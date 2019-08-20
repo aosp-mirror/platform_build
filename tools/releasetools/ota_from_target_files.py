@@ -181,6 +181,7 @@ A/B OTA specific options
 
 from __future__ import print_function
 
+import collections
 import logging
 import multiprocessing
 import os.path
@@ -859,6 +860,94 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
                           vendor_updated or odm_updated)
 
 
+def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
+                        device_specific):
+  """Returns a ordered dict of block differences with partition name as key."""
+
+  def GetIncrementalBlockDifferenceForPartition(name):
+    if not HasPartition(source_zip, name):
+      raise RuntimeError("can't generate incremental that adds {}".format(name))
+
+    partition_src = common.GetUserImage(name, OPTIONS.source_tmp, source_zip,
+                                        info_dict=source_info,
+                                        allow_shared_blocks=allow_shared_blocks)
+
+    hashtree_info_generator = verity_utils.CreateHashtreeInfoGenerator(
+        name, 4096, target_info)
+    partition_tgt = common.GetUserImage(name, OPTIONS.target_tmp, target_zip,
+                                        info_dict=target_info,
+                                        allow_shared_blocks=allow_shared_blocks,
+                                        hashtree_info_generator=
+                                        hashtree_info_generator)
+
+    # Check the first block of the source system partition for remount R/W only
+    # if the filesystem is ext4.
+    partition_source_info = source_info["fstab"]["/" + name]
+    check_first_block = partition_source_info.fs_type == "ext4"
+    # Disable using imgdiff for squashfs. 'imgdiff -z' expects input files to be
+    # in zip formats. However with squashfs, a) all files are compressed in LZ4;
+    # b) the blocks listed in block map may not contain all the bytes for a
+    # given file (because they're rounded to be 4K-aligned).
+    partition_target_info = target_info["fstab"]["/" + name]
+    disable_imgdiff = (partition_source_info.fs_type == "squashfs" or
+                       partition_target_info.fs_type == "squashfs")
+    return common.BlockDifference(name, partition_src, partition_tgt,
+                                  check_first_block,
+                                  version=blockimgdiff_version,
+                                  disable_imgdiff=disable_imgdiff)
+
+  if source_zip:
+    # See notes in common.GetUserImage()
+    allow_shared_blocks = (source_info.get('ext4_share_dup_blocks') == "true" or
+                           target_info.get('ext4_share_dup_blocks') == "true")
+    blockimgdiff_version = max(
+        int(i) for i in target_info.get(
+            "blockimgdiff_versions", "1").split(","))
+    assert blockimgdiff_version >= 3
+
+  block_diff_dict = collections.OrderedDict()
+  partition_names = ["system", "vendor", "product", "odm", "system_ext"]
+  for partition in partition_names:
+    if not HasPartition(target_zip, partition):
+      continue
+    # Full OTA update.
+    if not source_zip:
+      tgt = common.GetUserImage(partition, OPTIONS.input_tmp, target_zip,
+                                info_dict=target_info,
+                                reset_file_map=True)
+      block_diff_dict[partition] = common.BlockDifference(partition, tgt,
+                                                          src=None)
+    # Incremental OTA update.
+    else:
+      block_diff_dict[partition] = GetIncrementalBlockDifferenceForPartition(
+          partition)
+  assert "system" in block_diff_dict
+
+  # Get the block diffs from the device specific script. If there is a
+  # duplicate block diff for a partition, ignore the diff in the generic script
+  # and use the one in the device specific script instead.
+  if source_zip:
+    device_specific_diffs = device_specific.IncrementalOTA_GetBlockDifferences()
+    function_name = "IncrementalOTA_GetBlockDifferences"
+  else:
+    device_specific_diffs = device_specific.FullOTA_GetBlockDifferences()
+    function_name = "FullOTA_GetBlockDifferences"
+
+  if device_specific_diffs:
+    assert all(isinstance(diff, common.BlockDifference)
+               for diff in device_specific_diffs), \
+        "{} is not returning a list of BlockDifference objects".format(
+            function_name)
+    for diff in device_specific_diffs:
+      if diff.partition in block_diff_dict:
+        logger.warning("Duplicate block difference found. Device specific block"
+                       " diff for partition '%s' overrides the one in generic"
+                       " script.", diff.partition)
+      block_diff_dict[diff.partition] = diff
+
+  return block_diff_dict
+
+
 def WriteFullOTAPackage(input_zip, output_file):
   target_info = BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
 
@@ -899,6 +988,11 @@ def WriteFullOTAPackage(input_zip, output_file):
 
   target_info.WriteDeviceAssertions(script, OPTIONS.oem_no_mount)
   device_specific.FullOTA_Assertions()
+
+  block_diff_dict = GetBlockDifferences(target_zip=input_zip, source_zip=None,
+                                        target_info=target_info,
+                                        source_info=None,
+                                        device_specific=device_specific)
 
   # Two-step package strategy (in chronological order, which is *not*
   # the order in which the generated script has things):
@@ -951,52 +1045,25 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   device_specific.FullOTA_InstallBegin()
 
-  system_progress = 0.75
-
+  # All other partitions as well as the data wipe use 10% of the progress, and
+  # the update of the system partition takes the remaining progress.
+  system_progress = 0.9 - (len(block_diff_dict) - 1) * 0.1
   if OPTIONS.wipe_user_data:
     system_progress -= 0.1
-  if HasVendorPartition(input_zip):
-    system_progress -= 0.1
-
-  script.ShowProgress(system_progress, 0)
-
-  def GetBlockDifference(partition):
-    # Full OTA is done as an "incremental" against an empty source image. This
-    # has the effect of writing new data from the package to the entire
-    # partition, but lets us reuse the updater code that writes incrementals to
-    # do it.
-    tgt = common.GetUserImage(partition, OPTIONS.input_tmp, input_zip,
-                              info_dict=target_info,
-                              reset_file_map=True)
-    diff = common.BlockDifference(partition, tgt, src=None)
-    return diff
-
-  device_specific_diffs = device_specific.FullOTA_GetBlockDifferences()
-  if device_specific_diffs:
-    assert all(isinstance(diff, common.BlockDifference)
-               for diff in device_specific_diffs), \
-        "FullOTA_GetBlockDifferences is not returning a list of " \
-        "BlockDifference objects"
-
-  progress_dict = dict()
-  block_diffs = [GetBlockDifference("system")]
-  if HasVendorPartition(input_zip):
-    block_diffs.append(GetBlockDifference("vendor"))
-    progress_dict["vendor"] = 0.1
-  if device_specific_diffs:
-    block_diffs += device_specific_diffs
+  progress_dict = {partition: 0.1 for partition in block_diff_dict}
+  progress_dict["system"] = system_progress
 
   if target_info.get('use_dynamic_partitions') == "true":
     # Use empty source_info_dict to indicate that all partitions / groups must
     # be re-added.
     dynamic_partitions_diff = common.DynamicPartitionsDifference(
         info_dict=OPTIONS.info_dict,
-        block_diffs=block_diffs,
+        block_diffs=block_diff_dict.values(),
         progress_dict=progress_dict)
     dynamic_partitions_diff.WriteScript(script, output_zip,
                                         write_verify_script=OPTIONS.verify)
   else:
-    for block_diff in block_diffs:
+    for block_diff in block_diff_dict.values():
       block_diff.WriteScript(script, output_zip,
                              progress=progress_dict.get(block_diff.partition),
                              write_verify_script=OPTIONS.verify)
@@ -1008,10 +1075,9 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   common.CheckSize(boot_img.data, "boot.img", target_info)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
 
-  script.ShowProgress(0.05, 5)
   script.WriteRawImage("/boot", "boot.img")
 
-  script.ShowProgress(0.2, 10)
+  script.ShowProgress(0.1, 10)
   device_specific.FullOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
@@ -1571,66 +1637,11 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
   target_recovery = common.GetBootableImage(
       "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
 
-  # See notes in common.GetUserImage()
-  allow_shared_blocks = (source_info.get('ext4_share_dup_blocks') == "true" or
-                         target_info.get('ext4_share_dup_blocks') == "true")
-  system_src = common.GetUserImage("system", OPTIONS.source_tmp, source_zip,
-                                   info_dict=source_info,
-                                   allow_shared_blocks=allow_shared_blocks)
-
-  hashtree_info_generator = verity_utils.CreateHashtreeInfoGenerator(
-      "system", 4096, target_info)
-  system_tgt = common.GetUserImage("system", OPTIONS.target_tmp, target_zip,
-                                   info_dict=target_info,
-                                   allow_shared_blocks=allow_shared_blocks,
-                                   hashtree_info_generator=
-                                   hashtree_info_generator)
-
-  blockimgdiff_version = max(
-      int(i) for i in target_info.get("blockimgdiff_versions", "1").split(","))
-  assert blockimgdiff_version >= 3
-
-  # Check the first block of the source system partition for remount R/W only
-  # if the filesystem is ext4.
-  system_src_partition = source_info["fstab"]["/system"]
-  check_first_block = system_src_partition.fs_type == "ext4"
-  # Disable using imgdiff for squashfs. 'imgdiff -z' expects input files to be
-  # in zip formats. However with squashfs, a) all files are compressed in LZ4;
-  # b) the blocks listed in block map may not contain all the bytes for a given
-  # file (because they're rounded to be 4K-aligned).
-  system_tgt_partition = target_info["fstab"]["/system"]
-  disable_imgdiff = (system_src_partition.fs_type == "squashfs" or
-                     system_tgt_partition.fs_type == "squashfs")
-  system_diff = common.BlockDifference("system", system_tgt, system_src,
-                                       check_first_block,
-                                       version=blockimgdiff_version,
-                                       disable_imgdiff=disable_imgdiff)
-
-  if HasVendorPartition(target_zip):
-    if not HasVendorPartition(source_zip):
-      raise RuntimeError("can't generate incremental that adds /vendor")
-    vendor_src = common.GetUserImage("vendor", OPTIONS.source_tmp, source_zip,
-                                     info_dict=source_info,
-                                     allow_shared_blocks=allow_shared_blocks)
-    hashtree_info_generator = verity_utils.CreateHashtreeInfoGenerator(
-        "vendor", 4096, target_info)
-    vendor_tgt = common.GetUserImage(
-        "vendor", OPTIONS.target_tmp, target_zip,
-        info_dict=target_info,
-        allow_shared_blocks=allow_shared_blocks,
-        hashtree_info_generator=hashtree_info_generator)
-
-    # Check first block of vendor partition for remount R/W only if
-    # disk type is ext4
-    vendor_partition = source_info["fstab"]["/vendor"]
-    check_first_block = vendor_partition.fs_type == "ext4"
-    disable_imgdiff = vendor_partition.fs_type == "squashfs"
-    vendor_diff = common.BlockDifference("vendor", vendor_tgt, vendor_src,
-                                         check_first_block,
-                                         version=blockimgdiff_version,
-                                         disable_imgdiff=disable_imgdiff)
-  else:
-    vendor_diff = None
+  block_diff_dict = GetBlockDifferences(target_zip=target_zip,
+                                        source_zip=source_zip,
+                                        target_info=target_info,
+                                        source_info=source_info,
+                                        device_specific=device_specific)
 
   AddCompatibilityArchiveIfTrebleEnabled(
       target_zip, output_zip, target_info, source_info)
@@ -1697,12 +1708,8 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
   WriteFingerprintAssertion(script, target_info, source_info)
 
   # Check the required cache size (i.e. stashed blocks).
-  size = []
-  if system_diff:
-    size.append(system_diff.required_cache)
-  if vendor_diff:
-    size.append(vendor_diff.required_cache)
-
+  required_cache_sizes = [diff.required_cache for diff in
+                          block_diff_dict.values()]
   if updating_boot:
     boot_type, boot_device = common.GetTypeAndDevice("/boot", source_info)
     d = common.Difference(target_boot, source_boot)
@@ -1725,10 +1732,14 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
           "{}:{}:{}:{}".format(
               boot_type, boot_device, source_boot.size, source_boot.sha1))
 
-      size.append(target_boot.size)
+      required_cache_sizes.append(target_boot.size)
 
-  if size:
-    script.CacheFreeSpaceCheck(max(size))
+  if required_cache_sizes:
+    script.CacheFreeSpaceCheck(max(required_cache_sizes))
+
+  # Verify the existing partitions.
+  for diff in block_diff_dict.values():
+    diff.WriteVerifyScript(script, touched_blocks_only=True)
 
   device_specific.IncrementalOTA_VerifyEnd()
 
@@ -1745,30 +1756,12 @@ else
     # Stage 3/3: Make changes.
     script.Comment("Stage 3/3")
 
-  # Verify the existing partitions.
-  system_diff.WriteVerifyScript(script, touched_blocks_only=True)
-  if vendor_diff:
-    vendor_diff.WriteVerifyScript(script, touched_blocks_only=True)
-  device_specific_diffs = device_specific.IncrementalOTA_GetBlockDifferences()
-  if device_specific_diffs:
-    assert all(isinstance(diff, common.BlockDifference)
-               for diff in device_specific_diffs), \
-        "IncrementalOTA_GetBlockDifferences is not returning a list of " \
-        "BlockDifference objects"
-    for diff in device_specific_diffs:
-      diff.WriteVerifyScript(script, touched_blocks_only=True)
-
   script.Comment("---- start making changes here ----")
 
   device_specific.IncrementalOTA_InstallBegin()
 
-  block_diffs = [system_diff]
-  progress_dict = {"system": 0.8 if vendor_diff else 0.9}
-  if vendor_diff:
-    block_diffs.append(vendor_diff)
-    progress_dict["vendor"] = 0.1
-  if device_specific_diffs:
-    block_diffs += device_specific_diffs
+  progress_dict = {partition: 0.1 for partition in block_diff_dict}
+  progress_dict["system"] = 1 - len(block_diff_dict) * 0.1
 
   if OPTIONS.source_info_dict.get("use_dynamic_partitions") == "true":
     if OPTIONS.target_info_dict.get("use_dynamic_partitions") != "true":
@@ -1777,12 +1770,12 @@ else
     dynamic_partitions_diff = common.DynamicPartitionsDifference(
         info_dict=OPTIONS.target_info_dict,
         source_info_dict=OPTIONS.source_info_dict,
-        block_diffs=block_diffs,
+        block_diffs=block_diff_dict.values(),
         progress_dict=progress_dict)
     dynamic_partitions_diff.WriteScript(
         script, output_zip, write_verify_script=OPTIONS.verify)
   else:
-    for block_diff in block_diffs:
+    for block_diff in block_diff_dict.values():
       block_diff.WriteScript(script, output_zip,
                              progress=progress_dict.get(block_diff.partition),
                              write_verify_script=OPTIONS.verify)
