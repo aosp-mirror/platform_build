@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ffea93bd_78517a8f",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 982,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-08-21T06:38:16Z",
+      "side": 1,
+      "message": "This can just be:\n\n  create-system-vendor-symlink :\u003d\n\n(define is just a multi-line variable)",
+      "range": {
+        "startLine": 981,
+        "startChar": 2,
+        "endLine": 982,
+        "endChar": 7
+      },
+      "revId": "adcdea2d18846fd766d468e8f99861f5bfee2d9a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bcdcc294_408f82e6",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1086,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-08-21T06:38:16Z",
+      "side": 1,
+      "message": "At some point soon we\u0027ll need to refactor this not to rely on local side-effects, but this is an improvement over using LOCAL_POST_INSTALL_CMD.",
+      "revId": "adcdea2d18846fd766d468e8f99861f5bfee2d9a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
