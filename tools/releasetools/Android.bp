@@ -76,6 +76,19 @@ python_defaults {
 }
 
 python_defaults {
+    name: "releasetools_check_target_files_vintf_defaults",
+    srcs: [
+        "check_target_files_vintf.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+    required: [
+        "checkvintf",
+    ],
+}
+
+python_defaults {
     name: "releasetools_ota_from_target_files_defaults",
     srcs: [
         "edify_generator.py",
@@ -262,6 +275,14 @@ python_binary_host {
     ],
     required: [
         "aapt",
+    ],
+}
+
+python_binary_host {
+    name: "check_target_files_vintf",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_check_target_files_vintf_defaults"
     ],
 }
 
