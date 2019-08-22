@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8823af54_e1e8976f",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-22T15:53:54Z",
+      "side": 1,
+      "message": "declare the dependency in tools/releasetools/Android.bp",
+      "range": {
+        "startLine": 90,
+        "startChar": 7,
+        "endLine": 90,
+        "endChar": 31
+      },
+      "revId": "ebd2f5fc117499fdf2bbc26ad5905d9a7f7412b6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
