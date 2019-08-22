@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3001c5c3_0a1bc9d2",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 4542,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-22T04:29:34Z",
+      "side": 1,
+      "message": "nit: can you also revert the change to this part since INTERNAL_SUPERIMAGE_MISC_INFO is no longer used at 4669? Just move the value to L4594.",
+      "range": {
+        "startLine": 4542,
+        "startChar": 0,
+        "endLine": 4542,
+        "endChar": 103
+      },
+      "revId": "a4a4d61fc26cd5de112c00a954055cb32c15460e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "312d5e37_396ae6f3",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 4602,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-22T04:29:34Z",
+      "side": 1,
+      "message": "seems it should be dist\u0027d based on the same condition as super.img (L4551), i.e. `dist_files`?",
+      "range": {
+        "startLine": 4602,
+        "startChar": 22,
+        "endLine": 4602,
+        "endChar": 31
+      },
+      "revId": "a4a4d61fc26cd5de112c00a954055cb32c15460e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f67a5807_54630280",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 4602,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-22T04:29:34Z",
+      "side": 1,
+      "message": "nit: $(INSTALLED_MISC_INFO_TARGET)",
+      "range": {
+        "startLine": 4602,
+        "startChar": 32,
+        "endLine": 4602,
+        "endChar": 60
+      },
+      "revId": "a4a4d61fc26cd5de112c00a954055cb32c15460e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
