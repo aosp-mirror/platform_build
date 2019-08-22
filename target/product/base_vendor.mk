@@ -75,3 +75,7 @@ PRODUCT_PACKAGES += \
 # VINTF data for vendor image
 PRODUCT_PACKAGES += \
     device_compatibility_matrix.xml \
+
+PRODUCT_PACKAGES += \
+    libprotobuf-cpp-lite-vendorcompat \
+    libprotobuf-cpp-full-vendorcompat \
