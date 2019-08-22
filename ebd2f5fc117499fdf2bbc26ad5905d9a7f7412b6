@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3d5e8763_69229f64",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-22T23:19:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8823af54_e1e8976f",
+      "range": {
+        "startLine": 90,
+        "startChar": 7,
+        "endLine": 90,
+        "endChar": 31
+      },
+      "revId": "ebd2f5fc117499fdf2bbc26ad5905d9a7f7412b6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "39189436_510d0e97",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2019-08-22T16:59:57Z",
       "side": 1,
       "message": "Mega-nit: I feel this may belong more in the merge_target_files() function after the call to create_merged_package, since it\u0027s more a validation of the merged package rather than actually contributing to the merging.",
+      "range": {
+        "startLine": 656,
+        "startChar": 2,
+        "endLine": 657,
+        "endChar": 53
+      },
+      "revId": "ebd2f5fc117499fdf2bbc26ad5905d9a7f7412b6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0156882f_75f19a6e",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-22T23:19:29Z",
+      "side": 1,
+      "message": "See new PS. I don\u0027t know how to verify this though...",
+      "parentUuid": "39189436_510d0e97",
       "range": {
         "startLine": 656,
         "startChar": 2,
