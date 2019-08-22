@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "180feb8d_b91908cd",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-22T19:25:33Z",
+      "side": 1,
+      "message": "The TH failure catches a real issue. The key_path here could be None, which means the partition won\u0027t be signed as chained. When that happens, it hits the invalid concatenation of str and None.",
+      "range": {
+        "startLine": 618,
+        "startChar": 2,
+        "endLine": 618,
+        "endChar": 10
+      },
+      "revId": "960a2d40c1578af2b99edf9d898d78716a0157cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
