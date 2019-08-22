@@ -762,30 +762,6 @@ ifdef BOARD_ODM_KERNEL_MODULES
 endif
 
 # -----------------------------------------------------------------
-# package stats
-ifdef BUILDING_SYSTEM_IMAGE
-
-PACKAGE_STATS_FILE := $(PRODUCT_OUT)/package-stats.txt
-PACKAGES_TO_STAT := \
-    $(sort $(filter $(TARGET_OUT)/% $(TARGET_OUT_DATA)/%, \
-	$(filter %.jar %.apk, $(ALL_DEFAULT_INSTALLED_MODULES))))
-$(PACKAGE_STATS_FILE): $(PACKAGES_TO_STAT)
-	@echo Package stats: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@
-ifeq ($(PACKAGES_TO_STAT),)
-# Create empty package stats file if target builds no jar(s) or apk(s).
-	$(hide) touch $@
-else
-	$(hide) build/make/tools/dump-package-stats $^ > $@
-endif
-
-.PHONY: package-stats
-package-stats: $(PACKAGE_STATS_FILE)
-
-endif # BUILDING_SYSTEM_IMAGE
-
-# -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
 define _apkcerts_write_line
