@@ -156,6 +156,14 @@ python_library_host {
 }
 
 python_library_host {
+    name: "releasetools_check_target_files_vintf",
+    defaults: [
+        "releasetools_library_defaults",
+        "releasetools_check_target_files_vintf_defaults",
+    ],
+}
+
+python_library_host {
     name: "releasetools_common",
     defaults: ["releasetools_library_defaults"],
     srcs: [
@@ -417,13 +425,14 @@ python_defaults {
         "releasetools_apex_utils",
         "releasetools_build_image",
         "releasetools_build_super_image",
+        "releasetools_check_target_files_vintf",
         "releasetools_common",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
         "releasetools_verity_utils",
     ],
     data: [
-        "testdata/*",
+        "testdata/**/*",
     ],
     required: [
         "otatools",
