@@ -55,7 +55,7 @@ $(compatibility_zip): $(test_artifacts) $(test_tools) $(test_suite_prebuilt_tool
 # Copy tools
 	$(hide) cp $(PRIVATE_TOOLS) $(PRIVATE_OUT_DIR)/tools
 	$(if $(PRIVATE_DYNAMIC_CONFIG),$(hide) cp $(PRIVATE_DYNAMIC_CONFIG) $(PRIVATE_OUT_DIR)/testcases/$(PRIVATE_SUITE_NAME).dynamic)
-	$(hide) find $(dir $@)/$(PRIVATE_NAME) | sort >$@.list
+	$(hide) find $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases | sort >$@.list
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(dir $@) -l $@.list
 
 # Reset all input variables
