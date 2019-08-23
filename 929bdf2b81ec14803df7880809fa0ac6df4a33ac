@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "334607b3_6ba7dbef",
+        "filename": "tools/releasetools/test_check_target_files_vintf.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-23T03:00:51Z",
+      "side": 1,
+      "message": "Tao, the script rely on the external checkvintf tool heavily. If I decorate the tests with @testutils.SkipIfExternalToolsUnavailable, treehugger will never run it, right?",
+      "revId": "929bdf2b81ec14803df7880809fa0ac6df4a33ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
