@@ -111,9 +111,6 @@ endif
 ifneq (,$(findstring Darwin,$(UNAME)))
   HOST_OS := darwin
 endif
-ifneq (,$(findstring Macintosh,$(UNAME)))
-  HOST_OS := darwin
-endif
 
 HOST_OS_EXTRA := $(shell uname -rsm)
 ifeq ($(HOST_OS),linux)
