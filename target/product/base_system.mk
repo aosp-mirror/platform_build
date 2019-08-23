@@ -163,7 +163,6 @@ PRODUCT_PACKAGES += \
     libOpenMAXAL \
     libOpenSLES \
     libpdfium \
-    libpixelflinger \
     libpower \
     libpowermanager \
     libradio_metadata \
