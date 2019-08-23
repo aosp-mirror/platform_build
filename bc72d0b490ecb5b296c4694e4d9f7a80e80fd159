@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "72da4288_c4222fe8",
+        "filename": "tools/releasetools/test_check_target_files_vintf.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-23T23:54:15Z",
+      "side": 1,
+      "message": "is it supposed to be @test_utils.SkipIfExternalToolsUnavailable()",
+      "range": {
+        "startLine": 28,
+        "startChar": 3,
+        "endLine": 28,
+        "endChar": 43
+      },
+      "revId": "bc72d0b490ecb5b296c4694e4d9f7a80e80fd159",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4839485f_cfd11377",
+        "filename": "tools/releasetools/test_check_target_files_vintf.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-23T23:54:15Z",
+      "side": 1,
+      "message": "why is it not a successful case.",
+      "range": {
+        "startLine": 50,
+        "startChar": 15,
+        "endLine": 50,
+        "endChar": 20
+      },
+      "revId": "bc72d0b490ecb5b296c4694e4d9f7a80e80fd159",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
