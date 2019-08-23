@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ce7a760_29583e78",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 14
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-23T21:13:03Z",
+      "side": 1,
+      "message": "I already have it in \"required\", why does the presubmit test fail on not being able to find checkvintf?",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 21
+      },
+      "revId": "3a5b69e8f40391174e73521b84ab0bf08d798359",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
