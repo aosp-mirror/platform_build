@@ -177,6 +177,7 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
   payload_dir = common.MakeTempDir(prefix='apex-payload-')
   with zipfile.ZipFile(apex_file) as apex_fd:
     payload_file = apex_fd.extract(APEX_PAYLOAD_IMAGE, payload_dir)
+    zip_items = apex_fd.namelist()
 
   payload_info = ParseApexPayloadInfo(payload_file)
   SignApexPayload(
@@ -191,7 +192,8 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
   payload_public_key = common.ExtractAvbPublicKey(payload_key)
 
   common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
-  common.ZipDelete(apex_file, APEX_PUBKEY)
+  if APEX_PUBKEY in zip_items:
+    common.ZipDelete(apex_file, APEX_PUBKEY)
   apex_zip = zipfile.ZipFile(apex_file, 'a')
   common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
   common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
