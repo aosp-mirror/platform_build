@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82780104_610b60c6",
+        "filename": "tools/releasetools/check_target_files_vintf.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-26T22:09:26Z",
+      "side": 1,
+      "message": "Is it just\n\nif proc.returncode \u003d\u003d 0:\n  logger.info(\"Command `%s` returns \u0027compatible\u0027\", \u0027 \u0027.join(command))\nelif out.strip() \u003d\u003d \"INCOMPATIBLE\":\n  logger.info(\"Command `%s` returns \u0027incompatible\u0027\", \u0027 \u0027.join(command))\n  success \u003d False\nelse\n  logger.error(\"Command `%s` failed with error code %d\", \u0027 \u0027.join(command), proc.returncode)\n  success \u003d False\n\nlogger.info(\"stdout: %s\", out)\nlogger.error(\"stderr: %s\", err)",
+      "range": {
+        "startLine": 137,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 28
+      },
+      "revId": "7a9736b3b2ec718474e4cef95bafd5c5807f0992",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
