@@ -22,6 +22,30 @@
       "revId": "a3a97c2cf9a4a4ed6506054facc255ba93358ecc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "edeb02f7_81b41353",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1018026
+      },
+      "writtenOn": "2019-08-26T05:02:37Z",
+      "side": 1,
+      "message": "Yeah - not thinking.\n\nDone.",
+      "parentUuid": "fa3dd024_66869d48",
+      "range": {
+        "startLine": 180,
+        "startChar": 16,
+        "endLine": 180,
+        "endChar": 55
+      },
+      "revId": "a3a97c2cf9a4a4ed6506054facc255ba93358ecc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
