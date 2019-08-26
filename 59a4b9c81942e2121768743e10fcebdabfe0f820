@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7ba4e0a9_2a823831",
+        "filename": "tools/releasetools/check_target_files_vintf.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-26T18:32:36Z",
+      "side": 1,
+      "message": "That\u0027s interesting; I thought these are the only possibilities:\n\nhttps://android.googlesource.com/platform/build/+/11dc247ba99f0c6bf6565531ec430c55fdf0d974/core/Makefile#2782\nhttps://android.googlesource.com/platform/build/+/11dc247ba99f0c6bf6565531ec430c55fdf0d974/core/board_config.mk#490\n\nMaybe because it is TV and Treble is not enforced there?",
+      "parentUuid": "98579734_2b897369",
+      "range": {
+        "startLine": 45,
+        "startChar": 4,
+        "endLine": 45,
+        "endChar": 11
+      },
+      "revId": "59a4b9c81942e2121768743e10fcebdabfe0f820",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "32182cf5_552d182e",
         "filename": "tools/releasetools/check_target_files_vintf.py",
         "patchSetId": 3
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "3a1558b2_ed50bd1b",
+        "filename": "tools/releasetools/check_target_files_vintf.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-26T18:32:36Z",
+      "side": 1,
+      "message": "\u003e regular split is sufficient?\n\nAgreed.\n\n\u003e And you don\u0027t need L68, the return value will be an empty list.\n\nI need L68 (which returns a list that contains an empty element) so that L133 loop runs at least once. Also, I returned [\u0027--property\u0027, \u0027ro.boot.product.hardware.sku\u003d\u0027] so that assemble_vintf knows it wants to check the no SKU case.\n\nIn fact, now that I think about it, this is still missing a check; will fix.",
+      "parentUuid": "c4bf8796_4c3266d7",
+      "range": {
+        "startLine": 67,
+        "startChar": 9,
+        "endLine": 67,
+        "endChar": 15
+      },
+      "revId": "59a4b9c81942e2121768743e10fcebdabfe0f820",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "54cac1bc_5fffb3cd",
         "filename": "tools/releasetools/check_target_files_vintf.py",
         "patchSetId": 3
@@ -83,6 +131,30 @@
       "writtenOn": "2019-08-23T23:10:51Z",
       "side": 1,
       "message": "RunAndCheckOutput() and stop at the first error?",
+      "range": {
+        "startLine": 133,
+        "startChar": 2,
+        "endLine": 133,
+        "endChar": 32
+      },
+      "revId": "59a4b9c81942e2121768743e10fcebdabfe0f820",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3658448a_af64b39f",
+        "filename": "tools/releasetools/check_target_files_vintf.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-26T18:32:36Z",
+      "side": 1,
+      "message": "I do want to report as many errors as possible though; skus are independent of each other.",
+      "parentUuid": "54cac1bc_5fffb3cd",
       "range": {
         "startLine": 133,
         "startChar": 2,
