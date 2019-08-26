@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0cef1e9_9ded9a24",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 20
+      },
+      "lineNbr": 732,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-26T23:48:27Z",
+      "side": 1,
+      "message": "\"VENDOR/\"?\n\nOr just replace the current try/except block with a call to HasPartition()?",
+      "range": {
+        "startLine": 732,
+        "startChar": 46,
+        "endLine": 732,
+        "endChar": 55
+      },
+      "revId": "e65cfce9ab2c8d97ff14899a7b9309139e3690ad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a24ca3bc_4dbbe95f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 20
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-26T23:48:27Z",
+      "side": 1,
+      "message": "nit: two more space before \"for\"",
+      "range": {
+        "startLine": 773,
+        "startChar": 6,
+        "endLine": 773,
+        "endChar": 9
+      },
+      "revId": "e65cfce9ab2c8d97ff14899a7b9309139e3690ad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
