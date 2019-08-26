@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa3dd024_66869d48",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-26T04:59:41Z",
+      "side": 1,
+      "message": "replace the whole thing with \"apex_fd.namelist()\"  :)",
+      "range": {
+        "startLine": 180,
+        "startChar": 16,
+        "endLine": 180,
+        "endChar": 55
+      },
+      "revId": "a3a97c2cf9a4a4ed6506054facc255ba93358ecc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
