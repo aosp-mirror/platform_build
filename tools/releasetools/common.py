@@ -616,6 +616,10 @@ def AppendAVBSigningArgs(cmd, partition):
   """Append signing arguments for avbtool."""
   # e.g., "--key path/to/signing_key --algorithm SHA256_RSA4096"
   key_path = OPTIONS.info_dict.get("avb_" + partition + "_key_path")
+  if key_path and not os.path.exists(key_path) and OPTIONS.search_path:
+    new_key_path = os.path.join(OPTIONS.search_path, key_path)
+    if os.path.exists(new_key_path):
+      key_path = new_key_path
   algorithm = OPTIONS.info_dict.get("avb_" + partition + "_algorithm")
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
@@ -668,6 +672,10 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
+  if key and not os.path.exists(key) and OPTIONS.search_path:
+    new_key_path = os.path.join(OPTIONS.search_path, key)
+    if os.path.exists(new_key_path):
+      key = new_key_path
   pubkey_path = ExtractAvbPublicKey(info_dict["avb_avbtool"], key)
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
