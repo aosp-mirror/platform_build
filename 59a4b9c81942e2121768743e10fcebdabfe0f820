@@ -167,6 +167,30 @@
     },
     {
       "key": {
+        "uuid": "ecdcd440_58075d95",
+        "filename": "tools/releasetools/check_target_files_vintf.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-26T19:37:35Z",
+      "side": 1,
+      "message": "Also, I want to return False in case of incompatibility (instead of throwing out an error).",
+      "parentUuid": "3658448a_af64b39f",
+      "range": {
+        "startLine": 133,
+        "startChar": 2,
+        "endLine": 133,
+        "endChar": 32
+      },
+      "revId": "59a4b9c81942e2121768743e10fcebdabfe0f820",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ce69f827_20ed4ecf",
         "filename": "tools/releasetools/check_target_files_vintf.py",
         "patchSetId": 3
