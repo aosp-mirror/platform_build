@@ -69,6 +69,29 @@
       "revId": "1e616fa00a143598df442b93648700a39016ec69",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07255e10_f717a930",
+        "filename": "tools/releasetools/test_check_target_files_vintf.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-26T22:21:38Z",
+      "side": 1,
+      "message": "Add a comment why they\u0027re failing cuz it\u0027s hard to tell from the code?",
+      "range": {
+        "startLine": 120,
+        "startChar": 6,
+        "endLine": 120,
+        "endChar": 34
+      },
+      "revId": "1e616fa00a143598df442b93648700a39016ec69",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
