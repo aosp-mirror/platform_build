@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "c4bf8796_4c3266d7",
+        "filename": "tools/releasetools/check_target_files_vintf.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-26T17:51:12Z",
+      "side": 1,
+      "message": "seems the script wants to return [\u0027--property\u0027, \u0027ro.boot.product.hardware.sku\u003d\u0027] in such a case.",
+      "parentUuid": "32182cf5_552d182e",
+      "range": {
+        "startLine": 67,
+        "startChar": 9,
+        "endLine": 67,
+        "endChar": 15
+      },
+      "revId": "59a4b9c81942e2121768743e10fcebdabfe0f820",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "54cac1bc_5fffb3cd",
         "filename": "tools/releasetools/check_target_files_vintf.py",
         "patchSetId": 3
