@@ -16,6 +16,24 @@
       "revId": "88e6470b17d427c31a0d79d67c6d3a4a461b3393",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f577138c_b785bbf8",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-08-26T16:21:19Z",
+      "side": 1,
+      "message": "It\u0027s in libhidltransport (which is now merged into libhidlbase). There is no such module in AOSP",
+      "parentUuid": "8cf31496_76cdd7fd",
+      "revId": "88e6470b17d427c31a0d79d67c6d3a4a461b3393",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
