@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "d6047661_4d9670b0",
+        "filename": "tools/releasetools/test_check_target_files_vintf.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-26T23:10:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "72da4288_c4222fe8",
+      "range": {
+        "startLine": 28,
+        "startChar": 3,
+        "endLine": 28,
+        "endChar": 43
+      },
+      "revId": "bc72d0b490ecb5b296c4694e4d9f7a80e80fd159",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4839485f_cfd11377",
         "filename": "tools/releasetools/test_check_target_files_vintf.py",
         "patchSetId": 6
@@ -68,6 +92,30 @@
       "revId": "bc72d0b490ecb5b296c4694e4d9f7a80e80fd159",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "10d4527b_207e3887",
+        "filename": "tools/releasetools/test_check_target_files_vintf.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-26T23:10:30Z",
+      "side": 1,
+      "message": "Done, I messed up the test case.",
+      "parentUuid": "4839485f_cfd11377",
+      "range": {
+        "startLine": 50,
+        "startChar": 15,
+        "endLine": 50,
+        "endChar": 20
+      },
+      "revId": "bc72d0b490ecb5b296c4694e4d9f7a80e80fd159",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
