@@ -46,6 +46,30 @@
       "revId": "7a9736b3b2ec718474e4cef95bafd5c5807f0992",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aad1476e_182c836e",
+        "filename": "tools/releasetools/check_target_files_vintf.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-26T22:30:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ce9983f9_ba5bdbc0",
+      "range": {
+        "startLine": 137,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 28
+      },
+      "revId": "7a9736b3b2ec718474e4cef95bafd5c5807f0992",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
