@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e6237ac3_e9561292",
+        "filename": "tools/releasetools/check_target_files_vintf.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-08-26T22:10:14Z",
+      "side": 1,
+      "message": "nit: more pythonic is skus \u003d ... or [\u0027\u0027]",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 15
+      },
+      "revId": "0f6ce445e45b0d5af058fc22704532eb7ce33d2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
