@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "fe3a4ed8_c9ad25a5",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 6
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-26T17:55:24Z",
+      "side": 1,
+      "message": "releasetools_check_target_files_vintf module doesn\u0027t exist in this CL yet.",
+      "range": {
+        "startLine": 420,
+        "startChar": 9,
+        "endLine": 420,
+        "endChar": 46
+      },
+      "revId": "bc72d0b490ecb5b296c4694e4d9f7a80e80fd159",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "72da4288_c4222fe8",
         "filename": "tools/releasetools/test_check_target_files_vintf.py",
         "patchSetId": 6
