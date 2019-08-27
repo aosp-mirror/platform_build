@@ -748,7 +748,7 @@ endif  # LOCAL_PRESUBMIT_DISABLED
 ## Register with ALL_MODULES
 ###########################################################
 
-ifeq ($(filter $(my_register_name),$(ALL_MODULES)),)
+ifndef ALL_MODULES.$(my_register_name).PATH
     # These keys are no longer used, they've been replaced by keys that specify
     # target/host/host_cross (REQUIRED_FROM_TARGET / REQUIRED_FROM_HOST) and similar.
     #
