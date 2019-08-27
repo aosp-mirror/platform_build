@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6518b894_afa29fa2",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 4641,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-27T19:19:29Z",
+      "side": 1,
+      "message": "is the super image supposed to be updated in img_from_target_files already?",
+      "range": {
+        "startLine": 4641,
+        "startChar": 64,
+        "endLine": 4641,
+        "endChar": 95
+      },
+      "revId": "ace868aa11202a26e2141d7962f9a87698a3a03c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
