@@ -34,6 +34,24 @@
       "revId": "88e6470b17d427c31a0d79d67c6d3a4a461b3393",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50f37980_e3b5bb67",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-08-27T03:42:21Z",
+      "side": 1,
+      "message": "It is tracked in b/138284486.",
+      "parentUuid": "f577138c_b785bbf8",
+      "revId": "88e6470b17d427c31a0d79d67c6d3a4a461b3393",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
