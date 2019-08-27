@@ -55,8 +55,6 @@ endif
 
 my_cxx_ldlibs :=
 ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
-    my_cflags += -D_USING_LIBCXX
-
     ifeq ($($(my_prefix)OS),darwin)
         # libc++'s headers are annotated with availability macros that indicate
         # which version of Mac OS was the first to ship with a libc++ feature
