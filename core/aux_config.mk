@@ -149,6 +149,8 @@ AUX_ALL_SUBARCHS :=
 variant_sfx :=_aux_variant_config.mk
 os_sfx :=_aux_os_config.mk
 
+ifdef AUX_OS_VARIANT_LIST
+
 config_roots := $(wildcard device vendor)
 all_configs :=
 ifdef config_roots
@@ -179,5 +181,7 @@ $(foreach v,$(AUX_ALL_VARIANTS),\
   $(call aux-variant-validate,$(v)) \
 )
 endif
+
+endif # AUX_OS_VARIANT_LIST
 
 INSTALLED_AUX_TARGETS :=
