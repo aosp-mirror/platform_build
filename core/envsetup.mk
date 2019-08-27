@@ -111,9 +111,6 @@ endif
 ifneq (,$(findstring Darwin,$(UNAME)))
   HOST_OS := darwin
 endif
-ifneq (,$(findstring Macintosh,$(UNAME)))
-  HOST_OS := darwin
-endif
 
 HOST_OS_EXTRA := $(shell uname -rsm)
 ifeq ($(HOST_OS),linux)
@@ -256,10 +253,10 @@ endef
 #################################################################
 # Set up minimal BOOTCLASSPATH list of jars to build/execute
 # java code with dalvikvm/art.
-# Jars present in the runtime apex. These should match exactly the list of
-# Java libraries in the runtime apex build rule.
-RUNTIME_APEX_JARS := core-oj core-libart core-icu4j okhttp bouncycastle apache-xml
-TARGET_CORE_JARS := $(RUNTIME_APEX_JARS) conscrypt
+# Jars present in the ART apex. These should match exactly the list of
+# Java libraries in the ART apex build rule.
+ART_APEX_JARS := core-oj core-libart core-icu4j okhttp bouncycastle apache-xml
+TARGET_CORE_JARS := $(ART_APEX_JARS) conscrypt
 ifeq ($(EMMA_INSTRUMENT),true)
   ifneq ($(EMMA_INSTRUMENT_STATIC),true)
     # For instrumented build, if Jacoco is not being included statically
@@ -817,7 +814,16 @@ TARGET_OUT_SYSTEM_EXT_JAVA_LIBRARIES:= $(TARGET_OUT_SYSTEM_EXT)/framework
 TARGET_OUT_SYSTEM_EXT_APPS := $(target_out_system_ext_app_base)/app
 TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED := $(target_out_system_ext_app_base)/priv-app
 TARGET_OUT_SYSTEM_EXT_ETC := $(TARGET_OUT_SYSTEM_EXT)/etc
+TARGET_OUT_SYSTEM_EXT_EXECUTABLES := $(TARGET_OUT_SYSTEM_EXT)/bin
+.KATI_READONLY := \
+  TARGET_OUT_SYSTEM_EXT_EXECUTABLES \
+  TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES \
+  TARGET_OUT_SYSTEM_EXT_JAVA_LIBRARIES \
+  TARGET_OUT_SYSTEM_EXT_APPS \
+  TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED \
+  TARGET_OUT_SYSTEM_EXT_ETC
 
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_EXECUTABLES := $(TARGET_OUT_SYSTEM_EXT_EXECUTABLES)
 ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES := $(target_out_system_ext_shared_libraries_base)/lib/$(TARGET_2ND_ARCH)
 else
@@ -825,6 +831,11 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES := $(target_
 endif
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_APPS := $(TARGET_OUT_SYSTEM_EXT_APPS)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED := $(TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED)
+.KATI_READONLY := \
+  $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_EXECUTABLES \
+  $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES \
+  $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_APPS \
+  $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED
 
 TARGET_OUT_BREAKPAD := $(PRODUCT_OUT)/breakpad
 .KATI_READONLY := TARGET_OUT_BREAKPAD

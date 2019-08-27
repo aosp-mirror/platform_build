@@ -163,7 +163,6 @@ PRODUCT_PACKAGES += \
     libOpenMAXAL \
     libOpenSLES \
     libpdfium \
-    libpixelflinger \
     libpower \
     libpowermanager \
     libradio_metadata \
@@ -248,6 +247,7 @@ PRODUCT_PACKAGES += \
     Shell \
     shell_and_utilities_system \
     sm \
+    SoundPicker \
     statsd \
     storaged \
     surfaceflinger \

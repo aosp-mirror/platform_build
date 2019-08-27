@@ -20,7 +20,6 @@
 
 # Device modules
 PRODUCT_PACKAGES += \
-    libGLES_android \
     vintf \
     CarrierConfig \
 

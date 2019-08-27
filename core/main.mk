@@ -1694,7 +1694,6 @@ else # TARGET_BUILD_APPS
     $(call dist-for-goals, droidcore, \
       $(APPS_ZIP) \
       $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
-      $(PACKAGE_STATS_FILE) \
     )
   endif
   endif

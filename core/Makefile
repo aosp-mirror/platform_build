@@ -763,30 +763,6 @@ ifdef BOARD_ODM_KERNEL_MODULES
 endif
 
 # -----------------------------------------------------------------
-# package stats
-ifdef BUILDING_SYSTEM_IMAGE
-
-PACKAGE_STATS_FILE := $(PRODUCT_OUT)/package-stats.txt
-PACKAGES_TO_STAT := \
-    $(sort $(filter $(TARGET_OUT)/% $(TARGET_OUT_DATA)/%, \
-	$(filter %.jar %.apk, $(ALL_DEFAULT_INSTALLED_MODULES))))
-$(PACKAGE_STATS_FILE): $(PACKAGES_TO_STAT)
-	@echo Package stats: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@
-ifeq ($(PACKAGES_TO_STAT),)
-# Create empty package stats file if target builds no jar(s) or apk(s).
-	$(hide) touch $@
-else
-	$(hide) build/make/tools/dump-package-stats $^ > $@
-endif
-
-.PHONY: package-stats
-package-stats: $(PACKAGE_STATS_FILE)
-
-endif # BUILDING_SYSTEM_IMAGE
-
-# -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
 define _apkcerts_write_line
@@ -4545,7 +4521,6 @@ ifneq (true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS))
 
 # For real devices and for dist builds, build super image from target files to an intermediate directory.
 INTERNAL_SUPERIMAGE_DIST_TARGET := $(call intermediates-dir-for,PACKAGING,super.img)/super.img
-INTERNAL_SUPERIMAGE_MISC_INFO := $(call intermediates-dir-for,PACKAGING,superimage_debug)/misc_info.txt
 $(INTERNAL_SUPERIMAGE_DIST_TARGET): extracted_input_target_files := $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE))
 $(INTERNAL_SUPERIMAGE_DIST_TARGET): $(LPMAKE) $(BUILT_TARGET_FILES_PACKAGE) $(BUILD_SUPER_IMAGE)
 	$(call pretty,"Target super fs image from target files: $@")
@@ -4597,13 +4572,15 @@ ifeq (true,$(BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT))
 $(INSTALLED_SUPERIMAGE_TARGET): $(INSTALLED_SUPERIMAGE_DEPENDENCIES)
 	$(call pretty,"Target super fs image for debug: $@")
 	$(call build-superimage-target,$(INSTALLED_SUPERIMAGE_TARGET),\
-	  $(INTERNAL_SUPERIMAGE_MISC_INFO))
+          $(call intermediates-dir-for,PACKAGING,superimage_debug)/misc_info.txt)
 
 droidcore: $(INSTALLED_SUPERIMAGE_TARGET)
 
 # For devices that uses super image directly, the superimage target points to the file in $(PRODUCT_OUT).
 .PHONY: superimage
 superimage: $(INSTALLED_SUPERIMAGE_TARGET)
+
+$(call dist-for-goals,dist_files,$(INSTALLED_MISC_INFO_TARGET):super_misc_info.txt)
 endif # BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT
 
 # Build $(PRODUCT_OUT)/super.img without dependencies.
@@ -4672,15 +4649,13 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(INTERNAL_SUPERIMAGE_DIST_TARGET)
 	      OTA/super_$(device).img:super_$(device).img)) \
 	  IMAGES/VerifiedBootParams.textproto:VerifiedBootParams.textproto \
 	  OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
-	$(if $(INTERNAL_SUPERIMAGE_MISC_INFO), zip -q -j -u $@ $(INTERNAL_SUPERIMAGE_MISC_INFO))
 	$(if $(INTERNAL_SUPERIMAGE_DIST_TARGET), zip -q -j -u $@ $(INTERNAL_SUPERIMAGE_DIST_TARGET))
 else
-$(INTERNAL_UPDATE_PACKAGE_TARGET): $(INSTALLED_MISC_INFO_TARGET)
+$(INTERNAL_UPDATE_PACKAGE_TARGET):
 	@echo "Package: $@"
 	$(hide) $(ZIP2ZIP) -i $(BUILT_TARGET_FILES_PACKAGE) -o $@ \
 	  IMAGES/VerifiedBootParams.textproto:VerifiedBootParams.textproto \
 	  OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
-	$(if $(INSTALLED_MISC_INFO_TARGET), zip -q -j -u $@ $(INSTALLED_MISC_INFO_TARGET))
 endif # BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE
 
 .PHONY: updatepackage
