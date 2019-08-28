@@ -366,6 +366,7 @@ PRODUCT_PACKAGES_DEBUG := \
     gdbserver \
     init-debug.rc \
     iotop \
+    iperf3 \
     iw \
     logpersist.start \
     logtagd.rc \
