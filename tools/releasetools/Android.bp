@@ -96,6 +96,7 @@ python_defaults {
         "target_files_diff.py",
     ],
     libs: [
+        "releasetools_check_target_files_vintf",
         "releasetools_common",
         "releasetools_verity_utils",
     ],
