@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be86496e_e7b0c02d",
+        "filename": "target/product/base_vendor.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2019-08-29T18:26:17Z",
+      "side": 1,
+      "message": "Why two empty lines? Is this intentional?",
+      "revId": "dbf465f2ae5e340d9b38e3dbc923d2c1c552135e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
