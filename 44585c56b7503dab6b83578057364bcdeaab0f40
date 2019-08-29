@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8b8bf52c_3752f69b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2019-08-29T01:44:49Z",
+      "side": 1,
+      "message": "This is a fixed bug for apex. Is this related?",
+      "revId": "44585c56b7503dab6b83578057364bcdeaab0f40",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
