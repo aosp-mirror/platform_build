@@ -335,6 +335,7 @@ python_binary_host {
     libs: [
         "releasetools_add_img_to_target_files",
         "releasetools_build_super_image",
+        "releasetools_check_target_files_vintf",
         "releasetools_common",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
