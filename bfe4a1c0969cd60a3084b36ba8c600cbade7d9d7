@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57dba552_dbf4d40d",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-08-29T02:14:10Z",
+      "side": 1,
+      "message": "Please file a bug to track this",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 40
+      },
+      "revId": "bfe4a1c0969cd60a3084b36ba8c600cbade7d9d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
