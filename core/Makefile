@@ -4011,6 +4011,10 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(HOST_OUT_EXECUTABLES)/fs_config \
 	    $(ADD_IMG_TO_TARGET_FILES) \
 	    $(MAKE_RECOVERY_PATCH) \
+	    $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST) \
+	    $(BUILT_ASSEMBLED_VENDOR_MANIFEST) \
+	    $(BUILT_SYSTEM_MATRIX) \
+	    $(BUILT_VENDOR_MATRIX) \
 	    $(BUILT_KERNEL_CONFIGS_FILE) \
 	    $(BUILT_KERNEL_VERSION_FILE) \
 	    | $(ACP)
@@ -4251,6 +4255,16 @@ ifdef BUILDING_SYSTEM_OTHER_IMAGE
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
 	@# Metadata for compatibility verification.
+	$(hide) cp $(BUILT_SYSTEM_MATRIX) $(zip_root)/META/system_matrix.xml
+ifdef BUILT_ASSEMBLED_FRAMEWORK_MANIFEST
+	$(hide) cp $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST) $(zip_root)/META/system_manifest.xml
+endif
+ifdef BUILT_ASSEMBLED_VENDOR_MANIFEST
+	$(hide) cp $(BUILT_ASSEMBLED_VENDOR_MANIFEST) $(zip_root)/META/vendor_manifest.xml
+endif
+ifdef BUILT_VENDOR_MATRIX
+	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
+endif
 ifdef BUILT_KERNEL_CONFIGS_FILE
 	$(hide) cp $(BUILT_KERNEL_CONFIGS_FILE) $(zip_root)/META/kernel_configs.txt
 endif
