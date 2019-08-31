@@ -87,6 +87,7 @@ import zipfile
 
 import add_img_to_target_files
 import build_super_image
+import check_target_files_vintf
 import common
 import img_from_target_files
 import ota_from_target_files
@@ -117,8 +118,6 @@ DEFAULT_FRAMEWORK_ITEM_LIST = (
     'META/apkcerts.txt',
     'META/filesystem_config.txt',
     'META/root_filesystem_config.txt',
-    'META/system_manifest.xml',
-    'META/system_matrix.xml',
     'META/update_engine_config.txt',
     'PRODUCT/*',
     'ROOT/*',
@@ -163,8 +162,6 @@ DEFAULT_VENDOR_ITEM_LIST = (
     'META/otakeys.txt',
     'META/releasetools.py',
     'META/vendor_filesystem_config.txt',
-    'META/vendor_manifest.xml',
-    'META/vendor_matrix.xml',
     'BOOT/*',
     'DATA/*',
     'ODM/*',
@@ -909,6 +906,9 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
       temp_dir, framework_target_files, framework_item_list,
       vendor_target_files, vendor_item_list, framework_misc_info_keys,
       rebuild_recovery)
+
+  if not check_target_files_vintf.CheckVintf(output_target_files_temp_dir):
+    raise RuntimeError("Incompatible VINTF metadata")
 
   generate_images(output_target_files_temp_dir, rebuild_recovery)
 
