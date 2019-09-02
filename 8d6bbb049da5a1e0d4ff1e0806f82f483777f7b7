@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "92647ce0_78aca348",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-09-02T05:25:31Z",
+      "side": 1,
+      "message": "Please ignore this comment.\nWe don\u0027t need to handle the case that a skip_mount.cfg skipping mount system_ext partition in a separate system_ext.img.\n`init` always read skip_mount.cfg from the path /system/system_ext/etc/init/config when mounting system.img. This is the only possible path to read.",
+      "parentUuid": "19236164_a96c32e9",
+      "range": {
+        "startLine": 189,
+        "startChar": 33,
+        "endLine": 189,
+        "endChar": 51
+      },
+      "revId": "8d6bbb049da5a1e0d4ff1e0806f82f483777f7b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "497f5803_bb729e05",
         "filename": "target/product/gsi_release.mk",
         "patchSetId": 1
