@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4e73b868_72510ad3",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-02T09:28:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "65b6bb3f_27d788d2",
+      "range": {
+        "startLine": 177,
+        "startChar": 16,
+        "endLine": 177,
+        "endChar": 14
+      },
+      "revId": "8d6bbb049da5a1e0d4ff1e0806f82f483777f7b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "19236164_a96c32e9",
         "filename": "target/product/gsi/Android.mk",
         "patchSetId": 1
@@ -60,6 +84,30 @@
       "side": 1,
       "message": "Please ignore this comment.\nWe don\u0027t need to handle the case that a skip_mount.cfg skipping mount system_ext partition in a separate system_ext.img.\n`init` always read skip_mount.cfg from the path /system/system_ext/etc/init/config when mounting system.img. This is the only possible path to read.",
       "parentUuid": "19236164_a96c32e9",
+      "range": {
+        "startLine": 189,
+        "startChar": 33,
+        "endLine": 189,
+        "endChar": 51
+      },
+      "revId": "8d6bbb049da5a1e0d4ff1e0806f82f483777f7b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "354a944c_e6e2af63",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-02T09:28:39Z",
+      "side": 1,
+      "message": "Note that old init (in Android Q) still reads /system/etc/init/config.\n\nFor new init, we\u0027ll switch to read /system/system_ext/etc/init/config/.\n\nAlso note that if there is GSI\u0027s system_exit.img in the future, we then don\u0027t have to skip mounting /system_ext. But we might still want to skip mount /product. In any case, it will need more changes in init and we can see what to do then.",
+      "parentUuid": "92647ce0_78aca348",
       "range": {
         "startLine": 189,
         "startChar": 33,
