@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "06a91bd5_6efe33a5",
+        "filename": "target/product/sdk_phone_arm64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-02T10:21:33Z",
+      "side": 1,
+      "message": "This masquerades as a PRODUCT_* variable but isn\u0027t one, because it won\u0027t get inherited in the same way normal PRODUCT variables will. Either\n- name it something other than PRODUCT_*\n- make it a real product variable, by adding it to the single_var_list in product.mk",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 41
+      },
+      "revId": "206be20d24254edec0ff65b6d34e26ca11fdda2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
