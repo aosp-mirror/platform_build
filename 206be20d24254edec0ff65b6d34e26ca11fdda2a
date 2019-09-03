@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "8d2087de_914cebba",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-09-03T06:21:38Z",
+      "side": 1,
+      "message": "We need CleanSpec.mk for sdk_phone targets. (ex. https://android-review.googlesource.com/c/platform/build/+/1092671/4/CleanSpec.mk). When I tested my CL (aosp/1092671), I failed to launch the emulator without the CleanSpec.",
+      "range": {
+        "startLine": 46,
+        "startChar": 4,
+        "endLine": 49,
+        "endChar": 50
+      },
+      "revId": "206be20d24254edec0ff65b6d34e26ca11fdda2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "06a91bd5_6efe33a5",
         "filename": "target/product/sdk_phone_arm64.mk",
         "patchSetId": 2
