@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "555540aa_1706af2b",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-09-03T02:29:08Z",
+      "side": 1,
+      "message": "Make sense. \nI think GSI has a separate system_ext will not happen soon.",
+      "parentUuid": "354a944c_e6e2af63",
+      "range": {
+        "startLine": 189,
+        "startChar": 33,
+        "endLine": 189,
+        "endChar": 51
+      },
+      "revId": "8d6bbb049da5a1e0d4ff1e0806f82f483777f7b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "497f5803_bb729e05",
         "filename": "target/product/gsi_release.mk",
         "patchSetId": 1
