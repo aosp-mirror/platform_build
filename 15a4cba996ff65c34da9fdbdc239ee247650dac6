@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57347566_43f0f35d",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 660,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-03T10:44:52Z",
+      "side": 1,
+      "message": "You probably need to clean up this directory too since you\u0027re putting a symlink there?",
+      "range": {
+        "startLine": 660,
+        "startChar": 61,
+        "endLine": 660,
+        "endChar": 67
+      },
+      "revId": "15a4cba996ff65c34da9fdbdc239ee247650dac6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9972bbfa_5afbcee9",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-03T10:44:52Z",
+      "side": 1,
+      "message": "Note, this isn\u0027t caught by the PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST, but diff_system.sh finds it (if there are tests setup with GSI, this would cause them to fail, but I guess there isn\u0027t?)",
+      "range": {
+        "startLine": 189,
+        "startChar": 21,
+        "endLine": 190,
+        "endChar": 97
+      },
+      "revId": "15a4cba996ff65c34da9fdbdc239ee247650dac6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
