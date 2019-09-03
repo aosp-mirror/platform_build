@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+QEMU_USE_SYSTEM_EXT_PARTITIONS := true
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_x86.mk)
 

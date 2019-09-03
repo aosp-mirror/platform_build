@@ -35,9 +35,23 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
   # 3G + header
   BOARD_SUPER_PARTITION_SIZE := 3229614080
   BOARD_SUPER_PARTITION_GROUPS := emulator_dynamic_partitions
-  BOARD_EMULATOR_DYNAMIC_PARTITIONS_PARTITION_LIST := \
-      system \
-      vendor
+
+  ifeq ($(QEMU_USE_SYSTEM_EXT_PARTITIONS),true)
+    BOARD_EMULATOR_DYNAMIC_PARTITIONS_PARTITION_LIST := \
+        system \
+        system_ext \
+        product \
+        vendor
+
+    TARGET_COPY_OUT_PRODUCT := product
+    BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+    TARGET_COPY_OUT_SYSTEM_EXT := system_ext
+    BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
+  else
+    BOARD_EMULATOR_DYNAMIC_PARTITIONS_PARTITION_LIST := \
+        system \
+        vendor
+  endif
 
   # 3G
   BOARD_EMULATOR_DYNAMIC_PARTITIONS_SIZE := 3221225472
