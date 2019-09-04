@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "21ca906d_e3d85dc1",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 660,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-04T06:55:56Z",
+      "side": 1,
+      "message": "Correct, good catch.",
+      "parentUuid": "57347566_43f0f35d",
+      "range": {
+        "startLine": 660,
+        "startChar": 61,
+        "endLine": 660,
+        "endChar": 67
+      },
+      "revId": "15a4cba996ff65c34da9fdbdc239ee247650dac6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9972bbfa_5afbcee9",
         "filename": "target/product/gsi/Android.mk",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "15a4cba996ff65c34da9fdbdc239ee247650dac6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d23f9672_1eeefda3",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-04T06:55:56Z",
+      "side": 1,
+      "message": "IIRC, there is no automated test for diff_system.sh yet. \nWe can see if there is any whilelist of diff_system.sh when it\u0027s being automated later.\n\nYup, this symlink is actually \"GSI-specific\", but we can remove that once we don\u0027t need to support Q vendor.img later. The other alternative is to add this symlink for all targets. As non-gsi targets won\u0027t have the linkto file under /system/system_ext, so this will be a no-op for them.\n\nHowever, I can\u0027t find a suitable LOCAL_MODULE to add this POST_INSTALL_CMD under mainline_system.\nSo it\u0027s probably still better to create this \"GSI-specific\" symlink as a workaround.",
+      "parentUuid": "9972bbfa_5afbcee9",
+      "range": {
+        "startLine": 189,
+        "startChar": 21,
+        "endLine": 190,
+        "endChar": 97
+      },
+      "revId": "15a4cba996ff65c34da9fdbdc239ee247650dac6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
