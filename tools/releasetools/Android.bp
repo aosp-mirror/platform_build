@@ -105,6 +105,7 @@ python_defaults {
     ],
     required: [
         "brillo_update_payload",
+        "checkvintf",
     ],
 }
 
@@ -342,6 +343,9 @@ python_binary_host {
         "releasetools_common",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
+    ],
+    required: [
+        "checkvintf",
     ],
 }
 
