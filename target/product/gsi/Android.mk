@@ -169,3 +169,38 @@ _binder32 :=
 include $(BUILD_PHONY_PACKAGE)
 
 endif # BOARD_VNDK_VERSION is set
+
+#####################################################################
+# skip_mount.cfg, read by init to skip mounting some partitions when GSI is used.
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := gsi_skip_mount.cfg
+LOCAL_MODULE_STEM := skip_mount.cfg
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SYSTEM_EXT_MODULE := true
+LOCAL_MODULE_RELATIVE_PATH := init/config
+
+# Adds a symlink under /system/etc/init/config pointing to /system/system_ext/etc/init/config
+# because first-stage init in Android 10.0 will read the skip_mount.cfg from /system/etc/* after
+# chroot /system.
+# TODO: remove this symlink when no need to support new GSI on Android 10.
+# The actual file needs to be under /system/system_ext because it's GSI-specific and does not
+# belong to core CSI.
+LOCAL_POST_INSTALL_CMD := \
+    mkdir -p $(TARGET_OUT)/etc/init; \
+    ln -sf /system/system_ext/etc/init/config $(TARGET_OUT)/etc/init/config
+
+include $(BUILD_PREBUILT)
+
+#####################################################################
+# init.gsi.rc, GSI-specific init script.
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := init.gsi.rc
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SYSTEM_EXT_MODULE := true
+LOCAL_MODULE_RELATIVE_PATH := init
+
+include $(BUILD_PREBUILT)
