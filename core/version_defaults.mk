@@ -84,12 +84,10 @@ MAX_PLATFORM_VERSION :=
 # generate the range of allowed SDK versions, so it must have an entry for every
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
-PLATFORM_VERSION.QP1A := Q
 PLATFORM_VERSION.RP1A := R
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.QP1A := Q
 PLATFORM_VERSION_CODENAME.RP1A := R
 
 ifndef PLATFORM_VERSION
@@ -114,7 +112,7 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 28
+  PLATFORM_SDK_VERSION := 29
 endif
 .KATI_READONLY := PLATFORM_SDK_VERSION
 
@@ -252,7 +250,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2019-08-01
+      PLATFORM_SECURITY_PATCH := 2019-09-05
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH
 

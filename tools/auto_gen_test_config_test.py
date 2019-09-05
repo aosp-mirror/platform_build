@@ -34,7 +34,7 @@ MANIFEST_JUNIT_TEST = """<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.android.my.tests.x">
     <instrumentation
-        android:name="android.support.test.runner.AndroidJUnitRunner"
+        android:name="androidx.test.runner.AndroidJUnitRunner"
         android:targetPackage="com.android.my.tests" />
 </manifest>
 """
@@ -72,7 +72,7 @@ EXPECTED_JUNIT_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
 
     <test class="com.android.tradefed.testtype.AndroidJUnitTest" >
         <option name="package" value="com.android.my.tests.x" />
-        <option name="runner" value="android.support.test.runner.AndroidJUnitRunner" />
+        <option name="runner" value="androidx.test.runner.AndroidJUnitRunner" />
     </test>
 </configuration>
 """

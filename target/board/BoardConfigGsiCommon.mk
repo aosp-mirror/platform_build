@@ -56,7 +56,3 @@ BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Disable 64 bit mediadrmserver
 TARGET_ENABLE_MEDIADRM_64 :=
-
-# Ordinary (non-flattened) APEX may require kernel changes. For maximum compatibility,
-# use flattened APEX for GSI
-TARGET_FLATTEN_APEX := true

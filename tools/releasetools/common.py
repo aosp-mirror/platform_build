@@ -1200,7 +1200,7 @@ def GetKeyPasswords(keylist):
 def GetMinSdkVersion(apk_name):
   """Gets the minSdkVersion declared in the APK.
 
-  It calls 'aapt' to query the embedded minSdkVersion from the given APK file.
+  It calls 'aapt2' to query the embedded minSdkVersion from the given APK file.
   This can be both a decimal number (API Level) or a codename.
 
   Args:
@@ -1213,12 +1213,12 @@ def GetMinSdkVersion(apk_name):
     ExternalError: On failing to obtain the min SDK version.
   """
   proc = Run(
-      ["aapt", "dump", "badging", apk_name], stdout=subprocess.PIPE,
+      ["aapt2", "dump", "badging", apk_name], stdout=subprocess.PIPE,
       stderr=subprocess.PIPE)
   stdoutdata, stderrdata = proc.communicate()
   if proc.returncode != 0:
     raise ExternalError(
-        "Failed to obtain minSdkVersion: aapt return code {}:\n{}\n{}".format(
+        "Failed to obtain minSdkVersion: aapt2 return code {}:\n{}\n{}".format(
             proc.returncode, stdoutdata, stderrdata))
 
   for line in stdoutdata.split("\n"):
@@ -1226,7 +1226,7 @@ def GetMinSdkVersion(apk_name):
     m = re.match(r'sdkVersion:\'([^\']*)\'', line)
     if m:
       return m.group(1)
-  raise ExternalError("No minSdkVersion returned by aapt")
+  raise ExternalError("No minSdkVersion returned by aapt2")
 
 
 def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
