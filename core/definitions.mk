@@ -2678,9 +2678,9 @@ endef
 ###########################################################
 
 # $(1): The file to check
-ifndef get-file-size
-$(error HOST_OS must define get-file-size)
-endif
+define get-file-size
+stat -c "%s" "$(1)" | tr -d '\n'
+endef
 
 # $(1): The file(s) to check (often $@)
 # $(2): The partition size.
