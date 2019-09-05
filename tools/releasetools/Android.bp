@@ -181,7 +181,7 @@ python_library_host {
     // Only the tools that are referenced directly are listed as required modules. For example,
     // `avbtool` is not here, as the script always uses the one from info_dict['avb_avbtool'].
     required: [
-        "aapt",
+        "aapt2",
         "boot_signer",
         "brotli",
         "bsdiff",

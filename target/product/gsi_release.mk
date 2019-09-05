@@ -49,8 +49,8 @@ PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
     init.gsi.rc
 
-# Support addtional P VNDK packages
-PRODUCT_EXTRA_VNDK_VERSIONS := 28
+# Support addtional P and Q VNDK packages
+PRODUCT_EXTRA_VNDK_VERSIONS := 28 29
 
 # The 64 bits GSI build targets inhiert core_64_bit.mk to enable 64 bits and
 # include the init.zygote64_32.rc.

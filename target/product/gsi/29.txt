@@ -4,7 +4,6 @@ LLNDK: libGLESv2.so
 LLNDK: libGLESv3.so
 LLNDK: libRS.so
 LLNDK: libandroid_net.so
-LLNDK: libbinder_ndk.so
 LLNDK: libc.so
 LLNDK: libcgrouprc.so
 LLNDK: libdl.so
@@ -174,7 +173,6 @@ VNDK-core: android.hardware.thermal@2.0.so
 VNDK-core: android.hardware.tv.cec@1.0.so
 VNDK-core: android.hardware.tv.cec@2.0.so
 VNDK-core: android.hardware.tv.input@1.0.so
-VNDK-core: android.hardware.tv.tuner@1.0.so
 VNDK-core: android.hardware.usb.gadget@1.0.so
 VNDK-core: android.hardware.usb@1.0.so
 VNDK-core: android.hardware.usb@1.1.so
@@ -199,7 +197,6 @@ VNDK-core: android.hidl.allocator@1.0.so
 VNDK-core: android.hidl.memory.block@1.0.so
 VNDK-core: android.hidl.token@1.0.so
 VNDK-core: android.hidl.token@1.0-utils.so
-VNDK-core: android.system.ashmem@1.0.so
 VNDK-core: android.system.net.netd@1.0.so
 VNDK-core: android.system.net.netd@1.1.so
 VNDK-core: android.system.suspend@1.0.so
@@ -225,6 +222,7 @@ VNDK-core: libgatekeeper.so
 VNDK-core: libgui.so
 VNDK-core: libhardware_legacy.so
 VNDK-core: libhidlallocatorutils.so
+VNDK-core: libhidlcache.so
 VNDK-core: libjpeg.so
 VNDK-core: libkeymaster_messages.so
 VNDK-core: libkeymaster_portable.so
