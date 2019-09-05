@@ -24,11 +24,6 @@
 # - etc.
 #
 
-# Exclude GSI specific files
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-    system/etc/init/config/skip_mount.cfg \
-    system/etc/init/init.gsi.rc \
-
 # Exclude all files under system/product and system/system_ext
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/product/% \
@@ -50,9 +45,9 @@ PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
 
 # GSI specific tasks on boot
-PRODUCT_COPY_FILES += \
-    build/make/target/product/gsi/skip_mount.cfg:system/etc/init/config/skip_mount.cfg \
-    build/make/target/product/gsi/init.gsi.rc:system/etc/init/init.gsi.rc \
+PRODUCT_PACKAGES += \
+    gsi_skip_mount.cfg \
+    init.gsi.rc
 
 # Support addtional P and Q VNDK packages
 PRODUCT_EXTRA_VNDK_VERSIONS := 28 29

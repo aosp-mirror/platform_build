@@ -187,6 +187,7 @@ ifdef LOCAL_DEX_PREOPT
     org.apache.http.legacy \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
+    telephony-common \
 
   my_dexpreopt_libs := $(sort \
     $(LOCAL_USES_LIBRARIES) \
