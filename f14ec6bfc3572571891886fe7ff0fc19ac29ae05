@@ -46,6 +46,30 @@
       "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4bd0222d_4938039d",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-06T14:45:23Z",
+      "side": 1,
+      "message": "why do we need to modify multiple mk\u0027s instead of just using PRODUCT_PRODUCT_PROPERTIES here? I\u0027m not saying one or the other is correct, just feel we want to minimize /system_ext contents.",
+      "parentUuid": "2567ba11_316cd9a4",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 32
+      },
+      "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
