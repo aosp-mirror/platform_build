@@ -22,6 +22,30 @@
       "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2567ba11_316cd9a4",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-06T14:42:57Z",
+      "side": 1,
+      "message": "IIRC, emulator has different targets. e.g., sdk_gphone_x86, aosp_x86, etc.\n\nAs the emulator.mk here looks common to all emulators, seems we can just put it under /system_ext.\n\nTo use /product proerty, it requires modifying multiple .mk files: sdk_gphone_x86_64.mk, sdk_gphone_x86_arm.mk, etc (seems not ideal if all targets have the same value).\n\nWe still can override system_ext props via /product property in product-specific .mk files when necessary.",
+      "parentUuid": "bfdf48fe_3ecf00fb",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 32
+      },
+      "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
