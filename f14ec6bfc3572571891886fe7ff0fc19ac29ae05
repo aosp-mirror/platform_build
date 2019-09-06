@@ -94,6 +94,30 @@
       "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc3839e6_b6381f81",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-06T15:52:26Z",
+      "side": 1,
+      "message": "\u003e why do we need to modify multiple mk\u0027s instead of just using PRODUCT_PRODUCT_PROPERTIES here?\n\nIIRC, current plan of system/system_ext/product in the future:\n  - system: core-CSI system.img that\u0027s common for all targets\n  - system_ext: customization to system.img, can use hidden APIs.\n  - product: should use SDK or NDK only, i.e., unbundle modules\n\nNote that system_ext.img + system.img \u003d common system.img for a family of targets.\n\ne.g., Pixel system_ext.img + core system.img \u003d\u003e Pixel SSI\n      emulator system_ext.img + core system.img \u003d\u003e emulator SSI\n\nhttps://docs.google.com/document/d/183AaoeAbbYfTMkyfDjpy6jz8GFAdD-xZtfuV_pdMHFI/edit#heading\u003dh.qh9g0ung864n\n\nAs the file \u0027emulator.mk\u0027 looks common to all emulator targets, so it seems better not to include product-level customization in it. Just wanted to map .mk hierarchy to /system_ext (common for all emulators) and /product (target-specific, fine-grained customization), respectively. Does that sound reasonable or no?\n\n\n\n\u003e want to minimize /system_ext contents\nNot sure why need to minimize system_ext, could you elaborate more?\nGiven we have \"dynamic partition\" now, resizing should not be a concern?\n\n\n\u003e good discussion, and yes, we do want to minimize system_ext\n\nYup, it\u0027s a good discussion. \nBtw, I\u0027m ok to move this to /product, just not sure why need to minimize system_ext.\n\n\u003e what are the main differences between system_ext and product?\n\u003e does product have the same level of privilege as system_ext (and system?) any pointer to relevant document might be very helpful\n\nYup, please see the doc :)\n\nhttps://docs.google.com/document/d/183AaoeAbbYfTMkyfDjpy6jz8GFAdD-xZtfuV_pdMHFI/edit#heading\u003dh.fp4ingbs4oq4\n\nhttps://docs.google.com/document/d/183AaoeAbbYfTMkyfDjpy6jz8GFAdD-xZtfuV_pdMHFI/edit#heading\u003dh.jrn6eggat2ow\n\n\n\u003e btw, even with system_ext, but we run into problem when moving to system_ext b/140544421\n/system_ext was added this summer, so it\u0027s still possible to have some issue now.",
+      "parentUuid": "d291eac3_cd4ce42c",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 32
+      },
+      "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
