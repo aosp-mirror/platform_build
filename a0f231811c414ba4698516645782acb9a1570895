@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "16c9b254_08cd6f0f",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-06T21:17:10Z",
+      "side": 1,
+      "message": "will fix",
+      "parentUuid": "98bb9b4c_0d857592",
+      "range": {
+        "startLine": 716,
+        "startChar": 2,
+        "endLine": 718,
+        "endChar": 7
+      },
+      "revId": "a0f231811c414ba4698516645782acb9a1570895",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8bf2d3df_94881a63",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2019-09-06T15:18:05Z",
       "side": 1,
       "message": "nit:  thought we did not like to see double blank lines in the make files?",
+      "range": {
+        "startLine": 1034,
+        "startChar": 0,
+        "endLine": 1034,
+        "endChar": 0
+      },
+      "revId": "a0f231811c414ba4698516645782acb9a1570895",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21586522_9e57ae1a",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1034,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-06T21:17:10Z",
+      "side": 1,
+      "message": "this was spurious, will fix",
+      "parentUuid": "8bf2d3df_94881a63",
       "range": {
         "startLine": 1034,
         "startChar": 0,
