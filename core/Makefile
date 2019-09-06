@@ -4494,25 +4494,28 @@ endif # EMMA_INSTRUMENT=true
 
 #------------------------------------------------------------------
 # A zip of Proguard obfuscation dictionary files.
-# Only for apps_only build.
 #
-ifdef TARGET_BUILD_APPS
 PROGUARD_DICT_ZIP := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict-$(FILE_NAME_TAG).zip
-# the dependency will be set up later in build/make/core/main.mk.
-$(PROGUARD_DICT_ZIP) :
+# For apps_only build we'll establish the dependency later in build/make/core/main.mk.
+ifndef TARGET_BUILD_APPS
+$(PROGUARD_DICT_ZIP): \
+    $(INSTALLED_SYSTEMIMAGE_TARGET) \
+    $(INSTALLED_RAMDISK_TARGET) \
+    $(INSTALLED_BOOTIMAGE_TARGET) \
+    $(INSTALLED_USERDATAIMAGE_TARGET) \
+    $(INSTALLED_VENDORIMAGE_TARGET) \
+    $(INSTALLED_PRODUCTIMAGE_TARGET) \
+    $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) \
+    $(INSTALLED_ODMIMAGE_TARGET) \
+    $(updater_dep)
+endif
+$(PROGUARD_DICT_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,proguard)/filelist
+$(PROGUARD_DICT_ZIP): $(SOONG_ZIP)
 	@echo "Packaging Proguard obfuscation dictionary files."
-	$(hide) dict_files=`find $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS -name proguard_dictionary`; \
-	    if [ -n "$$dict_files" ]; then \
-	      unobfuscated_jars=$${dict_files//proguard_dictionary/classes.jar}; \
-	      zip -qX $@ $$dict_files $$unobfuscated_jars; \
-	    else \
-	      touch $(dir $@)/zipdummy; \
-	      (cd $(dir $@) && zip -q $(notdir $@) zipdummy); \
-	      zip -qd $@ zipdummy; \
-	      rm $(dir $@)/zipdummy; \
-	    fi
-
-endif # TARGET_BUILD_APPS
+	mkdir -p $(dir $@) $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS $(dir $(PRIVATE_LIST_FILE))
+	find $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS -name proguard_dictionary | \
+	    sed -e 's/\(.*\)\/proguard_dictionary/\0\n\1\/classes.jar/' > $(PRIVATE_LIST_FILE)
+	$(SOONG_ZIP) --ignore_missing_files -d -o $@ -C $(OUT_DIR)/.. -l $(PRIVATE_LIST_FILE)
 
 
 ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
