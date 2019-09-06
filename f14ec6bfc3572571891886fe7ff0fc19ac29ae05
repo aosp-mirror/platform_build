@@ -70,6 +70,30 @@
       "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d291eac3_cd4ce42c",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-09-06T14:51:05Z",
+      "side": 1,
+      "message": "good discussion, and yes, we do want to minimize system_ext\n\nwhat are the main differences between system_ext and product ?\n\ndoes product have the same level of privilege as system_ext (and system?) any pointer to relevant document might be very helpful\n\nbtw, even with system_ext, but we run into problem when moving to system_ext b/140544421",
+      "parentUuid": "4bd0222d_4938039d",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 32
+      },
+      "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
