@@ -45,7 +45,6 @@ VNDK-SP: libhidlbase.so
 VNDK-SP: libhidlmemory.so
 VNDK-SP: libhidltransport.so
 VNDK-SP: libhwbinder.so
-VNDK-SP: libhwbinder_noltopgo.so
 VNDK-SP: libion.so
 VNDK-SP: libjsoncpp.so
 VNDK-SP: liblzma.so
