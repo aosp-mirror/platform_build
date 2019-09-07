@@ -187,7 +187,9 @@ LOCAL_MODULE_RELATIVE_PATH := init/config
 # TODO: remove this symlink when no need to support new GSI on Android 10.
 # The actual file needs to be under /system/system_ext because it's GSI-specific and does not
 # belong to core CSI.
-LOCAL_POST_INSTALL_CMD := ln -sf /system/system_ext/etc/init/config $(TARGET_OUT)/etc/init/config
+LOCAL_POST_INSTALL_CMD := \
+    mkdir -p $(TARGET_OUT)/etc/init; \
+    ln -sf /system/system_ext/etc/init/config $(TARGET_OUT)/etc/init/config
 
 include $(BUILD_PREBUILT)
 

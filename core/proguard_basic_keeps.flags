@@ -72,3 +72,7 @@
 
 # Less spammy.
 -dontnote
+
+# The lite proto runtime uses reflection to access fields based on the names in
+# the schema, keep all the fields.
+-keepclassmembers class * extends com.google.protobuf.MessageLite { <fields>; }
