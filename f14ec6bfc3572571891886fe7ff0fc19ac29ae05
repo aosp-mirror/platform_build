@@ -118,6 +118,30 @@
       "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08974f71_12012dbd",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-07T01:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc3839e6_b6381f81",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 32
+      },
+      "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
