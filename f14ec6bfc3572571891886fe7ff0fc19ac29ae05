@@ -142,6 +142,30 @@
       "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "18b6b040_5d5a63bc",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-09T09:59:11Z",
+      "side": 1,
+      "message": "The way I think about it, system_ext is just an arbitrary place to put things that don\u0027t yet conform to the /system-/product interface (that is yet to be defined). For system properties, I think some should be customizable from /product and some shouldn\u0027t. They kind of need to be looked at individually to decide if that makes sense.",
+      "parentUuid": "08974f71_12012dbd",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 32
+      },
+      "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
