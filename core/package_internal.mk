@@ -455,7 +455,7 @@ private_key := $(LOCAL_CERTIFICATE).pk8
 certificate := $(LOCAL_CERTIFICATE).x509.pem
 additional_certificates := $(foreach c,$(LOCAL_ADDITIONAL_CERTIFICATES), $(c).x509.pem $(c).pk8)
 
-$(LOCAL_BUILT_MODULE): $(private_key) $(certificate) $(SIGNAPK_JAR)
+$(LOCAL_BUILT_MODULE): $(private_key) $(certificate) $(SIGNAPK_JAR) $(SIGNAPK_JNI_LIBRARY_PATH)
 $(LOCAL_BUILT_MODULE): PRIVATE_PRIVATE_KEY := $(private_key)
 $(LOCAL_BUILT_MODULE): PRIVATE_CERTIFICATE := $(certificate)
 
