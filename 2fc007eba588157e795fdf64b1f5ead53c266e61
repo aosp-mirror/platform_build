@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d4684bf_fb89d4e2",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-09-09T18:30:55Z",
+      "side": 0,
+      "message": "oof, seems this was hiding many checks",
+      "range": {
+        "startLine": 101,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 7
+      },
+      "revId": "2fc007eba588157e795fdf64b1f5ead53c266e61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
