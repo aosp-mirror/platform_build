@@ -46,6 +46,30 @@
       "revId": "a3daf2e27c3030df7c40e4d11975171faeec4572",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e97d732_53acf661",
+        "filename": "target/product/sdk_phone_x86_64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-09-09T17:42:27Z",
+      "side": 1,
+      "message": "I added to white list for now: \nhttps://android-review.googlesource.com/c/platform/development/+/1116214/1/build/product_sdk.mk",
+      "parentUuid": "b2d2e8c6_725709c1",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 59
+      },
+      "revId": "a3daf2e27c3030df7c40e4d11975171faeec4572",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
