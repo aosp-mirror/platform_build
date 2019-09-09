@@ -166,6 +166,30 @@
       "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab460611_573228bd",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-09T11:38:29Z",
+      "side": 1,
+      "message": "I see, got your point.\nFrankly I didn\u0027t look into those prop\u0027s names but just move them from /system -\u003e /system_ext.\n\nLooking into the name closer, probably they can be in product those names are more for product-specific config. (tough they\u0027re in this common .mk file).\n\nLet me upload another CL to discuss and review.",
+      "parentUuid": "18b6b040_5d5a63bc",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 32
+      },
+      "revId": "f14ec6bfc3572571891886fe7ff0fc19ac29ae05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
