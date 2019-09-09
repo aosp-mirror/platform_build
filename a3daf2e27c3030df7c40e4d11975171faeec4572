@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d142800e_f58f6d82",
+        "filename": "target/product/sdk_phone_x86_64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-09-09T07:50:27Z",
+      "side": 1,
+      "message": "Looks the output files in following makefiles are for host.\nThe only issue is \"deployagent\". Do you know which partition does it output to?\nShould it move to product or system_ext?",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 59
+      },
+      "revId": "a3daf2e27c3030df7c40e4d11975171faeec4572",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
