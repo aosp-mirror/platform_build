@@ -22,6 +22,30 @@
       "revId": "1fe5a3e24ff0d4a72d6647d1054a32bdf7207a0b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca406551_fabee4d9",
+        "filename": "target/product/aosp_x86_arm.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-09-10T07:27:44Z",
+      "side": 1,
+      "message": "Ah! Good catch.\nThanks",
+      "parentUuid": "8e7e7104_20eedb32",
+      "range": {
+        "startLine": 42,
+        "startChar": 48,
+        "endLine": 42,
+        "endChar": 59
+      },
+      "revId": "1fe5a3e24ff0d4a72d6647d1054a32bdf7207a0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
