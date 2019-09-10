@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2649ce_0815067e",
+        "filename": "target/board/gsi_system_ext.prop",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-10T14:06:32Z",
+      "side": 1,
+      "message": "checked those props don\u0027t have sysprop APIs (i.e., they\u0027re not stable, so should be under system_ext).\n\nAn example of sysprop API:\nhttps://android-review.googlesource.com/c/platform/system/libsysprop/+/952375/1/srcs/android/sysprop/TraceProperties.sysprop",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 30
+      },
+      "revId": "06533fef4ae77758ae94464040b8a1d49d53349c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
