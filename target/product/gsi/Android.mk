@@ -150,6 +150,8 @@ ifneq ($(TARGET_SKIP_CURRENT_VNDK),true)
 LOCAL_REQUIRED_MODULES += \
     llndk.libraries.txt \
     vndksp.libraries.txt \
+    vndkcore.libraries.txt \
+    vndkprivate.libraries.txt \
     $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES)) \
     $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES))
 endif
