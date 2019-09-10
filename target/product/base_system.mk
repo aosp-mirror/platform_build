@@ -268,8 +268,6 @@ PRODUCT_PACKAGES += \
     viewcompiler \
     voip-common \
     vold \
-    vndkcore.libraries.txt \
-    vndkprivate.libraries.txt \
     WallpaperBackup \
     watchdogd \
     wificond \
