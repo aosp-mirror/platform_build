@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4ba0868f_8ac6bc2a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-09-11T16:26:29Z",
+      "side": 1,
+      "message": "Hmmm. Maybe I should add something like \"BUILD_BROKEN_PREBUILT_SONAME_MISMATCH\" or similar for specific devices? I do feel strongly about getting these checks on by default at least (or at least for new devices) because I need to have the build system understand these prebuilts in order to add certain other types of checks.\n\nLet me setup a sync to talk about this in more detail. It\u0027s clear your input is needed on this.",
+      "parentUuid": "c76fa00a_ec2f64b3",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 71
+      },
+      "revId": "e3cbc2b97ad76efbf1c9361f904f10802ad3e419",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0d0ae2d7_c07d2339",
         "filename": "tools/check_elf_file.py",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2019-09-11T16:13:10Z",
       "side": 1,
       "message": "IMO, it is better to simply update the if conditions between 534-541?",
+      "range": {
+        "startLine": 529,
+        "startChar": 0,
+        "endLine": 537,
+        "endChar": 55
+      },
+      "revId": "e3cbc2b97ad76efbf1c9361f904f10802ad3e419",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61a57d6e_2f03ebc3",
+        "filename": "tools/check_elf_file.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-09-11T16:26:29Z",
+      "side": 1,
+      "message": "Actually, yeah I agree. I was trying to avoid extra parses of the elf file, but I think we want that.",
+      "parentUuid": "0d0ae2d7_c07d2339",
       "range": {
         "startLine": 529,
         "startChar": 0,
