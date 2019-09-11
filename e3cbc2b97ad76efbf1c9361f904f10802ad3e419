@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d0ae2d7_c07d2339",
+        "filename": "tools/check_elf_file.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1014807
+      },
+      "writtenOn": "2019-09-11T16:13:10Z",
+      "side": 1,
+      "message": "IMO, it is better to simply update the if conditions between 534-541?",
+      "range": {
+        "startLine": 529,
+        "startChar": 0,
+        "endLine": 537,
+        "endChar": 55
+      },
+      "revId": "e3cbc2b97ad76efbf1c9361f904f10802ad3e419",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
