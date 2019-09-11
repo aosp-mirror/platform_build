@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "bc6b04de_b47fc370",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-11T05:52:41Z",
+      "side": 1,
+      "message": "indent conditional blocks",
+      "revId": "06533fef4ae77758ae94464040b8a1d49d53349c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1a2649ce_0815067e",
         "filename": "target/board/gsi_system_ext.prop",
         "patchSetId": 2
