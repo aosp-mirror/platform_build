@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2c9209c8_575b06c4",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1826,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-11T22:02:54Z",
+      "side": 1,
+      "message": "partition can\u0027t be empty or None",
+      "range": {
+        "startLine": 1826,
+        "startChar": 63,
+        "endLine": 1826,
+        "endChar": 72
+      },
+      "revId": "32ef63a4f74688fa22f7160beeb0535819ebbb29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e2f75ce_bc796cd7",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1873,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-11T22:02:54Z",
+      "side": 1,
+      "message": "Seems cleaner to move the skipped images near L1851, and to only handle the rest here. Since the actions for IMAGES and RADIO will be identical, they can be put into one line:\n\nelif info.filename in (\u0027IMAGES/system.img\u0027, ...):\n  pass\n\nelif info.filename in [...the ones to be skipped...]:\n  pass\n\n...\n\nelif info.filename.startswith((\u0027IMAGES/\u0027, \u0027RADIO/\u0027)):\n  common.zipWrite()",
+      "range": {
+        "startLine": 1870,
+        "startChar": 4,
+        "endLine": 1873,
+        "endChar": 71
+      },
+      "revId": "32ef63a4f74688fa22f7160beeb0535819ebbb29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
