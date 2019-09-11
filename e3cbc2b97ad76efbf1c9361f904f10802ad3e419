@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "c76fa00a_ec2f64b3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1014807
+      },
+      "writtenOn": "2019-09-11T16:21:56Z",
+      "side": 1,
+      "message": "I disagree.  This may lead to someone to fix the prebuilts that they don\u0027t own.  Please take multiple-gerrit and/or multiple-ownership into consideration.\n\nSome downstream vendors may suffer from always-check-by-default.  It was the reason why I added a separate \"check-elf-files\" that checks all visible modules instead of checking them by default.\n\nIMO, the correct direction is to cleanup internal tree and add check-elf-files to make goal into the targets with checkbuild.  I somehow regret that I did not add one ASAP 6 months ago when I cleared all of them once.",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 71
+      },
+      "revId": "e3cbc2b97ad76efbf1c9361f904f10802ad3e419",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0d0ae2d7_c07d2339",
         "filename": "tools/check_elf_file.py",
         "patchSetId": 5
