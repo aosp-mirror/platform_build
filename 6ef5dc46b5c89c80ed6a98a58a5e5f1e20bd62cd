@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5bcdff6_3dc0f83a",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-11T19:47:56Z",
+      "side": 1,
+      "message": "odm and system_ext",
+      "range": {
+        "startLine": 253,
+        "startChar": 55,
+        "endLine": 253,
+        "endChar": 56
+      },
+      "revId": "6ef5dc46b5c89c80ed6a98a58a5e5f1e20bd62cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e491683_b865feff",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1797,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-11T19:47:56Z",
+      "side": 1,
+      "message": "make this a constant (I don\u0027t see callers with other variants in this CL)",
+      "range": {
+        "startLine": 1797,
+        "startChar": 51,
+        "endLine": 1797,
+        "endChar": 65
+      },
+      "revId": "6ef5dc46b5c89c80ed6a98a58a5e5f1e20bd62cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1bcf158a_45f98218",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1797,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-11T19:47:56Z",
+      "side": 1,
+      "message": "This function doesn\u0027t \"rewrite\". Maybe call it \"get\"",
+      "range": {
+        "startLine": 1797,
+        "startChar": 6,
+        "endLine": 1797,
+        "endChar": 39
+      },
+      "revId": "6ef5dc46b5c89c80ed6a98a58a5e5f1e20bd62cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "797f266d_b135cf36",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1819,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-11T19:47:56Z",
+      "side": 1,
+      "message": "if line.startswith(\u0027#\u0027) or \u0027\u003d\u0027 not in line:\n  ...\n  continue",
+      "range": {
+        "startLine": 1819,
+        "startChar": 6,
+        "endLine": 1819,
+        "endChar": 50
+      },
+      "revId": "6ef5dc46b5c89c80ed6a98a58a5e5f1e20bd62cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13558df8_a8213dbc",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1820,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-11T19:47:56Z",
+      "side": 1,
+      "message": "single quote",
+      "range": {
+        "startLine": 1820,
+        "startChar": 40,
+        "endLine": 1820,
+        "endChar": 43
+      },
+      "revId": "6ef5dc46b5c89c80ed6a98a58a5e5f1e20bd62cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0170cce0_5d19ffa6",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1851,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-11T19:47:56Z",
+      "side": 1,
+      "message": "split into individual cases\n\nelif startswith(\u0027META/\u0027):\n  ...\nelif startswith(\u0027IMAGES/\u0027):\n  ...\nelif startswith(\u0027RADIO/\u0027)):\n  ...",
+      "range": {
+        "startLine": 1851,
+        "startChar": 4,
+        "endLine": 1851,
+        "endChar": 66
+      },
+      "revId": "6ef5dc46b5c89c80ed6a98a58a5e5f1e20bd62cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9601d1b8_7b5cf289",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1862,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-11T19:47:56Z",
+      "side": 1,
+      "message": "(info.filename \u003d\u003d ... or\n info.filename \u003d\u003d ...)",
+      "range": {
+        "startLine": 1861,
+        "startChar": 11,
+        "endLine": 1862,
+        "endChar": 36
+      },
+      "revId": "6ef5dc46b5c89c80ed6a98a58a5e5f1e20bd62cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
