@@ -101,6 +101,24 @@
     },
     {
       "key": {
+        "uuid": "a3978dff_67513758",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-11T07:02:53Z",
+      "side": 1,
+      "message": "Haha, really. This is a long enough (~5000 lines) Makefile.\nLet me keep it consistent for now :-)  (assuming very few folks will read related lines in the future)",
+      "parentUuid": "5948748d_5f5d1908",
+      "revId": "06533fef4ae77758ae94464040b8a1d49d53349c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a2649ce_0815067e",
         "filename": "target/board/gsi_system_ext.prop",
         "patchSetId": 2
