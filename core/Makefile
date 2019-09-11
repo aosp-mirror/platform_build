@@ -597,16 +597,32 @@ $(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS)
 INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET)
 
+ifdef TARGET_SYSTEM_EXT_PROP
+system_ext_prop_files := $(TARGET_SYSTEM_EXT_PROP)
+else
+system_ext_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/system_ext.prop)
+endif
+
 FINAL_SYSTEM_EXT_PROPERTIES += \
     $(call collapse-pairs, $(PRODUCT_SYSTEM_EXT_PROPERTIES))
 FINAL_SYSTEM_EXT_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_SYSTEM_EXT_PROPERTIES),=)
 
-$(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS)
+$(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(system_ext_prop_files)
 	@echo Target system_ext buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) echo > $@
 	$(hide) $(call generate-common-build-props,system_ext,$@)
+	$(hide) $(foreach file,$(system_ext_prop_files), \
+	    if [ -f "$(file)" ]; then \
+	        echo Target system_ext properties from: "$(file)"; \
+	        echo "" >> $@; \
+	        echo "#" >> $@; \
+	        echo "# from $(file)" >> $@; \
+	        echo "#" >> $@; \
+	        cat $(file) >> $@; \
+	        echo "# end of $(file)" >> $@; \
+	    fi;)
 	$(hide) echo "#" >> $@; \
 	        echo "# ADDITIONAL SYSTEM_EXT BUILD PROPERTIES" >> $@; \
 	        echo "#" >> $@;
