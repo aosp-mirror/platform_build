@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "28052c3f_3123e75c",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-11T06:30:24Z",
+      "side": 1,
+      "message": "system prop is define here",
+      "range": {
+        "startLine": 390,
+        "startChar": 0,
+        "endLine": 394,
+        "endChar": 5
+      },
+      "revId": "06533fef4ae77758ae94464040b8a1d49d53349c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c63eb8e6_3c66485b",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 538,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-11T06:30:24Z",
+      "side": 1,
+      "message": "product_prop here",
+      "range": {
+        "startLine": 534,
+        "startChar": 0,
+        "endLine": 538,
+        "endChar": 5
+      },
+      "revId": "06533fef4ae77758ae94464040b8a1d49d53349c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bc6b04de_b47fc370",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -13,6 +59,24 @@
       "writtenOn": "2019-09-11T05:52:41Z",
       "side": 1,
       "message": "indent conditional blocks",
+      "revId": "06533fef4ae77758ae94464040b8a1d49d53349c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0627641_b88cc047",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-09-11T06:30:24Z",
+      "side": 1,
+      "message": "Just curious, is this a new preferred style? \n\nI was trying to keep consistent style as other make targets, but would happy to change if having indent is preferred in the future.",
+      "parentUuid": "bc6b04de_b47fc370",
       "revId": "06533fef4ae77758ae94464040b8a1d49d53349c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
