@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa16bba5_3c48c445",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2736,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-09-12T04:48:15Z",
+      "side": 1,
+      "message": "This isn\u0027t installed, installed generally means $OUT/system",
+      "range": {
+        "startLine": 2736,
+        "startChar": 3,
+        "endLine": 2736,
+        "endChar": 12
+      },
+      "revId": "01dea91b012c33ff8f8e13118c1ec528c0af9281",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cac1a12_6f08698e",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2737,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-09-12T04:48:15Z",
+      "side": 1,
+      "message": "Make it an error to have multiple words?",
+      "range": {
+        "startLine": 2737,
+        "startChar": 50,
+        "endLine": 2737,
+        "endChar": 59
+      },
+      "revId": "01dea91b012c33ff8f8e13118c1ec528c0af9281",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e572d46_67a594a6",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2747,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-09-12T04:48:15Z",
+      "side": 1,
+      "message": "use a private variable for this, or make my_installed_kernel read-only with :\u003d$\u003d",
+      "range": {
+        "startLine": 2747,
+        "startChar": 50,
+        "endLine": 2747,
+        "endChar": 69
+      },
+      "revId": "01dea91b012c33ff8f8e13118c1ec528c0af9281",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
