@@ -256,11 +256,7 @@ endif
 
 ifndef PLATFORM_SECURITY_PATCH_TIMESTAMP
   # Used to indicate the matching timestamp for the security patch string in PLATFORM_SECURITY_PATCH.
-  ifneq (,$(findstring Darwin,$(UNAME)))
-    PLATFORM_SECURITY_PATCH_TIMESTAMP := $(shell date -jf '%Y-%m-%d %T %Z' '$(PLATFORM_SECURITY_PATCH) 00:00:00 GMT' +%s)
-  else
-    PLATFORM_SECURITY_PATCH_TIMESTAMP := $(shell date -d 'TZ="GMT" $(PLATFORM_SECURITY_PATCH)' +%s)
-  endif
+  PLATFORM_SECURITY_PATCH_TIMESTAMP := $(shell date -d 'TZ="GMT" $(PLATFORM_SECURITY_PATCH)' +%s)
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH_TIMESTAMP
 
@@ -289,11 +285,7 @@ ifndef BUILD_DATETIME
   BUILD_DATETIME := $(shell date +%s)
 endif
 
-ifneq (,$(findstring Darwin,$(UNAME)))
-DATE := date -r $(BUILD_DATETIME)
-else
 DATE := date -d @$(BUILD_DATETIME)
-endif
 .KATI_READONLY := DATE
 
 # Everything should be using BUILD_DATETIME_FROM_FILE instead.
