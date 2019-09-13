@@ -44,11 +44,7 @@ BUILD_NUMBER_FILE := $(OUT_DIR)/build_number.txt
 .KATI_READONLY := BUILD_NUMBER_FILE
 $(KATI_obsolete_var BUILD_NUMBER,See https://android.googlesource.com/platform/build/+/master/Changes.md#BUILD_NUMBER)
 
-ifeq ($(HOST_OS),darwin)
-DATE_FROM_FILE := date -r $(BUILD_DATETIME_FROM_FILE)
-else
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
-endif
 .KATI_READONLY := DATE_FROM_FILE
 
 # Pick a reasonable string to use to identify files.
