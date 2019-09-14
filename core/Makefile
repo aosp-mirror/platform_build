@@ -870,6 +870,10 @@ $(WALL_WERROR):
 $(call dist-for-goals,droidcore,$(WALL_WERROR))
 
 # -----------------------------------------------------------------
+# C/C++ flag information for modules
+$(call dist-for-goals,droidcore,$(SOONG_MODULES_CFLAG_ARTIFACTS))
+
+# -----------------------------------------------------------------
 # Modules missing profile files
 PGO_PROFILE_MISSING := $(PRODUCT_OUT)/pgo_profile_file_missing.txt
 $(PGO_PROFILE_MISSING):
