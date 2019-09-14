@@ -568,7 +568,7 @@ my_installed_test_data :=
 # Source to relative dst file paths for reuse in LOCAL_COMPATIBILITY_SUITE.
 my_test_data_file_pairs :=
 
-ifneq ($(filter NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+ifneq ($(strip $(filter NATIVE_TESTS,$(LOCAL_MODULE_CLASS)) $(LOCAL_IS_FUZZ_TARGET)),)
 ifneq ($(strip $(LOCAL_TEST_DATA)),)
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 

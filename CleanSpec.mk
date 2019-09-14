@@ -666,6 +666,13 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/generic*/*/system_ext)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/init/init.gsi.rc)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/init/config/)
 
+# Move fuzz targets from /data/fuzz/* to /data/fuzz/<arch>/* for device, and
+# /fuzz/* to /fuzz/<arch>/* on host.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/fuzz/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/symbols/data/fuzz/*)
+$(call add-clean-step, rm -rf $(HOST_OUT)/fuzz/*)
+$(call add-clean-step, rm -rf $(SOONG_OUT_DIR)/host/*/fuzz/*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
