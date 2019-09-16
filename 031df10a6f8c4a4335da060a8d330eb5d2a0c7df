@@ -1,0 +1,291 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c2089756_aa50276c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "We currently have recovery-from-boot patch for non-A/B devices. Has (vendor_boot, recovery) become a pair instead?\n\n(+bpeckham@ since this may affect the ongoing recovery-from-boot stuff.)",
+      "range": {
+        "startLine": 9,
+        "startChar": 56,
+        "endLine": 10,
+        "endChar": 69
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d14d559_fa00183c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 713,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "I think the ordering matters here. It won\u0027t see the desired varlue (defined at L1185) at this point.",
+      "range": {
+        "startLine": 713,
+        "startChar": 7,
+        "endLine": 713,
+        "endChar": 40
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67bfd3fe_68334c42",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1178,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "nit: space",
+      "range": {
+        "startLine": 1178,
+        "startChar": 0,
+        "endLine": 1178,
+        "endChar": 1
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac00ebdb_01bfdd3a",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1183,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "nit: remove all these $(hide)s in new code (no-op now)",
+      "range": {
+        "startLine": 1183,
+        "startChar": 1,
+        "endLine": 1183,
+        "endChar": 8
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6fba0e3b_cc5243c2",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1187,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "Missing the dependency on vendor boot image files (e.g. kernel). See INTERNAL_BOOTIMAGE_FILES at L1048.",
+      "range": {
+        "startLine": 1187,
+        "startChar": 38,
+        "endLine": 1187,
+        "endChar": 134
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ef4c55a_518d67f4",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "This seems inconsistent with existing vars (BOARD_\u003cX\u003eIMAGE_PARTITION_SIZE)",
+      "range": {
+        "startLine": 1192,
+        "startChar": 23,
+        "endLine": 1192,
+        "endChar": 55
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e97a8338_ad8fb584",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1195,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "When using AVB, this has to happen before adding the hash footer (e.g. L1096)",
+      "range": {
+        "startLine": 1195,
+        "startChar": 1,
+        "endLine": 1195,
+        "endChar": 77
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86d2598d_41299c6e",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1196,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "Can you confirm that vendor_boot will not support verified boot 1.0? If so, error out explicitly (e.g. L1485).",
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dec17a4f_4739af73",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3884,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "Missing lines to handle avb_vendor_boot_*",
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfab784a_7b811073",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4161,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "Merge these lines into the block at L4172?",
+      "range": {
+        "startLine": 4153,
+        "startChar": 0,
+        "endLine": 4161,
+        "endChar": 5
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e3031da_ddebf312",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4176,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "Does vendor_boot mandate the use of dtb image? Seems it\u0027s optional for boot.",
+      "range": {
+        "startLine": 4176,
+        "startChar": 14,
+        "endLine": 4176,
+        "endChar": 39
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9956d00a_4987aca7",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4177,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "VENDOR_BOOT?",
+      "range": {
+        "startLine": 4177,
+        "startChar": 51,
+        "endLine": 4177,
+        "endChar": 55
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5c33cea_ffe89a33",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4333,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-16T22:18:52Z",
+      "side": 1,
+      "message": "There should be vendor_boot_filesystem_config.txt generated",
+      "range": {
+        "startLine": 4333,
+        "startChar": 72,
+        "endLine": 4333,
+        "endChar": 94
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
