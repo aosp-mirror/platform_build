@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1054d646_f57410bc",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2736,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-09-16T19:37:02Z",
+      "side": 1,
+      "message": "I can rename this. I use the name from \"INSTALLED_KERNEL_TARGET\"",
+      "parentUuid": "aa16bba5_3c48c445",
+      "range": {
+        "startLine": 2736,
+        "startChar": 3,
+        "endLine": 2736,
+        "endChar": 12
+      },
+      "revId": "01dea91b012c33ff8f8e13118c1ec528c0af9281",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3cac1a12_6f08698e",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "0e2a41e5_bab5aaf5",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2737,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-09-16T19:37:02Z",
+      "side": 1,
+      "message": "Sure",
+      "parentUuid": "3cac1a12_6f08698e",
+      "range": {
+        "startLine": 2737,
+        "startChar": 50,
+        "endLine": 2737,
+        "endChar": 59
+      },
+      "revId": "01dea91b012c33ff8f8e13118c1ec528c0af9281",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8e572d46_67a594a6",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2019-09-12T04:48:15Z",
       "side": 1,
       "message": "use a private variable for this, or make my_installed_kernel read-only with :\u003d$\u003d",
+      "range": {
+        "startLine": 2747,
+        "startChar": 50,
+        "endLine": 2747,
+        "endChar": 69
+      },
+      "revId": "01dea91b012c33ff8f8e13118c1ec528c0af9281",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a07bde0_9e30c6cf",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2747,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-09-16T19:37:02Z",
+      "side": 1,
+      "message": "oops, will fix this.",
+      "parentUuid": "8e572d46_67a594a6",
       "range": {
         "startLine": 2747,
         "startChar": 50,
