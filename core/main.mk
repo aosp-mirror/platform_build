@@ -494,7 +494,6 @@ CUSTOM_MODULES := \
 #
 # Resolve the required module name to 32-bit or 64-bit variant.
 # Get a list of corresponding 32-bit module names, if one exists.
-ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
 define get-32-bit-modules
 $(sort $(foreach m,$(1),\
   $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),\
@@ -508,15 +507,6 @@ $(sort $(foreach m,$(1),\
     $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX), \
     $(m))))
 endef
-else  # TARGET_TRANSLATE_2ND_ARCH
-# For binary translation config, by default only install the first arch.
-define get-32-bit-modules
-endef
-
-define get-32-bit-modules-if-we-can
-$(strip $(1))
-endef
-endif  # TARGET_TRANSLATE_2ND_ARCH
 
 # TODO: we can probably check to see if these modules are actually host
 # modules
