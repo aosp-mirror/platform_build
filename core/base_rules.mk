@@ -716,6 +716,18 @@ ifneq (,$(filter $(SOONG_OUT_DIR)%,$(LOCAL_FULL_TEST_CONFIG)))
   endif
 endif
 
+
+ifeq ($(use_testcase_folder),true)
+ifneq ($(my_test_data_file_pairs),)
+$(foreach pair, $(my_test_data_file_pairs), \
+  $(eval parts := $(subst :,$(space),$(pair))) \
+  $(eval src_path := $(word 1,$(parts))) \
+  $(eval file := $(word 2,$(parts))) \
+  $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+    $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
+      $(call filter-copy-pair,$(src_path),$(call append-path,$(dir),$(file)),$(my_installed_test_data))))))
+endif
+else
 ifneq ($(my_test_data_file_pairs),)
 $(foreach pair, $(my_test_data_file_pairs), \
   $(eval parts := $(subst :,$(space),$(pair))) \
@@ -724,6 +736,7 @@ $(foreach pair, $(my_test_data_file_pairs), \
   $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
       $(src_path):$(call append-path,$(dir),$(file))))))
+endif
 endif
 
 
