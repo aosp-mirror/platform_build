@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a449b98d_3ecc6f4c",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 872,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-09-17T19:39:14Z",
+      "side": 1,
+      "message": "This isn\u0027t using any information from Make, which means the rule could be handled inside a Singleton in Soong instead.  See apexKeysText in apex/key.go for a simple singleton, although I\u0027d suggest using android.RuleBuilder instead of ctx.Build().",
+      "revId": "d261dbb2f438aac8a3a8d95e8a8cff0db425d634",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
