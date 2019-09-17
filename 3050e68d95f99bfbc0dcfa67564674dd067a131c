@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a323a78a_7c6aca1e",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-09-17T08:44:49Z",
+      "side": 1,
+      "message": "Indeed.\nHowever this is for consistent with TARGET_COPY_OUT_PRODUCT at line#49",
+      "parentUuid": "69c20853_31cff8c0",
+      "range": {
+        "startLine": 53,
+        "startChar": 6,
+        "endLine": 54,
+        "endChar": 45
+      },
+      "revId": "3050e68d95f99bfbc0dcfa67564674dd067a131c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "905d9125_27fff388",
         "filename": "target/board/BoardConfigEmuCommon.mk",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "3050e68d95f99bfbc0dcfa67564674dd067a131c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "486e2c4b_a04b2b69",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-09-17T08:44:49Z",
+      "side": 1,
+      "message": "+1",
+      "parentUuid": "905d9125_27fff388",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 14
+      },
+      "revId": "3050e68d95f99bfbc0dcfa67564674dd067a131c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
