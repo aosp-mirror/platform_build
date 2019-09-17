@@ -46,6 +46,30 @@
       "revId": "37e237aa712475dc725d3b16c00f5bdf9f838f4d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "76dfc040_84d3349a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1014807
+      },
+      "writtenOn": "2019-09-17T17:12:34Z",
+      "side": 1,
+      "message": "\u003e making this conditional on PRODUCT_CHECK_ELF_FILES defeats that\n\nI have a different opinion.  But anyway, I filed a b/141176116 and let\u0027s discuss there.  I have also prepared http://aosp/1123442 if we really want to go through that direction.",
+      "parentUuid": "e896433b_c083ddf4",
+      "range": {
+        "startLine": 11,
+        "startChar": 1,
+        "endLine": 11,
+        "endChar": 24
+      },
+      "revId": "37e237aa712475dc725d3b16c00f5bdf9f838f4d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
