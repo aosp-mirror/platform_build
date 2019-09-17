@@ -299,6 +299,9 @@ class BuildInfo(object):
           that it always uses the first dict to calculate the fingerprint or the
           device name. The rest would be used for asserting OEM properties only
           (e.g. one package can be installed on one of these devices).
+
+    Raises:
+      ValueError: On invalid inputs.
     """
     self.info_dict = info_dict
     self.oem_dicts = oem_dicts
@@ -312,6 +315,13 @@ class BuildInfo(object):
     # These two should be computed only after setting self._oem_props.
     self._device = self.GetOemProperty("ro.product.device")
     self._fingerprint = self.CalculateFingerprint()
+
+    # Sanity check the build fingerprint.
+    if (' ' in self._fingerprint or
+        any(ord(ch) > 127 for ch in self._fingerprint)):
+      raise ValueError(
+          'Invalid build fingerprint: "{}". See the requirement in Android CDD '
+          '3.2.2. Build Parameters.'.format(self._fingerprint))
 
   @property
   def is_ab(self):
