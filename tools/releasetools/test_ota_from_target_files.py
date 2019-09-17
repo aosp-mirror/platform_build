@@ -174,6 +174,14 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(AssertionError, BuildInfo,
                       self.TEST_INFO_DICT_USES_OEM_PROPS, None)
 
+  def test_init_badFingerprint(self):
+    info_dict = copy.deepcopy(self.TEST_INFO_DICT)
+    info_dict['build.prop']['ro.build.fingerprint'] = 'bad fingerprint'
+    self.assertRaises(ValueError, BuildInfo, info_dict, None)
+
+    info_dict['build.prop']['ro.build.fingerprint'] = 'bad\x80fingerprint'
+    self.assertRaises(ValueError, BuildInfo, info_dict, None)
+
   def test___getitem__(self):
     target_info = BuildInfo(self.TEST_INFO_DICT, None)
     self.assertEqual('value1', target_info['property1'])
