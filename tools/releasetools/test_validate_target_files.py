@@ -143,19 +143,50 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     verity_image_builder.Build(output_file)
 
   @test_utils.SkipIfExternalToolsUnavailable()
-  def test_ValidateVerifiedBootImages_systemImage(self):
+  def test_ValidateVerifiedBootImages_systemRootImage(self):
     input_tmp = common.MakeTempDir()
     os.mkdir(os.path.join(input_tmp, 'IMAGES'))
     system_image = os.path.join(input_tmp, 'IMAGES', 'system.img')
     self._generate_system_image(system_image)
 
     # Pack the verity key.
-    verity_key_mincrypt = os.path.join(
-        input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
+    verity_key_mincrypt = os.path.join(input_tmp, 'ROOT', 'verity_key')
     os.makedirs(os.path.dirname(verity_key_mincrypt))
     shutil.copyfile(
         os.path.join(self.testdata_dir, 'testkey_mincrypt'),
         verity_key_mincrypt)
+
+    info_dict = {
+        'system_root_image' : 'true',
+        'verity' : 'true',
+    }
+    options = {
+        'verity_key' : os.path.join(self.testdata_dir, 'testkey.x509.pem'),
+        'verity_key_mincrypt' : verity_key_mincrypt,
+    }
+    ValidateVerifiedBootImages(input_tmp, info_dict, options)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_ValidateVerifiedBootImages_nonSystemRootImage(self):
+    input_tmp = common.MakeTempDir()
+    os.mkdir(os.path.join(input_tmp, 'IMAGES'))
+    system_image = os.path.join(input_tmp, 'IMAGES', 'system.img')
+    self._generate_system_image(system_image)
+
+    # Pack the verity key into the root dir in system.img.
+    verity_key_mincrypt = os.path.join(input_tmp, 'ROOT', 'verity_key')
+    os.makedirs(os.path.dirname(verity_key_mincrypt))
+    shutil.copyfile(
+        os.path.join(self.testdata_dir, 'testkey_mincrypt'),
+        verity_key_mincrypt)
+
+    # And a copy in ramdisk.
+    verity_key_ramdisk = os.path.join(
+        input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
+    os.makedirs(os.path.dirname(verity_key_ramdisk))
+    shutil.copyfile(
+        os.path.join(self.testdata_dir, 'testkey_mincrypt'),
+        verity_key_ramdisk)
 
     info_dict = {
         'verity' : 'true',
@@ -165,6 +196,39 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'verity_key_mincrypt' : verity_key_mincrypt,
     }
     ValidateVerifiedBootImages(input_tmp, info_dict, options)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_ValidateVerifiedBootImages_nonSystemRootImage_mismatchingKeys(self):
+    input_tmp = common.MakeTempDir()
+    os.mkdir(os.path.join(input_tmp, 'IMAGES'))
+    system_image = os.path.join(input_tmp, 'IMAGES', 'system.img')
+    self._generate_system_image(system_image)
+
+    # Pack the verity key into the root dir in system.img.
+    verity_key_mincrypt = os.path.join(input_tmp, 'ROOT', 'verity_key')
+    os.makedirs(os.path.dirname(verity_key_mincrypt))
+    shutil.copyfile(
+        os.path.join(self.testdata_dir, 'testkey_mincrypt'),
+        verity_key_mincrypt)
+
+    # And an invalid copy in ramdisk.
+    verity_key_ramdisk = os.path.join(
+        input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
+    os.makedirs(os.path.dirname(verity_key_ramdisk))
+    shutil.copyfile(
+        os.path.join(self.testdata_dir, 'verity_mincrypt'),
+        verity_key_ramdisk)
+
+    info_dict = {
+        'verity' : 'true',
+    }
+    options = {
+        'verity_key' : os.path.join(self.testdata_dir, 'testkey.x509.pem'),
+        'verity_key_mincrypt' : verity_key_mincrypt,
+    }
+    self.assertRaises(
+        AssertionError, ValidateVerifiedBootImages, input_tmp, info_dict,
+        options)
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_ValidateFileConsistency_incompleteRange(self):
