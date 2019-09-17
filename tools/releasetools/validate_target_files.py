@@ -276,15 +276,12 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   # Verify verity signed system images in Verified Boot 1.0. Note that not using
   # 'elif' here, since 'boot_signer' and 'verity' are not bundled in VB 1.0.
   if info_dict.get('verity') == 'true':
-    # First verify that the verity key that's built into the root image (as
-    # /verity_key) matches the one given via command line, if any.
-    if info_dict.get("system_root_image") == "true":
-      verity_key_mincrypt = os.path.join(input_tmp, 'ROOT', 'verity_key')
-    else:
-      verity_key_mincrypt = os.path.join(
-          input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
+    # First verify that the verity key is built into the root image (regardless
+    # of system-as-root).
+    verity_key_mincrypt = os.path.join(input_tmp, 'ROOT', 'verity_key')
     assert os.path.exists(verity_key_mincrypt), 'Missing verity_key'
 
+    # Verify /verity_key matches the one given via command line, if any.
     if options['verity_key_mincrypt'] is None:
       logging.warn(
           'Skipped checking the content of /verity_key, as the key file not '
@@ -294,6 +291,18 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
       assert filecmp.cmp(expected_key, verity_key_mincrypt, shallow=False), \
           "Mismatching mincrypt verity key files"
       logging.info('Verified the content of /verity_key')
+
+    # For devices with a separate ramdisk (i.e. non-system-as-root), there must
+    # be a copy in ramdisk.
+    if info_dict.get("system_root_image") != "true":
+      verity_key_ramdisk = os.path.join(
+          input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
+      assert os.path.exists(verity_key_ramdisk), 'Missing verity_key in ramdisk'
+
+      assert filecmp.cmp(
+          verity_key_mincrypt, verity_key_ramdisk, shallow=False), \
+              'Mismatching verity_key files in root and ramdisk'
+      logging.info('Verified the content of /verity_key in ramdisk')
 
     # Then verify the verity signed system/vendor/product images, against the
     # verity pubkey in mincrypt format.
