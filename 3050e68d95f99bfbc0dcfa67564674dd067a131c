@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "69c20853_31cff8c0",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-17T08:02:05Z",
+      "side": 1,
+      "message": "It\u0027s kind of weird to have QEMU_USE_SYSTEM_EXT_PARTITIONS control whether we have a product partition",
+      "range": {
+        "startLine": 53,
+        "startChar": 6,
+        "endLine": 54,
+        "endChar": 45
+      },
+      "revId": "3050e68d95f99bfbc0dcfa67564674dd067a131c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "905d9125_27fff388",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-17T08:02:05Z",
+      "side": 1,
+      "message": "Could put these two outside the conditional and use +\u003d in the other block",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 14
+      },
+      "revId": "3050e68d95f99bfbc0dcfa67564674dd067a131c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4729f63_7df2c5db",
+        "filename": "target/board/generic_x86_arm/BoardConfig.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-17T08:02:05Z",
+      "side": 1,
+      "message": "the order of these two matter, could you add a comment to note that?",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 55
+      },
+      "revId": "3050e68d95f99bfbc0dcfa67564674dd067a131c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
