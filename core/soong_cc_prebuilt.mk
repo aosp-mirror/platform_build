@@ -31,20 +31,6 @@ else
   $(call pretty-error,Unsupported LOCAL_MODULE_$(my_prefix)ARCH=$(LOCAL_MODULE_$(my_prefix)ARCH))
 endif
 
-skip_module :=
-ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
-  ifndef LOCAL_IS_HOST_MODULE
-    ifdef LOCAL_2ND_ARCH_VAR_PREFIX
-      # Only support shared and static libraries and tests for translated arch
-      ifeq ($(filter SHARED_LIBRARIES STATIC_LIBRARIES HEADER_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-        skip_module := true
-      endif
-    endif
-  endif
-endif
-
-ifndef skip_module
-
 # Don't install static libraries by default.
 ifndef LOCAL_UNINSTALLABLE_MODULE
   ifeq (STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS))
@@ -233,7 +219,3 @@ installed_static_library_notice_file_targets := \
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)
-
-endif # !skip_module
-
-skip_module :=
