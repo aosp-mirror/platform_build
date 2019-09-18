@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9c808121_6e31ed80",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-09-18T14:56:22Z",
+      "side": 1,
+      "message": "Not in this change, but after cleaning this up elsewhere, this variable should be obsoleted.",
+      "range": {
+        "startLine": 7,
+        "startChar": 7,
+        "endLine": 7,
+        "endChar": 32
+      },
+      "revId": "1c1e99b222ba0c289a7c2ac262fdc0936e4333ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
