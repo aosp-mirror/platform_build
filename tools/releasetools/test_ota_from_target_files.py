@@ -599,16 +599,16 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
       ab_partitions = verify_zip.read('META/ab_partitions.txt')
 
     self.assertIn('META/ab_partitions.txt', namelist)
-    self.assertIn('IMAGES/boot.img', namelist)
     self.assertIn('IMAGES/system.img', namelist)
     self.assertIn('RADIO/bootloader.img', namelist)
-    self.assertIn('RADIO/modem.img', namelist)
     self.assertIn(POSTINSTALL_CONFIG, namelist)
 
+    self.assertNotIn('IMAGES/boot.img', namelist)
     self.assertNotIn('IMAGES/system_other.img', namelist)
     self.assertNotIn('IMAGES/system.map', namelist)
+    self.assertNotIn('RADIO/modem.img', namelist)
 
-    expected_ab_partitions = ['boot', 'system', 'bootloader', 'modem']
+    expected_ab_partitions = ['system', 'bootloader']
     self.assertEqual('\n'.join(expected_ab_partitions), ab_partitions)
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -621,13 +621,13 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
       namelist = verify_zip.namelist()
 
     self.assertIn('META/ab_partitions.txt', namelist)
-    self.assertIn('IMAGES/boot.img', namelist)
     self.assertIn('IMAGES/system.img', namelist)
     self.assertIn('RADIO/bootloader.img', namelist)
-    self.assertIn('RADIO/modem.img', namelist)
 
+    self.assertNotIn('IMAGES/boot.img', namelist)
     self.assertNotIn('IMAGES/system_other.img', namelist)
     self.assertNotIn('IMAGES/system.map', namelist)
+    self.assertNotIn('RADIO/modem.img', namelist)
     self.assertNotIn(POSTINSTALL_CONFIG, namelist)
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -641,10 +641,10 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
       namelist = verify_zip.namelist()
 
     self.assertIn('META/ab_partitions.txt', namelist)
-    self.assertIn('IMAGES/boot.img', namelist)
     self.assertIn('IMAGES/system.img', namelist)
     self.assertIn(POSTINSTALL_CONFIG, namelist)
 
+    self.assertNotIn('IMAGES/boot.img', namelist)
     self.assertNotIn('IMAGES/system_other.img', namelist)
     self.assertNotIn('IMAGES/system.map', namelist)
     self.assertNotIn('RADIO/bootloader.img', namelist)
@@ -681,12 +681,12 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
           'META/dynamic_partitions_info.txt')
 
     self.assertIn('META/ab_partitions.txt', namelist)
-    self.assertIn('IMAGES/boot.img', namelist)
     self.assertIn('IMAGES/system.img', namelist)
     self.assertIn(POSTINSTALL_CONFIG, namelist)
     self.assertIn('META/misc_info.txt', namelist)
     self.assertIn('META/dynamic_partitions_info.txt', namelist)
 
+    self.assertNotIn('IMAGES/boot.img', namelist)
     self.assertNotIn('IMAGES/system_other.img', namelist)
     self.assertNotIn('IMAGES/system.map', namelist)
 
