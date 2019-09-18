@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ad1f0171_11305f56",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-09-18T22:41:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1697e1ff_44f4e09d",
+      "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5cffe50b_011ea69f",
         "filename": "core/base_rules.mk",
         "patchSetId": 6
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "417d7777_f55df2c4",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-09-18T22:41:05Z",
+      "side": 1,
+      "message": "The format is slightly different. For FUZZ_DATA, we want to support parent-relative (\"..\") and absolute paths, so we can reference corpora outside of the fuzz target directory (e.g. we might want to use both libzzz/test/testdata and libzzz/fuzz/corpus for the fuzz target libzzz/fuzz/my_fuzz_target.\n\nWe also want to support soong-only use of this flag.\n\nAnd IIRC having a NATIVE_TEST classification does some additional things that are probably inappropriate for fuzz targets (like generating an atest config).",
+      "parentUuid": "5cffe50b_011ea69f",
+      "range": {
+        "startLine": 606,
+        "startChar": 0,
+        "endLine": 610,
+        "endChar": 0
+      },
+      "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f49359df_c6ce3bf0",
         "filename": "core/clear_vars.mk",
         "patchSetId": 6
@@ -56,6 +98,24 @@
       "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3961bcbe_375b34df",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-09-18T22:41:05Z",
+      "side": 1,
+      "message": "Sorry if I\u0027m just reading it wrong - isn\u0027t it currently in the right place?",
+      "parentUuid": "f49359df_c6ce3bf0",
+      "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
