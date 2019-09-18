@@ -19,6 +19,29 @@
     },
     {
       "key": {
+        "uuid": "5cffe50b_011ea69f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-09-18T22:15:34Z",
+      "side": 1,
+      "message": "I don\u0027t see anything obviously different from LOCAL_TEST_DATA, could Soong put these in LOCAL_TEST_DATA instead of LOCAL_FUZZ_DATA if the cc_fuzz class was NATIVE_TESTS?",
+      "range": {
+        "startLine": 606,
+        "startChar": 0,
+        "endLine": 610,
+        "endChar": 0
+      },
+      "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f49359df_c6ce3bf0",
         "filename": "core/clear_vars.mk",
         "patchSetId": 6
