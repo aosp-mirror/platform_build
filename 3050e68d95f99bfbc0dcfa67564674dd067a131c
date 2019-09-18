@@ -116,6 +116,30 @@
       "revId": "3050e68d95f99bfbc0dcfa67564674dd067a131c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37b9451e_2149ad19",
+        "filename": "target/board/generic_x86_arm/BoardConfig.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-09-18T02:12:30Z",
+      "side": 1,
+      "message": "Nice suggestion. Added.",
+      "parentUuid": "e4729f63_7df2c5db",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 55
+      },
+      "revId": "3050e68d95f99bfbc0dcfa67564674dd067a131c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
