@@ -84,6 +84,30 @@
     },
     {
       "key": {
+        "uuid": "4d53e8b6_b1910b7c",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-09-18T23:41:04Z",
+      "side": 1,
+      "message": "LOCAL_TEST_DATA only enforces the no parent-relative and absolute path requirements for non-Soong, so it should work.\n\nI\u0027d suggest modifying line 571 to work for NATIVE_TEST || fuzzer, which may mean adding LOCAL_IS_FUZZ_TEST :\u003d true to androidmk for fuzz tests.\n\nRelatedly, yes, NATIVE_TEST will autogenerate a config, but that could be a good thing, is there any way the fuzzers could be run through atest/tradefed?",
+      "parentUuid": "417d7777_f55df2c4",
+      "range": {
+        "startLine": 606,
+        "startChar": 0,
+        "endLine": 610,
+        "endChar": 0
+      },
+      "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f49359df_c6ce3bf0",
         "filename": "core/clear_vars.mk",
         "patchSetId": 6
@@ -113,6 +137,24 @@
       "side": 1,
       "message": "Sorry if I\u0027m just reading it wrong - isn\u0027t it currently in the right place?",
       "parentUuid": "f49359df_c6ce3bf0",
+      "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a528cacf_4db6fa39",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-09-18T23:41:04Z",
+      "side": 1,
+      "message": "Ack, misread LOCAL_FULL as LOCAL_FUZZ",
+      "parentUuid": "3961bcbe_375b34df",
       "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
