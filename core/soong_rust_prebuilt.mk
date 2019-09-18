@@ -28,21 +28,6 @@ else
   $(call pretty-error,Unsupported LOCAL_MODULE_$(my_prefix)ARCH=$(LOCAL_MODULE_$(my_prefix)ARCH))
 endif
 
-skip_module :=
-ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
-  ifndef LOCAL_IS_HOST_MODULE
-    ifdef LOCAL_2ND_ARCH_VAR_PREFIX
-      # Only support rlib and dylib libraries for translated arch
-      ifeq ($(filter RLIB_LIBRARIES DYLIB_LIBRARIES PROC_MACRO_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
-        skip_module := true
-      endif
-    endif
-  endif
-endif
-
-
-ifndef skip_module
-
 # Don't install rlib/proc_macro libraries.
 ifndef LOCAL_UNINSTALLABLE_MODULE
   ifneq ($(filter RLIB_LIBRARIES PROC_MACRO_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
@@ -121,7 +106,3 @@ installed_static_library_notice_file_targets += \
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)
-endif # !skip_module
-
-skip_module :=
-
