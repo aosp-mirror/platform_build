@@ -359,6 +359,7 @@ PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
     gdbserver \
+    idlcli \
     init-debug.rc \
     iotop \
     iperf3 \
