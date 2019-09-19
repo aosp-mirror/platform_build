@@ -115,12 +115,6 @@ my_module_tags := $(LOCAL_MODULE_TAGS)
 ifeq ($(my_host_cross),true)
   my_module_tags :=
 endif
-ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
-ifdef LOCAL_2ND_ARCH_VAR_PREFIX
-# Don't pull in modules by tags if this is for translation TARGET_2ND_ARCH.
-  my_module_tags :=
-endif
-endif
 
 # Ninja has an implicit dependency on the command being run, and kati will
 # regenerate the ninja manifest if any read makefile changes, so there is no
@@ -204,17 +198,7 @@ endif
 my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT),64,32)
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
-# When in TARGET_TRANSLATE_2ND_ARCH both TARGET_ARCH and TARGET_2ND_ARCH are 32-bit,
-# to avoid path conflict we force using LOCAL_MODULE_PATH_64 for the first arch.
-ifdef LOCAL_2ND_ARCH_VAR_PREFIX
-my_multilib_module_path := $(LOCAL_MODULE_PATH_32)
-else  # ! LOCAL_2ND_ARCH_VAR_PREFIX
-my_multilib_module_path := $(LOCAL_MODULE_PATH_64)
-endif  # ! LOCAL_2ND_ARCH_VAR_PREFIX
-else  # ! TARGET_TRANSLATE_2ND_ARCH
 my_multilib_module_path := $(strip $(LOCAL_MODULE_PATH_$(my_32_64_bit_suffix)))
-endif # ! TARGET_TRANSLATE_2ND_ARCH
 ifdef my_multilib_module_path
 my_module_path := $(my_multilib_module_path)
 else
