@@ -108,6 +108,30 @@
     },
     {
       "key": {
+        "uuid": "94b9a3fc_448566c6",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-09-19T00:00:42Z",
+      "side": 1,
+      "message": "\u003e Relatedly, yes, NATIVE_TEST will autogenerate a config, but that could be a good thing, is there any way the fuzzers could be run through atest/tradefed?\n\nI\u0027m currently under the impression that fuzz targets are unsuitable for atest/tradefed as they (ideally) run forever and never exit. The only things that could use tradefed/atest are:\n\n  a) Run example_fuzzer, and break the build if it *doesn\u0027t* find a bug.\n  b) Run the fuzz target through its corpus for regression testing, as any bugs found by fuzzing should have their test files added to the corpus.\n\nThis would still allow non-soong builds to use LOCAL_TEST_DATA as a corpus, which I\u0027m a bit hesitant on. I think that by re-using LOCAL_TEST_DATA here, we run the risk of confusing `test data \u003d\u003d fuzzer corpus`, and while there\u0027s only a subtle distinction, I can forsee someone being confused that LOCAL_TEST_DATA is used for something that\u0027s not a test.\n\nHappy to be overruled here, it\u0027s your baby after all :)\n\n\u003e I\u0027d suggest modifying line 571 to work for NATIVE_TEST || fuzzer, which may mean adding LOCAL_IS_FUZZ_TEST :\u003d true to androidmk for fuzz tests.\n\nIf we go down the path here, do we need an additional declaration here? We don\u0027t need to run the my_test_data_pairs blocks if there\u0027s no fuzzer test data.",
+      "parentUuid": "4d53e8b6_b1910b7c",
+      "range": {
+        "startLine": 606,
+        "startChar": 0,
+        "endLine": 610,
+        "endChar": 0
+      },
+      "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f49359df_c6ce3bf0",
         "filename": "core/clear_vars.mk",
         "patchSetId": 6
