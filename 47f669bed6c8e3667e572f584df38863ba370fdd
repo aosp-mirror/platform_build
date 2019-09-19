@@ -156,6 +156,30 @@
     },
     {
       "key": {
+        "uuid": "8de790f7_d1308b0e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-09-19T01:57:07Z",
+      "side": 1,
+      "message": "Ack, initially misunderstood the last part of your question, thanks for the clarification. Have done everything else.",
+      "parentUuid": "92e9eb0c_fc24216f",
+      "range": {
+        "startLine": 606,
+        "startChar": 0,
+        "endLine": 610,
+        "endChar": 0
+      },
+      "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f49359df_c6ce3bf0",
         "filename": "core/clear_vars.mk",
         "patchSetId": 6
