@@ -914,11 +914,6 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
 
   generate_super_empty_image(output_target_files_temp_dir, output_super_empty)
 
-  if output_img:
-    # Create the IMG package from the merged target files (before zipping, in
-    # order to avoid an unnecessary unzip and copy).
-    img_from_target_files.main([output_target_files_temp_dir, output_img])
-
   # Finally, create the output target files zip archive and/or copy the
   # output items to the output target files directory.
 
@@ -931,6 +926,11 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   output_zip = create_target_files_archive(output_target_files,
                                            output_target_files_temp_dir,
                                            temp_dir)
+
+  # Create the IMG package from the merged target files package.
+
+  if output_img:
+    img_from_target_files.main([output_zip, output_img])
 
   # Create the OTA package from the merged target files package.
 
