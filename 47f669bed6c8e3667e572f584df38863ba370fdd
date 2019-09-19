@@ -132,6 +132,30 @@
     },
     {
       "key": {
+        "uuid": "92e9eb0c_fc24216f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-09-19T00:23:06Z",
+      "side": 1,
+      "message": "b sounds useful for atest support, but you\u0027d still have to add a way to not generate test configs for cc_fuzz without a corpus.\n\nI\u0027m not sure I understand your concern - LOCAL_TEST_DATA can be used to install data files alongside a test, you could already use it to install a file called \"corpus\", and the fuzzer would find it.  Also, I don\u0027t see the distinction between \"fuzzer\" and \"test\" - I\u0027d call the fuzzer a type of test, just not a unit test.  As I understand it, Make fuzz support is being removed in favor of cc_fuzz, so corpus for non-Soong builds shouldn\u0027t be an issue.\n\nI\u0027m not sure I understand your last question either.  I\u0027m proposing having androidmk.go produce LOCAL_TEST_DATA, but that would be ignored by base_rules.mk because LOCAL_MODULE_CLASS !\u003d NATIVE_TEST.  You need some way to turn that block on for fuzzers.",
+      "parentUuid": "94b9a3fc_448566c6",
+      "range": {
+        "startLine": 606,
+        "startChar": 0,
+        "endLine": 610,
+        "endChar": 0
+      },
+      "revId": "47f669bed6c8e3667e572f584df38863ba370fdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f49359df_c6ce3bf0",
         "filename": "core/clear_vars.mk",
         "patchSetId": 6
