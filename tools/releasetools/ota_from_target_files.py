@@ -242,7 +242,12 @@ DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
 AB_PARTITIONS = 'META/ab_partitions.txt'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'RADIO/*']
 RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
-SECONDARY_IMAGES_SKIP_PARTITIONS = ['odm', 'product', 'system_ext', 'vendor']
+
+# Images to be excluded from secondary payload. We essentially only keep
+# 'system_other' and bootloader partitions.
+SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
+    'boot', 'dtbo', 'modem', 'odm', 'product', 'radio', 'recovery',
+    'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor']
 
 
 class BuildInfo(object):
@@ -1891,7 +1896,7 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
       if key == 'dynamic_partition_list' or key.endswith(LIST_SUFFIX):
         partitions = value.split()
         partitions = [partition for partition in partitions if partition
-                      not in SECONDARY_IMAGES_SKIP_PARTITIONS]
+                      not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
         output_list.append('{}={}'.format(key, ' '.join(partitions)))
       else:
         output_list.append(line)
@@ -1914,10 +1919,13 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
     elif info.filename in ('IMAGES/system.img',
                            'IMAGES/system.map'):
       pass
-    # Images like vendor and product are not needed in the secondary payload.
-    elif info.filename in ['IMAGES/{}.img'.format(partition) for partition in
-                           SECONDARY_IMAGES_SKIP_PARTITIONS]:
-      pass
+
+    # Copy images that are not in SECONDARY_PAYLOAD_SKIPPED_IMAGES.
+    elif info.filename.startswith(('IMAGES/', 'RADIO/')):
+      image_name = os.path.basename(info.filename)
+      if image_name not in ['{}.img'.format(partition) for partition in
+                            SECONDARY_PAYLOAD_SKIPPED_IMAGES]:
+        common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
 
     # Skip copying the postinstall config if requested.
     elif skip_postinstall and info.filename == POSTINSTALL_CONFIG:
@@ -1930,7 +1938,7 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
         with open(unzipped_file) as f:
           partition_list = f.read().splitlines()
         partition_list = [partition for partition in partition_list if partition
-                          and partition not in SECONDARY_IMAGES_SKIP_PARTITIONS]
+                          and partition not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
         common.ZipWriteStr(target_zip, info.filename, '\n'.join(partition_list))
       # Remove the unnecessary partitions from the dynamic partitions list.
       elif (info.filename == 'META/misc_info.txt' or
@@ -1939,8 +1947,6 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
         common.ZipWriteStr(target_zip, info.filename, modified_info)
       else:
         common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
-    elif info.filename.startswith(('IMAGES/', 'RADIO/')):
-      common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
 
   common.ZipClose(target_zip)
 
