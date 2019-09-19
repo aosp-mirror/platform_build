@@ -44,19 +44,42 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
     payload_file = self._GetTestPayload()
     apex_utils.SignApexPayload(
         'avbtool', payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048',
-        self.SALT)
+        self.SALT, no_hashtree=True)
     payload_info = apex_utils.ParseApexPayloadInfo('avbtool', payload_file)
     self.assertEqual('SHA256_RSA2048', payload_info['Algorithm'])
     self.assertEqual(self.SALT, payload_info['Salt'])
     self.assertEqual('testkey', payload_info['apex.key'])
+    self.assertEqual('0 bytes', payload_info['Tree Size'])
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_SignApexPayload(self):
     payload_file = self._GetTestPayload()
     apex_utils.SignApexPayload(
         'avbtool', payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048',
-        self.SALT)
+        self.SALT, no_hashtree=True)
+    apex_utils.VerifyApexPayload(
+        'avbtool', payload_file, self.payload_key, True)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_SignApexPayload_withHashtree(self):
+    payload_file = self._GetTestPayload()
+    apex_utils.SignApexPayload(
+        'avbtool', payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048',
+        self.SALT, no_hashtree=False)
     apex_utils.VerifyApexPayload('avbtool', payload_file, self.payload_key)
+    payload_info = apex_utils.ParseApexPayloadInfo('avbtool', payload_file)
+    self.assertEqual('4096 bytes', payload_info['Tree Size'])
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_SignApexPayload_noHashtree(self):
+    payload_file = self._GetTestPayload()
+    apex_utils.SignApexPayload(
+        'avbtool', payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048',
+        self.SALT, no_hashtree=True)
+    apex_utils.VerifyApexPayload('avbtool', payload_file, self.payload_key,
+                                 no_hashtree=True)
+    payload_info = apex_utils.ParseApexPayloadInfo('avbtool', payload_file)
+    self.assertEqual('0 bytes', payload_info['Tree Size'])
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_SignApexPayload_withSignerHelper(self):
@@ -70,8 +93,10 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
         payload_file,
         self.payload_key,
         'testkey', 'SHA256_RSA2048', self.SALT,
+        True,
         payload_signer_args)
-    apex_utils.VerifyApexPayload('avbtool', payload_file, self.payload_key)
+    apex_utils.VerifyApexPayload(
+        'avbtool', payload_file, self.payload_key, True)
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_SignApexPayload_invalidKey(self):
@@ -83,18 +108,21 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
         os.path.join(self.testdata_dir, 'testkey.x509.pem'),
         'testkey',
         'SHA256_RSA2048',
-        self.SALT)
+        self.SALT,
+        no_hashtree=True)
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_VerifyApexPayload_wrongKey(self):
     payload_file = self._GetTestPayload()
     apex_utils.SignApexPayload(
         'avbtool', payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048',
-        self.SALT)
-    apex_utils.VerifyApexPayload('avbtool', payload_file, self.payload_key)
+        self.SALT, True)
+    apex_utils.VerifyApexPayload(
+        'avbtool', payload_file, self.payload_key, True)
     self.assertRaises(
         apex_utils.ApexSigningError,
         apex_utils.VerifyApexPayload,
         'avbtool',
         payload_file,
-        os.path.join(self.testdata_dir, 'testkey_with_passwd.key'))
+        os.path.join(self.testdata_dir, 'testkey_with_passwd.key'),
+        no_hashtree=True)
