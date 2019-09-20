@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "02c6e32c_b5c19cb5",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1178,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T17:57:08Z",
+      "side": 1,
+      "message": "Sorry are you saying this should be some number of spaces instead of a tab? There seems to be a variety of conventions followed in the file for indentation after line wrapping when assigning to a macro, I tried to follow what I saw in sections similar to this one",
+      "parentUuid": "67bfd3fe_68334c42",
+      "range": {
+        "startLine": 1178,
+        "startChar": 0,
+        "endLine": 1178,
+        "endChar": 1
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ac00ebdb_01bfdd3a",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -91,6 +115,30 @@
       "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1df1849a_48a1c602",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1183,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T17:57:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac00ebdb_01bfdd3a",
+      "range": {
+        "startLine": 1183,
+        "startChar": 1,
+        "endLine": 1183,
+        "endChar": 8
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +165,30 @@
     },
     {
       "key": {
+        "uuid": "4a2f17bb_aa760762",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1187,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T17:57:08Z",
+      "side": 1,
+      "message": "Kernel\u0027s still in the boot.img. Other than the vendor ramdisk which is included above I think it\u0027s just the dtb (if in use) that\u0027s missing. I\u0027ll add that.",
+      "parentUuid": "6fba0e3b_cc5243c2",
+      "range": {
+        "startLine": 1187,
+        "startChar": 38,
+        "endLine": 1187,
+        "endChar": 134
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ef4c55a_518d67f4",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -140,6 +212,30 @@
     },
     {
       "key": {
+        "uuid": "088ca6c7_5436e11c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T17:57:08Z",
+      "side": 1,
+      "message": "renamed to BOARD_VENDORBOOTIMAGE_PARTITION_SIZE",
+      "parentUuid": "5ef4c55a_518d67f4",
+      "range": {
+        "startLine": 1192,
+        "startChar": 23,
+        "endLine": 1192,
+        "endChar": 55
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e97a8338_ad8fb584",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -160,6 +256,30 @@
       "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25df582b_196d45ac",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1195,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T17:57:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e97a8338_ad8fb584",
+      "range": {
+        "startLine": 1195,
+        "startChar": 1,
+        "endLine": 1195,
+        "endChar": 77
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -197,6 +317,24 @@
     },
     {
       "key": {
+        "uuid": "ef647049_bcd53152",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3884,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T17:57:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dec17a4f_4739af73",
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cfab784a_7b811073",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -217,6 +355,30 @@
       "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b16a5b2e_94dbd95c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4161,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T17:57:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cfab784a_7b811073",
+      "range": {
+        "startLine": 4153,
+        "startChar": 0,
+        "endLine": 4161,
+        "endChar": 5
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -243,6 +405,30 @@
     },
     {
       "key": {
+        "uuid": "d92279a9_c15b1e89",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4176,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T17:57:08Z",
+      "side": 1,
+      "message": "No it should remain optional, I\u0027ve wrapped this line with ifdef INSTALLED_DTBIMAGE_TARGET, thanks.",
+      "parentUuid": "1e3031da_ddebf312",
+      "range": {
+        "startLine": 4176,
+        "startChar": 14,
+        "endLine": 4176,
+        "endChar": 39
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9956d00a_4987aca7",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -266,6 +452,30 @@
     },
     {
       "key": {
+        "uuid": "499198ed_ef081bc4",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4177,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T17:57:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9956d00a_4987aca7",
+      "range": {
+        "startLine": 4177,
+        "startChar": 51,
+        "endLine": 4177,
+        "endChar": 55
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d5c33cea_ffe89a33",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -286,6 +496,30 @@
       "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5c975a5_adaa765f",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4333,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T17:57:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d5c33cea_ffe89a33",
+      "range": {
+        "startLine": 4333,
+        "startChar": 72,
+        "endLine": 4333,
+        "endChar": 94
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
