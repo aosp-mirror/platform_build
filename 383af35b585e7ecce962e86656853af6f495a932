@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5af6f37_b6e92a66",
+        "filename": "target/board/generic_x86_64_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-09-20T02:12:23Z",
+      "side": 1,
+      "message": "I suggest this file clones from new version BoardConfig.mk of generic_x86_arm. (which is just merged few days ago)\nWhich inherits from BoardConfigMainlineCommon.mk directly.",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 55
+      },
+      "revId": "383af35b585e7ecce962e86656853af6f495a932",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
