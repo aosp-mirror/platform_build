@@ -46,6 +46,30 @@
       "revId": "383af35b585e7ecce962e86656853af6f495a932",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52ccb0e6_32e9831c",
+        "filename": "target/board/generic_x86_64_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1074438
+      },
+      "writtenOn": "2019-09-20T13:12:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d946b5df_645259f7",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 55
+      },
+      "revId": "383af35b585e7ecce962e86656853af6f495a932",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
