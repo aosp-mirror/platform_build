@@ -3655,7 +3655,6 @@ INTERNAL_OTATOOLS_MODULES := \
   mkbootfs \
   mkbootimg \
   mke2fs \
-  mke2fs.conf \
   mkf2fsuserimg.sh \
   mksquashfs \
   mksquashfsimage.sh \
