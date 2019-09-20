@@ -48,6 +48,29 @@
     },
     {
       "key": {
+        "uuid": "944c9c4c_5f3b04e1",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2019-09-20T18:25:14Z",
+      "side": 1,
+      "message": "Makes me nervous because I have seen this before. Given that this list might not be a simple operation of explicitly manually enumerated entries, could be created with wildcard, filter and macros that mine file content in the context of the device BoardConfig file, which could easily get sloppy and embed spaces causing odd behaviors, I would feel more comfortable if this and other *_KERNEL_MODULE parms had $(strip $(BOARD_RECOVERY_KERNEL_MODULES)) for critical tests like this.",
+      "range": {
+        "startLine": 731,
+        "startChar": 7,
+        "endLine": 731,
+        "endChar": 39
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "67bfd3fe_68334c42",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -83,6 +106,30 @@
       "side": 1,
       "message": "Sorry are you saying this should be some number of spaces instead of a tab? There seems to be a variety of conventions followed in the file for indentation after line wrapping when assigning to a macro, I tried to follow what I saw in sections similar to this one",
       "parentUuid": "67bfd3fe_68334c42",
+      "range": {
+        "startLine": 1178,
+        "startChar": 0,
+        "endLine": 1178,
+        "endChar": 1
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51ca58fd_7463ef4f",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1178,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2019-09-20T18:25:14Z",
+      "side": 1,
+      "message": "Simple and flawed poll for this file:\n165 instances of 2 space indent on line wrap\n228 instances of 4 space indent on line wrap\n432 instances of tab indent on line wrap\n\nQ: what is new code supposed to use? Sounds like a good time to have the build/tools teams create a clang format standard?",
+      "parentUuid": "02c6e32c_b5c19cb5",
       "range": {
         "startLine": 1178,
         "startChar": 0,
