@@ -60,7 +60,6 @@ VNDK-core: android.frameworks.displayservice@1.0.so
 VNDK-core: android.frameworks.schedulerservice@1.0.so
 VNDK-core: android.frameworks.sensorservice@1.0.so
 VNDK-core: android.frameworks.stats@1.0.so
-VNDK-core: android.frameworks.vr.composer@1.0.so
 VNDK-core: android.hardware.atrace@1.0.so
 VNDK-core: android.hardware.audio.common@2.0.so
 VNDK-core: android.hardware.audio.common@4.0.so
