@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "6f43ed68_45523e09",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-20T23:16:47Z",
+      "side": 1,
+      "message": "The only issue I could see is if a vendor somehow assigns just whitespace to a BOARD_*_KERNEL_MODULE variable, but I don\u0027t think we should complicate the Makefile to deal with that degenerate (and unlikely) case. Embedded whitespaces in a list of modules should be otherwise be fine.",
+      "parentUuid": "944c9c4c_5f3b04e1",
+      "range": {
+        "startLine": 731,
+        "startChar": 7,
+        "endLine": 731,
+        "endChar": 39
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "67bfd3fe_68334c42",
         "filename": "core/Makefile",
         "patchSetId": 4
