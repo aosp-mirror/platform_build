@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "12bec1b7_f22dadc5",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 3241,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2019-09-20T21:59:15Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this happen after line 3239 as well (or instead - keep reading)? Do you actually want to check a line match if you already parsed one for a particular prev_rustc_warning? I guess I am just pedantic about things like this (i.e. unnecessarily checking subsequent lines for Rust file/line info, when we have already processed it).\n\nHonestly, this line should probably check if prev_rustc_warning is set and then notify us that there is some weird warning pattern with no file/line info. Right now, those will just get ignored entirely. I think I would prefer to see this moved up, with a check here instead.",
+      "revId": "67e5567b0de62caa7606fa7de7d18c3162575723",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
