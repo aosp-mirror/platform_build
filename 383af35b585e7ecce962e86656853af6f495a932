@@ -22,6 +22,30 @@
       "revId": "383af35b585e7ecce962e86656853af6f495a932",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d946b5df_645259f7",
+        "filename": "target/board/generic_x86_64_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1074438
+      },
+      "writtenOn": "2019-09-20T10:39:44Z",
+      "side": 1,
+      "message": "Sure, but let me have this in as a first step.\n\nWill test and prepare an update ASAP.",
+      "parentUuid": "f5af6f37_b6e92a66",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 55
+      },
+      "revId": "383af35b585e7ecce962e86656853af6f495a932",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
