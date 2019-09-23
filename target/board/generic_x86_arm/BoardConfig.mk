@@ -34,8 +34,6 @@ include build/make/target/board/BoardConfigEmuCommon.mk
 
 # the settings differ from BoardConfigMainlineCommon.mk
 BOARD_USES_SYSTEM_OTHER_ODEX :=
-BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
 
 # Resize to 4G to accomodate ASAN and CTS
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 4294967296
