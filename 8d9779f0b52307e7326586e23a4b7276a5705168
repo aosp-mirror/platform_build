@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "026e1cf1_e6bf0b36",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2225,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-23T19:57:18Z",
+      "side": 1,
+      "message": "Seems we can add RECOVERY_RESOURCE_ZIP to ALL_DEFAULT_INSTALLED_MODULES around L1859, and possibly add comment there to explain the fact it could go into either system or vendor. The code here and below (L2710) will just do the normal filtering.",
+      "parentUuid": "7d45e6cb_d9e3e053",
+      "range": {
+        "startLine": 2223,
+        "startChar": 0,
+        "endLine": 2225,
+        "endChar": 62
+      },
+      "revId": "8d9779f0b52307e7326586e23a4b7276a5705168",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "872c80e6_37367fb3",
         "filename": "core/Makefile",
         "patchSetId": 3

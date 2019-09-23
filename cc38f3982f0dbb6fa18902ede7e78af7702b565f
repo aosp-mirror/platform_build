@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cfd12be4_cadd89dd",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-23T19:57:18Z",
+      "side": 1,
+      "message": "Will need to clean up legacy files (e.g. /system/bin/applypatch, /system/recovery-from-boot.p etc).",
+      "revId": "cc38f3982f0dbb6fa18902ede7e78af7702b565f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dab3d3f1_bc231ee2",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-23T19:57:18Z",
+      "side": 1,
+      "message": "I\u0027m thinking about the difference between this new var and the `has_vendor` at L704. It feels like they may effectively have the same meaning?",
+      "range": {
+        "startLine": 168,
+        "startChar": 2,
+        "endLine": 168,
+        "endChar": 24
+      },
+      "revId": "cc38f3982f0dbb6fa18902ede7e78af7702b565f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
