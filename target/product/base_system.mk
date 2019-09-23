@@ -19,9 +19,6 @@ PRODUCT_PACKAGES += \
     abb \
     adbd \
     am \
-    android.hardware.neuralnetworks@1.0 \
-    android.hardware.neuralnetworks@1.1 \
-    android.hardware.neuralnetworks@1.2 \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
