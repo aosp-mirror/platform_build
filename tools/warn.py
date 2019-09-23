@@ -2684,6 +2684,17 @@ warn_patterns = [
      'patterns': [r".*: .+\[clang-analyzer-.+\]$",
                   r".*: Call Path : .+$"]},
 
+    # rustc warnings
+    {'category': 'rust', 'severity': Severity.HIGH,
+     'description': 'Does not derive Copy',
+     'patterns': [r".*: warning: .+ does not derive Copy"]},
+    {'category': 'rust', 'severity': Severity.MEDIUM,
+     'description': 'Deprecated range pattern',
+     'patterns': [r".*: warning: .+ range patterns are deprecated"]},
+    {'category': 'rust', 'severity': Severity.MEDIUM,
+     'description': 'Deprecated missing explicit \'dyn\'',
+     'patterns': [r".*: warning: .+ without an explicit `dyn` are deprecated"]},
+
     # catch-all for warnings this script doesn't know about yet
     {'category': 'C/C++', 'severity': Severity.UNKNOWN,
      'description': 'Unclassified/unrecognized warnings',
@@ -3208,16 +3219,42 @@ def parse_input_file(infile):
   global target_variant
   line_counter = 0
 
-  # handle only warning messages with a file path
-  warning_pattern = re.compile('^[^ ]*/[^ ]*: warning: .*')
+  # rustc warning messages have two lines that should be combined:
+  #     warning: description
+  #        --> file_path:line_number:column_number
+  # Some warning messages have no file name:
+  #     warning: macro replacement list ... [bugprone-macro-parentheses]
+  # Some makefile warning messages have no line number:
+  #     some/path/file.mk: warning: description
+  # C/C++ compiler warning messages have line and column numbers:
+  #     some/path/file.c:line_number:column_number: warning: description
+  warning_pattern = re.compile('(^[^ ]*/[^ ]*: warning: .*)|(^warning: .*)')
+  warning_without_file = re.compile('^warning: .*')
+  rustc_file_position = re.compile('^[ ]+--> [^ ]*/[^ ]*:[0-9]+:[0-9]+')
 
   # Collect all warnings into the warning_lines set.
   warning_lines = set()
+  prev_warning = ''
   for line in infile:
+    if prev_warning:
+      if rustc_file_position.match(line):
+        # must be a rustc warning, combine 2 lines into one warning
+        line = line.strip().replace('--> ', '') + ': ' + prev_warning
+        warning_lines.add(normalize_warning_line(line))
+        prev_warning = ''
+        continue
+      # add prev_warning, and then process the current line
+      prev_warning = 'unknown_source_file: ' + prev_warning
+      warning_lines.add(normalize_warning_line(prev_warning))
+      prev_warning = ''
     if warning_pattern.match(line):
-      line = normalize_warning_line(line)
-      warning_lines.add(line)
-    elif line_counter < 100:
+      if warning_without_file.match(line):
+        # save this line and combine it with the next line
+        prev_warning = line
+      else:
+        warning_lines.add(normalize_warning_line(line))
+      continue
+    if line_counter < 100:
       # save a little bit of time by only doing this for the first few lines
       line_counter += 1
       m = re.search('(?<=^PLATFORM_VERSION=).*', line)
