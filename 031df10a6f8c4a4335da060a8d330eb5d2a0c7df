@@ -95,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "e025195e_e796f63d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2019-09-23T15:22:44Z",
+      "side": 1,
+      "message": "Ok, let me make an impassioned passive aggressive plea on closing (because in the end, I guess it is you that takes the questions from partners if/when they have problems, and most problems can be solved by providing clear public documentation and examples which is _not_ part of this change and could be _brilliant_ for all I know).\n\nOur makefiles are supposed to be bullet proof. When a vendor makes the \u0027mistake\u0027, it will be very hard to diagnose for them.\n\nBOARD_RECOVERY_KERNEL_MODULES :\u003d $(shell echo \"$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES) $(BOARD_OEM_RAMDISK_KERNEL_MODULES)\" | tr \u0027 \u0027 \u0027\\n\u0027 | grep -F recovery.modules | tr \u0027\\n\u0027 \u0027 \u0027)\n\nBOARD_RECOVERY_KERNEL_MODULES :\u003d $(MY_VENDOR_RECOVERY_KERNEL_MODULES) $(MY_OEM_RECOVERY_KERNEL_MODULES) $(MY_ODM_RECOVERY_KERNEL_MODULES)\n\n(MY_* vars are empty, then why did they add them, and the answer is \u0027because\u0027)\n\nOh well, _they_ forgot the $(strip ...) around it and weird things happen when we build, file a bug to Google to find out why. Whereas we have a few instances in these bundle of make files where we have added $(strip ...) after the fact when similar pesky issues were discovered about our API.\n\nifneq ($(strip $(BOARD_RECOVERY_KERNEL_MODULES)),)",
+      "parentUuid": "6f43ed68_45523e09",
+      "range": {
+        "startLine": 731,
+        "startChar": 7,
+        "endLine": 731,
+        "endChar": 39
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67bfd3fe_68334c42",
         "filename": "core/Makefile",
         "patchSetId": 4
