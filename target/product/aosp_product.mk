@@ -40,6 +40,7 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.config.ringtone=Ring_Synth_04.ogg \
     ro.config.notification_sound=pixiedust.ogg \
+    ro.com.android.dataroaming=true \
 
 # More AOSP packages
 PRODUCT_PACKAGES += \
