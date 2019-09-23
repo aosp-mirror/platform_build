@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6ddb6451_3b1f3e47",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-09-23T20:10:25Z",
+      "side": 1,
+      "message": "I\u0027ll fix this.",
+      "parentUuid": "cfd12be4_cadd89dd",
+      "revId": "cc38f3982f0dbb6fa18902ede7e78af7702b565f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dab3d3f1_bc231ee2",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 7
@@ -30,6 +48,30 @@
       "writtenOn": "2019-09-23T19:57:18Z",
       "side": 1,
       "message": "I\u0027m thinking about the difference between this new var and the `has_vendor` at L704. It feels like they may effectively have the same meaning?",
+      "range": {
+        "startLine": 168,
+        "startChar": 2,
+        "endLine": 168,
+        "endChar": 24
+      },
+      "revId": "cc38f3982f0dbb6fa18902ede7e78af7702b565f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f4ccdd7_c7d68aef",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-09-23T20:10:25Z",
+      "side": 1,
+      "message": "I had a similar thought when I coded it. I decided to use similar logic for all the places that need to make this decision (currently 5 places in releasetools). However, I\u0027m okay switching it if you\u0027d like.",
+      "parentUuid": "dab3d3f1_bc231ee2",
       "range": {
         "startLine": 168,
         "startChar": 2,
