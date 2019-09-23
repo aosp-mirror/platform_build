@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e416098_1cb35068",
+        "filename": "target/board/generic_x86_64_arm64/device.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-23T14:57:27Z",
+      "side": 1,
+      "message": "I\u0027d be tempted to just delete this empty file (and remove the import in the product)",
+      "revId": "5c36806fbf0e2862385230829bb7b773c11b47d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
