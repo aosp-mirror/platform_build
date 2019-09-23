@@ -479,7 +479,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             container_key,
             key_passwords[container_key],
             codename_to_api_level_map,
-            OPTIONS.avb_extra_args.get('apex'))
+            no_hashtree=True,
+            signing_args=OPTIONS.avb_extra_args.get('apex'))
         common.ZipWrite(output_tf_zip, signed_apex, filename)
 
       else:
