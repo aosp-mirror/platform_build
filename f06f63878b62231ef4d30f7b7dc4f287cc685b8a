@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a8e567a_9d286aa1",
+        "filename": "target/board/generic_x86_64_arm64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-23T14:33:26Z",
+      "side": 1,
+      "message": "Do we need these? see http://r.android.com/1126578",
+      "range": {
+        "startLine": 43,
+        "startChar": 31,
+        "endLine": 45,
+        "endChar": 43
+      },
+      "revId": "f06f63878b62231ef4d30f7b7dc4f287cc685b8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1260aab5_f6010614",
+        "filename": "target/board/generic_x86_64_arm64/device.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-23T14:33:26Z",
+      "side": 1,
+      "message": "Are you also defining a product that uses this device (and in particular this mk)? Is there a CL for that?",
+      "revId": "f06f63878b62231ef4d30f7b7dc4f287cc685b8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6576154c_08a86435",
+        "filename": "target/board/generic_x86_64_arm64/device.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-23T14:33:26Z",
+      "side": 1,
+      "message": "I don\u0027t see any mentions of NET_ETH0_STARTONBOOT in the tree. Can we remove this?",
+      "range": {
+        "startLine": 15,
+        "startChar": 1,
+        "endLine": 19,
+        "endChar": 5
+      },
+      "revId": "f06f63878b62231ef4d30f7b7dc4f287cc685b8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c5d37d2_170563ad",
+        "filename": "target/board/generic_x86_64_arm64/device.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-23T14:33:26Z",
+      "side": 1,
+      "message": "Are these actually needed? I noticed they\u0027re originally from http://r.android.com/22350 so pretty ancient..",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 21
+      },
+      "revId": "f06f63878b62231ef4d30f7b7dc4f287cc685b8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
