@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5c6dbdba_1c9f9851",
+        "filename": "target/board/generic_x86_64_arm64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1074438
+      },
+      "writtenOn": "2019-09-23T14:58:54Z",
+      "side": 1,
+      "message": "cloned generic_x86_arm before this CL, removed",
+      "parentUuid": "1a8e567a_9d286aa1",
+      "range": {
+        "startLine": 43,
+        "startChar": 31,
+        "endLine": 45,
+        "endChar": 43
+      },
+      "revId": "f06f63878b62231ef4d30f7b7dc4f287cc685b8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1260aab5_f6010614",
         "filename": "target/board/generic_x86_64_arm64/device.mk",
         "patchSetId": 3
@@ -39,6 +63,24 @@
       "revId": "f06f63878b62231ef4d30f7b7dc4f287cc685b8a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd0b0e71_d6a86aa5",
+        "filename": "target/board/generic_x86_64_arm64/device.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1074438
+      },
+      "writtenOn": "2019-09-23T14:58:54Z",
+      "side": 1,
+      "message": "yes, sent.",
+      "parentUuid": "1260aab5_f6010614",
+      "revId": "f06f63878b62231ef4d30f7b7dc4f287cc685b8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "c720b186_bd218b26",
+        "filename": "target/board/generic_x86_64_arm64/device.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1074438
+      },
+      "writtenOn": "2019-09-23T14:58:54Z",
+      "side": 1,
+      "message": "cloned generic_x86_64 before it was modified, removed",
+      "parentUuid": "6576154c_08a86435",
+      "range": {
+        "startLine": 15,
+        "startChar": 1,
+        "endLine": 19,
+        "endChar": 5
+      },
+      "revId": "f06f63878b62231ef4d30f7b7dc4f287cc685b8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8c5d37d2_170563ad",
         "filename": "target/board/generic_x86_64_arm64/device.mk",
         "patchSetId": 3
@@ -85,6 +151,30 @@
       "revId": "f06f63878b62231ef4d30f7b7dc4f287cc685b8a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e225511c_fb061465",
+        "filename": "target/board/generic_x86_64_arm64/device.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1074438
+      },
+      "writtenOn": "2019-09-23T14:58:54Z",
+      "side": 1,
+      "message": "same as above",
+      "parentUuid": "8c5d37d2_170563ad",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 21
+      },
+      "revId": "f06f63878b62231ef4d30f7b7dc4f287cc685b8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
