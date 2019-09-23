@@ -46,6 +46,30 @@
       "revId": "fee6fedd74bd95e479968e841bb1befb5adaeb34",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04286498_4c469699",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-09-23T09:41:34Z",
+      "side": 1,
+      "message": "I\u0027ve amended the text based on your suggestions in PS4.",
+      "parentUuid": "d9e93b1c_c7c4af08",
+      "range": {
+        "startLine": 43,
+        "startChar": 24,
+        "endLine": 43,
+        "endChar": 25
+      },
+      "revId": "fee6fedd74bd95e479968e841bb1befb5adaeb34",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
