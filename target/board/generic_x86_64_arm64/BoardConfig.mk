@@ -13,29 +13,36 @@
 # limitations under the License.
 #
 
-# x86 emulator specific definitions
-TARGET_CPU_ABI := x86
-TARGET_ARCH := x86
-TARGET_ARCH_VARIANT := x86
+# x86_64 emulator specific definitions
+TARGET_CPU_ABI := x86_64
+TARGET_ARCH := x86_64
+TARGET_ARCH_VARIANT := x86_64
 
-TARGET_NATIVE_BRIDGE_ARCH := arm
-TARGET_NATIVE_BRIDGE_ARCH_VARIANT := armv7-a-neon
+TARGET_2ND_CPU_ABI := x86
+TARGET_2ND_ARCH := x86
+TARGET_2ND_ARCH_VARIANT := x86_64
+
+TARGET_NATIVE_BRIDGE_ARCH := arm64
+TARGET_NATIVE_BRIDGE_ARCH_VARIANT := armv8-a
 TARGET_NATIVE_BRIDGE_CPU_VARIANT := generic
-TARGET_NATIVE_BRIDGE_ABI := armeabi-v7a armeabi
+TARGET_NATIVE_BRIDGE_ABI := arm64-v8a
+
+TARGET_NATIVE_BRIDGE_2ND_ARCH := arm
+TARGET_NATIVE_BRIDGE_2ND_ARCH_VARIANT := armv7-a-neon
+TARGET_NATIVE_BRIDGE_2ND_CPU_VARIANT := generic
+TARGET_NATIVE_BRIDGE_2ND_ABI := armeabi-v7a armeabi
 
 BUILD_BROKEN_DUP_RULES := true
 
-#
-# The inclusion order below is important.
-# The settings in latter makefiles overwrite those in the former.
-#
+TARGET_PRELINK_MODULE := false
+
 include build/make/target/board/BoardConfigMainlineCommon.mk
 include build/make/target/board/BoardConfigEmuCommon.mk
 
 # the settings differ from BoardConfigMainlineCommon.mk
 BOARD_USES_SYSTEM_OTHER_ODEX :=
 
-# Resize to 4G to accomodate ASAN and CTS
+# Resize to 4G to accommodate ASAN and CTS
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 4294967296
 
 BOARD_SEPOLICY_DIRS += device/generic/goldfish/sepolicy/x86
