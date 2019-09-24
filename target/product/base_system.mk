@@ -36,7 +36,6 @@ PRODUCT_PACKAGES += \
     appops \
     app_process \
     appwidget \
-    ashmemd \
     atrace \
     audioserver \
     BackupRestoreConfirmation \
@@ -123,7 +122,6 @@ PRODUCT_PACKAGES += \
     libandroid_runtime \
     libandroid_servers \
     libartpalette-system \
-    libashmemd_client \
     libaudioeffect_jni \
     libbinder \
     libbinder_ndk \
