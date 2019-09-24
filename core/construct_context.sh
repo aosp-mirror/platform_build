@@ -66,11 +66,6 @@ fi
 if [[ "${target_sdk_version}" -lt "29" ]]; then
   add_to_contexts "${conditional_host_libs_29}" "${conditional_target_libs_29}"
 fi
-# TODO(b/139318877) Remove check for SDK_VERSION_CUR_DEVELOPMENT after cleaning up system apps targeting on
-# current SDK version and link telephony-common
-if [ "${target_sdk_version}" -lt "30" ] || [ "${target_sdk_version}" -eq "10000"]; then
-  add_to_contexts "${conditional_host_libs_30}" "${conditional_target_libs_30}"
-fi
 
 add_to_contexts "${dex_preopt_host_libraries}" "${dex_preopt_target_libraries}"
 
