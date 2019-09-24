@@ -3163,7 +3163,7 @@ def compile_patterns():
       i['compiled_patterns'].append(re.compile(pat))
 
 
-def find_android_root(path):
+def find_warn_py_and_android_root(path):
   """Set and return android_root path if it is found."""
   global android_root
   parts = path.split('/')
@@ -3172,8 +3172,36 @@ def find_android_root(path):
     # Android root directory should contain this script.
     if os.path.exists(root_path + '/build/make/tools/warn.py'):
       android_root = root_path
-      return root_path
-  return ''
+      return True
+  return False
+
+
+def find_android_root():
+  """Guess android_root from common prefix of file paths."""
+  # Use the longest common prefix of the absolute file paths
+  # of the first 10000 warning messages as the android_root.
+  global android_root
+  warning_lines = set()
+  warning_pattern = re.compile('^/[^ ]*/[^ ]*: warning: .*')
+  count = 0
+  infile = io.open(args.buildlog, mode='r', encoding='utf-8')
+  for line in infile:
+    if warning_pattern.match(line):
+      warning_lines.add(line)
+      count += 1
+      if count > 9999:
+        break
+      # Try to find warn.py and use its location to find
+      # the source tree root.
+      if count < 100:
+        path = os.path.normpath(re.sub(':.*$', '', line))
+        if find_warn_py_and_android_root(path):
+          return
+  # Do not use common prefix of a small number of paths.
+  if count > 10:
+    root_path = os.path.commonprefix(warning_lines)
+    if len(root_path) > 2 and root_path[len(root_path) - 1] == '/':
+      android_root = root_path[:-1]
 
 
 def remove_android_root_prefix(path):
@@ -3188,13 +3216,10 @@ def normalize_path(path):
   """Normalize file path relative to android_root."""
   # If path is not an absolute path, just normalize it.
   path = os.path.normpath(path)
-  if path[0] != '/':
-    return path
   # Remove known prefix of root path and normalize the suffix.
-  if android_root or find_android_root(path):
+  if path[0] == '/' and android_root:
     return remove_android_root_prefix(path)
-  else:
-    return path
+  return path
 
 
 def normalize_warning_line(line):
@@ -3569,6 +3594,7 @@ def dump_csv(writer):
 
 
 def main():
+  find_android_root()
   # We must use 'utf-8' codec to parse some non-ASCII code in warnings.
   warning_lines = parse_input_file(
       io.open(args.buildlog, mode='r', encoding='utf-8'))
