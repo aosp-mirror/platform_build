@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28e8ac65_58d59f70",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 4187,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T00:22:12Z",
+      "side": 0,
+      "message": "I wonder if we still need some condition here: if the patch should go to /vendor, but we\u0027re not building vendor image (BUILDING_VENDOR_IMAGE !\u003d true), are we gonna have VENDOR/recovery-from-boot.p (as the only entry for vendor files) in the built target_files.zip?",
+      "range": {
+        "startLine": 4187,
+        "startChar": 6,
+        "endLine": 4187,
+        "endChar": 27
+      },
+      "revId": "8bfd896e3d107e275febad97e9638bf53754d80f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

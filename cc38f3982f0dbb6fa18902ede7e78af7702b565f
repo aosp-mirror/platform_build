@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "099791ee_cbbd467d",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T00:22:12Z",
+      "side": 1,
+      "message": "yeah, that also works",
+      "parentUuid": "c2cb119c_c313dc33",
+      "revId": "cc38f3982f0dbb6fa18902ede7e78af7702b565f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dab3d3f1_bc231ee2",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 7
@@ -123,6 +141,30 @@
       "revId": "cc38f3982f0dbb6fa18902ede7e78af7702b565f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "39408ce7_38a5cdc6",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T00:22:12Z",
+      "side": 1,
+      "message": "yeah, i\u0027m ok to go with the current approach.",
+      "parentUuid": "dd79964a_e88d7b07",
+      "range": {
+        "startLine": 168,
+        "startChar": 2,
+        "endLine": 168,
+        "endChar": 24
+      },
+      "revId": "cc38f3982f0dbb6fa18902ede7e78af7702b565f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
