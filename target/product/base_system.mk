@@ -186,7 +186,6 @@ PRODUCT_PACKAGES += \
     libui \
     libusbhost \
     libutils \
-    libvorbisidec \
     libvulkan \
     libwifi-service \
     libwilhelm \
