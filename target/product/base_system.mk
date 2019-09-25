@@ -245,6 +245,7 @@ PRODUCT_PACKAGES += \
     Shell \
     shell_and_utilities_system \
     sm \
+    snapshotctl \
     SoundPicker \
     statsd \
     storaged \
