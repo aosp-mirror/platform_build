@@ -52,7 +52,9 @@ $(call inherit-product-if-exists, device/generic/goldfish/vendor.mk)
 #config.disable_location=true
 
 # Enable Perfetto traced
-PRODUCT_SYSTEM_EXT_PROPERTIES += \
+# There is a stable property API for this prop so we can move it to /product.
+# https://android-review.googlesource.com/c/platform/system/libsysprop/+/952375
+PRODUCT_PRODUCT_PROPERTIES += \
     persist.traced.enable=1
 
 # enable Google-specific location features,
