@@ -184,7 +184,6 @@ PRODUCT_PACKAGES += \
     libui \
     libusbhost \
     libutils \
-    libvorbisidec \
     libvulkan \
     libwilhelm \
     linker \
