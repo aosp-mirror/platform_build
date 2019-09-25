@@ -262,6 +262,30 @@
     },
     {
       "key": {
+        "uuid": "b2bb2f64_0bbf35a1",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1178,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "I think the current preference is to use space whenever possible (only the lines in a recipe must start with a tab).\n\nRe 2 vs 4: I heard 4 from ccross last time...\n\nRe clang format: I guess there isn\u0027t a linter that supports Makefile syntax",
+      "parentUuid": "51ca58fd_7463ef4f",
+      "range": {
+        "startLine": 1178,
+        "startChar": 0,
+        "endLine": 1178,
+        "endChar": 1
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ac00ebdb_01bfdd3a",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -400,6 +424,30 @@
       "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3029e8e3_825239c3",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE might be more consistent, in case we want to add something that maps partition name to size variable.",
+      "parentUuid": "088ca6c7_5436e11c",
+      "range": {
+        "startLine": 1192,
+        "startChar": 23,
+        "endLine": 1192,
+        "endChar": 55
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     },
     {
       "key": {

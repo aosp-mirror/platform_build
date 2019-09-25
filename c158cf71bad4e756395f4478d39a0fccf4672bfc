@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6677fa2_0412540e",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 1071,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "space in between?",
+      "range": {
+        "startLine": 1071,
+        "startChar": 65,
+        "endLine": 1071,
+        "endChar": 67
+      },
+      "revId": "c158cf71bad4e756395f4478d39a0fccf4672bfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9340dbeb_03e1975a",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 1214,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "missing dependency on INSTALLED_DTBIMAGE_TARGET.\n\nMaybe separate the common dependencies out:\n\n$(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(MKBOOTIMG) ...\n\nifeq ($(BOARD_AVB_ENABLE),true)\n$(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB...)\n...\nelse\n...\nendif",
+      "range": {
+        "startLine": 1214,
+        "startChar": 83,
+        "endLine": 1214,
+        "endChar": 84
+      },
+      "revId": "c158cf71bad4e756395f4478d39a0fccf4672bfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d9ea3ed_5e1c0287",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 1219,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "nit: add `# BUILDING_VENDOR_BOOT_IMAGE`",
+      "range": {
+        "startLine": 1219,
+        "startChar": 0,
+        "endLine": 1219,
+        "endChar": 5
+      },
+      "revId": "c158cf71bad4e756395f4478d39a0fccf4672bfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b16482e_da0dd17e",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 1987,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "Is there any expected change to recovery image, in particular whether the kernel cmdline needs to pick up GENERIC_KERNEL_CMDLINE?\n\nNote that this applies to two cases: building a standalone recovery.img, as well as building the recovery image as \"boot.img\". For example, by design is using recovery-as-boot AND vendor_boot a supported combination? If so, should it use GENERIC_KERNEL_CMDLINE or (BOARD_KERNEL_CMDLINE + GENERIC_KERNEL_CMDLINE)?",
+      "range": {
+        "startLine": 1987,
+        "startChar": 6,
+        "endLine": 1987,
+        "endChar": 29
+      },
+      "revId": "c158cf71bad4e756395f4478d39a0fccf4672bfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a82865c7_602dcbb2",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 3901,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "avb_vendor_boot_key_path",
+      "range": {
+        "startLine": 3901,
+        "startChar": 7,
+        "endLine": 3901,
+        "endChar": 24
+      },
+      "revId": "c158cf71bad4e756395f4478d39a0fccf4672bfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9acd297f_450ddbb7",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 4159,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "The rules here conflict with the recovery image building rules between L1987 and L1995.",
+      "range": {
+        "startLine": 4142,
+        "startChar": 0,
+        "endLine": 4159,
+        "endChar": 5
+      },
+      "revId": "c158cf71bad4e756395f4478d39a0fccf4672bfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a65be1ae_b31ad81e",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 4196,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "Doesn\u0027t match the logic at L1071 (should it pick up GENERIC_KERNEL_CMDLINE?)",
+      "range": {
+        "startLine": 4196,
+        "startChar": 6,
+        "endLine": 4196,
+        "endChar": 34
+      },
+      "revId": "c158cf71bad4e756395f4478d39a0fccf4672bfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26537534_3ccdd9fe",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 4209,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "They may possibly overwrite the contents written by L4147 - L4158, when BOARD_USES_RECOVERY_AS_BOOT \u003d\u003d true and not using INSTALLED_VENDOR_BOOTIMAGE_TARGET.",
+      "range": {
+        "startLine": 4195,
+        "startChar": 0,
+        "endLine": 4209,
+        "endChar": 5
+      },
+      "revId": "c158cf71bad4e756395f4478d39a0fccf4672bfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b33aa9a2_4cbd5cfb",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-25T03:56:37Z",
+      "side": 1,
+      "message": "nit: _MakeRamdisk (the leading underscore)",
+      "range": {
+        "startLine": 736,
+        "startChar": 4,
+        "endLine": 736,
+        "endChar": 16
+      },
+      "revId": "c158cf71bad4e756395f4478d39a0fccf4672bfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
