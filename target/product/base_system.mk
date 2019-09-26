@@ -323,6 +323,7 @@ PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
     framework \
     ext \
+    telephony-common \
     voip-common \
     ims-common \
     updatable-media
