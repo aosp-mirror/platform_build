@@ -22,6 +22,13 @@ BUILD_SYSTEM_COMMON :=$= build/make/common
 
 include $(BUILD_SYSTEM_COMMON)/core.mk
 
+# -----------------------------------------------------------------
+# Rules and functions to help copy important files to DIST_DIR
+# when requested. This must be included once only, and must be included before
+# soong_config (as soong_config calls make_vars-$(TARGET).mk, and soong may
+# propagate calls to dist-for-goals there).
+include $(BUILD_SYSTEM)/distdir.mk
+
 # Mark variables that should be coming as environment variables from soong_ui
 # as readonly
 .KATI_READONLY := OUT_DIR TMPDIR BUILD_DATETIME_FILE

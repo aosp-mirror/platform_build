@@ -3139,11 +3139,6 @@ endef
 ## Other includes
 ###########################################################
 
-# -----------------------------------------------------------------
-# Rules and functions to help copy important files to DIST_DIR
-# when requested.
-include $(BUILD_SYSTEM)/distdir.mk
-
 # Include any vendor specific definitions.mk file
 -include $(TOPDIR)vendor/*/build/core/definitions.mk
 -include $(TOPDIR)device/*/build/core/definitions.mk
