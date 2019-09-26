@@ -1749,7 +1749,9 @@ warn_patterns = [
     analyzer_warn_check('clang-analyzer-security.insecureAPI.strcpy'),
     analyzer_group_high('clang-analyzer-security.insecureAPI'),
     analyzer_group_high('clang-analyzer-security'),
-    analyzer_group_check('clang-analyzer-unix.Malloc'),
+    analyzer_high_check('clang-analyzer-unix.Malloc'),
+    analyzer_high_check('clang-analyzer-cplusplus.NewDeleteLeaks'),
+    analyzer_high_check('clang-analyzer-cplusplus.NewDelete'),
     analyzer_group_check('clang-analyzer-unix'),
     analyzer_group_check('clang-analyzer'),  # catch al
 
@@ -1767,11 +1769,14 @@ warn_patterns = [
     {'category': 'Protoc', 'severity': Severity.MEDIUM,
      'description': 'Proto: Enum name colision after strip',
      'patterns': [r".*: warning: Enum .* has the same name .* ignore case and strip"]},
+    {'category': 'Protoc', 'severity': Severity.MEDIUM,
+     'description': 'Proto: Import not used',
+     'patterns': [r".*: warning: Import .*/.*\.proto but not used.$"]},
 
     # Kotlin warnings
     {'category': 'Kotlin', 'severity': Severity.MEDIUM,
-     'description': 'Kotlin: never used parameter',
-     'patterns': [r".*: warning: parameter '.*' is never used"]},
+     'description': 'Kotlin: never used parameter or variable',
+     'patterns': [r".*: warning: (parameter|variable) '.*' is never used$"]},
     {'category': 'Kotlin', 'severity': Severity.MEDIUM,
      'description': 'Kotlin: Deprecated in Java',
      'patterns': [r".*: warning: '.*' is deprecated. Deprecated in Java"]},
