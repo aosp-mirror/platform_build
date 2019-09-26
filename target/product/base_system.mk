@@ -184,7 +184,6 @@ PRODUCT_PACKAGES += \
     libui \
     libusbhost \
     libutils \
-    libvorbisidec \
     libvulkan \
     libwilhelm \
     linker \
@@ -222,6 +221,7 @@ PRODUCT_PACKAGES += \
     platform.xml \
     pm \
     pppd \
+    preinstalled-packages-platform.xml \
     privapp-permissions-platform.xml \
     racoon \
     recovery-persist \
@@ -245,6 +245,7 @@ PRODUCT_PACKAGES += \
     Shell \
     shell_and_utilities_system \
     sm \
+    snapshotctl \
     SoundPicker \
     statsd \
     storaged \
