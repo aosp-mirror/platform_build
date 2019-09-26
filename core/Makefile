@@ -4957,3 +4957,17 @@ include $(BUILD_SYSTEM)/product-graph.mk
 ifneq ($(sdk_repo_goal),)
 include $(TOPDIR)development/build/tools/sdk_repo.mk
 endif
+
+# -----------------------------------------------------------------
+# The rule to build all fuzz targets, and package them.
+# Note: The packages are created in Soong, and in a perfect world,
+# we'd be able to create the phony rule there. But, if we want to
+# have dist goals for the fuzz target, we need to have the PHONY
+# target defined in make. MakeVarsContext.DistForGoal doesn't take
+# into account that a PHONY rule create by Soong won't be available
+# during make, and such will fail with `writing to readonly
+# directory`, because kati will see 'fuzz' as being a file, not a
+# phony target.
+.PHONY: fuzz
+fuzz: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES)
+$(call dist-for-goals,fuzz,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
