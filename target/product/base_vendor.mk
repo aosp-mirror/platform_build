@@ -51,7 +51,6 @@ PRODUCT_PACKAGES += \
     group_system_ext \
     group_vendor \
     init_vendor \
-    libashmemd_hidl_client \
     libbundlewrapper \
     libclearkeycasplugin \
     libdownmix \
