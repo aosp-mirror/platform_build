@@ -55,6 +55,7 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     ethernet-service \
     com.android.location.provider \
     jobscheduler-service \
+    statsd-service \
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt

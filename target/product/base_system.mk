@@ -246,6 +246,7 @@ PRODUCT_PACKAGES += \
     snapshotctl \
     SoundPicker \
     statsd \
+    statsd-service \
     storaged \
     surfaceflinger \
     svc \
