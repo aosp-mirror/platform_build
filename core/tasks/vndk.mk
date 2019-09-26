@@ -48,7 +48,6 @@ vndk_prebuilt_txts := \
 vndk_snapshot_top := $(call intermediates-dir-for,PACKAGING,vndk-snapshot)
 vndk_snapshot_out := $(vndk_snapshot_top)/vndk-snapshot
 vndk_snapshot_soong_dir := $(call intermediates-dir-for,PACKAGING,vndk-snapshot-soong)
-vndk_snapshot_configs_out := $(vndk_snapshot_top)/configs
 
 #######################################
 # vndk_snapshot_zip
@@ -105,7 +104,6 @@ vndk_snapshot_top :=
 vndk_snapshot_out :=
 vndk_snapshot_soong_dir :=
 vndk_snapshot_soong_files :=
-vndk_snapshot_configs_out :=
 vndk_snapshot_variant :=
 
 else # BOARD_VNDK_RUNTIME_DISABLE is set to 'true'
