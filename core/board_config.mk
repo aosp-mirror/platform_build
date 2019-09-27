@@ -336,6 +336,20 @@ else ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),true)
 endif
 .KATI_READONLY := BUILDING_RECOVERY_IMAGE
 
+# Are we building a vendor boot image
+BUILDING_VENDOR_BOOT_IMAGE :=
+ifdef BOARD_BOOT_HEADER_VERSION
+  ifneq ($(call math_gt_or_eq,$(BOARD_BOOT_HEADER_VERSION),3),)
+    BUILDING_VENDOR_BOOT_IMAGE := true
+    ifdef BUILDING_RECOVERY_IMAGE
+      ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+        $(error Boot header version >=3 requires recovery as boot)
+      endif
+    endif
+  endif
+endif
+.KATI_READONLY := BUILDING_VENDOR_BOOT_IMAGE
+
 # Are we building a ramdisk image
 BUILDING_RAMDISK_IMAGE := true
 ifeq ($(PRODUCT_BUILD_RAMDISK_IMAGE),)

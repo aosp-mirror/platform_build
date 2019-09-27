@@ -727,12 +727,10 @@ $(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): $(2)
 	(for MODULE in $$(PRIVATE_LOAD_MODULES); do basename $$$$MODULE >> $$@; done)
 endef
 
-# Until support for a vendor-boot/vendor-ramdisk is added, store vendor ramdisk
-# kernel modules on the generic ramdisk as a stopgap.
-ifneq ($(BOARD_VENDOR_RAMDISK_KERNEL_MODULES),)
+ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+  # If there is no vendor boot partition, store vendor ramdisk kernel modules in the
+  # boot ramdisk.
   BOARD_GENERIC_RAMDISK_KERNEL_MODULES += $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES)
-endif
-ifneq ($(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD),)
   BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD += $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD)
 endif
 
@@ -743,13 +741,13 @@ ifeq ($(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),)
   BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD := $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)
 endif
 
-ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES
+ifneq ($(strip $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)),)
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
     BOARD_RECOVERY_KERNEL_MODULES += $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)
   endif
 endif
 
-ifdef BOARD_RECOVERY_KERNEL_MODULES
+ifneq ($(strip $(BOARD_RECOVERY_KERNEL_MODULES)),)
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
     ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD
       ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,ramdisk_modules),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(TARGET_RECOVERY_ROOT_OUT)))
@@ -758,20 +756,27 @@ ifdef BOARD_RECOVERY_KERNEL_MODULES
   ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery),$(BOARD_RECOVERY_KERNEL_MODULES_LOAD),modules.load.recovery))
 endif
 
+ifneq ($(strip $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES)),)
+  ifeq ($(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD),)
+    BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD := $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES)
+  endif
+  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES),$(TARGET_VENDOR_RAMDISK_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_vendor_ramdisk),$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD),modules.load))
+endif
+
 ifneq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
-  ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES
+  ifneq ($(strip $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)),)
     ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES),$(TARGET_RAMDISK_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_ramdisk),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),modules.load))
   endif
 endif
 
-ifdef BOARD_VENDOR_KERNEL_MODULES
+ifneq ($(strip $(BOARD_VENDOR_KERNEL_MODULES)),)
   ifeq ($(BOARD_VENDOR_KERNEL_MODULES_LOAD),)
     BOARD_VENDOR_KERNEL_MODULES_LOAD := $(BOARD_VENDOR_KERNEL_MODULES)
   endif
   ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_VENDOR_KERNEL_MODULES),$(TARGET_OUT_VENDOR),vendor,$(call intermediates-dir-for,PACKAGING,depmod_vendor),$(BOARD_VENDOR_KERNEL_MODULES_LOAD),modules.load))
 endif
 
-ifdef BOARD_ODM_KERNEL_MODULES
+ifneq ($(strip $(BOARD_ODM_KERNEL_MODULES)),)
   ifeq ($(BOARD_RECOVERY_KERNEL_MODULES_LOAD),)
     BOARD_ODM_KERNEL_MODULES_LOAD := $(BOARD_ODM_KERNEL_MODULES)
   endif
@@ -1027,23 +1032,17 @@ INTERNAL_BOOTIMAGE_ARGS := \
 	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
 	--kernel $(INSTALLED_KERNEL_TARGET)
 
-ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
-  INTERNAL_BOOTIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
-endif
-
 ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
 endif
 
+ifndef BUILDING_VENDOR_BOOT_IMAGE
+ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
+  INTERNAL_BOOTIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
+endif
+endif
+
 INTERNAL_BOOTIMAGE_FILES := $(filter-out --%,$(INTERNAL_BOOTIMAGE_ARGS))
-
-ifdef BOARD_KERNEL_BASE
-  INTERNAL_BOOTIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
-endif
-
-ifdef BOARD_KERNEL_PAGESIZE
-  INTERNAL_BOOTIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
-endif
 
 ifeq ($(PRODUCT_SUPPORTS_VERITY),true)
 ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
@@ -1053,8 +1052,22 @@ endif
 endif
 
 INTERNAL_KERNEL_CMDLINE := $(strip $(INTERNAL_KERNEL_CMDLINE) buildvariant=$(TARGET_BUILD_VARIANT) $(VERITY_KEYID))
+
+ifndef BUILDING_VENDOR_BOOT_IMAGE
+ifdef BOARD_KERNEL_BASE
+  INTERNAL_BOOTIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
+endif
+ifdef BOARD_KERNEL_PAGESIZE
+  INTERNAL_BOOTIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+endif
 ifdef INTERNAL_KERNEL_CMDLINE
-INTERNAL_BOOTIMAGE_ARGS += --cmdline "$(INTERNAL_KERNEL_CMDLINE)"
+  INTERNAL_BOOTIMAGE_ARGS += --cmdline "$(INTERNAL_KERNEL_CMDLINE)"
+endif
+else
+# building vendor boot image, dtb/base/pagesize go there
+ifdef GENERIC_KERNEL_CMDLINE
+  INTERNAL_BOOTIMAGE_ARGS += --cmdline "$(GENERIC_KERNEL_CMDLINE)"
+endif
 endif
 
 INTERNAL_MKBOOTIMG_VERSION_ARGS := \
@@ -1149,6 +1162,55 @@ else # BOARD_PREBUILT_BOOTIMAGE not defined
 INSTALLED_BOOTIMAGE_TARGET :=
 endif # BOARD_PREBUILT_BOOTIMAGE
 endif # TARGET_NO_KERNEL
+
+# -----------------------------------------------------------------
+# vendor boot image
+ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+
+ifeq ($(PRODUCT_SUPPORTS_VERITY),true)
+  $(error vboot 1.0 does not support vendor_boot partition)
+endif
+
+INTERNAL_VENDOR_RAMDISK_FILES := $(filter $(TARGET_VENDOR_RAMDISK_OUT)/%, \
+    $(ALL_GENERATED_SOURCES) \
+    $(ALL_DEFAULT_INSTALLED_MODULES))
+
+INTERNAL_VENDOR_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor-boot)/vendor-ramdisk.cpio.gz
+$(INTERNAL_VENDOR_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_VENDOR_RAMDISK_FILES) | $(MINIGZIP)
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_VENDOR_RAMDISK_OUT) | $(MINIGZIP) > $@
+
+ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
+  INTERNAL_VENDOR_BOOTIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
+endif
+ifdef BOARD_KERNEL_BASE
+  INTERNAL_VENDOR_BOOTIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
+endif
+ifdef BOARD_KERNEL_PAGESIZE
+  INTERNAL_VENDOR_BOOTIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+endif
+ifdef INTERNAL_KERNEL_CMDLINE
+  INTERNAL_VENDOR_BOOTIMAGE_ARGS += --vendor_cmdline "$(INTERNAL_KERNEL_CMDLINE)"
+endif
+
+INSTALLED_VENDOR_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/vendor_boot.img
+$(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_DTBIMAGE_TARGET)
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOTIMAGE_KEY_PATH)
+	$(call pretty,"Target vendor_boot image: $@")
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_RAMDISK_TARGET) --vendor_boot $@
+	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
+	$(AVBTOOL) add_hash_footer \
+           --image $@ \
+	   --partition_size $(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE) \
+	   --partition_name vendor_boot $(INTERNAL_AVB_VENDOR_BOOT_SIGNING_ARGS) \
+	   $(BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS)
+else
+$(INSTALLED_VENDOR_BOOTIMAGE_TARGET):
+	$(call pretty,"Target vendor_boot image: $@")
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_RAMDISK_TARGET) --vendor_boot $@
+	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
+endif
+endif # BUILDING_VENDOR_BOOT_IMAGE
 
 # -----------------------------------------------------------------
 # NOTICE files
@@ -1910,11 +1972,16 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	$(hide) cat $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET) >> $@
 	$(call append-recovery-ui-properties,$(PRIVATE_RECOVERY_UI_PROPERTIES),$@)
 
-INTERNAL_RECOVERYIMAGE_ARGS := \
-	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
-	--kernel $(recovery_kernel) \
-	--ramdisk $(recovery_ramdisk)
-
+ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
+  INTERNAL_RECOVERYIMAGE_ARGS := \
+      --kernel $(recovery_kernel) --ramdisk $(recovery_ramdisk)
+ifdef GENERIC_KERNEL_CMDLINE
+  INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(GENERIC_KERNEL_CMDLINE)"
+endif
+else # INSTALLED_VENDOR_BOOTIMAGE_TARGET not defined
+  INTERNAL_RECOVERYIMAGE_ARGS := \
+      $(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
+      --kernel $(recovery_kernel) --ramdisk $(recovery_ramdisk)
 # Assumes this has already been stripped
 ifdef INTERNAL_KERNEL_CMDLINE
   INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(INTERNAL_KERNEL_CMDLINE)"
@@ -1931,13 +1998,14 @@ ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
 else
   INTERNAL_RECOVERYIMAGE_ARGS += --recovery_dtbo $(BOARD_PREBUILT_DTBOIMAGE)
 endif
-endif
+endif # BOARD_INCLUDE_RECOVERY_DTBO
 ifdef BOARD_INCLUDE_RECOVERY_ACPIO
   INTERNAL_RECOVERYIMAGE_ARGS += --recovery_acpio $(BOARD_RECOVERY_ACPIO)
 endif
 ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
   INTERNAL_RECOVERYIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
 endif
+endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET not defined
 
 # $(1): output file
 define build-recoveryimage-target
@@ -3179,6 +3247,7 @@ BOARD_AVB_ODM_ADD_HASHTREE_FOOTER_ARGS += \
 endif
 
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
+VENDOR_BOOT_FOOTER_ARGS := BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS
 DTBO_FOOTER_ARGS := BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS
 SYSTEM_FOOTER_ARGS := BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS
 VENDOR_FOOTER_ARGS := BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS
@@ -3235,6 +3304,10 @@ endef
 
 ifdef INSTALLED_BOOTIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,boot))
+endif
+
+ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
+$(eval $(call check-and-set-avb-args,vendor_boot))
 endif
 
 $(eval $(call check-and-set-avb-args,system))
@@ -3312,6 +3385,9 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_BOOT_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_BOOT_KEY_PATH) \
       --output $(1)/boot.avbpubkey)
+  $(if $(BOARD_AVB_VENDOR_BOOT_KEY_PATH),\
+    $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VENDOR_BOOT_KEY_PATH) \
+      --output $(1)/vendor_boot.avbpubkey)
   $(if $(BOARD_AVB_SYSTEM_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_SYSTEM_KEY_PATH) \
       --output $(1)/system.avbpubkey)
@@ -3399,6 +3475,7 @@ $(INSTALLED_VBMETAIMAGE_TARGET): PRIVATE_AVB_VBMETA_SIGNING_ARGS := \
 $(INSTALLED_VBMETAIMAGE_TARGET): \
 	    $(AVBTOOL) \
 	    $(INSTALLED_BOOTIMAGE_TARGET) \
+	    $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
 	    $(INSTALLED_SYSTEMIMAGE_TARGET) \
 	    $(INSTALLED_VENDORIMAGE_TARGET) \
 	    $(INSTALLED_PRODUCTIMAGE_TARGET) \
@@ -3765,6 +3842,10 @@ endif
 ifeq ($(INSTALLED_BOOTIMAGE_TARGET),)
 	$(hide) echo "no_boot=true" >> $@
 endif
+ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
+	echo "vendor_boot=true" >> $@
+	echo "vendor_boot_size=$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE)" >> $@
+endif
 ifeq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) echo "no_recovery=true" >> $@
 endif
@@ -3817,6 +3898,12 @@ ifdef BOARD_AVB_BOOT_KEY_PATH
 	$(hide) echo "avb_boot_algorithm=$(BOARD_AVB_BOOT_ALGORITHM)" >> $@
 	$(hide) echo "avb_boot_rollback_index_location=$(BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION)" >> $@
 endif # BOARD_AVB_BOOT_KEY_PATH
+	echo "avb_vendor_boot_add_hash_footer_args=$(BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS)" >> $@
+ifdef BOARD_AVB_VENDOR_BOOT_KEY_PATH
+	echo "avb_vendor_boot_key_path=$(BOARD_AVB_VENDOR_BOOT_KEY_PATH)" >> $@
+	echo "avb_vendor_boot_algorithm=$(BOARD_AVB_VENDOR_BOOT_ALGORITHM)" >> $@
+	echo "avb_vendor_boot_rollback_index_location=$(BOARD_AVB_VENDOR_BOOT_ROLLBACK_INDEX_LOCATION)" >> $@
+endif # BOARD_AVB_VENDOR_BOOT_KEY_PATH
 	$(hide) echo "avb_recovery_add_hash_footer_args=$(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)" >> $@
 ifdef BOARD_AVB_RECOVERY_KEY_PATH
 	$(hide) echo "avb_recovery_key_path=$(BOARD_AVB_RECOVERY_KEY_PATH)" >> $@
@@ -3995,6 +4082,7 @@ endif
 $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INSTALLED_RAMDISK_TARGET) \
 	    $(INSTALLED_BOOTIMAGE_TARGET) \
+	    $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
 	    $(INSTALLED_RADIOIMAGE_TARGET) \
 	    $(INSTALLED_RECOVERYIMAGE_TARGET) \
 	    $(INSTALLED_USERDATAIMAGE_TARGET) \
@@ -4047,33 +4135,37 @@ ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_RECOVERY_ROOT_OUT),$(zip_root)/$(PRIVATE_RECOVERY_OUT)/RAMDISK)
 ifdef INSTALLED_KERNEL_TARGET
-	$(hide) cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/kernel
+	cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/kernel
 endif
+ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
+	echo "$(GENERIC_KERNEL_CMDLINE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/cmdline
+else # INSTALLED_VENDOR_BOOTIMAGE_TARGET not defined
 ifdef INSTALLED_2NDBOOTLOADER_TARGET
-	$(hide) cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/second
+	cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/second
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
 ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
-	$(hide) cp $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_dtbo
+	cp $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_dtbo
 else
-	$(hide) cp $(BOARD_PREBUILT_DTBOIMAGE) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_dtbo
+	cp $(BOARD_PREBUILT_DTBOIMAGE) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_dtbo
 endif
-endif
+endif # BOARD_INCLUDE_RECOVERY_DTBO
 ifdef BOARD_INCLUDE_RECOVERY_ACPIO
-	$(hide) cp $(BOARD_RECOVERY_ACPIO) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_acpio
+	cp $(BOARD_RECOVERY_ACPIO) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_acpio
 endif
 ifdef INSTALLED_DTBIMAGE_TARGET
-	$(hide) cp $(INSTALLED_DTBIMAGE_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/dtb
+	cp $(INSTALLED_DTBIMAGE_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/dtb
 endif
 ifdef INTERNAL_KERNEL_CMDLINE
-	$(hide) echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/cmdline
+	echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/cmdline
 endif
 ifdef BOARD_KERNEL_BASE
-	$(hide) echo "$(BOARD_KERNEL_BASE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/base
+	echo "$(BOARD_KERNEL_BASE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/base
 endif
 ifdef BOARD_KERNEL_PAGESIZE
-	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/pagesize
+	echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/pagesize
 endif
+endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET not defined
 endif # INSTALLED_RECOVERYIMAGE_TARGET defined or BOARD_USES_RECOVERY_AS_BOOT is true
 	@# Components of the boot image
 	$(hide) mkdir -p $(zip_root)/BOOT
@@ -4089,25 +4181,42 @@ endif
 ifdef INSTALLED_KERNEL_TARGET
 	$(hide) cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/BOOT/kernel
 endif
+ifndef INSTALLED_VENDOR_BOOTIMAGE_TARGET
 ifdef INSTALLED_2NDBOOTLOADER_TARGET
-	$(hide) cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/BOOT/second
+	cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/BOOT/second
 endif
 ifdef INSTALLED_DTBIMAGE_TARGET
-	$(hide) cp $(INSTALLED_DTBIMAGE_TARGET) $(zip_root)/BOOT/dtb
+	cp $(INSTALLED_DTBIMAGE_TARGET) $(zip_root)/BOOT/dtb
 endif
-ifdef INTERNAL_KERNEL_CMDLINE
-	$(hide) echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/BOOT/cmdline
-endif
+	echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/BOOT/cmdline
 ifdef BOARD_KERNEL_BASE
-	$(hide) echo "$(BOARD_KERNEL_BASE)" > $(zip_root)/BOOT/base
+	echo "$(BOARD_KERNEL_BASE)" > $(zip_root)/BOOT/base
 endif
 ifdef BOARD_KERNEL_PAGESIZE
-	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/BOOT/pagesize
+	echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/BOOT/pagesize
 endif
-endif # BOARD_USES_RECOVERY_AS_BOOT
+else # INSTALLED_VENDOR_BOOTIMAGE_TARGET defined
+	echo "$(GENERIC_KERNEL_CMDLINE)" > $(zip_root)/BOOT/cmdline
+endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET defined
+endif # BOARD_USES_RECOVERY_AS_BOOT not true
 	$(hide) $(foreach t,$(INSTALLED_RADIOIMAGE_TARGET),\
 	            mkdir -p $(zip_root)/RADIO; \
 	            cp $(t) $(zip_root)/RADIO/$(notdir $(t));)
+ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
+	mkdir -p $(zip_root)/VENDOR_BOOT
+	$(call package_files-copy-root, \
+	    $(TARGET_VENDOR_RAMDISK_OUT),$(zip_root)/VENDOR_BOOT/RAMDISK)
+ifdef INSTALLED_DTBIMAGE_TARGET
+	cp $(INSTALLED_DTBIMAGE_TARGET) $(zip_root)/VENDOR_BOOT/dtb
+endif
+ifdef BOARD_KERNEL_BASE
+	echo "$(BOARD_KERNEL_BASE)" > $(zip_root)/VENDOR_BOOT/base
+endif
+ifdef BOARD_KERNEL_PAGESIZE
+	echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/VENDOR_BOOT/pagesize
+endif
+	echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/VENDOR_BOOT/vendor_cmdline
+endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET
 ifdef BUILDING_SYSTEM_IMAGE
 	@# Contents of the system image
 	$(hide) $(call package_files-copy-root, \
@@ -4259,6 +4368,9 @@ endif
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 	@# BOOT/RAMDISK exists and contains the ramdisk for recovery if using BOARD_USES_RECOVERY_AS_BOOT.
 	$(hide) $(call fs_config,$(zip_root)/BOOT/RAMDISK,) > $(zip_root)/META/boot_filesystem_config.txt
+endif
+ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
+	$(call fs_config,$(zip_root)/VENDOR_BOOT/RAMDISK,) > $(zip_root)/META/vendor_boot_filesystem_config.txt
 endif
 ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 	@# BOOT/RAMDISK also exists and contains the first stage ramdisk if not using BOARD_BUILD_SYSTEM_ROOT_IMAGE.
