@@ -382,6 +382,30 @@
       "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e982344d_da641edf",
+        "filename": "target/board/mainline_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-09-27T04:59:13Z",
+      "side": 1,
+      "message": "yeah, for example..\n\nmyproduct.mk:\n$(inherit-product non-updatable-apex.mk)\n$(inherit-product base.mk)  # order is important here\n\nnon-updatable-apex.mk:\nTARGET_FLATTEN_APEX :\u003d true\nPRODUCT_PROPERTY_OVERRIDES :\u003d ro.apex.updatable\u003dfalse\n\nbase.mk:\n$(inherit-product updatable-apex.mk)\n\nupdatable-apex.mk:\nTARGET_FLATTEN_APEX :\u003d false\nPRODUCT_PROPERTY_OVERRIDES :\u003d ro.apex.updatable\u003dtrue\n\nThen\nTARGET_FLATTEN_APEX is true for myproduct and false for base\nvendor/build.prop will have ro.apex.updatable\u003dfalse for myproduct and ro.apex.updatable\u003dtrue for base",
+      "parentUuid": "e72e2621_5b1aa7d1",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 28
+      },
+      "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
