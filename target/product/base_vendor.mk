@@ -43,6 +43,7 @@ PRODUCT_PACKAGES += \
     android.hardware.cas@1.1-service \
     android.hardware.configstore@1.1-service \
     android.hardware.media.omx@1.0-service \
+    boringssl_self_test_vendor \
     dumpsys_vendor \
     fs_config_files_nonsystem \
     fs_config_dirs_nonsystem \
