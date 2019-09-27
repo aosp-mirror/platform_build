@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4d93c1f2_2328ed63",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1983,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-27T17:27:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "02889e2b_afb1c826",
+      "range": {
+        "startLine": 1983,
+        "startChar": 1,
+        "endLine": 1983,
+        "endChar": 57
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a17801fd_afe7784b",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -36,6 +60,30 @@
       "writtenOn": "2019-09-27T06:28:01Z",
       "side": 1,
       "message": "nit: It seems better to keep guarding the line with `ifdef GENERIC_KERNEL_CMDLINE`, so it has consistent logic as L1988, and one doesn\u0027t need to worry about the behavior when passing `--cmdline \"\"` to mkbootimg.\n\nSame below (e.g. L4187, L4195).",
+      "range": {
+        "startLine": 4137,
+        "startChar": 1,
+        "endLine": 4137,
+        "endChar": 33
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c915d3b4_03ad7825",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 4137,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-27T17:27:21Z",
+      "side": 1,
+      "message": "It seemed odd to me for the file to disappear entirely if the command line is empty... someone might think the file had contents but was deleted. I thought it\u0027d be more clear if it is always present? Mkbootimg should tolerate an empty cmdline (as long as it is quoted).",
+      "parentUuid": "a17801fd_afe7784b",
       "range": {
         "startLine": 4137,
         "startChar": 1,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "3e80188a_8c39d5e7",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 4183,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-27T17:27:21Z",
+      "side": 1,
+      "message": "This section is ifndef INSTALLED_VENDOR_BOOTIMAGE_TARGET, so 2nd bootloader target should be included. Below when INSTALLED_VENDOR_BOOTIMAGE_TARGET is defined, 2nd bootloader target is not included. I think this is consistent since INSTALLED_VENDOR_BOOTIMAGE_TARGET will only be defined when recovery is boot.",
+      "parentUuid": "7a946ab1_79b08ca7",
+      "range": {
+        "startLine": 4181,
+        "startChar": 0,
+        "endLine": 4183,
+        "endChar": 5
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bd260f13_b4c7fbae",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -91,6 +163,30 @@
       "revId": "34d320ddcfc048da86934c35149508772fa305d0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48a419bb_b1c49f33",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 4214,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-27T17:27:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd260f13_b4c7fbae",
+      "range": {
+        "startLine": 4214,
+        "startChar": 61,
+        "endLine": 4214,
+        "endChar": 68
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "e0083a3c_3379e703",
+        "filename": "core/board_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-27T17:27:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0d291e55_2bc4d0ca",
+      "range": {
+        "startLine": 330,
+        "startChar": 0,
+        "endLine": 330,
+        "endChar": 5
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c98c2fb6_e9fd6d51",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 11
@@ -137,6 +257,30 @@
       "revId": "34d320ddcfc048da86934c35149508772fa305d0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c4a9303_ebb0cd0a",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-27T17:27:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c98c2fb6_e9fd6d51",
+      "range": {
+        "startLine": 738,
+        "startChar": 2,
+        "endLine": 738,
+        "endChar": 26
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "9d62c22d_b5cf6687",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-27T17:27:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "66149d9d_0ae0048b",
+      "range": {
+        "startLine": 745,
+        "startChar": 75,
+        "endLine": 745,
+        "endChar": 94
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9bd09698_95e65d83",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 11
@@ -183,6 +351,30 @@
       "revId": "34d320ddcfc048da86934c35149508772fa305d0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c76d016_a9a7735c",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 999,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-27T17:27:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9bd09698_95e65d83",
+      "range": {
+        "startLine": 994,
+        "startChar": 2,
+        "endLine": 999,
+        "endChar": 43
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "aa29ebbd_a03758b9",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 1002,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-27T17:27:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a1be55df_72e41e95",
+      "range": {
+        "startLine": 1002,
+        "startChar": 19,
+        "endLine": 1002,
+        "endChar": 54
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "70f1db20_338c0617",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 11
@@ -229,6 +445,30 @@
       "revId": "34d320ddcfc048da86934c35149508772fa305d0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7106435a_e2a74df0",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-09-27T17:27:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "70f1db20_338c0617",
+      "range": {
+        "startLine": 1029,
+        "startChar": 21,
+        "endLine": 1029,
+        "endChar": 23
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
