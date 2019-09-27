@@ -310,6 +310,30 @@
       "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09bcb4e4_672d7f9b",
+        "filename": "target/board/mainline_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2019-09-27T04:05:54Z",
+      "side": 1,
+      "message": "If BoardConfigMainlineCommon were to use updatable_apex.mk then GSI targets would have to override TARGET_FLATTEN_APEX to \"true\" and \"undo\" the sysprop (PRODUCT_PROPERTY_OVERRIDES :\u003d ro.apex.updatable\u003dtrue) added by updatable_apex.\n\nWhat we were thinking is that BoardConfigMainlineCommon (and other boards) can use TARGET_FLATTEN_APEX to decide apex flatness (without manually setting ro.apex.updatable\u003dtrue), and let the build system add the sysprop automatically",
+      "parentUuid": "92ab7fd7_32c0903a",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 28
+      },
+      "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
