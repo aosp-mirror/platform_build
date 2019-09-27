@@ -334,6 +334,30 @@
       "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfc0d15b_21a47162",
+        "filename": "target/board/mainline_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-09-27T04:20:24Z",
+      "side": 1,
+      "message": "Why such override and undo are considered bad? You can abstract that by having\n\nnon_updatable_apex.mk:\nPRODUCT_PROPERTY_OVERRIDES :\u003d ro.apex.updatable\u003dfalse\nTARGET_FLATTEN_APEX :\u003d true\n\nand let GSI to inherit from it",
+      "parentUuid": "09bcb4e4_672d7f9b",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 28
+      },
+      "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
