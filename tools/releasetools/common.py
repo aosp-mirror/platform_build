@@ -100,7 +100,7 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # that system_other is not in the list because we don't want to include its
 # descriptor into vbmeta.img.
 AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'recovery', 'system',
-                  'system_ext', 'vendor')
+                  'system_ext', 'vendor', 'vendor_boot')
 
 # Chained VBMeta partitions.
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
@@ -741,6 +741,25 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
   RunAndCheckOutput(cmd)
 
 
+def _MakeRamdisk(sourcedir, fs_config_file=None):
+  ramdisk_img = tempfile.NamedTemporaryFile()
+
+  if fs_config_file is not None and os.access(fs_config_file, os.F_OK):
+    cmd = ["mkbootfs", "-f", fs_config_file,
+           os.path.join(sourcedir, "RAMDISK")]
+  else:
+    cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
+  p1 = Run(cmd, stdout=subprocess.PIPE)
+  p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
+
+  p2.wait()
+  p1.wait()
+  assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (sourcedir,)
+  assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (sourcedir,)
+
+  return ramdisk_img
+
+
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
                         has_ramdisk=False, two_step_image=False):
   """Build a bootable image from the specified sourcedir.
@@ -754,24 +773,6 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   for building the requested image.
   """
 
-  def make_ramdisk():
-    ramdisk_img = tempfile.NamedTemporaryFile()
-
-    if os.access(fs_config_file, os.F_OK):
-      cmd = ["mkbootfs", "-f", fs_config_file,
-             os.path.join(sourcedir, "RAMDISK")]
-    else:
-      cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
-    p1 = Run(cmd, stdout=subprocess.PIPE)
-    p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
-
-    p2.wait()
-    p1.wait()
-    assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (sourcedir,)
-    assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (sourcedir,)
-
-    return ramdisk_img
-
   if not os.access(os.path.join(sourcedir, "kernel"), os.F_OK):
     return None
 
@@ -784,7 +785,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   img = tempfile.NamedTemporaryFile()
 
   if has_ramdisk:
-    ramdisk_img = make_ramdisk()
+    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
@@ -941,6 +942,105 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   data = _BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
                              os.path.join(unpack_dir, fs_config),
                              info_dict, has_ramdisk, two_step_image)
+  if data:
+    return File(name, data)
+  return None
+
+
+def _BuildVendorBootImage(sourcedir, info_dict=None):
+  """Build a vendor boot image from the specified sourcedir.
+
+  Take a ramdisk, dtb, and vendor_cmdline from the input (in 'sourcedir'), and
+  turn them into a vendor boot image.
+
+  Return the image data, or None if sourcedir does not appear to contains files
+  for building the requested image.
+  """
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  img = tempfile.NamedTemporaryFile()
+
+  ramdisk_img = _MakeRamdisk(sourcedir)
+
+  # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
+  mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
+
+  cmd = [mkbootimg]
+
+  fn = os.path.join(sourcedir, "dtb")
+  if os.access(fn, os.F_OK):
+    cmd.append("--dtb")
+    cmd.append(fn)
+
+  fn = os.path.join(sourcedir, "vendor_cmdline")
+  if os.access(fn, os.F_OK):
+    cmd.append("--vendor_cmdline")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  fn = os.path.join(sourcedir, "base")
+  if os.access(fn, os.F_OK):
+    cmd.append("--base")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  fn = os.path.join(sourcedir, "pagesize")
+  if os.access(fn, os.F_OK):
+    cmd.append("--pagesize")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  args = info_dict.get("mkbootimg_args")
+  if args and args.strip():
+    cmd.extend(shlex.split(args))
+
+  args = info_dict.get("mkbootimg_version_args")
+  if args and args.strip():
+    cmd.extend(shlex.split(args))
+
+  cmd.extend(["--vendor_ramdisk", ramdisk_img.name])
+  cmd.extend(["--vendor_boot", img.name])
+
+  RunAndCheckOutput(cmd)
+
+  # AVB: if enabled, calculate and add hash.
+  if info_dict.get("avb_enable") == "true":
+    avbtool = info_dict["avb_avbtool"]
+    part_size = info_dict["vendor_boot_size"]
+    cmd = [avbtool, "add_hash_footer", "--image", img.name,
+           "--partition_size", str(part_size), "--partition_name vendor_boot"]
+    AppendAVBSigningArgs(cmd, "vendor_boot")
+    args = info_dict.get("avb_vendor_boot_add_hash_footer_args")
+    if args and args.strip():
+      cmd.extend(shlex.split(args))
+    RunAndCheckOutput(cmd)
+
+  img.seek(os.SEEK_SET, 0)
+  data = img.read()
+
+  ramdisk_img.close()
+  img.close()
+
+  return data
+
+
+def GetVendorBootImage(name, prebuilt_name, unpack_dir, tree_subdir,
+                       info_dict=None):
+  """Return a File object with the desired vendor boot image.
+
+  Look for it under 'unpack_dir'/IMAGES, otherwise construct it from
+  the source files in 'unpack_dir'/'tree_subdir'."""
+
+  prebuilt_path = os.path.join(unpack_dir, "IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    logger.info("using prebuilt %s from IMAGES...", prebuilt_name)
+    return File.FromLocalFile(name, prebuilt_path)
+
+  logger.info("building image from target_files %s...", tree_subdir)
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  data = _BuildVendorBootImage(os.path.join(unpack_dir, tree_subdir), info_dict)
   if data:
     return File(name, data)
   return None
