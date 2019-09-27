@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "02889e2b_afb1c826",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1983,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-27T06:28:01Z",
+      "side": 1,
+      "message": "Different behavior than L4140, when both of INSTALLED_2NDBOOTLOADER_TARGET and INSTALLED_VENDOR_BOOTIMAGE_TARGET are defined. The code here will pick up the `--second` flag; but the one at L4140 won\u0027t.",
+      "range": {
+        "startLine": 1983,
+        "startChar": 1,
+        "endLine": 1983,
+        "endChar": 57
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a17801fd_afe7784b",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 4137,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-27T06:28:01Z",
+      "side": 1,
+      "message": "nit: It seems better to keep guarding the line with `ifdef GENERIC_KERNEL_CMDLINE`, so it has consistent logic as L1988, and one doesn\u0027t need to worry about the behavior when passing `--cmdline \"\"` to mkbootimg.\n\nSame below (e.g. L4187, L4195).",
+      "range": {
+        "startLine": 4137,
+        "startChar": 1,
+        "endLine": 4137,
+        "endChar": 33
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a946ab1_79b08ca7",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 4183,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-27T06:28:01Z",
+      "side": 1,
+      "message": "Similar issue as L1983. The behavior will be different from the rules at L1039, when INSTALLED_VENDOR_BOOTIMAGE_TARGET and INSTALLED_2NDBOOTLOADER_TARGET are both defined.",
+      "range": {
+        "startLine": 4181,
+        "startChar": 0,
+        "endLine": 4183,
+        "endChar": 5
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd260f13_b4c7fbae",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 4214,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-27T06:28:01Z",
+      "side": 1,
+      "message": "Use `vendor_cmdline` (along with the matching change to https://android-review.googlesource.com/c/platform/build/+/1110614/11/tools/releasetools/common.py#969)? This will signify the difference between the one here and the `cmdline` for BOOT.",
+      "range": {
+        "startLine": 4214,
+        "startChar": 61,
+        "endLine": 4214,
+        "endChar": 68
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d291e55_2bc4d0ca",
+        "filename": "core/board_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-27T06:28:01Z",
+      "side": 1,
+      "message": "I think we should add a check to fail loudly upon seeing vendor_boot + standalone recovery, as the current rules in Makefile are not designed to handle such a case (per comments in PS9).\n\nMay move this block after BUILDING_RECOVERY_IMAGE, then\n\nifdef BUILDING_RECOVERY_IMAGE\n  ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)\n    $(error ...)\n  endif\nendif",
+      "range": {
+        "startLine": 330,
+        "startChar": 0,
+        "endLine": 330,
+        "endChar": 5
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c98c2fb6_e9fd6d51",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-27T06:28:01Z",
+      "side": 1,
+      "message": "delete",
+      "range": {
+        "startLine": 738,
+        "startChar": 2,
+        "endLine": 738,
+        "endChar": 26
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66149d9d_0ae0048b",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-27T06:28:01Z",
+      "side": 1,
+      "message": "nit: wrap (80-char)",
+      "range": {
+        "startLine": 745,
+        "startChar": 75,
+        "endLine": 745,
+        "endChar": 94
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bd09698_95e65d83",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 999,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-27T06:28:01Z",
+      "side": 1,
+      "message": "cmd.extend([\"--vendor_boot\", img.name])\n\n(\"vboot\" is another Verified Boot implementation, which doesn\u0027t apply here.)",
+      "range": {
+        "startLine": 994,
+        "startChar": 2,
+        "endLine": 999,
+        "endChar": 43
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1be55df_72e41e95",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 1002,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-27T06:28:01Z",
+      "side": 1,
+      "message": "\"vendor_boot\"\n\nand move the line into the block at L1008 (or kill this variable)",
+      "range": {
+        "startLine": 1002,
+        "startChar": 19,
+        "endLine": 1002,
+        "endChar": 54
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70f1db20_338c0617",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-09-27T06:28:01Z",
+      "side": 1,
+      "message": "nit: indentation",
+      "range": {
+        "startLine": 1029,
+        "startChar": 21,
+        "endLine": 1029,
+        "endChar": 23
+      },
+      "revId": "34d320ddcfc048da86934c35149508772fa305d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
