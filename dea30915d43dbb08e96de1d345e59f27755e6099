@@ -526,6 +526,30 @@
       "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54c9a693_5a765af6",
+        "filename": "target/board/mainline_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-09-27T11:31:20Z",
+      "side": 1,
+      "message": "\u003e We seldom do that\n\nPlenty of examples (in e.g. core/main.mk). In general I\u0027d agree with you we want the core to be more generic, just in this case it seems to keep causing pain..",
+      "parentUuid": "090c75d9_60be7fa8",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 28
+      },
+      "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
