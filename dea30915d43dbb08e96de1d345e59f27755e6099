@@ -478,6 +478,30 @@
       "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2faf7705_1829479b",
+        "filename": "target/board/mainline_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-09-27T09:37:17Z",
+      "side": 1,
+      "message": "This patch is to setup a target building a golden binary for CSI x86.\nThe target requires TARGET_FLATTEN_APEX, and GSI will align CSI.\n\nMaybe we could leave the \"TODO\" here (which is cloned from mainline_arm64/BoardConfig.mk),\nand discuss the solution in a bug separately?",
+      "parentUuid": "10656541_aea1167b",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 28
+      },
+      "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
