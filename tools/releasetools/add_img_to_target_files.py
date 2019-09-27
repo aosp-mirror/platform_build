@@ -673,6 +673,7 @@ def AddImagesToTargetFiles(filename):
 
   has_recovery = OPTIONS.info_dict.get("no_recovery") != "true"
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
+  has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
 
   # {vendor,odm,product,system_ext}.img are unlike system.img or
   # system_other.img. Because it could be built from source, or dropped into
@@ -733,6 +734,19 @@ def AddImagesToTargetFiles(filename):
         boot_image.WriteToDir(OPTIONS.input_tmp)
         if output_zip:
           boot_image.AddToZip(output_zip)
+
+  if has_vendor_boot:
+    banner("vendor_boot")
+    vendor_boot_image = common.GetVendorBootImage(
+        "IMAGES/vendor_boot.img", "vendor_boot.img", OPTIONS.input_tmp,
+        "VENDOR_BOOT")
+    if vendor_boot_image:
+      partitions['vendor_boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                               "vendor_boot.img")
+      if not os.path.exists(partitions['vendor_boot']):
+        vendor_boot_image.WriteToDir(OPTIONS.input_tmp)
+        if output_zip:
+          vendor_boot_image.AddToZip(output_zip)
 
   recovery_image = None
   if has_recovery:
