@@ -358,6 +358,30 @@
       "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e72e2621_5b1aa7d1",
+        "filename": "target/board/mainline_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2019-09-27T04:37:43Z",
+      "side": 1,
+      "message": "Because BoardConfigGsiCommon includes BoardConfigMainlineCommon, so if we add \"TARGET_FLATTEN_APEX :\u003d true\" and \"PRODUCT_PROPERTY_OVERRIDES :\u003d ro.apex.updatable\u003dtrue\" to BoardConfigMainlineCommon, we would have to somehow \"undo\" the \"ro.apex.updatable\u003dtrue\" in BoardConfigGsiCommon. As far as I know we don\u0027t have a way to do that? (Please correct me if there actually is one)",
+      "parentUuid": "cfc0d15b_21a47162",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 28
+      },
+      "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
