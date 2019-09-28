@@ -33,7 +33,6 @@ PRODUCT_PACKAGES += \
     appops \
     app_process \
     appwidget \
-    ashmemd \
     atrace \
     audioserver \
     BackupRestoreConfirmation \
@@ -121,7 +120,6 @@ PRODUCT_PACKAGES += \
     libandroid_runtime \
     libandroid_servers \
     libartpalette-system \
-    libashmemd_client \
     libaudioeffect_jni \
     libbinder \
     libbinder_ndk \
@@ -248,6 +246,7 @@ PRODUCT_PACKAGES += \
     snapshotctl \
     SoundPicker \
     statsd \
+    statsd-service \
     storaged \
     surfaceflinger \
     svc \
@@ -323,6 +322,7 @@ PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
     framework \
     ext \
+    telephony-common \
     voip-common \
     ims-common \
     updatable-media

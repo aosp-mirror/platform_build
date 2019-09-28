@@ -43,6 +43,7 @@ PRODUCT_PACKAGES += \
     android.hardware.cas@1.1-service \
     android.hardware.configstore@1.1-service \
     android.hardware.media.omx@1.0-service \
+    boringssl_self_test_vendor \
     dumpsys_vendor \
     fs_config_files_nonsystem \
     fs_config_dirs_nonsystem \
@@ -51,7 +52,6 @@ PRODUCT_PACKAGES += \
     group_system_ext \
     group_vendor \
     init_vendor \
-    libashmemd_hidl_client \
     libbundlewrapper \
     libclearkeycasplugin \
     libdownmix \
