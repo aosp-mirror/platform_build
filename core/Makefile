@@ -1733,8 +1733,10 @@ recovery_initrc := $(call include-path-for, recovery)/etc/init.rc
 recovery_sepolicy := \
     $(TARGET_RECOVERY_ROOT_OUT)/sepolicy \
     $(TARGET_RECOVERY_ROOT_OUT)/plat_file_contexts \
-    $(TARGET_RECOVERY_ROOT_OUT)/vendor_file_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/plat_property_contexts \
+    $(TARGET_RECOVERY_ROOT_OUT)/system_ext_file_contexts \
+    $(TARGET_RECOVERY_ROOT_OUT)/system_ext_property_contexts \
+    $(TARGET_RECOVERY_ROOT_OUT)/vendor_file_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/vendor_property_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/odm_file_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/odm_property_contexts \
