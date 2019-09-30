@@ -16,7 +16,6 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
-    adbd \
     adbd_system_binaries \
     am \
     android.hidl.allocator@1.0-service \
@@ -48,6 +47,7 @@ PRODUCT_PACKAGES += \
     cgroups.json \
     charger \
     cmd \
+    com.android.adbd \
     com.android.apex.cts.shim.v1_prebuilt \
     com.android.conscrypt \
     com.android.i18n \
