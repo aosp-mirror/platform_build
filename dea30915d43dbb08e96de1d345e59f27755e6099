@@ -574,6 +574,30 @@
       "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "35e3f984_80b908dc",
+        "filename": "target/board/mainline_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2019-09-30T11:38:10Z",
+      "side": 1,
+      "message": "\u003e Yo, could you try the non-updatable-apex.mk way? Sorry that I seem to be preventing you from making progress. If so and if you are in hurry, I am also fine with you submitting this first and then work on the suggested method in a follow-up CL.\n\nNo worries Jiyong, this CL is not in a hurry, and I also need to figure out if we actually need a x86 or x86_arm board (b/141657175#comment5) before submitting.\n\nFor the [non-]updatable-apex.mk part, I agree with Anton \n\n\u003e the semantics of which of the two entries in PRODUCT_PROPERTY_OVERRIDES will have an effect is not well specified.\n\nand I feel that relying on the order of inheritance isn\u0027t a \"healthy\" pattern.\n\nI propose to not change BoardConfigMainlineCommon and only add \"$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)\" to mainline_system_x86.mk (which is the product makefile).",
+      "parentUuid": "b43ef939_c4168968",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 28
+      },
+      "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
