@@ -550,6 +550,30 @@
       "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b43ef939_c4168968",
+        "filename": "target/board/mainline_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-09-30T01:32:13Z",
+      "side": 1,
+      "message": "Most of the ADDITIONAL_BUILD_PROPERTIES in core/main.mk are conditionally set by TARGET_BUILD_VARIANT, which is not a product-specific variable, but a generic variable that affects the entire builds. TARGET_FLATTEN_APEX however is a variable that is very specific to a domain and a product.\n\nYo, could you try the non-updatable-apex.mk way? Sorry that I seem to be preventing you from making progress. If so and if you are in hurry, I am also fine with you submitting this first and then work on the suggested method in a follow-up CL.",
+      "parentUuid": "54c9a693_5a765af6",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 28
+      },
+      "revId": "dea30915d43dbb08e96de1d345e59f27755e6099",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
