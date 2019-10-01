@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "225249ed_5931979a",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-10-01T00:33:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "099791ee_cbbd467d",
+      "revId": "cc38f3982f0dbb6fa18902ede7e78af7702b565f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab3d3f1_bc231ee2",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 7
