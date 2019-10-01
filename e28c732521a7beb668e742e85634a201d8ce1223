@@ -22,6 +22,30 @@
       "revId": "e28c732521a7beb668e742e85634a201d8ce1223",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14389b89_f4fc8815",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1334152
+      },
+      "writtenOn": "2019-10-01T09:37:13Z",
+      "side": 1,
+      "message": "Oh, good catch, thanks!\n\nI\u0027ll make a note on the bug to ensure we add one.\n\nAlso, does that mean we should add this somewhere else as well as base_system?",
+      "parentUuid": "d2eae088_3d8e0269",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 8
+      },
+      "revId": "e28c732521a7beb668e742e85634a201d8ce1223",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
