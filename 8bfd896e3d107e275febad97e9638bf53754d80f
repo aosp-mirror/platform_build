@@ -70,6 +70,30 @@
       "revId": "8bfd896e3d107e275febad97e9638bf53754d80f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "997bb23e_e2362345",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 4187,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-10-02T23:42:46Z",
+      "side": 0,
+      "message": "It would be a special config other than framework-only build, e.g. when we build boot + recovery + system, but without vendor. It\u0027s essentially what we do for aosp_ builds for Pixel targets. But for the particular case here, we\u0027ll no longer hit this path since Pixels don\u0027t have a standalone recovery image. So seems fine to keep what we have in the latest PS.",
+      "parentUuid": "38cfd762_f52b06c5",
+      "range": {
+        "startLine": 4187,
+        "startChar": 6,
+        "endLine": 4187,
+        "endChar": 27
+      },
+      "revId": "8bfd896e3d107e275febad97e9638bf53754d80f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
