@@ -46,6 +46,30 @@
       "revId": "8bfd896e3d107e275febad97e9638bf53754d80f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38cfd762_f52b06c5",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 4187,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-10-02T23:29:58Z",
+      "side": 0,
+      "message": "Actually, I think this is okay as INSTALLED_RECOVERYIMAGE_TARGET is non-blank only if we\u0027re building a recovery image. If we\u0027re doing a framework-only build (i.e., the system-ish partitions), INSTALLED_RECOVERYIMAGE_TARGET would be blank.",
+      "parentUuid": "a7429464_bb7e3b79",
+      "range": {
+        "startLine": 4187,
+        "startChar": 6,
+        "endLine": 4187,
+        "endChar": 27
+      },
+      "revId": "8bfd896e3d107e275febad97e9638bf53754d80f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
