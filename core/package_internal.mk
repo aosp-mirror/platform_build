@@ -99,7 +99,7 @@ include $(BUILD_SYSTEM)/support_libraries.mk
 
 # Determine whether auto-RRO is enabled for this package.
 enforce_rro_enabled :=
-ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
+ifneq (,$(filter *, $(PRODUCT_ENFORCE_RRO_TARGETS)))
   # * means all system APKs, so enable conditionally based on module path.
 
   # Note that base_rules.mk has not yet been included, so it's likely that only
