@@ -95,16 +95,8 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     dalvik.vm.minidebuginfo=true \
     dalvik.vm.dex2oat-minidebuginfo=true
 
-# Enable iorapd by default
+# Disable iorapd by default
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.iorapd.enable=true
-
-# Enable iorapd prefetching by default
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    iorapd.readahead.enable=true
-
-# Disable Camera Pinning by default
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    pinner.pin_camera=false
 
 PRODUCT_USES_DEFAULT_ART_CONFIG := true
