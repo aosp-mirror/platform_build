@@ -43,8 +43,6 @@ VNDK-SP: libcutils.so
 VNDK-SP: libhardware.so
 VNDK-SP: libhidlbase.so
 VNDK-SP: libhidlmemory.so
-VNDK-SP: libhidltransport.so
-VNDK-SP: libhwbinder.so
 VNDK-SP: libion.so
 VNDK-SP: libjsoncpp.so
 VNDK-SP: liblzma.so
