@@ -172,8 +172,6 @@ PRODUCT_PACKAGES += \
     libspeexresampler \
     libsqlite \
     libstagefright \
-    libstagefright_amrnb_common \
-    libstagefright_enc_common \
     libstagefright_foundation \
     libstagefright_omx \
     libstdc++ \
