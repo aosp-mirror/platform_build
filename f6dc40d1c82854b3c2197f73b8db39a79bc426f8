@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5f3281b_2a990d77",
+        "filename": "target/product/base_vendor.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-10-02T19:54:31Z",
+      "side": 1,
+      "message": "nit: mention that the packages will be installed to \"vendor\" (as we also have modules to be installed into recovery in this file).",
+      "range": {
+        "startLine": 78,
+        "startChar": 43,
+        "endLine": 78,
+        "endChar": 44
+      },
+      "revId": "f6dc40d1c82854b3c2197f73b8db39a79bc426f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b19d6c9_90205ade",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-10-02T19:54:31Z",
+      "side": 1,
+      "message": "nit: wrap (80-char), or run `pylint --rcfile\u003dpylintrc add_img_to_target_files.py` (while under build/make/tools/releasetools)",
+      "range": {
+        "startLine": 168,
+        "startChar": 2,
+        "endLine": 168,
+        "endChar": 84
+      },
+      "revId": "f6dc40d1c82854b3c2197f73b8db39a79bc426f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19ad031c_de02bca3",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 2569,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-10-02T19:54:31Z",
+      "side": 1,
+      "message": "nit: use \"/vendor\" (here and below)?\n\nAlso it\u0027d be helpful to put a comment that notes the symlink created by init.rc (from /vendor to /system/vendor)",
+      "range": {
+        "startLine": 2569,
+        "startChar": 30,
+        "endLine": 2569,
+        "endChar": 44
+      },
+      "revId": "f6dc40d1c82854b3c2197f73b8db39a79bc426f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
