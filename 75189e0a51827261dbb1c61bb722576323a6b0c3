@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae0c9fb7_26bce748",
+        "filename": "target/board/mainline_x86/BoardConfig.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-10-03T23:46:08Z",
+      "side": 1,
+      "message": "Here, too.",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 0
+      },
+      "revId": "75189e0a51827261dbb1c61bb722576323a6b0c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84da6c62_9161964b",
+        "filename": "target/board/mainline_x86_arm/BoardConfig.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-10-03T23:46:08Z",
+      "side": 1,
+      "message": "Are these required?\nmainline targets will not build either vendor or product image.\nIf it is just for the reference purpose, we must have \"BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE :\u003d ext4\" as well because BoardConfigMainlineCommon.mk defines \"TARGET_COPY_OUT_SYSTEM_EXT :\u003d system_ext\" in it.",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 43
+      },
+      "revId": "75189e0a51827261dbb1c61bb722576323a6b0c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
