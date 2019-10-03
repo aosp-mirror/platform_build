@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f2947971_fe0945b3",
+        "filename": "target/product/base_vendor.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-10-03T03:51:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f5f3281b_2a990d77",
+      "range": {
+        "startLine": 78,
+        "startChar": 43,
+        "endLine": 78,
+        "endChar": 44
+      },
+      "revId": "f6dc40d1c82854b3c2197f73b8db39a79bc426f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b19d6c9_90205ade",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 14
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "a11fac45_19fadd9b",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-10-03T03:51:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b19d6c9_90205ade",
+      "range": {
+        "startLine": 168,
+        "startChar": 2,
+        "endLine": 168,
+        "endChar": 84
+      },
+      "revId": "f6dc40d1c82854b3c2197f73b8db39a79bc426f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "19ad031c_de02bca3",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 14
@@ -68,6 +116,30 @@
       "revId": "f6dc40d1c82854b3c2197f73b8db39a79bc426f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c2f0227_90090d51",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 2569,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-10-03T03:51:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "19ad031c_de02bca3",
+      "range": {
+        "startLine": 2569,
+        "startChar": 30,
+        "endLine": 2569,
+        "endChar": 44
+      },
+      "revId": "f6dc40d1c82854b3c2197f73b8db39a79bc426f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

@@ -94,6 +94,30 @@
       "revId": "8bfd896e3d107e275febad97e9638bf53754d80f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce697432_7c611142",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 4187,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-10-03T03:51:45Z",
+      "side": 0,
+      "message": "That would be for the non-updatable recovery case, right?",
+      "parentUuid": "997bb23e_e2362345",
+      "range": {
+        "startLine": 4187,
+        "startChar": 6,
+        "endLine": 4187,
+        "endChar": 27
+      },
+      "revId": "8bfd896e3d107e275febad97e9638bf53754d80f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
