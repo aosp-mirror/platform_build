@@ -118,6 +118,30 @@
       "revId": "8bfd896e3d107e275febad97e9638bf53754d80f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a61efa1_4b62f7c4",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 4187,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-10-03T04:51:32Z",
+      "side": 0,
+      "message": "Yes, it\u0027s a case that shouldn\u0027t have an entry like VENDOR/recovery-from-boot.p in target_files, but I suspect the current CL would do that.",
+      "parentUuid": "ce697432_7c611142",
+      "range": {
+        "startLine": 4187,
+        "startChar": 6,
+        "endLine": 4187,
+        "endChar": 27
+      },
+      "revId": "8bfd896e3d107e275febad97e9638bf53754d80f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
