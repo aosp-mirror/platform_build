@@ -508,8 +508,16 @@ endif
 # APEXes are by default flattened, i.e. non-updatable.
 # It can be unflattened (and updatable) by inheriting from
 # updatable_apex.mk
-ifeq (,$(TARGET_FLATTEN_APEX))
-TARGET_FLATTEN_APEX := true
+#
+# APEX flattening can also be forcibly enabled (resp. disabled) by
+# setting OVERRIDE_TARGET_FLATTEN_APEX to true (resp. false), e.g. by
+# setting the OVERRIDE_TARGET_FLATTEN_APEX environment variable.
+ifdef OVERRIDE_TARGET_FLATTEN_APEX
+  TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
+else
+  ifeq (,$(TARGET_FLATTEN_APEX))
+    TARGET_FLATTEN_APEX := true
+  endif
 endif
 
 ifeq (,$(TARGET_BUILD_APPS))
