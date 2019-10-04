@@ -38,6 +38,7 @@ PRODUCT_PACKAGES += \
     bcc \
     blank_screen \
     blkid \
+    blobstore-service \
     bmgr \
     bootanimation \
     bootstat \
