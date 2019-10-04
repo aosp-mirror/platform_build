@@ -93,6 +93,30 @@
       "revId": "75189e0a51827261dbb1c61bb722576323a6b0c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1fe30109_2ccfc610",
+        "filename": "target/board/mainline_x86_arm/BoardConfig.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-10-04T04:18:17Z",
+      "side": 1,
+      "message": "Got it. It is because of the code here: https://cs.corp.google.com/android/build/make/core/main.mk?rcl\u003d5862a0fb8a0404585f785920e313baa29e1ec5ca\u0026l\u003d148\nOnly BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE has meaning but not for BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE, does it?\n\nRegardless of this, my concern is that targets that inherits BoardConfigMainlineCommon.mk usually do not define BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE by mistake (ag/9486581) that causes omitting building system_ext.img while the target out directory for system_ext is /system_ext. As a reference target, can we add \"BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE :\u003d ext4\" to mainline target as well?",
+      "parentUuid": "9a108afe_cb88441e",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 43
+      },
+      "revId": "75189e0a51827261dbb1c61bb722576323a6b0c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
