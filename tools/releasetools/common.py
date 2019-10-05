@@ -393,37 +393,8 @@ def LoadInfoDict(input_file, repacking=False):
   makeint("boot_size")
   makeint("fstab_version")
 
-  # We changed recovery.fstab path in Q, from ../RAMDISK/etc/recovery.fstab to
-  # ../RAMDISK/system/etc/recovery.fstab. LoadInfoDict() has to handle both
-  # cases, since it may load the info_dict from an old build (e.g. when
-  # generating incremental OTAs from that build).
-  system_root_image = d.get("system_root_image") == "true"
-  if d.get("no_recovery") != "true":
-    recovery_fstab_path = "RECOVERY/RAMDISK/system/etc/recovery.fstab"
-    if isinstance(input_file, zipfile.ZipFile):
-      if recovery_fstab_path not in input_file.namelist():
-        recovery_fstab_path = "RECOVERY/RAMDISK/etc/recovery.fstab"
-    else:
-      path = os.path.join(input_file, *recovery_fstab_path.split("/"))
-      if not os.path.exists(path):
-        recovery_fstab_path = "RECOVERY/RAMDISK/etc/recovery.fstab"
-    d["fstab"] = LoadRecoveryFSTab(
-        read_helper, d["fstab_version"], recovery_fstab_path, system_root_image)
-
-  elif d.get("recovery_as_boot") == "true":
-    recovery_fstab_path = "BOOT/RAMDISK/system/etc/recovery.fstab"
-    if isinstance(input_file, zipfile.ZipFile):
-      if recovery_fstab_path not in input_file.namelist():
-        recovery_fstab_path = "BOOT/RAMDISK/etc/recovery.fstab"
-    else:
-      path = os.path.join(input_file, *recovery_fstab_path.split("/"))
-      if not os.path.exists(path):
-        recovery_fstab_path = "BOOT/RAMDISK/etc/recovery.fstab"
-    d["fstab"] = LoadRecoveryFSTab(
-        read_helper, d["fstab_version"], recovery_fstab_path, system_root_image)
-
-  else:
-    d["fstab"] = None
+  # Load recovery fstab if applicable.
+  d["fstab"] = _FindAndLoadRecoveryFstab(d, input_file, read_helper)
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
@@ -549,6 +520,47 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
   return d
 
 
+def _FindAndLoadRecoveryFstab(info_dict, input_file, read_helper):
+  """Finds the path to recovery fstab and loads its contents."""
+  # recovery fstab is only meaningful when installing an update via recovery
+  # (i.e. non-A/B OTA). Skip loading fstab if device used A/B OTA.
+  if info_dict.get('ab_update') == 'true':
+    return None
+
+  # We changed recovery.fstab path in Q, from ../RAMDISK/etc/recovery.fstab to
+  # ../RAMDISK/system/etc/recovery.fstab. This function has to handle both
+  # cases, since it may load the info_dict from an old build (e.g. when
+  # generating incremental OTAs from that build).
+  system_root_image = info_dict.get('system_root_image') == 'true'
+  if info_dict.get('no_recovery') != 'true':
+    recovery_fstab_path = 'RECOVERY/RAMDISK/system/etc/recovery.fstab'
+    if isinstance(input_file, zipfile.ZipFile):
+      if recovery_fstab_path not in input_file.namelist():
+        recovery_fstab_path = 'RECOVERY/RAMDISK/etc/recovery.fstab'
+    else:
+      path = os.path.join(input_file, *recovery_fstab_path.split('/'))
+      if not os.path.exists(path):
+        recovery_fstab_path = 'RECOVERY/RAMDISK/etc/recovery.fstab'
+    return LoadRecoveryFSTab(
+        read_helper, info_dict['fstab_version'], recovery_fstab_path,
+        system_root_image)
+
+  if info_dict.get('recovery_as_boot') == 'true':
+    recovery_fstab_path = 'BOOT/RAMDISK/system/etc/recovery.fstab'
+    if isinstance(input_file, zipfile.ZipFile):
+      if recovery_fstab_path not in input_file.namelist():
+        recovery_fstab_path = 'BOOT/RAMDISK/etc/recovery.fstab'
+    else:
+      path = os.path.join(input_file, *recovery_fstab_path.split('/'))
+      if not os.path.exists(path):
+        recovery_fstab_path = 'BOOT/RAMDISK/etc/recovery.fstab'
+    return LoadRecoveryFSTab(
+        read_helper, info_dict['fstab_version'], recovery_fstab_path,
+        system_root_image)
+
+  return None
+
+
 def DumpInfoDict(d):
   for k, v in sorted(d.items()):
     logger.info("%-25s = (%s) %s", k, type(v).__name__, v)
@@ -629,7 +641,7 @@ def AppendAVBSigningArgs(cmd, partition):
     cmd.extend(["--salt", avb_salt])
 
 
-def GetAvbPartitionArg(partition, image, info_dict = None):
+def GetAvbPartitionArg(partition, image, info_dict=None):
   """Returns the VBMeta arguments for partition.
 
   It sets up the VBMeta argument by including the partition descriptor from the
