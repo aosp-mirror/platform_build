@@ -165,6 +165,30 @@
       "revId": "75189e0a51827261dbb1c61bb722576323a6b0c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "13cfbef3_e7aec453",
+        "filename": "target/board/mainline_x86_arm/BoardConfig.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-10-05T02:27:30Z",
+      "side": 1,
+      "message": "Right, that the code I said.",
+      "parentUuid": "70a69286_aece40fe",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 43
+      },
+      "revId": "75189e0a51827261dbb1c61bb722576323a6b0c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
