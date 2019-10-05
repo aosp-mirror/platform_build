@@ -2535,13 +2535,25 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
     info_dict = OPTIONS.info_dict
 
   full_recovery_image = info_dict.get("full_recovery_image") == "true"
+  board_uses_vendorimage = info_dict.get("board_uses_vendorimage") == "true"
+
+  if board_uses_vendorimage:
+    # In this case, the output sink is rooted at VENDOR
+    recovery_img_path = "etc/recovery.img"
+    recovery_resource_dat_path = "VENDOR/etc/recovery-resource.dat"
+    sh_dir = "bin"
+  else:
+    # In this case the output sink is rooted at SYSTEM
+    recovery_img_path = "vendor/etc/recovery.img"
+    recovery_resource_dat_path = "SYSTEM/vendor/etc/recovery-resource.dat"
+    sh_dir = "vendor/bin"
 
   if full_recovery_image:
-    output_sink("etc/recovery.img", recovery_img.data)
+    output_sink(recovery_img_path, recovery_img.data)
 
   else:
     system_root_image = info_dict.get("system_root_image") == "true"
-    path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
+    path = os.path.join(input_dir, recovery_resource_dat_path)
     # With system-root-image, boot and recovery images will have mismatching
     # entries (only recovery has the ramdisk entry) (Bug: 72731506). Use bsdiff
     # to handle such a case.
@@ -2554,7 +2566,7 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
       if os.path.exists(path):
         diff_program.append("-b")
         diff_program.append(path)
-        bonus_args = "--bonus /system/etc/recovery-resource.dat"
+        bonus_args = "--bonus /vendor/etc/recovery-resource.dat"
       else:
         bonus_args = ""
 
@@ -2571,10 +2583,16 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
     return
 
   if full_recovery_image:
-    sh = """#!/system/bin/sh
+
+    # Note that we use /vendor to refer to the recovery resources. This will
+    # work for a separate vendor partition mounted at /vendor or a
+    # /system/vendor subdirectory on the system partition, for which init will
+    # create a symlink from /vendor to /system/vendor.
+
+    sh = """#!/vendor/bin/sh
 if ! applypatch --check %(type)s:%(device)s:%(size)d:%(sha1)s; then
   applypatch \\
-          --flash /system/etc/recovery.img \\
+          --flash /vendor/etc/recovery.img \\
           --target %(type)s:%(device)s:%(size)d:%(sha1)s && \\
       log -t recovery "Installing new recovery image: succeeded" || \\
       log -t recovery "Installing new recovery image: failed"
@@ -2586,10 +2604,10 @@ fi
        'sha1': recovery_img.sha1,
        'size': recovery_img.size}
   else:
-    sh = """#!/system/bin/sh
+    sh = """#!/vendor/bin/sh
 if ! applypatch --check %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
   applypatch %(bonus_args)s \\
-          --patch /system/recovery-from-boot.p \\
+          --patch /vendor/recovery-from-boot.p \\
           --source %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s \\
           --target %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s && \\
       log -t recovery "Installing new recovery image: succeeded" || \\
@@ -2607,9 +2625,9 @@ fi
        'recovery_device': recovery_device,
        'bonus_args': bonus_args}
 
-  # The install script location moved from /system/etc to /system/bin
-  # in the L release.
-  sh_location = "bin/install-recovery.sh"
+  # The install script location moved from /system/etc to /system/bin in the L
+  # release. In the R release it is in VENDOR/bin or SYSTEM/vendor/bin.
+  sh_location = os.path.join(sh_dir, "install-recovery.sh")
 
   logger.info("putting script in %s", sh_location)
 
