@@ -679,6 +679,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/symbols/data/fuzz/*)
 $(call add-clean-step, rm -rf $(HOST_OUT)/fuzz/*)
 $(call add-clean-step, rm -rf $(SOONG_OUT_DIR)/host/*/fuzz/*)
 
+# Change file layout of system_other
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system_other)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
