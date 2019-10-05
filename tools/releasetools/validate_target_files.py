@@ -138,7 +138,7 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
   1. full recovery:
   ...
   if ! applypatch --check type:device:size:sha1; then
-    applypatch --flash /system/etc/recovery.img \\
+    applypatch --flash /vendor/etc/recovery.img \\
         type:device:size:sha1 && \\
   ...
 
@@ -146,18 +146,26 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
   ...
   if ! applypatch --check type:recovery_device:recovery_size:recovery_sha1; then
     applypatch [--bonus bonus_args] \\
-        --patch /system/recovery-from-boot.p \\
+        --patch /vendor/recovery-from-boot.p \\
         --source type:boot_device:boot_size:boot_sha1 \\
         --target type:recovery_device:recovery_size:recovery_sha1 && \\
   ...
 
-  For full recovery, we want to calculate the SHA-1 of /system/etc/recovery.img
+  For full recovery, we want to calculate the SHA-1 of /vendor/etc/recovery.img
   and compare it against the one embedded in the script. While for recovery
   from boot, we want to check the SHA-1 for both recovery.img and boot.img
   under IMAGES/.
   """
 
-  script_path = 'SYSTEM/bin/install-recovery.sh'
+  board_uses_vendorimage = info_dict.get("board_uses_vendorimage") == "true"
+
+  if board_uses_vendorimage:
+    script_path = 'VENDOR/bin/install-recovery.sh'
+    recovery_img = 'VENDOR/etc/recovery.img'
+  else:
+    script_path = 'SYSTEM/vendor/bin/install-recovery.sh'
+    recovery_img = 'SYSTEM/vendor/etc/recovery.img'
+
   if not os.path.exists(os.path.join(input_tmp, script_path)):
     logging.info('%s does not exist in input_tmp', script_path)
     return
@@ -188,7 +196,7 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
     # Validate the SHA-1 of the recovery image.
     recovery_sha1 = flash_partition.split(':')[3]
     ValidateFileAgainstSha1(
-        input_tmp, 'recovery.img', 'SYSTEM/etc/recovery.img', recovery_sha1)
+        input_tmp, 'recovery.img', recovery_img, recovery_sha1)
   else:
     assert len(lines) == 11, "Invalid line count: {}".format(lines)
 
