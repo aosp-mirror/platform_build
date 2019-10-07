@@ -317,11 +317,6 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   logger.info("creating %s.img...", what)
 
   image_props = build_image.ImagePropFromGlobalDict(info_dict, what)
-  fstab = info_dict["fstab"]
-  mount_point = "/" + what
-  if fstab and mount_point in fstab:
-    image_props["fs_type"] = fstab[mount_point].fs_type
-
   image_props["timestamp"] = FIXED_FILE_TIMESTAMP
 
   if what == "system":
@@ -406,9 +401,6 @@ def AddUserdata(output_zip):
   else:
     user_dir = common.MakeTempDir()
 
-  fstab = OPTIONS.info_dict["fstab"]
-  if fstab:
-    image_props["fs_type"] = fstab["/data"].fs_type
   build_image.BuildImage(user_dir, image_props, img.name)
 
   common.CheckSize(img.name, "userdata.img", OPTIONS.info_dict)
@@ -495,10 +487,6 @@ def AddCache(output_zip):
   image_props["timestamp"] = FIXED_FILE_TIMESTAMP
 
   user_dir = common.MakeTempDir()
-
-  fstab = OPTIONS.info_dict["fstab"]
-  if fstab:
-    image_props["fs_type"] = fstab["/cache"].fs_type
   build_image.BuildImage(user_dir, image_props, img.name)
 
   common.CheckSize(img.name, "cache.img", OPTIONS.info_dict)
