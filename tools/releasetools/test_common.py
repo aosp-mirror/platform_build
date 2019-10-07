@@ -749,10 +749,12 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertNotIn(
         'incomplete', sparse_image.file_map['/system/file2'].extra)
 
-    # All other entries should look normal without any tags.
+    # '/system/file1' will only contain one field -- a copy of the input text.
+    self.assertEqual(1, len(sparse_image.file_map['/system/file1'].extra))
+
+    # Meta entries should not have any extra tag.
     self.assertFalse(sparse_image.file_map['__COPY'].extra)
     self.assertFalse(sparse_image.file_map['__NONZERO-0'].extra)
-    self.assertFalse(sparse_image.file_map['/system/file1'].extra)
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetSparseImage_incompleteRanges(self):
@@ -775,7 +777,9 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(target_files, 'r') as input_zip:
       sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
 
-    self.assertFalse(sparse_image.file_map['/system/file1'].extra)
+    self.assertEqual(
+        '1-5 9-10',
+        sparse_image.file_map['/system/file1'].extra['text_str'])
     self.assertTrue(sparse_image.file_map['/system/file2'].extra['incomplete'])
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -801,7 +805,9 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(target_files, 'r') as input_zip:
       sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
 
-    self.assertFalse(sparse_image.file_map['//system/file1'].extra)
+    self.assertEqual(
+        '1-5 9-10',
+        sparse_image.file_map['//system/file1'].extra['text_str'])
     self.assertTrue(sparse_image.file_map['//system/file2'].extra['incomplete'])
     self.assertTrue(
         sparse_image.file_map['/system/app/file3'].extra['incomplete'])
@@ -826,7 +832,9 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(target_files, 'r') as input_zip:
       sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
 
-    self.assertFalse(sparse_image.file_map['//system/file1'].extra)
+    self.assertEqual(
+        '1-5 9-10',
+        sparse_image.file_map['//system/file1'].extra['text_str'])
     self.assertTrue(sparse_image.file_map['//init.rc'].extra['incomplete'])
 
   @test_utils.SkipIfExternalToolsUnavailable()
