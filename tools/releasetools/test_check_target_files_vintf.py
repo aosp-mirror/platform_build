@@ -78,6 +78,8 @@ class CheckTargetFilesVintfTest(test_utils.ReleaseToolsTestCase):
     for root, _, files in os.walk(test_delta_dir):
       rel_root = os.path.relpath(root, test_delta_dir)
       for f in files:
+        if not f.endswith('.xml'):
+          continue
         output_file = os.path.join(test_dir, rel_root, f)
         with open(os.path.join(root, f)) as inp:
           write_string_to_file(inp.read(), output_file)
