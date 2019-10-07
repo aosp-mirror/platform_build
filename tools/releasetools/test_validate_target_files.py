@@ -238,14 +238,14 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     system_root = os.path.join(input_tmp, "SYSTEM")
     os.mkdir(system_root)
 
-    # Write the test file that contain multiple blocks of zeros, and these
-    # zero blocks will be omitted by kernel. And the test files will occupy one
-    # block range each in the final system image.
+    # Write test files that contain multiple blocks of zeros, and these zero
+    # blocks will be omitted by kernel. Each test file will occupy one block in
+    # the final system image.
     with open(os.path.join(system_root, 'a'), 'w') as f:
-      f.write("aaa")
+      f.write('aaa')
       f.write('\0' * 4096 * 3)
     with open(os.path.join(system_root, 'b'), 'w') as f:
-      f.write("bbb")
+      f.write('bbb')
       f.write('\0' * 4096 * 3)
 
     raw_file_map = os.path.join(input_tmp, 'IMAGES', 'raw_system.map')
@@ -254,7 +254,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     # Parse the generated file map and update the block ranges for each file.
     file_map_list = {}
     image_ranges = RangeSet()
-    with open(raw_file_map, 'r') as f:
+    with open(raw_file_map) as f:
       for line in f.readlines():
         info = line.split()
         self.assertEqual(2, len(info))
@@ -265,7 +265,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     mock_shared_block = RangeSet("10-20").subtract(image_ranges).first(1)
     with open(os.path.join(input_tmp, 'IMAGES', 'system.map'), 'w') as f:
       for key in sorted(file_map_list.keys()):
-        line = "{} {}\n".format(
+        line = '{} {}\n'.format(
             key, file_map_list[key].union(mock_shared_block))
         f.write(line)
 
@@ -277,9 +277,55 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
       for name in all_entries:
         input_zip.write(os.path.join(input_tmp, name), arcname=name)
 
-    input_zip = zipfile.ZipFile(input_file, 'r')
-    info_dict = {'extfs_sparse_flag': '-s'}
-
     # Expect the validation to pass and both files are skipped due to
     # 'incomplete' block range.
-    ValidateFileConsistency(input_zip, input_tmp, info_dict)
+    with zipfile.ZipFile(input_file) as input_zip:
+      info_dict = {'extfs_sparse_flag': '-s'}
+      ValidateFileConsistency(input_zip, input_tmp, info_dict)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_ValidateFileConsistency_nonMonotonicRanges(self):
+    input_tmp = common.MakeTempDir()
+    os.mkdir(os.path.join(input_tmp, 'IMAGES'))
+    system_image = os.path.join(input_tmp, 'IMAGES', 'system.img')
+    system_root = os.path.join(input_tmp, "SYSTEM")
+    os.mkdir(system_root)
+
+    # Write the test file that contain three blocks of 'a', 'b', 'c'.
+    with open(os.path.join(system_root, 'abc'), 'w') as f:
+      f.write('a' * 4096 + 'b' * 4096 + 'c' * 4096)
+    raw_file_map = os.path.join(input_tmp, 'IMAGES', 'raw_system.map')
+    self._generate_system_image(system_image, system_root, raw_file_map)
+
+    # Parse the generated file map and manipulate the block ranges of 'abc' to
+    # be 'cba'.
+    file_map_list = {}
+    with open(raw_file_map) as f:
+      for line in f.readlines():
+        info = line.split()
+        self.assertEqual(2, len(info))
+        ranges = RangeSet(info[1])
+        self.assertTrue(ranges.monotonic)
+        blocks = reversed(list(ranges.next_item()))
+        file_map_list[info[0]] = ' '.join([str(block) for block in blocks])
+
+    # Update the contents of 'abc' to be 'cba'.
+    with open(os.path.join(system_root, 'abc'), 'w') as f:
+      f.write('c' * 4096 + 'b' * 4096 + 'a' * 4096)
+
+    # Update the system.map.
+    with open(os.path.join(input_tmp, 'IMAGES', 'system.map'), 'w') as f:
+      for key in sorted(file_map_list.keys()):
+        f.write('{} {}\n'.format(key, file_map_list[key]))
+
+    # Get the target zip file.
+    input_file = common.MakeTempFile()
+    all_entries = ['SYSTEM/', 'SYSTEM/abc', 'IMAGES/',
+                   'IMAGES/system.map', 'IMAGES/system.img']
+    with zipfile.ZipFile(input_file, 'w') as input_zip:
+      for name in all_entries:
+        input_zip.write(os.path.join(input_tmp, name), arcname=name)
+
+    with zipfile.ZipFile(input_file) as input_zip:
+      info_dict = {'extfs_sparse_flag': '-s'}
+      ValidateFileConsistency(input_zip, input_tmp, info_dict)
