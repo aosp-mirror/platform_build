@@ -48,6 +48,7 @@ PRODUCT_PACKAGES += \
     cgroups.json \
     charger \
     cmd \
+    com.android.apex.cts.shim.v1_prebuilt \
     com.android.conscrypt \
     com.android.i18n \
     com.android.location.provider \
