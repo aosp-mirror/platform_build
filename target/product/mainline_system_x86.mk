@@ -37,4 +37,5 @@ PRODUCT_NAME := mainline_system_x86
 PRODUCT_DEVICE := mainline_x86
 PRODUCT_BRAND := generic
 PRODUCT_SHIPPING_API_LEVEL := 28
-PRODUCT_RESTRICT_VENDOR_FILES := all
+# TODO(b/137033385): change this back to "all"
+PRODUCT_RESTRICT_VENDOR_FILES := owner
