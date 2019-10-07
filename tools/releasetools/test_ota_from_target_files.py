@@ -596,7 +596,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     with zipfile.ZipFile(target_file) as verify_zip:
       namelist = verify_zip.namelist()
-      ab_partitions = verify_zip.read('META/ab_partitions.txt')
+      ab_partitions = verify_zip.read('META/ab_partitions.txt').decode()
 
     self.assertIn('META/ab_partitions.txt', namelist)
     self.assertIn('IMAGES/system.img', namelist)
@@ -676,9 +676,9 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     with zipfile.ZipFile(target_file) as verify_zip:
       namelist = verify_zip.namelist()
-      updated_misc_info = verify_zip.read('META/misc_info.txt')
+      updated_misc_info = verify_zip.read('META/misc_info.txt').decode()
       updated_dynamic_partitions_info = verify_zip.read(
-          'META/dynamic_partitions_info.txt')
+          'META/dynamic_partitions_info.txt').decode()
 
     self.assertIn('META/ab_partitions.txt', namelist)
     self.assertIn('IMAGES/system.img', namelist)
