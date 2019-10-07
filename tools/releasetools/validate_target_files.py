@@ -36,20 +36,21 @@ import logging
 import os.path
 import re
 import zipfile
+from hashlib import sha1
 
 import common
+import rangelib
 
 
 def _ReadFile(file_name, unpacked_name, round_up=False):
   """Constructs and returns a File object. Rounds up its size if needed."""
-
   assert os.path.exists(unpacked_name)
   with open(unpacked_name, 'rb') as f:
     file_data = f.read()
   file_size = len(file_data)
   if round_up:
     file_size_rounded_up = common.RoundUpTo4K(file_size)
-    file_data += '\0' * (file_size_rounded_up - file_size)
+    file_data += b'\0' * (file_size_rounded_up - file_size)
   return common.File(file_name, file_data)
 
 
@@ -96,13 +97,15 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
         logging.warning('Skipping %s that has incomplete block list', entry)
         continue
 
-      # TODO(b/79951650): Handle files with non-monotonic ranges.
+      # If the file has non-monotonic ranges, read each range in order.
       if not file_ranges.monotonic:
-        logging.warning(
-            'Skipping %s that has non-monotonic ranges: %s', entry, file_ranges)
-        continue
-
-      blocks_sha1 = image.RangeSha1(file_ranges)
+        h = sha1()
+        for file_range in file_ranges.extra['text_str'].split(' '):
+          for data in image.ReadRangeSet(rangelib.RangeSet(file_range)):
+            h.update(data)
+        blocks_sha1 = h.hexdigest()
+      else:
+        blocks_sha1 = image.RangeSha1(file_ranges)
 
       # The filename under unpacked directory, such as SYSTEM/bin/sh.
       unpacked_name = os.path.join(
