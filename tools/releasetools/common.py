@@ -319,7 +319,7 @@ class BuildInfo(object):
   _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER = ["product", "odm", "vendor",
                                             "system_ext", "system"]
 
-  def __init__(self, info_dict, oem_dicts):
+  def __init__(self, info_dict, oem_dicts=None):
     """Initializes a BuildInfo instance with the given dicts.
 
     Note that it only wraps up the given dicts, without making copies.
@@ -628,18 +628,11 @@ def LoadInfoDict(input_file, repacking=False):
           read_helper, "{}/etc/build.prop".format(partition.upper()))
   d["build.prop"] = d["system.build.prop"]
 
-  # Set up the salt (based on fingerprint or thumbprint) that will be used when
-  # adding AVB footer.
+  # Set up the salt (based on fingerprint) that will be used when adding AVB
+  # hash / hashtree footers.
   if d.get("avb_enable") == "true":
-    fp = None
-    if "build.prop" in d:
-      build_prop = d["build.prop"]
-      if "ro.build.fingerprint" in build_prop:
-        fp = build_prop["ro.build.fingerprint"]
-      elif "ro.build.thumbprint" in build_prop:
-        fp = build_prop["ro.build.thumbprint"]
-    if fp:
-      d["avb_salt"] = sha256(fp).hexdigest()
+    build_info = BuildInfo(d)
+    d["avb_salt"] = sha256(build_info.fingerprint).hexdigest()
 
   return d
 
@@ -883,8 +876,7 @@ def GetAvbPartitionArg(partition, image, info_dict=None):
   if key_path:
     chained_partition_arg = GetAvbChainedPartitionArg(partition, info_dict)
     return ["--chain_partition", chained_partition_arg]
-  else:
-    return ["--include_descriptors_from_image", image]
+  return ["--include_descriptors_from_image", image]
 
 
 def GetAvbChainedPartitionArg(partition, info_dict, key=None):
