@@ -284,6 +284,225 @@ def CloseInheritedPipes():
       pass
 
 
+class BuildInfo(object):
+  """A class that holds the information for a given build.
+
+  This class wraps up the property querying for a given source or target build.
+  It abstracts away the logic of handling OEM-specific properties, and caches
+  the commonly used properties such as fingerprint.
+
+  There are two types of info dicts: a) build-time info dict, which is generated
+  at build time (i.e. included in a target_files zip); b) OEM info dict that is
+  specified at package generation time (via command line argument
+  '--oem_settings'). If a build doesn't use OEM-specific properties (i.e. not
+  having "oem_fingerprint_properties" in build-time info dict), all the queries
+  would be answered based on build-time info dict only. Otherwise if using
+  OEM-specific properties, some of them will be calculated from two info dicts.
+
+  Users can query properties similarly as using a dict() (e.g. info['fstab']),
+  or to query build properties via GetBuildProp() or GetVendorBuildProp().
+
+  Attributes:
+    info_dict: The build-time info dict.
+    is_ab: Whether it's a build that uses A/B OTA.
+    oem_dicts: A list of OEM dicts.
+    oem_props: A list of OEM properties that should be read from OEM dicts; None
+        if the build doesn't use any OEM-specific property.
+    fingerprint: The fingerprint of the build, which would be calculated based
+        on OEM properties if applicable.
+    device: The device name, which could come from OEM dicts if applicable.
+  """
+
+  _RO_PRODUCT_RESOLVE_PROPS = ["ro.product.brand", "ro.product.device",
+                               "ro.product.manufacturer", "ro.product.model",
+                               "ro.product.name"]
+  _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER = ["product", "odm", "vendor",
+                                            "system_ext", "system"]
+
+  def __init__(self, info_dict, oem_dicts):
+    """Initializes a BuildInfo instance with the given dicts.
+
+    Note that it only wraps up the given dicts, without making copies.
+
+    Arguments:
+      info_dict: The build-time info dict.
+      oem_dicts: A list of OEM dicts (which is parsed from --oem_settings). Note
+          that it always uses the first dict to calculate the fingerprint or the
+          device name. The rest would be used for asserting OEM properties only
+          (e.g. one package can be installed on one of these devices).
+
+    Raises:
+      ValueError: On invalid inputs.
+    """
+    self.info_dict = info_dict
+    self.oem_dicts = oem_dicts
+
+    self._is_ab = info_dict.get("ab_update") == "true"
+    self._oem_props = info_dict.get("oem_fingerprint_properties")
+
+    if self._oem_props:
+      assert oem_dicts, "OEM source required for this build"
+
+    # These two should be computed only after setting self._oem_props.
+    self._device = self.GetOemProperty("ro.product.device")
+    self._fingerprint = self.CalculateFingerprint()
+
+    # Sanity check the build fingerprint.
+    if (' ' in self._fingerprint or
+        any(ord(ch) > 127 for ch in self._fingerprint)):
+      raise ValueError(
+          'Invalid build fingerprint: "{}". See the requirement in Android CDD '
+          '3.2.2. Build Parameters.'.format(self._fingerprint))
+
+  @property
+  def is_ab(self):
+    return self._is_ab
+
+  @property
+  def device(self):
+    return self._device
+
+  @property
+  def fingerprint(self):
+    return self._fingerprint
+
+  @property
+  def vendor_fingerprint(self):
+    return self._fingerprint_of("vendor")
+
+  @property
+  def product_fingerprint(self):
+    return self._fingerprint_of("product")
+
+  @property
+  def odm_fingerprint(self):
+    return self._fingerprint_of("odm")
+
+  def _fingerprint_of(self, partition):
+    if partition + ".build.prop" not in self.info_dict:
+      return None
+    build_prop = self.info_dict[partition + ".build.prop"]
+    if "ro." + partition + ".build.fingerprint" in build_prop:
+      return build_prop["ro." + partition + ".build.fingerprint"]
+    if "ro." + partition + ".build.thumbprint" in build_prop:
+      return build_prop["ro." + partition + ".build.thumbprint"]
+    return None
+
+  @property
+  def oem_props(self):
+    return self._oem_props
+
+  def __getitem__(self, key):
+    return self.info_dict[key]
+
+  def __setitem__(self, key, value):
+    self.info_dict[key] = value
+
+  def get(self, key, default=None):
+    return self.info_dict.get(key, default)
+
+  def items(self):
+    return self.info_dict.items()
+
+  def GetBuildProp(self, prop):
+    """Returns the inquired build property."""
+    if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
+      return self._ResolveRoProductBuildProp(prop)
+
+    try:
+      return self.info_dict.get("build.prop", {})[prop]
+    except KeyError:
+      raise ExternalError("couldn't find %s in build.prop" % (prop,))
+
+  def _ResolveRoProductBuildProp(self, prop):
+    """Resolves the inquired ro.product.* build property"""
+    prop_val = self.info_dict.get("build.prop", {}).get(prop)
+    if prop_val:
+      return prop_val
+
+    source_order_val = self.info_dict.get("build.prop", {}).get(
+        "ro.product.property_source_order")
+    if source_order_val:
+      source_order = source_order_val.split(",")
+    else:
+      source_order = BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER
+
+    # Check that all sources in ro.product.property_source_order are valid
+    if any([x not in BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER
+            for x in source_order]):
+      raise ExternalError(
+          "Invalid ro.product.property_source_order '{}'".format(source_order))
+
+    for source in source_order:
+      source_prop = prop.replace(
+          "ro.product", "ro.product.{}".format(source), 1)
+      prop_val = self.info_dict.get(
+          "{}.build.prop".format(source), {}).get(source_prop)
+      if prop_val:
+        return prop_val
+
+    raise ExternalError("couldn't resolve {}".format(prop))
+
+  def GetVendorBuildProp(self, prop):
+    """Returns the inquired vendor build property."""
+    try:
+      return self.info_dict.get("vendor.build.prop", {})[prop]
+    except KeyError:
+      raise ExternalError(
+          "couldn't find %s in vendor.build.prop" % (prop,))
+
+  def GetOemProperty(self, key):
+    if self.oem_props is not None and key in self.oem_props:
+      return self.oem_dicts[0][key]
+    return self.GetBuildProp(key)
+
+  def CalculateFingerprint(self):
+    if self.oem_props is None:
+      try:
+        return self.GetBuildProp("ro.build.fingerprint")
+      except ExternalError:
+        return "{}/{}/{}:{}/{}/{}:{}/{}".format(
+            self.GetBuildProp("ro.product.brand"),
+            self.GetBuildProp("ro.product.name"),
+            self.GetBuildProp("ro.product.device"),
+            self.GetBuildProp("ro.build.version.release"),
+            self.GetBuildProp("ro.build.id"),
+            self.GetBuildProp("ro.build.version.incremental"),
+            self.GetBuildProp("ro.build.type"),
+            self.GetBuildProp("ro.build.tags"))
+    return "%s/%s/%s:%s" % (
+        self.GetOemProperty("ro.product.brand"),
+        self.GetOemProperty("ro.product.name"),
+        self.GetOemProperty("ro.product.device"),
+        self.GetBuildProp("ro.build.thumbprint"))
+
+  def WriteMountOemScript(self, script):
+    assert self.oem_props is not None
+    recovery_mount_options = self.info_dict.get("recovery_mount_options")
+    script.Mount("/oem", recovery_mount_options)
+
+  def WriteDeviceAssertions(self, script, oem_no_mount):
+    # Read the property directly if not using OEM properties.
+    if not self.oem_props:
+      script.AssertDevice(self.device)
+      return
+
+    # Otherwise assert OEM properties.
+    if not self.oem_dicts:
+      raise ExternalError(
+          "No OEM file provided to answer expected assertions")
+
+    for prop in self.oem_props.split():
+      values = []
+      for oem_dict in self.oem_dicts:
+        if prop in oem_dict:
+          values.append(oem_dict[prop])
+      if not values:
+        raise ExternalError(
+            "The OEM file is missing the property %s" % (prop,))
+      script.AssertOemProperty(prop, values, oem_no_mount)
+
+
 def LoadInfoDict(input_file, repacking=False):
   """Loads the key/value pairs from the given input target_files.
 
