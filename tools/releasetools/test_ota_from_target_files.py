@@ -74,35 +74,6 @@ def construct_target_files(secondary=False):
   return target_files
 
 
-class MockScriptWriter(object):
-  """A class that mocks edify_generator.EdifyGenerator.
-
-  It simply pushes the incoming arguments onto script stack, which is to assert
-  the calls to EdifyGenerator functions.
-  """
-
-  def __init__(self):
-    self.script = []
-
-  def Mount(self, *args):
-    self.script.append(('Mount',) + args)
-
-  def AssertDevice(self, *args):
-    self.script.append(('AssertDevice',) + args)
-
-  def AssertOemProperty(self, *args):
-    self.script.append(('AssertOemProperty',) + args)
-
-  def AssertFingerprintOrThumbprint(self, *args):
-    self.script.append(('AssertFingerprintOrThumbprint',) + args)
-
-  def AssertSomeFingerprint(self, *args):
-    self.script.append(('AssertSomeFingerprint',) + args)
-
-  def AssertSomeThumbprint(self, *args):
-    self.script.append(('AssertSomeThumbprint',) + args)
-
-
 class BuildInfoTest(test_utils.ReleaseToolsTestCase):
 
   TEST_INFO_DICT = {
@@ -281,20 +252,20 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
   def test_WriteMountOemScript(self):
     target_info = BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
                             self.TEST_OEM_DICTS)
-    script_writer = MockScriptWriter()
+    script_writer = test_utils.MockScriptWriter()
     target_info.WriteMountOemScript(script_writer)
-    self.assertEqual([('Mount', '/oem', None)], script_writer.script)
+    self.assertEqual([('Mount', '/oem', None)], script_writer.lines)
 
   def test_WriteDeviceAssertions(self):
     target_info = BuildInfo(self.TEST_INFO_DICT, None)
-    script_writer = MockScriptWriter()
+    script_writer = test_utils.MockScriptWriter()
     target_info.WriteDeviceAssertions(script_writer, False)
-    self.assertEqual([('AssertDevice', 'product-device')], script_writer.script)
+    self.assertEqual([('AssertDevice', 'product-device')], script_writer.lines)
 
   def test_WriteDeviceAssertions_with_oem_props(self):
     target_info = BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
                             self.TEST_OEM_DICTS)
-    script_writer = MockScriptWriter()
+    script_writer = test_utils.MockScriptWriter()
     target_info.WriteDeviceAssertions(script_writer, False)
     self.assertEqual(
         [
@@ -303,7 +274,7 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
             ('AssertOemProperty', 'ro.product.brand',
              ['brand1', 'brand2', 'brand3'], False),
         ],
-        script_writer.script)
+        script_writer.lines)
 
   def test_WriteFingerprintAssertion_without_oem_props(self):
     target_info = BuildInfo(self.TEST_INFO_DICT, None)
@@ -312,36 +283,36 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
         'source-build-fingerprint')
     source_info = BuildInfo(source_info_dict, None)
 
-    script_writer = MockScriptWriter()
+    script_writer = test_utils.MockScriptWriter()
     WriteFingerprintAssertion(script_writer, target_info, source_info)
     self.assertEqual(
         [('AssertSomeFingerprint', 'source-build-fingerprint',
           'build-fingerprint')],
-        script_writer.script)
+        script_writer.lines)
 
   def test_WriteFingerprintAssertion_with_source_oem_props(self):
     target_info = BuildInfo(self.TEST_INFO_DICT, None)
     source_info = BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
                             self.TEST_OEM_DICTS)
 
-    script_writer = MockScriptWriter()
+    script_writer = test_utils.MockScriptWriter()
     WriteFingerprintAssertion(script_writer, target_info, source_info)
     self.assertEqual(
         [('AssertFingerprintOrThumbprint', 'build-fingerprint',
           'build-thumbprint')],
-        script_writer.script)
+        script_writer.lines)
 
   def test_WriteFingerprintAssertion_with_target_oem_props(self):
     target_info = BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
                             self.TEST_OEM_DICTS)
     source_info = BuildInfo(self.TEST_INFO_DICT, None)
 
-    script_writer = MockScriptWriter()
+    script_writer = test_utils.MockScriptWriter()
     WriteFingerprintAssertion(script_writer, target_info, source_info)
     self.assertEqual(
         [('AssertFingerprintOrThumbprint', 'build-fingerprint',
           'build-thumbprint')],
-        script_writer.script)
+        script_writer.lines)
 
   def test_WriteFingerprintAssertion_with_both_oem_props(self):
     target_info = BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
@@ -351,12 +322,12 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
         'source-build-thumbprint')
     source_info = BuildInfo(source_info_dict, self.TEST_OEM_DICTS)
 
-    script_writer = MockScriptWriter()
+    script_writer = test_utils.MockScriptWriter()
     WriteFingerprintAssertion(script_writer, target_info, source_info)
     self.assertEqual(
         [('AssertSomeThumbprint', 'build-thumbprint',
           'source-build-thumbprint')],
-        script_writer.script)
+        script_writer.lines)
 
 
 class LoadOemDictsTest(test_utils.ReleaseToolsTestCase):

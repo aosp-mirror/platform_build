@@ -145,6 +145,47 @@ def construct_sparse_image(chunks):
   return sparse_image
 
 
+class MockScriptWriter(object):
+  """A class that mocks edify_generator.EdifyGenerator.
+
+  It simply pushes the incoming arguments onto script stack, which is to assert
+  the calls to EdifyGenerator functions.
+  """
+
+  def __init__(self, enable_comments=False):
+    self.lines = []
+    self.enable_comments = enable_comments
+
+  def Mount(self, *args):
+    self.lines.append(('Mount',) + args)
+
+  def AssertDevice(self, *args):
+    self.lines.append(('AssertDevice',) + args)
+
+  def AssertOemProperty(self, *args):
+    self.lines.append(('AssertOemProperty',) + args)
+
+  def AssertFingerprintOrThumbprint(self, *args):
+    self.lines.append(('AssertFingerprintOrThumbprint',) + args)
+
+  def AssertSomeFingerprint(self, *args):
+    self.lines.append(('AssertSomeFingerprint',) + args)
+
+  def AssertSomeThumbprint(self, *args):
+    self.lines.append(('AssertSomeThumbprint',) + args)
+
+  def Comment(self, comment):
+    if not self.enable_comments:
+      return
+    self.lines.append('# {}'.format(comment))
+
+  def AppendExtra(self, extra):
+    self.lines.append(extra)
+
+  def __str__(self):
+    return '\n'.join(self.lines)
+
+
 class ReleaseToolsTestCase(unittest.TestCase):
   """A common base class for all the releasetools unittests."""
 
