@@ -44,4 +44,13 @@ $(vts-core-zip) : $(COMPATIBILITY.vts-core.FILES) $(my_host_shared_lib_for_vts_c
 	  $(PRIVATE_vts_core_list)
 
 vts-core: $(vts-core-zip)
-$(call dist-for-goals, vts-core, $(vts-core-zip) $(vts-core-list-zip) $(vts-core-configs-zip))
+
+test_suite_name := vts-core
+test_suite_tradefed := vts-core-tradefed
+test_suite_readme := test/vts/tools/vts-core-tradefed/README
+include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
+vts-core: $(compatibility_zip)
+
+$(call dist-for-goals, vts-core, $(vts-core-zip) $(vts-core-list-zip) $(vts-core-configs-zip) $(compatibility_zip))
+
+tests: vts-core

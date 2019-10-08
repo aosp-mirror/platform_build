@@ -59,8 +59,3 @@ $(hide) $(PRIVATE_CXX) \
         $(PRIVATE_LDFLAGS) \
         $(PRIVATE_LDLIBS)
 endef
-
-# $(1): The file to check
-define get-file-size
-stat -f "%z" $(1)
-endef

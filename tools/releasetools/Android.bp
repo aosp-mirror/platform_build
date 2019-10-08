@@ -12,6 +12,107 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//
+// Module-specific defaults.
+//
+// For module X, if we need to build it both as a library and an executable:
+//  - A default rule `releasetools_X_defaults` is created, which lists `srcs`, `libs` and
+//    `required` properties.
+//  - `python_library_host` and `python_binary_host` are created by listing
+//    `releasetools_X_defaults` in their defaults.
+//
+
+python_defaults {
+    name: "releasetools_add_img_to_target_files_defaults",
+    srcs: [
+        "add_img_to_target_files.py",
+    ],
+    libs: [
+        "releasetools_build_image",
+        "releasetools_build_super_image",
+        "releasetools_common",
+    ],
+    required: [
+        "care_map_generator",
+    ],
+}
+
+python_defaults {
+    name: "releasetools_build_image_defaults",
+    srcs: [
+        "build_image.py",
+    ],
+    libs: [
+        "releasetools_common",
+        "releasetools_verity_utils",
+    ],
+    required: [
+        "blk_alloc_to_base_fs",
+        "e2fsck",
+        "simg2img",
+        "tune2fs",
+    ],
+}
+
+python_defaults {
+    name: "releasetools_build_super_image_defaults",
+    srcs: [
+        "build_super_image.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+}
+
+python_defaults {
+    name: "releasetools_img_from_target_files_defaults",
+    srcs: [
+        "img_from_target_files.py",
+    ],
+    libs: [
+        "releasetools_build_super_image",
+        "releasetools_common",
+    ],
+    required: [
+        "zip2zip",
+    ],
+}
+
+python_defaults {
+    name: "releasetools_check_target_files_vintf_defaults",
+    srcs: [
+        "check_target_files_vintf.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+    required: [
+        "checkvintf",
+    ],
+}
+
+python_defaults {
+    name: "releasetools_ota_from_target_files_defaults",
+    srcs: [
+        "edify_generator.py",
+        "ota_from_target_files.py",
+        "target_files_diff.py",
+    ],
+    libs: [
+        "releasetools_check_target_files_vintf",
+        "releasetools_common",
+        "releasetools_verity_utils",
+    ],
+    required: [
+        "brillo_update_payload",
+        "checkvintf",
+    ],
+}
+
+//
+// Host libraries.
+//
+
 python_defaults {
     name: "releasetools_library_defaults",
     version: {
@@ -25,10 +126,45 @@ python_defaults {
 }
 
 python_library_host {
-    name: "releasetools_build_super_image",
+    name: "releasetools_add_img_to_target_files",
+    defaults: [
+        "releasetools_library_defaults",
+        "releasetools_add_img_to_target_files_defaults",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_apex_utils",
     defaults: ["releasetools_library_defaults"],
     srcs: [
-        "build_super_image.py",
+        "apex_utils.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_build_image",
+    defaults: [
+        "releasetools_library_defaults",
+        "releasetools_build_image_defaults",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_build_super_image",
+    defaults: [
+        "releasetools_library_defaults",
+        "releasetools_build_super_image_defaults",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_check_target_files_vintf",
+    defaults: [
+        "releasetools_library_defaults",
+        "releasetools_check_target_files_vintf_defaults",
     ],
 }
 
@@ -45,13 +181,29 @@ python_library_host {
     // Only the tools that are referenced directly are listed as required modules. For example,
     // `avbtool` is not here, as the script always uses the one from info_dict['avb_avbtool'].
     required: [
-        "aapt",
+        "aapt2",
         "boot_signer",
         "brotli",
         "bsdiff",
         "imgdiff",
         "minigzip",
         "mkbootfs",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_img_from_target_files",
+    defaults: [
+        "releasetools_library_defaults",
+        "releasetools_img_from_target_files_defaults",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_ota_from_target_files",
+    defaults: [
+        "releasetools_library_defaults",
+        "releasetools_ota_from_target_files_defaults",
     ],
 }
 
@@ -69,6 +221,10 @@ python_library_host {
     ],
 }
 
+//
+// Host binaries.
+//
+
 python_defaults {
     name: "releasetools_binary_defaults",
     version: {
@@ -84,33 +240,70 @@ python_defaults {
 }
 
 python_binary_host {
+    name: "add_img_to_target_files",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_add_img_to_target_files_defaults",
+    ],
+}
+
+python_binary_host {
     name: "build_image",
-    defaults: ["releasetools_binary_defaults"],
-    srcs: [
-        "build_image.py",
-    ],
-    main: "build_image.py",
-    libs: [
-        "releasetools_common",
-        "releasetools_verity_utils",
-    ],
-    required: [
-        "blk_alloc_to_base_fs",
-        "e2fsck",
-        "simg2img",
-        "tune2fs",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_build_image_defaults",
     ],
 }
 
 python_binary_host {
     name: "build_super_image",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_build_super_image_defaults",
+    ],
+}
+
+python_binary_host {
+    name: "check_ota_package_signature",
     defaults: ["releasetools_binary_defaults"],
     srcs: [
-        "build_super_image.py",
+        "check_ota_package_signature.py",
     ],
-    main: "build_super_image.py",
     libs: [
         "releasetools_common",
+    ],
+    required: [
+        "delta_generator",
+    ],
+}
+
+python_binary_host {
+    name: "check_target_files_signatures",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "check_target_files_signatures.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+    required: [
+        "aapt",
+    ],
+}
+
+python_binary_host {
+    name: "check_target_files_vintf",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_check_target_files_vintf_defaults"
+    ],
+}
+
+python_binary_host {
+    name: "img_from_target_files",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_img_from_target_files_defaults",
     ],
 }
 
@@ -131,7 +324,6 @@ python_binary_host {
     srcs: [
         "merge_builds.py",
     ],
-    main: "merge_builds.py",
     libs: [
         "releasetools_build_super_image",
         "releasetools_common",
@@ -139,20 +331,38 @@ python_binary_host {
 }
 
 python_binary_host {
-    name: "ota_from_target_files",
+    name: "merge_target_files",
     defaults: ["releasetools_binary_defaults"],
     srcs: [
-        "edify_generator.py",
-        "ota_from_target_files.py",
-        "target_files_diff.py",
+        "merge_target_files.py",
     ],
-    main: "ota_from_target_files.py",
     libs: [
+        "releasetools_add_img_to_target_files",
+        "releasetools_build_super_image",
+        "releasetools_check_target_files_vintf",
         "releasetools_common",
-        "releasetools_verity_utils",
+        "releasetools_img_from_target_files",
+        "releasetools_ota_from_target_files",
     ],
     required: [
-        "brillo_update_payload",
+        "checkvintf",
+    ],
+}
+
+python_binary_host {
+    name: "ota_from_target_files",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_ota_from_target_files_defaults",
+    ],
+}
+
+python_binary_host {
+    name: "ota_package_parser",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "ota_package_parser.py",
+        "rangelib.py",
     ],
 }
 
@@ -163,37 +373,75 @@ python_binary_host {
         "rangelib.py",
         "sparse_img.py",
     ],
-    main: "sparse_img.py",
 }
+
+python_binary_host {
+    name: "sign_apex",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "sign_apex.py",
+    ],
+    libs: [
+        "releasetools_apex_utils",
+        "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "sign_target_files_apks",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "sign_target_files_apks.py",
+    ],
+    libs: [
+        "releasetools_add_img_to_target_files",
+        "releasetools_apex_utils",
+        "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "validate_target_files",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "validate_target_files.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+}
+
+//
+// Tests.
+//
 
 python_defaults {
     name: "releasetools_test_defaults",
     srcs: [
-        "add_img_to_target_files.py",
-        "apex_utils.py",
-        "build_image.py",
         "check_ota_package_signature.py",
         "check_target_files_signatures.py",
-        "edify_generator.py",
-        "img_from_target_files.py",
         "make_recovery_patch.py",
         "merge_target_files.py",
-        "ota_from_target_files.py",
         "ota_package_parser.py",
         "sign_apex.py",
         "sign_target_files_apks.py",
-        "target_files_diff.py",
         "validate_target_files.py",
 
         "test_*.py",
     ],
     libs: [
+        "releasetools_add_img_to_target_files",
+        "releasetools_apex_utils",
+        "releasetools_build_image",
         "releasetools_build_super_image",
+        "releasetools_check_target_files_vintf",
         "releasetools_common",
+        "releasetools_img_from_target_files",
+        "releasetools_ota_from_target_files",
         "releasetools_verity_utils",
     ],
     data: [
-        "testdata/*",
+        "testdata/**/*",
     ],
     required: [
         "otatools",

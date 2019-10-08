@@ -249,8 +249,9 @@ class SparseImage(object):
 
     with open(fn) as f:
       for line in f:
-        fn, ranges = line.split(None, 1)
-        ranges = rangelib.RangeSet.parse(ranges)
+        fn, ranges_text = line.rstrip().split(None, 1)
+        ranges = rangelib.RangeSet.parse(ranges_text)
+        ranges.extra['text_str'] = ranges_text
 
         if allow_shared_blocks:
           # Find the shared blocks that have been claimed by others. If so, tag
@@ -260,9 +261,6 @@ class SparseImage(object):
             non_shared = ranges.subtract(shared_blocks)
             if not non_shared:
               continue
-
-            # There shouldn't anything in the extra dict yet.
-            assert not ranges.extra, "Non-empty RangeSet.extra"
 
             # Put the non-shared RangeSet as the value in the block map, which
             # has a copy of the original RangeSet.

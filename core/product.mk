@@ -205,6 +205,7 @@ _product_list_vars += PRODUCT_SOONG_NAMESPACES
 
 _product_list_vars += PRODUCT_DEFAULT_WIFI_CHANNELS
 _product_list_vars += PRODUCT_DEFAULT_DEV_CERTIFICATE
+_product_list_vars += PRODUCT_MAINLINE_SEPOLICY_DEV_CERTIFICATES
 _product_list_vars += PRODUCT_RESTRICT_VENDOR_FILES
 
 # The list of product-specific kernel header dirs
@@ -361,6 +362,7 @@ _product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_USERDATA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RECOVERY_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
 
 _product_list_vars += PRODUCT_UPDATABLE_BOOT_MODULES
 _product_list_vars += PRODUCT_UPDATABLE_BOOT_LOCATIONS

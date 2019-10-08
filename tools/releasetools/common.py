@@ -100,7 +100,7 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # that system_other is not in the list because we don't want to include its
 # descriptor into vbmeta.img.
 AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'recovery', 'system',
-                  'system_ext', 'vendor')
+                  'system_ext', 'vendor', 'vendor_boot')
 
 # Chained VBMeta partitions.
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
@@ -393,37 +393,8 @@ def LoadInfoDict(input_file, repacking=False):
   makeint("boot_size")
   makeint("fstab_version")
 
-  # We changed recovery.fstab path in Q, from ../RAMDISK/etc/recovery.fstab to
-  # ../RAMDISK/system/etc/recovery.fstab. LoadInfoDict() has to handle both
-  # cases, since it may load the info_dict from an old build (e.g. when
-  # generating incremental OTAs from that build).
-  system_root_image = d.get("system_root_image") == "true"
-  if d.get("no_recovery") != "true":
-    recovery_fstab_path = "RECOVERY/RAMDISK/system/etc/recovery.fstab"
-    if isinstance(input_file, zipfile.ZipFile):
-      if recovery_fstab_path not in input_file.namelist():
-        recovery_fstab_path = "RECOVERY/RAMDISK/etc/recovery.fstab"
-    else:
-      path = os.path.join(input_file, *recovery_fstab_path.split("/"))
-      if not os.path.exists(path):
-        recovery_fstab_path = "RECOVERY/RAMDISK/etc/recovery.fstab"
-    d["fstab"] = LoadRecoveryFSTab(
-        read_helper, d["fstab_version"], recovery_fstab_path, system_root_image)
-
-  elif d.get("recovery_as_boot") == "true":
-    recovery_fstab_path = "BOOT/RAMDISK/system/etc/recovery.fstab"
-    if isinstance(input_file, zipfile.ZipFile):
-      if recovery_fstab_path not in input_file.namelist():
-        recovery_fstab_path = "BOOT/RAMDISK/etc/recovery.fstab"
-    else:
-      path = os.path.join(input_file, *recovery_fstab_path.split("/"))
-      if not os.path.exists(path):
-        recovery_fstab_path = "BOOT/RAMDISK/etc/recovery.fstab"
-    d["fstab"] = LoadRecoveryFSTab(
-        read_helper, d["fstab_version"], recovery_fstab_path, system_root_image)
-
-  else:
-    d["fstab"] = None
+  # Load recovery fstab if applicable.
+  d["fstab"] = _FindAndLoadRecoveryFstab(d, input_file, read_helper)
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
@@ -549,6 +520,47 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
   return d
 
 
+def _FindAndLoadRecoveryFstab(info_dict, input_file, read_helper):
+  """Finds the path to recovery fstab and loads its contents."""
+  # recovery fstab is only meaningful when installing an update via recovery
+  # (i.e. non-A/B OTA). Skip loading fstab if device used A/B OTA.
+  if info_dict.get('ab_update') == 'true':
+    return None
+
+  # We changed recovery.fstab path in Q, from ../RAMDISK/etc/recovery.fstab to
+  # ../RAMDISK/system/etc/recovery.fstab. This function has to handle both
+  # cases, since it may load the info_dict from an old build (e.g. when
+  # generating incremental OTAs from that build).
+  system_root_image = info_dict.get('system_root_image') == 'true'
+  if info_dict.get('no_recovery') != 'true':
+    recovery_fstab_path = 'RECOVERY/RAMDISK/system/etc/recovery.fstab'
+    if isinstance(input_file, zipfile.ZipFile):
+      if recovery_fstab_path not in input_file.namelist():
+        recovery_fstab_path = 'RECOVERY/RAMDISK/etc/recovery.fstab'
+    else:
+      path = os.path.join(input_file, *recovery_fstab_path.split('/'))
+      if not os.path.exists(path):
+        recovery_fstab_path = 'RECOVERY/RAMDISK/etc/recovery.fstab'
+    return LoadRecoveryFSTab(
+        read_helper, info_dict['fstab_version'], recovery_fstab_path,
+        system_root_image)
+
+  if info_dict.get('recovery_as_boot') == 'true':
+    recovery_fstab_path = 'BOOT/RAMDISK/system/etc/recovery.fstab'
+    if isinstance(input_file, zipfile.ZipFile):
+      if recovery_fstab_path not in input_file.namelist():
+        recovery_fstab_path = 'BOOT/RAMDISK/etc/recovery.fstab'
+    else:
+      path = os.path.join(input_file, *recovery_fstab_path.split('/'))
+      if not os.path.exists(path):
+        recovery_fstab_path = 'BOOT/RAMDISK/etc/recovery.fstab'
+    return LoadRecoveryFSTab(
+        read_helper, info_dict['fstab_version'], recovery_fstab_path,
+        system_root_image)
+
+  return None
+
+
 def DumpInfoDict(d):
   for k, v in sorted(d.items()):
     logger.info("%-25s = (%s) %s", k, type(v).__name__, v)
@@ -616,6 +628,10 @@ def AppendAVBSigningArgs(cmd, partition):
   """Append signing arguments for avbtool."""
   # e.g., "--key path/to/signing_key --algorithm SHA256_RSA4096"
   key_path = OPTIONS.info_dict.get("avb_" + partition + "_key_path")
+  if key_path and not os.path.exists(key_path) and OPTIONS.search_path:
+    new_key_path = os.path.join(OPTIONS.search_path, key_path)
+    if os.path.exists(new_key_path):
+      key_path = new_key_path
   algorithm = OPTIONS.info_dict.get("avb_" + partition + "_algorithm")
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
@@ -625,7 +641,7 @@ def AppendAVBSigningArgs(cmd, partition):
     cmd.extend(["--salt", avb_salt])
 
 
-def GetAvbPartitionArg(partition, image, info_dict = None):
+def GetAvbPartitionArg(partition, image, info_dict=None):
   """Returns the VBMeta arguments for partition.
 
   It sets up the VBMeta argument by including the partition descriptor from the
@@ -668,6 +684,10 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
+  if key and not os.path.exists(key) and OPTIONS.search_path:
+    new_key_path = os.path.join(OPTIONS.search_path, key)
+    if os.path.exists(new_key_path):
+      key = new_key_path
   pubkey_path = ExtractAvbPublicKey(info_dict["avb_avbtool"], key)
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
@@ -733,6 +753,25 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
   RunAndCheckOutput(cmd)
 
 
+def _MakeRamdisk(sourcedir, fs_config_file=None):
+  ramdisk_img = tempfile.NamedTemporaryFile()
+
+  if fs_config_file is not None and os.access(fs_config_file, os.F_OK):
+    cmd = ["mkbootfs", "-f", fs_config_file,
+           os.path.join(sourcedir, "RAMDISK")]
+  else:
+    cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
+  p1 = Run(cmd, stdout=subprocess.PIPE)
+  p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
+
+  p2.wait()
+  p1.wait()
+  assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (sourcedir,)
+  assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (sourcedir,)
+
+  return ramdisk_img
+
+
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
                         has_ramdisk=False, two_step_image=False):
   """Build a bootable image from the specified sourcedir.
@@ -746,24 +785,6 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   for building the requested image.
   """
 
-  def make_ramdisk():
-    ramdisk_img = tempfile.NamedTemporaryFile()
-
-    if os.access(fs_config_file, os.F_OK):
-      cmd = ["mkbootfs", "-f", fs_config_file,
-             os.path.join(sourcedir, "RAMDISK")]
-    else:
-      cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
-    p1 = Run(cmd, stdout=subprocess.PIPE)
-    p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
-
-    p2.wait()
-    p1.wait()
-    assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (sourcedir,)
-    assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (sourcedir,)
-
-    return ramdisk_img
-
   if not os.access(os.path.join(sourcedir, "kernel"), os.F_OK):
     return None
 
@@ -776,7 +797,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   img = tempfile.NamedTemporaryFile()
 
   if has_ramdisk:
-    ramdisk_img = make_ramdisk()
+    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
@@ -933,6 +954,105 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   data = _BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
                              os.path.join(unpack_dir, fs_config),
                              info_dict, has_ramdisk, two_step_image)
+  if data:
+    return File(name, data)
+  return None
+
+
+def _BuildVendorBootImage(sourcedir, info_dict=None):
+  """Build a vendor boot image from the specified sourcedir.
+
+  Take a ramdisk, dtb, and vendor_cmdline from the input (in 'sourcedir'), and
+  turn them into a vendor boot image.
+
+  Return the image data, or None if sourcedir does not appear to contains files
+  for building the requested image.
+  """
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  img = tempfile.NamedTemporaryFile()
+
+  ramdisk_img = _MakeRamdisk(sourcedir)
+
+  # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
+  mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
+
+  cmd = [mkbootimg]
+
+  fn = os.path.join(sourcedir, "dtb")
+  if os.access(fn, os.F_OK):
+    cmd.append("--dtb")
+    cmd.append(fn)
+
+  fn = os.path.join(sourcedir, "vendor_cmdline")
+  if os.access(fn, os.F_OK):
+    cmd.append("--vendor_cmdline")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  fn = os.path.join(sourcedir, "base")
+  if os.access(fn, os.F_OK):
+    cmd.append("--base")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  fn = os.path.join(sourcedir, "pagesize")
+  if os.access(fn, os.F_OK):
+    cmd.append("--pagesize")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  args = info_dict.get("mkbootimg_args")
+  if args and args.strip():
+    cmd.extend(shlex.split(args))
+
+  args = info_dict.get("mkbootimg_version_args")
+  if args and args.strip():
+    cmd.extend(shlex.split(args))
+
+  cmd.extend(["--vendor_ramdisk", ramdisk_img.name])
+  cmd.extend(["--vendor_boot", img.name])
+
+  RunAndCheckOutput(cmd)
+
+  # AVB: if enabled, calculate and add hash.
+  if info_dict.get("avb_enable") == "true":
+    avbtool = info_dict["avb_avbtool"]
+    part_size = info_dict["vendor_boot_size"]
+    cmd = [avbtool, "add_hash_footer", "--image", img.name,
+           "--partition_size", str(part_size), "--partition_name vendor_boot"]
+    AppendAVBSigningArgs(cmd, "vendor_boot")
+    args = info_dict.get("avb_vendor_boot_add_hash_footer_args")
+    if args and args.strip():
+      cmd.extend(shlex.split(args))
+    RunAndCheckOutput(cmd)
+
+  img.seek(os.SEEK_SET, 0)
+  data = img.read()
+
+  ramdisk_img.close()
+  img.close()
+
+  return data
+
+
+def GetVendorBootImage(name, prebuilt_name, unpack_dir, tree_subdir,
+                       info_dict=None):
+  """Return a File object with the desired vendor boot image.
+
+  Look for it under 'unpack_dir'/IMAGES, otherwise construct it from
+  the source files in 'unpack_dir'/'tree_subdir'."""
+
+  prebuilt_path = os.path.join(unpack_dir, "IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    logger.info("using prebuilt %s from IMAGES...", prebuilt_name)
+    return File.FromLocalFile(name, prebuilt_path)
+
+  logger.info("building image from target_files %s...", tree_subdir)
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  data = _BuildVendorBootImage(os.path.join(unpack_dir, tree_subdir), info_dict)
   if data:
     return File(name, data)
   return None
@@ -1192,7 +1312,7 @@ def GetKeyPasswords(keylist):
 def GetMinSdkVersion(apk_name):
   """Gets the minSdkVersion declared in the APK.
 
-  It calls 'aapt' to query the embedded minSdkVersion from the given APK file.
+  It calls 'aapt2' to query the embedded minSdkVersion from the given APK file.
   This can be both a decimal number (API Level) or a codename.
 
   Args:
@@ -1205,12 +1325,12 @@ def GetMinSdkVersion(apk_name):
     ExternalError: On failing to obtain the min SDK version.
   """
   proc = Run(
-      ["aapt", "dump", "badging", apk_name], stdout=subprocess.PIPE,
+      ["aapt2", "dump", "badging", apk_name], stdout=subprocess.PIPE,
       stderr=subprocess.PIPE)
   stdoutdata, stderrdata = proc.communicate()
   if proc.returncode != 0:
     raise ExternalError(
-        "Failed to obtain minSdkVersion: aapt return code {}:\n{}\n{}".format(
+        "Failed to obtain minSdkVersion: aapt2 return code {}:\n{}\n{}".format(
             proc.returncode, stdoutdata, stderrdata))
 
   for line in stdoutdata.split("\n"):
@@ -1218,7 +1338,7 @@ def GetMinSdkVersion(apk_name):
     m = re.match(r'sdkVersion:\'([^\']*)\'', line)
     if m:
       return m.group(1)
-  raise ExternalError("No minSdkVersion returned by aapt")
+  raise ExternalError("No minSdkVersion returned by aapt2")
 
 
 def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
@@ -2427,13 +2547,25 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
     info_dict = OPTIONS.info_dict
 
   full_recovery_image = info_dict.get("full_recovery_image") == "true"
+  board_uses_vendorimage = info_dict.get("board_uses_vendorimage") == "true"
+
+  if board_uses_vendorimage:
+    # In this case, the output sink is rooted at VENDOR
+    recovery_img_path = "etc/recovery.img"
+    recovery_resource_dat_path = "VENDOR/etc/recovery-resource.dat"
+    sh_dir = "bin"
+  else:
+    # In this case the output sink is rooted at SYSTEM
+    recovery_img_path = "vendor/etc/recovery.img"
+    recovery_resource_dat_path = "SYSTEM/vendor/etc/recovery-resource.dat"
+    sh_dir = "vendor/bin"
 
   if full_recovery_image:
-    output_sink("etc/recovery.img", recovery_img.data)
+    output_sink(recovery_img_path, recovery_img.data)
 
   else:
     system_root_image = info_dict.get("system_root_image") == "true"
-    path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
+    path = os.path.join(input_dir, recovery_resource_dat_path)
     # With system-root-image, boot and recovery images will have mismatching
     # entries (only recovery has the ramdisk entry) (Bug: 72731506). Use bsdiff
     # to handle such a case.
@@ -2446,7 +2578,7 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
       if os.path.exists(path):
         diff_program.append("-b")
         diff_program.append(path)
-        bonus_args = "--bonus /system/etc/recovery-resource.dat"
+        bonus_args = "--bonus /vendor/etc/recovery-resource.dat"
       else:
         bonus_args = ""
 
@@ -2463,10 +2595,16 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
     return
 
   if full_recovery_image:
-    sh = """#!/system/bin/sh
+
+    # Note that we use /vendor to refer to the recovery resources. This will
+    # work for a separate vendor partition mounted at /vendor or a
+    # /system/vendor subdirectory on the system partition, for which init will
+    # create a symlink from /vendor to /system/vendor.
+
+    sh = """#!/vendor/bin/sh
 if ! applypatch --check %(type)s:%(device)s:%(size)d:%(sha1)s; then
   applypatch \\
-          --flash /system/etc/recovery.img \\
+          --flash /vendor/etc/recovery.img \\
           --target %(type)s:%(device)s:%(size)d:%(sha1)s && \\
       log -t recovery "Installing new recovery image: succeeded" || \\
       log -t recovery "Installing new recovery image: failed"
@@ -2478,10 +2616,10 @@ fi
        'sha1': recovery_img.sha1,
        'size': recovery_img.size}
   else:
-    sh = """#!/system/bin/sh
+    sh = """#!/vendor/bin/sh
 if ! applypatch --check %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
   applypatch %(bonus_args)s \\
-          --patch /system/recovery-from-boot.p \\
+          --patch /vendor/recovery-from-boot.p \\
           --source %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s \\
           --target %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s && \\
       log -t recovery "Installing new recovery image: succeeded" || \\
@@ -2499,9 +2637,9 @@ fi
        'recovery_device': recovery_device,
        'bonus_args': bonus_args}
 
-  # The install script location moved from /system/etc to /system/bin
-  # in the L release.
-  sh_location = "bin/install-recovery.sh"
+  # The install script location moved from /system/etc to /system/bin in the L
+  # release. In the R release it is in VENDOR/bin or SYSTEM/vendor/bin.
+  sh_location = os.path.join(sh_dir, "install-recovery.sh")
 
   logger.info("putting script in %s", sh_location)
 

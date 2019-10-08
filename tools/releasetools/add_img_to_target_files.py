@@ -165,9 +165,12 @@ def AddSystem(output_zip, recovery_img=None, boot_img=None):
       else:
         common.ZipWrite(output_zip, output_file, arc_name)
 
-  if (OPTIONS.rebuild_recovery and recovery_img is not None and
-      boot_img is not None):
-    logger.info("Building new recovery patch")
+  board_uses_vendorimage = OPTIONS.info_dict.get(
+      "board_uses_vendorimage") == "true"
+
+  if (OPTIONS.rebuild_recovery and not board_uses_vendorimage and
+      recovery_img is not None and boot_img is not None):
+    logger.info("Building new recovery patch on system at system/vendor")
     common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink, recovery_img,
                              boot_img, info_dict=OPTIONS.info_dict)
 
@@ -190,7 +193,7 @@ def AddSystemOther(output_zip):
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "system_other", img)
 
 
-def AddVendor(output_zip):
+def AddVendor(output_zip, recovery_img=None, boot_img=None):
   """Turn the contents of VENDOR into a vendor image and store in it
   output_zip."""
 
@@ -198,6 +201,27 @@ def AddVendor(output_zip):
   if os.path.exists(img.name):
     logger.info("vendor.img already exists; no need to rebuild...")
     return img.name
+
+  def output_sink(fn, data):
+    ofile = open(os.path.join(OPTIONS.input_tmp, "VENDOR", fn), "w")
+    ofile.write(data)
+    ofile.close()
+
+    if output_zip:
+      arc_name = "VENDOR/" + fn
+      if arc_name in output_zip.namelist():
+        OPTIONS.replace_updated_files_list.append(arc_name)
+      else:
+        common.ZipWrite(output_zip, ofile.name, arc_name)
+
+  board_uses_vendorimage = OPTIONS.info_dict.get(
+      "board_uses_vendorimage") == "true"
+
+  if (OPTIONS.rebuild_recovery and board_uses_vendorimage and
+      recovery_img is not None and boot_img is not None):
+    logger.info("Building new recovery patch on vendor")
+    common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink, recovery_img,
+                             boot_img, info_dict=OPTIONS.info_dict)
 
   block_list = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vendor.map")
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "vendor", img,
@@ -293,11 +317,6 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   logger.info("creating %s.img...", what)
 
   image_props = build_image.ImagePropFromGlobalDict(info_dict, what)
-  fstab = info_dict["fstab"]
-  mount_point = "/" + what
-  if fstab and mount_point in fstab:
-    image_props["fs_type"] = fstab[mount_point].fs_type
-
   image_props["timestamp"] = FIXED_FILE_TIMESTAMP
 
   if what == "system":
@@ -382,9 +401,6 @@ def AddUserdata(output_zip):
   else:
     user_dir = common.MakeTempDir()
 
-  fstab = OPTIONS.info_dict["fstab"]
-  if fstab:
-    image_props["fs_type"] = fstab["/data"].fs_type
   build_image.BuildImage(user_dir, image_props, img.name)
 
   common.CheckSize(img.name, "userdata.img", OPTIONS.info_dict)
@@ -471,10 +487,6 @@ def AddCache(output_zip):
   image_props["timestamp"] = FIXED_FILE_TIMESTAMP
 
   user_dir = common.MakeTempDir()
-
-  fstab = OPTIONS.info_dict["fstab"]
-  if fstab:
-    image_props["fs_type"] = fstab["/cache"].fs_type
   build_image.BuildImage(user_dir, image_props, img.name)
 
   common.CheckSize(img.name, "cache.img", OPTIONS.info_dict)
@@ -673,6 +685,7 @@ def AddImagesToTargetFiles(filename):
 
   has_recovery = OPTIONS.info_dict.get("no_recovery") != "true"
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
+  has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
 
   # {vendor,odm,product,system_ext}.img are unlike system.img or
   # system_other.img. Because it could be built from source, or dropped into
@@ -734,6 +747,19 @@ def AddImagesToTargetFiles(filename):
         if output_zip:
           boot_image.AddToZip(output_zip)
 
+  if has_vendor_boot:
+    banner("vendor_boot")
+    vendor_boot_image = common.GetVendorBootImage(
+        "IMAGES/vendor_boot.img", "vendor_boot.img", OPTIONS.input_tmp,
+        "VENDOR_BOOT")
+    if vendor_boot_image:
+      partitions['vendor_boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                               "vendor_boot.img")
+      if not os.path.exists(partitions['vendor_boot']):
+        vendor_boot_image.WriteToDir(OPTIONS.input_tmp)
+        if output_zip:
+          vendor_boot_image.AddToZip(output_zip)
+
   recovery_image = None
   if has_recovery:
     banner("recovery")
@@ -767,7 +793,8 @@ def AddImagesToTargetFiles(filename):
 
   if has_vendor:
     banner("vendor")
-    partitions['vendor'] = AddVendor(output_zip)
+    partitions['vendor'] = AddVendor(
+        output_zip, recovery_img=recovery_image, boot_img=boot_image)
 
   if has_product:
     banner("product")

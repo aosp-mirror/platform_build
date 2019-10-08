@@ -213,7 +213,7 @@ class APK(object):
     self.certs = frozenset(out)
 
   def ReadManifest(self, full_filename):
-    p = common.Run(["aapt", "dump", "xmltree", full_filename,
+    p = common.Run(["aapt2", "dump", "xmltree", full_filename, "--file",
                     "AndroidManifest.xml"],
                    stdout=subprocess.PIPE)
     manifest, err = p.communicate()
