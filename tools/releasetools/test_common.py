@@ -44,6 +44,210 @@ def get_2gb_string():
     yield b'\0' * (step_size - block_size)
 
 
+class BuildInfoTest(test_utils.ReleaseToolsTestCase):
+
+  TEST_INFO_DICT = {
+      'build.prop' : {
+          'ro.product.device' : 'product-device',
+          'ro.product.name' : 'product-name',
+          'ro.build.fingerprint' : 'build-fingerprint',
+          'ro.build.foo' : 'build-foo',
+      },
+      'vendor.build.prop' : {
+          'ro.vendor.build.fingerprint' : 'vendor-build-fingerprint',
+      },
+      'property1' : 'value1',
+      'property2' : 4096,
+  }
+
+  TEST_INFO_DICT_USES_OEM_PROPS = {
+      'build.prop' : {
+          'ro.product.name' : 'product-name',
+          'ro.build.thumbprint' : 'build-thumbprint',
+          'ro.build.bar' : 'build-bar',
+      },
+      'vendor.build.prop' : {
+          'ro.vendor.build.fingerprint' : 'vendor-build-fingerprint',
+      },
+      'property1' : 'value1',
+      'property2' : 4096,
+      'oem_fingerprint_properties' : 'ro.product.device ro.product.brand',
+  }
+
+  TEST_OEM_DICTS = [
+      {
+          'ro.product.brand' : 'brand1',
+          'ro.product.device' : 'device1',
+      },
+      {
+          'ro.product.brand' : 'brand2',
+          'ro.product.device' : 'device2',
+      },
+      {
+          'ro.product.brand' : 'brand3',
+          'ro.product.device' : 'device3',
+      },
+  ]
+
+  def test_init(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
+    self.assertEqual('product-device', target_info.device)
+    self.assertEqual('build-fingerprint', target_info.fingerprint)
+    self.assertFalse(target_info.is_ab)
+    self.assertIsNone(target_info.oem_props)
+
+  def test_init_with_oem_props(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
+                                   self.TEST_OEM_DICTS)
+    self.assertEqual('device1', target_info.device)
+    self.assertEqual('brand1/product-name/device1:build-thumbprint',
+                     target_info.fingerprint)
+
+    # Swap the order in oem_dicts, which would lead to different BuildInfo.
+    oem_dicts = copy.copy(self.TEST_OEM_DICTS)
+    oem_dicts[0], oem_dicts[2] = oem_dicts[2], oem_dicts[0]
+    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
+                                   oem_dicts)
+    self.assertEqual('device3', target_info.device)
+    self.assertEqual('brand3/product-name/device3:build-thumbprint',
+                     target_info.fingerprint)
+
+    # Missing oem_dict should be rejected.
+    self.assertRaises(AssertionError, common.BuildInfo,
+                      self.TEST_INFO_DICT_USES_OEM_PROPS, None)
+
+  def test_init_badFingerprint(self):
+    info_dict = copy.deepcopy(self.TEST_INFO_DICT)
+    info_dict['build.prop']['ro.build.fingerprint'] = 'bad fingerprint'
+    self.assertRaises(ValueError, common.BuildInfo, info_dict, None)
+
+    info_dict['build.prop']['ro.build.fingerprint'] = 'bad\x80fingerprint'
+    self.assertRaises(ValueError, common.BuildInfo, info_dict, None)
+
+  def test___getitem__(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
+    self.assertEqual('value1', target_info['property1'])
+    self.assertEqual(4096, target_info['property2'])
+    self.assertEqual('build-foo', target_info['build.prop']['ro.build.foo'])
+
+  def test___getitem__with_oem_props(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
+                                   self.TEST_OEM_DICTS)
+    self.assertEqual('value1', target_info['property1'])
+    self.assertEqual(4096, target_info['property2'])
+    self.assertRaises(KeyError,
+                      lambda: target_info['build.prop']['ro.build.foo'])
+
+  def test___setitem__(self):
+    target_info = common.BuildInfo(copy.deepcopy(self.TEST_INFO_DICT), None)
+    self.assertEqual('value1', target_info['property1'])
+    target_info['property1'] = 'value2'
+    self.assertEqual('value2', target_info['property1'])
+
+    self.assertEqual('build-foo', target_info['build.prop']['ro.build.foo'])
+    target_info['build.prop']['ro.build.foo'] = 'build-bar'
+    self.assertEqual('build-bar', target_info['build.prop']['ro.build.foo'])
+
+  def test_get(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
+    self.assertEqual('value1', target_info.get('property1'))
+    self.assertEqual(4096, target_info.get('property2'))
+    self.assertEqual(4096, target_info.get('property2', 1024))
+    self.assertEqual(1024, target_info.get('property-nonexistent', 1024))
+    self.assertEqual('build-foo', target_info.get('build.prop')['ro.build.foo'])
+
+  def test_get_with_oem_props(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
+                                   self.TEST_OEM_DICTS)
+    self.assertEqual('value1', target_info.get('property1'))
+    self.assertEqual(4096, target_info.get('property2'))
+    self.assertEqual(4096, target_info.get('property2', 1024))
+    self.assertEqual(1024, target_info.get('property-nonexistent', 1024))
+    self.assertIsNone(target_info.get('build.prop').get('ro.build.foo'))
+    self.assertRaises(KeyError,
+                      lambda: target_info.get('build.prop')['ro.build.foo'])
+
+  def test_items(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
+    items = target_info.items()
+    self.assertIn(('property1', 'value1'), items)
+    self.assertIn(('property2', 4096), items)
+
+  def test_GetBuildProp(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
+    self.assertEqual('build-foo', target_info.GetBuildProp('ro.build.foo'))
+    self.assertRaises(common.ExternalError, target_info.GetBuildProp,
+                      'ro.build.nonexistent')
+
+  def test_GetBuildProp_with_oem_props(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
+                                   self.TEST_OEM_DICTS)
+    self.assertEqual('build-bar', target_info.GetBuildProp('ro.build.bar'))
+    self.assertRaises(common.ExternalError, target_info.GetBuildProp,
+                      'ro.build.nonexistent')
+
+  def test_GetVendorBuildProp(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
+    self.assertEqual('vendor-build-fingerprint',
+                     target_info.GetVendorBuildProp(
+                         'ro.vendor.build.fingerprint'))
+    self.assertRaises(common.ExternalError, target_info.GetVendorBuildProp,
+                      'ro.build.nonexistent')
+
+  def test_GetVendorBuildProp_with_oem_props(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
+                                   self.TEST_OEM_DICTS)
+    self.assertEqual('vendor-build-fingerprint',
+                     target_info.GetVendorBuildProp(
+                         'ro.vendor.build.fingerprint'))
+    self.assertRaises(common.ExternalError, target_info.GetVendorBuildProp,
+                      'ro.build.nonexistent')
+
+  def test_vendor_fingerprint(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
+    self.assertEqual('vendor-build-fingerprint',
+                     target_info.vendor_fingerprint)
+
+  def test_vendor_fingerprint_blacklisted(self):
+    target_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
+    del target_info_dict['vendor.build.prop']['ro.vendor.build.fingerprint']
+    target_info = common.BuildInfo(target_info_dict, self.TEST_OEM_DICTS)
+    self.assertIsNone(target_info.vendor_fingerprint)
+
+  def test_vendor_fingerprint_without_vendor_build_prop(self):
+    target_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
+    del target_info_dict['vendor.build.prop']
+    target_info = common.BuildInfo(target_info_dict, self.TEST_OEM_DICTS)
+    self.assertIsNone(target_info.vendor_fingerprint)
+
+  def test_WriteMountOemScript(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
+                                   self.TEST_OEM_DICTS)
+    script_writer = test_utils.MockScriptWriter()
+    target_info.WriteMountOemScript(script_writer)
+    self.assertEqual([('Mount', '/oem', None)], script_writer.lines)
+
+  def test_WriteDeviceAssertions(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
+    script_writer = test_utils.MockScriptWriter()
+    target_info.WriteDeviceAssertions(script_writer, False)
+    self.assertEqual([('AssertDevice', 'product-device')], script_writer.lines)
+
+  def test_WriteDeviceAssertions_with_oem_props(self):
+    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
+                                   self.TEST_OEM_DICTS)
+    script_writer = test_utils.MockScriptWriter()
+    target_info.WriteDeviceAssertions(script_writer, False)
+    self.assertEqual(
+        [
+            ('AssertOemProperty', 'ro.product.device',
+             ['device1', 'device2', 'device3'], False),
+            ('AssertOemProperty', 'ro.product.brand',
+             ['brand1', 'brand2', 'brand3'], False),
+        ],
+        script_writer.lines)
+
+
 class CommonZipTest(test_utils.ReleaseToolsTestCase):
 
   def _verify(self, zip_file, zip_file_name, arcname, expected_hash,
