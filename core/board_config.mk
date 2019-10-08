@@ -86,6 +86,7 @@ _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
+  BUILD_BROKEN_PREBUILT_ELF_FILES \
   BUILD_BROKEN_USES_NETWORK \
 
 _build_broken_var_list += \
@@ -336,6 +337,20 @@ else ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),true)
 endif
 .KATI_READONLY := BUILDING_RECOVERY_IMAGE
 
+# Are we building a vendor boot image
+BUILDING_VENDOR_BOOT_IMAGE :=
+ifdef BOARD_BOOT_HEADER_VERSION
+  ifneq ($(call math_gt_or_eq,$(BOARD_BOOT_HEADER_VERSION),3),)
+    BUILDING_VENDOR_BOOT_IMAGE := true
+    ifdef BUILDING_RECOVERY_IMAGE
+      ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+        $(error Boot header version >=3 requires recovery as boot)
+      endif
+    endif
+  endif
+endif
+.KATI_READONLY := BUILDING_VENDOR_BOOT_IMAGE
+
 # Are we building a ramdisk image
 BUILDING_RAMDISK_IMAGE := true
 ifeq ($(PRODUCT_BUILD_RAMDISK_IMAGE),)
@@ -357,6 +372,13 @@ else ifeq ($(PRODUCT_BUILD_USERDATA_IMAGE),true)
   BUILDING_USERDATA_IMAGE := true
 endif
 .KATI_READONLY := BUILDING_USERDATA_IMAGE
+
+# Are we building a vbmeta image
+BUILDING_VBMETA_IMAGE := true
+ifeq ($(PRODUCT_BUILD_VBMETA_IMAGE),false)
+  BUILDING_VBMETA_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_VBMETA_IMAGE
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR
@@ -562,8 +584,16 @@ endif
 # APEXes are by default flattened, i.e. non-updatable.
 # It can be unflattened (and updatable) by inheriting from
 # updatable_apex.mk
-ifeq (,$(TARGET_FLATTEN_APEX))
-TARGET_FLATTEN_APEX := true
+#
+# APEX flattening can also be forcibly enabled (resp. disabled) by
+# setting OVERRIDE_TARGET_FLATTEN_APEX to true (resp. false), e.g. by
+# setting the OVERRIDE_TARGET_FLATTEN_APEX environment variable.
+ifdef OVERRIDE_TARGET_FLATTEN_APEX
+  TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
+else
+  ifeq (,$(TARGET_FLATTEN_APEX))
+    TARGET_FLATTEN_APEX := true
+  endif
 endif
 
 ifeq (,$(TARGET_BUILD_APPS))

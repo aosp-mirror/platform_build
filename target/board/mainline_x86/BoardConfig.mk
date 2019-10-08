@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 The Android Open-Source Project
+# Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +14,22 @@
 # limitations under the License.
 #
 
-include build/make/target/board/BoardConfigGsiCommon.mk
-
-TARGET_CPU_ABI := x86
 TARGET_ARCH := x86
 TARGET_ARCH_VARIANT := x86
+TARGET_CPU_ABI := x86
 
-# Legacy GSI keeps 32 bits binder for 32 bits CPU Arch
-TARGET_USES_64_BIT_BINDER := false
+include build/make/target/board/BoardConfigMainlineCommon.mk
+
+TARGET_NO_KERNEL := true
+
+# Build generic A/B format system-only OTA.
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS := system
+
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+
+# Mainline devices support apex
+# TODO: move this to product makefile and use updatable_apex.mk
+TARGET_FLATTEN_APEX := false

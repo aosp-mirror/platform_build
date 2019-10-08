@@ -23,6 +23,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - resgrep:    Greps on all local res/*.xml files.
 - mangrep:    Greps on all local AndroidManifest.xml files.
 - mgrep:      Greps on all local Makefiles and *.bp files.
+- owngrep:    Greps on all local OWNERS files.
 - sepgrep:    Greps on all local sepolicy files.
 - sgrep:      Greps on all local source files.
 - godir:      Go to the directory containing a file.
@@ -32,9 +33,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - refreshmod: Refresh list of modules for allmod/gomod.
 
 Environment options:
-- SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
-                 ASAN_OPTIONS=detect_leaks=0 will be set by default until the
-                 build is leak-check clean.
+- SANITIZE_HOST: Set to 'address' to use ASAN for all host modules.
 - ANDROID_QUIET_BUILD: set to 'true' to display only the essential messages.
 
 Look at the source to view more functions. The complete list is:
@@ -332,7 +331,6 @@ function set_stuff_for_environment()
     export ANDROID_BUILD_TOP=$(gettop)
     # With this environment variable new GCC can apply colors to warnings/errors
     export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-    export ASAN_OPTIONS=detect_leaks=0
 }
 
 function set_sequence_number()
@@ -574,6 +572,7 @@ function add_lunch_combo()
 function print_lunch_menu()
 {
     local uname=$(uname)
+    local choices=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
     echo
     echo "You're building on" $uname
     echo
@@ -581,7 +580,7 @@ function print_lunch_menu()
 
     local i=1
     local choice
-    for choice in $(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
+    for choice in $(echo $choices)
     do
         echo "     $i. $choice"
         i=$(($i+1))
@@ -992,6 +991,12 @@ function resgrep()
 function mangrep()
 {
     find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'AndroidManifest.xml' \
+        -exec grep --color -n "$@" {} +
+}
+
+function owngrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'OWNERS' \
         -exec grep --color -n "$@" {} +
 }
 

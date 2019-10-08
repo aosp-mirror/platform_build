@@ -479,7 +479,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             container_key,
             key_passwords[container_key],
             codename_to_api_level_map,
-            OPTIONS.avb_extra_args.get('apex'))
+            no_hashtree=True,
+            signing_args=OPTIONS.avb_extra_args.get('apex'))
         common.ZipWrite(output_tf_zip, signed_apex, filename)
 
       else:
@@ -602,11 +603,16 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     ReplaceVerityPrivateKey(misc_info, OPTIONS.replace_verity_private_key[1])
 
   if OPTIONS.replace_verity_public_key:
-    dest = "ROOT/verity_key" if system_root_image else "BOOT/RAMDISK/verity_key"
-    # We are replacing the one in boot image only, since the one under
-    # recovery won't ever be needed.
+    # Replace the one in root dir in system.img.
     ReplaceVerityPublicKey(
-        output_tf_zip, dest, OPTIONS.replace_verity_public_key[1])
+        output_tf_zip, 'ROOT/verity_key', OPTIONS.replace_verity_public_key[1])
+
+    if not system_root_image:
+      # Additionally replace the copy in ramdisk if not using system-as-root.
+      ReplaceVerityPublicKey(
+          output_tf_zip,
+          'BOOT/RAMDISK/verity_key',
+          OPTIONS.replace_verity_public_key[1])
 
   # Replace the keyid string in BOOT/cmdline.
   if OPTIONS.replace_verity_keyid:

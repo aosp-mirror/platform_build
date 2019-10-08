@@ -18,8 +18,6 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
-# Enable updating of APEXes
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 # Add adb keys to debuggable AOSP builds (if they exist)
 $(call inherit-product-if-exists, vendor/google/security/adb/vendor_key.mk)
 
@@ -73,6 +71,8 @@ PRODUCT_PACKAGES += \
     android.hardware.radio@1.0 \
     android.hardware.radio@1.1 \
     android.hardware.radio@1.2 \
+    android.hardware.radio@1.3 \
+    android.hardware.radio@1.4 \
     android.hardware.radio.config@1.0 \
     android.hardware.radio.deprecated@1.0 \
     android.hardware.secure_element@1.0 \
@@ -84,6 +84,11 @@ PRODUCT_PACKAGES += \
     libminui \
     libnl \
     libprotobuf-cpp-full \
+
+# Camera service uses 'libdepthphoto' for adding dynamic depth
+# metadata inside depth jpegs.
+PRODUCT_PACKAGES += \
+    libdepthphoto \
 
 PRODUCT_PACKAGES_DEBUG += \
     avbctl \
@@ -99,6 +104,8 @@ PRODUCT_HOST_PACKAGES += \
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
+
+PRODUCT_ENFORCE_RRO_TARGETS := *
 
 PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic

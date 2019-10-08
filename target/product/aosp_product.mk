@@ -21,27 +21,11 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_product.mk)
 # Default AOSP sounds
 $(call inherit-product-if-exists, frameworks/base/data/sounds/AllAudio.mk)
 
-# TODO(b/133643923): Clean up the mainline whitelist
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-    system/app/messaging/messaging.apk \
-    system/app/messaging/oat/% \
-    system/app/WAPPushManager/WAPPushManager.apk \
-    system/app/WAPPushManager/oat/% \
-    system/bin/healthd \
-    system/etc/init/healthd.rc \
-    system/etc/seccomp_policy/crash_dump.%.policy \
-    system/etc/seccomp_policy/mediacodec.policy \
-    system/etc/vintf/manifest/manifest_healthd.xml \
-    system/lib/libframesequence.so \
-    system/lib/libgiftranscode.so \
-    system/lib64/libframesequence.so \
-    system/lib64/libgiftranscode.so \
-
-
 # Additional settings used in all AOSP builds
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.config.ringtone=Ring_Synth_04.ogg \
     ro.config.notification_sound=pixiedust.ogg \
+    ro.com.android.dataroaming=true \
 
 # More AOSP packages
 PRODUCT_PACKAGES += \

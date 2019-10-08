@@ -32,5 +32,11 @@ TARGET_NO_KERNEL := true
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS := system
 
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+
+# Mainline devices support apex
+# TODO: move this to BoardConfigMainlineCommon. Currently, GSI wants flattened
+#       apexes, but emulator wants .apex files, preventing this.
+TARGET_FLATTEN_APEX := false
