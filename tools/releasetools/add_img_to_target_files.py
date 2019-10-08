@@ -337,13 +337,8 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
 
   # Use repeatable ext4 FS UUID and hash_seed UUID (based on partition name and
   # build fingerprint).
-  uuid_seed = what + "-"
-  if "build.prop" in info_dict:
-    build_prop = info_dict["build.prop"]
-    if "ro.build.fingerprint" in build_prop:
-      uuid_seed += build_prop["ro.build.fingerprint"]
-    elif "ro.build.thumbprint" in build_prop:
-      uuid_seed += build_prop["ro.build.thumbprint"]
+  build_info = common.BuildInfo(info_dict)
+  uuid_seed = what + "-" + build_info.fingerprint
   image_props["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_seed))
   hash_seed = "hash_seed-" + uuid_seed
   image_props["hash_seed"] = str(uuid.uuid5(uuid.NAMESPACE_URL, hash_seed))
@@ -728,7 +723,7 @@ def AddImagesToTargetFiles(filename):
 
   # A map between partition names and their paths, which could be used when
   # generating AVB vbmeta image.
-  partitions = dict()
+  partitions = {}
 
   def banner(s):
     logger.info("\n\n++++ %s  ++++\n\n", s)
