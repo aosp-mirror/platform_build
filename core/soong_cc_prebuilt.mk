@@ -136,7 +136,7 @@ endif
 
 ifndef LOCAL_IS_HOST_MODULE
   ifdef LOCAL_SOONG_UNSTRIPPED_BINARY
-    ifneq ($(LOCAL_VNDK_DEPEND_ON_CORE_VARIANT),true)
+    ifneq ($(LOCAL_UNINSTALLABLE_MODULE),true)
       my_symbol_path := $(if $(LOCAL_SOONG_SYMBOL_PATH),$(LOCAL_SOONG_SYMBOL_PATH),$(my_module_path))
       # Store a copy with symbols for symbolic debugging
       my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_symbol_path))
