@@ -1232,24 +1232,6 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
                                                         self._info)
 
 
-class MockScriptWriter(object):
-  """A class that mocks edify_generator.EdifyGenerator."""
-
-  def __init__(self, enable_comments=False):
-    self.lines = []
-    self.enable_comments = enable_comments
-
-  def Comment(self, comment):
-    if self.enable_comments:
-      self.lines.append('# {}'.format(comment))
-
-  def AppendExtra(self, extra):
-    self.lines.append(extra)
-
-  def __str__(self):
-    return '\n'.join(self.lines)
-
-
 class MockBlockDifference(object):
 
   def __init__(self, partition, tgt, src=None):
@@ -1287,7 +1269,7 @@ class DynamicPartitionsDifferenceTest(test_utils.ReleaseToolsTestCase):
                 if not line.startswith(b'#')]
 
   def setUp(self):
-    self.script = MockScriptWriter()
+    self.script = test_utils.MockScriptWriter()
     self.output_path = common.MakeTempFile(suffix='.zip')
 
   def test_full(self):
