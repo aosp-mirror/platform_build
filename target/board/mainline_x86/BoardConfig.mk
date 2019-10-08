@@ -14,10 +14,22 @@
 # limitations under the License.
 #
 
-# Base modules and settings for the product partition.
-PRODUCT_PACKAGES += \
-    group_product \
-    ModuleMetadata \
-    passwd_product \
-    product_compatibility_matrix.xml \
-    product_manifest.xml \
+TARGET_ARCH := x86
+TARGET_ARCH_VARIANT := x86
+TARGET_CPU_ABI := x86
+
+include build/make/target/board/BoardConfigMainlineCommon.mk
+
+TARGET_NO_KERNEL := true
+
+# Build generic A/B format system-only OTA.
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS := system
+
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+
+# Mainline devices support apex
+# TODO: move this to product makefile and use updatable_apex.mk
+TARGET_FLATTEN_APEX := false

@@ -1,4 +1,5 @@
-# Copyright (C) 2018 The Android Open Source Project
+#
+# Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,16 +14,14 @@
 # limitations under the License.
 #
 
-TARGET_ARCH := arm64
-TARGET_ARCH_VARIANT := armv8-a
-TARGET_CPU_VARIANT := generic
-TARGET_CPU_ABI := arm64-v8a
+TARGET_ARCH := x86
+TARGET_ARCH_VARIANT := x86
+TARGET_CPU_ABI := x86
 
-TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv8-a
-TARGET_2ND_CPU_ABI := armeabi-v7a
-TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := generic
+TARGET_NATIVE_BRIDGE_ARCH := arm
+TARGET_NATIVE_BRIDGE_ARCH_VARIANT := armv7-a-neon
+TARGET_NATIVE_BRIDGE_CPU_VARIANT := generic
+TARGET_NATIVE_BRIDGE_ABI := armeabi-v7a armeabi
 
 include build/make/target/board/BoardConfigMainlineCommon.mk
 
@@ -37,6 +36,5 @@ BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Mainline devices support apex
-# TODO: move this to BoardConfigMainlineCommon. Currently, GSI wants flattened
-#       apexes, but emulator wants .apex files, preventing this.
+# TODO: move this to product makefile and use updatable_apex.mk
 TARGET_FLATTEN_APEX := false
