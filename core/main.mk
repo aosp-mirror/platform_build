@@ -1490,6 +1490,9 @@ ramdisk: $(INSTALLED_RAMDISK_TARGET)
 .PHONY: ramdisk_debug
 ramdisk_debug: $(INSTALLED_DEBUG_RAMDISK_TARGET)
 
+.PHONY: ramdisk_test_harness
+ramdisk_test_harness: $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
+
 .PHONY: userdataimage
 userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET)
 
@@ -1529,6 +1532,9 @@ bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
 .PHONY: bootimage_debug
 bootimage_debug: $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
+
+.PHONY: bootimage_test_harness
+bootimage_test_harness: $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET)
 
 .PHONY: vbmetaimage
 vbmetaimage: $(INSTALLED_VBMETAIMAGE_TARGET)
@@ -1696,6 +1702,10 @@ else # TARGET_BUILD_APPS
       $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
       $(INSTALLED_DEBUG_RAMDISK_TARGET) \
       $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
+    )
+    $(call dist-for-goals, bootimage_test_harness, \
+      $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
+      $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
     )
   endif
 
