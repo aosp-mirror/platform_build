@@ -3216,25 +3216,40 @@ endif
 # Appends os version and security patch level as a AVB property descriptor
 
 BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.system.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
     --prop com.android.build.system.os_version:$(PLATFORM_VERSION) \
     --prop com.android.build.system.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.product.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
     --prop com.android.build.product.os_version:$(PLATFORM_VERSION) \
     --prop com.android.build.product.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 BOARD_AVB_SYSTEM_EXT_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.system_ext.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
     --prop com.android.build.system_ext.os_version:$(PLATFORM_VERSION) \
     --prop com.android.build.system_ext.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
     --prop com.android.build.boot.os_version:$(PLATFORM_VERSION)
 
+BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.vendor_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
+
+BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.recovery.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
+
 BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.vendor.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
     --prop com.android.build.vendor.os_version:$(PLATFORM_VERSION)
 
 BOARD_AVB_ODM_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.odm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
     --prop com.android.build.odm.os_version:$(PLATFORM_VERSION)
+
+BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.dtbo.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
 # The following vendor- and odm-specific images needs explicit SPL set per board.
 ifdef BOOT_SECURITY_PATCH
