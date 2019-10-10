@@ -630,11 +630,9 @@ EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 USE_OPENJDK9 := true
 
 ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),)
-TARGET_OPENJDK9 := true
+TARGET_OPENJDK9 :=
 else ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),true)
 TARGET_OPENJDK9 := true
-else ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),false)
-TARGET_OPENJDK9 :=
 endif
 
 # Path to tools.jar
