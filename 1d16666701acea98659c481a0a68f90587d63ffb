@@ -185,6 +185,30 @@
     },
     {
       "key": {
+        "uuid": "1137540e_62023c95",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 3145,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-10-10T13:40:24Z",
+      "side": 1,
+      "message": "\u003e  we still need to explicitly set BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION, otherwise it would fail with a general error (... is not defined). \n\nOK, SGTM. Thanks for checking the CF as well.",
+      "parentUuid": "19540fd9_7f55347b",
+      "range": {
+        "startLine": 3145,
+        "startChar": 0,
+        "endLine": 3145,
+        "endChar": 216
+      },
+      "revId": "1d16666701acea98659c481a0a68f90587d63ffb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4ed17e4a_79698a23",
         "filename": "core/Makefile",
         "patchSetId": 2
