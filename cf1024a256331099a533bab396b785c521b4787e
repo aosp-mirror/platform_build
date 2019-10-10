@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28f0f4be_b511da8f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-10-10T13:59:19Z",
+      "side": 1,
+      "message": "nit: maybe we can add more info in the commit message to help others resolving the build breaks easily.\n\ne.g.,\nThis CL will cause a build break if BOARD_AVB_RECOVERY_KEY_PATH is not set for non-A/B targets with recovery.img\nThe following is an example to fix the build break by specifying the AVB signing configs for the recovery.img\n\nBOARD_AVB_RECOVERY_KEY_PATH :\u003d external/avb/test/data/testkey_rsa2048.pem\nBOARD_AVB_RECOVERY_ALGORITHM :\u003d SHA256_RSA2048\nBOARD_AVB_RECOVERY_ROLLBACK_INDEX :\u003d $(PLATFORM_SECURITY_PATCH_TIMESTAMP)\nBOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION :\u003d 2\n\nAlso note that libavb in bootloader needs an update to include this commit Iaa886037edb18c2ff6c60fa2a7f883ab7303ba1a.",
+      "revId": "cf1024a256331099a533bab396b785c521b4787e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
