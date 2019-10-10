@@ -34,6 +34,24 @@
       "revId": "cf1024a256331099a533bab396b785c521b4787e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e9542901_3e7533d3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-10-10T15:52:11Z",
+      "side": 1,
+      "message": "Makes sense to me. Thanks!",
+      "parentUuid": "29779a15_5609a44c",
+      "revId": "cf1024a256331099a533bab396b785c521b4787e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
