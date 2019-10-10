@@ -346,20 +346,25 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
       key = info_dict['avb_vbmeta_key_path']
 
     # avbtool verifies all the images that have descriptors listed in vbmeta.
+    # Using `--follow_chain_partitions` so it would additionally verify chained
+    # vbmeta partitions (e.g. vbmeta_system).
     image = os.path.join(input_tmp, 'IMAGES', 'vbmeta.img')
     cmd = [info_dict['avb_avbtool'], 'verify_image', '--image', image,
-           '--key', key]
+           '--key', key, '--follow_chain_partitions']
 
     # Append the args for chained partitions if any.
     for partition in common.AVB_PARTITIONS + common.AVB_VBMETA_PARTITIONS:
       key_name = 'avb_' + partition + '_key_path'
       if info_dict.get(key_name) is not None:
+        if info_dict.get('ab_update') != 'true' and partition == 'recovery':
+          continue
+
         # Use the key file from command line if specified; otherwise fall back
         # to the one in info dict.
         key_file = options.get(key_name, info_dict[key_name])
         chained_partition_arg = common.GetAvbChainedPartitionArg(
             partition, info_dict, key_file)
-        cmd.extend(["--expected_chain_partition", chained_partition_arg])
+        cmd.extend(['--expected_chain_partition', chained_partition_arg])
 
     proc = common.Run(cmd)
     stdoutdata, _ = proc.communicate()
@@ -370,6 +375,22 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
     logging.info(
         'Verified %s with avbtool (key: %s):\n%s', image, key,
         stdoutdata.rstrip())
+
+    # avbtool verifies recovery image for non-A/B devices.
+    if (info_dict.get('ab_update') != 'true' and
+        info_dict.get('no_recovery') != 'true'):
+      image = os.path.join(input_tmp, 'IMAGES', 'recovery.img')
+      key = info_dict['avb_recovery_key_path']
+      cmd = [info_dict['avb_avbtool'], 'verify_image', '--image', image,
+             '--key', key]
+      proc = common.Run(cmd)
+      stdoutdata, _ = proc.communicate()
+      assert proc.returncode == 0, \
+          'Failed to verify {} with avbtool (key: {}):\n{}'.format(
+              image, key, stdoutdata)
+      logging.info(
+          'Verified %s with avbtool (key: %s):\n%s', image, key,
+          stdoutdata.rstrip())
 
 
 def main():
