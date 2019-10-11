@@ -33,12 +33,6 @@ else
     endif
 endif
 
-# Yes, this is actually what the clang driver does.
-linux_dynamic_gcclibs := -lgcc_s -lgcc -lc -lgcc_s -lgcc
-linux_static_gcclibs := -Wl,--start-group -lgcc -lgcc_eh -lc -Wl,--end-group
-darwin_dynamic_gcclibs := -lc -lSystem
-darwin_static_gcclibs := NO_STATIC_HOST_BINARIES_ON_DARWIN
-
 my_link_type := dynamic
 ifdef LOCAL_IS_HOST_MODULE
     ifneq (,$(BUILD_HOST_static))
@@ -55,8 +49,6 @@ endif
 
 my_cxx_ldlibs :=
 ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
-    my_cflags += -D_USING_LIBCXX
-
     ifeq ($($(my_prefix)OS),darwin)
         # libc++'s headers are annotated with availability macros that indicate
         # which version of Mac OS was the first to ship with a libc++ feature
@@ -81,8 +73,7 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
 
     ifdef LOCAL_IS_HOST_MODULE
         my_cppflags += -nostdinc++
-        my_ldflags += -nodefaultlibs
-        my_cxx_ldlibs += $($($(my_prefix)OS)_$(my_link_type)_gcclibs)
+        my_ldflags += -nostdlib++
     else
         my_static_libraries += libc++demangle
         ifeq (arm,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
@@ -101,8 +92,7 @@ else ifeq ($(my_cxx_stl),libstdc++)
 else ifeq ($(my_cxx_stl),none)
     ifdef LOCAL_IS_HOST_MODULE
         my_cppflags += -nostdinc++
-        my_ldflags += -nodefaultlibs
-        my_cxx_ldlibs += $($($(my_prefix)OS)_$(my_link_type)_gcclibs)
+        my_ldflags += -nostdlib++
     endif
 else
     $(error $(LOCAL_PATH): $(LOCAL_MODULE): $(my_cxx_stl) is not a supported STL.)

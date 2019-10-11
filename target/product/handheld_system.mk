@@ -24,6 +24,7 @@ $(call inherit-product-if-exists, external/google-fonts/dancing-script/fonts.mk)
 $(call inherit-product-if-exists, external/google-fonts/carrois-gothic-sc/fonts.mk)
 $(call inherit-product-if-exists, external/google-fonts/coming-soon/fonts.mk)
 $(call inherit-product-if-exists, external/google-fonts/cutive-mono/fonts.mk)
+$(call inherit-product-if-exists, external/google-fonts/source-sans-pro/fonts.mk)
 $(call inherit-product-if-exists, external/noto-fonts/fonts.mk)
 $(call inherit-product-if-exists, external/roboto-fonts/fonts.mk)
 $(call inherit-product-if-exists, external/hyphenation-patterns/patterns.mk)
@@ -56,6 +57,7 @@ PRODUCT_PACKAGES += \
     MtpDocumentsProvider \
     MusicFX \
     NfcNci \
+    OsuLogin \
     PacProcessor \
     PrintRecommendationService \
     PrintSpooler \

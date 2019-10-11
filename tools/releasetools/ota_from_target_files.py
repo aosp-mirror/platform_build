@@ -72,7 +72,7 @@ Common options that apply to both of non-A/B and A/B OTAs
       --skip_postinstall is implied.
 
   --skip_compatibility_check
-      Skip adding the compatibility package to the generated OTA package.
+      Skip checking compatibility of the input target files package.
 
   --output_metadata_path
       Write a copy of the metadata to a separate file. Therefore, users can
@@ -139,6 +139,9 @@ Non-A/B OTA specific options
 
 A/B OTA specific options
 
+  --disable_fec_computation
+      Disable the on device FEC data computation for incremental updates.
+
   --include_secondary
       Additionally include the payload for secondary slot images (default:
       False). Only meaningful when generating A/B OTAs.
@@ -189,9 +192,9 @@ import shlex
 import shutil
 import struct
 import sys
-import tempfile
 import zipfile
 
+import check_target_files_vintf
 import common
 import edify_generator
 import verity_utils
@@ -235,6 +238,7 @@ OPTIONS.skip_postinstall = False
 OPTIONS.retrofit_dynamic_partitions = False
 OPTIONS.skip_compatibility_check = False
 OPTIONS.output_metadata_path = None
+OPTIONS.disable_fec_computation = False
 
 
 METADATA_NAME = 'META-INF/com/android/metadata'
@@ -247,214 +251,11 @@ TARGET_DIFFING_UNZIP_PATTERN = ['BOOT', 'RECOVERY', 'SYSTEM/*', 'VENDOR/*',
                                 'PRODUCT/*', 'SYSTEM_EXT/*', 'ODM/*']
 RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 
-
-class BuildInfo(object):
-  """A class that holds the information for a given build.
-
-  This class wraps up the property querying for a given source or target build.
-  It abstracts away the logic of handling OEM-specific properties, and caches
-  the commonly used properties such as fingerprint.
-
-  There are two types of info dicts: a) build-time info dict, which is generated
-  at build time (i.e. included in a target_files zip); b) OEM info dict that is
-  specified at package generation time (via command line argument
-  '--oem_settings'). If a build doesn't use OEM-specific properties (i.e. not
-  having "oem_fingerprint_properties" in build-time info dict), all the queries
-  would be answered based on build-time info dict only. Otherwise if using
-  OEM-specific properties, some of them will be calculated from two info dicts.
-
-  Users can query properties similarly as using a dict() (e.g. info['fstab']),
-  or to query build properties via GetBuildProp() or GetVendorBuildProp().
-
-  Attributes:
-    info_dict: The build-time info dict.
-    is_ab: Whether it's a build that uses A/B OTA.
-    oem_dicts: A list of OEM dicts.
-    oem_props: A list of OEM properties that should be read from OEM dicts; None
-        if the build doesn't use any OEM-specific property.
-    fingerprint: The fingerprint of the build, which would be calculated based
-        on OEM properties if applicable.
-    device: The device name, which could come from OEM dicts if applicable.
-  """
-
-  _RO_PRODUCT_RESOLVE_PROPS = ["ro.product.brand", "ro.product.device",
-                               "ro.product.manufacturer", "ro.product.model",
-                               "ro.product.name"]
-  _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER = ["product", "odm", "vendor",
-                                            "system_ext", "system"]
-
-  def __init__(self, info_dict, oem_dicts):
-    """Initializes a BuildInfo instance with the given dicts.
-
-    Note that it only wraps up the given dicts, without making copies.
-
-    Arguments:
-      info_dict: The build-time info dict.
-      oem_dicts: A list of OEM dicts (which is parsed from --oem_settings). Note
-          that it always uses the first dict to calculate the fingerprint or the
-          device name. The rest would be used for asserting OEM properties only
-          (e.g. one package can be installed on one of these devices).
-    """
-    self.info_dict = info_dict
-    self.oem_dicts = oem_dicts
-
-    self._is_ab = info_dict.get("ab_update") == "true"
-    self._oem_props = info_dict.get("oem_fingerprint_properties")
-
-    if self._oem_props:
-      assert oem_dicts, "OEM source required for this build"
-
-    # These two should be computed only after setting self._oem_props.
-    self._device = self.GetOemProperty("ro.product.device")
-    self._fingerprint = self.CalculateFingerprint()
-
-  @property
-  def is_ab(self):
-    return self._is_ab
-
-  @property
-  def device(self):
-    return self._device
-
-  @property
-  def fingerprint(self):
-    return self._fingerprint
-
-  @property
-  def vendor_fingerprint(self):
-    return self._fingerprint_of("vendor")
-
-  @property
-  def product_fingerprint(self):
-    return self._fingerprint_of("product")
-
-  @property
-  def odm_fingerprint(self):
-    return self._fingerprint_of("odm")
-
-  def _fingerprint_of(self, partition):
-    if partition + ".build.prop" not in self.info_dict:
-      return None
-    build_prop = self.info_dict[partition + ".build.prop"]
-    if "ro." + partition + ".build.fingerprint" in build_prop:
-      return build_prop["ro." + partition + ".build.fingerprint"]
-    if "ro." + partition + ".build.thumbprint" in build_prop:
-      return build_prop["ro." + partition + ".build.thumbprint"]
-    return None
-
-  @property
-  def oem_props(self):
-    return self._oem_props
-
-  def __getitem__(self, key):
-    return self.info_dict[key]
-
-  def __setitem__(self, key, value):
-    self.info_dict[key] = value
-
-  def get(self, key, default=None):
-    return self.info_dict.get(key, default)
-
-  def items(self):
-    return self.info_dict.items()
-
-  def GetBuildProp(self, prop):
-    """Returns the inquired build property."""
-    if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
-      return self._ResolveRoProductBuildProp(prop)
-
-    try:
-      return self.info_dict.get("build.prop", {})[prop]
-    except KeyError:
-      raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
-
-  def _ResolveRoProductBuildProp(self, prop):
-    """Resolves the inquired ro.product.* build property"""
-    prop_val = self.info_dict.get("build.prop", {}).get(prop)
-    if prop_val:
-      return prop_val
-
-    source_order_val = self.info_dict.get("build.prop", {}).get(
-        "ro.product.property_source_order")
-    if source_order_val:
-      source_order = source_order_val.split(",")
-    else:
-      source_order = BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER
-
-    # Check that all sources in ro.product.property_source_order are valid
-    if any([x not in BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER
-            for x in source_order]):
-      raise common.ExternalError(
-          "Invalid ro.product.property_source_order '{}'".format(source_order))
-
-    for source in source_order:
-      source_prop = prop.replace(
-          "ro.product", "ro.product.{}".format(source), 1)
-      prop_val = self.info_dict.get(
-          "{}.build.prop".format(source), {}).get(source_prop)
-      if prop_val:
-        return prop_val
-
-    raise common.ExternalError("couldn't resolve {}".format(prop))
-
-  def GetVendorBuildProp(self, prop):
-    """Returns the inquired vendor build property."""
-    try:
-      return self.info_dict.get("vendor.build.prop", {})[prop]
-    except KeyError:
-      raise common.ExternalError(
-          "couldn't find %s in vendor.build.prop" % (prop,))
-
-  def GetOemProperty(self, key):
-    if self.oem_props is not None and key in self.oem_props:
-      return self.oem_dicts[0][key]
-    return self.GetBuildProp(key)
-
-  def CalculateFingerprint(self):
-    if self.oem_props is None:
-      try:
-        return self.GetBuildProp("ro.build.fingerprint")
-      except common.ExternalError:
-        return "{}/{}/{}:{}/{}/{}:{}/{}".format(
-            self.GetBuildProp("ro.product.brand"),
-            self.GetBuildProp("ro.product.name"),
-            self.GetBuildProp("ro.product.device"),
-            self.GetBuildProp("ro.build.version.release"),
-            self.GetBuildProp("ro.build.id"),
-            self.GetBuildProp("ro.build.version.incremental"),
-            self.GetBuildProp("ro.build.type"),
-            self.GetBuildProp("ro.build.tags"))
-    return "%s/%s/%s:%s" % (
-        self.GetOemProperty("ro.product.brand"),
-        self.GetOemProperty("ro.product.name"),
-        self.GetOemProperty("ro.product.device"),
-        self.GetBuildProp("ro.build.thumbprint"))
-
-  def WriteMountOemScript(self, script):
-    assert self.oem_props is not None
-    recovery_mount_options = self.info_dict.get("recovery_mount_options")
-    script.Mount("/oem", recovery_mount_options)
-
-  def WriteDeviceAssertions(self, script, oem_no_mount):
-    # Read the property directly if not using OEM properties.
-    if not self.oem_props:
-      script.AssertDevice(self.device)
-      return
-
-    # Otherwise assert OEM properties.
-    if not self.oem_dicts:
-      raise common.ExternalError(
-          "No OEM file provided to answer expected assertions")
-
-    for prop in self.oem_props.split():
-      values = []
-      for oem_dict in self.oem_dicts:
-        if prop in oem_dict:
-          values.append(oem_dict[prop])
-      if not values:
-        raise common.ExternalError(
-            "The OEM file is missing the property %s" % (prop,))
-      script.AssertOemProperty(prop, values, oem_no_mount)
+# Images to be excluded from secondary payload. We essentially only keep
+# 'system_other' and bootloader partitions.
+SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
+    'boot', 'dtbo', 'modem', 'odm', 'product', 'radio', 'recovery',
+    'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor']
 
 
 class PayloadSigner(object):
@@ -571,6 +372,8 @@ class Payload(object):
            "--target_image", target_file]
     if source_file is not None:
       cmd.extend(["--source_image", source_file])
+      if OPTIONS.disable_fec_computation:
+        cmd.extend(["--disable_fec_computation", "true"])
     cmd.extend(additional_args)
     self._Run(cmd)
 
@@ -709,10 +512,19 @@ def _WriteRecoveryImageToBoot(script, output_zip):
     script.WriteRawImage("/boot", "recovery.img")
 
 
-def HasRecoveryPatch(target_files_zip):
+def HasRecoveryPatch(target_files_zip, info_dict):
+  board_uses_vendorimage = info_dict.get("board_uses_vendorimage") == "true"
+
+  if board_uses_vendorimage:
+    target_files_dir = "VENDOR"
+  else:
+    target_files_dir = "SYSTEM/vendor"
+
+  patch = "%s/recovery-from-boot.p" % target_files_dir
+  img = "%s/etc/recovery.img" %target_files_dir
+
   namelist = [name for name in target_files_zip.namelist()]
-  return ("SYSTEM/recovery-from-boot.p" in namelist or
-          "SYSTEM/etc/recovery.img" in namelist)
+  return (patch in namelist or img in namelist)
 
 
 def HasPartition(target_files_zip, partition):
@@ -723,20 +535,15 @@ def HasPartition(target_files_zip, partition):
     return False
 
 
-def HasVendorPartition(target_files_zip):
-  return HasPartition(target_files_zip, "vendor")
+def HasTrebleEnabled(target_files, target_info):
+  def HasVendorPartition(target_files):
+    if os.path.isdir(target_files):
+      return os.path.isdir(os.path.join(target_files, "VENDOR"))
+    if zipfile.is_zipfile(target_files):
+      return HasPartition(zipfile.ZipFile(target_files), "vendor")
+    raise ValueError("Unknown target_files argument")
 
-
-def HasProductPartition(target_files_zip):
-  return HasPartition(target_files_zip, "product")
-
-
-def HasOdmPartition(target_files_zip):
-  return HasPartition(target_files_zip, "odm")
-
-
-def HasTrebleEnabled(target_files_zip, target_info):
-  return (HasVendorPartition(target_files_zip) and
+  return (HasVendorPartition(target_files) and
           target_info.GetBuildProp("ro.treble.enabled") == "true")
 
 
@@ -761,74 +568,23 @@ def WriteFingerprintAssertion(script, target_info, source_info):
         source_info.GetBuildProp("ro.build.thumbprint"))
 
 
-def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
-                                           source_info=None):
-  """Adds compatibility info into the output zip if it's Treble-enabled target.
+def CheckVintfIfTrebleEnabled(target_files, target_info):
+  """Checks compatibility info of the input target files.
 
-  Metadata used for on-device compatibility verification is retrieved from
-  target_zip then added to compatibility.zip which is added to the output_zip
-  archive.
+  Metadata used for compatibility verification is retrieved from target_zip.
 
-  Compatibility archive should only be included for devices that have enabled
+  Compatibility should only be checked for devices that have enabled
   Treble support.
 
   Args:
-    target_zip: Zip file containing the source files to be included for OTA.
-    output_zip: Zip file that will be sent for OTA.
+    target_files: Path to zip file containing the source files to be included
+        for OTA. Can also be the path to extracted directory.
     target_info: The BuildInfo instance that holds the target build info.
-    source_info: The BuildInfo instance that holds the source build info, if
-        generating an incremental OTA; None otherwise.
   """
-
-  def AddCompatibilityArchive(framework_updated, device_updated):
-    """Adds compatibility info based on update status of both sides of Treble
-    boundary.
-
-    Args:
-      framework_updated: If True, the system / product image will be updated
-          and therefore their metadata should be included.
-      device_updated: If True, the vendor / odm image will be updated and
-          therefore their metadata should be included.
-    """
-    # Determine what metadata we need. Files are names relative to META/.
-    compatibility_files = []
-    device_metadata = ("vendor_manifest.xml", "vendor_matrix.xml")
-    framework_metadata = ("system_manifest.xml", "system_matrix.xml")
-    if device_updated:
-      compatibility_files += device_metadata
-    if framework_updated:
-      compatibility_files += framework_metadata
-
-    # Create new archive.
-    compatibility_archive = tempfile.NamedTemporaryFile()
-    compatibility_archive_zip = zipfile.ZipFile(
-        compatibility_archive, "w", compression=zipfile.ZIP_DEFLATED)
-
-    # Add metadata.
-    for file_name in compatibility_files:
-      target_file_name = "META/" + file_name
-
-      if target_file_name in target_zip.namelist():
-        data = target_zip.read(target_file_name)
-        common.ZipWriteStr(compatibility_archive_zip, file_name, data)
-
-    # Ensure files are written before we copy into output_zip.
-    compatibility_archive_zip.close()
-
-    # Only add the archive if we have any compatibility info.
-    if compatibility_archive_zip.namelist():
-      common.ZipWrite(output_zip, compatibility_archive.name,
-                      arcname="compatibility.zip",
-                      compress_type=zipfile.ZIP_STORED)
-
-  def FingerprintChanged(source_fp, target_fp):
-    if source_fp is None or target_fp is None:
-      return True
-    return source_fp != target_fp
 
   # Will only proceed if the target has enabled the Treble support (as well as
   # having a /vendor partition).
-  if not HasTrebleEnabled(target_zip, target_info):
+  if not HasTrebleEnabled(target_files, target_info):
     return
 
   # Skip adding the compatibility package as a workaround for b/114240221. The
@@ -836,28 +592,8 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
   if OPTIONS.skip_compatibility_check:
     return
 
-  # Full OTA carries the info for system/vendor/product/odm
-  if source_info is None:
-    AddCompatibilityArchive(True, True)
-    return
-
-  source_fp = source_info.fingerprint
-  target_fp = target_info.fingerprint
-  system_updated = source_fp != target_fp
-
-  # other build fingerprints could be possibly blacklisted at build time. For
-  # such a case, we consider those images being changed.
-  vendor_updated = FingerprintChanged(source_info.vendor_fingerprint,
-                                      target_info.vendor_fingerprint)
-  product_updated = HasProductPartition(target_zip) and \
-                    FingerprintChanged(source_info.product_fingerprint,
-                                       target_info.product_fingerprint)
-  odm_updated = HasOdmPartition(target_zip) and \
-                FingerprintChanged(source_info.odm_fingerprint,
-                                   target_info.odm_fingerprint)
-
-  AddCompatibilityArchive(system_updated or product_updated,
-                          vendor_updated or odm_updated)
+  if not check_target_files_vintf.CheckVintf(target_files, target_info):
+    raise RuntimeError("VINTF compatibility check failed")
 
 
 def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
@@ -949,7 +685,7 @@ def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
 
 
 def WriteFullOTAPackage(input_zip, output_file):
-  target_info = BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
+  target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
 
   # We don't know what version it will be installed on top of. We expect the API
   # just won't change very often. Similarly for fstab, it might have changed in
@@ -979,7 +715,7 @@ def WriteFullOTAPackage(input_zip, output_file):
       metadata=metadata,
       info_dict=OPTIONS.info_dict)
 
-  assert HasRecoveryPatch(input_zip)
+  assert HasRecoveryPatch(input_zip, info_dict=OPTIONS.info_dict)
 
   # Assertions (e.g. downgrade check, device properties check).
   ts = target_info.GetBuildProp("ro.build.date.utc")
@@ -1068,7 +804,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
                              progress=progress_dict.get(block_diff.partition),
                              write_verify_script=OPTIONS.verify)
 
-  AddCompatibilityArchiveIfTrebleEnabled(input_zip, output_zip, target_info)
+  CheckVintfIfTrebleEnabled(OPTIONS.input_tmp, target_info)
 
   boot_img = common.GetBootableImage(
       "boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
@@ -1175,8 +911,8 @@ def GetPackageMetadata(target_info, source_info=None):
   Returns:
     A dict to be written into package metadata entry.
   """
-  assert isinstance(target_info, BuildInfo)
-  assert source_info is None or isinstance(source_info, BuildInfo)
+  assert isinstance(target_info, common.BuildInfo)
+  assert source_info is None or isinstance(source_info, common.BuildInfo)
 
   metadata = {
       'post-build' : target_info.fingerprint,
@@ -1589,8 +1325,8 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
 
 
 def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
-  target_info = BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
-  source_info = BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
+  target_info = common.BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
+  source_info = common.BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
 
   target_api_version = target_info["recovery_api_version"]
   source_api_version = source_info["recovery_api_version"]
@@ -1643,8 +1379,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
                                         source_info=source_info,
                                         device_specific=device_specific)
 
-  AddCompatibilityArchiveIfTrebleEnabled(
-      target_zip, output_zip, target_info, source_info)
+  CheckVintfIfTrebleEnabled(OPTIONS.target_tmp, target_info)
 
   # Assertions (e.g. device properties check).
   target_info.WriteDeviceAssertions(script, OPTIONS.oem_no_mount)
@@ -1863,6 +1598,43 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   Returns:
     The filename of the target-files.zip for generating secondary payload.
   """
+
+  def GetInfoForSecondaryImages(info_file):
+    """Updates info file for secondary payload generation.
+
+    Scan each line in the info file, and remove the unwanted partitions from
+    the dynamic partition list in the related properties. e.g.
+    "super_google_dynamic_partitions_partition_list=system vendor product"
+    will become "super_google_dynamic_partitions_partition_list=system".
+
+    Args:
+      info_file: The input info file. e.g. misc_info.txt.
+
+    Returns:
+      A string of the updated info content.
+    """
+
+    output_list = []
+    with open(info_file) as f:
+      lines = f.read().splitlines()
+
+    # The suffix in partition_list variables that follows the name of the
+    # partition group.
+    LIST_SUFFIX = 'partition_list'
+    for line in lines:
+      if line.startswith('#') or '=' not in line:
+        output_list.append(line)
+        continue
+      key, value = line.strip().split('=', 1)
+      if key == 'dynamic_partition_list' or key.endswith(LIST_SUFFIX):
+        partitions = value.split()
+        partitions = [partition for partition in partitions if partition
+                      not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
+        output_list.append('{}={}'.format(key, ' '.join(partitions)))
+      else:
+        output_list.append(line)
+    return '\n'.join(output_list)
+
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   target_zip = zipfile.ZipFile(target_file, 'w', allowZip64=True)
 
@@ -1880,12 +1652,33 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
                            'IMAGES/system.map'):
       pass
 
+    # Copy images that are not in SECONDARY_PAYLOAD_SKIPPED_IMAGES.
+    elif info.filename.startswith(('IMAGES/', 'RADIO/')):
+      image_name = os.path.basename(info.filename)
+      if image_name not in ['{}.img'.format(partition) for partition in
+                            SECONDARY_PAYLOAD_SKIPPED_IMAGES]:
+        common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
+
     # Skip copying the postinstall config if requested.
     elif skip_postinstall and info.filename == POSTINSTALL_CONFIG:
       pass
 
-    elif info.filename.startswith(('META/', 'IMAGES/', 'RADIO/')):
-      common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
+    elif info.filename.startswith('META/'):
+      # Remove the unnecessary partitions for secondary images from the
+      # ab_partitions file.
+      if info.filename == AB_PARTITIONS:
+        with open(unzipped_file) as f:
+          partition_list = f.read().splitlines()
+        partition_list = [partition for partition in partition_list if partition
+                          and partition not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
+        common.ZipWriteStr(target_zip, info.filename, '\n'.join(partition_list))
+      # Remove the unnecessary partitions from the dynamic partitions list.
+      elif (info.filename == 'META/misc_info.txt' or
+            info.filename == DYNAMIC_PARTITION_INFO):
+        modified_info = GetInfoForSecondaryImages(unzipped_file)
+        common.ZipWriteStr(target_zip, info.filename, modified_info)
+      else:
+        common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
 
   common.ZipClose(target_zip)
 
@@ -2012,10 +1805,10 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
                                compression=zipfile.ZIP_DEFLATED)
 
   if source_file is not None:
-    target_info = BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
-    source_info = BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
+    target_info = common.BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
+    source_info = common.BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
   else:
-    target_info = BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
+    target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
     source_info = None
 
   # Metadata to comply with Android OTA package format.
@@ -2079,10 +1872,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     else:
       logger.warning("Cannot find care map file in target_file package")
 
-  AddCompatibilityArchiveIfTrebleEnabled(
-      target_zip, output_zip, target_info, source_info)
-
   common.ZipClose(target_zip)
+
+  CheckVintfIfTrebleEnabled(target_file, target_info)
 
   # We haven't written the metadata entry yet, which will be handled in
   # FinalizeMetadata().
@@ -2225,6 +2017,8 @@ def main(argv):
       OPTIONS.skip_compatibility_check = True
     elif o == "--output_metadata_path":
       OPTIONS.output_metadata_path = a
+    elif o == "--disable_fec_computation":
+      OPTIONS.disable_fec_computation = True
     else:
       return False
     return True
@@ -2259,6 +2053,7 @@ def main(argv):
                                  "retrofit_dynamic_partitions",
                                  "skip_compatibility_check",
                                  "output_metadata_path=",
+                                 "disable_fec_computation",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:

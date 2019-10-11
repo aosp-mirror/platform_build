@@ -40,9 +40,10 @@ PRODUCT_HOST_PACKAGES += \
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
-    android.hardware.cas@1.0-service \
+    android.hardware.cas@1.1-service \
     android.hardware.configstore@1.1-service \
     android.hardware.media.omx@1.0-service \
+    boringssl_self_test_vendor \
     dumpsys_vendor \
     fs_config_files_nonsystem \
     fs_config_dirs_nonsystem \
@@ -51,7 +52,6 @@ PRODUCT_PACKAGES += \
     group_system_ext \
     group_vendor \
     init_vendor \
-    libashmemd_hidl_client \
     libbundlewrapper \
     libclearkeycasplugin \
     libdownmix \
@@ -75,3 +75,8 @@ PRODUCT_PACKAGES += \
 # VINTF data for vendor image
 PRODUCT_PACKAGES += \
     device_compatibility_matrix.xml \
+
+# Packages to update the recovery partition, which will be installed on
+# /vendor. TODO(b/141648565): Don't install these unless they're needed.
+PRODUCT_PACKAGES += \
+    applypatch

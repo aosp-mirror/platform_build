@@ -13,6 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+QEMU_USE_SYSTEM_EXT_PARTITIONS := true
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+
+#
+# All components inherited here go to system image
+#
+$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+
+# Enable mainline checking for excat this product name
+ifeq (sdk_phone_x86,$(TARGET_PRODUCT))
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+endif
+
+#
+# All components inherited here go to product image
+#
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
+
+#
+# All components inherited here go to vendor image
+#
+$(call inherit-product-if-exists, device/generic/goldfish/x86-vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/device.mk)
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_x86.mk)
 

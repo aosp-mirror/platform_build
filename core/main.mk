@@ -44,11 +44,7 @@ BUILD_NUMBER_FILE := $(OUT_DIR)/build_number.txt
 .KATI_READONLY := BUILD_NUMBER_FILE
 $(KATI_obsolete_var BUILD_NUMBER,See https://android.googlesource.com/platform/build/+/master/Changes.md#BUILD_NUMBER)
 
-ifeq ($(HOST_OS),darwin)
-DATE_FROM_FILE := date -r $(BUILD_DATETIME_FROM_FILE)
-else
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
-endif
 .KATI_READONLY := DATE_FROM_FILE
 
 # Pick a reasonable string to use to identify files.
@@ -79,6 +75,8 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 -include test/suite_harness/tools/cts-instant-tradefed/build/config.mk
 # MTS-specific config.
 -include test/mts/tools/build/config.mk
+# VTS-Core-specific config.
+-include test/vts/tools/vts-core-tradefed/build/config.mk
 
 # Clean rules
 .PHONY: clean-dex-files
@@ -195,17 +193,7 @@ TARGET_BUILD_JAVA_SUPPORT_LEVEL := platform
 # The pdk (Platform Development Kit) build
 include build/make/core/pdk_config.mk
 
-#
 # -----------------------------------------------------------------
-# Enable dynamic linker warnings for userdebug, eng and non-REL builds
-ifneq ($(TARGET_BUILD_VARIANT),user)
-  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
-else
-# Enable it for user builds as long as they are not final.
-ifneq ($(PLATFORM_VERSION_CODENAME),REL)
-  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
-endif
-endif
 
 ADDITIONAL_BUILD_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
 
@@ -494,7 +482,6 @@ CUSTOM_MODULES := \
 #
 # Resolve the required module name to 32-bit or 64-bit variant.
 # Get a list of corresponding 32-bit module names, if one exists.
-ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
 define get-32-bit-modules
 $(sort $(foreach m,$(1),\
   $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),\
@@ -508,15 +495,6 @@ $(sort $(foreach m,$(1),\
     $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX), \
     $(m))))
 endef
-else  # TARGET_TRANSLATE_2ND_ARCH
-# For binary translation config, by default only install the first arch.
-define get-32-bit-modules
-endef
-
-define get-32-bit-modules-if-we-can
-$(strip $(1))
-endef
-endif  # TARGET_TRANSLATE_2ND_ARCH
 
 # TODO: we can probably check to see if these modules are actually host
 # modules
@@ -1365,7 +1343,9 @@ $(call dist-for-goals,droidcore,$(CERTIFICATE_VIOLATION_MODULES_FILENAME))
     $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
     $(eval files := $(call product-installed-files, $(makefile))) \
     $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns) $(static_whitelist_patterns),$(files))) \
-    $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
+    $(call maybe-print-list-and-error,$(offending_files),\
+      $(makefile) produces files outside its artifact path requirement. \
+      Allowed paths are $(subst $(space),$(comma)$(space),$(addsuffix *,$(requirements)))) \
     $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
     $(call maybe-print-list-and-error,$(unused_whitelist),$(makefile) includes redundant whitelist entries in its artifact path requirement.) \
     $(eval ### Optionally verify that nothing else produces files inside this artifact path requirement.) \
@@ -1498,7 +1478,7 @@ files: $(modules_to_install) \
 # -------------------------------------------------------------------
 
 .PHONY: checkbuild
-checkbuild: $(modules_to_check) droid_targets
+checkbuild: $(modules_to_check) droid_targets check-elf-files
 
 ifeq (true,$(ANDROID_BUILD_EVERYTHING_BY_DEFAULT))
 droid: checkbuild
@@ -1509,6 +1489,9 @@ ramdisk: $(INSTALLED_RAMDISK_TARGET)
 
 .PHONY: ramdisk_debug
 ramdisk_debug: $(INSTALLED_DEBUG_RAMDISK_TARGET)
+
+.PHONY: ramdisk_test_harness
+ramdisk_test_harness: $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
 
 .PHONY: userdataimage
 userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET)
@@ -1525,6 +1508,9 @@ bptimage: $(INSTALLED_BPTIMAGE_TARGET)
 
 .PHONY: vendorimage
 vendorimage: $(INSTALLED_VENDORIMAGE_TARGET)
+
+.PHONY: vendorbootimage
+vendorbootimage: $(INSTALLED_VENDOR_BOOTIMAGE_TARGET)
 
 .PHONY: productimage
 productimage: $(INSTALLED_PRODUCTIMAGE_TARGET)
@@ -1547,6 +1533,9 @@ bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 .PHONY: bootimage_debug
 bootimage_debug: $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
 
+.PHONY: bootimage_test_harness
+bootimage_test_harness: $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET)
+
 .PHONY: vbmetaimage
 vbmetaimage: $(INSTALLED_VBMETAIMAGE_TARGET)
 
@@ -1568,6 +1557,7 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_CACHEIMAGE_TARGET) \
     $(INSTALLED_BPTIMAGE_TARGET) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
     $(INSTALLED_SUPERIMAGE_EMPTY_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
@@ -1663,6 +1653,7 @@ else # TARGET_BUILD_APPS
     $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET) \
     $(BUILT_OTATOOLS_PACKAGE) \
     $(SYMBOLS_ZIP) \
+    $(PROGUARD_DICT_ZIP) \
     $(COVERAGE_ZIP) \
     $(APPCOMPAT_ZIP) \
     $(INSTALLED_FILES_FILE) \
@@ -1711,6 +1702,10 @@ else # TARGET_BUILD_APPS
       $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
       $(INSTALLED_DEBUG_RAMDISK_TARGET) \
       $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
+    )
+    $(call dist-for-goals, bootimage_test_harness, \
+      $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
+      $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
     )
   endif
 

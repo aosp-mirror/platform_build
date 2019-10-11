@@ -33,9 +33,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - refreshmod: Refresh list of modules for allmod/gomod.
 
 Environment options:
-- SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
-                 ASAN_OPTIONS=detect_leaks=0 will be set by default until the
-                 build is leak-check clean.
+- SANITIZE_HOST: Set to 'address' to use ASAN for all host modules.
 - ANDROID_QUIET_BUILD: set to 'true' to display only the essential messages.
 
 Look at the source to view more functions. The complete list is:
@@ -333,7 +331,6 @@ function set_stuff_for_environment()
     export ANDROID_BUILD_TOP=$(gettop)
     # With this environment variable new GCC can apply colors to warnings/errors
     export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-    export ASAN_OPTIONS=detect_leaks=0
 }
 
 function set_sequence_number()
@@ -527,7 +524,7 @@ function choosevariant()
             export TARGET_BUILD_VARIANT=$default_value
         elif (echo -n $ANSWER | grep -q -e "^[0-9][0-9]*$") ; then
             if [ "$ANSWER" -le "${#VARIANT_CHOICES[@]}" ] ; then
-                export TARGET_BUILD_VARIANT=${VARIANT_CHOICES[$(($ANSWER-1))]}
+                export TARGET_BUILD_VARIANT=${VARIANT_CHOICES[@]:$(($ANSWER-1)):1}
             fi
         else
             if check_variant $ANSWER
@@ -575,6 +572,7 @@ function add_lunch_combo()
 function print_lunch_menu()
 {
     local uname=$(uname)
+    local choices=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
     echo
     echo "You're building on" $uname
     echo
@@ -582,7 +580,7 @@ function print_lunch_menu()
 
     local i=1
     local choice
-    for choice in $(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
+    for choice in $(echo $choices)
     do
         echo "     $i. $choice"
         i=$(($i+1))
@@ -1297,10 +1295,10 @@ function godir () {
                 echo "Invalid choice"
                 continue
             fi
-            pathname=${lines[$(($choice-1))]}
+            pathname=${lines[@]:$(($choice-1)):1}
         done
     else
-        pathname=${lines[0]}
+        pathname=${lines[@]:0:1}
     fi
     \cd $T/$pathname
 }

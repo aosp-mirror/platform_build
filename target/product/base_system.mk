@@ -19,9 +19,6 @@ PRODUCT_PACKAGES += \
     abb \
     adbd \
     am \
-    android.hardware.neuralnetworks@1.0 \
-    android.hardware.neuralnetworks@1.1 \
-    android.hardware.neuralnetworks@1.2 \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
@@ -32,11 +29,9 @@ PRODUCT_PACKAGES += \
     android.test.mock \
     android.test.runner \
     apexd \
-    applypatch \
     appops \
     app_process \
     appwidget \
-    ashmemd \
     atrace \
     audioserver \
     BackupRestoreConfirmation \
@@ -53,9 +48,12 @@ PRODUCT_PACKAGES += \
     cgroups.json \
     charger \
     cmd \
+    com.android.apex.cts.shim.v1_prebuilt \
     com.android.conscrypt \
     com.android.i18n \
     com.android.location.provider \
+    com.android.media \
+    com.android.media.swcodec \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.tzdata \
@@ -65,13 +63,14 @@ PRODUCT_PACKAGES += \
     CtsShimPrebuilt \
     CtsShimPrivPrebuilt \
     debuggerd\
-    DefaultContainerService \
+    device_config \
     dmctl \
     dnsmasq \
     DownloadProvider \
     dpm \
     dumpstate \
     dumpsys \
+    DynamicSystemInstallationService \
     e2fsck \
     ExtServices \
     ExtShared \
@@ -84,6 +83,7 @@ PRODUCT_PACKAGES += \
     fs_config_dirs_system \
     group_system \
     gsid \
+    gsi_tool \
     heapprofd \
     heapprofd_client \
     gatekeeperd \
@@ -91,6 +91,8 @@ PRODUCT_PACKAGES += \
     hid \
     hwservicemanager \
     idmap \
+    idmap2 \
+    idmap2d \
     ime \
     ims-common \
     incident \
@@ -111,17 +113,13 @@ PRODUCT_PACKAGES += \
     ld.config.txt \
     ld.mc \
     libaaudio \
+    libamidi \
     libandroid \
     libandroidfw \
     libandroid_runtime \
     libandroid_servers \
     libartpalette-system \
-    libashmemd_client \
     libaudioeffect_jni \
-    libaudioflinger \
-    libaudiopolicymanager \
-    libaudiopolicyservice \
-    libaudioutils \
     libbinder \
     libbinder_ndk \
     libc.bootstrap \
@@ -154,11 +152,11 @@ PRODUCT_PACKAGES += \
     libmedia \
     libmedia_jni \
     libmediandk \
-    libmediaplayerservice \
     libmtp \
     libnetd_client \
     libnetlink \
     libnetutils \
+    libneuralnetworks_packageinfo \
     libOpenMAXAL \
     libOpenSLES \
     libpdfium \
@@ -168,17 +166,14 @@ PRODUCT_PACKAGES += \
     libradio_metadata \
     librtp_jni \
     libsensorservice \
+    libsfplugin_ccodec \
     libskia \
     libsonic \
     libsonivox \
     libsoundpool \
-    libsoundtrigger \
-    libsoundtriggerservice \
     libspeexresampler \
     libsqlite \
     libstagefright \
-    libstagefright_amrnb_common \
-    libstagefright_enc_common \
     libstagefright_foundation \
     libstagefright_omx \
     libstdc++ \
@@ -187,13 +182,13 @@ PRODUCT_PACKAGES += \
     libui \
     libusbhost \
     libutils \
-    libvorbisidec \
     libvulkan \
     libwifi-service \
     libwilhelm \
     linker \
     linkerconfig \
     lmkd \
+    LocalTransport \
     locksettings \
     logcat \
     logd \
@@ -201,6 +196,7 @@ PRODUCT_PACKAGES += \
     lshal \
     mdnsd \
     media \
+    mediacodec.policy \
     mediadrmserver \
     mediaextractor \
     mediametrics \
@@ -215,8 +211,10 @@ PRODUCT_PACKAGES += \
     NetworkStack \
     org.apache.http.legacy \
     otacerts \
+    PackageInstaller \
     passwd_system \
     perfetto \
+    PermissionController \
     ping \
     ping6 \
     platform.xml \
@@ -245,6 +243,7 @@ PRODUCT_PACKAGES += \
     Shell \
     shell_and_utilities_system \
     sm \
+    snapshotctl \
     statsd \
     storaged \
     surfaceflinger \
@@ -253,7 +252,6 @@ PRODUCT_PACKAGES += \
     tc \
     telecom \
     telephony-common \
-    thermalserviced \
     tombstoned \
     traced \
     traced_probes \
@@ -266,8 +264,6 @@ PRODUCT_PACKAGES += \
     viewcompiler \
     voip-common \
     vold \
-    vndkcore.libraries.txt \
-    vndkprivate.libraries.txt \
     WallpaperBackup \
     watchdogd \
     wificond \
@@ -292,6 +288,7 @@ PRODUCT_HOST_PACKAGES += \
     flags_health_check \
     icu-data_host_i18n_apex \
     icu_tzdata.dat_host_tzdata_apex \
+    idmap2 \
     incident_report \
     ld.mc \
     lpdump \
@@ -325,10 +322,12 @@ PRODUCT_BOOT_JARS := \
     ext \
     telephony-common \
     voip-common \
-    ims-common
-PRODUCT_UPDATABLE_BOOT_MODULES := conscrypt
+    ims-common \
+    updatable-media
+PRODUCT_UPDATABLE_BOOT_MODULES := conscrypt updatable-media
 PRODUCT_UPDATABLE_BOOT_LOCATIONS := \
-    /apex/com.android.conscrypt/javalib/conscrypt.jar
+    /apex/com.android.conscrypt/javalib/conscrypt.jar \
+    /apex/com.android.media/javalib/updatable-media.jar
 
 
 PRODUCT_COPY_FILES += \
@@ -357,8 +356,10 @@ PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
     gdbserver \
+    idlcli \
     init-debug.rc \
     iotop \
+    iperf3 \
     iw \
     logpersist.start \
     logtagd.rc \
@@ -383,7 +384,9 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     WallpaperBackup
 
 # Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
-PRODUCT_PACKAGES_DEBUG_ASAN :=
+PRODUCT_PACKAGES_DEBUG_ASAN := \
+    fuzz \
+    honggfuzz
 
 PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
     libdumpcoverage
