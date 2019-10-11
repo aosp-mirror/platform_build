@@ -2279,7 +2279,7 @@ endef
 # Align STORED entries of a package on 4-byte boundaries to make them easier to mmap.
 #
 define align-package
-$(hide) if ! $(ZIPALIGN) -c $(ZIPALIGN_PAGE_ALIGN_FLAGS) 4 $@ >/dev/null ; then \
+$(hide) if ! $(ZIPALIGN) -c -p 4 $@ >/dev/null ; then \
   mv $@ $@.unaligned; \
   $(ZIPALIGN) \
     -f \
