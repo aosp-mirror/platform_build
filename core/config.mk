@@ -1171,8 +1171,10 @@ dont_bother_goals := out \
     systemotherimage-nodeps \
     ramdisk-nodeps \
     ramdisk_debug-nodeps \
+    ramdisk_test_harness-nodeps \
     bootimage-nodeps \
     bootimage_debug-nodeps \
+    bootimage_test_harness-nodeps \
     recoveryimage-nodeps \
     vbmetaimage-nodeps \
     product-graph dump-products

@@ -2154,6 +2154,7 @@ ifneq ($(BOARD_NAND_SPARE_SIZE),)
 $(error MTD device is no longer supported and thus BOARD_NAND_SPARE_SIZE is deprecated.)
 endif
 
+ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 # -----------------------------------------------------------------
 # the debug ramdisk, which is the original ramdisk plus additional
 # files: force_debuggable, adb_debug.prop and userdebug sepolicy.
@@ -2250,39 +2251,114 @@ endif
 # Using a test key to sign boot-debug.img to continue booting with the mismatched
 # public key, if the device is unlocked.
 ifneq ($(BOARD_AVB_BOOT_KEY_PATH),)
-BOARD_AVB_DEBUG_BOOT_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-$(INSTALLED_DEBUG_BOOTIMAGE_TARGET): PRIVATE_AVB_DEBUG_BOOT_SIGNING_ARGS := \
-  --algorithm SHA256_RSA2048 --key $(BOARD_AVB_DEBUG_BOOT_KEY_PATH)
-$(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_DEBUG_BOOT_KEY_PATH)
+$(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_BOOT_TEST_KEY_PATH)
 endif
+
+BOARD_AVB_BOOT_TEST_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+INTERNAL_AVB_BOOT_TEST_SIGNING_ARGS := --algorithm SHA256_RSA2048 --key $(BOARD_AVB_BOOT_TEST_KEY_PATH)
+# $(1): the bootimage to sign
+define test-key-sign-bootimage
+$(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
+$(AVBTOOL) add_hash_footer \
+  --image $(1) \
+  --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
+  --partition_name boot $(INTERNAL_AVB_BOOT_TEST_SIGNING_ARGS) \
+  $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
+$(call assert-max-image-size,$(1),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+endef
 
 # Depends on original boot.img and ramdisk-debug.img, to build the new boot-debug.img
 $(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_DEBUG_RAMDISK_TARGET)
 	$(call pretty,"Target boot debug image: $@")
 	$(MKBOOTIMG) $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
-	$(if $(BOARD_AVB_BOOT_KEY_PATH),\
-	  $(call assert-max-image-size,$@,$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))); \
-	  $(AVBTOOL) add_hash_footer \
-	    --image $@ \
-	    --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
-	    --partition_name boot $(PRIVATE_AVB_DEBUG_BOOT_SIGNING_ARGS) \
-	    $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS), \
-	  $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
+	$(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$@))
 
 .PHONY: bootimage_debug-nodeps
 bootimage_debug-nodeps: $(MKBOOTIMG)
 	echo "make $@: ignoring dependencies"
 	$(MKBOOTIMG) $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
-	$(if $(BOARD_AVB_BOOT_KEY_PATH),\
-	  $(call assert-max-image-size,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))); \
-	  $(AVBTOOL) add_hash_footer \
-	    --image $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
-	    --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
-	    --partition_name boot $(PRIVATE_AVB_DEBUG_BOOT_SIGNING_ARGS) \
-	    $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS), \
-	  $(call assert-max-image-size,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
+	$(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET)))
 
 endif # TARGET_NO_KERNEL
+
+# -----------------------------------------------------------------
+# The test harness ramdisk, which is based off debug_ramdisk, plus a
+# few additional test-harness-specific properties in adb_debug.prop.
+
+ifdef BUILDING_RAMDISK_IMAGE
+BUILT_TEST_HARNESS_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk-test-harness.img
+INSTALLED_TEST_HARNESS_RAMDISK_TARGET := $(BUILT_TEST_HARNESS_RAMDISK_TARGET)
+
+# rsync the content from ramdisk-debug.img to ramdisk-test-harness.img, then
+# appends a few test harness specific properties into the adb_debug.prop.
+TEST_HARNESS_RAMDISK_SYNC_DIR := $(PRODUCT_OUT)/debug_ramdisk
+TEST_HARNESS_RAMDISK_ROOT_DIR := $(PRODUCT_OUT)/test_harness_ramdisk
+
+# The following TARGET_TEST_HARNESS_RAMDISK_OUT will be $(PRODUCT_OUT)/test_harness_ramdisk/first_stage_ramdisk,
+# if BOARD_USES_RECOVERY_AS_BOOT is true. Otherwise, it will be $(PRODUCT_OUT)/test_harness_ramdisk.
+TEST_HARNESS_PROP_TARGET := $(TARGET_TEST_HARNESS_RAMDISK_OUT)/adb_debug.prop
+ADDITIONAL_TEST_HARNESS_PROPERTIES := ro.audio.silent=1
+ADDITIONAL_TEST_HARNESS_PROPERTIES += ro.test_harness=1
+
+# $(1): a list of key=value pairs for additional property assignments
+# $(2): the target .prop file to append the properties from $(1)
+define append-test-harness-props
+  echo "#" >> $(2); \
+  echo "# ADDITIONAL TEST HARNESS_PROPERTIES" >> $(2); \
+  echo "#" >> $(2);
+  $(foreach line,$(1), echo "$(line)" >> $(2);)
+endef
+
+$(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): $(INSTALLED_DEBUG_RAMDISK_TARGET)
+$(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_TEST_HARNESS_RAMDISK_FILES) | $(MINIGZIP)
+	$(call pretty,"Target test harness ram disk: $@")
+	rsync -a $(TEST_HARNESS_RAMDISK_SYNC_DIR)/ $(TEST_HARNESS_RAMDISK_ROOT_DIR)
+	$(call append-test-harness-props,$(ADDITIONAL_TEST_HARNESS_PROPERTIES),$(TEST_HARNESS_PROP_TARGET))
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TEST_HARNESS_RAMDISK_ROOT_DIR) | $(MINIGZIP) > $@
+
+.PHONY: ramdisk_test_harness-nodeps
+ramdisk_test_harness-nodeps: $(MKBOOTFS) | $(MINIGZIP)
+	echo "make $@: ignoring dependencies"
+	rsync -a $(TEST_HARNESS_RAMDISK_SYNC_DIR)/ $(TEST_HARNESS_RAMDISK_ROOT_DIR)
+	$(call append-test-harness-props,$(ADDITIONAL_TEST_HARNESS_PROPERTIES),$(TEST_HARNESS_PROP_TARGET))
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TEST_HARNESS_RAMDISK_ROOT_DIR) | $(MINIGZIP) > $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
+
+endif # BUILDING_RAMDISK_IMAGE
+
+# -----------------------------------------------------------------
+# the boot-test-harness.img, which is the kernel plus ramdisk-test-harness.img
+#
+# Note: it's intentional to skip signing for boot-test-harness.img, because it
+# can only be used if the device is unlocked with verification error.
+ifneq ($(strip $(TARGET_NO_KERNEL)),true)
+
+INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot-test-harness.img
+
+# Replace ramdisk-debug.img in $(MKBOOTIMG) ARGS with ramdisk-test-harness.img to build boot-test-harness.img
+INTERNAL_TEST_HARNESS_BOOTIMAGE_ARGS := $(subst $(INSTALLED_DEBUG_RAMDISK_TARGET),$(INSTALLED_TEST_HARNESS_RAMDISK_TARGET),$(INTERNAL_DEBUG_BOOTIMAGE_ARGS))
+
+# If boot.img is chained but boot-test-harness.img is not signed, libavb in bootloader
+# will fail to find valid AVB metadata from the end of /boot, thus stop booting.
+# Using a test key to sign boot-test-harness.img to continue booting with the mismatched
+# public key, if the device is unlocked.
+ifneq ($(BOARD_AVB_BOOT_KEY_PATH),)
+$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_BOOT_TEST_KEY_PATH)
+endif
+
+# Build the new boot-test-harness.img, based on boot-debug.img and ramdisk-test-harness.img.
+$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
+	$(call pretty,"Target boot test harness image: $@")
+	$(MKBOOTIMG) $(INTERNAL_TEST_HARNESS_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
+	$(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$@))
+
+.PHONY: bootimage_test_harness-nodeps
+bootimage_test_harness-nodeps: $(MKBOOTIMG)
+	echo "make $@: ignoring dependencies"
+	$(MKBOOTIMG) $(INTERNAL_TEST_HARNESS_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET)
+	$(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET)))
+
+endif # TARGET_NO_KERNEL
+endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
 
 # -----------------------------------------------------------------
 # system image
@@ -3213,6 +3289,17 @@ ifneq ($(words $(sort $(INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES))),$(wo
   $(error BOARD_AVB_VBMETA_SYSTEM and BOARD_AVB_VBMETA_VENDOR cannot have duplicates)
 endif
 
+# When building a standalone recovery image for non-A/B devices, recovery image must be self-signed
+# to be verified independently, and cannot be chained into vbmeta.img. See the link below for
+# details.
+ifneq ($(AB_OTA_UPDATER),true)
+ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
+$(if $(BOARD_AVB_RECOVERY_KEY_PATH),,\
+    $(error BOARD_AVB_RECOVERY_KEY_PATH must be defined for non-A/B devices. \
+            See https://android.googlesource.com/platform/external/avb/+/master/README.md#booting-into-recovery))
+endif
+endif
+
 # Appends os version and security patch level as a AVB property descriptor
 
 BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += \
@@ -3282,8 +3369,11 @@ $(eval _signing_args := INTERNAL_AVB_$(PART)_SIGNING_ARGS)
 $(eval $(_signing_args) := \
     --algorithm $($(_signing_algorithm)) --key $($(_key_path)))
 
-$(eval INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --chain_partition $(part):$($(_rollback_index_location)):$(AVB_CHAIN_KEY_DIR)/$(part).avbpubkey)
+# The recovery partition in non-A/B devices should be verified separately. Skip adding the chain
+# partition descriptor for recovery partition into vbmeta.img.
+$(if $(or $(filter true,$(AB_OTA_UPDATER)),$(filter-out recovery,$(part))),\
+    $(eval INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+        --chain_partition $(part):$($(_rollback_index_location)):$(AVB_CHAIN_KEY_DIR)/$(part).avbpubkey))
 
 # Set rollback_index via footer args for non-chained vbmeta image. Chained vbmeta image will pick up
 # the index via a separate flag (e.g. BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX).
@@ -4433,9 +4523,8 @@ endif # BOARD_SUPER_PARTITION_GROUPS
 ifeq ($(PRODUCT_VIRTUAL_AB_OTA),true)
 	echo "virtual_ab=true" >> $(zip_root)/META/dynamic_partitions_info.txt
 endif # PRODUCT_VIRTUAL_AB_OTA
-	@# TODO(b/134525174): Remove `-r` after addressing the issue with recovery patch generation.
-	$(hide) PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
-	    $(ADD_IMG_TO_TARGET_FILES) -a -r -v -p $(HOST_OUT) $(zip_root)
+	PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
+	    $(ADD_IMG_TO_TARGET_FILES) -a -v -p $(HOST_OUT) $(zip_root)
 ifeq ($(BUILD_QEMU_IMAGES),true)
 	$(hide) AVBTOOL=$(AVBTOOL) $(MK_VBMETA_BOOT_KERNEL_CMDLINE_SH) $(zip_root)/IMAGES/vbmeta.img \
 	    $(zip_root)/IMAGES/system.img $(zip_root)/IMAGES/VerifiedBootParams.textproto
