@@ -64,8 +64,8 @@ PRODUCT_PACKAGES += \
 # For ringtones that rely on forward lock encryption
 PRODUCT_PACKAGES += libfwdlockengine
 
-# System libraries commonly depended on by things on the product partition.
-# This list will be pruned periodically.
+# System libraries commonly depended on by things on the system_ext or product partitions.
+# These lists will be pruned periodically.
 PRODUCT_PACKAGES += \
     android.hardware.biometrics.fingerprint@2.1 \
     android.hardware.radio@1.0 \
@@ -84,6 +84,13 @@ PRODUCT_PACKAGES += \
     libminui \
     libnl \
     libprotobuf-cpp-full \
+
+# These libraries are empty and have been combined into libhidlbase, but are still depended
+# on by things off /system.
+# TODO(b/135686713): remove these
+PRODUCT_PACKAGES += \
+    libhidltransport \
+    libhwbinder \
 
 # Camera service uses 'libdepthphoto' for adding dynamic depth
 # metadata inside depth jpegs.
