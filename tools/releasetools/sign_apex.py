@@ -56,6 +56,7 @@ def SignApexFile(avbtool, apex_file, payload_key, container_key,
       container_key=container_key,
       container_pw=None,
       codename_to_api_level_map=None,
+      no_hashtree=False,
       signing_args=signing_args)
 
 
@@ -103,7 +104,8 @@ def main(argv):
       args[0],
       options['payload_key'],
       options['container_key'],
-      options.get('payload_extra_args'))
+      no_hashtree=False,
+      signing_args=options.get('payload_extra_args'))
   shutil.copyfile(signed_apex, args[1])
   logger.info("done.")
 

@@ -73,6 +73,22 @@ python_defaults {
         "releasetools_build_super_image",
         "releasetools_common",
     ],
+    required: [
+        "zip2zip",
+    ],
+}
+
+python_defaults {
+    name: "releasetools_check_target_files_vintf_defaults",
+    srcs: [
+        "check_target_files_vintf.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+    required: [
+        "checkvintf",
+    ],
 }
 
 python_defaults {
@@ -83,11 +99,13 @@ python_defaults {
         "target_files_diff.py",
     ],
     libs: [
+        "releasetools_check_target_files_vintf",
         "releasetools_common",
         "releasetools_verity_utils",
     ],
     required: [
         "brillo_update_payload",
+        "checkvintf",
     ],
 }
 
@@ -143,6 +161,14 @@ python_library_host {
 }
 
 python_library_host {
+    name: "releasetools_check_target_files_vintf",
+    defaults: [
+        "releasetools_library_defaults",
+        "releasetools_check_target_files_vintf_defaults",
+    ],
+}
+
+python_library_host {
     name: "releasetools_common",
     defaults: ["releasetools_library_defaults"],
     srcs: [
@@ -155,7 +181,7 @@ python_library_host {
     // Only the tools that are referenced directly are listed as required modules. For example,
     // `avbtool` is not here, as the script always uses the one from info_dict['avb_avbtool'].
     required: [
-        "aapt",
+        "aapt2",
         "boot_signer",
         "brotli",
         "bsdiff",
@@ -266,6 +292,14 @@ python_binary_host {
 }
 
 python_binary_host {
+    name: "check_target_files_vintf",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_check_target_files_vintf_defaults"
+    ],
+}
+
+python_binary_host {
     name: "img_from_target_files",
     defaults: [
         "releasetools_binary_defaults",
@@ -305,9 +339,13 @@ python_binary_host {
     libs: [
         "releasetools_add_img_to_target_files",
         "releasetools_build_super_image",
+        "releasetools_check_target_files_vintf",
         "releasetools_common",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
+    ],
+    required: [
+        "checkvintf",
     ],
 }
 
@@ -396,13 +434,14 @@ python_defaults {
         "releasetools_apex_utils",
         "releasetools_build_image",
         "releasetools_build_super_image",
+        "releasetools_check_target_files_vintf",
         "releasetools_common",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
         "releasetools_verity_utils",
     ],
     data: [
-        "testdata/*",
+        "testdata/**/*",
     ],
     required: [
         "otatools",

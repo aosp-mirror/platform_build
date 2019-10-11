@@ -99,7 +99,7 @@ include $(BUILD_SYSTEM)/support_libraries.mk
 
 # Determine whether auto-RRO is enabled for this package.
 enforce_rro_enabled :=
-ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
+ifneq (,$(filter *, $(PRODUCT_ENFORCE_RRO_TARGETS)))
   # * means all system APKs, so enable conditionally based on module path.
 
   # Note that base_rules.mk has not yet been included, so it's likely that only
@@ -455,7 +455,7 @@ private_key := $(LOCAL_CERTIFICATE).pk8
 certificate := $(LOCAL_CERTIFICATE).x509.pem
 additional_certificates := $(foreach c,$(LOCAL_ADDITIONAL_CERTIFICATES), $(c).x509.pem $(c).pk8)
 
-$(LOCAL_BUILT_MODULE): $(private_key) $(certificate) $(SIGNAPK_JAR)
+$(LOCAL_BUILT_MODULE): $(private_key) $(certificate) $(SIGNAPK_JAR) $(SIGNAPK_JNI_LIBRARY_PATH)
 $(LOCAL_BUILT_MODULE): PRIVATE_PRIVATE_KEY := $(private_key)
 $(LOCAL_BUILT_MODULE): PRIVATE_CERTIFICATE := $(certificate)
 

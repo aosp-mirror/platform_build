@@ -100,7 +100,7 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # that system_other is not in the list because we don't want to include its
 # descriptor into vbmeta.img.
 AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'recovery', 'system',
-                  'system_ext', 'vendor')
+                  'system_ext', 'vendor', 'vendor_boot')
 
 # Chained VBMeta partitions.
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
@@ -284,6 +284,225 @@ def CloseInheritedPipes():
       pass
 
 
+class BuildInfo(object):
+  """A class that holds the information for a given build.
+
+  This class wraps up the property querying for a given source or target build.
+  It abstracts away the logic of handling OEM-specific properties, and caches
+  the commonly used properties such as fingerprint.
+
+  There are two types of info dicts: a) build-time info dict, which is generated
+  at build time (i.e. included in a target_files zip); b) OEM info dict that is
+  specified at package generation time (via command line argument
+  '--oem_settings'). If a build doesn't use OEM-specific properties (i.e. not
+  having "oem_fingerprint_properties" in build-time info dict), all the queries
+  would be answered based on build-time info dict only. Otherwise if using
+  OEM-specific properties, some of them will be calculated from two info dicts.
+
+  Users can query properties similarly as using a dict() (e.g. info['fstab']),
+  or to query build properties via GetBuildProp() or GetVendorBuildProp().
+
+  Attributes:
+    info_dict: The build-time info dict.
+    is_ab: Whether it's a build that uses A/B OTA.
+    oem_dicts: A list of OEM dicts.
+    oem_props: A list of OEM properties that should be read from OEM dicts; None
+        if the build doesn't use any OEM-specific property.
+    fingerprint: The fingerprint of the build, which would be calculated based
+        on OEM properties if applicable.
+    device: The device name, which could come from OEM dicts if applicable.
+  """
+
+  _RO_PRODUCT_RESOLVE_PROPS = ["ro.product.brand", "ro.product.device",
+                               "ro.product.manufacturer", "ro.product.model",
+                               "ro.product.name"]
+  _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER = ["product", "odm", "vendor",
+                                            "system_ext", "system"]
+
+  def __init__(self, info_dict, oem_dicts=None):
+    """Initializes a BuildInfo instance with the given dicts.
+
+    Note that it only wraps up the given dicts, without making copies.
+
+    Arguments:
+      info_dict: The build-time info dict.
+      oem_dicts: A list of OEM dicts (which is parsed from --oem_settings). Note
+          that it always uses the first dict to calculate the fingerprint or the
+          device name. The rest would be used for asserting OEM properties only
+          (e.g. one package can be installed on one of these devices).
+
+    Raises:
+      ValueError: On invalid inputs.
+    """
+    self.info_dict = info_dict
+    self.oem_dicts = oem_dicts
+
+    self._is_ab = info_dict.get("ab_update") == "true"
+    self._oem_props = info_dict.get("oem_fingerprint_properties")
+
+    if self._oem_props:
+      assert oem_dicts, "OEM source required for this build"
+
+    # These two should be computed only after setting self._oem_props.
+    self._device = self.GetOemProperty("ro.product.device")
+    self._fingerprint = self.CalculateFingerprint()
+
+    # Sanity check the build fingerprint.
+    if (' ' in self._fingerprint or
+        any(ord(ch) > 127 for ch in self._fingerprint)):
+      raise ValueError(
+          'Invalid build fingerprint: "{}". See the requirement in Android CDD '
+          '3.2.2. Build Parameters.'.format(self._fingerprint))
+
+  @property
+  def is_ab(self):
+    return self._is_ab
+
+  @property
+  def device(self):
+    return self._device
+
+  @property
+  def fingerprint(self):
+    return self._fingerprint
+
+  @property
+  def vendor_fingerprint(self):
+    return self._fingerprint_of("vendor")
+
+  @property
+  def product_fingerprint(self):
+    return self._fingerprint_of("product")
+
+  @property
+  def odm_fingerprint(self):
+    return self._fingerprint_of("odm")
+
+  def _fingerprint_of(self, partition):
+    if partition + ".build.prop" not in self.info_dict:
+      return None
+    build_prop = self.info_dict[partition + ".build.prop"]
+    if "ro." + partition + ".build.fingerprint" in build_prop:
+      return build_prop["ro." + partition + ".build.fingerprint"]
+    if "ro." + partition + ".build.thumbprint" in build_prop:
+      return build_prop["ro." + partition + ".build.thumbprint"]
+    return None
+
+  @property
+  def oem_props(self):
+    return self._oem_props
+
+  def __getitem__(self, key):
+    return self.info_dict[key]
+
+  def __setitem__(self, key, value):
+    self.info_dict[key] = value
+
+  def get(self, key, default=None):
+    return self.info_dict.get(key, default)
+
+  def items(self):
+    return self.info_dict.items()
+
+  def GetBuildProp(self, prop):
+    """Returns the inquired build property."""
+    if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
+      return self._ResolveRoProductBuildProp(prop)
+
+    try:
+      return self.info_dict.get("build.prop", {})[prop]
+    except KeyError:
+      raise ExternalError("couldn't find %s in build.prop" % (prop,))
+
+  def _ResolveRoProductBuildProp(self, prop):
+    """Resolves the inquired ro.product.* build property"""
+    prop_val = self.info_dict.get("build.prop", {}).get(prop)
+    if prop_val:
+      return prop_val
+
+    source_order_val = self.info_dict.get("build.prop", {}).get(
+        "ro.product.property_source_order")
+    if source_order_val:
+      source_order = source_order_val.split(",")
+    else:
+      source_order = BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER
+
+    # Check that all sources in ro.product.property_source_order are valid
+    if any([x not in BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER
+            for x in source_order]):
+      raise ExternalError(
+          "Invalid ro.product.property_source_order '{}'".format(source_order))
+
+    for source in source_order:
+      source_prop = prop.replace(
+          "ro.product", "ro.product.{}".format(source), 1)
+      prop_val = self.info_dict.get(
+          "{}.build.prop".format(source), {}).get(source_prop)
+      if prop_val:
+        return prop_val
+
+    raise ExternalError("couldn't resolve {}".format(prop))
+
+  def GetVendorBuildProp(self, prop):
+    """Returns the inquired vendor build property."""
+    try:
+      return self.info_dict.get("vendor.build.prop", {})[prop]
+    except KeyError:
+      raise ExternalError(
+          "couldn't find %s in vendor.build.prop" % (prop,))
+
+  def GetOemProperty(self, key):
+    if self.oem_props is not None and key in self.oem_props:
+      return self.oem_dicts[0][key]
+    return self.GetBuildProp(key)
+
+  def CalculateFingerprint(self):
+    if self.oem_props is None:
+      try:
+        return self.GetBuildProp("ro.build.fingerprint")
+      except ExternalError:
+        return "{}/{}/{}:{}/{}/{}:{}/{}".format(
+            self.GetBuildProp("ro.product.brand"),
+            self.GetBuildProp("ro.product.name"),
+            self.GetBuildProp("ro.product.device"),
+            self.GetBuildProp("ro.build.version.release"),
+            self.GetBuildProp("ro.build.id"),
+            self.GetBuildProp("ro.build.version.incremental"),
+            self.GetBuildProp("ro.build.type"),
+            self.GetBuildProp("ro.build.tags"))
+    return "%s/%s/%s:%s" % (
+        self.GetOemProperty("ro.product.brand"),
+        self.GetOemProperty("ro.product.name"),
+        self.GetOemProperty("ro.product.device"),
+        self.GetBuildProp("ro.build.thumbprint"))
+
+  def WriteMountOemScript(self, script):
+    assert self.oem_props is not None
+    recovery_mount_options = self.info_dict.get("recovery_mount_options")
+    script.Mount("/oem", recovery_mount_options)
+
+  def WriteDeviceAssertions(self, script, oem_no_mount):
+    # Read the property directly if not using OEM properties.
+    if not self.oem_props:
+      script.AssertDevice(self.device)
+      return
+
+    # Otherwise assert OEM properties.
+    if not self.oem_dicts:
+      raise ExternalError(
+          "No OEM file provided to answer expected assertions")
+
+    for prop in self.oem_props.split():
+      values = []
+      for oem_dict in self.oem_dicts:
+        if prop in oem_dict:
+          values.append(oem_dict[prop])
+      if not values:
+        raise ExternalError(
+            "The OEM file is missing the property %s" % (prop,))
+      script.AssertOemProperty(prop, values, oem_no_mount)
+
+
 def LoadInfoDict(input_file, repacking=False):
   """Loads the key/value pairs from the given input target_files.
 
@@ -393,37 +612,8 @@ def LoadInfoDict(input_file, repacking=False):
   makeint("boot_size")
   makeint("fstab_version")
 
-  # We changed recovery.fstab path in Q, from ../RAMDISK/etc/recovery.fstab to
-  # ../RAMDISK/system/etc/recovery.fstab. LoadInfoDict() has to handle both
-  # cases, since it may load the info_dict from an old build (e.g. when
-  # generating incremental OTAs from that build).
-  system_root_image = d.get("system_root_image") == "true"
-  if d.get("no_recovery") != "true":
-    recovery_fstab_path = "RECOVERY/RAMDISK/system/etc/recovery.fstab"
-    if isinstance(input_file, zipfile.ZipFile):
-      if recovery_fstab_path not in input_file.namelist():
-        recovery_fstab_path = "RECOVERY/RAMDISK/etc/recovery.fstab"
-    else:
-      path = os.path.join(input_file, *recovery_fstab_path.split("/"))
-      if not os.path.exists(path):
-        recovery_fstab_path = "RECOVERY/RAMDISK/etc/recovery.fstab"
-    d["fstab"] = LoadRecoveryFSTab(
-        read_helper, d["fstab_version"], recovery_fstab_path, system_root_image)
-
-  elif d.get("recovery_as_boot") == "true":
-    recovery_fstab_path = "BOOT/RAMDISK/system/etc/recovery.fstab"
-    if isinstance(input_file, zipfile.ZipFile):
-      if recovery_fstab_path not in input_file.namelist():
-        recovery_fstab_path = "BOOT/RAMDISK/etc/recovery.fstab"
-    else:
-      path = os.path.join(input_file, *recovery_fstab_path.split("/"))
-      if not os.path.exists(path):
-        recovery_fstab_path = "BOOT/RAMDISK/etc/recovery.fstab"
-    d["fstab"] = LoadRecoveryFSTab(
-        read_helper, d["fstab_version"], recovery_fstab_path, system_root_image)
-
-  else:
-    d["fstab"] = None
+  # Load recovery fstab if applicable.
+  d["fstab"] = _FindAndLoadRecoveryFstab(d, input_file, read_helper)
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
@@ -438,18 +628,11 @@ def LoadInfoDict(input_file, repacking=False):
           read_helper, "{}/etc/build.prop".format(partition.upper()))
   d["build.prop"] = d["system.build.prop"]
 
-  # Set up the salt (based on fingerprint or thumbprint) that will be used when
-  # adding AVB footer.
+  # Set up the salt (based on fingerprint) that will be used when adding AVB
+  # hash / hashtree footers.
   if d.get("avb_enable") == "true":
-    fp = None
-    if "build.prop" in d:
-      build_prop = d["build.prop"]
-      if "ro.build.fingerprint" in build_prop:
-        fp = build_prop["ro.build.fingerprint"]
-      elif "ro.build.thumbprint" in build_prop:
-        fp = build_prop["ro.build.thumbprint"]
-    if fp:
-      d["avb_salt"] = sha256(fp).hexdigest()
+    build_info = BuildInfo(d)
+    d["avb_salt"] = sha256(build_info.fingerprint).hexdigest()
 
   return d
 
@@ -549,6 +732,47 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
   return d
 
 
+def _FindAndLoadRecoveryFstab(info_dict, input_file, read_helper):
+  """Finds the path to recovery fstab and loads its contents."""
+  # recovery fstab is only meaningful when installing an update via recovery
+  # (i.e. non-A/B OTA). Skip loading fstab if device used A/B OTA.
+  if info_dict.get('ab_update') == 'true':
+    return None
+
+  # We changed recovery.fstab path in Q, from ../RAMDISK/etc/recovery.fstab to
+  # ../RAMDISK/system/etc/recovery.fstab. This function has to handle both
+  # cases, since it may load the info_dict from an old build (e.g. when
+  # generating incremental OTAs from that build).
+  system_root_image = info_dict.get('system_root_image') == 'true'
+  if info_dict.get('no_recovery') != 'true':
+    recovery_fstab_path = 'RECOVERY/RAMDISK/system/etc/recovery.fstab'
+    if isinstance(input_file, zipfile.ZipFile):
+      if recovery_fstab_path not in input_file.namelist():
+        recovery_fstab_path = 'RECOVERY/RAMDISK/etc/recovery.fstab'
+    else:
+      path = os.path.join(input_file, *recovery_fstab_path.split('/'))
+      if not os.path.exists(path):
+        recovery_fstab_path = 'RECOVERY/RAMDISK/etc/recovery.fstab'
+    return LoadRecoveryFSTab(
+        read_helper, info_dict['fstab_version'], recovery_fstab_path,
+        system_root_image)
+
+  if info_dict.get('recovery_as_boot') == 'true':
+    recovery_fstab_path = 'BOOT/RAMDISK/system/etc/recovery.fstab'
+    if isinstance(input_file, zipfile.ZipFile):
+      if recovery_fstab_path not in input_file.namelist():
+        recovery_fstab_path = 'BOOT/RAMDISK/etc/recovery.fstab'
+    else:
+      path = os.path.join(input_file, *recovery_fstab_path.split('/'))
+      if not os.path.exists(path):
+        recovery_fstab_path = 'BOOT/RAMDISK/etc/recovery.fstab'
+    return LoadRecoveryFSTab(
+        read_helper, info_dict['fstab_version'], recovery_fstab_path,
+        system_root_image)
+
+  return None
+
+
 def DumpInfoDict(d):
   for k, v in sorted(d.items()):
     logger.info("%-25s = (%s) %s", k, type(v).__name__, v)
@@ -616,6 +840,10 @@ def AppendAVBSigningArgs(cmd, partition):
   """Append signing arguments for avbtool."""
   # e.g., "--key path/to/signing_key --algorithm SHA256_RSA4096"
   key_path = OPTIONS.info_dict.get("avb_" + partition + "_key_path")
+  if key_path and not os.path.exists(key_path) and OPTIONS.search_path:
+    new_key_path = os.path.join(OPTIONS.search_path, key_path)
+    if os.path.exists(new_key_path):
+      key_path = new_key_path
   algorithm = OPTIONS.info_dict.get("avb_" + partition + "_algorithm")
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
@@ -625,7 +853,7 @@ def AppendAVBSigningArgs(cmd, partition):
     cmd.extend(["--salt", avb_salt])
 
 
-def GetAvbPartitionArg(partition, image, info_dict = None):
+def GetAvbPartitionArg(partition, image, info_dict=None):
   """Returns the VBMeta arguments for partition.
 
   It sets up the VBMeta argument by including the partition descriptor from the
@@ -645,11 +873,20 @@ def GetAvbPartitionArg(partition, image, info_dict = None):
 
   # Check if chain partition is used.
   key_path = info_dict.get("avb_" + partition + "_key_path")
-  if key_path:
-    chained_partition_arg = GetAvbChainedPartitionArg(partition, info_dict)
-    return ["--chain_partition", chained_partition_arg]
-  else:
+  if not key_path:
     return ["--include_descriptors_from_image", image]
+
+  # For a non-A/B device, we don't chain /recovery nor include its descriptor
+  # into vbmeta.img. The recovery image will be configured on an independent
+  # boot chain, to be verified with AVB_SLOT_VERIFY_FLAGS_NO_VBMETA_PARTITION.
+  # See details at
+  # https://android.googlesource.com/platform/external/avb/+/master/README.md#booting-into-recovery.
+  if OPTIONS.info_dict.get("ab_update") != "true" and partition == "recovery":
+    return []
+
+  # Otherwise chain the partition into vbmeta.
+  chained_partition_arg = GetAvbChainedPartitionArg(partition, info_dict)
+  return ["--chain_partition", chained_partition_arg]
 
 
 def GetAvbChainedPartitionArg(partition, info_dict, key=None):
@@ -668,6 +905,10 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
+  if key and not os.path.exists(key) and OPTIONS.search_path:
+    new_key_path = os.path.join(OPTIONS.search_path, key)
+    if os.path.exists(new_key_path):
+      key = new_key_path
   pubkey_path = ExtractAvbPublicKey(info_dict["avb_avbtool"], key)
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
@@ -733,6 +974,25 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
   RunAndCheckOutput(cmd)
 
 
+def _MakeRamdisk(sourcedir, fs_config_file=None):
+  ramdisk_img = tempfile.NamedTemporaryFile()
+
+  if fs_config_file is not None and os.access(fs_config_file, os.F_OK):
+    cmd = ["mkbootfs", "-f", fs_config_file,
+           os.path.join(sourcedir, "RAMDISK")]
+  else:
+    cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
+  p1 = Run(cmd, stdout=subprocess.PIPE)
+  p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
+
+  p2.wait()
+  p1.wait()
+  assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (sourcedir,)
+  assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (sourcedir,)
+
+  return ramdisk_img
+
+
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
                         has_ramdisk=False, two_step_image=False):
   """Build a bootable image from the specified sourcedir.
@@ -746,24 +1006,6 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   for building the requested image.
   """
 
-  def make_ramdisk():
-    ramdisk_img = tempfile.NamedTemporaryFile()
-
-    if os.access(fs_config_file, os.F_OK):
-      cmd = ["mkbootfs", "-f", fs_config_file,
-             os.path.join(sourcedir, "RAMDISK")]
-    else:
-      cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
-    p1 = Run(cmd, stdout=subprocess.PIPE)
-    p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
-
-    p2.wait()
-    p1.wait()
-    assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (sourcedir,)
-    assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (sourcedir,)
-
-    return ramdisk_img
-
   if not os.access(os.path.join(sourcedir, "kernel"), os.F_OK):
     return None
 
@@ -776,7 +1018,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   img = tempfile.NamedTemporaryFile()
 
   if has_ramdisk:
-    ramdisk_img = make_ramdisk()
+    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
@@ -933,6 +1175,105 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   data = _BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
                              os.path.join(unpack_dir, fs_config),
                              info_dict, has_ramdisk, two_step_image)
+  if data:
+    return File(name, data)
+  return None
+
+
+def _BuildVendorBootImage(sourcedir, info_dict=None):
+  """Build a vendor boot image from the specified sourcedir.
+
+  Take a ramdisk, dtb, and vendor_cmdline from the input (in 'sourcedir'), and
+  turn them into a vendor boot image.
+
+  Return the image data, or None if sourcedir does not appear to contains files
+  for building the requested image.
+  """
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  img = tempfile.NamedTemporaryFile()
+
+  ramdisk_img = _MakeRamdisk(sourcedir)
+
+  # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
+  mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
+
+  cmd = [mkbootimg]
+
+  fn = os.path.join(sourcedir, "dtb")
+  if os.access(fn, os.F_OK):
+    cmd.append("--dtb")
+    cmd.append(fn)
+
+  fn = os.path.join(sourcedir, "vendor_cmdline")
+  if os.access(fn, os.F_OK):
+    cmd.append("--vendor_cmdline")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  fn = os.path.join(sourcedir, "base")
+  if os.access(fn, os.F_OK):
+    cmd.append("--base")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  fn = os.path.join(sourcedir, "pagesize")
+  if os.access(fn, os.F_OK):
+    cmd.append("--pagesize")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  args = info_dict.get("mkbootimg_args")
+  if args and args.strip():
+    cmd.extend(shlex.split(args))
+
+  args = info_dict.get("mkbootimg_version_args")
+  if args and args.strip():
+    cmd.extend(shlex.split(args))
+
+  cmd.extend(["--vendor_ramdisk", ramdisk_img.name])
+  cmd.extend(["--vendor_boot", img.name])
+
+  RunAndCheckOutput(cmd)
+
+  # AVB: if enabled, calculate and add hash.
+  if info_dict.get("avb_enable") == "true":
+    avbtool = info_dict["avb_avbtool"]
+    part_size = info_dict["vendor_boot_size"]
+    cmd = [avbtool, "add_hash_footer", "--image", img.name,
+           "--partition_size", str(part_size), "--partition_name vendor_boot"]
+    AppendAVBSigningArgs(cmd, "vendor_boot")
+    args = info_dict.get("avb_vendor_boot_add_hash_footer_args")
+    if args and args.strip():
+      cmd.extend(shlex.split(args))
+    RunAndCheckOutput(cmd)
+
+  img.seek(os.SEEK_SET, 0)
+  data = img.read()
+
+  ramdisk_img.close()
+  img.close()
+
+  return data
+
+
+def GetVendorBootImage(name, prebuilt_name, unpack_dir, tree_subdir,
+                       info_dict=None):
+  """Return a File object with the desired vendor boot image.
+
+  Look for it under 'unpack_dir'/IMAGES, otherwise construct it from
+  the source files in 'unpack_dir'/'tree_subdir'."""
+
+  prebuilt_path = os.path.join(unpack_dir, "IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    logger.info("using prebuilt %s from IMAGES...", prebuilt_name)
+    return File.FromLocalFile(name, prebuilt_path)
+
+  logger.info("building image from target_files %s...", tree_subdir)
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  data = _BuildVendorBootImage(os.path.join(unpack_dir, tree_subdir), info_dict)
   if data:
     return File(name, data)
   return None
@@ -1192,7 +1533,7 @@ def GetKeyPasswords(keylist):
 def GetMinSdkVersion(apk_name):
   """Gets the minSdkVersion declared in the APK.
 
-  It calls 'aapt' to query the embedded minSdkVersion from the given APK file.
+  It calls 'aapt2' to query the embedded minSdkVersion from the given APK file.
   This can be both a decimal number (API Level) or a codename.
 
   Args:
@@ -1205,12 +1546,12 @@ def GetMinSdkVersion(apk_name):
     ExternalError: On failing to obtain the min SDK version.
   """
   proc = Run(
-      ["aapt", "dump", "badging", apk_name], stdout=subprocess.PIPE,
+      ["aapt2", "dump", "badging", apk_name], stdout=subprocess.PIPE,
       stderr=subprocess.PIPE)
   stdoutdata, stderrdata = proc.communicate()
   if proc.returncode != 0:
     raise ExternalError(
-        "Failed to obtain minSdkVersion: aapt return code {}:\n{}\n{}".format(
+        "Failed to obtain minSdkVersion: aapt2 return code {}:\n{}\n{}".format(
             proc.returncode, stdoutdata, stderrdata))
 
   for line in stdoutdata.split("\n"):
@@ -1218,7 +1559,7 @@ def GetMinSdkVersion(apk_name):
     m = re.match(r'sdkVersion:\'([^\']*)\'', line)
     if m:
       return m.group(1)
-  raise ExternalError("No minSdkVersion returned by aapt")
+  raise ExternalError("No minSdkVersion returned by aapt2")
 
 
 def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
@@ -2427,13 +2768,25 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
     info_dict = OPTIONS.info_dict
 
   full_recovery_image = info_dict.get("full_recovery_image") == "true"
+  board_uses_vendorimage = info_dict.get("board_uses_vendorimage") == "true"
+
+  if board_uses_vendorimage:
+    # In this case, the output sink is rooted at VENDOR
+    recovery_img_path = "etc/recovery.img"
+    recovery_resource_dat_path = "VENDOR/etc/recovery-resource.dat"
+    sh_dir = "bin"
+  else:
+    # In this case the output sink is rooted at SYSTEM
+    recovery_img_path = "vendor/etc/recovery.img"
+    recovery_resource_dat_path = "SYSTEM/vendor/etc/recovery-resource.dat"
+    sh_dir = "vendor/bin"
 
   if full_recovery_image:
-    output_sink("etc/recovery.img", recovery_img.data)
+    output_sink(recovery_img_path, recovery_img.data)
 
   else:
     system_root_image = info_dict.get("system_root_image") == "true"
-    path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
+    path = os.path.join(input_dir, recovery_resource_dat_path)
     # With system-root-image, boot and recovery images will have mismatching
     # entries (only recovery has the ramdisk entry) (Bug: 72731506). Use bsdiff
     # to handle such a case.
@@ -2446,7 +2799,7 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
       if os.path.exists(path):
         diff_program.append("-b")
         diff_program.append(path)
-        bonus_args = "--bonus /system/etc/recovery-resource.dat"
+        bonus_args = "--bonus /vendor/etc/recovery-resource.dat"
       else:
         bonus_args = ""
 
@@ -2463,10 +2816,16 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
     return
 
   if full_recovery_image:
-    sh = """#!/system/bin/sh
+
+    # Note that we use /vendor to refer to the recovery resources. This will
+    # work for a separate vendor partition mounted at /vendor or a
+    # /system/vendor subdirectory on the system partition, for which init will
+    # create a symlink from /vendor to /system/vendor.
+
+    sh = """#!/vendor/bin/sh
 if ! applypatch --check %(type)s:%(device)s:%(size)d:%(sha1)s; then
   applypatch \\
-          --flash /system/etc/recovery.img \\
+          --flash /vendor/etc/recovery.img \\
           --target %(type)s:%(device)s:%(size)d:%(sha1)s && \\
       log -t recovery "Installing new recovery image: succeeded" || \\
       log -t recovery "Installing new recovery image: failed"
@@ -2478,10 +2837,10 @@ fi
        'sha1': recovery_img.sha1,
        'size': recovery_img.size}
   else:
-    sh = """#!/system/bin/sh
+    sh = """#!/vendor/bin/sh
 if ! applypatch --check %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
   applypatch %(bonus_args)s \\
-          --patch /system/recovery-from-boot.p \\
+          --patch /vendor/recovery-from-boot.p \\
           --source %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s \\
           --target %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s && \\
       log -t recovery "Installing new recovery image: succeeded" || \\
@@ -2499,9 +2858,9 @@ fi
        'recovery_device': recovery_device,
        'bonus_args': bonus_args}
 
-  # The install script location moved from /system/etc to /system/bin
-  # in the L release.
-  sh_location = "bin/install-recovery.sh"
+  # The install script location moved from /system/etc to /system/bin in the L
+  # release. In the R release it is in VENDOR/bin or SYSTEM/vendor/bin.
+  sh_location = os.path.join(sh_dir, "install-recovery.sh")
 
   logger.info("putting script in %s", sh_location)
 

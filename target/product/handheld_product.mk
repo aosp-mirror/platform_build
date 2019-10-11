@@ -27,7 +27,6 @@ PRODUCT_PACKAGES += \
     Camera2 \
     Contacts \
     DeskClock \
-    Email \
     Gallery2 \
     LatinIME \
     Launcher3QuickStep \
@@ -40,3 +39,7 @@ PRODUCT_PACKAGES += \
     StorageManager \
     SystemUI \
     WallpaperCropper \
+    frameworks-base-overlays
+
+PRODUCT_PACKAGES_DEBUG += \
+    frameworks-base-overlays-debug
