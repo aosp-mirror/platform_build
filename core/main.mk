@@ -1138,6 +1138,7 @@ APEX_MODULE_LIBS := \
   libdt_socket.so \
   libicui18n.so \
   libicuuc.so \
+  libicu_jni.so \
   libjavacore.so \
   libjdwp.so \
   libm.so \
