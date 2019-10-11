@@ -873,10 +873,20 @@ def GetAvbPartitionArg(partition, image, info_dict=None):
 
   # Check if chain partition is used.
   key_path = info_dict.get("avb_" + partition + "_key_path")
-  if key_path:
-    chained_partition_arg = GetAvbChainedPartitionArg(partition, info_dict)
-    return ["--chain_partition", chained_partition_arg]
-  return ["--include_descriptors_from_image", image]
+  if not key_path:
+    return ["--include_descriptors_from_image", image]
+
+  # For a non-A/B device, we don't chain /recovery nor include its descriptor
+  # into vbmeta.img. The recovery image will be configured on an independent
+  # boot chain, to be verified with AVB_SLOT_VERIFY_FLAGS_NO_VBMETA_PARTITION.
+  # See details at
+  # https://android.googlesource.com/platform/external/avb/+/master/README.md#booting-into-recovery.
+  if OPTIONS.info_dict.get("ab_update") != "true" and partition == "recovery":
+    return []
+
+  # Otherwise chain the partition into vbmeta.
+  chained_partition_arg = GetAvbChainedPartitionArg(partition, info_dict)
+  return ["--chain_partition", chained_partition_arg]
 
 
 def GetAvbChainedPartitionArg(partition, info_dict, key=None):
