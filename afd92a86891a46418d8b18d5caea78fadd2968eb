@@ -46,6 +46,30 @@
       "revId": "afd92a86891a46418d8b18d5caea78fadd2968eb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed3fd727_05fbf163",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-10-14T17:50:19Z",
+      "side": 1,
+      "message": "ah. that makes sense.",
+      "parentUuid": "9064d091_fc2f73ab",
+      "range": {
+        "startLine": 57,
+        "startChar": 17,
+        "endLine": 57,
+        "endChar": 33
+      },
+      "revId": "afd92a86891a46418d8b18d5caea78fadd2968eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
