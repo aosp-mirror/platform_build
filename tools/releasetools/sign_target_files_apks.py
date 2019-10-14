@@ -153,6 +153,20 @@ OPTIONS.avb_algorithms = {}
 OPTIONS.avb_extra_args = {}
 
 
+AVB_FOOTER_ARGS_BY_PARTITION = {
+    'boot' : 'avb_boot_add_hash_footer_args',
+    'dtbo' : 'avb_dtbo_add_hash_footer_args',
+    'recovery' : 'avb_recovery_add_hash_footer_args',
+    'system' : 'avb_system_add_hashtree_footer_args',
+    'system_other' : 'avb_system_other_add_hashtree_footer_args',
+    'vendor' : 'avb_vendor_add_hashtree_footer_args',
+    'vendor_boot' : 'avb_vendor_boot_add_hash_footer_args',
+    'vbmeta' : 'avb_vbmeta_args',
+    'vbmeta_system' : 'avb_vbmeta_system_args',
+    'vbmeta_vendor' : 'avb_vbmeta_vendor_args',
+}
+
+
 def GetApkCerts(certmap):
   # apply the key remapping to the contents of the file
   for apk, cert in certmap.items():
@@ -622,6 +636,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
   # Replace the AVB signing keys, if any.
   ReplaceAvbSigningKeys(misc_info)
 
+  # Rewrite the props in AVB signing args.
+  if misc_info.get('avb_enable') == 'true':
+    RewriteAvbProps(misc_info)
+
   # Write back misc_info with the latest values.
   ReplaceMiscInfoTxt(input_tf_zip, output_tf_zip, misc_info)
 
@@ -910,18 +928,6 @@ def ReplaceMiscInfoTxt(input_zip, output_zip, misc_info):
 def ReplaceAvbSigningKeys(misc_info):
   """Replaces the AVB signing keys."""
 
-  AVB_FOOTER_ARGS_BY_PARTITION = {
-      'boot' : 'avb_boot_add_hash_footer_args',
-      'dtbo' : 'avb_dtbo_add_hash_footer_args',
-      'recovery' : 'avb_recovery_add_hash_footer_args',
-      'system' : 'avb_system_add_hashtree_footer_args',
-      'system_other' : 'avb_system_other_add_hashtree_footer_args',
-      'vendor' : 'avb_vendor_add_hashtree_footer_args',
-      'vbmeta' : 'avb_vbmeta_args',
-      'vbmeta_system' : 'avb_vbmeta_system_args',
-      'vbmeta_vendor' : 'avb_vbmeta_vendor_args',
-  }
-
   def ReplaceAvbPartitionSigningKey(partition):
     key = OPTIONS.avb_keys.get(partition)
     if not key:
@@ -944,6 +950,32 @@ def ReplaceAvbSigningKeys(misc_info):
 
   for partition in AVB_FOOTER_ARGS_BY_PARTITION:
     ReplaceAvbPartitionSigningKey(partition)
+
+
+def RewriteAvbProps(misc_info):
+  """Rewrites the props in AVB signing args."""
+  for partition, args_key in AVB_FOOTER_ARGS_BY_PARTITION.items():
+    args = misc_info.get(args_key)
+    if not args:
+      continue
+
+    tokens = []
+    changed = False
+    for token in args.split(' '):
+      fingerprint_key = 'com.android.build.{}.fingerprint'.format(partition)
+      if not token.startswith(fingerprint_key):
+        tokens.append(token)
+        continue
+      prefix, tag = token.rsplit('/', 1)
+      tokens.append('{}/{}'.format(prefix, EditTags(tag)))
+      changed = True
+
+    if changed:
+      result = ' '.join(tokens)
+      print('Rewriting AVB prop for {}:\n'.format(partition))
+      print('  replace: {}'.format(args))
+      print('     with: {}'.format(result))
+      misc_info[args_key] = result
 
 
 def BuildKeyMap(misc_info, key_mapping_options):

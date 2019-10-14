@@ -23,7 +23,8 @@ import common
 import test_utils
 from sign_target_files_apks import (
     CheckApkAndApexKeysAvailable, EditTags, GetApkFileInfo, ReadApexKeysInfo,
-    ReplaceCerts, ReplaceVerityKeyId, RewriteProps, WriteOtacerts)
+    ReplaceCerts, ReplaceVerityKeyId, RewriteAvbProps, RewriteProps,
+    WriteOtacerts)
 
 
 class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
@@ -51,6 +52,40 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
 
     # Tags are sorted.
     self.assertEqual(EditTags('xyz,abc,dev-keys,xyz'), ('abc,release-keys,xyz'))
+
+  def test_RewriteAvbProps(self):
+    misc_info = {
+      'avb_boot_add_hash_footer_args':
+          ('--prop com.android.build.boot.os_version:R '
+           '--prop com.android.build.boot.security_patch:2019-09-05'),
+      'avb_system_add_hashtree_footer_args':
+          ('--prop com.android.build.system.os_version:R '
+           '--prop com.android.build.system.security_patch:2019-09-05 '
+           '--prop com.android.build.system.fingerprint:'
+           'Android/aosp_taimen/taimen:R/QT/foo:userdebug/test-keys'),
+      'avb_vendor_add_hashtree_footer_args':
+          ('--prop com.android.build.vendor.os_version:R '
+           '--prop com.android.build.vendor.security_patch:2019-09-05 '
+           '--prop com.android.build.vendor.fingerprint:'
+           'Android/aosp_taimen/taimen:R/QT/foo:userdebug/dev-keys'),
+    }
+    expected_dict = {
+      'avb_boot_add_hash_footer_args':
+          ('--prop com.android.build.boot.os_version:R '
+           '--prop com.android.build.boot.security_patch:2019-09-05'),
+      'avb_system_add_hashtree_footer_args':
+          ('--prop com.android.build.system.os_version:R '
+           '--prop com.android.build.system.security_patch:2019-09-05 '
+           '--prop com.android.build.system.fingerprint:'
+           'Android/aosp_taimen/taimen:R/QT/foo:userdebug/release-keys'),
+      'avb_vendor_add_hashtree_footer_args':
+          ('--prop com.android.build.vendor.os_version:R '
+           '--prop com.android.build.vendor.security_patch:2019-09-05 '
+           '--prop com.android.build.vendor.fingerprint:'
+           'Android/aosp_taimen/taimen:R/QT/foo:userdebug/release-keys'),
+    }
+    RewriteAvbProps(misc_info)
+    self.assertDictEqual(expected_dict, misc_info)
 
   def test_RewriteProps(self):
     props = (
