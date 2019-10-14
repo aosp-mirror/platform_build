@@ -22,6 +22,30 @@
       "revId": "afd92a86891a46418d8b18d5caea78fadd2968eb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9064d091_fc2f73ab",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-10-14T17:43:25Z",
+      "side": 1,
+      "message": "it\u0027s not a fallback logic to handle the call to py files: the run with `python b/m/t/r/ota_from_target_files.py` will fail, unless explicitly providing `--path` in command line.\n\nthe accepted invocation would be either:\n$ out/host/.../bin/ota_from_target_files (optionally with `--path`)\nor\n$ python b/m/t/r/ota_from_target_files.py --path ... (`--path` would be mandatory)\n\nWe can possibly make it a hard failure for the second case as well, but feels like we should do that at a later point (e.g. after officially having R out and updating s.a.c instructions)",
+      "parentUuid": "7978920f_1e72cd4d",
+      "range": {
+        "startLine": 57,
+        "startChar": 17,
+        "endLine": 57,
+        "endChar": 33
+      },
+      "revId": "afd92a86891a46418d8b18d5caea78fadd2968eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
