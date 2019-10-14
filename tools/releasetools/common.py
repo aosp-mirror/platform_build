@@ -47,22 +47,23 @@ logger = logging.getLogger(__name__)
 
 
 class Options(object):
+
   def __init__(self):
-    base_out_path = os.getenv('OUT_DIR_COMMON_BASE')
-    if base_out_path is None:
-      base_search_path = "out"
-    else:
-      base_search_path = os.path.join(base_out_path,
-                                      os.path.basename(os.getcwd()))
+    # Set up search path, in order to find framework/ and lib64/. At the time of
+    # running this function, user-supplied search path (`--path`) hasn't been
+    # available. So the value set here is the default, which might be overridden
+    # by commandline flag later.
+    exec_path = sys.argv[0]
+    if exec_path.endswith('.py'):
+      script_name = os.path.basename(exec_path)
+      # logger hasn't been initialized yet at this point. Use print to output
+      # warnings.
+      print(
+          'Warning: releasetools script should be invoked as hermetic Python '
+          'executable -- build and run `{}` directly.'.format(script_name[:-3]),
+          file=sys.stderr)
+    self.search_path = os.path.realpath(os.path.join(exec_path, '..'))
 
-    # Python >= 3.3 returns 'linux', whereas Python 2.7 gives 'linux2'.
-    platform_search_path = {
-        "linux": os.path.join(base_search_path, "host/linux-x86"),
-        "linux2": os.path.join(base_search_path, "host/linux-x86"),
-        "darwin": os.path.join(base_search_path, "host/darwin-x86"),
-    }
-
-    self.search_path = platform_search_path.get(sys.platform)
     self.signapk_path = "framework/signapk.jar"  # Relative to search_path
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
     self.extra_signapk_args = []
