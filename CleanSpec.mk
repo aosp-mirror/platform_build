@@ -687,6 +687,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/apex)
 # Migrate preopt files to system_other for some devices
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/*/*app/*/oat)
 
+# Migrate preopt files from system_other for some devices
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system_other)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
