@@ -885,10 +885,28 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
       payload_offset, metadata_total = (
           property_files._GetPayloadMetadataOffsetAndSize(input_zip))
 
-    # Read in the metadata signature directly.
+    # The signature proto has the following format (details in
+    #  /platform/system/update_engine/update_metadata.proto):
+    #  message Signature {
+    #    optional uint32 version = 1;
+    #    optional bytes data = 2;
+    #    optional fixed32 unpadded_signature_size = 3;
+    #  }
+    #
+    # According to the protobuf encoding, the tail of the signature message will
+    # be [signature string(256 bytes) + encoding of the fixed32 number 256]. And
+    # 256 is encoded as 'x1d\x00\x01\x00\x00':
+    # [3 (field number) << 3 | 5 (type) + byte reverse of 0x100 (256)].
+    # Details in (https://developers.google.com/protocol-buffers/docs/encoding)
+    signature_tail_length = self.SIGNATURE_SIZE + 5
+    self.assertGreater(metadata_total, signature_tail_length)
     with open(output_file, 'rb') as verify_fp:
-      verify_fp.seek(payload_offset + metadata_total - self.SIGNATURE_SIZE)
-      metadata_signature = verify_fp.read(self.SIGNATURE_SIZE)
+      verify_fp.seek(payload_offset + metadata_total - signature_tail_length)
+      metadata_signature_proto_tail = verify_fp.read(signature_tail_length)
+
+    self.assertEqual(b'\x1d\x00\x01\x00\x00',
+                     metadata_signature_proto_tail[-5:])
+    metadata_signature = metadata_signature_proto_tail[:-5]
 
     # Now we extract the metadata hash via brillo_update_payload script, which
     # will serve as the oracle result.
@@ -1050,11 +1068,13 @@ class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
     with open(file1, 'rb') as fp1, open(file2, 'rb') as fp2:
       self.assertEqual(fp1.read(), fp2.read())
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_init(self):
     payload_signer = PayloadSigner()
     self.assertEqual('openssl', payload_signer.signer)
-    self.assertEqual(256, payload_signer.key_size)
+    self.assertEqual(256, payload_signer.maximum_signature_size)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_init_withPassword(self):
     common.OPTIONS.package_key = os.path.join(
         self.testdata_dir, 'testkey_with_passwd')
@@ -1067,18 +1087,27 @@ class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
   def test_init_withExternalSigner(self):
     common.OPTIONS.payload_signer = 'abc'
     common.OPTIONS.payload_signer_args = ['arg1', 'arg2']
-    common.OPTIONS.payload_signer_key_size = '512'
+    common.OPTIONS.payload_signer_maximum_signature_size = '512'
     payload_signer = PayloadSigner()
     self.assertEqual('abc', payload_signer.signer)
     self.assertEqual(['arg1', 'arg2'], payload_signer.signer_args)
-    self.assertEqual(512, payload_signer.key_size)
+    self.assertEqual(512, payload_signer.maximum_signature_size)
 
-  def test_GetKeySizeInBytes_512Bytes(self):
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetMaximumSignatureSizeInBytes_512Bytes(self):
     signing_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
     # pylint: disable=protected-access
-    key_size = PayloadSigner._GetKeySizeInBytes(signing_key)
-    self.assertEqual(512, key_size)
+    signature_size = PayloadSigner._GetMaximumSignatureSizeInBytes(signing_key)
+    self.assertEqual(512, signature_size)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetMaximumSignatureSizeInBytes_ECKey(self):
+    signing_key = os.path.join(self.testdata_dir, 'testkey_EC.key')
+    # pylint: disable=protected-access
+    signature_size = PayloadSigner._GetMaximumSignatureSizeInBytes(signing_key)
+    self.assertEqual(72, signature_size)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Sign(self):
     payload_signer = PayloadSigner()
     input_file = os.path.join(self.testdata_dir, self.SIGFILE)
