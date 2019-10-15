@@ -87,6 +87,7 @@ _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
+  BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
   BUILD_BROKEN_USES_NETWORK \
 
 _build_broken_var_list += \
@@ -506,9 +507,9 @@ endif
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_ODM
 ifeq ($(TARGET_COPY_OUT_ODM),$(_odm_path_placeholder))
-  TARGET_COPY_OUT_ODM := vendor/odm
-else ifeq ($(filter odm vendor/odm,$(TARGET_COPY_OUT_ODM)),)
-  $(error TARGET_COPY_OUT_ODM must be either 'odm' or 'vendor/odm', seeing '$(TARGET_COPY_OUT_ODM)'.)
+  TARGET_COPY_OUT_ODM := $(TARGET_COPY_OUT_VENDOR)/odm
+else ifeq ($(filter odm system/vendor/odm vendor/odm,$(TARGET_COPY_OUT_ODM)),)
+  $(error TARGET_COPY_OUT_ODM must be either 'odm', 'system/vendor/odm' or 'vendor/odm', seeing '$(TARGET_COPY_OUT_ODM)'.)
 endif
 PRODUCT_COPY_FILES := $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),$(PRODUCT_COPY_FILES))
 
