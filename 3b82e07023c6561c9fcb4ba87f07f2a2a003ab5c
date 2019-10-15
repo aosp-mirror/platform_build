@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "640eef87_7d058bcc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-10-15T20:49:46Z",
+      "side": 1,
+      "message": "What is a target? Do you mean target product? Product makefiles have their own list of variables that they may set (generally starting with PRODUCT_)",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 7
+      },
+      "revId": "3b82e07023c6561c9fcb4ba87f07f2a2a003ab5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
