@@ -22,6 +22,23 @@
       "revId": "a4d88aeef2472360cc5df0ee469e48defdaf7e05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "168d222c_57cf906e",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-10-16T06:11:38Z",
+      "side": 1,
+      "message": "Why is this blank line being added?",
+      "revId": "a4d88aeef2472360cc5df0ee469e48defdaf7e05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
