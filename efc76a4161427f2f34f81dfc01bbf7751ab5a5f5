@@ -52,6 +52,24 @@
       "revId": "efc76a4161427f2f34f81dfc01bbf7751ab5a5f5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be70fa60_beecaf80",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-10-16T22:51:49Z",
+      "side": 1,
+      "message": "Maybe I\u0027m mis-remembering here, but wouldn\u0027t this result in the same problem as: https://android-review.googlesource.com/c/platform/build/soong/+/1128033/3#message-804da9d6eb29287019669647a086dabada8702f9.\n\n... where the soong-generated rule that copies the corpus file to the intermediates directory won\u0027t be available at make-time, and thus we can\u0027t add a dependency on it from the module rule?",
+      "parentUuid": "c1a743ea_57d16f96",
+      "revId": "efc76a4161427f2f34f81dfc01bbf7751ab5a5f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
