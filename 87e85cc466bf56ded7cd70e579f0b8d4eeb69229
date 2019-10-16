@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6c8c29d_91368cdc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-16T11:18:59Z",
+      "side": 1,
+      "message": "I think you\u0027ll want to prevent this one from merging to internal master. You can achieve that by using the same Merged-In tag as the enable-CL I think?",
+      "revId": "87e85cc466bf56ded7cd70e579f0b8d4eeb69229",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
