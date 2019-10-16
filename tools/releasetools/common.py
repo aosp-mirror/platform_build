@@ -882,7 +882,7 @@ def GetAvbPartitionArg(partition, image, info_dict=None):
   # boot chain, to be verified with AVB_SLOT_VERIFY_FLAGS_NO_VBMETA_PARTITION.
   # See details at
   # https://android.googlesource.com/platform/external/avb/+/master/README.md#booting-into-recovery.
-  if OPTIONS.info_dict.get("ab_update") != "true" and partition == "recovery":
+  if info_dict.get("ab_update") != "true" and partition == "recovery":
     return []
 
   # Otherwise chain the partition into vbmeta.
