@@ -120,8 +120,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
     $(error $(LOCAL_PATH): LOCAL_SDK_VERSION cannot be used in host module)
   endif
 
-  my_cflags += -D__ANDROID_NDK__
-
   # Make sure we've built the NDK.
   my_additional_dependencies += $(SOONG_OUT_DIR)/ndk_base.timestamp
 
