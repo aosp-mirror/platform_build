@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0365f682_c6fb7a51",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-16T06:03:27Z",
+      "side": 1,
+      "message": "I submitted I9206a2b8540ec49889b9e8210eae3b64b0fa2d81 in internal (not a revert, but has the right cleanspec), and leaves the comment.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 52
+      },
+      "revId": "a4d88aeef2472360cc5df0ee469e48defdaf7e05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
