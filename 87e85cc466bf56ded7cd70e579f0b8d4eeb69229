@@ -16,6 +16,24 @@
       "revId": "87e85cc466bf56ded7cd70e579f0b8d4eeb69229",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "980627de_4adbea35",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1203210
+      },
+      "writtenOn": "2019-10-16T12:50:01Z",
+      "side": 1,
+      "message": "Yeah, it hadn\u0027t occurred to me, but it probably would be a good idea to stop this merging into internal master, since we\u0027ll only push in AOSP if we\u0027re happy enough that it\u0027s stable in master.",
+      "parentUuid": "b6c8c29d_91368cdc",
+      "revId": "87e85cc466bf56ded7cd70e579f0b8d4eeb69229",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
