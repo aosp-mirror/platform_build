@@ -34,6 +34,24 @@
       "revId": "efc76a4161427f2f34f81dfc01bbf7751ab5a5f5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1a743ea_57d16f96",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-10-16T22:34:36Z",
+      "side": 1,
+      "message": "You would add android.Cp rules in Soong to copy them to the intermediates\u0027 corpus directory, and then make the existing LOCAL_TEST_DATA point to the intermediates directory instead of the source file.",
+      "parentUuid": "82ffc69e_3693651f",
+      "revId": "efc76a4161427f2f34f81dfc01bbf7751ab5a5f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
