@@ -70,6 +70,24 @@
       "revId": "efc76a4161427f2f34f81dfc01bbf7751ab5a5f5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f26fa94f_5d1a4fe1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-10-16T22:55:45Z",
+      "side": 1,
+      "message": "No, the Soong rules are visible to Make at Ninja time.  That issue was because Make was trying to add an additional dependency to a rule that was created in Soong, which doesn\u0027t work.  Depending _on_ a rule created in Soong works fine.",
+      "parentUuid": "be70fa60_beecaf80",
+      "revId": "efc76a4161427f2f34f81dfc01bbf7751ab5a5f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
