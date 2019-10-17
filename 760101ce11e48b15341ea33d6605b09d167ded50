@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "102742ca_eb5ed6b4",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4193,
+      "author": {
+        "id": 1368904
+      },
+      "writtenOn": "2019-10-17T08:20:55Z",
+      "side": 1,
+      "message": "We also need to do the same for TARGET_USERIMAGES_SPARSE_F2FS_DISABLED i.e.\n\n$(if $(filter true,$(TARGET_USERIMAGES_SPARSE_F2FS_DISABLED)), \\\n    echo \"build_non_sparse_super_partition\u003dtrue\" \u003e\u003e $(1))",
+      "revId": "760101ce11e48b15341ea33d6605b09d167ded50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
