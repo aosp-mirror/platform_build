@@ -627,16 +627,6 @@ JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standa
 
 EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 
-USE_OPENJDK9 := true
-
-ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),)
-TARGET_OPENJDK9 := true
-else ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),true)
-TARGET_OPENJDK9 := true
-else ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),false)
-TARGET_OPENJDK9 :=
-endif
-
 # Path to tools.jar
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 
