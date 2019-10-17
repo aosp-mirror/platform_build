@@ -362,6 +362,7 @@ PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     logtagd.rc \
     procrank \
+    remount \
     showmap \
     sqlite3 \
     ss \
