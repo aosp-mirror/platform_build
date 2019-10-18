@@ -681,6 +681,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/apex)
 # Migrate preopt files to system_other for some devices
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/*/*app/*/oat)
 
+# Remove Android Core Library artifacts from the system partition, now
+# that they live in the ART APEX (b/142944799).
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/framework/*.jar)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
