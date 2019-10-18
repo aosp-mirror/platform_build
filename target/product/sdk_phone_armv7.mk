@@ -30,6 +30,3 @@ PRODUCT_PACKAGES += \
 PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_armv7
 PRODUCT_DEVICE := generic
-
-# TODO(b/131162102): remove this after cleaning up accesses of sysprop
-BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW := true
