@@ -13,16 +13,9 @@ SYSTEM_OTHER_ODEX_FILTER ?= \
     product/app/% \
     product/priv-app/% \
 
-# The default values for pre-opting. To support the runtime module we ensure no dex files
-# get stripped.
-ifeq ($(PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING),)
-  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING := true
-endif
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
   ifeq (eng,$(TARGET_BUILD_VARIANT))
-    # Don't strip for quick development turnarounds.
-    DEX_PREOPT_DEFAULT := nostripping
     # For an eng build only pre-opt the boot image and system server. This gives reasonable performance
     # and still allows a simple workflow: building in frameworks/base and syncing.
     WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true
@@ -86,7 +79,6 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
 
   $(call json_start)
 
-  $(call add_json_bool, DefaultNoStripping,                 $(filter nostripping,$(DEX_PREOPT_DEFAULT)))
   $(call add_json_bool, DisablePreopt,                      $(call invert_bool,$(filter true,$(WITH_DEXPREOPT))))
   $(call add_json_list, DisablePreoptModules,               $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer, $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
@@ -173,6 +165,3 @@ DEXPREOPT_GEN_DEPS := \
   $(SOONG_ZIP) \
   $(ZIP2ZIP) \
   $(BUILD_SYSTEM)/construct_context.sh \
-
-DEXPREOPT_STRIP_DEPS := \
-  $(ZIP2ZIP) \
