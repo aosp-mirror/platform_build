@@ -108,6 +108,10 @@ endif
 # ###############################################################
 $(foreach v,$(_build_broken_var_list),$(eval $(v) :=))
 
+# Build broken vars without default initialization above
+_build_broken_var_list += \
+  BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW
+
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
 # make sure only one exists.
