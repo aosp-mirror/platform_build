@@ -1253,6 +1253,8 @@ else
   endef
 endif
 
+# TODO(b/142944799): Implement Java library absence check for Core Libraries.
+
 ifdef FULL_BUILD
   ifneq (true,$(ALLOW_MISSING_DEPENDENCIES))
     # Check to ensure that all modules in PRODUCT_PACKAGES exist (opt in per product)
