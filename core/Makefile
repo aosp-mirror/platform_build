@@ -2557,7 +2557,7 @@ pdk_odex_apps := $(strip $(foreach m,$(DEXPREOPT.MODULES.APPS),\
   $(if $(filter $(DEXPREOPT.$(m).INSTALLED_STRIPPED),$(ALL_DEFAULT_INSTALLED_MODULES)),$(m))))
 pdk_classes_dex := $(strip \
   $(foreach m,$(pdk_odex_javalibs),$(call intermediates-dir-for,JAVA_LIBRARIES,$(m),,COMMON)/javalib.jar) \
-  $(foreach m,$(pdk_odex_apps),$(call intermediates-dir-for,APPS,$(m))/package.dex.apk))
+  $(foreach m,$(pdk_odex_apps),$(call intermediates-dir-for,APPS,$(m))/package.apk))
 
 pdk_odex_config_mk := $(PRODUCT_OUT)/pdk_dexpreopt_config.mk
 $(pdk_odex_config_mk): PRIVATE_JAVA_LIBRARIES := $(pdk_odex_javalibs)
@@ -2575,7 +2575,7 @@ $(pdk_odex_config_mk) :
 	  $(hide) echo "PDK.DEXPREOPT.$(m).DEX_PREOPT_FLAGS:=$(DEXPREOPT.$(m).DEX_PREOPT_FLAGS)" >> $@$(newline)\
 	  )
 	$(foreach m,$(PRIVATE_APPS),\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).SRC:=$(patsubst $(OUT_DIR)/%,%,$(call intermediates-dir-for,APPS,$(m))/package.dex.apk)" >> $@$(newline)\
+	  $(hide) echo "PDK.DEXPREOPT.$(m).SRC:=$(patsubst $(OUT_DIR)/%,%,$(call intermediates-dir-for,APPS,$(m))/package.apk)" >> $@$(newline)\
 	  $(hide) echo "PDK.DEXPREOPT.$(m).DEX_PREOPT:=$(DEXPREOPT.$(m).DEX_PREOPT)" >> $@$(newline)\
 	  $(hide) echo "PDK.DEXPREOPT.$(m).MULTILIB:=$(DEXPREOPT.$(m).MULTILIB)" >> $@$(newline)\
 	  $(hide) echo "PDK.DEXPREOPT.$(m).DEX_PREOPT_FLAGS:=$(DEXPREOPT.$(m).DEX_PREOPT_FLAGS)" >> $@$(newline)\

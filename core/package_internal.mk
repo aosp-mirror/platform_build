@@ -538,15 +538,6 @@ endif
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 $(LOCAL_BUILT_MODULE) : $(ZIP2ZIP)
 endif
-ifneq ($(BUILD_PLATFORM_ZIP),)
-$(LOCAL_BUILT_MODULE) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.dex.apk
-endif
-ifdef LOCAL_DEX_PREOPT
-$(LOCAL_BUILT_MODULE) : PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
-$(LOCAL_BUILT_MODULE) : $(intermediates)/strip.sh
-$(LOCAL_BUILT_MODULE) : | $(DEXPREOPT_STRIP_DEPS)
-$(LOCAL_BUILT_MODULE): .KATI_DEPFILE := $(LOCAL_BUILT_MODULE).d
-endif
 $(LOCAL_BUILT_MODULE): PRIVATE_USE_EMBEDDED_NATIVE_LIBS := $(LOCAL_USE_EMBEDDED_NATIVE_LIBS)
 $(LOCAL_BUILT_MODULE):
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
@@ -569,19 +560,11 @@ ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	@# No need to align, sign-package below will do it.
 	$(uncompress-dexs)
 endif
-# Run appcompat before stripping the classes.dex file.
+# Run appcompat before signing.
 ifeq ($(module_run_appcompat),true)
 	$(appcompat-header)
 	$(run-appcompat)
 endif  # module_run_appcompat
-ifdef LOCAL_DEX_PREOPT
-ifneq ($(BUILD_PLATFORM_ZIP),)
-	@# Keep a copy of apk with classes.dex unstripped
-	$(hide) cp -f $@ $(dir $@)package.dex.apk
-endif  # BUILD_PLATFORM_ZIP
-	mv -f $@ $@.tmp
-	$(PRIVATE_STRIP_SCRIPT) $@.tmp $@
-endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 ifdef LOCAL_COMPRESSED_MODULE
 	$(compress-package)
