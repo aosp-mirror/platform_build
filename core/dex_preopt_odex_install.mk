@@ -207,8 +207,7 @@ ifdef LOCAL_DEX_PREOPT
 
   $(call json_start)
 
-  # DexPath, StripInputPath, and StripOutputPath are not set, they will
-  # be filled in by dexpreopt_gen.
+  # DexPath is not set: it will be filled in by dexpreopt_gen.
 
   $(call add_json_str,  Name,                           $(LOCAL_MODULE))
   $(call add_json_str,  DexLocation,                    $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE)))
@@ -237,13 +236,10 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_bool, ForceCreateAppImage,            $(filter true,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
   $(call add_json_bool, PresignedPrebuilt,              $(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
 
-  $(call add_json_bool, NoStripping,                    $(filter nostripping,$(LOCAL_DEX_PREOPT)))
-
   $(call json_end)
 
   my_dexpreopt_config := $(intermediates)/dexpreopt.config
   my_dexpreopt_script := $(intermediates)/dexpreopt.sh
-  my_strip_script := $(intermediates)/strip.sh
   my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
 
   $(my_dexpreopt_config): PRIVATE_MODULE := $(LOCAL_MODULE)
@@ -252,17 +248,15 @@ ifdef LOCAL_DEX_PREOPT
 	@echo "$(PRIVATE_MODULE) dexpreopt.config"
 	echo -e -n '$(subst $(newline),\n,$(subst ','\'',$(subst \,\\,$(PRIVATE_CONTENTS))))' > $@
 
-  .KATI_RESTAT: $(my_dexpreopt_script) $(my_strip_script)
+  .KATI_RESTAT: $(my_dexpreopt_script)
   $(my_dexpreopt_script): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_script): PRIVATE_GLOBAL_CONFIG := $(DEX_PREOPT_CONFIG_FOR_MAKE)
   $(my_dexpreopt_script): PRIVATE_MODULE_CONFIG := $(my_dexpreopt_config)
-  $(my_dexpreopt_script): PRIVATE_STRIP_SCRIPT := $(my_strip_script)
-  $(my_dexpreopt_script): .KATI_IMPLICIT_OUTPUTS := $(my_strip_script)
   $(my_dexpreopt_script): $(DEXPREOPT_GEN)
   $(my_dexpreopt_script): $(my_dexpreopt_config) $(DEX_PREOPT_CONFIG_FOR_MAKE)
 	@echo "$(PRIVATE_MODULE) dexpreopt gen"
 	$(DEXPREOPT_GEN) -global $(PRIVATE_GLOBAL_CONFIG) -module $(PRIVATE_MODULE_CONFIG) \
-	-dexpreopt_script $@ -strip_script $(PRIVATE_STRIP_SCRIPT) \
+	-dexpreopt_script $@ \
 	-out_dir $(OUT_DIR)
 
   my_dexpreopt_deps := $(my_dex_jar)
@@ -302,6 +296,5 @@ ifdef LOCAL_DEX_PREOPT
 
   my_dexpreopt_config :=
   my_dexpreopt_script :=
-  my_strip_script :=
   my_dexpreopt_zip :=
 endif # LOCAL_DEX_PREOPT
