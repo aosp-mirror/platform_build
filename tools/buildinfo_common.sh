@@ -18,6 +18,7 @@ echo "ro.${partition}.build.tags=$BUILD_VERSION_TAGS"
 echo "ro.${partition}.build.type=$TARGET_BUILD_TYPE"
 echo "ro.${partition}.build.version.incremental=$BUILD_NUMBER"
 echo "ro.${partition}.build.version.release=$PLATFORM_VERSION"
+echo "ro.${partition}.build.version.release_or_codename=$PLATFORM_VERSION_LAST_STABLE"
 echo "ro.${partition}.build.version.sdk=$PLATFORM_SDK_VERSION"
 
 echo "ro.product.${partition}.brand=$PRODUCT_BRAND"
