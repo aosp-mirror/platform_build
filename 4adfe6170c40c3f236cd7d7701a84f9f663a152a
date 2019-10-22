@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b68c5e15_357ab0b1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-10-22T17:28:31Z",
+      "side": 1,
+      "message": "There are still link failures in linux-kselftest, which I also saw before. Unfortunately there\u0027s no convenient define around it: http://devops-console-stagingoss/android/platform/external/linux-kselftest/+/2af1aeb2f292776fa410e77c5a4d24d4c0710334:tools/testing/selftests/x86/unwind_vdso.c;l\u003d173 Fixable by adding libdl to kselftest_x86_tests?",
+      "revId": "4adfe6170c40c3f236cd7d7701a84f9f663a152a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
