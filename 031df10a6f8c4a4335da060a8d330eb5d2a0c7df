@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "df976895_84d1350d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-10-23T16:38:40Z",
+      "side": 1,
+      "message": "That\u0027s correct, legacy devices need not support vendor_boot.",
+      "parentUuid": "f8529739_b670acfb",
+      "range": {
+        "startLine": 9,
+        "startChar": 56,
+        "endLine": 10,
+        "endChar": 69
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0d14d559_fa00183c",
         "filename": "core/Makefile",
         "patchSetId": 4
