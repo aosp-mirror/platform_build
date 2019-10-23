@@ -27,9 +27,6 @@ ifeq (sdk_phone_x86_64,$(TARGET_PRODUCT))
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 endif
 
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-    root/init.zygote64_32.rc \
-
 #
 # All components inherited here go to product image
 #
