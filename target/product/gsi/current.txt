@@ -239,8 +239,8 @@ VNDK-core: libpiex.so
 VNDK-core: libpng.so
 VNDK-core: libpower.so
 VNDK-core: libprocinfo.so
-VNDK-core: libprotobuf-cpp-full-3.9.1.so
-VNDK-core: libprotobuf-cpp-lite-3.9.1.so
+VNDK-core: libprotobuf-cpp-full.so
+VNDK-core: libprotobuf-cpp-lite.so
 VNDK-core: libpuresoftkeymasterdevice.so
 VNDK-core: libradio_metadata.so
 VNDK-core: libselinux.so
