@@ -16,6 +16,24 @@
       "revId": "4adfe6170c40c3f236cd7d7701a84f9f663a152a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f1fc2c2_c1f4ce5a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1229339
+      },
+      "writtenOn": "2019-10-23T06:27:58Z",
+      "side": 1,
+      "message": "Yeah, that seems like a reasonable fix. I uploaded:\n\nhttps://android-review.googlesource.com/c/platform/external/linux-kselftest/+/1149116",
+      "parentUuid": "b68c5e15_357ab0b1",
+      "revId": "4adfe6170c40c3f236cd7d7701a84f9f663a152a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
