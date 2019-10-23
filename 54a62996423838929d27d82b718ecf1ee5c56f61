@@ -46,6 +46,30 @@
       "revId": "54a62996423838929d27d82b718ecf1ee5c56f61",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79b60d07_fc5f15de",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-10-23T10:08:27Z",
+      "side": 1,
+      "message": "Some partner devices is configured with 32_64. We want release one 64 bits GSI and support all 64_only, 64_32 and 32_64.",
+      "parentUuid": "d76a7ae0_ab65c30f",
+      "range": {
+        "startLine": 351,
+        "startChar": 0,
+        "endLine": 353,
+        "endChar": 68
+      },
+      "revId": "54a62996423838929d27d82b718ecf1ee5c56f61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
