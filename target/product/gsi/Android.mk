@@ -2,19 +2,37 @@ LOCAL_PATH:= $(call my-dir)
 
 #####################################################################
 # Create the list of vndk libraries from the source code.
+
+# Returns the unique installed basenames of a module, or module.so if there are
+# none.  The guess is to handle cases like libc, where the module itself is
+# marked uninstallable but a symlink is installed with the name libc.so.
+# $(1): list of libraries
+# $(2): suffix to to add to each library (not used for guess)
+define module-installed-files-or-guess
+$(foreach lib,$(1),$(or $(strip $(sort $(notdir $(call module-installed-files,$(lib)$(2))))),$(lib).so))
+endef
+
 INTERNAL_VNDK_LIB_LIST := $(call intermediates-dir-for,PACKAGING,vndk)/libs.txt
+$(INTERNAL_VNDK_LIB_LIST): PRIVATE_LLNDK_LIBRARIES := \
+	$(call module-installed-files-or-guess,$(filter-out libclang_rt.%,$(LLNDK_LIBRARIES)),)
+$(INTERNAL_VNDK_LIB_LIST): PRIVATE_VNDK_SAMEPROCESS_LIBRARIES := \
+	$(call module-installed-files-or-guess,$(VNDK_SAMEPROCESS_LIBRARIES),.vendor)
+$(INTERNAL_VNDK_LIB_LIST): PRIVATE_VNDK_CORE_LIBRARIES := \
+	$(call module-installed-files-or-guess,$(filter-out libclang_rt.%,$(VNDK_CORE_LIBRARIES)),.vendor)
+$(INTERNAL_VNDK_LIB_LIST): PRIVATE_VNDK_PRIVATE_LIBRARIES := \
+	$(call module-installed-files-or-guess,$(VNDK_PRIVATE_LIBRARIES),.vendor)
 $(INTERNAL_VNDK_LIB_LIST):
 	@echo "Generate: $@"
 	@mkdir -p $(dir $@)
 	$(hide) echo -n > $@
-	$(hide) $(foreach lib, $(filter-out libclang_rt.%,$(LLNDK_LIBRARIES)), \
-	  echo LLNDK: $(lib).so >> $@;)
-	$(hide) $(foreach lib, $(VNDK_SAMEPROCESS_LIBRARIES), \
-	  echo VNDK-SP: $(lib).so >> $@;)
-	$(hide) $(foreach lib, $(filter-out libclang_rt.%,$(VNDK_CORE_LIBRARIES)), \
-	  echo VNDK-core: $(lib).so >> $@;)
-	$(hide) $(foreach lib, $(VNDK_PRIVATE_LIBRARIES), \
-	  echo VNDK-private: $(lib).so >> $@;)
+	$(hide) $(foreach lib, $(PRIVATE_LLNDK_LIBRARIES), \
+	  echo LLNDK: $(lib) >> $@;)
+	$(hide) $(foreach lib, $(PRIVATE_VNDK_SAMEPROCESS_LIBRARIES), \
+	  echo VNDK-SP: $(lib) >> $@;)
+	$(hide) $(foreach lib, $(PRIVATE_VNDK_CORE_LIBRARIES), \
+	  echo VNDK-core: $(lib) >> $@;)
+	$(hide) $(foreach lib, $(PRIVATE_VNDK_PRIVATE_LIBRARIES), \
+	  echo VNDK-private: $(lib) >> $@;)
 
 #####################################################################
 # This is the up-to-date list of vndk libs.
