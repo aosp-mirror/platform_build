@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6b5bf193_53056694",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-23T18:40:34Z",
+      "side": 1,
+      "message": "Right; I added some more test stanzas in PS4.",
+      "parentUuid": "e3ac87c7_04e97e45",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 63
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b2ac5d0f_02293f53",
         "filename": "core/main.mk",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "061b3c01_12fc1a4f",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1119,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-23T18:40:34Z",
+      "side": 1,
+      "message": "Done in PS4. I\u0027ve also renamed functions `*check-apex-files-absence*` back to `*check-apex-libs-absence*`.",
+      "parentUuid": "b2ac5d0f_02293f53",
+      "range": {
+        "startLine": 1119,
+        "startChar": 13,
+        "endLine": 1119,
+        "endChar": 18
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9246aeb2_482a293a",
         "filename": "core/main.mk",
         "patchSetId": 3
@@ -59,6 +107,30 @@
       "writtenOn": "2019-10-23T14:03:15Z",
       "side": 1,
       "message": "Grammar nitty-nit: The lack of period was intentional since it isn\u0027t a complete sentence.",
+      "range": {
+        "startLine": 1168,
+        "startChar": 26,
+        "endLine": 1168,
+        "endChar": 27
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a440bed5_dddb34ea",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1168,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-23T18:40:34Z",
+      "side": 1,
+      "message": "I\u0027ve taken the habit to end all my code comments with a period, but I don\u0027t think our style guides say anything about this. :)\n\nI removed them in PS4.",
+      "parentUuid": "9246aeb2_482a293a",
       "range": {
         "startLine": 1168,
         "startChar": 26,
@@ -117,6 +189,54 @@
     },
     {
       "key": {
+        "uuid": "920dd00b_876cb789",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1219,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-23T18:40:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f590e9df_081316f4",
+      "range": {
+        "startLine": 1219,
+        "startChar": 24,
+        "endLine": 1219,
+        "endChar": 40
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ce90be3_f1beba0a",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1219,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-23T18:40:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f49c42af_905e9563",
+      "range": {
+        "startLine": 1219,
+        "startChar": 16,
+        "endLine": 1219,
+        "endChar": 20
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3667abe_dd620deb",
         "filename": "core/main.mk",
         "patchSetId": 3
@@ -128,6 +248,30 @@
       "writtenOn": "2019-10-22T19:07:06Z",
       "side": 1,
       "message": "I had envisioned getting rid of this dir filter and just scanning all of /system (removing the distinction between the two checks), which seemed simple, so sorry this caused you more work. Looks good anyhow. :)",
+      "range": {
+        "startLine": 1224,
+        "startChar": 46,
+        "endLine": 1225,
+        "endChar": 40
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63466aa3_072c9db8",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1225,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-23T18:40:34Z",
+      "side": 1,
+      "message": "Thanks. :)",
+      "parentUuid": "b3667abe_dd620deb",
       "range": {
         "startLine": 1224,
         "startChar": 46,
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "ed7a5b6f_d14255ed",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1234,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-23T18:40:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "90c80d27_336ecb3f",
+      "range": {
+        "startLine": 1234,
+        "startChar": 68,
+        "endLine": 1234,
+        "endChar": 69
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "204fcb7f_9fa73d9c",
         "filename": "core/main.mk",
         "patchSetId": 3
@@ -183,6 +351,30 @@
       "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61aca782_24efe621",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1284,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-23T18:40:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "204fcb7f_9fa73d9c",
+      "range": {
+        "startLine": 1284,
+        "startChar": 0,
+        "endLine": 1284,
+        "endChar": 1
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
