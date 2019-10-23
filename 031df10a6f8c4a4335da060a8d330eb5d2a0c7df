@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "f8529739_b670acfb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1079098
+      },
+      "writtenOn": "2019-10-23T01:07:21Z",
+      "side": 1,
+      "message": "vendor_boot should be only available on the new launch.\nHence, this change won\u0027t impact those legacy device, right",
+      "parentUuid": "646a3499_31c129eb",
+      "range": {
+        "startLine": 9,
+        "startChar": 56,
+        "endLine": 10,
+        "endChar": 69
+      },
+      "revId": "031df10a6f8c4a4335da060a8d330eb5d2a0c7df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0d14d559_fa00183c",
         "filename": "core/Makefile",
         "patchSetId": 4
