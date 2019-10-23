@@ -25,6 +25,98 @@
     },
     {
       "key": {
+        "uuid": "b2ac5d0f_02293f53",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1119,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-10-23T14:03:15Z",
+      "side": 1,
+      "message": "I suggest refraining from renaming this since people might depend on it in local scripts, how-to notes etc. I kinda hope we\u0027ll be able to remove it instead in the not too distant future. (Besides, \"libs\" isn\u0027t really a misnomer for jars.)",
+      "range": {
+        "startLine": 1119,
+        "startChar": 13,
+        "endLine": 1119,
+        "endChar": 18
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9246aeb2_482a293a",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1168,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-10-23T14:03:15Z",
+      "side": 1,
+      "message": "Grammar nitty-nit: The lack of period was intentional since it isn\u0027t a complete sentence.",
+      "range": {
+        "startLine": 1168,
+        "startChar": 26,
+        "endLine": 1168,
+        "endChar": 27
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f590e9df_081316f4",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1219,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-10-23T14:03:15Z",
+      "side": 1,
+      "message": "$(TARGET_OUT) is more precise. Same below.",
+      "range": {
+        "startLine": 1219,
+        "startChar": 24,
+        "endLine": 1219,
+        "endChar": 40
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f49c42af_905e9563",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1219,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-10-23T14:03:15Z",
+      "side": 1,
+      "message": "Spello: \"paths\"",
+      "range": {
+        "startLine": 1219,
+        "startChar": 16,
+        "endLine": 1219,
+        "endChar": 20
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b3667abe_dd620deb",
         "filename": "core/main.mk",
         "patchSetId": 3
@@ -45,6 +137,29 @@
       "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90c80d27_336ecb3f",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1234,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-10-23T14:03:15Z",
+      "side": 1,
+      "message": "in $(TARGET_OUT)",
+      "range": {
+        "startLine": 1234,
+        "startChar": 68,
+        "endLine": 1234,
+        "endChar": 69
+      },
+      "revId": "303f3034a66ebbafa3342ce4c2c1f5c21d3c6add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     },
     {
       "key": {
