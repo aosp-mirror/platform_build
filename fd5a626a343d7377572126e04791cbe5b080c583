@@ -117,6 +117,30 @@
       "revId": "fd5a626a343d7377572126e04791cbe5b080c583",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57cb8059_85ca237e",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-24T18:37:18Z",
+      "side": 1,
+      "message": "That was also for the sake of flexibility/extensibility (especially if someone else starts adding more exclusions to such a common list, to the point that we may miss some files).\n\nI\u0027m fine with simplifying if Martin is. :)",
+      "parentUuid": "bf8a369e_b48ef400",
+      "range": {
+        "startLine": 1273,
+        "startChar": 32,
+        "endLine": 1277,
+        "endChar": 68
+      },
+      "revId": "fd5a626a343d7377572126e04791cbe5b080c583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
