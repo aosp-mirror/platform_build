@@ -46,6 +46,30 @@
       "revId": "0b4c8c820612dd2bd5300360e5fb9c95285bcc0a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "51f0671c_42043558",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-10-24T12:09:03Z",
+      "side": 1,
+      "message": "Sorry, I missed them. Ack.",
+      "parentUuid": "e5ace538_7f68e204",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 22
+      },
+      "revId": "0b4c8c820612dd2bd5300360e5fb9c95285bcc0a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
