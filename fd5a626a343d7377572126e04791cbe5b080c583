@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21c59ede_0d168fea",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1218,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-24T18:02:39Z",
+      "side": 1,
+      "message": "Argh, Emacs! I\u0027ll remove this in the next patch set.",
+      "range": {
+        "startLine": 1218,
+        "startChar": 0,
+        "endLine": 1218,
+        "endChar": 1
+      },
+      "revId": "fd5a626a343d7377572126e04791cbe5b080c583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
