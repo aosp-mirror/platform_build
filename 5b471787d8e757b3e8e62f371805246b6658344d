@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f902c3a8_9f87fe6b",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1173,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-10-24T14:38:32Z",
+      "side": 1,
+      "message": "In the old code this was \"lib*\", and I think that was deliberate to avoid the error in TH for 32-bit only builds:\n\nfind: lib64: No such file or directory",
+      "range": {
+        "startLine": 1173,
+        "startChar": 30,
+        "endLine": 1173,
+        "endChar": 39
+      },
+      "revId": "5b471787d8e757b3e8e62f371805246b6658344d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
