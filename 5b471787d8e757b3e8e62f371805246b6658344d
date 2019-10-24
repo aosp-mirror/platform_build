@@ -22,6 +22,30 @@
       "revId": "5b471787d8e757b3e8e62f371805246b6658344d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05b1839f_22b52317",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1173,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-24T14:45:48Z",
+      "side": 1,
+      "message": "lib* in the `find` version and lib64 in the target_FILES version. This whole thing would be simpler if it wasn\u0027t so specific (just `find $(TARGET_OUT)`).",
+      "parentUuid": "f902c3a8_9f87fe6b",
+      "range": {
+        "startLine": 1173,
+        "startChar": 30,
+        "endLine": 1173,
+        "endChar": 39
+      },
+      "revId": "5b471787d8e757b3e8e62f371805246b6658344d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
