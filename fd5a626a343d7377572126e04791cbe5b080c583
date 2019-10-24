@@ -46,6 +46,29 @@
       "revId": "fd5a626a343d7377572126e04791cbe5b080c583",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5df244f_7bdae9c7",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-24T18:07:29Z",
+      "side": 1,
+      "message": "$(call generic-check-apex-libs-absence, $(APEX_MODULE_LIBS) $(APEX_MODULE_JARS), $(APEX_LIBS_ABSENCE_CHECK_EXCLUDE) $(APEX_LIBS_ABSENCE_CHECK_EXCLUDE)) ? (at which point the lists can be collapsed too, and the function \"inlined\"",
+      "range": {
+        "startLine": 1273,
+        "startChar": 32,
+        "endLine": 1277,
+        "endChar": 68
+      },
+      "revId": "fd5a626a343d7377572126e04791cbe5b080c583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
