@@ -16,8 +16,8 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
-    abb \
     adbd \
+    adbd_system_binaries \
     am \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
