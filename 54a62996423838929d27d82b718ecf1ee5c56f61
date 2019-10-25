@@ -94,6 +94,30 @@
       "revId": "54a62996423838929d27d82b718ecf1ee5c56f61",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e36d382a_5ad65581",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-25T10:00:05Z",
+      "side": 1,
+      "message": "I think it\u0027d be cleaner to only have this \"compat\" thing limited to mainline_system. Can we put this there instead (and keep it in core_64_bit?\n\nI don\u0027t really see a reason to add more junk here. Ideally what\u0027s here already should be cleaned up so that it didn\u0027t import init.zygote32.rc (and set the prop on the next line to 32bit) unconditionally on all devices",
+      "parentUuid": "5e6f6558_86c6ab2c",
+      "range": {
+        "startLine": 351,
+        "startChar": 0,
+        "endLine": 353,
+        "endChar": 68
+      },
+      "revId": "54a62996423838929d27d82b718ecf1ee5c56f61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
