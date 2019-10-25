@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "266be03a_8ebc969a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1345967
+      },
+      "writtenOn": "2019-10-25T21:09:52Z",
+      "side": 1,
+      "message": "This can also be tested by running the avd/avd_boot_health_check and verifying that the DeviceBootTest completes (the ApkInstallation test is flaky and may fail).",
+      "parentUuid": "6fe47cb0_f781f6aa",
+      "range": {
+        "startLine": 14,
+        "startChar": 6,
+        "endLine": 14,
+        "endChar": 9
+      },
+      "revId": "fdf8570bd47bd86b3f029ea0bc926fbde3e42646",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ec3054a8_18172f45",
         "filename": "target/product/base_system.mk",
         "patchSetId": 2
