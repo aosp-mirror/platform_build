@@ -22,6 +22,30 @@
       "revId": "bfe8e7c3f867fbfec2b370e61d06c706b0cedcb9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12e3e3e5_097b9622",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-25T17:40:48Z",
+      "side": 1,
+      "message": "Fixed in PS5.",
+      "parentUuid": "338da1d1_7d7e3806",
+      "range": {
+        "startLine": 274,
+        "startChar": 0,
+        "endLine": 279,
+        "endChar": 0
+      },
+      "revId": "bfe8e7c3f867fbfec2b370e61d06c706b0cedcb9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
