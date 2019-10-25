@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "338da1d1_7d7e3806",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-25T17:29:11Z",
+      "side": 1,
+      "message": "This shouldn\u0027t be here; will remove ASAP.",
+      "range": {
+        "startLine": 274,
+        "startChar": 0,
+        "endLine": 279,
+        "endChar": 0
+      },
+      "revId": "bfe8e7c3f867fbfec2b370e61d06c706b0cedcb9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
