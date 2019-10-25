@@ -70,6 +70,30 @@
       "revId": "54a62996423838929d27d82b718ecf1ee5c56f61",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e6f6558_86c6ab2c",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-10-25T00:42:29Z",
+      "side": 1,
+      "message": "Anton, can we resolve this comment? Or do you still have concern on it?",
+      "parentUuid": "79b60d07_fc5f15de",
+      "range": {
+        "startLine": 351,
+        "startChar": 0,
+        "endLine": 353,
+        "endChar": 68
+      },
+      "revId": "54a62996423838929d27d82b718ecf1ee5c56f61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
