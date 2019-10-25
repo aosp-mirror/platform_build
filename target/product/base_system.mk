@@ -124,8 +124,6 @@ PRODUCT_PACKAGES += \
     libbinder_ndk \
     libc.bootstrap \
     libcamera2ndk \
-    libcamera_client \
-    libcameraservice \
     libcutils \
     libdl.bootstrap \
     libdrmframework \

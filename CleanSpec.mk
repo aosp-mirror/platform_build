@@ -646,6 +646,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libstagefright_soft*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/odm/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/odm/build.prop)
 
+# Remove libcameraservice and libcamera_client from base_system
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libcameraservice.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libcamera_client.so)
+
 # Move product and system_ext to root for emulators
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/generic*/*/product)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/generic*/*/system_ext)
