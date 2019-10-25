@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47f4af87_9222c127",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-10-25T11:07:31Z",
+      "side": 1,
+      "message": "I reckon this would be a bit cleaner if it\u0027s also easy to do, but I don\u0027t feel strongly about it.",
+      "range": {
+        "startLine": 17,
+        "startChar": 30,
+        "endLine": 18,
+        "endChar": 29
+      },
+      "revId": "acf8b0ff009def3466cad8d4244a04bab15e8bcd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
