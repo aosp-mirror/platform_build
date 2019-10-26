@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "efb3436f_1440fdb1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-26T08:50:01Z",
+      "side": 1,
+      "message": "Thanks, added to commit message in PS6.",
+      "parentUuid": "266be03a_8ebc969a",
+      "range": {
+        "startLine": 14,
+        "startChar": 6,
+        "endLine": 14,
+        "endChar": 9
+      },
+      "revId": "fdf8570bd47bd86b3f029ea0bc926fbde3e42646",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ec3054a8_18172f45",
         "filename": "target/product/base_system.mk",
         "patchSetId": 2
