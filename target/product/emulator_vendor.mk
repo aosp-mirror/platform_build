@@ -21,18 +21,6 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
 
-# TODO(b/123495142): these files should be clean up
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST := \
-    system/bin/vintf \
-    system/etc/permissions/android.software.verified_boot.xml \
-    system/etc/permissions/privapp-permissions-goldfish.xml \
-    system/priv-app/SdkSetup/SdkSetup.apk \
-    system/priv-app/SdkSetup/oat/% \
-
-# Device modules
-PRODUCT_PACKAGES += \
-    vintf \
-
 # need this for gles libraries to load properly
 # after moving to /vendor/lib/
 PRODUCT_PACKAGES += \
