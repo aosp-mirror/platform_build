@@ -358,9 +358,7 @@ include $(BUILD_SYSTEM)/jacoco.mk
 
 # Temporarily enable --multi-dex until proguard supports v53 class files
 # ( http://b/67673860 ) or we move away from proguard altogether.
-ifdef TARGET_OPENJDK9
 LOCAL_DX_FLAGS := $(filter-out --multi-dex,$(LOCAL_DX_FLAGS)) --multi-dex
-endif
 
 full_classes_pre_proguard_jar := $(LOCAL_FULL_CLASSES_JACOCO_JAR)
 
