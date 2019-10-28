@@ -193,6 +193,30 @@
     },
     {
       "key": {
+        "uuid": "79fc2517_0b95b7e4",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T20:13:24Z",
+      "side": 1,
+      "message": "yeah, that makes sense. (post my linked change, what you have here should work)",
+      "parentUuid": "efc52eda_f273497e",
+      "range": {
+        "startLine": 332,
+        "startChar": 4,
+        "endLine": 332,
+        "endChar": 35
+      },
+      "revId": "068d777a8107500a4a3d12f5b42ebf3bff249c31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "51348297_ddbc42cf",
         "filename": "core/product_config.mk",
         "patchSetId": 3
