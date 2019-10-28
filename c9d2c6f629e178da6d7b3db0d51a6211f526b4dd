@@ -70,6 +70,30 @@
       "revId": "c9d2c6f629e178da6d7b3db0d51a6211f526b4dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1d77add0_43b932cc",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T18:06:44Z",
+      "side": 1,
+      "message": "nope, there\u0027s no documentation. This is kind of a new thing too, it used to be that you had to use PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_* but I set this thing up to get rid of that.",
+      "parentUuid": "19c96a91_a80a84b5",
+      "range": {
+        "startLine": 564,
+        "startChar": 60,
+        "endLine": 564,
+        "endChar": 64
+      },
+      "revId": "c9d2c6f629e178da6d7b3db0d51a6211f526b4dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
