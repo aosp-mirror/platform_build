@@ -22,6 +22,30 @@
       "revId": "c9d2c6f629e178da6d7b3db0d51a6211f526b4dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32fbcd1c_26cde889",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T17:09:25Z",
+      "side": 1,
+      "message": "Not generally necessary, only if rare situations (you need to use the PRODUCT_ variables of a different product than the one being built). Most users can use the PRODUCT_* variables directly.",
+      "parentUuid": "f3478015_decc3ca5",
+      "range": {
+        "startLine": 564,
+        "startChar": 60,
+        "endLine": 564,
+        "endChar": 64
+      },
+      "revId": "c9d2c6f629e178da6d7b3db0d51a6211f526b4dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
