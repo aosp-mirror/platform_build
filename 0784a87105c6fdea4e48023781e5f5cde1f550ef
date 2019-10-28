@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "4e41c14b_f5b2786e",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T15:25:25Z",
+      "side": 1,
+      "message": "ah, I missed the removal of the \u0027vendor\u0027 part. makes sense",
+      "parentUuid": "f1b7d6a5_b7340b35",
+      "range": {
+        "startLine": 33,
+        "startChar": 17,
+        "endLine": 33,
+        "endChar": 49
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "be8ae0ff_fe68b289",
         "filename": "core/sdk_check.mk",
         "patchSetId": 3
