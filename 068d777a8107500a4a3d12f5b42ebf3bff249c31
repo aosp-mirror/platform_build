@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "77ade5bf_5371c486",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-28T13:34:11Z",
+      "side": 1,
+      "message": "\u003e try assigning to PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES instead ?\n\nThanks. I tried this in `core/product_config.mk`:\n\n  # Jacoco agent JARS to be built and installed, if any.\n  ifeq ($(EMMA_INSTRUMENT),true)\n    ifneq ($(EMMA_INSTRUMENT_STATIC),true)\n      # For instrumented build, if Jacoco is not being included statically\n      # in instrumented packages then include Jacoco classes into the\n      # bootclasspath.\n      PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES +\u003d jacocoagent\n      PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BOOT_JARS +\u003d jacocoagent\n    endif # EMMA_INSTRUMENT_STATIC\n  endif # EMMA_INSTRUMENT\n\nBut the list of files installed on the system partition seems incorrect:\n  \n  /system/framework/jacocoagent.jar\n  /system/framework/oat/arm/jacocoagent.odex\n  /system/framework/oat/arm/jacocoagent.vdex\n  /system/framework/oat/arm64/jacocoagent.odex\n  /system/framework/oat/arm64/jacocoagent.vdex\n\nI expected this:\n\n  /system/framework/apex-jacocoagent.vdex\n  /system/framework/arm/apex-jacocoagent.art\n  /system/framework/arm/apex-jacocoagent.oat\n  /system/framework/arm/apex-jacocoagent.vdex\n  /system/framework/arm/boot-jacocoagent.art\n  /system/framework/arm/boot-jacocoagent.oat\n  /system/framework/arm/boot-jacocoagent.vdex\n  /system/framework/arm64/apex-jacocoagent.art\n  /system/framework/arm64/apex-jacocoagent.oat\n  /system/framework/arm64/apex-jacocoagent.vdex\n  /system/framework/arm64/boot-jacocoagent.art\n  /system/framework/arm64/boot-jacocoagent.oat\n  /system/framework/arm64/boot-jacocoagent.vdex\n  /system/framework/boot-jacocoagent.vdex\n  /system/framework/jacocoagent.jar",
+      "parentUuid": "d996ecb7_37704c77",
+      "range": {
+        "startLine": 332,
+        "startChar": 4,
+        "endLine": 332,
+        "endChar": 35
+      },
+      "revId": "068d777a8107500a4a3d12f5b42ebf3bff249c31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "51348297_ddbc42cf",
         "filename": "core/product_config.mk",
         "patchSetId": 3
