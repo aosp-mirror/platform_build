@@ -169,6 +169,30 @@
     },
     {
       "key": {
+        "uuid": "efc52eda_f273497e",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-28T20:00:00Z",
+      "side": 1,
+      "message": "I think I found the issue: these lines needs to appear before this statement:\n\n  $(call strip-product-vars)\n\non line 189. For clarity, I uploaded another change here: https://android-review.googlesource.com/c/platform/build/+/1151464.",
+      "parentUuid": "c3384cc5_081da88a",
+      "range": {
+        "startLine": 332,
+        "startChar": 4,
+        "endLine": 332,
+        "endChar": 35
+      },
+      "revId": "068d777a8107500a4a3d12f5b42ebf3bff249c31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "51348297_ddbc42cf",
         "filename": "core/product_config.mk",
         "patchSetId": 3
