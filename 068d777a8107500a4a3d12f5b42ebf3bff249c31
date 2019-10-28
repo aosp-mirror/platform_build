@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "743057c5_af7af6f3",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T14:01:15Z",
+      "side": 1,
+      "message": "okay, I think you\u0027re going to have to dig into what\u0027s causing that discrepancy? shouldn\u0027t TARGET_CORE_JARS be involved somehow?",
+      "parentUuid": "77ade5bf_5371c486",
+      "range": {
+        "startLine": 332,
+        "startChar": 4,
+        "endLine": 332,
+        "endChar": 35
+      },
+      "revId": "068d777a8107500a4a3d12f5b42ebf3bff249c31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "51348297_ddbc42cf",
         "filename": "core/product_config.mk",
         "patchSetId": 3
