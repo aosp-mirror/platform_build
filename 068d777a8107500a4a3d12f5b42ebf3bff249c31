@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0298c5ff_d8866b54",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T11:19:54Z",
+      "side": 1,
+      "message": "try assigning to PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES instead ?",
+      "parentUuid": "189d6350_5fb76376",
+      "range": {
+        "startLine": 332,
+        "startChar": 4,
+        "endLine": 332,
+        "endChar": 35
+      },
+      "revId": "068d777a8107500a4a3d12f5b42ebf3bff249c31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "51348297_ddbc42cf",
         "filename": "core/product_config.mk",
         "patchSetId": 3
