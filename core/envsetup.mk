@@ -259,14 +259,6 @@ endef
 # Java libraries in the ART apex build rule.
 ART_APEX_JARS := core-oj core-libart core-icu4j okhttp bouncycastle apache-xml
 TARGET_CORE_JARS := $(ART_APEX_JARS) conscrypt
-ifeq ($(EMMA_INSTRUMENT),true)
-  ifneq ($(EMMA_INSTRUMENT_STATIC),true)
-    # For instrumented build, if Jacoco is not being included statically
-    # in instrumented packages then include Jacoco classes into the
-    # bootclasspath.
-    TARGET_CORE_JARS += jacocoagent
-  endif # EMMA_INSTRUMENT_STATIC
-endif # EMMA_INSTRUMENT
 HOST_CORE_JARS := $(addsuffix -hostdex,$(TARGET_CORE_JARS))
 #################################################################
 
