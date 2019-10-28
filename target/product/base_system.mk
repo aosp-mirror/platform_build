@@ -75,7 +75,7 @@ PRODUCT_PACKAGES += \
     ExtServices \
     ExtShared \
     flags_health_check \
-    framework \
+    framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
@@ -318,7 +318,7 @@ endif
 # The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    framework \
+    framework-minus-apex \
     ext \
     telephony-common \
     voip-common \
