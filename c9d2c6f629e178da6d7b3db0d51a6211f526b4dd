@@ -46,6 +46,30 @@
       "revId": "c9d2c6f629e178da6d7b3db0d51a6211f526b4dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19c96a91_a80a84b5",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-28T18:04:08Z",
+      "side": 1,
+      "message": "I see; thanks for the explanation!\n\nI there a source / document for that type of information on the build system?",
+      "parentUuid": "32fbcd1c_26cde889",
+      "range": {
+        "startLine": 564,
+        "startChar": 60,
+        "endLine": 564,
+        "endChar": 64
+      },
+      "revId": "c9d2c6f629e178da6d7b3db0d51a6211f526b4dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
