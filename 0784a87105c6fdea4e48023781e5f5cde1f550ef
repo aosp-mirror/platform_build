@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fb0593ca_b48072ad",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-10-28T15:16:18Z",
+      "side": 1,
+      "message": "PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE sounds good, I changed variable name in both soong and make.",
+      "parentUuid": "fc3bb446_24b5d80d",
+      "range": {
+        "startLine": 9,
+        "startChar": 8,
+        "endLine": 9,
+        "endChar": 41
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "32452f78_ee24b205",
         "filename": "core/local_systemsdk.mk",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "9f8d0c3b_0fdfa6f1",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-10-28T15:16:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "32452f78_ee24b205",
+      "range": {
+        "startLine": 24,
+        "startChar": 2,
+        "endLine": 25,
+        "endChar": 6
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c1d4d1ed_e9208ac2",
         "filename": "core/local_systemsdk.mk",
         "patchSetId": 3
@@ -59,6 +107,30 @@
       "writtenOn": "2019-10-28T14:45:03Z",
       "side": 1,
       "message": "why is this changing?",
+      "range": {
+        "startLine": 33,
+        "startChar": 17,
+        "endLine": 33,
+        "endChar": 49
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1b7d6a5_b7340b35",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-10-28T15:16:18Z",
+      "side": 1,
+      "message": "because we need to consider rro package in not only vendor, but also product.",
+      "parentUuid": "c1d4d1ed_e9208ac2",
       "range": {
         "startLine": 33,
         "startChar": 17,
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "6cdf03eb_342b0cae",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-10-28T15:16:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be8ae0ff_fe68b289",
+      "range": {
+        "startLine": 31,
+        "startChar": 18,
+        "endLine": 31,
+        "endChar": 33
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3dc53d79_9aadee31",
         "filename": "core/soong_config.mk",
         "patchSetId": 3
@@ -114,6 +210,30 @@
       "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "076db557_a15660d8",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-10-28T15:16:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3dc53d79_9aadee31",
+      "range": {
+        "startLine": 198,
+        "startChar": 59,
+        "endLine": 198,
+        "endChar": 92
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
