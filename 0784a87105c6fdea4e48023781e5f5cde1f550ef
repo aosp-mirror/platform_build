@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc3bb446_24b5d80d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T14:45:03Z",
+      "side": 1,
+      "message": "maybe PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE?\n\n\"enforce product partition\" sounds like you\u0027d be enforcing there is a product partition.",
+      "range": {
+        "startLine": 9,
+        "startChar": 8,
+        "endLine": 9,
+        "endChar": 41
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32452f78_ee24b205",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T14:45:03Z",
+      "side": 1,
+      "message": "else ifeq",
+      "range": {
+        "startLine": 24,
+        "startChar": 2,
+        "endLine": 25,
+        "endChar": 6
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1d4d1ed_e9208ac2",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T14:45:03Z",
+      "side": 1,
+      "message": "why is this changing?",
+      "range": {
+        "startLine": 33,
+        "startChar": 17,
+        "endLine": 33,
+        "endChar": 49
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be8ae0ff_fe68b289",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T14:45:03Z",
+      "side": 1,
+      "message": "Not needed I think? pretty-error prints the current module name.",
+      "range": {
+        "startLine": 31,
+        "startChar": 18,
+        "endLine": 31,
+        "endChar": 33
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3dc53d79_9aadee31",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-28T14:45:03Z",
+      "side": 1,
+      "message": "you need to add this variable (and document what it does) in product.mk",
+      "range": {
+        "startLine": 198,
+        "startChar": 59,
+        "endLine": 198,
+        "endChar": 92
+      },
+      "revId": "0784a87105c6fdea4e48023781e5f5cde1f550ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
