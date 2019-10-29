@@ -694,6 +694,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system_other)
 # that they live in the ART APEX (b/142944799).
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/framework/*.jar)
 
+# Remove symlinks for VNDK apexes
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/vndk-*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
