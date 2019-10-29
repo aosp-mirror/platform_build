@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "252212f8_7feafb63",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 562,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-10-29T04:42:56Z",
+      "side": 1,
+      "message": "As an addition, should we also make these readonly? Or is that essentially happening elsewhere already?",
+      "range": {
+        "startLine": 562,
+        "startChar": 9,
+        "endLine": 562,
+        "endChar": 16
+      },
+      "revId": "c9d2c6f629e178da6d7b3db0d51a6211f526b4dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f3478015_decc3ca5",
         "filename": "core/product.mk",
         "patchSetId": 1
