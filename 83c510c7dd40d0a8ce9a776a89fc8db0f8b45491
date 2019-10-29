@@ -22,6 +22,30 @@
       "revId": "83c510c7dd40d0a8ce9a776a89fc8db0f8b45491",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9be993a5_22044892",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-29T11:18:42Z",
+      "side": 1,
+      "message": "This build failed with:\n\nhttps://android-build.googleplex.com/builds/pending/P10246007/cf_x86_phone-userdebug_coverage/latest/view/logs/build_error.log\n\n  build/soong/soong_ui.bash --make-mode SKIP_ABI_CHECKS\u003dtrue TARGET_PRODUCT\u003dcf_x86_phone TARGET_BUILD_VARIANT\u003duserdebug droid dist DIST_DIR\u003d/buildbot/dist_dirs/git_master-linux-cf_x86_phone-userdebug_coverage/P10246007/0 EMMA_INSTRUMENT\u003dtrue EMMA_INSTRUMENT_FRAMEWORK\u003dtrue NATIVE_COVERAGE\u003dtrue COVERAGE_PATHS\u003d\"*\" SKIP_BOOT_JARS_CHECK\u003dtrue platform_tests\n  FAILED:\n  build/make/core/main.mk:1341: warning: vendor/google/products/cf_x86_phone.mk produces files inside build/make/target/product/mainline_system.mks artifact path requirement.\n  Offending entries:\n  system/framework/jacocoagent.jar\n  build/make/core/main.mk:1341: error: Build failed.\n  20:27:13 ckati failed with: exit status 1\n  Return Code: 1\n\nLooking into it.",
+      "parentUuid": "5e4c2f47_ad3b164d",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 37
+      },
+      "revId": "83c510c7dd40d0a8ce9a776a89fc8db0f8b45491",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
