@@ -145,8 +145,7 @@ LOCAL_REQUIRED_MODULES += \
     vndkprivate.libraries.txt \
     vndkcorevariant.libraries.txt \
     $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES)) \
-    $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES)) \
-    com.android.vndk.current
+    $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES))
 endif
 include $(BUILD_PHONY_PACKAGE)
 
@@ -158,11 +157,8 @@ ifneq ($(TARGET_IS_64_BIT),true)
 _binder32 := _binder32
 endif
 endif
-# Phony targets are installed for **.libraries.txt files.
-# TODO(b/141450808): remove following VNDK phony targets when **.libraries.txt files are provided by apexes.
 LOCAL_REQUIRED_MODULES := \
     $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),vndk_v$(vndk_ver)_$(TARGET_ARCH)$(_binder32))
-LOCAL_REQUIRED_MODULES += $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver))
 _binder32 :=
 include $(BUILD_PHONY_PACKAGE)
 

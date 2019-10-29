@@ -20,7 +20,6 @@
 
 # Device modules
 PRODUCT_PACKAGES += \
-    vintf \
     CarrierConfig \
 
 # need this for gles libraries to load properly
