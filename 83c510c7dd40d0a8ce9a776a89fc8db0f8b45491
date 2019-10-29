@@ -46,6 +46,30 @@
       "revId": "83c510c7dd40d0a8ce9a776a89fc8db0f8b45491",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "221f483b_01c23ac2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-29T17:46:20Z",
+      "side": 1,
+      "message": "Anton explained the issue offline to me and gave me a solution, implemented in PS3.",
+      "parentUuid": "9be993a5_22044892",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 37
+      },
+      "revId": "83c510c7dd40d0a8ce9a776a89fc8db0f8b45491",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
