@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7049c67_5985dbcb",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1026,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-10-29T17:27:25Z",
+      "side": 1,
+      "message": "What are the square brackets here for?",
+      "range": {
+        "startLine": 1026,
+        "startChar": 196,
+        "endLine": 1026,
+        "endChar": 199
+      },
+      "revId": "dece93ddc4d0b535d2bcdeb7da8284a28226cd36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
