@@ -23,9 +23,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
 # Enable mainline checking
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-    root/init.zygote64_32.rc \
-
 #
 # All components inherited here go to product image
 #
