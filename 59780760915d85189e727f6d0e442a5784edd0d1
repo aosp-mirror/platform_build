@@ -46,6 +46,30 @@
       "revId": "59780760915d85189e727f6d0e442a5784edd0d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44030cb1_212d0b5f",
+        "filename": "target/product/mainline_arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-10-30T07:40:53Z",
+      "side": 1,
+      "message": "Em... \nHere said \"vendor image\" is not good....\nHere we want to say vendor includes all parts under vendor interface.\n(usually also includes boot image and recovery image if it has)",
+      "parentUuid": "4a9d8526_5380eac3",
+      "range": {
+        "startLine": 34,
+        "startChar": 1,
+        "endLine": 35,
+        "endChar": 50
+      },
+      "revId": "59780760915d85189e727f6d0e442a5784edd0d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
