@@ -22,6 +22,30 @@
       "revId": "0a59db895df1c33565871127339e5d1339ca5408",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33b32d85_837aed87",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-10-30T02:23:08Z",
+      "side": 1,
+      "message": "because java libraries is checked by link type check from app, and also most of java libraries is linked statically, so it is hard to check them by themselves.",
+      "parentUuid": "a6e829a7_3bc684b3",
+      "range": {
+        "startLine": 537,
+        "startChar": 0,
+        "endLine": 537,
+        "endChar": 33
+      },
+      "revId": "0a59db895df1c33565871127339e5d1339ca5408",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
