@@ -141,6 +141,30 @@
       "revId": "59780760915d85189e727f6d0e442a5784edd0d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4958d13_ca64489d",
+        "filename": "target/product/mainline_arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-30T09:31:16Z",
+      "side": 1,
+      "message": "I don\u0027t think setting it to PLATFORM_SDK_LEVEL is a good idea. Changing the value can lead to build breakages, and having it set to platform_sdk_level makes it the job of the person changing that constant to also \"fix mainline\", which isn\u0027t fair",
+      "parentUuid": "b7ae4afd_9e0cc24c",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 32
+      },
+      "revId": "59780760915d85189e727f6d0e442a5784edd0d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
