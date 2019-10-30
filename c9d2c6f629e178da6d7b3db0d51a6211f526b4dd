@@ -49,6 +49,23 @@
     },
     {
       "key": {
+        "uuid": "db165072_d8a51270",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-30T10:49:56Z",
+      "side": 1,
+      "message": "I infuriated the Make god by forgetting some double-dollars here",
+      "revId": "c9d2c6f629e178da6d7b3db0d51a6211f526b4dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3478015_decc3ca5",
         "filename": "core/product.mk",
         "patchSetId": 1
