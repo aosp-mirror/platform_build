@@ -692,6 +692,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/framework/*.jar)
 # Remove symlinks for VNDK apexes
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/vndk-*)
 
+# Switch to symlinks for VNDK libs
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/vndk-*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
