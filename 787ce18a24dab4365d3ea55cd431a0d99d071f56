@@ -22,6 +22,30 @@
       "revId": "787ce18a24dab4365d3ea55cd431a0d99d071f56",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4b0a535_11319fba",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-30T16:31:39Z",
+      "side": 1,
+      "message": "\u003e Forrest run for this test with PS6: https://android-build.googleplex.com/builds/forrest/run/L48400000383613299.\n\nThis run failed the avd/avd_boot_health_check test; restarted another Forrest run here:\n\nhttps://android-build.googleplex.com/builds/forrest/run/L32600000383647538\n\nwhich is green.",
+      "parentUuid": "cc8e2174_52866550",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 37
+      },
+      "revId": "787ce18a24dab4365d3ea55cd431a0d99d071f56",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
