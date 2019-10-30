@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "119c0c6a_11cb514d",
+        "filename": "core/main.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 1116,
+      "author": {
+        "id": 1071150
+      },
+      "writtenOn": "2019-10-30T13:24:10Z",
+      "side": 1,
+      "message": "tiny nit: drop ART here? [libc.so, libneuralnetworks.so, libnpt.so]",
+      "range": {
+        "startLine": 1116,
+        "startChar": 2,
+        "endLine": 1116,
+        "endChar": 29
+      },
+      "revId": "16e73873d48028fa05313033df04556766def73b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
