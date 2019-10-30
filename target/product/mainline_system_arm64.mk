@@ -23,8 +23,6 @@ $(call enforce-product-packages-exist,)
 
 # Enable mainline checking
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-  root/init.zygote64_32.rc \
 
 PRODUCT_BUILD_CACHE_IMAGE := false
 PRODUCT_BUILD_ODM_IMAGE := false
