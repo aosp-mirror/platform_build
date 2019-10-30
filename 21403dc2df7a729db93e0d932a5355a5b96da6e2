@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d916173c_c99543c6",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-30T13:13:01Z",
+      "side": 0,
+      "message": "as GLES is being removed, is this needed? (missed this in internal, sorry)",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 11
+      },
+      "revId": "21403dc2df7a729db93e0d932a5355a5b96da6e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6456156_d624418b",
+        "filename": "target/product/emulator_vendor.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-10-30T13:13:01Z",
+      "side": 0,
+      "message": "ditto",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 11
+      },
+      "revId": "21403dc2df7a729db93e0d932a5355a5b96da6e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
