@@ -22,6 +22,30 @@
       "revId": "56b34c99e64f660c9f112b108842071ca2c20178",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d76701d_e6dc4088",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-10-30T11:31:46Z",
+      "side": 1,
+      "message": "This run failed; the issue was addressed in https://android-review.googlesource.com/c/platform/build/+/1151464/3.",
+      "parentUuid": "99a85372_bdf3a122",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 37
+      },
+      "revId": "56b34c99e64f660c9f112b108842071ca2c20178",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
