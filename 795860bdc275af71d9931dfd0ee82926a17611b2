@@ -105,6 +105,24 @@
       "revId": "795860bdc275af71d9931dfd0ee82926a17611b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d4bb010_1da70495",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1308042
+      },
+      "writtenOn": "2019-10-30T23:59:42Z",
+      "side": 1,
+      "message": "@Dan,\nActually, I am not sure why ALL_DEPS stopped working, I guess the base_rule.mk is not included by some mk files.\n\n@Colin, \nIt\u0027s my bad to use the SOONG_CONV as the solution since it\u0027s the only way for the quick workaround.\nWould you recommend a correct solution for this issue, it will be a great help for AIDEGen.\nThank you.",
+      "parentUuid": "3cc68d2b_48d34dae",
+      "revId": "795860bdc275af71d9931dfd0ee82926a17611b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
