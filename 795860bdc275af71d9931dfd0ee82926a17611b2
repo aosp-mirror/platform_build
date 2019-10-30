@@ -87,6 +87,24 @@
       "revId": "795860bdc275af71d9931dfd0ee82926a17611b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cc68d2b_48d34dae",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-10-30T22:29:46Z",
+      "side": 1,
+      "message": "This is not intended for use here, it is for tracking the conversion from Make to Soong.",
+      "parentUuid": "bcde34de_4bac7cf8",
+      "revId": "795860bdc275af71d9931dfd0ee82926a17611b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
