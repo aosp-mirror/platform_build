@@ -30,6 +30,7 @@ PRODUCT_PACKAGES += \
     apexd \
     appops \
     app_process \
+    appsearch-service \
     appwidget \
     atrace \
     audioserver \

@@ -57,6 +57,7 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     jobscheduler-service \
     statsd-service \
     blobstore-service \
+    appsearch-service \
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
