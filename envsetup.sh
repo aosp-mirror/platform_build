@@ -19,6 +19,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - provision:  Flash device with all required partitions. Options will be passed on to fastboot.
 - cgrep:      Greps on all local C/C++ files.
 - ggrep:      Greps on all local Gradle files.
+- gogrep:     Greps on all local Go files.
 - jgrep:      Greps on all local Java files.
 - resgrep:    Greps on all local res/*.xml files.
 - mangrep:    Greps on all local AndroidManifest.xml files.
@@ -968,6 +969,12 @@ function ggrep()
         -exec grep --color -n "$@" {} +
 }
 
+function gogrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.go" \
+        -exec grep --color -n "$@" {} +
+}
+
 function jgrep()
 {
     find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.java" \
@@ -1016,7 +1023,7 @@ case `uname -s` in
     Darwin)
         function mgrep()
         {
-            find -E . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -iregex '.*/(Makefile|Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regex '(.*/)?soong/[^/]*.go' \) -type f \
+            find -E . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -iregex '.*/(Makefile|Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regex '(.*/)?(build|soong)/.*[^/]*\.go' \) -type f \
                 -exec grep --color -n "$@" {} +
         }
 
@@ -1030,7 +1037,7 @@ case `uname -s` in
     *)
         function mgrep()
         {
-            find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -regextype posix-egrep -iregex '(.*\/Makefile|.*\/Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regextype posix-extended -regex '(.*/)?soong/[^/]*.go' \) -type f \
+            find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -regextype posix-egrep -iregex '(.*\/Makefile|.*\/Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regextype posix-extended -regex '(.*/)?(build|soong)/.*[^/]*\.go' \) -type f \
                 -exec grep --color -n "$@" {} +
         }
 
