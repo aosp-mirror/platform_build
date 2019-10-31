@@ -700,6 +700,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/vndk-*)
 # Switch to symlinks for VNDK libs
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/vndk-*)
 
+# Remove Android Core Library artifacts from the system partition
+# again, as the original change removing them was reverted.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/framework/*.jar)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
