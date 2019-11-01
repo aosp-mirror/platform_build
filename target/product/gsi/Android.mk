@@ -2,7 +2,7 @@ LOCAL_PATH:= $(call my-dir)
 
 #####################################################################
 # list of vndk libraries from the source code.
-INTERNAL_VNDK_LIB_LIST := $(SOONG_OUT_DIR)/vndk/vndk.libraries.txt
+INTERNAL_VNDK_LIB_LIST := $(SOONG_VNDK_LIBRARIES_FILE)
 
 #####################################################################
 # This is the up-to-date list of vndk libs.
