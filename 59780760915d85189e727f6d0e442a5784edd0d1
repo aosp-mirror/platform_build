@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "dc60302d_eed2e268",
+        "filename": "target/product/mainline_arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-11-01T04:06:38Z",
+      "side": 1,
+      "message": "I don\u0027t think so.\nvendor partition is exact from vendor image.\nI think \"vendor images\" (add an \u0027s\u0027) is better.",
+      "parentUuid": "194add13_9f44d809",
+      "range": {
+        "startLine": 34,
+        "startChar": 1,
+        "endLine": 35,
+        "endChar": 50
+      },
+      "revId": "59780760915d85189e727f6d0e442a5784edd0d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ecbb9d46_0d4b84b8",
         "filename": "target/product/mainline_arm64.mk",
         "patchSetId": 1
