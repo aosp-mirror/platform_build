@@ -925,10 +925,6 @@ $(foreach t,$($(2).TYPE),\
       $(call link-type-error,$(1),$(2),$(t)))))
 endef
 
-# TODO: Verify all branches/configs have reasonable warnings/errors, and remove
-# this override
-verify-link-type = $(eval $$(1).MISSING := true)
-
 $(foreach lt,$(ALL_LINK_TYPES),\
   $(foreach d,$($(lt).DEPS),\
     $(if $($(d).TYPE),\
