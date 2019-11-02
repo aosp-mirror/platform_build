@@ -19,12 +19,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline.mk)
 whitelist := product_manifest.xml
 $(call enforce-product-packages-exist,$(whitelist))
 
-PRODUCT_NAME := mainline_arm64
-PRODUCT_DEVICE := mainline_arm64
-PRODUCT_BRAND := generic
-PRODUCT_SHIPPING_API_LEVEL := 28
-PRODUCT_RESTRICT_VENDOR_FILES := all
-
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 
 # Modules that should probably be moved to /product
@@ -32,3 +26,11 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
   system/bin/healthd \
   system/etc/init/healthd.rc \
   system/etc/vintf/manifest/manifest_healthd.xml \
+
+PRODUCT_SHIPPING_API_LEVEL := 29
+
+PRODUCT_RESTRICT_VENDOR_FILES := all
+
+PRODUCT_NAME := mainline_arm64
+PRODUCT_DEVICE := mainline_arm64
+PRODUCT_BRAND := generic
