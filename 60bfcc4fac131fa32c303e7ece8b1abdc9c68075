@@ -46,6 +46,30 @@
       "revId": "60bfcc4fac131fa32c303e7ece8b1abdc9c68075",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c6c1ecd_f093a0fa",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4063,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-11-04T22:18:53Z",
+      "side": 1,
+      "message": "Ah, so you can take a prebuilt. I guess the INSTALLED_*IMAGE_TARGET is probably the only thing we have for PREBUILT || BUILDING.\n\nAOSP targets, depending on the branch/etc, can have anything from full vendor source, to a prebuilt, to not having a vendor image at all. The last case is really only valid if there\u0027s already a vendor image on the device.\n\nI suspect there will eventually be other partitions doing the same thing, but we\u0027re not configuring things like that yet.",
+      "parentUuid": "d4e26457_d1e58220",
+      "range": {
+        "startLine": 4061,
+        "startChar": 0,
+        "endLine": 4063,
+        "endChar": 5
+      },
+      "revId": "60bfcc4fac131fa32c303e7ece8b1abdc9c68075",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
