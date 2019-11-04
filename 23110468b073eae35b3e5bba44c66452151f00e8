@@ -141,6 +141,30 @@
       "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb267203_268f3782",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5208,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-04T23:39:06Z",
+      "side": 1,
+      "message": "I see, this is a little strange because Soong is depending the target path of each copy, but then using Make to do the copies.  Why not do the install inside Soong?",
+      "parentUuid": "6d7c2f1a_2e0da2f3",
+      "range": {
+        "startLine": 5208,
+        "startChar": 0,
+        "endLine": 5208,
+        "endChar": 16
+      },
+      "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
