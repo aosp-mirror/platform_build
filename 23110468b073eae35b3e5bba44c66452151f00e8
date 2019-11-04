@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a847b372_641e0d1d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5206,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-11-04T22:42:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "edbef6fc_91517929",
+      "range": {
+        "startLine": 5206,
+        "startChar": 55,
+        "endLine": 5206,
+        "endChar": 66
+      },
+      "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ec25befc_a749125b",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2019-10-30T19:44:07Z",
       "side": 1,
       "message": "This is never referenced",
+      "range": {
+        "startLine": 5208,
+        "startChar": 0,
+        "endLine": 5208,
+        "endChar": 16
+      },
+      "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb93b466_bbcfc28a",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5208,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-11-04T22:42:06Z",
+      "side": 1,
+      "message": "The copy-many-files here is actually the thing that\u0027s responsible for generating the rules. The result doesn\u0027t actually need to be saved anywhere (as you\u0027re right, it\u0027s not referenced), but I couldn\u0027t find a better way to discard the result of the call. If we don\u0027t assign it here (and just make the $(call ...)), make complains as it expands the string.\n\nAny ideas?",
+      "parentUuid": "ec25befc_a749125b",
       "range": {
         "startLine": 5208,
         "startChar": 0,
