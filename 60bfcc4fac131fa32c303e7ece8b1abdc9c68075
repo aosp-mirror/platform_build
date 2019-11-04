@@ -70,6 +70,30 @@
       "revId": "60bfcc4fac131fa32c303e7ece8b1abdc9c68075",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1960f9ca_0b34ba87",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4063,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-11-04T22:40:53Z",
+      "side": 1,
+      "message": "ack, makes sense to me.",
+      "parentUuid": "1c6c1ecd_f093a0fa",
+      "range": {
+        "startLine": 4061,
+        "startChar": 0,
+        "endLine": 4063,
+        "endChar": 5
+      },
+      "revId": "60bfcc4fac131fa32c303e7ece8b1abdc9c68075",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
