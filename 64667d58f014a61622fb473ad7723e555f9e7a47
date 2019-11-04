@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50682ba9_77b79aa7",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-11-04T22:14:33Z",
+      "side": 1,
+      "message": "Mark this variable as obsolete near the top of build/make/core/config.mk instead (you will need to remove the use of it in binary.mk)",
+      "revId": "64667d58f014a61622fb473ad7723e555f9e7a47",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
