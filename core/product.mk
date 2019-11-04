@@ -382,7 +382,7 @@ _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 define dump-product
 $(warning ==== $(1) ====)\
 $(foreach v,$(_product_var_list),\
-$(warning PRODUCTS.$(1).$(v) := $(PRODUCTS.$(1).$(v))))\
+$(warning PRODUCTS.$(1).$(v) := $(call get-product-var,$(1),$(v))))\
 $(warning --------)
 endef
 
@@ -547,6 +547,8 @@ define readonly-final-product-vars
 $(call readonly-variables,$(_readonly_late_variables))
 endef
 
+# Macro re-defined inside strip-product-vars.
+get-product-var = $(PRODUCTS.$(strip $(1)).$(2))
 #
 # Strip the variables in _product_var_list and a few build-system
 # internal variables, and assign the ones for the current product
@@ -558,6 +560,8 @@ $(foreach v,\
     PRODUCT_ENFORCE_PACKAGES_EXIST \
     PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST, \
   $(eval $(v) := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).$(v)))) \
+  $(eval get-product-var = $$(if $$(filter $$(1),$$(INTERNAL_PRODUCT)),$$($$(2)),$$(PRODUCTS.$$(strip $$(1)).$$(2)))) \
+  $(KATI_obsolete_var PRODUCTS.$(INTERNAL_PRODUCT).$(v),Use $(v) instead) \
 )
 endef
 
