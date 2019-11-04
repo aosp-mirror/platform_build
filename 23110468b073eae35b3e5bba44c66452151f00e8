@@ -117,6 +117,30 @@
       "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d7c2f1a_2e0da2f3",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5208,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-11-04T23:05:53Z",
+      "side": 1,
+      "message": "FUZZ_SHARED_DEPS is for the fuzz targets\u0027 shared library dependencies though, not for the modules themselves.",
+      "parentUuid": "058de29f_5d8bb25c",
+      "range": {
+        "startLine": 5208,
+        "startChar": 0,
+        "endLine": 5208,
+        "endChar": 16
+      },
+      "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
