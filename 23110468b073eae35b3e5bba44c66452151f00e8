@@ -93,6 +93,30 @@
       "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "058de29f_5d8bb25c",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5208,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-04T22:50:23Z",
+      "side": 1,
+      "message": "copy-many-files produces a list of the destination files, so I think ALL_FUZZ_TARGETS :\u003d $(call copy-many-files,...) and remove the ALL_FUZZ_TARGETS generation from Soong.",
+      "parentUuid": "cb93b466_bbcfc28a",
+      "range": {
+        "startLine": 5208,
+        "startChar": 0,
+        "endLine": 5208,
+        "endChar": 16
+      },
+      "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
