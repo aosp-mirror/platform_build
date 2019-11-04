@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     com.android.apex.cts.shim.v1_prebuilt \
     com.android.conscrypt \
     com.android.i18n \
+    com.android.ipsec \
     com.android.location.provider \
     com.android.media \
     com.android.media.swcodec \
