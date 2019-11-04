@@ -46,6 +46,30 @@
       "revId": "9ef0587acc2017c856fd77d9177fa1f7f1a19751",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "de8fc197_7105e93c",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2019-11-04T03:33:51Z",
+      "side": 1,
+      "message": "Yes, that\u0027s exactly what I recommended: clarifying the other module is \"installable\" by rewriting \"with the notice for the Java module whose stem...\" to \"with the notice for an installable module whose stem...\" The new comment is crystal clear. Thanks.",
+      "parentUuid": "8e781336_319fe7fc",
+      "range": {
+        "startLine": 75,
+        "startChar": 12,
+        "endLine": 75,
+        "endChar": 27
+      },
+      "revId": "9ef0587acc2017c856fd77d9177fa1f7f1a19751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
