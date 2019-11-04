@@ -22,6 +22,30 @@
       "revId": "60bfcc4fac131fa32c303e7ece8b1abdc9c68075",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4e26457_d1e58220",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4063,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-11-04T21:57:46Z",
+      "side": 1,
+      "message": "I copied the logic from this code:\n\nhttps://android-review.googlesource.com/c/platform/build/+/1157701/2/core/Makefile#b4424\n\nIt only filters out vendor and depends on INSTALLED_VENDORIMAGE_TARGET.\n\nI think it is correct that it uses INSTALLED_*IMAGE_TARGET. For prebuilt images, it\u0027ll test the size of the prebuilt image instead. \n\nIt also looks like \"vendor\" is the only thing that needs to be filtered out. At least this makes aosp_sargo happy. This is only a hack for AOSP targets.",
+      "parentUuid": "67da14cd_d4ff4be7",
+      "range": {
+        "startLine": 4061,
+        "startChar": 0,
+        "endLine": 4063,
+        "endChar": 5
+      },
+      "revId": "60bfcc4fac131fa32c303e7ece8b1abdc9c68075",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
