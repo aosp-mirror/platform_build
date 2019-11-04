@@ -1733,7 +1733,6 @@ $(INSTALLED_FILES_FILE_RECOVERY): $(INTERNAL_RECOVERYIMAGE_FILES) $(FILESLIST) $
 	$(hide) $(FILESLIST) $(TARGET_RECOVERY_ROOT_OUT) > $(@:.txt=.json)
 	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
-recovery_initrc := $(call include-path-for, recovery)/etc/init.rc
 recovery_sepolicy := \
     $(TARGET_RECOVERY_ROOT_OUT)/sepolicy \
     $(TARGET_RECOVERY_ROOT_OUT)/plat_file_contexts \
@@ -2027,7 +2026,6 @@ define build-recoveryimage-target
     $(hide) ln -sf /system/bin/init $(TARGET_RECOVERY_ROOT_OUT)/init)
   # Removes $(TARGET_RECOVERY_ROOT_OUT)/init*.rc EXCEPT init.recovery*.rc.
   $(hide) find $(TARGET_RECOVERY_ROOT_OUT) -maxdepth 1 -name 'init*.rc' -type f -not -name "init.recovery.*.rc" | xargs rm -f
-  $(hide) cp -f $(recovery_initrc) $(TARGET_RECOVERY_ROOT_OUT)/
   $(hide) cp $(TARGET_ROOT_OUT)/init.recovery.*.rc $(TARGET_RECOVERY_ROOT_OUT)/ 2> /dev/null || true # Ignore error when the src file doesn't exist.
   $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/res
   $(hide) rm -rf $(TARGET_RECOVERY_ROOT_OUT)/res/*
@@ -2092,7 +2090,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	    $(INTERNAL_ROOT_FILES) \
 	    $(INSTALLED_RAMDISK_TARGET) \
 	    $(INTERNAL_RECOVERYIMAGE_FILES) \
-	    $(recovery_initrc) $(recovery_sepolicy) $(recovery_kernel) \
+	    $(recovery_sepolicy) $(recovery_kernel) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
 	    $(recovery_resource_deps) \
@@ -2120,7 +2118,7 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	    $(INSTALLED_RAMDISK_TARGET) \
 	    $(INSTALLED_BOOTIMAGE_TARGET) \
 	    $(INTERNAL_RECOVERYIMAGE_FILES) \
-	    $(recovery_initrc) $(recovery_sepolicy) $(recovery_kernel) \
+	    $(recovery_sepolicy) $(recovery_kernel) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
 	    $(recovery_resource_deps) \
