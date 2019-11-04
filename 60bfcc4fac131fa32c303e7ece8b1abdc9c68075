@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67da14cd_d4ff4be7",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4063,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-11-04T21:44:51Z",
+      "side": 1,
+      "message": "Is vendor the only thing we need to filter out? Is this just that we\u0027ve got a prebuilt and not building it from source, or that we don\u0027t actually have one? Should it be using the BUILDING_*_IMAGE variables instead?",
+      "range": {
+        "startLine": 4061,
+        "startChar": 0,
+        "endLine": 4063,
+        "endChar": 5
+      },
+      "revId": "60bfcc4fac131fa32c303e7ece8b1abdc9c68075",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
