@@ -22,6 +22,30 @@
       "revId": "9ef0587acc2017c856fd77d9177fa1f7f1a19751",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e781336_319fe7fc",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-11-04T01:31:24Z",
+      "side": 1,
+      "message": "No, this is correct. \"this\" module is an uninstallable module and the conflict that I am referring to is with the \"installable\" module whose stem is the same as this module\u0027s. \n\nBut I think the sentence is a little bit unfriendly to understand. I\u0027ve refined.",
+      "parentUuid": "5ec1f1df_43c1a341",
+      "range": {
+        "startLine": 75,
+        "startChar": 12,
+        "endLine": 75,
+        "endChar": 27
+      },
+      "revId": "9ef0587acc2017c856fd77d9177fa1f7f1a19751",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
