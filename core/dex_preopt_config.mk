@@ -80,7 +80,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
 
   $(call json_start)
 
-  $(call add_json_bool, DisablePreopt,                      $(call invert_bool,$(filter true,$(WITH_DEXPREOPT))))
+  $(call add_json_bool, DisablePreopt,                      $(call invert_bool,$(and $(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)),$(filter true,$(WITH_DEXPREOPT)))))
   $(call add_json_list, DisablePreoptModules,               $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer, $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
   $(call add_json_bool, GenerateApexImage,                  $(filter true,$(DEXPREOPT_GENERATE_APEX_IMAGE)))
