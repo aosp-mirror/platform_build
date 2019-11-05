@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "166c3e68_4d262b63",
+        "filename": "core/Makefile",
+        "patchSetId": 12
+      },
+      "lineNbr": 3626,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-11-05T21:10:52Z",
+      "side": 1,
+      "message": "How about:\n\n  $(CHECK_PARTITION_SIZES) -v $(1) $(if $(2), \u003e $(2) 2\u003e\u00261 || (cat $(2) \u0026\u0026 exit 1))",
+      "range": {
+        "startLine": 3626,
+        "startChar": 0,
+        "endLine": 3626,
+        "endChar": 53
+      },
+      "revId": "dff71fbb7aeadeee850bc364aeca172808642461",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
