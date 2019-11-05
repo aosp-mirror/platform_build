@@ -16,6 +16,24 @@
       "revId": "64667d58f014a61622fb473ad7723e555f9e7a47",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "646eb205_da058507",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-11-05T01:12:01Z",
+      "side": 1,
+      "message": "Ah; removing the use of it in binary.mk is what I missed. That\u0027s why it failed to build when I put it there.\n\nThanks for the instructions! Will do.",
+      "parentUuid": "50682ba9_77b79aa7",
+      "revId": "64667d58f014a61622fb473ad7723e555f9e7a47",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
