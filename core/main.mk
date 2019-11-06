@@ -1045,14 +1045,13 @@ endef
 #   32-bit variant, if it exits. See the select-bitness-of-required-modules definition.
 # $(1): product makefile
 define product-installed-files
-  $(eval _mk := $(strip $(1))) \
   $(eval _pif_modules := \
-    $(PRODUCTS.$(_mk).PRODUCT_PACKAGES) \
-    $(if $(filter eng,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_ENG)) \
-    $(if $(filter debug,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG)) \
-    $(if $(filter tests,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_TESTS)) \
-    $(if $(filter asan,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_ASAN)) \
-    $(if $(filter java_coverage,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
+    $(call get-product-var,$(1),PRODUCT_PACKAGES) \
+    $(if $(filter eng,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ENG)) \
+    $(if $(filter debug,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG)) \
+    $(if $(filter tests,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
+    $(if $(filter asan,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
+    $(if $(filter java_coverage,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
@@ -1071,13 +1070,13 @@ define product-installed-files
   $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \
   $(filter-out $(HOST_OUT_ROOT)/%,$(call module-installed-files, $(_pif_modules))) \
   $(call resolve-product-relative-paths,\
-    $(foreach cf,$(PRODUCTS.$(_mk).PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
+    $(foreach cf,$(call get-product-var,$(1),PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
 endef
 
 # Similar to product-installed-files above, but handles PRODUCT_HOST_PACKAGES instead
 # This does support the :32 / :64 syntax, but does not support module overrides.
 define host-installed-files
-  $(eval _hif_modules := $(PRODUCTS.$(strip $(1)).PRODUCT_HOST_PACKAGES)) \
+  $(eval _hif_modules := $(call get-product-var,$(1),PRODUCT_HOST_PACKAGES)) \
   $(eval ### Resolve the :32 :64 module name) \
   $(eval _hif_modules_32 := $(patsubst %:32,%,$(filter %:32, $(_hif_modules)))) \
   $(eval _hif_modules_64 := $(patsubst %:64,%,$(filter %:64, $(_hif_modules)))) \
@@ -1109,11 +1108,11 @@ $(if $(strip $(1)), \
 endef
 
 # Check that libraries that should only be in APEXes don't end up in the system
-# image. For the Runtime APEX this complements the checks in
+# image. For the ART APEX this complements the checks in
 # art/build/apex/art_apex_test.py.
 # TODO(b/128708192): Implement this restriction in Soong instead.
 
-# Runtime APEX libraries
+# ART APEX (native) libraries
 APEX_MODULE_LIBS := \
   libadbconnection.so \
   libadbconnectiond.so \
@@ -1129,14 +1128,10 @@ APEX_MODULE_LIBS := \
   libartd-dexlayout.so \
   libartd.so \
   libartpalette.so \
-  libc.so \
-  libc_malloc_debug.so \
-  libc_malloc_hooks.so \
   libdexfile.so \
   libdexfile_external.so \
   libdexfiled.so \
   libdexfiled_external.so \
-  libdl.so \
   libdt_fd_forward.so \
   libdt_socket.so \
   libicui18n.so \
@@ -1144,11 +1139,9 @@ APEX_MODULE_LIBS := \
   libicu_jni.so \
   libjavacore.so \
   libjdwp.so \
-  libm.so \
   libnativebridge.so \
   libnativehelper.so \
   libnativeloader.so \
-  libneuralnetworks.so \
   libnpt.so \
   libopenjdk.so \
   libopenjdkjvm.so \
@@ -1160,16 +1153,45 @@ APEX_MODULE_LIBS := \
   libprofiled.so \
   libsigchain.so \
 
+# Runtime (Bionic) APEX (native) libraries
+APEX_MODULE_LIBS += \
+  libc.so \
+  libc_malloc_debug.so \
+  libc_malloc_hooks.so \
+  libdl.so \
+  libm.so \
+
 # Conscrypt APEX libraries
 APEX_MODULE_LIBS += \
   libjavacrypto.so \
+
+# Android Neural Network API (NNAPI) APEX (native) libraries
+APEX_MODULE_LIBS += \
+  libneuralnetworks.so \
+
+# ART APEX JARs (Java libraries)
+APEX_MODULE_LIBS += \
+  apache-xml.jar \
+  bouncycastle.jar \
+  core-icu4j.jar \
+  core-libart.jar \
+  core-oj.jar \
+  okhttp.jar \
+
+# Conscrypt APEX JARs (Java libraries)
+APEX_MODULE_LIBS += \
+  conscrypt.jar \
 
 # An option to disable the check below, for local use since some build targets
 # still may create these libraries in /system (b/129006418).
 DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
 
+# Allow APEX libraries under /system/apex, which happens when APEX flattening
+# is enabled.
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE := apex
+
 # Bionic should not be in /system, except for the bootstrap instance.
-APEX_LIBS_ABSENCE_CHECK_EXCLUDE := lib/bootstrap lib64/bootstrap
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/bootstrap lib64/bootstrap
 
 # Exclude lib/arm and lib64/arm64 which contain the native bridge proxy libs. They
 # are compiled for the guest architecture and used with an entirely different
@@ -1216,12 +1238,14 @@ else
   # APEX might be misconfigured or something is wrong in the build system.
   # Please reach out to the APEX package owners and/or soong-team@, or
   # android-building@googlegroups.com externally.
+  #
+  # Likewise, we check for the absence of APEX Java libraries (JARs).
   define check-apex-libs-absence
     $(call maybe-print-list-and-error, \
       $(filter $(foreach lib,$(APEX_MODULE_LIBS),%/$(lib)), \
         $(filter-out $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE), \
                        $(TARGET_OUT)/$(if $(findstring %,$(dir)),$(dir),$(dir)/%)), \
-          $(filter $(TARGET_OUT)/lib/% $(TARGET_OUT)/lib64/%,$(1)))), \
+          $(filter $(TARGET_OUT),$(1)))), \
       APEX libraries found in product_target_FILES (see comment for check-apex-libs-absence in \
       build/make/core/main.mk for details))
   endef
@@ -1235,11 +1259,13 @@ else
   # try "m installclean && m systemimage" to get a correct system image. For
   # local work you can also disable the check with the
   # DISABLE_APEX_LIBS_ABSENCE_CHECK environment variable.
+  #
+  # Likewise, we check for the absence of APEX Java libraries (JARs).
   define check-apex-libs-absence-on-disk
     $(hide) ( \
       cd $(TARGET_OUT) && \
-      findres=$$(find lib* \
-        $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE),-path "$(subst %,*,$(dir))" -prune -o) \
+      findres=$$(find . \
+        $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE),-path "./$(subst %,*,$(dir))" -prune -o) \
         -type f \( -false $(foreach lib,$(APEX_MODULE_LIBS),-o -name $(lib)) \) \
         -print) && \
       if [ -n "$$findres" ]; then \
@@ -1291,11 +1317,11 @@ ifdef FULL_BUILD
 
   # Some modules produce only host installed files when building with TARGET_BUILD_APPS
   ifeq ($(TARGET_BUILD_APPS),)
-    _modules := $(foreach m,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES) \
-                            $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG) \
-                            $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG_ASAN) \
-                            $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG) \
-                            $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS),\
+    _modules := $(foreach m,$(PRODUCT_PACKAGES) \
+                            $(PRODUCT_PACKAGES_DEBUG) \
+                            $(PRODUCT_PACKAGES_DEBUG_ASAN) \
+                            $(PRODUCT_PACKAGES_ENG) \
+                            $(PRODUCT_PACKAGES_TESTS),\
                   $(if $(ALL_MODULES.$(m).INSTALLED),\
                     $(if $(filter-out $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,\
                       $(m))))

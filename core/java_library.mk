@@ -85,17 +85,6 @@ endif  # LOCAL_UNCOMPRESS_DEX
 
 .KATI_RESTAT: $(common_javalib.jar)
 
-ifdef LOCAL_DEX_PREOPT
-
-$(LOCAL_BUILT_MODULE): PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
-$(LOCAL_BUILT_MODULE): $(intermediates)/strip.sh
-$(LOCAL_BUILT_MODULE): | $(DEXPREOPT_STRIP_DEPS)
-$(LOCAL_BUILT_MODULE): .KATI_DEPFILE := $(LOCAL_BUILT_MODULE).d
-$(LOCAL_BUILT_MODULE): $(common_javalib.jar)
-	$(PRIVATE_STRIP_SCRIPT) $< $@
-
-else # LOCAL_DEX_PREOPT
 $(eval $(call copy-one-file,$(common_javalib.jar),$(LOCAL_BUILT_MODULE)))
 
-endif # LOCAL_DEX_PREOPT
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY

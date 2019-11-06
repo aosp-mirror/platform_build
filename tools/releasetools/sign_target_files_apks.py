@@ -557,14 +557,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       OPTIONS.rebuild_recovery = True
 
     # Don't copy OTA certs if we're replacing them.
+    # Replacement of update-payload-key.pub.pem was removed in b/116660991.
     elif (
         OPTIONS.replace_ota_keys and
         filename in (
             "BOOT/RAMDISK/system/etc/security/otacerts.zip",
-            "BOOT/RAMDISK/system/etc/update_engine/update-payload-key.pub.pem",
             "RECOVERY/RAMDISK/system/etc/security/otacerts.zip",
-            "SYSTEM/etc/security/otacerts.zip",
-            "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
+            "SYSTEM/etc/security/otacerts.zip")):
       pass
 
     # Skip META/misc_info.txt since we will write back the new values later.
@@ -832,24 +831,6 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   # We DO NOT include the extra_recovery_keys (if any) here.
   WriteOtacerts(output_tf_zip, "SYSTEM/etc/security/otacerts.zip", mapped_keys)
 
-  # For A/B devices, update the payload verification key.
-  if misc_info.get("ab_update") == "true":
-    # Unlike otacerts.zip that may contain multiple keys, we can only specify
-    # ONE payload verification key.
-    if len(mapped_keys) > 1:
-      print("\n  WARNING: Found more than one OTA keys; Using the first one"
-            " as payload verification key.\n\n")
-
-    print("Using %s for payload verification." % (mapped_keys[0],))
-    pubkey = common.ExtractPublicKey(mapped_keys[0])
-    common.ZipWriteStr(
-        output_tf_zip,
-        "SYSTEM/etc/update_engine/update-payload-key.pub.pem",
-        pubkey)
-    common.ZipWriteStr(
-        output_tf_zip,
-        "BOOT/RAMDISK/system/etc/update_engine/update-payload-key.pub.pem",
-        pubkey)
 
 
 def ReplaceVerityPublicKey(output_zip, filename, key_path):

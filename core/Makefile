@@ -2557,7 +2557,7 @@ pdk_odex_apps := $(strip $(foreach m,$(DEXPREOPT.MODULES.APPS),\
   $(if $(filter $(DEXPREOPT.$(m).INSTALLED_STRIPPED),$(ALL_DEFAULT_INSTALLED_MODULES)),$(m))))
 pdk_classes_dex := $(strip \
   $(foreach m,$(pdk_odex_javalibs),$(call intermediates-dir-for,JAVA_LIBRARIES,$(m),,COMMON)/javalib.jar) \
-  $(foreach m,$(pdk_odex_apps),$(call intermediates-dir-for,APPS,$(m))/package.dex.apk))
+  $(foreach m,$(pdk_odex_apps),$(call intermediates-dir-for,APPS,$(m))/package.apk))
 
 pdk_odex_config_mk := $(PRODUCT_OUT)/pdk_dexpreopt_config.mk
 $(pdk_odex_config_mk): PRIVATE_JAVA_LIBRARIES := $(pdk_odex_javalibs)
@@ -2575,7 +2575,7 @@ $(pdk_odex_config_mk) :
 	  $(hide) echo "PDK.DEXPREOPT.$(m).DEX_PREOPT_FLAGS:=$(DEXPREOPT.$(m).DEX_PREOPT_FLAGS)" >> $@$(newline)\
 	  )
 	$(foreach m,$(PRIVATE_APPS),\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).SRC:=$(patsubst $(OUT_DIR)/%,%,$(call intermediates-dir-for,APPS,$(m))/package.dex.apk)" >> $@$(newline)\
+	  $(hide) echo "PDK.DEXPREOPT.$(m).SRC:=$(patsubst $(OUT_DIR)/%,%,$(call intermediates-dir-for,APPS,$(m))/package.apk)" >> $@$(newline)\
 	  $(hide) echo "PDK.DEXPREOPT.$(m).DEX_PREOPT:=$(DEXPREOPT.$(m).DEX_PREOPT)" >> $@$(newline)\
 	  $(hide) echo "PDK.DEXPREOPT.$(m).MULTILIB:=$(DEXPREOPT.$(m).MULTILIB)" >> $@$(newline)\
 	  $(hide) echo "PDK.DEXPREOPT.$(m).DEX_PREOPT_FLAGS:=$(DEXPREOPT.$(m).DEX_PREOPT_FLAGS)" >> $@$(newline)\
@@ -3616,36 +3616,6 @@ ifeq (,$(TARGET_BUILD_APPS))
 
 ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 
-# (1): list of items like "system", "vendor", "product", "system_ext"
-# return: map each item into a command ( wrapped in $$() ) that reads the size
-define read-size-of-partitions
-$(foreach image,$(call images-for-partitions,$(1)),$$($(SPARSE_IMG) --get_partition_size $(image)))
-endef
-
-# round result to BOARD_SUPER_PARTITION_ALIGNMENT
-#$(1): the calculated size
-ifeq (,$(BOARD_SUPER_PARTITION_ALIGNMENT))
-define round-partition-size
-$(1)
-endef
-else
-define round-partition-size
-$$((($(1)+$(BOARD_SUPER_PARTITION_ALIGNMENT)-1)/$(BOARD_SUPER_PARTITION_ALIGNMENT)*$(BOARD_SUPER_PARTITION_ALIGNMENT)))
-endef
-endif
-
-define super-slot-suffix
-$(if $(filter true,$(AB_OTA_UPDATER)),$(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)),,_a))
-endef
-
-ifndef BOARD_SUPER_PARTITION_WARN_LIMIT
-BOARD_SUPER_PARTITION_WARN_LIMIT := $$(($(BOARD_SUPER_PARTITION_SIZE) * 95 / 100))
-endif
-
-ifndef BOARD_SUPER_PARTITION_ERROR_LIMIT
-BOARD_SUPER_PARTITION_ERROR_LIMIT := $(BOARD_SUPER_PARTITION_SIZE)
-endif
-
 droid_targets: check-all-partition-sizes
 
 .PHONY: check-all-partition-sizes check-all-partition-sizes-nodeps
@@ -3654,103 +3624,28 @@ check_all_partition_sizes_file := $(call intermediates-dir-for,PACKAGING,check-a
 
 check-all-partition-sizes: $(check_all_partition_sizes_file)
 
-# Add image dependencies so that generated_*_image_info.txt are written before checking.
 $(check_all_partition_sizes_file): \
-    $(SPARSE_IMG) \
+    $(CHECK_PARTITION_SIZES) \
     $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
 
-ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
-# Check sum(super partition block devices) == super partition
-# Non-retrofit devices already defines BOARD_SUPER_PARTITION_SUPER_DEVICE_SIZE = BOARD_SUPER_PARTITION_SIZE
-define check-super-partition-size
-  size_list="$(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)),$(BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE))"; \
-  sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${size_list}"); \
-  max_size_expr="$(BOARD_SUPER_PARTITION_SIZE)"; \
-  if [ $$(( $${sum_sizes_expr} )) -ne $$(( $${max_size_expr} )) ]; then \
-    echo "The sum of super partition block device sizes is not equal to BOARD_SUPER_PARTITION_SIZE:"; \
-    echo $${sum_sizes_expr} '!=' $${max_size_expr}; \
-    exit 1; \
-  else \
-    echo "The sum of super partition block device sizes is equal to BOARD_SUPER_PARTITION_SIZE:"; \
-    echo $${sum_sizes_expr} '==' $${max_size_expr}; \
-  fi
-endef
-endif
-
-# $(1): human-readable max size string
-# $(2): max size expression
-# $(3): list of partition names
-# $(4): human-readable warn size string
-# $(5): warn size expression
-# $(6): human readable error size string
-# $(7): error size expression
-define check-sum-of-partition-sizes
-  partition_size_list="$$(for i in $(call read-size-of-partitions,$(3)); do \
-    echo $(call round-partition-size,$${i}); \
-  done)"; \
-  sum_sizes_expr=$$(tr '\n' '+' <<< "$${partition_size_list}" | sed 's/+$$//'); \
-  if [ $$(( $${sum_sizes_expr} )) -gt $$(( $(2) )) ]; then \
-    echo "The sum of sizes of [$(strip $(3))] is larger than $(strip $(1)):"; \
-    echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' "$(2)" '==' $$(( $(2) )); \
-    exit 1; \
-  else \
-    if [[ ! -z "$(7)" ]] && [ $$(( $${sum_sizes_expr} )) -gt $$(( $(7) )) ]; then \
-        echo "!!!! ERROR !!!! The sum of sizes of [$(strip $(3))] is larger than $(strip $(6)):"; \
-        echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' "$(7)" '==' $$(( $(7) )); \
-        echo "Super partition is" $$(( $$(( $$(( $${sum_sizes_expr} )) * 100)) / $$(( $(2) )) )) "percent occupied!"; \
-        exit 1; \
-    fi; \
-    if [[ ! -z "$(5)" ]] && [ $$(( $${sum_sizes_expr} )) -gt $$(( $(5) )) ]; then \
-        echo "!!!! WARNING !!!! The sum of sizes of [$(strip $(3))] is larger than $(strip $(4)):"; \
-        echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' "$(5)" '==' $$(( $(5) )); \
-        echo "Super partition is" $$(( $$(( $$(( $${sum_sizes_expr} )) * 100)) / $$(( $(2) )) )) "percent occupied!"; \
-    fi; \
-    echo "The sum of sizes of [$(strip $(3))] is within $(strip $(1)):"; \
-    echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' "$(2)" '==' $$(( $(2) )); \
-  fi;
-endef
-
+# $(1): misc_info.txt
 define check-all-partition-sizes-target
-  # Check sum(all partitions) <= super partition (/ 2 for A/B devices launched with dynamic partitions)
-  $(if $(BOARD_SUPER_PARTITION_SIZE),$(if $(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-    $(call check-sum-of-partition-sizes,BOARD_SUPER_PARTITION_SIZE$(if $(call super-slot-suffix), / 2), \
-      $(BOARD_SUPER_PARTITION_SIZE)$(if $(call super-slot-suffix), / 2),$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-      BOARD_SUPER_PARTITION_WARN_LIMIT$(if $(call super-slot-suffix), / 2), \
-      $(BOARD_SUPER_PARTITION_WARN_LIMIT)$(if $(call super-slot-suffix), / 2), \
-      BOARD_SUPER_PARTITION_ERROR_LIMIT$(if $(call super-slot-suffix), / 2), \
-      $(BOARD_SUPER_PARTITION_ERROR_LIMIT)$(if $(call super-slot-suffix), / 2)) \
-  ))
-
-  # For each group, check sum(partitions in group) <= group size
-  $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
-    $(if $(BOARD_$(group)_SIZE),$(if $(BOARD_$(group)_PARTITION_LIST), \
-      $(call check-sum-of-partition-sizes,BOARD_$(group)_SIZE,$(BOARD_$(group)_SIZE),$(BOARD_$(group)_PARTITION_LIST)))))
-
-  # Check sum(all group sizes) <= super partition (/ 2 for A/B devices launched with dynamic partitions)
-  if [[ ! -z $(BOARD_SUPER_PARTITION_SIZE) ]]; then \
-    group_size_list="$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)),$(BOARD_$(group)_SIZE))"; \
-    sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${group_size_list}"); \
-    max_size_tail=$(if $(call super-slot-suffix)," / 2"); \
-    max_size_expr="$(BOARD_SUPER_PARTITION_SIZE)$${max_size_tail}"; \
-    if [ $$(( $${sum_sizes_expr} )) -gt $$(( $${max_size_expr} )) ]; then \
-      echo "The sum of sizes of [$(strip $(BOARD_SUPER_PARTITION_GROUPS))] is larger than BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
-      echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' $${max_size_expr} '==' $$(( $${max_size_expr} )); \
-      exit 1; \
-    else \
-      echo "The sum of sizes of [$(strip $(BOARD_SUPER_PARTITION_GROUPS))] is within BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
-      echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' $${max_size_expr} '==' $$(( $${max_size_expr} )); \
-    fi \
-  fi
+  mkdir -p $(dir $(1))
+  rm -f $(1)
+  $(call dump-super-image-info, $(1))
+  $(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+    echo "$(partition)_image="$(call images-for-partitions,$(partition)) >> $(1);)
+  $(CHECK_PARTITION_SIZES) -v $(1)
 endef
 
 $(check_all_partition_sizes_file):
-	$(call check-all-partition-sizes-target)
-	$(call check-super-partition-size)
+	$(call check-all-partition-sizes-target, \
+	  $(call intermediates-dir-for,PACKAGING,check-all-partition-sizes)/misc_info.txt)
 	touch $@
 
 check-all-partition-sizes-nodeps:
-	$(call check-all-partition-sizes-target)
-	$(call check-super-partition-size)
+	$(call check-all-partition-sizes-target, \
+	  $(call intermediates-dir-for,PACKAGING,check-all-partition-sizes-nodeps)/misc_info.txt)
 
 endif # PRODUCT_BUILD_SUPER_PARTITION
 
@@ -3891,7 +3786,7 @@ INTERNAL_OTATOOLS_PACKAGE_FILES += \
 ifneq (,$(wildcard device))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
-      -name "*.x509.pem" -o -name "oem*.prop"))
+      -name "*.pem" -o -name "oem*.prop" -o -name "*.avbpubkey"))
 endif
 ifneq (,$(wildcard external/avb))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \
@@ -4161,6 +4056,15 @@ define fs_config
 (cd $(1); find . -type d | sed 's,$$,/,'; find . \! -type d) | cut -c 3- | sort | sed 's,^,$(2),' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -S $(SELINUX_FC) -R "$(2)"
 endef
 
+# Filter out vendor from the list for AOSP targets.
+# $(1): list
+define filter-out-missing-vendor
+$(if $(INSTALLED_VENDORIMAGE_TARGET),$(1),$(filter-out vendor,$(1)))
+endef
+
+# Information related to dynamic partitions and virtual A/B. This information
+# is needed for building the super image (see dump-super-image-info) and
+# building OTA packages.
 # $(1): file
 define dump-dynamic-partitions-info
   $(if $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITIONS)), \
@@ -4178,17 +4082,25 @@ define dump-dynamic-partitions-info
   $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
     echo "super_$(device)_device_size=$(BOARD_SUPER_PARTITION_$(call to-upper,$(device))_DEVICE_SIZE)" >> $(1);)
   $(if $(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-    echo "dynamic_partition_list=$(BOARD_SUPER_PARTITION_PARTITION_LIST)" >> $(1))
+    echo "dynamic_partition_list=$(call filter-out-missing-vendor, $(BOARD_SUPER_PARTITION_PARTITION_LIST))" >> $(1))
   $(if $(BOARD_SUPER_PARTITION_GROUPS),
     echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" >> $(1))
   $(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
     echo "super_$(group)_group_size=$(BOARD_$(call to-upper,$(group))_SIZE)" >> $(1); \
     $(if $(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
-      echo "super_$(group)_partition_list=$(BOARD_$(call to-upper,$(group))_PARTITION_LIST)" >> $(1);))
+      echo "super_$(group)_partition_list=$(call filter-out-missing-vendor, $(BOARD_$(call to-upper,$(group))_PARTITION_LIST))" >> $(1);))
   $(if $(filter true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED)), \
     echo "build_non_sparse_super_partition=true" >> $(1))
   $(if $(filter true,$(BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE)), \
     echo "super_image_in_update_package=true" >> $(1))
+  $(if $(BOARD_SUPER_PARTITION_SIZE), \
+    echo "super_partition_size=$(BOARD_SUPER_PARTITION_SIZE)" >> $(1))
+  $(if $(BOARD_SUPER_PARTITION_ALIGNMENT), \
+    echo "super_partition_alignment=$(BOARD_SUPER_PARTITION_ALIGNMENT)" >> $(1))
+  $(if $(BOARD_SUPER_PARTITION_WARN_LIMIT), \
+    echo "super_partition_warn_limit=$(BOARD_SUPER_PARTITION_WARN_LIMIT)" >> $(1))
+  $(if $(BOARD_SUPER_PARTITION_ERROR_LIMIT), \
+    echo "super_partition_error_limit=$(BOARD_SUPER_PARTITION_ERROR_LIMIT)" >> $(1))
 endef
 
 # By conditionally including the dependency of the target files package on the
@@ -4241,10 +4153,6 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(HOST_OUT_EXECUTABLES)/fs_config \
 	    $(ADD_IMG_TO_TARGET_FILES) \
 	    $(MAKE_RECOVERY_PATCH) \
-	    $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST) \
-	    $(BUILT_ASSEMBLED_VENDOR_MANIFEST) \
-	    $(BUILT_SYSTEM_MATRIX) \
-	    $(BUILT_VENDOR_MATRIX) \
 	    $(BUILT_KERNEL_CONFIGS_FILE) \
 	    $(BUILT_KERNEL_VERSION_FILE) \
 	    | $(ACP)
@@ -4507,16 +4415,6 @@ ifdef BUILDING_SYSTEM_OTHER_IMAGE
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
 	@# Metadata for compatibility verification.
-	$(hide) cp $(BUILT_SYSTEM_MATRIX) $(zip_root)/META/system_matrix.xml
-ifdef BUILT_ASSEMBLED_FRAMEWORK_MANIFEST
-	$(hide) cp $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST) $(zip_root)/META/system_manifest.xml
-endif
-ifdef BUILT_ASSEMBLED_VENDOR_MANIFEST
-	$(hide) cp $(BUILT_ASSEMBLED_VENDOR_MANIFEST) $(zip_root)/META/vendor_manifest.xml
-endif
-ifdef BUILT_VENDOR_MATRIX
-	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
-endif
 ifdef BUILT_KERNEL_CONFIGS_FILE
 	$(hide) cp $(BUILT_KERNEL_CONFIGS_FILE) $(zip_root)/META/kernel_configs.txt
 endif
@@ -4779,6 +4677,10 @@ define dump-super-image-info
   $(call dump-dynamic-partitions-info,$(1))
   $(if $(filter true,$(AB_OTA_UPDATER)), \
     echo "ab_update=true" >> $(1))
+  $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA)), \
+    echo "virtual_ab=true" >> $(1))
+  $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA_RETROFIT)), \
+    echo "virtual_ab_retrofit=true" >> $(1))
 endef
 
 endif # PRODUCT_USE_DYNAMIC_PARTITIONS
@@ -4829,6 +4731,8 @@ define build-superimage-target
   $(call dump-super-image-info,$(2))
   $(foreach p,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
     echo "$(p)_image=$(INSTALLED_$(call to-upper,$(p))IMAGE_TARGET)" >> $(2);)
+  $(if $(BUILDING_SYSTEM_OTHER_IMAGE), $(if $(filter system,$(BOARD_SUPER_PARTITION_PARTITION_LIST)), \
+    echo "system_other_image=$(INSTALLED_SYSTEMOTHERIMAGE_TARGET)" >> $(2);))
   mkdir -p $(dir $(1))
   PATH=$(dir $(LPMAKE)):$$PATH \
     $(BUILD_SUPER_IMAGE) -v $(2) $(1)
@@ -4837,6 +4741,12 @@ endef
 INSTALLED_SUPERIMAGE_TARGET := $(PRODUCT_OUT)/super.img
 INSTALLED_SUPERIMAGE_DEPENDENCIES := $(LPMAKE) $(BUILD_SUPER_IMAGE) \
     $(foreach p, $(BOARD_SUPER_PARTITION_PARTITION_LIST), $(INSTALLED_$(call to-upper,$(p))IMAGE_TARGET))
+
+ifdef BUILDING_SYSTEM_OTHER_IMAGE
+ifneq ($(filter system,$(BOARD_SUPER_PARTITION_PARTITION_LIST)),)
+INSTALLED_SUPERIMAGE_DEPENDENCIES += $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
+endif
+endif
 
 # If BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT is set, super.img is built from images in the
 # $(PRODUCT_OUT) directory, and is built to $(PRODUCT_OUT)/super.img. Also, it will
@@ -5080,6 +4990,7 @@ deps := \
 	$(target_notice_file_txt) \
 	$(tools_notice_file_txt) \
 	$(OUT_DOCS)/offline-sdk-timestamp \
+	$(SDK_METADATA_FILES) \
 	$(SYMBOLS_ZIP) \
 	$(COVERAGE_ZIP) \
 	$(APPCOMPAT_ZIP) \

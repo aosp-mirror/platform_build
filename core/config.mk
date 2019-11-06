@@ -602,6 +602,7 @@ IMG_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/img_from_target_files$(HOST_EXE
 MAKE_RECOVERY_PATCH := $(HOST_OUT_EXECUTABLES)/make_recovery_patch$(HOST_EXECUTABLE_SUFFIX)
 OTA_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/ota_from_target_files$(HOST_EXECUTABLE_SUFFIX)
 SPARSE_IMG := $(HOST_OUT_EXECUTABLES)/sparse_img$(HOST_EXECUTABLE_SUFFIX)
+CHECK_PARTITION_SIZES := $(HOST_OUT_EXECUTABLES)/check_partition_sizes$(HOST_EXECUTABLE_SUFFIX)
 
 PROGUARD_HOME := external/proguard
 PROGUARD := $(PROGUARD_HOME)/bin/proguard.sh
@@ -626,14 +627,6 @@ FINDBUGS := $(FINDBUGS_DIR)/findbugs
 JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standalone
 
 EXTRACT_KERNEL := build/make/tools/extract_kernel.py
-
-USE_OPENJDK9 := true
-
-ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),)
-TARGET_OPENJDK9 :=
-else ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),true)
-TARGET_OPENJDK9 := true
-endif
 
 # Path to tools.jar
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar

@@ -27,9 +27,6 @@ ifeq (sdk_phone_x86_64,$(TARGET_PRODUCT))
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 endif
 
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-    root/init.zygote64_32.rc \
-
 #
 # All components inherited here go to product image
 #
@@ -51,6 +48,3 @@ PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_x86_64
 PRODUCT_DEVICE := generic_x86_64
 PRODUCT_MODEL := Android SDK built for x86_64
-
-# TODO(b/131162102): remove this after cleaning up accesses of sysprop
-BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW := true
