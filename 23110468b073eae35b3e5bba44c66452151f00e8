@@ -237,6 +237,47 @@
       "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a70f723_25be39f2",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5208,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-06T23:43:27Z",
+      "side": 1,
+      "message": "I see.  I recommend replacing LOCAL_FUZZ_INSTALLED_SHARED_DEPS with LOCAL_FUZZ_SHARED_DEPS_INSTALL_PAIRS, and then:\n\nmy_fuzz_shared_deps :\u003d $(call copy-many-files,$(LOCAL_FUZZ_SHARED_DEPS_INSTALL_PAIRS))\n$(LOCAL_INSTALLED_MODULE): $(my_fuzz_shared_deps)",
+      "parentUuid": "1ec0d43b_c61c730f",
+      "range": {
+        "startLine": 5208,
+        "startChar": 0,
+        "endLine": 5208,
+        "endChar": 16
+      },
+      "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83d4be6c_28d0c146",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-06T23:43:27Z",
+      "side": 1,
+      "message": "This shouldn\u0027t go in base_rules.mk.  Either put it in soong_cc_prebuilt.mk, or add a new soong_fuzz_prebuilt.mk that includes soong_cc_prebuilt.mk and does this, or put it directly into the generated androidmk.go Make code (it would have to go after the include soong_cc_prebuilt.mk line).",
+      "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
