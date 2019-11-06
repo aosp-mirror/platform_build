@@ -16,11 +16,9 @@
 
 LOCAL_MODULE_CLASS := FAKE
 LOCAL_IS_HOST_MODULE := true
-LOCAL_COMPATIBILITY_SUITE := vts
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
 $(LOCAL_BUILT_MODULE):
-	@echo "VTS host-driven test target: $(PRIVATE_MODULE)"
+	@echo "$(LOCAL_COMPATIBILITY_SUITE) host-driven test target: $(PRIVATE_MODULE)"
 	$(hide) touch $@
-

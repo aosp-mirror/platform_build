@@ -1373,6 +1373,39 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual('5', chained_partition_args[1])
     self.assertTrue(os.path.exists(chained_partition_args[2]))
 
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AppendVBMetaArgsForPartition_recoveryAsChainedPartition_nonAb(self):
+    testdata_dir = test_utils.get_testdata_dir()
+    pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
+    info_dict = {
+        'avb_avbtool': 'avbtool',
+        'avb_recovery_key_path': pubkey,
+        'avb_recovery_rollback_index_location': 3,
+    }
+    cmd = common.GetAvbPartitionArg(
+        'recovery', '/path/to/recovery.img', info_dict)
+    self.assertFalse(cmd)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AppendVBMetaArgsForPartition_recoveryAsChainedPartition_ab(self):
+    testdata_dir = test_utils.get_testdata_dir()
+    pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
+    info_dict = {
+        'ab_update': 'true',
+        'avb_avbtool': 'avbtool',
+        'avb_recovery_key_path': pubkey,
+        'avb_recovery_rollback_index_location': 3,
+    }
+    cmd = common.GetAvbPartitionArg(
+        'recovery', '/path/to/recovery.img', info_dict)
+    self.assertEqual(2, len(cmd))
+    self.assertEqual('--chain_partition', cmd[0])
+    chained_partition_args = cmd[1].split(':')
+    self.assertEqual(3, len(chained_partition_args))
+    self.assertEqual('recovery', chained_partition_args[0])
+    self.assertEqual('3', chained_partition_args[1])
+    self.assertTrue(os.path.exists(chained_partition_args[2]))
+
 
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   """Checks the format of install-recovery.sh.

@@ -45,19 +45,8 @@ ALL_MODULES.$(my_register_name).CLASSES_JAR := $(common_classes_jar)
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 #######################################
-ifdef LOCAL_DEX_PREOPT
-
-$(built_module): PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
-$(built_module): $(intermediates)/strip.sh
-$(built_module): | $(DEXPREOPT_STRIP_DEPS)
-$(built_module): .KATI_DEPFILE := $(built_module).d
-$(built_module): $(my_prebuilt_src_file)
-	$(PRIVATE_STRIP_SCRIPT) $< $@
-
-else # ! LOCAL_DEX_PREOPT
 $(built_module) : $(my_prebuilt_src_file)
 	$(call copy-file-to-target)
-endif # LOCAL_DEX_PREOPT
 
 else  # ! prebuilt_module_is_dex_javalib
 $(built_module) : $(my_prebuilt_src_file)

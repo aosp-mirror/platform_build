@@ -16,8 +16,7 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
-    abb \
-    adbd \
+    adbd_system_binaries \
     am \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
@@ -48,6 +47,7 @@ PRODUCT_PACKAGES += \
     cgroups.json \
     charger \
     cmd \
+    com.android.adbd \
     com.android.apex.cts.shim.v1_prebuilt \
     com.android.conscrypt \
     com.android.i18n \
@@ -75,7 +75,7 @@ PRODUCT_PACKAGES += \
     ExtServices \
     ExtShared \
     flags_health_check \
-    framework \
+    framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
@@ -124,8 +124,6 @@ PRODUCT_PACKAGES += \
     libbinder_ndk \
     libc.bootstrap \
     libcamera2ndk \
-    libcamera_client \
-    libcameraservice \
     libcutils \
     libdl.bootstrap \
     libdrmframework \
@@ -318,7 +316,7 @@ endif
 # The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    framework \
+    framework-minus-apex \
     ext \
     telephony-common \
     voip-common \
@@ -364,6 +362,7 @@ PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     logtagd.rc \
     procrank \
+    remount \
     showmap \
     sqlite3 \
     ss \

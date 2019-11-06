@@ -646,6 +646,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libstagefright_soft*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/odm/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/odm/build.prop)
 
+# Remove libcameraservice and libcamera_client from base_system
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libcameraservice.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libcamera_client.so)
+
 # Move product and system_ext to root for emulators
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/generic*/*/product)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/generic*/*/system_ext)
@@ -680,6 +684,20 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/apex)
 
 # Migrate preopt files to system_other for some devices
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/*/*app/*/oat)
+
+# Remove Android Core Library artifacts from the system partition, now
+# that they live in the ART APEX (b/142944799).
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/framework/*.jar)
+
+# Remove symlinks for VNDK apexes
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/vndk-*)
+
+# Switch to symlinks for VNDK libs
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/vndk-*)
+
+# Remove Android Core Library artifacts from the system partition
+# again, as the original change removing them was reverted.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/framework/*.jar)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST

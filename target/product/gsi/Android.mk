@@ -1,20 +1,8 @@
 LOCAL_PATH:= $(call my-dir)
 
 #####################################################################
-# Create the list of vndk libraries from the source code.
-INTERNAL_VNDK_LIB_LIST := $(call intermediates-dir-for,PACKAGING,vndk)/libs.txt
-$(INTERNAL_VNDK_LIB_LIST):
-	@echo "Generate: $@"
-	@mkdir -p $(dir $@)
-	$(hide) echo -n > $@
-	$(hide) $(foreach lib, $(filter-out libclang_rt.%,$(LLNDK_LIBRARIES)), \
-	  echo LLNDK: $(lib).so >> $@;)
-	$(hide) $(foreach lib, $(VNDK_SAMEPROCESS_LIBRARIES), \
-	  echo VNDK-SP: $(lib).so >> $@;)
-	$(hide) $(foreach lib, $(filter-out libclang_rt.%,$(VNDK_CORE_LIBRARIES)), \
-	  echo VNDK-core: $(lib).so >> $@;)
-	$(hide) $(foreach lib, $(VNDK_PRIVATE_LIBRARIES), \
-	  echo VNDK-private: $(lib).so >> $@;)
+# list of vndk libraries from the source code.
+INTERNAL_VNDK_LIB_LIST := $(SOONG_VNDK_LIBRARIES_FILE)
 
 #####################################################################
 # This is the up-to-date list of vndk libs.
@@ -48,6 +36,9 @@ else ifeq ($(TARGET_BUILD_PDK),true)
 # and some render-script related ones) can't be built in PDK due to missing frameworks/base.
 check-vndk-list: ;
 else ifeq ($(TARGET_SKIP_CURRENT_VNDK),true)
+check-vndk-list: ;
+else ifeq ($(BOARD_VNDK_VERSION),)
+# b/143233626 do not check vndk-list when vndk libs are not built
 check-vndk-list: ;
 else
 check-vndk-list: $(check-vndk-list-timestamp)

@@ -49,6 +49,3 @@ PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_x86
 PRODUCT_DEVICE := generic_x86
 PRODUCT_MODEL := Android SDK built for x86
-
-# TODO(b/131162102): remove this after cleaning up accesses of sysprop
-BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW := true

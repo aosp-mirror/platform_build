@@ -44,6 +44,3 @@ PRODUCT_NAME := full_x86
 PRODUCT_DEVICE := generic_x86
 PRODUCT_BRAND := Android
 PRODUCT_MODEL := AOSP on IA Emulator
-
-# TODO(b/131162102): remove this after cleaning up accesses of sysprop
-BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW := true

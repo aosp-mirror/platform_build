@@ -97,10 +97,6 @@ endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 java-dex: $(LOCAL_SOONG_DEX_JAR)
 
 
-ifneq ($(BUILD_PLATFORM_ZIP),)
-  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(dir $(LOCAL_BUILT_MODULE))package.dex.apk))
-endif
-
 my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
   $(call word-colon,1,$(f)):$(PRODUCT_OUT)$(call word-colon,2,$(f)))
 my_installed := $(call copy-many-files, $(my_built_installed))
