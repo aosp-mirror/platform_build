@@ -40,6 +40,7 @@ VNDK-SP: libblas.so
 VNDK-SP: libc++.so
 VNDK-SP: libcompiler_rt.so
 VNDK-SP: libcutils.so
+VNDK-SP: libgralloctypes.so
 VNDK-SP: libhardware.so
 VNDK-SP: libhidlbase.so
 VNDK-SP: libhidlmemory.so
