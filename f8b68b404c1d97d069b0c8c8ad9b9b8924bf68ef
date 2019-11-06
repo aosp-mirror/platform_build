@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "62c43968_e8da1d7c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1304263
+      },
+      "writtenOn": "2019-11-06T02:27:56Z",
+      "side": 1,
+      "message": "Nit: dependencies",
+      "range": {
+        "startLine": 11,
+        "startChar": 32,
+        "endLine": 11,
+        "endChar": 42
+      },
+      "revId": "f8b68b404c1d97d069b0c8c8ad9b9b8924bf68ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "104db664_513c123e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1304263
+      },
+      "writtenOn": "2019-11-06T02:27:56Z",
+      "side": 1,
+      "message": "Question: will it able to verify in both Go and non-Go device to see it works in both devices?",
+      "range": {
+        "startLine": 13,
+        "startChar": 46,
+        "endLine": 16,
+        "endChar": 0
+      },
+      "revId": "f8b68b404c1d97d069b0c8c8ad9b9b8924bf68ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
