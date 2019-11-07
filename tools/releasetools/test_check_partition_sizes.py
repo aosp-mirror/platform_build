@@ -92,3 +92,37 @@ class CheckPartitionSizesTest(test_utils.ReleaseToolsTestCase):
         """.split("\n")))
     with self.assertRaises(RuntimeError):
       CheckPartitionSizes(self.info_dict)
+
+  def test_retrofit_vab(self):
+    self.info_dict.update(common.LoadDictionaryFromLines("""
+        virtual_ab=true
+        virtual_ab_retrofit=true
+        """.split("\n")))
+    CheckPartitionSizes(self.info_dict)
+
+  def test_retrofit_vab_too_big(self):
+    self.info_dict.update(common.LoadDictionaryFromLines("""
+        virtual_ab=true
+        virtual_ab_retrofit=true
+        system_image_size=100
+        """.split("\n")))
+    with self.assertRaises(RuntimeError):
+      CheckPartitionSizes(self.info_dict)
+
+  def test_vab(self):
+    self.info_dict.update(common.LoadDictionaryFromLines("""
+        virtual_ab=true
+        super_partition_size=100
+        super_super_device_size=100
+        """.split("\n")))
+    CheckPartitionSizes(self.info_dict)
+
+  def test_vab_too_big(self):
+    self.info_dict.update(common.LoadDictionaryFromLines("""
+        virtual_ab=true
+        super_partition_size=100
+        super_super_device_size=100
+        system_image_size=100
+        """.split("\n")))
+    with self.assertRaises(RuntimeError):
+      CheckPartitionSizes(self.info_dict)
