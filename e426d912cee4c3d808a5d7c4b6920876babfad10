@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6e42b62f_47a7db02",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2019-11-07T18:35:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33ccc603_1fa7397e",
+      "range": {
+        "startLine": 15,
+        "startChar": 13,
+        "endLine": 15,
+        "endChar": 40
+      },
+      "revId": "e426d912cee4c3d808a5d7c4b6920876babfad10",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "61a3f42a_4c9fbc64",
         "filename": "core/soong_config.mk",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "e426d912cee4c3d808a5d7c4b6920876babfad10",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31e0836c_6c7d8cbd",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2019-11-07T18:35:26Z",
+      "side": 1,
+      "message": "For GSI, we should install un-flattened apex and flattened apex.\nAnd flattened apex should be installed to system_ext partition. So I added this variable for it.",
+      "parentUuid": "61a3f42a_4c9fbc64",
+      "range": {
+        "startLine": 168,
+        "startChar": 0,
+        "endLine": 170,
+        "endChar": 109
+      },
+      "revId": "e426d912cee4c3d808a5d7c4b6920876babfad10",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
