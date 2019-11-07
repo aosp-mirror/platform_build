@@ -4101,6 +4101,10 @@ define dump-dynamic-partitions-info
     echo "super_partition_warn_limit=$(BOARD_SUPER_PARTITION_WARN_LIMIT)" >> $(1))
   $(if $(BOARD_SUPER_PARTITION_ERROR_LIMIT), \
     echo "super_partition_error_limit=$(BOARD_SUPER_PARTITION_ERROR_LIMIT)" >> $(1))
+  $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA)), \
+    echo "virtual_ab=true" >> $(1))
+  $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA_RETROFIT)), \
+    echo "virtual_ab_retrofit=true" >> $(1))
 endef
 
 # By conditionally including the dependency of the target files package on the
@@ -4421,21 +4425,10 @@ endif
 ifdef BUILT_KERNEL_VERSION_FILE
 	$(hide) cp $(BUILT_KERNEL_VERSION_FILE) $(zip_root)/META/kernel_version.txt
 endif
-ifneq ($(BOARD_SUPER_PARTITION_GROUPS),)
-	$(hide) echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" > $(zip_root)/META/dynamic_partitions_info.txt
-	@# Remove 'vendor' from the group partition list if the image is not available. This should only
-	@# happen to AOSP targets built without vendor.img. We can't remove the partition from the
-	@# BoardConfig file, as it's still needed elsewhere (e.g. when creating super_empty.img).
-	$(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
-	    $(eval _group_partition_list := $(BOARD_$(call to-upper,$(group))_PARTITION_LIST)) \
-	    $(if $(INSTALLED_VENDORIMAGE_TARGET),,$(eval _group_partition_list := $(filter-out vendor,$(_group_partition_list)))) \
-	    echo "$(group)_size=$(BOARD_$(call to-upper,$(group))_SIZE)" >> $(zip_root)/META/dynamic_partitions_info.txt; \
-	    $(if $(_group_partition_list), \
-	        echo "$(group)_partition_list=$(_group_partition_list)" >> $(zip_root)/META/dynamic_partitions_info.txt;))
-endif # BOARD_SUPER_PARTITION_GROUPS
-ifeq ($(PRODUCT_VIRTUAL_AB_OTA),true)
-	echo "virtual_ab=true" >> $(zip_root)/META/dynamic_partitions_info.txt
-endif # PRODUCT_VIRTUAL_AB_OTA
+	rm -rf $(zip_root)/META/dynamic_partitions_info.txt
+ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
+	$(call dump-dynamic-partitions-info, $(zip_root)/META/dynamic_partitions_info.txt)
+endif
 	PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    $(ADD_IMG_TO_TARGET_FILES) -a -v -p $(HOST_OUT) $(zip_root)
 ifeq ($(BUILD_QEMU_IMAGES),true)
@@ -4677,10 +4670,6 @@ define dump-super-image-info
   $(call dump-dynamic-partitions-info,$(1))
   $(if $(filter true,$(AB_OTA_UPDATER)), \
     echo "ab_update=true" >> $(1))
-  $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA)), \
-    echo "virtual_ab=true" >> $(1))
-  $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA_RETROFIT)), \
-    echo "virtual_ab_retrofit=true" >> $(1))
 endef
 
 endif # PRODUCT_USE_DYNAMIC_PARTITIONS
