@@ -264,6 +264,30 @@
     },
     {
       "key": {
+        "uuid": "9840a477_8aa44c42",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5208,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-11-07T16:06:35Z",
+      "side": 1,
+      "message": "This would result in multiple rules being generated for installing shared libraries.\n\nFor example, dtsframescanner_fuzzer and example_fuzzer both depend on libclang_rt.hwasan-aarch64-android.so for a HWASan build. Both these modules would then copy-many-files on $(LOCAL_FUZZ_SHARED_DEPS_INSTALL_PAIRS), resulting in duplicate definitions of $(PRODUCT_OUT)/data/fuzz/arm64/lib/libclang_rt.hwasan-aarch64-android.so.",
+      "parentUuid": "9a70f723_25be39f2",
+      "range": {
+        "startLine": 5208,
+        "startChar": 0,
+        "endLine": 5208,
+        "endChar": 16
+      },
+      "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "83d4be6c_28d0c146",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
@@ -278,6 +302,24 @@
       "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c5840a2_ff74dc30",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2019-11-07T16:06:35Z",
+      "side": 1,
+      "message": "Done -\u003e soong_cc_prebuilt.mk",
+      "parentUuid": "83d4be6c_28d0c146",
+      "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
