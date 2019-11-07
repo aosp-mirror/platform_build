@@ -22,6 +22,29 @@
       "revId": "e426d912cee4c3d808a5d7c4b6920876babfad10",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61a3f42a_4c9fbc64",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-07T10:39:38Z",
+      "side": 1,
+      "message": "The combination of these two flags makes no sense IMO. If TARGET_FLATTEN_APEX is false, we shouldn\u0027t be flattening apexes.",
+      "range": {
+        "startLine": 168,
+        "startChar": 0,
+        "endLine": 170,
+        "endChar": 109
+      },
+      "revId": "e426d912cee4c3d808a5d7c4b6920876babfad10",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
