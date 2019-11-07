@@ -76,11 +76,17 @@ class Expression(object):
 class DeviceType(object):
   NONE = 0
   AB = 1
+  RVAB = 2 # retrofit Virtual-A/B
+  VAB = 3
 
   @staticmethod
   def Get(info_dict):
     if info_dict.get("ab_update") != "true":
       return DeviceType.NONE
+    if info_dict.get("virtual_ab_retrofit") == "true":
+      return DeviceType.RVAB
+    if info_dict.get("virtual_ab") == "true":
+      return DeviceType.VAB
     return DeviceType.AB
 
 
@@ -174,6 +180,14 @@ class DynamicPartitionSizeChecker(object):
     # DAP + A/B: 2 slots in super
     if slot == DeviceType.AB:
       return 2
+
+    # DAP + retrofit Virtual A/B: same as A/B
+    if slot == DeviceType.RVAB:
+      return 2
+
+    # DAP + Launch Virtual A/B: 1 *real* slot in super (2 virtual slots)
+    if slot == DeviceType.VAB:
+      return 1
 
     # DAP + non-A/B: 1 slot in super
     assert slot == DeviceType.NONE
