@@ -288,6 +288,30 @@
     },
     {
       "key": {
+        "uuid": "c5f758a7_6b649a8c",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5208,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-07T21:00:39Z",
+      "side": 1,
+      "message": "I see.  You could fix that in Soong using ctx.Config().Once() to hold a OncePer, and then set up the copy rule inside a Once call so that only a single module would create the copy rule.\n\nAlternatively, put an extensive comment here explaining these details, because a $(call copy-many-files) with nothing that depends on the output files looks like something that should be deleted.",
+      "parentUuid": "9840a477_8aa44c42",
+      "range": {
+        "startLine": 5208,
+        "startChar": 0,
+        "endLine": 5208,
+        "endChar": 16
+      },
+      "revId": "23110468b073eae35b3e5bba44c66452151f00e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "83d4be6c_28d0c146",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
