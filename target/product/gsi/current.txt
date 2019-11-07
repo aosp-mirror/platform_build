@@ -95,6 +95,7 @@ VNDK-core: android.hardware.camera.provider@2.5.so
 VNDK-core: android.hardware.cas.native@1.0.so
 VNDK-core: android.hardware.cas@1.0.so
 VNDK-core: android.hardware.cas@1.1.so
+VNDK-core: android.hardware.cas@1.2.so
 VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
 VNDK-core: android.hardware.configstore@1.1.so
