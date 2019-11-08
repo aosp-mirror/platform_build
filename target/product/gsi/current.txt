@@ -184,6 +184,7 @@ VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
 VNDK-core: android.hardware.soundtrigger@2.1.so
 VNDK-core: android.hardware.soundtrigger@2.2.so
+VNDK-core: android.hardware.soundtrigger@2.3.so
 VNDK-core: android.hardware.tetheroffload.config@1.0.so
 VNDK-core: android.hardware.tetheroffload.control@1.0.so
 VNDK-core: android.hardware.thermal@1.0.so
