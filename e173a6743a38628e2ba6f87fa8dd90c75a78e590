@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c2f3cb20_83eb2780",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-09T15:02:10Z",
+      "side": 1,
+      "message": "The variables in rules are expanded late, after all Makefiles have been parsed.  Use rule-local variables for any references to variables that are not read-only:\n\n $(with_license_zip): PRIVATE_NAME :\u003d $(name)\n $(with_license_zip): PRIVATE_INPUT_ZIP :\u003d $(license_image_input_zip)\n $(with_license_zip): PRIVATE_VENDOR_BLOBS_NOTICE :\u003d $(VENDOR_BLOBS_NOTICE)",
+      "range": {
+        "startLine": 46,
+        "startChar": 2,
+        "endLine": 46,
+        "endChar": 9
+      },
+      "revId": "e173a6743a38628e2ba6f87fa8dd90c75a78e590",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
