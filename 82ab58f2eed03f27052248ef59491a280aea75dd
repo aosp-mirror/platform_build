@@ -142,6 +142,24 @@
       "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd95a872_95b89d09",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T03:36:14Z",
+      "side": 1,
+      "message": "mwills@ can you change the script to fix the permissions?",
+      "parentUuid": "38d95900_594700d4",
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
