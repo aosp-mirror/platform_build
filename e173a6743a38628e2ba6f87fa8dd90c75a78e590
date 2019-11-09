@@ -22,6 +22,30 @@
       "revId": "e173a6743a38628e2ba6f87fa8dd90c75a78e590",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50b05555_db7a7b98",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T22:22:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c2f3cb20_83eb2780",
+      "range": {
+        "startLine": 46,
+        "startChar": 2,
+        "endLine": 46,
+        "endChar": 9
+      },
+      "revId": "e173a6743a38628e2ba6f87fa8dd90c75a78e590",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
