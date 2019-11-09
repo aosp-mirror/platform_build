@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f68156e5_2aa047ee",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T07:02:21Z",
+      "side": 1,
+      "message": "Discussed offline, updated to VENDOR_BLOBS_NOTICE.",
+      "parentUuid": "aaa74f43_e64eed95",
+      "range": {
+        "startLine": 17,
+        "startChar": 7,
+        "endLine": 17,
+        "endChar": 26
+      },
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "857ef08c_cffdda80",
         "filename": "core/tasks/with-license.mk",
         "patchSetId": 2
@@ -39,6 +63,24 @@
       "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "700697f2_d7114707",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T07:02:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "857ef08c_cffdda80",
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "9363d2f1_c95d7bfd",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T07:02:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6f87bb4a_d745798e",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 23
+      },
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aa349190_f0275434",
         "filename": "core/tasks/with-license.mk",
         "patchSetId": 2
@@ -88,6 +154,30 @@
     },
     {
       "key": {
+        "uuid": "118a08c0_01c521d2",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T07:02:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa349190_f0275434",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 16
+      },
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf4b8b36_21f2a9d7",
         "filename": "core/tasks/with-license.mk",
         "patchSetId": 2
@@ -102,6 +192,24 @@
       "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1f9dab8_4d88e5ae",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T07:02:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bf4b8b36_21f2a9d7",
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -125,6 +233,30 @@
       "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f832ec0_9e2a1f42",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T07:02:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a61d13a1_0ae5fa43",
+      "range": {
+        "startLine": 43,
+        "startChar": 1,
+        "endLine": 43,
+        "endChar": 53
+      },
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -160,6 +292,24 @@
       "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1fa5795_93b278b0",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T07:02:21Z",
+      "side": 1,
+      "message": "Removed here, will get script updated.",
+      "parentUuid": "bd95a872_95b89d09",
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
