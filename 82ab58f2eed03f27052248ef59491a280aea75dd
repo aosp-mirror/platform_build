@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aaa74f43_e64eed95",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-09T03:31:18Z",
+      "side": 1,
+      "message": "Where is this expected to be set?  The name is too generic, LICENSE/NOTICE file for what?",
+      "range": {
+        "startLine": 17,
+        "startChar": 7,
+        "endLine": 17,
+        "endChar": 26
+      },
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "857ef08c_cffdda80",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-09T03:31:18Z",
+      "side": 1,
+      "message": "This file will be included unconditionally on all builds, it can\u0027t error on products that don\u0027t have LICENSE_NOTICE_FILE set.  You can put this ifndef inside the license-image-input-zip rule instead so it is printed if you try to `m with-license`:\n\nifndef LICENSE_NOTICE_FILE\n    echo with-license requires LICENSE_NOTICE_FILE to be set\n    exit 1\nelse\n    ...\nendif",
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f87bb4a_d745798e",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-09T03:31:18Z",
+      "side": 1,
+      "message": "suggest license_image_input_zip for consistency",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 23
+      },
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa349190_f0275434",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-09T03:31:18Z",
+      "side": 1,
+      "message": "suggest with_license_zip",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 16
+      },
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf4b8b36_21f2a9d7",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-09T03:31:18Z",
+      "side": 1,
+      "message": "add before this line so there is a dependency on the script if it changes:\n\n $(with-license-zip): build/make/tools/generate-self-extracting-archive.py",
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38d95900_594700d4",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-09T03:31:18Z",
+      "side": 1,
+      "message": "seems like this is something the script should handle by passing perms 0755 when it creates the output file",
+      "revId": "82ab58f2eed03f27052248ef59491a280aea75dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
