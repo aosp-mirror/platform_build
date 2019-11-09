@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "7278d5c5_91092213",
+        "filename": "tools/generate-self-extracting-archive.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T03:53:44Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c17f8136_99465ddd",
+      "revId": "8620fe38d76d7dfd00ee65a3d8e1f571382f6d5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2844bbdb_2206bda4",
         "filename": "tools/generate-self-extracting-archive.py",
         "patchSetId": 2
