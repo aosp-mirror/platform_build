@@ -34,6 +34,24 @@
       "revId": "8620fe38d76d7dfd00ee65a3d8e1f571382f6d5c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c17f8136_99465ddd",
+        "filename": "tools/generate-self-extracting-archive.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-09T03:41:56Z",
+      "side": 1,
+      "message": "If you want to restrict to a single license then here is as good anywhere.",
+      "parentUuid": "f27e6227_b23076a4",
+      "revId": "8620fe38d76d7dfd00ee65a3d8e1f571382f6d5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
