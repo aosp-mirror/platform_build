@@ -52,6 +52,29 @@
       "revId": "8620fe38d76d7dfd00ee65a3d8e1f571382f6d5c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2844bbdb_2206bda4",
+        "filename": "tools/generate-self-extracting-archive.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-09T03:52:28Z",
+      "side": 1,
+      "message": "See aosp/1162731 for context. Can you set the file permission so it\u0027s executable.",
+      "range": {
+        "startLine": 158,
+        "startChar": 38,
+        "endLine": 158,
+        "endChar": 44
+      },
+      "revId": "8620fe38d76d7dfd00ee65a3d8e1f571382f6d5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
