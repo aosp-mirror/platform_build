@@ -37,6 +37,7 @@ PRODUCT_PACKAGES += \
     bcc \
     blank_screen \
     blkid \
+    blobstore-service \
     bmgr \
     bootanimation \
     bootstat \
@@ -205,7 +206,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NetworkStack \
+    NetworkStackNext \
     org.apache.http.legacy \
     otacerts \
     PackageInstaller \
