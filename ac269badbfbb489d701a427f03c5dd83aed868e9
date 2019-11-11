@@ -16,6 +16,24 @@
       "revId": "ac269badbfbb489d701a427f03c5dd83aed868e9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64df8441_379fdb19",
+        "filename": "tools/generate-self-extracting-archive.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-11-11T19:18:33Z",
+      "side": 1,
+      "message": "What about doing it this way:\nst \u003d os.stat(output_filename) # Get current permissions which respects umask\nos.chmod(output_filename, st.st_mode | stat.S_IEXEC | stat.stat.S_IXGRP)",
+      "parentUuid": "34bdbcab_127f7b21",
+      "revId": "ac269badbfbb489d701a427f03c5dd83aed868e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
