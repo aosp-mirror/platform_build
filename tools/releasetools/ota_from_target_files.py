@@ -1635,6 +1635,10 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
         partitions = [partition for partition in partitions if partition
                       not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
         output_list.append('{}={}'.format(key, ' '.join(partitions)))
+      elif key == 'virtual_ab' or key == "virtual_ab_retrofit":
+        # Remove virtual_ab flag from secondary payload so that OTA client
+        # don't use snapshots for secondary update
+        pass
       else:
         output_list.append(line)
     return '\n'.join(output_list)

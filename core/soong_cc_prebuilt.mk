@@ -220,3 +220,9 @@ installed_static_library_notice_file_targets := \
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)
+
+# Reinstall shared library dependencies of fuzz targets to /data/fuzz/ (for
+# target) or /data/ (for host).
+ifdef LOCAL_IS_FUZZ_TARGET
+$(LOCAL_INSTALLED_MODULE): $(LOCAL_FUZZ_INSTALLED_SHARED_DEPS)
+endif
