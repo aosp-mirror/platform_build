@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "34bdbcab_127f7b21",
+        "filename": "tools/generate-self-extracting-archive.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-11T18:57:25Z",
+      "side": 1,
+      "message": "It would be nice if this could respect umask, but that doesn\u0027t seem particularly easy in python 2.  Python 3 could use:\n\n with os.fdopen(os.open(output_filename, os.O_WRONLY | os.O_CREAT, 0o777), \u0027wb\u0027) as output:\n\n(double check this actually results in 0755 permissions after umask)\n\nYou could probably manually mask 0o777 with umask.",
+      "revId": "ac269badbfbb489d701a427f03c5dd83aed868e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
