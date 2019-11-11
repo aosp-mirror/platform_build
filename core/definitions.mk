@@ -2099,8 +2099,12 @@ $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) -o -n "$(PRIVATE_SRCJARS)" ] ; then 
     --output $@.premerged --temp_dir $(dir $@)/classes-turbine \
     --sources \@$(PRIVATE_JAVA_SOURCE_LIST) --source_jars $(PRIVATE_SRCJARS) \
     --javacopts $(PRIVATE_JAVACFLAGS) $(COMMON_JDK_FLAGS) -- \
-    $(addprefix --bootclasspath ,$(strip $(PRIVATE_BOOTCLASSPATH))) \
-    $(addprefix --classpath ,$(strip $(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))) \
+    $(if $(PRIVATE_USE_SYSTEM_MODULES), \
+      --system $(PRIVATE_SYSTEM_MODULES_DIR), \
+      --bootclasspath $(strip $(PRIVATE_BOOTCLASSPATH))) \
+    --classpath $(strip $(if $(PRIVATE_USE_SYSTEM_MODULES), \
+        $(filter-out $(PRIVATE_SYSTEM_MODULES_LIBS),$(PRIVATE_BOOTCLASSPATH))) \
+      $(PRIVATE_ALL_JAVA_HEADER_LIBRARIES)) \
     || ( rm -rf $(dir $@)/classes-turbine ; exit 41 ) && \
     $(MERGE_ZIPS) -j --ignore-duplicates -stripDir META-INF $@.tmp $@.premerged $(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES) ; \
 else \
