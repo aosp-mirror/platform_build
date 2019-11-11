@@ -182,7 +182,9 @@ ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)HWADDRESS_SANITIZER_RUNTIME_LIBRARY)
   ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
     ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-      my_static_libraries := $(my_static_libraries) $($(LOCAL_2ND_ARCH_VAR_PREFIX)HWADDRESS_SANITIZER_STATIC_LIBRARY)
+      my_static_libraries := $(my_static_libraries) \
+                             $($(LOCAL_2ND_ARCH_VAR_PREFIX)HWADDRESS_SANITIZER_STATIC_LIBRARY) \
+                             libdl
     endif
   endif
 endif

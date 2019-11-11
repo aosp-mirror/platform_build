@@ -16,7 +16,6 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
-    adbd \
     adbd_system_binaries \
     am \
     android.hidl.allocator@1.0-service \
@@ -48,6 +47,7 @@ PRODUCT_PACKAGES += \
     cgroups.json \
     charger \
     cmd \
+    com.android.adbd \
     com.android.apex.cts.shim.v1_prebuilt \
     com.android.conscrypt \
     com.android.i18n \
@@ -75,7 +75,7 @@ PRODUCT_PACKAGES += \
     ExtServices \
     ExtShared \
     flags_health_check \
-    framework \
+    framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
@@ -206,7 +206,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NetworkStack \
+    NetworkStackNext \
     org.apache.http.legacy \
     otacerts \
     PackageInstaller \
@@ -316,7 +316,7 @@ endif
 # The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    framework \
+    framework-minus-apex \
     ext \
     telephony-common \
     voip-common \

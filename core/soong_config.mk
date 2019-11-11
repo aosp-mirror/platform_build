@@ -105,6 +105,8 @@ $(call add_json_bool, EnableXOM,                         $(call invert_bool,$(fi
 $(call add_json_list, XOMExcludePaths,                   $(XOM_EXCLUDE_PATHS) $(PRODUCT_XOM_EXCLUDE_PATHS))
 $(call add_json_list, IntegerOverflowExcludePaths,       $(INTEGER_OVERFLOW_EXCLUDE_PATHS) $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
 
+$(call add_json_bool, Experimental_mte,                  $(filter true,$(TARGET_EXPERIMENTAL_MTE)))
+
 $(call add_json_bool, DisableScudo,                      $(filter true,$(PRODUCT_DISABLE_SCUDO)))
 
 $(call add_json_bool, ClangTidy,                         $(filter 1 true,$(WITH_TIDY)))
@@ -194,6 +196,8 @@ $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
     $(call add_json_str,$(key),$(SOONG_CONFIG_$(namespace)_$(key))))\
   $(call end_json_map))
 $(call end_json_map)
+
+$(call add_json_bool, EnforceProductPartitionInterface,  $(PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE))
 
 $(call json_end)
 

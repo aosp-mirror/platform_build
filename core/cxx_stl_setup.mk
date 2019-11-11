@@ -82,7 +82,7 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         endif
 
         ifeq ($(my_link_type),static)
-            my_static_libraries += libm libc libdl
+            my_static_libraries += libm libc
         endif
     endif
 else ifeq ($(my_cxx_stl),ndk)
