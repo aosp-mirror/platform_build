@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-# All modules for telephony
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_product.mk)
+# This is the list of modules that are specific to products that have telephony
+# hardware, and install to the system_ext partition.
+
+# /system_ext packages
+PRODUCT_PACKAGES += \
