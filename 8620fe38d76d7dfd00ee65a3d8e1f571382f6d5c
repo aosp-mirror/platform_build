@@ -93,6 +93,30 @@
       "revId": "8620fe38d76d7dfd00ee65a3d8e1f571382f6d5c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94092356_c4aa1802",
+        "filename": "tools/generate-self-extracting-archive.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1079753
+      },
+      "writtenOn": "2019-11-11T17:39:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2844bbdb_2206bda4",
+      "range": {
+        "startLine": 158,
+        "startChar": 38,
+        "endLine": 158,
+        "endChar": 44
+      },
+      "revId": "8620fe38d76d7dfd00ee65a3d8e1f571382f6d5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
