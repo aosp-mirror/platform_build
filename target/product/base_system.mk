@@ -206,7 +206,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NetworkStack \
+    NetworkStackNext \
     org.apache.http.legacy \
     otacerts \
     PackageInstaller \
