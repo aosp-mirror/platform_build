@@ -16,6 +16,24 @@
       "revId": "bb9cf9249044fdfa8199734ce5a0a5fa86820ad8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9994b55a_fcfcdf1b",
+        "filename": "target/board/mainline_arm64/sepolicy/OWNERS",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-11-11T23:28:13Z",
+      "side": 1,
+      "message": "I just followed aosp/503368, thought it was a policy for sepolicy in /build.",
+      "parentUuid": "7b155ff2_4dac6d61",
+      "revId": "bb9cf9249044fdfa8199734ce5a0a5fa86820ad8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
