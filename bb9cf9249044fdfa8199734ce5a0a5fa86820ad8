@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7b155ff2_4dac6d61",
+        "filename": "target/board/mainline_arm64/sepolicy/OWNERS",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-11T13:35:14Z",
+      "side": 1,
+      "message": "do we really need an OWNERS file here ?",
+      "revId": "bb9cf9249044fdfa8199734ce5a0a5fa86820ad8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
