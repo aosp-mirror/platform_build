@@ -22,6 +22,30 @@
       "revId": "7b4ce95107347b89044d072502132288705de526",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1be49655_fd0f8894",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1297255
+      },
+      "writtenOn": "2019-11-12T18:58:50Z",
+      "side": 1,
+      "message": "Yes this new. It doesn\u0027t replace anything.",
+      "parentUuid": "3667cdce_d4a7a03b",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 23
+      },
+      "revId": "7b4ce95107347b89044d072502132288705de526",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
