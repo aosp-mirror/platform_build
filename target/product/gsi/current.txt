@@ -187,7 +187,6 @@ VNDK-core: android.hardware.vibrator@1.0.so
 VNDK-core: android.hardware.vibrator@1.1.so
 VNDK-core: android.hardware.vibrator@1.2.so
 VNDK-core: android.hardware.vibrator@1.3.so
-VNDK-core: android.hardware.vibrator@1.4.so
 VNDK-core: android.hardware.vr@1.0.so
 VNDK-core: android.hardware.weaver@1.0.so
 VNDK-core: android.hardware.wifi.hostapd@1.0.so
