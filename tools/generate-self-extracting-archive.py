@@ -91,7 +91,7 @@ def _pipe_bytes(src, dst):
       break
     dst.write(b)
 
-_MAX_OFFSET_WIDTH = 8
+_MAX_OFFSET_WIDTH = 20
 def _generate_extract_command(start, end, extract_name):
   """Generate the extract command.
 
@@ -119,6 +119,10 @@ def _generate_extract_command(start, end, extract_name):
 
 
 def main(argv):
+  if len(argv) != 5:
+    print 'generate-self-extracting-archive.py expects exactly 4 arguments'
+    sys.exit(1)
+
   output_filename = argv[1]
   input_archive_filename = argv[2]
   comment = argv[3]
@@ -128,6 +132,14 @@ def main(argv):
 
   with open(license_filename, 'r') as license_file:
     license = license_file.read()
+
+  if not license:
+    print 'License file was empty'
+    sys.exit(1)
+
+  if 'SOFTWARE LICENSE AGREEMENT' not in license:
+    print 'License does not look like a license'
+    sys.exit(1)
 
   comment_line = '# %s\n' % comment
   extract_name = os.path.basename(input_archive_filename)
@@ -160,6 +172,10 @@ def main(argv):
       # append the trailing zip to the end of the file
       trailing_zip.seek(0)
       _pipe_bytes(trailing_zip, output)
+
+  umask = os.umask(0)
+  os.umask(umask)
+  os.chmod(output_filename, 0o777 & ~umask)
 
 if __name__ == "__main__":
   main(sys.argv)
