@@ -29,8 +29,8 @@ with_license_intermediates := \
 license_image_input_zip := $(with_license_intermediates)/$(name).zip
 $(license_image_input_zip) : $(BUILT_TARGET_FILES_PACKAGE) $(ZIP2ZIP)
 # DO NOT PROCEED without a license file.
-ifndef VENDOR_BLOBS_NOTICE
-	@echo "with-license requires VENDOR_BLOBS_NOTICE to be set."
+ifndef VENDOR_BLOBS_LICENSE
+	@echo "with-license requires VENDOR_BLOBS_LICENSE to be set."
 	exit 1
 else
 	$(ZIP2ZIP) -i $(BUILT_TARGET_FILES_PACKAGE) -o $@ \
@@ -41,11 +41,11 @@ endif
 with_license_zip := $(PRODUCT_OUT)/$(name).sh
 $(with_license_zip): PRIVATE_NAME := $(name)
 $(with_license_zip): PRIVATE_INPUT_ZIP := $(license_image_input_zip)
-$(with_license_zip): PRIVATE_VENDOR_BLOBS_NOTICE := $(VENDOR_BLOBS_NOTICE)
-$(with_license_zip): $(license_image_input_zip) $(VENDOR_BLOBS_NOTICE)
+$(with_license_zip): PRIVATE_VENDOR_BLOBS_LICENSE := $(VENDOR_BLOBS_LICENSE)
+$(with_license_zip): $(license_image_input_zip) $(VENDOR_BLOBS_LICENSE)
 $(with_license_zip): $(HOST_OUT_EXECUTABLES)/generate-self-extracting-archive
 	# Args: <output> <input archive> <comment> <license file>
 	$(HOST_OUT_EXECUTABLES)/generate-self-extracting-archive $@ \
-		$(PRIVATE_INPUT_ZIP) $(PRIVATE_NAME) $(PRIVATE_VENDOR_BLOBS_NOTICE)
+		$(PRIVATE_INPUT_ZIP) $(PRIVATE_NAME) $(PRIVATE_VENDOR_BLOBS_LICENSE)
 with-license : $(with_license_zip)
 $(call dist-for-goals, with-license, $(with_license_zip))
