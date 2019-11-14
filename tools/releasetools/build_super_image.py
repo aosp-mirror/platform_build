@@ -55,7 +55,7 @@ if sys.hexversion < 0x02070000:
 logger = logging.getLogger(__name__)
 
 
-UNZIP_PATTERN = ["IMAGES/*", "META/*"]
+UNZIP_PATTERN = ["IMAGES/*", "META/*", "*/build.prop"]
 
 
 def GetPartitionSizeFromImage(img):
