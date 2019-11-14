@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4520b091_cae5284e",
+        "filename": "core/rust_host_test_config_template.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1121894
+      },
+      "writtenOn": "2019-11-14T17:47:21Z",
+      "side": 1,
+      "message": "nit: rust host tests ?",
+      "range": {
+        "startLine": 16,
+        "startChar": 51,
+        "endLine": 16,
+        "endChar": 60
+      },
+      "revId": "ca466b5f3a6ec6ded36f23234f78979dadeaa2ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
