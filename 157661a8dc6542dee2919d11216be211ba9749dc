@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0aeab4c7_eed4a17d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 676,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-11-14T21:13:50Z",
+      "side": 1,
+      "message": "yeah that\u0027s ok, unzip is done below on line 707",
+      "parentUuid": "df173ba2_214c0c79",
+      "revId": "157661a8dc6542dee2919d11216be211ba9749dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4f7e16d5_a87a3102",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2019-11-14T20:41:40Z",
       "side": 1,
       "message": "Can you put these in the same order",
+      "range": {
+        "startLine": 677,
+        "startChar": 50,
+        "endLine": 677,
+        "endChar": 84
+      },
+      "revId": "157661a8dc6542dee2919d11216be211ba9749dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5dbd0f89_9f4c80a5",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-11-14T21:13:50Z",
+      "side": 1,
+      "message": "Could I do that in a cleanup change after this? I feel like it\u0027d keep the logic more obvious in this change and keep the churn down, and I spotted a couple other cleanups that should be made as well (for example PRIVATE_MOUNT_POINT is never used below).",
+      "parentUuid": "4f7e16d5_a87a3102",
       "range": {
         "startLine": 677,
         "startChar": 50,
@@ -76,6 +118,24 @@
       "writtenOn": "2019-11-14T20:41:40Z",
       "side": 1,
       "message": "Nothing unzips the archive into the installation directory.  I think you\u0027ll need to convert the PRODUCT_COPY_FILES for modules.dep into a module, and then use LOCAL_POST_INSTALL_CMD to unzip the archive into the modules directory.",
+      "revId": "157661a8dc6542dee2919d11216be211ba9749dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcb92b1a_badf5c07",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-11-14T21:13:50Z",
+      "side": 1,
+      "message": "unzip on line 707",
+      "parentUuid": "2e2e68d1_87b88644",
       "revId": "157661a8dc6542dee2919d11216be211ba9749dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
