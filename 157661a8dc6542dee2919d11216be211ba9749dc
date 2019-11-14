@@ -139,6 +139,24 @@
       "revId": "157661a8dc6542dee2919d11216be211ba9749dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c75a0da_2b4564b4",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-14T21:44:07Z",
+      "side": 1,
+      "message": "I see, this has pushed the \"installation\" step into build of modules.dep, which is generally not what we want.  The modules.dep build rule should unzip the archive into its temporary directory and run depmod on it, but the actual copy to the installation directory needs to happen when the intermediates modules.dep is copied to the installation directory.",
+      "parentUuid": "bcb92b1a_badf5c07",
+      "revId": "157661a8dc6542dee2919d11216be211ba9749dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
