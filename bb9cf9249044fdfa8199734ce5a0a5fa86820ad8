@@ -34,6 +34,24 @@
       "revId": "bb9cf9249044fdfa8199734ce5a0a5fa86820ad8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "616bbee0_53f360af",
+        "filename": "target/board/mainline_arm64/sepolicy/OWNERS",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-11-14T00:49:19Z",
+      "side": 1,
+      "message": "Let me resolve this comment.",
+      "parentUuid": "9994b55a_fcfcdf1b",
+      "revId": "bb9cf9249044fdfa8199734ce5a0a5fa86820ad8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
