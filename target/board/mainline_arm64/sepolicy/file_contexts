@@ -1,0 +1,5 @@
+# TODO(b/143732851): remove this file when the mainline system image
+# no longer need these SoC specific directory
+
+# /persist
+/persist(/.*)?          u:object_r:persist_file:s0
