@@ -26,6 +26,11 @@ TARGET_2ND_CPU_VARIANT := generic
 
 include build/make/target/board/BoardConfigMainlineCommon.mk
 
+# TODO(b/143732851): Remove this after replacing /persit with
+# /mnt/vendor/persist
+BOARD_ROOT_EXTRA_SYMLINKS += /mnt/vendor/persist:/persist
+BOARD_SEPOLICY_DIRS += build/make/target/board/mainline_arm64/sepolicy
+
 TARGET_NO_KERNEL := true
 
 # Build generic A/B format system-only OTA.
