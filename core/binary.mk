@@ -1441,10 +1441,10 @@ endif
 
 # Check if -Werror or -Wno-error is used in C compiler flags.
 # Header libraries do not need cflags.
+my_all_cflags := $(my_cflags) $(my_cppflags) $(my_cflags_no_override)
 ifneq (HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS))
   # Prebuilt modules do not need cflags.
   ifeq (,$(LOCAL_PREBUILT_MODULE_FILE))
-    my_all_cflags := $(my_cflags) $(my_cppflags) $(my_cflags_no_override)
     # Issue warning if -Wno-error is used.
     ifneq (,$(filter -Wno-error,$(my_all_cflags)))
       $(eval MODULES_USING_WNO_ERROR := $(MODULES_USING_WNO_ERROR) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
@@ -1460,6 +1460,13 @@ ifneq (HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS))
         endif
       endif
     endif
+  endif
+endif
+
+ifneq (,$(filter -Weverything,$(my_all_cflags)))
+  ifeq (,$(ANDROID_TEMPORARILY_ALLOW_WEVERYTHING))
+    $(call pretty-error, -Weverything is not allowed in Android.mk files.\
+      Build with `m ANDROID_TEMPORARILY_ALLOW_WEVERYTHING=true` to experiment locally with -Weverything.)
   endif
 endif
 
