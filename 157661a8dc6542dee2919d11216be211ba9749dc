@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "df173ba2_214c0c79",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 676,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-14T20:41:40Z",
+      "side": 1,
+      "message": "This list of copy pairs will not contain the ones from the archive, and can not because the contents of the archive are not know when this is run.",
+      "revId": "157661a8dc6542dee2919d11216be211ba9749dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f7e16d5_a87a3102",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-14T20:41:40Z",
+      "side": 1,
+      "message": "Can you put these in the same order",
+      "range": {
+        "startLine": 677,
+        "startChar": 50,
+        "endLine": 677,
+        "endChar": 84
+      },
+      "revId": "157661a8dc6542dee2919d11216be211ba9749dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5adf872f_8413c903",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 706,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-14T20:41:40Z",
+      "side": 1,
+      "message": "$(if $(6),\\",
+      "range": {
+        "startLine": 706,
+        "startChar": 1,
+        "endLine": 706,
+        "endChar": 47
+      },
+      "revId": "157661a8dc6542dee2919d11216be211ba9749dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e2e68d1_87b88644",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-14T20:41:40Z",
+      "side": 1,
+      "message": "Nothing unzips the archive into the installation directory.  I think you\u0027ll need to convert the PRODUCT_COPY_FILES for modules.dep into a module, and then use LOCAL_POST_INSTALL_CMD to unzip the archive into the modules directory.",
+      "revId": "157661a8dc6542dee2919d11216be211ba9749dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
