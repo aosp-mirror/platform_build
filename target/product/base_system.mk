@@ -194,7 +194,6 @@ PRODUCT_PACKAGES += \
     mdnsd \
     media \
     mediacodec.policy \
-    mediadrmserver \
     mediaextractor \
     mediametrics \
     media_profiles_V1_0.dtd \
