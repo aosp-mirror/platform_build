@@ -267,7 +267,7 @@ PRODUCT_PACKAGES += \
     vold \
     WallpaperBackup \
     watchdogd \
-    InProcessWifiStack \
+    wifi-service \
     wificond \
     wm \
 
