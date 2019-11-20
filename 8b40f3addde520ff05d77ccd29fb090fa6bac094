@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f0a5348_12878e1e",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 1018108
+      },
+      "writtenOn": "2019-11-20T12:52:11Z",
+      "side": 1,
+      "message": "Never remove lines from CleanSpec. Add new lines at the end. (See the comment at the start of the file.)",
+      "revId": "8b40f3addde520ff05d77ccd29fb090fa6bac094",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
