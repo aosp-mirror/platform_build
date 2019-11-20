@@ -69,6 +69,7 @@ PRODUCT_PACKAGES += \
     Telecom \
     TelephonyProvider \
     TeleService \
+    TeleServiceLib \
     Traceur \
     UserDictionaryProvider \
     VpnDialogs \
