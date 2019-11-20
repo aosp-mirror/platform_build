@@ -60,6 +60,7 @@ PRODUCT_PACKAGES += \
     com.android.neuralnetworks \
     com.android.sdkext \
     com.android.telephony \
+    com.android.tethering \
     com.android.tzdata \
     ContactsProvider \
     content \
@@ -103,7 +104,6 @@ PRODUCT_PACKAGES += \
     incident_helper \
     init.environ.rc \
     init_system \
-    InProcessTethering \
     input \
     installd \
     iorapd \
@@ -326,7 +326,8 @@ PRODUCT_BOOT_JARS := \
     ims-common \
     framework-sdkext \
     ike \
-    updatable-media
+    updatable-media \
+    framework-tethering
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
@@ -334,7 +335,8 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.media:updatable-media \
     com.android.sdkext:framework-sdkext \
     com.android.telephony:telephony-common \
-    com.android.telephony:ims-common
+    com.android.telephony:ims-common \
+    com.android.tethering:framework-tethering
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
