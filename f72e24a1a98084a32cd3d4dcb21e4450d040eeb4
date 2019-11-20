@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b1e4afc8_82c51dd1",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-11-20T18:44:06Z",
+      "side": 1,
+      "message": "Can you add a comment and a TODO here that explains that this rule also installs modules from the module archive to the partition while creating modules.dep in the PACKAGING directory?",
+      "revId": "f72e24a1a98084a32cd3d4dcb21e4450d040eeb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
