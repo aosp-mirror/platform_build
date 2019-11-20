@@ -67,6 +67,7 @@ PRODUCT_PACKAGES += \
     com.android.os.statsd \
     com.android.sdkext \
     com.android.telephony \
+    com.android.tethering \
     com.android.tzdata \
     com.android.wifi \
     ContactsProvider \
@@ -108,7 +109,6 @@ PRODUCT_PACKAGES += \
     incident_helper \
     init.environ.rc \
     init_system \
-    InProcessTethering \
     input \
     installd \
     iorapd \
@@ -334,7 +334,8 @@ PRODUCT_BOOT_JARS := \
     ike \
     updatable-media \
     framework-appsearch \
-    framework-wifi
+    framework-wifi \
+    framework-tethering
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
@@ -345,7 +346,8 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.sdkext:framework-sdkext \
     com.android.telephony:telephony-common \
     com.android.telephony:ims-common \
-    com.android.wifi:framework-wifi
+    com.android.wifi:framework-wifi \
+    com.android.tethering:framework-tethering
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
