@@ -14,8 +14,11 @@
 # limitations under the License.
 #
 
-# All modules for telephony
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_product.mk)
+# This makefile contains the system_ext partition contents for
+# media-capable devices (non-wearables). Only add something here
+# if it definitely doesn't belong on wearables. Otherwise, choose
+# base_system_ext.mk.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base_system_ext.mk)
+
+# /system_ext packages
+PRODUCT_PACKAGES += \

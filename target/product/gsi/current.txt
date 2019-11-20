@@ -61,12 +61,15 @@ VNDK-core: android.hardware.atrace@1.0.so
 VNDK-core: android.hardware.audio.common@2.0.so
 VNDK-core: android.hardware.audio.common@4.0.so
 VNDK-core: android.hardware.audio.common@5.0.so
+VNDK-core: android.hardware.audio.common@6.0.so
 VNDK-core: android.hardware.audio.effect@2.0.so
 VNDK-core: android.hardware.audio.effect@4.0.so
 VNDK-core: android.hardware.audio.effect@5.0.so
+VNDK-core: android.hardware.audio.effect@6.0.so
 VNDK-core: android.hardware.audio@2.0.so
 VNDK-core: android.hardware.audio@4.0.so
 VNDK-core: android.hardware.audio@5.0.so
+VNDK-core: android.hardware.audio@6.0.so
 VNDK-core: android.hardware.authsecret@1.0.so
 VNDK-core: android.hardware.automotive.audiocontrol@1.0.so
 VNDK-core: android.hardware.automotive.evs@1.0.so
@@ -76,6 +79,7 @@ VNDK-core: android.hardware.biometrics.fingerprint@2.1.so
 VNDK-core: android.hardware.bluetooth.a2dp@1.0.so
 VNDK-core: android.hardware.bluetooth.audio@2.0.so
 VNDK-core: android.hardware.bluetooth@1.0.so
+VNDK-core: android.hardware.bluetooth@1.1.so
 VNDK-core: android.hardware.boot@1.0.so
 VNDK-core: android.hardware.boot@1.1.so
 VNDK-core: android.hardware.broadcastradio@1.0.so
@@ -95,6 +99,7 @@ VNDK-core: android.hardware.camera.provider@2.5.so
 VNDK-core: android.hardware.cas.native@1.0.so
 VNDK-core: android.hardware.cas@1.0.so
 VNDK-core: android.hardware.cas@1.1.so
+VNDK-core: android.hardware.cas@1.2.so
 VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
 VNDK-core: android.hardware.configstore@1.1.so
@@ -183,7 +188,6 @@ VNDK-core: android.hardware.vibrator@1.0.so
 VNDK-core: android.hardware.vibrator@1.1.so
 VNDK-core: android.hardware.vibrator@1.2.so
 VNDK-core: android.hardware.vibrator@1.3.so
-VNDK-core: android.hardware.vibrator@1.4.so
 VNDK-core: android.hardware.vr@1.0.so
 VNDK-core: android.hardware.weaver@1.0.so
 VNDK-core: android.hardware.wifi.hostapd@1.0.so
