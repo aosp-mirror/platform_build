@@ -17,5 +17,6 @@
 # This makefile is suitable to inherit by products that don't need to be split
 # up by partition.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base_system_ext.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base_product.mk)
