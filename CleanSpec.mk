@@ -716,6 +716,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/apex/com.android.cellbroadcast)
 # Remove MediaProvider after moving into APEX
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/MediaProvider)
 
+# The core image variant has been renamed to ""
+$(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -type d -name "android_*_core*" -print0 | xargs -0 rm -rf)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
