@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08f6bed2_28fa5fd0",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-21T15:47:33Z",
+      "side": 1,
+      "message": "Should they be listed in the same order as the locations just below this ?",
+      "range": {
+        "startLine": 327,
+        "startChar": 0,
+        "endLine": 327,
+        "endChar": 30
+      },
+      "revId": "912ea563c355ce77d16482699e38a26a75875c50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78accd1b_2fc4f712",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-21T15:47:33Z",
+      "side": 1,
+      "message": "framework-ike.jar please (or ike-framework.jar, hmm, I\u0027ll come to you :), to be consistent with other things (not the ones here, obviously)",
+      "range": {
+        "startLine": 331,
+        "startChar": 36,
+        "endLine": 331,
+        "endChar": 43
+      },
+      "revId": "912ea563c355ce77d16482699e38a26a75875c50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
