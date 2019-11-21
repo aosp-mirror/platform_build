@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2853169f_1d45017e",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-21T22:54:35Z",
+      "side": 1,
+      "message": "missing backslash at end of line",
+      "revId": "8761652160a083810dc8d527c6e18a9c6c202c2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
