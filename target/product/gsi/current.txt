@@ -115,6 +115,7 @@ VNDK-core: android.hardware.contexthub@1.0.so
 VNDK-core: android.hardware.drm@1.0.so
 VNDK-core: android.hardware.drm@1.1.so
 VNDK-core: android.hardware.drm@1.2.so
+VNDK-core: android.hardware.drm@1.3.so
 VNDK-core: android.hardware.dumpstate@1.0.so
 VNDK-core: android.hardware.fastboot@1.0.so
 VNDK-core: android.hardware.gatekeeper@1.0.so
