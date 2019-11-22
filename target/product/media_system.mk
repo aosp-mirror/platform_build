@@ -54,10 +54,10 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
     com.android.location.provider \
-    jobscheduler-service \
-    statsd-service \
-    blobstore-service \
-    appsearch-service \
+    service-jobscheduler \
+    service-statsd \
+    service-blobstore \
+    service-appsearch \
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
