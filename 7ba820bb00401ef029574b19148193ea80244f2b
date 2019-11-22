@@ -217,6 +217,30 @@
     },
     {
       "key": {
+        "uuid": "35643828_722b43ab",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-22T18:16:09Z",
+      "side": 1,
+      "message": "PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS sgtm",
+      "parentUuid": "75b556a7_c4872149",
+      "range": {
+        "startLine": 228,
+        "startChar": 55,
+        "endLine": 230,
+        "endChar": 48
+      },
+      "revId": "7ba820bb00401ef029574b19148193ea80244f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1de8aa74_4461390f",
         "filename": "core/product.mk",
         "patchSetId": 1
