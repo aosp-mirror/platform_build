@@ -121,6 +121,30 @@
     },
     {
       "key": {
+        "uuid": "b721da82_6d0f9551",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2019-11-22T17:56:58Z",
+      "side": 1,
+      "message": "2 variables are more efficient as no string splitting is necessary in Soong (it is probably ok to omit bonds checking and use the same index for both lists).",
+      "parentUuid": "da85ef29_8b34e450",
+      "range": {
+        "startLine": 228,
+        "startChar": 55,
+        "endLine": 230,
+        "endChar": 48
+      },
+      "revId": "7ba820bb00401ef029574b19148193ea80244f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1de8aa74_4461390f",
         "filename": "core/product.mk",
         "patchSetId": 1
