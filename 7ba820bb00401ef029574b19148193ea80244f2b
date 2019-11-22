@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "e4992396_50c40744",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-22T17:41:18Z",
+      "side": 1,
+      "message": "I highlighted the wrong strings, I meant these ones:\nPRODUCT_UPDATABLE_BOOT_MODULES\nPRODUCT_UPDATABLE_BOOT_LOCATIONS",
+      "parentUuid": "aec26cdd_4e811277",
+      "range": {
+        "startLine": 228,
+        "startChar": 55,
+        "endLine": 230,
+        "endChar": 48
+      },
+      "revId": "7ba820bb00401ef029574b19148193ea80244f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1de8aa74_4461390f",
         "filename": "core/product.mk",
         "patchSetId": 1
