@@ -145,6 +145,30 @@
     },
     {
       "key": {
+        "uuid": "3b771279_d82a08c4",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1074459
+      },
+      "writtenOn": "2019-11-22T18:02:07Z",
+      "side": 1,
+      "message": "But, that could change if the same apex delivers more than 1 system_server jar or boot jars (unlikely for now, but it could happen in the future). Then modules list will have 1 entry, but jars will have more than 1 entry. so, then it becomes hard to index the 2 lists.",
+      "parentUuid": "b721da82_6d0f9551",
+      "range": {
+        "startLine": 228,
+        "startChar": 55,
+        "endLine": 230,
+        "endChar": 48
+      },
+      "revId": "7ba820bb00401ef029574b19148193ea80244f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1de8aa74_4461390f",
         "filename": "core/product.mk",
         "patchSetId": 1
