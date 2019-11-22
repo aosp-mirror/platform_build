@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5495803f_715c1b6c",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-22T17:24:22Z",
+      "side": 1,
+      "message": "Is there a reason the new prop isn\u0027t consistent with the BCP-equivalent? (i.e. not pairing them up in a single prop).",
+      "range": {
+        "startLine": 228,
+        "startChar": 55,
+        "endLine": 230,
+        "endChar": 48
+      },
+      "revId": "7ba820bb00401ef029574b19148193ea80244f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1de8aa74_4461390f",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-22T17:24:22Z",
+      "side": 1,
+      "message": "please add documentation for how this variable is used here",
+      "range": {
+        "startLine": 230,
+        "startChar": 48,
+        "endLine": 231,
+        "endChar": 53
+      },
+      "revId": "7ba820bb00401ef029574b19148193ea80244f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
