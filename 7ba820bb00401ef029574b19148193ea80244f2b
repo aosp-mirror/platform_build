@@ -169,6 +169,30 @@
     },
     {
       "key": {
+        "uuid": "e812f566_2d1c5784",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2019-11-22T18:05:40Z",
+      "side": 1,
+      "message": "Good point! Then let\u0027s agree on the current 1-variable version.",
+      "parentUuid": "3b771279_d82a08c4",
+      "range": {
+        "startLine": 228,
+        "startChar": 55,
+        "endLine": 230,
+        "endChar": 48
+      },
+      "revId": "7ba820bb00401ef029574b19148193ea80244f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1de8aa74_4461390f",
         "filename": "core/product.mk",
         "patchSetId": 1
