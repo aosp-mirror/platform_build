@@ -481,9 +481,9 @@ def process_dynamic_partitions_info_txt(framework_target_files_dir,
   merged_dynamic_partitions_dict = common.MergeDynamicPartitionInfoDicts(
       framework_dict=framework_dynamic_partitions_dict,
       vendor_dict=vendor_dynamic_partitions_dict,
-      # META/dynamic_partitions_info.txt does not use dynamic_partition_list.
-      include_dynamic_partition_list=False,
-      size_suffix='_size',
+      size_prefix='super_',
+      size_suffix='_group_size',
+      list_prefix='super_',
       list_suffix='_partition_list')
 
   output_dynamic_partitions_info_txt = os.path.join(
