@@ -46,6 +46,7 @@ PRODUCT_PACKAGES += \
     bu \
     bugreport \
     bugreportz \
+    cacerts_wfa \
     cgroups.json \
     charger \
     cmd \
@@ -60,6 +61,7 @@ PRODUCT_PACKAGES += \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.tzdata \
+    com.android.wifi \
     ContactsProvider \
     content \
     crash_dump \
@@ -267,7 +269,6 @@ PRODUCT_PACKAGES += \
     vold \
     WallpaperBackup \
     watchdogd \
-    wifi-service \
     wificond \
     wm \
 
