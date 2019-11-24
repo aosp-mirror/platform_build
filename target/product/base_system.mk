@@ -30,6 +30,7 @@ PRODUCT_PACKAGES += \
     apexd \
     appops \
     app_process \
+    appsearch-service \
     appwidget \
     atrace \
     audioserver \
@@ -126,6 +127,7 @@ PRODUCT_PACKAGES += \
     libcamera2ndk \
     libcutils \
     libdl.bootstrap \
+    libdl_android.bootstrap \
     libdrmframework \
     libdrmframework_jni \
     libEGL \

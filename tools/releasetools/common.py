@@ -1241,7 +1241,7 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
     avbtool = info_dict["avb_avbtool"]
     part_size = info_dict["vendor_boot_size"]
     cmd = [avbtool, "add_hash_footer", "--image", img.name,
-           "--partition_size", str(part_size), "--partition_name vendor_boot"]
+           "--partition_size", str(part_size), "--partition_name", "vendor_boot"]
     AppendAVBSigningArgs(cmd, "vendor_boot")
     args = info_dict.get("avb_vendor_boot_add_hash_footer_args")
     if args and args.strip():

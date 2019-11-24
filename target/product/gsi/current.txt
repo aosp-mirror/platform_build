@@ -40,6 +40,7 @@ VNDK-SP: libblas.so
 VNDK-SP: libc++.so
 VNDK-SP: libcompiler_rt.so
 VNDK-SP: libcutils.so
+VNDK-SP: libgralloctypes.so
 VNDK-SP: libhardware.so
 VNDK-SP: libhidlbase.so
 VNDK-SP: libhidlmemory.so
@@ -140,6 +141,7 @@ VNDK-core: android.hardware.input.common@1.0.so
 VNDK-core: android.hardware.ir@1.0.so
 VNDK-core: android.hardware.keymaster@3.0.so
 VNDK-core: android.hardware.keymaster@4.0.so
+VNDK-core: android.hardware.keymaster@4.1.so
 VNDK-core: android.hardware.light@2.0.so
 VNDK-core: android.hardware.media.bufferpool@1.0.so
 VNDK-core: android.hardware.media.bufferpool@2.0.so
