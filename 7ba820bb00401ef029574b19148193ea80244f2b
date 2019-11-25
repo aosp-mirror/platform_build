@@ -265,6 +265,30 @@
     },
     {
       "key": {
+        "uuid": "0b47e824_d7232691",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2019-11-25T09:23:58Z",
+      "side": 1,
+      "message": "Ulya, about:\n\n\u003e In case of BCP it is always the ART apex: com.android.art, but here jars come from different \u003e apexes. See e.g. how the pair (apex, jar) is used in the related CL in Soong.\n\nActually, the boot classpath also contains modules outside of ART, eg conscrypt.",
+      "parentUuid": "5dbec049_4b7dbcd4",
+      "range": {
+        "startLine": 228,
+        "startChar": 55,
+        "endLine": 230,
+        "endChar": 48
+      },
+      "revId": "7ba820bb00401ef029574b19148193ea80244f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1de8aa74_4461390f",
         "filename": "core/product.mk",
         "patchSetId": 1
