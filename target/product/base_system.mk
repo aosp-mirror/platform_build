@@ -30,7 +30,7 @@ PRODUCT_PACKAGES += \
     apexd \
     appops \
     app_process \
-    appsearch-service \
+    service-appsearch \
     appwidget \
     atrace \
     audioserver \
@@ -38,7 +38,7 @@ PRODUCT_PACKAGES += \
     bcc \
     blank_screen \
     blkid \
-    blobstore-service \
+    service-blobstore \
     bmgr \
     bootanimation \
     bootstat \
@@ -109,7 +109,7 @@ PRODUCT_PACKAGES += \
     iptables \
     ip-up-vpn \
     javax.obex \
-    jobscheduler-service \
+    service-jobscheduler \
     keystore \
     ld.config.txt \
     ld.mc \
@@ -244,7 +244,7 @@ PRODUCT_PACKAGES += \
     snapshotctl \
     SoundPicker \
     statsd \
-    statsd-service \
+    service-statsd \
     storaged \
     surfaceflinger \
     svc \

@@ -54,10 +54,10 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
     com.android.location.provider \
-    jobscheduler-service \
-    statsd-service \
-    blobstore-service \
-    appsearch-service \
+    service-jobscheduler \
+    service-statsd \
+    service-blobstore \
+    service-appsearch \
 
 # system server jars which are updated via apex modules.
 # The values should be of the format <apex name>:<jar name>
