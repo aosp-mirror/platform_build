@@ -22,3 +22,4 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/base_system_ext.mk)
 
 # /system_ext packages
 PRODUCT_PACKAGES += \
+    vndk_apex_snapshot_package \
