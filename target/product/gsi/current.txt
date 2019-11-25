@@ -283,6 +283,7 @@ VNDK-core: libwifi-system-iface.so
 VNDK-core: libxml2.so
 VNDK-core: libyuv.so
 VNDK-core: libziparchive.so
+VNDK-core: vintf-vibrator-V1-ndk_platform.so
 VNDK-private: libbacktrace.so
 VNDK-private: libbinderthreadstate.so
 VNDK-private: libblas.so
