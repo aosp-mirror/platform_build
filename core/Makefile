@@ -5115,8 +5115,8 @@ FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INS
 # target defined in make. MakeVarsContext.DistForGoal doesn't take
 # into account that a PHONY rule create by Soong won't be available
 # during make, and such will fail with `writing to readonly
-# directory`, because kati will see 'fuzz' as being a file, not a
+# directory`, because kati will see 'haiku' as being a file, not a
 # phony target.
-.PHONY: fuzz
-fuzz: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
-$(call dist-for-goals,fuzz,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
+.PHONY: haiku
+haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
+$(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
