@@ -39,7 +39,6 @@ PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
 
 # Do not spin up a separate process for the network stack on go devices, use an in-process APK.
 PRODUCT_PACKAGES += InProcessNetworkStack
-PRODUCT_PACKAGES += InProcessWifiStack
 PRODUCT_PACKAGES += CellBroadcastAppPlatform
 PRODUCT_PACKAGES += CellBroadcastServiceModulePlatform
 
