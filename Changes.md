@@ -1,5 +1,36 @@
 # Build System Changes for Android.mk Writers
 
+## LOCAL_C_INCLUDES outside the source/output trees are an error {#BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS}
+
+Include directories are expected to be within the source tree (or in the output
+directory, generated during the build). This has been checked in some form
+since Oreo, but now has better checks.
+
+There's now a `BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS` variable, that when set, will
+turn these errors into warnings temporarily. I don't expect this to last more
+than a release, since they're fairly easy to clean up.
+
+Neither of these cases are supported by Soong, and will produce errors when
+converting your module.
+
+### Absolute paths
+
+This has been checked since Oreo. The common reason to hit this is because a
+makefile is calculating a path, and ran abspath/realpath/etc. This is a problem
+because it makes your build non-reproducible. It's very unlikely that your
+source path is the same on every machine.
+
+### Using `../` to leave the source/output directories
+
+This is the new check that has been added. In every case I've found, this has
+been a mistake in the Android.mk -- assuming that `LOCAL_C_INCLUDES` (which is
+relative to the top of the source tree) acts like `LOCAL_SRC_FILES` (which is
+relative to `LOCAL_PATH`).
+
+Since this usually isn't a valid path, you can almost always just remove the
+offending line.
+
+
 # `BOARD_HAL_STATIC_LIBRARIES` and `LOCAL_HAL_STATIC_LIBRARIES` are obsolete {#BOARD_HAL_STATIC_LIBRARIES}
 
 Define proper HIDL / Stable AIDL HAL instead.
