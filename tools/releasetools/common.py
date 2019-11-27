@@ -87,6 +87,7 @@ class Options(object):
     # Stash size cannot exceed cache_size * threshold.
     self.cache_size = None
     self.stash_threshold = 0.8
+    self.logfile = None
 
 
 OPTIONS = Options()
@@ -158,13 +159,14 @@ def InitLogging():
           'default': {
               'class': 'logging.StreamHandler',
               'formatter': 'standard',
+              'level': 'WARNING',
           },
       },
       'loggers': {
           '': {
               'handlers': ['default'],
-              'level': 'WARNING',
               'propagate': True,
+              'level': 'INFO',
           }
       }
   }
@@ -177,8 +179,19 @@ def InitLogging():
 
     # Increase the logging level for verbose mode.
     if OPTIONS.verbose:
-      config = copy.deepcopy(DEFAULT_LOGGING_CONFIG)
-      config['loggers']['']['level'] = 'INFO'
+      config = copy.deepcopy(config)
+      config['handlers']['default']['level'] = 'INFO'
+
+    if OPTIONS.logfile:
+      config = copy.deepcopy(config)
+      config['handlers']['logfile'] = {
+        'class': 'logging.FileHandler',
+        'formatter': 'standard',
+        'level': 'INFO',
+        'mode': 'w',
+        'filename': OPTIONS.logfile,
+      }
+      config['loggers']['']['handlers'].append('logfile')
 
   logging.config.dictConfig(config)
 
@@ -1797,6 +1810,9 @@ Global options
 
   -h  (--help)
       Display this usage message and exit.
+
+  --logfile <file>
+      Put verbose logs to specified file (regardless of --verbose option.)
 """
 
 def Usage(docstring):
@@ -1822,7 +1838,7 @@ def ParseOptions(argv,
          "java_path=", "java_args=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
-         "extra="] +
+         "extra=", "logfile="] +
         list(extra_long_opts))
   except getopt.GetoptError as err:
     Usage(docstring)
@@ -1864,6 +1880,8 @@ def ParseOptions(argv,
     elif o in ("-x", "--extra"):
       key, value = a.split("=", 1)
       OPTIONS.extras[key] = value
+    elif o in ("--logfile",):
+      OPTIONS.logfile = a
     else:
       if extra_option_handler is None or not extra_option_handler(o, a):
         assert False, "unknown option \"%s\"" % (o,)
