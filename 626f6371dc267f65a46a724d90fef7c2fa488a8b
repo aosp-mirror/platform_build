@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f548492a_593d8dd3",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2019-11-28T13:14:03Z",
+      "side": 1,
+      "message": "Wouldn\u0027t consistency with PRODUCT_BOOT_JARS be that we drop the apex name in that list?\n\nI guess we\u0027re ending up using two information from that list: the location, and the library name. Can we not infer the location from the library name?",
+      "range": {
+        "startLine": 328,
+        "startChar": 0,
+        "endLine": 331,
+        "endChar": 37
+      },
+      "revId": "626f6371dc267f65a46a724d90fef7c2fa488a8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
