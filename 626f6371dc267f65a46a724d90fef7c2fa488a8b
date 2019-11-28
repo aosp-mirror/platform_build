@@ -46,6 +46,30 @@
       "revId": "626f6371dc267f65a46a724d90fef7c2fa488a8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc2174da_f24e19b0",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-28T14:45:25Z",
+      "side": 1,
+      "message": "(the argument was to make it consistent with PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS, not PRODUCT_BOOT_JARS) :)",
+      "parentUuid": "f548492a_593d8dd3",
+      "range": {
+        "startLine": 328,
+        "startChar": 0,
+        "endLine": 331,
+        "endChar": 37
+      },
+      "revId": "626f6371dc267f65a46a724d90fef7c2fa488a8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
