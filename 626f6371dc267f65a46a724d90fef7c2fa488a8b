@@ -22,6 +22,30 @@
       "revId": "626f6371dc267f65a46a724d90fef7c2fa488a8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9094318f_a81254cf",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2019-11-28T14:43:29Z",
+      "side": 1,
+      "message": "I think for a given \"module\" in Soong it would amount to finding a module of type ApexBundle that has \"module\" in its properties.Java_libs. Supposing that module\u0027s name is \"name\", then the location will be \"/apex/module-name/javalib/module.jar\". It would be necessary to traverse all modules at least once and check that each library-apex combination is unique. So the inference can be done in Soong, but it\u0027s neither simple nor reliable.\n\nIn Make I\u0027m not sure how this inference would work (and I\u0027m not sure it\u0027s needed anyway).",
+      "parentUuid": "f548492a_593d8dd3",
+      "range": {
+        "startLine": 328,
+        "startChar": 0,
+        "endLine": 331,
+        "endChar": 37
+      },
+      "revId": "626f6371dc267f65a46a724d90fef7c2fa488a8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
