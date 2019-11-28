@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "819f7f4f_66216aa2",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-11-28T11:04:50Z",
+      "side": 1,
+      "message": "there seems to be a fair amount of logic that checks PRODUCT_BOOT_JARS and not PRODUCT_UPDATABLE_BOOT_MODULES. Do you think it\u0027s causing some problem? If not, please remove this",
+      "range": {
+        "startLine": 318,
+        "startChar": 0,
+        "endLine": 318,
+        "endChar": 98
+      },
+      "revId": "5668ac9268c9aea3e75989f677bcfa143dd162d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
