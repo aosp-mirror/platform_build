@@ -88,6 +88,7 @@ PRODUCT_PACKAGES += \
     framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
+    framework-wifi \
     fsck_msdos \
     fs_config_files_system \
     fs_config_dirs_system \
@@ -332,7 +333,8 @@ PRODUCT_BOOT_JARS := \
     ims-common \
     framework-sdkext \
     ike \
-    updatable-media
+    updatable-media \
+    framework-wifi
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
