@@ -58,6 +58,11 @@ ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR))) # con
   LOCAL_DEX_PREOPT :=
 endif
 
+# Don't preopt system server jars that are updatable.
+ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS)))
+  LOCAL_DEX_PREOPT :=
+endif
+
 # if WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true and module is not in boot class path skip
 # Also preopt system server jars since selinux prevents system server from loading anything from
 # /data. If we don't do this they will need to be extracted which is not favorable for RAM usage
