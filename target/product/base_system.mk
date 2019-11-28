@@ -206,6 +206,7 @@ PRODUCT_PACKAGES += \
     media_profiles_V1_0.dtd \
     MediaProvider \
     mediaserver \
+    mediatranscoding \
     mke2fs \
     monkey \
     mtpd \
