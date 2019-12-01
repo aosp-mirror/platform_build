@@ -104,6 +104,7 @@ PRODUCT_PACKAGES += \
     incident_helper \
     init.environ.rc \
     init_system \
+    InProcessTethering \
     input \
     installd \
     iorapd \
