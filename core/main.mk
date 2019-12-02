@@ -1121,10 +1121,6 @@ APEX_MODULE_LIBS += \
   libdl_android.so \
   libm.so \
 
-# Android Neural Network API (NNAPI) APEX (native) libraries
-APEX_MODULE_LIBS += \
-  libneuralnetworks.so \
-
 # An option to disable the check below, for local use since some build targets
 # still may create these libraries in /system (b/129006418).
 DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
