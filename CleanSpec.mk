@@ -702,6 +702,13 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/framework/*.jar)
 # The core image variant has been renamed to ""
 $(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -type d -name "android_*_core*" -print0 | xargs -0 rm -rf)
 
+# Remove CtsShim apks from system partition, since the have been moved inside
+# the cts shim apex. Also remove the cts shim apex prebuilt since it has been
+# removed in flattened apexs configurations.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/CtsShimPrivPrebuilt)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/CtsShimPrebuilt)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/apex/com.android.apex.cts.shim.apex)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
