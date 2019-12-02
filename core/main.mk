@@ -1112,15 +1112,6 @@ endef
 # art/build/apex/art_apex_test.py.
 # TODO(b/128708192): Implement this restriction in Soong instead.
 
-# Runtime (Bionic) APEX (native) libraries
-APEX_MODULE_LIBS += \
-  libc.so \
-  libc_malloc_debug.so \
-  libc_malloc_hooks.so \
-  libdl.so \
-  libdl_android.so \
-  libm.so \
-
 # An option to disable the check below, for local use since some build targets
 # still may create these libraries in /system (b/129006418).
 DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
