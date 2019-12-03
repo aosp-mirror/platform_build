@@ -315,6 +315,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
     build_command.extend([out_file, prop_dict["image_size"]])
+    if "f2fs_sparse_flag" in prop_dict:
+      build_command.extend([prop_dict["f2fs_sparse_flag"]])
     if fs_config:
       build_command.extend(["-C", fs_config])
     build_command.extend(["-f", in_dir])
@@ -519,6 +521,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   common_props = (
       "extfs_sparse_flag",
       "squashfs_sparse_flag",
+      "f2fs_sparse_flag",
       "skip_fsck",
       "ext_mkuserimg",
       "verity",
