@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "77da21e5_0a485efe",
+        "filename": "Changes.md",
+        "patchSetId": 6
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-12-03T22:07:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0af855bd_e572c69e",
+      "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ee80348_f7edb129",
         "filename": "Changes.md",
         "patchSetId": 6
@@ -33,6 +51,24 @@
       "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a7808fd_d3905800",
+        "filename": "Changes.md",
+        "patchSetId": 6
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-12-03T22:07:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8ee80348_f7edb129",
+      "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -56,6 +92,30 @@
       "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aba03f06_c1946311",
+        "filename": "core/binary.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-12-03T22:07:49Z",
+      "side": 1,
+      "message": "LOCAL_HAL_STATIC_LIBRARIES is only defined per-module, so I think this is the proper place to put the pretty-error. PTAL.",
+      "parentUuid": "ba139608_07f51753",
+      "range": {
+        "startLine": 440,
+        "startChar": 2,
+        "endLine": 440,
+        "endChar": 7
+      },
+      "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
