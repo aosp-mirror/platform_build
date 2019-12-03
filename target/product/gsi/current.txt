@@ -203,6 +203,7 @@ VNDK-core: android.hardware.vr@1.0.so
 VNDK-core: android.hardware.weaver@1.0.so
 VNDK-core: android.hardware.wifi.hostapd@1.0.so
 VNDK-core: android.hardware.wifi.hostapd@1.1.so
+VNDK-core: android.hardware.wifi.hostapd@1.2.so
 VNDK-core: android.hardware.wifi.offload@1.0.so
 VNDK-core: android.hardware.wifi.supplicant@1.0.so
 VNDK-core: android.hardware.wifi.supplicant@1.1.so
