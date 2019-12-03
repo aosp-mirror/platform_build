@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0af855bd_e572c69e",
+        "filename": "Changes.md",
+        "patchSetId": 6
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-12-03T21:17:10Z",
+      "side": 1,
+      "message": "I\u0027ve been adding new sections at the top of this file, not the bottom",
+      "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ee80348_f7edb129",
+        "filename": "Changes.md",
+        "patchSetId": 6
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-12-03T21:17:10Z",
+      "side": 1,
+      "message": "Can you link to the readme you added? See lines 446 \u0026 482 for how we\u0027ve been defining links here",
+      "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba139608_07f51753",
+        "filename": "core/binary.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-12-03T21:17:10Z",
+      "side": 1,
+      "message": "Either have it print information about which makefile / module caused the problem:\n\n $(call pretty-error,LOCAL_HAL_STATIC_LIBRARIES is no longer supported.)\n\nOr just mark LOCAL_HAL_STATIC_LIBRARIES as obsolete like BOARD_HAL_STATIC_LIBRARIES (which will produce an error with the exact file/line information). You\u0027d need to remove it in clear_vars.mk then too",
+      "range": {
+        "startLine": 440,
+        "startChar": 2,
+        "endLine": 440,
+        "endChar": 7
+      },
+      "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
