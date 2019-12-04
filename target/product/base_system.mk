@@ -58,8 +58,10 @@ PRODUCT_PACKAGES += \
     com.android.location.provider \
     com.android.media \
     com.android.media.swcodec \
+    com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
+    com.android.sdkext \
     com.android.tzdata \
     com.android.wifi \
     ContactsProvider \
@@ -326,13 +328,15 @@ PRODUCT_BOOT_JARS := \
     telephony-common \
     voip-common \
     ims-common \
+    framework-sdkext \
     ike \
     updatable-media
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
     com.android.ipsec:ike \
-    com.android.media:updatable-media
+    com.android.media:updatable-media \
+    com.android.sdkext:framework-sdkext
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \

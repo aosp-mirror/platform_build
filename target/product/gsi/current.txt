@@ -115,6 +115,7 @@ VNDK-core: android.hardware.contexthub@1.0.so
 VNDK-core: android.hardware.drm@1.0.so
 VNDK-core: android.hardware.drm@1.1.so
 VNDK-core: android.hardware.drm@1.2.so
+VNDK-core: android.hardware.drm@1.3.so
 VNDK-core: android.hardware.dumpstate@1.0.so
 VNDK-core: android.hardware.fastboot@1.0.so
 VNDK-core: android.hardware.gatekeeper@1.0.so
@@ -123,6 +124,7 @@ VNDK-core: android.hardware.gnss.visibility_control@1.0.so
 VNDK-core: android.hardware.gnss@1.0.so
 VNDK-core: android.hardware.gnss@1.1.so
 VNDK-core: android.hardware.gnss@2.0.so
+VNDK-core: android.hardware.gnss@2.1.so
 VNDK-core: android.hardware.graphics.allocator@2.0.so
 VNDK-core: android.hardware.graphics.allocator@3.0.so
 VNDK-core: android.hardware.graphics.allocator@4.0.so
