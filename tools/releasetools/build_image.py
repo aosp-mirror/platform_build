@@ -585,7 +585,6 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
-    copy_prop("system_base_fs_file", "base_fs_file")
     copy_prop("system_extfs_inode_count", "extfs_inode_count")
     if not copy_prop("system_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
