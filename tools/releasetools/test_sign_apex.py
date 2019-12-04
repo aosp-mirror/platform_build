@@ -38,5 +38,6 @@ class SignApexTest(test_utils.ReleaseToolsTestCase):
         'avbtool',
         foo_apex,
         payload_key,
-        container_key)
+        container_key,
+        False)
     self.assertTrue(os.path.exists(signed_foo_apex))
