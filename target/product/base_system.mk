@@ -58,6 +58,7 @@ PRODUCT_PACKAGES += \
     com.android.location.provider \
     com.android.media \
     com.android.media.swcodec \
+    com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.sdkext \
