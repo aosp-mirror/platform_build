@@ -140,6 +140,30 @@
       "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2c73c0df_99447f15",
+        "filename": "core/binary.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-12-04T19:24:58Z",
+      "side": 1,
+      "message": "So I should call KATI_obsolete_var here?",
+      "parentUuid": "a38e9b20_bebdffbe",
+      "range": {
+        "startLine": 440,
+        "startChar": 2,
+        "endLine": 440,
+        "endChar": 7
+      },
+      "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
