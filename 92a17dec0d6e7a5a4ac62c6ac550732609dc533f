@@ -116,6 +116,30 @@
       "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a38e9b20_bebdffbe",
+        "filename": "core/binary.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-12-04T19:12:39Z",
+      "side": 1,
+      "message": "Yes, but marking the variable as obsolete gives a better error message (down to the line that it was defined)",
+      "parentUuid": "aba03f06_c1946311",
+      "range": {
+        "startLine": 440,
+        "startChar": 2,
+        "endLine": 440,
+        "endChar": 7
+      },
+      "revId": "92a17dec0d6e7a5a4ac62c6ac550732609dc533f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
