@@ -120,6 +120,8 @@ $(KATI_obsolete_var \
 )
 $(KATI_obsolete_var PRODUCT_IOT)
 $(KATI_obsolete_var MD5SUM)
+$(KATI_obsolete_var BOARD_HAL_STATIC_LIBRARIES, See $(CHANGES_URL)#BOARD_HAL_STATIC_LIBRARIES)
+$(KATI_obsolete_var LOCAL_HAL_STATIC_LIBRARIES, See $(CHANGES_URL)#BOARD_HAL_STATIC_LIBRARIES)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
