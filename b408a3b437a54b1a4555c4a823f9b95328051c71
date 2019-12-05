@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "399ebb07_8299de92",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1115178
+      },
+      "writtenOn": "2019-12-05T20:11:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0d62b226_44140382",
+      "range": {
+        "startLine": 89,
+        "startChar": 37,
+        "endLine": 89,
+        "endChar": 45
+      },
+      "revId": "b408a3b437a54b1a4555c4a823f9b95328051c71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f0ae96f8_48094db5",
         "filename": "core/binary.mk",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "b408a3b437a54b1a4555c4a823f9b95328051c71",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a378780b_c0358b2e",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1115178
+      },
+      "writtenOn": "2019-12-05T20:11:51Z",
+      "side": 1,
+      "message": "Ah yea that\u0027s much nicer, thanks!",
+      "parentUuid": "f0ae96f8_48094db5",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 90,
+        "endChar": 42
+      },
+      "revId": "b408a3b437a54b1a4555c4a823f9b95328051c71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
