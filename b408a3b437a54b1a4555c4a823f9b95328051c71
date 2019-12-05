@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d62b226_44140382",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-12-05T19:50:18Z",
+      "side": 1,
+      "message": "There are no commas in ALLOWED_MANUAL_INTERFACE_PATHS",
+      "range": {
+        "startLine": 89,
+        "startChar": 37,
+        "endLine": 89,
+        "endChar": 45
+      },
+      "revId": "b408a3b437a54b1a4555c4a823f9b95328051c71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0ae96f8_48094db5",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-12-05T19:50:18Z",
+      "side": 1,
+      "message": "I think this can be:\n\n  ifneq (,$(filter $(addsuffix %,$(ALLOWED_MANUAL_INTERFACE_PATHS)),$(LOCAL_PATH)))",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 90,
+        "endChar": 42
+      },
+      "revId": "b408a3b437a54b1a4555c4a823f9b95328051c71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
