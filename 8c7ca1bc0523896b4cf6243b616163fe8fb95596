@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e44562d7_ad17b269",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-06T23:09:07Z",
+      "side": 1,
+      "message": "it used to be the case that telephony was kept separate from other makefiles (see the telephony_*.mk files in this repo). Is that no longer a relevant distinction? (pretty much every device will inherit this one, including non-telephony devices, I suppose).",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 27
+      },
+      "revId": "8c7ca1bc0523896b4cf6243b616163fe8fb95596",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
