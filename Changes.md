@@ -1,5 +1,17 @@
 # Build System Changes for Android.mk Writers
 
+# `BOARD_HAL_STATIC_LIBRARIES` and `LOCAL_HAL_STATIC_LIBRARIES` are obsolete {#BOARD_HAL_STATIC_LIBRARIES}
+
+Define proper HIDL / Stable AIDL HAL instead.
+
+* For libhealthd, use health HAL. See instructions for implementing
+  health HAL:
+
+  * [hardware/interfaces/health/2.1/README.md] for health 2.1 HAL (recommended)
+  * [hardware/interfaces/health/1.0/README.md] for health 1.0 HAL
+
+* For libdumpstate, use at least Dumpstate HAL 1.0.
+
 ## PRODUCT_STATIC_BOOT_CONTROL_HAL is obsolete {#PRODUCT_STATIC_BOOT_CONTROL_HAL}
 
 `PRODUCT_STATIC_BOOT_CONTROL_HAL` was the workaround to allow sideloading with
@@ -480,3 +492,5 @@ version.
 [external/fonttools/Lib/fontTools/Android.bp]: https://android.googlesource.com/platform/external/fonttools/+/master/Lib/fontTools/Android.bp
 [frameworks/base/Android.bp]: https://android.googlesource.com/platform/frameworks/base/+/master/Android.bp
 [frameworks/base/data/fonts/Android.mk]: https://android.googlesource.com/platform/frameworks/base/+/master/data/fonts/Android.mk
+[hardware/interfaces/health/1.0/README.md]: https://android.googlesource.com/platform/hardware/interfaces/+/master/health/1.0/README.md
+[hardware/interfaces/health/2.1/README.md]: https://android.googlesource.com/platform/hardware/interfaces/+/master/health/2.1/README.md

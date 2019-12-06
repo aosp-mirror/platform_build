@@ -435,15 +435,6 @@ my_header_libraries := $(LOCAL_HEADER_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_V
 
 include $(BUILD_SYSTEM)/cxx_stl_setup.mk
 
-# Add static HAL libraries
-ifdef LOCAL_HAL_STATIC_LIBRARIES
-$(foreach lib, $(LOCAL_HAL_STATIC_LIBRARIES), \
-    $(eval b_lib := $(filter $(lib).%,$(BOARD_HAL_STATIC_LIBRARIES)))\
-    $(if $(b_lib), $(eval my_static_libraries += $(b_lib)),\
-                   $(eval my_static_libraries += $(lib).default)))
-b_lib :=
-endif
-
 ifneq ($(strip $(CUSTOM_$(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)LINKER)),)
   my_linker := $(CUSTOM_$(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)LINKER)
 else
