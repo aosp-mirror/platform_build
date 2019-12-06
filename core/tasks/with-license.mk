@@ -20,7 +20,7 @@ ifeq ($(TARGET_BUILD_TYPE),debug)
 	name := $(name)_debug
 endif
 
-name := $(name)-img-$(FILE_NAME_TAG)-with-license
+name := $(name)-flashable-$(FILE_NAME_TAG)-with-license
 
 with_license_intermediates := \
 	$(call intermediates-dir-for,PACKAGING,with_license)
@@ -35,8 +35,7 @@ ifndef VENDOR_BLOBS_LICENSE
 else
 	$(ZIP2ZIP) -i $(BUILT_TARGET_FILES_PACKAGE) -o $@ \
 		RADIO/bootloader.img:bootloader.img RADIO/radio.img:radio.img \
-		IMAGES/system.img:system.img IMAGES/vendor.img:vendor.img \
-		IMAGES/boot.img:boot.img OTA/android-info.txt:android-info.txt
+		IMAGES/*.img:. OTA/android-info.txt:android-info.txt
 endif
 with_license_zip := $(PRODUCT_OUT)/$(name).sh
 $(with_license_zip): PRIVATE_NAME := $(name)
