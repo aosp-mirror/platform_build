@@ -22,6 +22,30 @@
       "revId": "8f9b3c196ce155f706294a7abae8d3e26815a439",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7850b2a6_dcc0237e",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1307230
+      },
+      "writtenOn": "2019-12-06T17:10:24Z",
+      "side": 1,
+      "message": "Valid, we decided to call it something else because it does include radio/bootloader images in addition to what -img- has in it. Naming is hard 😊",
+      "parentUuid": "6137aa48_9ff2651c",
+      "range": {
+        "startLine": 23,
+        "startChar": 16,
+        "endLine": 23,
+        "endChar": 25
+      },
+      "revId": "8f9b3c196ce155f706294a7abae8d3e26815a439",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
