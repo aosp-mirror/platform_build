@@ -84,6 +84,12 @@ ifneq ($(NATIVE_COVERAGE),true)
   my_native_coverage := false
 endif
 
+# Exclude directories from manual binder interface whitelisting.
+# TODO(b/145621474): Move this check into IInterface.h when clang-tidy no longer uses absolute paths.
+ifneq (,$(filter $(addsuffix %,$(ALLOWED_MANUAL_INTERFACE_PATHS)),$(LOCAL_PATH)))
+  my_cflags += -DDO_NOT_CHECK_MANUAL_BINDER_INTERFACES
+endif
+
 ifneq ($(strip $(ENABLE_XOM)),false)
   ifndef LOCAL_IS_HOST_MODULE
     my_xom := true
