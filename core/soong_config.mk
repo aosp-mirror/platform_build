@@ -113,6 +113,7 @@ $(call add_json_bool, ClangTidy,                         $(filter 1 true,$(WITH_
 $(call add_json_str,  TidyChecks,                        $(WITH_TIDY_CHECKS))
 
 $(call add_json_bool, NativeCoverage,                    $(filter true,$(NATIVE_COVERAGE)))
+$(call add_json_bool, ClangCoverage,                     $(filter true,$(CLANG_COVERAGE)))
 $(call add_json_list, CoveragePaths,                     $(COVERAGE_PATHS))
 $(call add_json_list, CoverageExcludePaths,              $(COVERAGE_EXCLUDE_PATHS))
 
