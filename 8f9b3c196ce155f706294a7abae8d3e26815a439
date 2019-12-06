@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6137aa48_9ff2651c",
+        "filename": "core/tasks/with-license.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-12-06T17:03:10Z",
+      "side": 1,
+      "message": "img_with_license here would probably work and not match *-img-*",
+      "range": {
+        "startLine": 23,
+        "startChar": 16,
+        "endLine": 23,
+        "endChar": 25
+      },
+      "revId": "8f9b3c196ce155f706294a7abae8d3e26815a439",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
