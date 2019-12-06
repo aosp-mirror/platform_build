@@ -22,6 +22,30 @@
       "revId": "8c7ca1bc0523896b4cf6243b616163fe8fb95596",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9741ff8d_93337072",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1054648
+      },
+      "writtenOn": "2019-12-06T23:18:15Z",
+      "side": 1,
+      "message": "Yes, the parts that are being converted to libs will be on all devices now. There is still a distinction -- the apps that load these libs will only be present based on device requirement. Is there an easy workaround for this in mainline world?",
+      "parentUuid": "e44562d7_ad17b269",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 27
+      },
+      "revId": "8c7ca1bc0523896b4cf6243b616163fe8fb95596",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
