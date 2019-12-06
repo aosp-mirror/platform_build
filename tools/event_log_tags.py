@@ -62,9 +62,9 @@ class TagFile(object):
     try:
       for self.linenum, line in enumerate(file_object):
         self.linenum += 1
-
+        line = re.sub('#.*$', '', line) # strip trailing comments
         line = line.strip()
-        if not line or line[0] == '#': continue
+        if not line: continue
         parts = re.split(r"\s+", line, 2)
 
         if len(parts) < 2:
