@@ -38,7 +38,7 @@ import sys
 import os
 import zipfile
 
-_HEADER_TEMPLATE = """#!/bin/sh
+_HEADER_TEMPLATE = """#!/bin/bash
 #
 {comment_line}
 #
