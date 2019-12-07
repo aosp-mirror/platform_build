@@ -162,8 +162,12 @@ endif
 # TODO(b/141450808): remove following VNDK phony targets when **.libraries.txt files are provided by apexes.
 LOCAL_REQUIRED_MODULES := \
     $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),vndk_v$(vndk_ver)_$(TARGET_ARCH)$(_binder32))
-LOCAL_REQUIRED_MODULES += $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver))
 _binder32 :=
+include $(BUILD_PHONY_PACKAGE)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := vndk_apex_snapshot_package
+LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver))
 include $(BUILD_PHONY_PACKAGE)
 
 endif # BOARD_VNDK_VERSION is set

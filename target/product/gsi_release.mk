@@ -29,12 +29,6 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/product/% \
     system/system_ext/%
 
-
-# GSI doesn't support apex for now.
-# Properties set in product take precedence over those in vendor.
-PRODUCT_PRODUCT_PROPERTIES += \
-    ro.apex.updatable=false
-
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
