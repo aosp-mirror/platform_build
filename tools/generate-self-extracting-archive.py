@@ -92,7 +92,7 @@ def _pipe_bytes(src, dst):
     dst.write(b)
 
 _MAX_OFFSET_WIDTH = 20
-def _generate_extract_command(start, end, extract_name):
+def _generate_extract_command(start, size, extract_name):
   """Generate the extract command.
 
   The length of this string must be constant no matter what the start and end
@@ -101,7 +101,7 @@ def _generate_extract_command(start, end, extract_name):
 
   Args:
     start: offset in bytes of the start of the wrapped file
-    end: offset in bytes of the end of the wrapped file
+    size: size in bytes of the wrapped file
     extract_name: of the file to create when extracted
 
   """
@@ -111,11 +111,11 @@ def _generate_extract_command(start, end, extract_name):
   if len(start_str) != _MAX_OFFSET_WIDTH + 1:
     raise Exception('Start offset too large (%d)' % start)
 
-  end_str = ('%d' % end).rjust(_MAX_OFFSET_WIDTH)
-  if len(end_str) != _MAX_OFFSET_WIDTH:
-    raise Exception('End offset too large (%d)' % end)
+  size_str = ('%d' % size).rjust(_MAX_OFFSET_WIDTH)
+  if len(size_str) != _MAX_OFFSET_WIDTH:
+    raise Exception('Size too large (%d)' % size)
 
-  return "tail -c %s $0 | head -c %s > %s\n" % (start_str, end_str, extract_name)
+  return "tail -c %s $0 | head -c %s > %s\n" % (start_str, size_str, extract_name)
 
 
 def main(argv):
