@@ -46,6 +46,30 @@
       "revId": "13e0e8912409c5f61b82228402f89627262a509a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf9225a3_df704e43",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-09T21:31:56Z",
+      "side": 1,
+      "message": "I\u0027m not sure what you think the requirements are. The way you phrase this it doesn\u0027t sound like there\u0027s a requirement for them to be here, which makes me think they should be removed?",
+      "parentUuid": "63e0951b_7c921ce9",
+      "range": {
+        "startLine": 333,
+        "startChar": 41,
+        "endLine": 336,
+        "endChar": 36
+      },
+      "revId": "13e0e8912409c5f61b82228402f89627262a509a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
