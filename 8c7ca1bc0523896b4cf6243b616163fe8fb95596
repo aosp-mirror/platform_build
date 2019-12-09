@@ -46,6 +46,30 @@
       "revId": "8c7ca1bc0523896b4cf6243b616163fe8fb95596",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8875f43_c0151171",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-09T10:48:58Z",
+      "side": 1,
+      "message": "I assume you mean the apps won\u0027t be in the apex? Your module can not vary based on device\n\n(if you only intend to have the libs in the apex, that sounds fine)",
+      "parentUuid": "9741ff8d_93337072",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 27
+      },
+      "revId": "8c7ca1bc0523896b4cf6243b616163fe8fb95596",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
