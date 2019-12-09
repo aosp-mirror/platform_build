@@ -3625,6 +3625,8 @@ $(INSTALLED_VBMETAIMAGE_TARGET): \
 	$(build-vbmetaimage-target)
 
 .PHONY: vbmetaimage-nodeps
+vbmetaimage-nodeps: PRIVATE_AVB_VBMETA_SIGNING_ARGS := \
+    --algorithm $(BOARD_AVB_ALGORITHM) --key $(BOARD_AVB_KEY_PATH)
 vbmetaimage-nodeps:
 	$(build-vbmetaimage-target)
 endif # BUILDING_VBMETA_IMAGE
