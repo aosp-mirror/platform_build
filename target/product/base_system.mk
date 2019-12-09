@@ -58,6 +58,7 @@ PRODUCT_PACKAGES += \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.sdkext \
+    com.android.telephony \
     com.android.tzdata \
     ContactsProvider \
     content \
