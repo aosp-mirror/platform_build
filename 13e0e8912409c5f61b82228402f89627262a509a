@@ -22,6 +22,30 @@
       "revId": "13e0e8912409c5f61b82228402f89627262a509a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63e0951b_7c921ce9",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1054648
+      },
+      "writtenOn": "2019-12-09T19:06:41Z",
+      "side": 1,
+      "message": "The intent was to remove them from BCP, but now we are reconsidering depending on if that is really required for mainline. What do you think about it from mainline perspective? Is it ok to leave them on BCP?",
+      "parentUuid": "d2b90205_728d6cb7",
+      "range": {
+        "startLine": 333,
+        "startChar": 41,
+        "endLine": 336,
+        "endChar": 36
+      },
+      "revId": "13e0e8912409c5f61b82228402f89627262a509a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
