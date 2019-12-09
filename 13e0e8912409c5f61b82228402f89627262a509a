@@ -118,6 +118,30 @@
       "revId": "13e0e8912409c5f61b82228402f89627262a509a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "826c1823_1025b2c9",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1054648
+      },
+      "writtenOn": "2019-12-09T22:22:21Z",
+      "side": 1,
+      "message": "We are tracking it as a work item for R, but I cannot commit to it. The risks are:\n1. We ran into system health issues with the solution we implemented for removing telephony-common. We believe it will be resolved once hidden API cleanup is done, but if we run into further issues that may become a factor.\n2. Given the higher priority of mainline work for telephony, some work items that are not mandatory for mainline may be dropped.",
+      "parentUuid": "e319930e_00797fe0",
+      "range": {
+        "startLine": 333,
+        "startChar": 41,
+        "endLine": 336,
+        "endChar": 36
+      },
+      "revId": "13e0e8912409c5f61b82228402f89627262a509a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
