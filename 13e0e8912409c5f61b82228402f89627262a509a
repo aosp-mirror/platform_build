@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d2b90205_728d6cb7",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-09T13:29:52Z",
+      "side": 1,
+      "message": "is the intent to keep these on the BCP or is it a temporary setup?",
+      "range": {
+        "startLine": 333,
+        "startChar": 41,
+        "endLine": 336,
+        "endChar": 36
+      },
+      "revId": "13e0e8912409c5f61b82228402f89627262a509a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
