@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "264d2015_0491baad",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-10T16:06:49Z",
+      "side": 1,
+      "message": "Note: there will be a requirement that an SDK is setup for these (it\u0027s a new concept in the build system), which will prevent non-sdk api accesses to them.",
+      "range": {
+        "startLine": 334,
+        "startChar": 41,
+        "endLine": 336,
+        "endChar": 36
+      },
+      "revId": "13bc18a3ece2a503970bd9846e7759ded0154114",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
