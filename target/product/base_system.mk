@@ -58,10 +58,12 @@ PRODUCT_PACKAGES += \
     com.android.location.provider \
     com.android.media \
     com.android.media.swcodec \
+    com.android.mediaprovider \
     com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.sdkext \
+    com.android.telephony \
     com.android.tzdata \
     com.android.wifi \
     ContactsProvider \
@@ -204,7 +206,7 @@ PRODUCT_PACKAGES += \
     mediaextractor \
     mediametrics \
     media_profiles_V1_0.dtd \
-    MediaProvider \
+    MediaProviderLegacy \
     mediaserver \
     mediatranscoding \
     mke2fs \

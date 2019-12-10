@@ -713,6 +713,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/etc/vintf/manifest/android.h
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/apex/com.android.cellbroadcast.apex)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/apex/com.android.cellbroadcast)
 
+# Remove MediaProvider after moving into APEX
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/MediaProvider)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
