@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "68defc5c_164b3b94",
+        "filename": "target/product/developer_gsi_keys.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-10T11:36:29Z",
+      "side": 1,
+      "message": "who is going to include this? could you give a bit more context in this comment about what this is for?",
+      "revId": "471216ccaa0ce1a6684172ee0d331328ba7001dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
