@@ -142,6 +142,30 @@
       "revId": "13e0e8912409c5f61b82228402f89627262a509a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "005e3421_701e4e26",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1054648
+      },
+      "writtenOn": "2019-12-10T18:41:39Z",
+      "side": 1,
+      "message": "Marking this comment as resolved; started an email thread to discuss this further.",
+      "parentUuid": "826c1823_1025b2c9",
+      "range": {
+        "startLine": 333,
+        "startChar": 41,
+        "endLine": 336,
+        "endChar": 36
+      },
+      "revId": "13e0e8912409c5f61b82228402f89627262a509a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

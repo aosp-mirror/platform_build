@@ -22,6 +22,30 @@
       "revId": "13bc18a3ece2a503970bd9846e7759ded0154114",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02ef1845_6ff51b15",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1054648
+      },
+      "writtenOn": "2019-12-10T18:41:39Z",
+      "side": 1,
+      "message": "Ack. Also started a separate discussion for this over email.",
+      "parentUuid": "264d2015_0491baad",
+      "range": {
+        "startLine": 334,
+        "startChar": 41,
+        "endLine": 336,
+        "endChar": 36
+      },
+      "revId": "13bc18a3ece2a503970bd9846e7759ded0154114",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
