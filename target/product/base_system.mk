@@ -97,7 +97,6 @@ PRODUCT_PACKAGES += \
     idmap2 \
     idmap2d \
     ime \
-    ims-common \
     incident \
     incidentd \
     incident_helper \
@@ -253,7 +252,6 @@ PRODUCT_PACKAGES += \
     task_profiles.json \
     tc \
     telecom \
-    telephony-common \
     tombstoned \
     traced \
     traced_probes \
@@ -333,7 +331,9 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
     com.android.ipsec:ike \
     com.android.media:updatable-media \
-    com.android.sdkext:framework-sdkext
+    com.android.sdkext:framework-sdkext \
+    com.android.telephony:telephony-common \
+    com.android.telephony:ims-common
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
