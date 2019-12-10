@@ -1745,9 +1745,9 @@ else # TARGET_BUILD_APPS
   endif
 
   # Put XML formatted API files in the dist dir.
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/api.xml: $(call java-lib-header-files,android_stubs_current) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/system-api.xml: $(call java-lib-header-files,android_system_stubs_current) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/test-api.xml: $(call java-lib-header-files,android_test_stubs_current) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/api.xml: $(call java-lib-files,android_stubs_current) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/system-api.xml: $(call java-lib-files,android_system_stubs_current) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/test-api.xml: $(call java-lib-files,android_test_stubs_current) $(APICHECK)
 
   api_xmls := $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/,api.xml system-api.xml test-api.xml)
   $(api_xmls):
