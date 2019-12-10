@@ -32,6 +32,7 @@ PRODUCT_PACKAGES += \
     Launcher3QuickStep \
     Music \
     OneTimeInitializer \
+    preinstalled-packages-platform-handheld-product.xml \
     Provision \
     QuickSearchBox \
     Settings \
