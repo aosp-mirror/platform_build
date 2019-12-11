@@ -22,6 +22,30 @@
       "revId": "2cff7c36412a4323bcd53402c847c44df8cb253c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4ec4d64_dd25efe6",
+        "filename": "target/product/developer_gsi_keys.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1081223
+      },
+      "writtenOn": "2019-12-11T12:35:15Z",
+      "side": 1,
+      "message": "As a non-googler I would like to see what this means for us :)\nThanks",
+      "parentUuid": "ffd90000_ecef67f8",
+      "range": {
+        "startLine": 18,
+        "startChar": 50,
+        "endLine": 19,
+        "endChar": 13
+      },
+      "revId": "2cff7c36412a4323bcd53402c847c44df8cb253c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
