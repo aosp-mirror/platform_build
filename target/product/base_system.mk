@@ -202,7 +202,6 @@ PRODUCT_PACKAGES += \
     lpdump \
     lshal \
     mdnsd \
-    media \
     mediacodec.policy \
     mediaextractor \
     mediametrics \
