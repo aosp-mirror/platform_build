@@ -46,6 +46,30 @@
       "revId": "2cff7c36412a4323bcd53402c847c44df8cb253c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75095296_1c891a91",
+        "filename": "target/product/developer_gsi_keys.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-12-11T13:32:04Z",
+      "side": 1,
+      "message": "OK, let me remove it.\n\nIt\u0027s just the public GSI for developers:\nhttps://developer.android.com/topic/generic-system-image/releases",
+      "parentUuid": "e4ec4d64_dd25efe6",
+      "range": {
+        "startLine": 18,
+        "startChar": 50,
+        "endLine": 19,
+        "endChar": 13
+      },
+      "revId": "2cff7c36412a4323bcd53402c847c44df8cb253c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
