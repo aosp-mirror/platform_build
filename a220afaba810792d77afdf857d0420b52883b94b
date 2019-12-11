@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "922b762b_e3518665",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1189,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-11T16:46:19Z",
+      "side": 1,
+      "message": ":",
+      "range": {
+        "startLine": 1189,
+        "startChar": 28,
+        "endLine": 1189,
+        "endChar": 32
+      },
+      "revId": "a220afaba810792d77afdf857d0420b52883b94b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a37d6cdf_c8d7a14f",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-11T16:46:19Z",
+      "side": 1,
+      "message": "+dariofreni fyi, please remove in your CL",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 28
+      },
+      "revId": "a220afaba810792d77afdf857d0420b52883b94b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
