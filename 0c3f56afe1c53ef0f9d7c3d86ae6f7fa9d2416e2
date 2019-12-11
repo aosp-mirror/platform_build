@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc4aa186_f06fe3da",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-11T16:47:22Z",
+      "side": 1,
+      "message": "there\u0027s a lot of TARGET_FLATTEN_APEX :\u003d false that can be removed now -- are you doing that too? (don\u0027t need them all to be in this topic, but at least the one in this repo would be good to cleanup at the same time).",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 68
+      },
+      "revId": "0c3f56afe1c53ef0f9d7c3d86ae6f7fa9d2416e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
