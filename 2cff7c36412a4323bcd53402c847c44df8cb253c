@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ffd90000_ecef67f8",
+        "filename": "target/product/developer_gsi_keys.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-11T10:38:33Z",
+      "side": 1,
+      "message": "well this is only accessible to googlers...",
+      "range": {
+        "startLine": 18,
+        "startChar": 50,
+        "endLine": 19,
+        "endChar": 13
+      },
+      "revId": "2cff7c36412a4323bcd53402c847c44df8cb253c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
