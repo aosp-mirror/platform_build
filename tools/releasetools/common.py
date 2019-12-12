@@ -591,26 +591,19 @@ def LoadInfoDict(input_file, repacking=False):
     d["root_fs_config"] = os.path.join(
         input_file, "META", "root_filesystem_config.txt")
 
-    # Redirect {system,vendor}_base_fs_file.
-    if "system_base_fs_file" in d:
-      basename = os.path.basename(d["system_base_fs_file"])
-      system_base_fs_file = os.path.join(input_file, "META", basename)
-      if os.path.exists(system_base_fs_file):
-        d["system_base_fs_file"] = system_base_fs_file
+    # Redirect {partition}_base_fs_file for each of the named partitions.
+    for part_name in ["system", "vendor", "system_ext", "product", "odm"]:
+      key_name = part_name + "_base_fs_file"
+      if key_name not in d:
+        continue
+      basename = os.path.basename(d[key_name])
+      base_fs_file = os.path.join(input_file, "META", basename)
+      if os.path.exists(base_fs_file):
+        d[key_name] = base_fs_file
       else:
         logger.warning(
-            "Failed to find system base fs file: %s", system_base_fs_file)
-        del d["system_base_fs_file"]
-
-    if "vendor_base_fs_file" in d:
-      basename = os.path.basename(d["vendor_base_fs_file"])
-      vendor_base_fs_file = os.path.join(input_file, "META", basename)
-      if os.path.exists(vendor_base_fs_file):
-        d["vendor_base_fs_file"] = vendor_base_fs_file
-      else:
-        logger.warning(
-            "Failed to find vendor base fs file: %s", vendor_base_fs_file)
-        del d["vendor_base_fs_file"]
+            "Failed to find %s base fs file: %s", part_name, base_fs_file)
+        del d[key_name]
 
   def makeint(key):
     if key in d:
