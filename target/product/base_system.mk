@@ -88,7 +88,6 @@ PRODUCT_PACKAGES += \
     framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
-    framework-wifi \
     fsck_msdos \
     fs_config_files_system \
     fs_config_dirs_system \
@@ -342,7 +341,8 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.media:updatable-media \
     com.android.sdkext:framework-sdkext \
     com.android.telephony:telephony-common \
-    com.android.telephony:ims-common
+    com.android.telephony:ims-common \
+    com.android.wifi:framework-wifi
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
