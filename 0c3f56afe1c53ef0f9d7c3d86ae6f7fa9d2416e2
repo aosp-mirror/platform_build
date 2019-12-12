@@ -22,6 +22,30 @@
       "revId": "0c3f56afe1c53ef0f9d7c3d86ae6f7fa9d2416e2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ee38b9d_59f60ec1",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2019-12-12T17:22:34Z",
+      "side": 1,
+      "message": "I prefer to leave it as a cleanup task so in parallel I can proceed with the CLs pending on this. Will use the same tracking bug.",
+      "parentUuid": "fc4aa186_f06fe3da",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 68
+      },
+      "revId": "0c3f56afe1c53ef0f9d7c3d86ae6f7fa9d2416e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
