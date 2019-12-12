@@ -733,6 +733,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/apex/com.android.apex.cts.sh
 $(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -type d -name "android_*_recovery*" -print0 | xargs -0 rm -rf)
 $(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -type d -name "android_*_vendor*" -print0 | xargs -0 rm -rf)
 
+# Remove PermissionController after moving into APEX
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/*PermissionController)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
