@@ -1185,9 +1185,10 @@ APEX_MODULE_LIBS += \
 # still may create these libraries in /system (b/129006418).
 DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
 
-# Allow APEX libraries under /system/apex, which happens when APEX flattening
-# is enabled.
-APEX_LIBS_ABSENCE_CHECK_EXCLUDE := apex
+# Allow APEX libraries under:
+# /system/apex, which happens when APEX flattening is enabled.
+# /system/system_ext, which happens with GSI
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE := apex system_ext
 
 # Bionic should not be in /system, except for the bootstrap instance.
 APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/bootstrap lib64/bootstrap
