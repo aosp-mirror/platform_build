@@ -46,6 +46,30 @@
       "revId": "e4200326119d572de024936363320e7f8d15a493",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6561024_fc461a63",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-12-13T18:12:38Z",
+      "side": 1,
+      "message": "That same buildbot executable needs to work with many years of different android branches.",
+      "parentUuid": "d727a20b_5ee1a690",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 52
+      },
+      "revId": "e4200326119d572de024936363320e7f8d15a493",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
