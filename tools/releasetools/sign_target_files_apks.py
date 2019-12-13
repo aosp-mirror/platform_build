@@ -972,6 +972,7 @@ def BuildKeyMap(misc_info, key_mapping_options):
           devkeydir + "/media":    d + "/media",
           devkeydir + "/shared":   d + "/shared",
           devkeydir + "/platform": d + "/platform",
+          devkeydir + "/networkstack": d + "/networkstack",
           })
     else:
       OPTIONS.key_map[s] = d
