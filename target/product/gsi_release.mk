@@ -38,6 +38,12 @@ PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 # Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
 
+# GSI targets should install "unflattened" APEXes in /system
+TARGET_FLATTEN_APEX := false
+
+# GSI targets should install "flattened" APEXes in /system_ext as well
+PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES := true
+
 # GSI specific tasks on boot
 PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
