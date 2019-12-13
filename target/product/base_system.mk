@@ -64,6 +64,7 @@ PRODUCT_PACKAGES += \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.sdkext \
+    com.android.os.statsd \
     com.android.telephony \
     com.android.tzdata \
     com.android.wifi \
@@ -253,7 +254,6 @@ PRODUCT_PACKAGES += \
     snapshotctl \
     SoundPicker \
     statsd \
-    service-statsd \
     storaged \
     surfaceflinger \
     svc \
