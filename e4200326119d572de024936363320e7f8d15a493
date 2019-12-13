@@ -22,6 +22,30 @@
       "revId": "e4200326119d572de024936363320e7f8d15a493",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d727a20b_5ee1a690",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2019-12-13T18:07:58Z",
+      "side": 1,
+      "message": "This script is also used to process compiler output without going through the soong build progress, e.g., processing collected log files though google3 cron jobs for both Android and Chromium build output. So we cannot have only a program in soong_ui.\n\nWhy can\u0027t we change the old calls in build script? We have changed it several times in the past to add more parameters, etc.",
+      "parentUuid": "63cd918f_e623cee4",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 52
+      },
+      "revId": "e4200326119d572de024936363320e7f8d15a493",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
