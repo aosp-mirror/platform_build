@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63cd918f_e623cee4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-12-13T17:51:06Z",
+      "side": 1,
+      "message": "We can\u0027t remove the old call, if you\u0027re going to change this in buildbot, I\u0027d rather stop doing it in buildbot -- there\u0027s no reason to still have it there instead of processed during soong_ui (which would let us integrate it better into other reporting)",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 52
+      },
+      "revId": "e4200326119d572de024936363320e7f8d15a493",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
