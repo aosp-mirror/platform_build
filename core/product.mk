@@ -381,6 +381,8 @@ _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA_RETROFIT
 # If set, Java module in product partition cannot use hidden APIs.
 _product_single_value_vars += PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
 
+_product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
