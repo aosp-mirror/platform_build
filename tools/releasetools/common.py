@@ -76,6 +76,10 @@ class Options(object):
     self.boot_signer_args = []
     self.verity_signer_path = None
     self.verity_signer_args = []
+    self.aftl_server = None
+    self.aftl_key_path = None
+    self.aftl_manufacturer_key_path = None
+    self.aftl_signer_helper = None
     self.verbose = False
     self.tempfiles = []
     self.device_specific = None
@@ -959,6 +963,12 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
 
   RunAndCheckOutput(cmd)
 
+  if OPTIONS.aftl_server is not None:
+    # Ensure the other AFTL parameters are set as well.
+    assert OPTIONS.aftl_key_path is not None, 'No AFTL key provided.'
+    assert OPTIONS.aftl_manufacturer_key_path is not None, 'No AFTL manufacturer key provided.'
+    assert OPTIONS.aftl_signer_helper is not None, 'No AFTL signer helper provided.'
+    # AFTL inclusion proof generation code will go here.
 
 def _MakeRamdisk(sourcedir, fs_config_file=None):
   ramdisk_img = tempfile.NamedTemporaryFile()
@@ -1810,7 +1820,8 @@ def ParseOptions(argv,
          "java_path=", "java_args=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
-         "extra=", "logfile="] +
+         "extra=", "logfile=", "aftl_server=", "aftl_key_path=",
+         "aftl_manufacturer_key_path=", "aftl_signer_helper="] +
         list(extra_long_opts))
   except getopt.GetoptError as err:
     Usage(docstring)
@@ -1847,6 +1858,14 @@ def ParseOptions(argv,
       OPTIONS.verity_signer_path = a
     elif o in ("--verity_signer_args",):
       OPTIONS.verity_signer_args = shlex.split(a)
+    elif o in ("--aftl_server",):
+      OPTIONS.aftl_server = a
+    elif o in ("--aftl_key_path",):
+      OPTIONS.aftl_key_path = a
+    elif o in ("--aftl_manufacturer_key_path",):
+      OPTIONS.aftl_manufacturer_key_path = a
+    elif o in ("--aftl_signer_helper",):
+      OPTIONS.aftl_signer_helper = a
     elif o in ("-s", "--device_specific"):
       OPTIONS.device_specific = a
     elif o in ("-x", "--extra"):
