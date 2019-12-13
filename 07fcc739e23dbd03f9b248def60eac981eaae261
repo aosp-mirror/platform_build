@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "84d6d7d1_98366bb0",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-12-13T20:37:10Z",
+      "side": 1,
+      "message": "$(current_makefile) may have been overwritten by the time the rule is evaluated, use\n\nvendor-snapshot: PRIVATE_MAKEFILE :\u003d $(lastword $(MAKEFILE_LIST))\nvendor-snapshot:\n\t$(call echo-error,$(PRIVATE_MAKEFILE),\\\n\nSame for vndk.mk.",
+      "range": {
+        "startLine": 29,
+        "startChar": 19,
+        "endLine": 29,
+        "endChar": 38
+      },
+      "revId": "07fcc739e23dbd03f9b248def60eac981eaae261",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
