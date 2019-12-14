@@ -413,6 +413,7 @@ legacy_proguard_lib_deps := $(my_proguard_sdk_raise) \
 legacy_proguard_flags += -printmapping $(proguard_dictionary)
 legacy_proguard_flags += -printconfiguration $(proguard_configuration)
 
+common_proguard_flags :=
 common_proguard_flag_files := $(BUILD_SYSTEM)/proguard.flags
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
 common_proguard_flags += -dontshrink # don't shrink tests by default
