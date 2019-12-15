@@ -125,6 +125,14 @@ PRODUCT_ENFORCE_RRO_TARGETS := *
 PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic
 
+# Define /system partition-specific product properties to identify that /system
+# partition is mainline_system.
+PRODUCT_SYSTEM_NAME := mainline
+PRODUCT_SYSTEM_BRAND := Android
+PRODUCT_SYSTEM_MANUFACTURER := Android
+PRODUCT_SYSTEM_MODEL := mainline
+PRODUCT_SYSTEM_DEVICE := generic
+
 _base_mk_whitelist :=
 
 _my_whitelist := $(_base_mk_whitelist)
