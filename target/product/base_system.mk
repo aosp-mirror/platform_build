@@ -64,8 +64,8 @@ PRODUCT_PACKAGES += \
     com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
-    com.android.sdkext \
     com.android.os.statsd \
+    com.android.sdkext \
     com.android.telephony \
     com.android.tzdata \
     com.android.wifi \
@@ -331,6 +331,7 @@ PRODUCT_BOOT_JARS := \
     voip-common \
     ims-common \
     framework-sdkext \
+    framework-statsd \
     ike \
     updatable-media
 
@@ -338,6 +339,7 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
     com.android.ipsec:ike \
     com.android.media:updatable-media \
+    com.android.os.statsd:framework-statsd \
     com.android.sdkext:framework-sdkext \
     com.android.telephony:telephony-common \
     com.android.telephony:ims-common
