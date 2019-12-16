@@ -22,6 +22,30 @@
       "revId": "05c8db112a86218b8061a1dd2336567c6cee4be5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f33f263_0ed44ced",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1116,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-12-16T06:33:37Z",
+      "side": 0,
+      "message": "b/129006418 is also fixed with apex_available. \n\n\u0027m xxx\u0027 does not create out/target/product/xxx/system/lib/libxxx.so unless \"://apex_available:platform\" is in apex_available property.",
+      "parentUuid": "6946b920_9cfb5892",
+      "range": {
+        "startLine": 1116,
+        "startChar": 0,
+        "endLine": 1116,
+        "endChar": 16
+      },
+      "revId": "05c8db112a86218b8061a1dd2336567c6cee4be5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
