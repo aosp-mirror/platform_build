@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf593cb0_a883c9ae",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-12-16T21:12:34Z",
+      "side": 1,
+      "message": "It\u0027s not possible to avoid this ad-hoc renaming? Shouldn\u0027t PRODUCT_BOOT_JARS contain the full module names instead?\n\n+skvadrik on the boot jars handling.",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 83
+      },
+      "revId": "9506d686af3496cbb232c47f81f928aaf1cce895",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
