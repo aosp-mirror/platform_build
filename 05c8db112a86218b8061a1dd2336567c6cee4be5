@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6946b920_9cfb5892",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1116,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-12-16T01:48:34Z",
+      "side": 0,
+      "message": "Is it safe to remove these from the check-apex-libs-absence-on-disk check now? E.g. this should still fail until b/129006418 is fixed:\n\n$ m libartbase \u0026\u0026 m",
+      "range": {
+        "startLine": 1116,
+        "startChar": 0,
+        "endLine": 1116,
+        "endChar": 16
+      },
+      "revId": "05c8db112a86218b8061a1dd2336567c6cee4be5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

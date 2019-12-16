@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dbfa64c1_66e8a975",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-12-16T01:48:34Z",
+      "side": 1,
+      "message": "Please test that errors are still triggered when things are wrong. E.g. remove libnativeloader.so from art_runtime_base_native_shared_libs in art/build/apex/Android.bp to make it incorrectly go into system and check that it fails. You\u0027ll have to disable art_apex_test.py then, because the presence check it implements should be independent.",
+      "revId": "becc1d95f82b831c81480a7ddb73feab506278d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
