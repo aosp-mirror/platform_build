@@ -51,7 +51,7 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.adbd \
-    com.android.apex.cts.shim.v1_prebuilt \
+    com.android.apex.cts.shim.v1 \
     com.android.conscrypt \
     com.android.cronet \
     com.android.i18n \
@@ -72,8 +72,6 @@ PRODUCT_PACKAGES += \
     ContactsProvider \
     content \
     crash_dump \
-    CtsShimPrebuilt \
-    CtsShimPrivPrebuilt \
     debuggerd\
     device_config \
     dmctl \
