@@ -30,7 +30,6 @@ PRODUCT_PACKAGES += \
     apexd \
     appops \
     app_process \
-    service-appsearch \
     appwidget \
     atrace \
     audioserver \
@@ -52,6 +51,7 @@ PRODUCT_PACKAGES += \
     cmd \
     com.android.adbd \
     com.android.apex.cts.shim.v1 \
+    com.android.appsearch \
     com.android.conscrypt \
     com.android.cronet \
     com.android.i18n \
@@ -332,9 +332,11 @@ PRODUCT_BOOT_JARS := \
     framework-statsd \
     ike \
     updatable-media \
+    framework-appsearch \
     framework-wifi
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
+    com.android.appsearch:framework-appsearch \
     com.android.conscrypt:conscrypt \
     com.android.ipsec:ike \
     com.android.media:updatable-media \
