@@ -333,7 +333,8 @@ PRODUCT_BOOT_JARS := \
     framework-sdkext \
     framework-statsd \
     ike \
-    updatable-media
+    updatable-media \
+    framework-wifi
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
@@ -342,7 +343,8 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.os.statsd:framework-statsd \
     com.android.sdkext:framework-sdkext \
     com.android.telephony:telephony-common \
-    com.android.telephony:ims-common
+    com.android.telephony:ims-common \
+    com.android.wifi:framework-wifi
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
