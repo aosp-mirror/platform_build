@@ -315,6 +315,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
     build_command.extend([out_file, prop_dict["image_size"]])
+    if "f2fs_sparse_flag" in prop_dict:
+      build_command.extend([prop_dict["f2fs_sparse_flag"]])
     if fs_config:
       build_command.extend(["-C", fs_config])
     build_command.extend(["-f", in_dir])
@@ -519,6 +521,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   common_props = (
       "extfs_sparse_flag",
       "squashfs_sparse_flag",
+      "f2fs_sparse_flag",
       "skip_fsck",
       "ext_mkuserimg",
       "verity",
@@ -582,7 +585,6 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
-    copy_prop("system_base_fs_file", "base_fs_file")
     copy_prop("system_extfs_inode_count", "extfs_inode_count")
     if not copy_prop("system_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"

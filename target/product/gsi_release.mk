@@ -29,12 +29,6 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/product/% \
     system/system_ext/%
 
-
-# GSI doesn't support apex for now.
-# Properties set in product take precedence over those in vendor.
-PRODUCT_PRODUCT_PROPERTIES += \
-    ro.apex.updatable=false
-
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
@@ -43,6 +37,12 @@ PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
 # Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+
+# GSI targets should install "unflattened" APEXes in /system
+TARGET_FLATTEN_APEX := false
+
+# GSI targets should install "flattened" APEXes in /system_ext as well
+PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES := true
 
 # GSI specific tasks on boot
 PRODUCT_PACKAGES += \

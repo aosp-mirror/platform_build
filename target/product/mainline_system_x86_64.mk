@@ -19,28 +19,28 @@
 #
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+$(call enforce-product-packages-exist,)
 
 # Enable mainline checking
-PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
 
-#
-# All components inherited here go to system_ext image
-#
-$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system_ext.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
+# Enable nonflat APEX
+$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
-#
-# All components inherited here go to product image
-#
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
+PRODUCT_BUILD_CACHE_IMAGE := false
+PRODUCT_BUILD_ODM_IMAGE := false
+PRODUCT_BUILD_PRODUCT_IMAGE  := false
+PRODUCT_BUILD_RAMDISK_IMAGE := false
+PRODUCT_BUILD_SYSTEM_IMAGE := true
+PRODUCT_BUILD_SYSTEM_EXT_IMAGE := false
+PRODUCT_BUILD_SYSTEM_OTHER_IMAGE := false
+PRODUCT_BUILD_USERDATA_IMAGE := false
+PRODUCT_BUILD_VENDOR_IMAGE := false
 
-#
-# Special settings for GSI releasing
-#
-$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
+PRODUCT_SHIPPING_API_LEVEL := 29
 
+PRODUCT_RESTRICT_VENDOR_FILES := all
 
-PRODUCT_NAME := gsi_arm64
-PRODUCT_DEVICE := gsi_arm64
+PRODUCT_NAME := mainline_system_x86_64
+PRODUCT_DEVICE := mainline_x86_64
 PRODUCT_BRAND := generic
-PRODUCT_MODEL := GSI on ARM64

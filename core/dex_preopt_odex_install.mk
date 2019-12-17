@@ -58,6 +58,11 @@ ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR))) # con
   LOCAL_DEX_PREOPT :=
 endif
 
+# Don't preopt system server jars that are updatable.
+ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS)))
+  LOCAL_DEX_PREOPT :=
+endif
+
 # if WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true and module is not in boot class path skip
 # Also preopt system server jars since selinux prevents system server from loading anything from
 # /data. If we don't do this they will need to be extracted which is not favorable for RAM usage
@@ -229,6 +234,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call end_json_map)
   $(call add_json_list, Archs,                          $(my_dexpreopt_archs))
   $(call add_json_list, DexPreoptImages,                $(my_dexpreopt_images))
+  $(call add_json_list, DexPreoptImageLocations,        $(DEXPREOPT_IMAGE_LOCATIONS))
   $(call add_json_list, PreoptBootClassPathDexFiles,    $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
   $(call add_json_list, PreoptBootClassPathDexLocations,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
   $(call add_json_bool, PreoptExtractedApk,             $(my_preopt_for_extracted_apk))
