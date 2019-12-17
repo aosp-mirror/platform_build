@@ -14,12 +14,22 @@
 # limitations under the License.
 #
 
-# This makefile contains the system_ext partition contents for
-# media-capable devices (non-wearables). Only add something here
-# if it definitely doesn't belong on wearables. Otherwise, choose
-# base_system_ext.mk.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/base_system_ext.mk)
+TARGET_ARCH := x86_64
+TARGET_ARCH_VARIANT := x86_64
+TARGET_CPU_ABI := x86_64
 
-# /system_ext packages
-PRODUCT_PACKAGES += \
-    vndk_apex_snapshot_package \
+TARGET_2ND_ARCH := x86
+TARGET_2ND_ARCH_VARIANT := x86_64
+TARGET_2ND_CPU_ABI := x86
+
+include build/make/target/board/BoardConfigMainlineCommon.mk
+
+TARGET_NO_KERNEL := true
+
+# Build generic A/B format system-only OTA.
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS := system
+
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4

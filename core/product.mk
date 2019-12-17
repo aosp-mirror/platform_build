@@ -228,6 +228,8 @@ _product_list_vars += PRODUCT_SYSTEM_PROPERTY_BLACKLIST
 _product_list_vars += PRODUCT_VENDOR_PROPERTY_BLACKLIST
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
+# List of system_server jars delivered via apex. Format = <apex name>:<jar name>.
+_product_list_vars += PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS
 
 # All of the apps that we force preopt, this overrides WITH_DEXPREOPT.
 _product_list_vars += PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK
@@ -364,8 +366,8 @@ _product_single_value_vars += PRODUCT_BUILD_RECOVERY_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
 
-_product_list_vars += PRODUCT_UPDATABLE_BOOT_MODULES
-_product_list_vars += PRODUCT_UPDATABLE_BOOT_LOCATIONS
+# List of boot jars delivered via apex
+_product_list_vars += PRODUCT_UPDATABLE_BOOT_JARS
 
 # Whether the product would like to check prebuilt ELF files.
 _product_single_value_vars += PRODUCT_CHECK_ELF_FILES
@@ -378,6 +380,8 @@ _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA_RETROFIT
 
 # If set, Java module in product partition cannot use hidden APIs.
 _product_single_value_vars += PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
+
+_product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

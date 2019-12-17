@@ -1159,6 +1159,7 @@ APEX_MODULE_LIBS += \
   libc_malloc_debug.so \
   libc_malloc_hooks.so \
   libdl.so \
+  libdl_android.so \
   libm.so \
 
 # Conscrypt APEX libraries
@@ -1186,9 +1187,10 @@ APEX_MODULE_LIBS += \
 # still may create these libraries in /system (b/129006418).
 DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
 
-# Allow APEX libraries under /system/apex, which happens when APEX flattening
-# is enabled.
-APEX_LIBS_ABSENCE_CHECK_EXCLUDE := apex
+# Allow APEX libraries under:
+# /system/apex, which happens when APEX flattening is enabled.
+# /system/system_ext, which happens with GSI
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE := apex system_ext
 
 # Bionic should not be in /system, except for the bootstrap instance.
 APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/bootstrap lib64/bootstrap
@@ -1745,9 +1747,9 @@ else # TARGET_BUILD_APPS
   endif
 
   # Put XML formatted API files in the dist dir.
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/api.xml: $(call java-lib-header-files,android_stubs_current) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/system-api.xml: $(call java-lib-header-files,android_system_stubs_current) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/test-api.xml: $(call java-lib-header-files,android_test_stubs_current) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/api.xml: $(call java-lib-files,android_stubs_current) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/system-api.xml: $(call java-lib-files,android_system_stubs_current) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/test-api.xml: $(call java-lib-files,android_test_stubs_current) $(APICHECK)
 
   api_xmls := $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/,api.xml system-api.xml test-api.xml)
   $(api_xmls):

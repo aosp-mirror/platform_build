@@ -50,12 +50,16 @@ PRODUCT_PACKAGES += \
     com.android.adbd \
     com.android.apex.cts.shim.v1_prebuilt \
     com.android.conscrypt \
+    com.android.cronet \
     com.android.i18n \
+    com.android.ipsec \
     com.android.location.provider \
     com.android.media \
     com.android.media.swcodec \
     com.android.resolv \
     com.android.neuralnetworks \
+    com.android.sdkext \
+    com.android.telephony \
     com.android.tzdata \
     ContactsProvider \
     content \
@@ -94,12 +98,12 @@ PRODUCT_PACKAGES += \
     idmap2 \
     idmap2d \
     ime \
-    ims-common \
     incident \
     incidentd \
     incident_helper \
     init.environ.rc \
     init_system \
+    InProcessTethering \
     input \
     installd \
     iorapd \
@@ -125,6 +129,7 @@ PRODUCT_PACKAGES += \
     libcamera2ndk \
     libcutils \
     libdl.bootstrap \
+    libdl_android.bootstrap \
     libdrmframework \
     libdrmframework_jni \
     libEGL \
@@ -248,7 +253,6 @@ PRODUCT_PACKAGES += \
     task_profiles.json \
     tc \
     telecom \
-    telephony-common \
     tombstoned \
     traced \
     traced_probes \
@@ -320,12 +324,17 @@ PRODUCT_BOOT_JARS := \
     telephony-common \
     voip-common \
     ims-common \
+    framework-sdkext \
+    ike \
     updatable-media
-PRODUCT_UPDATABLE_BOOT_MODULES := conscrypt updatable-media
-PRODUCT_UPDATABLE_BOOT_LOCATIONS := \
-    /apex/com.android.conscrypt/javalib/conscrypt.jar \
-    /apex/com.android.media/javalib/updatable-media.jar
 
+PRODUCT_UPDATABLE_BOOT_JARS := \
+    com.android.conscrypt:conscrypt \
+    com.android.ipsec:ike \
+    com.android.media:updatable-media \
+    com.android.sdkext:framework-sdkext \
+    com.android.telephony:telephony-common \
+    com.android.telephony:ims-common
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
