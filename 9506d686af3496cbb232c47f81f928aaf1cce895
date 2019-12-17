@@ -22,6 +22,30 @@
       "revId": "9506d686af3496cbb232c47f81f928aaf1cce895",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ba71590_6e7c210e",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-12-17T01:15:11Z",
+      "side": 1,
+      "message": "Unfortunately, no, we can\u0027t. The .\u003capexname\u003e suffix is a Make thing whereas the primary consumer for PRODUCT_BOOT_JARS is Soong where the suffix doesn\u0027t make sense.",
+      "parentUuid": "bf593cb0_a883c9ae",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 83
+      },
+      "revId": "9506d686af3496cbb232c47f81f928aaf1cce895",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
