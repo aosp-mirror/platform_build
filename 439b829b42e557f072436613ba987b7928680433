@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c393ca2e_387e616f",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-12-17T15:43:43Z",
+      "side": 1,
+      "message": "Missed this. We need the same release vs debug logic here, don\u0027t we? The makefile order isn\u0027t clear to me - would it be possible to use ${TARGET_ART_APEX} from art/Android.mk here?",
+      "range": {
+        "startLine": 25,
+        "startChar": 46,
+        "endLine": 25,
+        "endChar": 53
+      },
+      "revId": "439b829b42e557f072436613ba987b7928680433",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
