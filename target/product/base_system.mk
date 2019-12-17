@@ -53,6 +53,7 @@ PRODUCT_PACKAGES += \
     com.android.adbd \
     com.android.apex.cts.shim.v1_prebuilt \
     com.android.conscrypt \
+    com.android.cronet \
     com.android.i18n \
     com.android.ipsec \
     com.android.location.provider \
@@ -63,8 +64,8 @@ PRODUCT_PACKAGES += \
     com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
-    com.android.sdkext \
     com.android.os.statsd \
+    com.android.sdkext \
     com.android.telephony \
     com.android.tzdata \
     com.android.wifi \
@@ -202,7 +203,6 @@ PRODUCT_PACKAGES += \
     lpdump \
     lshal \
     mdnsd \
-    media \
     mediacodec.policy \
     mediaextractor \
     mediametrics \
@@ -331,6 +331,7 @@ PRODUCT_BOOT_JARS := \
     voip-common \
     ims-common \
     framework-sdkext \
+    framework-statsd \
     ike \
     updatable-media
 
@@ -338,6 +339,7 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
     com.android.ipsec:ike \
     com.android.media:updatable-media \
+    com.android.os.statsd:framework-statsd \
     com.android.sdkext:framework-sdkext \
     com.android.telephony:telephony-common \
     com.android.telephony:ims-common
@@ -361,6 +363,7 @@ PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/in
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += persist.traced.enable=1
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
