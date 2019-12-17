@@ -16,6 +16,24 @@
       "revId": "05e85017602a64236d5028d8d0a26814a2db407f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0db21a75_05530a3b",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2019-12-17T23:14:00Z",
+      "side": 1,
+      "message": "Done. I don\u0027t think we will change the Android builders.",
+      "parentUuid": "52112d86_7e1271d9",
+      "revId": "05e85017602a64236d5028d8d0a26814a2db407f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
