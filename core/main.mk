@@ -1156,6 +1156,7 @@ APEX_MODULE_LIBS += \
   libc_malloc_debug.so \
   libc_malloc_hooks.so \
   libdl.so \
+  libdl_android.so \
   libm.so \
 
 # Conscrypt APEX libraries
