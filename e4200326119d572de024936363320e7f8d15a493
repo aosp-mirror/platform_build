@@ -70,6 +70,30 @@
       "revId": "e4200326119d572de024936363320e7f8d15a493",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7c7b322_cc9a2ef8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2019-12-17T18:36:39Z",
+      "side": 1,
+      "message": "Done. Now old warn.py calls -m warn.warn, so build scripts do not need any change.",
+      "parentUuid": "b6561024_fc461a63",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 52
+      },
+      "revId": "e4200326119d572de024936363320e7f8d15a493",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
