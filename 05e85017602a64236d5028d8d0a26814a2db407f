@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "52112d86_7e1271d9",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1096946
+      },
+      "writtenOn": "2019-12-17T22:56:13Z",
+      "side": 1,
+      "message": "please add context about why we have this (probably a link to this CL and a FIXME about how some builders still call warn.py?)",
+      "revId": "05e85017602a64236d5028d8d0a26814a2db407f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
