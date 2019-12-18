@@ -46,6 +46,30 @@
       "revId": "439b829b42e557f072436613ba987b7928680433",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "83b90afc_a2b65587",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-12-18T12:26:18Z",
+      "side": 1,
+      "message": "Right. I suppose it\u0027d become an issue if they at some point started to depend on JNI libs that are split, but I don\u0027t see how that could happen.",
+      "parentUuid": "379278a9_fbc2b29a",
+      "range": {
+        "startLine": 25,
+        "startChar": 46,
+        "endLine": 25,
+        "endChar": 53
+      },
+      "revId": "439b829b42e557f072436613ba987b7928680433",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
