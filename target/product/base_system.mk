@@ -30,7 +30,6 @@ PRODUCT_PACKAGES += \
     apexd \
     appops \
     app_process \
-    service-appsearch \
     appwidget \
     atrace \
     audioserver \
@@ -51,7 +50,8 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.adbd \
-    com.android.apex.cts.shim.v1_prebuilt \
+    com.android.apex.cts.shim.v1 \
+    com.android.appsearch \
     com.android.conscrypt \
     com.android.cronet \
     com.android.i18n \
@@ -72,8 +72,6 @@ PRODUCT_PACKAGES += \
     ContactsProvider \
     content \
     crash_dump \
-    CtsShimPrebuilt \
-    CtsShimPrivPrebuilt \
     debuggerd\
     device_config \
     dmctl \
@@ -333,16 +331,20 @@ PRODUCT_BOOT_JARS := \
     framework-sdkext \
     framework-statsd \
     ike \
-    updatable-media
+    updatable-media \
+    framework-appsearch \
+    framework-wifi
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
+    com.android.appsearch:framework-appsearch \
     com.android.conscrypt:conscrypt \
     com.android.ipsec:ike \
     com.android.media:updatable-media \
     com.android.os.statsd:framework-statsd \
     com.android.sdkext:framework-sdkext \
     com.android.telephony:telephony-common \
-    com.android.telephony:ims-common
+    com.android.telephony:ims-common \
+    com.android.wifi:framework-wifi
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \

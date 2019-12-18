@@ -23,7 +23,6 @@ PRODUCT_PACKAGES += \
     init_second_stage.recovery \
     ld.config.recovery.txt \
     linker.recovery \
-    linkerconfig.recovery \
     otacerts.recovery \
     recovery \
     shell_and_utilities_recovery \
