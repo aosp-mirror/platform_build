@@ -255,6 +255,19 @@ TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST))
 TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
 TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
 
+# Check if config about image building is valid or not.
+define check_image_config
+  $(eval _uc_name := $(call to-upper,$(1))) \
+  $(eval _lc_name := $(call to-lower,$(1))) \
+  $(if $(filter $(_lc_name),$(TARGET_COPY_OUT_$(_uc_name))), \
+    $(if $(BOARD_USES_$(_uc_name)IMAGE),, \
+      $(error If TARGET_COPY_OUT_$(_uc_name) is '$(_lc_name)', either BOARD_PREBUILT_$(_uc_name)IMAGE or BOARD_$(_uc_name)IMAGE_FILE_SYSTEM_TYPE must be set)), \
+  $(if $(BOARD_USES_$(_uc_name)IMAGE), \
+    $(error TARGET_COPY_OUT_$(_uc_name) must be set to '$(_lc_name)' to use a $(_lc_name) image))) \
+  $(eval _uc_name :=) \
+  $(eval _lc_name :=)
+endef
+
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_RAMDISK
 ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
@@ -399,6 +412,8 @@ endif
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
   BOARD_USES_VENDORIMAGE := true
 endif
+# TODO(b/137169253): For now, some AOSP targets build with prebuilt vendor image.
+# But target's BOARD_PREBUILT_VENDORIMAGE is not filled.
 ifeq ($(TARGET_COPY_OUT_VENDOR),vendor)
   BOARD_USES_VENDORIMAGE := true
 else ifdef BOARD_USES_VENDORIMAGE
@@ -438,11 +453,7 @@ endif
 ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
   BOARD_USES_PRODUCTIMAGE := true
 endif
-ifeq ($(TARGET_COPY_OUT_PRODUCT),product)
-  BOARD_USES_PRODUCTIMAGE := true
-else ifdef BOARD_USES_PRODUCTIMAGE
-  $(error TARGET_COPY_OUT_PRODUCT must be set to 'product' to use a product image)
-endif
+$(call check_image_config,product)
 .KATI_READONLY := BOARD_USES_PRODUCTIMAGE
 
 BUILDING_PRODUCT_IMAGE :=
@@ -482,11 +493,7 @@ endif
 ifdef BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE
   BOARD_USES_SYSTEM_EXTIMAGE := true
 endif
-ifeq ($(TARGET_COPY_OUT_SYSTEM_EXT),system_ext)
-  BOARD_USES_SYSTEM_EXTIMAGE := true
-else ifdef BOARD_USES_SYSTEM_EXTIMAGE
-  $(error TARGET_COPY_OUT_SYSTEM_EXT must be set to 'system_ext' to use a system_ext image)
-endif
+$(call check_image_config,system_ext)
 .KATI_READONLY := BOARD_USES_SYSTEM_EXTIMAGE
 
 BUILDING_SYSTEM_EXT_IMAGE :=
@@ -521,11 +528,7 @@ endif
 ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
   BOARD_USES_ODMIMAGE := true
 endif
-ifeq ($(TARGET_COPY_OUT_ODM),odm)
-  BOARD_USES_ODMIMAGE := true
-else ifdef BOARD_USES_ODMIMAGE
-  $(error TARGET_COPY_OUT_ODM must be set to 'odm' to use an odm image)
-endif
+$(call check_image_config,odm)
 
 BUILDING_ODM_IMAGE :=
 ifeq ($(PRODUCT_BUILD_ODM_IMAGE),)
