@@ -709,6 +709,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/CtsShimPrivPrebuilt
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/CtsShimPrebuilt)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/apex/com.android.apex.cts.shim.apex)
 
+# Remove vendor and recovery variants, the directory name has changed.
+$(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -type d -name "android_*_recovery*" -print0 | xargs -0 rm -rf)
+$(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -type d -name "android_*_vendor*" -print0 | xargs -0 rm -rf)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
