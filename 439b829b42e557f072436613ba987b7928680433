@@ -22,6 +22,30 @@
       "revId": "439b829b42e557f072436613ba987b7928680433",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "379278a9_fbc2b29a",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-12-18T04:49:26Z",
+      "side": 1,
+      "message": "\u003e would it be possible to use ${TARGET_ART_APEX} from art/Android.mk here\n\nNo. the core build system shouldn\u0027t depend on side effect of executing Android.mk files.\n\nI think .release or .debug doesn\u0027t make any difference here because the java libs are the same across the two variants. If you strongly think we need to be conditional here, I will create a follow-up change. Please let me know.",
+      "parentUuid": "c393ca2e_387e616f",
+      "range": {
+        "startLine": 25,
+        "startChar": 46,
+        "endLine": 25,
+        "endChar": 53
+      },
+      "revId": "439b829b42e557f072436613ba987b7928680433",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
