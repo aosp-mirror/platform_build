@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "223a0e62_5baa23e1",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1432579
+      },
+      "writtenOn": "2019-12-19T17:26:47Z",
+      "side": 1,
+      "message": "Basically, if device is enrolled into Mainline, by default we enable a userspace reboot for it. I just didn\u0027t want to include the same file in .mk files for all pixels. :)\n\nIf mainline-enrolled device wan\u0027t to opt-out, we can have build flag to conditionally include userspace_reboot.mk. WDYT?",
+      "parentUuid": "c49d4012_5f0ca6d2",
+      "range": {
+        "startLine": 27,
+        "startChar": 2,
+        "endLine": 27,
+        "endChar": 18
+      },
+      "revId": "1d0f32f6a6ebb3452d97437102f691ed1d7d1331",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c71e13bc_b0c36797",
         "filename": "target/product/userspace_reboot.mk",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "1d0f32f6a6ebb3452d97437102f691ed1d7d1331",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "692a5f28_d82b7bbe",
+        "filename": "target/product/userspace_reboot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1432579
+      },
+      "writtenOn": "2019-12-19T17:26:47Z",
+      "side": 1,
+      "message": "Mostly default values for userspace reboot configuration, like:\n* a timeout before we fall back to hard reboot\n* a timeout for services to react to SIGTERM\n* a timeout for services to react to SIGSTOP\n* whenever to trigger a different boot animation during userspace reboot (still under discussion)",
+      "parentUuid": "c71e13bc_b0c36797",
+      "range": {
+        "startLine": 21,
+        "startChar": 21,
+        "endLine": 21,
+        "endChar": 66
+      },
+      "revId": "1d0f32f6a6ebb3452d97437102f691ed1d7d1331",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
