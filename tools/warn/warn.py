@@ -14,21 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Call -m warn.warn to process warning messages.
+"""Simple wrapper to run warn_common with Python standard Pool."""
 
-This script is used by Android continuous build bots for all branches.
-Old frozen branches will continue to use the old warn.py, and active
-branches will use this new version to call -m warn.warn.
-"""
+import multiprocessing
 
-import os
-import subprocess
-import sys
+# pylint:disable=relative-beyond-top-level
+from .warn_common import common_main
+
+
+# This parallel_process could be changed depending on platform
+# and availability of multi-process library functions.
+def parallel_process(num_cpu, classify_warnings, groups):
+  pool = multiprocessing.Pool(num_cpu)
+  return pool.map(classify_warnings, groups)
 
 
 def main():
-  os.environ['PYTHONPATH'] = os.path.dirname(os.path.abspath(__file__))
-  subprocess.check_call(['/usr/bin/python', '-m', 'warn.warn'] + sys.argv[1:])
+  common_main(parallel_process)
 
 
 if __name__ == '__main__':
