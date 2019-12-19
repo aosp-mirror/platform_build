@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c49d4012_5f0ca6d2",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-19T14:24:33Z",
+      "side": 1,
+      "message": "just want to check -- what do you mean by \"mainline devices\" in this case? What governs hwether someone should include this or not?",
+      "range": {
+        "startLine": 27,
+        "startChar": 2,
+        "endLine": 27,
+        "endChar": 18
+      },
+      "revId": "1d0f32f6a6ebb3452d97437102f691ed1d7d1331",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c71e13bc_b0c36797",
+        "filename": "target/product/userspace_reboot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-19T14:24:33Z",
+      "side": 1,
+      "message": "what kind of props? just curious if we expect many more.",
+      "range": {
+        "startLine": 21,
+        "startChar": 21,
+        "endLine": 21,
+        "endChar": 66
+      },
+      "revId": "1d0f32f6a6ebb3452d97437102f691ed1d7d1331",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
