@@ -94,6 +94,30 @@
       "revId": "439b829b42e557f072436613ba987b7928680433",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7a32377_9a4aef63",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-12-19T09:51:49Z",
+      "side": 1,
+      "message": "I will do that when relanding this change.",
+      "parentUuid": "8f4119ed_70b3524f",
+      "range": {
+        "startLine": 25,
+        "startChar": 46,
+        "endLine": 25,
+        "endChar": 53
+      },
+      "revId": "439b829b42e557f072436613ba987b7928680433",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
