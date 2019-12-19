@@ -40,13 +40,7 @@ $(check_elf_files_stamp): $(my_prebuilt_src_file) $(my_check_elf_file_shared_lib
 
 ifneq ($(strip $(LOCAL_CHECK_ELF_FILES)),false)
 ifneq ($(strip $(BUILD_BROKEN_PREBUILT_ELF_FILES)),true)
-# TODO(b/141176116): Remove the PRODUCT_CHECK_ELF_FILES condition below and
-# cover `make droid` targets after everything goes well with `make checkbuild`
-# targets.
-ifneq ($(PRODUCT_CHECK_ELF_FILES)$(CHECK_ELF_FILES),)
 $(LOCAL_BUILT_MODULE): $(check_elf_files_stamp)
-endif  # PRODUCT_CHECK_ELF_FILES or CHECK_ELF_FILES
-
 check-elf-files: $(check_elf_files_stamp)
 endif  # BUILD_BROKEN_PREBUILT_ELF_FILES
 endif  # LOCAL_CHECK_ELF_FILES
