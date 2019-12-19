@@ -17,6 +17,7 @@
 # Inherit this when the target needs to support updating APEXes
 
 ifneq ($(OVERRIDE_TARGET_FLATTEN_APEX),true)
+  PRODUCT_PACKAGES += com.android.apex.cts.shim.v1_prebuilt
   PRODUCT_PROPERTY_OVERRIDES := ro.apex.updatable=true
   TARGET_FLATTEN_APEX := false
 endif
