@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "aa872215_9b737bf9",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-12-19T17:38:39Z",
+      "side": 1,
+      "message": "\u003e conditionally include userspace_reboot.mk\nplease no 😊\n\nNote that mainline_system is unlikely to be broadly used outside of google-managed products. I\u0027ll make a recommendation for what to do offline",
+      "parentUuid": "223a0e62_5baa23e1",
+      "range": {
+        "startLine": 27,
+        "startChar": 2,
+        "endLine": 27,
+        "endChar": 18
+      },
+      "revId": "1d0f32f6a6ebb3452d97437102f691ed1d7d1331",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c71e13bc_b0c36797",
         "filename": "target/product/userspace_reboot.mk",
         "patchSetId": 1
