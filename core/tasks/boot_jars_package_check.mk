@@ -22,10 +22,7 @@ ifdef PRODUCT_BOOT_JARS
 
 intermediates := $(call intermediates-dir-for, PACKAGING, boot-jars-package-check,,COMMON)
 stamp := $(intermediates)/stamp
-art_boot_jars := $(addsuffix .com.android.art.release,$(filter $(ART_APEX_JARS), $(PRODUCT_BOOT_JARS)))
-conscrypt_boot_jars := $(addsuffix .com.android.conscrypt,$(filter conscrypt, $(PRODUCT_BOOT_JARS)))
-noncore_boot_jars := $(filter-out $(ART_APEX_JARS) conscrypt, $(PRODUCT_BOOT_JARS))
-built_boot_jars := $(foreach j, $(art_boot_jars) $(conscrypt_boot_jars) $(noncore_boot_jars), \
+built_boot_jars := $(foreach j, $(PRODUCT_BOOT_JARS), \
   $(call intermediates-dir-for, JAVA_LIBRARIES, $(j),,COMMON)/classes.jar)
 script := build/make/core/tasks/check_boot_jars/check_boot_jars.py
 whitelist_file := build/make/core/tasks/check_boot_jars/package_whitelist.txt
