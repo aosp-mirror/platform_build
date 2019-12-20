@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4f38da9d_b31a5be0",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2126,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-12-20T16:44:22Z",
+      "side": 1,
+      "message": "recovery_ramdisk is not declared as an output of this rule, you can add:\n\n $(INSTALLED_BOOTIMAGE_TARGET): .KATI_IMPLICIT_OUTPUTS +\u003d $(recovery_ramdisk)",
+      "revId": "60405f53f9742b07f74202c9f2b29587f846617d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
