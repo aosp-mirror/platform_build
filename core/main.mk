@@ -1120,17 +1120,9 @@ APEX_MODULE_LIBS += \
   libdl_android.so \
   libm.so \
 
-# Conscrypt APEX libraries
-APEX_MODULE_LIBS += \
-  libjavacrypto.so \
-
 # Android Neural Network API (NNAPI) APEX (native) libraries
 APEX_MODULE_LIBS += \
   libneuralnetworks.so \
-
-# Conscrypt APEX JARs (Java libraries)
-APEX_MODULE_LIBS += \
-  conscrypt.jar \
 
 # An option to disable the check below, for local use since some build targets
 # still may create these libraries in /system (b/129006418).
