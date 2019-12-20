@@ -333,6 +333,7 @@ PRODUCT_BOOT_JARS := \
     framework-statsd \
     ike \
     updatable-media \
+    framework-mediaprovider \
     framework-appsearch \
     framework-wifi
 
@@ -341,6 +342,7 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
     com.android.ipsec:ike \
     com.android.media:updatable-media \
+    com.android.mediaprovider:framework-mediaprovider \
     com.android.os.statsd:framework-statsd \
     com.android.sdkext:framework-sdkext \
     com.android.telephony:telephony-common \
