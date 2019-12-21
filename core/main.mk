@@ -1111,47 +1111,6 @@ endef
 # art/build/apex/art_apex_test.py.
 # TODO(b/128708192): Implement this restriction in Soong instead.
 
-# ART APEX (native) libraries
-APEX_MODULE_LIBS := \
-  libadbconnection.so \
-  libadbconnectiond.so \
-  libandroidicu.so \
-  libandroidio.so \
-  libart-compiler.so \
-  libart-dexlayout.so \
-  libart-disassembler.so \
-  libart.so \
-  libartbase.so \
-  libartbased.so \
-  libartd-compiler.so \
-  libartd-dexlayout.so \
-  libartd.so \
-  libartpalette.so \
-  libdexfile.so \
-  libdexfile_external.so \
-  libdexfiled.so \
-  libdexfiled_external.so \
-  libdt_fd_forward.so \
-  libdt_socket.so \
-  libicui18n.so \
-  libicuuc.so \
-  libicu_jni.so \
-  libjavacore.so \
-  libjdwp.so \
-  libnativebridge.so \
-  libnativehelper.so \
-  libnativeloader.so \
-  libnpt.so \
-  libopenjdk.so \
-  libopenjdkjvm.so \
-  libopenjdkjvmd.so \
-  libopenjdkjvmti.so \
-  libopenjdkjvmtid.so \
-  libpac.so \
-  libprofile.so \
-  libprofiled.so \
-  libsigchain.so \
-
 # Runtime (Bionic) APEX (native) libraries
 APEX_MODULE_LIBS += \
   libc.so \
@@ -1161,26 +1120,9 @@ APEX_MODULE_LIBS += \
   libdl_android.so \
   libm.so \
 
-# Conscrypt APEX libraries
-APEX_MODULE_LIBS += \
-  libjavacrypto.so \
-
 # Android Neural Network API (NNAPI) APEX (native) libraries
 APEX_MODULE_LIBS += \
   libneuralnetworks.so \
-
-# ART APEX JARs (Java libraries)
-APEX_MODULE_LIBS += \
-  apache-xml.jar \
-  bouncycastle.jar \
-  core-icu4j.jar \
-  core-libart.jar \
-  core-oj.jar \
-  okhttp.jar \
-
-# Conscrypt APEX JARs (Java libraries)
-APEX_MODULE_LIBS += \
-  conscrypt.jar \
 
 # An option to disable the check below, for local use since some build targets
 # still may create these libraries in /system (b/129006418).

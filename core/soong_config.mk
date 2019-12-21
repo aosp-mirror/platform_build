@@ -124,6 +124,7 @@ $(call add_json_bool, DevicePrefer32BitApps,             $(filter true,$(TARGET_
 $(call add_json_bool, DevicePrefer32BitExecutables,      $(filter true,$(TARGET_PREFER_32_BIT_EXECUTABLES)))
 $(call add_json_str,  DeviceVndkVersion,                 $(BOARD_VNDK_VERSION))
 $(call add_json_str,  Platform_vndk_version,             $(PLATFORM_VNDK_VERSION))
+$(call add_json_str,  ProductVndkVersion,                $(PRODUCT_PRODUCT_VNDK_VERSION))
 $(call add_json_list, ExtraVndkVersions,                 $(PRODUCT_EXTRA_VNDK_VERSIONS))
 $(call add_json_bool, BoardVndkRuntimeDisable,           $(BOARD_VNDK_RUNTIME_DISABLE))
 $(call add_json_list, DeviceSystemSdkVersions,           $(BOARD_SYSTEMSDK_VERSIONS))
