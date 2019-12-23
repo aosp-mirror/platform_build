@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "68898b71_6c3510d4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-12-23T03:42:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d7ba751_f31012df",
+      "range": {
+        "startLine": 9,
+        "startChar": 42,
+        "endLine": 9,
+        "endChar": 59
+      },
+      "revId": "eee72905d5518235442d8e118d4a0f30b1f90e72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0601d18a_119f9099",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "ea324a6f_6a1b40ed",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-12-23T03:42:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0601d18a_119f9099",
+      "range": {
+        "startLine": 11,
+        "startChar": 49,
+        "endLine": 11,
+        "endChar": 58
+      },
+      "revId": "eee72905d5518235442d8e118d4a0f30b1f90e72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "319b2808_fc11225a",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "eee72905d5518235442d8e118d4a0f30b1f90e72",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0964cce8_edc40368",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-12-23T03:42:29Z",
+      "side": 1,
+      "message": "Thanks. Added that part too.",
+      "parentUuid": "319b2808_fc11225a",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 55
+      },
+      "revId": "eee72905d5518235442d8e118d4a0f30b1f90e72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
