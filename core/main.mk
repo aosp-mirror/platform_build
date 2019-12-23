@@ -1528,7 +1528,9 @@ else # TARGET_BUILD_APPS
     $(INSTALLED_BUILD_PROP_TARGET) \
     $(BUILT_TARGET_FILES_PACKAGE) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
+    $(INSTALLED_MISC_INFO_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
+    $(recovery_ramdisk) \
    )
 
   # Put a copy of the radio/bootloader files in the dist dir.
