@@ -16,3 +16,5 @@
 
 # Base modules and settings for the system_ext partition.
 PRODUCT_PACKAGES += \
+    group_system_ext \
+    passwd_system_ext \
