@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "60394505_009e62f6",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-12-23T03:41:38Z",
+      "side": 1,
+      "message": "This will leave PRODUCT_USE_PRODUCT_VNDK blank if PRODUCT_USE_VNDK is not set, will that be an issue?",
+      "revId": "f167aac8524233ba8d1fe0bdaa087bb66d620586",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "deca43e5_596fa6bb",
         "filename": "core/config.mk",
         "patchSetId": 2
