@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b8ae704a_99e7e71a",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-12-23T04:06:24Z",
+      "side": 1,
+      "message": "It must not be an issue, but I moved it outside of \u0027ifeq\u0027 body.\nPRODUCT_USE_PRODUCT_VNDK will not be used outside the config.mk file. Neither does PRODUCT_USE_VNDK.\nSo I added them to \u0027KATI_obsolete_var\u0027.",
+      "parentUuid": "60394505_009e62f6",
+      "revId": "f167aac8524233ba8d1fe0bdaa087bb66d620586",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "deca43e5_596fa6bb",
         "filename": "core/config.mk",
         "patchSetId": 2
