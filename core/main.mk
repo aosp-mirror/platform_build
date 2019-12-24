@@ -1528,7 +1528,6 @@ else # TARGET_BUILD_APPS
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_MISC_INFO_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
-    $(recovery_ramdisk) \
    )
 
   # Put a copy of the radio/bootloader files in the dist dir.
@@ -1561,6 +1560,12 @@ else # TARGET_BUILD_APPS
     $(call dist-for-goals, bootimage_test_harness, \
       $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
       $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
+    )
+  endif
+
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    $(call dist-for-goals, droidcore, \
+      $(recovery_ramdisk) \
     )
   endif
 
