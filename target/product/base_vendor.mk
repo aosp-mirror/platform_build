@@ -49,7 +49,6 @@ PRODUCT_PACKAGES += \
     fs_config_dirs_nonsystem \
     gralloc.default \
     group_odm \
-    group_system_ext \
     group_vendor \
     init_vendor \
     libbundlewrapper \
@@ -65,7 +64,6 @@ PRODUCT_PACKAGES += \
     libril \
     libvisualizer \
     passwd_odm \
-    passwd_system_ext \
     passwd_vendor \
     selinux_policy_nonsystem \
     shell_and_utilities_vendor \

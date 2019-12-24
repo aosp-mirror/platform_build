@@ -2124,6 +2124,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	    $(recovery_fstab)
 	$(call pretty,"Target boot image from recovery: $@")
 	$(call build-recoveryimage-target, $@)
+$(INSTALLED_BOOTIMAGE_TARGET): .KATI_IMPLICIT_OUTPUTS += $(recovery_ramdisk)
 endif # BOARD_USES_RECOVERY_AS_BOOT
 
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
@@ -2489,7 +2490,6 @@ define build-systemimage-target
   $(call create-system-vendor-symlink)
   $(call create-system-product-symlink)
   $(call create-system-system_ext-symlink)
-  $(call check-apex-libs-absence-on-disk)
   @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf $(systemimage_intermediates)/system_image_info.txt
   $(call generate-image-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt,system, \
       skip_fsck=true)

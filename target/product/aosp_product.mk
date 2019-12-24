@@ -31,6 +31,7 @@ PRODUCT_PRODUCT_PROPERTIES += \
 PRODUCT_PACKAGES += \
     messaging \
     PhotoTable \
+    preinstalled-packages-platform-aosp-product.xml \
     WAPPushManager \
     WallpaperPicker \
 
