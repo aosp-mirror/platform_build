@@ -97,6 +97,9 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'product',
                   'product_services', 'dtbo', 'odm')
 
+# Chained VBMeta partitions.
+AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
+
 # Partitions that should have their care_map added to META/care_map.pb
 PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
                             'odm')

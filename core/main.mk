@@ -102,6 +102,8 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 -include test/sts/tools/sts-tradefed/build/config.mk
 # CTS-Instant-specific config
 -include test/suite_harness/tools/cts-instant-tradefed/build/config.mk
+# MTS-specific config.
+-include test/mts/tools/build/config.mk
 
 # Clean rules
 .PHONY: clean-dex-files

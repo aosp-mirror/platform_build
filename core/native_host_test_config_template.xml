@@ -16,6 +16,9 @@
 <!-- This test config file is auto-generated. -->
 <configuration description="Runs {MODULE}.">
     <option name="null-device" value="true" />
+
+    {EXTRA_CONFIGS}
+
     <test class="com.android.tradefed.testtype.HostGTest" >
         <option name="module-name" value="{MODULE}" />
     </test>

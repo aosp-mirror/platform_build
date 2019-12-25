@@ -123,8 +123,6 @@ PRODUCT_PACKAGES += \
     libbinder_ndk \
     libc.bootstrap \
     libcamera2ndk \
-    libcamera_client \
-    libcameraservice \
     libc_malloc_debug \
     libc_malloc_hooks \
     libcutils \
