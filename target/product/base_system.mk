@@ -104,6 +104,7 @@ PRODUCT_PACKAGES += \
     idmap2 \
     idmap2d \
     ime \
+    ims-common \
     incident \
     incidentd \
     incident_helper \
@@ -259,6 +260,7 @@ PRODUCT_PACKAGES += \
     task_profiles.json \
     tc \
     telecom \
+    telephony-common \
     tombstoned \
     traced \
     traced_probes \
@@ -350,8 +352,6 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.os.statsd:framework-statsd \
     com.android.sdkext:framework-sdkext \
-    com.android.telephony:telephony-common \
-    com.android.telephony:ims-common \
     com.android.wifi:framework-wifi \
     com.android.tethering:framework-tethering
 
