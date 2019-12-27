@@ -111,7 +111,6 @@ PRODUCT_PACKAGES += \
     ip-up-vpn \
     javax.obex \
     keystore \
-    ld.config.txt \
     ld.mc \
     libaaudio \
     libamidi \
