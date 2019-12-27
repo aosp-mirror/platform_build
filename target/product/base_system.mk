@@ -119,7 +119,6 @@ PRODUCT_PACKAGES += \
     javax.obex \
     service-jobscheduler \
     keystore \
-    ld.config.txt \
     ld.mc \
     libaaudio \
     libamidi \
