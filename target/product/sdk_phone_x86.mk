@@ -15,6 +15,7 @@
 #
 QEMU_USE_SYSTEM_EXT_PARTITIONS := true
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 2
 
 #
 # All components inherited here go to system image
