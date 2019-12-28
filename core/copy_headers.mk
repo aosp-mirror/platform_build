@@ -4,15 +4,13 @@ ifneq (,$(strip $(LOCAL_COPY_HEADERS)))
 ###########################################################
 $(call record-module-type,COPY_HEADERS)
 ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
-  $(shell echo $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): LOCAL_COPY_HEADERS may not be used with host modules >&2)
-  $(error done)
+  $(call pretty-error,LOCAL_COPY_HEADERS may not be used with host modules)
 endif
 
 # Modules linking against the SDK do not have the include path to use
 # COPY_HEADERS, so prevent them from exporting any either.
 ifdef LOCAL_SDK_VERSION
-$(shell echo $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Modules using LOCAL_SDK_VERSION may not use LOCAL_COPY_HEADERS >&2)
-$(error done)
+  $(call pretty-error,Modules using LOCAL_SDK_VERSION may not use LOCAL_COPY_HEADERS)
 endif
 
 include $(BUILD_SYSTEM)/local_vndk.mk
@@ -22,9 +20,18 @@ include $(BUILD_SYSTEM)/local_vndk.mk
 # present.
 ifdef BOARD_VNDK_VERSION
 ifndef LOCAL_USE_VNDK
-$(shell echo $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Only vendor modules using LOCAL_USE_VNDK may use LOCAL_COPY_HEADERS >&2)
-$(error done)
+  $(call pretty-error,Only vendor modules using LOCAL_USE_VNDK may use LOCAL_COPY_HEADERS)
 endif
+endif
+
+# Clean up LOCAL_COPY_HEADERS_TO, since soong_ui will be comparing cleaned
+# paths to figure out which headers are obsolete and should be removed.
+LOCAL_COPY_HEADERS_TO := $(call clean-path,$(LOCAL_COPY_HEADERS_TO))
+ifneq ($(filter /% .. ../%,$(LOCAL_COPY_HEADERS_TO)),)
+  $(call pretty-error,LOCAL_COPY_HEADERS_TO may not start with / or ../ : $(LOCAL_COPY_HEADERS_TO))
+endif
+ifeq ($(LOCAL_COPY_HEADERS_TO),.)
+  LOCAL_COPY_HEADERS_TO :=
 endif
 
 # Create a rule to copy each header, and make the
