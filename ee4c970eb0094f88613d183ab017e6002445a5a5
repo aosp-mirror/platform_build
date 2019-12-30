@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d32962b_6df627b4",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 1608334
+      },
+      "writtenOn": "2019-12-30T16:37:50Z",
+      "side": 1,
+      "message": "where it\u0027s TARGET_PRODUCT here? \nShould it be \"PRODUCT_NAME\" ?",
+      "revId": "ee4c970eb0094f88613d183ab017e6002445a5a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
