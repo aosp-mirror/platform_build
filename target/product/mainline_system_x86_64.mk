@@ -24,9 +24,6 @@ $(call enforce-product-packages-exist,)
 # Enable mainline checking
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
 
-# Enable nonflat APEX
-$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
-
 PRODUCT_BUILD_CACHE_IMAGE := false
 PRODUCT_BUILD_ODM_IMAGE := false
 PRODUCT_BUILD_PRODUCT_IMAGE  := false
