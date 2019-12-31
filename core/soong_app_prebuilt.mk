@@ -41,6 +41,10 @@ ifdef LOCAL_SOONG_CLASSES_JAR
       $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
     endif
   endif # TURBINE_ENABLED != false
+
+  javac-check : $(full_classes_jar)
+  javac-check-$(LOCAL_MODULE) : $(full_classes_jar)
+  .PHONY: javac-check-$(LOCAL_MODULE)
 endif
 
 # Run veridex on product, system_ext and vendor modules.
