@@ -16,6 +16,24 @@
       "revId": "ee4c970eb0094f88613d183ab017e6002445a5a5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4dd6dc9_f594c529",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 1608334
+      },
+      "writtenOn": "2019-12-31T02:18:22Z",
+      "side": 1,
+      "message": "\u003e Why it\u0027s TARGET_PRODUCT here? \n\u003e Should it be \"PRODUCT_NAME\" ?\n(where \u003e\u003e why)",
+      "parentUuid": "0d32962b_6df627b4",
+      "revId": "ee4c970eb0094f88613d183ab017e6002445a5a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
