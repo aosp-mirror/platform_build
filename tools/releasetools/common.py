@@ -62,7 +62,7 @@ class Options(object):
           'Warning: releasetools script should be invoked as hermetic Python '
           'executable -- build and run `{}` directly.'.format(script_name[:-3]),
           file=sys.stderr)
-    self.search_path = os.path.realpath(os.path.join(exec_path, '..'))
+    self.search_path = os.path.realpath(os.path.join(os.path.dirname(exec_path), '..'))
 
     self.signapk_path = "framework/signapk.jar"  # Relative to search_path
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
