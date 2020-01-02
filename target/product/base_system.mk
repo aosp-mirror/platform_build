@@ -131,6 +131,7 @@ PRODUCT_PACKAGES += \
     libdrmframework_jni \
     libEGL \
     libETC1 \
+    libfdtrack \
     libFFTEm \
     libfilterfw \
     libgatekeeper \
