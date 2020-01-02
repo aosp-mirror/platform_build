@@ -823,6 +823,12 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
     merged_dict[key] = (
         "%s %s" %
         (framework_dict.get(key, ""), vendor_dict.get(key, ""))).strip()
+
+  # Pick virtual ab related flags from vendor dict, if defined.
+  if "virtual_ab" in vendor_dict.keys():
+     merged_dict["virtual_ab"] = vendor_dict["virtual_ab"]
+  if "virtual_ab_retrofit" in vendor_dict.keys():
+     merged_dict["virtual_ab_retrofit"] = vendor_dict["virtual_ab_retrofit"]
   return merged_dict
 
 
