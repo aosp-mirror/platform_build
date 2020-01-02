@@ -62,7 +62,8 @@ PRODUCT_SYSTEM_SERVER_JARS := \
 PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
     com.android.permission:service-permission \
-    com.android.wifi:wifi-service
+    com.android.wifi:wifi-service \
+    com.android.ipsec:android.net.ipsec.ike \
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt

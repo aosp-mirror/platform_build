@@ -334,7 +334,6 @@ PRODUCT_BOOT_JARS := \
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
     com.android.conscrypt:conscrypt \
-    com.android.ipsec:ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.os.statsd:framework-statsd \
