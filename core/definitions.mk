@@ -108,6 +108,9 @@ ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 # All tests that should be skipped in presubmit check.
 ALL_DISABLED_PRESUBMIT_TESTS :=
 
+# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
+ALL_COMPATIBILITY_SUITES :=
+
 ###########################################################
 ## Debugging; prints a variable list to stdout
 ###########################################################
@@ -2894,6 +2897,7 @@ endef
 #    and use my_compat_dist_$(suite) to define the others.
 define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,$(eval ALL_COMPATIBILITY_SUITES += $(suite))) \
   $(eval COMPATIBILITY.$(suite).FILES := \
     $$(COMPATIBILITY.$(suite).FILES) $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
       $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f)))) \
