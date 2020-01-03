@@ -47,7 +47,10 @@ def get_version(input_bytes, start_idx):
   null_idx = input_bytes.find('\x00', start_idx)
   if null_idx < 0:
     return None
-  linux_banner = input_bytes[start_idx:null_idx].decode()
+  try:
+    linux_banner = input_bytes[start_idx:null_idx].decode()
+  except UnicodeDecodeError:
+    return None
   mo = re.match(LINUX_BANNER_REGEX, linux_banner)
   if mo:
     return mo.group(1)

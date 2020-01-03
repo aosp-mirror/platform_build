@@ -972,6 +972,10 @@ def GetCodenameToApiLevelMap(input_tf_zip):
     codename = codename.strip()
     if codename:
       result[codename] = api_level
+
+  # Work around APKs that still target 'Q' instead of API 29 (b/132882632).
+  result['Q'] = 29
+
   return result
 
 
