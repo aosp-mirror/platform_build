@@ -1251,6 +1251,28 @@ modules_to_install := $(sort \
     $(CUSTOM_MODULES) \
   )
 
+#
+# Used by the cleanup logic in soong_ui to remove files that should no longer
+# be installed.
+#
+
+# Include all tests, so that we remove them from the test suites / testcase
+# folders when they are removed.
+test_files := $(foreach ts,$(ALL_COMPATIBILITY_SUITES),$(COMPATIBILITY.$(ts).FILES))
+
+$(shell mkdir -p $(PRODUCT_OUT) $(HOST_OUT))
+
+$(file >$(PRODUCT_OUT)/.installable_files$(if $(filter address,$(SANITIZE_TARGET)),_asan), \
+  $(sort $(patsubst $(PRODUCT_OUT)/%,%,$(filter $(PRODUCT_OUT)/%, \
+    $(modules_to_install) $(test_files)))))
+
+$(file >$(HOST_OUT)/.installable_test_files,$(sort \
+  $(patsubst $(HOST_OUT)/%,%,$(filter $(HOST_OUT)/%, \
+    $(test_files)))))
+
+test_files :=
+
+
 # Don't include any GNU General Public License shared objects or static
 # libraries in SDK images.  GPL executables (not static/dynamic libraries)
 # are okay if they don't link against any closed source libraries (directly
