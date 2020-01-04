@@ -98,7 +98,8 @@ _build_broken_var_list += \
     BUILD_BROKEN_USES_$(m))
 
 _board_true_false_vars := $(_build_broken_var_list)
-_board_strip_readonly_list += $(_build_broken_var_list)
+_board_strip_readonly_list += $(_build_broken_var_list) \
+  BUILD_BROKEN_NINJA_USES_ENV_VARS
 
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
@@ -109,6 +110,7 @@ endif
 # Broken build defaults
 # ###############################################################
 $(foreach v,$(_build_broken_var_list),$(eval $(v) :=))
+BUILD_BROKEN_NINJA_USES_ENV_VARS :=
 
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
