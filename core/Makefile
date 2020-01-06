@@ -3778,6 +3778,7 @@ INTERNAL_OTATOOLS_MODULES := \
   simg2img \
   sload_f2fs \
   tune2fs \
+  unpack_bootimg \
   update_host_simulator \
   validate_target_files \
   verity_signer \
