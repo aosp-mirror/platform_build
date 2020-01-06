@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8eaa8a0d_4afc9cf7",
+        "filename": "core/config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 717,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-01-06T20:22:20Z",
+      "side": 1,
+      "message": "greater than or equal to?",
+      "range": {
+        "startLine": 717,
+        "startChar": 32,
+        "endLine": 717,
+        "endChar": 44
+      },
+      "revId": "663dc49b36599a0813dcb3fe9f4db7f57cf06a77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
