@@ -46,6 +46,30 @@
       "revId": "663dc49b36599a0813dcb3fe9f4db7f57cf06a77",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f902e270_d56e632f",
+        "filename": "core/config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 717,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-01-07T00:46:12Z",
+      "side": 1,
+      "message": "Can you simplify the logic then?  Either math_lt or add math_gt to math.mk",
+      "parentUuid": "28eab9fa_46c4e469",
+      "range": {
+        "startLine": 717,
+        "startChar": 32,
+        "endLine": 717,
+        "endChar": 44
+      },
+      "revId": "663dc49b36599a0813dcb3fe9f4db7f57cf06a77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
