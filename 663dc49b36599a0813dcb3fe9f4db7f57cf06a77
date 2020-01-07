@@ -22,6 +22,30 @@
       "revId": "663dc49b36599a0813dcb3fe9f4db7f57cf06a77",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28eab9fa_46c4e469",
+        "filename": "core/config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 717,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-01-07T00:37:27Z",
+      "side": 1,
+      "message": "No, not \"equal to\". It does not include Q.\nThe following \u0027math_gt_or_eq\u0027 is \u002729 is not greater than or equal to shipping api level\u0027, that is \u0027shipping api level is greater than 29\u0027",
+      "parentUuid": "8eaa8a0d_4afc9cf7",
+      "range": {
+        "startLine": 717,
+        "startChar": 32,
+        "endLine": 717,
+        "endChar": 44
+      },
+      "revId": "663dc49b36599a0813dcb3fe9f4db7f57cf06a77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
