@@ -45,8 +45,6 @@ else
 DEX2OAT := $(SOONG_HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
 endif
 
-DEX2OAT_DEPENDENCY += $(DEX2OAT)
-
 # Use the first preloaded-classes file in PRODUCT_COPY_FILES.
 PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
     $(filter %system/etc/preloaded-classes,$(PRODUCT_COPY_FILES))))
