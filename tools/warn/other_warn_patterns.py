@@ -39,6 +39,10 @@ def asm(description, pattern_list):
   return warn('asm', Severity.MEDIUM, description, pattern_list)
 
 
+def kotlin(description, pattern_list):
+  return warn('Kotlin', Severity.MEDIUM, description, pattern_list)
+
+
 patterns = [
     # pylint:disable=line-too-long,g-inconsistent-quotes
     # aapt warnings
@@ -96,16 +100,16 @@ patterns = [
      'description': 'Proto: Import not used',
      'patterns': [r".*: warning: Import .*/.*\.proto but not used.$"]},
     # Kotlin warnings
-    {'category': 'Kotlin', 'severity': Severity.MEDIUM,
-     'description': 'Kotlin: never used parameter or variable',
-     'patterns': [r".*: warning: (parameter|variable) '.*' is never used$"]},
-    {'category': 'Kotlin', 'severity': Severity.MEDIUM,
-     'description': 'Kotlin: Deprecated in Java',
-     'patterns': [r".*: warning: '.*' is deprecated. Deprecated in Java"]},
-    {'category': 'Kotlin', 'severity': Severity.MEDIUM,
-     'description': 'Kotlin: library has Kotlin runtime',
-     'patterns': [r".*: warning: library has Kotlin runtime bundled into it",
-                  r".*: warning: some JAR files .* have the Kotlin Runtime library"]},
+    kotlin('never used parameter or variable',
+           [r".*\.kt:.*: warning: (parameter|variable) '.*' is never used$",
+            r".*\.kt:.*: warning: (parameter|variable) '.*' is never used, could be renamed to _$"]),
+    kotlin('unchecked cast',
+           [r".*\.kt:.*: warning: unchecked cast: .* to .*$"]),
+    kotlin('Deprecated in Java',
+           [r".*\.kt:.*: warning: '.*' is deprecated. Deprecated in Java"]),
+    kotlin('library has Kotlin runtime',
+           [r".*: warning: library has Kotlin runtime bundled into it",
+            r".*: warning: some JAR files .* have the Kotlin Runtime library"]),
     # Rust warnings
     {'category': 'Rust', 'severity': Severity.HIGH,
      'description': 'Rust: Does not derive Copy',
