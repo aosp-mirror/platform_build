@@ -51,7 +51,7 @@ _vndk_check_failure_message := " error: VNDK library list has been changed.\n"
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
 _vndk_check_failure_message += "       Changing the VNDK library list is not allowed in API locked branches."
 else
-_vndk_check_failure_message += "       Run update-vndk-list.sh to update $(LATEST_VNDK_LIB_LIST)"
+_vndk_check_failure_message += "       Run \`update-vndk-list.sh\` to update $(LATEST_VNDK_LIB_LIST)"
 endif
 
 $(check-vndk-list-timestamp): $(INTERNAL_VNDK_LIB_LIST) $(LATEST_VNDK_LIB_LIST) $(HOST_OUT_EXECUTABLES)/update-vndk-list.sh
