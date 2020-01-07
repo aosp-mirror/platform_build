@@ -70,6 +70,30 @@
       "revId": "663dc49b36599a0813dcb3fe9f4db7f57cf06a77",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a50b0460_ebc79885",
+        "filename": "core/config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 717,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-01-07T01:05:14Z",
+      "side": 1,
+      "message": "Ok, I will. That will be better for readability.\nI\u0027d better add math_gt because we may not use 30 which is not an official version for now.",
+      "parentUuid": "f902e270_d56e632f",
+      "range": {
+        "startLine": 717,
+        "startChar": 32,
+        "endLine": 717,
+        "endChar": 44
+      },
+      "revId": "663dc49b36599a0813dcb3fe9f4db7f57cf06a77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
