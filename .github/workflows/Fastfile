@@ -1,0 +1,171 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Submit a new Beta build"
+  lane :beta do
+    json_key = "./key.json"
+    package_name = "com.irccloud.android"
+    metadata = "./fastlane/metadata/android"
+    gradle(task: "clean")
+    build_android_app(task: "bundle", build_type: "Release")
+    upload_to_play_store(
+      package_name: package_name,
+      json_key: json_key,
+      aab: aab,
+      track: beta,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+  
+  lane :screenshots do
+    json_key = "./key.json"
+    
+    gradle(task: "clean")
+    build_android_app(
+      task: 'assemble',
+      build_type: 'Mockdata'
+    )
+    build_android_app(
+      task: 'assemble',
+      build_type: 'AndroidTest'
+    )
+
+    sh("../start-emulator.sh Nexus_S_API_O")
+
+    capture_android_screenshots(
+      clear_previous_screenshots: true,
+      skip_open_summary: true,
+      app_apk_path: "build/outputs/apk/mockdata/irccloud-android-mockdata.apk",
+      tests_apk_path: "build/outputs/apk/androidTest/mockdata/irccloud-android-mockdata-androidTest.apk",
+      app_package_name: "com.irccloud.android.mockdata",
+      tests_package_name: "com.irccloud.android.test",
+      test_instrumentation_runner: "androidx.test.runner.AndroidJUnitRunner",
+      use_tests_in_classes: ["com.irccloud.android.test.Screenshots"],
+      launch_arguments: ["theme dawn"],
+      device_type: "phone",
+      specific_device: "emulator-5580"
+    )
+    capture_android_screenshots(
+      skip_open_summary: true,
+      app_apk_path: "build/outputs/apk/mockdata/irccloud-android-mockdata.apk",
+      tests_apk_path: "build/outputs/apk/androidTest/mockdata/irccloud-android-mockdata-androidTest.apk",
+      app_package_name: "com.irccloud.android.mockdata",
+      tests_package_name: "com.irccloud.android.test",
+      test_instrumentation_runner: "androidx.test.runner.AndroidJUnitRunner",
+      use_tests_in_classes: ["com.irccloud.android.test.Screenshots"],
+      launch_arguments: ["theme dusk"],
+      device_type: "phone",
+      specific_device: "emulator-5580"
+    )
+    capture_android_screenshots(
+      skip_open_summary: true,
+      app_apk_path: "build/outputs/apk/mockdata/irccloud-android-mockdata.apk",
+      tests_apk_path: "build/outputs/apk/androidTest/mockdata/irccloud-android-mockdata-androidTest.apk",
+      app_package_name: "com.irccloud.android.mockdata",
+      tests_package_name: "com.irccloud.android.test",
+      test_instrumentation_runner: "androidx.test.runner.AndroidJUnitRunner",
+      use_tests_in_classes: ["com.irccloud.android.test.Screenshots"],
+      launch_arguments: ["theme ash"],
+      device_type: "phone",
+      specific_device: "emulator-5580"
+    )
+    
+    sh("../start-emulator.sh Nexus_7_API_O")
+    
+    capture_android_screenshots(
+      clear_previous_screenshots: true,
+      skip_open_summary: true,
+      app_apk_path: "build/outputs/apk/mockdata/irccloud-android-mockdata.apk",
+      tests_apk_path: "build/outputs/apk/androidTest/mockdata/irccloud-android-mockdata-androidTest.apk",
+      app_package_name: "com.irccloud.android.mockdata",
+      tests_package_name: "com.irccloud.android.test",
+      test_instrumentation_runner: "androidx.test.runner.AndroidJUnitRunner",
+      use_tests_in_classes: ["com.irccloud.android.test.Screenshots"],
+      launch_arguments: ["theme dawn"],
+      device_type: "sevenInch",
+      specific_device: "emulator-5580"
+    )
+    capture_android_screenshots(
+      skip_open_summary: true,
+      app_apk_path: "build/outputs/apk/mockdata/irccloud-android-mockdata.apk",
+      tests_apk_path: "build/outputs/apk/androidTest/mockdata/irccloud-android-mockdata-androidTest.apk",
+      app_package_name: "com.irccloud.android.mockdata",
+      tests_package_name: "com.irccloud.android.test",
+      test_instrumentation_runner: "androidx.test.runner.AndroidJUnitRunner",
+      use_tests_in_classes: ["com.irccloud.android.test.Screenshots"],
+      launch_arguments: ["theme dusk"],
+      device_type: "sevenInch",
+      specific_device: "emulator-5580"
+    )
+    capture_android_screenshots(
+      skip_open_summary: true,
+      app_apk_path: "build/outputs/apk/mockdata/irccloud-android-mockdata.apk",
+      tests_apk_path: "build/outputs/apk/androidTest/mockdata/irccloud-android-mockdata-androidTest.apk",
+      app_package_name: "com.irccloud.android.mockdata",
+      tests_package_name: "com.irccloud.android.test",
+      test_instrumentation_runner: "androidx.test.runner.AndroidJUnitRunner",
+      use_tests_in_classes: ["com.irccloud.android.test.Screenshots"],
+      launch_arguments: ["theme ash"],
+      device_type: "sevenInch",
+      specific_device: "emulator-5580"
+    )
+    
+    sh("../start-emulator.sh Nexus_10_API_O")
+    
+    capture_android_screenshots(
+      clear_previous_screenshots: true,
+      skip_open_summary: true,
+      app_apk_path: "build/outputs/apk/mockdata/irccloud-android-mockdata.apk",
+      tests_apk_path: "build/outputs/apk/androidTest/mockdata/irccloud-android-mockdata-androidTest.apk",
+      app_package_name: "com.irccloud.android.mockdata",
+      tests_package_name: "com.irccloud.android.test",
+      test_instrumentation_runner: "androidx.test.runner.AndroidJUnitRunner",
+      use_tests_in_classes: ["com.irccloud.android.test.Screenshots"],
+      launch_arguments: ["theme dawn"],
+      device_type: "tenInch",
+      specific_device: "emulator-5580"
+    )
+    capture_android_screenshots(
+      skip_open_summary: true,
+      app_apk_path: "build/outputs/apk/mockdata/irccloud-android-mockdata.apk",
+      tests_apk_path: "build/outputs/apk/androidTest/mockdata/irccloud-android-mockdata-androidTest.apk",
+      app_package_name: "com.irccloud.android.mockdata",
+      tests_package_name: "com.irccloud.android.test",
+      test_instrumentation_runner: "androidx.test.runner.AndroidJUnitRunner",
+      use_tests_in_classes: ["com.irccloud.android.test.Screenshots"],
+      launch_arguments: ["theme dusk"],
+      device_type: "tenInch",
+      specific_device: "emulator-5580"
+    )
+    capture_android_screenshots(
+      app_apk_path: "build/outputs/apk/mockdata/irccloud-android-mockdata.apk",
+      tests_apk_path: "build/outputs/apk/androidTest/mockdata/irccloud-android-mockdata-androidTest.apk",
+      app_package_name: "com.irccloud.android.mockdata",
+      tests_package_name: "com.irccloud.android.test",
+      test_instrumentation_runner: "androidx.test.runner.AndroidJUnitRunner",
+      use_tests_in_classes: ["com.irccloud.android.test.Screenshots"],
+      launch_arguments: ["theme ash"],
+      device_type: "tenInch",
+      specific_device: "emulator-5580"
+    )
+    
+    sh("adb -s emulator-5580 emu kill")
+  end
+end
