@@ -17,6 +17,8 @@ LLNDK: libneuralnetworks.so
 LLNDK: libsync.so
 LLNDK: libvndksupport.so
 LLNDK: libvulkan.so
+VNDK-SP: android.hardware.common-V1-ndk_platform.so
+VNDK-SP: android.hardware.graphics.common-V1-ndk_platform.so
 VNDK-SP: android.hardware.graphics.common@1.0.so
 VNDK-SP: android.hardware.graphics.common@1.1.so
 VNDK-SP: android.hardware.graphics.common@1.2.so
@@ -52,8 +54,6 @@ VNDK-SP: libunwindstack.so
 VNDK-SP: libutils.so
 VNDK-SP: libutilscallstack.so
 VNDK-SP: libz.so
-VNDK-SP: vintf-common-V1-ndk_platform.so
-VNDK-SP: vintf-graphics-common-V1-ndk_platform.so
 VNDK-core: android.frameworks.cameraservice.common@2.0.so
 VNDK-core: android.frameworks.cameraservice.device@2.0.so
 VNDK-core: android.frameworks.cameraservice.service@2.0.so
@@ -179,6 +179,7 @@ VNDK-core: android.hardware.radio@1.2.so
 VNDK-core: android.hardware.radio@1.3.so
 VNDK-core: android.hardware.radio@1.4.so
 VNDK-core: android.hardware.radio@1.5.so
+VNDK-core: android.hardware.rebootescrow-V1-ndk_platform.so
 VNDK-core: android.hardware.secure_element@1.0.so
 VNDK-core: android.hardware.secure_element@1.1.so
 VNDK-core: android.hardware.sensors@1.0.so
@@ -201,6 +202,7 @@ VNDK-core: android.hardware.usb.gadget@1.0.so
 VNDK-core: android.hardware.usb@1.0.so
 VNDK-core: android.hardware.usb@1.1.so
 VNDK-core: android.hardware.usb@1.2.so
+VNDK-core: android.hardware.vibrator-V1-ndk_platform.so
 VNDK-core: android.hardware.vibrator@1.0.so
 VNDK-core: android.hardware.vibrator@1.1.so
 VNDK-core: android.hardware.vibrator@1.2.so
@@ -291,8 +293,6 @@ VNDK-core: libwifi-system-iface.so
 VNDK-core: libxml2.so
 VNDK-core: libyuv.so
 VNDK-core: libziparchive.so
-VNDK-core: vintf-rebootescrow-V1-ndk_platform.so
-VNDK-core: vintf-vibrator-V1-ndk_platform.so
 VNDK-private: libbacktrace.so
 VNDK-private: libbinderthreadstate.so
 VNDK-private: libblas.so

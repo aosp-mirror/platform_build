@@ -277,10 +277,6 @@ PRODUCT_PACKAGES += \
     wificond \
     wm \
 
-# TODO(b/146549048) remove this
-PRODUCT_PACKAGES += \
-    boringssl_self_test
-
 # VINTF data for system image
 PRODUCT_PACKAGES += \
     system_manifest.xml \
