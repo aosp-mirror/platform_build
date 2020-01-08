@@ -330,7 +330,7 @@ PRODUCT_BOOT_JARS := \
     telephony-common \
     voip-common \
     ims-common \
-    framework-sdkext \
+    framework-sdkextensions \
     framework-statsd \
     ike \
     updatable-media \
@@ -346,7 +346,7 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.os.statsd:framework-statsd \
-    com.android.sdkext:framework-sdkext \
+    com.android.sdkext:framework-sdkextensions \
     com.android.wifi:framework-wifi \
     com.android.tethering:framework-tethering
 
