@@ -89,6 +89,7 @@ PRODUCT_PACKAGES += \
     framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
+    framework-telephony \
     fsck_msdos \
     fs_config_files_system \
     fs_config_dirs_system \
@@ -337,7 +338,8 @@ PRODUCT_BOOT_JARS := \
     framework-mediaprovider \
     framework-appsearch \
     framework-wifi \
-    framework-tethering
+    framework-tethering \
+    framework-telephony
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
