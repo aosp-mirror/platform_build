@@ -1601,7 +1601,7 @@ else # TARGET_BUILD_APPS
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE_TARGET)
+    $(JACOCO_REPORT_CLASSES_ALL) : $(modules_to_install)
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
   endif
 
