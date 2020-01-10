@@ -70,6 +70,30 @@
       "revId": "4d8546e145cbb77c7651ddabe3b2ac813b50fdef",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8e7a4eb_f17c03fb",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2020-01-10T16:05:50Z",
+      "side": 1,
+      "message": "I see - JZ does read odd, but works for me as shortcut of JitZygote.",
+      "parentUuid": "61838f67_9aa4b3b2",
+      "range": {
+        "startLine": 117,
+        "startChar": 24,
+        "endLine": 117,
+        "endChar": 33
+      },
+      "revId": "4d8546e145cbb77c7651ddabe3b2ac813b50fdef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
