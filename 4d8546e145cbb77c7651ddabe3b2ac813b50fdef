@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "804ff2ca_49626078",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2020-01-10T14:08:34Z",
+      "side": 1,
+      "message": "The name is unfortunately hardcoded in a couple more places:\n- PinnerService.java\n- AndroidRuntime.cpp\n- frameworks/native/cmds/installd/dexopt.cpp\n\n(look for \"apex.art\" in cs/)",
+      "range": {
+        "startLine": 117,
+        "startChar": 24,
+        "endLine": 117,
+        "endChar": 33
+      },
+      "revId": "4d8546e145cbb77c7651ddabe3b2ac813b50fdef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
