@@ -149,6 +149,7 @@ VNDK-core: android.hardware.nfc@1.0.so
 VNDK-core: android.hardware.nfc@1.1.so
 VNDK-core: android.hardware.nfc@1.2.so
 VNDK-core: android.hardware.oemlock@1.0.so
+VNDK-core: android.hardware.power-V1-ndk_platform.so
 VNDK-core: android.hardware.power.stats@1.0.so
 VNDK-core: android.hardware.power@1.0.so
 VNDK-core: android.hardware.power@1.1.so
