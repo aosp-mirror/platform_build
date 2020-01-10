@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "70baf9e6_93080cd0",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3566,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-10T00:56:11Z",
+      "side": 1,
+      "message": "Not necessarily 😊 An uninitialized variable is read from the environment.",
+      "parentUuid": "3c2f4336_4f42c057",
+      "range": {
+        "startLine": 3566,
+        "startChar": 9,
+        "endLine": 3566,
+        "endChar": 34
+      },
+      "revId": "b5fe56ee3bcddb1eeb944612d733af04f0cb678d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "63364d3e_179b82e2",
         "filename": "core/Makefile",
         "patchSetId": 4
