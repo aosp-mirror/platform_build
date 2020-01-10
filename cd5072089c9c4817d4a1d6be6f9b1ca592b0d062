@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4e82f561_947f484b",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3653,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-10T00:21:19Z",
+      "side": 1,
+      "message": "these seem a bit duplicative?",
+      "range": {
+        "startLine": 3652,
+        "startChar": 0,
+        "endLine": 3653,
+        "endChar": 87
+      },
+      "revId": "cd5072089c9c4817d4a1d6be6f9b1ca592b0d062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
