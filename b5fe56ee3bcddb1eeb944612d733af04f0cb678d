@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6cb5f1b4_c5a78ba0",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3566,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-10T00:25:53Z",
+      "side": 1,
+      "message": "This will read an uninitialized variable unless the two variables are defined above -- can you set it to empty above that?",
+      "range": {
+        "startLine": 3566,
+        "startChar": 9,
+        "endLine": 3566,
+        "endChar": 34
+      },
+      "revId": "b5fe56ee3bcddb1eeb944612d733af04f0cb678d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63364d3e_179b82e2",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3568,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-10T00:25:53Z",
+      "side": 1,
+      "message": "Should this be an error now instead of a warning?",
+      "range": {
+        "startLine": 3568,
+        "startChar": 2,
+        "endLine": 3568,
+        "endChar": 9
+      },
+      "revId": "b5fe56ee3bcddb1eeb944612d733af04f0cb678d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
