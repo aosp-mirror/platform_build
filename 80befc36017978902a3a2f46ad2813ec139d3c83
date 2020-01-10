@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c98e987_42020d28",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 3676,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-01-10T21:19:24Z",
+      "side": 1,
+      "message": "This doesn\u0027t include vendor/odm/etc/vintf because it is part of INTERNAL_VENDORIMAGE_FILES (same for others). This is fixed in PS7.",
+      "range": {
+        "startLine": 3675,
+        "startChar": 0,
+        "endLine": 3676,
+        "endChar": 71
+      },
+      "revId": "80befc36017978902a3a2f46ad2813ec139d3c83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
