@@ -1,4 +1,4 @@
-#
+# python3
 # Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,10 +24,6 @@ Use option --gencsv to output warning counts in CSV format.
 #
 # To parse and keep warning message in the input file:
 #   severity:                classification of message severity
-#   severity.range           [0, 1, ... last_severity_level]
-#   severity.colors          for header background
-#   severity.column_headers  for the warning count table
-#   severity.headers         for warning message tables
 #   warn_patterns:
 #   warn_patterns[w]['category']     tool that issued the warning, not used now
 #   warn_patterns[w]['description']  table heading
@@ -35,7 +31,7 @@ Use option --gencsv to output warning counts in CSV format.
 #   warn_patterns[w]['option']       compiler flag to control the warning
 #   warn_patterns[w]['patterns']     regular expressions to match warnings
 #   warn_patterns[w]['projects'][p]  number of warnings of pattern w in p
-#   warn_patterns[w]['severity']     severity level
+#   warn_patterns[w]['severity']     severity tuple
 #   project_list[p][0]               project name
 #   project_list[p][1]               regular expression to match a project path
 #   project_patterns[p]              re.compile(project_list[p][1])
@@ -48,7 +44,7 @@ Use option --gencsv to output warning counts in CSV format.
 #   platform_version
 #   target_product
 #   target_variant
-#   compile_patterns, parse_input_file
+#   parse_input_file
 #
 # To emit html page of warning messages:
 #   flags: --byproject, --url, --separator
@@ -68,9 +64,9 @@ Use option --gencsv to output warning counts in CSV format.
 #   Some data are copied from Python to JavaScript, to generate HTML elements.
 #   FlagURL                args.url
 #   FlagSeparator          args.separator
-#   SeverityColors:        severity.colors
-#   SeverityHeaders:       severity.headers
-#   SeverityColumnHeaders: severity.column_headers
+#   SeverityColors:        list of colors for all severity levels
+#   SeverityHeaders:       list of headers for all severity levels
+#   SeverityColumnHeaders: list of column_headers for all severity levels
 #   ProjectNames:          project_names, or project_list[*][0]
 #   WarnPatternsSeverity:     warn_patterns[*]['severity']
 #   WarnPatternsDescription:  warn_patterns[*]['description']
@@ -103,6 +99,7 @@ from . import java_warn_patterns
 from . import make_warn_patterns
 from . import other_warn_patterns
 from . import tidy_warn_patterns
+# pylint:disable=g-importing-member
 from .android_project_list import project_list
 from .severity import Severity
 
@@ -132,11 +129,11 @@ parser.add_argument(dest='buildlog', metavar='build.log',
                     help='Path to build.log file')
 args = parser.parse_args()
 
-warn_patterns = make_warn_patterns.patterns
-warn_patterns.extend(cpp_warn_patterns.patterns)
-warn_patterns.extend(java_warn_patterns.patterns)
-warn_patterns.extend(tidy_warn_patterns.patterns)
-warn_patterns.extend(other_warn_patterns.patterns)
+warn_patterns = make_warn_patterns.warn_patterns
+warn_patterns.extend(cpp_warn_patterns.warn_patterns)
+warn_patterns.extend(java_warn_patterns.warn_patterns)
+warn_patterns.extend(tidy_warn_patterns.warn_patterns)
+warn_patterns.extend(other_warn_patterns.warn_patterns)
 
 project_patterns = []
 project_names = []
@@ -233,27 +230,33 @@ def emit_stats_by_project():
   """Dump a google chart table of warnings per project and severity."""
   # warnings[p][s] is number of warnings in project p of severity s.
   # pylint:disable=g-complex-comprehension
-  warnings = {p: {s: 0 for s in Severity.range} for p in project_names}
+  warnings = {p: {s.value: 0 for s in Severity.levels} for p in project_names}
   for i in warn_patterns:
-    s = i['severity']
+    # pytype: disable=attribute-error
+    s = i['severity'].value
+    # pytype: enable=attribute-error
     for p in i['projects']:
       warnings[p][s] += i['projects'][p]
 
   # total_by_project[p] is number of warnings in project p.
-  total_by_project = {p: sum(warnings[p][s] for s in Severity.range)
-                      for p in project_names}
+  total_by_project = {
+      p: sum(warnings[p][s.value] for s in Severity.levels)
+      for p in project_names
+  }
 
   # total_by_severity[s] is number of warnings of severity s.
-  total_by_severity = {s: sum(warnings[p][s] for p in project_names)
-                       for s in Severity.range}
+  total_by_severity = {
+      s.value: sum(warnings[p][s.value] for p in project_names)
+      for s in Severity.levels
+  }
 
   # emit table header
   stats_header = ['Project']
-  for s in Severity.range:
-    if total_by_severity[s]:
-      stats_header.append("<span style='background-color:{}'>{}</span>".
-                          format(Severity.colors[s],
-                                 Severity.column_headers[s]))
+  for s in Severity.levels:
+    if total_by_severity[s.value]:
+      stats_header.append(
+          '<span style=\'background-color:{}\'>{}</span>'.format(
+              s.color, s.column_header))
   stats_header.append('TOTAL')
 
   # emit a row of warning counts per project, skip no-warning projects
@@ -262,9 +265,9 @@ def emit_stats_by_project():
   for p in project_names:
     if total_by_project[p]:
       one_row = [p]
-      for s in Severity.range:
-        if total_by_severity[s]:
-          one_row.append(warnings[p][s])
+      for s in Severity.levels:
+        if total_by_severity[s.value]:
+          one_row.append(warnings[p][s.value])
       one_row.append(total_by_project[p])
       stats_rows.append(one_row)
       total_all_projects += total_by_project[p]
@@ -272,10 +275,10 @@ def emit_stats_by_project():
   # emit a row of warning counts per severity
   total_all_severities = 0
   one_row = ['<b>TOTAL</b>']
-  for s in Severity.range:
-    if total_by_severity[s]:
-      one_row.append(total_by_severity[s])
-      total_all_severities += total_by_severity[s]
+  for s in Severity.levels:
+    if total_by_severity[s.value]:
+      one_row.append(total_by_severity[s.value])
+      total_all_severities += total_by_severity[s.value]
   one_row.append(total_all_projects)
   stats_rows.append(one_row)
   print('<script>')
@@ -292,7 +295,7 @@ def dump_stats():
   unknown = 0
   sort_warnings()
   for i in warn_patterns:
-    if i['severity'] == Severity.UNKNOWN:
+    if i['severity'] == Severity.UNMATCHED:
       unknown += len(i['members'])
     elif i['severity'] == Severity.SKIP:
       skipped += len(i['members'])
@@ -380,6 +383,7 @@ def classify_one_warning(line, results):
   for i in range(len(warn_patterns)):
     w = warn_patterns[i]
     for cpat in w['compiled_patterns']:
+      # pytype: disable=attribute-error
       if cpat.match(line):
         p = find_project_index(line)
         results.append([line, i, p])
@@ -389,6 +393,7 @@ def classify_one_warning(line, results):
         # probably caused by 'make -j' mixing the output from
         # 2 or more concurrent compiles
         pass
+      # pytype: enable=attribute-error
 
 
 def classify_warnings(lines):
@@ -404,7 +409,6 @@ def classify_warnings(lines):
 
 def parallel_classify_warnings(warning_lines, parallel_process):
   """Classify all warning lines with num_cpu parallel processes."""
-  compile_patterns()
   num_cpu = args.processes
   if num_cpu > 1:
     groups = [[] for x in range(num_cpu)]
@@ -429,14 +433,6 @@ def parallel_classify_warnings(warning_lines, parallel_process):
         pattern['projects'][pname] += 1
       else:
         pattern['projects'][pname] = 1
-
-
-def compile_patterns():
-  """Precompiling every pattern speeds up parsing by about 30x."""
-  for i in warn_patterns:
-    i['compiled_patterns'] = []
-    for pat in i['patterns']:
-      i['compiled_patterns'].append(re.compile(pat))
 
 
 def find_warn_py_and_android_root(path):
@@ -475,7 +471,9 @@ def find_android_root():
           return
   # Do not use common prefix of a small number of paths.
   if count > 10:
+    # pytype: disable=wrong-arg-types
     root_path = os.path.commonprefix(warning_lines)
+    # pytype: enable=wrong-arg-types
     if len(root_path) > 2 and root_path[len(root_path) - 1] == '/':
       android_root = root_path[:-1]
 
@@ -575,7 +573,9 @@ def parse_input_file(infile):
 
 # Return s with escaped backslash and quotation characters.
 def escape_string(s):
+  # pytype: disable=attribute-error
   return s.replace('\\', '\\\\').replace('"', '\\"')
+  # pytype: enable=attribute-error
 
 
 # Return s without trailing '\n' and escape the quotation characters.
@@ -777,12 +777,16 @@ def emit_js_data():
   """Dump dynamic HTML page's static JavaScript data."""
   emit_const_string('FlagURL', args.url if args.url else '')
   emit_const_string('FlagSeparator', args.separator if args.separator else '')
-  emit_const_string_array('SeverityColors', Severity.colors)
-  emit_const_string_array('SeverityHeaders', Severity.headers)
-  emit_const_string_array('SeverityColumnHeaders', Severity.column_headers)
+  emit_const_string_array('SeverityColors', [s.color for s in Severity.levels])
+  emit_const_string_array('SeverityHeaders',
+                          [s.header for s in Severity.levels])
+  emit_const_string_array('SeverityColumnHeaders',
+                          [s.column_header for s in Severity.levels])
   emit_const_string_array('ProjectNames', project_names)
+  # pytype: disable=attribute-error
   emit_const_int_array('WarnPatternsSeverity',
-                       [w['severity'] for w in warn_patterns])
+                       [w['severity'].value for w in warn_patterns])
+  # pytype: enable=attribute-error
   emit_const_html_string_array('WarnPatternsDescription',
                                [w['description'] for w in warn_patterns])
   emit_const_html_string_array('WarnPatternsOption',
@@ -851,7 +855,9 @@ def count_severity(writer, sev, kind):
       warning = kind + ': ' + description_for_csv(i)
       writer.writerow([n, '', warning])
       # print number of warnings for each project, ordered by project name.
+      # pytype: disable=attribute-error
       projects = sorted(i['projects'].keys())
+      # pytype: enable=attribute-error
       for p in projects:
         writer.writerow([i['projects'][p], p, warning])
   writer.writerow([total, '', kind + ' warnings'])
@@ -864,8 +870,9 @@ def dump_csv(writer):
   """Dump number of warnings in csv format to stdout."""
   sort_warnings()
   total = 0
-  for s in Severity.range:
-    total += count_severity(writer, s, Severity.column_headers[s])
+  for s in Severity.levels:
+    if s != Severity.SEVERITY_UNKNOWN:
+      total += count_severity(writer, s, s.column_header)
   writer.writerow([total, '', 'All warnings'])
 
 

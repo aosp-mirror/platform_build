@@ -1,4 +1,4 @@
-#
+# python3
 # Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,10 @@
 
 """Warning patterns for clang-tidy."""
 
-from severity import Severity
+# pylint:disable=relative-beyond-top-level
+from .cpp_warn_patterns import compile_patterns
+# pylint:disable=g-importing-member
+from .severity import Severity
 
 
 def tidy_warn_pattern(description, pattern):
@@ -35,13 +38,13 @@ def group_tidy_warn_pattern(description):
   return tidy_warn_pattern(description, description + r'-.+')
 
 
-def analyzer_high(description, pattern_list):
+def analyzer_high(description, patterns):
   # Important clang analyzer warnings to be fixed ASAP.
   return {
       'category': 'C/C++',
       'severity': Severity.HIGH,
       'description': description,
-      'patterns': pattern_list
+      'patterns': patterns
   }
 
 
@@ -53,12 +56,12 @@ def analyzer_group_high(check):
   return analyzer_high(check, [r'.*: .+\[' + check + r'.+\]$'])
 
 
-def analyzer_warn(description, pattern_list):
+def analyzer_warn(description, patterns):
   return {
       'category': 'C/C++',
       'severity': Severity.ANALYZER,
       'description': description,
-      'patterns': pattern_list
+      'patterns': patterns
   }
 
 
@@ -70,7 +73,7 @@ def analyzer_group_check(check):
   return analyzer_warn(check, [r'.*: .+\[' + check + r'.+\]$'])
 
 
-patterns = [
+warn_patterns = [
     # pylint:disable=line-too-long,g-inconsistent-quotes
     group_tidy_warn_pattern('android'),
     simple_tidy_warn_pattern('abseil-string-find-startswith'),
@@ -136,6 +139,13 @@ patterns = [
     simple_tidy_warn_pattern('portability-simd-intrinsics'),
     group_tidy_warn_pattern('performance'),
     group_tidy_warn_pattern('readability'),
+    simple_tidy_warn_pattern('abseil-string-find-startwith'),
+    simple_tidy_warn_pattern('abseil-faster-strsplit-delimiter'),
+    simple_tidy_warn_pattern('abseil-no-namespace'),
+    simple_tidy_warn_pattern('abseil-no-internal-dependencies'),
+    group_tidy_warn_pattern('abseil'),
+    simple_tidy_warn_pattern('portability-simd-intrinsics'),
+    group_tidy_warn_pattern('portability'),
 
     # warnings from clang-tidy's clang-analyzer checks
     analyzer_high('clang-analyzer-core, null pointer',
@@ -189,5 +199,8 @@ patterns = [
     analyzer_high_check('clang-analyzer-cplusplus.NewDeleteLeaks'),
     analyzer_high_check('clang-analyzer-cplusplus.NewDelete'),
     analyzer_group_check('clang-analyzer-unix'),
-    analyzer_group_check('clang-analyzer'),  # catch al
+    analyzer_group_check('clang-analyzer'),  # catch all
 ]
+
+
+compile_patterns(warn_patterns)
