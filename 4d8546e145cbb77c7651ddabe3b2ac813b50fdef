@@ -22,6 +22,30 @@
       "revId": "4d8546e145cbb77c7651ddabe3b2ac813b50fdef",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58b4e9f3_3024edcb",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-01-10T15:54:43Z",
+      "side": 1,
+      "message": "Thanks for pointing at this!\n\nIt is confusing, but this CL doesn\u0027t change the \"stem\" of the JIT-zygote boot image (https://source.corp.google.com/aosp-master/build/soong/java/dexpreopt_bootjars.go;cl\u003dmaster;l\u003d59), only the \"name\" that is used in directory names, etc. I intended to make the name-changing CL separately, and now I just needed a more or less consistent naming scheme for configs and directories.\n\nI can probably rename all \"JZ\" and \"jitzygote\" to \"apex\" for this CL if you think it\u0027s cleaner.",
+      "parentUuid": "804ff2ca_49626078",
+      "range": {
+        "startLine": 117,
+        "startChar": 24,
+        "endLine": 117,
+        "endChar": 33
+      },
+      "revId": "4d8546e145cbb77c7651ddabe3b2ac813b50fdef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
