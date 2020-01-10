@@ -70,6 +70,30 @@
       "revId": "cd5072089c9c4817d4a1d6be6f9b1ca592b0d062",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27c35039_f54c33a9",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3653,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-01-10T01:11:58Z",
+      "side": 1,
+      "message": "Ack; that makes sense. The first time I read it, I thought BOARD_USES_VENDORIMAGE may be overridden by board specific BoardConfig.mk",
+      "parentUuid": "900d89c8_2fa114ad",
+      "range": {
+        "startLine": 3652,
+        "startChar": 0,
+        "endLine": 3653,
+        "endChar": 87
+      },
+      "revId": "cd5072089c9c4817d4a1d6be6f9b1ca592b0d062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
