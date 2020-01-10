@@ -553,6 +553,7 @@ BISON_PKGDATADIR := $(PWD)/prebuilts/build-tools/common/bison
 BISON := $(prebuilt_build_tools_bin_noasan)/bison
 YACC := $(BISON) -d
 BISON_DATA := $(wildcard $(BISON_PKGDATADIR)/* $(BISON_PKGDATADIR)/*/*)
+M4 :=$= $(prebuilt_build_tools_bin_noasan)/m4
 
 YASM := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/yasm/yasm
 
