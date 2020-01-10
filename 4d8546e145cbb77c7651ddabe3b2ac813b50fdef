@@ -46,6 +46,30 @@
       "revId": "4d8546e145cbb77c7651ddabe3b2ac813b50fdef",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61838f67_9aa4b3b2",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-01-10T15:58:30Z",
+      "side": 1,
+      "message": "BTW you can see that the \"stem\" is till apex from the grep of \"apex-framework.art\" in proc/PID/maps in the commit message.",
+      "parentUuid": "58b4e9f3_3024edcb",
+      "range": {
+        "startLine": 117,
+        "startChar": 24,
+        "endLine": 117,
+        "endChar": 33
+      },
+      "revId": "4d8546e145cbb77c7651ddabe3b2ac813b50fdef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
