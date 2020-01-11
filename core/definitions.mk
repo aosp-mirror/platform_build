@@ -889,7 +889,7 @@ endef
 define transform-l-to-c-or-cpp
 @echo "Lex: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
-$(hide) $(LEX) -o$@ $<
+M4=$(M4) $(LEX) -o$@ $<
 endef
 
 ###########################################################
@@ -900,7 +900,7 @@ endef
 define transform-y-to-c-or-cpp
 @echo "Yacc: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
-$(YACC) $(PRIVATE_YACCFLAGS) \
+M4=$(M4) $(YACC) $(PRIVATE_YACCFLAGS) \
   --defines=$(basename $@).h \
   -o $@ $<
 endef

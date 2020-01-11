@@ -816,7 +816,7 @@ y_yacc_cs := $(addprefix \
     $(intermediates)/,$(y_yacc_sources:.y=.c))
 ifneq ($(y_yacc_cs),)
 $(y_yacc_cs): $(intermediates)/%.c: \
-    $(TOPDIR)$(LOCAL_PATH)/%.y $(BISON) $(BISON_DATA) \
+    $(TOPDIR)$(LOCAL_PATH)/%.y $(BISON) $(BISON_DATA) $(M4) \
     $(my_additional_dependencies)
 	$(call transform-y-to-c-or-cpp)
 $(call track-src-file-gen,$(y_yacc_sources),$(y_yacc_cs))
@@ -829,7 +829,7 @@ yy_yacc_cpps := $(addprefix \
     $(intermediates)/,$(yy_yacc_sources:.yy=$(LOCAL_CPP_EXTENSION)))
 ifneq ($(yy_yacc_cpps),)
 $(yy_yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
-    $(TOPDIR)$(LOCAL_PATH)/%.yy $(BISON) $(BISON_DATA) \
+    $(TOPDIR)$(LOCAL_PATH)/%.yy $(BISON) $(BISON_DATA) $(M4) \
     $(my_additional_dependencies)
 	$(call transform-y-to-c-or-cpp)
 $(call track-src-file-gen,$(yy_yacc_sources),$(yy_yacc_cpps))
@@ -845,6 +845,7 @@ l_lex_sources := $(filter %.l,$(my_src_files))
 l_lex_cs := $(addprefix \
     $(intermediates)/,$(l_lex_sources:.l=.c))
 ifneq ($(l_lex_cs),)
+$(l_lex_cs): $(LEX) $(M4)
 $(l_lex_cs): $(intermediates)/%.c: \
     $(TOPDIR)$(LOCAL_PATH)/%.l
 	$(transform-l-to-c-or-cpp)
@@ -857,6 +858,7 @@ ll_lex_sources := $(filter %.ll,$(my_src_files))
 ll_lex_cpps := $(addprefix \
     $(intermediates)/,$(ll_lex_sources:.ll=$(LOCAL_CPP_EXTENSION)))
 ifneq ($(ll_lex_cpps),)
+$(ll_lex_cpps): $(LEX) $(M4)
 $(ll_lex_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
     $(TOPDIR)$(LOCAL_PATH)/%.ll
 	$(transform-l-to-c-or-cpp)
