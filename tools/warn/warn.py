@@ -19,6 +19,7 @@
 import multiprocessing
 
 # pylint:disable=relative-beyond-top-level
+# pylint:disable=g-importing-member
 from .warn_common import common_main
 
 

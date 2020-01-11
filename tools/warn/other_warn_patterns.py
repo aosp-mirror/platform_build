@@ -1,4 +1,4 @@
-#
+# python3
 # Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,10 @@
 
 """Warning patterns from other tools."""
 
-from severity import Severity
+# pylint:disable=relative-beyond-top-level
+from .cpp_warn_patterns import compile_patterns
+# pylint:disable=g-importing-member
+from .severity import Severity
 
 
 def warn(name, severity, description, pattern_list):
@@ -43,9 +46,11 @@ def kotlin(description, pattern_list):
   return warn('Kotlin', Severity.MEDIUM, description, pattern_list)
 
 
-patterns = [
+warn_patterns = [
     # pylint:disable=line-too-long,g-inconsistent-quotes
     # aapt warnings
+    aapt('No comment for public symbol',
+         [r".*: warning: No comment for public symbol .+"]),
     aapt('No default translation',
          [r".*: warning: string '.+' has no default translation in .*"]),
     aapt('Missing default or required localization',
@@ -94,7 +99,7 @@ patterns = [
      'patterns': [r".*: warning: .* generate guard with empty availability: obsoleted ="]},
     # Protoc warnings
     {'category': 'Protoc', 'severity': Severity.MEDIUM,
-     'description': 'Proto: Enum name colision after strip',
+     'description': 'Proto: Enum name collision after strip',
      'patterns': [r".*: warning: Enum .* has the same name .* ignore case and strip"]},
     {'category': 'Protoc', 'severity': Severity.MEDIUM,
      'description': 'Proto: Import not used',
@@ -128,7 +133,10 @@ patterns = [
      'description': 'skip, In file included from ...',
      'patterns': [r".*: warning: In file included from .+,"]},
     # catch-all for warnings this script doesn't know about yet
-    {'category': 'C/C++', 'severity': Severity.UNKNOWN,
+    {'category': 'C/C++', 'severity': Severity.UNMATCHED,
      'description': 'Unclassified/unrecognized warnings',
      'patterns': [r".*: warning: .+"]},
 ]
+
+
+compile_patterns(warn_patterns)
