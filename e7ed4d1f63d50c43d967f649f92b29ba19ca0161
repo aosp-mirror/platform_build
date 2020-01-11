@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af64c80a_3f5b7885",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 3569,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-01-11T19:02:11Z",
+      "side": 1,
+      "message": "Dan, it looks like build_test fails because I set this to error. Do you mind me changing this back to a warning?",
+      "range": {
+        "startLine": 3569,
+        "startChar": 2,
+        "endLine": 3569,
+        "endChar": 8
+      },
+      "revId": "e7ed4d1f63d50c43d967f649f92b29ba19ca0161",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
