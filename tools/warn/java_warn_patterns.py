@@ -1,4 +1,4 @@
-#
+# python3
 # Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,10 @@
 
 """Warning patterns for Java compiler tools."""
 
-from severity import Severity
+# pylint:disable=relative-beyond-top-level
+from .cpp_warn_patterns import compile_patterns
+# pylint:disable=g-importing-member
+from .severity import Severity
 
 
 def java_warn(severity, description, pattern_list):
@@ -39,7 +42,7 @@ def java_low(description, pattern_list):
   return java_warn(Severity.LOW, description, pattern_list)
 
 
-patterns = [
+warn_patterns = [
     # pylint:disable=line-too-long,g-inconsistent-quotes
     # Warnings from Javac
     java_medium('Use of deprecated',
@@ -742,3 +745,5 @@ patterns = [
     java_medium('Supported version from annotation processor',
                 [r".*: warning: Supported source version .+ from annotation processor"]),
 ]
+
+compile_patterns(warn_patterns)
