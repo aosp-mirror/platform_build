@@ -22,6 +22,30 @@
       "revId": "e7ed4d1f63d50c43d967f649f92b29ba19ca0161",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7a2efdf_2525abb1",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 3569,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-01-11T19:09:18Z",
+      "side": 1,
+      "message": "The problem is that build_test uses mainline_arm64.mk, which sets PRODUCT_SHIPPING_API_LEVEL to 29 (which implies PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS.) (Why does it set shipping API level?)\n\nHowever, it is a generic target, so no kernel should be defined for it. Setting PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS to false in mainline_arm64.mk may cause other devices that inherit from this makefile to miss the kernel check.\n\nPlease advise. Thanks!",
+      "parentUuid": "af64c80a_3f5b7885",
+      "range": {
+        "startLine": 3569,
+        "startChar": 2,
+        "endLine": 3569,
+        "endChar": 8
+      },
+      "revId": "e7ed4d1f63d50c43d967f649f92b29ba19ca0161",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
