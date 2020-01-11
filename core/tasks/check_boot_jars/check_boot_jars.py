@@ -53,10 +53,9 @@ def CheckJar(whitelist_path, jar):
     if f.endswith('.class'):
       package_name = os.path.dirname(f)
       package_name = package_name.replace('/', '.')
-      # Skip class without a package name
-      if package_name and not whitelist_re.match(package_name):
-        print >> sys.stderr, ('Error: %s contains class file %s, whose package name %s is not '
-                              'in the whitelist %s of packages allowed on the bootclasspath.'
+      if not package_name or not whitelist_re.match(package_name):
+        print >> sys.stderr, ('Error: %s contains class file %s, whose package name %s is empty or'
+                              ' not in the whitelist %s of packages allowed on the bootclasspath.'
                               % (jar, f, package_name, whitelist_path))
         return False
   return True
