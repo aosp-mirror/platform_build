@@ -1,4 +1,4 @@
-#
+# python3
 # Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,14 @@
 
 """Warning patterns for C/C++ compiler, but not clang-tidy."""
 
-from severity import Severity
+import re
 
-patterns = [
+# pylint:disable=relative-beyond-top-level
+# pylint:disable=g-importing-member
+from .severity import Severity
+
+
+warn_patterns = [
     # pylint:disable=line-too-long,g-inconsistent-quotes
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wimplicit-function-declaration',
      'description': 'Implicit function declaration',
@@ -125,9 +130,6 @@ patterns = [
     {'category': 'libpng', 'severity': Severity.MEDIUM,
      'description': 'libpng: zero area',
      'patterns': [r".*libpng warning: Ignoring attempt to set cHRM RGB triangle with zero area"]},
-    {'category': 'aapt', 'severity': Severity.MEDIUM,
-     'description': 'aapt: no comment for public symbol',
-     'patterns': [r".*: warning: No comment for public symbol .+"]},
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wmissing-braces',
      'description': 'Missing braces around initializer',
      'patterns': [r".*: warning: missing braces around initializer.*"]},
@@ -578,3 +580,14 @@ patterns = [
      'patterns': [r".*: warning: '.+' defined as a .+ here but previously declared as a .+mismatched-tags",
                   r".*: warning: .+ was previously declared as a .+mismatched-tags"]},
 ]
+
+
+def compile_patterns(patterns):
+  """Precompiling every pattern speeds up parsing by about 30x."""
+  for i in patterns:
+    i['compiled_patterns'] = []
+    for pat in i['patterns']:
+      i['compiled_patterns'].append(re.compile(pat))
+
+
+compile_patterns(warn_patterns)
