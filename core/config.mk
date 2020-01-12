@@ -710,19 +710,37 @@ ifneq ($(PRODUCT_USE_VNDK_OVERRIDE),)
   PRODUCT_USE_VNDK := $(PRODUCT_USE_VNDK_OVERRIDE)
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
   # No shipping level defined
-else ifeq ($(call math_gt_or_eq,27,$(PRODUCT_SHIPPING_API_LEVEL)),)
+else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),27),true)
   PRODUCT_USE_VNDK := $(PRODUCT_FULL_TREBLE)
 endif
 
+# Define PRODUCT_PRODUCT_VNDK_VERSION if PRODUCT_USE_VNDK is true and
+# PRODUCT_SHIPPING_API_LEVEL is greater than 29.
+PRODUCT_USE_PRODUCT_VNDK := false
 ifeq ($(PRODUCT_USE_VNDK),true)
+  ifneq ($(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE),)
+    PRODUCT_USE_PRODUCT_VNDK := $(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE)
+  else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+    # No shipping level defined
+  else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
+    PRODUCT_USE_PRODUCT_VNDK := true
+  endif
+
   ifndef BOARD_VNDK_VERSION
     BOARD_VNDK_VERSION := current
   endif
+
+  ifeq ($(PRODUCT_USE_PRODUCT_VNDK),true)
+    ifndef PRODUCT_PRODUCT_VNDK_VERSION
+      PRODUCT_PRODUCT_VNDK_VERSION := current
+    endif
+  endif
 endif
 
-$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use PRODUCT_USE_VNDK instead)
-.KATI_READONLY := \
-    PRODUCT_USE_VNDK
+$(KATI_obsolete_var PRODUCT_USE_VNDK,Use BOARD_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use BOARD_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK_OVERRIDE,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
 
 # Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
 # devices if unset.
