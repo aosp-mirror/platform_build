@@ -22,6 +22,30 @@
       "revId": "b171ebbc3597635991ae5489c8b96fbe637ea8ad",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d9e06d3_bcf138b6",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-01-13T12:33:29Z",
+      "side": 1,
+      "message": "This is only for the modules described in Android.mk which has no way to install product variants to non-product partitions.\nSo I believe the assumption is correct.",
+      "parentUuid": "e46491fa_b4882d30",
+      "range": {
+        "startLine": 818,
+        "startChar": 4,
+        "endLine": 818,
+        "endChar": 39
+      },
+      "revId": "b171ebbc3597635991ae5489c8b96fbe637ea8ad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
