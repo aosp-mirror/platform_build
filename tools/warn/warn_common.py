@@ -28,7 +28,6 @@ Use option --gencsv to output warning counts in CSV format.
 #   warn_patterns[w]['category']     tool that issued the warning, not used now
 #   warn_patterns[w]['description']  table heading
 #   warn_patterns[w]['members']      matched warnings from input
-#   warn_patterns[w]['option']       compiler flag to control the warning
 #   warn_patterns[w]['patterns']     regular expressions to match warnings
 #   warn_patterns[w]['projects'][p]  number of warnings of pattern w in p
 #   warn_patterns[w]['severity']     severity tuple
@@ -70,7 +69,6 @@ Use option --gencsv to output warning counts in CSV format.
 #   ProjectNames:          project_names, or project_list[*][0]
 #   WarnPatternsSeverity:     warn_patterns[*]['severity']
 #   WarnPatternsDescription:  warn_patterns[*]['description']
-#   WarnPatternsOption:       warn_patterns[*]['option']
 #   WarningMessages:          warning_messages
 #   Warnings:                 warning_records
 #   StatsHeader:           warning count table header row
@@ -148,8 +146,6 @@ def initialize_arrays():
   project_patterns = [re.compile(p[1]) for p in project_list]
   for w in warn_patterns:
     w['members'] = []
-    if 'option' not in w:
-      w['option'] = ''
     # Each warning pattern has a 'projects' dictionary, that
     # maps a project name to number of warnings in that project.
     w['projects'] = {}
@@ -357,8 +353,6 @@ def dump_fixed():
     if not i['members']:
       fixed_patterns.append(i['description'] + ' (' +
                             all_patterns(i) + ')')
-    if i['option']:
-      fixed_patterns.append(' ' + i['option'])
   fixed_patterns = sorted(fixed_patterns)
   print('<div id="' + anchor + '" style="display:none;"><table>')
   cur_row_class = 0
@@ -789,8 +783,6 @@ def emit_js_data():
   # pytype: enable=attribute-error
   emit_const_html_string_array('WarnPatternsDescription',
                                [w['description'] for w in warn_patterns])
-  emit_const_html_string_array('WarnPatternsOption',
-                               [w['option'] for w in warn_patterns])
   emit_const_html_string_array('WarningMessages', warning_messages)
   emit_const_object_array('Warnings', warning_records)
 
