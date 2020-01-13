@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "70a5823a_ff466820",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-01-13T19:36:13Z",
+      "side": 1,
+      "message": "I had to read this code a few times to understand it, so I\u0027m thinking a comment around line 374 that explains the why we have two fields _fingerprint and _partition_fingerprints, why it\u0027s okay to ignore the error at line 382, and  the fallback algorithm at line 389.\n\nWon\u0027t it be the case that every partition has a fingerprint? If so, can we simplify this code by removing self._fingerprint altogether? I haven\u0027t reviewed all the self._fingerprint usages, so maybe that\u0027s not possible...",
+      "range": {
+        "startLine": 374,
+        "startChar": 0,
+        "endLine": 392,
+        "endChar": 15
+      },
+      "revId": "babf4696d98716e4bbea5916e0c2926724a78879",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
