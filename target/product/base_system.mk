@@ -108,6 +108,7 @@ PRODUCT_PACKAGES += \
     incident \
     incidentd \
     incident_helper \
+    incident-helper-cmd \
     init.environ.rc \
     init_system \
     input \
