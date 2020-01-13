@@ -46,6 +46,30 @@
       "revId": "e7ed4d1f63d50c43d967f649f92b29ba19ca0161",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af2a4789_0acf0c0f",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 3569,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-13T21:44:20Z",
+      "side": 1,
+      "message": "We don\u0027t want warnings either. It\u0027s been on my todo list to implement a -Werror for kati. I suppose we can punt this to later though.",
+      "parentUuid": "c7a2efdf_2525abb1",
+      "range": {
+        "startLine": 3569,
+        "startChar": 2,
+        "endLine": 3569,
+        "endChar": 8
+      },
+      "revId": "e7ed4d1f63d50c43d967f649f92b29ba19ca0161",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
