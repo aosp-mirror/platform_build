@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e46491fa_b4882d30",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-01-13T08:31:51Z",
+      "side": 1,
+      "message": "Question: does this mean that all product variants are installed to the product partition (and thus have LOCAL_PRODUCT_MODULE :\u003d true)?\n\nIn case of the vendor variant, that isn\u0027t true. VNDK libs are vendor variants but installed to system. Do we have the similar for product variants?",
+      "range": {
+        "startLine": 818,
+        "startChar": 4,
+        "endLine": 818,
+        "endChar": 39
+      },
+      "revId": "b171ebbc3597635991ae5489c8b96fbe637ea8ad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
