@@ -93,6 +93,8 @@ warn_patterns = [
              [r".*: warning: \[MultipleTopLevelClasses\] .+"]),
     java_low('Avoid having multiple unary operators acting on the same variable in a method call',
              [r".*: warning: \[MultipleUnaryOperatorsInMethodCall\] .+"]),
+    java_low('OnNameExpected naming style',
+             [r".*\.java:.*: warning: .+ \[OnNameExpected\]$"]),
     java_low('Package names should match the directory they are declared in',
              [r".*: warning: \[PackageLocation\] .+"]),
     java_low('Non-standard parameter comment; prefer `/* paramName= */ arg`',
