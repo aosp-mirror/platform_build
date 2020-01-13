@@ -70,6 +70,30 @@
       "revId": "b171ebbc3597635991ae5489c8b96fbe637ea8ad",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86bab608_bb2c17e8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-01-13T13:01:57Z",
+      "side": 1,
+      "message": "As described in the comment above, soong modules are already handled in cc.go to have proper suffix. So we don\u0027t need to check the SOONG_ANDROID_MK.\nThis is only for the modules with LOCAL_USE_VNDK described in Android.mk except SOONG_ANDROID_MK. LOCAL_USE_VNDK will be set automatically by core/local_vndk.mk",
+      "parentUuid": "23ed3abb_f5beef87",
+      "range": {
+        "startLine": 818,
+        "startChar": 4,
+        "endLine": 818,
+        "endChar": 39
+      },
+      "revId": "b171ebbc3597635991ae5489c8b96fbe637ea8ad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
