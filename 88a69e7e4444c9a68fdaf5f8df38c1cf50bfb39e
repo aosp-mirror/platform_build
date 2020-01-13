@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "44fa96f0_a8a00823",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-01-13T11:30:49Z",
+      "side": 1,
+      "message": "nit: 20",
+      "range": {
+        "startLine": 1,
+        "startChar": 18,
+        "endLine": 1,
+        "endChar": 21
+      },
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "757449be_50b5fe80",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-01-13T11:30:49Z",
+      "side": 1,
+      "message": "why do you need this?",
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68c06e2e_b3e9490c",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-01-13T11:30:49Z",
+      "side": 1,
+      "message": "why don\u0027t you reuse the existing target \u0027vndk\u0027?",
+      "range": {
+        "startLine": 23,
+        "startChar": 23,
+        "endLine": 23,
+        "endChar": 38
+      },
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31abbe0e_f493078d",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-01-13T11:30:49Z",
+      "side": 1,
+      "message": "use the pretty-error macro?",
+      "range": {
+        "startLine": 30,
+        "startChar": 8,
+        "endLine": 30,
+        "endChar": 18
+      },
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1370f4f1_c1635ec7",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-01-13T11:30:49Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 52
+      },
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
