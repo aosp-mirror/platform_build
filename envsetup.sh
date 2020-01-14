@@ -1342,7 +1342,7 @@ function allmod() {
         refreshmod || return 1
     fi
 
-    python -c "import json; print '\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys()))"
+    python -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
 }
 
 # Get the path of a specific module in the android tree, as cached in module-info.json. If any build change
@@ -1368,7 +1368,7 @@ module = '$1'
 module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
 if module not in module_info:
     exit(1)
-print module_info[module]['path'][0]" 2>/dev/null)
+print(module_info[module]['path'][0])" 2>/dev/null)
 
     if [ -z "$relpath" ]; then
         echo "Could not find module '$1' (try 'refreshmod' if there have been build changes?)." >&2
