@@ -46,6 +46,30 @@
       "revId": "babf4696d98716e4bbea5916e0c2926724a78879",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a48e3ee1_61e2d9b7",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-01-14T21:53:22Z",
+      "side": 1,
+      "message": "This looks simpler to me, but I think your idea of getting OWNERS feedback is the right way to go.",
+      "parentUuid": "5c23bbb4_5a5cbd06",
+      "range": {
+        "startLine": 374,
+        "startChar": 0,
+        "endLine": 392,
+        "endChar": 15
+      },
+      "revId": "babf4696d98716e4bbea5916e0c2926724a78879",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
