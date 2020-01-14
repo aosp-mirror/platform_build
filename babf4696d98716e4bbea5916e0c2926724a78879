@@ -22,6 +22,30 @@
       "revId": "babf4696d98716e4bbea5916e0c2926724a78879",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c23bbb4_5a5cbd06",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-01-14T17:01:17Z",
+      "side": 1,
+      "message": "I tried removing _fingerprint by replacing usages of it with GetPartitionFingerprint(\u0027system\u0027). Perhaps OWNERS will know best if this is the right idea?",
+      "parentUuid": "70a5823a_ff466820",
+      "range": {
+        "startLine": 374,
+        "startChar": 0,
+        "endLine": 392,
+        "endChar": 15
+      },
+      "revId": "babf4696d98716e4bbea5916e0c2926724a78879",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
