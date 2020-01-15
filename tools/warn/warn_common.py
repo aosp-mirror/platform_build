@@ -199,22 +199,30 @@ html_head_scripts = """\
 """
 
 
+def make_writer(output_stream):
+
+  def writer(text):
+    return output_stream.write(text + '\n')
+
+  return writer
+
+
 def html_big(param):
   return '<font size="+2">' + param + '</font>'
 
 
-def dump_html_prologue(title):
-  print('<html>\n<head>')
-  print('<title>' + title + '</title>')
-  print(html_head_scripts)
-  emit_stats_by_project()
-  print('</head>\n<body>')
-  print(html_big(title))
-  print('<p>')
+def dump_html_prologue(title, writer):
+  writer('<html>\n<head>')
+  writer('<title>' + title + '</title>')
+  writer(html_head_scripts)
+  emit_stats_by_project(writer)
+  writer('</head>\n<body>')
+  writer(html_big(title))
+  writer('<p>')
 
 
-def dump_html_epilogue():
-  print('</body>\n</head>\n</html>')
+def dump_html_epilogue(writer):
+  writer('</body>\n</head>\n</html>')
 
 
 def sort_warnings():
@@ -222,7 +230,7 @@ def sort_warnings():
     i['members'] = sorted(set(i['members']))
 
 
-def emit_stats_by_project():
+def emit_stats_by_project(writer):
   """Dump a google chart table of warnings per project and severity."""
   # warnings[p][s] is number of warnings in project p of severity s.
   # pylint:disable=g-complex-comprehension
@@ -277,14 +285,14 @@ def emit_stats_by_project():
       total_all_severities += total_by_severity[s.value]
   one_row.append(total_all_projects)
   stats_rows.append(one_row)
-  print('<script>')
-  emit_const_string_array('StatsHeader', stats_header)
-  emit_const_object_array('StatsRows', stats_rows)
-  print(draw_table_javascript)
-  print('</script>')
+  writer('<script>')
+  emit_const_string_array('StatsHeader', stats_header, writer)
+  emit_const_object_array('StatsRows', stats_rows, writer)
+  writer(draw_table_javascript)
+  writer('</script>')
 
 
-def dump_stats():
+def dump_stats(writer):
   """Dump some stats about total number of warnings and such."""
   known = 0
   skipped = 0
@@ -297,14 +305,14 @@ def dump_stats():
       skipped += len(i['members'])
     else:
       known += len(i['members'])
-  print('Number of classified warnings: <b>' + str(known) + '</b><br>')
-  print('Number of skipped warnings: <b>' + str(skipped) + '</b><br>')
-  print('Number of unclassified warnings: <b>' + str(unknown) + '</b><br>')
+  writer('Number of classified warnings: <b>' + str(known) + '</b><br>')
+  writer('Number of skipped warnings: <b>' + str(skipped) + '</b><br>')
+  writer('Number of unclassified warnings: <b>' + str(unknown) + '</b><br>')
   total = unknown + known + skipped
   extra_msg = ''
   if total < 1000:
     extra_msg = ' (low count may indicate incremental build)'
-  print('Total number of warnings: <b>' + str(total) + '</b>' + extra_msg)
+  writer('Total number of warnings: <b>' + str(total) + '</b>' + extra_msg)
 
 
 # New base table of warnings, [severity, warn_id, project, warning_message]
@@ -317,15 +325,15 @@ def dump_stats():
 # (3) New, group by project + severity,
 #     id for each warning pattern
 #     sort by project, severity, warn_id, warning_message
-def emit_buttons():
-  print('<button class="button" onclick="expandCollapse(1);">'
-        'Expand all warnings</button>\n'
-        '<button class="button" onclick="expandCollapse(0);">'
-        'Collapse all warnings</button>\n'
-        '<button class="button" onclick="groupBySeverity();">'
-        'Group warnings by severity</button>\n'
-        '<button class="button" onclick="groupByProject();">'
-        'Group warnings by project</button><br>')
+def emit_buttons(writer):
+  writer('<button class="button" onclick="expandCollapse(1);">'
+         'Expand all warnings</button>\n'
+         '<button class="button" onclick="expandCollapse(0);">'
+         'Collapse all warnings</button>\n'
+         '<button class="button" onclick="groupBySeverity();">'
+         'Group warnings by severity</button>\n'
+         '<button class="button" onclick="groupByProject();">'
+         'Group warnings by project</button><br>')
 
 
 def all_patterns(category):
@@ -336,33 +344,32 @@ def all_patterns(category):
   return patterns
 
 
-def dump_fixed():
+def dump_fixed(writer):
   """Show which warnings no longer occur."""
   anchor = 'fixed_warnings'
   mark = anchor + '_mark'
-  print('\n<br><p style="background-color:lightblue"><b>'
-        '<button id="' + mark + '" '
-        'class="bt" onclick="expand(\'' + anchor + '\');">'
-        '&#x2295</button> Fixed warnings. '
-        'No more occurrences. Please consider turning these into '
-        'errors if possible, before they are reintroduced in to the build'
-        ':</b></p>')
-  print('<blockquote>')
+  writer('\n<br><p style="background-color:lightblue"><b>'
+         '<button id="' + mark + '" '
+         'class="bt" onclick="expand(\'' + anchor + '\');">'
+         '&#x2295</button> Fixed warnings. '
+         'No more occurrences. Please consider turning these into '
+         'errors if possible, before they are reintroduced in to the build'
+         ':</b></p>')
+  writer('<blockquote>')
   fixed_patterns = []
   for i in warn_patterns:
     if not i['members']:
-      fixed_patterns.append(i['description'] + ' (' +
-                            all_patterns(i) + ')')
+      fixed_patterns.append(i['description'] + ' (' + all_patterns(i) + ')')
   fixed_patterns = sorted(fixed_patterns)
-  print('<div id="' + anchor + '" style="display:none;"><table>')
+  writer('<div id="' + anchor + '" style="display:none;"><table>')
   cur_row_class = 0
   for text in fixed_patterns:
     cur_row_class = 1 - cur_row_class
     # remove last '\n'
     t = text[:-1] if text[-1] == '\n' else text
-    print('<tr><td class="c' + str(cur_row_class) + '">' + t + '</td></tr>')
-  print('</table></div>')
-  print('</blockquote>')
+    writer('<tr><td class="c' + str(cur_row_class) + '">' + t + '</td></tr>')
+  writer('</table></div>')
+  writer('</blockquote>')
 
 
 def find_project_index(line):
@@ -540,6 +547,7 @@ def parse_input_file(infile):
       prev_warning = 'unknown_source_file: ' + prev_warning
       warning_lines.add(normalize_warning_line(prev_warning))
       prev_warning = ''
+
     if warning_pattern.match(line):
       if warning_without_file.match(line):
         # save this line and combine it with the next line
@@ -547,6 +555,7 @@ def parse_input_file(infile):
       else:
         warning_lines.add(normalize_warning_line(line))
       continue
+
     if line_counter < 100:
       # save a little bit of time by only doing this for the first few lines
       line_counter += 1
@@ -580,22 +589,22 @@ def strip_escape_string(s):
   return escape_string(s)
 
 
-def emit_warning_array(name):
-  print('var warning_{} = ['.format(name))
+def emit_warning_array(name, writer):
+  writer('var warning_{} = ['.format(name))
   for i in range(len(warn_patterns)):
-    print('{},'.format(warn_patterns[i][name]))
-  print('];')
+    writer('{},'.format(warn_patterns[i][name]))
+  writer('];')
 
 
-def emit_warning_arrays():
-  emit_warning_array('severity')
-  print('var warning_description = [')
+def emit_warning_arrays(writer):
+  emit_warning_array('severity', writer)
+  writer('var warning_description = [')
   for i in range(len(warn_patterns)):
     if warn_patterns[i]['members']:
-      print('"{}",'.format(escape_string(warn_patterns[i]['description'])))
+      writer('"{}",'.format(escape_string(warn_patterns[i]['description'])))
     else:
-      print('"",')  # no such warning
-  print('];')
+      writer('"",')  # no such warning
+  writer('];')
 
 
 scripts_for_warning_groups = """
@@ -701,7 +710,8 @@ scripts_for_warning_groups = """
     var result = "";
     var groups = groupWarningsBySeverity();
     for (s=0; s<SeverityColors.length; s++) {
-      result += createWarningSection(SeverityHeaders[s], SeverityColors[s], groups[s]);
+      result += createWarningSection(SeverityHeaders[s], SeverityColors[s],
+                                     groups[s]);
     }
     return result;
   }
@@ -728,63 +738,67 @@ scripts_for_warning_groups = """
 
 
 # Emit a JavaScript const string
-def emit_const_string(name, value):
-  print('const ' + name + ' = "' + escape_string(value) + '";')
+def emit_const_string(name, value, writer):
+  writer('const ' + name + ' = "' + escape_string(value) + '";')
 
 
 # Emit a JavaScript const integer array.
-def emit_const_int_array(name, array):
-  print('const ' + name + ' = [')
+def emit_const_int_array(name, array, writer):
+  writer('const ' + name + ' = [')
   for n in array:
-    print(str(n) + ',')
-  print('];')
+    writer(str(n) + ',')
+  writer('];')
 
 
 # Emit a JavaScript const string array.
-def emit_const_string_array(name, array):
-  print('const ' + name + ' = [')
+def emit_const_string_array(name, array, writer):
+  writer('const ' + name + ' = [')
   for s in array:
-    print('"' + strip_escape_string(s) + '",')
-  print('];')
+    writer('"' + strip_escape_string(s) + '",')
+  writer('];')
 
 
 # Emit a JavaScript const string array for HTML.
-def emit_const_html_string_array(name, array):
-  print('const ' + name + ' = [')
+def emit_const_html_string_array(name, array, writer):
+  writer('const ' + name + ' = [')
   for s in array:
     # Not using html.escape yet, to work for both python 2 and 3,
     # until all users switch to python 3.
     # pylint:disable=deprecated-method
-    print('"' + cgi.escape(strip_escape_string(s)) + '",')
-  print('];')
+    writer('"' + cgi.escape(strip_escape_string(s)) + '",')
+  writer('];')
 
 
 # Emit a JavaScript const object array.
-def emit_const_object_array(name, array):
-  print('const ' + name + ' = [')
+def emit_const_object_array(name, array, writer):
+  writer('const ' + name + ' = [')
   for x in array:
-    print(str(x) + ',')
-  print('];')
+    writer(str(x) + ',')
+  writer('];')
 
 
-def emit_js_data():
+def emit_js_data(writer):
   """Dump dynamic HTML page's static JavaScript data."""
-  emit_const_string('FlagURL', args.url if args.url else '')
-  emit_const_string('FlagSeparator', args.separator if args.separator else '')
-  emit_const_string_array('SeverityColors', [s.color for s in Severity.levels])
+  emit_const_string('FlagURL',
+                    args.url if args.url else '', writer)
+  emit_const_string('FlagSeparator',
+                    args.separator if args.separator else '', writer)
+  emit_const_string_array('SeverityColors',
+                          [s.color for s in Severity.levels], writer)
   emit_const_string_array('SeverityHeaders',
-                          [s.header for s in Severity.levels])
+                          [s.header for s in Severity.levels], writer)
   emit_const_string_array('SeverityColumnHeaders',
-                          [s.column_header for s in Severity.levels])
-  emit_const_string_array('ProjectNames', project_names)
+                          [s.column_header for s in Severity.levels], writer)
+  emit_const_string_array('ProjectNames', project_names, writer)
   # pytype: disable=attribute-error
   emit_const_int_array('WarnPatternsSeverity',
-                       [w['severity'].value for w in warn_patterns])
+                       [w['severity'].value for w in warn_patterns], writer)
   # pytype: enable=attribute-error
   emit_const_html_string_array('WarnPatternsDescription',
-                               [w['description'] for w in warn_patterns])
-  emit_const_html_string_array('WarningMessages', warning_messages)
-  emit_const_object_array('Warnings', warning_records)
+                               [w['description'] for w in warn_patterns],
+                               writer)
+  emit_const_html_string_array('WarningMessages', warning_messages, writer)
+  emit_const_object_array('Warnings', warning_records, writer)
 
 draw_table_javascript = """
 google.charts.load('current', {'packages':['table']});
@@ -801,31 +815,33 @@ function drawTable() {
       data.setProperty(i, j, 'style', 'border:1px solid black;');
     }
   }
-  var table = new google.visualization.Table(document.getElementById('stats_table'));
+  var table = new google.visualization.Table(
+      document.getElementById('stats_table'));
   table.draw(data, {allowHtml: true, alternatingRowStyle: true});
 }
 """
 
 
-def dump_html():
-  """Dump the html output to stdout."""
+def dump_html(output_stream):
+  """Dump the html output to output_stream."""
+  writer = make_writer(output_stream)
   dump_html_prologue('Warnings for ' + platform_version + ' - ' +
-                     target_product + ' - ' + target_variant)
-  dump_stats()
-  print('<br><div id="stats_table"></div><br>')
-  print('\n<script>')
-  emit_js_data()
-  print(scripts_for_warning_groups)
-  print('</script>')
-  emit_buttons()
+                     target_product + ' - ' + target_variant, writer)
+  dump_stats(writer)
+  writer('<br><div id="stats_table"></div><br>')
+  writer('\n<script>')
+  emit_js_data(writer)
+  writer(scripts_for_warning_groups)
+  writer('</script>')
+  emit_buttons(writer)
   # Warning messages are grouped by severities or project names.
-  print('<br><div id="warning_groups"></div>')
+  writer('<br><div id="warning_groups"></div>')
   if args.byproject:
-    print('<script>groupByProject();</script>')
+    writer('<script>groupByProject();</script>')
   else:
-    print('<script>groupBySeverity();</script>')
-  dump_fixed()
-  dump_html_epilogue()
+    writer('<script>groupBySeverity();</script>')
+  dump_fixed(writer)
+  dump_html_epilogue(writer)
 
 
 ##### Functions to count warnings and dump csv file. #########################
@@ -884,4 +900,4 @@ def common_main(parallel_process):
   if args.gencsv:
     dump_csv(csv.writer(sys.stdout, lineterminator='\n'))
   else:
-    dump_html()
+    dump_html(sys.stdout)
