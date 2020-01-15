@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "69f833d3_ba3fc9e1",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1014807
+      },
+      "writtenOn": "2020-01-15T15:25:38Z",
+      "side": 1,
+      "message": "Can this be rephrased?  I feel that the error message may be confusing if a developer is not familiar with VNDK/APEX.  For example,\n\n    Found unexpected ABI reference dump files under $(PLATFORM_ABI_DUMP_DIR).  There must be a mismatch between Android.bp and ABI reference dump files.  Run ...",
+      "range": {
+        "startLine": 140,
+        "startChar": 12,
+        "endLine": 140,
+        "endChar": 66
+      },
+      "revId": "a1d1d8bbee57db844bfdc6ba056416d0dbf1e360",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
