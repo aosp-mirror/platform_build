@@ -1,5 +1,20 @@
 # Build System Changes for Android.mk Writers
 
+## `m4` is not available on `$PATH`
+
+There is a prebuilt of it available in prebuilts/build-tools, and a make
+variable `M4` that contains the path.
+
+Beyond the direct usage, whenever you use bison or flex directly, they call m4
+behind the scene, so you must set the M4 environment variable (and depend upon
+it for incremental build correctness):
+
+```
+$(intermediates)/foo.c: .KATI_IMPLICIT_OUTPUTS := $(intermediates)/foo.h
+$(intermediates)/foo.c: $(LOCAL_PATH)/foo.y $(M4) $(BISON) $(BISON_DATA)
+	M4=$(M4) $(BISON) ...
+```
+
 ## Rules executed within limited environment
 
 With `ALLOW_NINJA_ENV=false` (soon to be the default), ninja, and all the
