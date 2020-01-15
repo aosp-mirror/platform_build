@@ -32,6 +32,12 @@ else
   LOCAL_MODULE_PATH := $(partition)/overlay/$(LOCAL_RRO_THEME)
 endif
 
+# Do not remove resources without default values nor dedupe resource
+# configurations with the same value
+LOCAL_AAPT_FLAGS += \
+    --no-resource-deduping \
+    --no-resource-removal
+
 partition :=
 
 include $(BUILD_SYSTEM)/package.mk
