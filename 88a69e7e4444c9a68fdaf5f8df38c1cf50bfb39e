@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "197cf951_22a31a1f",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-01-15T09:22:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "44fa96f0_a8a00823",
+      "range": {
+        "startLine": 1,
+        "startChar": 18,
+        "endLine": 1,
+        "endChar": 21
+      },
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "757449be_50b5fe80",
         "filename": "core/tasks/vendor_snapshot.mk",
         "patchSetId": 4
@@ -39,6 +63,24 @@
       "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3725a53_f786af9b",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-01-15T09:22:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "757449be_50b5fe80",
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "afde4af3_0dedba53",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-01-15T09:22:43Z",
+      "side": 1,
+      "message": "vendor-snapshot will be owned by each OEM, contrast to vndk. So I think there is no reason to merge those two into one target, because they are meant to be built on different source tree.",
+      "parentUuid": "68c06e2e_b3e9490c",
+      "range": {
+        "startLine": 23,
+        "startChar": 23,
+        "endLine": 23,
+        "endChar": 38
+      },
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "31abbe0e_f493078d",
         "filename": "core/tasks/vendor_snapshot.mk",
         "patchSetId": 4
@@ -76,6 +142,30 @@
       "writtenOn": "2020-01-13T11:30:49Z",
       "side": 1,
       "message": "use the pretty-error macro?",
+      "range": {
+        "startLine": 30,
+        "startChar": 8,
+        "endLine": 30,
+        "endChar": 18
+      },
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba0d93fa_dbc33ef0",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-01-15T09:22:43Z",
+      "side": 1,
+      "message": "AFAIK we should use echo-error on build rule. https://android.googlesource.com/platform/build/+/38dc09d39a815558eed9d9ae88b1ce3caa65461f/core/definitions.mk#807",
+      "parentUuid": "31abbe0e_f493078d",
       "range": {
         "startLine": 30,
         "startChar": 8,
