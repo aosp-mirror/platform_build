@@ -34,6 +34,24 @@
       "revId": "11c4ab031a3452addea0f8b17e21e061abbae03c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed171b1a_c028ece7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-01-15T14:24:17Z",
+      "side": 1,
+      "message": "No targets in aosp has this enabled. And it is tested in internal master.",
+      "parentUuid": "649e95f6_178b64d3",
+      "revId": "11c4ab031a3452addea0f8b17e21e061abbae03c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
