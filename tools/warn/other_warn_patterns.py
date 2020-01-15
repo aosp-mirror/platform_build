@@ -46,6 +46,10 @@ def kotlin(description, pattern_list):
   return warn('Kotlin', Severity.MEDIUM, description, pattern_list)
 
 
+def yacc(description, pattern_list):
+  return warn('yacc', Severity.MEDIUM, description, pattern_list)
+
+
 warn_patterns = [
     # pylint:disable=line-too-long,g-inconsistent-quotes
     # aapt warnings
@@ -115,6 +119,14 @@ warn_patterns = [
     kotlin('library has Kotlin runtime',
            [r".*: warning: library has Kotlin runtime bundled into it",
             r".*: warning: some JAR files .* have the Kotlin Runtime library"]),
+    # Yacc warnings
+    yacc('deprecate directive',
+         [r".*\.yy?:.*: warning: deprecated directive: "]),
+    yacc('shift/reduce conflicts',
+         [r".*\.yy?: warning: .+ shift/reduce conflicts "]),
+    {'category': 'yacc', 'severity': Severity.SKIP,
+     'description': 'yacc: fix-its can be applied',
+     'patterns': [r".*\.yy?: warning: fix-its can be applied."]},
     # Rust warnings
     {'category': 'Rust', 'severity': Severity.HIGH,
      'description': 'Rust: Does not derive Copy',
