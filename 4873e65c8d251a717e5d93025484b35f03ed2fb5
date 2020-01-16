@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7939c43f_141469b8",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-01-16T19:31:54Z",
+      "side": 1,
+      "message": "What about other sanitizers like address?",
+      "revId": "4873e65c8d251a717e5d93025484b35f03ed2fb5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
