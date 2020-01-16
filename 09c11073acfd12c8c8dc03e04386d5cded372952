@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "de54f215_1115bebb",
+        "filename": "core/tasks/tools/package-modules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2020-01-16T17:14:48Z",
+      "side": 1,
+      "message": "$(my_missing_error) ?",
+      "range": {
+        "startLine": 80,
+        "startChar": 10,
+        "endLine": 80,
+        "endChar": 14
+      },
+      "revId": "09c11073acfd12c8c8dc03e04386d5cded372952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
