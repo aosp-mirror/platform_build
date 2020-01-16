@@ -54,6 +54,7 @@ VNDK-SP: libunwindstack.so
 VNDK-SP: libutils.so
 VNDK-SP: libutilscallstack.so
 VNDK-SP: libz.so
+VNDK-core: android.frameworks.automotive.display@1.0.so
 VNDK-core: android.frameworks.cameraservice.common@2.0.so
 VNDK-core: android.frameworks.cameraservice.device@2.0.so
 VNDK-core: android.frameworks.cameraservice.service@2.0.so
@@ -141,6 +142,7 @@ VNDK-core: android.hardware.health.storage@1.0.so
 VNDK-core: android.hardware.health@1.0.so
 VNDK-core: android.hardware.health@2.0.so
 VNDK-core: android.hardware.health@2.1.so
+VNDK-core: android.hardware.identity@1.0.so
 VNDK-core: android.hardware.input.classifier@1.0.so
 VNDK-core: android.hardware.input.common@1.0.so
 VNDK-core: android.hardware.ir@1.0.so

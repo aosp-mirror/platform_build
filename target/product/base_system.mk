@@ -220,7 +220,6 @@ PRODUCT_PACKAGES += \
     PackageInstaller \
     passwd_system \
     perfetto \
-    PermissionController \
     ping \
     ping6 \
     platform.xml \
