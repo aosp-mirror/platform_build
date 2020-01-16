@@ -34,7 +34,7 @@ endif
 ifdef DEVICE_MANIFEST_FILE
 # $(DEVICE_MANIFEST_FILE) can be a list of files
 include $(CLEAR_VARS)
-LOCAL_MODULE        := device_manifest.xml
+LOCAL_MODULE        := vendor_manifest.xml
 LOCAL_MODULE_STEM   := manifest.xml
 LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)/etc/vintf
