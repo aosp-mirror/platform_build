@@ -334,6 +334,7 @@ PRODUCT_BOOT_JARS := \
     ike \
     updatable-media \
     framework-mediaprovider \
+    framework-permission \
     framework-appsearch \
     framework-wifi \
     framework-tethering
@@ -345,6 +346,7 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.os.statsd:framework-statsd \
+    com.android.permission:framework-permission \
     com.android.sdkext:framework-sdkextensions \
     com.android.wifi:framework-wifi \
     com.android.tethering:framework-tethering
