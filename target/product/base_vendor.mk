@@ -72,7 +72,7 @@ PRODUCT_PACKAGES += \
 
 # VINTF data for vendor image
 PRODUCT_PACKAGES += \
-    device_compatibility_matrix.xml \
+    vendor_compatibility_matrix.xml \
 
 # Packages to update the recovery partition, which will be installed on
 # /vendor. TODO(b/141648565): Don't install these unless they're needed.
