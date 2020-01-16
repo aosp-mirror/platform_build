@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "7780966e_1e9a1ddd",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-01-16T01:10:35Z",
+      "side": 1,
+      "message": "What is PLATFORM libraries?",
+      "range": {
+        "startLine": 97,
+        "startChar": 11,
+        "endLine": 97,
+        "endChar": 19
+      },
+      "revId": "a1d1d8bbee57db844bfdc6ba056416d0dbf1e360",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "69f833d3_ba3fc9e1",
         "filename": "target/product/gsi/Android.mk",
         "patchSetId": 2
