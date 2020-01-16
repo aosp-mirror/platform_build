@@ -35,7 +35,8 @@ PRODUCT_BUILD_VENDOR_IMAGE := false
 
 PRODUCT_SHIPPING_API_LEVEL := 29
 
-PRODUCT_RESTRICT_VENDOR_FILES := all
+# TODO(b/137033385): change this back to "all"
+PRODUCT_RESTRICT_VENDOR_FILES := owner
 
 PRODUCT_NAME := mainline_system_x86_arm
 PRODUCT_DEVICE := mainline_x86_arm
