@@ -5,6 +5,11 @@
 #   my_modules: a list of module names
 #   my_package_name: the name of the output zip file.
 #   my_copy_pairs: a list of extra files to install (in src:dest format)
+# Optional input variables:
+#   my_modules_strict: what happens when a module from my_modules does not exist
+#     "true": error out when a module is missing
+#     "false": print a warning when a module is missing
+#     "": defaults to false currently
 # Output variables:
 #   my_package_zip: the path to the output zip file.
 #
@@ -15,6 +20,7 @@ my_staging_dir := $(call intermediates-dir-for,PACKAGING,$(my_package_name))
 my_built_modules := $(foreach p,$(my_copy_pairs),$(call word-colon,1,$(p)))
 my_copy_pairs := $(foreach p,$(my_copy_pairs),$(call word-colon,1,$(p)):$(my_staging_dir)/$(call word-colon,2,$(p)))
 my_pickup_files :=
+my_missing_error :=
 
 # Iterate over the modules and include their direct dependencies stated in the
 # LOCAL_REQUIRED_MODULES.
@@ -26,10 +32,17 @@ $(foreach m,$(my_modules),\
   $(eval my_modules_and_deps += $(_explicitly_required))\
 )
 
-# Ignore unknown installed files on partial builds
-my_missing_files :=
-ifneq ($(ALLOW_MISSING_DEPENDENCIES),true)
+ifneq ($(filter-out true false,$(my_modules_strict)),)
+  $(shell $(call echo-error,$(my_makefile),$(my_package_name): Invalid value for 'my_module_strict' = '$(my_modules_strict)'. Valid values: 'true', 'false', ''))
+  $(error done)
+endif
+
 my_missing_files = $(shell $(call echo-warning,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))
+ifeq ($(ALLOW_MISSING_DEPENDENCIES),true)
+  # Ignore unknown installed files on partial builds
+  my_missing_files =
+else ifeq ($(my_modules_strict),true)
+  my_missing_files = $(shell $(call echo-error,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))$(eval my_missing_error := true)
 endif
 
 # Iterate over modules' built files and installed files;
@@ -63,6 +76,10 @@ $(foreach m,$(my_modules_and_deps),\
       $(eval my_copy_pairs += $(bui):$(my_staging_dir)/$(my_copy_dest)))\
   ))
 
+ifneq ($(my_missing_error),)
+  $(error done)
+endif
+
 my_package_zip := $(my_staging_dir)/$(my_package_name).zip
 $(my_package_zip): PRIVATE_COPY_PAIRS := $(my_copy_pairs)
 $(my_package_zip): PRIVATE_PICKUP_FILES := $(my_pickup_files)
@@ -84,4 +101,6 @@ my_copy_dest :=
 my_copy_pairs :=
 my_pickup_files :=
 my_missing_files :=
+my_missing_error :=
 my_modules_and_deps :=
+my_modules_strict :=
