@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1dbe5a21_cf4c618c",
+        "filename": "target/product/gsi/current.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-01-17T04:37:09Z",
+      "side": 1,
+      "message": "Might as well move lite out of the VNDK too, otherwise won\u0027t vendors have the same problem with APKs?",
+      "revId": "8da1b9add3f3513a1a16a8b074a4d162b38df728",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
