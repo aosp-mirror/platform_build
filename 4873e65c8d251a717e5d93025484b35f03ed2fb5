@@ -16,6 +16,24 @@
       "revId": "4873e65c8d251a717e5d93025484b35f03ed2fb5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c05696db_a888abfd",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1349653
+      },
+      "writtenOn": "2020-01-17T06:05:32Z",
+      "side": 1,
+      "message": "hwaddress is the only sanitizer that I\u0027ve seen breaking this check so far. I also tried building crosshatch_asan and didn\u0027t see a problem.",
+      "parentUuid": "7939c43f_141469b8",
+      "revId": "4873e65c8d251a717e5d93025484b35f03ed2fb5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
