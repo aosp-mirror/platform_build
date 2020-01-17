@@ -69,6 +69,8 @@ javax\.xml\.transform\.sax
 javax\.xml\.transform\.stream
 javax\.xml\.validation
 javax\.xml\.xpath
+jdk\.internal\.util
+jdk\.internal\.vm\.annotation
 jdk\.net
 org\.w3c\.dom
 org\.w3c\.dom\.ls
