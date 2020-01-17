@@ -16,6 +16,24 @@
       "revId": "8da1b9add3f3513a1a16a8b074a4d162b38df728",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4f25535_8c4c1b18",
+        "filename": "target/product/gsi/current.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-01-17T04:43:45Z",
+      "side": 1,
+      "message": "Let me do this one by one :)",
+      "parentUuid": "1dbe5a21_cf4c618c",
+      "revId": "8da1b9add3f3513a1a16a8b074a4d162b38df728",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
