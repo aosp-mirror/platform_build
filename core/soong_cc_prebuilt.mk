@@ -106,7 +106,7 @@ endif
 
 my_check_same_vndk_variants :=
 ifeq ($(LOCAL_CHECK_SAME_VNDK_VARIANTS),true)
-  ifneq ($(filter hwaddress, $(SANITIZE_TARGET)),hwaddress)
+  ifeq ($(filter hwaddress address, $(SANITIZE_TARGET)),)
     my_check_same_vndk_variants := true
   endif
 endif
