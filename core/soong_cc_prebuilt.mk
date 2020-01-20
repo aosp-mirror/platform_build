@@ -75,13 +75,8 @@ endif
 ifdef LOCAL_USE_VNDK
   ifneq ($(LOCAL_VNDK_DEPEND_ON_CORE_VARIANT),true)
     name_without_suffix := $(patsubst %.vendor,%,$(LOCAL_MODULE))
-    ifneq ($(name_without_suffix),$(LOCAL_MODULE))
+    ifneq ($(name_without_suffix),$(LOCAL_MODULE)
       SPLIT_VENDOR.$(LOCAL_MODULE_CLASS).$(name_without_suffix) := 1
-    else
-      name_without_suffix := $(patsubst %.product,%,$(LOCAL_MODULE))
-      ifneq ($(name_without_suffix),$(LOCAL_MODULE))
-        SPLIT_PRODUCT.$(LOCAL_MODULE_CLASS).$(name_without_suffix) := 1
-      endif
     endif
     name_without_suffix :=
   endif
