@@ -22,6 +22,29 @@
       "revId": "edeb86eb2fda7c990f271231b4e72828096c84b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6634926_3c96e16c",
+        "filename": "target/product/legacy_gsi_release.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-01-20T09:35:19Z",
+      "side": 1,
+      "message": "This is a single word: namespace",
+      "range": {
+        "startLine": 32,
+        "startChar": 2,
+        "endLine": 32,
+        "endChar": 12
+      },
+      "revId": "edeb86eb2fda7c990f271231b4e72828096c84b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
