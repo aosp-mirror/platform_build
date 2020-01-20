@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "869b53c8_3c1cd0c4",
+        "filename": "target/product/legacy_gsi_release.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-01-20T09:31:19Z",
+      "side": 1,
+      "message": "nit: Happy new year! It\u0027s 2020 now.",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 20
+      },
+      "revId": "edeb86eb2fda7c990f271231b4e72828096c84b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
