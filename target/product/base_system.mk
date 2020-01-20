@@ -54,6 +54,7 @@ PRODUCT_PACKAGES += \
     com.android.appsearch \
     com.android.conscrypt \
     com.android.cronet \
+    com.android.extservices \
     com.android.i18n \
     com.android.ipsec \
     com.android.location.provider \
@@ -83,7 +84,6 @@ PRODUCT_PACKAGES += \
     dumpsys \
     DynamicSystemInstallationService \
     e2fsck \
-    ExtServices \
     ExtShared \
     flags_health_check \
     framework-minus-apex \
