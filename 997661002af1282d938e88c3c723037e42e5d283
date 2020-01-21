@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4b99ddaf_7edf8465",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-01-21T18:57:22Z",
+      "side": 0,
+      "message": "It\u0027s safer to leave this here, MAKEFILE_LIST will be updated if you include any other makefile before reading it.",
+      "revId": "997661002af1282d938e88c3c723037e42e5d283",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
