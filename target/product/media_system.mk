@@ -61,7 +61,8 @@ PRODUCT_SYSTEM_SERVER_JARS := \
 # The values should be of the format <apex name>:<jar name>
 PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
-    com.android.permission:service-permission
+    com.android.permission:service-permission \
+    com.android.wifi:wifi-service
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
