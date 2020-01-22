@@ -3505,34 +3505,59 @@ ifndef TARGET_BUILD_APPS
 intermediates := $(call intermediates-dir-for,PACKAGING,check_vintf_all)
 check_vintf_all_deps :=
 
+# The build system only writes VINTF metadata to */etc/vintf paths. Legacy paths aren't needed here
+# because they are only used for prebuilt images.
+check_vintf_common_srcs_patterns := \
+  $(TARGET_OUT)/etc/vintf/% \
+  $(TARGET_OUT_VENDOR)/etc/vintf/% \
+  $(TARGET_OUT_ODM)/etc/vintf/% \
+  $(TARGET_OUT_PRODUCT)/etc/vintf/% \
+  $(TARGET_OUT_SYSTEM_EXT)/etc/vintf/% \
+
+check_vintf_common_srcs := $(sort $(filter $(check_vintf_common_srcs_patterns), \
+  $(INTERNAL_SYSTEMIMAGE_FILES) \
+  $(INTERNAL_VENDORIMAGE_FILES) \
+  $(INTERNAL_ODMIMAGE_FILES) \
+  $(INTERNAL_PRODUCTIMAGE_FILES) \
+  $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
+))
+check_vintf_common_srcs_patterns :=
+
+check_vintf_has_system :=
+check_vintf_has_vendor :=
+
 # -- Check system manifest / matrix including fragments (excluding other framework manifests / matrices, e.g. product);
-ifeq ($(BUILDING_SYSTEM_IMAGE),true)
+check_vintf_system_deps := $(filter $(TARGET_OUT)/etc/vintf/%, $(check_vintf_common_srcs))
+ifneq ($(check_vintf_system_deps),)
+check_vintf_has_system := true
 check_vintf_system_log := $(intermediates)/check_vintf_system_log
 check_vintf_all_deps += $(check_vintf_system_log)
-$(check_vintf_system_log): $(HOST_OUT_EXECUTABLES)/checkvintf \
-                           $(filter $(TARGET_OUT)/etc/vintf/%, $(INTERNAL_SYSTEMIMAGE_FILES))
+$(check_vintf_system_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_system_deps)
 	@( $< --check-one --dirmap /system:$(TARGET_OUT) > $@ 2>&1 ) || ( cat $@ && exit 1 )
 check_vintf_system_log :=
-endif # BUILDING_SYSTEM_IMAGE
+endif # check_vintf_system_deps
+check_vintf_system_deps :=
 
 # -- Check vendor manifest / matrix including fragments (excluding other device manifests / matrices)
-ifeq ($(BUILDING_VENDOR_IMAGE),true)
+check_vintf_vendor_deps := $(filter $(TARGET_OUT_VENDOR)/etc/vintf/%, $(check_vintf_common_srcs))
+ifneq ($(check_vintf_vendor_deps),)
+check_vintf_has_vendor := true
 check_vintf_vendor_log := $(intermediates)/check_vintf_vendor_log
 check_vintf_all_deps += $(check_vintf_vendor_log)
-$(check_vintf_vendor_log): $(HOST_OUT_EXECUTABLES)/checkvintf \
-                           $(filter $(TARGET_OUT_VENDOR)/etc/vintf/%, $(INTERNAL_VENDORIMAGE_FILES))
+$(check_vintf_vendor_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_vendor_deps)
 	@( $< --check-one --dirmap /vendor:$(TARGET_OUT_VENDOR) > $@ 2>&1 ) || ( cat $@ && exit 1 )
 check_vintf_vendor_log :=
-endif # BUILDING_VENDOR_IMAGE
+endif # check_vintf_vendor_deps
+check_vintf_vendor_deps :=
 
 # -- Check VINTF compatibility of build.
 # Skip partial builds; only check full builds. Only check if:
 # - PRODUCT_ENFORCE_VINTF_MANIFEST is true
-# - Building system and vendor images
+# - system / vendor VINTF metadata exists
 # - Building product / system_ext / odm images if board has product / system_ext / odm images
 ifeq ($(PRODUCT_ENFORCE_VINTF_MANIFEST),true)
-ifeq ($(BUILDING_SYSTEM_IMAGE),true)
-ifeq ($(BUILDING_VENDOR_IMAGE),true)
+ifeq ($(check_vintf_has_system),true)
+ifeq ($(check_vintf_has_vendor),true)
 ifeq ($(filter true,$(BUILDING_ODM_IMAGE)),$(filter true,$(BOARD_USES_ODMIMAGE)))
 ifeq ($(filter true,$(BUILDING_PRODUCT_IMAGE)),$(filter true,$(BOARD_USES_PRODUCTIMAGE)))
 ifeq ($(filter true,$(BUILDING_SYSTEM_EXT_IMAGE)),$(filter true,$(BOARD_USES_SYSTEM_EXTIMAGE)))
@@ -3541,7 +3566,7 @@ check_vintf_compatible_log := $(intermediates)/check_vintf_compatible_log
 check_vintf_all_deps += $(check_vintf_compatible_log)
 
 check_vintf_compatible_args :=
-check_vintf_compatible_deps :=
+check_vintf_compatible_deps := $(check_vintf_common_srcs)
 
 # -- Kernel version and configurations.
 ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),true)
@@ -3601,24 +3626,6 @@ check_vintf_compatible_deps += $(BUILT_KERNEL_CONFIGS_FILE) $(BUILT_KERNEL_VERSI
 
 endif # PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
-# The build system only writes VINTF metadata to */etc/vintf paths. Legacy paths aren't needed here
-# because they are only used for prebuilt images.
-check_vintf_compatible_deps_patterns := \
-  $(TARGET_OUT)/etc/vintf/% \
-  $(TARGET_OUT_VENDOR)/etc/vintf/% \
-  $(TARGET_OUT_ODM)/etc/vintf/% \
-  $(TARGET_OUT_PRODUCT)/etc/vintf/% \
-  $(TARGET_OUT_SYSTEM_EXT)/etc/vintf/% \
-
-check_vintf_compatible_deps += $(sort $(filter $(check_vintf_compatible_deps_patterns), \
-  $(INTERNAL_SYSTEMIMAGE_FILES) \
-  $(INTERNAL_VENDORIMAGE_FILES) \
-  $(INTERNAL_ODMIMAGE_FILES) \
-  $(INTERNAL_PRODUCTIMAGE_FILES) \
-  $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
-))
-check_vintf_compatible_deps_patterns :=
-
 check_vintf_compatible_args += \
   --dirmap /system:$(TARGET_OUT) \
   --dirmap /vendor:$(TARGET_OUT_VENDOR) \
@@ -3651,8 +3658,8 @@ check_vintf_compatible_deps :=
 endif # BUILDING_SYSTEM_EXT_IMAGE equals BOARD_USES_SYSTEM_EXTIMAGE
 endif # BUILDING_PRODUCT_IMAGE equals BOARD_USES_PRODUCTIMAGE
 endif # BUILDING_ODM_IMAGE equals BOARD_USES_ODMIMAGE
-endif # BUILDING_VENDOR_IMAGE
-endif # BUILDING_SYSTEM_IMAGE
+endif # check_vintf_has_vendor
+endif # check_vintf_has_system
 endif # PRODUCT_ENFORCE_VINTF_MANIFEST
 
 # Add all logs of VINTF checks to dist builds
@@ -3664,6 +3671,9 @@ $(call dist-for-goals, droid_targets, $(check_vintf_all_deps))
 check-vintf-all: $(check_vintf_all_deps)
 	$(foreach file,$^,echo "$(file)"; cat "$(file)"; echo;)
 
+check_vintf_has_vendor :=
+check_vintf_has_system :=
+check_vintf_common_srcs :=
 check_vintf_all_deps :=
 intermediates :=
 endif # !TARGET_BUILD_APPS
