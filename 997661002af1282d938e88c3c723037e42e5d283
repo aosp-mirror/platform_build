@@ -16,6 +16,24 @@
       "revId": "997661002af1282d938e88c3c723037e42e5d283",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d95d2e9_1b3a5a71",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-01-23T12:52:16Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "4b99ddaf_7edf8465",
+      "revId": "997661002af1282d938e88c3c723037e42e5d283",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
