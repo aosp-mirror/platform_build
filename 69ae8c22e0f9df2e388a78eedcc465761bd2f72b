@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bebfb8b6_785f71bb",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-01-24T08:15:40Z",
+      "side": 1,
+      "message": "If oem_prop is present, this one always return the oem prop?",
+      "range": {
+        "startLine": 370,
+        "startChar": 27,
+        "endLine": 370,
+        "endChar": 47
+      },
+      "revId": "69ae8c22e0f9df2e388a78eedcc465761bd2f72b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b59953a_6d9e6f78",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-01-24T08:15:40Z",
+      "side": 1,
+      "message": "split it into a new function? So one for a given partition and the other respect the resolve order.",
+      "range": {
+        "startLine": 404,
+        "startChar": 31,
+        "endLine": 404,
+        "endChar": 40
+      },
+      "revId": "69ae8c22e0f9df2e388a78eedcc465761bd2f72b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c175376a_b84b0f42",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 477,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-01-24T08:15:40Z",
+      "side": 1,
+      "message": "I believe it\u0027s better to leave this function and BuildInfo.fingerprint as is. And call GetPartitionFingerprint to get the per-partition fingerprint. I guess that\u0027s sufficient to address the avb salt issue.\n\nSo the logic is less confusing to calculate the unique identifier of a given package. Though for merged packages, the format of an unique identifier is debatable. But not in this cl....\n\nAlso in this cl, if the oem_prop is present, CalculateFingerprint(\u0027system\u0027) would return the value from oem_prop. This certainly adds more confusion than the current CalculateFingerprint.",
+      "range": {
+        "startLine": 477,
+        "startChar": 6,
+        "endLine": 477,
+        "endChar": 26
+      },
+      "revId": "69ae8c22e0f9df2e388a78eedcc465761bd2f72b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
