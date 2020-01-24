@@ -263,8 +263,6 @@ VNDK-core: libgui.so
 VNDK-core: libhardware_legacy.so
 VNDK-core: libhidlallocatorutils.so
 VNDK-core: libjpeg.so
-VNDK-core: libkeymaster_messages.so
-VNDK-core: libkeymaster_portable.so
 VNDK-core: libldacBT_abr.so
 VNDK-core: libldacBT_enc.so
 VNDK-core: liblz4.so
@@ -280,10 +278,8 @@ VNDK-core: libpiex.so
 VNDK-core: libpng.so
 VNDK-core: libpower.so
 VNDK-core: libprocinfo.so
-VNDK-core: libpuresoftkeymasterdevice.so
 VNDK-core: libradio_metadata.so
 VNDK-core: libselinux.so
-VNDK-core: libsoftkeymasterdevice.so
 VNDK-core: libspeexresampler.so
 VNDK-core: libsqlite.so
 VNDK-core: libssl.so
