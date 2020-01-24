@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5efa255d_f6b80021",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-24T22:55:31Z",
+      "side": 1,
+      "message": "BUILD_BROKEN_* need to be defined in build/make/core/board_config.mk",
+      "range": {
+        "startLine": 20,
+        "startChar": 21,
+        "endLine": 20,
+        "endChar": 58
+      },
+      "revId": "fb1a2e6c6683148d3ff221c331e27f3c5476afb5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
