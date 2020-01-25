@@ -1,4 +1,7 @@
 $(call record-module-type,SHARED_LIBRARY)
+ifdef LOCAL_IS_HOST_MODULE
+  $(call pretty-error,BUILD_SHARED_LIBRARY is incompatible with LOCAL_IS_HOST_MODULE. Use BUILD_HOST_SHARED_LIBRARY instead.)
+endif
 my_prefix := TARGET_
 include $(BUILD_SYSTEM)/multilib.mk
 
