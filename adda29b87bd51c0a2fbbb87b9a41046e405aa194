@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "067ee650_60c34564",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 3830,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-01-27T18:55:26Z",
+      "side": 1,
+      "message": "Either keep these sorted with the rest of the list or use a separate INTERNAL_OTATOOLS_MODULES +\u003d with a comment on what makes them different.",
+      "revId": "adda29b87bd51c0a2fbbb87b9a41046e405aa194",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
