@@ -2200,7 +2200,7 @@ define transform-classes.jar-to-dex
 @mkdir -p $(dir $@)
 $(hide) rm -f $(dir $@)classes*.dex $(dir $@)d8_input.jar
 $(hide) $(ZIP2ZIP) -j -i $< -o $(dir $@)d8_input.jar "**/*.class"
-$(hide) $(DX_COMMAND) $(DEX_FLAGS) \
+$(hide) $(D8_WRAPPER) $(DX_COMMAND) $(DEX_FLAGS) \
     --output $(dir $@) \
     $(addprefix --lib ,$(PRIVATE_D8_LIBS)) \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
@@ -2679,7 +2679,7 @@ endif
 define transform-jar-to-dex-r8
 @echo R8: $@
 $(hide) rm -f $(PRIVATE_PROGUARD_DICTIONARY)
-$(hide) $(R8_COMPAT_PROGUARD) $(DEX_FLAGS) \
+$(hide) $(R8_WRAPPER) $(R8_COMPAT_PROGUARD) $(DEX_FLAGS) \
     -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --no-data-resources \
