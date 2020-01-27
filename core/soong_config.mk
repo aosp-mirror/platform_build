@@ -140,6 +140,9 @@ $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT
 
 $(call add_json_bool, UseGoma,                           $(filter-out false,$(USE_GOMA)))
 $(call add_json_bool, UseRBE,                            $(filter-out false,$(USE_RBE)))
+$(call add_json_bool, UseRBEJAVAC,                       $(filter-out false,$(RBE_JAVAC)))
+$(call add_json_bool, UseRBER8,                          $(filter-out false,$(RBE_R8)))
+$(call add_json_bool, UseRBED8,                          $(filter-out false,$(RBE_D8)))
 $(call add_json_bool, Arc,                               $(filter true,$(TARGET_ARC)))
 
 $(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPACES))
