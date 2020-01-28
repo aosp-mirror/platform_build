@@ -1,5 +1,14 @@
 # Build System Changes for Android.mk Writers
 
+## COPY_HEADERS usage now produces warnings {#copy_headers}
+
+We've considered `BUILD_COPY_HEADERS`/`LOCAL_COPY_HEADERS` to be deprecated for
+a long time, and the places where it's been able to be used have shrinked over
+the last several releases. Equivalent functionality is not available in Soong.
+
+See the [build/soong/docs/best_practices.md#headers] for more information about
+how best to handle headers in Android.
+
 ## `m4` is not available on `$PATH`
 
 There is a prebuilt of it available in prebuilts/build-tools, and a make
@@ -553,6 +562,7 @@ version.
 
 
 [build/soong/Changes.md]: https://android.googlesource.com/platform/build/soong/+/master/Changes.md
+[build/soong/docs/best_practices.md#headers]: https://android.googlesource.com/platform/build/soong/+/master/docs/best_practices.md#headers
 [external/fonttools/Lib/fontTools/Android.bp]: https://android.googlesource.com/platform/external/fonttools/+/master/Lib/fontTools/Android.bp
 [frameworks/base/Android.bp]: https://android.googlesource.com/platform/frameworks/base/+/master/Android.bp
 [frameworks/base/data/fonts/Android.mk]: https://android.googlesource.com/platform/frameworks/base/+/master/data/fonts/Android.mk
