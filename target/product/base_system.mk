@@ -45,7 +45,6 @@ PRODUCT_PACKAGES += \
     bu \
     bugreport \
     bugreportz \
-    cacerts_wfa \
     cgroups.json \
     charger \
     cmd \
