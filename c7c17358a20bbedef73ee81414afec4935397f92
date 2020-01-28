@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "05e25877_c213dd6f",
+        "filename": "tools/generate-notice-files2.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-28T23:29:15Z",
+      "side": 1,
+      "message": "Why did this file get forked? It\u0027s not clear from the review what changed.",
+      "revId": "c7c17358a20bbedef73ee81414afec4935397f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
