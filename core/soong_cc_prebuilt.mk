@@ -130,7 +130,7 @@ ifeq ($(my_check_same_vndk_variants),true)
   $(same_vndk_variants_stamp): $(my_core_shared_lib) $(LOCAL_PREBUILT_MODULE_FILE)
 		$(call verify-vndk-libs-identical,\
 		    $(PRIVATE_CORE_VARIANT),\
-		    $(PRIVATE_VENDOR_VARIANT)\
+		    $(PRIVATE_VENDOR_VARIANT),\
 		    $(PRIVATE_TOOLS_PREFIX))
 
   $(LOCAL_BUILT_MODULE): $(same_vndk_variants_stamp)
