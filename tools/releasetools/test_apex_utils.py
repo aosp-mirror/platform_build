@@ -32,6 +32,8 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
     # The default payload signing key.
     self.payload_key = os.path.join(self.testdata_dir, 'testkey.key')
 
+    common.OPTIONS.search_path = test_utils.get_search_path()
+
   @staticmethod
   def _GetTestPayload():
     payload_file = common.MakeTempFile(prefix='apex-', suffix='.img')
@@ -126,3 +128,30 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
         payload_file,
         os.path.join(self.testdata_dir, 'testkey_with_passwd.key'),
         no_hashtree=True)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_ApexApkSigner_noApkPresent(self):
+    apex_path = os.path.join(self.testdata_dir, 'foo.apex')
+    signer = apex_utils.ApexApkSigner(apex_path, None, None)
+    processed_apex = signer.ProcessApexFile({}, self.payload_key,
+                                            None)
+    self.assertEqual(apex_path, processed_apex)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_ApexApkSigner_apkKeyNotPresent(self):
+    apex_path = os.path.join(self.testdata_dir, 'has_apk.apex')
+    signer = apex_utils.ApexApkSigner(apex_path, None, None)
+    self.assertRaises(apex_utils.ApexSigningError, signer.ProcessApexFile, {},
+                      self.payload_key, None)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_ApexApkSigner_signApk(self):
+    apex_path = os.path.join(self.testdata_dir, 'has_apk.apex')
+    signer = apex_utils.ApexApkSigner(apex_path, None, None)
+    apk_keys = {'wifi-service-resources.apk': os.path.join(
+        self.testdata_dir, 'testkey')}
+
+    self.payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
+    payload_pubkey = common.ExtractAvbPublicKey('avbtool',
+                                                self.payload_key)
+    signer.ProcessApexFile(apk_keys, self.payload_key, payload_pubkey)
