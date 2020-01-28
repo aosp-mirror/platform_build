@@ -3828,6 +3828,15 @@ INTERNAL_OTATOOLS_MODULES := \
   verity_verifier \
   zipalign \
 
+# Additional tools to unpack and repack the apex file.
+INTERNAL_OTATOOLS_MODULES += \
+  apexer \
+  deapexer \
+  debugfs_static \
+  merge_zips \
+  resize2fs \
+  soong_zip \
+
 ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
 INTERNAL_OTATOOLS_MODULES += \
   futility \
