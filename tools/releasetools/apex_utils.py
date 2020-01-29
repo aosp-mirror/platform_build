@@ -124,8 +124,9 @@ class ApexApkSigner(object):
 
     android_jar_path = common.OPTIONS.android_jar_path
     if not android_jar_path:
-      android_jar_path = os.path.join(os.environ.get(
-          'ANDROID_BUILD_TOP'), 'prebuilts/sdk/current/public/android.jar')
+      android_jar_path = os.path.join(os.environ.get('ANDROID_BUILD_TOP', ''),
+                                      'prebuilts', 'sdk', 'current', 'public',
+                                      'android.jar')
       logger.warning('android_jar_path not found in options, falling back to'
                      ' use %s', android_jar_path)
 
