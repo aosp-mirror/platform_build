@@ -39,6 +39,48 @@
       "revId": "c779ed21288f654174d023c9e602b30232b12e03",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae094e1d_56eb8fee",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1181388
+      },
+      "writtenOn": "2020-01-29T19:56:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47bf65c3_67d5320f",
+      "range": {
+        "startLine": 115,
+        "startChar": 57,
+        "endLine": 115,
+        "endChar": 73
+      },
+      "revId": "c779ed21288f654174d023c9e602b30232b12e03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "307a257c_36d2ccef",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1181388
+      },
+      "writtenOn": "2020-01-29T19:56:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42467d83_3d01c65b",
+      "revId": "c779ed21288f654174d023c9e602b30232b12e03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
