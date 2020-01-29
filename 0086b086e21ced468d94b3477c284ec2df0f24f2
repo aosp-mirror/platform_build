@@ -22,6 +22,30 @@
       "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d24f46cd_a4e0b62a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-01-29T07:53:35Z",
+      "side": 1,
+      "message": "Ack. Actually, it\u0027s not just taking $(PRODUCT_OUT) which is the -r or --target-root-dir argument; it\u0027s taking the full list of targets on the product image for which to report notices. The \"targets\" flag in the python script, and the ${6} argument of the combine-notice-files makefile definition.\n\nSee line 1285 of Makefile in the current patchset, and lines 200-202 of the generate-notice-files2.py file.",
+      "parentUuid": "d473fe1d_2a971008",
+      "range": {
+        "startLine": 14,
+        "startChar": 32,
+        "endLine": 14,
+        "endChar": 64
+      },
+      "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
