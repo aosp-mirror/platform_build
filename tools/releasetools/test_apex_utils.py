@@ -16,6 +16,7 @@
 
 import os
 import os.path
+import zipfile
 
 import apex_utils
 import common
@@ -148,6 +149,26 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
   def test_ApexApkSigner_signApk(self):
     apex_path = os.path.join(self.testdata_dir, 'has_apk.apex')
     signer = apex_utils.ApexApkSigner(apex_path, None, None)
+    apk_keys = {'wifi-service-resources.apk': os.path.join(
+        self.testdata_dir, 'testkey')}
+
+    self.payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
+    payload_pubkey = common.ExtractAvbPublicKey('avbtool',
+                                                self.payload_key)
+    signer.ProcessApexFile(apk_keys, self.payload_key, payload_pubkey)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_ApexApkSigner_noAssetDir(self):
+    apex_path = os.path.join(self.testdata_dir, 'has_apk.apex')
+    no_asset = common.MakeTempFile(suffix='.apex')
+    with zipfile.ZipFile(no_asset, 'w') as output_zip:
+      with zipfile.ZipFile(apex_path, 'r') as input_zip:
+        name_list = input_zip.namelist()
+        for name in name_list:
+          if not name.startswith('assets'):
+            output_zip.writestr(name, input_zip.read(name))
+
+    signer = apex_utils.ApexApkSigner(no_asset, None, None)
     apk_keys = {'wifi-service-resources.apk': os.path.join(
         self.testdata_dir, 'testkey')}
 
