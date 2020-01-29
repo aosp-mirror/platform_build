@@ -38,6 +38,10 @@ def java_medium(description, pattern_list):
   return java_warn(Severity.MEDIUM, description, pattern_list)
 
 
+def java_medium_type(name):
+  return java_medium(name, [r'.*\.java:.*: warning: .+ \[' + name + r'\]$'])
+
+
 def java_low(description, pattern_list):
   return java_warn(Severity.LOW, description, pattern_list)
 
@@ -457,6 +461,13 @@ warn_patterns = [
                 [r".*: warning: \[WaitNotInLoop\] .+"]),
     java_medium('A wakelock acquired with a timeout may be released by the system before calling `release`, even after checking `isHeld()`. If so, it will throw a RuntimeException. Please wrap in a try/catch block.',
                 [r".*: warning: \[WakelockReleasedDangerously\] .+"]),
+    java_medium_type('CallbackName'),
+    java_medium_type('ExecutorRegistration'),
+    java_medium_type('ListenerLast'),
+    java_medium_type('MissingBuildMethod'),
+    java_medium_type('NoByteOrShort'),
+    java_medium_type('SetterReturnsThis'),
+    java_medium_type('UseIcu'),
     java_high('AndroidInjection.inject() should always be invoked before calling super.lifecycleMethod()',
               [r".*: warning: \[AndroidInjectionBeforeSuper\] .+"]),
     java_high('Use of class, field, or method that is not compatible with legacy Android devices',
