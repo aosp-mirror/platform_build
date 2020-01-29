@@ -139,6 +139,9 @@ my_prebuilt_jni_libs :=
 my_2nd_arch_prefix :=
 
 PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
+ifndef LOCAL_CERTIFICATE
+  $(call pretty-error,LOCAL_CERTIFICATE must be set for soong_app_prebuilt.mk)
+endif
 ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
   # The magic string "PRESIGNED" means this package is already checked
   # signed with its release key.
