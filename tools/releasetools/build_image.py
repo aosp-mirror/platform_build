@@ -248,6 +248,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   build_command = []
   fs_type = prop_dict.get("fs_type", "")
   run_e2fsck = False
+  needs_projid = prop_dict.get("needs_projid", 0)
+  needs_casefold = prop_dict.get("needs_casefold", 0)
 
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
@@ -287,7 +289,10 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
         build_command.extend(["-S", prop_dict["hash_seed"]])
     if "ext4_share_dup_blocks" in prop_dict:
       build_command.append("-c")
-    build_command.extend(["--inode_size", "256"])
+    if (needs_projid):
+      build_command.extend(["--inode_size", "512"])
+    else:
+      build_command.extend(["--inode_size", "256"])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
@@ -328,6 +333,10 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
     if "timestamp" in prop_dict:
       build_command.extend(["-T", str(prop_dict["timestamp"])])
     build_command.extend(["-L", prop_dict["mount_point"]])
+    if (needs_projid):
+      build_command.append("--prjquota")
+    if (needs_casefold):
+      build_command.append("--casefold")
   else:
     raise BuildImageError(
         "Error: unknown filesystem type: {}".format(fs_type))
@@ -598,6 +607,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("flash_logical_block_size", "flash_logical_block_size")
     copy_prop("flash_erase_block_size", "flash_erase_block_size")
     copy_prop("userdata_selinux_fc", "selinux_fc")
+    copy_prop("needs_casefold", "needs_casefold")
+    copy_prop("needs_projid", "needs_projid")
   elif mount_point == "cache":
     copy_prop("cache_fs_type", "fs_type")
     copy_prop("cache_size", "partition_size")
