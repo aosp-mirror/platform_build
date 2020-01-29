@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d473fe1d_2a971008",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-29T07:32:49Z",
+      "side": 1,
+      "message": "this is perhaps more confusing -- we do actually have the concept of a product partition / image, but that doesn\u0027t appear to be what you\u0027re talking about. It\u0027s taking $(PRODUCT_OUT), which is just the containing folder for anything related to the device (whether it gets installed onto the device or not).",
+      "range": {
+        "startLine": 14,
+        "startChar": 32,
+        "endLine": 14,
+        "endChar": 64
+      },
+      "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
