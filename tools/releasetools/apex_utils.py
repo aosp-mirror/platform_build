@@ -133,7 +133,6 @@ class ApexApkSigner(object):
     arguments_dict = {
         'manifest': os.path.join(apex_dir, 'apex_manifest.pb'),
         'build_info': os.path.join(apex_dir, 'apex_build_info.pb'),
-        'assets_dir': os.path.join(apex_dir, 'assets'),
         'android_jar_path': android_jar_path,
         'key': payload_key,
         'pubkey': payload_public_key,
@@ -156,10 +155,16 @@ class ApexApkSigner(object):
     for key, val in arguments_dict.items():
       repack_cmd.append('--' + key)
       repack_cmd.append(val)
+    # optional arguments for apex repacking
     manifest_json = os.path.join(apex_dir, 'apex_manifest.json')
     if os.path.exists(manifest_json):
       repack_cmd.append('--manifest_json')
       repack_cmd.append(manifest_json)
+    assets_dir = os.path.join(apex_dir, 'assets')
+    if os.path.isdir(assets_dir):
+      repack_cmd.append('--assets_dir')
+      repack_cmd.append(assets_dir)
+
     repack_cmd.append(payload_dir)
     repack_cmd.append(repacked_apex)
     common.RunAndCheckOutput(repack_cmd)
