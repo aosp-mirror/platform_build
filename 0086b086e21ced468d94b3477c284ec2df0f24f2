@@ -46,6 +46,30 @@
       "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c810389e_04eec074",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-30T01:11:46Z",
+      "side": 1,
+      "message": "Ah, that is not a full list of targets, it\u0027s probably closer to ~95-99% depending on the device. It\u0027s currently impossible for us to give you a full list of targets given the current design of the build system. As the description for $(6) goes, it\u0027s good enough for dependencies, but not for other purposes.",
+      "parentUuid": "d24f46cd_a4e0b62a",
+      "range": {
+        "startLine": 14,
+        "startChar": 32,
+        "endLine": 14,
+        "endChar": 64
+      },
+      "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
