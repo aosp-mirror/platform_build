@@ -70,6 +70,30 @@
       "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e43ea921_c7d15e8b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-01-30T02:13:40Z",
+      "side": 1,
+      "message": "Please clarify.\n\nWhat sort of file gets flashed onto the device, has a corresponding .txt file under $(PRODUCT_OUT)/obj/NOTICE_FILES/src/, and does not appear in ${6} ?",
+      "parentUuid": "c810389e_04eec074",
+      "range": {
+        "startLine": 14,
+        "startChar": 32,
+        "endLine": 14,
+        "endChar": 64
+      },
+      "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
