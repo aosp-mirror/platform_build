@@ -94,6 +94,30 @@
       "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e58c69c6_229317e3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-30T04:14:37Z",
+      "side": 1,
+      "message": "Pretty much anything -- we don\u0027t have a complete list of what gets installed other than looking at what\u0027s there after the fact. It should be pretty close for the pixel targets, at least on the system image (as we\u0027ve spent time cleaning up the bad instances, but there\u0027s nothing preventing others, even other devices in our tree, from having problems).\n\nThe root cause is that anything can add make dependencies that trigger things to get installed without us knowing about it. This line in any makefile would trigger libbar.so to get installed if libfoo.so is installed, without it showing up in this list:\n\n  $(TARGET_OUT_SHARED_LIBRARIES)/libfoo.so: $(TARGET_OUT_SHARED_LIBRARIES)/libbar.so\n\n(There are also other cases of custom additions to the image via various side-effects, but those won\u0027t have NOTICE files anyways)",
+      "parentUuid": "e43ea921_c7d15e8b",
+      "range": {
+        "startLine": 14,
+        "startChar": 32,
+        "endLine": 14,
+        "endChar": 64
+      },
+      "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
