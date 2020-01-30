@@ -142,6 +142,30 @@
       "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9e259d9_e1e5fc9c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-01-30T05:13:21Z",
+      "side": 1,
+      "message": "1. It\u0027s a dependency of a dependency, so it should work.\n\n2. The image generation (used by flashall/etc) just do the same thing the existing logic here did. Depend on the things we know we need, then gather up everything we find in the relevant directories.",
+      "parentUuid": "f87facdc_5eb91251",
+      "range": {
+        "startLine": 14,
+        "startChar": 32,
+        "endLine": 14,
+        "endChar": 64
+      },
+      "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
