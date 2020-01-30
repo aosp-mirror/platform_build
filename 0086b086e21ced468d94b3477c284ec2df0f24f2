@@ -118,6 +118,30 @@
       "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f87facdc_5eb91251",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-01-30T05:06:57Z",
+      "side": 1,
+      "message": "1. If true, the statement that the list suffices for dependencies is false. If libbar.so is not in the dependencies, changes to it or its notices will not cause an update to the system image notice file.\n\n2. How does the .so.so rule inform flashall to install libbar.so? Let\u0027s just use that list instead.",
+      "parentUuid": "e58c69c6_229317e3",
+      "range": {
+        "startLine": 14,
+        "startChar": 32,
+        "endLine": 14,
+        "endChar": 64
+      },
+      "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
