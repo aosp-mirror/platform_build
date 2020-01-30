@@ -16,7 +16,28 @@ LOCAL_PATH := $(BUILD_SYSTEM)
 define check-product-copy-files
 $(if $(filter-out $(TARGET_COPY_OUT_SYSTEM_OTHER)/%,$(2)), \
   $(if $(filter %.apk, $(2)),$(error \
-     Prebuilt apk found in PRODUCT_COPY_FILES: $(1), use BUILD_PREBUILT instead!)))
+     Prebuilt apk found in PRODUCT_COPY_FILES: $(1), use BUILD_PREBUILT instead!))) \
+$(if $(filter true,$(BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES)),, \
+  $(if $(filter $(TARGET_COPY_OUT_SYSTEM)/etc/vintf/% \
+                $(TARGET_COPY_OUT_SYSTEM)/manifest.xml \
+                $(TARGET_COPY_OUT_SYSTEM)/compatibility_matrix.xml,$(2)), \
+    $(error VINTF metadata found in PRODUCT_COPY_FILES: $(1), use vintf_fragments instead!)) \
+  $(if $(filter $(TARGET_COPY_OUT_PRODUCT)/etc/vintf/%,$(2)), \
+    $(error VINTF metadata found in PRODUCT_COPY_FILES: $(1), \
+      use PRODUCT_MANIFEST_FILES / DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE / vintf_compatibility_matrix / vintf_fragments instead!)) \
+  $(if $(filter $(TARGET_COPY_OUT_SYSTEM_EXT)/etc/vintf/%,$(2)), \
+    $(error VINTF metadata found in PRODUCT_COPY_FILES: $(1), \
+      use vintf_compatibility_matrix / vintf_fragments instead!)) \
+  $(if $(filter $(TARGET_COPY_OUT_VENDOR)/etc/vintf/% \
+                $(TARGET_COPY_OUT_VENDOR)/manifest.xml \
+                $(TARGET_COPY_OUT_VENDOR)/compatibility_matrix.xml,$(2)), \
+    $(error VINTF metadata found in PRODUCT_COPY_FILES: $(1), \
+      use DEVICE_MANIFEST_FILE / DEVICE_MATRIX_FILE / vintf_compatibility_matrix / vintf_fragments instead!)) \
+  $(if $(filter $(TARGET_COPY_OUT_ODM)/etc/vintf/% \
+                $(TARGET_COPY_OUT_ODM)/etc/manifest%,$(2)), \
+    $(error VINTF metadata found in PRODUCT_COPY_FILES: $(1), \
+      use ODM_MANIFEST_FILES / vintf_fragments instead!)) \
+)
 endef
 # filter out the duplicate <source file>:<dest file> pairs.
 unique_product_copy_files_pairs :=
