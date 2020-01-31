@@ -41,7 +41,7 @@ my_missing_files = $(shell $(call echo-warning,$(my_makefile),$(my_package_name)
 ifeq ($(ALLOW_MISSING_DEPENDENCIES),true)
   # Ignore unknown installed files on partial builds
   my_missing_files =
-else ifeq ($(my_modules_strict),true)
+else ifneq ($(my_modules_strict),false)
   my_missing_files = $(shell $(call echo-error,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))$(eval my_missing_error := true)
 endif
 
