@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0133fa5e_ccca3ced",
+        "filename": "target/product/legacy_gsi_release.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-01-31T09:40:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "869b53c8_3c1cd0c4",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 20
+      },
+      "revId": "edeb86eb2fda7c990f271231b4e72828096c84b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d6634926_3c96e16c",
         "filename": "target/product/legacy_gsi_release.mk",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "edeb86eb2fda7c990f271231b4e72828096c84b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "062765a4_f586a393",
+        "filename": "target/product/legacy_gsi_release.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-01-31T09:40:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6634926_3c96e16c",
+      "range": {
+        "startLine": 32,
+        "startChar": 2,
+        "endLine": 32,
+        "endChar": 12
+      },
+      "revId": "edeb86eb2fda7c990f271231b4e72828096c84b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
