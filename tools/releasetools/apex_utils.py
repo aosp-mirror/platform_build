@@ -50,7 +50,8 @@ class ApexApkSigner(object):
     self.key_passwords = key_passwords
     self.codename_to_api_level_map = codename_to_api_level_map
 
-  def ProcessApexFile(self, apk_keys, payload_key, payload_public_key):
+  def ProcessApexFile(self, apk_keys, payload_key, payload_public_key,
+                      signing_args=None):
     """Scans and signs the apk files and repack the apex
 
     Args:
@@ -88,7 +89,8 @@ class ApexApkSigner(object):
       logger.info('No apk file has been signed in %s', self.apex_path)
       return self.apex_path
 
-    return self.RepackApexPayload(payload_dir, payload_key, payload_public_key)
+    return self.RepackApexPayload(payload_dir, payload_key, payload_public_key,
+                                  signing_args)
 
   def ExtractApexPayloadAndSignApks(self, apk_entries, apk_keys):
     """Extracts the payload image and signs the containing apk files."""
@@ -116,7 +118,8 @@ class ApexApkSigner(object):
       has_signed_apk = True
     return payload_dir, has_signed_apk
 
-  def RepackApexPayload(self, payload_dir, payload_key, payload_public_key):
+  def RepackApexPayload(self, payload_dir, payload_key, payload_public_key,
+                        signing_args=None):
     """Rebuilds the apex file with the updated payload directory."""
     apex_dir = common.MakeTempDir()
     # Extract the apex file and reuse its meta files as repack parameters.
@@ -153,20 +156,19 @@ class ApexApkSigner(object):
                   '--do_not_check_keyname', '--apexer_tool_path',
                   os.getenv('PATH')]
     for key, val in arguments_dict.items():
-      repack_cmd.append('--' + key)
-      repack_cmd.append(val)
+      repack_cmd.extend(['--' + key, val])
+    if signing_args:
+      repack_cmd.extend(['--signing_args', signing_args])
     # optional arguments for apex repacking
     manifest_json = os.path.join(apex_dir, 'apex_manifest.json')
     if os.path.exists(manifest_json):
-      repack_cmd.append('--manifest_json')
-      repack_cmd.append(manifest_json)
+      repack_cmd.extend(['--manifest_json', manifest_json])
     assets_dir = os.path.join(apex_dir, 'assets')
     if os.path.isdir(assets_dir):
-      repack_cmd.append('--assets_dir')
-      repack_cmd.append(assets_dir)
-
-    repack_cmd.append(payload_dir)
-    repack_cmd.append(repacked_apex)
+      repack_cmd.extend(['--assets_dir', assets_dir])
+    repack_cmd.extend([payload_dir, repacked_apex])
+    if OPTIONS.verbose:
+      repack_cmd.append('-v')
     common.RunAndCheckOutput(repack_cmd)
 
     return repacked_apex
@@ -316,7 +318,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
   apk_signer = ApexApkSigner(apex_file, container_pw,
                              codename_to_api_level_map)
   apex_file = apk_signer.ProcessApexFile(apk_keys, payload_key,
-                                         payload_public_key)
+                                         payload_public_key, signing_args)
 
   # 2a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
   # payload_key.

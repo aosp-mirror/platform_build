@@ -176,3 +176,20 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
     payload_pubkey = common.ExtractAvbPublicKey('avbtool',
                                                 self.payload_key)
     signer.ProcessApexFile(apk_keys, self.payload_key, payload_pubkey)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_ApexApkSigner_withSignerHelper(self):
+    apex_path = os.path.join(self.testdata_dir, 'has_apk.apex')
+    signer = apex_utils.ApexApkSigner(apex_path, None, None)
+    apk_keys = {'wifi-service-resources.apk': os.path.join(
+        self.testdata_dir, 'testkey')}
+
+    self.payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
+    payload_pubkey = common.ExtractAvbPublicKey('avbtool', self.payload_key)
+
+    signing_helper = os.path.join(self.testdata_dir, 'signing_helper.sh')
+    os.chmod(signing_helper, 0o700)
+    payload_signer_args = '--signing_helper_with_files {}'.format(
+        signing_helper)
+    signer.ProcessApexFile(apk_keys, self.payload_key, payload_pubkey,
+                           payload_signer_args)
