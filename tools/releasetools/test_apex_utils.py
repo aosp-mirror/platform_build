@@ -189,7 +189,7 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
 
     signing_helper = os.path.join(self.testdata_dir, 'signing_helper.sh')
     os.chmod(signing_helper, 0o700)
-    payload_signer_args = '--signing_helper_with_files {}'.format(
+    payload_signer_args = '--signing_helper_with_files={}'.format(
         signing_helper)
     signer.ProcessApexFile(apk_keys, self.payload_key, payload_pubkey,
                            payload_signer_args)
