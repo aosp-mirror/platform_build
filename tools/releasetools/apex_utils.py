@@ -157,8 +157,10 @@ class ApexApkSigner(object):
                   os.getenv('PATH')]
     for key, val in arguments_dict.items():
       repack_cmd.extend(['--' + key, val])
+    # Add quote to the signing_args as we will pass
+    # --signing_args "--signing_helper_with_files=%path" to apexer
     if signing_args:
-      repack_cmd.extend(['--signing_args', signing_args])
+      repack_cmd.extend(['--signing_args', '"{}"'.format(signing_args)])
     # optional arguments for apex repacking
     manifest_json = os.path.join(apex_dir, 'apex_manifest.json')
     if os.path.exists(manifest_json):
