@@ -53,6 +53,9 @@ warn_patterns = [
     {'category': 'make', 'severity': Severity.MEDIUM,
      'description': 'make: please convert to soong',
      'patterns': [r".*: warning: .* has been deprecated. Please convert to Soong."]},
+    {'category': 'make', 'severity': Severity.MEDIUM,
+     'description': 'make: deprecated macros',
+     'patterns': [r".*\.mk:.* warning:.* [A-Z_]+ (is|has been) deprecated."]},
 ]
 
 
