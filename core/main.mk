@@ -345,6 +345,15 @@ ifneq (,$(filter debug,$(tags_to_install)))
 endif
 endif
 
+## java coverage ##
+# Install additional tools on java coverage builds
+ifeq (true,$(EMMA_INSTRUMENT))
+ifneq (,$(filter debug,$(tags_to_install)))
+  tags_to_install += java_coverage
+endif
+endif
+
+
 ## sdk ##
 
 ifdef is_sdk_build
@@ -1139,6 +1148,7 @@ define product-installed-files
     $(if $(filter debug,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG)) \
     $(if $(filter tests,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_TESTS)) \
     $(if $(filter asan,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_ASAN)) \
+    $(if $(filter java_coverage,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
