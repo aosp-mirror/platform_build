@@ -166,6 +166,30 @@
       "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7ab7b05_fd1b08a8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-04T16:39:33Z",
+      "side": 1,
+      "message": "Ack\n\nYou are correct, of course. The system images of all the phones I looked at were clean, but the recovery partitions were full of these sorts of targets.",
+      "parentUuid": "e9e259d9_e1e5fc9c",
+      "range": {
+        "startLine": 14,
+        "startChar": 32,
+        "endLine": 14,
+        "endChar": 64
+      },
+      "revId": "0086b086e21ced468d94b3477c284ec2df0f24f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

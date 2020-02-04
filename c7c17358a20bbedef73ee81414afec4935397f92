@@ -16,6 +16,24 @@
       "revId": "c7c17358a20bbedef73ee81414afec4935397f92",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "254b4837_bd4db587",
+        "filename": "tools/generate-notice-files2.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-04T16:39:33Z",
+      "side": 1,
+      "message": "Ack\n\nIt\u0027s no longer part of this change.",
+      "parentUuid": "05e25877_c213dd6f",
+      "revId": "c7c17358a20bbedef73ee81414afec4935397f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
