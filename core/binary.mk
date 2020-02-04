@@ -267,6 +267,20 @@ ifneq ($(LOCAL_SDK_VERSION),)
   endif
 endif
 
+ifeq ($(NATIVE_COVERAGE),true)
+  ifndef LOCAL_IS_HOST_MODULE
+    my_ldflags += -Wl,--wrap,getenv
+
+    ifneq ($(LOCAL_MODULE_CLASS),STATIC_LIBRARIES)
+      ifeq ($(LOCAL_SDK_VERSION),)
+        my_whole_static_libraries += libprofile-extras
+      else
+        my_whole_static_libraries += libprofile-extras_ndk
+      endif
+    endif
+  endif
+endif
+
 ifneq ($(LOCAL_USE_VNDK),)
   # Required VNDK version for vendor modules is BOARD_VNDK_VERSION.
   my_vndk_version := $(BOARD_VNDK_VERSION)
