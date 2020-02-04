@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a5a525c6_9c802a02",
+        "filename": "tools/warn/java_warn_patterns.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-02-04T23:38:35Z",
+      "side": 1,
+      "message": "I don\u0027t think they can happen with Kotlin. Here I only added or changed warning patterns found for Java in existing build.log or in this file. If later they are found with Kotlin too, we can find someway to define the warning for multiple languages.\n \nSince we moved these warning patterns into separate Python modules named *_warn_patterns.py, we can now use shorter names. For example, cpp_warn_patterns.py also uses high/low/medium/skip/... functions to define many patterns. I think we will have more follow up CLs to clean up these java warning patterns, and generate them from Java ErrorProne compiler source.",
+      "parentUuid": "2b4137b8_657de745",
+      "range": {
+        "startLine": 73,
+        "startChar": 4,
+        "endLine": 73,
+        "endChar": 10
+      },
+      "revId": "167d8c5b2a0ef340979af4ac6603d05b082495bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e35fe4a_6299332c",
         "filename": "tools/warn/java_warn_patterns.py",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "167d8c5b2a0ef340979af4ac6603d05b082495bd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee971560_70b5619f",
+        "filename": "tools/warn/java_warn_patterns.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-02-04T23:38:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e35fe4a_6299332c",
+      "range": {
+        "startLine": 74,
+        "startChar": 20,
+        "endLine": 74,
+        "endChar": 29
+      },
+      "revId": "167d8c5b2a0ef340979af4ac6603d05b082495bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
