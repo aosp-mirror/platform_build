@@ -1839,6 +1839,16 @@ define transform-host-o-to-executable
 $(transform-host-o-to-executable-inner)
 endef
 
+###########################################################
+## Commands for packaging native coverage files
+###########################################################
+define package-coverage-files
+  @rm -f $@ $@.lst $@.premerged
+  @touch $@.lst
+  $(foreach obj,$(strip $(PRIVATE_ALL_OBJECTS)), $(hide) echo $(obj) >> $@.lst$(newline))
+  $(hide) $(SOONG_ZIP) -o $@.premerged -C $(OUT_DIR) -l $@.lst
+  $(hide) $(MERGE_ZIPS) -ignore-duplicates $@ $@.premerged $(strip $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES))
+endef
 
 ###########################################################
 ## Commands for running javac to make .class files
