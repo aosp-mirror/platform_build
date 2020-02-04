@@ -246,6 +246,7 @@ VNDK-core: libadf.so
 VNDK-core: libaudioroute.so
 VNDK-core: libaudioutils.so
 VNDK-core: libbinder.so
+VNDK-core: libbufferqueueconverter.so
 VNDK-core: libcamera_metadata.so
 VNDK-core: libcap.so
 VNDK-core: libcn-cbor.so
