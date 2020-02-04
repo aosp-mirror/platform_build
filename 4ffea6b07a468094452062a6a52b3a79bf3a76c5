@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d23394d8_3d33ad9d",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-02-04T21:37:12Z",
+      "side": 1,
+      "message": "Saw some interesting behavior using an all-uppercase variable name. Using a name like COOL_FEATURE required using a Soong config property like cOOL_FEATURE, so using to-lower here. This happens when mapping a Go field name to a property name here: https://android.googlesource.com/platform/build/blueprint/+/5b1a877f0a18a55cab0142e90155fdbb488ff9ca/proptools/proptools.go#25. Using to-lower solves that, but could result in name collisions.",
+      "range": {
+        "startLine": 248,
+        "startChar": 26,
+        "endLine": 248,
+        "endChar": 45
+      },
+      "revId": "4ffea6b07a468094452062a6a52b3a79bf3a76c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
