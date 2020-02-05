@@ -66,7 +66,6 @@ PRODUCT_PACKAGES += \
     com.android.neuralnetworks \
     com.android.os.statsd \
     com.android.sdkext \
-    com.android.telephony \
     com.android.tethering \
     com.android.tzdata \
     com.android.wifi \
