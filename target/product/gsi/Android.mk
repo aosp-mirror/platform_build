@@ -163,6 +163,7 @@ LOCAL_REQUIRED_MODULES += \
     vndkcorevariant.libraries.txt \
     $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES)) \
     $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES)) \
+    $(VNDK_USING_CORE_VARIANT_LIBRARIES) \
     com.android.vndk.current
 endif
 include $(BUILD_PHONY_PACKAGE)
