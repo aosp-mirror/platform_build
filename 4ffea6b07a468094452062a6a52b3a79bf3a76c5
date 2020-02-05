@@ -22,6 +22,30 @@
       "revId": "4ffea6b07a468094452062a6a52b3a79bf3a76c5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "daef3296_e7f8150f",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-02-05T20:14:09Z",
+      "side": 1,
+      "message": "Tracked in b/148865218, can you either leave out the to-lower here or add a TODO(b/148865218) to remove it and reference Bug: 148865218 in the commit message?",
+      "parentUuid": "d23394d8_3d33ad9d",
+      "range": {
+        "startLine": 248,
+        "startChar": 26,
+        "endLine": 248,
+        "endChar": 45
+      },
+      "revId": "4ffea6b07a468094452062a6a52b3a79bf3a76c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
