@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "bd81a725_b0b0deb1",
+        "filename": "tools/warn/java_warn_patterns.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-02-05T18:06:02Z",
+      "side": 1,
+      "message": "In warnings.html, there are prefixes like Java or Kotlin in each warning group description.\nIn Python modules like cpp_warn_patterns and java_warn_patterns, we can avoid the repeated prefix. However, other_warn_patterns module has multiple languages, so the patterns have kotlin or asm prefix. If we have kotlin_warn_patterns module in the future, it does not need to repeat \u0027kotlin\u0027 prefix.",
+      "parentUuid": "3536fe91_a150e1a6",
+      "range": {
+        "startLine": 73,
+        "startChar": 4,
+        "endLine": 73,
+        "endChar": 10
+      },
+      "revId": "167d8c5b2a0ef340979af4ac6603d05b082495bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e35fe4a_6299332c",
         "filename": "tools/warn/java_warn_patterns.py",
         "patchSetId": 1
