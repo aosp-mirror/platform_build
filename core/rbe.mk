@@ -21,8 +21,33 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   else
     rbe_dir := $(HOME)/rbe
   endif
+
+  ifdef RBE_CXX_EXEC_STRATEGY
+    cxx_rbe_exec_strategy := $(RBE_CXX_EXEC_STRATEGY)
+  else
+    cxx_rbe_exec_strategy := "local"
+  endif
+
+  ifdef RBE_JAVAC_EXEC_STRATEGY
+    javac_exec_strategy := $(RBE_JAVAC_EXEC_STRATEGY)
+  else
+    javac_exec_strategy := "local"
+  endif
+
+  ifdef RBE_R8_EXEC_STRATEGY
+    r8_exec_strategy := $(RBE_R8_EXEC_STRATEGY)
+  else
+    r8_exec_strategy := "local"
+  endif
+
+  ifdef RBE_D8_EXEC_STRATEGY
+    d8_exec_strategy := $(RBE_D8_EXEC_STRATEGY)
+  else
+    d8_exec_strategy := "local"
+  endif
+
   RBE_WRAPPER := $(rbe_dir)/rewrapper
-  RBE_CXX := --labels=type=compile,lang=cpp,compiler=clang --env_var_whitelist=PWD
+  RBE_CXX := --labels=type=compile,lang=cpp,compiler=clang --env_var_whitelist=PWD --exec_strategy=$(cxx_rbe_exec_strategy)
 
   # Append rewrapper to existing *_WRAPPER variables so it's possible to
   # use both ccache and rewrapper.
@@ -30,15 +55,15 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   CXX_WRAPPER := $(strip $(CXX_WRAPPER) $(RBE_WRAPPER) $(RBE_CXX))
 
   ifdef RBE_JAVAC
-    JAVAC_WRAPPER := $(strip $(JAVAC_WRAPPER) $(RBE_WRAPPER) --labels=type=compile,lang=java,compiler=javac,shallow=true)
+    JAVAC_WRAPPER := $(strip $(JAVAC_WRAPPER) $(RBE_WRAPPER) --labels=type=compile,lang=java,compiler=javac,shallow=true --exec_strategy=$(javac_exec_strategy))
   endif
 
   ifdef RBE_R8
-    R8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=r8,shallow=true)
+    R8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=r8,shallow=true --exec_strategy=$(r8_exec_strategy))
   endif
 
   ifdef RBE_D8
-    D8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=d8,shallow=true)
+    D8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=d8,shallow=true --exec_strategy=$(d8_exec_strategy))
   endif
 
   rbe_dir :=
