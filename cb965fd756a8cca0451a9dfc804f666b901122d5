@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce97d527_9ebac7f2",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-02-05T22:15:50Z",
+      "side": 1,
+      "message": "can you rename these to add_soong_config_namespace, etc?  I expect they\u0027ll end up being used by non-vendor users, in which case the vendor name will be confusing.",
+      "range": {
+        "startLine": 236,
+        "startChar": 11,
+        "endLine": 236,
+        "endChar": 17
+      },
+      "revId": "cb965fd756a8cca0451a9dfc804f666b901122d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f10de89_a9fec8af",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-02-05T22:15:50Z",
+      "side": 1,
+      "message": "I suggest downplaying this, and mentioning the soong_config module types instead.",
+      "range": {
+        "startLine": 242,
+        "startChar": 44,
+        "endLine": 242,
+        "endChar": 57
+      },
+      "revId": "cb965fd756a8cca0451a9dfc804f666b901122d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
