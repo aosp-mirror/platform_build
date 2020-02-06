@@ -228,6 +228,37 @@ endef
 # Initialize SOONG_CONFIG_NAMESPACES so that it isn't recursive.
 SOONG_CONFIG_NAMESPACES :=
 
+# The add_soong_config_namespace function adds a namespace and initializes it
+# to be empty.
+# $1 is the namespace.
+# Ex: $(call add_soong_config_namespace,acme)
+
+define add_soong_config_namespace
+$(eval SOONG_CONFIG_NAMESPACES += $1) \
+$(eval SOONG_CONFIG_$1 :=)
+endef
+
+# The add_soong_config_var function adds a soong config variable to
+# SOONG_CONFIG_*. The variable and its value are then be available to a
+# soong_config_module_type in an Android.bp file.
+# $1 is the namespace. $2 is the variable name.
+# Ex: $(call add_soong_config_var,acme,COOL_FEATURE)
+
+define add_soong_config_var
+$(eval SOONG_CONFIG_$1 += $2) \
+$(eval SOONG_CONFIG_$1_$2 := $($2))
+endef
+
+# The add_soong_config_var_value function defines a make variable and also adds
+# the variable to SOONG_CONFIG_*.
+# $1 is the namespace. $2 is the variable name. $3 is the variable value.
+# Ex: $(call add_soong_config_var_value,acme,COOL_FEATURE,true)
+
+define add_soong_config_var_value
+$(eval $2 := $3) \
+$(call add_soong_config_var,$1,$2)
+endef
+
 # Set the extensions used for various packages
 COMMON_PACKAGE_SUFFIX := .zip
 COMMON_JAVA_PACKAGE_SUFFIX := .jar
