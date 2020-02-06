@@ -46,6 +46,30 @@
       "revId": "4ffea6b07a468094452062a6a52b3a79bf3a76c5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d48167f7_7ba8025b",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-02-06T00:21:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "daef3296_e7f8150f",
+      "range": {
+        "startLine": 248,
+        "startChar": 26,
+        "endLine": 248,
+        "endChar": 45
+      },
+      "revId": "4ffea6b07a468094452062a6a52b3a79bf3a76c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
