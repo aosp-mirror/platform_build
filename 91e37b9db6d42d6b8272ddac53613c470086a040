@@ -70,6 +70,24 @@
       "revId": "91e37b9db6d42d6b8272ddac53613c470086a040",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32e533cb_d93c55e3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-02-06T06:07:31Z",
+      "side": 1,
+      "message": "The overriding code is from here: https://cs.corp.google.com/android/build/make/core/product_config.mk?rcl\u003dbde58440505a1dd87b6075d788516249a90ba631\u0026l\u003d347\nOVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE (let\u0027s say \u0027OVERRIDE_PEPPI\u0027 for the rest) is not for official use but just for debugging purpose to exempt from automatic setting of PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE (let\u0027s say \u0027PEPPI\u0027 for the rest).\nTo enable product enforcement the device must set PEPPI to true, Otherwise it is empty.\nI updated the patchset 2 to respect the case for setting \u0027OVERRIDE_PEPPI :\u003d false\u0027 which must be the only cases for using OVERRIDE_PEPPI to bypass the automatic settings of PEPPI.",
+      "parentUuid": "3b196abd_5d8ac5f9",
+      "revId": "91e37b9db6d42d6b8272ddac53613c470086a040",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
