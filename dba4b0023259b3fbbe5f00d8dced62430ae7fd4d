@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "074f3b22_c2c885b1",
+        "filename": "core/config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-02-06T22:37:09Z",
+      "side": 1,
+      "message": "As I go to attempt to convert devices in AOSP, I wonder if we should allow multiple variables in $2:\n\n  $(call add_soong_config_var,hikey,\\\n     MALI_FOO \\\n     MALI_BAR \\\n     ...20 more...)\n\nI can do a loop around the call, but it would be simple enough to support here.",
+      "revId": "dba4b0023259b3fbbe5f00d8dced62430ae7fd4d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
