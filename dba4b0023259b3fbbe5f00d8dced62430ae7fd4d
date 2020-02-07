@@ -16,6 +16,24 @@
       "revId": "dba4b0023259b3fbbe5f00d8dced62430ae7fd4d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "507efdc9_1fbbdf90",
+        "filename": "core/config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-02-07T03:36:07Z",
+      "side": 1,
+      "message": "I\u0027ll do this via b/149049342.",
+      "parentUuid": "074f3b22_c2c885b1",
+      "revId": "dba4b0023259b3fbbe5f00d8dced62430ae7fd4d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
