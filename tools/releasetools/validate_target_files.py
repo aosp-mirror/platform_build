@@ -350,7 +350,7 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
     # vbmeta partitions (e.g. vbmeta_system).
     image = os.path.join(input_tmp, 'IMAGES', 'vbmeta.img')
     cmd = [info_dict['avb_avbtool'], 'verify_image', '--image', image,
-           '--key', key, '--follow_chain_partitions']
+           '--follow_chain_partitions']
 
     # Append the args for chained partitions if any.
     for partition in common.AVB_PARTITIONS + common.AVB_VBMETA_PARTITIONS:
