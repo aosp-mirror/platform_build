@@ -12,6 +12,7 @@ echo "ro.build.version.preview_sdk_fingerprint=$PLATFORM_PREVIEW_SDK_FINGERPRINT
 echo "ro.build.version.codename=$PLATFORM_VERSION_CODENAME"
 echo "ro.build.version.all_codenames=$PLATFORM_VERSION_ALL_CODENAMES"
 echo "ro.build.version.release=$PLATFORM_VERSION"
+echo "ro.build.version.release_or_codename=$PLATFORM_VERSION_LAST_STABLE"
 echo "ro.build.version.security_patch=$PLATFORM_SECURITY_PATCH"
 echo "ro.build.version.base_os=$PLATFORM_BASE_OS"
 echo "ro.build.version.min_supported_target_sdk=$PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION"
