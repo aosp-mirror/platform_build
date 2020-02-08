@@ -238,15 +238,14 @@ $(eval SOONG_CONFIG_NAMESPACES += $1) \
 $(eval SOONG_CONFIG_$1 :=)
 endef
 
-# The add_soong_config_var function adds a soong config variable to
-# SOONG_CONFIG_*. The variable and its value are then be available to a
+# The add_soong_config_var function adds a a list of soong config variables to
+# SOONG_CONFIG_*. The variables and their values are then available to a
 # soong_config_module_type in an Android.bp file.
-# $1 is the namespace. $2 is the variable name.
-# Ex: $(call add_soong_config_var,acme,COOL_FEATURE)
-
+# $1 is the namespace. $2 is the list of variables.
+# Ex: $(call add_soong_config_var,acme,COOL_FEATURE_A COOL_FEATURE_B)
 define add_soong_config_var
 $(eval SOONG_CONFIG_$1 += $2) \
-$(eval SOONG_CONFIG_$1_$2 := $($2))
+$(foreach v,$2,$(eval SOONG_CONFIG_$1_$v := $($v)))
 endef
 
 # The add_soong_config_var_value function defines a make variable and also adds
