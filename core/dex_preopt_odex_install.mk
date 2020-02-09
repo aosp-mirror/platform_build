@@ -116,12 +116,6 @@ my_dexpreopt_infix := boot
 ifeq (true, $(DEXPREOPT_USE_ART_IMAGE))
   my_dexpreopt_infix := art
 endif
-ifeq (true, $(DEXPREOPT_USE_APEX_IMAGE))
-  my_dexpreopt_infix := jitzygote-boot
-  ifeq (true, $(DEXPREOPT_USE_ART_IMAGE))
-    my_dexpreopt_infix := jitzygote-art
-  endif
-endif
 
 ifdef LOCAL_DEX_PREOPT
   ifeq (,$(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
