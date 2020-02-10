@@ -22,6 +22,30 @@
       "revId": "5aff50c9b8789f7fd0509f49542a9d597ca02952",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a77c7c17_2e9b0edf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1278660
+      },
+      "writtenOn": "2020-02-10T18:28:06Z",
+      "side": 1,
+      "message": "Ack. Removed.",
+      "parentUuid": "565bab4e_65decae2",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 5
+      },
+      "revId": "5aff50c9b8789f7fd0509f49542a9d597ca02952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
