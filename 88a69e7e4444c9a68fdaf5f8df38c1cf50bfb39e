@@ -178,6 +178,30 @@
     },
     {
       "key": {
+        "uuid": "e6721903_a6a66231",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-02-10T23:40:36Z",
+      "side": 1,
+      "message": "marking as resolved",
+      "parentUuid": "ba0d93fa_dbc33ef0",
+      "range": {
+        "startLine": 30,
+        "startChar": 8,
+        "endLine": 30,
+        "endChar": 18
+      },
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1370f4f1_c1635ec7",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 4
@@ -198,6 +222,30 @@
       "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "77a226ad_75e17cc6",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-02-10T23:40:36Z",
+      "side": 1,
+      "message": "same above",
+      "parentUuid": "1370f4f1_c1635ec7",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 52
+      },
+      "revId": "88a69e7e4444c9a68fdaf5f8df38c1cf50bfb39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
