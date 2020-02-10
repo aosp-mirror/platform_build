@@ -46,6 +46,29 @@
       "revId": "5aff50c9b8789f7fd0509f49542a9d597ca02952",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6bdda9a7_7904b8b5",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2020-02-10T18:55:18Z",
+      "side": 1,
+      "message": "should go to emulator specific board config file",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 27
+      },
+      "revId": "5aff50c9b8789f7fd0509f49542a9d597ca02952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
