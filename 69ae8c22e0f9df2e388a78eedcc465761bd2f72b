@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e381f752_54233268",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-02-10T22:51:25Z",
+      "side": 1,
+      "message": "Updated CalculatePartitionFingerprint(partition) to always use the specific partition props, not OEM props.",
+      "parentUuid": "bebfb8b6_785f71bb",
+      "range": {
+        "startLine": 370,
+        "startChar": 27,
+        "endLine": 370,
+        "endChar": 47
+      },
+      "revId": "69ae8c22e0f9df2e388a78eedcc465761bd2f72b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2b59953a_6d9e6f78",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 7
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "b124c844_cfd3f6ce",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-02-10T22:51:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b59953a_6d9e6f78",
+      "range": {
+        "startLine": 404,
+        "startChar": 31,
+        "endLine": 404,
+        "endChar": 40
+      },
+      "revId": "69ae8c22e0f9df2e388a78eedcc465761bd2f72b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c175376a_b84b0f42",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 7
@@ -68,6 +116,30 @@
       "revId": "69ae8c22e0f9df2e388a78eedcc465761bd2f72b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de27d508_c7d01f40",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 477,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-02-10T22:51:25Z",
+      "side": 1,
+      "message": "Done.\n\nKept CalculateFingerprint() and BuildInfo.fingerprint as is by default, and changed changed CalculatePartitionFingerprint(partition) to not use OEM props.\n\nHowever, I had to include a fallback option for BuildInfo.fingerprint to use partition fingerprint if the regular CalculateFingerprint() fails, which is what was happening in b/144101993 where the vendor build\u0027s main build.prop file doesn\u0027t have ro.build.version.release.",
+      "parentUuid": "c175376a_b84b0f42",
+      "range": {
+        "startLine": 477,
+        "startChar": 6,
+        "endLine": 477,
+        "endChar": 26
+      },
+      "revId": "69ae8c22e0f9df2e388a78eedcc465761bd2f72b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
