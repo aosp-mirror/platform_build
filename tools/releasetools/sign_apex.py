@@ -31,6 +31,10 @@ Usage:  sign_apex [flags] input_apex_file output_apex_file
   --payload_extra_args <args>
       Optional flag that specifies any extra args to be passed to payload signer
       (e.g. --payload_extra_args="--signing_helper_with_files /path/to/helper").
+
+  -e  (--extra_apks)  <name,name,...=key>
+      Add extra APK name/key pairs. This is useful to sign the apk files in the
+      apex payload image.
 """
 
 import logging
@@ -43,8 +47,8 @@ import common
 logger = logging.getLogger(__name__)
 
 
-def SignApexFile(avbtool, apex_file, payload_key, container_key,
-                 signing_args=None):
+def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
+                 apk_keys=None, signing_args=None):
   """Signs the given apex file."""
   with open(apex_file, 'rb') as input_fp:
     apex_data = input_fp.read()
@@ -56,7 +60,8 @@ def SignApexFile(avbtool, apex_file, payload_key, container_key,
       container_key=container_key,
       container_pw=None,
       codename_to_api_level_map=None,
-      no_hashtree=False,
+      no_hashtree=no_hashtree,
+      apk_keys=apk_keys,
       signing_args=signing_args)
 
 
@@ -77,18 +82,26 @@ def main(argv):
       options['payload_key'] = a
     elif o == '--payload_extra_args':
       options['payload_extra_args'] = a
+    elif o in ("-e", "--extra_apks"):
+      names, key = a.split("=")
+      names = names.split(",")
+      for n in names:
+        if 'extra_apks' not in options:
+          options['extra_apks'] = {}
+        options['extra_apks'].update({n: key})
     else:
       return False
     return True
 
   args = common.ParseOptions(
       argv, __doc__,
-      extra_opts='',
+      extra_opts='e:',
       extra_long_opts=[
           'avbtool=',
           'container_key=',
           'payload_extra_args=',
           'payload_key=',
+          'extra_apks=',
       ],
       extra_option_handler=option_handler)
 
@@ -105,6 +118,7 @@ def main(argv):
       options['payload_key'],
       options['container_key'],
       no_hashtree=False,
+      apk_keys=options.get('extra_apks', {}),
       signing_args=options.get('payload_extra_args'))
   shutil.copyfile(signed_apex, args[1])
   logger.info("done.")

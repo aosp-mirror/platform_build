@@ -16,8 +16,7 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
-    abb \
-    adbd \
+    adbd_system_binaries \
     am \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
@@ -48,20 +47,24 @@ PRODUCT_PACKAGES += \
     cgroups.json \
     charger \
     cmd \
-    com.android.apex.cts.shim.v1_prebuilt \
+    com.android.adbd \
+    com.android.apex.cts.shim.v1 \
     com.android.conscrypt \
+    com.android.cronet \
     com.android.i18n \
+    com.android.ipsec \
     com.android.location.provider \
     com.android.media \
     com.android.media.swcodec \
     com.android.resolv \
     com.android.neuralnetworks \
+    com.android.sdkext \
+    com.android.telephony \
+    com.android.tethering \
     com.android.tzdata \
     ContactsProvider \
     content \
     crash_dump \
-    CtsShimPrebuilt \
-    CtsShimPrivPrebuilt \
     debuggerd\
     device_config \
     dmctl \
@@ -75,7 +78,7 @@ PRODUCT_PACKAGES += \
     ExtServices \
     ExtShared \
     flags_health_check \
-    framework \
+    framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
@@ -99,7 +102,6 @@ PRODUCT_PACKAGES += \
     incidentd \
     incident_helper \
     init.environ.rc \
-    init.rc \
     init_system \
     input \
     installd \
@@ -110,7 +112,6 @@ PRODUCT_PACKAGES += \
     ip-up-vpn \
     javax.obex \
     keystore \
-    ld.config.txt \
     ld.mc \
     libaaudio \
     libamidi \
@@ -124,14 +125,14 @@ PRODUCT_PACKAGES += \
     libbinder_ndk \
     libc.bootstrap \
     libcamera2ndk \
-    libcamera_client \
-    libcameraservice \
     libcutils \
     libdl.bootstrap \
+    libdl_android.bootstrap \
     libdrmframework \
     libdrmframework_jni \
     libEGL \
     libETC1 \
+    libfdtrack \
     libFFTEm \
     libfilterfw \
     libgatekeeper \
@@ -208,7 +209,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NetworkStack \
+    NetworkStackNext \
     org.apache.http.legacy \
     otacerts \
     PackageInstaller \
@@ -318,22 +319,26 @@ endif
 # The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    framework \
+    framework-minus-apex \
     ext \
     telephony-common \
     voip-common \
     ims-common \
-    updatable-media
-PRODUCT_UPDATABLE_BOOT_MODULES := conscrypt updatable-media
-PRODUCT_UPDATABLE_BOOT_LOCATIONS := \
-    /apex/com.android.conscrypt/javalib/conscrypt.jar \
-    /apex/com.android.media/javalib/updatable-media.jar
+    framework-sdkextensions \
+    ike \
+    updatable-media \
+    framework-tethering
 
+PRODUCT_UPDATABLE_BOOT_JARS := \
+    com.android.conscrypt:conscrypt \
+    com.android.ipsec:ike \
+    com.android.media:updatable-media \
+    com.android.sdkext:framework-sdkextensions \
+    com.android.tethering:framework-tethering
 
 PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.usb.rc:root/init.usb.rc \
-    system/core/rootdir/init.usb.configfs.rc:root/init.usb.configfs.rc \
-    system/core/rootdir/ueventd.rc:root/ueventd.rc \
+    system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
+    system/core/rootdir/init.usb.configfs.rc:system/etc/init/hw/init.usb.configfs.rc \
     system/core/rootdir/etc/hosts:system/etc/hosts
 
 # Add the compatibility library that is needed when android.test.base
@@ -346,7 +351,7 @@ else
 PRODUCT_BOOT_JARS += android.test.base
 endif
 
-PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
+PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0

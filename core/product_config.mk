@@ -184,6 +184,18 @@ current_product_makefile :=
 all_product_makefiles :=
 all_product_configs :=
 
+# Jacoco agent JARS to be built and installed, if any.
+ifeq ($(EMMA_INSTRUMENT),true)
+  ifneq ($(EMMA_INSTRUMENT_STATIC),true)
+    # For instrumented build, if Jacoco is not being included statically
+    # in instrumented packages then include Jacoco classes into the
+    # bootclasspath.
+    $(foreach product,$(PRODUCTS),\
+      $(eval PRODUCTS.$(product).PRODUCT_PACKAGES += jacocoagent)\
+      $(eval PRODUCTS.$(product).PRODUCT_BOOT_JARS += jacocoagent))
+  endif # EMMA_INSTRUMENT_STATIC
+endif # EMMA_INSTRUMENT
+
 ############################################################################
 # Strip and assign the PRODUCT_ variables.
 $(call strip-product-vars)
@@ -252,6 +264,13 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
   endif
 endif
 
+$(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS), \
+  $(if $(findstring $(call word-colon,2,$(pair)),$(PRODUCT_BOOT_JARS)),, \
+    $(error Every jar in PRODUCT_UPDATABLE_BOOT_JARS must also be in PRODUCT_BOOT_JARS, \
+      $(call word-colon,2,$(pair)) is not) \
+  ) \
+)
+
 ENFORCE_SYSTEM_CERTIFICATE := $(PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT)
 ENFORCE_SYSTEM_CERTIFICATE_WHITELIST := $(PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_WHITELIST)
 
@@ -316,6 +335,12 @@ ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),)
   endif
 endif
 
+ifdef PRODUCT_SHIPPING_API_LEVEL
+  ifneq (,$(call math_gt_or_eq,29,$(PRODUCT_SHIPPING_API_LEVEL)))
+    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29)
+  endif
+endif
+
 # If build command defines OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS,
 # override PRODUCT_EXTRA_VNDK_VERSIONS with it.
 ifdef OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS
@@ -324,6 +349,20 @@ endif
 
 $(KATI_obsolete_var OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS \
     ,Use PRODUCT_EXTRA_VNDK_VERSIONS instead)
+
+ifdef OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
+  ifeq (false,$(OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE))
+    PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE :=
+  else
+    PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := $(OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE)
+  endif
+else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+  # No shipping level defined
+else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
+  PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
+endif
+
+$(KATI_obsolete_var OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE,Use PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE instead)
 
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\

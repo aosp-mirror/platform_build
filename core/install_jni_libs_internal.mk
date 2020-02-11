@@ -49,29 +49,21 @@ else ifneq ($(my_jni_shared_libraries),) # not my_embed_jni
   my_shared_library_path := $(call get_non_asan_path,\
       $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHARED_LIBRARIES))
   my_installed_library := $(addprefix $(my_shared_library_path)/, $(my_jni_filenames))
-  # Do not use order-only dependency, because we want to rebuild the image if an jni is updated.
-  $(LOCAL_INSTALLED_MODULE) : $(my_installed_library)
 
   ALL_MODULES.$(LOCAL_MODULE).INSTALLED += $(my_installed_library)
 
   # Create symlink in the app specific lib path
   # Skip creating this symlink when running the second part of a target sanitization build.
   ifeq ($(filter address,$(SANITIZE_TARGET)),)
-    ifdef LOCAL_POST_INSTALL_CMD
-      # Add a shell command separator
-      LOCAL_POST_INSTALL_CMD += ;
-    endif
-
     my_symlink_target_dir := $(patsubst $(PRODUCT_OUT)%,%,\
-        $(my_shared_library_path))
-    LOCAL_POST_INSTALL_CMD += \
-        mkdir -p $(my_app_lib_path) \
-        $(foreach lib, $(my_jni_filenames), ;ln -sf $(my_symlink_target_dir)/$(lib) $(my_app_lib_path)/$(lib))
-    $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
-  else
-    ifdef LOCAL_POST_INSTALL_CMD
-      $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
-    endif
+      $(my_shared_library_path))
+    $(foreach lib,$(my_jni_filenames),\
+      $(call symlink-file, \
+        $(my_shared_library_path)/$(lib), \
+        $(my_symlink_target_dir)/$(lib), \
+        $(my_app_lib_path)/$(lib)) \
+      $(eval $$(LOCAL_INSTALLED_MODULE) : $$(my_app_lib_path)/$$(lib)) \
+      $(eval ALL_MODULES.$$(LOCAL_MODULE).INSTALLED += $$(my_app_lib_path)/$$(lib)))
   endif
 
   # Clear jni_shared_libraries to not embed it into the apk.
@@ -114,11 +106,13 @@ ifneq ($(strip $(LOCAL_JNI_SHARED_LIBRARIES)),)
     my_allowed_types := $(my_allowed_ndk_types)
     ifneq (,$(filter true,$(LOCAL_VENDOR_MODULE) $(LOCAL_ODM_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
       my_allowed_types += native:vendor native:vndk native:platform_vndk
+    else ifeq ($(LOCAL_PRODUCT_MODULE),true)
+      my_allowed_types += native:product native:vndk native:platform_vndk
     endif
   else
     my_link_type := app:platform
     my_warn_types := $(my_warn_ndk_types)
-    my_allowed_types := $(my_allowed_ndk_types) native:platform native:vendor native:vndk native:vndk_private native:platform_vndk
+    my_allowed_types := $(my_allowed_ndk_types) native:platform native:product native:vendor native:vndk native:vndk_private native:platform_vndk
   endif
 
   my_link_deps := $(addprefix SHARED_LIBRARIES:,$(LOCAL_JNI_SHARED_LIBRARIES))

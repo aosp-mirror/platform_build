@@ -108,6 +108,9 @@ ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 # All tests that should be skipped in presubmit check.
 ALL_DISABLED_PRESUBMIT_TESTS :=
 
+# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
+ALL_COMPATIBILITY_SUITES :=
+
 ###########################################################
 ## Debugging; prints a variable list to stdout
 ###########################################################
@@ -886,7 +889,7 @@ endef
 define transform-l-to-c-or-cpp
 @echo "Lex: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
-$(hide) $(LEX) -o$@ $<
+M4=$(M4) $(LEX) -o$@ $<
 endef
 
 ###########################################################
@@ -897,7 +900,7 @@ endef
 define transform-y-to-c-or-cpp
 @echo "Yacc: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
-$(YACC) $(PRIVATE_YACCFLAGS) \
+M4=$(M4) $(YACC) $(PRIVATE_YACCFLAGS) \
   --defines=$(basename $@).h \
   -o $@ $<
 endef
@@ -1363,8 +1366,10 @@ DOTDOT_REPLACEMENT := dotdot/
 # $(1): the C++ source file in LOCAL_SRC_FILES.
 # $(2): the additional dependencies.
 # $(3): the variable name to collect the output object file.
+# $(4): the ninja pool to use for the rule
 define compile-dotdot-cpp-file
 o := $(intermediates)/$(patsubst %$(LOCAL_CPP_EXTENSION),%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
+$$(o) : .KATI_NINJA_POOL := $(4)
 $$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2) $(CLANG_CXX)
 	$$(transform-$$(PRIVATE_HOST)cpp-to-o)
 $$(call include-depfiles-for-objs, $$(o))
@@ -1376,8 +1381,10 @@ endef
 # $(1): the C source file in LOCAL_SRC_FILES.
 # $(2): the additional dependencies.
 # $(3): the variable name to collect the output object file.
+# $(4): the ninja pool to use for the rule
 define compile-dotdot-c-file
 o := $(intermediates)/$(patsubst %.c,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
+$$(o) : .KATI_NINJA_POOL := $(4)
 $$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2) $(CLANG)
 	$$(transform-$$(PRIVATE_HOST)c-to-o)
 $$(call include-depfiles-for-objs, $$(o))
@@ -1389,8 +1396,10 @@ endef
 # $(1): the .S source file in LOCAL_SRC_FILES.
 # $(2): the additional dependencies.
 # $(3): the variable name to collect the output object file.
+# $(4): the ninja pool to use for the rule
 define compile-dotdot-s-file
 o := $(intermediates)/$(patsubst %.S,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
+$$(o) : .KATI_NINJA_POOL := $(4)
 $$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2) $(CLANG)
 	$$(transform-$$(PRIVATE_HOST)s-to-o)
 $$(call include-depfiles-for-objs, $$(o))
@@ -1402,8 +1411,10 @@ endef
 # $(1): the .s source file in LOCAL_SRC_FILES.
 # $(2): the additional dependencies.
 # $(3): the variable name to collect the output object file.
+# $(4): the ninja pool to use for the rule
 define compile-dotdot-s-file-no-deps
 o := $(intermediates)/$(patsubst %.s,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
+$$(o) : .KATI_NINJA_POOL := $(4)
 $$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2) $(CLANG)
 	$$(transform-$$(PRIVATE_HOST)s-to-o)
 $(3) += $$(o)
@@ -1709,7 +1720,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
   $(PRIVATE_TARGET_LIBATOMIC) \
-  $(PRIVATE_TARGET_LIBGCC) \
   $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
   $(PRIVATE_LDFLAGS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
@@ -1745,7 +1755,6 @@ $(hide) $(PRIVATE_CXX_LINK) -pie \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
   $(PRIVATE_TARGET_LIBATOMIC) \
-  $(PRIVATE_TARGET_LIBGCC) \
   $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
   $(PRIVATE_LDFLAGS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
@@ -1792,7 +1801,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(PRIVATE_TARGET_LIBATOMIC) \
   $(filter %libcompiler_rt.a %libcompiler_rt.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
-  $(PRIVATE_TARGET_LIBGCC) \
   -Wl,--end-group \
   $(PRIVATE_TARGET_CRTEND_O)
 endef
@@ -2099,8 +2107,12 @@ $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) -o -n "$(PRIVATE_SRCJARS)" ] ; then 
     --output $@.premerged --temp_dir $(dir $@)/classes-turbine \
     --sources \@$(PRIVATE_JAVA_SOURCE_LIST) --source_jars $(PRIVATE_SRCJARS) \
     --javacopts $(PRIVATE_JAVACFLAGS) $(COMMON_JDK_FLAGS) -- \
-    $(addprefix --bootclasspath ,$(strip $(PRIVATE_BOOTCLASSPATH))) \
-    $(addprefix --classpath ,$(strip $(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))) \
+    $(if $(PRIVATE_USE_SYSTEM_MODULES), \
+      --system $(PRIVATE_SYSTEM_MODULES_DIR), \
+      --bootclasspath $(strip $(PRIVATE_BOOTCLASSPATH))) \
+    --classpath $(strip $(if $(PRIVATE_USE_SYSTEM_MODULES), \
+        $(filter-out $(PRIVATE_SYSTEM_MODULES_LIBS),$(PRIVATE_BOOTCLASSPATH))) \
+      $(PRIVATE_ALL_JAVA_HEADER_LIBRARIES)) \
     || ( rm -rf $(dir $@)/classes-turbine ; exit 41 ) && \
     $(MERGE_ZIPS) -j --ignore-duplicates -stripDir META-INF $@.tmp $@.premerged $(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES) ; \
 else \
@@ -2188,7 +2200,7 @@ define transform-classes.jar-to-dex
 @mkdir -p $(dir $@)
 $(hide) rm -f $(dir $@)classes*.dex $(dir $@)d8_input.jar
 $(hide) $(ZIP2ZIP) -j -i $< -o $(dir $@)d8_input.jar "**/*.class"
-$(hide) $(DX_COMMAND) $(DEX_FLAGS) \
+$(hide) $(D8_WRAPPER) $(DX_COMMAND) $(DEX_FLAGS) \
     --output $(dir $@) \
     $(addprefix --lib ,$(PRIVATE_D8_LIBS)) \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
@@ -2454,17 +2466,26 @@ ifneq ($(HOST_OS),darwin)
 $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
-	$(HIDL_INHERITANCE_HIERARCHY) \
 	$(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
 	$(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
 	$(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
-	$(call intermediates-dir-for,ETC,passwd_product)/passwd_product
+	$(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
+	$(call intermediates-dir-for,ETC,plat_property_contexts)/plat_property_contexts \
+	$(call intermediates-dir-for,ETC,system_ext_property_contexts)/system_ext_property_contexts \
+	$(call intermediates-dir-for,ETC,product_property_contexts)/product_property_contexts \
+	$(call intermediates-dir-for,ETC,vendor_property_contexts)/vendor_property_contexts \
+	$(call intermediates-dir-for,ETC,odm_property_contexts)/odm_property_contexts
 	$(hide) $(HOST_INIT_VERIFIER) \
 	  -p $(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
 	  -p $(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
 	  -p $(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
 	  -p $(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
-	  -i $(HIDL_INHERITANCE_HIERARCHY) $$<
+	  --property-contexts=$(call intermediates-dir-for,ETC,plat_property_contexts)/plat_property_contexts \
+	  --property-contexts=$(call intermediates-dir-for,ETC,system_ext_property_contexts)/system_ext_property_contexts \
+	  --property-contexts=$(call intermediates-dir-for,ETC,product_property_contexts)/product_property_contexts \
+	  --property-contexts=$(call intermediates-dir-for,ETC,vendor_property_contexts)/vendor_property_contexts \
+	  --property-contexts=$(call intermediates-dir-for,ETC,odm_property_contexts)/odm_property_contexts \
+	  $$<
 else
 $(2): $(1)
 endif
@@ -2604,17 +2625,15 @@ $(foreach t,$(1),\
 endef
 
 # Define a rule to create a symlink to a file.
-# $(1): full path to source
+# $(1): any dependencies
 # $(2): source (may be relative)
 # $(3): full path to destination
 define symlink-file
 $(eval $(_symlink-file))
 endef
 
-# Order-only dependency because make/ninja will follow the link when checking
-# the timestamp, so the file must exist
 define _symlink-file
-$(3): | $(1)
+$(3): $(1)
 	@echo "Symlink: $$@ -> $(2)"
 	@mkdir -p $(dir $$@)
 	@rm -rf $$@
@@ -2660,7 +2679,7 @@ endif
 define transform-jar-to-dex-r8
 @echo R8: $@
 $(hide) rm -f $(PRIVATE_PROGUARD_DICTIONARY)
-$(hide) $(R8_COMPAT_PROGUARD) $(DEX_FLAGS) \
+$(hide) $(R8_WRAPPER) $(R8_COMPAT_PROGUARD) $(DEX_FLAGS) \
     -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --no-data-resources \
@@ -2873,6 +2892,7 @@ endef
 #    and use my_compat_dist_$(suite) to define the others.
 define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,$(eval ALL_COMPATIBILITY_SUITES += $(suite))) \
   $(eval COMPATIBILITY.$(suite).FILES := \
     $$(COMPATIBILITY.$(suite).FILES) $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
       $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f)))) \

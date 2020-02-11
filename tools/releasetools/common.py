@@ -62,13 +62,14 @@ class Options(object):
           'Warning: releasetools script should be invoked as hermetic Python '
           'executable -- build and run `{}` directly.'.format(script_name[:-3]),
           file=sys.stderr)
-    self.search_path = os.path.realpath(os.path.join(exec_path, '..'))
+    self.search_path = os.path.realpath(os.path.join(os.path.dirname(exec_path), '..'))
 
     self.signapk_path = "framework/signapk.jar"  # Relative to search_path
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
     self.extra_signapk_args = []
     self.java_path = "java"  # Use the one on the path by default.
     self.java_args = ["-Xmx2048m"]  # The default JVM args.
+    self.android_jar_path = None
     self.public_key_suffix = ".x509.pem"
     self.private_key_suffix = ".pk8"
     # use otatools built boot_signer by default
@@ -76,6 +77,10 @@ class Options(object):
     self.boot_signer_args = []
     self.verity_signer_path = None
     self.verity_signer_args = []
+    self.aftl_server = None
+    self.aftl_key_path = None
+    self.aftl_manufacturer_key_path = None
+    self.aftl_signer_helper = None
     self.verbose = False
     self.tempfiles = []
     self.device_specific = None
@@ -87,6 +92,7 @@ class Options(object):
     # Stash size cannot exceed cache_size * threshold.
     self.cache_size = None
     self.stash_threshold = 0.8
+    self.logfile = None
 
 
 OPTIONS = Options()
@@ -158,13 +164,14 @@ def InitLogging():
           'default': {
               'class': 'logging.StreamHandler',
               'formatter': 'standard',
+              'level': 'WARNING',
           },
       },
       'loggers': {
           '': {
               'handlers': ['default'],
-              'level': 'WARNING',
               'propagate': True,
+              'level': 'INFO',
           }
       }
   }
@@ -177,8 +184,19 @@ def InitLogging():
 
     # Increase the logging level for verbose mode.
     if OPTIONS.verbose:
-      config = copy.deepcopy(DEFAULT_LOGGING_CONFIG)
-      config['loggers']['']['level'] = 'INFO'
+      config = copy.deepcopy(config)
+      config['handlers']['default']['level'] = 'INFO'
+
+    if OPTIONS.logfile:
+      config = copy.deepcopy(config)
+      config['handlers']['logfile'] = {
+        'class': 'logging.FileHandler',
+        'formatter': 'standard',
+        'level': 'INFO',
+        'mode': 'w',
+        'filename': OPTIONS.logfile,
+      }
+      config['loggers']['']['handlers'].append('logfile')
 
   logging.config.dictConfig(config)
 
@@ -578,26 +596,19 @@ def LoadInfoDict(input_file, repacking=False):
     d["root_fs_config"] = os.path.join(
         input_file, "META", "root_filesystem_config.txt")
 
-    # Redirect {system,vendor}_base_fs_file.
-    if "system_base_fs_file" in d:
-      basename = os.path.basename(d["system_base_fs_file"])
-      system_base_fs_file = os.path.join(input_file, "META", basename)
-      if os.path.exists(system_base_fs_file):
-        d["system_base_fs_file"] = system_base_fs_file
+    # Redirect {partition}_base_fs_file for each of the named partitions.
+    for part_name in ["system", "vendor", "system_ext", "product", "odm"]:
+      key_name = part_name + "_base_fs_file"
+      if key_name not in d:
+        continue
+      basename = os.path.basename(d[key_name])
+      base_fs_file = os.path.join(input_file, "META", basename)
+      if os.path.exists(base_fs_file):
+        d[key_name] = base_fs_file
       else:
         logger.warning(
-            "Failed to find system base fs file: %s", system_base_fs_file)
-        del d["system_base_fs_file"]
-
-    if "vendor_base_fs_file" in d:
-      basename = os.path.basename(d["vendor_base_fs_file"])
-      vendor_base_fs_file = os.path.join(input_file, "META", basename)
-      if os.path.exists(vendor_base_fs_file):
-        d["vendor_base_fs_file"] = vendor_base_fs_file
-      else:
-        logger.warning(
-            "Failed to find vendor base fs file: %s", vendor_base_fs_file)
-        del d["vendor_base_fs_file"]
+            "Failed to find %s base fs file: %s", part_name, base_fs_file)
+        del d[key_name]
 
   def makeint(key):
     if key in d:
@@ -779,13 +790,7 @@ def DumpInfoDict(d):
     logger.info("%-25s = (%s) %s", k, type(v).__name__, v)
 
 
-def MergeDynamicPartitionInfoDicts(framework_dict,
-                                   vendor_dict,
-                                   include_dynamic_partition_list=True,
-                                   size_prefix="",
-                                   size_suffix="",
-                                   list_prefix="",
-                                   list_suffix=""):
+def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   """Merges dynamic partition info variables.
 
   Args:
@@ -793,18 +798,6 @@ def MergeDynamicPartitionInfoDicts(framework_dict,
       partial framework target files.
     vendor_dict: The dictionary of dynamic partition info variables from the
       partial vendor target files.
-    include_dynamic_partition_list: If true, merges the dynamic_partition_list
-      variable. Not all use cases need this variable merged.
-    size_prefix: The prefix in partition group size variables that precedes the
-      name of the partition group. For example, partition group 'group_a' with
-      corresponding size variable 'super_group_a_group_size' would have the
-      size_prefix 'super_'.
-    size_suffix: Similar to size_prefix but for the variable's suffix. For
-      example, 'super_group_a_group_size' would have size_suffix '_group_size'.
-    list_prefix: Similar to size_prefix but for the partition group's
-      partition_list variable.
-    list_suffix: Similar to size_suffix but for the partition group's
-      partition_list variable.
 
   Returns:
     The merged dynamic partition info dictionary.
@@ -813,27 +806,30 @@ def MergeDynamicPartitionInfoDicts(framework_dict,
   # Partition groups and group sizes are defined by the vendor dict because
   # these values may vary for each board that uses a shared system image.
   merged_dict["super_partition_groups"] = vendor_dict["super_partition_groups"]
-  if include_dynamic_partition_list:
-    framework_dynamic_partition_list = framework_dict.get(
-        "dynamic_partition_list", "")
-    vendor_dynamic_partition_list = vendor_dict.get("dynamic_partition_list",
-                                                    "")
-    merged_dict["dynamic_partition_list"] = (
-        "%s %s" % (framework_dynamic_partition_list,
-                   vendor_dynamic_partition_list)).strip()
+  framework_dynamic_partition_list = framework_dict.get(
+      "dynamic_partition_list", "")
+  vendor_dynamic_partition_list = vendor_dict.get("dynamic_partition_list", "")
+  merged_dict["dynamic_partition_list"] = ("%s %s" % (
+      framework_dynamic_partition_list, vendor_dynamic_partition_list)).strip()
   for partition_group in merged_dict["super_partition_groups"].split(" "):
     # Set the partition group's size using the value from the vendor dict.
-    key = "%s%s%s" % (size_prefix, partition_group, size_suffix)
+    key = "super_%s_group_size" % partition_group
     if key not in vendor_dict:
       raise ValueError("Vendor dict does not contain required key %s." % key)
     merged_dict[key] = vendor_dict[key]
 
     # Set the partition group's partition list using a concatenation of the
     # framework and vendor partition lists.
-    key = "%s%s%s" % (list_prefix, partition_group, list_suffix)
+    key = "super_%s_partition_list" % partition_group
     merged_dict[key] = (
         "%s %s" %
         (framework_dict.get(key, ""), vendor_dict.get(key, ""))).strip()
+
+  # Pick virtual ab related flags from vendor dict, if defined.
+  if "virtual_ab" in vendor_dict.keys():
+     merged_dict["virtual_ab"] = vendor_dict["virtual_ab"]
+  if "virtual_ab_retrofit" in vendor_dict.keys():
+     merged_dict["virtual_ab_retrofit"] = vendor_dict["virtual_ab_retrofit"]
   return merged_dict
 
 
@@ -974,6 +970,12 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
 
   RunAndCheckOutput(cmd)
 
+  if OPTIONS.aftl_server is not None:
+    # Ensure the other AFTL parameters are set as well.
+    assert OPTIONS.aftl_key_path is not None, 'No AFTL key provided.'
+    assert OPTIONS.aftl_manufacturer_key_path is not None, 'No AFTL manufacturer key provided.'
+    assert OPTIONS.aftl_signer_helper is not None, 'No AFTL signer helper provided.'
+    # AFTL inclusion proof generation code will go here.
 
 def _MakeRamdisk(sourcedir, fs_config_file=None):
   ramdisk_img = tempfile.NamedTemporaryFile()
@@ -1241,7 +1243,7 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
     avbtool = info_dict["avb_avbtool"]
     part_size = info_dict["vendor_boot_size"]
     cmd = [avbtool, "add_hash_footer", "--image", img.name,
-           "--partition_size", str(part_size), "--partition_name vendor_boot"]
+           "--partition_size", str(part_size), "--partition_name", "vendor_boot"]
     AppendAVBSigningArgs(cmd, "vendor_boot")
     args = info_dict.get("avb_vendor_boot_add_hash_footer_args")
     if args and args.strip():
@@ -1797,6 +1799,9 @@ Global options
 
   -h  (--help)
       Display this usage message and exit.
+
+  --logfile <file>
+      Put verbose logs to specified file (regardless of --verbose option.)
 """
 
 def Usage(docstring):
@@ -1819,10 +1824,11 @@ def ParseOptions(argv,
         argv, "hvp:s:x:" + extra_opts,
         ["help", "verbose", "path=", "signapk_path=",
          "signapk_shared_library_path=", "extra_signapk_args=",
-         "java_path=", "java_args=", "public_key_suffix=",
+         "java_path=", "java_args=", "android_jar_path=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
-         "extra="] +
+         "extra=", "logfile=", "aftl_server=", "aftl_key_path=",
+         "aftl_manufacturer_key_path=", "aftl_signer_helper="] +
         list(extra_long_opts))
   except getopt.GetoptError as err:
     Usage(docstring)
@@ -1847,6 +1853,8 @@ def ParseOptions(argv,
       OPTIONS.java_path = a
     elif o in ("--java_args",):
       OPTIONS.java_args = shlex.split(a)
+    elif o in ("--android_jar_path",):
+      OPTIONS.android_jar_path = a
     elif o in ("--public_key_suffix",):
       OPTIONS.public_key_suffix = a
     elif o in ("--private_key_suffix",):
@@ -1859,11 +1867,21 @@ def ParseOptions(argv,
       OPTIONS.verity_signer_path = a
     elif o in ("--verity_signer_args",):
       OPTIONS.verity_signer_args = shlex.split(a)
+    elif o in ("--aftl_server",):
+      OPTIONS.aftl_server = a
+    elif o in ("--aftl_key_path",):
+      OPTIONS.aftl_key_path = a
+    elif o in ("--aftl_manufacturer_key_path",):
+      OPTIONS.aftl_manufacturer_key_path = a
+    elif o in ("--aftl_signer_helper",):
+      OPTIONS.aftl_signer_helper = a
     elif o in ("-s", "--device_specific"):
       OPTIONS.device_specific = a
     elif o in ("-x", "--extra"):
       key, value = a.split("=", 1)
       OPTIONS.extras[key] = value
+    elif o in ("--logfile",):
+      OPTIONS.logfile = a
     else:
       if extra_option_handler is None or not extra_option_handler(o, a):
         assert False, "unknown option \"%s\"" % (o,)

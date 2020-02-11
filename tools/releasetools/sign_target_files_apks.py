@@ -103,6 +103,9 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       Specify any additional args that are needed to AVB-sign the image
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
       the existing ones in info dict.
+
+  --android_jar_path <path>
+      Path to the android.jar to repack the apex file.
 """
 
 from __future__ import print_function
@@ -151,6 +154,7 @@ OPTIONS.tag_changes = ("-test-keys", "-dev-keys", "+release-keys")
 OPTIONS.avb_keys = {}
 OPTIONS.avb_algorithms = {}
 OPTIONS.avb_extra_args = {}
+OPTIONS.android_jar_path = None
 
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
@@ -492,6 +496,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             payload_key,
             container_key,
             key_passwords[container_key],
+            apk_keys,
             codename_to_api_level_map,
             no_hashtree=True,
             signing_args=OPTIONS.avb_extra_args.get('apex'))
@@ -552,8 +557,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
     # Ask add_img_to_target_files to rebuild the recovery patch if needed.
     elif filename in ("SYSTEM/recovery-from-boot.p",
+                      "VENDOR/recovery-from-boot.p",
+
                       "SYSTEM/etc/recovery.img",
-                      "SYSTEM/bin/install-recovery.sh"):
+                      "VENDOR/etc/recovery.img",
+
+                      "SYSTEM/bin/install-recovery.sh",
+                      "VENDOR/bin/install-recovery.sh"):
       OPTIONS.rebuild_recovery = True
 
     # Don't copy OTA certs if we're replacing them.
@@ -972,6 +982,7 @@ def BuildKeyMap(misc_info, key_mapping_options):
           devkeydir + "/media":    d + "/media",
           devkeydir + "/shared":   d + "/shared",
           devkeydir + "/platform": d + "/platform",
+          devkeydir + "/networkstack": d + "/networkstack",
           })
     else:
       OPTIONS.key_map[s] = d
@@ -1241,6 +1252,8 @@ def main(argv):
   apex_keys_info = ReadApexKeysInfo(input_zip)
   apex_keys = GetApexKeys(apex_keys_info, apk_keys)
 
+  # TODO(xunchang) check for the apks inside the apex files, and abort early if
+  # the keys are not available.
   CheckApkAndApexKeysAvailable(
       input_zip,
       set(apk_keys.keys()) | set(apex_keys.keys()),

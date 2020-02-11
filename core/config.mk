@@ -120,6 +120,8 @@ $(KATI_obsolete_var \
 )
 $(KATI_obsolete_var PRODUCT_IOT)
 $(KATI_obsolete_var MD5SUM)
+$(KATI_obsolete_var BOARD_HAL_STATIC_LIBRARIES, See $(CHANGES_URL)#BOARD_HAL_STATIC_LIBRARIES)
+$(KATI_obsolete_var LOCAL_HAL_STATIC_LIBRARIES, See $(CHANGES_URL)#BOARD_HAL_STATIC_LIBRARIES)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -225,6 +227,36 @@ endef
 
 # Initialize SOONG_CONFIG_NAMESPACES so that it isn't recursive.
 SOONG_CONFIG_NAMESPACES :=
+
+# The add_soong_config_namespace function adds a namespace and initializes it
+# to be empty.
+# $1 is the namespace.
+# Ex: $(call add_soong_config_namespace,acme)
+
+define add_soong_config_namespace
+$(eval SOONG_CONFIG_NAMESPACES += $1) \
+$(eval SOONG_CONFIG_$1 :=)
+endef
+
+# The add_soong_config_var function adds a a list of soong config variables to
+# SOONG_CONFIG_*. The variables and their values are then available to a
+# soong_config_module_type in an Android.bp file.
+# $1 is the namespace. $2 is the list of variables.
+# Ex: $(call add_soong_config_var,acme,COOL_FEATURE_A COOL_FEATURE_B)
+define add_soong_config_var
+$(eval SOONG_CONFIG_$1 += $2) \
+$(foreach v,$2,$(eval SOONG_CONFIG_$1_$v := $($v)))
+endef
+
+# The add_soong_config_var_value function defines a make variable and also adds
+# the variable to SOONG_CONFIG_*.
+# $1 is the namespace. $2 is the variable name. $3 is the variable value.
+# Ex: $(call add_soong_config_var_value,acme,COOL_FEATURE,true)
+
+define add_soong_config_var_value
+$(eval $2 := $3) \
+$(call add_soong_config_var,$1,$2)
+endef
 
 # Set the extensions used for various packages
 COMMON_PACKAGE_SUFFIX := .zip
@@ -551,6 +583,7 @@ BISON_PKGDATADIR := $(PWD)/prebuilts/build-tools/common/bison
 BISON := $(prebuilt_build_tools_bin_noasan)/bison
 YACC := $(BISON) -d
 BISON_DATA := $(wildcard $(BISON_PKGDATADIR)/* $(BISON_PKGDATADIR)/*/*)
+M4 :=$= $(prebuilt_build_tools_bin_noasan)/m4
 
 YASM := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/yasm/yasm
 
@@ -602,6 +635,7 @@ IMG_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/img_from_target_files$(HOST_EXE
 MAKE_RECOVERY_PATCH := $(HOST_OUT_EXECUTABLES)/make_recovery_patch$(HOST_EXECUTABLE_SUFFIX)
 OTA_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/ota_from_target_files$(HOST_EXECUTABLE_SUFFIX)
 SPARSE_IMG := $(HOST_OUT_EXECUTABLES)/sparse_img$(HOST_EXECUTABLE_SUFFIX)
+CHECK_PARTITION_SIZES := $(HOST_OUT_EXECUTABLES)/check_partition_sizes$(HOST_EXECUTABLE_SUFFIX)
 
 PROGUARD_HOME := external/proguard
 PROGUARD := $(PROGUARD_HOME)/bin/proguard.sh
@@ -626,16 +660,6 @@ FINDBUGS := $(FINDBUGS_DIR)/findbugs
 JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standalone
 
 EXTRACT_KERNEL := build/make/tools/extract_kernel.py
-
-USE_OPENJDK9 := true
-
-ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),)
-TARGET_OPENJDK9 := true
-else ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),true)
-TARGET_OPENJDK9 := true
-else ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),false)
-TARGET_OPENJDK9 :=
-endif
 
 # Path to tools.jar
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
@@ -716,19 +740,37 @@ ifneq ($(PRODUCT_USE_VNDK_OVERRIDE),)
   PRODUCT_USE_VNDK := $(PRODUCT_USE_VNDK_OVERRIDE)
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
   # No shipping level defined
-else ifeq ($(call math_gt_or_eq,27,$(PRODUCT_SHIPPING_API_LEVEL)),)
+else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),27),true)
   PRODUCT_USE_VNDK := $(PRODUCT_FULL_TREBLE)
 endif
 
+# Define PRODUCT_PRODUCT_VNDK_VERSION if PRODUCT_USE_VNDK is true and
+# PRODUCT_SHIPPING_API_LEVEL is greater than 29.
+PRODUCT_USE_PRODUCT_VNDK := false
 ifeq ($(PRODUCT_USE_VNDK),true)
+  ifneq ($(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE),)
+    PRODUCT_USE_PRODUCT_VNDK := $(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE)
+  else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+    # No shipping level defined
+  else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
+    PRODUCT_USE_PRODUCT_VNDK := true
+  endif
+
   ifndef BOARD_VNDK_VERSION
     BOARD_VNDK_VERSION := current
   endif
+
+  ifeq ($(PRODUCT_USE_PRODUCT_VNDK),true)
+    ifndef PRODUCT_PRODUCT_VNDK_VERSION
+      PRODUCT_PRODUCT_VNDK_VERSION := current
+    endif
+  endif
 endif
 
-$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use PRODUCT_USE_VNDK instead)
-.KATI_READONLY := \
-    PRODUCT_USE_VNDK
+$(KATI_obsolete_var PRODUCT_USE_VNDK,Use BOARD_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use BOARD_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK_OVERRIDE,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
 
 # Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
 # devices if unset.
@@ -1158,6 +1200,21 @@ endif
 define find_warning_allowed_projects
     $(filter $(ANDROID_WARNING_ALLOWED_PROJECTS),$(1)/)
 endef
+
+GOMA_POOL :=
+RBE_POOL :=
+GOMA_OR_RBE_POOL :=
+# When goma or RBE are enabled, kati will be passed --default_pool=local_pool to put
+# most rules into the local pool.  Explicitly set the pool to "none" for rules that
+# should be run outside the local pool, i.e. with -j500.
+ifneq (,$(filter-out false,$(USE_GOMA)))
+  GOMA_POOL := none
+  GOMA_OR_RBE_POOL := none
+else ifneq (,$(filter-out false,$(USE_RBE)))
+  RBE_POOL := none
+  GOMA_OR_RBE_POOL := none
+endif
+.KATI_READONLY := GOMA_POOL RBE_POOL GOMA_OR_RBE_POOL
 
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.

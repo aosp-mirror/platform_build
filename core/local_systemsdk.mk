@@ -16,16 +16,20 @@
 
 ifdef BOARD_SYSTEMSDK_VERSIONS
   # Apps and jars in vendor or odm partition are forced to build against System SDK.
-  _is_vendor_app :=
+  _cannot_use_platform_apis :=
   ifneq (,$(filter true,$(LOCAL_VENDOR_MODULE) $(LOCAL_ODM_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
     # Note: no need to check LOCAL_MODULE_PATH* since LOCAL_[VENDOR|ODM|OEM]_MODULE is already
     # set correctly before this is included.
-    _is_vendor_app := true
+    _cannot_use_platform_apis := true
+  else ifeq ($(LOCAL_PRODUCT_MODULE),true)
+    ifeq ($(PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE),true)
+      _cannot_use_platform_apis := true
+    endif
   endif
   ifneq (,$(filter JAVA_LIBRARIES APPS,$(LOCAL_MODULE_CLASS)))
     ifndef LOCAL_SDK_VERSION
-      ifeq ($(_is_vendor_app),true)
-        ifeq (,$(filter %__auto_generated_rro_vendor,$(LOCAL_MODULE)))
+      ifeq ($(_cannot_use_platform_apis),true)
+        ifeq (,$(findstring __auto_generated_rro_,$(LOCAL_MODULE)))
           # Runtime resource overlays are exempted from building against System SDK.
           # TODO(b/35859726): remove this exception
           LOCAL_SDK_VERSION := system_current
@@ -39,7 +43,7 @@ endif
 # The range of support versions becomes narrower when BOARD_SYSTEMSDK_VERSIONS
 # is set, which is a subset of PLATFORM_SYSTEMSDK_VERSIONS.
 ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
-  ifneq ($(_is_vendor_app),true)
+  ifneq ($(_cannot_use_platform_apis),true)
     # apps bundled in system partition can use all system sdk versions provided by the platform
     _supported_systemsdk_versions := $(PLATFORM_SYSTEMSDK_VERSIONS)
   else ifdef BOARD_SYSTEMSDK_VERSIONS

@@ -51,7 +51,7 @@ else ifeq (JAVA_LIBRARIES,$(LOCAL_MODULE_CLASS))
   include $(BUILD_SYSTEM)/java_prebuilt_internal.mk
 else ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
   include $(BUILD_SYSTEM)/cc_prebuilt_internal.mk
-else ifneq ($(filter SCRIPT ETC DATA,$(LOCAL_MODULE_CLASS)),)
+else ifneq ($(filter SCRIPT ETC DATA RENDERSCRIPT_BITCODE,$(LOCAL_MODULE_CLASS)),)
   include $(BUILD_SYSTEM)/misc_prebuilt_internal.mk
 else
   $(error $(LOCAL_MODULE) : unexpected LOCAL_MODULE_CLASS for prebuilts: $(LOCAL_MODULE_CLASS))

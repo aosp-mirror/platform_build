@@ -55,7 +55,7 @@ if sys.hexversion < 0x02070000:
 logger = logging.getLogger(__name__)
 
 
-UNZIP_PATTERN = ["IMAGES/*", "META/*"]
+UNZIP_PATTERN = ["IMAGES/*", "META/*", "*/build.prop"]
 
 
 def GetArgumentsForImage(partition, group, image=None):
@@ -76,6 +76,8 @@ def BuildSuperImageFromDict(info_dict, output):
          "--super-name", info_dict["super_metadata_device"]]
 
   ab_update = info_dict.get("ab_update") == "true"
+  virtual_ab = info_dict.get("virtual_ab") == "true"
+  virtual_ab_retrofit = info_dict.get("virtual_ab_retrofit") == "true"
   retrofit = info_dict.get("dynamic_partition_retrofit") == "true"
   block_devices = shlex.split(info_dict.get("super_block_devices", "").strip())
   groups = shlex.split(info_dict.get("super_partition_groups", "").strip())
@@ -89,6 +91,8 @@ def BuildSuperImageFromDict(info_dict, output):
 
   if ab_update and retrofit:
     cmd.append("--auto-slot-suffixing")
+  if virtual_ab and not virtual_ab_retrofit:
+    cmd.append("--virtual-ab")
 
   for device in block_devices:
     size = info_dict["super_{}_device_size".format(device)]

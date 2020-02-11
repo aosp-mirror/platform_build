@@ -38,7 +38,7 @@ import sys
 import os
 import zipfile
 
-_HEADER_TEMPLATE = """#!/bin/sh
+_HEADER_TEMPLATE = """#!/bin/bash
 #
 {comment_line}
 #
@@ -91,8 +91,8 @@ def _pipe_bytes(src, dst):
       break
     dst.write(b)
 
-_MAX_OFFSET_WIDTH = 8
-def _generate_extract_command(start, end, extract_name):
+_MAX_OFFSET_WIDTH = 20
+def _generate_extract_command(start, size, extract_name):
   """Generate the extract command.
 
   The length of this string must be constant no matter what the start and end
@@ -101,7 +101,7 @@ def _generate_extract_command(start, end, extract_name):
 
   Args:
     start: offset in bytes of the start of the wrapped file
-    end: offset in bytes of the end of the wrapped file
+    size: size in bytes of the wrapped file
     extract_name: of the file to create when extracted
 
   """
@@ -111,14 +111,18 @@ def _generate_extract_command(start, end, extract_name):
   if len(start_str) != _MAX_OFFSET_WIDTH + 1:
     raise Exception('Start offset too large (%d)' % start)
 
-  end_str = ('%d' % end).rjust(_MAX_OFFSET_WIDTH)
-  if len(end_str) != _MAX_OFFSET_WIDTH:
-    raise Exception('End offset too large (%d)' % end)
+  size_str = ('%d' % size).rjust(_MAX_OFFSET_WIDTH)
+  if len(size_str) != _MAX_OFFSET_WIDTH:
+    raise Exception('Size too large (%d)' % size)
 
-  return "tail -c %s $0 | head -c %s > %s\n" % (start_str, end_str, extract_name)
+  return "tail -c %s $0 | head -c %s > %s\n" % (start_str, size_str, extract_name)
 
 
 def main(argv):
+  if len(argv) != 5:
+    print 'generate-self-extracting-archive.py expects exactly 4 arguments'
+    sys.exit(1)
+
   output_filename = argv[1]
   input_archive_filename = argv[2]
   comment = argv[3]
@@ -128,6 +132,14 @@ def main(argv):
 
   with open(license_filename, 'r') as license_file:
     license = license_file.read()
+
+  if not license:
+    print 'License file was empty'
+    sys.exit(1)
+
+  if 'SOFTWARE LICENSE AGREEMENT' not in license:
+    print 'License does not look like a license'
+    sys.exit(1)
 
   comment_line = '# %s\n' % comment
   extract_name = os.path.basename(input_archive_filename)
@@ -160,6 +172,10 @@ def main(argv):
       # append the trailing zip to the end of the file
       trailing_zip.seek(0)
       _pipe_bytes(trailing_zip, output)
+
+  umask = os.umask(0)
+  os.umask(umask)
+  os.chmod(output_filename, 0o777 & ~umask)
 
 if __name__ == "__main__":
   main(sys.argv)

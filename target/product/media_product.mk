@@ -17,7 +17,7 @@
 # This makefile contains the product partition contents for
 # media-capable devices (non-wearables). Only add something here
 # if it definitely doesn't belong on wearables. Otherwise, choose
-# base_vendor.mk.
+# base_product.mk.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base_product.mk)
 
 # /product packages

@@ -26,6 +26,7 @@ _board_strip_readonly_list := \
   BOARD_KERNEL_CMDLINE \
   BOARD_KERNEL_BASE \
   BOARD_USES_GENERIC_AUDIO \
+  BOARD_USES_RECOVERY_AS_BOOT \
   BOARD_VENDOR_USE_AKMD \
   BOARD_WPA_SUPPLICANT_DRIVER \
   BOARD_WLAN_DEVICE \
@@ -86,8 +87,11 @@ _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
+  BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
+  BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
   BUILD_BROKEN_USES_NETWORK \
+  BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES \
 
 _build_broken_var_list += \
   $(foreach m,$(AVAILABLE_BUILD_MODULE_TYPES) \
@@ -96,7 +100,8 @@ _build_broken_var_list += \
     BUILD_BROKEN_USES_$(m))
 
 _board_true_false_vars := $(_build_broken_var_list)
-_board_strip_readonly_list += $(_build_broken_var_list)
+_board_strip_readonly_list += $(_build_broken_var_list) \
+  BUILD_BROKEN_NINJA_USES_ENV_VARS
 
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
@@ -107,10 +112,7 @@ endif
 # Broken build defaults
 # ###############################################################
 $(foreach v,$(_build_broken_var_list),$(eval $(v) :=))
-
-# Build broken vars without default initialization above
-_build_broken_var_list += \
-  BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW
+BUILD_BROKEN_NINJA_USES_ENV_VARS :=
 
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
@@ -257,6 +259,19 @@ TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST))
 TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
 TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
 
+# Check if config about image building is valid or not.
+define check_image_config
+  $(eval _uc_name := $(call to-upper,$(1))) \
+  $(eval _lc_name := $(call to-lower,$(1))) \
+  $(if $(filter $(_lc_name),$(TARGET_COPY_OUT_$(_uc_name))), \
+    $(if $(BOARD_USES_$(_uc_name)IMAGE),, \
+      $(error If TARGET_COPY_OUT_$(_uc_name) is '$(_lc_name)', either BOARD_PREBUILT_$(_uc_name)IMAGE or BOARD_$(_uc_name)IMAGE_FILE_SYSTEM_TYPE must be set)), \
+  $(if $(BOARD_USES_$(_uc_name)IMAGE), \
+    $(error TARGET_COPY_OUT_$(_uc_name) must be set to '$(_lc_name)' to use a $(_lc_name) image))) \
+  $(eval _uc_name :=) \
+  $(eval _lc_name :=)
+endef
+
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_RAMDISK
 ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
@@ -401,6 +416,8 @@ endif
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
   BOARD_USES_VENDORIMAGE := true
 endif
+# TODO(b/137169253): For now, some AOSP targets build with prebuilt vendor image.
+# But target's BOARD_PREBUILT_VENDORIMAGE is not filled.
 ifeq ($(TARGET_COPY_OUT_VENDOR),vendor)
   BOARD_USES_VENDORIMAGE := true
 else ifdef BOARD_USES_VENDORIMAGE
@@ -440,11 +457,7 @@ endif
 ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
   BOARD_USES_PRODUCTIMAGE := true
 endif
-ifeq ($(TARGET_COPY_OUT_PRODUCT),product)
-  BOARD_USES_PRODUCTIMAGE := true
-else ifdef BOARD_USES_PRODUCTIMAGE
-  $(error TARGET_COPY_OUT_PRODUCT must be set to 'product' to use a product image)
-endif
+$(call check_image_config,product)
 .KATI_READONLY := BOARD_USES_PRODUCTIMAGE
 
 BUILDING_PRODUCT_IMAGE :=
@@ -484,11 +497,7 @@ endif
 ifdef BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE
   BOARD_USES_SYSTEM_EXTIMAGE := true
 endif
-ifeq ($(TARGET_COPY_OUT_SYSTEM_EXT),system_ext)
-  BOARD_USES_SYSTEM_EXTIMAGE := true
-else ifdef BOARD_USES_SYSTEM_EXTIMAGE
-  $(error TARGET_COPY_OUT_SYSTEM_EXT must be set to 'system_ext' to use a system_ext image)
-endif
+$(call check_image_config,system_ext)
 .KATI_READONLY := BOARD_USES_SYSTEM_EXTIMAGE
 
 BUILDING_SYSTEM_EXT_IMAGE :=
@@ -523,11 +532,7 @@ endif
 ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
   BOARD_USES_ODMIMAGE := true
 endif
-ifeq ($(TARGET_COPY_OUT_ODM),odm)
-  BOARD_USES_ODMIMAGE := true
-else ifdef BOARD_USES_ODMIMAGE
-  $(error TARGET_COPY_OUT_ODM must be set to 'odm' to use an odm image)
-endif
+$(call check_image_config,odm)
 
 BUILDING_ODM_IMAGE :=
 ifeq ($(PRODUCT_BUILD_ODM_IMAGE),)
@@ -617,10 +622,14 @@ endif
 ###########################################
 # Handle BUILD_BROKEN_USES_BUILD_*
 
-$(foreach m,$(DEFAULT_WARNING_BUILD_MODULE_TYPES),\
+$(foreach m,$(filter-out BUILD_COPY_HEADERS,$(DEFAULT_WARNING_BUILD_MODULE_TYPES)),\
   $(if $(filter false,$(BUILD_BROKEN_USES_$(m))),\
     $(KATI_obsolete_var $(m),Please convert to Soong),\
     $(KATI_deprecated_var $(m),Please convert to Soong)))
+
+$(if $(filter false,$(BUILD_BROKEN_USES_BUILD_COPY_HEADERS)),\
+  $(KATI_obsolete_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers),\
+  $(KATI_deprecated_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers))
 
 $(foreach m,$(DEFAULT_ERROR_BUILD_MODULE_TYPES),\
   $(if $(filter true,$(BUILD_BROKEN_USES_$(m))),\

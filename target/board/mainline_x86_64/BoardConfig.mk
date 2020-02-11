@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016 The Android Open Source Project
+# Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,13 +14,22 @@
 # limitations under the License.
 #
 
-LOCAL_MODULE_CLASS := FAKE
-LOCAL_IS_HOST_MODULE := true
-LOCAL_COMPATIBILITY_SUITE := vts
+TARGET_ARCH := x86_64
+TARGET_ARCH_VARIANT := x86_64
+TARGET_CPU_ABI := x86_64
 
-include $(BUILD_SYSTEM)/base_rules.mk
+TARGET_2ND_ARCH := x86
+TARGET_2ND_ARCH_VARIANT := x86_64
+TARGET_2ND_CPU_ABI := x86
 
-$(LOCAL_BUILT_MODULE):
-	@echo "VTS host-driven test target: $(PRIVATE_MODULE)"
-	$(hide) touch $@
+include build/make/target/board/BoardConfigMainlineCommon.mk
 
+TARGET_NO_KERNEL := true
+
+# Build generic A/B format system-only OTA.
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS := system
+
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4

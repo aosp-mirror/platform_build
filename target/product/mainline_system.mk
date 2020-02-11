@@ -21,6 +21,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
 # Add adb keys to debuggable AOSP builds (if they exist)
 $(call inherit-product-if-exists, vendor/google/security/adb/vendor_key.mk)
 
+# Enable updating of APEXes
+$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
+
 # Shared java libs
 PRODUCT_PACKAGES += \
     com.android.nfc_extras \
@@ -110,6 +113,13 @@ PRODUCT_PACKAGES_DEBUG += \
 PRODUCT_HOST_PACKAGES += \
     tinyplay
 
+# Include all zygote init scripts. "ro.zygote" will select one of them.
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc \
+    system/core/rootdir/init.zygote64.rc:system/etc/init/hw/init.zygote64.rc \
+    system/core/rootdir/init.zygote32_64.rc:system/etc/init/hw/init.zygote32_64.rc \
+    system/core/rootdir/init.zygote64_32.rc:system/etc/init/hw/init.zygote64_32.rc \
+
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
@@ -117,6 +127,14 @@ PRODUCT_ENFORCE_RRO_TARGETS := *
 
 PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic
+
+# Define /system partition-specific product properties to identify that /system
+# partition is mainline_system.
+PRODUCT_SYSTEM_NAME := mainline
+PRODUCT_SYSTEM_BRAND := Android
+PRODUCT_SYSTEM_MANUFACTURER := Android
+PRODUCT_SYSTEM_MODEL := mainline
+PRODUCT_SYSTEM_DEVICE := generic
 
 _base_mk_whitelist :=
 

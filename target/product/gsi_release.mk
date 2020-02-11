@@ -29,12 +29,6 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/product/% \
     system/system_ext/%
 
-
-# GSI doesn't support apex for now.
-# Properties set in product take precedence over those in vendor.
-PRODUCT_PRODUCT_PROPERTIES += \
-    ro.apex.updatable=false
-
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
@@ -44,6 +38,12 @@ PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 # Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
 
+# GSI targets should install "unflattened" APEXes in /system
+TARGET_FLATTEN_APEX := false
+
+# GSI targets should install "flattened" APEXes in /system_ext as well
+PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES := true
+
 # GSI specific tasks on boot
 PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
@@ -51,19 +51,3 @@ PRODUCT_PACKAGES += \
 
 # Support addtional P and Q VNDK packages
 PRODUCT_EXTRA_VNDK_VERSIONS := 28 29
-
-# The 64 bits GSI build targets inhiert core_64_bit.mk to enable 64 bits and
-# include the init.zygote64_32.rc.
-# 64 bits GSI for releasing need to includes different zygote settings for
-# vendor.img to select by setting property ro.zygote=zygote64_32 or
-# ro.zygote=zygote32_64:
-#   1. 64-bit primary, 32-bit secondary, or
-#   2. 32-bit primary, 64-bit secondary
-# Here includes the init.zygote32_64.rc if it had inhierted core_64_bit.mk.
-ifeq (true|true,$(TARGET_SUPPORTS_32_BIT_APPS)|$(TARGET_SUPPORTS_64_BIT_APPS))
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
-
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-    root/init.zygote32_64.rc
-endif

@@ -16,8 +16,11 @@ have any problems converting, please contact us via:
 | -------------------------------- | --------- |
 | `BUILD_AUX_EXECUTABLE`           | Error     |
 | `BUILD_AUX_STATIC_LIBRARY`       | Error     |
+| `BUILD_COPY_HEADERS`             | Warning   |
+| `BUILD_HOST_EXECUTABLE`          | Warning   |
 | `BUILD_HOST_FUZZ_TEST`           | Error     |
 | `BUILD_HOST_NATIVE_TEST`         | Error     |
+| `BUILD_HOST_SHARED_LIBRARY`      | Warning   |
 | `BUILD_HOST_SHARED_TEST_LIBRARY` | Error     |
 | `BUILD_HOST_STATIC_LIBRARY`      | Warning   |
 | `BUILD_HOST_STATIC_TEST_LIBRARY` | Error     |
