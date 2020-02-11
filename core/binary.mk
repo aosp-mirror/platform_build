@@ -90,32 +90,6 @@ ifneq (,$(filter $(addsuffix %,$(ALLOWED_MANUAL_INTERFACE_PATHS)),$(LOCAL_PATH))
   my_cflags += -DDO_NOT_CHECK_MANUAL_BINDER_INTERFACES
 endif
 
-ifneq ($(strip $(ENABLE_XOM)),false)
-  ifndef LOCAL_IS_HOST_MODULE
-    my_xom := true
-    # Disable XOM in excluded paths.
-    combined_xom_exclude_paths := $(XOM_EXCLUDE_PATHS) \
-                                  $(PRODUCT_XOM_EXCLUDE_PATHS)
-    ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_xom_exclude_paths)),\
-           $(filter $(dir)%,$(LOCAL_PATH)))),)
-      my_xom := false
-    endif
-
-    # Allow LOCAL_XOM to override the above
-    ifdef LOCAL_XOM
-      my_xom := $(LOCAL_XOM)
-    endif
-
-    ifeq ($(strip $(my_xom)),true)
-      ifeq (arm64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
-        ifeq ($(my_use_clang_lld),true)
-          my_ldflags += -Wl,--execute-only -Wl,-z,separate-code
-        endif
-      endif
-    endif
-  endif
-endif
-
 my_allow_undefined_symbols := $(strip $(LOCAL_ALLOW_UNDEFINED_SYMBOLS))
 ifdef SANITIZE_HOST
 ifdef LOCAL_IS_HOST_MODULE
