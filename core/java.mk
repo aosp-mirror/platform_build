@@ -274,6 +274,7 @@ $(eval $(call copy-one-file,$(full_classes_header_jarjar),$(full_classes_header_
 
 endif # TURBINE_ENABLED != false
 
+$(full_classes_compiled_jar): .KATI_NINJA_POOL := $(GOMA_POOL)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
@@ -358,9 +359,7 @@ include $(BUILD_SYSTEM)/jacoco.mk
 
 # Temporarily enable --multi-dex until proguard supports v53 class files
 # ( http://b/67673860 ) or we move away from proguard altogether.
-ifdef TARGET_OPENJDK9
 LOCAL_DX_FLAGS := $(filter-out --multi-dex,$(LOCAL_DX_FLAGS)) --multi-dex
-endif
 
 full_classes_pre_proguard_jar := $(LOCAL_FULL_CLASSES_JACOCO_JAR)
 
@@ -414,8 +413,7 @@ legacy_proguard_lib_deps := $(my_proguard_sdk_raise) \
 legacy_proguard_flags += -printmapping $(proguard_dictionary)
 legacy_proguard_flags += -printconfiguration $(proguard_configuration)
 
-common_proguard_flags := -forceprocessing
-
+common_proguard_flags :=
 common_proguard_flag_files := $(BUILD_SYSTEM)/proguard.flags
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
 common_proguard_flags += -dontshrink # don't shrink tests by default

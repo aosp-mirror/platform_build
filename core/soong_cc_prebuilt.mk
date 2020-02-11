@@ -75,8 +75,13 @@ endif
 ifdef LOCAL_USE_VNDK
   ifneq ($(LOCAL_VNDK_DEPEND_ON_CORE_VARIANT),true)
     name_without_suffix := $(patsubst %.vendor,%,$(LOCAL_MODULE))
-    ifneq ($(name_without_suffix),$(LOCAL_MODULE)
+    ifneq ($(name_without_suffix),$(LOCAL_MODULE))
       SPLIT_VENDOR.$(LOCAL_MODULE_CLASS).$(name_without_suffix) := 1
+    else
+      name_without_suffix := $(patsubst %.product,%,$(LOCAL_MODULE))
+      ifneq ($(name_without_suffix),$(LOCAL_MODULE))
+        SPLIT_PRODUCT.$(LOCAL_MODULE_CLASS).$(name_without_suffix) := 1
+      endif
     endif
     name_without_suffix :=
   endif
@@ -104,32 +109,35 @@ ifdef LOCAL_INSTALLED_MODULE
   endif
 endif
 
-ifeq ($(LOCAL_VNDK_DEPEND_ON_CORE_VARIANT),true)
-  # Add $(LOCAL_BUILT_MODULE) as a dependency to no_vendor_variant_vndk_check so
-  # that the vendor variant will be built and checked against the core variant.
-  no_vendor_variant_vndk_check: $(LOCAL_BUILT_MODULE)
+my_check_same_vndk_variants :=
+ifeq ($(LOCAL_CHECK_SAME_VNDK_VARIANTS),true)
+  ifeq ($(filter hwaddress address, $(SANITIZE_TARGET)),)
+    my_check_same_vndk_variants := true
+  endif
+endif
 
-  my_core_register_name := $(subst .vendor,,$(my_register_name))
+ifeq ($(my_check_same_vndk_variants),true)
+  same_vndk_variants_stamp := $(intermediates)/same_vndk_variants.timestamp
+
+  my_core_register_name := $(subst .vendor,,$(subst .product,,$(my_register_name)))
   my_core_variant_files := $(call module-target-built-files,$(my_core_register_name))
   my_core_shared_lib := $(sort $(filter %.so,$(my_core_variant_files)))
-  $(LOCAL_BUILT_MODULE): PRIVATE_CORE_VARIANT := $(my_core_shared_lib)
 
-  # The built vendor variant library needs to depend on the built core variant
-  # so that we can perform identity check against the core variant.
-  $(LOCAL_BUILT_MODULE): $(my_core_shared_lib)
+  $(same_vndk_variants_stamp): PRIVATE_CORE_VARIANT := $(my_core_shared_lib)
+  $(same_vndk_variants_stamp): PRIVATE_VENDOR_VARIANT := $(LOCAL_PREBUILT_MODULE_FILE)
+  $(same_vndk_variants_stamp): PRIVATE_TOOLS_PREFIX := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)TOOLS_PREFIX)
+
+  $(same_vndk_variants_stamp): $(my_core_shared_lib) $(LOCAL_PREBUILT_MODULE_FILE)
+		$(call verify-vndk-libs-identical,\
+		    $(PRIVATE_CORE_VARIANT),\
+		    $(PRIVATE_VENDOR_VARIANT),\
+		    $(PRIVATE_TOOLS_PREFIX))
+
+  $(LOCAL_BUILT_MODULE): $(same_vndk_variants_stamp)
 endif
 
-ifeq ($(LOCAL_VNDK_DEPEND_ON_CORE_VARIANT),true)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE) $(LIBRARY_IDENTITY_CHECK_SCRIPT)
-	$(call verify-vndk-libs-identical,\
-		$(PRIVATE_CORE_VARIANT),\
-		$<,\
-		$($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)TOOLS_PREFIX))
-	$(copy-file-to-target)
-else
 $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
 	$(transform-prebuilt-to-target)
-endif
 ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
 	$(hide) chmod +x $@
 endif
@@ -219,3 +227,9 @@ installed_static_library_notice_file_targets := \
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)
+
+# Reinstall shared library dependencies of fuzz targets to /data/fuzz/ (for
+# target) or /data/ (for host).
+ifdef LOCAL_IS_FUZZ_TARGET
+$(LOCAL_INSTALLED_MODULE): $(LOCAL_FUZZ_INSTALLED_SHARED_DEPS)
+endif

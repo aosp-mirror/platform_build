@@ -1,20 +1,8 @@
 LOCAL_PATH:= $(call my-dir)
 
 #####################################################################
-# Create the list of vndk libraries from the source code.
-INTERNAL_VNDK_LIB_LIST := $(call intermediates-dir-for,PACKAGING,vndk)/libs.txt
-$(INTERNAL_VNDK_LIB_LIST):
-	@echo "Generate: $@"
-	@mkdir -p $(dir $@)
-	$(hide) echo -n > $@
-	$(hide) $(foreach lib, $(filter-out libclang_rt.%,$(LLNDK_LIBRARIES)), \
-	  echo LLNDK: $(lib).so >> $@;)
-	$(hide) $(foreach lib, $(VNDK_SAMEPROCESS_LIBRARIES), \
-	  echo VNDK-SP: $(lib).so >> $@;)
-	$(hide) $(foreach lib, $(filter-out libclang_rt.%,$(VNDK_CORE_LIBRARIES)), \
-	  echo VNDK-core: $(lib).so >> $@;)
-	$(hide) $(foreach lib, $(VNDK_PRIVATE_LIBRARIES), \
-	  echo VNDK-private: $(lib).so >> $@;)
+# list of vndk libraries from the source code.
+INTERNAL_VNDK_LIB_LIST := $(SOONG_VNDK_LIBRARIES_FILE)
 
 #####################################################################
 # This is the up-to-date list of vndk libs.
@@ -49,6 +37,9 @@ else ifeq ($(TARGET_BUILD_PDK),true)
 check-vndk-list: ;
 else ifeq ($(TARGET_SKIP_CURRENT_VNDK),true)
 check-vndk-list: ;
+else ifeq ($(BOARD_VNDK_VERSION),)
+# b/143233626 do not check vndk-list when vndk libs are not built
+check-vndk-list: ;
 else
 check-vndk-list: $(check-vndk-list-timestamp)
 ifneq ($(SKIP_ABI_CHECKS),true)
@@ -60,7 +51,7 @@ _vndk_check_failure_message := " error: VNDK library list has been changed.\n"
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
 _vndk_check_failure_message += "       Changing the VNDK library list is not allowed in API locked branches."
 else
-_vndk_check_failure_message += "       Run update-vndk-list.sh to update $(LATEST_VNDK_LIB_LIST)"
+_vndk_check_failure_message += "       Run \`update-vndk-list.sh\` to update $(LATEST_VNDK_LIB_LIST)"
 endif
 
 $(check-vndk-list-timestamp): $(INTERNAL_VNDK_LIB_LIST) $(LATEST_VNDK_LIB_LIST) $(HOST_OUT_EXECUTABLES)/update-vndk-list.sh
@@ -102,8 +93,8 @@ endif
 	@chmod a+x $@
 
 #####################################################################
-# Check that all ABI reference dumps have corresponding NDK/VNDK
-# libraries.
+# Check that all ABI reference dumps have corresponding
+# NDK/VNDK/PLATFORM libraries.
 
 # $(1): The directory containing ABI dumps.
 # Return a list of ABI dump paths ending with .so.lsdump.
@@ -113,25 +104,42 @@ $(if $(wildcard $(1)), \
     $(call find-files-in-subdirs,$(1),"*.so.lsdump" -and -type f,.)))
 endef
 
+# $(1): A list of tags.
+# $(2): A list of tag:path.
+# Return the file names of the ABI dumps that match the tags.
+define filter-abi-dump-paths
+$(eval tag_patterns := $(foreach tag,$(1),$(tag):%))
+$(notdir $(patsubst $(tag_patterns),%,$(filter $(tag_patterns),$(2))))
+endef
+
 VNDK_ABI_DUMP_DIR := prebuilts/abi-dumps/vndk/$(PLATFORM_VNDK_VERSION)
 NDK_ABI_DUMP_DIR := prebuilts/abi-dumps/ndk/$(PLATFORM_VNDK_VERSION)
+PLATFORM_ABI_DUMP_DIR := prebuilts/abi-dumps/platform/$(PLATFORM_VNDK_VERSION)
 VNDK_ABI_DUMPS := $(call find-abi-dump-paths,$(VNDK_ABI_DUMP_DIR))
 NDK_ABI_DUMPS := $(call find-abi-dump-paths,$(NDK_ABI_DUMP_DIR))
+PLATFORM_ABI_DUMPS := $(call find-abi-dump-paths,$(PLATFORM_ABI_DUMP_DIR))
 
-$(check-vndk-abi-dump-list-timestamp): $(VNDK_ABI_DUMPS) $(NDK_ABI_DUMPS)
+$(check-vndk-abi-dump-list-timestamp): PRIVATE_LSDUMP_PATHS := $(LSDUMP_PATHS)
+$(check-vndk-abi-dump-list-timestamp):
 	$(eval added_vndk_abi_dumps := $(strip $(sort $(filter-out \
-	  $(addsuffix .so.lsdump,$(filter-out $(NDK_MIGRATED_LIBS) $(VNDK_PRIVATE_LIBRARIES),$(LLNDK_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES) $(VNDK_CORE_LIBRARIES))), \
+	  $(call filter-abi-dump-paths,LLNDK VNDK-SP VNDK-core,$(PRIVATE_LSDUMP_PATHS)), \
 	  $(notdir $(VNDK_ABI_DUMPS))))))
 	$(if $(added_vndk_abi_dumps), \
-	  echo -e "Found ABI reference dumps for non-VNDK libraries. Run \`find \$${ANDROID_BUILD_TOP}/$(VNDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_vndk_abi_dumps)) ')' -delete\` to delete the dumps.")
+	  echo -e "Found unexpected ABI reference dump files under $(VNDK_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(VNDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_vndk_abi_dumps)) ')' -delete\` to delete the dump files.")
 
 	$(eval added_ndk_abi_dumps := $(strip $(sort $(filter-out \
-	  $(addsuffix .so.lsdump,$(NDK_MIGRATED_LIBS)), \
+	  $(call filter-abi-dump-paths,NDK,$(PRIVATE_LSDUMP_PATHS)), \
 	  $(notdir $(NDK_ABI_DUMPS))))))
 	$(if $(added_ndk_abi_dumps), \
-	  echo -e "Found ABI reference dumps for non-NDK libraries. Run \`find \$${ANDROID_BUILD_TOP}/$(NDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_ndk_abi_dumps)) ')' -delete\` to delete the dumps.")
+	  echo -e "Found unexpected ABI reference dump files under $(NDK_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(NDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_ndk_abi_dumps)) ')' -delete\` to delete the dump files.")
 
-	$(if $(added_vndk_abi_dumps)$(added_ndk_abi_dumps),exit 1)
+	$(eval added_platform_abi_dumps := $(strip $(sort $(filter-out \
+	  $(call filter-abi-dump-paths,PLATFORM,$(PRIVATE_LSDUMP_PATHS)), \
+	  $(notdir $(PLATFORM_ABI_DUMPS))))))
+	$(if $(added_platform_abi_dumps), \
+	  echo -e "Found unexpected ABI reference dump files under $(PLATFORM_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(PLATFORM_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_platform_abi_dumps)) ')' -delete\` to delete the dump files.")
+
+	$(if $(added_vndk_abi_dumps)$(added_ndk_abi_dumps)$(added_platform_abi_dumps),exit 1)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) touch $@
 
@@ -154,7 +162,9 @@ LOCAL_REQUIRED_MODULES += \
     vndkprivate.libraries.txt \
     vndkcorevariant.libraries.txt \
     $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES)) \
-    $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES))
+    $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES)) \
+    $(VNDK_USING_CORE_VARIANT_LIBRARIES) \
+    com.android.vndk.current
 endif
 include $(BUILD_PHONY_PACKAGE)
 
@@ -166,9 +176,16 @@ ifneq ($(TARGET_IS_64_BIT),true)
 _binder32 := _binder32
 endif
 endif
+# Phony targets are installed for **.libraries.txt files.
+# TODO(b/141450808): remove following VNDK phony targets when **.libraries.txt files are provided by apexes.
 LOCAL_REQUIRED_MODULES := \
     $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),vndk_v$(vndk_ver)_$(TARGET_ARCH)$(_binder32))
 _binder32 :=
+include $(BUILD_PHONY_PACKAGE)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := vndk_apex_snapshot_package
+LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver))
 include $(BUILD_PHONY_PACKAGE)
 
 endif # BOARD_VNDK_VERSION is set

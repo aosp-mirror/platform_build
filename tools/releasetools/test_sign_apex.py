@@ -38,5 +38,22 @@ class SignApexTest(test_utils.ReleaseToolsTestCase):
         'avbtool',
         foo_apex,
         payload_key,
-        container_key)
+        container_key,
+        False)
     self.assertTrue(os.path.exists(signed_foo_apex))
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_SignApexWithApk(self):
+    test_apex = os.path.join(self.testdata_dir, 'has_apk.apex')
+    payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
+    container_key = os.path.join(self.testdata_dir, 'testkey')
+    apk_keys = {'wifi-service-resources.apk': os.path.join(
+        self.testdata_dir, 'testkey')}
+    signed_test_apex = sign_apex.SignApexFile(
+        'avbtool',
+        test_apex,
+        payload_key,
+        container_key,
+        False,
+        apk_keys)
+    self.assertTrue(os.path.exists(signed_test_apex))

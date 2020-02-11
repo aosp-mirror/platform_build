@@ -16,11 +16,13 @@
 
 # This makefile is intended to serve as a base for completely AOSP based
 # mainline devices, It contain the mainline system partition and sensible
-# defaults for the product and vendor partition.
+# defaults for the system_ext, product and vendor partitions.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system_ext.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_product.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_product.mk)
 

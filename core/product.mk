@@ -228,6 +228,8 @@ _product_list_vars += PRODUCT_SYSTEM_PROPERTY_BLACKLIST
 _product_list_vars += PRODUCT_VENDOR_PROPERTY_BLACKLIST
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
+# List of system_server jars delivered via apex. Format = <apex name>:<jar name>.
+_product_list_vars += PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS
 
 # All of the apps that we force preopt, this overrides WITH_DEXPREOPT.
 _product_list_vars += PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK
@@ -307,6 +309,10 @@ _product_single_value_vars += PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE
 # List of extra VNDK versions to be included
 _product_list_vars += PRODUCT_EXTRA_VNDK_VERSIONS
 
+# VNDK version of product partition. It can be 'current' if the product
+# partitions uses PLATFORM_VNDK_VERSION.
+_product_single_value_var += PRODUCT_PRODUCT_VNDK_VERSION
+
 # Whether the whitelist of actionable compatible properties should be disabled or not
 _product_single_value_vars += PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE
 
@@ -364,8 +370,8 @@ _product_single_value_vars += PRODUCT_BUILD_RECOVERY_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
 
-_product_list_vars += PRODUCT_UPDATABLE_BOOT_MODULES
-_product_list_vars += PRODUCT_UPDATABLE_BOOT_LOCATIONS
+# List of boot jars delivered via apex
+_product_list_vars += PRODUCT_UPDATABLE_BOOT_JARS
 
 # Whether the product would like to check prebuilt ELF files.
 _product_single_value_vars += PRODUCT_CHECK_ELF_FILES
@@ -376,13 +382,18 @@ _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA
 # If set, device retrofits virtual A/B.
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA_RETROFIT
 
+# If set, Java module in product partition cannot use hidden APIs.
+_product_single_value_vars += PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
+
+_product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
 define dump-product
 $(warning ==== $(1) ====)\
 $(foreach v,$(_product_var_list),\
-$(warning PRODUCTS.$(1).$(v) := $(PRODUCTS.$(1).$(v))))\
+$(warning PRODUCTS.$(1).$(v) := $(call get-product-var,$(1),$(v))))\
 $(warning --------)
 endef
 
@@ -547,6 +558,8 @@ define readonly-final-product-vars
 $(call readonly-variables,$(_readonly_late_variables))
 endef
 
+# Macro re-defined inside strip-product-vars.
+get-product-var = $(PRODUCTS.$(strip $(1)).$(2))
 #
 # Strip the variables in _product_var_list and a few build-system
 # internal variables, and assign the ones for the current product
@@ -558,6 +571,8 @@ $(foreach v,\
     PRODUCT_ENFORCE_PACKAGES_EXIST \
     PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST, \
   $(eval $(v) := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).$(v)))) \
+  $(eval get-product-var = $$(if $$(filter $$(1),$$(INTERNAL_PRODUCT)),$$($$(2)),$$(PRODUCTS.$$(strip $$(1)).$$(2)))) \
+  $(KATI_obsolete_var PRODUCTS.$(INTERNAL_PRODUCT).$(v),Use $(v) instead) \
 )
 endef
 

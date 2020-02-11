@@ -76,17 +76,27 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         my_ldflags += -nostdlib++
     else
         my_static_libraries += libc++demangle
-        ifeq (arm,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
-            my_static_libraries += libunwind_llvm
-            my_ldflags += -Wl,--exclude-libs,libunwind_llvm.a
-        endif
 
         ifeq ($(my_link_type),static)
-            my_static_libraries += libm libc libdl
+            my_static_libraries += libm libc
+            ifeq (arm,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+                my_static_libraries += libunwind_llvm
+                my_ldflags += -Wl,--exclude-libs,libunwind_llvm.a
+            else
+                my_static_libraries += libgcc_stripped
+                my_ldflags += -Wl,--exclude-libs,libgcc_stripped.a
+            endif
         endif
     endif
 else ifeq ($(my_cxx_stl),ndk)
-    # Using an NDK STL. Handled in binary.mk.
+    # Using an NDK STL. Handled in binary.mk, except for the unwinder.
+    ifeq (arm,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+        my_static_libraries += libunwind_llvm
+        my_ldflags += -Wl,--exclude-libs,libunwind_llvm.a
+    else
+        my_static_libraries += libgcc_stripped
+        my_ldflags += -Wl,--exclude-libs,libgcc_stripped.a
+    endif
 else ifeq ($(my_cxx_stl),libstdc++)
     $(error $(LOCAL_PATH): $(LOCAL_MODULE): libstdc++ is not supported)
 else ifeq ($(my_cxx_stl),none)

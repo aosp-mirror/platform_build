@@ -22,7 +22,23 @@ ifdef PRODUCT_BOOT_JARS
 
 intermediates := $(call intermediates-dir-for, PACKAGING, boot-jars-package-check,,COMMON)
 stamp := $(intermediates)/stamp
-built_boot_jars := $(foreach j, $(PRODUCT_BOOT_JARS), \
+
+# The actual names for the updatable jars are <jar_name>.<apex_name> e.g., updatable-media.com.android.media
+updatable_boot_jars := $(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS),\
+  $(eval apex := $(call word-colon,1,$(pair)))\
+  $(eval jar := $(call word-colon,2,$(pair)))\
+  $(jar).$(apex)\
+)
+#TODO(jiyong) merge art_boot_jars into updatable_boot_jars
+art_boot_jars := $(addsuffix .com.android.art.release,$(filter $(ART_APEX_JARS),$(PRODUCT_BOOT_JARS)))
+
+platform_boot_jars := $(filter-out \
+  $(ART_APEX_JARS)\
+  $(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS),$(call word-colon,2,$(pair))),\
+  $(PRODUCT_BOOT_JARS)\
+)
+
+built_boot_jars := $(foreach j, $(updatable_boot_jars) $(art_boot_jars) $(platform_boot_jars), \
   $(call intermediates-dir-for, JAVA_LIBRARIES, $(j),,COMMON)/classes.jar)
 script := build/make/core/tasks/check_boot_jars/check_boot_jars.py
 whitelist_file := build/make/core/tasks/check_boot_jars/package_whitelist.txt

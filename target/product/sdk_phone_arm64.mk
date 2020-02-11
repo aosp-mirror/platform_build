@@ -31,5 +31,4 @@ PRODUCT_NAME := sdk_phone_arm64
 PRODUCT_DEVICE := generic_arm64
 PRODUCT_MODEL := Android SDK built for arm64
 
-# TODO(b/131162102): remove this after cleaning up accesses of sysprop
-BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW := true
+

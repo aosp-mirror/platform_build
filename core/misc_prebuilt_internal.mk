@@ -18,7 +18,7 @@
 # Internal build rules for misc prebuilt modules that don't need additional processing
 ############################################################
 
-prebuilt_module_classes := SCRIPT ETC DATA
+prebuilt_module_classes := SCRIPT ETC DATA RENDERSCRIPT_BITCODE
 ifeq ($(filter $(prebuilt_module_classes),$(LOCAL_MODULE_CLASS)),)
 $(call pretty-error,misc_prebuilt_internal.mk is for $(prebuilt_module_classes) modules only)
 endif

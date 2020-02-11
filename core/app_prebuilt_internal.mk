@@ -215,17 +215,6 @@ $(built_module) : $(appcompat-files)
 $(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
 endif
 
-ifneq ($(BUILD_PLATFORM_ZIP),)
-$(built_module) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.dex.apk
-endif
-ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
-ifdef LOCAL_DEX_PREOPT
-$(built_module) : PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
-$(built_module) : $(intermediates)/strip.sh
-$(built_module) : | $(DEXPREOPT_STRIP_DEPS)
-$(built_module) : .KATI_DEPFILE := $(built_module).d
-endif
-endif
 ifeq ($(module_run_appcompat),true)
 $(built_module) : $(AAPT2)
 endif
@@ -235,23 +224,11 @@ $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	$(uncompress-dexs)
 endif  # LOCAL_UNCOMPRESS_DEX
-ifdef LOCAL_DEX_PREOPT
-ifneq ($(BUILD_PLATFORM_ZIP),)
-	@# Keep a copy of apk with classes.dex unstripped
-	$(hide) cp -f $@ $(dir $@)package.dex.apk
-endif  # BUILD_PLATFORM_ZIP
-endif  # LOCAL_DEX_PREOPT
 ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
-	@# Only strip out files if we can re-sign the package.
-# Run appcompat before stripping the classes.dex file.
 ifeq ($(module_run_appcompat),true)
 	$(call appcompat-header, aapt2)
 	$(run-appcompat)
 endif  # module_run_appcompat
-ifdef LOCAL_DEX_PREOPT
-	mv -f $@ $@.tmp
-	$(PRIVATE_STRIP_SCRIPT) $@.tmp $@
-endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 	# No need for align-package because sign-package takes care of alignment
 else  # LOCAL_CERTIFICATE == PRESIGNED

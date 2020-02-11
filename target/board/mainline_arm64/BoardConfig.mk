@@ -26,6 +26,11 @@ TARGET_2ND_CPU_VARIANT := generic
 
 include build/make/target/board/BoardConfigMainlineCommon.mk
 
+# TODO(b/143732851): Remove this after replacing /persit with
+# /mnt/vendor/persist
+BOARD_ROOT_EXTRA_SYMLINKS += /mnt/vendor/persist:/persist
+BOARD_SEPOLICY_DIRS += build/make/target/board/mainline_arm64/sepolicy
+
 TARGET_NO_KERNEL := true
 
 # Build generic A/B format system-only OTA.
@@ -35,8 +40,3 @@ AB_OTA_PARTITIONS := system
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-
-# Mainline devices support apex
-# TODO: move this to BoardConfigMainlineCommon. Currently, GSI wants flattened
-#       apexes, but emulator wants .apex files, preventing this.
-TARGET_FLATTEN_APEX := false

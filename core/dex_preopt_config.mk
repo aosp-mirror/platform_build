@@ -14,16 +14,9 @@ SYSTEM_OTHER_ODEX_FILTER ?= \
     product/app/% \
     product/priv-app/% \
 
-# The default values for pre-opting. To support the runtime module we ensure no dex files
-# get stripped.
-ifeq ($(PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING),)
-  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING := true
-endif
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
   ifeq (eng,$(TARGET_BUILD_VARIANT))
-    # Don't strip for quick development turnarounds.
-    DEX_PREOPT_DEFAULT := nostripping
     # For an eng build only pre-opt the boot image and system server. This gives reasonable performance
     # and still allows a simple workflow: building in frameworks/base and syncing.
     WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true
@@ -43,16 +36,6 @@ ifeq ($(HOST_OS),linux)
     endif
   endif
 endif
-
-# Default to debug version to help find bugs.
-# Set USE_DEX2OAT_DEBUG to false for only building non-debug versions.
-ifeq ($(USE_DEX2OAT_DEBUG),false)
-DEX2OAT := $(SOONG_HOST_OUT_EXECUTABLES)/dex2oat$(HOST_EXECUTABLE_SUFFIX)
-else
-DEX2OAT := $(SOONG_HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
-endif
-
-DEX2OAT_DEPENDENCY += $(DEX2OAT)
 
 # Use the first preloaded-classes file in PRODUCT_COPY_FILES.
 PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
@@ -87,12 +70,10 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
 
   $(call json_start)
 
-  $(call add_json_bool, DefaultNoStripping,                 $(filter nostripping,$(DEX_PREOPT_DEFAULT)))
-  $(call add_json_bool, DisablePreopt,                      $(call invert_bool,$(filter true,$(WITH_DEXPREOPT))))
+  $(call add_json_bool, DisablePreopt,                      $(call invert_bool,$(and $(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)),$(filter true,$(WITH_DEXPREOPT)))))
   $(call add_json_list, DisablePreoptModules,               $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer, $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
-  $(call add_json_bool, GenerateApexImage,                  $(filter true,$(DEXPREOPT_GENERATE_APEX_IMAGE)))
-  $(call add_json_bool, UseApexImage,                       $(filter true,$(DEXPREOPT_USE_APEX_IMAGE)))
+  $(call add_json_bool, UseArtImage,                        $(filter true,$(DEXPREOPT_USE_ART_IMAGE)))
   $(call add_json_bool, DontUncompressPrivAppsDex,          $(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS)))
   $(call add_json_list, ModulesLoadedByPrivilegedModules,   $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
   $(call add_json_bool, HasSystemOther,                     $(BOARD_USES_SYSTEM_OTHER_ODEX))
@@ -100,11 +81,11 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, DisableGenerateProfile,             $(filter false,$(WITH_DEX_PREOPT_GENERATE_PROFILE)))
   $(call add_json_str,  ProfileDir,                         $(PRODUCT_DEX_PREOPT_PROFILE_DIR))
   $(call add_json_list, BootJars,                           $(PRODUCT_BOOT_JARS))
+  $(call add_json_list, UpdatableBootJars,                  $(PRODUCT_UPDATABLE_BOOT_JARS))
   $(call add_json_list, ArtApexJars,                        $(ART_APEX_JARS))
-  $(call add_json_list, ProductUpdatableBootModules,        $(PRODUCT_UPDATABLE_BOOT_MODULES))
-  $(call add_json_list, ProductUpdatableBootLocations,      $(PRODUCT_UPDATABLE_BOOT_LOCATIONS))
   $(call add_json_list, SystemServerJars,                   $(PRODUCT_SYSTEM_SERVER_JARS))
   $(call add_json_list, SystemServerApps,                   $(PRODUCT_SYSTEM_SERVER_APPS))
+  $(call add_json_list, UpdatableSystemServerJars,          $(PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS))
   $(call add_json_list, SpeedApps,                          $(PRODUCT_DEXPREOPT_SPEED_APPS))
   $(call add_json_list, PreoptFlags,                        $(PRODUCT_DEX_PREOPT_DEFAULT_FLAGS))
   $(call add_json_str,  DefaultCompilerFilter,              $(PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER))
@@ -144,16 +125,6 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  Dex2oatImageXmx,                    $(DEX2OAT_IMAGE_XMX))
   $(call add_json_str,  Dex2oatImageXms,                    $(DEX2OAT_IMAGE_XMS))
 
-  $(call add_json_map,  Tools)
-  $(call add_json_str,  Profman,                            $(SOONG_HOST_OUT_EXECUTABLES)/profman)
-  $(call add_json_str,  Dex2oat,                            $(DEX2OAT))
-  $(call add_json_str,  Aapt,                               $(SOONG_HOST_OUT_EXECUTABLES)/aapt)
-  $(call add_json_str,  SoongZip,                           $(SOONG_ZIP))
-  $(call add_json_str,  Zip2zip,                            $(ZIP2ZIP))
-  $(call add_json_str,  ManifestCheck,                      $(SOONG_HOST_OUT_EXECUTABLES)/manifest_check)
-  $(call add_json_str,  ConstructContext,                   $(BUILD_SYSTEM)/construct_context.sh)
-  $(call end_json_map)
-
   $(call json_end)
 
   $(shell mkdir -p $(dir $(DEX_PREOPT_CONFIG)))
@@ -166,14 +137,3 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
       rm $(DEX_PREOPT_CONFIG).tmp; \
     fi)
 endif
-
-DEXPREOPT_GEN_DEPS := \
-  $(SOONG_HOST_OUT_EXECUTABLES)/profman \
-  $(DEX2OAT) \
-  $(SOONG_HOST_OUT_EXECUTABLES)/aapt \
-  $(SOONG_ZIP) \
-  $(ZIP2ZIP) \
-  $(BUILD_SYSTEM)/construct_context.sh \
-
-DEXPREOPT_STRIP_DEPS := \
-  $(ZIP2ZIP) \

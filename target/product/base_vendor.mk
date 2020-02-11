@@ -41,7 +41,6 @@ PRODUCT_HOST_PACKAGES += \
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
     android.hardware.cas@1.1-service \
-    android.hardware.configstore@1.1-service \
     android.hardware.media.omx@1.0-service \
     boringssl_self_test_vendor \
     dumpsys_vendor \
@@ -49,7 +48,6 @@ PRODUCT_PACKAGES += \
     fs_config_dirs_nonsystem \
     gralloc.default \
     group_odm \
-    group_system_ext \
     group_vendor \
     init_vendor \
     libbundlewrapper \
@@ -65,16 +63,19 @@ PRODUCT_PACKAGES += \
     libril \
     libvisualizer \
     passwd_odm \
-    passwd_system_ext \
     passwd_vendor \
     selinux_policy_nonsystem \
     shell_and_utilities_vendor \
     vndservice \
     vndservicemanager \
 
+# Base module when shipping api level is less than or equal to 29
+PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29 += \
+    android.hardware.configstore@1.1-service \
+
 # VINTF data for vendor image
 PRODUCT_PACKAGES += \
-    device_compatibility_matrix.xml \
+    vendor_compatibility_matrix.xml \
 
 # Packages to update the recovery partition, which will be installed on
 # /vendor. TODO(b/141648565): Don't install these unless they're needed.

@@ -16,4 +16,6 @@
 
 PRODUCT_VIRTUAL_AB_OTA := true
 
-PRODUCT_PRODUCT_PROPERTIES += ro.virtual_ab.enabled=true
+PRODUCT_PROPERTY_OVERRIDES += ro.virtual_ab.enabled=true
+
+PRODUCT_PACKAGES += e2fsck_ramdisk

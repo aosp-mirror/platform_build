@@ -58,6 +58,11 @@ ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR))) # con
   LOCAL_DEX_PREOPT :=
 endif
 
+# Don't preopt system server jars that are updatable.
+ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS)))
+  LOCAL_DEX_PREOPT :=
+endif
+
 # if WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true and module is not in boot class path skip
 # Also preopt system server jars since selinux prevents system server from loading anything from
 # /data. If we don't do this they will need to be extracted which is not favorable for RAM usage
@@ -106,9 +111,10 @@ endif
 my_dexpreopt_archs :=
 my_dexpreopt_images :=
 my_dexpreopt_images_deps :=
+my_dexpreopt_image_locations :=
 my_dexpreopt_infix := boot
-ifeq (true, $(DEXPREOPT_USE_APEX_IMAGE))
-  my_dexpreopt_infix := apex
+ifeq (true, $(DEXPREOPT_USE_ART_IMAGE))
+  my_dexpreopt_infix := art
 endif
 
 ifdef LOCAL_DEX_PREOPT
@@ -178,6 +184,8 @@ ifdef LOCAL_DEX_PREOPT
     endif  # TARGET_2ND_ARCH
   endif  # LOCAL_MODULE_CLASS
 
+  my_dexpreopt_image_locations += $(DEXPREOPT_IMAGE_LOCATIONS_$(my_dexpreopt_infix))
+
   my_filtered_optional_uses_libraries := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
     $(LOCAL_OPTIONAL_USES_LIBRARIES))
 
@@ -207,8 +215,7 @@ ifdef LOCAL_DEX_PREOPT
 
   $(call json_start)
 
-  # DexPath, StripInputPath, and StripOutputPath are not set, they will
-  # be filled in by dexpreopt_gen.
+  # DexPath is not set: it will be filled in by dexpreopt_gen.
 
   $(call add_json_str,  Name,                           $(LOCAL_MODULE))
   $(call add_json_str,  DexLocation,                    $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE)))
@@ -230,6 +237,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call end_json_map)
   $(call add_json_list, Archs,                          $(my_dexpreopt_archs))
   $(call add_json_list, DexPreoptImages,                $(my_dexpreopt_images))
+  $(call add_json_list, DexPreoptImageLocations,        $(my_dexpreopt_image_locations))
   $(call add_json_list, PreoptBootClassPathDexFiles,    $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
   $(call add_json_list, PreoptBootClassPathDexLocations,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
   $(call add_json_bool, PreoptExtractedApk,             $(my_preopt_for_extracted_apk))
@@ -237,13 +245,10 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_bool, ForceCreateAppImage,            $(filter true,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
   $(call add_json_bool, PresignedPrebuilt,              $(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
 
-  $(call add_json_bool, NoStripping,                    $(filter nostripping,$(LOCAL_DEX_PREOPT)))
-
   $(call json_end)
 
   my_dexpreopt_config := $(intermediates)/dexpreopt.config
   my_dexpreopt_script := $(intermediates)/dexpreopt.sh
-  my_strip_script := $(intermediates)/strip.sh
   my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
 
   $(my_dexpreopt_config): PRIVATE_MODULE := $(LOCAL_MODULE)
@@ -252,17 +257,19 @@ ifdef LOCAL_DEX_PREOPT
 	@echo "$(PRIVATE_MODULE) dexpreopt.config"
 	echo -e -n '$(subst $(newline),\n,$(subst ','\'',$(subst \,\\,$(PRIVATE_CONTENTS))))' > $@
 
-  .KATI_RESTAT: $(my_dexpreopt_script) $(my_strip_script)
+  .KATI_RESTAT: $(my_dexpreopt_script)
   $(my_dexpreopt_script): PRIVATE_MODULE := $(LOCAL_MODULE)
+  $(my_dexpreopt_script): PRIVATE_GLOBAL_SOONG_CONFIG := $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)
   $(my_dexpreopt_script): PRIVATE_GLOBAL_CONFIG := $(DEX_PREOPT_CONFIG_FOR_MAKE)
   $(my_dexpreopt_script): PRIVATE_MODULE_CONFIG := $(my_dexpreopt_config)
-  $(my_dexpreopt_script): PRIVATE_STRIP_SCRIPT := $(my_strip_script)
-  $(my_dexpreopt_script): .KATI_IMPLICIT_OUTPUTS := $(my_strip_script)
   $(my_dexpreopt_script): $(DEXPREOPT_GEN)
-  $(my_dexpreopt_script): $(my_dexpreopt_config) $(DEX_PREOPT_CONFIG_FOR_MAKE)
+  $(my_dexpreopt_script): $(my_dexpreopt_config) $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(DEX_PREOPT_CONFIG_FOR_MAKE)
 	@echo "$(PRIVATE_MODULE) dexpreopt gen"
-	$(DEXPREOPT_GEN) -global $(PRIVATE_GLOBAL_CONFIG) -module $(PRIVATE_MODULE_CONFIG) \
-	-dexpreopt_script $@ -strip_script $(PRIVATE_STRIP_SCRIPT) \
+	$(DEXPREOPT_GEN) \
+	-global_soong $(PRIVATE_GLOBAL_SOONG_CONFIG) \
+	-global $(PRIVATE_GLOBAL_CONFIG) \
+	-module $(PRIVATE_MODULE_CONFIG) \
+	-dexpreopt_script $@ \
 	-out_dir $(OUT_DIR)
 
   my_dexpreopt_deps := $(my_dex_jar)
@@ -302,6 +309,5 @@ ifdef LOCAL_DEX_PREOPT
 
   my_dexpreopt_config :=
   my_dexpreopt_script :=
-  my_strip_script :=
   my_dexpreopt_zip :=
 endif # LOCAL_DEX_PREOPT

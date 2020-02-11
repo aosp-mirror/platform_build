@@ -248,6 +248,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   build_command = []
   fs_type = prop_dict.get("fs_type", "")
   run_e2fsck = False
+  needs_projid = prop_dict.get("needs_projid", 0)
+  needs_casefold = prop_dict.get("needs_casefold", 0)
 
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
@@ -287,7 +289,10 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
         build_command.extend(["-S", prop_dict["hash_seed"]])
     if "ext4_share_dup_blocks" in prop_dict:
       build_command.append("-c")
-    build_command.extend(["--inode_size", "256"])
+    if (needs_projid):
+      build_command.extend(["--inode_size", "512"])
+    else:
+      build_command.extend(["--inode_size", "256"])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
@@ -315,6 +320,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
     build_command.extend([out_file, prop_dict["image_size"]])
+    if "f2fs_sparse_flag" in prop_dict:
+      build_command.extend([prop_dict["f2fs_sparse_flag"]])
     if fs_config:
       build_command.extend(["-C", fs_config])
     build_command.extend(["-f", in_dir])
@@ -326,6 +333,10 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
     if "timestamp" in prop_dict:
       build_command.extend(["-T", str(prop_dict["timestamp"])])
     build_command.extend(["-L", prop_dict["mount_point"]])
+    if (needs_projid):
+      build_command.append("--prjquota")
+    if (needs_casefold):
+      build_command.append("--casefold")
   else:
     raise BuildImageError(
         "Error: unknown filesystem type: {}".format(fs_type))
@@ -519,6 +530,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   common_props = (
       "extfs_sparse_flag",
       "squashfs_sparse_flag",
+      "f2fs_sparse_flag",
       "skip_fsck",
       "ext_mkuserimg",
       "verity",
@@ -582,7 +594,6 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
-    copy_prop("system_base_fs_file", "base_fs_file")
     copy_prop("system_extfs_inode_count", "extfs_inode_count")
     if not copy_prop("system_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
@@ -596,6 +607,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("flash_logical_block_size", "flash_logical_block_size")
     copy_prop("flash_erase_block_size", "flash_erase_block_size")
     copy_prop("userdata_selinux_fc", "selinux_fc")
+    copy_prop("needs_casefold", "needs_casefold")
+    copy_prop("needs_projid", "needs_projid")
   elif mount_point == "cache":
     copy_prop("cache_fs_type", "fs_type")
     copy_prop("cache_size", "partition_size")

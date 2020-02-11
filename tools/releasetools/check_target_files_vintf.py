@@ -38,11 +38,14 @@ OPTIONS = common.OPTIONS
 # paths (VintfObject.cpp).
 # These paths are stored in different directories in target files package, so
 # we have to search for the correct path and tell checkvintf to remap them.
+# Look for TARGET_COPY_OUT_* variables in board_config.mk for possible paths for
+# each partition.
 DIR_SEARCH_PATHS = {
     '/system': ('SYSTEM',),
     '/vendor': ('VENDOR', 'SYSTEM/vendor'),
     '/product': ('PRODUCT', 'SYSTEM/product'),
-    '/odm': ('ODM', 'VENDOR/odm'),
+    '/odm': ('ODM', 'VENDOR/odm', 'SYSTEM/vendor/odm'),
+    '/system_ext': ('SYSTEM_EXT', 'SYSTEM/system_ext'),
 }
 
 UNZIP_PATTERN = ['META/*', '*/build.prop']

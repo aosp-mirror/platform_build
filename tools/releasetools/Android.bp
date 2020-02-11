@@ -264,6 +264,19 @@ python_binary_host {
 }
 
 python_binary_host {
+    name: "check_partition_sizes",
+    srcs: [
+        "check_partition_sizes.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+    defaults: [
+        "releasetools_binary_defaults",
+    ],
+}
+
+python_binary_host {
     name: "check_ota_package_signature",
     defaults: ["releasetools_binary_defaults"],
     srcs: [
@@ -419,6 +432,7 @@ python_defaults {
     name: "releasetools_test_defaults",
     srcs: [
         "check_ota_package_signature.py",
+        "check_partition_sizes.py",
         "check_target_files_signatures.py",
         "make_recovery_patch.py",
         "merge_target_files.py",
