@@ -43,8 +43,9 @@ endif # BOARD_VNDK_VERSION
 ifneq (,$(error_msg))
 
 .PHONY: vndk
+vndk: PRIVATE_MAKEFILE := $(current_makefile)
 vndk:
-	$(call echo-error,$(current_makefile),$(error_msg))
+	$(call echo-error,$(PRIVATE_MAKEFILE),$(error_msg))
 	exit 1
 
 endif
