@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3993693b_8a957f72",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1181388
+      },
+      "writtenOn": "2020-02-11T18:19:42Z",
+      "side": 1,
+      "message": "The only link I found that explains in detail is this: https://stackoverflow.com/questions/54422265/native-code-coverage-with-android-soong-build-system\n\nSince it\u0027s not a good idea to have stack overflow links here, I just removed the whole line.",
+      "parentUuid": "7a3c5dec_45897023",
+      "range": {
+        "startLine": 9,
+        "startChar": 19,
+        "endLine": 9,
+        "endChar": 48
+      },
+      "revId": "faf8f7ecb5a0850286536470ce93edd13957594f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "83384b63_d41355be",
         "filename": "core/line_coverage.mk",
         "patchSetId": 7
@@ -68,6 +92,54 @@
       "revId": "faf8f7ecb5a0850286536470ce93edd13957594f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf0ca102_ca067669",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1181388
+      },
+      "writtenOn": "2020-02-11T18:19:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "83384b63_d41355be",
+      "range": {
+        "startLine": 55,
+        "startChar": 34,
+        "endLine": 55,
+        "endChar": 51
+      },
+      "revId": "faf8f7ecb5a0850286536470ce93edd13957594f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5d8a16c_c3dc1b58",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1181388
+      },
+      "writtenOn": "2020-02-11T18:19:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d66f2bf_64da2c7e",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 19
+      },
+      "revId": "faf8f7ecb5a0850286536470ce93edd13957594f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
