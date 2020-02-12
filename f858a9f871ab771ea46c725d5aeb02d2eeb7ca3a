@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "32dc1e79_04d6fc2f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-02-12T21:27:49Z",
+      "side": 1,
+      "message": "if you use `git cherry-pick -x` it adds it automatically",
+      "parentUuid": "ec92a899_027a9471",
+      "revId": "f858a9f871ab771ea46c725d5aeb02d2eeb7ca3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "296aee26_22aa950d",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2
