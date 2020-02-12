@@ -4732,13 +4732,8 @@ ifeq (true,$(EMMA_INSTRUMENT))
 JACOCO_REPORT_CLASSES_ALL := $(PRODUCT_OUT)/jacoco-report-classes-all.jar
 $(JACOCO_REPORT_CLASSES_ALL) :
 	@echo "Collecting uninstrumented classes"
-	$(hide) find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" | \
-	    zip -@ -0 -q -X $@
-# Meaning of these options:
-# -@ scan stdin for file paths to add to the zip
-# -0 don't do any compression
-# -q supress most output
-# -X skip storing extended file attributes
+	find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" 2>/dev/null | sort > $@.list
+	$(SOONG_ZIP) -o $@ -L 0 -C $(OUT_DIR) -P out -l $@.list
 
 endif # EMMA_INSTRUMENT=true
 
