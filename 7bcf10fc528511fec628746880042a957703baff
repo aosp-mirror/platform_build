@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "13d8fdf5_84373bad",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1379,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-02-12T02:21:20Z",
+      "side": 1,
+      "message": "I don\u0027t think this statement is true in general. For example, the winpthreads notice file below is for the host side. The CTS package may also contain some.\n\nIt\u0027s a different story if this is in the context of the current configuration block, but then it means this is a misleading statement.",
+      "revId": "7bcf10fc528511fec628746880042a957703baff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18c14c3d_786cfb5f",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1397,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-02-12T02:21:20Z",
+      "side": 1,
+      "message": "I\u0027d be consistent with naming between license_modules_symbols_only and exclude_target_dirs. The former is specifically about modules built only for debugging symbols, whereas the latter is a super set, directories to be excluded for any reasons.",
+      "revId": "7bcf10fc528511fec628746880042a957703baff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c4cdd99_4fdf25ff",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1407,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-02-12T02:21:20Z",
+      "side": 1,
+      "message": "Can you do this instead?\nlicense_modules_rehomed :\u003d $(filter-out $(PRODUCT_OUT)/%/%,$(license_modules_rest)) \\ # files in root have no /etc\n  $(filter $(PRODUCT_OUT)/recovery/%,$(license_modules_rest)) \\\n  $(filter $(PRODUCT_OUT)/root/%,$(license_modules_rest)) \\\n  :\n  :\n\nI think this style is more common in build/make.",
+      "revId": "7bcf10fc528511fec628746880042a957703baff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
