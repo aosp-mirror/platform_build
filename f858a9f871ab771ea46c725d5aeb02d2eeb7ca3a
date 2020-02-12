@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec92a899_027a9471",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2020-02-12T19:34:17Z",
+      "side": 1,
+      "message": "Can you add the cherry-pick line?",
+      "revId": "f858a9f871ab771ea46c725d5aeb02d2eeb7ca3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "296aee26_22aa950d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2020-02-12T19:34:17Z",
+      "side": 1,
+      "message": "This needs to be the internal CL.",
+      "range": {
+        "startLine": 17,
+        "startChar": 11,
+        "endLine": 17,
+        "endChar": 52
+      },
+      "revId": "f858a9f871ab771ea46c725d5aeb02d2eeb7ca3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
