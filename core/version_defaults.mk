@@ -84,37 +84,16 @@ MAX_PLATFORM_VERSION :=
 # generate the range of allowed SDK versions, so it must have an entry for every
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
-PLATFORM_VERSION.RP1A := R
+
+# The last stable version name of the platform that was released.  During
+# development, this stays at that previous version, while the codename indicates
+# further work based on the previous version.
+PLATFORM_VERSION_LAST_STABLE := 10
+.KATI_READONLY := PLATFORM_VERSION_LAST_STABLE
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
 PLATFORM_VERSION_CODENAME.RP1A := R
-
-ifndef PLATFORM_VERSION
-  PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
-  ifndef PLATFORM_VERSION
-    # PLATFORM_VERSION falls back to TARGET_PLATFORM_VERSION
-    PLATFORM_VERSION := $(TARGET_PLATFORM_VERSION)
-  endif
-endif
-.KATI_READONLY := PLATFORM_VERSION
-
-ifndef PLATFORM_SDK_VERSION
-  # This is the canonical definition of the SDK version, which defines
-  # the set of APIs and functionality available in the platform.  It
-  # is a single integer that increases monotonically as updates to
-  # the SDK are released.  It should only be incremented when the APIs for
-  # the new release are frozen (so that developers don't write apps against
-  # intermediate builds).  During development, this number remains at the
-  # SDK version the branch is based on and PLATFORM_VERSION_CODENAME holds
-  # the code-name of the new development work.
-
-  # When you increment the PLATFORM_SDK_VERSION please ensure you also
-  # clear out the following text file of all older PLATFORM_VERSION's:
-  # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 29
-endif
-.KATI_READONLY := PLATFORM_SDK_VERSION
 
 ifndef PLATFORM_VERSION_CODENAME
   PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
@@ -164,6 +143,32 @@ endif
   PLATFORM_VERSION_CODENAME \
   PLATFORM_VERSION_ALL_CODENAMES \
   PLATFORM_VERSION_FUTURE_CODENAMES
+
+ifndef PLATFORM_VERSION
+  ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+      PLATFORM_VERSION := $(PLATFORM_VERSION_LAST_STABLE)
+  else
+      PLATFORM_VERSION := $(PLATFORM_VERSION_CODENAME)
+  endif
+endif
+.KATI_READONLY := PLATFORM_VERSION
+
+ifndef PLATFORM_SDK_VERSION
+  # This is the canonical definition of the SDK version, which defines
+  # the set of APIs and functionality available in the platform.  It
+  # is a single integer that increases monotonically as updates to
+  # the SDK are released.  It should only be incremented when the APIs for
+  # the new release are frozen (so that developers don't write apps against
+  # intermediate builds).  During development, this number remains at the
+  # SDK version the branch is based on and PLATFORM_VERSION_CODENAME holds
+  # the code-name of the new development work.
+
+  # When you increment the PLATFORM_SDK_VERSION please ensure you also
+  # clear out the following text file of all older PLATFORM_VERSION's:
+  # cts/tests/tests/os/assets/platform_versions.txt
+  PLATFORM_SDK_VERSION := 29
+endif
+.KATI_READONLY := PLATFORM_SDK_VERSION
 
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
   PLATFORM_PREVIEW_SDK_VERSION := 0
