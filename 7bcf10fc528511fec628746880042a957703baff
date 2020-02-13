@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "64aaa7c1_d9efa512",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1379,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-13T00:26:56Z",
+      "side": 1,
+      "message": "I am not sure I understand your comment.\n\nwinpthreads doesn\u0027t use license_modules -- it directly uses ALL_DEFAULT_INSTALL_MODULES. And, as you say, it\u0027s in a different configuration block.\n\nIt seems to me the statement is 100% with respect to the variable to which it applies.\n\nHow would you rewrite the comment to make it less misleading?",
+      "parentUuid": "13d8fdf5_84373bad",
+      "revId": "7bcf10fc528511fec628746880042a957703baff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "18c14c3d_786cfb5f",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -30,6 +48,24 @@
       "writtenOn": "2020-02-12T02:21:20Z",
       "side": 1,
       "message": "I\u0027d be consistent with naming between license_modules_symbols_only and exclude_target_dirs. The former is specifically about modules built only for debugging symbols, whereas the latter is a super set, directories to be excluded for any reasons.",
+      "revId": "7bcf10fc528511fec628746880042a957703baff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ed580f4_e86c4c16",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1397,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-13T00:26:56Z",
+      "side": 1,
+      "message": "Not sure what you are recommending here. What change would you make to improve the code?",
+      "parentUuid": "18c14c3d_786cfb5f",
       "revId": "7bcf10fc528511fec628746880042a957703baff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -50,6 +86,24 @@
       "revId": "7bcf10fc528511fec628746880042a957703baff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cdb1b6da_2dffcfcc",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1407,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-13T00:26:56Z",
+      "side": 1,
+      "message": "Ack\n\nThis file is full of other uses of +\u003d so the \"+\u003d\" style seems very consistent with this file.",
+      "parentUuid": "0c4cdd99_4fdf25ff",
+      "revId": "7bcf10fc528511fec628746880042a957703baff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
