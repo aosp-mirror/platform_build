@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "7be61222_5b45efd2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-02-13T11:31:15Z",
+      "side": 1,
+      "message": "Added (I put it below Merged-In tag, because that\u0027s what repo does by default --- not sure where is the right place).",
+      "parentUuid": "32dc1e79_04d6fc2f",
+      "revId": "f858a9f871ab771ea46c725d5aeb02d2eeb7ca3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "296aee26_22aa950d",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2
@@ -57,6 +75,30 @@
       "revId": "f858a9f871ab771ea46c725d5aeb02d2eeb7ca3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c5b1f9c_8fc2dc82",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-02-13T11:31:15Z",
+      "side": 1,
+      "message": "It is the internal CL:\n\n- `git cherry-pick` gives me the same Change-Id\n- instructions here also say it should be the same Change-ID: http://g3doc/company/teams/android-build-team/automerger#using-merged-in\n\n(Although I personally would prefer a new one, but I don\u0027t know where to get it.)",
+      "parentUuid": "296aee26_22aa950d",
+      "range": {
+        "startLine": 17,
+        "startChar": 11,
+        "endLine": 17,
+        "endChar": 52
+      },
+      "revId": "f858a9f871ab771ea46c725d5aeb02d2eeb7ca3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
