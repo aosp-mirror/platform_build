@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "32de4ab2_9d9af675",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-13T23:28:50Z",
+      "side": 1,
+      "message": "In various meetings where they have given me my instructions for moving to METADATA files.",
+      "parentUuid": "3afcf54c_ed4ace4d",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 65
+      },
+      "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b6081c09_aeba5a32",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -36,6 +60,24 @@
       "writtenOn": "2020-02-13T22:55:47Z",
       "side": 1,
       "message": "Is there a matching change for Soong?",
+      "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af225e57_b0607bef",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-13T23:28:50Z",
+      "side": 1,
+      "message": "Not yet. If you can point me where in the Soong source code this logic appears, I will happily make the change.\n\nFrom what I\u0027ve seen, though, Soong often just leaves LOCAL_NOTICE_FILE undefined to let notice_files.mk fill it in at the changed line of code.",
+      "parentUuid": "b6081c09_aeba5a32",
       "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -56,6 +98,24 @@
       "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c50024c8_25bec92e",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-13T23:28:50Z",
+      "side": 1,
+      "message": "Ack\n\nI don\u0027t expect a single file. If both exist with different content, we can show both in the UI. (Or even all 3.) ::shrug::",
+      "parentUuid": "143fa911_83341dac",
+      "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
