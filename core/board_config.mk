@@ -582,9 +582,8 @@ endef
 
 ifdef BOARD_VNDK_VERSION
   ifneq ($(BOARD_VNDK_VERSION),current)
-    $(error BOARD_VNDK_VERSION: Only "current" is implemented)
+    $(call check_vndk_version,$(BOARD_VNDK_VERSION))
   endif
-
   TARGET_VENDOR_TEST_SUFFIX := /vendor
 else
   TARGET_VENDOR_TEST_SUFFIX :=
