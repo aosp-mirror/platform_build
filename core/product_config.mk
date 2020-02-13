@@ -265,9 +265,9 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
 endif
 
 $(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS), \
-  $(if $(findstring $(call word-colon,2,$(pair)),$(PRODUCT_BOOT_JARS)),, \
-    $(error Every jar in PRODUCT_UPDATABLE_BOOT_JARS must also be in PRODUCT_BOOT_JARS, \
-      $(call word-colon,2,$(pair)) is not) \
+  $(if $(findstring $(call word-colon,2,$(pair)),$(PRODUCT_BOOT_JARS)), \
+    $(error A jar in PRODUCT_UPDATABLE_BOOT_JARS must not be in PRODUCT_BOOT_JARS, \
+      but $(call word-colon,2,$(pair)) is) \
   ) \
 )
 
