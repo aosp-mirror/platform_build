@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9fa090f0_90c93be4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2020-02-13T08:49:31Z",
+      "side": 1,
+      "message": "aosp_arm64 is also one of the emulator targets. It is used in presubmit/postsubmit tests.",
+      "range": {
+        "startLine": 11,
+        "startChar": 49,
+        "endLine": 13,
+        "endChar": 21
+      },
+      "revId": "2f5aa3acf3ae1fc1bb58a4986bd7380e7fb1310f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
