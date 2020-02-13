@@ -124,6 +124,8 @@ warn_patterns = [
            [r".*\.kt:.*: warning: unnecessary safe call on a non-null receiver"]),
     kotlin('Deprecated in Java',
            [r".*\.kt:.*: warning: '.*' is deprecated. Deprecated in Java"]),
+    kotlin('Replacing Handler for Executor',
+           [r".*\.kt:.*: warning: .+ Replacing Handler for Executor in "]),
     kotlin('library has Kotlin runtime',
            [r".*: warning: library has Kotlin runtime bundled into it",
             r".*: warning: some JAR files .* have the Kotlin Runtime library"]),
