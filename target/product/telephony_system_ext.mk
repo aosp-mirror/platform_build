@@ -19,3 +19,5 @@
 
 # /system_ext packages
 PRODUCT_PACKAGES += \
+    CarrierConfig \
+    EmergencyInfo \

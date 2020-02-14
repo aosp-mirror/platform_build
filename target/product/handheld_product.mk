@@ -29,16 +29,10 @@ PRODUCT_PACKAGES += \
     DeskClock \
     Gallery2 \
     LatinIME \
-    Launcher3QuickStep \
     Music \
     OneTimeInitializer \
-    Provision \
     QuickSearchBox \
-    Settings \
     SettingsIntelligence \
-    StorageManager \
-    SystemUI \
-    WallpaperCropper \
     frameworks-base-overlays
 
 PRODUCT_PACKAGES_DEBUG += \
