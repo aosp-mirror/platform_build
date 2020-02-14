@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f4ade62_bcff9f52",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2020-02-14T08:09:55Z",
+      "side": 1,
+      "message": "ifneq ($(TARGET_NO_VENDOR_BOOT),false)\n\nto be more precise",
+      "range": {
+        "startLine": 364,
+        "startChar": 4,
+        "endLine": 364,
+        "endChar": 36
+      },
+      "revId": "c83433e5146856d14d376fea4285203949ca8e62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
