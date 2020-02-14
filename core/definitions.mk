@@ -2197,17 +2197,19 @@ endef
 
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
-@mkdir -p $(dir $@)
+@mkdir -p $(dir $@)tmp
 $(hide) rm -f $(dir $@)classes*.dex $(dir $@)d8_input.jar
 $(hide) $(ZIP2ZIP) -j -i $< -o $(dir $@)d8_input.jar "**/*.class"
 $(hide) $(D8_WRAPPER) $(DX_COMMAND) $(DEX_FLAGS) \
-    --output $(dir $@) \
+    --output $(dir $@)tmp \
     $(addprefix --lib ,$(PRIVATE_D8_LIBS)) \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     $(subst --main-dex-list=, --main-dex-list , \
         $(filter-out --core-library --multi-dex --minimal-main-dex,$(PRIVATE_DX_FLAGS))) \
     $(dir $@)d8_input.jar
+$(hide) mv $(dir $@)tmp/* $(dir $@)
 $(hide) rm -f $(dir $@)d8_input.jar
+$(hide) rm -rf $(dir $@)tmp
 endef
 
 # We need the extra blank line, so that the command will be on a separate line.

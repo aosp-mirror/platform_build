@@ -299,6 +299,9 @@ ifneq ($(LOCAL_USE_VNDK),)
     # If PLATFORM_VNDK_VERSION has a CODENAME, it will return
     # __ANDROID_API_FUTURE__.
     my_api_level := $(call codename-or-sdk-to-sdk,$(PLATFORM_VNDK_VERSION))
+  else
+    # Build with current BOARD_VNDK_VERSION.
+    my_api_level := $(call codename-or-sdk-to-sdk,$(BOARD_VNDK_VERSION))
   endif
   my_cflags += -D__ANDROID_VNDK__
 endif
