@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec514445_de8c3a52",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4735,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-02-14T06:12:31Z",
+      "side": 1,
+      "message": "Can you sort this too, so that it\u0027s reproducible?",
+      "revId": "1f156d14756ec3a106b5214b44489cc8a0a0aa68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6dc89985_77209426",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4742,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-02-14T06:12:31Z",
+      "side": 1,
+      "message": "This is no longer relevant",
+      "range": {
+        "startLine": 4738,
+        "startChar": 0,
+        "endLine": 4742,
+        "endChar": 42
+      },
+      "revId": "1f156d14756ec3a106b5214b44489cc8a0a0aa68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
