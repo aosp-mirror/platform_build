@@ -350,8 +350,6 @@ _product_list_vars += PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 # system.img), so devices need to install the package in a system-only OTA manner.
 _product_single_value_vars += PRODUCT_BUILD_GENERIC_OTA_PACKAGE
 
-# Whether any paths are excluded from being set XOM when ENABLE_XOM=true
-_product_list_vars += PRODUCT_XOM_EXCLUDE_PATHS
 _product_list_vars += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
