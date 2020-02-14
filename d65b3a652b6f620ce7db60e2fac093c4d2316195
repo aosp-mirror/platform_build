@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04114f79_842e709e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-02-14T06:02:13Z",
+      "side": 1,
+      "message": "According to the current logic, we will fall back to use the fingerprint for system|vendor if one of the ro* property isn\u0027t present for the given partition? Then, why don\u0027t we just use the ro.build.fingerprint as fall back....",
+      "range": {
+        "startLine": 340,
+        "startChar": 0,
+        "endLine": 340,
+        "endChar": 58
+      },
+      "revId": "d65b3a652b6f620ce7db60e2fac093c4d2316195",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
