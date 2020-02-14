@@ -22,6 +22,30 @@
       "revId": "6bf4a7d0be45b720dae92249aab72c58247e3e72",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "887b890c_4a926f16",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-02-14T08:27:26Z",
+      "side": 0,
+      "message": "Turns out I was outdated 😎.\nPlease ignore this comment.",
+      "parentUuid": "a651d04f_1440a7cf",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 74
+      },
+      "revId": "6bf4a7d0be45b720dae92249aab72c58247e3e72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
