@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6ed11e00_4ff0dd0d",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-02-15T03:26:27Z",
+      "side": 1,
+      "message": "You can\u0027t depend on a module name from a real file, and you don\u0027t need to as you already depend on the files through fuzz_target_inputs.",
+      "revId": "e587c03f16f19a4ce42151261a961fce9afa9402",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08ed8df3_dbe94064",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-02-15T03:26:27Z",
+      "side": 1,
+      "message": "What copies files into the coverage directory?",
+      "revId": "e587c03f16f19a4ce42151261a961fce9afa9402",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b389463_7182b605",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-02-15T03:26:27Z",
+      "side": 1,
+      "message": "This will give you non-deterministic results, you are zipping the whole EXECUTABLES directory but only depending on a few files.  You should only be zipping files you depend on.",
+      "revId": "e587c03f16f19a4ce42151261a961fce9afa9402",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
