@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b66db15_66ed5d8b",
+        "filename": "core/tasks/vts-core-tests.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-02-15T15:55:33Z",
+      "side": 1,
+      "message": "I don\u0027t see anything that would use this value in the recipe to zip the files into $@",
+      "range": {
+        "startLine": 31,
+        "startChar": 98,
+        "endLine": 31,
+        "endChar": 124
+      },
+      "revId": "ce55b9f8d335fc158c8989817aa6e290ea677d74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
