@@ -66,7 +66,6 @@ PRODUCT_PACKAGES += \
     com.android.neuralnetworks \
     com.android.os.statsd \
     com.android.sdkext \
-    com.android.telephony \
     com.android.tethering \
     com.android.tzdata \
     com.android.wifi \
@@ -324,21 +323,12 @@ endif
 
 # The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
-    $(TARGET_CORE_JARS) \
+    $(ART_APEX_JARS) \
     framework-minus-apex \
     ext \
     telephony-common \
     voip-common \
     ims-common \
-    framework-sdkextensions \
-    framework-statsd \
-    ike \
-    updatable-media \
-    framework-mediaprovider \
-    framework-permission \
-    framework-appsearch \
-    framework-wifi \
-    framework-tethering \
     framework-telephony
 
 PRODUCT_UPDATABLE_BOOT_JARS := \

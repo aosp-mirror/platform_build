@@ -265,9 +265,9 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
 endif
 
 $(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS), \
-  $(if $(findstring $(call word-colon,2,$(pair)),$(PRODUCT_BOOT_JARS)),, \
-    $(error Every jar in PRODUCT_UPDATABLE_BOOT_JARS must also be in PRODUCT_BOOT_JARS, \
-      $(call word-colon,2,$(pair)) is not) \
+  $(if $(findstring $(call word-colon,2,$(pair)),$(PRODUCT_BOOT_JARS)), \
+    $(error A jar in PRODUCT_UPDATABLE_BOOT_JARS must not be in PRODUCT_BOOT_JARS, \
+      but $(call word-colon,2,$(pair)) is) \
   ) \
 )
 
@@ -351,7 +351,11 @@ $(KATI_obsolete_var OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS \
     ,Use PRODUCT_EXTRA_VNDK_VERSIONS instead)
 
 ifdef OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
-  PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := $(OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE)
+  ifeq (false,$(OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE))
+    PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE :=
+  else
+    PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := $(OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE)
+  endif
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
   # No shipping level defined
 else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
