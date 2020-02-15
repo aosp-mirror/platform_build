@@ -22,6 +22,30 @@
       "revId": "d65b3a652b6f620ce7db60e2fac093c4d2316195",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93552c99_ac600a1a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-02-15T00:59:14Z",
+      "side": 1,
+      "message": "Done. Changed CalculatePartitionFingerprint to fallback on ro.build.fingerprint.",
+      "parentUuid": "04114f79_842e709e",
+      "range": {
+        "startLine": 340,
+        "startChar": 0,
+        "endLine": 340,
+        "endChar": 58
+      },
+      "revId": "d65b3a652b6f620ce7db60e2fac093c4d2316195",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
