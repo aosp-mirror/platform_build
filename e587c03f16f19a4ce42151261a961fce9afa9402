@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ac382619_07c3d5eb",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1181388
+      },
+      "writtenOn": "2020-02-17T19:19:44Z",
+      "side": 1,
+      "message": "I actually need these two otherwise I\u0027m not getting the profile files for the critical components. `make haiku-line-coverage` collects coverage from 2 sources: 1) all fuzz targets (fuzz_target_inputs) and 2) all critical components (critical_components_static_inputs, critical_components_shared_inputs). The process of determining the critical components is\nso far manual, so we maintain a list of them. Maybe we can search them by file path (e.g., /external/libyuv/files/) instead, but using the module name seems the easiest way.",
+      "parentUuid": "6ed11e00_4ff0dd0d",
+      "revId": "e587c03f16f19a4ce42151261a961fce9afa9402",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08ed8df3_dbe94064",
         "filename": "core/line_coverage.mk",
         "patchSetId": 13
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "e5f48795_56cd5e05",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1181388
+      },
+      "writtenOn": "2020-02-17T19:19:44Z",
+      "side": 1,
+      "message": "I added a comment for it: When line coverage is enabled (NATIVE_LINE_COVERAGE is set),\nmake creates a \"coverage\" directory and stores all profile (*.gcno) files inside.\nWe need everything that is stored inside this directory.",
+      "parentUuid": "08ed8df3_dbe94064",
+      "revId": "e587c03f16f19a4ce42151261a961fce9afa9402",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b389463_7182b605",
         "filename": "core/line_coverage.mk",
         "patchSetId": 13
@@ -50,6 +86,24 @@
       "revId": "e587c03f16f19a4ce42151261a961fce9afa9402",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5fc86569_4070d704",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1181388
+      },
+      "writtenOn": "2020-02-17T19:19:44Z",
+      "side": 1,
+      "message": "Instead of zipping the whole directory, I iterate through $(fuzz_target_inputs) and zip them one by one.",
+      "parentUuid": "5b389463_7182b605",
+      "revId": "e587c03f16f19a4ce42151261a961fce9afa9402",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
