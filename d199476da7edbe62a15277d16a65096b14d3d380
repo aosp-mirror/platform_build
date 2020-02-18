@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "8dc05cbc_d17c7c39",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-02-18T21:25:46Z",
+      "side": 1,
+      "message": "https://cs.android.com/android/platform/superproject/+/master:build/soong/android/module.go;drc\u003db13a9487a07eec562bdb800309cb85564462f339;l\u003d1154\n\nFor a lot of \"normal\" modules, I\u0027d believe it, but for apex/etc cases we do handle them in Soong.",
+      "parentUuid": "af225e57_b0607bef",
+      "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "143fa911_83341dac",
         "filename": "core/notice_files.mk",
         "patchSetId": 1
@@ -116,6 +134,24 @@
       "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95a96973_fd71f933",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-02-18T21:25:46Z",
+      "side": 1,
+      "message": "That\u0027s not what this is doing though, it\u0027s adding dependencies on all of them, and only using the first one ($\u003c on line 104)",
+      "parentUuid": "c50024c8_25bec92e",
+      "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
