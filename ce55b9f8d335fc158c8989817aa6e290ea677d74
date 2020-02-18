@@ -22,6 +22,30 @@
       "revId": "ce55b9f8d335fc158c8989817aa6e290ea677d74",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6b715f4_7a59419a",
+        "filename": "core/tasks/vts-core-tests.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-02-18T22:59:00Z",
+      "side": 1,
+      "message": "right, I forgot to package them in the zip.\n\nI will rewrite this mk to make it like other *ts mk (e.g., build/make/core/tasks/mts.mk)\n\nrefer to aosp/1238790",
+      "parentUuid": "1b66db15_66ed5d8b",
+      "range": {
+        "startLine": 31,
+        "startChar": 98,
+        "endLine": 31,
+        "endChar": 124
+      },
+      "revId": "ce55b9f8d335fc158c8989817aa6e290ea677d74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
