@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "92b8ffd7_7d62ef95",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1379,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-02-18T16:05:42Z",
+      "side": 1,
+      "message": "What part of my comment do you not understand? Is it the grammar?",
+      "parentUuid": "64aaa7c1_d9efa512",
+      "revId": "7bcf10fc528511fec628746880042a957703baff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "18c14c3d_786cfb5f",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Not sure what you are recommending here. What change would you make to improve the code?",
       "parentUuid": "18c14c3d_786cfb5f",
+      "revId": "7bcf10fc528511fec628746880042a957703baff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed376ec2_d3235c6d",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1397,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-02-18T16:05:42Z",
+      "side": 1,
+      "message": "Please be consistent with naming, specifically between symbols_only and exclude_target_dirs.",
+      "parentUuid": "8ed580f4_e86c4c16",
       "revId": "7bcf10fc528511fec628746880042a957703baff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
