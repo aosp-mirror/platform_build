@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "76ac4382_f5cf218e",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2353,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-02-18T05:47:50Z",
+      "side": 1,
+      "message": "Added this dependency in PS-4: INTERNAL_VENDOR_DEBUG_RAMDISK_FILES",
+      "range": {
+        "startLine": 2353,
+        "startChar": 56,
+        "endLine": 2353,
+        "endChar": 91
+      },
+      "revId": "6a68367e6ee460bab5edb96c20f80ce14999b5de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
