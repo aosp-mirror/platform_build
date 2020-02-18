@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45916731_21b041c6",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-02-18T23:47:58Z",
+      "side": 1,
+      "message": "could you double check the fallback? I believe this case should never happen because lack of main fingerprint would be fatal for image generation?",
+      "range": {
+        "startLine": 391,
+        "startChar": 0,
+        "endLine": 391,
+        "endChar": 79
+      },
+      "revId": "ffe6f67dbc00afb50e3af2a5a5e624cee70afb24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b18b9251_66d61f3d",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-02-18T23:47:58Z",
+      "side": 1,
+      "message": "should we try this fingerprint, and switch the try..except.. (as we do in CalculateFingerprint)",
+      "range": {
+        "startLine": 500,
+        "startChar": 0,
+        "endLine": 500,
+        "endChar": 74
+      },
+      "revId": "ffe6f67dbc00afb50e3af2a5a5e624cee70afb24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
