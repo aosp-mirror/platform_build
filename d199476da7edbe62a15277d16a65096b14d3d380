@@ -102,6 +102,24 @@
     },
     {
       "key": {
+        "uuid": "07549b70_867832b0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-19T01:37:55Z",
+      "side": 1,
+      "message": "Hmmm... fixing that will require replacing the OptionalPath NoticeFile() with a Paths NoticeFiles() and changing all references.\n\nI will handle that in a separate (soon-ish but later) change to keep this change small.",
+      "parentUuid": "8dc05cbc_d17c7c39",
+      "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "143fa911_83341dac",
         "filename": "core/notice_files.mk",
         "patchSetId": 1
@@ -152,6 +170,24 @@
       "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d33efc37_8d9be7a3",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-19T01:37:55Z",
+      "side": 1,
+      "message": "Good catch! Thanks!\n\nI would like at some point to replace `cat` at line 104 with something that preserves the mapping from notice/license filename to content,but for a first step, `cat` will do. I changed $\u003c to $^ on line 104.",
+      "parentUuid": "95a96973_fd71f933",
+      "revId": "d199476da7edbe62a15277d16a65096b14d3d380",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
