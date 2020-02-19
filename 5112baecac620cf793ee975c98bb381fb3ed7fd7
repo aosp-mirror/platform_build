@@ -16,6 +16,24 @@
       "revId": "5112baecac620cf793ee975c98bb381fb3ed7fd7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5850fbb_787c88fc",
+        "filename": "core/tasks/vts-core-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-02-19T18:45:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef26ac11_7abf0ed9",
+      "revId": "5112baecac620cf793ee975c98bb381fb3ed7fd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
