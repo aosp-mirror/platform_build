@@ -251,6 +251,12 @@ class SparseImage(object):
       for line in f:
         fn, ranges_text = line.rstrip().split(None, 1)
         ranges = rangelib.RangeSet.parse(ranges_text)
+
+        # Note: e2fsdroid records holes in the extent tree as "0" blocks.
+        # This causes confusion because clobbered_blocks always includes
+        # the superblock (physical block #0). Since the 0 blocks here do
+        # not represent actual physical blocks, remove them from the set.
+        ranges = ranges.subtract(rangelib.RangeSet("0"))
         ranges.extra['text_str'] = ranges_text
 
         if allow_shared_blocks:
