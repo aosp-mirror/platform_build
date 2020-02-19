@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "c255d649_41a47f5e",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-02-19T19:03:46Z",
+      "side": 1,
+      "message": "I misread this, this is fine as long as you depend on $(critical_components_static_inputs) and not $(critical_components_static).",
+      "parentUuid": "ac382619_07c3d5eb",
+      "revId": "e587c03f16f19a4ce42151261a961fce9afa9402",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08ed8df3_dbe94064",
         "filename": "core/line_coverage.mk",
         "patchSetId": 13
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "I added a comment for it: When line coverage is enabled (NATIVE_LINE_COVERAGE is set),\nmake creates a \"coverage\" directory and stores all profile (*.gcno) files inside.\nWe need everything that is stored inside this directory.",
       "parentUuid": "08ed8df3_dbe94064",
+      "revId": "e587c03f16f19a4ce42151261a961fce9afa9402",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3914e66f_be8ad849",
+        "filename": "core/line_coverage.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-02-19T19:03:46Z",
+      "side": 1,
+      "message": "You may find this to be non-deterministic if anything that is not a dependency of this rule (something that is not a fuzz target or a critical component) writes *.gcno files into this directory.",
+      "parentUuid": "e5f48795_56cd5e05",
       "revId": "e587c03f16f19a4ce42151261a961fce9afa9402",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
