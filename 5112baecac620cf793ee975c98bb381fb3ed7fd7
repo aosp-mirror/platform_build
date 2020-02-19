@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef26ac11_7abf0ed9",
+        "filename": "core/tasks/vts-core-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-02-19T17:19:12Z",
+      "side": 1,
+      "message": "This would need to be a dependency of $(compatibility_zip) if you intend these artifacts to be packaged into the zip file",
+      "revId": "5112baecac620cf793ee975c98bb381fb3ed7fd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
