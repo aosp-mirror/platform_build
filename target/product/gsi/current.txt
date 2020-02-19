@@ -196,6 +196,7 @@ VNDK-core: android.hardware.secure_element@1.1.so
 VNDK-core: android.hardware.secure_element@1.2.so
 VNDK-core: android.hardware.sensors@1.0.so
 VNDK-core: android.hardware.sensors@2.0.so
+VNDK-core: android.hardware.sensors@2.1.so
 VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
 VNDK-core: android.hardware.soundtrigger@2.1.so
