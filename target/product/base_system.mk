@@ -64,7 +64,6 @@ PRODUCT_PACKAGES += \
     com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
-    com.android.os.statsd \
     com.android.sdkext \
     com.android.tethering \
     com.android.tzdata \
@@ -251,7 +250,6 @@ PRODUCT_PACKAGES += \
     sm \
     snapshotctl \
     SoundPicker \
-    statsd \
     storaged \
     surfaceflinger \
     svc \
