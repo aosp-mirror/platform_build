@@ -57,6 +57,8 @@ my_module_arch_supported :=
 ## Copy headers to the install tree
 ###########################################################
 ifdef LOCAL_COPY_HEADERS
-$(call pretty-warning,LOCAL_COPY_HEADERS is deprecated. See $(CHANGES_URL)#copy_headers)
+$(if $(filter true,$(BUILD_BROKEN_USES_BUILD_COPY_HEADERS)),\
+  $(call pretty-warning,LOCAL_COPY_HEADERS is deprecated. See $(CHANGES_URL)#copy_headers),\
+  $(call pretty-error,LOCAL_COPY_HEADERS is obsolete. See $(CHANGES_URL)#copy_headers))
 include $(BUILD_SYSTEM)/copy_headers.mk
 endif
