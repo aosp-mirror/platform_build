@@ -82,6 +82,7 @@ VNDK-core: android.hardware.automotive.can@1.0.so
 VNDK-core: android.hardware.automotive.evs@1.0.so
 VNDK-core: android.hardware.automotive.evs@1.1.so
 VNDK-core: android.hardware.automotive.occupant_awareness-V1-ndk_platform.so
+VNDK-core: android.hardware.automotive.sv@1.0.so
 VNDK-core: android.hardware.automotive.vehicle@2.0.so
 VNDK-core: android.hardware.biometrics.face@1.0.so
 VNDK-core: android.hardware.biometrics.face@1.1.so
