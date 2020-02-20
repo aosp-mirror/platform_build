@@ -272,6 +272,7 @@ PRODUCT_PACKAGES += \
     WallpaperBackup \
     watchdogd \
     wificond \
+    wifi.rc \
     wm \
 
 # VINTF data for system image
