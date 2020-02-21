@@ -12,9 +12,18 @@
 #   my_embedded_prebuilt_jni_libs, prebuilt jni libs embedded in prebuilt apk.
 #
 
+my_sdk_variant = $(1)
+ifneq (,$(and $(my_embed_jni),$(LOCAL_SDK_VERSION)))
+  # Soong produces $(lib).so in $(lib).sdk_intermediates so that the library
+  # has the correct name for embedding in an APK.  Append .sdk to the name
+  # of the intermediates directory, but not the .so name.
+  my_sdk_variant = $(call use_soong_sdk_libraries,$(1))
+endif
+
 my_jni_shared_libraries := $(strip \
-    $(foreach lib,$(LOCAL_JNI_SHARED_LIBRARIES), \
-      $(call intermediates-dir-for,SHARED_LIBRARIES,$(lib),,,$(my_2nd_arch_prefix))/$(lib).so))
+  $(foreach lib,$(LOCAL_JNI_SHARED_LIBRARIES), \
+    $(call intermediates-dir-for,SHARED_LIBRARIES,$(call my_sdk_variant,$(lib)),,,$(my_2nd_arch_prefix))/$(lib).so))
+
 
 # App-specific lib path.
 my_app_lib_path := $(dir $(LOCAL_INSTALLED_MODULE))lib/$(TARGET_$(my_2nd_arch_prefix)ARCH)
@@ -115,7 +124,18 @@ ifneq ($(strip $(LOCAL_JNI_SHARED_LIBRARIES)),)
     my_allowed_types := $(my_allowed_ndk_types) native:platform native:product native:vendor native:vndk native:vndk_private native:platform_vndk
   endif
 
-  my_link_deps := $(addprefix SHARED_LIBRARIES:,$(LOCAL_JNI_SHARED_LIBRARIES))
+  ifneq (,$(LOCAL_SDK_VERSION))
+    ifeq ($(SOONG_ANDROID_MK),$(LOCAL_MODULE_MAKEFILE))
+      # SOONG_SDK_VARIANT_MODULES isn't complete yet while parsing Soong modules, and Soong has
+      # already ensured that apps link against the correct SDK variants, rewrite all JNI libraries
+      # to the SDK variant.
+      my_link_deps := $(addprefix SHARED_LIBRARIES:,$(addsuffix .sdk,$(LOCAL_JNI_SHARED_LIBRARIES)))
+    else
+      my_link_deps := $(addprefix SHARED_LIBRARIES:,$(call use_soong_sdk_libraries,$(LOCAL_JNI_SHARED_LIBRARIES)))
+    endif
+  else
+    my_link_deps := $(addprefix SHARED_LIBRARIES:,$(LOCAL_JNI_SHARED_LIBRARIES))
+  endif
 
   my_common :=
   include $(BUILD_SYSTEM)/link_type.mk
