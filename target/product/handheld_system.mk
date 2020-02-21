@@ -57,7 +57,6 @@ PRODUCT_PACKAGES += \
     MtpService \
     MusicFX \
     NfcNci \
-    OsuLogin \
     PacProcessor \
     PrintRecommendationService \
     PrintSpooler \
