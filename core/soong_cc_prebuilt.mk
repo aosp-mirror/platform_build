@@ -128,10 +128,11 @@ ifeq ($(my_check_same_vndk_variants),true)
   $(same_vndk_variants_stamp): PRIVATE_TOOLS_PREFIX := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)TOOLS_PREFIX)
 
   $(same_vndk_variants_stamp): $(my_core_shared_lib) $(LOCAL_PREBUILT_MODULE_FILE)
-		$(call verify-vndk-libs-identical,\
-		    $(PRIVATE_CORE_VARIANT),\
-		    $(PRIVATE_VENDOR_VARIANT),\
-		    $(PRIVATE_TOOLS_PREFIX))
+	$(call verify-vndk-libs-identical,\
+	    $(PRIVATE_CORE_VARIANT),\
+	    $(PRIVATE_VENDOR_VARIANT),\
+	    $(PRIVATE_TOOLS_PREFIX))
+	touch $@
 
   $(LOCAL_BUILT_MODULE): $(same_vndk_variants_stamp)
 endif
