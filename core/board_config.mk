@@ -282,6 +282,7 @@ endif
 # Now we can substitute with the real value of TARGET_COPY_OUT_DEBUG_RAMDISK
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 TARGET_COPY_OUT_DEBUG_RAMDISK := debug_ramdisk/first_stage_ramdisk
+TARGET_COPY_OUT_VENDOR_DEBUG_RAMDISK := vendor_debug_ramdisk/first_stage_ramdisk
 TARGET_COPY_OUT_TEST_HARNESS_RAMDISK := test_harness_ramdisk/first_stage_ramdisk
 endif
 
@@ -621,16 +622,16 @@ endif
 ###########################################
 # Handle BUILD_BROKEN_USES_BUILD_*
 
-$(foreach m,$(filter-out BUILD_COPY_HEADERS,$(DEFAULT_WARNING_BUILD_MODULE_TYPES)),\
+$(foreach m,$(DEFAULT_WARNING_BUILD_MODULE_TYPES),\
   $(if $(filter false,$(BUILD_BROKEN_USES_$(m))),\
     $(KATI_obsolete_var $(m),Please convert to Soong),\
     $(KATI_deprecated_var $(m),Please convert to Soong)))
 
-$(if $(filter false,$(BUILD_BROKEN_USES_BUILD_COPY_HEADERS)),\
-  $(KATI_obsolete_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers),\
-  $(KATI_deprecated_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers))
+$(if $(filter true,$(BUILD_BROKEN_USES_BUILD_COPY_HEADERS)),\
+  $(KATI_deprecated_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers),\
+  $(KATI_obsolete_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers))
 
-$(foreach m,$(DEFAULT_ERROR_BUILD_MODULE_TYPES),\
+$(foreach m,$(filter-out BUILD_COPY_HEADERS,$(DEFAULT_ERROR_BUILD_MODULE_TYPES)),\
   $(if $(filter true,$(BUILD_BROKEN_USES_$(m))),\
     $(KATI_deprecated_var $(m),Please convert to Soong),\
     $(KATI_obsolete_var $(m),Please convert to Soong)))

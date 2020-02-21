@@ -64,7 +64,6 @@ PRODUCT_PACKAGES += \
     com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
-    com.android.os.statsd \
     com.android.sdkext \
     com.android.tethering \
     com.android.tzdata \
@@ -251,7 +250,6 @@ PRODUCT_PACKAGES += \
     sm \
     snapshotctl \
     SoundPicker \
-    statsd \
     storaged \
     surfaceflinger \
     svc \
@@ -274,6 +272,7 @@ PRODUCT_PACKAGES += \
     WallpaperBackup \
     watchdogd \
     wificond \
+    wifi.rc \
     wm \
 
 # VINTF data for system image
@@ -334,7 +333,6 @@ PRODUCT_BOOT_JARS := \
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
     com.android.conscrypt:conscrypt \
-    com.android.ipsec:ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.os.statsd:framework-statsd \
