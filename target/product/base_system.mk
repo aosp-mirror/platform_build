@@ -212,7 +212,6 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NativeAdbDataLoaderService \
     NetworkStackNext \
     org.apache.http.legacy \
     otacerts \
