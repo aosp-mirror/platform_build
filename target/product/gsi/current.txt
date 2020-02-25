@@ -155,7 +155,6 @@ VNDK-core: android.hardware.power@1.3.so
 VNDK-core: android.hardware.radio.config@1.0.so
 VNDK-core: android.hardware.radio.config@1.1.so
 VNDK-core: android.hardware.radio.config@1.2.so
-VNDK-core: android.hardware.radio.config@1.3.so
 VNDK-core: android.hardware.radio.deprecated@1.0.so
 VNDK-core: android.hardware.radio@1.0.so
 VNDK-core: android.hardware.radio@1.1.so
