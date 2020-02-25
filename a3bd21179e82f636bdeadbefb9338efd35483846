@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8668975b_1493c71e",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-02-25T23:35:34Z",
+      "side": 1,
+      "message": "Won\u0027t this result in all license files merged without a clear separator between them, unlike what you do in Soong? I suspect you could do some linux command tricks to mimic it?",
+      "revId": "a3bd21179e82f636bdeadbefb9338efd35483846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
