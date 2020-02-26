@@ -69,6 +69,24 @@
       "revId": "a3bd21179e82f636bdeadbefb9338efd35483846",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bfc1ddbe_69a881da",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-02-26T19:32:36Z",
+      "side": 1,
+      "message": "You could simply do something like this and make it better for everyone right now. Why not just do it then?\n\n$(hide) awk \u0027FNR\u003d\u003d1 \u0026\u0026 NR \u003e 1 {print \"\"}1\u0027 $^ \u003e $@\n\n(I pieced it together from some web search results. There might be a better way to do this.)",
+      "parentUuid": "3f6ee67c_077350ec",
+      "revId": "a3bd21179e82f636bdeadbefb9338efd35483846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
