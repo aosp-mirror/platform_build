@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b5534c52_73e31795",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-26T19:15:22Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "f3b6064b_a20a6098",
+      "revId": "a3bd21179e82f636bdeadbefb9338efd35483846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8668975b_1493c71e",
         "filename": "core/notice_files.mk",
         "patchSetId": 5
@@ -33,6 +51,24 @@
       "revId": "a3bd21179e82f636bdeadbefb9338efd35483846",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f6ee67c_077350ec",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-26T19:15:22Z",
+      "side": 1,
+      "message": "Ack\n\nAs I said to Dan last week:\n\u003e\u003e\nI would like at some point to replace `cat` at line 104 with something that preserves the mapping from notice/license filename to content,but for a first step, `cat` will do. I changed $\u003c to $^ on line 104.\n\u003c\u003c\n\nIn the near future, I expect to replace `cat` with a script. The open question is: \"Exactly which script?\" In the meantime, this change is a big improvement allowing us to delete 150+ redundant NOTICE files and simplify the instructions for importing a third-party library.\n\nUnlike the case with arbitrary notices for apex files etc., these files are related files in the same directory. If someone cannot wait for the eventual replacement and insists on having a blank line, they can edit the LICENSE and/or the NOTICE to add a newline.",
+      "parentUuid": "8668975b_1493c71e",
+      "revId": "a3bd21179e82f636bdeadbefb9338efd35483846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
