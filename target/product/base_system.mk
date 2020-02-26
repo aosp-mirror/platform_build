@@ -59,7 +59,6 @@ PRODUCT_PACKAGES += \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.sdkext \
-    com.android.telephony \
     com.android.tethering \
     com.android.tzdata \
     ContactsProvider \
