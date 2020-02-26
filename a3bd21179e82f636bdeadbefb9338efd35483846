@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "f3b6064b_a20a6098",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-26T01:18:47Z",
+      "side": 1,
+      "message": "Probably better if LICENSE comes before NOTICE.",
+      "revId": "a3bd21179e82f636bdeadbefb9338efd35483846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8668975b_1493c71e",
         "filename": "core/notice_files.mk",
         "patchSetId": 5
