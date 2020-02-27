@@ -64,9 +64,7 @@ PRODUCT_PACKAGES += \
     com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
-    com.android.os.statsd \
     com.android.sdkext \
-    com.android.telephony \
     com.android.tethering \
     com.android.tzdata \
     com.android.wifi \
@@ -214,7 +212,6 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NativeAdbDataLoaderService \
     NetworkStackNext \
     org.apache.http.legacy \
     otacerts \
@@ -252,7 +249,6 @@ PRODUCT_PACKAGES += \
     sm \
     snapshotctl \
     SoundPicker \
-    statsd \
     storaged \
     surfaceflinger \
     svc \
@@ -275,6 +271,7 @@ PRODUCT_PACKAGES += \
     WallpaperBackup \
     watchdogd \
     wificond \
+    wifi.rc \
     wm \
 
 # VINTF data for system image
@@ -324,27 +321,17 @@ endif
 
 # The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
-    $(TARGET_CORE_JARS) \
+    $(ART_APEX_JARS) \
     framework-minus-apex \
     ext \
     telephony-common \
     voip-common \
     ims-common \
-    framework-sdkextensions \
-    framework-statsd \
-    ike \
-    updatable-media \
-    framework-mediaprovider \
-    framework-permission \
-    framework-appsearch \
-    framework-wifi \
-    framework-tethering \
     framework-telephony
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
     com.android.conscrypt:conscrypt \
-    com.android.ipsec:ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.os.statsd:framework-statsd \

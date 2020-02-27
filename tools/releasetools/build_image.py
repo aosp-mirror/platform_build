@@ -287,7 +287,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
         build_command.extend(["-U", prop_dict["uuid"]])
       if "hash_seed" in prop_dict:
         build_command.extend(["-S", prop_dict["hash_seed"]])
-    if "ext4_share_dup_blocks" in prop_dict:
+    if prop_dict.get("ext4_share_dup_blocks") == "true":
       build_command.append("-c")
     if (needs_projid):
       build_command.extend(["--inode_size", "512"])
