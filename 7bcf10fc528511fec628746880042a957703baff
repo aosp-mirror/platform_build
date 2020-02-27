@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "8b163983_55609c04",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1379,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-27T00:52:57Z",
+      "side": 1,
+      "message": "A apologize for my confusion. Your grammar was perfect. I suspect you don\u0027t need to worry about that.\n\nI changed the comment to reflect that both build artifacts and notices are going into system images.",
+      "parentUuid": "92b8ffd7_7d62ef95",
+      "revId": "7bcf10fc528511fec628746880042a957703baff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "18c14c3d_786cfb5f",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -105,6 +123,24 @@
       "revId": "7bcf10fc528511fec628746880042a957703baff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94bde286_a9a9ef32",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1397,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-02-27T00:52:57Z",
+      "side": 1,
+      "message": "I changed the code to make it clearer the variables are only incidentally equal.",
+      "parentUuid": "ed376ec2_d3235c6d",
+      "revId": "7bcf10fc528511fec628746880042a957703baff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
