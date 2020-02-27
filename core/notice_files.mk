@@ -6,7 +6,7 @@ $(call record-module-type,NOTICE_FILE)
 ifneq ($(LOCAL_NOTICE_FILE),)
 notice_file:=$(strip $(LOCAL_NOTICE_FILE))
 else
-notice_file:=$(strip $(wildcard $(LOCAL_PATH)/NOTICE))
+notice_file:=$(strip $(wildcard $(LOCAL_PATH)/LICENSE $(LOCAL_PATH)/LICENCE $(LOCAL_PATH)/NOTICE))
 endif
 
 ifeq ($(LOCAL_MODULE_CLASS),GYP)
@@ -101,7 +101,7 @@ $(installed_notice_file): PRIVATE_INSTALLED_MODULE := $(module_installed_filenam
 $(installed_notice_file): $(notice_file)
 	@echo Notice file: $< -- $@
 	$(hide) mkdir -p $(dir $@)
-	$(hide) cat $< > $@
+	$(hide) awk 'FNR==1 && NR > 1 {print "\n"} {print}' $^ > $@
 
 ifdef LOCAL_INSTALLED_MODULE
 # Make LOCAL_INSTALLED_MODULE depend on NOTICE files if they exist
