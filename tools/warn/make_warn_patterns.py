@@ -16,8 +16,8 @@
 """Warning patterns for build make tools."""
 
 # pylint:disable=relative-beyond-top-level
-from .cpp_warn_patterns import compile_patterns
 # pylint:disable=g-importing-member
+from .cpp_warn_patterns import compile_patterns
 from .severity import Severity
 
 warn_patterns = [
