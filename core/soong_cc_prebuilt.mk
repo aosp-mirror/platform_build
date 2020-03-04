@@ -112,7 +112,9 @@ endif
 my_check_same_vndk_variants :=
 ifeq ($(LOCAL_CHECK_SAME_VNDK_VARIANTS),true)
   ifeq ($(filter hwaddress address, $(SANITIZE_TARGET)),)
-    my_check_same_vndk_variants := true
+    ifneq ($(CLANG_COVERAGE),true)
+      my_check_same_vndk_variants := true
+    endif
   endif
 endif
 
