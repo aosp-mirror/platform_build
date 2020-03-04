@@ -52,6 +52,7 @@ genrule {
 
 cc_library_headers {
     name: "oemaids_headers",
+    vendor_available: true,
     generated_headers: ["oemaids_header_gen"],
     export_generated_headers: ["oemaids_header_gen"],
 }

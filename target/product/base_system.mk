@@ -59,7 +59,6 @@ PRODUCT_PACKAGES += \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.sdkext \
-    com.android.telephony \
     com.android.tethering \
     com.android.tzdata \
     ContactsProvider \
@@ -318,20 +317,15 @@ endif
 
 # The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
-    $(TARGET_CORE_JARS) \
+    $(ART_APEX_JARS) \
     framework-minus-apex \
     ext \
     telephony-common \
     voip-common \
     ims-common \
-    framework-sdkextensions \
-    ike \
-    updatable-media \
-    framework-tethering
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
-    com.android.ipsec:ike \
     com.android.media:updatable-media \
     com.android.sdkext:framework-sdkextensions \
     com.android.tethering:framework-tethering

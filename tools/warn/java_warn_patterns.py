@@ -16,8 +16,8 @@
 """Warning patterns for Java compiler tools."""
 
 # pylint:disable=relative-beyond-top-level
-from .cpp_warn_patterns import compile_patterns
 # pylint:disable=g-importing-member
+from .cpp_warn_patterns import compile_patterns
 from .severity import Severity
 
 
@@ -485,16 +485,24 @@ warn_patterns = [
     java_medium('Static method should be qualified',
                 [r'.*\.java:.*: warning: \[static\] static method should be qualified']),
     medium('AbstractInner'),
+    medium('BothPackageInfoAndHtml'),
     medium('CallbackName'),
     medium('ExecutorRegistration'),
+    medium('HiddenTypeParameter'),
     medium('JavaApiUsedByMainlineModule'),
     medium('ListenerLast'),
+    medium('MinMaxConstant'),
     medium('MissingBuildMethod'),
     medium('NoByteOrShort'),
     medium('OverlappingConstants'),
     medium('SetterReturnsThis'),
+    medium('StreamFiles'),
     medium('Typo'),
     medium('UseIcu'),
+    medium('fallthrough'),
+    medium('overrides'),
+    medium('serial'),
+    medium('try'),
     high('AndroidInjectionBeforeSuper',
          'AndroidInjection.inject() should always be invoked before calling super.lifecycleMethod()'),
     high('AndroidJdkLibsChecker',
@@ -783,6 +791,8 @@ warn_patterns = [
     # Other javac tool warnings
     java_medium('addNdkApiCoverage failed to getPackage',
                 [r".*: warning: addNdkApiCoverage failed to getPackage"]),
+    java_medium('bad path element',
+                [r".*: warning: \[path\] bad path element .*\.jar"]),
     java_medium('Supported version from annotation processor',
                 [r".*: warning: Supported source version .+ from annotation processor"]),
 ]

@@ -20,24 +20,26 @@ This file stores definition for class Severity that is used in warn_patterns.
 
 
 # pylint:disable=old-style-class
+class SeverityInfo:
+
+  def __init__(self, value, color, column_header, header):
+    self.value = value
+    self.color = color
+    self.column_header = column_header
+    self.header = header
+
+
+# pylint:disable=old-style-class
 class Severity:
   """Class of Severity levels where each level is a SeverityInfo."""
-
-  class SeverityInfo:
-
-    def __init__(self, value, color, column_header, header):
-      self.value = value
-      self.color = color
-      self.column_header = column_header
-      self.header = header
 
   # SEVERITY_UNKNOWN should never occur since every warn_pattern listed has
   # a specified severity. It exists for protobuf, the other values must
   # map to non-zero values (since 0 is reserved for a default UNKNOWN), but
   # logic in clang_tidy_warn.py assumes severity level values are consecutive
   # ints starting with 0.
-  SEVERITY_UNKNOWN = SeverityInfo(0, 'blueviolet', 'Errors of unknown severity',
-                                  'Unknown severity (should not occur)')
+  SEVERITY_UNKNOWN = SeverityInfo(0, 'blueviolet', 'Unknown',
+                                  'Unknown-severity warnings)')
   FIXMENOW = SeverityInfo(1, 'fuschia', 'FixNow',
                           'Critical warnings, fix me now')
   HIGH = SeverityInfo(2, 'red', 'High', 'High severity warnings')
