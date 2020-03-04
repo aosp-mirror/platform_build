@@ -176,17 +176,23 @@ ifneq ($(TARGET_IS_64_BIT),true)
 _binder32 := _binder32
 endif
 endif
+_vndk_versions := $(PRODUCT_EXTRA_VNDK_VERSIONS)
+ifneq ($(BOARD_VNDK_VERSION),current)
+	_vndk_versions += $(BOARD_VNDK_VERSION)
+endif
 # Phony targets are installed for **.libraries.txt files.
 # TODO(b/141450808): remove following VNDK phony targets when **.libraries.txt files are provided by apexes.
 LOCAL_REQUIRED_MODULES := \
-    $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),vndk_v$(vndk_ver)_$(TARGET_ARCH)$(_binder32))
+    $(foreach vndk_ver,$(_vndk_versions),vndk_v$(vndk_ver)_$(TARGET_ARCH)$(_binder32))
 _binder32 :=
 include $(BUILD_PHONY_PACKAGE)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_apex_snapshot_package
-LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver))
+LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(_vndk_versions),com.android.vndk.v$(vndk_ver))
 include $(BUILD_PHONY_PACKAGE)
+
+_vndk_versions :=
 
 endif # BOARD_VNDK_VERSION is set
 

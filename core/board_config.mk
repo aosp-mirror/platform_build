@@ -282,6 +282,7 @@ endif
 # Now we can substitute with the real value of TARGET_COPY_OUT_DEBUG_RAMDISK
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 TARGET_COPY_OUT_DEBUG_RAMDISK := debug_ramdisk/first_stage_ramdisk
+TARGET_COPY_OUT_VENDOR_DEBUG_RAMDISK := vendor_debug_ramdisk/first_stage_ramdisk
 TARGET_COPY_OUT_TEST_HARNESS_RAMDISK := test_harness_ramdisk/first_stage_ramdisk
 endif
 
@@ -582,9 +583,8 @@ endef
 
 ifdef BOARD_VNDK_VERSION
   ifneq ($(BOARD_VNDK_VERSION),current)
-    $(error BOARD_VNDK_VERSION: Only "current" is implemented)
+    $(call check_vndk_version,$(BOARD_VNDK_VERSION))
   endif
-
   TARGET_VENDOR_TEST_SUFFIX := /vendor
 else
   TARGET_VENDOR_TEST_SUFFIX :=

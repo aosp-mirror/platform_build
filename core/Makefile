@@ -501,6 +501,12 @@ $(INSTALLED_BUILD_PROP_TARGET): $(intermediate_system_build_prop)
 INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
 
+ifdef TARGET_VENDOR_PROP
+vendor_prop_files := $(TARGET_VENDOR_PROP)
+else
+vendor_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/vendor.prop)
+endif
+
 ifdef property_overrides_split_enabled
 FINAL_VENDOR_BUILD_PROPERTIES += \
     $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES))
@@ -508,7 +514,7 @@ FINAL_VENDOR_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_VENDOR_BUILD_PROPERTIES),=)
 endif  # property_overrides_split_enabled
 
-$(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(intermediate_system_build_prop)
+$(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(intermediate_system_build_prop) $(vendor_prop_files)
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) echo > $@
@@ -544,6 +550,16 @@ endif
 	        echo "#" >> $@;
 	$(hide) cat $(INSTALLED_ANDROID_INFO_TXT_TARGET) | grep 'require version-' | sed -e 's/require version-/ro.build.expect./g' >> $@
 ifdef property_overrides_split_enabled
+	$(hide) $(foreach file,$(vendor_prop_files), \
+	    if [ -f "$(file)" ]; then \
+	        echo Target vendor properties from: "$(file)"; \
+	        echo "" >> $@; \
+	        echo "#" >> $@; \
+	        echo "# from $(file)" >> $@; \
+	        echo "#" >> $@; \
+	        cat $(file) >> $@; \
+	        echo "# end of $(file)" >> $@; \
+	    fi;)
 	$(hide) $(foreach line,$(FINAL_VENDOR_BUILD_PROPERTIES), \
 	    echo "$(line)" >> $@;)
 endif  # property_overrides_split_enabled
@@ -595,12 +611,18 @@ endif  # BOARD_USES_PRODUCTIMAGE
 INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_ODM_BUILD_PROP_TARGET)
 
+ifdef TARGET_ODM_PROP
+odm_prop_files := $(TARGET_ODM_PROP)
+else
+odm_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/odm.prop)
+endif
+
 FINAL_ODM_BUILD_PROPERTIES += \
     $(call collapse-pairs, $(PRODUCT_ODM_PROPERTIES))
 FINAL_ODM_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_ODM_BUILD_PROPERTIES),=)
 
-$(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS)
+$(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(odm_prop_files)
 	@echo Target odm buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) echo > $@
@@ -608,6 +630,16 @@ $(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS)
 	$(hide) echo ro.odm.product.cpu.abilist32="$(TARGET_CPU_ABI_LIST_32_BIT)">>$@
 	$(hide) echo ro.odm.product.cpu.abilist64="$(TARGET_CPU_ABI_LIST_64_BIT)">>$@
 	$(hide) $(call generate-common-build-props,odm,$@)
+	$(hide) $(foreach file,$(odm_prop_files), \
+	    if [ -f "$(file)" ]; then \
+	        echo Target odm properties from: "$(file)"; \
+	        echo "" >> $@; \
+	        echo "#" >> $@; \
+	        echo "# from $(file)" >> $@; \
+	        echo "#" >> $@; \
+	        cat $(file) >> $@; \
+	        echo "# end of $(file)" >> $@; \
+	    fi;)
 	$(hide) echo "#" >> $@; \
 	        echo "# ADDITIONAL ODM BUILD PROPERTIES" >> $@; \
 	        echo "#" >> $@;
@@ -734,7 +766,6 @@ $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1) $(6)
 	$(if $(6),\
 	  unzip -qo -d $$(PRIVATE_MODULE_DIR) $$(PRIVATE_MODULE_ARCHIVE); \
 	  mkdir -p $$(PRIVATE_OUTPUT_DIR)/lib; \
-	  rm -rf $$(PRIVATE_OUTPUT_DIR)/lib/modules; \
 	  cp -r $$(PRIVATE_MODULE_DIR) $$(PRIVATE_OUTPUT_DIR)/lib/; \
 	  find $$(PRIVATE_MODULE_DIR) -type f -name *.ko | xargs basename -a > $$(PRIVATE_LOAD_FILE); \
 	)
@@ -1283,6 +1314,7 @@ endif # BUILDING_VENDOR_BOOT_IMAGE
 # $(5) - Directory to use.  Notice files are all $(5)/src.  Other
 #		 directories in there will be used for scratch
 # $(6) - Dependencies for the output files
+# $(7) - Directories to exclude
 #
 # The algorithm here is that we go collect a hash for each of the notice
 # files and write the names of the files that match that hash.  Then
@@ -1300,7 +1332,7 @@ $(2) $(3): PRIVATE_MESSAGE := $(4)
 $(2) $(3): PRIVATE_DIR := $(5)
 $(2) : $(3)
 $(3) : $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
-	build/make/tools/generate-notice-files.py --text-output $(2) \
+	build/make/tools/generate-notice-files.py --text-output $(2) $(foreach xdir, $(7), -e $(xdir) )\
 	    $(if $(filter $(1),xml_excluded_vendor_product_odm),-e vendor -e product -e system_ext -e odm --xml-output, \
 	      $(if $(filter $(1),xml_excluded_system_product_odm),-e system -e product -e system_ext -e odm --xml-output, \
 	        $(if $(filter $(1),xml_product),-i product --xml-output, \
@@ -1325,6 +1357,11 @@ kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
 winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
 pdk_fusion_notice_files := $(filter $(TARGET_OUT_NOTICE_FILES)/%, $(ALL_PDK_FUSION_FILES))
 
+# Some targets get included under $(PRODUCT_OUT) for debug symbols or other
+# reasons--not to be flashed onto any device. Targets under these directories
+# need no associated notice file on the device UI.
+exclude_target_dirs := apex
+
 # TODO(b/69865032): Make PRODUCT_NOTICE_SPLIT the default behavior.
 ifneq ($(PRODUCT_NOTICE_SPLIT),true)
 target_notice_file_html := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html
@@ -1335,7 +1372,8 @@ $(eval $(call combine-notice-files, html, \
 	        $(target_notice_file_html), \
 	        "Notices for files contained in the filesystem images in this directory:", \
 	        $(TARGET_OUT_NOTICE_FILES), \
-	        $(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)))
+	        $(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files), \
+	        $(exclude_target_dirs)))
 $(target_notice_file_html_gz): $(target_notice_file_html) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
 $(installed_notice_html_or_xml_gz): $(target_notice_file_html_gz)
@@ -1369,10 +1407,13 @@ installed_odm_notice_xml_gz := $(TARGET_OUT_ODM)/etc/NOTICE.xml.gz
 # being built. A notice xml file must depend on all modules that could potentially
 # install a license file relevant to it.
 license_modules := $(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)
+# Only files copied to a system image need system image notices.
+license_modules := $(filter $(PRODUCT_OUT)/%,$(license_modules))
 # Phonys/fakes don't have notice files (though their deps might)
 license_modules := $(filter-out $(TARGET_OUT_FAKE)/%,$(license_modules))
 # testcases are not relevant to the system image.
 license_modules := $(filter-out $(TARGET_OUT_TESTCASES)/%,$(license_modules))
+# filesystem images: system, vendor, product, system_ext, and odm
 license_modules_system := $(filter $(TARGET_OUT)/%,$(license_modules))
 license_modules_vendor := $(filter $(TARGET_OUT_VENDOR)/%,$(license_modules))
 license_modules_product := $(filter $(TARGET_OUT_PRODUCT)/%,$(license_modules))
@@ -1383,16 +1424,44 @@ license_modules_agg := $(license_modules_system) \
                        $(license_modules_product) \
                        $(license_modules_system_ext) \
                        $(license_modules_odm)
+# targets used for debug symbols only and do not get copied to the device
+license_modules_symbols_only := $(filter $(PRODUCT_OUT)/apex/%,$(license_modules))
+
 license_modules_rest := $(filter-out $(license_modules_agg),$(license_modules))
+license_modules_rest := $(filter-out $(license_modules_symbols_only),$(license_modules_rest))
+
+# Identify the other targets we expect to have notices for:
+# targets copied to the device but are not readable by the UI (e.g. must boot
+# into a different partition to read or don't have an associated /etc
+# directory) must have their notices built somewhere readable.
+license_modules_rehomed := $(filter-out $(PRODUCT_OUT)/%/%,$(license_modules_rest))  # files in root have no /etc
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/recovery/%,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/root/%,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/data/%,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/ramdisk/%,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/debug_ramdisk/%,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/vendor-ramdisk/%,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/persist/%,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/persist.img,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/system_other/%,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/kernel%,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/%.img,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/%.bin,$(license_modules_rest))
+
+# after removing targets in system images, targets reported in system images, and
+# targets used for debug symbols that do not need notices, nothing must remain.
+license_modules_rest := $(filter-out $(license_modules_rehomed),$(license_modules_rest))
+$(call maybe-print-list-and-error, $(license_modules_rest), \
+        "Targets added under $(PRODUCT_OUT)/ unaccounted for notice handling.")
 
 # If we are building in a configuration that includes a prebuilt vendor.img, we can't
 # update its notice file, so include those notices in the system partition instead
 ifdef BOARD_PREBUILT_VENDORIMAGE
-license_modules_system += $(license_modules_rest)
+license_modules_system += $(license_modules_rehomed)
 system_xml_directories := xml_excluded_vendor_product_odm
 system_notice_file_message := "Notices for files contained in all filesystem images except vendor/system_ext/product/odm in this directory:"
 else
-license_modules_vendor += $(license_modules_rest)
+license_modules_vendor += $(license_modules_rehomed)
 system_xml_directories := xml_system
 system_notice_file_message := "Notices for files contained in the system filesystem image in this directory:"
 endif
@@ -1402,31 +1471,36 @@ $(eval $(call combine-notice-files, $(system_xml_directories), \
 	        $(target_notice_file_xml), \
 	        $(system_notice_file_message), \
 	        $(TARGET_OUT_NOTICE_FILES), \
-	        $(license_modules_system)))
+	        $(license_modules_system), \
+	        $(exclude_target_dirs)))
 $(eval $(call combine-notice-files, xml_excluded_system_product_odm, \
 	        $(target_vendor_notice_file_txt), \
 	        $(target_vendor_notice_file_xml), \
 	        "Notices for files contained in all filesystem images except system/system_ext/product/odm in this directory:", \
 	        $(TARGET_OUT_NOTICE_FILES), \
-	        $(license_modules_vendor)))
+	        $(license_modules_vendor), \
+	        $(exclude_target_dirs)))
 $(eval $(call combine-notice-files, xml_product, \
 	        $(target_product_notice_file_txt), \
 	        $(target_product_notice_file_xml), \
 	        "Notices for files contained in the product filesystem image in this directory:", \
 	        $(TARGET_OUT_NOTICE_FILES), \
-	        $(license_modules_product)))
+	        $(license_modules_product), \
+	        $(exclude_target_dirs)))
 $(eval $(call combine-notice-files, xml_system_ext, \
 	        $(target_system_ext_notice_file_txt), \
 	        $(target_system_ext_notice_file_xml), \
 	        "Notices for files contained in the system_ext filesystem image in this directory:", \
 	        $(TARGET_OUT_NOTICE_FILES), \
-	        $(license_modules_system_ext)))
+	        $(license_modules_system_ext), \
+	        $(exclude_target_dirs)))
 $(eval $(call combine-notice-files, xml_odm, \
 	        $(target_odm_notice_file_txt), \
 	        $(target_odm_notice_file_xml), \
 	        "Notices for files contained in the odm filesystem image in this directory:", \
 	        $(TARGET_OUT_NOTICE_FILES), \
-	        $(license_modules_odm)))
+	        $(license_modules_odm), \
+	        $(exclude_target_dirs)))
 
 $(target_notice_file_xml_gz): $(target_notice_file_xml) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
@@ -1464,7 +1538,8 @@ $(eval $(call combine-notice-files, html, \
 	        "Notices for files contained in the tools directory:", \
 	        $(HOST_OUT_NOTICE_FILES), \
 	        $(ALL_DEFAULT_INSTALLED_MODULES) \
-	        $(winpthreads_notice_file)))
+	        $(winpthreads_notice_file), \
+	        $(exclude_target_dirs)))
 
 endif  # TARGET_BUILD_APPS
 
@@ -1714,7 +1789,8 @@ $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
 $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
     $(hide) echo "system_root_image=true" >> $(1))
 $(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1)
-$(if $(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),$(hide) echo "use_dynamic_partition_size=true" >> $(1))
+$(if $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITION_SIZE)),\
+    $(hide) echo "use_dynamic_partition_size=true" >> $(1))
 $(if $(3),$(hide) $(foreach kv,$(3),echo "$(kv)" >> $(1);))
 endef
 
@@ -2329,6 +2405,81 @@ bootimage_debug-nodeps: $(MKBOOTIMG)
 	$(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET)))
 
 endif # TARGET_NO_KERNEL
+
+ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+ifeq ($(BUILDING_RAMDISK_IMAGE),true)
+# -----------------------------------------------------------------
+# vendor debug ramdisk
+# Combines vendor ramdisk files and debug ramdisk files to build the vendor debug ramdisk.
+INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET := $(PRODUCT_OUT)/vendor-ramdisk-debug.cpio.gz
+$(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_FILES := $(INTERNAL_DEBUG_RAMDISK_FILES)
+$(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): VENDOR_RAMDISK_DIR := $(TARGET_VENDOR_RAMDISK_OUT)
+
+INTERNAL_VENDOR_DEBUG_RAMDISK_FILES := $(filter $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/%, \
+    $(ALL_GENERATED_SOURCES) \
+    $(ALL_DEFAULT_INSTALLED_MODULES))
+
+# Note: TARGET_VENDOR_DEBUG_RAMDISK_OUT will be $(PRODUCT_OUT)/vendor_debug_ramdisk/first_stage_ramdisk,
+# if BOARD_USES_RECOVERY_AS_BOOT is true. Otherwise, it will be $(PRODUCT_OUT)/vendor_debug_ramdisk.
+# But the path of $(VENDOR_DEBUG_RAMDISK_DIR) to build the vendor debug ramdisk, is always
+# $(PRODUCT_OUT)/vendor_debug_ramdisk.
+$(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): VENDOR_DEBUG_RAMDISK_DIR := $(PRODUCT_OUT)/vendor_debug_ramdisk
+$(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_DEBUG_RAMDISK_TARGET)
+$(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_VENDOR_DEBUG_RAMDISK_FILES) | $(MINIGZIP)
+	$(call pretty,"Target vendor debug ram disk: $@")
+	mkdir -p $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)
+	touch $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/force_debuggable
+	$(foreach debug_file,$(DEBUG_RAMDISK_FILES), \
+	  cp -f $(debug_file) $(subst $(PRODUCT_OUT)/debug_ramdisk,$(PRODUCT_OUT)/vendor_debug_ramdisk,$(debug_file)) &&) true
+	rsync -a $(VENDOR_RAMDISK_DIR)/ $(VENDOR_DEBUG_RAMDISK_DIR)
+	$(MKBOOTFS) -d $(TARGET_OUT) $(VENDOR_DEBUG_RAMDISK_DIR) | $(MINIGZIP) > $@
+
+INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK := $(PRODUCT_OUT)/installed-files-vendor-ramdisk-debug.txt
+INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK := $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK:.txt=.json)
+$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK)
+$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): VENDOR_DEBUG_RAMDISK_DIR := $(PRODUCT_OUT)/vendor_debug_ramdisk
+
+# The vendor debug ramdisk will rsync from $(TARGET_VENDOR_RAMDISK_OUT) and $(INTERNAL_DEBUG_RAMDISK_FILES),
+# so we have to wait for the vendor debug ramdisk to be built before generating the installed file list.
+$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET)
+$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): $(INTERNAL_VENDOR_DEBUG_RAMDISK_FILES) $(FILESLIST) $(FILESLIST_UTIL)
+	echo Installed file list: $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(VENDOR_DEBUG_RAMDISK_DIR) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+
+# -----------------------------------------------------------------
+# vendor_boot-debug.img.
+INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/vendor_boot-debug.img
+
+# The util to sign vendor_boot-debug.img with a test key.
+BOARD_AVB_VENDOR_BOOT_TEST_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+INTERNAL_AVB_VENDOR_BOOT_TEST_SIGNING_ARGS := --algorithm SHA256_RSA2048 --key $(BOARD_AVB_VENDOR_BOOT_TEST_KEY_PATH)
+# $(1): the vendor bootimage to sign
+define test-key-sign-vendor-bootimage
+$(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE)))
+$(AVBTOOL) add_hash_footer \
+  --image $(1) \
+  --partition_size $(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE) \
+  --partition_name vendor_boot $(INTERNAL_AVB_VENDOR_BOOT_TEST_SIGNING_ARGS) \
+  $(BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS)
+$(call assert-max-image-size,$(1),$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
+endef
+
+ifneq ($(BOARD_AVB_VENDOR_BOOT_KEY_PATH),)
+$(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOT_TEST_KEY_PATH)
+endif
+
+# Depends on vendor_boot.img and vendor-ramdisk-debug.cpio.gz to build the new vendor_boot-debug.img
+$(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET)
+	$(call pretty,"Target vendor_boot debug image: $@")
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) --vendor_boot $@
+	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
+	$(if $(BOARD_AVB_VENDOR_BOOT_KEY_PATH),$(call test-key-sign-vendor-bootimage,$@))
+
+endif # BUILDING_RAMDISK_IMAGE
+endif # BUILDING_VENDOR_BOOT_IMAGE
 
 # -----------------------------------------------------------------
 # The test harness ramdisk, which is based off debug_ramdisk, plus a
@@ -4732,13 +4883,8 @@ ifeq (true,$(EMMA_INSTRUMENT))
 JACOCO_REPORT_CLASSES_ALL := $(PRODUCT_OUT)/jacoco-report-classes-all.jar
 $(JACOCO_REPORT_CLASSES_ALL) :
 	@echo "Collecting uninstrumented classes"
-	$(hide) find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" | \
-	    zip -@ -0 -q -X $@
-# Meaning of these options:
-# -@ scan stdin for file paths to add to the zip
-# -0 don't do any compression
-# -q supress most output
-# -X skip storing extended file attributes
+	find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" 2>/dev/null | sort > $@.list
+	$(SOONG_ZIP) -o $@ -L 0 -C $(OUT_DIR) -P out -l $@.list
 
 endif # EMMA_INSTRUMENT=true
 
@@ -5229,3 +5375,7 @@ FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INS
 .PHONY: haiku
 haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
 $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
+
+# -----------------------------------------------------------------
+# The makefile for haiku line coverage.
+include $(BUILD_SYSTEM)/line_coverage.mk
