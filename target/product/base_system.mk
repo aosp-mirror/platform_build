@@ -52,7 +52,6 @@ PRODUCT_PACKAGES += \
     com.android.apex.cts.shim.v1 \
     com.android.appsearch \
     com.android.conscrypt \
-    com.android.cronet \
     com.android.extservices \
     com.android.i18n \
     com.android.ipsec \
