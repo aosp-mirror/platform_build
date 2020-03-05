@@ -599,7 +599,12 @@ function lunch()
 {
     local answer
 
-    if [ "$1" ] ; then
+    if [[ $# -gt 1 ]]; then
+        echo "usage: lunch [target]" >&2
+        return 1
+    fi
+
+    if [ "$1" ]; then
         answer=$1
     else
         print_lunch_menu
