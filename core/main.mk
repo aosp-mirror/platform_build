@@ -1247,6 +1247,7 @@ modules_to_install := $(sort \
     $(CUSTOM_MODULES) \
   )
 
+ifdef FULL_BUILD
 #
 # Used by the cleanup logic in soong_ui to remove files that should no longer
 # be installed.
@@ -1267,6 +1268,7 @@ $(file >$(HOST_OUT)/.installable_test_files,$(sort \
     $(test_files)))))
 
 test_files :=
+endif
 
 
 # Don't include any GNU General Public License shared objects or static
