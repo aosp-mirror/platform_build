@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f4a1d8c5_e5fb23dd",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2734,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-05T18:42:09Z",
+      "side": 1,
+      "message": "Will this message pop out more often now? For example, it seems like every build that has a system image and where WITH_DEXPREOPT is set will emit this.\n\nI wasn\u0027t able to figure out from aosp/33200 why this warning was guarded by the snod goal.\n\n+wangying@",
+      "range": {
+        "startLine": 2734,
+        "startChar": 1,
+        "endLine": 2734,
+        "endChar": 73
+      },
+      "revId": "395358edae83aaa58d7700e3f33e1c8e364d8c6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
