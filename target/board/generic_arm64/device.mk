@@ -14,6 +14,16 @@
 # limitations under the License.
 #
 
+# Cuttlefish has GKI kernel prebuilts, so use those for the GKI boot.img.
+ifeq ($(TARGET_PREBUILT_KERNEL),)
+    LOCAL_KERNEL := device/google/cuttlefish_kernel/5.4-arm64/kernel
+else
+    LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
+endif
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_KERNEL):kernel
+
 # Adjust the Dalvik heap to be appropriate for a tablet.
 $(call inherit-product-if-exists, frameworks/base/build/tablet-dalvik-heap.mk)
 $(call inherit-product-if-exists, frameworks/native/build/tablet-dalvik-heap.mk)
