@@ -22,6 +22,30 @@
       "revId": "395358edae83aaa58d7700e3f33e1c8e364d8c6b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27ee901b_761ca9f1",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2734,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-03-05T18:47:54Z",
+      "side": 1,
+      "message": "No, this warning is now part of the rule itself, so it\u0027ll print out when the systemimage-nodeps / snod rule is executed.\n\nI don\u0027t think the reasoning for the warning has really gone away, but there are plenty of other cases that should hit it as well. *-nodeps is rather dangerous depending on what your current build state is.",
+      "parentUuid": "f4a1d8c5_e5fb23dd",
+      "range": {
+        "startLine": 2734,
+        "startChar": 1,
+        "endLine": 2734,
+        "endChar": 73
+      },
+      "revId": "395358edae83aaa58d7700e3f33e1c8e364d8c6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
