@@ -16,6 +16,7 @@
 QEMU_USE_SYSTEM_EXT_PARTITIONS := true
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_arm64.mk)
+$(call inherit-product-if-exists, device/generic/goldfish/arm64-vendor.mk)
 
 # Define the host tools and libs that are parts of the SDK.
 $(call inherit-product, sdk/build/product_sdk.mk)
