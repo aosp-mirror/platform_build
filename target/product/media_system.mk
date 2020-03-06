@@ -60,7 +60,6 @@ PRODUCT_SYSTEM_SERVER_JARS := \
 # system server jars which are updated via apex modules.
 # The values should be of the format <apex name>:<jar name>
 PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
-    com.android.appsearch:service-appsearch \
     com.android.permission:service-permission \
     com.android.wifi:wifi-service \
     com.android.ipsec:android.net.ipsec.ike \
