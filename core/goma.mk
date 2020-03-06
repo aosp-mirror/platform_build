@@ -27,7 +27,8 @@ ifneq ($(filter-out false,$(USE_GOMA)),)
   # use both ccache and gomacc.
   CC_WRAPPER := $(strip $(CC_WRAPPER) $(GOMA_CC))
   CXX_WRAPPER := $(strip $(CXX_WRAPPER) $(GOMA_CC))
-  JAVAC_WRAPPER := $(strip $(JAVAC_WRAPPER) $(GOMA_CC))
+  # b/143658984: goma can't handle the --system argument to javac
+  #JAVAC_WRAPPER := $(strip $(JAVAC_WRAPPER) $(GOMA_CC))
 
   goma_dir :=
 endif
