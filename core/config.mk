@@ -1219,23 +1219,6 @@ endif
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.
 dont_bother_goals := out \
-    snod systemimage-nodeps \
-    userdataimage-nodeps \
-    cacheimage-nodeps \
-    bptimage-nodeps \
-    vnod vendorimage-nodeps \
-    pnod productimage-nodeps \
-    senod systemextimage-nodeps \
-    onod odmimage-nodeps \
-    systemotherimage-nodeps \
-    ramdisk-nodeps \
-    ramdisk_debug-nodeps \
-    ramdisk_test_harness-nodeps \
-    bootimage-nodeps \
-    bootimage_debug-nodeps \
-    bootimage_test_harness-nodeps \
-    recoveryimage-nodeps \
-    vbmetaimage-nodeps \
     product-graph dump-products
 
 ifeq ($(CALLED_FROM_SETUP),true)
