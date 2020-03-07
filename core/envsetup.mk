@@ -101,7 +101,7 @@ TARGET_BUILD_APPS ?=
 
 # ---------------------------------------------------------------
 # Set up configuration for host machine.  We don't do cross-
-# compiles except for arm/mips, so the HOST is whatever we are
+# compiles except for arm, so the HOST is whatever we are
 # running on
 
 # HOST_OS

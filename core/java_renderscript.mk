@@ -129,7 +129,7 @@ LOCAL_JNI_SHARED_LIBRARIES += libRSSupportIO
 endif
 
 my_arch := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-ifneq (,$(filter arm64 mips64 x86_64,$(my_arch)))
+ifneq (,$(filter arm64 x86_64,$(my_arch)))
   my_min_sdk_version := 21
 else
   my_min_sdk_version := $(MIN_SUPPORTED_SDK_VERSION)
