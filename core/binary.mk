@@ -110,19 +110,8 @@ ifneq ($(LOCAL_SDK_VERSION),)
   # Make sure we've built the NDK.
   my_additional_dependencies += $(SOONG_OUT_DIR)/ndk_base.timestamp
 
-  # mips32r6 is not supported by the NDK. No released NDK contains these
-  # libraries, but the r10 in prebuilts/ndk had a local hack to add them :(
-  #
-  # We need to find a real solution to this problem, but until we do just drop
-  # mips32r6 things back to r10 to get the tree building again.
-  ifeq (mips32r6,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH_VARIANT))
-    ifeq ($(LOCAL_NDK_VERSION), current)
-      LOCAL_NDK_VERSION := r10
-    endif
-  endif
-
   my_arch := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-  ifneq (,$(filter arm64 mips64 x86_64,$(my_arch)))
+  ifneq (,$(filter arm64 x86_64,$(my_arch)))
     my_min_sdk_version := 21
   else
     my_min_sdk_version := $(MIN_SUPPORTED_SDK_VERSION)
@@ -156,17 +145,11 @@ ifneq ($(LOCAL_SDK_VERSION),)
       $(my_built_ndk)/sysroot/usr/include/$(my_ndk_triple) \
       $(my_ndk_sysroot)/usr/include \
 
-  # x86_64 and and mips64 are both multilib toolchains, so their libraries are
+  # x86_64 is a multilib toolchain, so their libraries are
   # installed in /usr/lib64. Aarch64, on the other hand, is not a multilib
   # compiler, so its libraries are in /usr/lib.
-  #
-  # Mips32r6 is yet another variation, with libraries installed in libr6.
-  #
-  # For the rest, the libraries are installed simply to /usr/lib.
-  ifneq (,$(filter x86_64 mips64,$(my_arch)))
+  ifneq (,$(filter x86_64,$(my_arch)))
     my_ndk_libdir_name := lib64
-  else ifeq (mips32r6,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH_VARIANT))
-    my_ndk_libdir_name := libr6
   else
     my_ndk_libdir_name := lib
   endif
@@ -180,11 +163,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
   # hashes (which are much faster!), but shipping to older devices requires
   # the old style hash. Fortunately, we can build with both and it'll work
   # anywhere.
-  #
-  # This is not currently supported on MIPS architectures.
-  ifeq (,$(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
-    my_ldflags += -Wl,--hash-style=both
-  endif
+  my_ldflags += -Wl,--hash-style=both
 
   # We don't want to expose the relocation packer to the NDK just yet.
   LOCAL_PACK_MODULE_RELOCATIONS := false
@@ -195,9 +174,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
   my_ndk_stl_shared_lib_fullpath :=
   my_ndk_stl_static_lib :=
   my_cpu_variant := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)
-  ifeq (mips32r6,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH_VARIANT))
-    my_cpu_variant := mips32r6
-  endif
   LOCAL_NDK_STL_VARIANT := $(strip $(LOCAL_NDK_STL_VARIANT))
   ifeq (,$(LOCAL_NDK_STL_VARIANT))
     LOCAL_NDK_STL_VARIANT := system
