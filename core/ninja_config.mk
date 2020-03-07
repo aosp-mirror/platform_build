@@ -15,7 +15,6 @@ PARSE_TIME_MAKE_GOALS := \
 	$(dont_bother_goals) \
 	all \
 	ECLIPSE-% \
-	AUX-% \
 	brillo_tests \
 	btnod \
 	build-art% \
