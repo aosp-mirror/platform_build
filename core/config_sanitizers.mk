@@ -134,12 +134,6 @@ ifneq ($(filter address,$(my_sanitize)),)
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
 
-# CFI needs gold linker, and mips toolchain does not have one.
-ifneq ($(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
-  my_sanitize := $(filter-out cfi,$(my_sanitize))
-  my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
-endif
-
 # Disable sanitizers which need the UBSan runtime for host targets.
 ifdef LOCAL_IS_HOST_MODULE
   my_sanitize := $(filter-out cfi,$(my_sanitize))
