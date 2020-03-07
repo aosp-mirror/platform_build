@@ -3242,11 +3242,12 @@ endef
 
 ###########################################################
 ## Find system_$(VER) in LOCAL_SDK_VERSION
+## note: system_server_* is excluded. It's a different API surface
 ##
 ## $(1): LOCAL_SDK_VERSION
 ###########################################################
 define has-system-sdk-version
-$(filter system_%,$(1))
+$(filter-out system_server_%,$(filter system_%,$(1)))
 endef
 
 ###########################################################
