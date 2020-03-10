@@ -53,8 +53,26 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
           'ro.build.fingerprint' : 'build-fingerprint',
           'ro.build.foo' : 'build-foo',
       },
+      'system.build.prop' : {
+          'ro.product.system.brand' : 'product-brand',
+          'ro.product.system.name' : 'product-name',
+          'ro.product.system.device' : 'product-device',
+          'ro.system.build.version.release' : 'version-release',
+          'ro.system.build.id' : 'build-id',
+          'ro.system.build.version.incremental' : 'version-incremental',
+          'ro.system.build.type' : 'build-type',
+          'ro.system.build.tags' : 'build-tags',
+          'ro.system.build.foo' : 'build-foo',
+      },
       'vendor.build.prop' : {
-          'ro.vendor.build.fingerprint' : 'vendor-build-fingerprint',
+          'ro.product.vendor.brand' : 'vendor-product-brand',
+          'ro.product.vendor.name' : 'vendor-product-name',
+          'ro.product.vendor.device' : 'vendor-product-device',
+          'ro.vendor.build.version.release' : 'vendor-version-release',
+          'ro.vendor.build.id' : 'vendor-build-id',
+          'ro.vendor.build.version.incremental' : 'vendor-version-incremental',
+          'ro.vendor.build.type' : 'vendor-build-type',
+          'ro.vendor.build.tags' : 'vendor-build-tags',
       },
       'property1' : 'value1',
       'property2' : 4096,
@@ -186,39 +204,27 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(common.ExternalError, target_info.GetBuildProp,
                       'ro.build.nonexistent')
 
-  def test_GetVendorBuildProp(self):
+  def test_GetPartitionFingerprint(self):
     target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
-    self.assertEqual('vendor-build-fingerprint',
-                     target_info.GetVendorBuildProp(
-                         'ro.vendor.build.fingerprint'))
-    self.assertRaises(common.ExternalError, target_info.GetVendorBuildProp,
-                      'ro.build.nonexistent')
+    self.assertEqual(
+        target_info.GetPartitionFingerprint('vendor'),
+        'vendor-product-brand/vendor-product-name/vendor-product-device'
+        ':vendor-version-release/vendor-build-id/vendor-version-incremental'
+        ':vendor-build-type/vendor-build-tags')
 
-  def test_GetVendorBuildProp_with_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    self.assertEqual('vendor-build-fingerprint',
-                     target_info.GetVendorBuildProp(
-                         'ro.vendor.build.fingerprint'))
-    self.assertRaises(common.ExternalError, target_info.GetVendorBuildProp,
-                      'ro.build.nonexistent')
-
-  def test_vendor_fingerprint(self):
+  def test_GetPartitionFingerprint_system_other_uses_system(self):
     target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
-    self.assertEqual('vendor-build-fingerprint',
-                     target_info.vendor_fingerprint)
+    self.assertEqual(
+        target_info.GetPartitionFingerprint('system_other'),
+        target_info.GetPartitionFingerprint('system'))
 
-  def test_vendor_fingerprint_blacklisted(self):
-    target_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
-    del target_info_dict['vendor.build.prop']['ro.vendor.build.fingerprint']
-    target_info = common.BuildInfo(target_info_dict, self.TEST_OEM_DICTS)
-    self.assertIsNone(target_info.vendor_fingerprint)
-
-  def test_vendor_fingerprint_without_vendor_build_prop(self):
-    target_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
-    del target_info_dict['vendor.build.prop']
-    target_info = common.BuildInfo(target_info_dict, self.TEST_OEM_DICTS)
-    self.assertIsNone(target_info.vendor_fingerprint)
+  def test_GetPartitionFingerprint_uses_fingerprint_prop_if_available(self):
+    info_dict = copy.deepcopy(self.TEST_INFO_DICT)
+    info_dict['vendor.build.prop']['ro.vendor.build.fingerprint'] = 'vendor:fingerprint'
+    target_info = common.BuildInfo(info_dict, None)
+    self.assertEqual(
+        target_info.GetPartitionFingerprint('vendor'),
+        'vendor:fingerprint')
 
   def test_WriteMountOemScript(self):
     target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
