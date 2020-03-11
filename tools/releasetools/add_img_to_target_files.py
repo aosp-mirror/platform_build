@@ -338,7 +338,7 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   # Use repeatable ext4 FS UUID and hash_seed UUID (based on partition name and
   # build fingerprint).
   build_info = common.BuildInfo(info_dict)
-  uuid_seed = what + "-" + build_info.fingerprint
+  uuid_seed = what + "-" + build_info.GetPartitionFingerprint(what)
   image_props["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_seed))
   hash_seed = "hash_seed-" + uuid_seed
   image_props["hash_seed"] = str(uuid.uuid5(uuid.NAMESPACE_URL, hash_seed))
