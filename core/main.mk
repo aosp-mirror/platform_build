@@ -222,9 +222,6 @@ ifneq ($(TARGET_BUILD_VARIANT),user)
 ADDITIONAL_BUILD_PROPERTIES += persist.debug.dalvik.vm.core_platform_api_policy=just-warn
 endif
 
-# Define ro.sanitize.<name> properties for all global sanitizers.
-ADDITIONAL_BUILD_PROPERTIES += $(foreach s,$(SANITIZE_TARGET),ro.sanitize.$(s)=true)
-
 # Sets the default value of ro.postinstall.fstab.prefix to /system.
 # Device board config should override the value to /product when needed by:
 #
@@ -1033,6 +1030,7 @@ endef
 define auto-included-modules
   $(if $(BOARD_VNDK_VERSION),vndk_package) \
   $(if $(DEVICE_MANIFEST_FILE),vendor_manifest.xml) \
+  $(if $(DEVICE_MANIFEST_SKUS),$(foreach sku, $(DEVICE_MANIFEST_SKUS),vendor_manifest_$(sku).xml)) \
   $(if $(ODM_MANIFEST_FILES),odm_manifest.xml) \
   $(if $(ODM_MANIFEST_SKUS),$(foreach sku, $(ODM_MANIFEST_SKUS),odm_manifest_$(sku).xml)) \
 
@@ -1254,6 +1252,7 @@ modules_to_install := $(sort \
     $(CUSTOM_MODULES) \
   )
 
+ifdef FULL_BUILD
 #
 # Used by the cleanup logic in soong_ui to remove files that should no longer
 # be installed.
@@ -1274,6 +1273,7 @@ $(file >$(HOST_OUT)/.installable_test_files,$(sort \
     $(test_files)))))
 
 test_files :=
+endif
 
 
 # Don't include any GNU General Public License shared objects or static
