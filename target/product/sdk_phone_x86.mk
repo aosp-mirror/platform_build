@@ -44,8 +44,6 @@ $(call inherit-product-if-exists, device/generic/goldfish/x86-vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/device.mk)
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_x86.mk)
-
 # Define the host tools and libs that are parts of the SDK.
 -include sdk/build/product_sdk.mk
 -include development/build/product_sdk.mk
