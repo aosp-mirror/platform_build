@@ -631,7 +631,7 @@ def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
     partition_target_info = target_info["fstab"]["/" + name]
     disable_imgdiff = (partition_source_info.fs_type == "squashfs" or
                        partition_target_info.fs_type == "squashfs")
-    return common.BlockDifference(name, partition_src, partition_tgt,
+    return common.BlockDifference(name, partition_tgt, partition_src,
                                   check_first_block,
                                   version=blockimgdiff_version,
                                   disable_imgdiff=disable_imgdiff)
