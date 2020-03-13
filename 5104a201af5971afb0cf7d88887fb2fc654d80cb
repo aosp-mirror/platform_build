@@ -16,6 +16,24 @@
       "revId": "5104a201af5971afb0cf7d88887fb2fc654d80cb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9733d08_b4d13855",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1120043
+      },
+      "writtenOn": "2020-03-13T14:48:25Z",
+      "side": 1,
+      "message": "Done. Confirmed that the property is set in a local build.",
+      "parentUuid": "c5698317_0b8b05e1",
+      "revId": "5104a201af5971afb0cf7d88887fb2fc654d80cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
