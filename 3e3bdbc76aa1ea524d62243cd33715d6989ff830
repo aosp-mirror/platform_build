@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e8f34e51_9ebed92e",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 3719,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-03-14T01:17:51Z",
+      "side": 1,
+      "message": "This needs to be updated too.",
+      "range": {
+        "startLine": 3719,
+        "startChar": 0,
+        "endLine": 3719,
+        "endChar": 92
+      },
+      "revId": "3e3bdbc76aa1ea524d62243cd33715d6989ff830",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
