@@ -3697,6 +3697,13 @@ check_vintf_common_srcs_patterns :=
 check_vintf_has_system :=
 check_vintf_has_vendor :=
 
+ifneq (,$(filter EMPTY_ODM_SKU_PLACEHOLDER,$(ODM_MANIFEST_SKUS)))
+$(error EMPTY_ODM_SKU_PLACEHOLDER is an internal variable and cannot be used for ODM_MANIFEST_SKUS)
+endif
+ifneq (,$(filter EMPTY_VENDOR_SKU_PLACEHOLDER,$(DEVICE_MANIFEST_SKUS)))
+$(error EMPTY_VENDOR_SKU_PLACEHOLDER is an internal variable and cannot be used for DEIVCE_MANIFEST_SKUS)
+endif
+
 # -- Check system manifest / matrix including fragments (excluding other framework manifests / matrices, e.g. product);
 check_vintf_system_deps := $(filter $(TARGET_OUT)/etc/vintf/%, $(check_vintf_common_srcs))
 ifneq ($(check_vintf_system_deps),)
@@ -3715,8 +3722,14 @@ ifneq ($(check_vintf_vendor_deps),)
 check_vintf_has_vendor := true
 check_vintf_vendor_log := $(intermediates)/check_vintf_vendor_log
 check_vintf_all_deps += $(check_vintf_vendor_log)
+$(check_vintf_vendor_log): PRIVATE_VENDOR_SKUS := \
+  $(if $(DEVICE_MANIFEST_FILE),EMPTY_VENDOR_SKU_PLACEHOLDER) \
+  $(DEVICE_MANIFEST_SKUS)
 $(check_vintf_vendor_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_vendor_deps)
-	@( $< --check-one --dirmap /vendor:$(TARGET_OUT_VENDOR) > $@ 2>&1 ) || ( cat $@ && exit 1 )
+	$(foreach vendor_sku,$(PRIVATE_VENDOR_SKUS), \
+	  ( $< --check-one --dirmap /vendor:$(TARGET_OUT_VENDOR) \
+	       --property ro.boot.product.vendor.sku=$(filter-out EMPTY_VENDOR_SKU_PLACEHOLDER,$(vendor_sku)) \
+	       > $@ 2>&1 ) || ( cat $@ && exit 1 ); )
 check_vintf_vendor_log :=
 endif # check_vintf_vendor_deps
 check_vintf_vendor_deps :=
@@ -3810,17 +3823,23 @@ endif # PRODUCT_SHIPPING_API_LEVEL
 
 $(check_vintf_compatible_log): PRIVATE_CHECK_VINTF_ARGS := $(check_vintf_compatible_args)
 $(check_vintf_compatible_log): PRIVATE_CHECK_VINTF_DEPS := $(check_vintf_compatible_deps)
+$(check_vintf_compatible_log): PRIVATE_ODM_SKUS := \
+  $(if $(ODM_MANIFEST_FILES),EMPTY_ODM_SKU_PLACEHOLDER) \
+  $(ODM_MANIFEST_SKUS)
+$(check_vintf_compatible_log): PRIVATE_VENDOR_SKUS := \
+  $(if $(DEVICE_MANIFEST_FILE),EMPTY_VENDOR_SKU_PLACEHOLDER) \
+  $(DEVICE_MANIFEST_SKUS)
 $(check_vintf_compatible_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_compatible_deps)
 	@echo -n -e 'Deps: \n  ' > $@
 	@sed 's/ /\n  /g' <<< "$(PRIVATE_CHECK_VINTF_DEPS)" >> $@
 	@echo -n -e 'Args: \n  ' >> $@
 	@cat <<< "$(PRIVATE_CHECK_VINTF_ARGS)" >> $@
-	@echo -n -e 'For empty SKU:' >> $@
-	@( $< --check-compat $(PRIVATE_CHECK_VINTF_ARGS) >> $@ 2>&1 ) || ( cat $@ && exit 1 )
-	$(foreach sku,$(ODM_MANIFEST_SKUS), \
-	  echo "For SKU = $(sku):" >> $@; \
+	$(foreach odm_sku,$(PRIVATE_ODM_SKUS), $(foreach vendor_sku,$(PRIVATE_VENDOR_SKUS), \
+	  echo "For ODM SKU = $(odm_sku), vendor SKU = $(vendor_sku)" >> $@; \
 	  ( $< --check-compat $(PRIVATE_CHECK_VINTF_ARGS) \
-	      --property ro.boot.product.hardware.sku=$(sku) >> $@ 2>&1 ) || ( cat $@ && exit 1 ); )
+	       --property ro.boot.product.hardware.sku=$(filter-out EMPTY_ODM_SKU_PLACEHOLDER,$(odm_sku)) \
+	       --property ro.boot.product.vendor.sku=$(filter-out EMPTY_VENDOR_SKU_PLACEHOLDER,$(vendor_sku)) \
+	       >> $@ 2>&1 ) || (cat $@ && exit 1); ))
 
 check_vintf_compatible_log :=
 check_vintf_compatible_args :=
@@ -4218,6 +4237,15 @@ ifeq ($(PRODUCT_ENFORCE_VINTF_MANIFEST),true)
 endif
 ifdef ODM_MANIFEST_SKUS
 	$(hide) echo "vintf_odm_manifest_skus=$(ODM_MANIFEST_SKUS)" >> $@
+endif
+ifdef ODM_MANIFEST_FILES
+	$(hide) echo "vintf_include_empty_odm_sku=true" >> $@
+endif
+ifdef DEVICE_MANIFEST_SKUS
+	$(hide) echo "vintf_vendor_manifest_skus=$(DEVICE_MANIFEST_SKUS)" >> $@
+endif
+ifdef DEVICE_MANIFEST_FILE
+	$(hide) echo "vintf_include_empty_vendor_sku=true" >> $@
 endif
 
 .PHONY: misc_info
