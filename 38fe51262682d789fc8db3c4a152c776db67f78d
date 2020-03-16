@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e8288909_7e362a5c",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-03-16T12:48:40Z",
+      "side": 1,
+      "message": "why don\u0027t we change the default in the code instead of trying to install prop override everywhere? that seems more effective",
+      "range": {
+        "startLine": 353,
+        "startChar": 0,
+        "endLine": 355,
+        "endChar": 64
+      },
+      "revId": "38fe51262682d789fc8db3c4a152c776db67f78d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
