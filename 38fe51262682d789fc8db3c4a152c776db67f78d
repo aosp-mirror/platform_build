@@ -46,6 +46,30 @@
       "revId": "38fe51262682d789fc8db3c4a152c776db67f78d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5314bcb3_2160e8f7",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-03-16T14:38:55Z",
+      "side": 1,
+      "message": "What I meant is, why not reverse the prop such that the default is true and the vendor can override it by setting it to false, if that is expected to be much less frequent\n\nbtw - I think go-devices inherit base_system",
+      "parentUuid": "fc0860a0_86c88887",
+      "range": {
+        "startLine": 353,
+        "startChar": 0,
+        "endLine": 355,
+        "endChar": 64
+      },
+      "revId": "38fe51262682d789fc8db3c4a152c776db67f78d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
