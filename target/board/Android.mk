@@ -52,13 +52,13 @@ LOCAL_PREBUILT_MODULE_FILE := $(GEN)
 include $(BUILD_PREBUILT)
 endif
 
-# DEVICE_MANIFEST_SKUS: a list of SKUS where DEVICE_MANIFEST_<sku>_FILE is defined.
+# DEVICE_MANIFEST_SKUS: a list of SKUS where DEVICE_MANIFEST_<sku>_FILES is defined.
 ifdef DEVICE_MANIFEST_SKUS
 
 # Install /vendor/etc/vintf/manifest_$(sku).xml
 # $(1): sku
 define _add_device_sku_manifest
-my_fragment_files_var := DEVICE_MANIFEST_$$(call to-upper,$(1))_FILE
+my_fragment_files_var := DEVICE_MANIFEST_$$(call to-upper,$(1))_FILES
 ifndef $$(my_fragment_files_var)
 $$(error $(1) is in DEVICE_MANIFEST_SKUS but $$(my_fragment_files_var) is not defined)
 endif
