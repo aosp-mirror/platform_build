@@ -70,6 +70,30 @@
       "revId": "38fe51262682d789fc8db3c4a152c776db67f78d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6cee7864_b68243a8",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1120043
+      },
+      "writtenOn": "2020-03-16T16:59:47Z",
+      "side": 1,
+      "message": "Ah, yes, thanks.  I went ahead and removed this property.  The CL should be safe to land and I\u0027ll enable the CTS with the property reversed after.",
+      "parentUuid": "5314bcb3_2160e8f7",
+      "range": {
+        "startLine": 353,
+        "startChar": 0,
+        "endLine": 355,
+        "endChar": 64
+      },
+      "revId": "38fe51262682d789fc8db3c4a152c776db67f78d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
