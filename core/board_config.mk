@@ -365,11 +365,6 @@ ifdef BOARD_BOOT_HEADER_VERSION
     ifneq ($(TARGET_NO_VENDOR_BOOT),true)
       BUILDING_VENDOR_BOOT_IMAGE := true
     endif
-    ifdef BUILDING_RECOVERY_IMAGE
-      ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-        $(error Boot header version >=3 requires recovery as boot)
-      endif
-    endif
   endif
 endif
 .KATI_READONLY := BUILDING_VENDOR_BOOT_IMAGE
