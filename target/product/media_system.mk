@@ -50,10 +50,10 @@ endif
 
 # The order here is the same order they end up on the classpath, so it matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
+    com.android.location.provider \
     services \
     ethernet-service \
     wifi-service \
-    com.android.location.provider \
 
 # system server jars which are updated via apex modules.
 # The values should be of the format <apex name>:<jar name>
