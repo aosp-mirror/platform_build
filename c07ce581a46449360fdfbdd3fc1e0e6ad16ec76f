@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b202a3cf_3e37d327",
+        "filename": "core/product.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-03-17T17:20:43Z",
+      "side": 1,
+      "message": "don\u0027t understand the comment. Perhaps\n\"Packages to skip auto-generating RROs for when PRODUCT_ENFORCE_RRO_TARGETS is set to *\"",
+      "range": {
+        "startLine": 195,
+        "startChar": 0,
+        "endLine": 196,
+        "endChar": 42
+      },
+      "revId": "c07ce581a46449360fdfbdd3fc1e0e6ad16ec76f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
