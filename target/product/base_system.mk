@@ -69,7 +69,6 @@ PRODUCT_PACKAGES += \
     com.android.wifi \
     ContactsProvider \
     content \
-    crash_dump \
     debuggerd\
     device_config \
     dmctl \
