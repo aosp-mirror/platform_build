@@ -64,7 +64,6 @@ PRODUCT_PACKAGES += \
     com.android.tzdata \
     ContactsProvider \
     content \
-    crash_dump \
     debuggerd\
     device_config \
     dmctl \
