@@ -22,6 +22,30 @@
       "revId": "c07ce581a46449360fdfbdd3fc1e0e6ad16ec76f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f2d3c39_5e3cf759",
+        "filename": "core/product.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-03-18T00:56:52Z",
+      "side": 1,
+      "message": "Thanks, done.",
+      "parentUuid": "b202a3cf_3e37d327",
+      "range": {
+        "startLine": 195,
+        "startChar": 0,
+        "endLine": 196,
+        "endChar": 42
+      },
+      "revId": "c07ce581a46449360fdfbdd3fc1e0e6ad16ec76f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
