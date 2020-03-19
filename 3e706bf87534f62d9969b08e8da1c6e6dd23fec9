@@ -22,6 +22,30 @@
       "revId": "3e706bf87534f62d9969b08e8da1c6e6dd23fec9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1026d3b7_91e2c1af",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-03-19T18:34:34Z",
+      "side": 1,
+      "message": "I\u0027m not sure where to add such tests (I\u0027ll check with Roland and David). The absence of \u0027mismatch\u0027 is not a universal error, because there are valid cases when the dexpreopted code gets obsolete and needs to be recompiled.\n\nTo some extent the absence of \u0027mismatch\u0027 is tested by the boot timeout check: when I broke it in some previous PS, I had failures on various boot health tests (on presubmit checks) because compiling the system server took a lot of time.",
+      "parentUuid": "55ef91c1_efaed033",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 34
+      },
+      "revId": "3e706bf87534f62d9969b08e8da1c6e6dd23fec9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
