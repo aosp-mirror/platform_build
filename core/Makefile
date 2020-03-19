@@ -3722,8 +3722,12 @@ ifneq ($(check_vintf_vendor_deps),)
 check_vintf_has_vendor := true
 check_vintf_vendor_log := $(intermediates)/check_vintf_vendor_log
 check_vintf_all_deps += $(check_vintf_vendor_log)
+# Check vendor SKU=(empty) case when:
+# - DEVICE_MANIFEST_FILE is not empty; OR
+# - DEVICE_MANIFEST_FILE is empty AND DEVICE_MANIFEST_SKUS is empty (only vendor manifest fragments are used)
 $(check_vintf_vendor_log): PRIVATE_VENDOR_SKUS := \
-  $(if $(DEVICE_MANIFEST_FILE),EMPTY_VENDOR_SKU_PLACEHOLDER) \
+  $(if $(DEVICE_MANIFEST_FILE),EMPTY_VENDOR_SKU_PLACEHOLDER,\
+    $(if $(DEVICE_MANIFEST_SKUS),,EMPTY_VENDOR_SKU_PLACEHOLDER)) \
   $(DEVICE_MANIFEST_SKUS)
 $(check_vintf_vendor_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_vendor_deps)
 	$(foreach vendor_sku,$(PRIVATE_VENDOR_SKUS), \
@@ -3823,11 +3827,19 @@ endif # PRODUCT_SHIPPING_API_LEVEL
 
 $(check_vintf_compatible_log): PRIVATE_CHECK_VINTF_ARGS := $(check_vintf_compatible_args)
 $(check_vintf_compatible_log): PRIVATE_CHECK_VINTF_DEPS := $(check_vintf_compatible_deps)
+# Check ODM SKU=(empty) case when:
+# - ODM_MANIFEST_FILES is not empty; OR
+# - ODM_MANIFEST_FILES is empty AND ODM_MANIFEST_SKUS is empty (only ODM manifest fragments are used)
 $(check_vintf_compatible_log): PRIVATE_ODM_SKUS := \
-  $(if $(ODM_MANIFEST_FILES),EMPTY_ODM_SKU_PLACEHOLDER) \
+  $(if $(ODM_MANIFEST_FILES),EMPTY_ODM_SKU_PLACEHOLDER,\
+    $(if $(ODM_MANIFEST_SKUS),,EMPTY_ODM_SKU_PLACEHOLDER)) \
   $(ODM_MANIFEST_SKUS)
+# Check vendor SKU=(empty) case when:
+# - DEVICE_MANIFEST_FILE is not empty; OR
+# - DEVICE_MANIFEST_FILE is empty AND DEVICE_MANIFEST_SKUS is empty (only vendor manifest fragments are used)
 $(check_vintf_compatible_log): PRIVATE_VENDOR_SKUS := \
-  $(if $(DEVICE_MANIFEST_FILE),EMPTY_VENDOR_SKU_PLACEHOLDER) \
+  $(if $(DEVICE_MANIFEST_FILE),EMPTY_VENDOR_SKU_PLACEHOLDER,\
+    $(if $(DEVICE_MANIFEST_SKUS),,EMPTY_VENDOR_SKU_PLACEHOLDER)) \
   $(DEVICE_MANIFEST_SKUS)
 $(check_vintf_compatible_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_compatible_deps)
 	@echo -n -e 'Deps: \n  ' > $@
