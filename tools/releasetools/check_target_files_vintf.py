@@ -68,11 +68,12 @@ def GetDirmap(input_tmp):
 
 def GetArgsForSkus(info_dict):
   odm_skus = info_dict.get('vintf_odm_manifest_skus', '').strip().split()
-  if info_dict.get('vintf_include_empty_odm_sku', '') == "true":
+  if info_dict.get('vintf_include_empty_odm_sku', '') == "true" or not odm_skus:
     odm_skus += ['']
 
   vendor_skus = info_dict.get('vintf_vendor_manifest_skus', '').strip().split()
-  if info_dict.get('vintf_include_empty_vendor_sku', '') == "true":
+  if info_dict.get('vintf_include_empty_vendor_sku', '') == "true" or \
+      not vendor_skus:
     vendor_skus += ['']
 
   return [['--property', 'ro.boot.product.hardware.sku=' + odm_sku,
