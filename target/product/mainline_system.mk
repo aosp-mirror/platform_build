@@ -120,6 +120,9 @@ PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
 PRODUCT_ENFORCE_RRO_TARGETS := *
 
+# TODO(b/150820813) Settings depends on static overlay, remove this after eliminating the dependency.
+PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS := Settings
+
 PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic
 
