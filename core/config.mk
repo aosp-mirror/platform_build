@@ -228,6 +228,36 @@ endef
 # Initialize SOONG_CONFIG_NAMESPACES so that it isn't recursive.
 SOONG_CONFIG_NAMESPACES :=
 
+# The add_soong_config_namespace function adds a namespace and initializes it
+# to be empty.
+# $1 is the namespace.
+# Ex: $(call add_soong_config_namespace,acme)
+
+define add_soong_config_namespace
+$(eval SOONG_CONFIG_NAMESPACES += $1) \
+$(eval SOONG_CONFIG_$1 :=)
+endef
+
+# The add_soong_config_var function adds a a list of soong config variables to
+# SOONG_CONFIG_*. The variables and their values are then available to a
+# soong_config_module_type in an Android.bp file.
+# $1 is the namespace. $2 is the list of variables.
+# Ex: $(call add_soong_config_var,acme,COOL_FEATURE_A COOL_FEATURE_B)
+define add_soong_config_var
+$(eval SOONG_CONFIG_$1 += $2) \
+$(foreach v,$2,$(eval SOONG_CONFIG_$1_$v := $($v)))
+endef
+
+# The add_soong_config_var_value function defines a make variable and also adds
+# the variable to SOONG_CONFIG_*.
+# $1 is the namespace. $2 is the variable name. $3 is the variable value.
+# Ex: $(call add_soong_config_var_value,acme,COOL_FEATURE,true)
+
+define add_soong_config_var_value
+$(eval $2 := $3) \
+$(call add_soong_config_var,$1,$2)
+endef
+
 # Set the extensions used for various packages
 COMMON_PACKAGE_SUFFIX := .zip
 COMMON_JAVA_PACKAGE_SUFFIX := .jar
@@ -553,6 +583,7 @@ BISON_PKGDATADIR := $(PWD)/prebuilts/build-tools/common/bison
 BISON := $(prebuilt_build_tools_bin_noasan)/bison
 YACC := $(BISON) -d
 BISON_DATA := $(wildcard $(BISON_PKGDATADIR)/* $(BISON_PKGDATADIR)/*/*)
+M4 :=$= $(prebuilt_build_tools_bin_noasan)/m4
 
 YASM := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/yasm/yasm
 
@@ -709,19 +740,37 @@ ifneq ($(PRODUCT_USE_VNDK_OVERRIDE),)
   PRODUCT_USE_VNDK := $(PRODUCT_USE_VNDK_OVERRIDE)
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
   # No shipping level defined
-else ifeq ($(call math_gt_or_eq,27,$(PRODUCT_SHIPPING_API_LEVEL)),)
+else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),27),true)
   PRODUCT_USE_VNDK := $(PRODUCT_FULL_TREBLE)
 endif
 
+# Define PRODUCT_PRODUCT_VNDK_VERSION if PRODUCT_USE_VNDK is true and
+# PRODUCT_SHIPPING_API_LEVEL is greater than 29.
+PRODUCT_USE_PRODUCT_VNDK := false
 ifeq ($(PRODUCT_USE_VNDK),true)
+  ifneq ($(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE),)
+    PRODUCT_USE_PRODUCT_VNDK := $(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE)
+  else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+    # No shipping level defined
+  else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
+    PRODUCT_USE_PRODUCT_VNDK := true
+  endif
+
   ifndef BOARD_VNDK_VERSION
     BOARD_VNDK_VERSION := current
   endif
+
+  ifeq ($(PRODUCT_USE_PRODUCT_VNDK),true)
+    ifndef PRODUCT_PRODUCT_VNDK_VERSION
+      PRODUCT_PRODUCT_VNDK_VERSION := current
+    endif
+  endif
 endif
 
-$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use PRODUCT_USE_VNDK instead)
-.KATI_READONLY := \
-    PRODUCT_USE_VNDK
+$(KATI_obsolete_var PRODUCT_USE_VNDK,Use BOARD_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use BOARD_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK_OVERRIDE,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
 
 # Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
 # devices if unset.
@@ -771,7 +820,7 @@ else
   MAINLINE_SEPOLICY_DEV_CERTIFICATES := $(dir $(DEFAULT_SYSTEM_DEV_CERTIFICATE))
 endif
 
-BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
+BUILD_NUMBER_FROM_FILE := $$(cat $(SOONG_OUT_DIR)/build_number.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 
 # SEPolicy versions
@@ -1170,23 +1219,6 @@ endif
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.
 dont_bother_goals := out \
-    snod systemimage-nodeps \
-    userdataimage-nodeps \
-    cacheimage-nodeps \
-    bptimage-nodeps \
-    vnod vendorimage-nodeps \
-    pnod productimage-nodeps \
-    senod systemextimage-nodeps \
-    onod odmimage-nodeps \
-    systemotherimage-nodeps \
-    ramdisk-nodeps \
-    ramdisk_debug-nodeps \
-    ramdisk_test_harness-nodeps \
-    bootimage-nodeps \
-    bootimage_debug-nodeps \
-    bootimage_test_harness-nodeps \
-    recoveryimage-nodeps \
-    vbmetaimage-nodeps \
     product-graph dump-products
 
 ifeq ($(CALLED_FROM_SETUP),true)

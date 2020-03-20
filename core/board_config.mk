@@ -26,6 +26,7 @@ _board_strip_readonly_list := \
   BOARD_KERNEL_CMDLINE \
   BOARD_KERNEL_BASE \
   BOARD_USES_GENERIC_AUDIO \
+  BOARD_USES_RECOVERY_AS_BOOT \
   BOARD_VENDOR_USE_AKMD \
   BOARD_WPA_SUPPLICANT_DRIVER \
   BOARD_WLAN_DEVICE \
@@ -86,10 +87,11 @@ _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
+  BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
   BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
   BUILD_BROKEN_USES_NETWORK \
-  BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS \
+  BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES \
 
 _build_broken_var_list += \
   $(foreach m,$(AVAILABLE_BUILD_MODULE_TYPES) \
@@ -98,7 +100,8 @@ _build_broken_var_list += \
     BUILD_BROKEN_USES_$(m))
 
 _board_true_false_vars := $(_build_broken_var_list)
-_board_strip_readonly_list += $(_build_broken_var_list)
+_board_strip_readonly_list += $(_build_broken_var_list) \
+  BUILD_BROKEN_NINJA_USES_ENV_VARS
 
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
@@ -109,6 +112,7 @@ endif
 # Broken build defaults
 # ###############################################################
 $(foreach v,$(_build_broken_var_list),$(eval $(v) :=))
+BUILD_BROKEN_NINJA_USES_ENV_VARS :=
 
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
@@ -278,6 +282,7 @@ endif
 # Now we can substitute with the real value of TARGET_COPY_OUT_DEBUG_RAMDISK
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 TARGET_COPY_OUT_DEBUG_RAMDISK := debug_ramdisk/first_stage_ramdisk
+TARGET_COPY_OUT_VENDOR_DEBUG_RAMDISK := vendor_debug_ramdisk/first_stage_ramdisk
 TARGET_COPY_OUT_TEST_HARNESS_RAMDISK := test_harness_ramdisk/first_stage_ramdisk
 endif
 
@@ -357,7 +362,9 @@ endif
 BUILDING_VENDOR_BOOT_IMAGE :=
 ifdef BOARD_BOOT_HEADER_VERSION
   ifneq ($(call math_gt_or_eq,$(BOARD_BOOT_HEADER_VERSION),3),)
-    BUILDING_VENDOR_BOOT_IMAGE := true
+    ifneq ($(TARGET_NO_VENDOR_BOOT),true)
+      BUILDING_VENDOR_BOOT_IMAGE := true
+    endif
     ifdef BUILDING_RECOVERY_IMAGE
       ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
         $(error Boot header version >=3 requires recovery as boot)
@@ -578,9 +585,8 @@ endef
 
 ifdef BOARD_VNDK_VERSION
   ifneq ($(BOARD_VNDK_VERSION),current)
-    $(error BOARD_VNDK_VERSION: Only "current" is implemented)
+    $(call check_vndk_version,$(BOARD_VNDK_VERSION))
   endif
-
   TARGET_VENDOR_TEST_SUFFIX := /vendor
 else
   TARGET_VENDOR_TEST_SUFFIX :=
@@ -623,7 +629,11 @@ $(foreach m,$(DEFAULT_WARNING_BUILD_MODULE_TYPES),\
     $(KATI_obsolete_var $(m),Please convert to Soong),\
     $(KATI_deprecated_var $(m),Please convert to Soong)))
 
-$(foreach m,$(DEFAULT_ERROR_BUILD_MODULE_TYPES),\
+$(if $(filter true,$(BUILD_BROKEN_USES_BUILD_COPY_HEADERS)),\
+  $(KATI_deprecated_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers),\
+  $(KATI_obsolete_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers))
+
+$(foreach m,$(filter-out BUILD_COPY_HEADERS,$(DEFAULT_ERROR_BUILD_MODULE_TYPES)),\
   $(if $(filter true,$(BUILD_BROKEN_USES_$(m))),\
     $(KATI_deprecated_var $(m),Please convert to Soong),\
     $(KATI_obsolete_var $(m),Please convert to Soong)))

@@ -62,13 +62,14 @@ class Options(object):
           'Warning: releasetools script should be invoked as hermetic Python '
           'executable -- build and run `{}` directly.'.format(script_name[:-3]),
           file=sys.stderr)
-    self.search_path = os.path.realpath(os.path.join(exec_path, '..'))
+    self.search_path = os.path.realpath(os.path.join(os.path.dirname(exec_path), '..'))
 
     self.signapk_path = "framework/signapk.jar"  # Relative to search_path
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
     self.extra_signapk_args = []
     self.java_path = "java"  # Use the one on the path by default.
     self.java_args = ["-Xmx2048m"]  # The default JVM args.
+    self.android_jar_path = None
     self.public_key_suffix = ".x509.pem"
     self.private_key_suffix = ".pk8"
     # use otatools built boot_signer by default
@@ -318,7 +319,7 @@ class BuildInfo(object):
   OEM-specific properties, some of them will be calculated from two info dicts.
 
   Users can query properties similarly as using a dict() (e.g. info['fstab']),
-  or to query build properties via GetBuildProp() or GetVendorBuildProp().
+  or to query build properties via GetBuildProp() or GetPartitionBuildProp().
 
   Attributes:
     info_dict: The build-time info dict.
@@ -361,16 +362,31 @@ class BuildInfo(object):
     if self._oem_props:
       assert oem_dicts, "OEM source required for this build"
 
+    def check_fingerprint(fingerprint):
+      if (" " in fingerprint or any(ord(ch) > 127 for ch in fingerprint)):
+        raise ValueError(
+            'Invalid build fingerprint: "{}". See the requirement in Android CDD '
+            "3.2.2. Build Parameters.".format(fingerprint))
+
+
+    self._partition_fingerprints = {}
+    for partition in PARTITIONS_WITH_CARE_MAP:
+      try:
+        fingerprint = self.CalculatePartitionFingerprint(partition)
+        check_fingerprint(fingerprint)
+        self._partition_fingerprints[partition] = fingerprint
+      except ExternalError:
+        continue
+    if "system" in self._partition_fingerprints:
+      # system_other is not included in PARTITIONS_WITH_CARE_MAP, but does
+      # need a fingerprint when creating the image.
+      self._partition_fingerprints[
+          "system_other"] = self._partition_fingerprints["system"]
+
     # These two should be computed only after setting self._oem_props.
     self._device = self.GetOemProperty("ro.product.device")
     self._fingerprint = self.CalculateFingerprint()
-
-    # Sanity check the build fingerprint.
-    if (' ' in self._fingerprint or
-        any(ord(ch) > 127 for ch in self._fingerprint)):
-      raise ValueError(
-          'Invalid build fingerprint: "{}". See the requirement in Android CDD '
-          '3.2.2. Build Parameters.'.format(self._fingerprint))
+    check_fingerprint(self._fingerprint)
 
   @property
   def is_ab(self):
@@ -383,28 +399,6 @@ class BuildInfo(object):
   @property
   def fingerprint(self):
     return self._fingerprint
-
-  @property
-  def vendor_fingerprint(self):
-    return self._fingerprint_of("vendor")
-
-  @property
-  def product_fingerprint(self):
-    return self._fingerprint_of("product")
-
-  @property
-  def odm_fingerprint(self):
-    return self._fingerprint_of("odm")
-
-  def _fingerprint_of(self, partition):
-    if partition + ".build.prop" not in self.info_dict:
-      return None
-    build_prop = self.info_dict[partition + ".build.prop"]
-    if "ro." + partition + ".build.fingerprint" in build_prop:
-      return build_prop["ro." + partition + ".build.fingerprint"]
-    if "ro." + partition + ".build.thumbprint" in build_prop:
-      return build_prop["ro." + partition + ".build.thumbprint"]
-    return None
 
   @property
   def oem_props(self):
@@ -422,8 +416,22 @@ class BuildInfo(object):
   def items(self):
     return self.info_dict.items()
 
+  def GetPartitionBuildProp(self, prop, partition):
+    """Returns the inquired build property for the provided partition."""
+    # If provided a partition for this property, only look within that
+    # partition's build.prop.
+    if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
+      prop = prop.replace("ro.product", "ro.product.{}".format(partition))
+    else:
+      prop = prop.replace("ro.", "ro.{}.".format(partition))
+    try:
+      return self.info_dict.get("{}.build.prop".format(partition), {})[prop]
+    except KeyError:
+      raise ExternalError("couldn't find %s in %s.build.prop" %
+                          (prop, partition))
+
   def GetBuildProp(self, prop):
-    """Returns the inquired build property."""
+    """Returns the inquired build property from the standard build.prop file."""
     if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
       return self._ResolveRoProductBuildProp(prop)
 
@@ -461,18 +469,27 @@ class BuildInfo(object):
 
     raise ExternalError("couldn't resolve {}".format(prop))
 
-  def GetVendorBuildProp(self, prop):
-    """Returns the inquired vendor build property."""
-    try:
-      return self.info_dict.get("vendor.build.prop", {})[prop]
-    except KeyError:
-      raise ExternalError(
-          "couldn't find %s in vendor.build.prop" % (prop,))
-
   def GetOemProperty(self, key):
     if self.oem_props is not None and key in self.oem_props:
       return self.oem_dicts[0][key]
     return self.GetBuildProp(key)
+
+  def GetPartitionFingerprint(self, partition):
+    return self._partition_fingerprints.get(partition, None)
+
+  def CalculatePartitionFingerprint(self, partition):
+    try:
+      return self.GetPartitionBuildProp("ro.build.fingerprint", partition)
+    except ExternalError:
+      return "{}/{}/{}:{}/{}/{}:{}/{}".format(
+          self.GetPartitionBuildProp("ro.product.brand", partition),
+          self.GetPartitionBuildProp("ro.product.name", partition),
+          self.GetPartitionBuildProp("ro.product.device", partition),
+          self.GetPartitionBuildProp("ro.build.version.release", partition),
+          self.GetPartitionBuildProp("ro.build.id", partition),
+          self.GetPartitionBuildProp("ro.build.version.incremental", partition),
+          self.GetPartitionBuildProp("ro.build.type", partition),
+          self.GetPartitionBuildProp("ro.build.tags", partition))
 
   def CalculateFingerprint(self):
     if self.oem_props is None:
@@ -643,7 +660,10 @@ def LoadInfoDict(input_file, repacking=False):
   # hash / hashtree footers.
   if d.get("avb_enable") == "true":
     build_info = BuildInfo(d)
-    d["avb_salt"] = sha256(build_info.fingerprint).hexdigest()
+    for partition in PARTITIONS_WITH_CARE_MAP:
+      fingerprint = build_info.GetPartitionFingerprint(partition)
+      if fingerprint:
+        d["avb_{}_salt".format(partition)] = sha256(fingerprint).hexdigest()
 
   return d
 
@@ -823,6 +843,12 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
     merged_dict[key] = (
         "%s %s" %
         (framework_dict.get(key, ""), vendor_dict.get(key, ""))).strip()
+
+  # Pick virtual ab related flags from vendor dict, if defined.
+  if "virtual_ab" in vendor_dict.keys():
+     merged_dict["virtual_ab"] = vendor_dict["virtual_ab"]
+  if "virtual_ab_retrofit" in vendor_dict.keys():
+     merged_dict["virtual_ab_retrofit"] = vendor_dict["virtual_ab_retrofit"]
   return merged_dict
 
 
@@ -1817,7 +1843,7 @@ def ParseOptions(argv,
         argv, "hvp:s:x:" + extra_opts,
         ["help", "verbose", "path=", "signapk_path=",
          "signapk_shared_library_path=", "extra_signapk_args=",
-         "java_path=", "java_args=", "public_key_suffix=",
+         "java_path=", "java_args=", "android_jar_path=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
          "extra=", "logfile=", "aftl_server=", "aftl_key_path=",
@@ -1846,6 +1872,8 @@ def ParseOptions(argv,
       OPTIONS.java_path = a
     elif o in ("--java_args",):
       OPTIONS.java_args = shlex.split(a)
+    elif o in ("--android_jar_path",):
+      OPTIONS.android_jar_path = a
     elif o in ("--public_key_suffix",):
       OPTIONS.public_key_suffix = a
     elif o in ("--private_key_suffix",):

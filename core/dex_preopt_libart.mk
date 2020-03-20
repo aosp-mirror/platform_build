@@ -1,45 +1,42 @@
 ####################################
 # ART boot image installation
-# Input variable:
+# Input variables:
 #   my_boot_image_name: the boot image to install
+#   my_boot_image_arch: the architecture to install (e.g. TARGET_ARCH, not expanded)
+#   my_boot_image_out:  the install directory (e.g. $(PRODUCT_OUT))
+#   my_boot_image_syms: the symbols director (e.g. $(TARGET_OUT_UNSTRIPPED))
+#   my_boot_image_root: make variable used to store installed image path
 #
 ####################################
 
-# Install primary arch vdex files into a shared location, and then symlink them to both the primary
-# and secondary arch directories.
-my_vdex_copy_pairs := $(DEXPREOPT_IMAGE_VDEX_BUILT_INSTALLED_$(my_boot_image_name)_$(TARGET_ARCH))
-my_installed := $(foreach v,$(my_vdex_copy_pairs),$(PRODUCT_OUT)$(call word-colon,2,$(v)))
+# Install $(1) to $(2) so that it is shared between architectures.
+define copy-vdex-file
+my_vdex_shared := $$(dir $$(patsubst %/,%,$$(dir $(2))))$$(notdir $(2))  # Remove the arch dir.
+ifneq ($(my_boot_image_arch),$(filter $(my_boot_image_arch), TARGET_2ND_ARCH HOST_2ND_ARCH))
+$$(my_vdex_shared): $(1)  # Copy $(1) to directory one level up (i.e. with the arch dir removed).
+	@echo "Install: $$@"
+	$$(copy-file-to-target)
+endif
+$(2): $$(my_vdex_shared)  # Create symlink at $(2) which points to the actual physical copy.
+	@echo "Symlink: $$@"
+	mkdir -p $$(dir $$@)
+	ln -sfn ../$$(notdir $$@) $$@
+my_vdex_shared :=
+endef
+
+# Same as 'copy-many-files' but it uses the vdex-specific helper above.
+define copy-vdex-files
+$(foreach v,$(1),$(eval $(call copy-vdex-file, $(call word-colon,1,$(v)), $(2)$(call word-colon,2,$(v)))))
+$(foreach v,$(1),$(2)$(call word-colon,2,$(v)))
+endef
+
+# Install the boot images compiled by Soong.
+# The first file is saved in $(my_boot_image_root) and the rest are added as it's dependencies.
+my_suffix := BUILT_INSTALLED_$(my_boot_image_name)_$($(my_boot_image_arch))
+my_installed := $(call copy-many-files,$(DEXPREOPT_IMAGE_$(my_suffix)),$(my_boot_image_out))
+my_installed += $(call copy-many-files,$(DEXPREOPT_IMAGE_UNSTRIPPED_$(my_suffix)),$(my_boot_image_syms))
+my_installed += $(call copy-vdex-files,$(DEXPREOPT_IMAGE_VDEX_$(my_suffix)),$(my_boot_image_out))
+$(my_boot_image_root) += $(firstword $(my_installed))
 $(firstword $(my_installed)): $(wordlist 2,9999,$(my_installed))
-
-my_built_vdex_dir := $(dir $(call word-colon,1,$(firstword $(my_vdex_copy_pairs))))
-my_installed_vdex_dir := $(PRODUCT_OUT)$(dir $(call word-colon,2,$(firstword $(my_vdex_copy_pairs))))
-
-$(my_installed): $(my_installed_vdex_dir)% : $(my_built_vdex_dir)%
-	@echo "Install: $@"
-	@rm -f $@
-	$(copy-file-to-target)
-	mkdir -p $(dir $@)/$(TARGET_ARCH)
-	ln -sfn ../$(notdir $@) $(dir $@)/$(TARGET_ARCH)
-ifdef TARGET_2ND_ARCH
-	mkdir -p $(dir $@)/$(TARGET_2ND_ARCH)
-	ln -sfn ../$(notdir $@) $(dir $@)/$(TARGET_2ND_ARCH)
-endif
-
-my_dexpreopt_image_extra_deps := $(firstword $(my_installed))
-
-my_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/dex_preopt_libart_boot.mk
-
-ifdef TARGET_2ND_ARCH
-  my_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
-  include $(BUILD_SYSTEM)/dex_preopt_libart_boot.mk
-endif
-
-my_2nd_arch_prefix :=
-
-
-my_vdex_copy_pairs :=
 my_installed :=
-my_built_vdex_dir :=
-my_installed_vdex_dir :=
-my_dexpreopt_image_extra_deps :=
+my_suffix :=

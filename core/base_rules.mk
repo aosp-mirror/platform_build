@@ -705,13 +705,19 @@ endif
 
 ifeq ($(use_testcase_folder),true)
 ifneq ($(my_test_data_file_pairs),)
+# Filter out existng installed test data paths when collecting test data files to be installed and
+# indexed as they cause build rule conflicts. Instead put them in a separate list which is only
+# used for indexing.
 $(foreach pair, $(my_test_data_file_pairs), \
   $(eval parts := $(subst :,$(space),$(pair))) \
   $(eval src_path := $(word 1,$(parts))) \
   $(eval file := $(word 2,$(parts))) \
   $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-      $(call filter-copy-pair,$(src_path),$(call append-path,$(dir),$(file)),$(my_installed_test_data))))))
+      $(call filter-copy-pair,$(src_path),$(call append-path,$(dir),$(file)),$(my_installed_test_data)))) \
+    $(eval my_compat_dist_test_data_$(suite) += \
+      $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
+        $(filter $(my_installed_test_data),$(call append-path,$(dir),$(file)))))))
 endif
 else
 ifneq ($(my_test_data_file_pairs),)
@@ -732,7 +738,8 @@ is_native :=
 
 $(call create-suite-dependencies)
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_config_$(suite) := ))
+  $(eval my_compat_dist_config_$(suite) := ) \
+  $(eval my_compat_dist_test_data_$(suite) := ))
 
 endif  # LOCAL_COMPATIBILITY_SUITE
 
@@ -800,22 +807,28 @@ ifdef LOCAL_IS_HOST_MODULE
 my_required_modules += $(LOCAL_REQUIRED_MODULES_$($(my_prefix)OS))
 endif
 
-###############################################################################
-## When compiling against the VNDK, add the .vendor suffix to required modules.
-###############################################################################
+##########################################################################
+## When compiling against the VNDK, add the .vendor or .product suffix to
+## required modules.
+##########################################################################
 ifneq ($(LOCAL_USE_VNDK),)
-  ####################################################
-  ## Soong modules may be built twice, once for /system
-  ## and once for /vendor. If we're using the VNDK,
-  ## switch all soong libraries over to the /vendor
-  ## variant.
-  ####################################################
+  #####################################################
+  ## Soong modules may be built three times, once for
+  ## /system, once for /vendor and once for /product.
+  ## If we're using the VNDK, switch all soong
+  ## libraries over to the /vendor or /product variant.
+  #####################################################
   ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
     # We don't do this renaming for soong-defined modules since they already
-    # have correct names (with .vendor suffix when necessary) in their
-    # LOCAL_*_LIBRARIES.
-    my_required_modules := $(foreach l,$(my_required_modules),\
-      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+    # have correct names (with .vendor or .product suffix when necessary) in
+    # their LOCAL_*_LIBRARIES.
+    ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+      my_required_modules := $(foreach l,$(my_required_modules),\
+        $(if $(SPLIT_PRODUCT.SHARED_LIBRARIES.$(l)),$(l).product,$(l)))
+    else
+      my_required_modules := $(foreach l,$(my_required_modules),\
+        $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+    endif
   endif
 endif
 

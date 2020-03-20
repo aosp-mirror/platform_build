@@ -34,7 +34,7 @@ endif
 ifdef DEVICE_MANIFEST_FILE
 # $(DEVICE_MANIFEST_FILE) can be a list of files
 include $(CLEAR_VARS)
-LOCAL_MODULE        := device_manifest.xml
+LOCAL_MODULE        := vendor_manifest.xml
 LOCAL_MODULE_STEM   := manifest.xml
 LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)/etc/vintf
@@ -50,8 +50,44 @@ $(GEN): $(DEVICE_MANIFEST_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
 
 LOCAL_PREBUILT_MODULE_FILE := $(GEN)
 include $(BUILD_PREBUILT)
-BUILT_VENDOR_MANIFEST := $(LOCAL_BUILT_MODULE)
 endif
+
+# DEVICE_MANIFEST_SKUS: a list of SKUS where DEVICE_MANIFEST_<sku>_FILES is defined.
+ifdef DEVICE_MANIFEST_SKUS
+
+# Install /vendor/etc/vintf/manifest_$(sku).xml
+# $(1): sku
+define _add_device_sku_manifest
+my_fragment_files_var := DEVICE_MANIFEST_$$(call to-upper,$(1))_FILES
+ifndef $$(my_fragment_files_var)
+$$(error $(1) is in DEVICE_MANIFEST_SKUS but $$(my_fragment_files_var) is not defined)
+endif
+my_fragment_files := $$($$(my_fragment_files_var))
+include $$(CLEAR_VARS)
+LOCAL_MODULE := vendor_manifest_$(1).xml
+LOCAL_MODULE_STEM := manifest_$(1).xml
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)/etc/vintf
+
+GEN := $$(local-generated-sources-dir)/manifest_$(1).xml
+$$(GEN): PRIVATE_SRC_FILES := $$(my_fragment_files)
+$$(GEN): $$(my_fragment_files) $$(HOST_OUT_EXECUTABLES)/assemble_vintf
+	BOARD_SEPOLICY_VERS=$$(BOARD_SEPOLICY_VERS) \
+	PRODUCT_ENFORCE_VINTF_MANIFEST=$$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
+	PRODUCT_SHIPPING_API_LEVEL=$$(PRODUCT_SHIPPING_API_LEVEL) \
+	$$(HOST_OUT_EXECUTABLES)/assemble_vintf -o $$@ \
+		-i $$(call normalize-path-list,$$(PRIVATE_SRC_FILES))
+
+LOCAL_PREBUILT_MODULE_FILE := $$(GEN)
+include $$(BUILD_PREBUILT)
+my_fragment_files_var :=
+my_fragment_files :=
+endef
+
+$(foreach sku, $(DEVICE_MANIFEST_SKUS), $(eval $(call _add_device_sku_manifest,$(sku))))
+_add_device_sku_manifest :=
+
+endif # DEVICE_MANIFEST_SKUS
 
 # ODM manifest
 ifdef ODM_MANIFEST_FILES

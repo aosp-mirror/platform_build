@@ -91,6 +91,14 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       Replace the veritykeyid in BOOT/cmdline of input_target_file_zip
       with keyid of the cert pointed by <path_to_X509_PEM_cert_file>.
 
+  --remove_avb_public_keys <key1>,<key2>,...
+      Remove AVB public keys from the first-stage ramdisk. The key file to
+      remove is located at either of the following dirs:
+        - BOOT/RAMDISK/avb/ or
+        - BOOT/RAMDISK/first_stage_ramdisk/avb/
+      The second dir will be used for lookup if BOARD_USES_RECOVERY_AS_BOOT is
+      set to true.
+
   --avb_{boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
          vbmeta_vendor}_algorithm <algorithm>
   --avb_{boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
@@ -103,6 +111,9 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       Specify any additional args that are needed to AVB-sign the image
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
       the existing ones in info dict.
+
+  --android_jar_path <path>
+      Path to the android.jar to repack the apex file.
 """
 
 from __future__ import print_function
@@ -147,10 +158,12 @@ OPTIONS.replace_ota_keys = False
 OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
 OPTIONS.replace_verity_keyid = False
+OPTIONS.remove_avb_public_keys = None
 OPTIONS.tag_changes = ("-test-keys", "-dev-keys", "+release-keys")
 OPTIONS.avb_keys = {}
 OPTIONS.avb_algorithms = {}
 OPTIONS.avb_extra_args = {}
+OPTIONS.android_jar_path = None
 
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
@@ -492,6 +505,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             payload_key,
             container_key,
             key_passwords[container_key],
+            apk_keys,
             codename_to_api_level_map,
             no_hashtree=True,
             signing_args=OPTIONS.avb_extra_args.get('apex'))
@@ -552,8 +566,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
     # Ask add_img_to_target_files to rebuild the recovery patch if needed.
     elif filename in ("SYSTEM/recovery-from-boot.p",
+                      "VENDOR/recovery-from-boot.p",
+
                       "SYSTEM/etc/recovery.img",
-                      "SYSTEM/bin/install-recovery.sh"):
+                      "VENDOR/etc/recovery.img",
+
+                      "SYSTEM/bin/install-recovery.sh",
+                      "VENDOR/bin/install-recovery.sh"):
       OPTIONS.rebuild_recovery = True
 
     # Don't copy OTA certs if we're replacing them.
@@ -575,6 +594,18 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
           filename in ("BOOT/RAMDISK/verity_key",
                        "ROOT/verity_key")):
       pass
+    elif (OPTIONS.remove_avb_public_keys and
+          (filename.startswith("BOOT/RAMDISK/avb/") or
+           filename.startswith("BOOT/RAMDISK/first_stage_ramdisk/avb/"))):
+        matched_removal = False
+        for key_to_remove in OPTIONS.remove_avb_public_keys:
+          if filename.endswith(key_to_remove):
+            matched_removal = True
+            print("Removing AVB public key from ramdisk: %s" % filename)
+            break
+        if not matched_removal:
+          # Copy it verbatim if we don't want to remove it.
+          common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # Skip verity keyid (for system_root_image use) if we will replace it.
     elif OPTIONS.replace_verity_keyid and filename == "BOOT/cmdline":
@@ -600,8 +631,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # Should NOT sign boot-debug.img.
     elif filename in (
         "BOOT/RAMDISK/force_debuggable",
-        "RECOVERY/RAMDISK/force_debuggable"
-        "RECOVERY/RAMDISK/first_stage_ramdisk/force_debuggable"):
+        "BOOT/RAMDISK/first_stage_ramdisk/force_debuggable"):
       raise common.ExternalError("debuggable boot.img cannot be signed")
 
     # A non-APK file; copy it verbatim.
@@ -1125,6 +1155,8 @@ def main(argv):
       OPTIONS.replace_verity_private_key = (True, a)
     elif o == "--replace_verity_keyid":
       OPTIONS.replace_verity_keyid = (True, a)
+    elif o == "--remove_avb_public_keys":
+      OPTIONS.remove_avb_public_keys = a.split(",")
     elif o == "--avb_vbmeta_key":
       OPTIONS.avb_keys['vbmeta'] = a
     elif o == "--avb_vbmeta_algorithm":
@@ -1193,6 +1225,7 @@ def main(argv):
           "replace_verity_public_key=",
           "replace_verity_private_key=",
           "replace_verity_keyid=",
+          "remove_avb_public_keys=",
           "avb_apex_extra_args=",
           "avb_vbmeta_algorithm=",
           "avb_vbmeta_key=",
@@ -1242,6 +1275,8 @@ def main(argv):
   apex_keys_info = ReadApexKeysInfo(input_zip)
   apex_keys = GetApexKeys(apex_keys_info, apk_keys)
 
+  # TODO(xunchang) check for the apks inside the apex files, and abort early if
+  # the keys are not available.
   CheckApkAndApexKeysAvailable(
       input_zip,
       set(apk_keys.keys()) | set(apex_keys.keys()),

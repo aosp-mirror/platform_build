@@ -1,5 +1,5 @@
 
-#Set LOCAL_USE_VNDK for modules going into vendor or odm partition, except for host modules
+#Set LOCAL_USE_VNDK for modules going into product, vendor or odm partition, except for host modules
 #If LOCAL_SDK_VERSION is set, thats a more restrictive set, so they dont need LOCAL_USE_VNDK
 ifndef LOCAL_IS_HOST_MODULE
 ifndef LOCAL_SDK_VERSION
@@ -7,6 +7,13 @@ ifndef LOCAL_SDK_VERSION
     LOCAL_USE_VNDK:=true
     # Note: no need to check LOCAL_MODULE_PATH* since LOCAL_[VENDOR|ODM|OEM]_MODULE is already
     # set correctly before this is included.
+  endif
+  ifdef PRODUCT_PRODUCT_VNDK_VERSION
+    # Product modules also use VNDK when PRODUCT_PRODUCT_VNDK_VERSION is defined.
+    ifeq (true,$(LOCAL_PRODUCT_MODULE))
+      LOCAL_USE_VNDK:=true
+      LOCAL_USE_VNDK_PRODUCT:=true
+    endif
   endif
 endif
 endif
@@ -33,6 +40,7 @@ ifdef LOCAL_USE_VNDK
   # If we're not using the VNDK, drop all restrictions
   ifndef BOARD_VNDK_VERSION
     LOCAL_USE_VNDK:=
+    LOCAL_USE_VNDK_PRODUCT:=
   endif
 endif
 

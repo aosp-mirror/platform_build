@@ -41,6 +41,10 @@ ifdef LOCAL_SOONG_CLASSES_JAR
       $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
     endif
   endif # TURBINE_ENABLED != false
+
+  javac-check : $(full_classes_jar)
+  javac-check-$(LOCAL_MODULE) : $(full_classes_jar)
+  .PHONY: javac-check-$(LOCAL_MODULE)
 endif
 
 # Run veridex on product, system_ext and vendor modules.
@@ -135,6 +139,9 @@ my_prebuilt_jni_libs :=
 my_2nd_arch_prefix :=
 
 PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
+ifndef LOCAL_CERTIFICATE
+  $(call pretty-error,LOCAL_CERTIFICATE must be set for soong_app_prebuilt.mk)
+endif
 ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
   # The magic string "PRESIGNED" means this package is already checked
   # signed with its release key.

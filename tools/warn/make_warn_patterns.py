@@ -1,4 +1,4 @@
-#
+# python3
 # Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,12 @@
 
 """Warning patterns for build make tools."""
 
-from severity import Severity
+# pylint:disable=relative-beyond-top-level
+# pylint:disable=g-importing-member
+from .cpp_warn_patterns import compile_patterns
+from .severity import Severity
 
-patterns = [
+warn_patterns = [
     # pylint:disable=line-too-long,g-inconsistent-quotes
     {'category': 'make', 'severity': Severity.MEDIUM,
      'description': 'make: overriding commands/ignoring old commands',
@@ -50,4 +53,10 @@ patterns = [
     {'category': 'make', 'severity': Severity.MEDIUM,
      'description': 'make: please convert to soong',
      'patterns': [r".*: warning: .* has been deprecated. Please convert to Soong."]},
+    {'category': 'make', 'severity': Severity.MEDIUM,
+     'description': 'make: deprecated macros',
+     'patterns': [r".*\.mk:.* warning:.* [A-Z_]+ (is|has been) deprecated."]},
 ]
+
+
+compile_patterns(warn_patterns)

@@ -193,6 +193,9 @@ _product_list_vars += PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS
 # Package list to apply enforcing RRO.
 _product_list_vars += PRODUCT_ENFORCE_RRO_TARGETS
 
+# Packages to skip auto-generating RROs for when PRODUCT_ENFORCE_RRO_TARGETS is set to *.
+_product_list_vars += PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
+
 _product_list_vars += PRODUCT_SDK_ATREE_FILES
 _product_list_vars += PRODUCT_SDK_ADDON_NAME
 _product_list_vars += PRODUCT_SDK_ADDON_COPY_FILES
@@ -309,6 +312,10 @@ _product_single_value_vars += PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE
 # List of extra VNDK versions to be included
 _product_list_vars += PRODUCT_EXTRA_VNDK_VERSIONS
 
+# VNDK version of product partition. It can be 'current' if the product
+# partitions uses PLATFORM_VNDK_VERSION.
+_product_single_value_var += PRODUCT_PRODUCT_VNDK_VERSION
+
 # Whether the whitelist of actionable compatible properties should be disabled or not
 _product_single_value_vars += PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE
 
@@ -346,8 +353,6 @@ _product_list_vars += PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 # system.img), so devices need to install the package in a system-only OTA manner.
 _product_single_value_vars += PRODUCT_BUILD_GENERIC_OTA_PACKAGE
 
-# Whether any paths are excluded from being set XOM when ENABLE_XOM=true
-_product_list_vars += PRODUCT_XOM_EXCLUDE_PATHS
 _product_list_vars += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES

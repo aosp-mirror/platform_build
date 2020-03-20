@@ -33,8 +33,8 @@ math-expect :=
 math-expect-error :=
 
 # Run the math tests with:
-#  make -f ${ANDROID_BUILD_TOP}/build/make/core/math.mk RUN_MATH_TESTS=true
-#  $(get_build_var CKATI) -f ${ANDROID_BUILD_TOP}//build/make/core/math.mk RUN_MATH_TESTS=true
+#  make -f ${ANDROID_BUILD_TOP}/build/make/common/math.mk RUN_MATH_TESTS=true
+#  $(get_build_var CKATI) -f ${ANDROID_BUILD_TOP}//build/make/common/math.mk RUN_MATH_TESTS=true
 ifdef RUN_MATH_TESTS
   MATH_TEST_FAILURE :=
   MATH_TEST_ERROR :=
@@ -134,6 +134,10 @@ define math_gt_or_eq
 $(if $(filter $(1),$(call math_max,$(1),$(2))),true)
 endef
 
+define math_gt
+$(if $(call math_gt_or_eq,$(2),$(1)),,true)
+endef
+
 define math_lt
 $(if $(call math_gt_or_eq,$(1),$(2)),,true)
 endef
@@ -141,6 +145,12 @@ endef
 $(call math-expect-true,(call math_gt_or_eq, 2, 1))
 $(call math-expect-true,(call math_gt_or_eq, 1, 1))
 $(call math-expect-false,(call math_gt_or_eq, 1, 2))
+$(call math-expect-true,(call math_gt, 4, 3))
+$(call math-expect-false,(call math_gt, 5, 5))
+$(call math-expect-false,(call math_gt, 6, 7))
+$(call math-expect-false,(call math_lt, 1, 0))
+$(call math-expect-false,(call math_lt, 8, 8))
+$(call math-expect-true,(call math_lt, 10, 11))
 
 # $1 is the variable name to increment
 define inc_and_print

@@ -18,6 +18,7 @@ import logging
 import os.path
 import re
 import shlex
+import shutil
 import zipfile
 
 import common
@@ -39,6 +40,140 @@ class ApexSigningError(Exception):
 
   def __init__(self, message):
     Exception.__init__(self, message)
+
+
+class ApexApkSigner(object):
+  """Class to sign the apk files in a apex payload image and repack the apex"""
+
+  def __init__(self, apex_path, key_passwords, codename_to_api_level_map):
+    self.apex_path = apex_path
+    self.key_passwords = key_passwords
+    self.codename_to_api_level_map = codename_to_api_level_map
+
+  def ProcessApexFile(self, apk_keys, payload_key, payload_public_key,
+                      signing_args=None):
+    """Scans and signs the apk files and repack the apex
+
+    Args:
+      apk_keys: A dict that holds the signing keys for apk files.
+      payload_key: The path to the apex payload signing key.
+      payload_public_key: The path to the public key corresponding to the
+       payload signing key.
+
+    Returns:
+      The repacked apex file containing the signed apk files.
+    """
+    list_cmd = ['deapexer', 'list', self.apex_path]
+    entries_names = common.RunAndCheckOutput(list_cmd).split()
+    apk_entries = [name for name in entries_names if name.endswith('.apk')]
+
+    # No need to sign and repack, return the original apex path.
+    if not apk_entries:
+      logger.info('No apk file to sign in %s', self.apex_path)
+      return self.apex_path
+
+    for entry in apk_entries:
+      apk_name = os.path.basename(entry)
+      if apk_name not in apk_keys:
+        raise ApexSigningError('Failed to find signing keys for apk file {} in'
+                               ' apex {}.  Use "-e <apkname>=" to specify a key'
+                               .format(entry, self.apex_path))
+      if not any(dirname in entry for dirname in ['app/', 'priv-app/',
+                                                  'overlay/']):
+        logger.warning('Apk path does not contain the intended directory name:'
+                       ' %s', entry)
+
+    payload_dir, has_signed_apk = self.ExtractApexPayloadAndSignApks(
+        apk_entries, apk_keys)
+    if not has_signed_apk:
+      logger.info('No apk file has been signed in %s', self.apex_path)
+      return self.apex_path
+
+    return self.RepackApexPayload(payload_dir, payload_key, payload_public_key,
+                                  signing_args)
+
+  def ExtractApexPayloadAndSignApks(self, apk_entries, apk_keys):
+    """Extracts the payload image and signs the containing apk files."""
+    payload_dir = common.MakeTempDir()
+    extract_cmd = ['deapexer', 'extract', self.apex_path, payload_dir]
+    common.RunAndCheckOutput(extract_cmd)
+
+    has_signed_apk = False
+    for entry in apk_entries:
+      apk_path = os.path.join(payload_dir, entry)
+      assert os.path.exists(self.apex_path)
+
+      key_name = apk_keys.get(os.path.basename(entry))
+      if key_name in common.SPECIAL_CERT_STRINGS:
+        logger.info('Not signing: %s due to special cert string', apk_path)
+        continue
+
+      logger.info('Signing apk file %s in apex %s', apk_path, self.apex_path)
+      # Rename the unsigned apk and overwrite the original apk path with the
+      # signed apk file.
+      unsigned_apk = common.MakeTempFile()
+      os.rename(apk_path, unsigned_apk)
+      common.SignFile(unsigned_apk, apk_path, key_name, self.key_passwords,
+                      codename_to_api_level_map=self.codename_to_api_level_map)
+      has_signed_apk = True
+    return payload_dir, has_signed_apk
+
+  def RepackApexPayload(self, payload_dir, payload_key, payload_public_key,
+                        signing_args=None):
+    """Rebuilds the apex file with the updated payload directory."""
+    apex_dir = common.MakeTempDir()
+    # Extract the apex file and reuse its meta files as repack parameters.
+    common.UnzipToDir(self.apex_path, apex_dir)
+
+    android_jar_path = common.OPTIONS.android_jar_path
+    if not android_jar_path:
+      android_jar_path = os.path.join(os.environ.get('ANDROID_BUILD_TOP', ''),
+                                      'prebuilts', 'sdk', 'current', 'public',
+                                      'android.jar')
+      logger.warning('android_jar_path not found in options, falling back to'
+                     ' use %s', android_jar_path)
+
+    arguments_dict = {
+        'manifest': os.path.join(apex_dir, 'apex_manifest.pb'),
+        'build_info': os.path.join(apex_dir, 'apex_build_info.pb'),
+        'android_jar_path': android_jar_path,
+        'key': payload_key,
+        'pubkey': payload_public_key,
+    }
+    for filename in arguments_dict.values():
+      assert os.path.exists(filename), 'file {} not found'.format(filename)
+
+    # The repack process will add back these files later in the payload image.
+    for name in ['apex_manifest.pb', 'apex_manifest.json', 'lost+found']:
+      path = os.path.join(payload_dir, name)
+      if os.path.isfile(path):
+        os.remove(path)
+      elif os.path.isdir(path):
+        shutil.rmtree(path)
+
+    repacked_apex = common.MakeTempFile(suffix='.apex')
+    repack_cmd = ['apexer', '--force', '--include_build_info',
+                  '--do_not_check_keyname', '--apexer_tool_path',
+                  os.getenv('PATH')]
+    for key, val in arguments_dict.items():
+      repack_cmd.extend(['--' + key, val])
+    # Add quote to the signing_args as we will pass
+    # --signing_args "--signing_helper_with_files=%path" to apexer
+    if signing_args:
+      repack_cmd.extend(['--signing_args', '"{}"'.format(signing_args)])
+    # optional arguments for apex repacking
+    manifest_json = os.path.join(apex_dir, 'apex_manifest.json')
+    if os.path.exists(manifest_json):
+      repack_cmd.extend(['--manifest_json', manifest_json])
+    assets_dir = os.path.join(apex_dir, 'assets')
+    if os.path.isdir(assets_dir):
+      repack_cmd.extend(['--assets_dir', assets_dir])
+    repack_cmd.extend([payload_dir, repacked_apex])
+    if OPTIONS.verbose:
+      repack_cmd.append('-v')
+    common.RunAndCheckOutput(repack_cmd)
+
+    return repacked_apex
 
 
 def SignApexPayload(avbtool, payload_file, payload_key_path, payload_key_name,
@@ -155,7 +290,8 @@ def ParseApexPayloadInfo(avbtool, payload_path):
 
 
 def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
-             codename_to_api_level_map, no_hashtree, signing_args=None):
+             apk_keys, codename_to_api_level_map,
+             no_hashtree, signing_args=None):
   """Signs the current APEX with the given payload/container keys.
 
   Args:
@@ -163,6 +299,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
     payload_key: The path to payload signing key (w/ extension).
     container_key: The path to container signing key (w/o extension).
     container_pw: The matching password of the container_key, or None.
+    apk_keys: A dict that holds the signing keys for apk files.
     codename_to_api_level_map: A dict that maps from codename to API level.
     no_hashtree: Don't include hashtree in the signed APEX.
     signing_args: Additional args to be passed to the payload signer.
@@ -177,7 +314,15 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
   APEX_PAYLOAD_IMAGE = 'apex_payload.img'
   APEX_PUBKEY = 'apex_pubkey'
 
-  # 1a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
+  # 1. Extract the apex payload image and sign the containing apk files. Repack
+  # the apex file after signing.
+  payload_public_key = common.ExtractAvbPublicKey(avbtool, payload_key)
+  apk_signer = ApexApkSigner(apex_file, container_pw,
+                             codename_to_api_level_map)
+  apex_file = apk_signer.ProcessApexFile(apk_keys, payload_key,
+                                         payload_public_key, signing_args)
+
+  # 2a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
   # payload_key.
   payload_dir = common.MakeTempDir(prefix='apex-payload-')
   with zipfile.ZipFile(apex_file) as apex_fd:
@@ -195,8 +340,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
       no_hashtree,
       signing_args)
 
-  # 1b. Update the embedded payload public key.
-  payload_public_key = common.ExtractAvbPublicKey(avbtool, payload_key)
+  # 2b. Update the embedded payload public key.
 
   common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
   if APEX_PUBKEY in zip_items:
@@ -206,11 +350,11 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
   common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
   common.ZipClose(apex_zip)
 
-  # 2. Align the files at page boundary (same as in apexer).
+  # 3. Align the files at page boundary (same as in apexer).
   aligned_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
   common.RunAndCheckOutput(['zipalign', '-f', '4096', apex_file, aligned_apex])
 
-  # 3. Sign the APEX container with container_key.
+  # 4. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
 
   # Specify the 4K alignment when calling SignApk.
