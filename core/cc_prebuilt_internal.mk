@@ -85,6 +85,7 @@ ifdef LOCAL_SDK_VERSION
 my_link_type := native:ndk:$(my_ndk_stl_family):$(my_ndk_stl_link_type)
 else ifdef LOCAL_USE_VNDK
     _name := $(patsubst %.vendor,%,$(LOCAL_MODULE))
+    _name := $(patsubst %.product,%,$(LOCAL_MODULE))
     ifneq ($(filter $(_name),$(VNDK_CORE_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES) $(LLNDK_LIBRARIES)),)
         ifeq ($(filter $(_name),$(VNDK_PRIVATE_LIBRARIES)),)
             my_link_type := native:vndk
@@ -92,7 +93,11 @@ else ifdef LOCAL_USE_VNDK
             my_link_type := native:vndk_private
         endif
     else
-        my_link_type := native:vendor
+        ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+            my_link_type := native:product
+        else
+            my_link_type := native:vendor
+        endif
     endif
 else ifneq ($(filter $(TARGET_RECOVERY_OUT)/%,$(LOCAL_MODULE_PATH)),)
 my_link_type := native:recovery
@@ -136,8 +141,13 @@ include $(BUILD_SYSTEM)/cxx_stl_setup.mk
 
 ifdef my_shared_libraries
 ifdef LOCAL_USE_VNDK
-  my_shared_libraries := $(foreach l,$(my_shared_libraries),\
-    $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+      $(if $(SPLIT_PRODUCT.SHARED_LIBRARIES.$(l)),$(l).product,$(l)))
+  else
+    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  endif
 endif
 $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
   $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(my_shared_libraries))

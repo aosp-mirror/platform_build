@@ -1,4 +1,4 @@
-#
+# python3
 # Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,10 @@
 
 """Warning patterns for clang-tidy."""
 
-from severity import Severity
+# pylint:disable=relative-beyond-top-level
+# pylint:disable=g-importing-member
+from .cpp_warn_patterns import compile_patterns
+from .severity import Severity
 
 
 def tidy_warn_pattern(description, pattern):
@@ -35,13 +38,13 @@ def group_tidy_warn_pattern(description):
   return tidy_warn_pattern(description, description + r'-.+')
 
 
-def analyzer_high(description, pattern_list):
+def analyzer_high(description, patterns):
   # Important clang analyzer warnings to be fixed ASAP.
   return {
       'category': 'C/C++',
       'severity': Severity.HIGH,
       'description': description,
-      'patterns': pattern_list
+      'patterns': patterns
   }
 
 
@@ -53,12 +56,12 @@ def analyzer_group_high(check):
   return analyzer_high(check, [r'.*: .+\[' + check + r'.+\]$'])
 
 
-def analyzer_warn(description, pattern_list):
+def analyzer_warn(description, patterns):
   return {
       'category': 'C/C++',
       'severity': Severity.ANALYZER,
       'description': description,
-      'patterns': pattern_list
+      'patterns': patterns
   }
 
 
@@ -70,11 +73,12 @@ def analyzer_group_check(check):
   return analyzer_warn(check, [r'.*: .+\[' + check + r'.+\]$'])
 
 
-patterns = [
+warn_patterns = [
     # pylint:disable=line-too-long,g-inconsistent-quotes
     group_tidy_warn_pattern('android'),
     simple_tidy_warn_pattern('abseil-string-find-startswith'),
     simple_tidy_warn_pattern('bugprone-argument-comment'),
+    simple_tidy_warn_pattern('bugprone-branch-clone'),
     simple_tidy_warn_pattern('bugprone-copy-constructor-init'),
     simple_tidy_warn_pattern('bugprone-fold-init-type'),
     simple_tidy_warn_pattern('bugprone-forward-declaration-namespace'),
@@ -86,6 +90,9 @@ patterns = [
     simple_tidy_warn_pattern('bugprone-macro-parentheses'),
     simple_tidy_warn_pattern('bugprone-misplaced-widening-cast'),
     simple_tidy_warn_pattern('bugprone-move-forwarding-reference'),
+    simple_tidy_warn_pattern('bugprone-parent-virtual-call'),
+    simple_tidy_warn_pattern('bugprone-posix-return'),
+    simple_tidy_warn_pattern('bugprone-sizeof-container'),
     simple_tidy_warn_pattern('bugprone-sizeof-expression'),
     simple_tidy_warn_pattern('bugprone-string-constructor'),
     simple_tidy_warn_pattern('bugprone-string-integer-assignment'),
@@ -93,10 +100,25 @@ patterns = [
     simple_tidy_warn_pattern('bugprone-suspicious-missing-comma'),
     simple_tidy_warn_pattern('bugprone-suspicious-string-compare'),
     simple_tidy_warn_pattern('bugprone-suspicious-semicolon'),
+    simple_tidy_warn_pattern('bugprone-terminating-continue'),
+    simple_tidy_warn_pattern('bugprone-too-small-loop-variable'),
     simple_tidy_warn_pattern('bugprone-undefined-memory-manipulation'),
+    simple_tidy_warn_pattern('bugprone-unhandled-self-assignment'),
     simple_tidy_warn_pattern('bugprone-unused-raii'),
+    simple_tidy_warn_pattern('bugprone-unused-return-value'),
     simple_tidy_warn_pattern('bugprone-use-after-move'),
     group_tidy_warn_pattern('bugprone'),
+    simple_tidy_warn_pattern('cert-dcl16-c'),
+    simple_tidy_warn_pattern('cert-dcl21-cpp'),
+    simple_tidy_warn_pattern('cert-dcl50-cpp'),
+    simple_tidy_warn_pattern('cert-dcl54-cpp'),
+    simple_tidy_warn_pattern('cert-dcl59-cpp'),
+    simple_tidy_warn_pattern('cert-env33-c'),
+    simple_tidy_warn_pattern('cert-err34-c'),
+    simple_tidy_warn_pattern('cert-err52-cpp'),
+    simple_tidy_warn_pattern('cert-msc30-c'),
+    simple_tidy_warn_pattern('cert-msc50-cpp'),
+    simple_tidy_warn_pattern('cert-oop54-cpp'),
     group_tidy_warn_pattern('cert'),
     group_tidy_warn_pattern('clang-diagnostic'),
     group_tidy_warn_pattern('cppcoreguidelines'),
@@ -136,6 +158,13 @@ patterns = [
     simple_tidy_warn_pattern('portability-simd-intrinsics'),
     group_tidy_warn_pattern('performance'),
     group_tidy_warn_pattern('readability'),
+    simple_tidy_warn_pattern('abseil-string-find-startwith'),
+    simple_tidy_warn_pattern('abseil-faster-strsplit-delimiter'),
+    simple_tidy_warn_pattern('abseil-no-namespace'),
+    simple_tidy_warn_pattern('abseil-no-internal-dependencies'),
+    group_tidy_warn_pattern('abseil'),
+    simple_tidy_warn_pattern('portability-simd-intrinsics'),
+    group_tidy_warn_pattern('portability'),
 
     # warnings from clang-tidy's clang-analyzer checks
     analyzer_high('clang-analyzer-core, null pointer',
@@ -189,5 +218,8 @@ patterns = [
     analyzer_high_check('clang-analyzer-cplusplus.NewDeleteLeaks'),
     analyzer_high_check('clang-analyzer-cplusplus.NewDelete'),
     analyzer_group_check('clang-analyzer-unix'),
-    analyzer_group_check('clang-analyzer'),  # catch al
+    analyzer_group_check('clang-analyzer'),  # catch all
 ]
+
+
+compile_patterns(warn_patterns)

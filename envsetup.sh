@@ -8,7 +8,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
               Selects <product_name> as the product to build, and <build_variant> as the variant to
               build, and stores those selections in the environment to be read by subsequent
               invocations of 'm' etc.
-- tapas:      tapas [<App1> <App2> ...] [arm|x86|mips|arm64|x86_64|mips64] [eng|userdebug|user]
+- tapas:      tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
 - croot:      Changes directory to the top of the tree, or a subdirectory thereof.
 - m:          Makes from the top of the tree.
 - mm:         Builds and installs all of the modules in the current directory, and their
@@ -218,8 +218,6 @@ function setpaths()
         arm64) toolchaindir=aarch64/aarch64-linux-android-$targetgccversion/bin;
                toolchaindir2=arm/arm-linux-androideabi-$targetgccversion2/bin
             ;;
-        mips|mips64) toolchaindir=mips/mips64el-linux-android-$targetgccversion/bin
-            ;;
         *)
             echo "Can't find toolchain for unknown architecture: $ARCH"
             toolchaindir=xxxxxxxxx
@@ -253,6 +251,9 @@ function setpaths()
     # Append llvm binutils prebuilts path to ANDROID_BUILD_PATHS.
     local ANDROID_LLVM_BINUTILS=$(get_abs_build_var ANDROID_CLANG_PREBUILTS)/llvm-binutils-stable
     ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_LLVM_BINUTILS
+
+    # Set up ASAN_SYMBOLIZER_PATH for SANITIZE_HOST=address builds.
+    export ASAN_SYMBOLIZER_PATH=$ANDROID_LLVM_BINUTILS/llvm-symbolizer
 
     # If prebuilts/android-emulator/<system>/ exists, prepend it to our PATH
     # to ensure that the corresponding 'emulator' binaries are used.
@@ -596,7 +597,12 @@ function lunch()
 {
     local answer
 
-    if [ "$1" ] ; then
+    if [[ $# -gt 1 ]]; then
+        echo "usage: lunch [target]" >&2
+        return 1
+    fi
+
+    if [ "$1" ]; then
         answer=$1
     else
         print_lunch_menu
@@ -693,10 +699,10 @@ function _lunch()
 function tapas()
 {
     local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
-    local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|mips|arm64|x86_64|mips64)$' | xargs)"
+    local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|arm64|x86_64)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
     local density="$(echo $* | xargs -n 1 echo | \grep -E '^(ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
-    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|mips|arm64|x86_64|mips64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|arm64|x86_64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
 
     if [ "$showHelp" != "" ]; then
       $(gettop)/build/make/tapasHelp.sh
@@ -719,10 +725,8 @@ function tapas()
     local product=aosp_arm
     case $arch in
       x86)    product=aosp_x86;;
-      mips)   product=aosp_mips;;
       arm64)  product=aosp_arm64;;
       x86_64) product=aosp_x86_64;;
-      mips64)  product=aosp_mips64;;
     esac
     if [ -z "$variant" ]; then
         variant=eng
@@ -946,7 +950,7 @@ case `uname -s` in
     Darwin)
         function sgrep()
         {
-            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cc|cpp|hpp|S|java|xml|sh|mk|aidl|vts)' \
+            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cc|cpp|hpp|S|java|xml|sh|mk|aidl|vts|proto)' \
                 -exec grep --color -n "$@" {} +
         }
 
@@ -954,7 +958,7 @@ case `uname -s` in
     *)
         function sgrep()
         {
-            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cc\|cpp\|hpp\|S\|java\|xml\|sh\|mk\|aidl\|vts\)' \
+            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cc\|cpp\|hpp\|S\|java\|xml\|sh\|mk\|aidl\|vts\|proto\)' \
                 -exec grep --color -n "$@" {} +
         }
         ;;
@@ -1342,7 +1346,7 @@ function allmod() {
         refreshmod || return 1
     fi
 
-    python -c "import json; print '\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys()))"
+    python -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
 }
 
 # Get the path of a specific module in the android tree, as cached in module-info.json. If any build change
@@ -1368,7 +1372,7 @@ module = '$1'
 module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
 if module not in module_info:
     exit(1)
-print module_info[module]['path'][0]" 2>/dev/null)
+print(module_info[module]['path'][0])" 2>/dev/null)
 
     if [ -z "$relpath" ]; then
         echo "Could not find module '$1' (try 'refreshmod' if there have been build changes?)." >&2

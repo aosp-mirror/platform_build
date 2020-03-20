@@ -40,9 +40,7 @@ PARSE_TIME_MAKE_GOALS := \
 	sdk \
 	sdk_addon \
 	sdk_repo \
-	snod \
 	stnod \
-	systemimage-nodeps \
 	target-files-package \
 	test-art% \
 	user \

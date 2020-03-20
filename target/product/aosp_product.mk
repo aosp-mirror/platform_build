@@ -31,7 +31,6 @@ PRODUCT_PRODUCT_PROPERTIES += \
 PRODUCT_PACKAGES += \
     messaging \
     PhotoTable \
-    WAPPushManager \
     WallpaperPicker \
 
 # Telephony:

@@ -37,16 +37,6 @@ ifeq ($(HOST_OS),linux)
   endif
 endif
 
-# Default to debug version to help find bugs.
-# Set USE_DEX2OAT_DEBUG to false for only building non-debug versions.
-ifeq ($(USE_DEX2OAT_DEBUG),false)
-DEX2OAT := $(SOONG_HOST_OUT_EXECUTABLES)/dex2oat$(HOST_EXECUTABLE_SUFFIX)
-else
-DEX2OAT := $(SOONG_HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
-endif
-
-DEX2OAT_DEPENDENCY += $(DEX2OAT)
-
 # Use the first preloaded-classes file in PRODUCT_COPY_FILES.
 PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
     $(filter %system/etc/preloaded-classes,$(PRODUCT_COPY_FILES))))
@@ -66,16 +56,6 @@ DEX2OAT_IMAGE_XMX := $(call get-product-default-property,dalvik.vm.image-dex2oat
 DEX2OAT_XMS := $(call get-product-default-property,dalvik.vm.dex2oat-Xms)
 DEX2OAT_XMX := $(call get-product-default-property,dalvik.vm.dex2oat-Xmx)
 
-ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),mips mips64))
-# MIPS specific overrides.
-# For MIPS the ART image is loaded at a lower address. This causes issues
-# with the image overlapping with memory on the host cross-compiling and
-# building the image. We therefore limit the Xmx value. This isn't done
-# via a property as we want the larger Xmx value if we're running on a
-# MIPS device.
-DEX2OAT_XMX := 128m
-endif
-
 ifeq ($(WRITE_SOONG_VARIABLES),true)
 
   $(call json_start)
@@ -83,8 +63,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, DisablePreopt,                      $(call invert_bool,$(and $(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)),$(filter true,$(WITH_DEXPREOPT)))))
   $(call add_json_list, DisablePreoptModules,               $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer, $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
-  $(call add_json_bool, GenerateApexImage,                  $(filter true,$(DEXPREOPT_GENERATE_APEX_IMAGE)))
-  $(call add_json_bool, UseApexImage,                       $(filter true,$(DEXPREOPT_USE_APEX_IMAGE)))
+  $(call add_json_bool, UseArtImage,                        $(filter true,$(DEXPREOPT_USE_ART_IMAGE)))
   $(call add_json_bool, DontUncompressPrivAppsDex,          $(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS)))
   $(call add_json_list, ModulesLoadedByPrivilegedModules,   $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
   $(call add_json_bool, HasSystemOther,                     $(BOARD_USES_SYSTEM_OTHER_ODEX))
@@ -136,16 +115,6 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  Dex2oatImageXmx,                    $(DEX2OAT_IMAGE_XMX))
   $(call add_json_str,  Dex2oatImageXms,                    $(DEX2OAT_IMAGE_XMS))
 
-  $(call add_json_map,  Tools)
-  $(call add_json_str,  Profman,                            $(SOONG_HOST_OUT_EXECUTABLES)/profman)
-  $(call add_json_str,  Dex2oat,                            $(DEX2OAT))
-  $(call add_json_str,  Aapt,                               $(SOONG_HOST_OUT_EXECUTABLES)/aapt)
-  $(call add_json_str,  SoongZip,                           $(SOONG_ZIP))
-  $(call add_json_str,  Zip2zip,                            $(ZIP2ZIP))
-  $(call add_json_str,  ManifestCheck,                      $(SOONG_HOST_OUT_EXECUTABLES)/manifest_check)
-  $(call add_json_str,  ConstructContext,                   $(BUILD_SYSTEM)/construct_context.sh)
-  $(call end_json_map)
-
   $(call json_end)
 
   $(shell mkdir -p $(dir $(DEX_PREOPT_CONFIG)))
@@ -158,11 +127,3 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
       rm $(DEX_PREOPT_CONFIG).tmp; \
     fi)
 endif
-
-DEXPREOPT_GEN_DEPS := \
-  $(SOONG_HOST_OUT_EXECUTABLES)/profman \
-  $(DEX2OAT) \
-  $(SOONG_HOST_OUT_EXECUTABLES)/aapt \
-  $(SOONG_ZIP) \
-  $(ZIP2ZIP) \
-  $(BUILD_SYSTEM)/construct_context.sh \

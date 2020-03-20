@@ -29,7 +29,3 @@ AB_OTA_PARTITIONS := system
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-
-# Mainline devices support apex
-# TODO: move this to product makefile and use updatable_apex.mk
-TARGET_FLATTEN_APEX := false

@@ -25,7 +25,7 @@ $(call json_start)
 $(call add_json_str,  Make_suffix, -$(TARGET_PRODUCT))
 
 $(call add_json_str,  BuildId,                           $(BUILD_ID))
-$(call add_json_str,  BuildNumberFromFile,               $(BUILD_NUMBER_FROM_FILE))
+$(call add_json_str,  BuildNumberFile,                   build_number.txt)
 
 $(call add_json_str,  Platform_version_name,             $(PLATFORM_VERSION))
 $(call add_json_val,  Platform_sdk_version,              $(PLATFORM_SDK_VERSION))
@@ -81,6 +81,7 @@ $(call add_json_str,  CrossHostSecondaryArch,            $(HOST_CROSS_2ND_ARCH))
 $(call add_json_list, DeviceResourceOverlays,            $(DEVICE_PACKAGE_OVERLAYS))
 $(call add_json_list, ProductResourceOverlays,           $(PRODUCT_PACKAGE_OVERLAYS))
 $(call add_json_list, EnforceRROTargets,                 $(PRODUCT_ENFORCE_RRO_TARGETS))
+$(call add_json_list, EnforceRROExemptedTargets,         $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS))
 $(call add_json_list, EnforceRROExcludedOverlays,        $(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS))
 
 $(call add_json_str,  AAPTCharacteristics,               $(TARGET_AAPT_CHARACTERISTICS))
@@ -101,8 +102,6 @@ $(call add_json_bool, Safestack,                         $(filter true,$(USE_SAF
 $(call add_json_bool, EnableCFI,                         $(call invert_bool,$(filter false,$(ENABLE_CFI))))
 $(call add_json_list, CFIExcludePaths,                   $(CFI_EXCLUDE_PATHS) $(PRODUCT_CFI_EXCLUDE_PATHS))
 $(call add_json_list, CFIIncludePaths,                   $(CFI_INCLUDE_PATHS) $(PRODUCT_CFI_INCLUDE_PATHS))
-$(call add_json_bool, EnableXOM,                         $(call invert_bool,$(filter false,$(ENABLE_XOM))))
-$(call add_json_list, XOMExcludePaths,                   $(XOM_EXCLUDE_PATHS) $(PRODUCT_XOM_EXCLUDE_PATHS))
 $(call add_json_list, IntegerOverflowExcludePaths,       $(INTEGER_OVERFLOW_EXCLUDE_PATHS) $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
 
 $(call add_json_bool, Experimental_mte,                  $(filter true,$(TARGET_EXPERIMENTAL_MTE)))
@@ -112,7 +111,9 @@ $(call add_json_bool, DisableScudo,                      $(filter true,$(PRODUCT
 $(call add_json_bool, ClangTidy,                         $(filter 1 true,$(WITH_TIDY)))
 $(call add_json_str,  TidyChecks,                        $(WITH_TIDY_CHECKS))
 
-$(call add_json_bool, NativeCoverage,                    $(filter true,$(NATIVE_COVERAGE)))
+$(call add_json_bool, NativeLineCoverage,                $(filter true,$(NATIVE_LINE_COVERAGE)))
+$(call add_json_bool, Native_coverage,                   $(filter true,$(NATIVE_COVERAGE)))
+$(call add_json_bool, ClangCoverage,                     $(filter true,$(CLANG_COVERAGE)))
 $(call add_json_list, CoveragePaths,                     $(COVERAGE_PATHS))
 $(call add_json_list, CoverageExcludePaths,              $(COVERAGE_EXCLUDE_PATHS))
 
@@ -124,6 +125,7 @@ $(call add_json_bool, DevicePrefer32BitApps,             $(filter true,$(TARGET_
 $(call add_json_bool, DevicePrefer32BitExecutables,      $(filter true,$(TARGET_PREFER_32_BIT_EXECUTABLES)))
 $(call add_json_str,  DeviceVndkVersion,                 $(BOARD_VNDK_VERSION))
 $(call add_json_str,  Platform_vndk_version,             $(PLATFORM_VNDK_VERSION))
+$(call add_json_str,  ProductVndkVersion,                $(PRODUCT_PRODUCT_VNDK_VERSION))
 $(call add_json_list, ExtraVndkVersions,                 $(PRODUCT_EXTRA_VNDK_VERSIONS))
 $(call add_json_bool, BoardVndkRuntimeDisable,           $(BOARD_VNDK_RUNTIME_DISABLE))
 $(call add_json_list, DeviceSystemSdkVersions,           $(BOARD_SYSTEMSDK_VERSIONS))
@@ -135,6 +137,7 @@ $(call add_json_bool, UncompressPrivAppDex,              $(call invert_bool,$(fi
 $(call add_json_list, ModulesLoadedByPrivilegedModules,  $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
 
 $(call add_json_list, BootJars,                          $(PRODUCT_BOOT_JARS))
+$(call add_json_list, UpdatableBootJars,                 $(PRODUCT_UPDATABLE_BOOT_JARS))
 
 $(call add_json_bool, VndkUseCoreVariant,                $(TARGET_VNDK_USE_CORE_VARIANT))
 $(call add_json_bool, VndkSnapshotBuildArtifacts,        $(VNDK_SNAPSHOT_BUILD_ARTIFACTS))
@@ -154,6 +157,9 @@ $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT
 
 $(call add_json_bool, UseGoma,                           $(filter-out false,$(USE_GOMA)))
 $(call add_json_bool, UseRBE,                            $(filter-out false,$(USE_RBE)))
+$(call add_json_bool, UseRBEJAVAC,                       $(filter-out false,$(RBE_JAVAC)))
+$(call add_json_bool, UseRBER8,                          $(filter-out false,$(RBE_R8)))
+$(call add_json_bool, UseRBED8,                          $(filter-out false,$(RBE_D8)))
 $(call add_json_bool, Arc,                               $(filter true,$(TARGET_ARC)))
 
 $(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPACES))
@@ -200,6 +206,8 @@ $(call end_json_map)
 $(call add_json_bool, EnforceProductPartitionInterface,  $(PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE))
 
 $(call add_json_bool, InstallExtraFlattenedApexes, $(PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES))
+
+$(call add_json_bool, BoardUsesRecoveryAsBoot, $(BOARD_USES_RECOVERY_AS_BOOT))
 
 $(call json_end)
 

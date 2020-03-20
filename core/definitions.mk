@@ -108,6 +108,9 @@ ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 # All tests that should be skipped in presubmit check.
 ALL_DISABLED_PRESUBMIT_TESTS :=
 
+# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
+ALL_COMPATIBILITY_SUITES :=
+
 ###########################################################
 ## Debugging; prints a variable list to stdout
 ###########################################################
@@ -886,7 +889,7 @@ endef
 define transform-l-to-c-or-cpp
 @echo "Lex: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
-$(hide) $(LEX) -o$@ $<
+M4=$(M4) $(LEX) -o$@ $<
 endef
 
 ###########################################################
@@ -897,7 +900,7 @@ endef
 define transform-y-to-c-or-cpp
 @echo "Yacc: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
-$(YACC) $(PRIVATE_YACCFLAGS) \
+M4=$(M4) $(YACC) $(PRIVATE_YACCFLAGS) \
   --defines=$(basename $@).h \
   -o $@ $<
 endef
@@ -1717,7 +1720,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
   $(PRIVATE_TARGET_LIBATOMIC) \
-  $(PRIVATE_TARGET_LIBGCC) \
   $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
   $(PRIVATE_LDFLAGS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
@@ -1753,7 +1755,6 @@ $(hide) $(PRIVATE_CXX_LINK) -pie \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
   $(PRIVATE_TARGET_LIBATOMIC) \
-  $(PRIVATE_TARGET_LIBGCC) \
   $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
   $(PRIVATE_LDFLAGS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
@@ -1800,7 +1801,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(PRIVATE_TARGET_LIBATOMIC) \
   $(filter %libcompiler_rt.a %libcompiler_rt.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
-  $(PRIVATE_TARGET_LIBGCC) \
   -Wl,--end-group \
   $(PRIVATE_TARGET_CRTEND_O)
 endef
@@ -2197,17 +2197,19 @@ endef
 
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
-@mkdir -p $(dir $@)
+@mkdir -p $(dir $@)tmp
 $(hide) rm -f $(dir $@)classes*.dex $(dir $@)d8_input.jar
 $(hide) $(ZIP2ZIP) -j -i $< -o $(dir $@)d8_input.jar "**/*.class"
-$(hide) $(DX_COMMAND) $(DEX_FLAGS) \
-    --output $(dir $@) \
+$(hide) $(D8_WRAPPER) $(DX_COMMAND) $(DEX_FLAGS) \
+    --output $(dir $@)tmp \
     $(addprefix --lib ,$(PRIVATE_D8_LIBS)) \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     $(subst --main-dex-list=, --main-dex-list , \
         $(filter-out --core-library --multi-dex --minimal-main-dex,$(PRIVATE_DX_FLAGS))) \
     $(dir $@)d8_input.jar
+$(hide) mv $(dir $@)tmp/* $(dir $@)
 $(hide) rm -f $(dir $@)d8_input.jar
+$(hide) rm -rf $(dir $@)tmp
 endef
 
 # We need the extra blank line, so that the command will be on a separate line.
@@ -2625,17 +2627,15 @@ $(foreach t,$(1),\
 endef
 
 # Define a rule to create a symlink to a file.
-# $(1): full path to source
+# $(1): any dependencies
 # $(2): source (may be relative)
 # $(3): full path to destination
 define symlink-file
 $(eval $(_symlink-file))
 endef
 
-# Order-only dependency because make/ninja will follow the link when checking
-# the timestamp, so the file must exist
 define _symlink-file
-$(3): | $(1)
+$(3): $(1)
 	@echo "Symlink: $$@ -> $(2)"
 	@mkdir -p $(dir $$@)
 	@rm -rf $$@
@@ -2681,7 +2681,7 @@ endif
 define transform-jar-to-dex-r8
 @echo R8: $@
 $(hide) rm -f $(PRIVATE_PROGUARD_DICTIONARY)
-$(hide) $(R8_COMPAT_PROGUARD) $(DEX_FLAGS) \
+$(hide) $(R8_WRAPPER) $(R8_COMPAT_PROGUARD) $(DEX_FLAGS) \
     -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --no-data-resources \
@@ -2894,9 +2894,11 @@ endef
 #    and use my_compat_dist_$(suite) to define the others.
 define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,$(eval ALL_COMPATIBILITY_SUITES += $(suite))) \
   $(eval COMPATIBILITY.$(suite).FILES := \
     $$(COMPATIBILITY.$(suite).FILES) $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
-      $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f)))) \
+      $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f))) \
+      $$(my_compat_dist_test_data_$(suite))) \
   $(eval COMPATIBILITY.$(suite).MODULES := \
     $$(COMPATIBILITY.$(suite).MODULES) $$(my_register_name))) \
 $(eval $(my_all_targets) : $(call copy-many-files, \

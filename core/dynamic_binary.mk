@@ -132,8 +132,8 @@ ifneq (,$(my_strip_module))
 	CLANG_BIN=$(LLVM_PREBUILTS_PATH) \
 	CROSS_COMPILE=$(PRIVATE_TOOLS_PREFIX) \
 	XZ=$(XZ) \
-	$(SOONG_STRIP_PATH) -i $< -o $@ -d $@.d $(PRIVATE_STRIP_ARGS)
-  $(call include-depfile,$(strip_output).d)
+	$(SOONG_STRIP_PATH) -i $< -o $@ -d $@.strip.d $(PRIVATE_STRIP_ARGS)
+  $(call include-depfile,$(strip_output).strip.d,$(strip_output))
 else
   # Don't strip the binary, just copy it.  We can't skip this step
   # because a copy of the binary must appear at LOCAL_BUILT_MODULE.

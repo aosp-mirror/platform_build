@@ -27,6 +27,7 @@ PRODUCT_PACKAGES += \
     android.test.base \
     android.test.mock \
     android.test.runner \
+    ANGLE \
     apexd \
     appops \
     app_process \
@@ -59,7 +60,7 @@ PRODUCT_PACKAGES += \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.sdkext \
-    com.android.telephony \
+    com.android.tethering \
     com.android.tzdata \
     ContactsProvider \
     content \
@@ -96,12 +97,12 @@ PRODUCT_PACKAGES += \
     idmap2 \
     idmap2d \
     ime \
+    ims-common \
     incident \
     incidentd \
     incident_helper \
     init.environ.rc \
     init_system \
-    InProcessTethering \
     input \
     installd \
     iorapd \
@@ -111,7 +112,6 @@ PRODUCT_PACKAGES += \
     ip-up-vpn \
     javax.obex \
     keystore \
-    ld.config.txt \
     ld.mc \
     libaaudio \
     libamidi \
@@ -132,6 +132,7 @@ PRODUCT_PACKAGES += \
     libdrmframework_jni \
     libEGL \
     libETC1 \
+    libfdtrack \
     libFFTEm \
     libfilterfw \
     libgatekeeper \
@@ -251,6 +252,7 @@ PRODUCT_PACKAGES += \
     task_profiles.json \
     tc \
     telecom \
+    telephony-common \
     tombstoned \
     traced \
     traced_probes \
@@ -316,23 +318,18 @@ endif
 
 # The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
-    $(TARGET_CORE_JARS) \
+    $(ART_APEX_JARS) \
     framework-minus-apex \
     ext \
     telephony-common \
     voip-common \
     ims-common \
-    framework-sdkext \
-    ike \
-    updatable-media
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
-    com.android.ipsec:ike \
     com.android.media:updatable-media \
-    com.android.sdkext:framework-sdkext \
-    com.android.telephony:telephony-common \
-    com.android.telephony:ims-common
+    com.android.sdkext:framework-sdkextensions \
+    com.android.tethering:framework-tethering
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
