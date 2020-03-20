@@ -705,13 +705,19 @@ endif
 
 ifeq ($(use_testcase_folder),true)
 ifneq ($(my_test_data_file_pairs),)
+# Filter out existng installed test data paths when collecting test data files to be installed and
+# indexed as they cause build rule conflicts. Instead put them in a separate list which is only
+# used for indexing.
 $(foreach pair, $(my_test_data_file_pairs), \
   $(eval parts := $(subst :,$(space),$(pair))) \
   $(eval src_path := $(word 1,$(parts))) \
   $(eval file := $(word 2,$(parts))) \
   $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-      $(call filter-copy-pair,$(src_path),$(call append-path,$(dir),$(file)),$(my_installed_test_data))))))
+      $(call filter-copy-pair,$(src_path),$(call append-path,$(dir),$(file)),$(my_installed_test_data)))) \
+    $(eval my_compat_dist_test_data_$(suite) += \
+      $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
+        $(filter $(my_installed_test_data),$(call append-path,$(dir),$(file)))))))
 endif
 else
 ifneq ($(my_test_data_file_pairs),)
@@ -732,7 +738,8 @@ is_native :=
 
 $(call create-suite-dependencies)
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_config_$(suite) := ))
+  $(eval my_compat_dist_config_$(suite) := ) \
+  $(eval my_compat_dist_test_data_$(suite) := ))
 
 endif  # LOCAL_COMPATIBILITY_SUITE
 
