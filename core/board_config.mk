@@ -362,7 +362,9 @@ endif
 BUILDING_VENDOR_BOOT_IMAGE :=
 ifdef BOARD_BOOT_HEADER_VERSION
   ifneq ($(call math_gt_or_eq,$(BOARD_BOOT_HEADER_VERSION),3),)
-    BUILDING_VENDOR_BOOT_IMAGE := true
+    ifneq ($(TARGET_NO_VENDOR_BOOT),true)
+      BUILDING_VENDOR_BOOT_IMAGE := true
+    endif
     ifdef BUILDING_RECOVERY_IMAGE
       ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
         $(error Boot header version >=3 requires recovery as boot)
