@@ -1082,7 +1082,8 @@ def ReadApexKeysInfo(tf_zip):
         r'public_key="(?P<PAYLOAD_PUBLIC_KEY>.*)"\s+'
         r'private_key="(?P<PAYLOAD_PRIVATE_KEY>.*)"\s+'
         r'container_certificate="(?P<CONTAINER_CERT>.*)"\s+'
-        r'container_private_key="(?P<CONTAINER_PRIVATE_KEY>.*)"$',
+        r'container_private_key="(?P<CONTAINER_PRIVATE_KEY>.*)"\s+'
+        r'partition="(?P<PARTITION>.*)"$',
         line)
     if not matches:
       continue
