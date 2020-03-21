@@ -36,8 +36,8 @@ class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
 </policy>"""
 
   # pylint: disable=line-too-long
-  APEX_KEYS_TXT = """name="apex.apexd_test.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8"
-name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8"
+  APEX_KEYS_TXT = """name="apex.apexd_test.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8" partition="system"
+name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8" partition="system"
 """
 
   def setUp(self):
@@ -484,7 +484,8 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         'public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" '
         'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" '
         'container_certificate="build/make/target/product/security/testkey.x509.pem" '
-        'container_private_key="build/make/target/product/security/testkey2.pk8"')
+        'container_private_key="build/make/target/product/security/testkey2.pk8" '
+        'partition="system"')
     target_files = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
