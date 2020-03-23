@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7543ccb3_dc717842",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1005,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-03-23T23:41:05Z",
+      "side": 1,
+      "message": "Use spaces instead of tabs for indents that are not rules",
+      "range": {
+        "startLine": 1005,
+        "startChar": 0,
+        "endLine": 1005,
+        "endChar": 1
+      },
+      "revId": "fdda21143c7a63184a76dc8153fb27f3871ba9ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
