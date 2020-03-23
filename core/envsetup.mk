@@ -259,8 +259,6 @@ endef
 # Jars present in the ART apex. These should match exactly the list of
 # Java libraries in the ART apex build rule.
 ART_APEX_JARS := core-oj core-libart core-icu4j okhttp bouncycastle apache-xml
-TARGET_CORE_JARS := $(ART_APEX_JARS) conscrypt
-HOST_CORE_JARS := $(addsuffix -hostdex,$(TARGET_CORE_JARS))
 #################################################################
 
 # Read the product specs so we can get TARGET_DEVICE and other
