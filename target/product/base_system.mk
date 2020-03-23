@@ -85,7 +85,6 @@ PRODUCT_PACKAGES += \
     framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
-    framework-telephony \
     fsck_msdos \
     fs_config_files_system \
     fs_config_dirs_system \
@@ -325,8 +324,7 @@ PRODUCT_BOOT_JARS := \
     ext \
     telephony-common \
     voip-common \
-    ims-common \
-    framework-telephony
+    ims-common
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
