@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b33956e7_528fa5a0",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-03-23T16:13:16Z",
+      "side": 1,
+      "message": "add $(device_tests_host_shared_libs_zip) at the end.",
+      "revId": "63acf9b601f3bdb3a2906749e805f8504705983d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5ed52dd_b2e9e049",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-03-23T16:13:16Z",
+      "side": 1,
+      "message": "add $(device_tests_host_shared_libs_zip) here.",
+      "revId": "63acf9b601f3bdb3a2906749e805f8504705983d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
