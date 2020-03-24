@@ -237,6 +237,16 @@ python_defaults {
             embedded_launcher: false,
         },
     },
+    // TODO (b/140144201) Build imgdiff from releasetools_common
+    required: [
+        "aapt2",
+        "boot_signer",
+        "brotli",
+        "bsdiff",
+        "imgdiff",
+        "minigzip",
+        "mkbootfs",
+    ],
 }
 
 python_binary_host {
