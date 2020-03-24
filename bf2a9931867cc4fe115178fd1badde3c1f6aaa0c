@@ -22,6 +22,30 @@
       "revId": "bf2a9931867cc4fe115178fd1badde3c1f6aaa0c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "144c0b9b_2393c8fb",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-24T22:47:25Z",
+      "side": 1,
+      "message": "Added actual_partition_tag to solve this. Will implement a similar think for apexkeys.txt in Soong on the other change in the topic.",
+      "parentUuid": "798881c9_69572ec6",
+      "range": {
+        "startLine": 478,
+        "startChar": 44,
+        "endLine": 478,
+        "endChar": 60
+      },
+      "revId": "bf2a9931867cc4fe115178fd1badde3c1f6aaa0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
