@@ -17,4 +17,5 @@
 # Base modules and settings for the system_ext partition.
 PRODUCT_PACKAGES += \
     group_system_ext \
+    system_ext_manifest.xml \
     passwd_system_ext \
