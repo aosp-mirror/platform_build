@@ -16,6 +16,24 @@
       "revId": "ac7d2fe65ddbba2ca4c0500e5830ca18b7d7181c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25705e11_9912e7f3",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-25T21:38:59Z",
+      "side": 1,
+      "message": "I saw this style used in a few other places, so I added it here. Should I simply delete the comment? Is it assumed that variables defined in base_rules.mk are available here (and elsewhere)?",
+      "parentUuid": "f80f198a_4549c9af",
+      "revId": "ac7d2fe65ddbba2ca4c0500e5830ca18b7d7181c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
