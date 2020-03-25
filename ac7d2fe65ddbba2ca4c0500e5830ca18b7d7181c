@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f80f198a_4549c9af",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-03-25T18:50:56Z",
+      "side": 1,
+      "message": "This is misleading, base_rules.mk is included inside this file via java.mk.  It\u0027s also not an exhaustive list of what is used from base_rules.mk.",
+      "revId": "ac7d2fe65ddbba2ca4c0500e5830ca18b7d7181c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
