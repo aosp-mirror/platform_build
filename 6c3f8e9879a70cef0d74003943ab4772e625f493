@@ -94,6 +94,30 @@
       "revId": "6c3f8e9879a70cef0d74003943ab4772e625f493",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50ebdaf4_cfe369c8",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1233,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-03-25T10:41:57Z",
+      "side": 1,
+      "message": "Thank you for the detailed explanation!\nI thought if C.mk has system/c it must be caught as an offending file for A.mk and B.mk. But it will be caught by non-allowed files for C.mk itself!",
+      "parentUuid": "d443cf8a_1b4c9e87",
+      "range": {
+        "startLine": 1233,
+        "startChar": 58,
+        "endLine": 1233,
+        "endChar": 77
+      },
+      "revId": "6c3f8e9879a70cef0d74003943ab4772e625f493",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
