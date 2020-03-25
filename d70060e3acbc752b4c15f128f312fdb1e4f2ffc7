@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7f68070_5cec94c8",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-03-25T16:37:23Z",
+      "side": 1,
+      "message": "can you please move this logic under the \"# Sanity check and assign default values\" section below, and instead just use `PRODUCT_BOOT_JARS +\u003d $(PRODUCT_APPEND_BOOT_JARS)`?",
+      "range": {
+        "startLine": 198,
+        "startChar": 0,
+        "endLine": 200,
+        "endChar": 106
+      },
+      "revId": "d70060e3acbc752b4c15f128f312fdb1e4f2ffc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2cafb491_a9c27592",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-03-25T16:37:23Z",
+      "side": 1,
+      "message": "think you forgot to update this",
+      "range": {
+        "startLine": 200,
+        "startChar": 81,
+        "endLine": 200,
+        "endChar": 105
+      },
+      "revId": "d70060e3acbc752b4c15f128f312fdb1e4f2ffc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
