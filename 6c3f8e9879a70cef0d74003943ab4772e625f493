@@ -70,6 +70,30 @@
       "revId": "6c3f8e9879a70cef0d74003943ab4772e625f493",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d443cf8a_1b4c9e87",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1233,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-03-25T10:29:41Z",
+      "side": 1,
+      "message": "Let me explain the logic with an example..\nA.mk: system/a (ARTIFACT_PATH_REQUIREMENT: system)\nB.mk: system/b (ARTIFACT_PATH_REQUIREMENT: system)\nC.mk: system_ext/c (ARTIFACT_PATH_REQUIREMENT: system_ext)\nD.mk: system/d system_ext/d product/d (no ARTIFACT_PATH_REQUIREMENT)\n\n- List up every installed file\nall_offending_files \u003d system/a system/b system_ext/c system/d system_ext/d product/d\n- Remove product/* because there is no ARTIFACT_PATH_REQUIREMENT for product\nall_offending_files \u003d system/a system/b system_ext/c system/d system_ext/d\n- Processing A.mk: removing files defined in A\nall_offending_files \u003d system/b system_ext/c system/d system_ext/d\n- B.mk\nall_offending_files \u003d system_ext/c system/d system_ext/d\n- C.mk\nall_offending_files \u003d system/d system_ext/d\nFinally, raise an error because there is something remaining in all_offending_files.\n\nDoes it solve your concern?",
+      "parentUuid": "808a8c93_ace9c33f",
+      "range": {
+        "startLine": 1233,
+        "startChar": 58,
+        "endLine": 1233,
+        "endChar": 77
+      },
+      "revId": "6c3f8e9879a70cef0d74003943ab4772e625f493",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
