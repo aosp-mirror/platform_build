@@ -34,6 +34,24 @@
       "revId": "ac7d2fe65ddbba2ca4c0500e5830ca18b7d7181c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ff5abf8_76c313e6",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-03-25T23:12:20Z",
+      "side": 1,
+      "message": "It\u0027s usually used on an inner mk file to describe what is supposed to be set by the outer mk file.  Like everything in Make, it\u0027s all convention and not well followed.  I think the comment below is enough.",
+      "parentUuid": "25705e11_9912e7f3",
+      "revId": "ac7d2fe65ddbba2ca4c0500e5830ca18b7d7181c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
