@@ -83,6 +83,7 @@ PRODUCT_PACKAGES += \
     e2fsck \
     ExtShared \
     flags_health_check \
+    framework-graphics \
     framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
@@ -322,6 +323,7 @@ endif
 PRODUCT_BOOT_JARS := \
     $(ART_APEX_JARS) \
     framework-minus-apex \
+    framework-graphics \
     ext \
     telephony-common \
     voip-common \
