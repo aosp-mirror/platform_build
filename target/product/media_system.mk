@@ -61,7 +61,7 @@ PRODUCT_SYSTEM_SERVER_JARS := \
 PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
     com.android.permission:service-permission \
-    com.android.wifi:wifi-service \
+    com.android.wifi:service-wifi \
     com.android.ipsec:android.net.ipsec.ike \
 
 PRODUCT_COPY_FILES += \
