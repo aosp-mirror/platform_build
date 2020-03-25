@@ -1034,7 +1034,12 @@ else
   INSTALLED_2NDBOOTLOADER_TARGET :=
 endif # TARGET_NO_BOOTLOADER
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
-  INSTALLED_KERNEL_TARGET := $(PRODUCT_OUT)/kernel
+  ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
+    INSTALLED_KERNEL_TARGET := $(foreach k,$(BOARD_KERNEL_BINARIES), \
+      $(PRODUCT_OUT)/$(k))
+  else
+    INSTALLED_KERNEL_TARGET := $(PRODUCT_OUT)/kernel
+  endif
 else
   INSTALLED_KERNEL_TARGET :=
 endif
@@ -1106,7 +1111,12 @@ endif # BUILDING_RAMDISK_IMAGE
 
 # This is defined here since we may be building recovery as boot
 # below and only want to define this once
-BUILT_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
+ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
+  BUILT_BOOTIMAGE_TARGET := $(foreach k,$(subst kernel,boot,$(BOARD_KERNEL_BINARIES)), $(PRODUCT_OUT)/$(k).img)
+else
+  BUILT_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
+endif
+
 
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 INTERNAL_BOOTIMAGE_ARGS := \
@@ -2115,7 +2125,7 @@ endif
 else # INSTALLED_VENDOR_BOOTIMAGE_TARGET not defined
   INTERNAL_RECOVERYIMAGE_ARGS := \
       $(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
-      --kernel $(recovery_kernel) --ramdisk $(recovery_ramdisk)
+      --ramdisk $(recovery_ramdisk)
 # Assumes this has already been stripped
 ifdef INTERNAL_KERNEL_CMDLINE
   INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(INTERNAL_KERNEL_CMDLINE)"
@@ -2141,38 +2151,53 @@ ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
 endif
 endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET not defined
 
+$(recovery_ramdisk): $(MKBOOTFS) $(MINIGZIP) \
+	    $(INTERNAL_ROOT_FILES) \
+	    $(INSTALLED_RAMDISK_TARGET) \
+	    $(INTERNAL_RECOVERYIMAGE_FILES) \
+	    $(recovery_sepolicy) \
+	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
+	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
+	    $(recovery_resource_deps) \
+	    $(recovery_fstab)
+	# Making recovery image
+	mkdir -p $(TARGET_RECOVERY_OUT)
+	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/sdcard $(TARGET_RECOVERY_ROOT_OUT)/tmp
+	# Copying baseline ramdisk...
+	# Use rsync because "cp -Rf" fails to overwrite broken symlinks on Mac.
+	rsync -a --exclude=sdcard $(IGNORE_RECOVERY_SEPOLICY) $(IGNORE_CACHE_LINK) $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
+	# Modifying ramdisk contents...
+	$(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),, \
+	  ln -sf /system/bin/init $(TARGET_RECOVERY_ROOT_OUT)/init)
+	# Removes $(TARGET_RECOVERY_ROOT_OUT)/init*.rc EXCEPT init.recovery*.rc.
+	find $(TARGET_RECOVERY_ROOT_OUT) -maxdepth 1 -name 'init*.rc' -type f -not -name "init.recovery.*.rc" | xargs rm -f
+	cp $(TARGET_ROOT_OUT)/init.recovery.*.rc $(TARGET_RECOVERY_ROOT_OUT)/ 2> /dev/null || true # Ignore error when the src file doesn't exist.
+	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/res
+	rm -rf $(TARGET_RECOVERY_ROOT_OUT)/res/*
+	cp -rf $(recovery_resources_common)/* $(TARGET_RECOVERY_ROOT_OUT)/res
+	$(foreach recovery_text_file,$(generated_recovery_text_files), \
+	  cp -rf $(recovery_text_file) $(TARGET_RECOVERY_ROOT_OUT)/res/images/ &&) true
+	cp -f $(recovery_font) $(TARGET_RECOVERY_ROOT_OUT)/res/images/font.png
+	$(foreach item,$(TARGET_PRIVATE_RES_DIRS), \
+	  cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/$(newline))
+	$(foreach item,$(recovery_fstab), \
+	  cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab)
+	$(if $(strip $(recovery_wipe)), \
+	  cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.wipe)
+	ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+	$(BOARD_RECOVERY_IMAGE_PREPARE)
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
+
 # $(1): output file
+# $(2): kernel file
 define build-recoveryimage-target
-  # Making recovery image
-  $(hide) mkdir -p $(TARGET_RECOVERY_OUT)
-  $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/sdcard $(TARGET_RECOVERY_ROOT_OUT)/tmp
-  # Copying baseline ramdisk...
-  # Use rsync because "cp -Rf" fails to overwrite broken symlinks on Mac.
-  $(hide) rsync -a --exclude=sdcard $(IGNORE_RECOVERY_SEPOLICY) $(IGNORE_CACHE_LINK) $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
-  # Modifying ramdisk contents...
-  $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),, \
-    $(hide) ln -sf /system/bin/init $(TARGET_RECOVERY_ROOT_OUT)/init)
-  # Removes $(TARGET_RECOVERY_ROOT_OUT)/init*.rc EXCEPT init.recovery*.rc.
-  $(hide) find $(TARGET_RECOVERY_ROOT_OUT) -maxdepth 1 -name 'init*.rc' -type f -not -name "init.recovery.*.rc" | xargs rm -f
-  $(hide) cp $(TARGET_ROOT_OUT)/init.recovery.*.rc $(TARGET_RECOVERY_ROOT_OUT)/ 2> /dev/null || true # Ignore error when the src file doesn't exist.
-  $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/res
-  $(hide) rm -rf $(TARGET_RECOVERY_ROOT_OUT)/res/*
-  $(hide) cp -rf $(recovery_resources_common)/* $(TARGET_RECOVERY_ROOT_OUT)/res
-  $(hide) $(foreach recovery_text_file,$(generated_recovery_text_files), \
-    cp -rf $(recovery_text_file) $(TARGET_RECOVERY_ROOT_OUT)/res/images/ &&) true
-  $(hide) cp -f $(recovery_font) $(TARGET_RECOVERY_ROOT_OUT)/res/images/font.png
-  $(hide) $(foreach item,$(TARGET_PRIVATE_RES_DIRS), \
-    cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/$(newline))
-  $(hide) $(foreach item,$(recovery_fstab), \
-    cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab)
-  $(if $(strip $(recovery_wipe)), \
-    $(hide) cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.wipe)
-  $(hide) ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
-  $(BOARD_RECOVERY_IMAGE_PREPARE)
-  $(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
   $(if $(filter true,$(PRODUCT_SUPPORTS_VBOOT)), \
-    $(hide) $(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1).unsigned, \
-    $(hide) $(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1))
+    $(MKBOOTIMG) --kernel $(2) $(MKBOOTIMG_KERNEL_ARG) $(INTERNAL_RECOVERYIMAGE_ARGS) \
+                 $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) \
+                 --output $(1).unsigned, \
+    $(MKBOOTIMG) --kernel $(2) $(MKBOOTIMG_KERNEL_ARG) $(INTERNAL_RECOVERYIMAGE_ARGS) \
+                 $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) \
+                 --output $(1))
   $(if $(filter true,$(PRODUCT_SUPPORTS_BOOT_SIGNER)),\
     $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
       $(BOOT_SIGNER) /boot $(1) $(PRODUCT_VERITY_SIGNING_KEY).pk8 $(PRODUCT_VERITY_SIGNING_KEY).x509.pem $(1),\
@@ -2182,12 +2207,12 @@ define build-recoveryimage-target
   $(if $(filter true,$(PRODUCT_SUPPORTS_VBOOT)), \
     $(VBOOT_SIGNER) $(FUTILITY) $(1).unsigned $(PRODUCT_VBOOT_SIGNING_KEY).vbpubk $(PRODUCT_VBOOT_SIGNING_KEY).vbprivk $(PRODUCT_VBOOT_SIGNING_SUBKEY).vbprivk $(1).keyblock $(1))
   $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)), \
-    $(hide) $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))), \
-    $(hide) $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))))
+    $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))), \
+    $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))))
   $(if $(filter true,$(BOARD_AVB_ENABLE)), \
     $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)), \
-      $(hide) $(AVBTOOL) add_hash_footer --image $(1) --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS),\
-      $(hide) $(AVBTOOL) add_hash_footer --image $(1) --partition_size $(BOARD_RECOVERYIMAGE_PARTITION_SIZE) --partition_name recovery $(INTERNAL_AVB_RECOVERY_SIGNING_ARGS) $(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)))
+      $(AVBTOOL) add_hash_footer --image $(1) --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS),\
+      $(AVBTOOL) add_hash_footer --image $(1) --partition_size $(BOARD_RECOVERYIMAGE_PARTITION_SIZE) --partition_name recovery $(INTERNAL_AVB_RECOVERY_SIGNING_ARGS) $(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)))
 endef
 
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
@@ -2214,18 +2239,10 @@ ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
 $(INSTALLED_BOOTIMAGE_TARGET): $(INSTALLED_DTBIMAGE_TARGET)
 endif
 
-$(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
-	    $(INTERNAL_ROOT_FILES) \
-	    $(INSTALLED_RAMDISK_TARGET) \
-	    $(INTERNAL_RECOVERYIMAGE_FILES) \
-	    $(recovery_sepolicy) $(recovery_kernel) \
-	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
-	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
-	    $(recovery_resource_deps) \
-	    $(recovery_fstab)
+$(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(recovery_ramdisk) \
+	    $(recovery_kernel)
 	$(call pretty,"Target boot image from recovery: $@")
-	$(call build-recoveryimage-target, $@)
-$(INSTALLED_BOOTIMAGE_TARGET): .KATI_IMPLICIT_OUTPUTS += $(recovery_ramdisk)
+	$(call build-recoveryimage-target, $@, $(PRODUCT_OUT)/$(subst .img,,$(subst boot,kernel,$(notdir $@))))
 endif # BOARD_USES_RECOVERY_AS_BOOT
 
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
@@ -2242,17 +2259,9 @@ ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(INSTALLED_DTBIMAGE_TARGET)
 endif
 
-$(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
-	    $(INTERNAL_ROOT_FILES) \
-	    $(INSTALLED_RAMDISK_TARGET) \
-	    $(INSTALLED_BOOTIMAGE_TARGET) \
-	    $(INTERNAL_RECOVERYIMAGE_FILES) \
-	    $(recovery_sepolicy) $(recovery_kernel) \
-	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
-	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
-	    $(recovery_resource_deps) \
-	    $(recovery_fstab)
-	$(call build-recoveryimage-target, $@)
+$(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTIMG) $(recovery_ramdisk) \
+	    $(recovery_kernel)
+	$(call build-recoveryimage-target, $@, $(recovery_kernel))
 
 ifdef RECOVERY_RESOURCE_ZIP
 $(RECOVERY_RESOURCE_ZIP): $(INSTALLED_RECOVERYIMAGE_TARGET) | $(ZIPTIME)
@@ -2363,8 +2372,12 @@ endif # BUILDING_RAMDISK_IMAGE
 # Note: it's intentional to skip signing for boot-debug.img, because it
 # can only be used if the device is unlocked with verification error.
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
-
-INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot-debug.img
+ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
+  INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(foreach k,$(subst kernel,boot-debug,$(BOARD_KERNEL_BINARIES)), \
+         $(PRODUCT_OUT)/$(k).img)
+else
+  INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot-debug.img
+endif
 
 # Replace ramdisk.img in $(MKBOOTIMG) ARGS with ramdisk-debug.img to build boot-debug.img
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
@@ -2394,17 +2407,22 @@ $(AVBTOOL) add_hash_footer \
 $(call assert-max-image-size,$(1),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
 endef
 
+# $(1): output file
+define build-debug-bootimage-target
+  $(MKBOOTIMG) --kernel $(PRODUCT_OUT)/$(subst .img,,$(subst boot-debug,kernel,$(notdir $(1)))) \
+    $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $1
+  $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$1))
+endef
+
 # Depends on original boot.img and ramdisk-debug.img, to build the new boot-debug.img
 $(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_DEBUG_RAMDISK_TARGET)
 	$(call pretty,"Target boot debug image: $@")
-	$(MKBOOTIMG) $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
-	$(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$@))
+	$(call build-debug-bootimage-target, $@)
 
 .PHONY: bootimage_debug-nodeps
 bootimage_debug-nodeps: $(MKBOOTIMG)
 	echo "make $@: ignoring dependencies"
-	$(MKBOOTIMG) $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
-	$(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET)))
+	$(foreach b,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(call build-debug-bootimage-target,$b))
 
 endif # TARGET_NO_KERNEL
 
@@ -4468,7 +4486,7 @@ ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_RECOVERY_ROOT_OUT),$(zip_root)/$(PRIVATE_RECOVERY_OUT)/RAMDISK)
 ifdef INSTALLED_KERNEL_TARGET
-	cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/kernel
+	cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/
 endif
 ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
 	echo "$(GENERIC_KERNEL_CMDLINE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/cmdline
