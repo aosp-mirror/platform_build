@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1ee49469_9e614c53",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1233,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-03-25T10:05:12Z",
+      "side": 1,
+      "message": "I don\u0027t think we may reuse `all_offending_files` for multiple makefiles. It means we can define only one ARTIFACT_PATH_REQUIREMENT. We may have multiple ARTIFACT_PATH_REQUIREMENT for different partitions.",
+      "range": {
+        "startLine": 1233,
+        "startChar": 58,
+        "endLine": 1233,
+        "endChar": 77
+      },
+      "revId": "6c3f8e9879a70cef0d74003943ab4772e625f493",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
