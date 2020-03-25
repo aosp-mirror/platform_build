@@ -22,6 +22,30 @@
       "revId": "6c3f8e9879a70cef0d74003943ab4772e625f493",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2272e18_87f3a8a5",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1233,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-03-25T10:14:03Z",
+      "side": 1,
+      "message": "If we don\u0027t reuse \u0027all_offending_files\u0027, we can use ARTIFACT_PATH_REQUIREMENT for each partition only once.\n\nFor example, both A.mk and B.mk declare system modules and both\u0027s ARTIFACT_PATH_REQUIREMENT is system, if we don\u0027t reuse all_offending_file, during checking A.mk, build script thinks there are violation in modules defined in B.mk and vice versa",
+      "parentUuid": "1ee49469_9e614c53",
+      "range": {
+        "startLine": 1233,
+        "startChar": 58,
+        "endLine": 1233,
+        "endChar": 77
+      },
+      "revId": "6c3f8e9879a70cef0d74003943ab4772e625f493",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
