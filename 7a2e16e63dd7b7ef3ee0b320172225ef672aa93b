@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e2b128db_5994021b",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 581,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-03-26T22:11:32Z",
+      "side": 1,
+      "message": "How about \"filter_and_merge_dict\" or similar? To emphasize this isn\u0027t just filtering \u0026 returning the original, but instead adding it to merged_dict",
+      "range": {
+        "startLine": 581,
+        "startChar": 6,
+        "endLine": 581,
+        "endChar": 17
+      },
+      "revId": "7a2e16e63dd7b7ef3ee0b320172225ef672aa93b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13dc066b_bc541021",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-03-26T22:11:32Z",
+      "side": 1,
+      "message": "Can you please add a quick comment on why you\u0027re writing this here this way instead of using write_sorted_data? So someone doesn\u0027t erroneously \"clean it up\" later.",
+      "range": {
+        "startLine": 601,
+        "startChar": 2,
+        "endLine": 601,
+        "endChar": 40
+      },
+      "revId": "7a2e16e63dd7b7ef3ee0b320172225ef672aa93b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e7492fc_7fad5a99",
+        "filename": "tools/releasetools/test_merge_target_files.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-03-26T22:11:32Z",
+      "side": 1,
+      "message": "I believe you can have self.assertEqual(partition_set, {\u0027product\u0027, \u0027system\u0027, \u0027system_ext\u0027}) here.",
+      "range": {
+        "startLine": 230,
+        "startChar": 4,
+        "endLine": 234,
+        "endChar": 46
+      },
+      "revId": "7a2e16e63dd7b7ef3ee0b320172225ef672aa93b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
