@@ -45,6 +45,54 @@
       "revId": "d70060e3acbc752b4c15f128f312fdb1e4f2ffc7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20b7461e_16f03df8",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1282513
+      },
+      "writtenOn": "2020-03-26T10:39:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2cafb491_a9c27592",
+      "range": {
+        "startLine": 200,
+        "startChar": 81,
+        "endLine": 200,
+        "endChar": 105
+      },
+      "revId": "d70060e3acbc752b4c15f128f312fdb1e4f2ffc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f633038_901f60da",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1282513
+      },
+      "writtenOn": "2020-03-26T10:39:46Z",
+      "side": 1,
+      "message": "Thanks for your suggestion.\nI made a new patch set for this.",
+      "parentUuid": "a7f68070_5cec94c8",
+      "range": {
+        "startLine": 198,
+        "startChar": 0,
+        "endLine": 200,
+        "endChar": 106
+      },
+      "revId": "d70060e3acbc752b4c15f128f312fdb1e4f2ffc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
