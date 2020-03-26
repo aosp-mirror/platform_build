@@ -57,7 +57,7 @@ def GetDiskUsage(path):
   Returns:
     The number of bytes based on a 1K block_size.
   """
-  cmd = ["du", "-k", "-s", path]
+  cmd = ["du", "-b", "-k", "-s", path]
   output = common.RunAndCheckOutput(cmd, verbose=False)
   return int(output.split()[0]) * 1024
 
