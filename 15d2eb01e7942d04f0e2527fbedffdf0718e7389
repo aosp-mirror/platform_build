@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "193ffe75_e54ee5e3",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-26T20:37:00Z",
+      "side": 1,
+      "message": "New scheme doesn\u0027t use _UPPERCASE format for this name.",
+      "range": {
+        "startLine": 127,
+        "startChar": 48,
+        "endLine": 127,
+        "endChar": 52
+      },
+      "revId": "15d2eb01e7942d04f0e2527fbedffdf0718e7389",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

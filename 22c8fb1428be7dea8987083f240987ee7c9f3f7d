@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "72adc456_bb325872",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-26T20:37:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b586c69f_a875074c",
+      "range": {
+        "startLine": 553,
+        "startChar": 20,
+        "endLine": 553,
+        "endChar": 51
+      },
+      "revId": "22c8fb1428be7dea8987083f240987ee7c9f3f7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "64b07154_1a40729d",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 10
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "e1d575b1_664561e3",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-26T20:37:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64b07154_1a40729d",
+      "range": {
+        "startLine": 610,
+        "startChar": 0,
+        "endLine": 610,
+        "endChar": 28
+      },
+      "revId": "22c8fb1428be7dea8987083f240987ee7c9f3f7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f942199a_a7a22ba7",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 10
@@ -68,6 +116,30 @@
       "revId": "22c8fb1428be7dea8987083f240987ee7c9f3f7d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0808c3d9_142ffe79",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-26T20:37:00Z",
+      "side": 1,
+      "message": "Actually, with some changes I made to Soong and make, there will always be a partition tag, so I\u0027ll clean this up.",
+      "parentUuid": "f942199a_a7a22ba7",
+      "range": {
+        "startLine": 621,
+        "startChar": 39,
+        "endLine": 621,
+        "endChar": 45
+      },
+      "revId": "22c8fb1428be7dea8987083f240987ee7c9f3f7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
