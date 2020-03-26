@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b586c69f_a875074c",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-03-26T06:30:42Z",
+      "side": 1,
+      "message": "I believe the code is more readable if you remove this function and inline the code. So\nmatch \u003d PARTITION_ITEM_PATTERN.search(item.strip())\npartition_tag \u003d match.group(1).lower() if match else None\n\nSame in L612.",
+      "range": {
+        "startLine": 553,
+        "startChar": 20,
+        "endLine": 553,
+        "endChar": 51
+      },
+      "revId": "22c8fb1428be7dea8987083f240987ee7c9f3f7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64b07154_1a40729d",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-03-26T06:30:42Z",
+      "side": 1,
+      "message": "for key, value in framework_dict.items()",
+      "range": {
+        "startLine": 610,
+        "startChar": 0,
+        "endLine": 610,
+        "endChar": 28
+      },
+      "revId": "22c8fb1428be7dea8987083f240987ee7c9f3f7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f942199a_a7a22ba7",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-03-26T06:30:42Z",
+      "side": 1,
+      "message": "hmm, is it intentional to always default to system? what does it mean if we cannot find the partition tag, maybe worth add a comment .",
+      "range": {
+        "startLine": 621,
+        "startChar": 39,
+        "endLine": 621,
+        "endChar": 45
+      },
+      "revId": "22c8fb1428be7dea8987083f240987ee7c9f3f7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
