@@ -310,7 +310,7 @@ ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL
 endif
 ifndef is_sdk_build
   # To speedup startup of non-preopted builds, don't verify or compile the boot image.
-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-at-runtime
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=extract
 endif
 endif
 
