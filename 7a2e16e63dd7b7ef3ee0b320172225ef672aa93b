@@ -116,6 +116,30 @@
       "revId": "7a2e16e63dd7b7ef3ee0b320172225ef672aa93b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd337a12_c2ae2411",
+        "filename": "tools/releasetools/test_merge_target_files.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-26T22:37:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e7492fc_7fad5a99",
+      "range": {
+        "startLine": 230,
+        "startChar": 4,
+        "endLine": 234,
+        "endChar": 46
+      },
+      "revId": "7a2e16e63dd7b7ef3ee0b320172225ef672aa93b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
