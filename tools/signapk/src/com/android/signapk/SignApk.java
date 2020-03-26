@@ -40,6 +40,7 @@ import com.android.apksig.Hints;
 import com.android.apksig.apk.ApkUtils;
 import com.android.apksig.apk.MinSdkVersionException;
 import com.android.apksig.util.DataSink;
+import com.android.apksig.util.DataSource;
 import com.android.apksig.util.DataSources;
 import com.android.apksig.zip.ZipFormatException;
 
@@ -56,6 +57,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -1020,9 +1022,10 @@ class SignApk {
                            "[-providerClass <className>] " +
                            "[--min-sdk-version <n>] " +
                            "[--disable-v2] " +
+                           "[--enable-v4] " +
                            "publickey.x509[.pem] privatekey.pk8 " +
                            "[publickey2.x509[.pem] privatekey2.pk8 ...] " +
-                           "input.jar output.jar");
+                           "input.jar output.jar [output-v4-file]");
         System.exit(2);
     }
 
@@ -1042,6 +1045,7 @@ class SignApk {
         int alignment = 4;
         Integer minSdkVersionOverride = null;
         boolean signUsingApkSignatureSchemeV2 = true;
+        boolean signUsingApkSignatureSchemeV4 = false;
 
         int argstart = 0;
         while (argstart < args.length && args[argstart].startsWith("-")) {
@@ -1069,13 +1073,22 @@ class SignApk {
             } else if ("--disable-v2".equals(args[argstart])) {
                 signUsingApkSignatureSchemeV2 = false;
                 ++argstart;
+            } else if ("--enable-v4".equals(args[argstart])) {
+                signUsingApkSignatureSchemeV4 = true;
+                ++argstart;
             } else {
                 usage();
             }
         }
 
-        if ((args.length - argstart) % 2 == 1) usage();
-        int numKeys = ((args.length - argstart) / 2) - 1;
+        int numArgsExcludeV4FilePath;
+        if (signUsingApkSignatureSchemeV4) {
+            numArgsExcludeV4FilePath = args.length - 1;
+        } else {
+            numArgsExcludeV4FilePath = args.length;
+        }
+        if ((numArgsExcludeV4FilePath - argstart) % 2 == 1) usage();
+        int numKeys = ((numArgsExcludeV4FilePath - argstart) / 2) - 1;
         if (signWholeFile && numKeys > 1) {
             System.err.println("Only one key may be used with -w.");
             System.exit(2);
@@ -1083,8 +1096,12 @@ class SignApk {
 
         loadProviderIfNecessary(providerClass);
 
-        String inputFilename = args[args.length-2];
-        String outputFilename = args[args.length-1];
+        String inputFilename = args[numArgsExcludeV4FilePath - 2];
+        String outputFilename = args[numArgsExcludeV4FilePath - 1];
+        String outputV4Filename = "";
+        if (signUsingApkSignatureSchemeV4) {
+            outputV4Filename = args[args.length - 1];
+        }
 
         JarFile inputJar = null;
         FileOutputStream outputFile = null;
@@ -1221,6 +1238,13 @@ class SignApk {
                     outputFile.close();
                     outputFile = null;
                     apkSigner.outputDone();
+
+                    if (signUsingApkSignatureSchemeV4) {
+                        final DataSource outputApkIn = DataSources.asDataSource(
+                                new RandomAccessFile(new File(outputFilename), "r"));
+                        final File outputV4File =  new File(outputV4Filename);
+                        apkSigner.signV4(outputApkIn, outputV4File, false /* ignore failures */);
+                    }
                 }
 
                 return;
