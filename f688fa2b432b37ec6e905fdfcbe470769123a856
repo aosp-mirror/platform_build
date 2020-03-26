@@ -22,6 +22,30 @@
       "revId": "f688fa2b432b37ec6e905fdfcbe470769123a856",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f669b7d1_0466a007",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-03-26T12:07:19Z",
+      "side": 1,
+      "message": "It includes vndk apex contents and some native libraries(https://paste.googleplex.com/6666982923436032), while \n$(call module-installed-files,$(call auto-included-modules)) returns only fake_packages/vndk_package-timestamp and vendor/etc/vintf/manifest.xml\n\nIt blocks using require-artifacts-in-path for the other partition(system_ext, product, and so on), than system",
+      "parentUuid": "714d81be_2a810a60",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 9
+      },
+      "revId": "f688fa2b432b37ec6e905fdfcbe470769123a856",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
