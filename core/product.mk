@@ -239,6 +239,8 @@ _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
 # List of system_server jars delivered via apex. Format = <apex name>:<jar name>.
 _product_list_vars += PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS
+# If true, then suboptimal order of system server jars does not cause an error.
+_product_list_vars += PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS
 
 # Additional system server jars to be appended at the end of the common list.
 # This is necessary to avoid jars reordering due to makefile inheritance order.
