@@ -318,7 +318,7 @@ class PayloadSigner(object):
     common.RunAndCheckOutput(cmd)
     with open(out_signature_size_file) as f:
       signature_size = f.read().rstrip()
-    logger.info("% outputs the maximum signature size: %", cmd[0],
+    logger.info("%s outputs the maximum signature size: %s", cmd[0],
                 signature_size)
     return int(signature_size)
 
