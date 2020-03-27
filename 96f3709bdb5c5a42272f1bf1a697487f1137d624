@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "500cd52d_cb8bdc57",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1330217
+      },
+      "writtenOn": "2020-03-27T04:53:45Z",
+      "side": 1,
+      "message": "Done. Thanks!",
+      "parentUuid": "ca68b40a_b14fb0cf",
+      "range": {
+        "startLine": 7,
+        "startChar": 56,
+        "endLine": 7,
+        "endChar": 62
+      },
+      "revId": "96f3709bdb5c5a42272f1bf1a697487f1137d624",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "89121b31_7ea1926b",
         "filename": "/COMMIT_MSG",
         "patchSetId": 6
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "cd351287_125d5ce3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1330217
+      },
+      "writtenOn": "2020-03-27T04:53:45Z",
+      "side": 1,
+      "message": "Done. Thanks!",
+      "parentUuid": "89121b31_7ea1926b",
+      "range": {
+        "startLine": 10,
+        "startChar": 17,
+        "endLine": 10,
+        "endChar": 23
+      },
+      "revId": "96f3709bdb5c5a42272f1bf1a697487f1137d624",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c0303923_5026dfe3",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 6
@@ -59,6 +107,30 @@
       "writtenOn": "2020-03-27T01:16:11Z",
       "side": 1,
       "message": "This file may not be empty at the beginning of the rule if a previous run of the rule exited early with an error before the rm -f at the end.  That\u0027s not a problem for $@-host.list because the first write to it is with \u003e which will truncate it, but this file is only ever written with \u003e\u003e.",
+      "range": {
+        "startLine": 36,
+        "startChar": 24,
+        "endLine": 36,
+        "endChar": 43
+      },
+      "revId": "96f3709bdb5c5a42272f1bf1a697487f1137d624",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "533f5a12_ba24ce57",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1330217
+      },
+      "writtenOn": "2020-03-27T04:53:45Z",
+      "side": 1,
+      "message": "Done. Thanks!",
+      "parentUuid": "c0303923_5026dfe3",
       "range": {
         "startLine": 36,
         "startChar": 24,
