@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "845757c6_f3d788b2",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-03-27T22:20:12Z",
+      "side": 1,
+      "message": "These can only be added at the end of the file",
+      "revId": "8d9f0a4856e85f3cc304a9577290777e1e797a8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
