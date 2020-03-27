@@ -419,7 +419,7 @@ endif
 $(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(API_FINGERPRINT) $(POST_PROCESS_PROPS)
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
+	$(hide) touch $@
 ifneq ($(PRODUCT_OEM_PROPERTIES),)
 	$(hide) echo "#" >> $@; \
 	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
@@ -519,7 +519,7 @@ endif  # property_overrides_split_enabled
 $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(intermediate_system_build_prop) $(vendor_prop_files)
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
+	$(hide) touch $@
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 	$(hide) echo ro.boot.dynamic_partitions=true >> $@
 endif
@@ -586,7 +586,7 @@ FINAL_PRODUCT_PROPERTIES := $(call uniq-pairs-by-first-component, \
 $(INSTALLED_PRODUCT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(product_prop_files)
 	@echo Target product buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
+	$(hide) touch $@
 ifdef BOARD_USES_PRODUCTIMAGE
 	$(hide) $(call generate-common-build-props,product,$@)
 endif  # BOARD_USES_PRODUCTIMAGE
@@ -627,7 +627,7 @@ FINAL_ODM_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
 $(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(odm_prop_files)
 	@echo Target odm buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
+	$(hide) touch $@
 	$(hide) echo ro.odm.product.cpu.abilist="$(TARGET_CPU_ABI_LIST)">>$@
 	$(hide) echo ro.odm.product.cpu.abilist32="$(TARGET_CPU_ABI_LIST_32_BIT)">>$@
 	$(hide) echo ro.odm.product.cpu.abilist64="$(TARGET_CPU_ABI_LIST_64_BIT)">>$@
@@ -668,7 +668,7 @@ FINAL_SYSTEM_EXT_PROPERTIES := $(call uniq-pairs-by-first-component, \
 $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(system_ext_prop_files)
 	@echo Target system_ext buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
+	$(hide) touch $@
 	$(hide) $(call generate-common-build-props,system_ext,$@)
 	$(hide) $(foreach file,$(system_ext_prop_files), \
 	    if [ -f "$(file)" ]; then \
