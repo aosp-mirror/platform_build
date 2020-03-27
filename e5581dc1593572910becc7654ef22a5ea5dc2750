@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bae81593_edc85ba4",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-03-27T01:18:36Z",
+      "side": 1,
+      "message": "I\u0027m not sure why coverage would be required here, but not for example the symbols directory that every native module copies the unstripped binary to.",
+      "revId": "e5581dc1593572910becc7654ef22a5ea5dc2750",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
