@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "934c9980_a96ceb3f",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 574,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-28T22:42:21Z",
+      "side": 1,
+      "message": "This change is part of getting the output sorted correctly. The current input data does not include the path. The name field is \"Foo.apk\" rather than \"path/to/Foo.apk\". However, if the data did include the path the pattern would select that as well. I think this should be safe.",
+      "parentUuid": "18d4d0bd_9573e41e",
+      "range": {
+        "startLine": 574,
+        "startChar": 15,
+        "endLine": 574,
+        "endChar": 30
+      },
+      "revId": "5ba64e50b37f9c32752bc021cf35cc6f5232dd30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9dcfccc4_b1a5ee05",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 14
