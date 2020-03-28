@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "18d4d0bd_9573e41e",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 574,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-03-28T06:26:56Z",
+      "side": 1,
+      "message": "in theory, we could have colliding file paths; /system/app/Foo/Foo.apk and/system/app/Bar/Foo.apk.\nSo this looks dangerous. Could you explain why you need this change?",
+      "range": {
+        "startLine": 574,
+        "startChar": 15,
+        "endLine": 574,
+        "endChar": 30
+      },
+      "revId": "5ba64e50b37f9c32752bc021cf35cc6f5232dd30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9dcfccc4_b1a5ee05",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-03-28T06:26:56Z",
+      "side": 1,
+      "message": "ok this explains it, but is that a must?",
+      "range": {
+        "startLine": 603,
+        "startChar": 69,
+        "endLine": 605,
+        "endChar": 52
+      },
+      "revId": "5ba64e50b37f9c32752bc021cf35cc6f5232dd30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
