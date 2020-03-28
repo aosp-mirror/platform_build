@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2228e264_329be55d",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1081223
+      },
+      "writtenOn": "2020-03-28T10:21:42Z",
+      "side": 1,
+      "message": "I recently added signapk here.\nAnyways I had no issues with building host modules.",
+      "revId": "3a6204c6dabae0fb0ebe3bfe40dc2fd043e22906",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
