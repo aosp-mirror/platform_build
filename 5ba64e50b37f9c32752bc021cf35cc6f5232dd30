@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "cb78969b_3ce5e4e6",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 574,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-28T22:49:06Z",
+      "side": 1,
+      "message": "Wait, I think I see your point. You mean that we could have two entries with name\u003d\"Foo.apk\". In that case, we shouldn\u0027t be using a map, but rather a list.",
+      "parentUuid": "934c9980_a96ceb3f",
+      "range": {
+        "startLine": 574,
+        "startChar": 15,
+        "endLine": 574,
+        "endChar": 30
+      },
+      "revId": "5ba64e50b37f9c32752bc021cf35cc6f5232dd30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9dcfccc4_b1a5ee05",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 14
