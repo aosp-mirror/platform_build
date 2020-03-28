@@ -34,6 +34,24 @@
       "revId": "ef3f8a630db082525fccccce015a249d39d924ca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e46ecd8_4a45ddb1",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-03-28T20:31:27Z",
+      "side": 1,
+      "message": "This change can be landed in a standalone cl and merge first (avoid merge conflict issue).\naosp/1270884",
+      "parentUuid": "41a52d52_b564804a",
+      "revId": "ef3f8a630db082525fccccce015a249d39d924ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
