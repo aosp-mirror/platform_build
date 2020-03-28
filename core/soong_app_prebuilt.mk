@@ -202,4 +202,11 @@ ifdef LOCAL_SOONG_PRODUCT_RRO_DIRS
   )
 endif
 
+ifdef LOCAL_PREBUILT_COVERAGE_ARCHIVE
+  my_coverage_dir := $(TARGET_OUT_COVERAGE)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
+  my_coverage_copy_pairs := $(foreach f,$(LOCAL_PREBUILT_COVERAGE_ARCHIVE),$(f):$(my_coverage_dir)/$(notdir  $(f)))
+  my_coverage_files := $(call copy-many-files,$(my_coverage_copy_pairs))
+  $(LOCAL_INSTALLED_MODULE): $(my_coverage_files)
+endif
+
 SOONG_ALREADY_CONV := $(SOONG_ALREADY_CONV) $(LOCAL_MODULE)
