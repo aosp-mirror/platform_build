@@ -45,6 +45,30 @@
       "revId": "5ba64e50b37f9c32752bc021cf35cc6f5232dd30",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b35be2e_d121412c",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-03-28T16:34:38Z",
+      "side": 1,
+      "message": "It\u0027s not strictly a must, but without it comparison of the framework, vendor, and merged output has small differences caused by the inconsistent sort (lines swapping order). Removing these \"false\" differences eliminates noise and makes it easier to spot important differences.",
+      "parentUuid": "9dcfccc4_b1a5ee05",
+      "range": {
+        "startLine": 603,
+        "startChar": 69,
+        "endLine": 605,
+        "endChar": 52
+      },
+      "revId": "5ba64e50b37f9c32752bc021cf35cc6f5232dd30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
