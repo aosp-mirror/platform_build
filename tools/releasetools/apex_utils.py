@@ -27,6 +27,8 @@ logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
 
+APEX_PAYLOAD_IMAGE = 'apex_payload.img'
+
 
 class ApexInfoError(Exception):
   """An Exception raised during Apex Information command."""
@@ -50,15 +52,11 @@ class ApexApkSigner(object):
     self.key_passwords = key_passwords
     self.codename_to_api_level_map = codename_to_api_level_map
 
-  def ProcessApexFile(self, apk_keys, payload_key, payload_public_key,
-                      signing_args=None):
+  def ProcessApexFile(self, apk_keys, payload_key, signing_args=None):
     """Scans and signs the apk files and repack the apex
 
     Args:
       apk_keys: A dict that holds the signing keys for apk files.
-      payload_key: The path to the apex payload signing key.
-      payload_public_key: The path to the public key corresponding to the
-       payload signing key.
 
     Returns:
       The repacked apex file containing the signed apk files.
@@ -89,8 +87,7 @@ class ApexApkSigner(object):
       logger.info('No apk file has been signed in %s', self.apex_path)
       return self.apex_path
 
-    return self.RepackApexPayload(payload_dir, payload_key, payload_public_key,
-                                  signing_args)
+    return self.RepackApexPayload(payload_dir, payload_key, signing_args)
 
   def ExtractApexPayloadAndSignApks(self, apk_entries, apk_keys):
     """Extracts the payload image and signs the containing apk files."""
@@ -118,27 +115,15 @@ class ApexApkSigner(object):
       has_signed_apk = True
     return payload_dir, has_signed_apk
 
-  def RepackApexPayload(self, payload_dir, payload_key, payload_public_key,
-                        signing_args=None):
+  def RepackApexPayload(self, payload_dir, payload_key, signing_args=None):
     """Rebuilds the apex file with the updated payload directory."""
     apex_dir = common.MakeTempDir()
     # Extract the apex file and reuse its meta files as repack parameters.
     common.UnzipToDir(self.apex_path, apex_dir)
-
-    android_jar_path = common.OPTIONS.android_jar_path
-    if not android_jar_path:
-      android_jar_path = os.path.join(os.environ.get('ANDROID_BUILD_TOP', ''),
-                                      'prebuilts', 'sdk', 'current', 'public',
-                                      'android.jar')
-      logger.warning('android_jar_path not found in options, falling back to'
-                     ' use %s', android_jar_path)
-
     arguments_dict = {
         'manifest': os.path.join(apex_dir, 'apex_manifest.pb'),
         'build_info': os.path.join(apex_dir, 'apex_build_info.pb'),
-        'android_jar_path': android_jar_path,
         'key': payload_key,
-        'pubkey': payload_public_key,
     }
     for filename in arguments_dict.values():
       assert os.path.exists(filename), 'file {} not found'.format(filename)
@@ -151,29 +136,36 @@ class ApexApkSigner(object):
       elif os.path.isdir(path):
         shutil.rmtree(path)
 
-    repacked_apex = common.MakeTempFile(suffix='.apex')
-    repack_cmd = ['apexer', '--force', '--include_build_info',
-                  '--do_not_check_keyname', '--apexer_tool_path',
-                  os.getenv('PATH')]
+    # TODO(xunchang) the signing process can be improved by using
+    # '--unsigned_payload_only'. But we need to parse the vbmeta earlier for
+    # the signing arguments, e.g. algorithm, salt, etc.
+    payload_img = os.path.join(apex_dir, APEX_PAYLOAD_IMAGE)
+    generate_image_cmd = ['apexer', '--force', '--payload_only',
+                          '--do_not_check_keyname', '--apexer_tool_path',
+                          os.getenv('PATH')]
     for key, val in arguments_dict.items():
-      repack_cmd.extend(['--' + key, val])
+      generate_image_cmd.extend(['--' + key, val])
+
     # Add quote to the signing_args as we will pass
     # --signing_args "--signing_helper_with_files=%path" to apexer
     if signing_args:
-      repack_cmd.extend(['--signing_args', '"{}"'.format(signing_args)])
+      generate_image_cmd.extend(['--signing_args', '"{}"'.format(signing_args)])
+
     # optional arguments for apex repacking
     manifest_json = os.path.join(apex_dir, 'apex_manifest.json')
     if os.path.exists(manifest_json):
-      repack_cmd.extend(['--manifest_json', manifest_json])
-    assets_dir = os.path.join(apex_dir, 'assets')
-    if os.path.isdir(assets_dir):
-      repack_cmd.extend(['--assets_dir', assets_dir])
-    repack_cmd.extend([payload_dir, repacked_apex])
+      generate_image_cmd.extend(['--manifest_json', manifest_json])
+    generate_image_cmd.extend([payload_dir, payload_img])
     if OPTIONS.verbose:
-      repack_cmd.append('-v')
-    common.RunAndCheckOutput(repack_cmd)
+      generate_image_cmd.append('-v')
+    common.RunAndCheckOutput(generate_image_cmd)
 
-    return repacked_apex
+    # Add the payload image back to the apex file.
+    common.ZipDelete(self.apex_path, APEX_PAYLOAD_IMAGE)
+    with zipfile.ZipFile(self.apex_path, 'a') as output_apex:
+      common.ZipWrite(output_apex, payload_img, APEX_PAYLOAD_IMAGE,
+                      compress_type=zipfile.ZIP_STORED)
+    return self.apex_path
 
 
 def SignApexPayload(avbtool, payload_file, payload_key_path, payload_key_name,
@@ -311,16 +303,13 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
   with open(apex_file, 'wb') as apex_fp:
     apex_fp.write(apex_data)
 
-  APEX_PAYLOAD_IMAGE = 'apex_payload.img'
   APEX_PUBKEY = 'apex_pubkey'
 
   # 1. Extract the apex payload image and sign the containing apk files. Repack
   # the apex file after signing.
-  payload_public_key = common.ExtractAvbPublicKey(avbtool, payload_key)
   apk_signer = ApexApkSigner(apex_file, container_pw,
                              codename_to_api_level_map)
-  apex_file = apk_signer.ProcessApexFile(apk_keys, payload_key,
-                                         payload_public_key, signing_args)
+  apex_file = apk_signer.ProcessApexFile(apk_keys, payload_key, signing_args)
 
   # 2a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
   # payload_key.
@@ -341,7 +330,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
       signing_args)
 
   # 2b. Update the embedded payload public key.
-
+  payload_public_key = common.ExtractAvbPublicKey(avbtool, payload_key)
   common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
   if APEX_PUBKEY in zip_items:
     common.ZipDelete(apex_file, APEX_PUBKEY)
