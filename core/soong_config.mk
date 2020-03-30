@@ -81,6 +81,7 @@ $(call add_json_str,  CrossHostSecondaryArch,            $(HOST_CROSS_2ND_ARCH))
 $(call add_json_list, DeviceResourceOverlays,            $(DEVICE_PACKAGE_OVERLAYS))
 $(call add_json_list, ProductResourceOverlays,           $(PRODUCT_PACKAGE_OVERLAYS))
 $(call add_json_list, EnforceRROTargets,                 $(PRODUCT_ENFORCE_RRO_TARGETS))
+$(call add_json_list, EnforceRROExemptedTargets,         $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS))
 $(call add_json_list, EnforceRROExcludedOverlays,        $(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS))
 
 $(call add_json_str,  AAPTCharacteristics,               $(TARGET_AAPT_CHARACTERISTICS))
@@ -115,6 +116,8 @@ $(call add_json_bool, Native_coverage,                   $(filter true,$(NATIVE_
 $(call add_json_bool, ClangCoverage,                     $(filter true,$(CLANG_COVERAGE)))
 $(call add_json_list, CoveragePaths,                     $(COVERAGE_PATHS))
 $(call add_json_list, CoverageExcludePaths,              $(COVERAGE_EXCLUDE_PATHS))
+
+$(call add_json_bool, SamplingPGO,                       $(filter true,$(SAMPLING_PGO)))
 
 $(call add_json_bool, ArtUseReadBarrier,                 $(call invert_bool,$(filter false,$(PRODUCT_ART_USE_READ_BARRIER))))
 $(call add_json_bool, Binder32bit,                       $(BINDER32BIT))

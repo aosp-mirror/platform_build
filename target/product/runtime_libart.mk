@@ -16,10 +16,6 @@
 
 # Provides a functioning ART environment without Android frameworks
 
-ifeq ($(TARGET_CORE_JARS),)
-$(error TARGET_CORE_JARS is empty; cannot update PRODUCT_PACKAGES variable)
-endif
-
 # Additional mixins to the boot classpath.
 PRODUCT_PACKAGES += \
     android.test.base \
@@ -33,8 +29,7 @@ PRODUCT_PACKAGES += com.android.runtime
 
 # ART APEX module.
 # Note that this package includes the minimal boot classpath JARs (listed in
-# TARGET_CORE_JARS), which should no longer be added directly to
-# PRODUCT_PACKAGES.
+# ART_APEX_JARS), which should no longer be added directly to PRODUCT_PACKAGES.
 PRODUCT_PACKAGES += com.android.art
 PRODUCT_HOST_PACKAGES += com.android.art
 

@@ -193,6 +193,9 @@ _product_list_vars += PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS
 # Package list to apply enforcing RRO.
 _product_list_vars += PRODUCT_ENFORCE_RRO_TARGETS
 
+# Packages to skip auto-generating RROs for when PRODUCT_ENFORCE_RRO_TARGETS is set to *.
+_product_list_vars += PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
+
 _product_list_vars += PRODUCT_SDK_ATREE_FILES
 _product_list_vars += PRODUCT_SDK_ADDON_NAME
 _product_list_vars += PRODUCT_SDK_ADDON_COPY_FILES
@@ -213,6 +216,12 @@ _product_list_vars += PRODUCT_VENDOR_KERNEL_HEADERS
 
 # A list of module names of BOOTCLASSPATH (jar files)
 _product_list_vars += PRODUCT_BOOT_JARS
+
+# A list of extra BOOTCLASSPATH jars (to be appended after common jars).
+# Products that include device-specific makefiles before AOSP makefiles should use this
+# instead of PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
+_product_list_vars += PRODUCT_BOOT_JARS_EXTRA
+
 _product_list_vars += PRODUCT_SUPPORTS_BOOT_SIGNER
 _product_list_vars += PRODUCT_SUPPORTS_VBOOT
 _product_list_vars += PRODUCT_SUPPORTS_VERITY
