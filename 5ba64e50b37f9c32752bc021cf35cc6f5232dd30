@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "03ecb4a1_6a8cb0ba",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 574,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-03-30T07:15:27Z",
+      "side": 1,
+      "message": "Ack. I know see that the txt files have basename part only, rather than the full path, which seems incorrect but is definitely out of scope of this change.",
+      "parentUuid": "cb78969b_3ce5e4e6",
+      "range": {
+        "startLine": 574,
+        "startChar": 15,
+        "endLine": 574,
+        "endChar": 30
+      },
+      "revId": "5ba64e50b37f9c32752bc021cf35cc6f5232dd30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9dcfccc4_b1a5ee05",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 14
@@ -117,6 +141,30 @@
       "revId": "5ba64e50b37f9c32752bc021cf35cc6f5232dd30",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83adba9c_47851ec0",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-03-30T07:15:27Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9b35be2e_d121412c",
+      "range": {
+        "startLine": 603,
+        "startChar": 69,
+        "endLine": 605,
+        "endChar": 52
+      },
+      "revId": "5ba64e50b37f9c32752bc021cf35cc6f5232dd30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
