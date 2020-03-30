@@ -52,6 +52,24 @@
       "revId": "ef3f8a630db082525fccccce015a249d39d924ca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17c79681_4bc26e8e",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-03-30T16:28:34Z",
+      "side": 1,
+      "message": "Old lines of this file do not get re-run, so line 611 won\u0027t do anything. The point here would be to delete the vts/ directories now that they\u0027re no longer being populated, but that can\u0027t be merged first (since then we\u0027d delete the directories, then recreate them, then on the later commit create the new vts10 files).",
+      "parentUuid": "5e46ecd8_4a45ddb1",
+      "revId": "ef3f8a630db082525fccccce015a249d39d924ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
