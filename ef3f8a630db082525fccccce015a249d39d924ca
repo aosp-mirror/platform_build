@@ -70,6 +70,24 @@
       "revId": "ef3f8a630db082525fccccce015a249d39d924ca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1cb69dde_5ed91d8f",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-03-30T16:35:27Z",
+      "side": 1,
+      "message": "so I should move these 2 lines to the bottom of this file?\nAlso, there is some merge conflict from aosp to internal master. The internal one has some change, does that mean I only need to update the internal one?",
+      "parentUuid": "17c79681_4bc26e8e",
+      "revId": "ef3f8a630db082525fccccce015a249d39d924ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
