@@ -22,6 +22,30 @@
       "revId": "70fcf897c50b37e6675684836fc154c3da69f7e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c792a895_860a47b8",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 1071150
+      },
+      "writtenOn": "2020-03-30T14:08:16Z",
+      "side": 1,
+      "message": "That comment was added when the boot image filter was removed here: \n\nhttp://ag/c/platform/build/+/833486/2/core/main.mk\n\nSo, yes, still valid.",
+      "parentUuid": "cdba69a9_c5cd3252",
+      "range": {
+        "startLine": 311,
+        "startChar": 19,
+        "endLine": 312,
+        "endChar": 86
+      },
+      "revId": "70fcf897c50b37e6675684836fc154c3da69f7e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
