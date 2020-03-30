@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec9fa285_6ad8b3ce",
+        "filename": "core/tasks/tools/package-modules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-03-30T21:36:36Z",
+      "side": 1,
+      "message": "Note to reviewers:\n\nJust PATH is sufficient for my use case, but I\u0027m not sure if instead I should have inherited from base_rules.mk here in order to set *all* ALL_MODULES.*.\u003cvar\u003e vars.",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 101,
+        "endChar": 56
+      },
+      "revId": "3dea57721dff82339ba33d1afa1fbf54313af98b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
