@@ -140,6 +140,30 @@
       "revId": "96f3709bdb5c5a42272f1bf1a697487f1137d624",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14bef00f_d9c3b077",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1330217
+      },
+      "writtenOn": "2020-03-30T01:28:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "533f5a12_ba24ce57",
+      "range": {
+        "startLine": 36,
+        "startChar": 24,
+        "endLine": 36,
+        "endChar": 43
+      },
+      "revId": "96f3709bdb5c5a42272f1bf1a697487f1137d624",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
