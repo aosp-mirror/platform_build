@@ -38,3 +38,7 @@ ALL_DOCS += $(OUT_DOCS)/$(LOCAL_MODULE)-jdiff-docs.zip
 .PHONY: $(LOCAL_MODULE) $(LOCAL_MODULE)-jdiff
 $(LOCAL_MODULE) $(LOCAL_MODULE)-jdiff : $(OUT_DOCS)/$(LOCAL_MODULE)-jdiff-docs.zip
 endif
+
+ifdef LOCAL_DROIDDOC_METADATA_ZIP
+$(eval $(call copy-one-file,$(LOCAL_DROIDDOC_METADATA_ZIP),$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(LOCAL_MODULE)-metadata.zip))
+endif
