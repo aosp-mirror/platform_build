@@ -318,7 +318,7 @@ class PayloadSigner(object):
     common.RunAndCheckOutput(cmd)
     with open(out_signature_size_file) as f:
       signature_size = f.read().rstrip()
-    logger.info("% outputs the maximum signature size: %", cmd[0],
+    logger.info("%s outputs the maximum signature size: %s", cmd[0],
                 signature_size)
     return int(signature_size)
 
@@ -631,7 +631,7 @@ def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
     partition_target_info = target_info["fstab"]["/" + name]
     disable_imgdiff = (partition_source_info.fs_type == "squashfs" or
                        partition_target_info.fs_type == "squashfs")
-    return common.BlockDifference(name, partition_src, partition_tgt,
+    return common.BlockDifference(name, partition_tgt, partition_src,
                                   check_first_block,
                                   version=blockimgdiff_version,
                                   disable_imgdiff=disable_imgdiff)

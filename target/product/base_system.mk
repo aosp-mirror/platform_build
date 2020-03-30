@@ -27,6 +27,7 @@ PRODUCT_PACKAGES += \
     android.test.base \
     android.test.mock \
     android.test.runner \
+    ANGLE \
     apexd \
     appops \
     app_process \
@@ -63,7 +64,6 @@ PRODUCT_PACKAGES += \
     com.android.tzdata \
     ContactsProvider \
     content \
-    crash_dump \
     debuggerd\
     device_config \
     dmctl \
@@ -311,8 +311,8 @@ PRODUCT_HOST_PACKAGES += \
     tz_version_host \
     tz_version_host_tzdata_apex \
 
-ifeq ($(TARGET_CORE_JARS),)
-$(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
+ifeq ($(ART_APEX_JARS),)
+$(error ART_APEX_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
 endif
 
 # The order matters for runtime class lookup performance.

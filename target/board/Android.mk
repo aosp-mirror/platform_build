@@ -52,13 +52,13 @@ LOCAL_PREBUILT_MODULE_FILE := $(GEN)
 include $(BUILD_PREBUILT)
 endif
 
-# DEVICE_MANIFEST_SKUS: a list of SKUS where DEVICE_MANIFEST_<sku>_FILE is defined.
+# DEVICE_MANIFEST_SKUS: a list of SKUS where DEVICE_MANIFEST_<sku>_FILES is defined.
 ifdef DEVICE_MANIFEST_SKUS
 
 # Install /vendor/etc/vintf/manifest_$(sku).xml
 # $(1): sku
 define _add_device_sku_manifest
-my_fragment_files_var := DEVICE_MANIFEST_$$(call to-upper,$(1))_FILE
+my_fragment_files_var := DEVICE_MANIFEST_$$(call to-upper,$(1))_FILES
 ifndef $$(my_fragment_files_var)
 $$(error $(1) is in DEVICE_MANIFEST_SKUS but $$(my_fragment_files_var) is not defined)
 endif
@@ -72,9 +72,9 @@ LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)/etc/vintf
 GEN := $$(local-generated-sources-dir)/manifest_$(1).xml
 $$(GEN): PRIVATE_SRC_FILES := $$(my_fragment_files)
 $$(GEN): $$(my_fragment_files) $$(HOST_OUT_EXECUTABLES)/assemble_vintf
-	BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) \
-	PRODUCT_ENFORCE_VINTF_MANIFEST=$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
-	PRODUCT_SHIPPING_API_LEVEL=$(PRODUCT_SHIPPING_API_LEVEL) \
+	BOARD_SEPOLICY_VERS=$$(BOARD_SEPOLICY_VERS) \
+	PRODUCT_ENFORCE_VINTF_MANIFEST=$$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
+	PRODUCT_SHIPPING_API_LEVEL=$$(PRODUCT_SHIPPING_API_LEVEL) \
 	$$(HOST_OUT_EXECUTABLES)/assemble_vintf -o $$@ \
 		-i $$(call normalize-path-list,$$(PRIVATE_SRC_FILES))
 

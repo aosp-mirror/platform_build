@@ -67,13 +67,18 @@ def GetDirmap(input_tmp):
 
 
 def GetArgsForSkus(info_dict):
-  skus = info_dict.get('vintf_odm_manifest_skus', '').strip().split()
-  if not skus:
-    logger.info("ODM_MANIFEST_SKUS is not defined. Check once without SKUs.")
-    skus = ['']
-  return [['--property', 'ro.boot.product.hardware.sku=' + sku]
-          for sku in skus]
+  odm_skus = info_dict.get('vintf_odm_manifest_skus', '').strip().split()
+  if info_dict.get('vintf_include_empty_odm_sku', '') == "true" or not odm_skus:
+    odm_skus += ['']
 
+  vendor_skus = info_dict.get('vintf_vendor_manifest_skus', '').strip().split()
+  if info_dict.get('vintf_include_empty_vendor_sku', '') == "true" or \
+      not vendor_skus:
+    vendor_skus += ['']
+
+  return [['--property', 'ro.boot.product.hardware.sku=' + odm_sku,
+           '--property', 'ro.boot.product.vendor.sku=' + vendor_sku]
+          for odm_sku in odm_skus for vendor_sku in vendor_skus]
 
 def GetArgsForShippingApiLevel(info_dict):
   shipping_api_level = info_dict['vendor.build.prop'].get(
@@ -89,7 +94,7 @@ def GetArgsForKernel(input_tmp):
   config_path = os.path.join(input_tmp, 'META/kernel_configs.txt')
 
   if not os.path.isfile(version_path) or not os.path.isfile(config_path):
-    logger.info('Skipping kernel config checks because ' +
+    logger.info('Skipping kernel config checks because '
                 'PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS is not set')
     return []
 
