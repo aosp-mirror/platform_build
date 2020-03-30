@@ -88,6 +88,24 @@
       "revId": "ef3f8a630db082525fccccce015a249d39d924ca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "424dcbf2_a030395a",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-03-30T18:55:32Z",
+      "side": 1,
+      "message": "You *cannot change* existing lines in this file, it is append-only.\n\nAnd no, you\u0027d need to change this everywhere, though as long as it won\u0027t cause build/test breaks for both to exist, you could stage the CleanSpec.mk change to land after this change.",
+      "parentUuid": "1cb69dde_5ed91d8f",
+      "revId": "ef3f8a630db082525fccccce015a249d39d924ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
