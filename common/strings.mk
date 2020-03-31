@@ -88,7 +88,7 @@ $(word $(1),$(subst :,$(space),$(2)))
 endef
 
 ###########################################################
-## Convert "a=b c= d e = f" into "a=b c=d e=f"
+## Convert "a=b c= d e = f = g h=" into "a=b c=d e= f=g h="
 ##
 ## $(1): list to collapse
 ## $(2): if set, separator word; usually "=", ":", or ":="
@@ -96,10 +96,28 @@ endef
 ###########################################################
 
 define collapse-pairs
+$(strip \
 $(eval _cpSEP := $(strip $(if $(2),$(2),=)))\
-$(strip $(subst $(space)$(_cpSEP)$(space),$(_cpSEP),$(strip \
-    $(subst $(_cpSEP), $(_cpSEP) ,$(1)))$(space)))
+$(eval _cpLHS :=)\
+$(eval _cpRET :=)\
+$(foreach w,$(subst $(space)$(_cpSEP),$(_cpSEP),$(strip \
+            $(subst $(_cpSEP),$(space)$(_cpSEP)$(space),$(1)))),\
+  $(if $(findstring $(_cpSEP),$(w)),\
+    $(eval _cpRET += $(_cpLHS))$(eval _cpLHS := $(w)),\
+    $(eval _cpRET += $(_cpLHS)$(w))$(eval _cpLHS :=)))\
+$(if $(_cpLHS),$(_cpRET)$(space)$(_cpLHS),$(_cpRET))\
+$(eval _cpSEP :=)\
+$(eval _cpLHS :=)\
+$(eval _cpRET :=))
 endef
+
+# Sanity check for collapse-pairs.
+ifneq (a=b c=d e= f=g h=,$(call collapse-pairs,a=b c= d e = f = g h=))
+  $(error collapse-pairs sanity check failure)
+endif
+ifneq (a:=b c:=d e:=f g:=h,$(call collapse-pairs,a:=b c:= d e :=f g := h,:=))
+  $(error collapse-pairs sanity check failure)
+endif
 
 ###########################################################
 ## Given a list of pairs, if multiple pairs have the same
