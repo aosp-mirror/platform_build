@@ -861,10 +861,17 @@ endif
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
+# $1 package name
+# $2 certificate
+# $3 private key
+# $4 compressed
+# $5 partition tag
+# $6 output file
 define _apkcerts_write_line
-$(hide) echo -n 'name="$(1).apk" certificate="$2" private_key="$3"' >> $5
-$(if $(4), $(hide) echo -n ' compressed="$4"' >> $5)
-$(hide) echo '' >> $5
+$(hide) echo -n 'name="$(1).apk" certificate="$2" private_key="$3"' >> $6
+$(if $(4), $(hide) echo -n ' compressed="$4"' >> $6)
+$(if $(5), $(hide) echo -n ' partition="$5"' >> $6)
+$(hide) echo '' >> $6
 
 endef
 
@@ -884,8 +891,8 @@ $(APKCERTS_FILE):
 	@rm -f $@
 	$(foreach p,$(sort $(PACKAGES)),\
 	  $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
-	    $(call _apkcerts_write_line,$(p),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$@),\
-	    $(call _apkcerts_write_line,$(p),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$@)))
+	    $(call _apkcerts_write_line,$(p),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
+	    $(call _apkcerts_write_line,$(p),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@)))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
