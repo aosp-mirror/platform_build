@@ -22,6 +22,30 @@
       "revId": "3dea57721dff82339ba33d1afa1fbf54313af98b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "06a7b142_d1882655",
+        "filename": "core/tasks/tools/package-modules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-03-31T22:50:23Z",
+      "side": 1,
+      "message": "Please include base_rules.mk, that will be much more reliable against future changes.  It shouldn\u0027t be hard, something like:\n\n    include $(CLEAR_VARS)\n    LOCAL_MODULE :\u003d $(my_package_name)\n    LOCAL_MODULE_CLASS :\u003d PACKAGING\n    LOCAL_MODULE_STEM :\u003d $(my_package_name).zip\n    LOCAL_UNINSTALLABLE_MODULE :\u003d true\n    include $(BUILD_SYSTEM)/base_rules.mk\n    my_staging_dir :\u003d $(intermediates)\n    my_package_zip :\u003d $(LOCAL_BUILT_MODULE)",
+      "parentUuid": "ec9fa285_6ad8b3ce",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 101,
+        "endChar": 56
+      },
+      "revId": "3dea57721dff82339ba33d1afa1fbf54313af98b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
