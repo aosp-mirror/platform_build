@@ -1404,6 +1404,46 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual('3', chained_partition_args[1])
     self.assertTrue(os.path.exists(chained_partition_args[2]))
 
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_BuildVBMeta_appendAftl(self):
+    testdata_dir = test_utils.get_testdata_dir()
+    common.OPTIONS.info_dict = {
+        'ab_update': 'true',
+        'avb_avbtool': 'avbtool',
+        'build.prop': {
+            'ro.build.version.incremental': '6285659',
+            'ro.product.device': 'coral',
+            'ro.build.fingerprint': 'google/coral/coral:R/RP1A.200311.002/'
+                                    '6285659:userdebug/dev-keys'
+        }
+    }
+    common.OPTIONS.aftl_server = "log.endpoints.aftl-dev.cloud.goog:9000"
+    common.OPTIONS.aftl_key_path = os.path.join(testdata_dir,
+                                                'test_transparency_key.pub')
+    common.OPTIONS.aftl_manufacturer_key_path = os.path.join(
+        testdata_dir, 'test_aftl_rsa4096.pem')
+
+    input_dir = common.MakeTempDir()
+    system_image = common.MakeTempFile()
+    build_image_cmd = ['mkuserimg_mke2fs', input_dir, system_image, 'ext4',
+                       '/system', str(4096 * 100), '-j', '0', '-s']
+    common.RunAndCheckOutput(build_image_cmd)
+
+    add_footer_cmd = ['avbtool', 'add_hashtree_footer',
+                      '--partition_size', str(4096 * 150),
+                      '--partition_name', 'system',
+                      '--image', system_image]
+    common.RunAndCheckOutput(add_footer_cmd)
+
+    vbmeta_image = common.MakeTempFile()
+    common.BuildVBMeta(vbmeta_image, {'system': system_image}, 'vbmeta',
+                       ['system'])
+
+    verify_cmd = ['aftltool', 'verify_image_icp', '--vbmeta_image_path',
+                  vbmeta_image, '--transparency_log_pub_keys',
+                  common.OPTIONS.aftl_key_path]
+    common.RunAndCheckOutput(verify_cmd)
+
 
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   """Checks the format of install-recovery.sh.
