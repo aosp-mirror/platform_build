@@ -14,6 +14,7 @@ LLNDK: libm.so
 LLNDK: libmediandk.so
 LLNDK: libnativewindow.so
 LLNDK: libneuralnetworks.so
+LLNDK: libselinux.so
 LLNDK: libsync.so
 LLNDK: libvndksupport.so
 LLNDK: libvulkan.so
@@ -253,7 +254,6 @@ VNDK-core: libpng.so
 VNDK-core: libpower.so
 VNDK-core: libprocinfo.so
 VNDK-core: libradio_metadata.so
-VNDK-core: libselinux.so
 VNDK-core: libspeexresampler.so
 VNDK-core: libsqlite.so
 VNDK-core: libssl.so
