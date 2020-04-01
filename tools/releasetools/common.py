@@ -931,6 +931,37 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
 
 
+def AddAftlInclusionProof(output_image):
+  """Appends the aftl inclusion proof to the vbmeta image."""
+
+  # Ensure the other AFTL parameters are set as well.
+  assert OPTIONS.aftl_key_path is not None, 'No AFTL key provided.'
+  assert OPTIONS.aftl_manufacturer_key_path is not None, \
+      'No AFTL manufacturer key provided.'
+
+  vbmeta_image = MakeTempFile()
+  os.rename(output_image, vbmeta_image)
+  build_info = BuildInfo(OPTIONS.info_dict)
+  version_incremental = build_info.GetBuildProp("ro.build.version.incremental")
+  aftl_cmd = ["aftltool", "make_icp_from_vbmeta",
+              "--vbmeta_image_path", vbmeta_image,
+              "--output", output_image,
+              "--version_incremental", version_incremental,
+              "--transparency_log_servers", OPTIONS.aftl_server,
+              "--transparency_log_pub_keys", OPTIONS.aftl_key_path,
+              "--manufacturer_key", OPTIONS.aftl_manufacturer_key_path,
+              "--algorithm", "SHA256_RSA4096",
+              "--padding", "4096"]
+  if OPTIONS.aftl_signer_helper:
+    aftl_cmd.extend(shlex.split(OPTIONS.aftl_signer_helper))
+  RunAndCheckOutput(aftl_cmd)
+
+  verify_cmd = ['aftltool', 'verify_image_icp', '--vbmeta_image_path',
+                output_image, '--transparency_log_pub_keys',
+                OPTIONS.aftl_key_path]
+  RunAndCheckOutput(verify_cmd)
+
+
 def BuildVBMeta(image_path, partitions, name, needed_partitions):
   """Creates a VBMeta image.
 
@@ -973,28 +1004,26 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
       # zip only). For such cases, we additionally scan other locations (e.g.
       # IMAGES/, RADIO/, etc) before bailing out.
       if arg == '--include_descriptors_from_image':
-        image_path = split_args[index + 1]
-        if os.path.exists(image_path):
+        chained_image = split_args[index + 1]
+        if os.path.exists(chained_image):
           continue
         found = False
         for dir_name in ['IMAGES', 'RADIO', 'PREBUILT_IMAGES']:
           alt_path = os.path.join(
-              OPTIONS.input_tmp, dir_name, os.path.basename(image_path))
+              OPTIONS.input_tmp, dir_name, os.path.basename(chained_image))
           if os.path.exists(alt_path):
             split_args[index + 1] = alt_path
             found = True
             break
-        assert found, 'Failed to find {}'.format(image_path)
+        assert found, 'Failed to find {}'.format(chained_image)
     cmd.extend(split_args)
 
   RunAndCheckOutput(cmd)
 
+  # Generate the AFTL inclusion proof.
   if OPTIONS.aftl_server is not None:
-    # Ensure the other AFTL parameters are set as well.
-    assert OPTIONS.aftl_key_path is not None, 'No AFTL key provided.'
-    assert OPTIONS.aftl_manufacturer_key_path is not None, 'No AFTL manufacturer key provided.'
-    assert OPTIONS.aftl_signer_helper is not None, 'No AFTL signer helper provided.'
-    # AFTL inclusion proof generation code will go here.
+    AddAftlInclusionProof(image_path)
+
 
 def _MakeRamdisk(sourcedir, fs_config_file=None):
   ramdisk_img = tempfile.NamedTemporaryFile()
@@ -1754,7 +1783,8 @@ def ReadApkCerts(tf_zip):
       continue
     m = re.match(
         r'^name="(?P<NAME>.*)"\s+certificate="(?P<CERT>.*)"\s+'
-        r'private_key="(?P<PRIVKEY>.*?)"(\s+compressed="(?P<COMPRESSED>.*)")?$',
+        r'private_key="(?P<PRIVKEY>.*?)"(\s+compressed="(?P<COMPRESSED>.*)")?'
+        r'(\s+partition="(?P<PARTITION>.*)")?$',
         line)
     if not m:
       continue
