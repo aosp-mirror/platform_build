@@ -418,7 +418,7 @@ endif
 $(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(API_FINGERPRINT) $(POST_PROCESS_PROPS)
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) touch $@
+	$(hide) echo > $@
 ifneq ($(PRODUCT_OEM_PROPERTIES),)
 	$(hide) echo "#" >> $@; \
 	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
@@ -517,7 +517,7 @@ endif  # property_overrides_split_enabled
 $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(intermediate_system_build_prop) $(vendor_prop_files)
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) touch $@
+	$(hide) echo > $@
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 	$(hide) echo ro.boot.dynamic_partitions=true >> $@
 endif
@@ -584,7 +584,7 @@ FINAL_PRODUCT_PROPERTIES := $(call uniq-pairs-by-first-component, \
 $(INSTALLED_PRODUCT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(product_prop_files)
 	@echo Target product buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) touch $@
+	$(hide) echo > $@
 ifdef BOARD_USES_PRODUCTIMAGE
 	$(hide) $(call generate-common-build-props,product,$@)
 endif  # BOARD_USES_PRODUCTIMAGE
@@ -625,7 +625,7 @@ FINAL_ODM_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
 $(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(odm_prop_files)
 	@echo Target odm buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) touch $@
+	$(hide) echo > $@
 	$(hide) echo ro.odm.product.cpu.abilist="$(TARGET_CPU_ABI_LIST)">>$@
 	$(hide) echo ro.odm.product.cpu.abilist32="$(TARGET_CPU_ABI_LIST_32_BIT)">>$@
 	$(hide) echo ro.odm.product.cpu.abilist64="$(TARGET_CPU_ABI_LIST_64_BIT)">>$@
@@ -666,7 +666,7 @@ FINAL_SYSTEM_EXT_PROPERTIES := $(call uniq-pairs-by-first-component, \
 $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(system_ext_prop_files)
 	@echo Target system_ext buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) touch $@
+	$(hide) echo > $@
 	$(hide) $(call generate-common-build-props,system_ext,$@)
 	$(hide) $(foreach file,$(system_ext_prop_files), \
 	    if [ -f "$(file)" ]; then \
@@ -861,10 +861,17 @@ endif
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
+# $1 package name
+# $2 certificate
+# $3 private key
+# $4 compressed
+# $5 partition tag
+# $6 output file
 define _apkcerts_write_line
-$(hide) echo -n 'name="$(1).apk" certificate="$2" private_key="$3"' >> $5
-$(if $(4), $(hide) echo -n ' compressed="$4"' >> $5)
-$(hide) echo '' >> $5
+$(hide) echo -n 'name="$(1).apk" certificate="$2" private_key="$3"' >> $6
+$(if $(4), $(hide) echo -n ' compressed="$4"' >> $6)
+$(if $(5), $(hide) echo -n ' partition="$5"' >> $6)
+$(hide) echo '' >> $6
 
 endef
 
@@ -884,8 +891,8 @@ $(APKCERTS_FILE):
 	@rm -f $@
 	$(foreach p,$(sort $(PACKAGES)),\
 	  $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
-	    $(call _apkcerts_write_line,$(p),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$@),\
-	    $(call _apkcerts_write_line,$(p),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$@)))
+	    $(call _apkcerts_write_line,$(p),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
+	    $(call _apkcerts_write_line,$(p),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@)))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
@@ -3991,6 +3998,7 @@ ifeq ($(build_otatools_package),true)
 INTERNAL_OTATOOLS_MODULES := \
   aapt2 \
   add_img_to_target_files \
+  aftltool \
   append2simg \
   avbtool \
   blk_alloc_to_base_fs \
@@ -4904,6 +4912,19 @@ $(COVERAGE_ZIP): $(SOONG_ZIP)
 	$(hide) mkdir -p $(dir $@) $(TARGET_OUT_COVERAGE) $(dir $(PRIVATE_LIST_FILE))
 	$(hide) find $(TARGET_OUT_COVERAGE) | sort >$(PRIVATE_LIST_FILE)
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(TARGET_OUT_COVERAGE) -l $(PRIVATE_LIST_FILE)
+
+#------------------------------------------------------------------
+# Export the LLVM profile data tool and dependencies for Clang coverage processing
+#
+ifeq (true,$(CLANG_COVERAGE))
+  LLVM_PROFDATA := $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION)/bin/llvm-profdata
+  LIBCXX := $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION)/lib64/libc++.so.1
+  PROFDATA_ZIP := $(PRODUCT_OUT)/llvm-profdata.zip
+  $(PROFDATA_ZIP): $(SOONG_ZIP)
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION) -f $(LLVM_PROFDATA) -f $(LIBCXX)
+
+  $(call dist-for-goals,droidcore,$(PROFDATA_ZIP))
+endif
 
 # -----------------------------------------------------------------
 # A zip of the Android Apps. Not keeping full path so that we don't
