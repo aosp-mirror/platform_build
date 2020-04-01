@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8a29e5f4_3914c8e6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-04-01T14:21:48Z",
+      "side": 1,
+      "message": "Updated.",
+      "parentUuid": "9d4c734a_55972c04",
+      "revId": "3a6204c6dabae0fb0ebe3bfe40dc2fd043e22906",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2228e264_329be55d",
         "filename": "tools/releasetools/Android.bp",
         "patchSetId": 1
