@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9d4c734a_55972c04",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-04-01T08:32:12Z",
+      "side": 1,
+      "message": "Treehugger is supposed to be rejecting unknown merged-in lines... this change isn\u0027t merged in any (direct) downstream branch.",
+      "revId": "3a6204c6dabae0fb0ebe3bfe40dc2fd043e22906",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2228e264_329be55d",
         "filename": "tools/releasetools/Android.bp",
         "patchSetId": 1
