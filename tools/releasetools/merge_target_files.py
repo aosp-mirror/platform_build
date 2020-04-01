@@ -79,6 +79,7 @@ from __future__ import print_function
 import fnmatch
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -108,6 +109,27 @@ OPTIONS.output_super_empty = None
 # TODO(b/132730255): Remove this option.
 OPTIONS.rebuild_recovery = False
 OPTIONS.keep_tmp = False
+
+# In an item list (framework or vendor), we may see entries that select whole
+# partitions. Such an entry might look like this 'SYSTEM/*' (e.g., for the
+# system partition). The following regex matches this and extracts the
+# partition name.
+
+PARTITION_ITEM_PATTERN = re.compile(r'^([A-Z_]+)/\*$')
+
+# In apexkeys.txt or apkcerts.txt, we may find partition tags on the various
+# entries in the file. We use these partition tags to filter the entries in
+# those files from the two different target files packages to produce a merged
+# apexkeys.txt or apkcerts.txt file. A partition tag (e.g., for the product
+# partition) looks like this: 'partition="_PRODUCT"' or 'partition="product".
+# We use the group syntax grab the value of the tag.
+
+PARTITION_TAG_PATTERN = re.compile(r'partition="(.*)"')
+
+# The sorting algorithm for apexkeys.txt and apkcerts.txt does not include the
+# ".apex" or ".apk" suffix, so we use the following pattern to extract a key.
+
+MODULE_KEY_PATTERN = re.compile(r'name="(.+)\.(apex|apk)"')
 
 # DEFAULT_FRAMEWORK_ITEM_LIST is a list of items to extract from the partial
 # framework target files package as is, meaning these items will land in the
@@ -484,9 +506,40 @@ def process_dynamic_partitions_info_txt(framework_target_files_dir,
       path=output_dynamic_partitions_info_txt)
 
 
+def item_list_to_partition_set(item_list):
+  """Converts a target files item list to a partition set.
+
+  The item list contains items that might look like 'SYSTEM/*' or 'VENDOR/*' or
+  'OTA/android-info.txt'. Items that end in '/*' are assumed to match entire
+  directories where 'SYSTEM' or 'VENDOR' is a directory name that identifies the
+  contents of a partition of the same name. Other items in the list, such as the
+  'OTA' example contain metadata. This function iterates such a list, returning
+  a set that contains the partition entries.
+
+  Args:
+    item_list: A list of items in a target files package.
+  Returns:
+    A set of partitions extracted from the list of items.
+  """
+
+  partition_set = set()
+
+  for item in item_list:
+    match = PARTITION_ITEM_PATTERN.search(item.strip())
+    partition_tag = match.group(1).lower() if match else None
+
+    if partition_tag:
+      partition_set.add(partition_tag)
+
+  return partition_set
+
+
 def process_apex_keys_apk_certs_common(framework_target_files_dir,
                                        vendor_target_files_dir,
-                                       output_target_files_dir, file_name):
+                                       output_target_files_dir,
+                                       framework_partition_set,
+                                       vendor_partition_set, file_name):
+
   """Performs special processing for META/apexkeys.txt or META/apkcerts.txt.
 
   This function merges the contents of the META/apexkeys.txt or
@@ -502,6 +555,10 @@ def process_apex_keys_apk_certs_common(framework_target_files_dir,
       items extracted from the vendor target files package.
     output_target_files_dir: The name of a directory that will be used to create
       the output target files package after all the special cases are processed.
+    framework_partition_set: Partitions that are considered framework
+      partitions. Used to filter apexkeys.txt and apkcerts.txt.
+    vendor_partition_set: Partitions that are considered vendor partitions. Used
+      to filter apexkeys.txt and apkcerts.txt.
     file_name: The name of the file to merge. One of apkcerts.txt or
       apexkeys.txt.
   """
@@ -512,21 +569,44 @@ def process_apex_keys_apk_certs_common(framework_target_files_dir,
     with open(file_path) as f:
       for line in f:
         if line.strip():
-          temp[line.split()[0]] = line.strip()
+          name = line.split()[0]
+          match = MODULE_KEY_PATTERN.search(name)
+          temp[match.group(1)] = line.strip()
     return temp
 
   framework_dict = read_helper(framework_target_files_dir)
   vendor_dict = read_helper(vendor_target_files_dir)
+  merged_dict = {}
 
-  for key in framework_dict:
-    if key in vendor_dict and vendor_dict[key] != framework_dict[key]:
-      raise ValueError('Conflicting entries found in %s:\n %s and\n %s' %
-                       (file_name, framework_dict[key], vendor_dict[key]))
-    vendor_dict[key] = framework_dict[key]
+  def filter_into_merged_dict(item_dict, partition_set):
+    for key, value in item_dict.items():
+      match = PARTITION_TAG_PATTERN.search(value)
+
+      if match is None:
+        raise ValueError('Entry missing partition tag: %s' % value)
+
+      partition_tag = match.group(1)
+
+      if partition_tag in partition_set:
+        if key in merged_dict:
+          raise ValueError('Duplicate key %s' % key)
+
+        merged_dict[key] = value
+
+  filter_into_merged_dict(framework_dict, framework_partition_set)
+  filter_into_merged_dict(vendor_dict, vendor_partition_set)
 
   output_file = os.path.join(output_target_files_dir, 'META', file_name)
 
-  write_sorted_data(data=vendor_dict.values(), path=output_file)
+  # The following code is similar to write_sorted_data, but different enough
+  # that we couldn't use that function. We need the output to be sorted by the
+  # basename of the apex/apk (without the ".apex" or ".apk" suffix). This
+  # allows the sort to be consistent with the framework/vendor input data and
+  # eases comparison of input data with merged data.
+  with open(output_file, 'w') as output:
+    for key in sorted(merged_dict.keys()):
+      out_str = merged_dict[key] + '\n'
+      output.write(out_str)
 
 
 def copy_file_contexts(framework_target_files_dir, vendor_target_files_dir,
@@ -559,7 +639,9 @@ def copy_file_contexts(framework_target_files_dir, vendor_target_files_dir,
 def process_special_cases(framework_target_files_temp_dir,
                           vendor_target_files_temp_dir,
                           output_target_files_temp_dir,
-                          framework_misc_info_keys):
+                          framework_misc_info_keys,
+                          framework_partition_set,
+                          vendor_partition_set):
   """Performs special-case processing for certain target files items.
 
   Certain files in the output target files package require special-case
@@ -576,6 +658,10 @@ def process_special_cases(framework_target_files_temp_dir,
     framework_misc_info_keys: A list of keys to obtain from the framework
       instance of META/misc_info.txt. The remaining keys from the vendor
       instance.
+    framework_partition_set: Partitions that are considered framework
+      partitions. Used to filter apexkeys.txt and apkcerts.txt.
+    vendor_partition_set: Partitions that are considered vendor partitions. Used
+      to filter apexkeys.txt and apkcerts.txt.
   """
 
   if 'ab_update' in framework_misc_info_keys:
@@ -604,12 +690,16 @@ def process_special_cases(framework_target_files_temp_dir,
       framework_target_files_dir=framework_target_files_temp_dir,
       vendor_target_files_dir=vendor_target_files_temp_dir,
       output_target_files_dir=output_target_files_temp_dir,
+      framework_partition_set=framework_partition_set,
+      vendor_partition_set=vendor_partition_set,
       file_name='apkcerts.txt')
 
   process_apex_keys_apk_certs_common(
       framework_target_files_dir=framework_target_files_temp_dir,
       vendor_target_files_dir=vendor_target_files_temp_dir,
       output_target_files_dir=output_target_files_temp_dir,
+      framework_partition_set=framework_partition_set,
+      vendor_partition_set=vendor_partition_set,
       file_name='apexkeys.txt')
 
 
@@ -716,7 +806,9 @@ def create_merged_package(temp_dir, framework_target_files, framework_item_list,
       framework_target_files_temp_dir=framework_target_files_temp_dir,
       vendor_target_files_temp_dir=vendor_target_files_temp_dir,
       output_target_files_temp_dir=output_target_files_temp_dir,
-      framework_misc_info_keys=framework_misc_info_keys)
+      framework_misc_info_keys=framework_misc_info_keys,
+      framework_partition_set=item_list_to_partition_set(framework_item_list),
+      vendor_partition_set=item_list_to_partition_set(vendor_item_list))
 
   return output_target_files_temp_dir
 

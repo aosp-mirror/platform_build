@@ -167,6 +167,9 @@ endif
 
 include $(BUILD_SYSTEM)/app_certificate_validate.mk
 
+# Set a actual_partition_tag (calculated in base_rules.mk) for the package.
+PACKAGES.$(LOCAL_MODULE).PARTITION := $(actual_partition_tag)
+
 # Disable dex-preopt of prebuilts to save space, if requested.
 ifndef LOCAL_DEX_PREOPT
 ifeq ($(DONT_DEXPREOPT_PREBUILTS),true)
