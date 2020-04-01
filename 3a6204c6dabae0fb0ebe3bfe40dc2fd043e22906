@@ -16,6 +16,24 @@
       "revId": "3a6204c6dabae0fb0ebe3bfe40dc2fd043e22906",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9718c951_48b7a350",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-04-01T08:08:40Z",
+      "side": 1,
+      "message": "In general it works fine. However, if I try to build without system image, then those tools are not built properly.",
+      "parentUuid": "2228e264_329be55d",
+      "revId": "3a6204c6dabae0fb0ebe3bfe40dc2fd043e22906",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
