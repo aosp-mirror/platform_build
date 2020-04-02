@@ -157,6 +157,9 @@ endif
 include $(BUILD_SYSTEM)/app_certificate_validate.mk
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
+# Set a actual_partition_tag (calculated in base_rules.mk) for the package.
+PACKAGES.$(LOCAL_MODULE).PARTITION := $(actual_partition_tag)
+
 ifdef LOCAL_SOONG_BUNDLE
   ALL_MODULES.$(LOCAL_MODULE).BUNDLE := $(LOCAL_SOONG_BUNDLE)
 endif
