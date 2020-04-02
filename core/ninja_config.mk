@@ -48,7 +48,7 @@ PARSE_TIME_MAKE_GOALS := \
 	user \
 	userdataimage \
 	userdebug \
-	vts \
+	vts10 \
 	win_sdk \
 	winsdk-tools
 
