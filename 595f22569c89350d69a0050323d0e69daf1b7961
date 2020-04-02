@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b46c25bb_c9f944fa",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-04-02T03:56:30Z",
+      "side": 1,
+      "message": "Why do we need PRODUCT_CHECK_ELF_PREBUILT_PRODUCT_COPY_FILES and BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES?",
+      "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94c42830_4d6ca3eb",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-04-02T03:56:30Z",
+      "side": 1,
+      "message": "I think new BUILD_BROKEN variables need some changes in build/soong too to track their usage.",
+      "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
