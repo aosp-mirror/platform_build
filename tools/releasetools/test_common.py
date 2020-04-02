@@ -1417,6 +1417,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
                                     '6285659:userdebug/dev-keys'
         }
     }
+    common.OPTIONS.aftl_tool_path = "aftltool"
     common.OPTIONS.aftl_server = "log.endpoints.aftl-dev.cloud.goog:9000"
     common.OPTIONS.aftl_key_path = os.path.join(testdata_dir,
                                                 'test_transparency_key.pub')
