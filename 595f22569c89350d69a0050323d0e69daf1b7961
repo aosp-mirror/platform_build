@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "52324417_00ecc3e2",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-04-02T08:00:39Z",
+      "side": 1,
+      "message": "I often make the BUILD_BROKEN_* values tristate to accomplish this type of gradual enforcement:\n\n1. Unset is the default, which is equivalent to `true` to start with\n2. Optionally mark a few devices that don\u0027t have issues with `false` to prevent backsliding (preferably the global presubmit ones so you don\u0027t cause too many breaks)\n3. Mark all the devices that do have issues with `true`\n4. Change the unset equivalent to `false`\n5. Give it a day to make sure the build cops don\u0027t revert it, then remove the explicit `false` settings\n6. Continue cleaning up devices and remove the `true` settings\n7. Wait until at least the next release, then remove the flag and mark it as obsolete.",
+      "parentUuid": "114445d5_8a18940d",
+      "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "94c42830_4d6ca3eb",
         "filename": "core/board_config.mk",
         "patchSetId": 3
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Is there any procedures to add new BUILD_BROKEN_* or PRODUCT_* variables other than adding it to these *_var_list variables?",
       "parentUuid": "94c42830_4d6ca3eb",
+      "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9205c3ad_857eb994",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-04-02T08:00:39Z",
+      "side": 1,
+      "message": "They\u0027re in build/soong/ui/build/dumpvars.go mainly so I can use my script in build/soong/scripts/build_broken_logs.go to analyze where there are problems vs not. That script only works if the warnings/errors are at makefile reading time however, so it\u0027s not too important in this case.\n\nOtherwise, documentation in Changes.md and an email to keystone-downstream-issues@ is appreciated",
+      "parentUuid": "3de87db4_c51cb147",
       "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
