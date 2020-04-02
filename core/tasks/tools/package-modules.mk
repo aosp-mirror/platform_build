@@ -16,7 +16,16 @@
 #
 
 my_makefile := $(lastword $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
-my_staging_dir := $(call intermediates-dir-for,PACKAGING,$(my_package_name))
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := $(my_package_name)
+LOCAL_MODULE_CLASS := PACKAGING
+LOCAL_MODULE_STEM := $(my_package_name).zip
+LOCAL_UNINSTALLABLE_MODULE := true
+include $(BUILD_SYSTEM)/base_rules.mk
+my_staging_dir := $(intermediates)
+my_package_zip := $(LOCAL_BUILT_MODULE)
+
 my_built_modules := $(foreach p,$(my_copy_pairs),$(call word-colon,1,$(p)))
 my_copy_pairs := $(foreach p,$(my_copy_pairs),$(call word-colon,1,$(p)):$(my_staging_dir)/$(call word-colon,2,$(p)))
 my_pickup_files :=
@@ -80,7 +89,6 @@ ifneq ($(my_missing_error),)
   $(error done)
 endif
 
-my_package_zip := $(my_staging_dir)/$(my_package_name).zip
 $(my_package_zip): PRIVATE_COPY_PAIRS := $(my_copy_pairs)
 $(my_package_zip): PRIVATE_PICKUP_FILES := $(my_pickup_files)
 $(my_package_zip) : $(my_built_modules)
