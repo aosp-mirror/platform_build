@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "a16ceed5_fe1db22d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-04-02T09:22:32Z",
+      "side": 1,
+      "message": "Does it make sense to make this a product var so this switch can be per product instead of per board?",
+      "parentUuid": "52324417_00ecc3e2",
+      "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "94c42830_4d6ca3eb",
         "filename": "core/board_config.mk",
         "patchSetId": 3
@@ -102,6 +120,24 @@
       "side": 1,
       "message": "They\u0027re in build/soong/ui/build/dumpvars.go mainly so I can use my script in build/soong/scripts/build_broken_logs.go to analyze where there are problems vs not. That script only works if the warnings/errors are at makefile reading time however, so it\u0027s not too important in this case.\n\nOtherwise, documentation in Changes.md and an email to keystone-downstream-issues@ is appreciated",
       "parentUuid": "3de87db4_c51cb147",
+      "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79ef6be7_fb0855ce",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-04-02T09:22:32Z",
+      "side": 1,
+      "message": "Noted:\n- update Changed.md (in follow up CL)\n- email to android-eng@ and keystone-downstream-issues@ like what we have done for prebuilt elf check (when this check becomes default on)",
+      "parentUuid": "9205c3ad_857eb994",
       "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
