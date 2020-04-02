@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e987c5e6_a813b4ad",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-02T11:45:06Z",
+      "side": 1,
+      "message": "sorry but why is all this additional code necessary? Isn\u0027t it sufficient the change the existing \"enforcement\" variable to basically be \u003d PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS \u0026\u0026  ARTIFACT_PATH_EXCLUSIVE?",
+      "range": {
+        "startLine": 1201,
+        "startChar": 0,
+        "endLine": 1263,
+        "endChar": 146
+      },
+      "revId": "fdea8a64147736117d2234ba723b286a87a4e65c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1b5397a_4681c97a",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-02T11:45:06Z",
+      "side": 1,
+      "message": "instead of reusing the same macro with a new param, could we make separate macros for these two different behaviors? I propose:\n\n    require-artifacts-in-path-exclusive\n    require-artifacts-in-path-extensible\n\nOne which sets ARTIFACT_PATH_EXCLUSIVE \u003d true, and the other doesn\u0027t\n\nThen make require-artifacts-in-path call into require-artifacts-in-path-exclusive (compat mode).",
+      "range": {
+        "startLine": 436,
+        "startChar": 7,
+        "endLine": 436,
+        "endChar": 32
+      },
+      "revId": "fdea8a64147736117d2234ba723b286a87a4e65c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19e103ac_c2a96101",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-02T11:45:06Z",
+      "side": 1,
+      "message": "rename to ARTIFACT_PATH_EXCLUSIVE?",
+      "range": {
+        "startLine": 440,
+        "startChar": 32,
+        "endLine": 440,
+        "endChar": 73
+      },
+      "revId": "fdea8a64147736117d2234ba723b286a87a4e65c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
