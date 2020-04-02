@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "114445d5_8a18940d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-04-02T07:34:54Z",
+      "side": 1,
+      "message": "PRODUCT_CHECK... is for opting in the check, so I can do testing and selectively enable this check on a device when I cleaned up its PRODUCT_COPY_FILES ELF prebuilt.\nWhen all PRODUCT_COPY_FILES have been cleaned up I\u0027ll remove PRODUCT_CHECK... and turn this check from opt in to opt out.\n\nBUILD_BROKEN_ is for opting out in case some PRODUCT_COPY_FILES cannot be cleaned up immediately.\nI actually think this should be PRODUCT_* var but I also see BUILD_BROKEN_PREBUILT_ELF_FILES and BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES, so I thought it\u0027s a common step to add a BUILD_BROKEN_* switch",
+      "parentUuid": "b46c25bb_c9f944fa",
+      "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "94c42830_4d6ca3eb",
         "filename": "core/board_config.mk",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2020-04-02T03:56:30Z",
       "side": 1,
       "message": "I think new BUILD_BROKEN variables need some changes in build/soong too to track their usage.",
+      "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3de87db4_c51cb147",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-04-02T07:34:54Z",
+      "side": 1,
+      "message": "Is there any procedures to add new BUILD_BROKEN_* or PRODUCT_* variables other than adding it to these *_var_list variables?",
+      "parentUuid": "94c42830_4d6ca3eb",
       "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
