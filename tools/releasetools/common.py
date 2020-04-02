@@ -77,6 +77,7 @@ class Options(object):
     self.boot_signer_args = []
     self.verity_signer_path = None
     self.verity_signer_args = []
+    self.aftl_tool_path = None
     self.aftl_server = None
     self.aftl_key_path = None
     self.aftl_manufacturer_key_path = None
@@ -935,6 +936,7 @@ def AddAftlInclusionProof(output_image):
   """Appends the aftl inclusion proof to the vbmeta image."""
 
   # Ensure the other AFTL parameters are set as well.
+  assert OPTIONS.aftl_tool_path is not None, 'No aftl tool provided.'
   assert OPTIONS.aftl_key_path is not None, 'No AFTL key provided.'
   assert OPTIONS.aftl_manufacturer_key_path is not None, \
       'No AFTL manufacturer key provided.'
@@ -943,7 +945,8 @@ def AddAftlInclusionProof(output_image):
   os.rename(output_image, vbmeta_image)
   build_info = BuildInfo(OPTIONS.info_dict)
   version_incremental = build_info.GetBuildProp("ro.build.version.incremental")
-  aftl_cmd = ["aftltool", "make_icp_from_vbmeta",
+  aftltool = OPTIONS.aftl_tool_path
+  aftl_cmd = [aftltool, "make_icp_from_vbmeta",
               "--vbmeta_image_path", vbmeta_image,
               "--output", output_image,
               "--version_incremental", version_incremental,
@@ -1876,9 +1879,9 @@ def ParseOptions(argv,
          "java_path=", "java_args=", "android_jar_path=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
-         "extra=", "logfile=", "aftl_server=", "aftl_key_path=",
-         "aftl_manufacturer_key_path=", "aftl_signer_helper="] +
-        list(extra_long_opts))
+         "extra=", "logfile=", "aftl_tool_path=", "aftl_server=",
+         "aftl_key_path=", "aftl_manufacturer_key_path=",
+         "aftl_signer_helper="] + list(extra_long_opts))
   except getopt.GetoptError as err:
     Usage(docstring)
     print("**", str(err), "**")
@@ -1916,6 +1919,8 @@ def ParseOptions(argv,
       OPTIONS.verity_signer_path = a
     elif o in ("--verity_signer_args",):
       OPTIONS.verity_signer_args = shlex.split(a)
+    elif o in ("--aftl_tool_path",):
+      OPTIONS.aftl_tool_path = a
     elif o in ("--aftl_server",):
       OPTIONS.aftl_server = a
     elif o in ("--aftl_key_path",):
