@@ -22,6 +22,30 @@
       "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab4fdf31_11f514d5",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 5192,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2020-04-03T16:20:52Z",
+      "side": 1,
+      "message": "Anton,\n  This is for emulator only (qemu/goldfish); since both the \nramdisk.img and the vendor_boot.img will be created, the emulator will\nuse ramdisk.img when ramdisk-qemu.img is missing, and won\u0027t be able to\nboot since the ramdisk.img does not have goldfish ko modules anymore.\n  creating a ramdisk-qemu.img that is a simple combination of ramdisk.img\nand vendor_boot.img will direct emulator to use ramdisk-qemu.img instead.\n   ramdisk-qemu.img is also packaged to sdk-repo-linux-system-images.zip\nto distribute to studio. as in go/ag/10906271",
+      "parentUuid": "e10e8596_4dd7e53d",
+      "range": {
+        "startLine": 5179,
+        "startChar": 0,
+        "endLine": 5192,
+        "endChar": 0
+      },
+      "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
