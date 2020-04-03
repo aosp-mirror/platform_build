@@ -736,6 +736,15 @@ $(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -type d -name "andro
 # Remove PermissionController after moving into APEX
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/*PermissionController)
 
+# Clean up VTS-Core and VTS10 related artifacts.
+$(call add-clean-step, rm -rf $(HOST_OUT)/vts-core/*)
+$(call add-clean-step, rm -rf $(HOST_OUT)/framework/vts-core-tradefed.jar)
+$(call add-clean-step, rm -rf $(HOST_OUT)/vts10/*)
+$(call add-clean-step, rm -rf $(HOST_OUT)/framework/vts10-tradefed.jar)
+# Clean up VTS again as VTS-Core will be renamed to VTS
+$(call add-clean-step, rm -rf $(HOST_OUT)/vts/*)
+$(call add-clean-step, rm -rf $(HOST_OUT)/framework/vts-tradefed.jar)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
