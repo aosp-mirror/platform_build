@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e10e8596_4dd7e53d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 5192,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-03T12:48:46Z",
+      "side": 1,
+      "message": "Why do we need to have something qemu specific here?",
+      "range": {
+        "startLine": 5179,
+        "startChar": 0,
+        "endLine": 5192,
+        "endChar": 0
+      },
+      "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
