@@ -16,6 +16,24 @@
       "revId": "76ab84c8b8cf2411fcf5c2602ffdc08462e42485",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7afef2f_6cd89602",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-04-03T17:18:10Z",
+      "side": 1,
+      "message": "Done\n\ndidn\u0027t realize that we can use the same change id. Will abandon this one. aosp/1277781 is the new one.",
+      "parentUuid": "daff8bbd_12ccd9e4",
+      "revId": "76ab84c8b8cf2411fcf5c2602ffdc08462e42485",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
