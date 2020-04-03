@@ -1754,7 +1754,8 @@ def ReadApkCerts(tf_zip):
       continue
     m = re.match(
         r'^name="(?P<NAME>.*)"\s+certificate="(?P<CERT>.*)"\s+'
-        r'private_key="(?P<PRIVKEY>.*?)"(\s+compressed="(?P<COMPRESSED>.*)")?$',
+        r'private_key="(?P<PRIVKEY>.*?)"(\s+compressed="(?P<COMPRESSED>.*)")?'
+        r'(\s+partition="(?P<PARTITION>.*)")?$',
         line)
     if not m:
       continue
