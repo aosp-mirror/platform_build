@@ -710,6 +710,25 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
       'Compressed4.apk' : 'certs/compressed4',
   }
 
+  # Test parsing with no optional fields, both optional fields, and only the
+  # partition optional field.
+  APKCERTS_TXT4 = (
+      'name="RecoveryLocalizer.apk" certificate="certs/devkey.x509.pem"'
+      ' private_key="certs/devkey.pk8"\n'
+      'name="Settings.apk"'
+      ' certificate="build/make/target/product/security/platform.x509.pem"'
+      ' private_key="build/make/target/product/security/platform.pk8"'
+      ' compressed="gz" partition="system"\n'
+      'name="TV.apk" certificate="PRESIGNED" private_key=""'
+      ' partition="product"\n'
+  )
+
+  APKCERTS_CERTMAP4 = {
+      'RecoveryLocalizer.apk' : 'certs/devkey',
+      'Settings.apk' : 'build/make/target/product/security/platform',
+      'TV.apk' : 'PRESIGNED',
+  }
+
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
 
@@ -785,6 +804,14 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
 
     with zipfile.ZipFile(target_files, 'r') as input_zip:
       self.assertRaises(ValueError, common.ReadApkCerts, input_zip)
+
+  def test_ReadApkCerts_WithWithoutOptionalFields(self):
+    target_files = self._write_apkcerts_txt(self.APKCERTS_TXT4)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      certmap, ext = common.ReadApkCerts(input_zip)
+
+    self.assertDictEqual(self.APKCERTS_CERTMAP4, certmap)
+    self.assertIsNone(ext)
 
   def test_ExtractPublicKey(self):
     cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
