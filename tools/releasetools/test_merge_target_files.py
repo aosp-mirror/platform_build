@@ -22,6 +22,7 @@ from merge_target_files import (validate_config_lists,
                                 DEFAULT_FRAMEWORK_ITEM_LIST,
                                 DEFAULT_VENDOR_ITEM_LIST,
                                 DEFAULT_FRAMEWORK_MISC_INFO_KEYS, copy_items,
+                                item_list_to_partition_set,
                                 process_apex_keys_apk_certs_common)
 
 
@@ -142,6 +143,8 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
         os.path.join(vendor_dir, 'META', 'apexkeys.txt'))
 
     process_apex_keys_apk_certs_common(framework_dir, vendor_dir, output_dir,
+                                       set(['product', 'system', 'system_ext']),
+                                       set(['odm', 'vendor']),
                                        'apexkeys.txt')
 
     merged_entries = []
@@ -175,4 +178,54 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
         os.path.join(conflict_dir, 'META', 'apexkeys.txt'))
 
     self.assertRaises(ValueError, process_apex_keys_apk_certs_common,
-                      framework_dir, conflict_dir, output_dir, 'apexkeys.txt')
+                      framework_dir, conflict_dir, output_dir,
+                      set(['product', 'system', 'system_ext']),
+                      set(['odm', 'vendor']),
+                      'apexkeys.txt')
+
+  def test_process_apex_keys_apk_certs_HandlesApkCertsSyntax(self):
+    output_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(output_dir, 'META'))
+
+    framework_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(framework_dir, 'META'))
+    os.symlink(
+        os.path.join(self.testdata_dir, 'apkcerts_framework.txt'),
+        os.path.join(framework_dir, 'META', 'apkcerts.txt'))
+
+    vendor_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(vendor_dir, 'META'))
+    os.symlink(
+        os.path.join(self.testdata_dir, 'apkcerts_vendor.txt'),
+        os.path.join(vendor_dir, 'META', 'apkcerts.txt'))
+
+    process_apex_keys_apk_certs_common(framework_dir, vendor_dir, output_dir,
+                                       set(['product', 'system', 'system_ext']),
+                                       set(['odm', 'vendor']),
+                                       'apkcerts.txt')
+
+    merged_entries = []
+    merged_path = os.path.join(self.testdata_dir, 'apkcerts_merge.txt')
+
+    with open(merged_path) as f:
+      merged_entries = f.read().split('\n')
+
+    output_entries = []
+    output_path = os.path.join(output_dir, 'META', 'apkcerts.txt')
+
+    with open(output_path) as f:
+      output_entries = f.read().split('\n')
+
+    return self.assertEqual(merged_entries, output_entries)
+
+  def test_item_list_to_partition_set(self):
+    item_list = [
+        'META/apexkeys.txt',
+        'META/apkcerts.txt',
+        'META/filesystem_config.txt',
+        'PRODUCT/*',
+        'SYSTEM/*',
+        'SYSTEM_EXT/*',
+    ]
+    partition_set = item_list_to_partition_set(item_list)
+    self.assertEqual(set(['product', 'system', 'system_ext']), partition_set)
