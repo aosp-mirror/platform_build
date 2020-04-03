@@ -26,6 +26,7 @@
 #include <selinux/label.h>
 
 #include "private/android_filesystem_config.h"
+#include "private/fs_config.h"
 
 // This program takes a list of files and directories (indicated by a
 // trailing slash) on the stdin, and prints to stdout each input
