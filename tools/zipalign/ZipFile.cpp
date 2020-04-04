@@ -1221,7 +1221,7 @@ class FileReader : public zip_archive::Reader {
     FileReader(FILE* fp) : Reader(), fp_(fp), current_offset_(0) {
     }
 
-    bool ReadAtOffset(uint8_t* buf, size_t len, uint32_t offset) const {
+    bool ReadAtOffset(uint8_t* buf, size_t len, off64_t offset) const {
         // Data is usually requested sequentially, so this helps avoid pointless
         // fseeks every time we perform a read. There's an impedence mismatch
         // here because the original API was designed around pread and pwrite.
@@ -1244,7 +1244,7 @@ class FileReader : public zip_archive::Reader {
 
   private:
     FILE* fp_;
-    mutable uint32_t current_offset_;
+    mutable off64_t current_offset_;
 };
 
 // free the memory when you're done
