@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-test_suite_name := vts-core
-test_suite_tradefed := vts-core-tradefed
+test_suite_name := vts
+test_suite_tradefed := vts-tradefed
 test_suite_readme := test/vts/tools/vts-core-tradefed/README
 
 # TODO(b/149249068): Clean up after all VTS tests are converted.
@@ -23,9 +23,14 @@ vts_test_artifact_paths :=
 
 include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 
-.PHONY: vts-core
+.PHONY: vts
 $(compatibility_zip): $(vts_test_artifact_paths)
-vts-core: $(compatibility_zip)
-$(call dist-for-goals, vts-core, $(compatibility_zip))
+vts: $(compatibility_zip)
+$(call dist-for-goals, vts, $(compatibility_zip))
 
-tests: vts-core
+# TODO(b/149249068): Remove vts-core phony target after it's removed from all
+# builders.
+.PHONY: vts-core
+vts-core: vts
+
+tests: vts
