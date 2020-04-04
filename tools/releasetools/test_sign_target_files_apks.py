@@ -35,9 +35,13 @@ class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
   <signer signature="{}"><seinfo value="media"/></signer>
 </policy>"""
 
+  # Note that we test one apex with the partition tag, and another without to
+  # make sure that new OTA tools can process an older target files package that
+  # does not include the partition tag.
+
   # pylint: disable=line-too-long
   APEX_KEYS_TXT = """name="apex.apexd_test.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8" partition="system"
-name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8" partition="system"
+name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8"
 """
 
   def setUp(self):
