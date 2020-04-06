@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
+# This file lists emulator experimental modules added to PRODUCT_PACKAGES,
+# only included by targets sdk_phone_x86/64 and sdk_gphone_x86/64
 
-BUILD_ID=QQ2A.200305.003
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST := \
+    system/lib/libemulator_multidisplay_jni.so \
+    system/lib64/libemulator_multidisplay_jni.so \
+    system/priv-app/MultiDisplayProvider/MultiDisplayProvider.apk \
+
+PRODUCT_PACKAGES += MultiDisplayProvider
