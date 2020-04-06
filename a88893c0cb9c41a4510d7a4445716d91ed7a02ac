@@ -118,6 +118,30 @@
       "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70ca6dc2_3f10cb6a",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 5192,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-06T15:43:55Z",
+      "side": 1,
+      "message": "The (naive) proposal was to distribute just a ramdisk.img that had the contents of what ramdisk-qemu.img has in your current setup. Anyway, it seems like you\u0027ve thought about this for way longer than I have an decided against it, so stamping this to get out of your way.",
+      "parentUuid": "74f07997_5c556a89",
+      "range": {
+        "startLine": 5179,
+        "startChar": 0,
+        "endLine": 5192,
+        "endChar": 0
+      },
+      "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
