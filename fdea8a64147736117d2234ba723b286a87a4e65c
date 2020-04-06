@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c1432c49_8e5e73aa",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-06T13:41:51Z",
+      "side": 1,
+      "message": "In the case that ARTIFACT_PATH_EXCLUSIVE is false, it should check only makefiles which call     require-artifacts-in-path-extensible are allowed to declare modules on the specific paths.",
+      "parentUuid": "e987c5e6_a813b4ad",
+      "range": {
+        "startLine": 1201,
+        "startChar": 0,
+        "endLine": 1263,
+        "endChar": 146
+      },
+      "revId": "fdea8a64147736117d2234ba723b286a87a4e65c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e1b5397a_4681c97a",
         "filename": "core/product.mk",
         "patchSetId": 2
