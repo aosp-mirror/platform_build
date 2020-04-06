@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "0b3a3ec8_5c8ca035",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-06T15:26:59Z",
+      "side": 1,
+      "message": "oh so that\u0027s how it works. I thought you wanted to allow *any* other .mk to contribute to this path if it was extensible.\n\nLet me think about that for a moment :) there may be a simpler way...",
+      "parentUuid": "c1432c49_8e5e73aa",
+      "range": {
+        "startLine": 1201,
+        "startChar": 0,
+        "endLine": 1263,
+        "endChar": 146
+      },
+      "revId": "fdea8a64147736117d2234ba723b286a87a4e65c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e1b5397a_4681c97a",
         "filename": "core/product.mk",
         "patchSetId": 2
