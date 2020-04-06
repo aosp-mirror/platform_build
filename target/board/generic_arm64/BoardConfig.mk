@@ -56,7 +56,7 @@ include build/make/target/board/BoardConfigGsiCommon.mk
 include build/make/target/board/BoardConfigEmuCommon.mk
 
 TARGET_NO_KERNEL := false
-TARGET_NO_VENDOR_BOOT := true
+TARGET_NO_VENDOR_BOOT := false
 BOARD_USES_RECOVERY_AS_BOOT := true
 
 BOARD_BOOTIMAGE_PARTITION_SIZE := 0x02000000
