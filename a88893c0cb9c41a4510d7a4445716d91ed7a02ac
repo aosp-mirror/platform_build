@@ -46,6 +46,30 @@
       "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57df5616_e00a917f",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 5192,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-06T11:50:56Z",
+      "side": 1,
+      "message": "but why don\u0027t we make ramdisk.img contain the right data on qemu builds, rather than come up with a separate filename? That\u0027s what I mean by qemu-specific, it just seems like if there are devices than need ramdisk.img and vendor_boot.img merged, the build system should support that without having to mention QEMU.",
+      "parentUuid": "ab4fdf31_11f514d5",
+      "range": {
+        "startLine": 5179,
+        "startChar": 0,
+        "endLine": 5192,
+        "endChar": 0
+      },
+      "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
