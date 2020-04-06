@@ -94,6 +94,30 @@
       "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74f07997_5c556a89",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 5192,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2020-04-06T15:32:24Z",
+      "side": 1,
+      "message": "Anton,\n   if we don\u0027t enable the VENDOR_BOOT flag, the ramdisk.img actually has everything\n:init(and its config), and vendor ko modules.\n   with VENDOR_BOOT flag on, the ramdisk.img will have only init binary(and its config);\nand vendor_boot.img will have vendor ko and vendor dtb.img; for the case of emulator,\nthere is no dtb.img; so it makes sense for us to have ramdisk-qemu.img for distribution\npurpose. we could distribute both ramdisk.img and vendor_boot.img, but that will cause\nconfusion for no obvious gain to app devs. the purpose of using ramdisk-qemu.img here\nis to conform to the  VENDOR_BOOT requirement but also reduce confusion.",
+      "parentUuid": "46da2034_629d0aa3",
+      "range": {
+        "startLine": 5179,
+        "startChar": 0,
+        "endLine": 5192,
+        "endChar": 0
+      },
+      "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
