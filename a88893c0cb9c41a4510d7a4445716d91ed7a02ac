@@ -70,6 +70,30 @@
       "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "46da2034_629d0aa3",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 5192,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2020-04-06T13:45:26Z",
+      "side": 1,
+      "message": "Anton,\n  I don\u0027t know much about other devices, they might handle this situation differently.\nso far, emulator is the only one that has this special need: distributing two files\n(ramdisk.img and vendor_boot.img) will cause unnecessary confusion without any real\nbenefit to app developers and their test tool chains.",
+      "parentUuid": "57df5616_e00a917f",
+      "range": {
+        "startLine": 5179,
+        "startChar": 0,
+        "endLine": 5192,
+        "endChar": 0
+      },
+      "revId": "a88893c0cb9c41a4510d7a4445716d91ed7a02ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
