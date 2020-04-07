@@ -40,11 +40,9 @@ $(if $(filter true,$(BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES)),, \
 )
 endef
 
-# TODO(b/140560012): Flip BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES to default
-# false after all problematic devices are tagged.
-check_elf_prebuilt_product_copy_files :=
-ifneq (,$(filter false,$(BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES)))
 check_elf_prebuilt_product_copy_files := true
+ifneq (,$(filter true,$(BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES)))
+check_elf_prebuilt_product_copy_files :=
 endif
 check_elf_prebuilt_product_copy_files_hint := \
     found ELF prebuilt in PRODUCT_COPY_FILES, use cc_prebuilt_binary / cc_prebuilt_library_shared instead.
