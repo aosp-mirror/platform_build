@@ -22,6 +22,30 @@
       "revId": "3a0728bd18db549e109a58eec7e201b5125ffaee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c07f0c32_3b525f6a",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2020-04-07T21:23:50Z",
+      "side": 1,
+      "message": "Wait, I see other comments now and the code. Maybe this is just an out of date comment?",
+      "parentUuid": "39ca6639_8f4ad3cf",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 49
+      },
+      "revId": "3a0728bd18db549e109a58eec7e201b5125ffaee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
