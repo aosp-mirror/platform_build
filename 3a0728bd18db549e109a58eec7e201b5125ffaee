@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39ca6639_8f4ad3cf",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2020-04-07T21:22:13Z",
+      "side": 1,
+      "message": "Out of curiosity, how many devices is this? If possible, we should merge it with default true. Maybe Logan can share his strategy.\n\nDo you know about multiproduct_kati? You can use this to run build checks on every device in the tree.",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 49
+      },
+      "revId": "3a0728bd18db549e109a58eec7e201b5125ffaee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
