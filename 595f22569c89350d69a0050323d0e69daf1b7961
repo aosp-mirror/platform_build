@@ -159,6 +159,24 @@
       "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e55f8001_cedaabac",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-04-07T08:06:42Z",
+      "side": 1,
+      "message": "Changes.md documentation: aosp/1279914",
+      "parentUuid": "79ef6be7_fb0855ce",
+      "revId": "595f22569c89350d69a0050323d0e69daf1b7961",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
