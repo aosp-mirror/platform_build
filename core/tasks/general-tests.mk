@@ -18,7 +18,7 @@
 general_tests_tools := \
     $(HOST_OUT_JAVA_LIBRARIES)/cts-tradefed.jar \
     $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util.jar \
-    $(HOST_OUT_JAVA_LIBRARIES)/vts-core-tradefed.jar \
+    $(HOST_OUT_JAVA_LIBRARIES)/vts-tradefed.jar \
     $(HOST_OUT_JAVA_LIBRARIES)/vts10-tradefed.jar
 
 intermediates_dir := $(call intermediates-dir-for,PACKAGING,general-tests)
