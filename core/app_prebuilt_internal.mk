@@ -163,6 +163,13 @@ else
   $(built_module) : $(LOCAL_CERTIFICATE).pk8 $(LOCAL_CERTIFICATE).x509.pem
   $(built_module) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
+
+  additional_certificates := $(foreach c,$(LOCAL_ADDITIONAL_CERTIFICATES), $(c).x509.pem $(c).pk8)
+  $(built_module): $(additional_certificates)
+  $(built_module): PRIVATE_ADDITIONAL_CERTIFICATES := $(additional_certificates)
+
+  $(built_module): $(LOCAL_CERTIFICATE_LINEAGE)
+  $(built_module): PRIVATE_CERTIFICATE_LINEAGE := $(LOCAL_CERTIFICATE_LINEAGE)
 endif
 
 include $(BUILD_SYSTEM)/app_certificate_validate.mk
