@@ -418,7 +418,7 @@ endif
 $(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(API_FINGERPRINT) $(POST_PROCESS_PROPS)
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
+	$(hide) rm -f $@ && touch $@
 ifneq ($(PRODUCT_OEM_PROPERTIES),)
 	$(hide) echo "#" >> $@; \
 	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
@@ -517,7 +517,7 @@ endif  # property_overrides_split_enabled
 $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(intermediate_system_build_prop) $(vendor_prop_files)
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
+	$(hide) rm -f $@ && touch $@
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 	$(hide) echo ro.boot.dynamic_partitions=true >> $@
 endif
@@ -584,7 +584,7 @@ FINAL_PRODUCT_PROPERTIES := $(call uniq-pairs-by-first-component, \
 $(INSTALLED_PRODUCT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(product_prop_files)
 	@echo Target product buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
+	$(hide) rm -f $@ && touch $@
 ifdef BOARD_USES_PRODUCTIMAGE
 	$(hide) $(call generate-common-build-props,product,$@)
 endif  # BOARD_USES_PRODUCTIMAGE
@@ -625,7 +625,7 @@ FINAL_ODM_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
 $(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(odm_prop_files)
 	@echo Target odm buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
+	$(hide) rm -f $@ && touch $@
 	$(hide) echo ro.odm.product.cpu.abilist="$(TARGET_CPU_ABI_LIST)">>$@
 	$(hide) echo ro.odm.product.cpu.abilist32="$(TARGET_CPU_ABI_LIST_32_BIT)">>$@
 	$(hide) echo ro.odm.product.cpu.abilist64="$(TARGET_CPU_ABI_LIST_64_BIT)">>$@
@@ -666,7 +666,7 @@ FINAL_SYSTEM_EXT_PROPERTIES := $(call uniq-pairs-by-first-component, \
 $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(system_ext_prop_files)
 	@echo Target system_ext buildinfo: $@
 	@mkdir -p $(dir $@)
-	$(hide) echo > $@
+	$(hide) rm -f $@ && touch $@
 	$(hide) $(call generate-common-build-props,system_ext,$@)
 	$(hide) $(foreach file,$(system_ext_prop_files), \
 	    if [ -f "$(file)" ]; then \
@@ -2557,7 +2557,12 @@ endif # BUILDING_RAMDISK_IMAGE
 # can only be used if the device is unlocked with verification error.
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 
-INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot-test-harness.img
+ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
+  INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET := $(foreach k,$(subst kernel,boot-test-harness,$(BOARD_KERNEL_BINARIES)), \
+    $(PRODUCT_OUT)/$(k).img)
+else
+  INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot-test-harness.img
+endif
 
 # Replace ramdisk-debug.img in $(MKBOOTIMG) ARGS with ramdisk-test-harness.img to build boot-test-harness.img
 INTERNAL_TEST_HARNESS_BOOTIMAGE_ARGS := $(subst $(INSTALLED_DEBUG_RAMDISK_TARGET),$(INSTALLED_TEST_HARNESS_RAMDISK_TARGET),$(INTERNAL_DEBUG_BOOTIMAGE_ARGS))
@@ -2570,17 +2575,22 @@ ifneq ($(BOARD_AVB_BOOT_KEY_PATH),)
 $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_BOOT_TEST_KEY_PATH)
 endif
 
+# $(1): output file
+define build-boot-test-harness-target
+  $(MKBOOTIMG) --kernel $(PRODUCT_OUT)/$(subst .img,,$(subst boot-test-harness,kernel,$(notdir $(1)))) \
+    $(INTERNAL_TEST_HARNESS_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
+  $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$@))
+endef
+
 # Build the new boot-test-harness.img, based on boot-debug.img and ramdisk-test-harness.img.
 $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
 	$(call pretty,"Target boot test harness image: $@")
-	$(MKBOOTIMG) $(INTERNAL_TEST_HARNESS_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
-	$(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$@))
+	$(call build-boot-test-harness-target,$@)
 
 .PHONY: bootimage_test_harness-nodeps
 bootimage_test_harness-nodeps: $(MKBOOTIMG)
 	echo "make $@: ignoring dependencies"
-	$(MKBOOTIMG) $(INTERNAL_TEST_HARNESS_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET)
-	$(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET)))
+	$(foreach b,$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET),$(call build-boot-test-harness-target,$b))
 
 endif # TARGET_NO_KERNEL
 endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
@@ -5176,6 +5186,20 @@ $(INSTALLED_QEMU_VENDORIMAGE): $(INSTALLED_VENDORIMAGE_TARGET) $(MK_QEMU_IMAGE_S
 vendorimage: $(INSTALLED_QEMU_VENDORIMAGE)
 droidcore: $(INSTALLED_QEMU_VENDORIMAGE)
 endif
+
+ifdef INSTALLED_RAMDISK_TARGET
+ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
+ifdef INTERNAL_VENDOR_RAMDISK_TARGET
+INSTALLED_QEMU_RAMDISKIMAGE := $(PRODUCT_OUT)/ramdisk-qemu.img
+$(INSTALLED_QEMU_RAMDISKIMAGE): $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_RAMDISK_TARGET)
+	@echo Create ramdisk-qemu.img
+	(cat $(INSTALLED_RAMDISK_TARGET) $(INTERNAL_VENDOR_RAMDISK_TARGET) > $(INSTALLED_QEMU_RAMDISKIMAGE))
+
+droidcore: $(INSTALLED_QEMU_RAMDISKIMAGE)
+endif
+endif
+endif
+
 ifdef INSTALLED_PRODUCTIMAGE_TARGET
 INSTALLED_QEMU_PRODUCTIMAGE := $(PRODUCT_OUT)/product-qemu.img
 $(INSTALLED_QEMU_PRODUCTIMAGE): $(INSTALLED_PRODUCTIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST) $(SIMG2IMG)
@@ -5313,6 +5337,7 @@ deps := \
 	$(APPCOMPAT_ZIP) \
 	$(INSTALLED_SYSTEMIMAGE_TARGET) \
 	$(INSTALLED_QEMU_SYSTEMIMAGE) \
+	$(INSTALLED_QEMU_RAMDISKIMAGE) \
 	$(INSTALLED_QEMU_VENDORIMAGE) \
 	$(QEMU_VERIFIED_BOOT_PARAMS) \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \

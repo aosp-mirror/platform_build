@@ -36,6 +36,7 @@ import org.conscrypt.OpenSSLProvider;
 
 import com.android.apksig.ApkSignerEngine;
 import com.android.apksig.DefaultApkSignerEngine;
+import com.android.apksig.SigningCertificateLineage;
 import com.android.apksig.Hints;
 import com.android.apksig.apk.ApkUtils;
 import com.android.apksig.apk.MinSdkVersionException;
@@ -1042,6 +1043,7 @@ class SignApk {
         int alignment = 4;
         Integer minSdkVersionOverride = null;
         boolean signUsingApkSignatureSchemeV2 = true;
+        SigningCertificateLineage certLineage = null;
 
         int argstart = 0;
         while (argstart < args.length && args[argstart].startsWith("-")) {
@@ -1068,6 +1070,15 @@ class SignApk {
                 ++argstart;
             } else if ("--disable-v2".equals(args[argstart])) {
                 signUsingApkSignatureSchemeV2 = false;
+                ++argstart;
+            } else if ("--lineage".equals(args[argstart])) {
+                File lineageFile = new File(args[++argstart]);
+                try {
+                    certLineage = SigningCertificateLineage.readFromFile(lineageFile);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(
+                            "Error reading lineage file: " + e.getMessage());
+                }
                 ++argstart;
             } else {
                 usage();
@@ -1149,6 +1160,7 @@ class SignApk {
                                 .setV2SigningEnabled(signUsingApkSignatureSchemeV2)
                                 .setOtherSignersSignaturesPreserved(false)
                                 .setCreatedBy("1.0 (Android SignApk)")
+                                .setSigningCertificateLineage(certLineage)
                                 .build()) {
                     // We don't preserve the input APK's APK Signing Block (which contains v2
                     // signatures)
