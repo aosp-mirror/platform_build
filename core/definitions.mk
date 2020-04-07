@@ -3321,3 +3321,9 @@ $(hide) CLANG_BIN="$(LLVM_PREBUILTS_PATH)" \
   XZ="$(XZ)" \
   $(LIBRARY_IDENTITY_CHECK_SCRIPT) $(SOONG_STRIP_PATH) $(1) $(2)
 endef
+
+# Convert Soong libraries that have SDK variant
+define use_soong_sdk_libraries
+  $(foreach l,$(1),$(if $(filter $(l),$(SOONG_SDK_VARIANT_MODULES)),\
+      $(l).sdk,$(l)))
+endef
