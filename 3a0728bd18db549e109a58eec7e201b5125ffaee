@@ -70,6 +70,30 @@
       "revId": "3a0728bd18db549e109a58eec7e201b5125ffaee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83f02785_9a6dbc1b",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-04-08T13:14:52Z",
+      "side": 1,
+      "message": "The `multiproduct_kati` is useful, I collected the full list of offending products in the bug b/140560012#comment14.",
+      "parentUuid": "fcc19feb_585e621f",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 49
+      },
+      "revId": "3a0728bd18db549e109a58eec7e201b5125ffaee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
