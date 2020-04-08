@@ -46,6 +46,30 @@
       "revId": "3a0728bd18db549e109a58eec7e201b5125ffaee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcc19feb_585e621f",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-04-08T03:37:54Z",
+      "side": 1,
+      "message": "\u003e Out of curiosity, how many devices is this?\nI haven\u0027t checked all devices yet, but I think it should roughly be the same number of devices when Logan landed his elfcheck work, as only devices with prebuilts are goint to be affected.\n\nI\u0027m not familiar with multiproduct_kati, IIRC that\u0027s how the build_test presubmit is done, right?\n\nNo, the comment is up to date, now the default value (empty) means \"true\", so default is to relax this check. Only explicitly setting BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES to \"false\" will this check be enforced.",
+      "parentUuid": "c07f0c32_3b525f6a",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 49
+      },
+      "revId": "3a0728bd18db549e109a58eec7e201b5125ffaee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
