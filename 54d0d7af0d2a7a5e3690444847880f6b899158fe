@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "09f194e1_81ad287a",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-04-08T12:10:49Z",
+      "side": 1,
+      "message": "\u003e I guess get_build_var also fails, so could check the return code instead of emptiness?\n\nRight; I amended `get_build_var` and I\u0027m using its return status in PS3.\n\n\u003e I\u0027d also move it on top of the \"You\u0027re building on\" message, as we\u0027re not going to be building anything if this fails\n\nNote that the user can still provide a (valid) target at the prompt, even if the menu is not displayed, so I kept the original order here.",
+      "parentUuid": "8c796ecd_19d544e3",
+      "range": {
+        "startLine": 584,
+        "startChar": 0,
+        "endLine": 585,
+        "endChar": 24
+      },
+      "revId": "54d0d7af0d2a7a5e3690444847880f6b899158fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d93d6b49_c7e9f023",
         "filename": "envsetup.sh",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "b85acc4c_ef61328a",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-04-08T12:10:49Z",
+      "side": 1,
+      "message": "Fair enough. :) Removed in PS3.",
+      "parentUuid": "d93d6b49_c7e9f023",
+      "range": {
+        "startLine": 587,
+        "startChar": 50,
+        "endLine": 589,
+        "endChar": 0
+      },
+      "revId": "54d0d7af0d2a7a5e3690444847880f6b899158fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f07be7b8_03a9215c",
         "filename": "envsetup.sh",
         "patchSetId": 2
@@ -68,6 +116,30 @@
       "revId": "54d0d7af0d2a7a5e3690444847880f6b899158fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89ac9434_f37e221b",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-04-08T12:10:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f07be7b8_03a9215c",
+      "range": {
+        "startLine": 591,
+        "startChar": 12,
+        "endLine": 592,
+        "endChar": 42
+      },
+      "revId": "54d0d7af0d2a7a5e3690444847880f6b899158fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
