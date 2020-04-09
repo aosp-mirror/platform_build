@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "94530f3c_b540b65d",
+        "filename": "core/soong_droiddoc_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-09T14:10:04Z",
+      "side": 1,
+      "message": "FTR, I\u0027m hoping to clean up the INTERNAL_* variables altogether, I don\u0027t think they are used anymore: b/152479829",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 0
+      },
+      "revId": "e9e7247749f412b0fa8a3e5b3da646b9a812728d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
