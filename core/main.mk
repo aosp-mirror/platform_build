@@ -38,11 +38,13 @@ include $(BUILD_SYSTEM)/clang/config.mk
 # Write the build number to a file so it can be read back in
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
-$(shell mkdir -p $(OUT_DIR) && \
-    echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt)
-BUILD_NUMBER_FILE := $(OUT_DIR)/build_number.txt
+$(shell mkdir -p $(SOONG_OUT_DIR) && \
+    echo -n $(BUILD_NUMBER) > $(SOONG_OUT_DIR)/build_number.txt)
+BUILD_NUMBER_FILE := $(SOONG_OUT_DIR)/build_number.txt
 .KATI_READONLY := BUILD_NUMBER_FILE
 $(KATI_obsolete_var BUILD_NUMBER,See https://android.googlesource.com/platform/build/+/master/Changes.md#BUILD_NUMBER)
+$(BUILD_NUMBER_FILE):
+	touch $@
 
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
 .KATI_READONLY := DATE_FROM_FILE
