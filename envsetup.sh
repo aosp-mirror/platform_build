@@ -33,7 +33,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - allmod:     List all modules.
 - gomod:      Go to the directory containing a module.
 - pathmod:    Get the directory containing a module.
-- refreshmod: Refresh list of modules for allmod/gomod.
+- refreshmod: Refresh list of modules for allmod/gomod/pathmod.
 
 Environment options:
 - SANITIZE_HOST: Set to 'address' to use ASAN for all host modules.
