@@ -42,13 +42,16 @@ test_tools := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar \
 
 test_tools += $(test_suite_tools)
 
+# Include host shared libraries
+host_shared_libs := $(call copy-many-files, $(COMPATIBILITY.$(test_suite_name).HOST_SHARED_LIBRARY.FILES))
+
 compatibility_zip := $(out_dir).zip
 $(compatibility_zip): PRIVATE_NAME := android-$(test_suite_name)
 $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
 $(compatibility_zip): PRIVATE_TOOLS := $(test_tools) $(test_suite_prebuilt_tools)
 $(compatibility_zip): PRIVATE_SUITE_NAME := $(test_suite_name)
 $(compatibility_zip): PRIVATE_DYNAMIC_CONFIG := $(test_suite_dynamic_config)
-$(compatibility_zip): $(test_artifacts) $(test_tools) $(test_suite_prebuilt_tools) $(test_suite_dynamic_config) $(SOONG_ZIP) | $(ADB) $(ACP)
+$(compatibility_zip): $(test_artifacts) $(test_tools) $(test_suite_prebuilt_tools) $(test_suite_dynamic_config) $(SOONG_ZIP) $(host_shared_libs) | $(ADB) $(ACP)
 # Make dir structure
 	$(hide) mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases
 	$(hide) echo $(BUILD_NUMBER_FROM_FILE) > $(PRIVATE_OUT_DIR)/tools/version.txt
@@ -65,3 +68,4 @@ test_suite_dynamic_config :=
 test_suite_readme :=
 test_suite_prebuilt_tools :=
 test_suite_tools :=
+host_shared_libs :=
