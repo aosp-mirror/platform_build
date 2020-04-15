@@ -742,15 +742,18 @@ $(if $(_all_deps_for_$(1)_set_),$(_all_deps_for_$(1)_),\
 $(_all_deps_for_$(1)_))
 endef
 
-# Scan all modules in general-tests and device-tests suite and flatten the
-# shared library dependencies.
+# Scan all modules in general-tests, device-tests and other selected suites and
+# flatten the shared library dependencies.
 define update-host-shared-libs-deps-for-suites
-$(foreach suite,general-tests device-tests,\
+$(foreach suite,general-tests device-tests vts,\
   $(foreach m,$(COMPATIBILITY.$(suite).MODULES),\
     $(eval my_deps := $(call get-all-shared-libs-deps,$(m)))\
     $(foreach dep,$(my_deps),\
       $(foreach f,$(ALL_MODULES.$(dep).HOST_SHARED_LIBRARY_FILES),\
-        $(eval target := $(HOST_OUT_TESTCASES)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(if $(filter $(suite),device-tests general-tests),\
+          $(eval my_testcases := $(HOST_OUT_TESTCASES)),\
+          $(eval my_testcases := $$(COMPATIBILITY_TESTCASES_OUT_$(suite))))\
+        $(eval target := $(my_testcases)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
         $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
           $$(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES) $(f):$(target))\
         $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
