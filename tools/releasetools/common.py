@@ -1104,7 +1104,13 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
     cmd.append("--pagesize")
     cmd.append(open(fn).read().rstrip("\n"))
 
-  args = info_dict.get("mkbootimg_args")
+  # "boot" or "recovery", without extension.
+  partition_name = os.path.basename(sourcedir).lower()
+
+  if partition_name == "recovery":
+    args = info_dict.get("recovery_mkbootimg_args")
+  else:
+    args = info_dict.get("mkbootimg_args")
   if args and args.strip():
     cmd.extend(shlex.split(args))
 
@@ -1121,9 +1127,6 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
     cmd.extend(["--output", img_unsigned.name])
   else:
     cmd.extend(["--output", img.name])
-
-  # "boot" or "recovery", without extension.
-  partition_name = os.path.basename(sourcedir).lower()
 
   if partition_name == "recovery":
     if info_dict.get("include_recovery_dtbo") == "true":
