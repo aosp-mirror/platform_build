@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fc2c00b0_b98ba451",
+        "filename": "target/board/generic_arm64/device.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-04-16T06:02:41Z",
+      "side": 1,
+      "message": "Hope to keep output vbmeta.img for aosp_$arch. OEM and many tools are familiar to disable AVB by the vbmeta.img in our folder.\n\nhttps://source.android.com/setup/build/gsi#building-gsis",
+      "parentUuid": "c33c0d54_fc73c8a6",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 26
+      },
+      "revId": "58a7b741dd6b624fa5437a39f8bdc6978a4a3844",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6c3ab82b_3cfc280b",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 1
