@@ -110,7 +110,6 @@ PRODUCT_PACKAGES += \
     installd \
     iorapd \
     ip \
-    ip6tables \
     iptables \
     ip-up-vpn \
     javax.obex \
