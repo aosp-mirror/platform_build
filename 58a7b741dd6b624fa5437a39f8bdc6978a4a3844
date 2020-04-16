@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c33c0d54_fc73c8a6",
+        "filename": "target/board/generic_arm64/device.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-04-16T04:20:43Z",
+      "side": 1,
+      "message": "Not sure if this impacts the signing of system.img (signing is needed to pass VtsSecurityAvb).\n\nMight need some investigation.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 26
+      },
+      "revId": "58a7b741dd6b624fa5437a39f8bdc6978a4a3844",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
