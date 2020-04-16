@@ -15,7 +15,7 @@
 #
 
 PRODUCT_QUOTA_PROJID := 1
-PRODUCT_PRODUCT_PROPERTIES += ro.emulated_storage.projid=1
+PRODUCT_PROPERTY_OVERRIDES += ro.emulated_storage.projid=1
 
 PRODUCT_FS_CASEFOLD := 1
-PRODUCT_PRODUCT_PROPERTIES += ro.emulated_storage.casefold=1
+PRODUCT_PROPERTY_OVERRIDES += ro.emulated_storage.casefold=1
