@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "a2130b5d_daf4e787",
+        "filename": "target/board/generic_arm64/device.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-04-16T23:00:30Z",
+      "side": 1,
+      "message": "I\u0027ve added back in the vbmeta by following the previous suggestion to remove boot from it.",
+      "parentUuid": "fc2c00b0_b98ba451",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 26
+      },
+      "revId": "58a7b741dd6b624fa5437a39f8bdc6978a4a3844",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6c3ab82b_3cfc280b",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 1
@@ -69,6 +93,30 @@
       "revId": "58a7b741dd6b624fa5437a39f8bdc6978a4a3844",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df432193_da504fa6",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-04-16T23:00:30Z",
+      "side": 1,
+      "message": "I see vbmeta.img being generated properly in mdist.",
+      "parentUuid": "6c3ab82b_3cfc280b",
+      "range": {
+        "startLine": 434,
+        "startChar": 2,
+        "endLine": 434,
+        "endChar": 20
+      },
+      "revId": "58a7b741dd6b624fa5437a39f8bdc6978a4a3844",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
