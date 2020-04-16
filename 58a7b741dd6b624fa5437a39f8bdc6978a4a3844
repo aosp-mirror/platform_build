@@ -22,6 +22,29 @@
       "revId": "58a7b741dd6b624fa5437a39f8bdc6978a4a3844",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c3ab82b_3cfc280b",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-04-16T05:59:24Z",
+      "side": 1,
+      "message": "IIRC, when `make dist` (or in the signing process), vbmeta.img will be rebuilt here.\n\nWill this cause some error if GKI is added?",
+      "range": {
+        "startLine": 434,
+        "startChar": 2,
+        "endLine": 434,
+        "endChar": 20
+      },
+      "revId": "58a7b741dd6b624fa5437a39f8bdc6978a4a3844",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
