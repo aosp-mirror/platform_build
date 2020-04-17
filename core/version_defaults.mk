@@ -123,8 +123,8 @@ ifndef PLATFORM_VERSION_CODENAME
     PLATFORM_VERSION_CODENAME := $(TARGET_PLATFORM_VERSION)
   endif
 
-  # This is all of the *active* development codenames. There are future
-  # codenames not included in this list. This confusing name is needed because
+  # This is all of the *active* development codenames.
+  # This confusing name is needed because
   # all_codenames has been baked into build.prop for ages.
   #
   # Should be either the same as PLATFORM_VERSION_CODENAME or a comma-separated
@@ -141,29 +141,14 @@ ifndef PLATFORM_VERSION_CODENAME
     $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
       $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
 
-  # This is all of the inactive development codenames. Available to be targeted
-  # in this branch but in the future relative to our current target.
-  PLATFORM_VERSION_FUTURE_CODENAMES :=
-
-  # Build a list of all untargeted code names. Avoid duplicates.
-  _versions_not_in_target := \
-    $(filter-out $(PLATFORM_VERSION_ALL_CODENAMES),$(ALL_VERSIONS))
-  $(foreach version,$(_versions_not_in_target),\
-    $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
-    $(if $(filter $(_codename),$(PLATFORM_VERSION_FUTURE_CODENAMES)),,\
-      $(eval PLATFORM_VERSION_FUTURE_CODENAMES += $(_codename))))
-
   # And convert from space separated to comma separated.
   PLATFORM_VERSION_ALL_CODENAMES := \
     $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_CODENAMES)))
-  PLATFORM_VERSION_FUTURE_CODENAMES := \
-    $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_FUTURE_CODENAMES)))
 
 endif
 .KATI_READONLY := \
   PLATFORM_VERSION_CODENAME \
-  PLATFORM_VERSION_ALL_CODENAMES \
-  PLATFORM_VERSION_FUTURE_CODENAMES
+  PLATFORM_VERSION_ALL_CODENAMES
 
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
   PLATFORM_PREVIEW_SDK_VERSION := 0
@@ -250,7 +235,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2020-03-05
+      PLATFORM_SECURITY_PATCH := 2020-04-05
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH
 

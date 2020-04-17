@@ -2285,6 +2285,7 @@ endef
 define sign-package-arg
 $(hide) mv $(1) $(1).unsigned
 $(hide) $(JAVA) -Djava.library.path=$$(dirname $(SIGNAPK_JNI_LIBRARY_PATH)) -jar $(SIGNAPK_JAR) \
+    $(if $(strip $(PRIVATE_CERTIFICATE_LINEAGE)), --lineage $(PRIVATE_CERTIFICATE_LINEAGE)) \
     $(PRIVATE_CERTIFICATE) $(PRIVATE_PRIVATE_KEY) \
     $(PRIVATE_ADDITIONAL_CERTIFICATES) $(1).unsigned $(1).signed
 $(hide) mv $(1).signed $(1)
@@ -2549,6 +2550,22 @@ $(foreach f, $(1), $(strip \
     $(eval _cmf_dest := $(word 2,$(_cmf_tuple))) \
     $(eval $(call copy-vintf-manifest-checked,$(_cmf_src),$(_cmf_dest))) \
     $(_cmf_dest)))
+endef
+
+# Copy the file only if it's not an ELF file. For use via $(eval).
+# $(1): source file
+# $(2): destination file
+# $(3): message to print on error
+define copy-non-elf-file-checked
+$(2): $(1) $(LLVM_READOBJ)
+	@echo "Copy non-ELF: $$@"
+	$(hide) \
+	    if $(LLVM_READOBJ) -h $$< >/dev/null 2>&1; then \
+	        $(call echo-error,$$@,$(3)); \
+	        $(call echo-error,$$@,found ELF file: $$<); \
+	        false; \
+	    fi
+	$$(copy-file-to-target)
 endef
 
 # The -t option to acp and the -p option to cp is
@@ -3320,4 +3337,10 @@ $(hide) CLANG_BIN="$(LLVM_PREBUILTS_PATH)" \
   CROSS_COMPILE="$(strip $(3))" \
   XZ="$(XZ)" \
   $(LIBRARY_IDENTITY_CHECK_SCRIPT) $(SOONG_STRIP_PATH) $(1) $(2)
+endef
+
+# Convert Soong libraries that have SDK variant
+define use_soong_sdk_libraries
+  $(foreach l,$(1),$(if $(filter $(l),$(SOONG_SDK_VARIANT_MODULES)),\
+      $(l).sdk,$(l)))
 endef

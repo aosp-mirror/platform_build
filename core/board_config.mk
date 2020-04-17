@@ -87,6 +87,7 @@ _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
+  BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES \
   BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
   BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
@@ -364,11 +365,6 @@ ifdef BOARD_BOOT_HEADER_VERSION
   ifneq ($(call math_gt_or_eq,$(BOARD_BOOT_HEADER_VERSION),3),)
     ifneq ($(TARGET_NO_VENDOR_BOOT),true)
       BUILDING_VENDOR_BOOT_IMAGE := true
-    endif
-    ifdef BUILDING_RECOVERY_IMAGE
-      ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-        $(error Boot header version >=3 requires recovery as boot)
-      endif
     endif
   endif
 endif
