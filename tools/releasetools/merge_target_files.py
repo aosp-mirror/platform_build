@@ -95,6 +95,8 @@ import ota_from_target_files
 logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
+# Always turn on verbose logging.
+OPTIONS.verbose = True
 OPTIONS.framework_target_files = None
 OPTIONS.framework_item_list = None
 OPTIONS.framework_misc_info_keys = None
@@ -117,14 +119,15 @@ OPTIONS.keep_tmp = False
 
 PARTITION_ITEM_PATTERN = re.compile(r'^([A-Z_]+)/\*$')
 
-# In apexkeys.txt or apkcerts.txt, we may find partition tags on the various
-# entries in the file. We use these partition tags to filter the entries in
-# those files from the two different target files packages to produce a merged
-# apexkeys.txt or apkcerts.txt file. A partition tag (e.g., for the product
-# partition) looks like this: 'partition="_PRODUCT"' or 'partition="product".
-# We use the group syntax grab the value of the tag.
+# In apexkeys.txt or apkcerts.txt, we will find partition tags on each entry in
+# the file. We use these partition tags to filter the entries in those files
+# from the two different target files packages to produce a merged apexkeys.txt
+# or apkcerts.txt file. A partition tag (e.g., for the product partition) looks
+# like this: 'partition="product"'. We use the group syntax grab the value of
+# the tag. We use non-greedy matching in case there are other fields on the
+# same line.
 
-PARTITION_TAG_PATTERN = re.compile(r'partition="(.*)"')
+PARTITION_TAG_PATTERN = re.compile(r'partition="(.*?)"')
 
 # The sorting algorithm for apexkeys.txt and apkcerts.txt does not include the
 # ".apex" or ".apk" suffix, so we use the following pattern to extract a key.
@@ -1107,9 +1110,6 @@ def main():
       (OPTIONS.output_dir is not None and OPTIONS.output_item_list is None)):
     common.Usage(__doc__)
     sys.exit(1)
-
-  # Always turn on verbose logging.
-  OPTIONS.verbose = True
 
   if OPTIONS.framework_item_list:
     framework_item_list = common.LoadListFromFile(OPTIONS.framework_item_list)

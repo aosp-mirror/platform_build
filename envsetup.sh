@@ -33,7 +33,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - allmod:     List all modules.
 - gomod:      Go to the directory containing a module.
 - pathmod:    Get the directory containing a module.
-- refreshmod: Refresh list of modules for allmod/gomod.
+- refreshmod: Refresh list of modules for allmod/gomod/pathmod.
 
 Environment options:
 - SANITIZE_HOST: Set to 'address' to use ASAN for all host modules.
@@ -119,13 +119,13 @@ function get_build_var()
     if [ "$BUILD_VAR_CACHE_READY" = "true" ]
     then
         eval "echo \"\${var_cache_$1}\""
-    return
+        return 0
     fi
 
     local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
-        return
+        return 1
     fi
     (\cd $T; build/soong/soong_ui.bash --dumpvar-mode $1)
 }
@@ -576,10 +576,25 @@ function add_lunch_combo()
 function print_lunch_menu()
 {
     local uname=$(uname)
-    local choices=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
+    local choices
+    choices=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
+    local ret=$?
+
     echo
     echo "You're building on" $uname
     echo
+
+    if [ $ret -ne 0 ]
+    then
+        echo "Warning: Cannot display lunch menu."
+        echo
+        echo "Note: You can invoke lunch with an explicit target:"
+        echo
+        echo "  usage: lunch [target]" >&2
+        echo
+        return
+    fi
+
     echo "Lunch menu... pick a combo:"
 
     local i=1

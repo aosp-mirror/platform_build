@@ -82,6 +82,10 @@ else
     else ifeq ($(LOCAL_MODULE_CLASS),ETC)
       # ETC modules may be uninstallable, yet still have a NOTICE file. e.g. apex components
       module_installed_filename :=
+    else ifneq (,$(and $(filter %.sdk,$(LOCAL_MODULE)),$(filter $(patsubst %.sdk,%,$(LOCAL_MODULE)),$(SOONG_SDK_VARIANT_MODULES))))
+      # Soong produces uninstallable *.sdk shared libraries for embedding in APKs.
+      module_installed_filename := \
+          $(patsubst $(PRODUCT_OUT)/%,%,$($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_SHARED_LIBRARIES))/$(notdir $(LOCAL_BUILT_MODULE))
     else
       $(error Cannot determine where to install NOTICE file for $(LOCAL_MODULE))
     endif # JAVA_LIBRARIES
