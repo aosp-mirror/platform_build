@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f9bd1eae_7111d7b9",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-04-17T03:01:44Z",
+      "side": 1,
+      "message": "This had been defined in gsi_release.mk (included below)",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 0
+      },
+      "revId": "e93bce562c2013f751809dbe334e5d40846d5e9c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

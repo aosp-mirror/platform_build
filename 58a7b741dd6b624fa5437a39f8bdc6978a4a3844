@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "207da811_26f67adb",
+        "filename": "target/board/generic_arm64/device.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-04-17T03:01:44Z",
+      "side": 1,
+      "message": "Thanks!",
+      "parentUuid": "a2130b5d_daf4e787",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 26
+      },
+      "revId": "58a7b741dd6b624fa5437a39f8bdc6978a4a3844",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6c3ab82b_3cfc280b",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 1
