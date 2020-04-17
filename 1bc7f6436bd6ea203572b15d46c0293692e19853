@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d8a0a494_0db45ca7",
+        "filename": "core/soong_droiddoc_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-04-17T17:14:44Z",
+      "side": 0,
+      "message": "They are used here to make the phony rules for the module name build the api file.  If that is still necessary we should rename these to LOCAL_PLATFORM_API_FILE and add them to clear_vars.mk.",
+      "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
