@@ -22,6 +22,30 @@
       "revId": "e93bce562c2013f751809dbe334e5d40846d5e9c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a49e2837_f6bcf5aa",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-04-17T04:56:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9bd1eae_7111d7b9",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 0
+      },
+      "revId": "e93bce562c2013f751809dbe334e5d40846d5e9c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
