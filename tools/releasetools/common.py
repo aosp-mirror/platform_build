@@ -702,12 +702,13 @@ def LoadDictionaryFromLines(lines):
 def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
                       system_root_image=False):
   class Partition(object):
-    def __init__(self, mount_point, fs_type, device, length, context):
+    def __init__(self, mount_point, fs_type, device, length, context, slotselect):
       self.mount_point = mount_point
       self.fs_type = fs_type
       self.device = device
       self.length = length
       self.context = context
+      self.slotselect = slotselect
 
   try:
     data = read_helper(recovery_fstab_path)
@@ -735,10 +736,13 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
 
     # It's a good line, parse it.
     length = 0
+    slotselect = False
     options = options.split(",")
     for i in options:
       if i.startswith("length="):
         length = int(i[7:])
+      elif i == "slotselect":
+        slotselect = True
       else:
         # Ignore all unknown options in the unified fstab.
         continue
@@ -752,7 +756,8 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
 
     mount_point = pieces[1]
     d[mount_point] = Partition(mount_point=mount_point, fs_type=pieces[2],
-                               device=pieces[0], length=length, context=context)
+                               device=pieces[0], length=length, context=context,
+                               slotselect=slotselect)
 
   # / is used for the system mount point when the root directory is included in
   # system. Other areas assume system is always at "/system" so point /system
@@ -767,7 +772,8 @@ def _FindAndLoadRecoveryFstab(info_dict, input_file, read_helper):
   """Finds the path to recovery fstab and loads its contents."""
   # recovery fstab is only meaningful when installing an update via recovery
   # (i.e. non-A/B OTA). Skip loading fstab if device used A/B OTA.
-  if info_dict.get('ab_update') == 'true':
+  if info_dict.get('ab_update') == 'true' and \
+     info_dict.get("allow_non_ab") != "true":
     return None
 
   # We changed recovery.fstab path in Q, from ../RAMDISK/etc/recovery.fstab to
