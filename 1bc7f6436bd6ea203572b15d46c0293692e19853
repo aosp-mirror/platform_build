@@ -52,6 +52,24 @@
       "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a3abd804_622d3a68",
+        "filename": "core/soong_droiddoc_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-04-17T17:25:44Z",
+      "side": 0,
+      "message": "I don\u0027t know of any users of $(LOCAL_MODULE).txt, but I don\u0027t know how to check.\n\nI think the intention here was to make $(LOCAL_MODULE) depend on the stubs from the droiddoc if the droiddoc contained stubs.  I think this code was assuming INTERNAL_PLATFORM_API_FILE was set for each module and cleared between each module.\n\nThis code was added very recently by Paul in aosp/1282492",
+      "parentUuid": "0be95059_be84c5c3",
+      "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
