@@ -16,6 +16,24 @@
       "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0be95059_be84c5c3",
+        "filename": "core/soong_droiddoc_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-17T17:21:58Z",
+      "side": 0,
+      "message": "Thanks for catching this. If I\u0027m reading it right it\u0027s\n- creating the $(LOCAL_MODULE).txt PHONY -- I would assume this is unused, do you know of a good way to sruvey?\n\n- making $(LOCAL_MODULE) depend on the main stubs txt (not the stubs txt for the droiddoc being built). Doesn\u0027t really make sense, I think?",
+      "parentUuid": "d8a0a494_0db45ca7",
+      "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
