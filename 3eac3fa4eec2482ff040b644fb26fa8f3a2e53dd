@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "6285122c_f01086c7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2053,
+      "author": {
+        "id": 1514973
+      },
+      "writtenOn": "2020-04-17T01:25:28Z",
+      "side": 1,
+      "message": "`compile-java` is used in:\n\n`transform-host-java-to-package` \u0026 `transform-host-java-to-dalvik-package` and directly in `core/java.mk`.\n\nAdded Soong-zip as dependency in each of them.",
+      "parentUuid": "dcb38732_21671b93",
+      "revId": "3eac3fa4eec2482ff040b644fb26fa8f3a2e53dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c661b95e_e3109b7c",
         "filename": "core/definitions.mk",
         "patchSetId": 1
