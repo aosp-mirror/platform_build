@@ -2552,6 +2552,22 @@ $(foreach f, $(1), $(strip \
     $(_cmf_dest)))
 endef
 
+# Copy the file only if it's not an ELF file. For use via $(eval).
+# $(1): source file
+# $(2): destination file
+# $(3): message to print on error
+define copy-non-elf-file-checked
+$(2): $(1) $(LLVM_READOBJ)
+	@echo "Copy non-ELF: $$@"
+	$(hide) \
+	    if $(LLVM_READOBJ) -h $$< >/dev/null 2>&1; then \
+	        $(call echo-error,$$@,$(3)); \
+	        $(call echo-error,$$@,found ELF file: $$<); \
+	        false; \
+	    fi
+	$$(copy-file-to-target)
+endef
+
 # The -t option to acp and the -p option to cp is
 # required for OSX.  OSX has a ridiculous restriction
 # where it's an error for a .a file's modification time
