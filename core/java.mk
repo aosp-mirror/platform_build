@@ -296,6 +296,7 @@ $(full_classes_compiled_jar): \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
     $(ZIPSYNC) \
+    $(SOONG_ZIP) \
     | $(SOONG_JAVAC_WRAPPER)
 	@echo "Target Java: $@
 	$(call compile-java,$(TARGET_JAVAC),$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))
