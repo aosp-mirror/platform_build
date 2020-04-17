@@ -70,6 +70,24 @@
       "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6eeb162_feace018",
+        "filename": "core/soong_droiddoc_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-17T19:29:25Z",
+      "side": 0,
+      "message": "aha it\u0027s almost like I should remember that :)\n\nI converted this .PHONY generation to soong androidmk instead of adding the new LOCAL_ variable, LMK if there are any problems with that (seemed to work in my testing).",
+      "parentUuid": "a3abd804_622d3a68",
+      "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
