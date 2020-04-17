@@ -16,6 +16,24 @@
       "revId": "9f75d75db08be29203113ccd91afd165ec893a2e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b9bdaa3_3114d268",
+        "filename": "target/product/security/Android.bp",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1042276
+      },
+      "writtenOn": "2020-04-17T17:28:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5df8e9e3_ce99326a",
+      "revId": "9f75d75db08be29203113ccd91afd165ec893a2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
