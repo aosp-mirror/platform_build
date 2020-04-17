@@ -34,6 +34,24 @@
       "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f31109b5_88b0bd07",
+        "filename": "core/soong_droiddoc_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-17T17:24:11Z",
+      "side": 0,
+      "message": "BTW - what series of gerrit button clicks allowed you to comment on an unchanged file? 😂",
+      "parentUuid": "0be95059_be84c5c3",
+      "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
