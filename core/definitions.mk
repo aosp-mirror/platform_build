@@ -2093,7 +2093,7 @@ $(if $(PRIVATE_JAR_PACKAGES), \
 $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
     $(foreach pkg, $(PRIVATE_JAR_EXCLUDE_PACKAGES), \
         $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))))
-$(hide) $(JAR) -cf $@ $(call jar-args-sorted-files-in-directory,$(PRIVATE_CLASS_INTERMEDIATES_DIR))
+$(hide) $(SOONG_ZIP) -jar -o $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) -D $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
