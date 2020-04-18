@@ -12,11 +12,6 @@ ALL_DOCS += $(OUT_DOCS)/$(LOCAL_MODULE)-stubs.srcjar
 $(LOCAL_MODULE) : $(OUT_DOCS)/$(LOCAL_MODULE)-stubs.srcjar
 endif
 
-ifdef INTERNAL_PLATFORM_API_FILE
-.PHONY: $(LOCAL_MODULE) $(LOCAL_MODULE).txt
-$(LOCAL_MODULE) $(LOCAL_MODULE).txt : $(INTERNAL_PLATFORM_API_FILE) $(INTERNAL_PLATFORM_REMOVED_API_FILE)
-endif
-
 ifdef LOCAL_DROIDDOC_DOC_ZIP
 $(eval $(call copy-one-file,$(LOCAL_DROIDDOC_DOC_ZIP),$(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip))
 $(call dist-for-goals,docs,$(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip)
