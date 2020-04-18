@@ -99,6 +99,7 @@ $(full_classes_compiled_jar): \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
     $(ZIPSYNC) \
+    $(SOONG_ZIP) \
     | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-dalvik-package)
 
