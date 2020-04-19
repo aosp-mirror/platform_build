@@ -932,8 +932,8 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
 
 
-def AddAftlInclusionProof(output_image):
-  """Appends the aftl inclusion proof to the vbmeta image."""
+def ConstructAftlMakeImageCommands(output_image):
+  """Constructs the command to append the aftl image to vbmeta."""
 
   # Ensure the other AFTL parameters are set as well.
   assert OPTIONS.aftl_tool_path is not None, 'No aftl tool provided.'
@@ -946,17 +946,24 @@ def AddAftlInclusionProof(output_image):
   build_info = BuildInfo(OPTIONS.info_dict)
   version_incremental = build_info.GetBuildProp("ro.build.version.incremental")
   aftltool = OPTIONS.aftl_tool_path
+  server_argument_list = [OPTIONS.aftl_server, OPTIONS.aftl_key_path]
   aftl_cmd = [aftltool, "make_icp_from_vbmeta",
               "--vbmeta_image_path", vbmeta_image,
               "--output", output_image,
               "--version_incremental", version_incremental,
-              "--transparency_log_servers", OPTIONS.aftl_server,
-              "--transparency_log_pub_keys", OPTIONS.aftl_key_path,
+              "--transparency_log_servers", ','.join(server_argument_list),
               "--manufacturer_key", OPTIONS.aftl_manufacturer_key_path,
               "--algorithm", "SHA256_RSA4096",
               "--padding", "4096"]
   if OPTIONS.aftl_signer_helper:
     aftl_cmd.extend(shlex.split(OPTIONS.aftl_signer_helper))
+  return aftl_cmd
+
+
+def AddAftlInclusionProof(output_image):
+  """Appends the aftl inclusion proof to the vbmeta image."""
+
+  aftl_cmd = ConstructAftlMakeImageCommands(output_image)
   RunAndCheckOutput(aftl_cmd)
 
   verify_cmd = ['aftltool', 'verify_image_icp', '--vbmeta_image_path',
