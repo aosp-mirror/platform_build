@@ -2093,7 +2093,7 @@ $(if $(PRIVATE_JAR_PACKAGES), \
 $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
     $(foreach pkg, $(PRIVATE_JAR_EXCLUDE_PACKAGES), \
         $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))))
-$(hide) $(JAR) -cf $@ $(call jar-args-sorted-files-in-directory,$(PRIVATE_CLASS_INTERMEDIATES_DIR))
+$(hide) $(SOONG_ZIP) -jar -o $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) -D $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
@@ -2550,6 +2550,22 @@ $(foreach f, $(1), $(strip \
     $(eval _cmf_dest := $(word 2,$(_cmf_tuple))) \
     $(eval $(call copy-vintf-manifest-checked,$(_cmf_src),$(_cmf_dest))) \
     $(_cmf_dest)))
+endef
+
+# Copy the file only if it's not an ELF file. For use via $(eval).
+# $(1): source file
+# $(2): destination file
+# $(3): message to print on error
+define copy-non-elf-file-checked
+$(2): $(1) $(LLVM_READOBJ)
+	@echo "Copy non-ELF: $$@"
+	$(hide) \
+	    if $(LLVM_READOBJ) -h $$< >/dev/null 2>&1; then \
+	        $(call echo-error,$$@,$(3)); \
+	        $(call echo-error,$$@,found ELF file: $$<); \
+	        false; \
+	    fi
+	$$(copy-file-to-target)
 endef
 
 # The -t option to acp and the -p option to cp is

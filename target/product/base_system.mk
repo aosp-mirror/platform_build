@@ -88,6 +88,7 @@ PRODUCT_PACKAGES += \
     framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
+    fsverity-release-cert-der \
     fs_config_files_system \
     fs_config_dirs_system \
     group_system \
@@ -206,6 +207,7 @@ PRODUCT_PACKAGES += \
     media_profiles_V1_0.dtd \
     MediaProviderLegacy \
     mediaserver \
+    mediatranscoding \
     mke2fs \
     monkey \
     mtpd \
