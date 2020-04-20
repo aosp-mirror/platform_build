@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "072467ee_04fe9127",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2020-04-20T08:20:27Z",
+      "side": 1,
+      "message": "Maybe i\u0027m just being paranoid, but might it make sense to compare the built (64+32) images before / after the change to make sure they\u0027re identical ?",
+      "range": {
+        "startLine": 10,
+        "startChar": 6,
+        "endLine": 10,
+        "endChar": 12
+      },
+      "revId": "e062ae8644936d24d1835fc485e9876eb2c4e9c7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
