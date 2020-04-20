@@ -1047,7 +1047,7 @@ def _MakeRamdisk(sourcedir, fs_config_file=None):
   return ramdisk_img
 
 
-def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
+def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
                         has_ramdisk=False, two_step_image=False):
   """Build a bootable image from the specified sourcedir.
 
@@ -1060,7 +1060,15 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   for building the requested image.
   """
 
-  if not os.access(os.path.join(sourcedir, "kernel"), os.F_OK):
+  # "boot" or "recovery", without extension.
+  partition_name = os.path.basename(sourcedir).lower()
+
+  if partition_name == "recovery":
+    kernel = "kernel"
+  else:
+    kernel = image_name.replace("boot", "kernel")
+    kernel = kernel.replace(".img","")
+  if not os.access(os.path.join(sourcedir, kernel), os.F_OK):
     return None
 
   if has_ramdisk and not os.access(os.path.join(sourcedir, "RAMDISK"), os.F_OK):
@@ -1077,7 +1085,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
 
-  cmd = [mkbootimg, "--kernel", os.path.join(sourcedir, "kernel")]
+  cmd = [mkbootimg, "--kernel", os.path.join(sourcedir, kernel)]
 
   fn = os.path.join(sourcedir, "second")
   if os.access(fn, os.F_OK):
@@ -1103,9 +1111,6 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   if os.access(fn, os.F_OK):
     cmd.append("--pagesize")
     cmd.append(open(fn).read().rstrip("\n"))
-
-  # "boot" or "recovery", without extension.
-  partition_name = os.path.basename(sourcedir).lower()
 
   if partition_name == "recovery":
     args = info_dict.get("recovery_mkbootimg_args")
@@ -1229,7 +1234,7 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
                  info_dict.get("recovery_as_boot") == "true")
 
   fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
-  data = _BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
+  data = _BuildBootableImage(prebuilt_name, os.path.join(unpack_dir, tree_subdir),
                              os.path.join(unpack_dir, fs_config),
                              info_dict, has_ramdisk, two_step_image)
   if data:
