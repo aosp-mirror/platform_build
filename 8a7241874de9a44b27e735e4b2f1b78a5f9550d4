@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "76e339c0_8d811e18",
+        "filename": "core/tasks/platform_availability_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-04-21T21:03:51Z",
+      "side": 1,
+      "message": "Remove this",
+      "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
