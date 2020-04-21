@@ -344,9 +344,6 @@ ifneq ($(words $(sort $(filter-out $(INTERNAL_MODIFIER_TARGETS) checkbuild emula
 $(error The 'sdk' target may not be specified with any other targets)
 endif
 
-# AUX dependencies are already added by now; remove triggers from the MAKECMDGOALS
-MAKECMDGOALS := $(strip $(filter-out AUX-%,$(MAKECMDGOALS)))
-
 # TODO: this should be eng I think.  Since the sdk is built from the eng
 # variant.
 tags_to_install := debug eng
@@ -830,7 +827,6 @@ add-required-deps :=
 #     - TARGET
 #     - HOST
 #     - HOST_CROSS
-#     - AUX-<variant-name>
 #   3: Whether to use the common intermediates directory or not
 #     - _
 #     - COMMON
@@ -857,14 +853,8 @@ add-required-deps :=
 
 link_type_error :=
 
-define link-type-prefix-base
-$(word 2,$(subst :,$(space),$(1)))
-endef
 define link-type-prefix
-$(if $(filter AUX-%,$(link-type-prefix-base)),$(patsubst AUX-%,AUX,$(link-type-prefix-base)),$(link-type-prefix-base))
-endef
-define link-type-aux-variant
-$(if $(filter AUX-%,$(link-type-prefix-base)),$(patsubst AUX-%,%,$(link-type-prefix-base)))
+$(word 2,$(subst :,$(space),$(1)))
 endef
 define link-type-common
 $(patsubst _,,$(word 3,$(subst :,$(space),$(1))))
@@ -882,7 +872,7 @@ define link-type-os
 $(strip $(eval _p := $(link-type-prefix))\
   $(if $(filter HOST HOST_CROSS,$(_p)),\
     $($(_p)_OS),\
-    $(if $(filter AUX,$(_p)),AUX,android)))
+    android))
 endef
 define link-type-arch
 $($(link-type-prefix)_$(link-type-2ndarchprefix)ARCH)
@@ -1435,9 +1425,6 @@ bootimage_test_harness: $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET)
 .PHONY: vbmetaimage
 vbmetaimage: $(INSTALLED_VBMETAIMAGE_TARGET)
 
-.PHONY: auxiliary
-auxiliary: $(INSTALLED_AUX_TARGETS)
-
 # Build files and then package it into the rom formats
 .PHONY: droidcore
 droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
@@ -1483,7 +1470,6 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_FILE_RECOVERY) \
     $(INSTALLED_FILES_JSON_RECOVERY) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
-    auxiliary \
     soong_docs
 
 # dist_files only for putting your library into the dist directory with a full build.
