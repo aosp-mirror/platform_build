@@ -19,6 +19,7 @@ import os
 import subprocess
 import tempfile
 import time
+import unittest
 import zipfile
 from hashlib import sha1
 
@@ -1431,8 +1432,45 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual('3', chained_partition_args[1])
     self.assertTrue(os.path.exists(chained_partition_args[2]))
 
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_BuildVBMeta_appendAftl(self):
+  def test_BuildVBMeta_appendAftlCommandSyntax(self):
+    testdata_dir = test_utils.get_testdata_dir()
+    common.OPTIONS.info_dict = {
+        'ab_update': 'true',
+        'avb_avbtool': 'avbtool',
+        'build.prop': {
+            'ro.build.version.incremental': '6285659',
+            'ro.product.device': 'coral',
+            'ro.build.fingerprint': 'google/coral/coral:R/RP1A.200311.002/'
+                                    '6285659:userdebug/dev-keys'
+        }
+    }
+    common.OPTIONS.aftl_tool_path = 'aftltool'
+    common.OPTIONS.aftl_server = 'log.endpoints.aftl-dev.cloud.goog:9000'
+    common.OPTIONS.aftl_key_path = os.path.join(testdata_dir,
+                                                'test_transparency_key.pub')
+    common.OPTIONS.aftl_manufacturer_key_path = os.path.join(
+        testdata_dir, 'test_aftl_rsa4096.pem')
+
+    vbmeta_image = tempfile.NamedTemporaryFile(delete=False)
+    cmd = common.ConstructAftlMakeImageCommands(vbmeta_image.name)
+    expected_cmd = [
+        'aftltool', 'make_icp_from_vbmeta',
+        '--vbmeta_image_path', 'place_holder',
+        '--output', vbmeta_image.name,
+        '--version_incremental', '6285659',
+        '--transparency_log_servers',
+        'log.endpoints.aftl-dev.cloud.goog:9000,{}'.format(
+            common.OPTIONS.aftl_key_path),
+        '--manufacturer_key', common.OPTIONS.aftl_manufacturer_key_path,
+        '--algorithm', 'SHA256_RSA4096',
+        '--padding', '4096']
+
+    # ignore the place holder, i.e. path to a temp file
+    self.assertEqual(cmd[:3], expected_cmd[:3])
+    self.assertEqual(cmd[4:], expected_cmd[4:])
+
+  @unittest.skip("enable after we have a server for public")
+  def test_BuildVBMeta_appendAftlContactServer(self):
     testdata_dir = test_utils.get_testdata_dir()
     common.OPTIONS.info_dict = {
         'ab_update': 'true',
