@@ -122,6 +122,18 @@ $(KATI_obsolete_var PRODUCT_IOT)
 $(KATI_obsolete_var MD5SUM)
 $(KATI_obsolete_var BOARD_HAL_STATIC_LIBRARIES, See $(CHANGES_URL)#BOARD_HAL_STATIC_LIBRARIES)
 $(KATI_obsolete_var LOCAL_HAL_STATIC_LIBRARIES, See $(CHANGES_URL)#BOARD_HAL_STATIC_LIBRARIES)
+$(KATI_obsolete_var \
+  TARGET_AUX_OS_VARIANT_LIST \
+  LOCAL_AUX_ARCH \
+  LOCAL_AUX_CPU \
+  LOCAL_AUX_OS \
+  LOCAL_AUX_OS_VARIANT \
+  LOCAL_AUX_SUBARCH \
+  LOCAL_AUX_TOOLCHAIN \
+  LOCAL_CUSTOM_BUILD_STEP_INPUT \
+  LOCAL_CUSTOM_BUILD_STEP_OUTPUT \
+  LOCAL_IS_AUX_MODULE \
+  ,AUX support has been removed)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -170,8 +182,6 @@ BUILD_HOST_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/host_static_library.mk
 BUILD_HOST_SHARED_LIBRARY :=$= $(BUILD_SYSTEM)/host_shared_library.mk
 BUILD_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/static_library.mk
 BUILD_HEADER_LIBRARY :=$= $(BUILD_SYSTEM)/header_library.mk
-BUILD_AUX_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/aux_static_library.mk
-BUILD_AUX_EXECUTABLE :=$= $(BUILD_SYSTEM)/aux_executable.mk
 BUILD_SHARED_LIBRARY :=$= $(BUILD_SYSTEM)/shared_library.mk
 BUILD_EXECUTABLE :=$= $(BUILD_SYSTEM)/executable.mk
 BUILD_HOST_EXECUTABLE :=$= $(BUILD_SYSTEM)/host_executable.mk
