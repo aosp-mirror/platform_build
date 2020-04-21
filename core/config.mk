@@ -134,6 +134,7 @@ $(KATI_obsolete_var \
   LOCAL_CUSTOM_BUILD_STEP_OUTPUT \
   LOCAL_IS_AUX_MODULE \
   ,AUX support has been removed)
+$(KATI_obsolete_var HOST_OUT_TEST_CONFIG TARGET_OUT_TEST_CONFIG LOCAL_TEST_CONFIG_OPTIONS)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -196,22 +197,11 @@ BUILD_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/static_java_library.mk
 BUILD_HOST_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_java_library.mk
 BUILD_COPY_HEADERS :=$= $(BUILD_SYSTEM)/copy_headers.mk
 BUILD_NATIVE_TEST :=$= $(BUILD_SYSTEM)/native_test.mk
-BUILD_NATIVE_BENCHMARK :=$= $(BUILD_SYSTEM)/native_benchmark.mk
-BUILD_HOST_NATIVE_TEST :=$= $(BUILD_SYSTEM)/host_native_test.mk
 BUILD_FUZZ_TEST :=$= $(BUILD_SYSTEM)/fuzz_test.mk
-BUILD_HOST_FUZZ_TEST :=$= $(BUILD_SYSTEM)/host_fuzz_test.mk
-
-BUILD_SHARED_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/shared_test_lib.mk
-BUILD_HOST_SHARED_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/host_shared_test_lib.mk
-BUILD_STATIC_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/static_test_lib.mk
-BUILD_HOST_STATIC_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/host_static_test_lib.mk
 
 BUILD_NOTICE_FILE :=$= $(BUILD_SYSTEM)/notice_files.mk
 BUILD_HOST_DALVIK_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_java_library.mk
 BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
-
-BUILD_HOST_TEST_CONFIG :=$= $(BUILD_SYSTEM)/host_test_config.mk
-BUILD_TARGET_TEST_CONFIG :=$= $(BUILD_SYSTEM)/target_test_config.mk
 
 include $(BUILD_SYSTEM)/deprecation.mk
 
