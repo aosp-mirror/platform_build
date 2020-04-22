@@ -372,8 +372,8 @@ ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_cflags += $(HWADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
 endif
 
-# Use minimal diagnostics when integer overflow is enabled; never do it for HOST or AUX modules
-ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
+# Use minimal diagnostics when integer overflow is enabled; never do it for HOST modules
+ifeq ($(LOCAL_IS_HOST_MODULE),)
   # Pre-emptively add UBSAN minimal runtime incase a static library dependency requires it
   ifeq ($(filter STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
     ifndef LOCAL_SDK_VERSION
