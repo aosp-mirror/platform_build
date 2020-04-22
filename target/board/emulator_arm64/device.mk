@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013 The Android Open Source Project
+# Copyright (C) 2020 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,15 @@
 # limitations under the License.
 #
 
+# Cuttlefish has GKI kernel prebuilts, so use those for the GKI boot.img.
+ifeq ($(TARGET_PREBUILT_KERNEL),)
+    LOCAL_KERNEL := device/google/cuttlefish_kernel/5.4-arm64/kernel
+else
+    LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
+endif
+
 PRODUCT_COPY_FILES += \
-    device/google/cuttlefish_kernel/5.4-arm64/kernel-5.4:kernel-5.4 \
-    device/google/cuttlefish_kernel/5.4-arm64/kernel-5.4-gz:kernel-5.4-gz \
-    device/google/cuttlefish_kernel/5.4-arm64/kernel-5.4-lz4:kernel-5.4-lz4
+    $(LOCAL_KERNEL):kernel
 
 # Adjust the Dalvik heap to be appropriate for a tablet.
 $(call inherit-product-if-exists, frameworks/base/build/tablet-dalvik-heap.mk)
