@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3455c33_9be4c924",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 812,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-04-22T20:25:31Z",
+      "side": 1,
+      "message": "Can you indent this",
+      "revId": "61e9a11ea055ac715dd9f83ad888fefa82682883",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89402674_89f4e005",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-04-22T20:25:31Z",
+      "side": 1,
+      "message": "Keep this alphabetized",
+      "revId": "61e9a11ea055ac715dd9f83ad888fefa82682883",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
