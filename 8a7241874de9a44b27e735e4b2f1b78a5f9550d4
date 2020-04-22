@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "705c4d78_67254cc0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-04-22T06:57:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c79ccf2c_03dafb06",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 9
+      },
+      "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9b003005_c7296efd",
         "filename": "core/base_rules.mk",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "d7c05f95_cd7a3fae",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 820,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-04-22T06:57:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9b003005_c7296efd",
+      "range": {
+        "startLine": 820,
+        "startChar": 48,
+        "endLine": 820,
+        "endChar": 54
+      },
+      "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "76e339c0_8d811e18",
         "filename": "core/tasks/platform_availability_check.mk",
         "patchSetId": 4
@@ -62,6 +110,24 @@
       "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79e19e93_646c4d06",
+        "filename": "core/tasks/platform_availability_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-04-22T06:57:35Z",
+      "side": 1,
+      "message": "oops. done.",
+      "parentUuid": "76e339c0_8d811e18",
+      "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -88,6 +154,30 @@
     },
     {
       "key": {
+        "uuid": "5177ebe2_f2ab7996",
+        "filename": "core/tasks/platform_availability_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-04-22T06:57:35Z",
+      "side": 1,
+      "message": "I\u0027ve adjust the line endings in the source file, but couldn\u0027t break the output.",
+      "parentUuid": "2d897243_99c22f9f",
+      "range": {
+        "startLine": 32,
+        "startChar": 98,
+        "endLine": 32,
+        "endChar": 99
+      },
+      "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "55120e31_7536dfd6",
         "filename": "core/tasks/platform_availability_check.mk",
         "patchSetId": 4
@@ -108,6 +198,30 @@
       "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a9edc79_36d654a3",
+        "filename": "core/tasks/platform_availability_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-04-22T06:57:35Z",
+      "side": 1,
+      "message": "wow, that macro is what I was looking for. Thanks!",
+      "parentUuid": "55120e31_7536dfd6",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 5
+      },
+      "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
