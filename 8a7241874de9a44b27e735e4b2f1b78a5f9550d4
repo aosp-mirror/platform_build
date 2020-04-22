@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "c79ccf2c_03dafb06",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-04-22T00:02:54Z",
+      "side": 1,
+      "message": "Typo: \"exist\"",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 9
+      },
+      "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b003005_c7296efd",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 820,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-04-22T00:02:54Z",
+      "side": 1,
+      "message": "Typo: \"static\"",
+      "range": {
+        "startLine": 820,
+        "startChar": 48,
+        "endLine": 820,
+        "endChar": 54
+      },
+      "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "76e339c0_8d811e18",
         "filename": "core/tasks/platform_availability_check.mk",
         "patchSetId": 4
@@ -13,6 +59,52 @@
       "writtenOn": "2020-04-21T21:03:51Z",
       "side": 1,
       "message": "Remove this",
+      "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d897243_99c22f9f",
+        "filename": "core/tasks/platform_availability_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-04-22T00:02:54Z",
+      "side": 1,
+      "message": "Isn\u0027t it nicer to have line breaks in this longish message?",
+      "range": {
+        "startLine": 32,
+        "startChar": 98,
+        "endLine": 32,
+        "endChar": 99
+      },
+      "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "55120e31_7536dfd6",
+        "filename": "core/tasks/platform_availability_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-04-22T00:02:54Z",
+      "side": 1,
+      "message": "Possible to use the maybe-print-list-and-error define for this? If not, then in line with the formatting done there the message itself should be a $(warning).",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 5
+      },
       "revId": "8a7241874de9a44b27e735e4b2f1b78a5f9550d4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
