@@ -2080,8 +2080,7 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	$(call append-recovery-ui-properties,$(PRIVATE_RECOVERY_UI_PROPERTIES),$@)
 
 ifeq (truetrue,$(strip $(BUILDING_VENDOR_BOOT_IMAGE))$(strip $(AB_OTA_UPDATER)))
-  INTERNAL_RECOVERYIMAGE_ARGS := \
-      --kernel $(recovery_kernel) --ramdisk $(recovery_ramdisk)
+  INTERNAL_RECOVERYIMAGE_ARGS := --ramdisk $(recovery_ramdisk)
 ifdef GENERIC_KERNEL_CMDLINE
   INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(GENERIC_KERNEL_CMDLINE)"
 endif
@@ -2158,10 +2157,10 @@ $(recovery_ramdisk): $(MKBOOTFS) $(MINIGZIP) \
 # $(2): kernel file
 define build-recoveryimage-target
   $(if $(filter true,$(PRODUCT_SUPPORTS_VBOOT)), \
-    $(MKBOOTIMG) --kernel $(2) $(MKBOOTIMG_KERNEL_ARG) $(INTERNAL_RECOVERYIMAGE_ARGS) \
+    $(MKBOOTIMG) --kernel $(2) $(INTERNAL_RECOVERYIMAGE_ARGS) \
                  $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_RECOVERY_MKBOOTIMG_ARGS) \
                  --output $(1).unsigned, \
-    $(MKBOOTIMG) --kernel $(2) $(MKBOOTIMG_KERNEL_ARG) $(INTERNAL_RECOVERYIMAGE_ARGS) \
+    $(MKBOOTIMG) --kernel $(2) $(INTERNAL_RECOVERYIMAGE_ARGS) \
                  $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_RECOVERY_MKBOOTIMG_ARGS) \
                  --output $(1))
   $(if $(filter true,$(PRODUCT_SUPPORTS_BOOT_SIGNER)),\
@@ -3472,7 +3471,11 @@ $(if $(BOARD_AVB_$(call to-upper,$(1))_KEY_PATH),\
 endef
 
 ifdef INSTALLED_BOOTIMAGE_TARGET
+# multiple hashes for an image are not yet supported, fortunately this
+# only arises for GKI where the boot descriptor can be left out
+ifeq ($(strip $(BOARD_KERNEL_BINARIES)),)
 $(eval $(call check-and-set-avb-args,boot))
+endif
 endif
 
 ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
@@ -4128,6 +4131,8 @@ ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
 endif
 ifeq ($(INSTALLED_BOOTIMAGE_TARGET),)
 	$(hide) echo "no_boot=true" >> $@
+else
+	echo "boot_images=$(foreach b,$(INSTALLED_BOOTIMAGE_TARGET),$(notdir $(b)))" >> $@
 endif
 ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	echo "vendor_boot=true" >> $@
