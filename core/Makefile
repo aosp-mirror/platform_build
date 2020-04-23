@@ -2080,8 +2080,7 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	$(call append-recovery-ui-properties,$(PRIVATE_RECOVERY_UI_PROPERTIES),$@)
 
 ifeq (truetrue,$(strip $(BUILDING_VENDOR_BOOT_IMAGE))$(strip $(AB_OTA_UPDATER)))
-  INTERNAL_RECOVERYIMAGE_ARGS := \
-      --kernel $(recovery_kernel) --ramdisk $(recovery_ramdisk)
+  INTERNAL_RECOVERYIMAGE_ARGS := --ramdisk $(recovery_ramdisk)
 ifdef GENERIC_KERNEL_CMDLINE
   INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(GENERIC_KERNEL_CMDLINE)"
 endif
@@ -2158,10 +2157,10 @@ $(recovery_ramdisk): $(MKBOOTFS) $(MINIGZIP) \
 # $(2): kernel file
 define build-recoveryimage-target
   $(if $(filter true,$(PRODUCT_SUPPORTS_VBOOT)), \
-    $(MKBOOTIMG) --kernel $(2) $(MKBOOTIMG_KERNEL_ARG) $(INTERNAL_RECOVERYIMAGE_ARGS) \
+    $(MKBOOTIMG) --kernel $(2) $(INTERNAL_RECOVERYIMAGE_ARGS) \
                  $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_RECOVERY_MKBOOTIMG_ARGS) \
                  --output $(1).unsigned, \
-    $(MKBOOTIMG) --kernel $(2) $(MKBOOTIMG_KERNEL_ARG) $(INTERNAL_RECOVERYIMAGE_ARGS) \
+    $(MKBOOTIMG) --kernel $(2) $(INTERNAL_RECOVERYIMAGE_ARGS) \
                  $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_RECOVERY_MKBOOTIMG_ARGS) \
                  --output $(1))
   $(if $(filter true,$(PRODUCT_SUPPORTS_BOOT_SIGNER)),\
