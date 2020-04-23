@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fd651f92_636484af",
+        "filename": "core/java_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-04-23T23:08:55Z",
+      "side": 1,
+      "message": "Yes.",
+      "parentUuid": "973789b1_b43d4261",
+      "range": {
+        "startLine": 385,
+        "startChar": 0,
+        "endLine": 385,
+        "endChar": 80
+      },
+      "revId": "bcb27d9b2645d99c1a0d7155acbfec868c315a70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "540b8737_900bb325",
         "filename": "core/java_common.mk",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2020-04-23T21:18:23Z",
       "side": 1,
       "message": "Also, more a question for the build team experts:\n\nIn an effort to prevent line 385 here \u0026 line 898 in base_rules.mk from getting out of sync, should we replace this ifneq combination of RECORD_ALL_DEPS \u0026 deps-license with a single .KATI_READONLY variable or function? Where that variable/function would be the \"source of truth\" for when to update ALL_DEPS.",
+      "range": {
+        "startLine": 387,
+        "startChar": 0,
+        "endLine": 387,
+        "endChar": 5
+      },
+      "revId": "bcb27d9b2645d99c1a0d7155acbfec868c315a70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b42d8c3_c7a8565d",
+        "filename": "core/java_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-04-23T23:08:55Z",
+      "side": 1,
+      "message": "I am not a kati/make expert, but I wonder if an ifdef would be faster than this pair of filters. Seems like it would be (but maybe hard to measure).",
+      "parentUuid": "540b8737_900bb325",
       "range": {
         "startLine": 387,
         "startChar": 0,
