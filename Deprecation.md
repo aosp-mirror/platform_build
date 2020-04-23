@@ -14,21 +14,21 @@ have any problems converting, please contact us via:
 
 | Module type                      | State     |
 | -------------------------------- | --------- |
-| `BUILD_AUX_EXECUTABLE`           | Error     |
-| `BUILD_AUX_STATIC_LIBRARY`       | Error     |
+| `BUILD_AUX_EXECUTABLE`           | Obsolete  |
+| `BUILD_AUX_STATIC_LIBRARY`       | Obsolete  |
 | `BUILD_COPY_HEADERS`             | Error     |
 | `BUILD_HOST_EXECUTABLE`          | Error     |
-| `BUILD_HOST_FUZZ_TEST`           | Error     |
-| `BUILD_HOST_NATIVE_TEST`         | Error     |
+| `BUILD_HOST_FUZZ_TEST`           | Obsolete  |
+| `BUILD_HOST_NATIVE_TEST`         | Obsolete  |
 | `BUILD_HOST_SHARED_LIBRARY`      | Error     |
-| `BUILD_HOST_SHARED_TEST_LIBRARY` | Error     |
+| `BUILD_HOST_SHARED_TEST_LIBRARY` | Obsolete  |
 | `BUILD_HOST_STATIC_LIBRARY`      | Error     |
-| `BUILD_HOST_STATIC_TEST_LIBRARY` | Error     |
-| `BUILD_HOST_TEST_CONFIG`         | Error     |
-| `BUILD_NATIVE_BENCHMARK`         | Error     |
-| `BUILD_SHARED_TEST_LIBRARY`      | Error     |
-| `BUILD_STATIC_TEST_LIBRARY`      | Error     |
-| `BUILD_TARGET_TEST_CONFIG`       | Error     |
+| `BUILD_HOST_STATIC_TEST_LIBRARY` | Obsolete  |
+| `BUILD_HOST_TEST_CONFIG`         | Obsolete  |
+| `BUILD_NATIVE_BENCHMARK`         | Obsolete  |
+| `BUILD_SHARED_TEST_LIBRARY`      | Obsolete  |
+| `BUILD_STATIC_TEST_LIBRARY`      | Obsolete  |
+| `BUILD_TARGET_TEST_CONFIG`       | Obsolete  |
 | `BUILD_*`                        | Available |
 
 ## Module Type Deprecation Process
