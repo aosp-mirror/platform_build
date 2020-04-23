@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d5b6277d_db049d18",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1371486
+      },
+      "writtenOn": "2020-04-23T11:20:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d4afd479_02de9ce5",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 17
+      },
+      "revId": "de9715a19996fee8f27e2fe1a7e1483ecfff8b23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0844546_b61e8f58",
         "filename": "core/product.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2020-04-22T10:54:25Z",
       "side": 1,
       "message": "I\u0027d change this to:\n\n  # Additional system server jars to be appended at the end of the common list.\n  # This is necessary to avoid jars reordering due to makefile inheritance order.\n\n(this variable may be useful for some AOSP products as well).",
+      "range": {
+        "startLine": 243,
+        "startChar": 0,
+        "endLine": 244,
+        "endChar": 65
+      },
+      "revId": "de9715a19996fee8f27e2fe1a7e1483ecfff8b23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bb3fd70_f4dbf32b",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1371486
+      },
+      "writtenOn": "2020-04-23T11:20:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0844546_b61e8f58",
       "range": {
         "startLine": 243,
         "startChar": 0,
