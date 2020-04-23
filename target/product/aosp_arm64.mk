@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+
 # The system image of aosp_arm64-userdebug is a GSI for the devices with:
 # - ARM 64 bits user space
 # - 64 bits binder interface
