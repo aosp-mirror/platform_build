@@ -88,6 +88,24 @@
       "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5baf4f31_2af842e6",
+        "filename": "core/soong_droiddoc_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2020-04-24T08:53:34Z",
+      "side": 0,
+      "message": "This change was made as part of https://r.android.com/1281665.\n\nThe purpose of this code was to ensure that even when stubs are not being generated that you can use \"m module-lib-api\" to build the target. Without this you end up with a situation when \"m module-lib-api\" fails claiming that the target does not exist which is really confusing and useless. That would also apply to any module that uses \"framework-module-api-defaults-module_libs_api\".\n\nReplacing this with LOCAL_PLATFORM_API_FILE and clearing it would also work as long as the androidmk code that sets this property is also changed to match.",
+      "parentUuid": "a3abd804_622d3a68",
+      "revId": "1bc7f6436bd6ea203572b15d46c0293692e19853",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
