@@ -731,16 +731,24 @@ def AddImagesToTargetFiles(filename):
   boot_image = None
   if has_boot:
     banner("boot")
-    # common.GetBootableImage() returns the image directly if present.
-    boot_image = common.GetBootableImage(
-        "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
-    # boot.img may be unavailable in some targets (e.g. aosp_arm64).
-    if boot_image:
-      partitions['boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES", "boot.img")
-      if not os.path.exists(partitions['boot']):
-        boot_image.WriteToDir(OPTIONS.input_tmp)
-        if output_zip:
-          boot_image.AddToZip(output_zip)
+    boot_images = OPTIONS.info_dict.get("boot_images")
+    if boot_images is None:
+      boot_images = "boot.img"
+    for b in boot_images.split():
+      # common.GetBootableImage() returns the image directly if present.
+      boot_image = common.GetBootableImage(
+          "IMAGES/" + b, b, OPTIONS.input_tmp, "BOOT")
+      # boot.img may be unavailable in some targets (e.g. aosp_arm64).
+      if boot_image:
+        boot_image_path = os.path.join(OPTIONS.input_tmp, "IMAGES", b)
+        # vbmeta does not need to include boot.img with multiple boot.img files,
+        # which is only used for aosp_arm64 for GKI
+        if len(boot_images.split()) == 1:
+          partitions['boot'] = boot_image_path
+        if not os.path.exists(boot_image_path):
+          boot_image.WriteToDir(OPTIONS.input_tmp)
+          if output_zip:
+            boot_image.AddToZip(output_zip)
 
   if has_vendor_boot:
     banner("vendor_boot")
