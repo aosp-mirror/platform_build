@@ -55,6 +55,8 @@ endif
 include build/make/target/board/BoardConfigGsiCommon.mk
 include build/make/target/board/BoardConfigEmuCommon.mk
 
+BOARD_EXT4_SHARE_DUP_BLOCKS := true
+
 TARGET_NO_KERNEL := false
 TARGET_NO_VENDOR_BOOT := true
 BOARD_USES_RECOVERY_AS_BOOT := true
