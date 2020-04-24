@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ff3cf90_e6a8a30c",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 812,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-04-24T15:47:57Z",
+      "side": 1,
+      "message": "We usually indent conditionals by 2 spaces",
+      "range": {
+        "startLine": 812,
+        "startChar": 0,
+        "endLine": 812,
+        "endChar": 4
+      },
+      "revId": "3eaa0fda4a7864921fd9da12cf081d820f21da5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a8c0dc4_baf25ac9",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-04-24T15:47:57Z",
+      "side": 1,
+      "message": "It should alphabetize between these two (letters after _).",
+      "range": {
+        "startLine": 195,
+        "startChar": 0,
+        "endLine": 196,
+        "endChar": 19
+      },
+      "revId": "3eaa0fda4a7864921fd9da12cf081d820f21da5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
