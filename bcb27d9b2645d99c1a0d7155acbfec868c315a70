@@ -117,6 +117,30 @@
       "revId": "bcb27d9b2645d99c1a0d7155acbfec868c315a70",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffd06a52_4588d310",
+        "filename": "core/java_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-04-24T22:58:51Z",
+      "side": 1,
+      "message": "Good suggestions Daniel and Colin. I like this approach much better.",
+      "parentUuid": "df048c0b_00d31053",
+      "range": {
+        "startLine": 387,
+        "startChar": 0,
+        "endLine": 387,
+        "endChar": 5
+      },
+      "revId": "bcb27d9b2645d99c1a0d7155acbfec868c315a70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
