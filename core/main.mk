@@ -1171,7 +1171,7 @@ ifdef FULL_BUILD
   static_whitelist_patterns += %__auto_generated_rro_product.apk
   static_whitelist_patterns += %__auto_generated_rro_vendor.apk
   # Auto-included targets are not considered
-  static_whitelist_patterns += $(call module-installed-files,$(call auto-included-modules))
+  static_whitelist_patterns += $(call product-installed-files,)
   # $(PRODUCT_OUT)/apex is where shared libraries in APEXes get installed.
   # The path can be considered as a fake path, as the shared libraries
   # are installed there just to have symbols files for them under
