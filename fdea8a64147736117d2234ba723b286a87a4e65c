@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "8971fffd_9d396639",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-24T12:09:09Z",
+      "side": 1,
+      "message": "I don\u0027t have the idea about simpler way yet..\nWDYT?",
+      "parentUuid": "0b3a3ec8_5c8ca035",
+      "range": {
+        "startLine": 1201,
+        "startChar": 0,
+        "endLine": 1263,
+        "endChar": 146
+      },
+      "revId": "fdea8a64147736117d2234ba723b286a87a4e65c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e1b5397a_4681c97a",
         "filename": "core/product.mk",
         "patchSetId": 2
@@ -96,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "ffb99a92_748bc467",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-24T12:09:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e1b5397a_4681c97a",
+      "range": {
+        "startLine": 436,
+        "startChar": 7,
+        "endLine": 436,
+        "endChar": 32
+      },
+      "revId": "fdea8a64147736117d2234ba723b286a87a4e65c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "19e103ac_c2a96101",
         "filename": "core/product.mk",
         "patchSetId": 2
@@ -116,6 +164,30 @@
       "revId": "fdea8a64147736117d2234ba723b286a87a4e65c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "986f7153_9a5b8777",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-24T12:09:09Z",
+      "side": 1,
+      "message": "renamed to ARTIFACT_PATH_EXTENSIBLE to keep require-artifacts-in-path behavior.",
+      "parentUuid": "19e103ac_c2a96101",
+      "range": {
+        "startLine": 440,
+        "startChar": 32,
+        "endLine": 440,
+        "endChar": 73
+      },
+      "revId": "fdea8a64147736117d2234ba723b286a87a4e65c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
