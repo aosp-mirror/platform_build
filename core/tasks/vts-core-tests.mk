@@ -28,9 +28,4 @@ $(compatibility_zip): $(vts_test_artifact_paths)
 vts: $(compatibility_zip)
 $(call dist-for-goals, vts, $(compatibility_zip))
 
-# TODO(b/149249068): Remove vts-core phony target after it's removed from all
-# builders.
-.PHONY: vts-core
-vts-core: vts
-
 tests: vts
