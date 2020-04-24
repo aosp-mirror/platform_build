@@ -93,6 +93,30 @@
       "revId": "bcb27d9b2645d99c1a0d7155acbfec868c315a70",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df048c0b_00d31053",
+        "filename": "core/java_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-04-24T21:28:42Z",
+      "side": 1,
+      "message": "You could add to config.mk:\n\n  RECORD_ALL_DEPS :\u003d$\u003d $(filter true,$(RECORD_ALL_DEPS))$(filter deps-license,$(MAKECMDGOALS))\n\nThat should make RECORD_ALL_DEPS read only and non-empty only in the appropriate cases, and then use ifdef RECORD_ALL_DEPS in both places.  I wouldn\u0027t expect that to have a noticeable affect on runtime, but it will at least help them stay consistent.",
+      "parentUuid": "4b42d8c3_c7a8565d",
+      "range": {
+        "startLine": 387,
+        "startChar": 0,
+        "endLine": 387,
+        "endChar": 5
+      },
+      "revId": "bcb27d9b2645d99c1a0d7155acbfec868c315a70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
