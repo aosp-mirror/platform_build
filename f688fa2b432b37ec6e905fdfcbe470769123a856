@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "f46d4971_1117f78c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-24T05:10:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f669b7d1_0466a007",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 9
+      },
+      "revId": "f688fa2b432b37ec6e905fdfcbe470769123a856",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ff7e0fe_fd3fc29f",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "675cd6c0_2412d614",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-24T05:10:49Z",
+      "side": 1,
+      "message": "/system enforcement works properly.",
+      "parentUuid": "8ff7e0fe_fd3fc29f",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 25
+      },
+      "revId": "f688fa2b432b37ec6e905fdfcbe470769123a856",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e33e71a5_94230500",
         "filename": "core/main.mk",
         "patchSetId": 1
@@ -92,6 +140,30 @@
       "revId": "f688fa2b432b37ec6e905fdfcbe470769123a856",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68bbaaa7_afa70f5d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1176,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-24T05:10:49Z",
+      "side": 1,
+      "message": "only $(TARGET_OUT_FAKE)/% is necessary. aosp/1293983",
+      "parentUuid": "e33e71a5_94230500",
+      "range": {
+        "startLine": 1176,
+        "startChar": 2,
+        "endLine": 1176,
+        "endChar": 88
+      },
+      "revId": "f688fa2b432b37ec6e905fdfcbe470769123a856",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
