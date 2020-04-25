@@ -35,6 +35,10 @@ Usage:  sign_apex [flags] input_apex_file output_apex_file
   -e  (--extra_apks)  <name,name,...=key>
       Add extra APK name/key pairs. This is useful to sign the apk files in the
       apex payload image.
+
+  --codename_to_api_level_map Q:29,R:30,...
+      A Mapping of codename to api level.  This is useful to provide sdk targeting
+      information to APK Signer.
 """
 
 import logging
@@ -48,7 +52,7 @@ logger = logging.getLogger(__name__)
 
 
 def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
-                 apk_keys=None, signing_args=None):
+                 apk_keys=None, signing_args=None, codename_to_api_level_map=None):
   """Signs the given apex file."""
   with open(apex_file, 'rb') as input_fp:
     apex_data = input_fp.read()
@@ -59,7 +63,7 @@ def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
       payload_key=payload_key,
       container_key=container_key,
       container_pw=None,
-      codename_to_api_level_map=None,
+      codename_to_api_level_map=codename_to_api_level_map,
       no_hashtree=no_hashtree,
       apk_keys=apk_keys,
       signing_args=signing_args)
@@ -82,6 +86,13 @@ def main(argv):
       options['payload_key'] = a
     elif o == '--payload_extra_args':
       options['payload_extra_args'] = a
+    elif o == '--codename_to_api_level_map':
+      versions = a.split(",")
+      for v in versions:
+        key, value = v.split(":")
+        if 'codename_to_api_level_map' not in options:
+          options['codename_to_api_level_map'] = {}
+        options['codename_to_api_level_map'].update({key: value})
     elif o in ("-e", "--extra_apks"):
       names, key = a.split("=")
       names = names.split(",")
@@ -98,6 +109,7 @@ def main(argv):
       extra_opts='e:',
       extra_long_opts=[
           'avbtool=',
+          'codename_to_api_level_map=',
           'container_key=',
           'payload_extra_args=',
           'payload_key=',
@@ -119,7 +131,9 @@ def main(argv):
       options['container_key'],
       no_hashtree=False,
       apk_keys=options.get('extra_apks', {}),
-      signing_args=options.get('payload_extra_args'))
+      signing_args=options.get('payload_extra_args'),
+      codename_to_api_level_map=options.get(
+          'codename_to_api_level_map', {}))
   shutil.copyfile(signed_apex, args[1])
   logger.info("done.")
 
