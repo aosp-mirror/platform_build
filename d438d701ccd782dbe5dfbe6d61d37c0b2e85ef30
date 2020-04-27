@@ -70,6 +70,24 @@
       "revId": "d438d701ccd782dbe5dfbe6d61d37c0b2e85ef30",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57becbe1_1fd36b66",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-04-27T20:05:25Z",
+      "side": 1,
+      "message": "Something like this? I\u0027m sure there\u0027s room for improvements here, I\u0027m not sure the standard way of writing to a build log like this (that isn\u0027t a build target), so please let me know.\n\nThis results in only one line added to the main build log.",
+      "parentUuid": "f945fe6f_96d33eb4",
+      "revId": "d438d701ccd782dbe5dfbe6d61d37c0b2e85ef30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
