@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "de96fba5_d3c7cda0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-27T02:55:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "255f1fcb_b106af3d",
+      "range": {
+        "startLine": 7,
+        "startChar": 16,
+        "endLine": 7,
+        "endChar": 26
+      },
+      "revId": "fede29a2073bbad164546c384de60a9c56088537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "82c9194b_aa85e4e6",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "fede29a2073bbad164546c384de60a9c56088537",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "303956d4_1ee6b972",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-27T02:55:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82c9194b_aa85e4e6",
+      "range": {
+        "startLine": 9,
+        "startChar": 64,
+        "endLine": 9,
+        "endChar": 68
+      },
+      "revId": "fede29a2073bbad164546c384de60a9c56088537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "af981200_5e4022cc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-27T02:55:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a4a498b5_c52ade83",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 79
+      },
+      "revId": "fede29a2073bbad164546c384de60a9c56088537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ced38fcc_b98f8ee1",
         "filename": "core/local_systemsdk.mk",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "f26e00fc_b30cbb46",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-27T02:55:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ced38fcc_b98f8ee1",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 84
+      },
+      "revId": "fede29a2073bbad164546c384de60a9c56088537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4086d14a_0116cf5c",
         "filename": "core/local_systemsdk.mk",
         "patchSetId": 1
@@ -114,6 +210,30 @@
       "revId": "fede29a2073bbad164546c384de60a9c56088537",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43b5351e_bf4581e9",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-27T02:55:05Z",
+      "side": 1,
+      "message": "I think it could be still valid in the context of declaring overlayable both in framework and apps. (b/155027019)",
+      "parentUuid": "4086d14a_0116cf5c",
+      "range": {
+        "startLine": 34,
+        "startChar": 12,
+        "endLine": 34,
+        "endChar": 53
+      },
+      "revId": "fede29a2073bbad164546c384de60a9c56088537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
