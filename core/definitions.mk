@@ -95,7 +95,6 @@ ANDROID_RESOURCE_GENERATED_CLASSES := 'R.class' 'R$$*.class' 'Manifest.class' 'M
 
 # Display names for various build targets
 TARGET_DISPLAY := target
-AUX_DISPLAY := aux
 HOST_DISPLAY := host
 HOST_CROSS_DISPLAY := host cross
 
@@ -510,23 +509,18 @@ define reverse-list
 $(if $(1),$(call reverse-list,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
 endef
 
-define def-host-aux-target
-$(eval _idf_val_:=$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST,$(if $(strip $(LOCAL_IS_AUX_MODULE)),AUX,))) \
-$(_idf_val_)
-endef
-
 ###########################################################
 ## Returns correct _idfPrefix from the list:
-##   { HOST, HOST_CROSS, AUX, TARGET }
+##   { HOST, HOST_CROSS, TARGET }
 ###########################################################
 # the following rules checked in order:
-# ($1 is in {AUX, HOST_CROSS} => $1;
+# ($1 is in {HOST_CROSS} => $1;
 # ($1 is empty) => TARGET;
 # ($2 is not empty) => HOST_CROSS;
 # => HOST;
 define find-idf-prefix
 $(strip \
-    $(eval _idf_pfx_:=$(strip $(filter AUX HOST_CROSS,$(1)))) \
+    $(eval _idf_pfx_:=$(strip $(filter HOST_CROSS,$(1)))) \
     $(eval _idf_pfx_:=$(if $(strip $(1)),$(if $(_idf_pfx_),$(_idf_pfx_),$(if $(strip $(2)),HOST_CROSS,HOST)),TARGET)) \
     $(_idf_pfx_)
 )
@@ -542,7 +536,7 @@ endef
 
 # $(1): target class, like "APPS"
 # $(2): target name, like "NotePad"
-# $(3): { HOST, HOST_CROSS, AUX, <empty (TARGET)>, <other non-empty (HOST)> }
+# $(3): { HOST, HOST_CROSS, <empty (TARGET)>, <other non-empty (HOST)> }
 # $(4): if non-empty, force the intermediates to be COMMON
 # $(5): if non-empty, force the intermediates to be for the 2nd arch
 # $(6): if non-empty, force the intermediates to be for the host cross os
@@ -579,7 +573,7 @@ $(strip \
         $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-intermediates-dir)) \
     $(if $(strip $(LOCAL_MODULE)),, \
         $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-intermediates-dir)) \
-    $(call intermediates-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(call def-host-aux-target),$(1),$(2),$(3)) \
+    $(call intermediates-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST),$(1),$(2),$(3)) \
 )
 endef
 
@@ -594,7 +588,7 @@ endef
 
 # $(1): target class, like "APPS"
 # $(2): target name, like "NotePad"
-# $(3): { HOST, HOST_CROSS, AUX, <empty (TARGET)>, <other non-empty (HOST)> }
+# $(3): { HOST, HOST_CROSS, <empty (TARGET)>, <other non-empty (HOST)> }
 # $(4): if non-empty, force the generated sources to be COMMON
 define generated-sources-dir-for
 $(strip \
@@ -624,7 +618,7 @@ $(strip \
         $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-generated-sources-dir)) \
     $(if $(strip $(LOCAL_MODULE)),, \
         $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-generated-sources-dir)) \
-    $(call generated-sources-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(call def-host-aux-target),$(1)) \
+    $(call generated-sources-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST),$(1)) \
 )
 endef
 
@@ -1499,89 +1493,6 @@ $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
 $(hide) mv -f $@.tmp $@
 endef
 
-# $(1): the full path of the source static library.
-# $(2): the full path of the destination static library.
-define _extract-and-include-single-aux-whole-static-lib
-$(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
-    rm -rf $$ldir; \
-    mkdir -p $$ldir; \
-    cp $(1) $$ldir; \
-    lib_to_include=$$ldir/$(notdir $(1)); \
-    filelist=; \
-    subdir=0; \
-    for f in `$(PRIVATE_AR) t $(1)`; do \
-        if [ -e $$ldir/$$f ]; then \
-            mkdir $$ldir/$$subdir; \
-            ext=$$subdir/; \
-            subdir=$$((subdir+1)); \
-            $(PRIVATE_AR) m $$lib_to_include $$f; \
-        else \
-            ext=; \
-        fi; \
-        $(PRIVATE_AR) p $$lib_to_include $$f > $$ldir/$$ext$$f; \
-        filelist="$$filelist $$ldir/$$ext$$f"; \
-    done ; \
-    $(PRIVATE_AR) $(AUX_GLOBAL_ARFLAGS) $(2) $$filelist
-
-endef
-
-define extract-and-include-aux-whole-static-libs
-$(call extract-and-include-whole-static-libs-first, $(firstword $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)),$(1))
-$(foreach lib,$(wordlist 2,999,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)), \
-    $(call _extract-and-include-single-aux-whole-static-lib, $(lib), $(1)))
-endef
-
-# Explicitly delete the archive first so that ar doesn't
-# try to add to an existing archive.
-define transform-o-to-aux-static-lib
-@echo "$($(PRIVATE_PREFIX)DISPLAY) StaticLib: $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-@rm -f $@ $@.tmp
-$(call extract-and-include-aux-whole-static-libs,$@.tmp)
-$(call split-long-arguments,$(PRIVATE_AR) \
-    $(AUX_GLOBAL_ARFLAGS) $@.tmp,$(PRIVATE_ALL_OBJECTS))
-$(hide) mv -f $@.tmp $@
-endef
-
-define transform-o-to-aux-executable-inner
-$(hide) $(PRIVATE_CXX_LINK) -pie \
-  -Bdynamic \
-  -Wl,--gc-sections \
-  $(PRIVATE_ALL_OBJECTS) \
-  -Wl,--whole-archive \
-  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-  -Wl,--no-whole-archive \
-  $(PRIVATE_ALL_STATIC_LIBRARIES) \
-  $(PRIVATE_LDFLAGS) \
-  -o $@
-endef
-
-define transform-o-to-aux-executable
-@echo "$(AUX_DISPLAY) Executable: $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-$(transform-o-to-aux-executable-inner)
-endef
-
-define transform-o-to-aux-static-executable-inner
-$(hide) $(PRIVATE_CXX_LINK) \
-  -Bstatic \
-  -Wl,--gc-sections \
-  $(PRIVATE_ALL_OBJECTS) \
-  -Wl,--whole-archive \
-  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-  -Wl,--no-whole-archive \
-  $(PRIVATE_ALL_STATIC_LIBRARIES) \
-  $(PRIVATE_LDFLAGS) \
-  -Wl,-Map=$(@).map \
-  -o $@
-endef
-
-define transform-o-to-aux-static-executable
-@echo "$(AUX_DISPLAY) StaticExecutable: $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-$(transform-o-to-aux-static-executable-inner)
-endef
-
 ###########################################################
 ## Commands for running host ar
 ###########################################################
@@ -2093,7 +2004,7 @@ $(if $(PRIVATE_JAR_PACKAGES), \
 $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
     $(foreach pkg, $(PRIVATE_JAR_EXCLUDE_PACKAGES), \
         $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))))
-$(hide) $(JAR) -cf $@ $(call jar-args-sorted-files-in-directory,$(PRIVATE_CLASS_INTERMEDIATES_DIR))
+$(hide) $(SOONG_ZIP) -jar -o $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) -D $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
