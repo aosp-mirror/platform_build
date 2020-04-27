@@ -22,6 +22,30 @@
       "revId": "07a44f48dcd0825cd3105b7395744da678199b08",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de78eed3_1f089c6f",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-04-27T13:56:23Z",
+      "side": 1,
+      "message": "This exemption is necessary only if RRO refers/uses\n 1. @hide marked frameworks resource defined in public.xml\n 2. resources of the target app which uses hidden API(because of link type check even though RRO doesn\u0027t contain any code)\n\nWhat I plan to do roughly is\n 1. check if there is really usage of framework\u0027s @hide resource from RRO.\n 2. support @SystemApi or @hide in public.xml of an arbitrary app which exports their resource as java_sdk_library does for java library.\n\nAfter two things are done, I think we can delete this exemption. Does it make sense?",
+      "parentUuid": "dcd43e73_d06ee9e7",
+      "range": {
+        "startLine": 34,
+        "startChar": 12,
+        "endLine": 34,
+        "endChar": 43
+      },
+      "revId": "07a44f48dcd0825cd3105b7395744da678199b08",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
