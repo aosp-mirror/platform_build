@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "255f1fcb_b106af3d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-04-27T01:11:36Z",
+      "side": 1,
+      "message": "typo: restriction",
+      "range": {
+        "startLine": 7,
+        "startChar": 16,
+        "endLine": 7,
+        "endChar": 26
+      },
+      "revId": "fede29a2073bbad164546c384de60a9c56088537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82c9194b_aa85e4e6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-04-27T01:11:36Z",
+      "side": 1,
+      "message": "missing period(.)",
+      "range": {
+        "startLine": 9,
+        "startChar": 64,
+        "endLine": 9,
+        "endChar": 68
+      },
+      "revId": "fede29a2073bbad164546c384de60a9c56088537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4a498b5_c52ade83",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-04-27T01:11:36Z",
+      "side": 1,
+      "message": "max 70 characters in a line.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 79
+      },
+      "revId": "fede29a2073bbad164546c384de60a9c56088537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ced38fcc_b98f8ee1",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-04-27T01:11:36Z",
+      "side": 1,
+      "message": "Can we update the comment for product partition enforcement?",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 84
+      },
+      "revId": "fede29a2073bbad164546c384de60a9c56088537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4086d14a_0116cf5c",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-04-27T01:11:36Z",
+      "side": 1,
+      "message": "Do we still need this? As it is decided that the framework resources will not be the systemAPI in b/35859726?",
+      "range": {
+        "startLine": 34,
+        "startChar": 12,
+        "endLine": 34,
+        "endChar": 53
+      },
+      "revId": "fede29a2073bbad164546c384de60a9c56088537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
