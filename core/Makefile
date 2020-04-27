@@ -3523,7 +3523,11 @@ $(if $(BOARD_AVB_$(call to-upper,$(1))_KEY_PATH),\
 endef
 
 ifdef INSTALLED_BOOTIMAGE_TARGET
+# multiple hashes for an image are not yet supported, fortunately this
+# only arises for GKI where the boot descriptor can be left out
+ifeq ($(strip $(BOARD_KERNEL_BINARIES)),)
 $(eval $(call check-and-set-avb-args,boot))
+endif
 endif
 
 ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
@@ -4180,6 +4184,8 @@ ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
 endif
 ifeq ($(INSTALLED_BOOTIMAGE_TARGET),)
 	$(hide) echo "no_boot=true" >> $@
+else
+	echo "boot_images=$(foreach b,$(INSTALLED_BOOTIMAGE_TARGET),$(notdir $(b)))" >> $@
 endif
 ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	echo "vendor_boot=true" >> $@

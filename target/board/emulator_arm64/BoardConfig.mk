@@ -1,4 +1,4 @@
-# Copyright (C) 2018 The Android Open Source Project
+# Copyright (C) 2020 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,29 +53,25 @@ TARGET_2ND_CPU_VARIANT := generic
 endif
 
 include build/make/target/board/BoardConfigGsiCommon.mk
-
-BOARD_EXT4_SHARE_DUP_BLOCKS := true
+include build/make/target/board/BoardConfigEmuCommon.mk
 
 TARGET_NO_KERNEL := false
-TARGET_NO_VENDOR_BOOT := true
+TARGET_NO_VENDOR_BOOT := false
 BOARD_USES_RECOVERY_AS_BOOT := true
 
-BOARD_BOOTIMAGE_PARTITION_SIZE := 0x04000000
+BOARD_BOOTIMAGE_PARTITION_SIZE := 0x02000000
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 
 BOARD_BOOT_HEADER_VERSION := 3
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 
-BOARD_KERNEL_BINARIES := kernel-5.4 kernel-5.4-gz kernel-5.4-lz4
-
-# Some vendors still haven't cleaned up all device specific directories under
-# root!
-
-# TODO(b/111434759, b/111287060) SoC specific hacks
-BOARD_ROOT_EXTRA_SYMLINKS += /vendor/lib/dsp:/dsp
-BOARD_ROOT_EXTRA_SYMLINKS += /mnt/vendor/persist:/persist
-BOARD_ROOT_EXTRA_SYMLINKS += /vendor/firmware_mnt:/firmware
-
-# TODO(b/36764215): remove this setting when the generic system image
-# no longer has QCOM-specific directories under /.
-BOARD_SEPOLICY_DIRS += build/make/target/board/generic_arm64/sepolicy
+# Wifi.
+BOARD_WLAN_DEVICE           := emulator
+BOARD_HOSTAPD_DRIVER        := NL80211
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_simulated
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_simulated
+WPA_SUPPLICANT_VERSION      := VER_0_8_X
+WIFI_DRIVER_FW_PATH_PARAM   := "/dev/null"
+WIFI_DRIVER_FW_PATH_STA     := "/dev/null"
+WIFI_DRIVER_FW_PATH_AP      := "/dev/null"
