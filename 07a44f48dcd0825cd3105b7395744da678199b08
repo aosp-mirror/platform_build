@@ -46,6 +46,30 @@
       "revId": "07a44f48dcd0825cd3105b7395744da678199b08",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f00d79d5_9862e44d",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-27T14:28:42Z",
+      "side": 1,
+      "message": "ok, sgtm",
+      "parentUuid": "de78eed3_1f089c6f",
+      "range": {
+        "startLine": 34,
+        "startChar": 12,
+        "endLine": 34,
+        "endChar": 43
+      },
+      "revId": "07a44f48dcd0825cd3105b7395744da678199b08",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
