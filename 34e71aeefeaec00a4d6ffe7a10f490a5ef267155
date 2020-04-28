@@ -22,6 +22,30 @@
       "revId": "34e71aeefeaec00a4d6ffe7a10f490a5ef267155",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4bcacc2_7def4afd",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2020-04-28T19:05:52Z",
+      "side": 1,
+      "message": "My concern here was to make sure that the fingerprint calculated on-target and by the OTA scripts match. If we have a partition in the default source order in one and not the other, then we risk calculating a mismatched fingerprint. However, you are correct, this could then generate an incorrect fingerprint when parsing an older target-files package containing a product_services partition.\n\nIf we want to ensure correctness, I think we need two sets of default source orders, one for Android 10, and one for Current, and select the appropriate one based on version properties in build.prop.\n\nExactly what we should do here depends on the importance of:\na) Having the fingerprint logic in this code and in init match exactly\nb) Generating correct fingerprints for all target files packages processed using this version of releasetools\nc) Simplicity of implementation\n\nI\u0027d propose that (a) is a must. If (b) is also a must, then I can revert back to checking build.prop for version properties, and using that to select the right value for _DEFAULT_SOURCE_ORDER.",
+      "parentUuid": "701cbf5c_08aa5d70",
+      "range": {
+        "startLine": 345,
+        "startChar": 7,
+        "endLine": 345,
+        "endChar": 23
+      },
+      "revId": "34e71aeefeaec00a4d6ffe7a10f490a5ef267155",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
