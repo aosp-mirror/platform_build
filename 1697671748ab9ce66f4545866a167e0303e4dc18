@@ -22,6 +22,75 @@
       "revId": "1697671748ab9ce66f4545866a167e0303e4dc18",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af409994_2c1f1fbd",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-04-28T23:02:02Z",
+      "side": 1,
+      "message": "prop_val is not None?\n\ncan prop_val be an empty string? (e.g. it is in partition_props in L422 but it is empty)",
+      "range": {
+        "startLine": 437,
+        "startChar": 4,
+        "endLine": 437,
+        "endChar": 16
+      },
+      "revId": "1697671748ab9ce66f4545866a167e0303e4dc18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b87ae1b7_8418ffe0",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-04-28T23:02:02Z",
+      "side": 1,
+      "message": "Looks like the order is changed here. Is it intentional?",
+      "range": {
+        "startLine": 444,
+        "startChar": 0,
+        "endLine": 449,
+        "endChar": 50
+      },
+      "revId": "1697671748ab9ce66f4545866a167e0303e4dc18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82da2f89_20bd82eb",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-04-28T23:02:02Z",
+      "side": 1,
+      "message": "nit: staticmethod and omit cls? You don\u0027t seem to be using cls here...",
+      "range": {
+        "startLine": 724,
+        "startChar": 2,
+        "endLine": 725,
+        "endChar": 24
+      },
+      "revId": "1697671748ab9ce66f4545866a167e0303e4dc18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
