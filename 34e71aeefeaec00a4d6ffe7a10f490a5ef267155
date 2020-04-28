@@ -46,6 +46,30 @@
       "revId": "34e71aeefeaec00a4d6ffe7a10f490a5ef267155",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f88bd2f_c8c450d3",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-04-28T19:28:49Z",
+      "side": 1,
+      "message": "I thought we might use git_master tools for R, but not for Q. But then I realized it sometimes happens for incremental packages. Like we do a p-\u003eR update. In that case, the fingerprint in the source build is still useful to match pre update fingerprint.\n\nThough my main concern is this code doesn\u0027t use the fingerprint in product_services at all, so it\u0027s possible to gives the wrong fingerprint after android 10? Or we just assume it\u0027s embedded in the ro.product.property_source_order. In that case, we need to assert the property exists in R and forward.",
+      "parentUuid": "a4bcacc2_7def4afd",
+      "range": {
+        "startLine": 345,
+        "startChar": 7,
+        "endLine": 345,
+        "endChar": 23
+      },
+      "revId": "34e71aeefeaec00a4d6ffe7a10f490a5ef267155",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
