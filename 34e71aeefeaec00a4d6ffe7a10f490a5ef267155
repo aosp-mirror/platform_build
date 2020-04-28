@@ -142,6 +142,30 @@
       "revId": "34e71aeefeaec00a4d6ffe7a10f490a5ef267155",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eac380e8_5d01a5b2",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2020-04-28T20:59:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0bf609e_cb7083e3",
+      "range": {
+        "startLine": 345,
+        "startChar": 7,
+        "endLine": 345,
+        "endChar": 23
+      },
+      "revId": "34e71aeefeaec00a4d6ffe7a10f490a5ef267155",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
