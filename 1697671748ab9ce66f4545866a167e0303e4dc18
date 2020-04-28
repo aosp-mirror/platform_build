@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae16cfb4_eb9c64e3",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-04-28T20:13:17Z",
+      "side": 1,
+      "message": "I guess the logic is not optimism, e.g. it can be merged with the GetPartitionBuildProp(). As GetPartitionBuildProp right now seems only used in the fingerprint calculation. BUt I don\u0027t plan to touch it in this cl...",
+      "range": {
+        "startLine": 420,
+        "startChar": 6,
+        "endLine": 420,
+        "endChar": 22
+      },
+      "revId": "1697671748ab9ce66f4545866a167e0303e4dc18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
