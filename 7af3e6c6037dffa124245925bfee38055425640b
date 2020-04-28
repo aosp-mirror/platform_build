@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "19bb333d_ff95e76d",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 480,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-04-28T21:17:00Z",
+      "side": 1,
+      "message": "Does git master now reports S for the android version? Or should we use AtLeast instead of equal here. At any rate, these need to be consistent with the init code.",
+      "range": {
+        "startLine": 480,
+        "startChar": 0,
+        "endLine": 480,
+        "endChar": 61
+      },
+      "revId": "7af3e6c6037dffa124245925bfee38055425640b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
