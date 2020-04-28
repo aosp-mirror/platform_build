@@ -118,6 +118,30 @@
       "revId": "34e71aeefeaec00a4d6ffe7a10f490a5ef267155",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0bf609e_cb7083e3",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-04-28T19:46:02Z",
+      "side": 1,
+      "message": "Just an idea, when moving forward, I wonder if we can use some struct or protos that are shared between init and host tools. As it starts getting fragile...",
+      "parentUuid": "02a55480_52188df2",
+      "range": {
+        "startLine": 345,
+        "startChar": 7,
+        "endLine": 345,
+        "endChar": 23
+      },
+      "revId": "34e71aeefeaec00a4d6ffe7a10f490a5ef267155",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
