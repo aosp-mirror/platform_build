@@ -14,31 +14,23 @@
 # limitations under the License.
 #
 
-#
-# All components inherited here go to system image
-#
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
 $(call enforce-product-packages-exist,)
 
-# Enable mainline checking
-PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
-
 PRODUCT_BUILD_CACHE_IMAGE := false
 PRODUCT_BUILD_ODM_IMAGE := false
 PRODUCT_BUILD_PRODUCT_IMAGE  := false
+PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE := false
 PRODUCT_BUILD_RAMDISK_IMAGE := false
 PRODUCT_BUILD_SYSTEM_IMAGE := true
-PRODUCT_BUILD_SYSTEM_EXT_IMAGE := false
 PRODUCT_BUILD_SYSTEM_OTHER_IMAGE := false
 PRODUCT_BUILD_USERDATA_IMAGE := false
 PRODUCT_BUILD_VENDOR_IMAGE := false
 
-PRODUCT_SHIPPING_API_LEVEL := 29
-
-# TODO(b/137033385): change this back to "all"
-PRODUCT_RESTRICT_VENDOR_FILES := owner
-
 PRODUCT_NAME := mainline_system_arm64
 PRODUCT_DEVICE := mainline_arm64
 PRODUCT_BRAND := generic
+PRODUCT_SHIPPING_API_LEVEL := 28
+# TODO(b/137033385): change this back to "all"
+PRODUCT_RESTRICT_VENDOR_FILES := owner

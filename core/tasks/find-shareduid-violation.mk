@@ -24,7 +24,7 @@ $(shareduid_violation_modules_filename): $(INSTALLED_SYSTEMIMAGE_TARGET) \
     $(INSTALLED_USERDATAIMAGE_TARGET) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
-    $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
+    $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
 
 $(shareduid_violation_modules_filename): $(find_shareduid_script)
 $(shareduid_violation_modules_filename): $(AAPT2)

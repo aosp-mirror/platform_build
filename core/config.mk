@@ -93,33 +93,9 @@ $(KATI_obsolete_var \
 $(KATI_obsolete_var DIST_DIR dist_goal,Use dist-for-goals instead. See $(CHANGES_URL)#dist)
 $(KATI_obsolete_var TARGET_ANDROID_FILESYSTEM_CONFIG_H,Use TARGET_FS_CONFIG_GEN instead)
 $(KATI_deprecated_var USER,Use BUILD_USERNAME instead. See $(CHANGES_URL)#USER)
-$(KATI_obsolete_var TARGET_ROOT_OUT_SBIN,/sbin has been removed, use /system/bin instead)
-$(KATI_obsolete_var TARGET_ROOT_OUT_SBIN_UNSTRIPPED,/sbin has been removed, use /system/bin instead)
-$(KATI_obsolete_var BUILD_BROKEN_PHONY_TARGETS)
-$(KATI_obsolete_var BUILD_BROKEN_DUP_COPY_HEADERS)
-$(KATI_obsolete_var BUILD_BROKEN_ENG_DEBUG_TAGS)
-$(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
-$(KATI_obsolete_var BUILD_BROKEN_ANDROIDMK_EXPORTS)
-$(KATI_obsolete_var PRODUCT_STATIC_BOOT_CONTROL_HAL,Use shared library module instead. See $(CHANGES_URL)#PRODUCT_STATIC_BOOT_CONTROL_HAL)
-$(KATI_obsolete_var \
-  ARCH_ARM_HAVE_ARMV7A \
-  ARCH_DSP_REV \
-  ARCH_HAVE_ALIGNED_DOUBLES \
-  ARCH_MIPS_HAS_DSP \
-  ARCH_MIPS_HAS_FPU \
-  ARCH_MIPS_REV6 \
-  ARCH_X86_HAVE_AES_NI \
-  ARCH_X86_HAVE_AVX \
-  ARCH_X86_HAVE_AVX2 \
-  ARCH_X86_HAVE_AVX512 \
-  ARCH_X86_HAVE_MOVBE \
-  ARCH_X86_HAVE_POPCNT \
-  ARCH_X86_HAVE_SSE4 \
-  ARCH_X86_HAVE_SSE4_2 \
-  ARCH_X86_HAVE_SSSE3 \
-)
-$(KATI_obsolete_var PRODUCT_IOT)
-$(KATI_obsolete_var MD5SUM)
+
+# This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
+$(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -129,7 +105,7 @@ ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
 
 UNAME := $(shell uname -sm)
 
-SRC_TARGET_DIR := $(TOPDIR)build/make/target
+SRC_TARGET_DIR := $(TOPDIR)build/target
 
 # Some specific paths to tools
 SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
@@ -138,9 +114,6 @@ SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
 ifdef TARGET_DEVICE_DIR
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
-
-ONE_SHOT_MAKEFILE :=
-.KATI_READONLY := ONE_SHOT_MAKEFILE
 
 # Set up efficient math functions which are used in make.
 # Here since this file is included by envsetup as well as during build.
@@ -160,48 +133,45 @@ include $(BUILD_SYSTEM)/project_definitions.mk
 # Build system internal files
 # ###############################################################
 
-BUILD_COMBOS :=$= $(BUILD_SYSTEM)/combo
+BUILD_COMBOS:= $(BUILD_SYSTEM)/combo
 
-CLEAR_VARS :=$= $(BUILD_SYSTEM)/clear_vars.mk
+CLEAR_VARS:= $(BUILD_SYSTEM)/clear_vars.mk
+BUILD_HOST_STATIC_LIBRARY:= $(BUILD_SYSTEM)/host_static_library.mk
+BUILD_HOST_SHARED_LIBRARY:= $(BUILD_SYSTEM)/host_shared_library.mk
+BUILD_STATIC_LIBRARY:= $(BUILD_SYSTEM)/static_library.mk
+BUILD_HEADER_LIBRARY:= $(BUILD_SYSTEM)/header_library.mk
+BUILD_AUX_STATIC_LIBRARY:= $(BUILD_SYSTEM)/aux_static_library.mk
+BUILD_AUX_EXECUTABLE:= $(BUILD_SYSTEM)/aux_executable.mk
+BUILD_SHARED_LIBRARY:= $(BUILD_SYSTEM)/shared_library.mk
+BUILD_EXECUTABLE:= $(BUILD_SYSTEM)/executable.mk
+BUILD_HOST_EXECUTABLE:= $(BUILD_SYSTEM)/host_executable.mk
+BUILD_PACKAGE:= $(BUILD_SYSTEM)/package.mk
+BUILD_PHONY_PACKAGE:= $(BUILD_SYSTEM)/phony_package.mk
+BUILD_RRO_PACKAGE:= $(BUILD_SYSTEM)/build_rro_package.mk
+BUILD_HOST_PREBUILT:= $(BUILD_SYSTEM)/host_prebuilt.mk
+BUILD_PREBUILT:= $(BUILD_SYSTEM)/prebuilt.mk
+BUILD_MULTI_PREBUILT:= $(BUILD_SYSTEM)/multi_prebuilt.mk
+BUILD_JAVA_LIBRARY:= $(BUILD_SYSTEM)/java_library.mk
+BUILD_STATIC_JAVA_LIBRARY:= $(BUILD_SYSTEM)/static_java_library.mk
+BUILD_HOST_JAVA_LIBRARY:= $(BUILD_SYSTEM)/host_java_library.mk
+BUILD_COPY_HEADERS := $(BUILD_SYSTEM)/copy_headers.mk
+BUILD_NATIVE_TEST := $(BUILD_SYSTEM)/native_test.mk
+BUILD_NATIVE_BENCHMARK := $(BUILD_SYSTEM)/native_benchmark.mk
+BUILD_HOST_NATIVE_TEST := $(BUILD_SYSTEM)/host_native_test.mk
+BUILD_FUZZ_TEST := $(BUILD_SYSTEM)/fuzz_test.mk
+BUILD_HOST_FUZZ_TEST := $(BUILD_SYSTEM)/host_fuzz_test.mk
 
-BUILD_HOST_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/host_static_library.mk
-BUILD_HOST_SHARED_LIBRARY :=$= $(BUILD_SYSTEM)/host_shared_library.mk
-BUILD_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/static_library.mk
-BUILD_HEADER_LIBRARY :=$= $(BUILD_SYSTEM)/header_library.mk
-BUILD_AUX_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/aux_static_library.mk
-BUILD_AUX_EXECUTABLE :=$= $(BUILD_SYSTEM)/aux_executable.mk
-BUILD_SHARED_LIBRARY :=$= $(BUILD_SYSTEM)/shared_library.mk
-BUILD_EXECUTABLE :=$= $(BUILD_SYSTEM)/executable.mk
-BUILD_HOST_EXECUTABLE :=$= $(BUILD_SYSTEM)/host_executable.mk
-BUILD_PACKAGE :=$= $(BUILD_SYSTEM)/package.mk
-BUILD_PHONY_PACKAGE :=$= $(BUILD_SYSTEM)/phony_package.mk
-BUILD_RRO_PACKAGE :=$= $(BUILD_SYSTEM)/build_rro_package.mk
-BUILD_HOST_PREBUILT :=$= $(BUILD_SYSTEM)/host_prebuilt.mk
-BUILD_PREBUILT :=$= $(BUILD_SYSTEM)/prebuilt.mk
-BUILD_MULTI_PREBUILT :=$= $(BUILD_SYSTEM)/multi_prebuilt.mk
-BUILD_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/java_library.mk
-BUILD_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/static_java_library.mk
-BUILD_HOST_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_java_library.mk
-BUILD_COPY_HEADERS :=$= $(BUILD_SYSTEM)/copy_headers.mk
-BUILD_NATIVE_TEST :=$= $(BUILD_SYSTEM)/native_test.mk
-BUILD_NATIVE_BENCHMARK :=$= $(BUILD_SYSTEM)/native_benchmark.mk
-BUILD_HOST_NATIVE_TEST :=$= $(BUILD_SYSTEM)/host_native_test.mk
-BUILD_FUZZ_TEST :=$= $(BUILD_SYSTEM)/fuzz_test.mk
-BUILD_HOST_FUZZ_TEST :=$= $(BUILD_SYSTEM)/host_fuzz_test.mk
+BUILD_SHARED_TEST_LIBRARY := $(BUILD_SYSTEM)/shared_test_lib.mk
+BUILD_HOST_SHARED_TEST_LIBRARY := $(BUILD_SYSTEM)/host_shared_test_lib.mk
+BUILD_STATIC_TEST_LIBRARY := $(BUILD_SYSTEM)/static_test_lib.mk
+BUILD_HOST_STATIC_TEST_LIBRARY := $(BUILD_SYSTEM)/host_static_test_lib.mk
 
-BUILD_SHARED_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/shared_test_lib.mk
-BUILD_HOST_SHARED_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/host_shared_test_lib.mk
-BUILD_STATIC_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/static_test_lib.mk
-BUILD_HOST_STATIC_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/host_static_test_lib.mk
+BUILD_NOTICE_FILE := $(BUILD_SYSTEM)/notice_files.mk
+BUILD_HOST_DALVIK_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_java_library.mk
+BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
 
-BUILD_NOTICE_FILE :=$= $(BUILD_SYSTEM)/notice_files.mk
-BUILD_HOST_DALVIK_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_java_library.mk
-BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
-
-BUILD_HOST_TEST_CONFIG :=$= $(BUILD_SYSTEM)/host_test_config.mk
-BUILD_TARGET_TEST_CONFIG :=$= $(BUILD_SYSTEM)/target_test_config.mk
-
-include $(BUILD_SYSTEM)/deprecation.mk
+BUILD_HOST_TEST_CONFIG := $(BUILD_SYSTEM)/host_test_config.mk
+BUILD_TARGET_TEST_CONFIG := $(BUILD_SYSTEM)/target_test_config.mk
 
 # ###############################################################
 # Parse out any modifier targets.
@@ -334,7 +304,6 @@ endef
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
-include $(BUILD_SYSTEM)/rbe.mk
 endif
 
 ifdef TARGET_PREFER_32_BIT
@@ -474,6 +443,9 @@ endif
 ifneq ($(filter true,$(SOONG_ALLOW_MISSING_DEPENDENCIES)),)
 ALLOW_MISSING_DEPENDENCIES := true
 endif
+ifneq ($(ONE_SHOT_MAKEFILE),)
+ALLOW_MISSING_DEPENDENCIES := true
+endif
 .KATI_READONLY := ALLOW_MISSING_DEPENDENCIES
 
 TARGET_BUILD_APPS_USE_PREBUILT_SDK :=
@@ -486,6 +458,7 @@ endif
 prebuilt_sdk_tools := prebuilts/sdk/tools
 prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
 
+# Always use prebuilts for ckati and makeparallel
 prebuilt_build_tools := prebuilts/build-tools
 prebuilt_build_tools_wrappers := prebuilts/build-tools/common/bin
 prebuilt_build_tools_jars := prebuilts/build-tools/common/framework
@@ -507,12 +480,22 @@ USE_D8 := true
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
 ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
+  AIDL := $(HOST_OUT_EXECUTABLES)/aidl
   AAPT := $(HOST_OUT_EXECUTABLES)/aapt
+  AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
   MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
+  SIGNAPK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
+  SIGNAPK_JNI_LIBRARY_PATH := $(HOST_OUT_SHARED_LIBRARIES)
+  ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign
 
 else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
+  AIDL := $(prebuilt_build_tools_bin)/aidl
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
+  AAPT2 := $(prebuilt_sdk_tools_bin)/aapt2
   MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
+  SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
+  SIGNAPK_JNI_LIBRARY_PATH := $(prebuilt_sdk_tools)/$(HOST_OS)/lib64
+  ZIPALIGN := $(prebuilt_build_tools_bin)/zipalign
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
 
 ifeq (,$(TARGET_BUILD_APPS))
@@ -531,13 +514,14 @@ ACP := $(prebuilt_build_tools_bin)/acp
 CKATI := $(prebuilt_build_tools_bin)/ckati
 DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
 FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
-FILESLIST_UTIL :=$= build/make/tools/fileslist_util.py
 HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
-XMLLINT := $(SOONG_HOST_OUT_EXECUTABLES)/xmllint
-
-# SOONG_ZIP is exported by Soong, but needs to be defined early for
-# $OUT/dexpreopt.global.  It will be verified against the Soong version.
+MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
+SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
+MERGE_ZIPS := $(SOONG_HOST_OUT_EXECUTABLES)/merge_zips
+XMLLINT := $(SOONG_HOST_OUT_EXECUTABLES)/xmllint
+ZIP2ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/zip2zip
+ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
 
 # ---------------------------------------------------------------
 # Generic tools.
@@ -566,6 +550,7 @@ NANOPB_SRCS := $(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
 VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
+BROTLI := $(HOST_OUT_EXECUTABLES)/brotli$(HOST_EXECUTABLE_SUFFIX)
 ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
@@ -583,42 +568,44 @@ AVBTOOL := $(BOARD_CUSTOM_AVBTOOL)
 endif
 APICHECK := $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX)
 FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
+MAKE_EXT4FS := $(HOST_OUT_EXECUTABLES)/mke2fs$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs
 MKE2FS_CONF := system/extras/ext4_utils/mke2fs.conf
+BLK_ALLOC_TO_BASE_FS := $(HOST_OUT_EXECUTABLES)/blk_alloc_to_base_fs$(HOST_EXECUTABLE_SUFFIX)
+MAKE_SQUASHFS := $(HOST_OUT_EXECUTABLES)/mksquashfs$(HOST_EXECUTABLE_SUFFIX)
 MKSQUASHFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh
+MAKE_F2FS := $(HOST_OUT_EXECUTABLES)/make_f2fs$(HOST_EXECUTABLE_SUFFIX)
 MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
 SIMG2IMG := $(HOST_OUT_EXECUTABLES)/simg2img$(HOST_EXECUTABLE_SUFFIX)
+IMG2SIMG := $(HOST_OUT_EXECUTABLES)/img2simg$(HOST_EXECUTABLE_SUFFIX)
 E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
+MKTARBALL := build/make/tools/mktarball.sh
 TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/make/tools/fat16copy.py
+CHECK_LINK_TYPE := build/make/tools/check_link_type.py
 CHECK_ELF_FILE := build/make/tools/check_elf_file.py
 LPMAKE := $(HOST_OUT_EXECUTABLES)/lpmake$(HOST_EXECUTABLE_SUFFIX)
-ADD_IMG_TO_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/add_img_to_target_files$(HOST_EXECUTABLE_SUFFIX)
-BUILD_IMAGE := $(HOST_OUT_EXECUTABLES)/build_image$(HOST_EXECUTABLE_SUFFIX)
-BUILD_SUPER_IMAGE := $(HOST_OUT_EXECUTABLES)/build_super_image$(HOST_EXECUTABLE_SUFFIX)
-IMG_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/img_from_target_files$(HOST_EXECUTABLE_SUFFIX)
-MAKE_RECOVERY_PATCH := $(HOST_OUT_EXECUTABLES)/make_recovery_patch$(HOST_EXECUTABLE_SUFFIX)
-OTA_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/ota_from_target_files$(HOST_EXECUTABLE_SUFFIX)
-SPARSE_IMG := $(HOST_OUT_EXECUTABLES)/sparse_img$(HOST_EXECUTABLE_SUFFIX)
-CHECK_PARTITION_SIZES := $(HOST_OUT_EXECUTABLES)/check_partition_sizes$(HOST_EXECUTABLE_SUFFIX)
+BUILD_SUPER_IMAGE := build/make/tools/releasetools/build_super_image.py
 
 PROGUARD_HOME := external/proguard
 PROGUARD := $(PROGUARD_HOME)/bin/proguard.sh
 PROGUARD_DEPS := $(PROGUARD) $(PROGUARD_HOME)/lib/proguard.jar
 JAVATAGS := build/make/tools/java-event-log-tags.py
 MERGETAGS := build/make/tools/merge-event-log-tags.py
+BUILD_IMAGE_SRCS := $(wildcard build/make/tools/releasetools/*.py)
 APPEND2SIMG := $(HOST_OUT_EXECUTABLES)/append2simg
 VERITY_SIGNER := $(HOST_OUT_EXECUTABLES)/verity_signer
-BUILD_VERITY_METADATA := $(HOST_OUT_EXECUTABLES)/build_verity_metadata
+BUILD_VERITY_METADATA := $(HOST_OUT_EXECUTABLES)/build_verity_metadata.py
 BUILD_VERITY_TREE := $(HOST_OUT_EXECUTABLES)/build_verity_tree
 BOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/boot_signer
 FUTILITY := $(HOST_OUT_EXECUTABLES)/futility-host
-VBOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/vboot_signer
+VBOOT_SIGNER := prebuilts/misc/scripts/vboot_signer/vboot_signer.sh
 FEC := $(HOST_OUT_EXECUTABLES)/fec
+BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 
-DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump$(BUILD_EXECUTABLE_SUFFIX)
+DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump2$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
@@ -628,8 +615,25 @@ JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standa
 
 EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 
+USE_OPENJDK9 := true
+
+ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),1.8)
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+TARGET_OPENJDK9 := true
+endif
+
 # Path to tools.jar
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
+
+# It's called md5 on Mac OS and md5sum on Linux
+ifeq ($(HOST_OS),darwin)
+MD5SUM:=md5 -q
+else
+MD5SUM:=md5sum
+endif
 
 APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner --compatible-output=yes
 
@@ -758,16 +762,9 @@ endif
 ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
   DEFAULT_SYSTEM_DEV_CERTIFICATE := $(PRODUCT_DEFAULT_DEV_CERTIFICATE)
 else
-  DEFAULT_SYSTEM_DEV_CERTIFICATE := build/make/target/product/security/testkey
+  DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
 endif
 .KATI_READONLY := DEFAULT_SYSTEM_DEV_CERTIFICATE
-
-# Certificate for the NetworkStack sepolicy context
-ifdef PRODUCT_MAINLINE_SEPOLICY_DEV_CERTIFICATES
-  MAINLINE_SEPOLICY_DEV_CERTIFICATES := $(PRODUCT_MAINLINE_SEPOLICY_DEV_CERTIFICATES)
-else
-  MAINLINE_SEPOLICY_DEV_CERTIFICATES := $(dir $(DEFAULT_SYSTEM_DEV_CERTIFICATE))
-endif
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
@@ -805,7 +802,6 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     26.0 \
     27.0 \
     28.0 \
-    29.0 \
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
@@ -871,10 +867,10 @@ $(error Should not define BOARD_PRODUCTIMAGE_PARTITION_SIZE and \
 endif
 endif
 
-ifneq ($(BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE),)
-ifneq ($(BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE),)
-$(error Should not define BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE and \
-    BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE together)
+ifneq ($(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE),)
+ifneq ($(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE),)
+$(error Should not define BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE and \
+    BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE together)
 endif
 endif
 
@@ -899,7 +895,7 @@ $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
 )
 
 # BOARD_*_PARTITION_LIST: a list of the following tokens
-valid_super_partition_list := system vendor product system_ext odm
+valid_super_partition_list := system vendor product product_services odm
 $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
     $(if $(filter-out $(valid_super_partition_list),$(BOARD_$(group)_PARTITION_LIST)), \
         $(error BOARD_$(group)_PARTITION_LIST contains invalid partition name \
@@ -1096,7 +1092,7 @@ TARGET_AVAILABLE_SDK_VERSIONS += test_current
 TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
-TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,27,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
 ifndef INTERNAL_PLATFORM_PRIVATE_API_FILE
 INTERNAL_PLATFORM_PRIVATE_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/private.txt
@@ -1112,11 +1108,8 @@ INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIAT
 endif
 
 # Missing optional uses-libraries so that the platform doesn't create build rules that depend on
-# them.
-INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := \
-  com.google.android.ble \
-  com.google.android.media.effects \
-  com.google.android.wearable \
+# them. See setup_one_odex.mk.
+INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := com.google.android.ble com.google.android.wearable
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
@@ -1154,20 +1147,19 @@ endef
 # in the source tree.
 dont_bother_goals := out \
     snod systemimage-nodeps \
-    userdataimage-nodeps \
+    stnod systemtarball-nodeps \
+    userdataimage-nodeps userdatatarball-nodeps \
     cacheimage-nodeps \
     bptimage-nodeps \
     vnod vendorimage-nodeps \
     pnod productimage-nodeps \
-    senod systemextimage-nodeps \
+    psnod productservicesimage-nodeps \
     onod odmimage-nodeps \
     systemotherimage-nodeps \
     ramdisk-nodeps \
     ramdisk_debug-nodeps \
-    ramdisk_test_harness-nodeps \
     bootimage-nodeps \
     bootimage_debug-nodeps \
-    bootimage_test_harness-nodeps \
     recoveryimage-nodeps \
     vbmetaimage-nodeps \
     product-graph dump-products

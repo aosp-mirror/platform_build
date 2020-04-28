@@ -32,12 +32,3 @@ ifdef LOCAL_IS_HOST_MODULE
   # Do not pack relocations on host modules
   my_pack_module_relocations := false
 endif
-
-# Lld relocation packing cannot be enabled for binaries before Android Pie.
-ifneq ($(LOCAL_SDK_VERSION),)
-  ifneq ($(LOCAL_SDK_VERSION),current)
-    ifeq ($(call math_lt,$(LOCAL_SDK_VERSION),28),true)
-      my_pack_module_relocations := false
-    endif
-  endif
-endif

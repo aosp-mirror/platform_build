@@ -24,7 +24,7 @@ java_library_host {
         "apksig",
         "bouncycastle-unbundled",
         "bouncycastle-bcpkix-unbundled",
-        "conscrypt-unbundled",
+        "conscrypt-nojarjar",
     ],
 
     required: ["libconscrypt_openjdk_jni"],

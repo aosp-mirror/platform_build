@@ -3,33 +3,16 @@
 |  _  <|   __||  _  ||  |  ||  \/  ||   __|
 \__|\_/\_____/\__|__/|_____/\__ \__/\_____/
 
-The fs_config_generator.py tool uses the platform android_filesystem_config.h and the
-TARGET_FS_CONFIG_GEN files to generate the fs_config_dirs and fs_config_files files for each
-partition, as well as passwd and group files, and the generated_oem_aid.h header.
+Generating the android_filesystem_config.h:
 
-The fs_config_dirs and fs_config_files binary files are interpreted by the libcutils fs_config()
-function, along with the built-in defaults, to serve as overrides to complete the results. The
-Target files are used by filesystem and adb tools to ensure that the file and directory properties
-are preserved during runtime operations. The host files in the ${OUT} directory are used in the
-final stages when building the filesystem images to set the file and directory properties.
+To generate the android_filesystem_config.h file, one can set
+TARGET_FS_CONFIG_GEN, which can be a list of intermediate fs configuration
+files.
 
-See ./fs_config_generator.py fsconfig --help for how these files are generated.
-
-The passwd and group files are formatted as documented in man pages passwd(5) and group(5) and used
-by bionic for implementing getpwnam() and related functions.
-
-See ./fs_config_generator.py passwd --help and ./fs_config_generator.py group --help for how these
-files are generated.
-
-The generated_oem_aid.h creates identifiers for non-platform AIDs for developers wishing to use them
-in their native code.  To do so, include the oemaids_headers header library in the corresponding
-makefile and #include "generated_oem_aid.h" in the code wishing to use these identifiers.
-
-See ./fs_config_generator.py oemaid --help for how this file is generated.
-
-The parsing of the TARGET_FS_CONFIG_GEN files follows the Python ConfigParser specification, with
-the sections and fields as defined below. There are two types of sections, both sections require all
-options to be specified. The first section type is the "caps" section.
+The parsing of the config file follows the Python ConfigParser specification,
+with the sections and fields as defined below. There are two types of sections,
+both sections require all options to be specified. The first section type is
+the "caps" section.
 
 The "caps" section follows the following syntax:
 
@@ -120,6 +103,11 @@ representation of value is preserved. Both choices were made for maximum readabi
 file and to line up files. Sync lines are placed with the source file as comments in the generated
 header file.
 
+For OEMs wishing to use the define AIDs in their native code, one can access the generated header
+file like so:
+  1. In your C code just #include "generated_oem_aid.h" and start using the declared identifiers.
+  2. In your Makefile add this static library like so: LOCAL_HEADER_LIBRARIES := oemaids_headers
+
 Unit Tests:
 
 From within the fs_config directory, unit tests can be executed like so:
@@ -135,3 +123,45 @@ $ nose2
 
 To add new tests, simply add a test_<xxx> method to the test class. It will automatically
 get picked up and added to the test suite.
+
+Using the android_filesystem_config.h:
+
+The tool fs_config_generate is built as a dependency to fs_config_dirs and
+fs_config_files host targets, and #includes the above supplied or generated
+android_filesystem_config.h file, and can be instructed to generate the binary
+data that lands in the device target locations /system/etc/fs_config_dirs and
+/system/etc/fs_config_files and in the host's ${OUT} locations
+${OUT}/target/product/<device>/system/etc/fs_config_dirs and
+${OUT}/target/product/<device>/system/etc/fs_config_files. The binary files
+are interpreted by the libcutils fs_conf() function, along with the built-in
+defaults, to serve as overrides to complete the results. The Target files are
+used by filesystem and adb tools to ensure that the file and directory
+properties are preserved during runtime operations. The host files in the
+${OUT} directory are used in the final stages when building the filesystem
+images to set the file and directory properties.
+
+For systems with separate partition images, such as vendor or oem,
+fs_config_generate can be instructed to filter the specific file references
+to land in each partition's etc/fs_config_dirs or etc/fs_config_files
+locations. The filter can be instructed to blacklist a partition's data by
+providing the comma separated minus sign prefixed partition names. The filter
+can be instructed to whitelist partition data by providing the partition name.
+
+For example:
+- For system.img, but not vendor, oem or odm file references:
+      -P -vendor,-oem,-odm
+  This makes sure the results only contain content associated with the
+  system, and not vendor, oem or odm, blacklisting their content.
+- For vendor.img file references: -P vendor
+- For oem.img file references: -P oem
+- For odm.img file references: -P odm
+
+fs_config_generate --help reports:
+
+Generate binary content for fs_config_dirs (-D) and fs_config_files (-F)
+from device-specific android_filesystem_config.h override. Filter based
+on a comma separated partition list (-P) whitelist or prefixed by a
+minus blacklist. Partitions are identified as path references to
+<partition>/ or system/<partition>
+
+Usage: fs_config_generate -D|-F [-P list] [-o output-file]

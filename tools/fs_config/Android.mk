@@ -27,13 +27,13 @@ endif
 system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
 system_capability_header := bionic/libc/kernel/uapi/linux/capability.h
 
-# List of supported vendor, oem, odm, product and system_ext Partitions
+# List of supported vendor, oem, odm, product and product_services Partitions
 fs_config_generate_extra_partition_list := $(strip \
   $(if $(BOARD_USES_VENDORIMAGE)$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),vendor) \
   $(if $(BOARD_USES_OEMIMAGE)$(BOARD_OEMIMAGE_FILE_SYSTEM_TYPE),oem) \
   $(if $(BOARD_USES_ODMIMAGE)$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),odm) \
   $(if $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),product) \
-  $(if $(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),system_ext) \
+  $(if $(BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE),product_services) \
 )
 
 ##################################
@@ -332,17 +332,17 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
 endif
 
-ifneq ($(filter system_ext,$(fs_config_generate_extra_partition_list)),)
+ifneq ($(filter product_services,$(fs_config_generate_extra_partition_list)),)
 ##################################
-# Generate the system_ext/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs or fs_config_dirs_system_ext to PRODUCT_PACKAGES in
+# Generate the product_services/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_product_services to PRODUCT_PACKAGES in
 # the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_dirs_system_ext
+LOCAL_MODULE := fs_config_dirs_product_services
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
-LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_EXT)/etc
+LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT_SERVICES)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
 $(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
@@ -352,21 +352,21 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
 	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition system_ext \
+	   --partition product_services \
 	   --dirs \
 	   --out_file $@ \
 	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
 
 ##################################
-# Generate the system_ext/etc/fs_config_files binary file for the target
-# Add fs_config_files of fs_config_files_system_ext to PRODUCT_PACKAGES in
+# Generate the product_services/etc/fs_config_files binary file for the target
+# Add fs_config_files of fs_config_files_product_services to PRODUCT_PACKAGES in
 # the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_files_system_ext
+LOCAL_MODULE := fs_config_files_product_services
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
-LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_EXT)/etc
+LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT_SERVICES)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
 $(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
@@ -376,7 +376,7 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
 	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition system_ext \
+	   --partition product_services \
 	   --files \
 	   --out_file $@ \
 	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)

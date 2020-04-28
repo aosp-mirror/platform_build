@@ -39,9 +39,9 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := RP1A
-MIN_PLATFORM_VERSION := RP1A
-MAX_PLATFORM_VERSION := RP1A
+DEFAULT_PLATFORM_VERSION := QP1A
+MIN_PLATFORM_VERSION := QP1A
+MAX_PLATFORM_VERSION := QP1A
 
 ALLOWED_VERSIONS := $(call allowed-platform-versions,\
   $(MIN_PLATFORM_VERSION),\
@@ -84,11 +84,11 @@ MAX_PLATFORM_VERSION :=
 # generate the range of allowed SDK versions, so it must have an entry for every
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
-PLATFORM_VERSION.RP1A := R
+PLATFORM_VERSION.QP1A := 10
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.RP1A := R
+PLATFORM_VERSION_CODENAME.QP1A := REL
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
@@ -250,13 +250,17 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2019-12-05
+      PLATFORM_SECURITY_PATCH := 2020-06-05
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH
 
 ifndef PLATFORM_SECURITY_PATCH_TIMESTAMP
   # Used to indicate the matching timestamp for the security patch string in PLATFORM_SECURITY_PATCH.
-  PLATFORM_SECURITY_PATCH_TIMESTAMP := $(shell date -d 'TZ="GMT" $(PLATFORM_SECURITY_PATCH)' +%s)
+  ifneq (,$(findstring Darwin,$(UNAME)))
+    PLATFORM_SECURITY_PATCH_TIMESTAMP := $(shell date -jf '%Y-%m-%d %T %Z' '$(PLATFORM_SECURITY_PATCH) 00:00:00 GMT' +%s)
+  else
+    PLATFORM_SECURITY_PATCH_TIMESTAMP := $(shell date -d 'TZ="GMT" $(PLATFORM_SECURITY_PATCH)' +%s)
+  endif
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH_TIMESTAMP
 
@@ -285,7 +289,11 @@ ifndef BUILD_DATETIME
   BUILD_DATETIME := $(shell date +%s)
 endif
 
+ifneq (,$(findstring Darwin,$(UNAME)))
+DATE := date -r $(BUILD_DATETIME)
+else
 DATE := date -d @$(BUILD_DATETIME)
+endif
 .KATI_READONLY := DATE
 
 # Everything should be using BUILD_DATETIME_FROM_FILE instead.

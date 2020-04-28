@@ -16,35 +16,27 @@
 
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
-#
-# All components inherited here go to system image
-#
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+# aosp_x86 with arm libraries needed by binary translation.
 
-# Enable mainline checking
-ifeq (aosp_x86_arm,$(TARGET_PRODUCT))
-PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
-endif
+# The system image of aosp_x86-userdebug is a GSI for the devices with:
+# - x86 32 bits user space
+# - 64 bits binder interface
+# - system-as-root
+# - VNDK enforcement
+# - compatible property override enabled
 
-# TODO (b/138382074): remove following setting after enable product/system_ext
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-    system/product/% \
-    system/system_ext/%
+-include device/generic/goldfish/x86-vendor.mk
 
-#
-# All components inherited here go to product image
-#
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
+include $(SRC_TARGET_DIR)/product/full_x86.mk
 
-#
-# All components inherited here go to vendor image
-#
-$(call inherit-product-if-exists, device/generic/goldfish/x86-vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86_arm/device.mk)
+# Enable dynamic partition size
+PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
+# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+
+# Support addtional P vendor interface
+PRODUCT_EXTRA_VNDK_VERSIONS := 28
 
 PRODUCT_NAME := aosp_x86_arm
 PRODUCT_DEVICE := generic_x86_arm
-PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on IA Emulator

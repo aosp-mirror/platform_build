@@ -34,6 +34,7 @@ ifeq ($(enforce_rro_use_res_lib),true)
 endif
 
 LOCAL_FULL_MANIFEST_FILE := $(rro_android_manifest_file)
+LOCAL_CERTIFICATE := platform
 
 LOCAL_AAPT_FLAGS += --auto-add-overlay
 LOCAL_RESOURCE_DIR := $(enforce_rro_source_overlays)

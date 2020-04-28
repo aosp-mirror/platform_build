@@ -22,11 +22,6 @@ set -e
 # class_loader_context_arg: final class loader conext arg
 # stored_class_loader_context_arg: final stored class loader context arg
 
-if [ -z "${target_sdk_version}" ]; then
-    echo "ERROR: target_sdk_version not set"
-    exit 2
-fi
-
 # The hidl.manager shared library has a dependency on hidl.base. We'll manually
 # add that information to the class loader context if we see those libraries.
 hidl_manager="android.hidl.manager-V1.0-java"

@@ -42,9 +42,6 @@ endef
 backslash := \a
 backslash := $(patsubst %a,%,$(backslash))
 
-TOP :=$= .
-TOPDIR :=$=
-
 # Prevent accidentally changing these variables
 .KATI_READONLY := SHELL empty space comma newline pound backslash
 

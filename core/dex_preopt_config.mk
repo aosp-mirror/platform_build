@@ -1,22 +1,28 @@
-DEX_PREOPT_CONFIG := $(SOONG_OUT_DIR)/dexpreopt.config
+DEX_PREOPT_CONFIG := $(PRODUCT_OUT)/dexpreopt.config
 
 # The default value for LOCAL_DEX_PREOPT
 DEX_PREOPT_DEFAULT ?= true
 
 # The default filter for which files go into the system_other image (if it is
-# being used). Note that each pattern p here matches both '/<p>' and /system/<p>'.
-# To bundle everything one should set this to '%'.
+# being used). To bundle everything one should set this to '%'
 SYSTEM_OTHER_ODEX_FILTER ?= \
     app/% \
     priv-app/% \
-    system_ext/app/% \
-    system_ext/priv-app/% \
+    product_services/app/% \
+    product_services/priv-app/% \
     product/app/% \
     product/priv-app/% \
 
+# The default values for pre-opting. To support the runtime module we ensure no dex files
+# get stripped.
+ifeq ($(PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING),)
+  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING := true
+endif
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
   ifeq (eng,$(TARGET_BUILD_VARIANT))
+    # Don't strip for quick development turnarounds.
+    DEX_PREOPT_DEFAULT := nostripping
     # For an eng build only pre-opt the boot image and system server. This gives reasonable performance
     # and still allows a simple workflow: building in frameworks/base and syncing.
     WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true
@@ -80,7 +86,8 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
 
   $(call json_start)
 
-  $(call add_json_bool, DisablePreopt,                      $(call invert_bool,$(and $(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)),$(filter true,$(WITH_DEXPREOPT)))))
+  $(call add_json_bool, DefaultNoStripping,                 $(filter nostripping,$(DEX_PREOPT_DEFAULT)))
+  $(call add_json_bool, DisablePreopt,                      $(call invert_bool,$(filter true,$(WITH_DEXPREOPT))))
   $(call add_json_list, DisablePreoptModules,               $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer, $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
   $(call add_json_bool, GenerateApexImage,                  $(filter true,$(DEXPREOPT_GENERATE_APEX_IMAGE)))
@@ -92,7 +99,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, DisableGenerateProfile,             $(filter false,$(WITH_DEX_PREOPT_GENERATE_PROFILE)))
   $(call add_json_str,  ProfileDir,                         $(PRODUCT_DEX_PREOPT_PROFILE_DIR))
   $(call add_json_list, BootJars,                           $(PRODUCT_BOOT_JARS))
-  $(call add_json_list, ArtApexJars,                        $(ART_APEX_JARS))
+  $(call add_json_list, RuntimeApexJars,                    $(RUNTIME_APEX_JARS))
   $(call add_json_list, ProductUpdatableBootModules,        $(PRODUCT_UPDATABLE_BOOT_MODULES))
   $(call add_json_list, ProductUpdatableBootLocations,      $(PRODUCT_UPDATABLE_BOOT_LOCATIONS))
   $(call add_json_list, SystemServerJars,                   $(PRODUCT_SYSTEM_SERVER_JARS))
@@ -109,6 +116,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, NeverSystemServerDebugInfo,         $(filter false,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)))
   $(call add_json_bool, AlwaysOtherDebugInfo,               $(filter true,$(PRODUCT_OTHER_JAVA_DEBUG_INFO)))
   $(call add_json_bool, NeverOtherDebugInfo,                $(filter false,$(PRODUCT_OTHER_JAVA_DEBUG_INFO)))
+  $(call add_json_list, MissingUsesLibraries,               $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES))
   $(call add_json_bool, IsEng,                              $(filter eng,$(TARGET_BUILD_VARIANT)))
   $(call add_json_bool, SanitizeLite,                       $(SANITIZE_LITE))
   $(call add_json_bool, DefaultAppImages,                   $(WITH_DEX_PREOPT_APP_IMAGE))
@@ -131,7 +139,9 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call end_json_map)
 
   $(call add_json_str,  DirtyImageObjects,                  $(DIRTY_IMAGE_OBJECTS))
+  $(call add_json_str,  PreloadedClasses,                   $(PRELOADED_CLASSES))
   $(call add_json_list, BootImageProfiles,                  $(PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION))
+  $(call add_json_bool, UseProfileForBootImage,             $(call invert_bool,$(filter false,$(PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE))))
   $(call add_json_str,  BootFlags,                          $(PRODUCT_DEX_PREOPT_BOOT_FLAGS))
   $(call add_json_str,  Dex2oatImageXmx,                    $(DEX2OAT_IMAGE_XMX))
   $(call add_json_str,  Dex2oatImageXms,                    $(DEX2OAT_IMAGE_XMS))
@@ -142,7 +152,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  Aapt,                               $(SOONG_HOST_OUT_EXECUTABLES)/aapt)
   $(call add_json_str,  SoongZip,                           $(SOONG_ZIP))
   $(call add_json_str,  Zip2zip,                            $(ZIP2ZIP))
-  $(call add_json_str,  ManifestCheck,                      $(SOONG_HOST_OUT_EXECUTABLES)/manifest_check)
+  $(call add_json_str,  VerifyUsesLibraries,                $(BUILD_SYSTEM)/verify_uses_libraries.sh)
   $(call add_json_str,  ConstructContext,                   $(BUILD_SYSTEM)/construct_context.sh)
   $(call end_json_map)
 
@@ -159,10 +169,20 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
     fi)
 endif
 
+# Dummy rule to create dexpreopt.config, it will already have been created
+# by the $(file) call above, but a rule needs to exist to keep the dangling
+# rule check happy.
+$(DEX_PREOPT_CONFIG):
+	@#empty
+
 DEXPREOPT_GEN_DEPS := \
   $(SOONG_HOST_OUT_EXECUTABLES)/profman \
   $(DEX2OAT) \
   $(SOONG_HOST_OUT_EXECUTABLES)/aapt \
   $(SOONG_ZIP) \
   $(ZIP2ZIP) \
+  $(BUILD_SYSTEM)/verify_uses_libraries.sh \
   $(BUILD_SYSTEM)/construct_context.sh \
+
+DEXPREOPT_STRIP_DEPS := \
+  $(ZIP2ZIP) \

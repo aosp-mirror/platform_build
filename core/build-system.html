@@ -516,8 +516,8 @@ LOCAL_MODULE_RELATIVE_PATH := hw
 example the root filesystem instead of in /system, add these lines to your
 Android.mk:</p>
 <pre>
-LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
-LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_UNSTRIPPED)
+LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT_SBIN)
+LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_SBIN_UNSTRIPPED)
 </pre>
 <p>For executables and libraries, you need to specify a
 <code>LOCAL_UNSTRIPPED_PATH</code> location if you specified a
@@ -527,6 +527,9 @@ the unstripped executables so GDB can find the symbols.
 <code>LOCAL_MODULE_RELATIVE_PATH</code>.</p>
 <p>Look in <code>core/envsetup.mk</code> for all of the variables defining
 places to build things.</p>
+<p>FYI: If you're installing an executable to /sbin, you probably also want to
+set <code>LOCAL_FORCE_STATIC_EXCUTABLE := true</code> in your Android.mk, which
+will force the linker to only accept static libraries.</p>
 
 
 <h3>Android.mk variables</h3>
@@ -682,7 +685,8 @@ installed when a given app is installed.
 <h4>LOCAL_FORCE_STATIC_EXECUTABLE</h4>
 <p>If your executable should be linked statically, set 
 <code>LOCAL_FORCE_STATIC_EXECUTABLE:=true</code>.  There is a very short
-list of libraries that we have in static form (currently only libc).</p>
+list of libraries that we have in static form (currently only libc).  This is
+really only used for executables in /sbin on the root filesystem.</p>
 
 <h4>LOCAL_GENERATED_SOURCES</h4>
 <p>Files that you add to <code>LOCAL_GENERATED_SOURCES</code> will be
@@ -808,7 +812,7 @@ them with the directory name:</p>
 <h4>LOCAL_STATIC_LIBRARIES</h4>
 <p>These are the static libraries that you want to include in your module.
 Mostly, we use shared libraries, but there are a couple of places, like
-host executables where we use static libraries instead.
+executables in sbin and host executables where we use static libraries instead.
 <p><code>LOCAL_STATIC_LIBRARIES := \<br/>
 	&nbsp;&nbsp;&nbsp;&nbsp;libutils \<br/>
 	&nbsp;&nbsp;&nbsp;&nbsp;libtinyxml

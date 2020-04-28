@@ -43,7 +43,7 @@ ifdef LOCAL_SOONG_CLASSES_JAR
   endif # TURBINE_ENABLED != false
 endif
 
-# Run veridex on product, system_ext and vendor modules.
+# Run veridex on product, product_services and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
 ifeq (true,$(non_system_module))
@@ -60,7 +60,7 @@ ifeq ($(module_run_appcompat),true)
   $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
 	@echo "Copy: $@"
 	$(copy-file-to-target)
-	$(appcompat-header)
+	$(call appcompat-header, aapt2)
 	$(run-appcompat)
 else
   $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
@@ -97,6 +97,10 @@ endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 java-dex: $(LOCAL_SOONG_DEX_JAR)
 
 
+ifneq ($(BUILD_PLATFORM_ZIP),)
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(dir $(LOCAL_BUILT_MODULE))package.dex.apk))
+endif
+
 my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
   $(call word-colon,1,$(f)):$(PRODUCT_OUT)$(call word-colon,2,$(f)))
 my_installed := $(call copy-many-files, $(my_built_installed))
@@ -125,15 +129,7 @@ my_prebuilt_jni_libs :=
 my_2nd_arch_prefix :=
 
 PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
-ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
-  # The magic string "PRESIGNED" means this package is already checked
-  # signed with its release key.
-  #
-  # By setting .CERTIFICATE but not .PRIVATE_KEY, this package will be
-  # mentioned in apkcerts.txt (with certificate set to "PRESIGNED")
-  # but the dexpreopt process will not try to re-sign the app.
-  PACKAGES.$(LOCAL_MODULE).CERTIFICATE := PRESIGNED
-else ifneq ($(LOCAL_CERTIFICATE),)
+ifdef LOCAL_CERTIFICATE
   PACKAGES.$(LOCAL_MODULE).CERTIFICATE := $(LOCAL_CERTIFICATE)
   PACKAGES.$(LOCAL_MODULE).PRIVATE_KEY := $(patsubst %.x509.pem,%.pk8,$(LOCAL_CERTIFICATE))
 endif

@@ -21,7 +21,6 @@ PRODUCT_PACKAGES := \
     ONS \
     CarrierDefaultApp \
     CallLogBackup \
-    CellBroadcastAppPlatform \
-    CellBroadcastServiceModule \
+    CellBroadcastReceiver \
 
 PRODUCT_COPY_FILES := \

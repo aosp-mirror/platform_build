@@ -39,7 +39,6 @@ PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
 
 # Do not spin up a separate process for the network stack on go devices, use an in-process APK.
 PRODUCT_PACKAGES += InProcessNetworkStack
-PRODUCT_PACKAGES += CellBroadcastAppPlatform
 
 # Strip the local variable table and the local variable type table to reduce
 # the size of the system image. This has no bearing on stack traces, but will
@@ -58,6 +57,3 @@ TARGET_SYSTEM_PROP += \
 # use the go specific handheld_core_hardware.xml from frameworks
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/go_handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
-
-# Dedupe VNDK libraries with identical core variants.
-TARGET_VNDK_USE_CORE_VARIANT := true

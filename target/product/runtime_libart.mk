@@ -20,6 +20,11 @@ ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot update PRODUCT_PACKAGES variable)
 endif
 
+# Minimal boot classpath. This should be a subset of PRODUCT_BOOT_JARS, and equivalent to
+# TARGET_CORE_JARS.
+PRODUCT_PACKAGES += \
+    $(TARGET_CORE_JARS)
+
 # Additional mixins to the boot classpath.
 PRODUCT_PACKAGES += \
     android.test.base \
@@ -28,15 +33,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     ext \
 
-# Runtime (Bionic) APEX module.
+# Android Runtime APEX module.
 PRODUCT_PACKAGES += com.android.runtime
-
-# ART APEX module.
-# Note that this package includes the minimal boot classpath JARs (listed in
-# TARGET_CORE_JARS), which should no longer be added directly to
-# PRODUCT_PACKAGES.
-PRODUCT_PACKAGES += com.android.art
-PRODUCT_HOST_PACKAGES += com.android.art
+PRODUCT_HOST_PACKAGES += com.android.runtime
 
 # Certificates.
 PRODUCT_PACKAGES += \
@@ -97,4 +96,4 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.iorapd.enable=false
 
-PRODUCT_USES_DEFAULT_ART_CONFIG := true
+PRODUCT_USES_ART := true

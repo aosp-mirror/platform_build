@@ -18,22 +18,20 @@ TARGET_CPU_ABI := x86
 TARGET_ARCH := x86
 TARGET_ARCH_VARIANT := x86
 
-TARGET_NATIVE_BRIDGE_ARCH := arm
-TARGET_NATIVE_BRIDGE_ARCH_VARIANT := armv7-a-neon
-TARGET_NATIVE_BRIDGE_CPU_VARIANT := generic
-TARGET_NATIVE_BRIDGE_ABI := armeabi-v7a armeabi
+TARGET_2ND_ARCH := arm
+TARGET_2ND_CPU_ABI := armeabi-v7a
+TARGET_2ND_CPU_ABI2 := armeabi
+TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+TARGET_2ND_CPU_VARIANT := generic
+
+TARGET_CPU_ABI_LIST := x86 armeabi-v7a armeabi
+TARGET_TRANSLATE_2ND_ARCH := true
 
 BUILD_BROKEN_DUP_RULES := true
 
-#
-# The inclusion order below is important.
-# The settings in latter makefiles overwrite those in the former.
-#
-include build/make/target/board/BoardConfigMainlineCommon.mk
-include build/make/target/board/BoardConfigEmuCommon.mk
 
-# the settings differ from BoardConfigMainlineCommon.mk
-BOARD_USES_SYSTEM_OTHER_ODEX :=
+include build/make/target/board/BoardConfigGsiCommon.mk
+include build/make/target/board/BoardConfigEmuCommon.mk
 
 # Resize to 4G to accomodate ASAN and CTS
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 4294967296

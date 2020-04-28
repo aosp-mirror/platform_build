@@ -17,7 +17,6 @@ endif
 ANDROID_BUILD_PATHS := $(ABP)
 ANDROID_PREBUILTS := prebuilt/$(HOST_PREBUILT_TAG)
 ANDROID_GCC_PREBUILTS := prebuilts/gcc/$(HOST_PREBUILT_TAG)
-ANDROID_CLANG_PREBUILTS := prebuilts/clang/host/$(HOST_PREBUILT_TAG)
 
 # Dump mulitple variables to "<var>=<value>" pairs, one per line.
 # The output may be executed as bash script.
@@ -27,6 +26,6 @@ ANDROID_CLANG_PREBUILTS := prebuilts/clang/host/$(HOST_PREBUILT_TAG)
 .PHONY: dump-many-vars
 dump-many-vars :
 	@$(foreach v, $(DUMP_MANY_VARS),\
-	  printf "%s='%s'\n" '$(DUMP_VAR_PREFIX)$(v)' '$($(v))';)
+	  echo "$(DUMP_VAR_PREFIX)$(v)='$($(v))'";)
 
 endif # CALLED_FROM_SETUP

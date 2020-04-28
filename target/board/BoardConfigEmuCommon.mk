@@ -7,9 +7,6 @@ HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
 TARGET_BOOTLOADER_BOARD_NAME := goldfish_$(TARGET_ARCH)
 
-# No Kernel
-TARGET_NO_KERNEL := true
-
 # no hardware camera
 USE_CAMERA_STUB := true
 
@@ -38,33 +35,12 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
   # 3G + header
   BOARD_SUPER_PARTITION_SIZE := 3229614080
   BOARD_SUPER_PARTITION_GROUPS := emulator_dynamic_partitions
-
-  ifeq ($(QEMU_USE_SYSTEM_EXT_PARTITIONS),true)
-    BOARD_EMULATOR_DYNAMIC_PARTITIONS_PARTITION_LIST := \
-        system \
-        system_ext \
-        product \
-        vendor
-
-    TARGET_COPY_OUT_PRODUCT := product
-    BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
-    TARGET_COPY_OUT_SYSTEM_EXT := system_ext
-    BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
-  else
-    TARGET_COPY_OUT_PRODUCT := system/product
-    TARGET_COPY_OUT_SYSTEM_EXT := system/system_ext
-    BOARD_EMULATOR_DYNAMIC_PARTITIONS_PARTITION_LIST := \
-        system \
-        vendor
-  endif
+  BOARD_EMULATOR_DYNAMIC_PARTITIONS_PARTITION_LIST := \
+      system \
+      vendor
 
   # 3G
   BOARD_EMULATOR_DYNAMIC_PARTITIONS_SIZE := 3221225472
-
-  # in build environment to speed up make -j
-  ifeq ($(QEMU_DISABLE_AVB),true)
-    BOARD_AVB_ENABLE := false
-  endif
 else ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
   # Enable dynamic system image size and reserved 64MB in it.
   BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
@@ -73,12 +49,6 @@ else
   BOARD_SYSTEMIMAGE_PARTITION_SIZE := 3221225472
   BOARD_VENDORIMAGE_PARTITION_SIZE := 146800640
 endif
-
-# Enable chain partition for system.
-BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
 
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512

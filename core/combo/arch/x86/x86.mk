@@ -8,3 +8,9 @@
 # These features are optional and shall not be included in the base platform
 # Otherwise, sdk_x86-eng system images might fail to run on some
 # developer machines.
+ARCH_X86_HAVE_SSSE3 := false
+ARCH_X86_HAVE_MOVBE := false
+ARCH_X86_HAVE_POPCNT := false
+ARCH_X86_HAVE_AVX := false
+ARCH_X86_HAVE_AVX2 := false
+ARCH_X86_HAVE_AVX512 := false

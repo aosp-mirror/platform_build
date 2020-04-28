@@ -51,13 +51,6 @@ ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
     $(intermediates.COMMON)/jacoco-report-classes.jar)
 endif
 
-ifdef LOCAL_SOONG_PROGUARD_DICT
-  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
-    $(intermediates.COMMON)/proguard_dictionary))
-  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(intermediates.COMMON)/proguard_dictionary)
-endif
-
 ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
   my_res_package := $(intermediates.COMMON)/package-res.apk
 
@@ -128,7 +121,6 @@ my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
 my_installed := $(call copy-many-files, $(my_built_installed))
 ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_installed)
-ALL_MODULES.$(my_register_name).CLASSES_JAR := $(full_classes_jar)
 $(my_register_name): $(my_installed)
 
 ifdef LOCAL_SOONG_AAR

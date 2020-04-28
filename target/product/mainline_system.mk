@@ -18,6 +18,8 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
+# Enable updating of APEXes
+$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 # Add adb keys to debuggable AOSP builds (if they exist)
 $(call inherit-product-if-exists, vendor/google/security/adb/vendor_key.mk)
 
@@ -64,34 +66,24 @@ PRODUCT_PACKAGES += \
 # For ringtones that rely on forward lock encryption
 PRODUCT_PACKAGES += libfwdlockengine
 
-# System libraries commonly depended on by things on the system_ext or product partitions.
-# These lists will be pruned periodically.
+# System libraries commonly depended on by things on the product partition.
+# This list will be pruned periodically.
 PRODUCT_PACKAGES += \
     android.hardware.biometrics.fingerprint@2.1 \
     android.hardware.radio@1.0 \
     android.hardware.radio@1.1 \
     android.hardware.radio@1.2 \
-    android.hardware.radio@1.3 \
-    android.hardware.radio@1.4 \
     android.hardware.radio.config@1.0 \
     android.hardware.radio.deprecated@1.0 \
     android.hardware.secure_element@1.0 \
     android.hardware.wifi@1.0 \
     libaudio-resampler \
-    libaudiohal \
     libdrm \
     liblogwrap \
     liblz4 \
     libminui \
     libnl \
     libprotobuf-cpp-full \
-
-# These libraries are empty and have been combined into libhidlbase, but are still depended
-# on by things off /system.
-# TODO(b/135686713): remove these
-PRODUCT_PACKAGES += \
-    libhidltransport \
-    libhwbinder \
 
 # Camera service uses 'libdepthphoto' for adding dynamic depth
 # metadata inside depth jpegs.
@@ -110,17 +102,11 @@ PRODUCT_PACKAGES_DEBUG += \
 PRODUCT_HOST_PACKAGES += \
     tinyplay
 
-# Include all zygote init scripts. "ro.zygote" will select one of them.
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc \
-    system/core/rootdir/init.zygote64.rc:root/init.zygote64.rc \
-    system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc \
-    system/core/rootdir/init.zygote64_32.rc:root/init.zygote64_32.rc
+# Enable stats logging in LMKD
+TARGET_LMKD_STATS_LOG := true
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
-
-PRODUCT_ENFORCE_RRO_TARGETS := *
 
 PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic

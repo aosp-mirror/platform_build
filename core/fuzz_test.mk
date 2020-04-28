@@ -15,7 +15,8 @@ else ifdef TARGET_FUZZ_ENGINE
     my_fuzzer:=$(TARGET_FUZZ_ENGINE)
 endif
 
-LOCAL_SANITIZE += fuzzer
+
+LOCAL_CFLAGS += -fsanitize-coverage=trace-pc-guard,indirect-calls,trace-cmp
 
 ifeq ($(my_fuzzer),libFuzzer)
 LOCAL_STATIC_LIBRARIES += libFuzzer
@@ -66,6 +67,12 @@ endif
 
 LOCAL_MODULE_PATH_64 := $(TARGET_OUT_DATA_NATIVE_TESTS)/fuzzers/$(my_fuzzer)/$(LOCAL_MODULE)
 LOCAL_MODULE_PATH_32 := $($(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_DATA_NATIVE_TESTS)/fuzzers/$(my_fuzzer)/$(LOCAL_MODULE)
+
+ifndef LOCAL_MULTILIB
+ifndef LOCAL_32_BIT_ONLY
+LOCAL_MULTILIB := 64
+endif
+endif
 
 ifndef LOCAL_STRIP_MODULE
 LOCAL_STRIP_MODULE := keep_symbols

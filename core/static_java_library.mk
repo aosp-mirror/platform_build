@@ -33,6 +33,10 @@ include $(BUILD_SYSTEM)/support_libraries.mk
 
 include $(BUILD_SYSTEM)/force_aapt2.mk
 
+ifdef LOCAL_AAPT2_ONLY
+LOCAL_USE_AAPT2 := true
+endif
+
 # Hack to build static Java library with Android resource
 # See bug 5714516
 all_resources :=
@@ -42,8 +46,10 @@ ifdef LOCAL_RESOURCE_DIR
 need_compile_res := true
 LOCAL_RESOURCE_DIR := $(foreach d,$(LOCAL_RESOURCE_DIR),$(call clean-path,$(d)))
 endif
+ifeq ($(LOCAL_USE_AAPT2),true)
 ifneq ($(strip $(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)),)
 need_compile_res := true
+endif
 endif
 
 ifeq ($(need_compile_res),true)
@@ -74,25 +80,26 @@ ifneq ($(filter custom,$(LOCAL_PROGUARD_ENABLED)),custom)
 endif
 
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
-LOCAL_PROGUARD_FLAGS_DEPS += $(proguard_options_file)
 
 R_file_stamp := $(intermediates.COMMON)/src/R.stamp
 LOCAL_INTERMEDIATE_TARGETS += $(R_file_stamp)
 
-ifneq ($(strip $(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)),)
-  # If we are using static android libraries, every source file becomes an overlay.
-  # This is to emulate old AAPT behavior which simulated library support.
-  my_res_resources :=
-  my_overlay_resources := $(all_resources)
-else
-  # Otherwise, for a library we treat all the resource equal with no overlay.
-  my_res_resources := $(all_resources)
-  my_overlay_resources :=
-endif
-# For libraries put everything in the COMMON intermediate directory.
-my_res_package := $(intermediates.COMMON)/package-res.apk
+ifeq ($(LOCAL_USE_AAPT2),true)
+  ifneq ($(strip $(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)),)
+    # If we are using static android libraries, every source file becomes an overlay.
+    # This is to emulate old AAPT behavior which simulated library support.
+    my_res_resources :=
+    my_overlay_resources := $(all_resources)
+  else
+    # Otherwise, for a library we treat all the resource equal with no overlay.
+    my_res_resources := $(all_resources)
+    my_overlay_resources :=
+  endif
+  # For libraries put everything in the COMMON intermediate directory.
+  my_res_package := $(intermediates.COMMON)/package-res.apk
 
-LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
+  LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
+endif  # LOCAL_USE_AAPT2
 
 endif  # need_compile_res
 
@@ -120,6 +127,7 @@ framework_res_package_export := \
 endif
 endif
 
+ifeq ($(LOCAL_USE_AAPT2),true)
 import_proguard_flag_files := $(strip $(foreach l,$(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES),\
     $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/export_proguard_flags))
 $(intermediates.COMMON)/export_proguard_flags: $(import_proguard_flag_files) $(addprefix $(LOCAL_PATH)/,$(LOCAL_EXPORT_PROGUARD_FLAG_FILES))
@@ -131,6 +139,7 @@ $(intermediates.COMMON)/export_proguard_flags: $(import_proguard_flag_files) $(a
 		cat $$f >>$@; \
 	done
 import_proguard_flag_files :=
+endif
 
 include $(BUILD_SYSTEM)/aapt_flags.mk
 
@@ -141,6 +150,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_M
 
 # add --non-constant-id to prevent inlining constants.
 # AAR needs text symbol file R.txt.
+ifeq ($(LOCAL_USE_AAPT2),true)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --static-lib --output-text-symbols $(intermediates.COMMON)/R.txt
 ifndef LOCAL_AAPT_NAMESPACES
   $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS += --no-static-lib-packages
@@ -148,6 +158,15 @@ endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_AAPT_CHARACTERISTICS :=
+else
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --non-constant-id --output-text-symbols $(intermediates.COMMON)
+
+my_srcjar := $(intermediates.COMMON)/aapt.srcjar
+LOCAL_SRCJARS += $(my_srcjar)
+$(R_file_stamp): PRIVATE_SRCJAR := $(my_srcjar)
+$(R_file_stamp): PRIVATE_JAVA_GEN_DIR := $(intermediates.COMMON)/aapt
+$(R_file_stamp): .KATI_IMPLICIT_OUTPUTS := $(my_srcjar)
+endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_PUBLICS_OUTPUT := $(intermediates.COMMON)/public_resources.xml
@@ -159,16 +178,26 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_optio
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_PACKAGE_NAME :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR :=
 
-# One more level with name res so we can zip up the flat resources that can be linked by apps.
-my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res/res
-ifneq (,$(filter-out current,$(renderscript_target_api)))
-  ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
-    my_generated_res_zips := $(rs_generated_res_zip)
-  endif  # renderscript_target_api < 21
-endif  # renderscript_target_api is set
-include $(BUILD_SYSTEM)/aapt2.mk
-$(my_res_package) : $(framework_res_package_export)
-$(my_res_package): .KATI_IMPLICIT_OUTPUTS += $(intermediates.COMMON)/R.txt
+ifeq ($(LOCAL_USE_AAPT2),true)
+  # One more level with name res so we can zip up the flat resources that can be linked by apps.
+  my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res/res
+  ifneq (,$(filter-out current,$(renderscript_target_api)))
+    ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
+      my_generated_res_zips := $(rs_generated_res_zip)
+    endif  # renderscript_target_api < 21
+  endif  # renderscript_target_api is set
+  include $(BUILD_SYSTEM)/aapt2.mk
+  $(my_res_package) : $(framework_res_package_export)
+  $(my_res_package): .KATI_IMPLICIT_OUTPUTS += $(intermediates.COMMON)/R.txt
+else
+  $(R_file_stamp): .KATI_IMPLICIT_OUTPUTS += $(intermediates.COMMON)/R.txt
+  $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
+  $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(SOONG_ZIP) \
+    $(framework_res_package_export) $(rs_generated_res_zip)
+	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
+	$(create-resource-java-files)
+	$(hide) find $(PRIVATE_JAVA_GEN_DIR) -name R.java | xargs cat > $@
+endif  # LOCAL_USE_AAPT2
 
 endif # need_compile_res
 

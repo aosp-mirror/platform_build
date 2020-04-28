@@ -20,8 +20,8 @@ ifeq ($(strip $(LOCAL_ODM_MODULE)),true)
   partition := $(TARGET_OUT_ODM)
 else ifeq ($(strip $(LOCAL_VENDOR_MODULE)),true)
   partition := $(TARGET_OUT_VENDOR)
-else ifeq ($(strip $(LOCAL_SYSTEM_EXT_MODULE)),true)
-  partition := $(TARGET_OUT_SYSTEM_EXT)
+else ifeq ($(strip $(LOCAL_PRODUCT_SERVICES_MODULE)),true)
+  partition := $(TARGET_OUT_PRODUCT_SERVICES)
 else
   partition := $(TARGET_OUT_PRODUCT)
 endif

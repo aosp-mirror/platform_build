@@ -182,9 +182,7 @@ ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)HWADDRESS_SANITIZER_RUNTIME_LIBRARY)
   ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
     ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-      my_static_libraries := $(my_static_libraries) \
-                             $($(LOCAL_2ND_ARCH_VAR_PREFIX)HWADDRESS_SANITIZER_STATIC_LIBRARY) \
-                             libdl
+      my_static_libraries := $(my_static_libraries) $($(LOCAL_2ND_ARCH_VAR_PREFIX)HWADDRESS_SANITIZER_STATIC_LIBRARY)
     endif
   endif
 endif
@@ -237,20 +235,12 @@ ifneq ($(filter default-ub,$(my_sanitize)),)
   my_sanitize := $(CLANG_DEFAULT_UB_CHECKS)
 endif
 
-ifneq ($(filter fuzzer,$(my_sanitize)),)
-  # SANITIZE_TARGET='fuzzer' actually means to create the fuzzer coverage
-  # information, not to link against the fuzzer main().
-  my_sanitize := $(filter-out fuzzer,$(my_sanitize))
-  my_sanitize += fuzzer-no-link
-
-  # TODO(b/131771163): Disable LTO for fuzzer builds. Note that Cfi causes
-  # dependency on LTO.
-  my_sanitize := $(filter-out cfi,$(my_sanitize))
-  my_cflags += -fno-lto
-  my_ldflags += -fno-lto
-
-  # TODO(b/133876586): Disable experimental pass manager for fuzzer builds.
-  my_cflags += -fno-experimental-new-pass-manager
+ifneq ($(filter coverage,$(my_sanitize)),)
+  ifeq ($(filter address,$(my_sanitize)),)
+    $(error $(LOCAL_PATH): $(LOCAL_MODULE): Use of 'coverage' also requires 'address')
+  endif
+  my_cflags += -fsanitize-coverage=trace-pc-guard,indirect-calls,trace-cmp
+  my_sanitize := $(filter-out coverage,$(my_sanitize))
 endif
 
 ifneq ($(filter integer_overflow,$(my_sanitize)),)
@@ -290,12 +280,7 @@ ifneq ($(my_sanitize),)
   my_cflags += -fsanitize=$(fsanitize_arg)
   my_asflags += -fsanitize=$(fsanitize_arg)
 
-  # When fuzzing, we wish to crash with diagnostics on any bug.
-  ifneq ($(filter fuzzer-no-link,$(my_sanitize)),)
-    my_cflags += -fno-sanitize-trap=all
-    my_cflags += -fno-sanitize-recover=all
-    my_ldflags += -fsanitize=fuzzer-no-link
-  else ifdef LOCAL_IS_HOST_MODULE
+  ifdef LOCAL_IS_HOST_MODULE
     my_cflags += -fno-sanitize-recover=all
     my_ldflags += -fsanitize=$(fsanitize_arg)
   else
@@ -347,6 +332,9 @@ ifneq ($(filter address,$(my_global_sanitize) $(my_sanitize)),)
       my_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RUNTIME_LIBRARY) \
                              $(my_shared_libraries)
     endif
+    ifeq (,$(filter $(LOCAL_MODULE),$(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)))
+      my_static_libraries += $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)
+    endif
 
     # Do not add unnecessary dependency in shared libraries.
     ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
@@ -390,7 +378,7 @@ ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
   ifneq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize)),)
     ifeq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize_diag)),)
       ifeq ($(filter cfi,$(my_sanitize_diag)),)
-        ifeq ($(filter address hwaddress fuzzer-no-link,$(my_sanitize)),)
+        ifeq ($(filter address hwaddress,$(my_sanitize)),)
           my_cflags += -fsanitize-minimal-runtime
           my_cflags += -fno-sanitize-trap=integer
           my_cflags += -fno-sanitize-recover=integer

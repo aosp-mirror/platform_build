@@ -4,7 +4,6 @@ LLNDK: libGLESv2.so
 LLNDK: libGLESv3.so
 LLNDK: libRS.so
 LLNDK: libandroid_net.so
-LLNDK: libbinder_ndk.so
 LLNDK: libc.so
 LLNDK: libcgrouprc.so
 LLNDK: libdl.so
@@ -25,8 +24,8 @@ VNDK-SP: android.hardware.graphics.mapper@2.1.so
 VNDK-SP: android.hardware.graphics.mapper@3.0.so
 VNDK-SP: android.hardware.renderscript@1.0.so
 VNDK-SP: android.hidl.memory.token@1.0.so
-VNDK-SP: android.hidl.memory@1.0-impl.so
 VNDK-SP: android.hidl.memory@1.0.so
+VNDK-SP: android.hidl.memory@1.0-impl.so
 VNDK-SP: android.hidl.safe_union@1.0.so
 VNDK-SP: libRSCpuRef.so
 VNDK-SP: libRSDriver.so
@@ -42,6 +41,9 @@ VNDK-SP: libcutils.so
 VNDK-SP: libhardware.so
 VNDK-SP: libhidlbase.so
 VNDK-SP: libhidlmemory.so
+VNDK-SP: libhidltransport.so
+VNDK-SP: libhwbinder.so
+VNDK-SP: libhwbinder_noltopgo.so
 VNDK-SP: libion.so
 VNDK-SP: libjsoncpp.so
 VNDK-SP: liblzma.so
@@ -57,19 +59,17 @@ VNDK-core: android.frameworks.displayservice@1.0.so
 VNDK-core: android.frameworks.schedulerservice@1.0.so
 VNDK-core: android.frameworks.sensorservice@1.0.so
 VNDK-core: android.frameworks.stats@1.0.so
+VNDK-core: android.frameworks.vr.composer@1.0.so
 VNDK-core: android.hardware.atrace@1.0.so
 VNDK-core: android.hardware.audio.common@2.0.so
 VNDK-core: android.hardware.audio.common@4.0.so
 VNDK-core: android.hardware.audio.common@5.0.so
-VNDK-core: android.hardware.audio.common@6.0.so
 VNDK-core: android.hardware.audio.effect@2.0.so
 VNDK-core: android.hardware.audio.effect@4.0.so
 VNDK-core: android.hardware.audio.effect@5.0.so
-VNDK-core: android.hardware.audio.effect@6.0.so
 VNDK-core: android.hardware.audio@2.0.so
 VNDK-core: android.hardware.audio@4.0.so
 VNDK-core: android.hardware.audio@5.0.so
-VNDK-core: android.hardware.audio@6.0.so
 VNDK-core: android.hardware.authsecret@1.0.so
 VNDK-core: android.hardware.automotive.audiocontrol@1.0.so
 VNDK-core: android.hardware.automotive.evs@1.0.so
@@ -80,7 +80,6 @@ VNDK-core: android.hardware.bluetooth.a2dp@1.0.so
 VNDK-core: android.hardware.bluetooth.audio@2.0.so
 VNDK-core: android.hardware.bluetooth@1.0.so
 VNDK-core: android.hardware.boot@1.0.so
-VNDK-core: android.hardware.boot@1.1.so
 VNDK-core: android.hardware.broadcastradio@1.0.so
 VNDK-core: android.hardware.broadcastradio@1.1.so
 VNDK-core: android.hardware.broadcastradio@2.0.so
@@ -98,7 +97,6 @@ VNDK-core: android.hardware.camera.provider@2.5.so
 VNDK-core: android.hardware.cas.native@1.0.so
 VNDK-core: android.hardware.cas@1.0.so
 VNDK-core: android.hardware.cas@1.1.so
-VNDK-core: android.hardware.cas@1.2.so
 VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
 VNDK-core: android.hardware.configstore@1.1.so
@@ -126,7 +124,6 @@ VNDK-core: android.hardware.graphics.composer@2.3.so
 VNDK-core: android.hardware.health.storage@1.0.so
 VNDK-core: android.hardware.health@1.0.so
 VNDK-core: android.hardware.health@2.0.so
-VNDK-core: android.hardware.health@2.1.so
 VNDK-core: android.hardware.input.classifier@1.0.so
 VNDK-core: android.hardware.input.common@1.0.so
 VNDK-core: android.hardware.ir@1.0.so
@@ -142,7 +139,6 @@ VNDK-core: android.hardware.memtrack@1.0.so
 VNDK-core: android.hardware.neuralnetworks@1.0.so
 VNDK-core: android.hardware.neuralnetworks@1.1.so
 VNDK-core: android.hardware.neuralnetworks@1.2.so
-VNDK-core: android.hardware.neuralnetworks@1.3.so
 VNDK-core: android.hardware.nfc@1.0.so
 VNDK-core: android.hardware.nfc@1.1.so
 VNDK-core: android.hardware.nfc@1.2.so
@@ -161,13 +157,12 @@ VNDK-core: android.hardware.radio@1.1.so
 VNDK-core: android.hardware.radio@1.2.so
 VNDK-core: android.hardware.radio@1.3.so
 VNDK-core: android.hardware.radio@1.4.so
-VNDK-core: android.hardware.radio@1.5.so
 VNDK-core: android.hardware.secure_element@1.0.so
 VNDK-core: android.hardware.secure_element@1.1.so
 VNDK-core: android.hardware.sensors@1.0.so
 VNDK-core: android.hardware.sensors@2.0.so
-VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
+VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.1.so
 VNDK-core: android.hardware.soundtrigger@2.2.so
 VNDK-core: android.hardware.tetheroffload.config@1.0.so
@@ -178,7 +173,6 @@ VNDK-core: android.hardware.thermal@2.0.so
 VNDK-core: android.hardware.tv.cec@1.0.so
 VNDK-core: android.hardware.tv.cec@2.0.so
 VNDK-core: android.hardware.tv.input@1.0.so
-VNDK-core: android.hardware.tv.tuner@1.0.so
 VNDK-core: android.hardware.usb.gadget@1.0.so
 VNDK-core: android.hardware.usb@1.0.so
 VNDK-core: android.hardware.usb@1.1.so
@@ -187,7 +181,6 @@ VNDK-core: android.hardware.vibrator@1.0.so
 VNDK-core: android.hardware.vibrator@1.1.so
 VNDK-core: android.hardware.vibrator@1.2.so
 VNDK-core: android.hardware.vibrator@1.3.so
-VNDK-core: android.hardware.vibrator@1.4.so
 VNDK-core: android.hardware.vr@1.0.so
 VNDK-core: android.hardware.weaver@1.0.so
 VNDK-core: android.hardware.wifi.hostapd@1.0.so
@@ -202,8 +195,8 @@ VNDK-core: android.hardware.wifi@1.2.so
 VNDK-core: android.hardware.wifi@1.3.so
 VNDK-core: android.hidl.allocator@1.0.so
 VNDK-core: android.hidl.memory.block@1.0.so
-VNDK-core: android.hidl.token@1.0-utils.so
 VNDK-core: android.hidl.token@1.0.so
+VNDK-core: android.hidl.token@1.0-utils.so
 VNDK-core: android.system.net.netd@1.0.so
 VNDK-core: android.system.net.netd@1.1.so
 VNDK-core: android.system.suspend@1.0.so
@@ -229,6 +222,7 @@ VNDK-core: libgatekeeper.so
 VNDK-core: libgui.so
 VNDK-core: libhardware_legacy.so
 VNDK-core: libhidlallocatorutils.so
+VNDK-core: libhidlcache.so
 VNDK-core: libjpeg.so
 VNDK-core: libkeymaster_messages.so
 VNDK-core: libkeymaster_portable.so
@@ -247,8 +241,8 @@ VNDK-core: libpiex.so
 VNDK-core: libpng.so
 VNDK-core: libpower.so
 VNDK-core: libprocinfo.so
-VNDK-core: libprotobuf-cpp-full-3.9.1.so
-VNDK-core: libprotobuf-cpp-lite-3.9.1.so
+VNDK-core: libprotobuf-cpp-full.so
+VNDK-core: libprotobuf-cpp-lite.so
 VNDK-core: libpuresoftkeymasterdevice.so
 VNDK-core: libradio_metadata.so
 VNDK-core: libselinux.so

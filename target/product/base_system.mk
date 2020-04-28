@@ -16,7 +16,8 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
-    adbd_system_binaries \
+    abb \
+    adbd \
     am \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
@@ -28,9 +29,11 @@ PRODUCT_PACKAGES += \
     android.test.mock \
     android.test.runner \
     apexd \
+    applypatch \
     appops \
     app_process \
     appwidget \
+    ashmemd \
     atrace \
     audioserver \
     BackupRestoreConfirmation \
@@ -47,15 +50,11 @@ PRODUCT_PACKAGES += \
     cgroups.json \
     charger \
     cmd \
-    com.android.adbd \
-    com.android.apex.cts.shim.v1_prebuilt \
     com.android.conscrypt \
-    com.android.i18n \
     com.android.location.provider \
     com.android.media \
     com.android.media.swcodec \
     com.android.resolv \
-    com.android.neuralnetworks \
     com.android.tzdata \
     ContactsProvider \
     content \
@@ -75,13 +74,12 @@ PRODUCT_PACKAGES += \
     ExtServices \
     ExtShared \
     flags_health_check \
-    framework-minus-apex \
+    framework \
     framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
     fs_config_files_system \
     fs_config_dirs_system \
-    group_system \
     gsid \
     gsi_tool \
     heapprofd \
@@ -119,11 +117,14 @@ PRODUCT_PACKAGES += \
     libandroid_runtime \
     libandroid_servers \
     libartpalette-system \
+    libashmemd_client \
     libaudioeffect_jni \
     libbinder \
     libbinder_ndk \
     libc.bootstrap \
     libcamera2ndk \
+    libc_malloc_debug \
+    libc_malloc_hooks \
     libcutils \
     libdl.bootstrap \
     libdrmframework \
@@ -154,7 +155,7 @@ PRODUCT_PACKAGES += \
     libnetd_client \
     libnetlink \
     libnetutils \
-    libneuralnetworks_packageinfo \
+    libneuralnetworks \
     libOpenMAXAL \
     libOpenSLES \
     libpdfium \
@@ -172,6 +173,8 @@ PRODUCT_PACKAGES += \
     libspeexresampler \
     libsqlite \
     libstagefright \
+    libstagefright_amrnb_common \
+    libstagefright_enc_common \
     libstagefright_foundation \
     libstagefright_omx \
     libstdc++ \
@@ -180,11 +183,11 @@ PRODUCT_PACKAGES += \
     libui \
     libusbhost \
     libutils \
+    libvorbisidec \
     libvulkan \
     libwifi-service \
     libwilhelm \
     linker \
-    linkerconfig \
     lmkd \
     LocalTransport \
     locksettings \
@@ -206,11 +209,9 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NetworkStackNext \
+    NetworkStack \
     org.apache.http.legacy \
-    otacerts \
     PackageInstaller \
-    passwd_system \
     perfetto \
     PermissionController \
     ping \
@@ -224,7 +225,6 @@ PRODUCT_PACKAGES += \
     resize2fs \
     rss_hwm_reset \
     run-as \
-    sanitizer.libraries.txt \
     schedtest \
     screencap \
     sdcard \
@@ -241,7 +241,6 @@ PRODUCT_PACKAGES += \
     Shell \
     shell_and_utilities_system \
     sm \
-    snapshotctl \
     statsd \
     storaged \
     surfaceflinger \
@@ -284,8 +283,7 @@ PRODUCT_HOST_PACKAGES += \
     e2fsck \
     fastboot \
     flags_health_check \
-    icu-data_host_i18n_apex \
-    icu_tzdata.dat_host_tzdata_apex \
+    icu-data_host_runtime_apex \
     idmap2 \
     incident_report \
     ld.mc \
@@ -304,10 +302,10 @@ PRODUCT_HOST_PACKAGES += \
     unwind_symbols \
     viewcompiler \
     tzdata_host \
-    tzdata_host_tzdata_apex \
-    tzlookup.xml_host_tzdata_apex \
+    tzdata_host_runtime_apex \
+    tzlookup.xml_host_runtime_apex \
     tz_version_host \
-    tz_version_host_tzdata_apex \
+    tz_version_host_runtime_apex \
 
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
@@ -316,7 +314,7 @@ endif
 # The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    framework-minus-apex \
+    framework \
     ext \
     telephony-common \
     voip-common \
@@ -336,8 +334,7 @@ PRODUCT_COPY_FILES += \
 
 # Add the compatibility library that is needed when android.test.base
 # is removed from the bootclasspath.
-# Default to excluding android.test.base from the bootclasspath.
-ifneq ($(REMOVE_ATB_FROM_BCP),false)
+ifeq ($(REMOVE_ATB_FROM_BCP),true)
 PRODUCT_PACKAGES += framework-atb-backward-compatibility
 PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
 else
@@ -354,19 +351,15 @@ PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
     gdbserver \
-    idlcli \
     init-debug.rc \
     iotop \
-    iperf3 \
     iw \
     logpersist.start \
     logtagd.rc \
     procrank \
-    remount \
     showmap \
     sqlite3 \
     ss \
-    start_with_lockagent \
     strace \
     su \
     sanitizer-status \

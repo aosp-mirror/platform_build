@@ -78,17 +78,85 @@ $(sort $(shell find $(2) -name "$(1)" -type f | $(SED_EXTENDED) "s:($(2)/?(.*)):
 endef
 
 # ---------------------------------------------------------------
-# Check for obsolete PRODUCT- and APP- goals
+
+# These are the valid values of TARGET_BUILD_VARIANT.  Also, if anything else is passed
+# as the variant in the PRODUCT-$TARGET_BUILD_PRODUCT-$TARGET_BUILD_VARIANT form,
+# it will be treated as a goal, and the eng variant will be used.
+INTERNAL_VALID_VARIANTS := user userdebug eng
+
+# ---------------------------------------------------------------
+# Provide "PRODUCT-<prodname>-<goal>" targets, which lets you build
+# a particular configuration without needing to set up the environment.
+#
 ifeq ($(CALLED_FROM_SETUP),true)
 product_goals := $(strip $(filter PRODUCT-%,$(MAKECMDGOALS)))
 ifdef product_goals
-  $(error The PRODUCT-* goal is no longer supported. Use `TARGET_PRODUCT=<product> m droid` instead)
+  # Scrape the product and build names out of the goal,
+  # which should be of the form PRODUCT-<productname>-<buildname>.
+  #
+  ifneq ($(words $(product_goals)),1)
+    $(error Only one PRODUCT-* goal may be specified; saw "$(product_goals)")
+  endif
+  goal_name := $(product_goals)
+  product_goals := $(patsubst PRODUCT-%,%,$(product_goals))
+  product_goals := $(subst -, ,$(product_goals))
+  ifneq ($(words $(product_goals)),2)
+    $(error Bad PRODUCT-* goal "$(goal_name)")
+  endif
+
+  # The product they want
+  TARGET_PRODUCT := $(word 1,$(product_goals))
+
+  # The variant they want
+  TARGET_BUILD_VARIANT := $(word 2,$(product_goals))
+
+  ifeq ($(TARGET_BUILD_VARIANT),tests)
+    $(error "tests" has been deprecated as a build variant. Use it as a build goal instead.)
+  endif
+
+  # The build server wants to do make PRODUCT-dream-sdk
+  # which really means TARGET_PRODUCT=dream make sdk.
+  ifneq ($(filter-out $(INTERNAL_VALID_VARIANTS),$(TARGET_BUILD_VARIANT)),)
+    override MAKECMDGOALS := $(MAKECMDGOALS) $(TARGET_BUILD_VARIANT)
+    TARGET_BUILD_VARIANT := userdebug
+    default_goal_substitution :=
+  else
+    default_goal_substitution := droid
+  endif
+
+  # Replace the PRODUCT-* goal with the build goal that it refers to.
+  # Note that this will ensure that it appears in the same relative
+  # position, in case it matters.
+  override MAKECMDGOALS := $(patsubst $(goal_name),$(default_goal_substitution),$(MAKECMDGOALS))
 endif
+endif # CALLED_FROM_SETUP
+# else: Use the value set in the environment or buildspec.mk.
+
+# ---------------------------------------------------------------
+# Provide "APP-<appname>" targets, which lets you build
+# an unbundled app.
+#
+ifeq ($(CALLED_FROM_SETUP),true)
 unbundled_goals := $(strip $(filter APP-%,$(MAKECMDGOALS)))
 ifdef unbundled_goals
-  $(error The APP-* goal is no longer supported. Use `TARGET_BUILD_APPS="<app>" m droid` instead)
+  ifneq ($(words $(unbundled_goals)),1)
+    $(error Only one APP-* goal may be specified; saw "$(unbundled_goals)")
+  endif
+  TARGET_BUILD_APPS := $(strip $(subst -, ,$(patsubst APP-%,%,$(unbundled_goals))))
+  ifneq ($(filter droid,$(MAKECMDGOALS)),)
+    override MAKECMDGOALS := $(patsubst $(unbundled_goals),,$(MAKECMDGOALS))
+  else
+    override MAKECMDGOALS := $(patsubst $(unbundled_goals),droid,$(MAKECMDGOALS))
+  endif
 endif # unbundled_goals
 endif
+
+# Now that we've parsed APP-* and PRODUCT-*, mark these as readonly
+TARGET_BUILD_APPS ?=
+.KATI_READONLY := \
+  TARGET_PRODUCT \
+  TARGET_BUILD_VARIANT \
+  TARGET_BUILD_APPS
 
 # Default to building dalvikvm on hosts that support it...
 ifeq ($(HOST_OS),linux)
@@ -183,18 +251,6 @@ endif
 current_product_makefile :=
 all_product_makefiles :=
 all_product_configs :=
-
-# Jacoco agent JARS to be built and installed, if any.
-ifeq ($(EMMA_INSTRUMENT),true)
-  ifneq ($(EMMA_INSTRUMENT_STATIC),true)
-    # For instrumented build, if Jacoco is not being included statically
-    # in instrumented packages then include Jacoco classes into the
-    # bootclasspath.
-    $(foreach product,$(PRODUCTS),\
-      $(eval PRODUCTS.$(product).PRODUCT_PACKAGES += jacocoagent)\
-      $(eval PRODUCTS.$(product).PRODUCT_BOOT_JARS += jacocoagent))
-  endif # EMMA_INSTRUMENT_STATIC
-endif # EMMA_INSTRUMENT
 
 ############################################################################
 # Strip and assign the PRODUCT_ variables.
@@ -328,15 +384,6 @@ ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),)
   endif
 endif
 
-# If build command defines OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS,
-# override PRODUCT_EXTRA_VNDK_VERSIONS with it.
-ifdef OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS
-  PRODUCT_EXTRA_VNDK_VERSIONS := $(OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS)
-endif
-
-$(KATI_obsolete_var OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS \
-    ,Use PRODUCT_EXTRA_VNDK_VERSIONS instead)
-
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
     $$(if $$(filter 2,$$(words $$(subst :,$$(space),$$(rule)))),,\
@@ -351,6 +398,7 @@ $(foreach var, \
 
 # Macro to use below. $(1) is the name of the partition
 define product-build-image-config
+PRODUCT_BUILD_$(1)_IMAGE := $$(firstword $$(PRODUCT_BUILD_$(1)_IMAGE))
 ifneq ($$(filter-out true false,$$(PRODUCT_BUILD_$(1)_IMAGE)),)
     $$(error Invalid PRODUCT_BUILD_$(1)_IMAGE: $$(PRODUCT_BUILD_$(1)_IMAGE) -- true false and empty are supported)
 endif
@@ -362,13 +410,11 @@ $(foreach image, \
     SYSTEM_OTHER \
     VENDOR \
     PRODUCT \
-    SYSTEM_EXT \
+    PRODUCT_SERVICES \
     ODM \
     CACHE \
     RAMDISK \
-    USERDATA \
-    BOOT \
-    RECOVERY, \
+    USERDATA, \
   $(eval $(call product-build-image-config,$(image))))
 
 product-build-image-config :=

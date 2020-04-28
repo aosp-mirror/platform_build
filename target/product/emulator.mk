@@ -20,6 +20,8 @@
 
 # Device modules
 PRODUCT_PACKAGES += \
+    libGLES_android \
+    vintf \
     CarrierConfig \
 
 # need this for gles libraries to load properly
@@ -51,16 +53,14 @@ $(call inherit-product-if-exists, device/generic/goldfish/vendor.mk)
 #config.disable_location=true
 
 # Enable Perfetto traced
-# There is a stable property API for this prop so we can move it to /product.
-# https://android-review.googlesource.com/c/platform/system/libsysprop/+/952375
-PRODUCT_PRODUCT_PROPERTIES += \
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     persist.traced.enable=1
 
 # enable Google-specific location features,
 # like NetworkLocationProvider and LocationCollector
-PRODUCT_SYSTEM_EXT_PROPERTIES += \
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.com.google.locationfeatures=1
 
 # disable setupwizard
-PRODUCT_SYSTEM_EXT_PROPERTIES += \
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.setupwizard.mode=DISABLED

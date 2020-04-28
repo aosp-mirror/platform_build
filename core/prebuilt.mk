@@ -12,6 +12,13 @@ ifdef LOCAL_IS_HOST_MODULE
   LOCAL_HOST_PREFIX :=
 else
   my_prefix := TARGET_
+
+  ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+    # Only support prebuilt shared and static libraries for translated arch
+    ifeq ($(filter SHARED_LIBRARIES STATIC_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+      LOCAL_MULTILIB := first
+    endif
+  endif
 endif
 
 include $(BUILD_SYSTEM)/multilib.mk

@@ -11,22 +11,18 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - tapas:      tapas [<App1> <App2> ...] [arm|x86|mips|arm64|x86_64|mips64] [eng|userdebug|user]
 - croot:      Changes directory to the top of the tree, or a subdirectory thereof.
 - m:          Makes from the top of the tree.
-- mm:         Builds and installs all of the modules in the current directory, and their
-              dependencies.
-- mmm:        Builds and installs all of the modules in the supplied directories, and their
-              dependencies.
+- mm:         Builds all of the modules in the current directory, but not their dependencies.
+- mmm:        Builds all of the modules in the supplied directories, but not their dependencies.
               To limit the modules being built use the syntax: mmm dir/:target1,target2.
-- mma:        Same as 'mm'
-- mmma:       Same as 'mmm'
+- mma:        Builds all of the modules in the current directory, and their dependencies.
+- mmma:       Builds all of the modules in the supplied directories, and their dependencies.
 - provision:  Flash device with all required partitions. Options will be passed on to fastboot.
 - cgrep:      Greps on all local C/C++ files.
 - ggrep:      Greps on all local Gradle files.
-- gogrep:     Greps on all local Go files.
 - jgrep:      Greps on all local Java files.
 - resgrep:    Greps on all local res/*.xml files.
 - mangrep:    Greps on all local AndroidManifest.xml files.
-- mgrep:      Greps on all local Makefiles and *.bp files.
-- owngrep:    Greps on all local OWNERS files.
+- mgrep:      Greps on all local Makefiles files.
 - sepgrep:    Greps on all local sepolicy files.
 - sgrep:      Greps on all local source files.
 - godir:      Go to the directory containing a file.
@@ -36,7 +32,9 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - refreshmod: Refresh list of modules for allmod/gomod.
 
 Environment options:
-- SANITIZE_HOST: Set to 'address' to use ASAN for all host modules.
+- SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
+                 ASAN_OPTIONS=detect_leaks=0 will be set by default until the
+                 build is leak-check clean.
 - ANDROID_QUIET_BUILD: set to 'true' to display only the essential messages.
 
 Look at the source to view more functions. The complete list is:
@@ -248,11 +246,8 @@ function setpaths()
     if [ -n "$ANDROID_TOOLCHAIN_2ND_ARCH" ]; then
         ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_TOOLCHAIN_2ND_ARCH
     fi
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_DEV_SCRIPTS
-
-    # Append llvm binutils prebuilts path to ANDROID_BUILD_PATHS.
-    local ANDROID_LLVM_BINUTILS=$(get_abs_build_var ANDROID_CLANG_PREBUILTS)/llvm-binutils-stable
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_LLVM_BINUTILS
+    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_DEV_SCRIPTS:
+    export ANDROID_BUILD_PATHS
 
     # If prebuilts/android-emulator/<system>/ exists, prepend it to our PATH
     # to ensure that the corresponding 'emulator' binaries are used.
@@ -268,16 +263,16 @@ function setpaths()
             ;;
     esac
     if [ -n "$ANDROID_EMULATOR_PREBUILTS" -a -d "$ANDROID_EMULATOR_PREBUILTS" ]; then
-        ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_EMULATOR_PREBUILTS
+        ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS$ANDROID_EMULATOR_PREBUILTS:
         export ANDROID_EMULATOR_PREBUILTS
     fi
 
     # Append asuite prebuilts path to ANDROID_BUILD_PATHS.
     local os_arch=$(get_build_var HOST_PREBUILT_TAG)
-    local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch"
-    local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch"
-    local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch"
-    export ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH:$AIDEGEN_PATH:$ATEST_PATH:
+    local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch:"
+    local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch:"
+    local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch:"
+    export ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS$ACLOUD_PATH$AIDEGEN_PATH$ATEST_PATH
 
     export PATH=$ANDROID_BUILD_PATHS$PATH
 
@@ -287,9 +282,6 @@ function setpaths()
     fi
     # and in with the new
     export ANDROID_PYTHONPATH=$T/development/python-packages:
-    if [ -n $VENDOR_PYTHONPATH  ]; then
-        ANDROID_PYTHONPATH=$ANDROID_PYTHONPATH$VENDOR_PYTHONPATH
-    fi
     export PYTHONPATH=$ANDROID_PYTHONPATH$PYTHONPATH
 
     export ANDROID_JAVA_HOME=$(get_abs_build_var ANDROID_JAVA_HOME)
@@ -334,6 +326,7 @@ function set_stuff_for_environment()
     export ANDROID_BUILD_TOP=$(gettop)
     # With this environment variable new GCC can apply colors to warnings/errors
     export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+    export ASAN_OPTIONS=detect_leaks=0
 }
 
 function set_sequence_number()
@@ -527,7 +520,7 @@ function choosevariant()
             export TARGET_BUILD_VARIANT=$default_value
         elif (echo -n $ANSWER | grep -q -e "^[0-9][0-9]*$") ; then
             if [ "$ANSWER" -le "${#VARIANT_CHOICES[@]}" ] ; then
-                export TARGET_BUILD_VARIANT=${VARIANT_CHOICES[@]:$(($ANSWER-1)):1}
+                export TARGET_BUILD_VARIANT=${VARIANT_CHOICES[$(($ANSWER-1))]}
             fi
         else
             if check_variant $ANSWER
@@ -575,7 +568,6 @@ function add_lunch_combo()
 function print_lunch_menu()
 {
     local uname=$(uname)
-    local choices=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
     echo
     echo "You're building on" $uname
     echo
@@ -583,7 +575,7 @@ function print_lunch_menu()
 
     local i=1
     local choice
-    for choice in $(echo $choices)
+    for choice in $(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
     do
         echo "     $i. $choice"
         i=$(($i+1))
@@ -771,6 +763,218 @@ function gettop
             fi
         fi
     fi
+}
+
+function m()
+{
+    local T=$(gettop)
+    if [ "$T" ]; then
+        _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
+    else
+        echo "Couldn't locate the top of the tree.  Try setting TOP."
+        return 1
+    fi
+}
+
+function findmakefile()
+{
+    local TOPFILE=build/make/core/envsetup.mk
+    local HERE=$PWD
+    if [ "$1" ]; then
+        \cd $1
+    fi;
+    local T=
+    while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
+        T=`PWD= /bin/pwd`
+        if [ -f "$T/Android.mk" -o -f "$T/Android.bp" ]; then
+            echo $T/Android.mk
+            \cd $HERE
+            return
+        fi
+        \cd ..
+    done
+    \cd $HERE
+    return 1
+}
+
+function mm()
+{
+    local T=$(gettop)
+    # If we're sitting in the root of the build tree, just do a
+    # normal build.
+    if [ -f build/soong/soong_ui.bash ]; then
+        _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
+    else
+        # Find the closest Android.mk file.
+        local M=$(findmakefile)
+        local MODULES=
+        local GET_INSTALL_PATH=
+        local ARGS=
+        # Remove the path to top as the makefilepath needs to be relative
+        local M=`echo $M|sed 's:'$T'/::'`
+        if [ ! "$T" ]; then
+            echo "Couldn't locate the top of the tree.  Try setting TOP."
+            return 1
+        elif [ ! "$M" ]; then
+            echo "Couldn't locate a makefile from the current directory."
+            return 1
+        else
+            local ARG
+            for ARG in $@; do
+                case $ARG in
+                  GET-INSTALL-PATH) GET_INSTALL_PATH=$ARG;;
+                esac
+            done
+            if [ -n "$GET_INSTALL_PATH" ]; then
+              MODULES=
+              ARGS=GET-INSTALL-PATH-IN-$(dirname ${M})
+              ARGS=${ARGS//\//-}
+            else
+              MODULES=MODULES-IN-$(dirname ${M})
+              # Convert "/" to "-".
+              MODULES=${MODULES//\//-}
+              ARGS=$@
+            fi
+            if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
+              MODULES=tidy_only
+            fi
+            ONE_SHOT_MAKEFILE=$M _wrap_build $T/build/soong/soong_ui.bash --make-mode $MODULES $ARGS
+        fi
+    fi
+}
+
+function mmm()
+{
+    local T=$(gettop)
+    if [ "$T" ]; then
+        local MAKEFILE=
+        local MODULES=
+        local MODULES_IN_PATHS=
+        local ARGS=
+        local DIR TO_CHOP
+        local DIR_MODULES
+        local GET_INSTALL_PATH=
+        local GET_INSTALL_PATHS=
+        local DASH_ARGS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^-.*$/')
+        local DIRS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^[^-].*$/')
+        for DIR in $DIRS ; do
+            DIR_MODULES=`echo $DIR | sed -n -e 's/.*:\(.*$\)/\1/p' | sed 's/,/ /'`
+            DIR=`echo $DIR | sed -e 's/:.*//' -e 's:/$::'`
+            # Remove the leading ./ and trailing / if any exists.
+            DIR=${DIR#./}
+            DIR=${DIR%/}
+            local M
+            if [ "$DIR_MODULES" = "" ]; then
+                M=$(findmakefile $DIR)
+            else
+                # Only check the target directory if a module is specified.
+                if [ -f $DIR/Android.mk -o -f $DIR/Android.bp ]; then
+                    local HERE=$PWD
+                    cd $DIR
+                    M=`PWD= /bin/pwd`
+                    M=$M/Android.mk
+                    cd $HERE
+                fi
+            fi
+            if [ "$M" ]; then
+                # Remove the path to top as the makefilepath needs to be relative
+                local M=`echo $M|sed 's:'$T'/::'`
+                if [ "$DIR_MODULES" = "" ]; then
+                    MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN-$(dirname ${M})"
+                    GET_INSTALL_PATHS="$GET_INSTALL_PATHS GET-INSTALL-PATH-IN-$(dirname ${M})"
+                else
+                    MODULES="$MODULES $DIR_MODULES"
+                fi
+                MAKEFILE="$MAKEFILE $M"
+            else
+                case $DIR in
+                  showcommands | snod | dist | *=*) ARGS="$ARGS $DIR";;
+                  GET-INSTALL-PATH) GET_INSTALL_PATH=$DIR;;
+                  *) if [ -d $DIR ]; then
+                         echo "No Android.mk in $DIR.";
+                     else
+                         echo "Couldn't locate the directory $DIR";
+                     fi
+                     return 1;;
+                esac
+            fi
+        done
+        if [ -n "$GET_INSTALL_PATH" ]; then
+          ARGS=${GET_INSTALL_PATHS//\//-}
+          MODULES=
+          MODULES_IN_PATHS=
+        fi
+        if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
+          MODULES=tidy_only
+          MODULES_IN_PATHS=
+        fi
+        # Convert "/" to "-".
+        MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
+        ONE_SHOT_MAKEFILE="$MAKEFILE" _wrap_build $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $MODULES $MODULES_IN_PATHS $ARGS
+    else
+        echo "Couldn't locate the top of the tree.  Try setting TOP."
+        return 1
+    fi
+}
+
+function mma()
+{
+  local T=$(gettop)
+  if [ -f build/soong/soong_ui.bash ]; then
+    _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
+  else
+    if [ ! "$T" ]; then
+      echo "Couldn't locate the top of the tree.  Try setting TOP."
+      return 1
+    fi
+    local M=$(findmakefile || echo $(realpath $PWD)/Android.mk)
+    # Remove the path to top as the makefilepath needs to be relative
+    local M=`echo $M|sed 's:'$T'/::'`
+    local MODULES_IN_PATHS=MODULES-IN-$(dirname ${M})
+    # Convert "/" to "-".
+    MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
+    _wrap_build $T/build/soong/soong_ui.bash --make-mode $@ $MODULES_IN_PATHS
+  fi
+}
+
+function mmma()
+{
+  local T=$(gettop)
+  if [ "$T" ]; then
+    local DASH_ARGS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^-.*$/')
+    local DIRS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^[^-].*$/')
+    local MY_PWD=`PWD= /bin/pwd`
+    if [ "$MY_PWD" = "$T" ]; then
+      MY_PWD=
+    else
+      MY_PWD=`echo $MY_PWD|sed 's:'$T'/::'`
+    fi
+    local DIR=
+    local MODULES_IN_PATHS=
+    local ARGS=
+    for DIR in $DIRS ; do
+      if [ -d $DIR ]; then
+        # Remove the leading ./ and trailing / if any exists.
+        DIR=${DIR#./}
+        DIR=${DIR%/}
+        if [ "$MY_PWD" != "" ]; then
+          DIR=$MY_PWD/$DIR
+        fi
+        MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN-$DIR"
+      else
+        case $DIR in
+          showcommands | snod | dist | *=*) ARGS="$ARGS $DIR";;
+          *) echo "Couldn't find directory $DIR"; return 1;;
+        esac
+      fi
+    done
+    # Convert "/" to "-".
+    MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
+    _wrap_build $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $ARGS $MODULES_IN_PATHS
+  else
+    echo "Couldn't locate the top of the tree.  Try setting TOP."
+    return 1
+  fi
 }
 
 function croot()
@@ -971,12 +1175,6 @@ function ggrep()
         -exec grep --color -n "$@" {} +
 }
 
-function gogrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.go" \
-        -exec grep --color -n "$@" {} +
-}
-
 function jgrep()
 {
     find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.java" \
@@ -1003,12 +1201,6 @@ function mangrep()
         -exec grep --color -n "$@" {} +
 }
 
-function owngrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'OWNERS' \
-        -exec grep --color -n "$@" {} +
-}
-
 function sepgrep()
 {
     find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -name sepolicy -type d \
@@ -1025,7 +1217,7 @@ case `uname -s` in
     Darwin)
         function mgrep()
         {
-            find -E . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -iregex '.*/(Makefile|Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regex '(.*/)?(build|soong)/.*[^/]*\.go' \) -type f \
+            find -E . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -iregex '.*/(Makefile|Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regex '(.*/)?soong/[^/]*.go' \) -type f \
                 -exec grep --color -n "$@" {} +
         }
 
@@ -1039,7 +1231,7 @@ case `uname -s` in
     *)
         function mgrep()
         {
-            find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -regextype posix-egrep -iregex '(.*\/Makefile|.*\/Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regextype posix-extended -regex '(.*/)?(build|soong)/.*[^/]*\.go' \) -type f \
+            find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -regextype posix-egrep -iregex '(.*\/Makefile|.*\/Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regextype posix-extended -regex '(.*/)?soong/[^/]*.go' \) -type f \
                 -exec grep --color -n "$@" {} +
         }
 
@@ -1304,10 +1496,10 @@ function godir () {
                 echo "Invalid choice"
                 continue
             fi
-            pathname=${lines[@]:$(($choice-1)):1}
+            pathname=${lines[$(($choice-1))]}
         done
     else
-        pathname=${lines[@]:0:1}
+        pathname=${lines[0]}
     fi
     \cd $T/$pathname
 }
@@ -1470,41 +1662,6 @@ function _wrap_build()
     return $ret
 }
 
-function _trigger_build()
-(
-    local -r bc="$1"; shift
-    if T="$(gettop)"; then
-      _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
-    else
-      echo "Couldn't locate the top of the tree. Try setting TOP."
-    fi
-)
-
-function m()
-(
-    _trigger_build "all-modules" "$@"
-)
-
-function mm()
-(
-    _trigger_build "modules-in-a-dir-no-deps" "$@"
-)
-
-function mmm()
-(
-    _trigger_build "modules-in-dirs-no-deps" "$@"
-)
-
-function mma()
-(
-    _trigger_build "modules-in-a-dir" "$@"
-)
-
-function mmma()
-(
-    _trigger_build "modules-in-dirs" "$@"
-)
-
 function make()
 {
     _wrap_build $(get_make_command "$@") "$@"
@@ -1569,7 +1726,6 @@ function validate_current_shell() {
 #
 # This allows loading only approved vendorsetup.sh files
 function source_vendorsetup() {
-    unset VENDOR_PYTHONPATH
     allowed=
     for f in $(find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
         if [ -n "$allowed" ]; then

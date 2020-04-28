@@ -52,8 +52,6 @@ java_sources := $(addprefix $(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES)))
                 $(filter %.java,$(LOCAL_GENERATED_SOURCES))
 all_java_sources := $(java_sources)
 
-ALL_MODULES.$(my_register_name).SRCS := $(ALL_MODULES.$(my_register_name).SRCS) $(all_java_sources)
-
 include $(BUILD_SYSTEM)/java_common.mk
 
 # The layers file allows you to enforce a layering between java packages.
@@ -64,6 +62,7 @@ layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
 java_sources_deps := \
     $(java_sources) \
     $(java_resource_sources) \
+    $(proto_java_sources_file_stamp) \
     $(LOCAL_SRCJARS) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
@@ -96,15 +95,13 @@ javac-check : $(full_classes_compiled_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
 .PHONY: javac-check-$(LOCAL_MODULE)
 
-$(full_classes_combined_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_combined_jar): $(full_classes_compiled_jar) \
                               $(jar_manifest_file) \
                               $(full_static_java_libs) | $(MERGE_ZIPS)
 	$(if $(PRIVATE_JAR_MANIFEST), $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
             $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf)
 	$(MERGE_ZIPS) -j --ignore-duplicates $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
-            $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
-            $@ $< $(PRIVATE_STATIC_JAVA_LIBRARIES)
+            -stripDir META-INF -zipToNotStrip $< $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
 
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)

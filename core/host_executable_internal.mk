@@ -39,7 +39,7 @@ $(LOCAL_BUILT_MODULE): PRIVATE_RPATHS := ../$(my_libdir) $(my_libdir)
 endif
 my_libdir :=
 
-$(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries) $(CLANG_CXX)
+$(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries)
 	$(transform-host-o-to-executable)
 
 endif  # skip_build_from_source

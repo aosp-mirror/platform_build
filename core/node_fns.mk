@@ -142,8 +142,7 @@ endef
 #
 # $(1): context prefix
 # $(2): name of this node
-# $(3): list of node variable names
-# $(4): list of single value variable names (subset of $(3))
+# $(3): list of variable names
 #
 define _expand-inherited-values
   $(foreach v,$(3), \
@@ -155,21 +154,15 @@ define _expand-inherited-values
             $(patsubst $(INHERIT_TAG)%,%, \
                 $(filter $(INHERIT_TAG)%, $($(_eiv_tv)) \
      )))) \
-    $(eval ### "Whether this variable should only take a single value") \
-    $(eval _eiv_sv := $(filter $(v),$(4))) \
     $(foreach i,$(_eiv_i), \
       $(eval ### "Make sure that this inherit appears only once") \
       $(eval $(_eiv_tv) := \
           $(call uniq-word,$($(_eiv_tv)),$(INHERIT_TAG)$(i))) \
-      $(eval ### "The expanded value, empty if we want a single value and have one") \
-      $(eval _eiv_ev := \
-        $(if $(and $(_eiv_sv),$(filter-out $(INHERIT_TAG)%,$($(_eiv_tv)))),,\
-          $($(1).$(i).$(v)) \
-        ) \
-      ) \
       $(eval ### "Expand the inherit tag") \
       $(eval $(_eiv_tv) := \
-          $(strip $(patsubst $(INHERIT_TAG)$(i),$(_eiv_ev),$($(_eiv_tv))))) \
+          $(strip \
+              $(patsubst $(INHERIT_TAG)$(i),$($(1).$(i).$(v)), \
+                  $($(_eiv_tv))))) \
       $(eval ### "Clear the child so DAGs don't create duplicate entries" ) \
       $(eval $(1).$(i).$(v) :=) \
       $(eval ### "If we just inherited ourselves, it's a cycle.") \
@@ -187,7 +180,6 @@ endef
 # $(1): context prefix
 # $(2): makefile representing this node
 # $(3): list of node variable names
-# $(4): list of single value variable names (subset of $(3))
 #
 # _include_stack contains the list of included files, with the most recent files first.
 define _import-node
@@ -206,7 +198,7 @@ define _import-node
       $(call get-inherited-nodes,$(1).$(2),$(3)))
   $(call _import-nodes-inner,$(1),$($(1).$(2).inherited),$(3))
 
-  $(call _expand-inherited-values,$(1),$(2),$(3),$(4))
+  $(call _expand-inherited-values,$(1),$(2),$(3))
 
   $(eval $(1).$(2).inherited :=)
   $(eval _include_stack := $(wordlist 2,9999,$$(_include_stack)))
@@ -223,7 +215,6 @@ endef
 # $(1): context prefix
 # $(2): list of makefiles representing nodes to import
 # $(3): list of node variable names
-# $(4): list of single value variable names (subset of $(3))
 #
 #TODO: Make the "does not exist" message more helpful;
 #      should print out the name of the file trying to include it.
@@ -234,7 +225,7 @@ define _import-nodes-inner
         $(eval ### "skipping already-imported $(_in)") \
        , \
         $(eval $(1).$(_in).seen := true) \
-        $(call _import-node,$(1),$(strip $(_in)),$(3),$(4)) \
+        $(call _import-node,$(1),$(strip $(_in)),$(3)) \
        ) \
      , \
       $(error $(1): "$(_in)" does not exist) \
@@ -246,8 +237,6 @@ endef
 # $(1): output list variable name, like "PRODUCTS" or "DEVICES"
 # $(2): list of makefiles representing nodes to import
 # $(3): list of node variable names
-# $(4): list with subset of variable names that take only a single value, instead
-#       of the default list semantics
 #
 define import-nodes
 $(if \
@@ -256,7 +245,7 @@ $(if \
     $(if $(_include_stack),$(eval $(error ASSERTION FAILED: _include_stack \
                 should be empty here: $(_include_stack))),) \
     $(eval _include_stack := ) \
-    $(call _import-nodes-inner,$(_node_import_context),$(_in),$(3),$(4)) \
+    $(call _import-nodes-inner,$(_node_import_context),$(_in),$(3)) \
     $(call move-var-list,$(_node_import_context).$(_in),$(1).$(_in),$(3)) \
     $(eval _node_import_context :=) \
     $(eval $(1) := $($(1)) $(_in)) \

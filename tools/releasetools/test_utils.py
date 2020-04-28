@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2018 The Android Open Source Project
 #
@@ -31,21 +30,6 @@ import common
 # Some test runner doesn't like outputs from stderr.
 logging.basicConfig(stream=sys.stdout)
 
-# Use ANDROID_BUILD_TOP as an indicator to tell if the needed tools (e.g.
-# avbtool, mke2fs) are available while running the tests, unless
-# FORCE_RUN_RELEASETOOLS is set to '1'. Not having the required vars means we
-# can't run the tests that require external tools.
-EXTERNAL_TOOLS_UNAVAILABLE = (
-    not os.environ.get('ANDROID_BUILD_TOP') and
-    os.environ.get('FORCE_RUN_RELEASETOOLS') != '1')
-
-
-def SkipIfExternalToolsUnavailable():
-  """Decorator function that allows skipping tests per tools availability."""
-  if EXTERNAL_TOOLS_UNAVAILABLE:
-    return unittest.skip('External tools unavailable')
-  return lambda func: func
-
 
 def get_testdata_dir():
   """Returns the testdata dir, in relative to the script dir."""
@@ -56,19 +40,6 @@ def get_testdata_dir():
 
 def get_search_path():
   """Returns the search path that has 'framework/signapk.jar' under."""
-
-  def signapk_exists(path):
-    signapk_path = os.path.realpath(
-        os.path.join(path, 'framework', 'signapk.jar'))
-    return os.path.exists(signapk_path)
-
-  # Try with ANDROID_BUILD_TOP first.
-  full_path = os.path.realpath(os.path.join(
-      os.environ.get('ANDROID_BUILD_TOP', ''), 'out', 'host', 'linux-x86'))
-  if signapk_exists(full_path):
-    return full_path
-
-  # Otherwise try going with relative pathes.
   current_dir = os.path.dirname(os.path.realpath(__file__))
   for path in (
       # In relative to 'build/make/tools/releasetools' in the Android source.
@@ -76,7 +47,9 @@ def get_search_path():
       # Or running the script unpacked from otatools.zip.
       ['..']):
     full_path = os.path.realpath(os.path.join(current_dir, *path))
-    if signapk_exists(full_path):
+    signapk_path = os.path.realpath(
+        os.path.join(full_path, 'framework', 'signapk.jar'))
+    if os.path.exists(signapk_path):
       return full_path
   return None
 
@@ -145,56 +118,8 @@ def construct_sparse_image(chunks):
   return sparse_image
 
 
-class MockScriptWriter(object):
-  """A class that mocks edify_generator.EdifyGenerator.
-
-  It simply pushes the incoming arguments onto script stack, which is to assert
-  the calls to EdifyGenerator functions.
-  """
-
-  def __init__(self, enable_comments=False):
-    self.lines = []
-    self.enable_comments = enable_comments
-
-  def Mount(self, *args):
-    self.lines.append(('Mount',) + args)
-
-  def AssertDevice(self, *args):
-    self.lines.append(('AssertDevice',) + args)
-
-  def AssertOemProperty(self, *args):
-    self.lines.append(('AssertOemProperty',) + args)
-
-  def AssertFingerprintOrThumbprint(self, *args):
-    self.lines.append(('AssertFingerprintOrThumbprint',) + args)
-
-  def AssertSomeFingerprint(self, *args):
-    self.lines.append(('AssertSomeFingerprint',) + args)
-
-  def AssertSomeThumbprint(self, *args):
-    self.lines.append(('AssertSomeThumbprint',) + args)
-
-  def Comment(self, comment):
-    if not self.enable_comments:
-      return
-    self.lines.append('# {}'.format(comment))
-
-  def AppendExtra(self, extra):
-    self.lines.append(extra)
-
-  def __str__(self):
-    return '\n'.join(self.lines)
-
-
 class ReleaseToolsTestCase(unittest.TestCase):
   """A common base class for all the releasetools unittests."""
 
   def tearDown(self):
     common.Cleanup()
-
-
-if __name__ == '__main__':
-  testsuite = unittest.TestLoader().discover(
-      os.path.dirname(os.path.realpath(__file__)))
-  # atest needs a verbosity level of >= 2 to correctly parse the result.
-  unittest.TextTestRunner(verbosity=2).run(testsuite)

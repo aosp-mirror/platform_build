@@ -18,8 +18,9 @@ import os
 from hashlib import sha1
 
 import common
-from blockimgdiff import BlockImageDiff, HeapItem, ImgdiffStats, Transfer
-from images import DataImage, EmptyImage, FileImage
+from blockimgdiff import (
+    BlockImageDiff, DataImage, EmptyImage, FileImage, HeapItem, ImgdiffStats,
+    Transfer)
 from rangelib import RangeSet
 from test_utils import ReleaseToolsTestCase
 
@@ -267,7 +268,6 @@ class ImgdiffStatsTest(ReleaseToolsTestCase):
 
 
 class DataImageTest(ReleaseToolsTestCase):
-
   def test_read_range_set(self):
     data = "file" + ('\0' * 4092)
     image = DataImage(data)
@@ -275,11 +275,10 @@ class DataImageTest(ReleaseToolsTestCase):
 
 
 class FileImageTest(ReleaseToolsTestCase):
-
   def setUp(self):
     self.file_path = common.MakeTempFile()
     self.data = os.urandom(4096 * 4)
-    with open(self.file_path, 'wb') as f:
+    with open(self.file_path, 'w') as f:
       f.write(self.data)
     self.file = FileImage(self.file_path)
 
@@ -293,18 +292,18 @@ class FileImageTest(ReleaseToolsTestCase):
         expected_data = self.data[s * blocksize : e * blocksize]
 
         rs = RangeSet([s, e])
-        data = b''.join(self.file.ReadRangeSet(rs))
+        data = "".join(self.file.ReadRangeSet(rs))
         self.assertEqual(expected_data, data)
 
         sha1sum = self.file.RangeSha1(rs)
         self.assertEqual(sha1(expected_data).hexdigest(), sha1sum)
 
         tmpfile = common.MakeTempFile()
-        with open(tmpfile, 'wb') as f:
+        with open(tmpfile, 'w') as f:
           self.file.WriteRangeDataToFd(rs, f)
-        with open(tmpfile, 'rb') as f:
+        with open(tmpfile, 'r') as f:
           self.assertEqual(expected_data, f.read())
 
   def test_read_all(self):
-    data = b''.join(self.file.ReadRangeSet(self.file.care_map))
+    data = "".join(self.file.ReadRangeSet(self.file.care_map))
     self.assertEqual(self.data, data)

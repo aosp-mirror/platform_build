@@ -25,9 +25,9 @@ from hashlib import sha1
 import common
 import test_utils
 import validate_target_files
-from images import EmptyImage, DataImage
 from rangelib import RangeSet
 
+from blockimgdiff import EmptyImage, DataImage
 
 KiB = 1024
 MiB = 1024 * KiB
@@ -41,211 +41,7 @@ def get_2gb_string():
   # Generate a long string with holes, e.g. 'xyz\x00abc\x00...'.
   for _ in range(0, size, step_size):
     yield os.urandom(block_size)
-    yield b'\0' * (step_size - block_size)
-
-
-class BuildInfoTest(test_utils.ReleaseToolsTestCase):
-
-  TEST_INFO_DICT = {
-      'build.prop' : {
-          'ro.product.device' : 'product-device',
-          'ro.product.name' : 'product-name',
-          'ro.build.fingerprint' : 'build-fingerprint',
-          'ro.build.foo' : 'build-foo',
-      },
-      'vendor.build.prop' : {
-          'ro.vendor.build.fingerprint' : 'vendor-build-fingerprint',
-      },
-      'property1' : 'value1',
-      'property2' : 4096,
-  }
-
-  TEST_INFO_DICT_USES_OEM_PROPS = {
-      'build.prop' : {
-          'ro.product.name' : 'product-name',
-          'ro.build.thumbprint' : 'build-thumbprint',
-          'ro.build.bar' : 'build-bar',
-      },
-      'vendor.build.prop' : {
-          'ro.vendor.build.fingerprint' : 'vendor-build-fingerprint',
-      },
-      'property1' : 'value1',
-      'property2' : 4096,
-      'oem_fingerprint_properties' : 'ro.product.device ro.product.brand',
-  }
-
-  TEST_OEM_DICTS = [
-      {
-          'ro.product.brand' : 'brand1',
-          'ro.product.device' : 'device1',
-      },
-      {
-          'ro.product.brand' : 'brand2',
-          'ro.product.device' : 'device2',
-      },
-      {
-          'ro.product.brand' : 'brand3',
-          'ro.product.device' : 'device3',
-      },
-  ]
-
-  def test_init(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
-    self.assertEqual('product-device', target_info.device)
-    self.assertEqual('build-fingerprint', target_info.fingerprint)
-    self.assertFalse(target_info.is_ab)
-    self.assertIsNone(target_info.oem_props)
-
-  def test_init_with_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    self.assertEqual('device1', target_info.device)
-    self.assertEqual('brand1/product-name/device1:build-thumbprint',
-                     target_info.fingerprint)
-
-    # Swap the order in oem_dicts, which would lead to different BuildInfo.
-    oem_dicts = copy.copy(self.TEST_OEM_DICTS)
-    oem_dicts[0], oem_dicts[2] = oem_dicts[2], oem_dicts[0]
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   oem_dicts)
-    self.assertEqual('device3', target_info.device)
-    self.assertEqual('brand3/product-name/device3:build-thumbprint',
-                     target_info.fingerprint)
-
-    # Missing oem_dict should be rejected.
-    self.assertRaises(AssertionError, common.BuildInfo,
-                      self.TEST_INFO_DICT_USES_OEM_PROPS, None)
-
-  def test_init_badFingerprint(self):
-    info_dict = copy.deepcopy(self.TEST_INFO_DICT)
-    info_dict['build.prop']['ro.build.fingerprint'] = 'bad fingerprint'
-    self.assertRaises(ValueError, common.BuildInfo, info_dict, None)
-
-    info_dict['build.prop']['ro.build.fingerprint'] = 'bad\x80fingerprint'
-    self.assertRaises(ValueError, common.BuildInfo, info_dict, None)
-
-  def test___getitem__(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
-    self.assertEqual('value1', target_info['property1'])
-    self.assertEqual(4096, target_info['property2'])
-    self.assertEqual('build-foo', target_info['build.prop']['ro.build.foo'])
-
-  def test___getitem__with_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    self.assertEqual('value1', target_info['property1'])
-    self.assertEqual(4096, target_info['property2'])
-    self.assertRaises(KeyError,
-                      lambda: target_info['build.prop']['ro.build.foo'])
-
-  def test___setitem__(self):
-    target_info = common.BuildInfo(copy.deepcopy(self.TEST_INFO_DICT), None)
-    self.assertEqual('value1', target_info['property1'])
-    target_info['property1'] = 'value2'
-    self.assertEqual('value2', target_info['property1'])
-
-    self.assertEqual('build-foo', target_info['build.prop']['ro.build.foo'])
-    target_info['build.prop']['ro.build.foo'] = 'build-bar'
-    self.assertEqual('build-bar', target_info['build.prop']['ro.build.foo'])
-
-  def test_get(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
-    self.assertEqual('value1', target_info.get('property1'))
-    self.assertEqual(4096, target_info.get('property2'))
-    self.assertEqual(4096, target_info.get('property2', 1024))
-    self.assertEqual(1024, target_info.get('property-nonexistent', 1024))
-    self.assertEqual('build-foo', target_info.get('build.prop')['ro.build.foo'])
-
-  def test_get_with_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    self.assertEqual('value1', target_info.get('property1'))
-    self.assertEqual(4096, target_info.get('property2'))
-    self.assertEqual(4096, target_info.get('property2', 1024))
-    self.assertEqual(1024, target_info.get('property-nonexistent', 1024))
-    self.assertIsNone(target_info.get('build.prop').get('ro.build.foo'))
-    self.assertRaises(KeyError,
-                      lambda: target_info.get('build.prop')['ro.build.foo'])
-
-  def test_items(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
-    items = target_info.items()
-    self.assertIn(('property1', 'value1'), items)
-    self.assertIn(('property2', 4096), items)
-
-  def test_GetBuildProp(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
-    self.assertEqual('build-foo', target_info.GetBuildProp('ro.build.foo'))
-    self.assertRaises(common.ExternalError, target_info.GetBuildProp,
-                      'ro.build.nonexistent')
-
-  def test_GetBuildProp_with_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    self.assertEqual('build-bar', target_info.GetBuildProp('ro.build.bar'))
-    self.assertRaises(common.ExternalError, target_info.GetBuildProp,
-                      'ro.build.nonexistent')
-
-  def test_GetVendorBuildProp(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
-    self.assertEqual('vendor-build-fingerprint',
-                     target_info.GetVendorBuildProp(
-                         'ro.vendor.build.fingerprint'))
-    self.assertRaises(common.ExternalError, target_info.GetVendorBuildProp,
-                      'ro.build.nonexistent')
-
-  def test_GetVendorBuildProp_with_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    self.assertEqual('vendor-build-fingerprint',
-                     target_info.GetVendorBuildProp(
-                         'ro.vendor.build.fingerprint'))
-    self.assertRaises(common.ExternalError, target_info.GetVendorBuildProp,
-                      'ro.build.nonexistent')
-
-  def test_vendor_fingerprint(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
-    self.assertEqual('vendor-build-fingerprint',
-                     target_info.vendor_fingerprint)
-
-  def test_vendor_fingerprint_blacklisted(self):
-    target_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
-    del target_info_dict['vendor.build.prop']['ro.vendor.build.fingerprint']
-    target_info = common.BuildInfo(target_info_dict, self.TEST_OEM_DICTS)
-    self.assertIsNone(target_info.vendor_fingerprint)
-
-  def test_vendor_fingerprint_without_vendor_build_prop(self):
-    target_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
-    del target_info_dict['vendor.build.prop']
-    target_info = common.BuildInfo(target_info_dict, self.TEST_OEM_DICTS)
-    self.assertIsNone(target_info.vendor_fingerprint)
-
-  def test_WriteMountOemScript(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    script_writer = test_utils.MockScriptWriter()
-    target_info.WriteMountOemScript(script_writer)
-    self.assertEqual([('Mount', '/oem', None)], script_writer.lines)
-
-  def test_WriteDeviceAssertions(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
-    script_writer = test_utils.MockScriptWriter()
-    target_info.WriteDeviceAssertions(script_writer, False)
-    self.assertEqual([('AssertDevice', 'product-device')], script_writer.lines)
-
-  def test_WriteDeviceAssertions_with_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    script_writer = test_utils.MockScriptWriter()
-    target_info.WriteDeviceAssertions(script_writer, False)
-    self.assertEqual(
-        [
-            ('AssertOemProperty', 'ro.product.device',
-             ['device1', 'device2', 'device3'], False),
-            ('AssertOemProperty', 'ro.product.brand',
-             ['brand1', 'brand2', 'brand3'], False),
-        ],
-        script_writer.lines)
+    yield '\0' * (step_size - block_size)
 
 
 class CommonZipTest(test_utils.ReleaseToolsTestCase):
@@ -276,7 +72,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     # Verify the zip contents.
     entry = zip_file.open(arcname)
     sha1_hash = sha1()
-    for chunk in iter(lambda: entry.read(4 * MiB), b''):
+    for chunk in iter(lambda: entry.read(4 * MiB), ''):
       sha1_hash.update(chunk)
     self.assertEqual(expected_hash, sha1_hash.hexdigest())
     self.assertIsNone(zip_file.testzip())
@@ -301,8 +97,8 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     try:
       sha1_hash = sha1()
       for data in contents:
-        sha1_hash.update(bytes(data))
-        test_file.write(bytes(data))
+        sha1_hash.update(data)
+        test_file.write(data)
       test_file.close()
 
       expected_stat = os.stat(test_file_name)
@@ -340,11 +136,8 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         expected_mode = extra_args.get("perms", 0o644)
       else:
         arcname = zinfo_or_arcname.filename
-        if zinfo_or_arcname.external_attr:
-          zinfo_perms = zinfo_or_arcname.external_attr >> 16
-        else:
-          zinfo_perms = 0o600
-        expected_mode = extra_args.get("perms", zinfo_perms)
+        expected_mode = extra_args.get("perms",
+                                       zinfo_or_arcname.external_attr >> 16)
 
       common.ZipWriteStr(zip_file, zinfo_or_arcname, contents, **extra_args)
       common.ZipClose(zip_file)
@@ -469,10 +262,6 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         "perms": 0o600,
         "compress_type": zipfile.ZIP_STORED,
     })
-    self._test_ZipWriteStr(zinfo, random_string, {
-        "perms": 0o000,
-        "compress_type": zipfile.ZIP_STORED,
-    })
 
   def test_ZipWriteStr_large_file(self):
     # zipfile.writestr() doesn't work when the str size is over 2GiB even with
@@ -485,9 +274,9 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     })
 
   def test_ZipWriteStr_resets_ZIP64_LIMIT(self):
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, 'foo', b'')
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, "foo", "")
     zinfo = zipfile.ZipInfo(filename="foo")
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, b'')
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, "")
 
   def test_bug21309935(self):
     zip_file = tempfile.NamedTemporaryFile(delete=False)
@@ -526,7 +315,6 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     finally:
       os.remove(zip_file_name)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_ZipDelete(self):
     zip_file = tempfile.NamedTemporaryFile(delete=False, suffix='.zip')
     output_zip = zipfile.ZipFile(zip_file.name, 'w',
@@ -588,7 +376,6 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     common.ZipClose(output_zip)
     return zip_file
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_UnzipTemp(self):
     zip_file = self._test_UnzipTemp_createZipFile()
     unzipped_dir = common.UnzipTemp(zip_file)
@@ -598,7 +385,6 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Bar4')))
     self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Dir5/Baz5')))
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_UnzipTemp_withPatterns(self):
     zip_file = self._test_UnzipTemp_createZipFile()
 
@@ -639,7 +425,6 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Bar4')))
     self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Dir5/Baz5')))
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_UnzipTemp_withPartiallyMatchingPatterns(self):
     zip_file = self._test_UnzipTemp_createZipFile()
     unzipped_dir = common.UnzipTemp(zip_file, ['Test*', 'Nonexistent*'])
@@ -666,14 +451,14 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
       'name="RecoveryLocalizer.apk" certificate="certs/devkey.x509.pem"'
       ' private_key="certs/devkey.pk8"\n'
       'name="Settings.apk"'
-      ' certificate="build/make/target/product/security/platform.x509.pem"'
-      ' private_key="build/make/target/product/security/platform.pk8"\n'
+      ' certificate="build/target/product/security/platform.x509.pem"'
+      ' private_key="build/target/product/security/platform.pk8"\n'
       'name="TV.apk" certificate="PRESIGNED" private_key=""\n'
   )
 
   APKCERTS_CERTMAP1 = {
       'RecoveryLocalizer.apk' : 'certs/devkey',
-      'Settings.apk' : 'build/make/target/product/security/platform',
+      'Settings.apk' : 'build/target/product/security/platform',
       'TV.apk' : 'PRESIGNED',
   }
 
@@ -783,29 +568,25 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   def test_ExtractPublicKey(self):
     cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
     pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
-    with open(pubkey) as pubkey_fp:
+    with open(pubkey, 'rb') as pubkey_fp:
       self.assertEqual(pubkey_fp.read(), common.ExtractPublicKey(cert))
 
   def test_ExtractPublicKey_invalidInput(self):
     wrong_input = os.path.join(self.testdata_dir, 'testkey.pk8')
     self.assertRaises(AssertionError, common.ExtractPublicKey, wrong_input)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_ExtractAvbPublicKey(self):
     privkey = os.path.join(self.testdata_dir, 'testkey.key')
     pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
-    extracted_from_privkey = common.ExtractAvbPublicKey('avbtool', privkey)
-    extracted_from_pubkey = common.ExtractAvbPublicKey('avbtool', pubkey)
-    with open(extracted_from_privkey, 'rb') as privkey_fp, \
-        open(extracted_from_pubkey, 'rb') as pubkey_fp:
+    with open(common.ExtractAvbPublicKey(privkey)) as privkey_fp, \
+        open(common.ExtractAvbPublicKey(pubkey)) as pubkey_fp:
       self.assertEqual(privkey_fp.read(), pubkey_fp.read())
 
   def test_ParseCertificate(self):
     cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
 
     cmd = ['openssl', 'x509', '-in', cert, '-outform', 'DER']
-    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                      universal_newlines=False)
+    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     expected, _ = proc.communicate()
     self.assertEqual(0, proc.returncode)
 
@@ -813,22 +594,18 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
       actual = common.ParseCertificate(cert_fp.read())
     self.assertEqual(expected, actual)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetMinSdkVersion(self):
     test_app = os.path.join(self.testdata_dir, 'TestApp.apk')
     self.assertEqual('24', common.GetMinSdkVersion(test_app))
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetMinSdkVersion_invalidInput(self):
     self.assertRaises(
         common.ExternalError, common.GetMinSdkVersion, 'does-not-exist.apk')
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetMinSdkVersionInt(self):
     test_app = os.path.join(self.testdata_dir, 'TestApp.apk')
     self.assertEqual(24, common.GetMinSdkVersionInt(test_app, {}))
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetMinSdkVersionInt_invalidInput(self):
     self.assertRaises(
         common.ExternalError, common.GetMinSdkVersionInt, 'does-not-exist.apk',
@@ -840,7 +617,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetSparseImage_emptyBlockMapFile(self):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
@@ -873,7 +649,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         AssertionError, common.GetSparseImage, 'unknown', self.testdata_dir,
         None, False)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetSparseImage_missingBlockMapFile(self):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
@@ -892,7 +667,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
           AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
           False)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetSparseImage_sharedBlocks_notAllowed(self):
     """Tests the case of having overlapping blocks but disallowed."""
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
@@ -915,7 +689,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
           AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
           False)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetSparseImage_sharedBlocks_allowed(self):
     """Tests the case for target using BOARD_EXT4_SHARE_DUP_BLOCKS := true."""
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
@@ -953,14 +726,11 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertNotIn(
         'incomplete', sparse_image.file_map['/system/file2'].extra)
 
-    # '/system/file1' will only contain one field -- a copy of the input text.
-    self.assertEqual(1, len(sparse_image.file_map['/system/file1'].extra))
-
-    # Meta entries should not have any extra tag.
+    # All other entries should look normal without any tags.
     self.assertFalse(sparse_image.file_map['__COPY'].extra)
     self.assertFalse(sparse_image.file_map['__NONZERO-0'].extra)
+    self.assertFalse(sparse_image.file_map['/system/file1'].extra)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetSparseImage_incompleteRanges(self):
     """Tests the case of ext4 images with holes."""
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
@@ -981,12 +751,9 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(target_files, 'r') as input_zip:
       sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
 
-    self.assertEqual(
-        '1-5 9-10',
-        sparse_image.file_map['/system/file1'].extra['text_str'])
+    self.assertFalse(sparse_image.file_map['/system/file1'].extra)
     self.assertTrue(sparse_image.file_map['/system/file2'].extra['incomplete'])
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetSparseImage_systemRootImage_filenameWithExtraLeadingSlash(self):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
@@ -1009,14 +776,11 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(target_files, 'r') as input_zip:
       sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
 
-    self.assertEqual(
-        '1-5 9-10',
-        sparse_image.file_map['//system/file1'].extra['text_str'])
+    self.assertFalse(sparse_image.file_map['//system/file1'].extra)
     self.assertTrue(sparse_image.file_map['//system/file2'].extra['incomplete'])
     self.assertTrue(
         sparse_image.file_map['/system/app/file3'].extra['incomplete'])
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetSparseImage_systemRootImage_nonSystemFiles(self):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
@@ -1036,12 +800,9 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(target_files, 'r') as input_zip:
       sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
 
-    self.assertEqual(
-        '1-5 9-10',
-        sparse_image.file_map['//system/file1'].extra['text_str'])
+    self.assertFalse(sparse_image.file_map['//system/file1'].extra)
     self.assertTrue(sparse_image.file_map['//init.rc'].extra['incomplete'])
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetSparseImage_fileNotFound(self):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
@@ -1061,7 +822,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
           AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
           False)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetAvbChainedPartitionArg(self):
     pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
     info_dict = {
@@ -1075,7 +835,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual('2', args[1])
     self.assertTrue(os.path.exists(args[2]))
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetAvbChainedPartitionArg_withPrivateKey(self):
     key = os.path.join(self.testdata_dir, 'testkey.key')
     info_dict = {
@@ -1089,7 +848,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual('2', args[1])
     self.assertTrue(os.path.exists(args[2]))
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetAvbChainedPartitionArg_withSpecifiedKey(self):
     info_dict = {
         'avb_avbtool': 'avbtool',
@@ -1104,7 +862,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual('2', args[1])
     self.assertTrue(os.path.exists(args[2]))
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetAvbChainedPartitionArg_invalidKey(self):
     pubkey = os.path.join(self.testdata_dir, 'testkey_with_passwd.x509.pem')
     info_dict = {
@@ -1124,29 +881,12 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       'recovery_as_boot': 'true',
   }
 
-  def test_LoadListFromFile(self):
-    file_path = os.path.join(self.testdata_dir,
-                             'merge_config_framework_item_list')
-    contents = common.LoadListFromFile(file_path)
-    expected_contents = [
-        'META/apkcerts.txt',
-        'META/filesystem_config.txt',
-        'META/root_filesystem_config.txt',
-        'META/system_manifest.xml',
-        'META/system_matrix.xml',
-        'META/update_engine_config.txt',
-        'PRODUCT/*',
-        'ROOT/*',
-        'SYSTEM/*',
-    ]
-    self.assertEqual(sorted(contents), sorted(expected_contents))
-
   @staticmethod
   def _test_LoadInfoDict_createTargetFiles(info_dict, fstab_path):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
       info_values = ''.join(
-          ['{}={}\n'.format(k, v) for k, v in sorted(info_dict.items())])
+          ['{}={}\n'.format(k, v) for k, v in sorted(info_dict.iteritems())])
       common.ZipWriteStr(target_files_zip, 'META/misc_info.txt', info_values)
 
       FSTAB_TEMPLATE = "/dev/block/system {} ext4 ro,barrier=1 defaults"
@@ -1182,7 +922,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       self.assertIn('/', loaded_dict['fstab'])
       self.assertIn('/system', loaded_dict['fstab'])
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_LoadInfoDict_dirInput(self):
     target_files = self._test_LoadInfoDict_createTargetFiles(
         self.INFO_DICT_DEFAULT,
@@ -1194,7 +933,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertIn('/', loaded_dict['fstab'])
     self.assertIn('/system', loaded_dict['fstab'])
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_LoadInfoDict_dirInput_legacyRecoveryFstabPath(self):
     target_files = self._test_LoadInfoDict_createTargetFiles(
         self.INFO_DICT_DEFAULT,
@@ -1252,7 +990,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       self.assertEqual(2, loaded_dict['fstab_version'])
       self.assertIsNone(loaded_dict['fstab'])
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_LoadInfoDict_missingMetaMiscInfoTxt(self):
     target_files = self._test_LoadInfoDict_createTargetFiles(
         self.INFO_DICT_DEFAULT,
@@ -1261,7 +998,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(target_files, 'r') as target_files_zip:
       self.assertRaises(ValueError, common.LoadInfoDict, target_files_zip)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_LoadInfoDict_repacking(self):
     target_files = self._test_LoadInfoDict_createTargetFiles(
         self.INFO_DICT_DEFAULT,
@@ -1285,126 +1021,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(target_files, 'r') as target_files_zip:
       self.assertRaises(
           AssertionError, common.LoadInfoDict, target_files_zip, True)
-
-  def test_MergeDynamicPartitionInfoDicts_ReturnsMergedDict(self):
-    framework_dict = {
-        'super_partition_groups': 'group_a',
-        'dynamic_partition_list': 'system',
-        'super_group_a_list': 'system',
-    }
-    vendor_dict = {
-        'super_partition_groups': 'group_a group_b',
-        'dynamic_partition_list': 'vendor product',
-        'super_group_a_list': 'vendor',
-        'super_group_a_size': '1000',
-        'super_group_b_list': 'product',
-        'super_group_b_size': '2000',
-    }
-    merged_dict = common.MergeDynamicPartitionInfoDicts(
-        framework_dict=framework_dict,
-        vendor_dict=vendor_dict,
-        size_prefix='super_',
-        size_suffix='_size',
-        list_prefix='super_',
-        list_suffix='_list')
-    expected_merged_dict = {
-        'super_partition_groups': 'group_a group_b',
-        'dynamic_partition_list': 'system vendor product',
-        'super_group_a_list': 'system vendor',
-        'super_group_a_size': '1000',
-        'super_group_b_list': 'product',
-        'super_group_b_size': '2000',
-    }
-    self.assertEqual(merged_dict, expected_merged_dict)
-
-  def test_MergeDynamicPartitionInfoDicts_IgnoringFrameworkGroupSize(self):
-    framework_dict = {
-        'super_partition_groups': 'group_a',
-        'dynamic_partition_list': 'system',
-        'super_group_a_list': 'system',
-        'super_group_a_size': '5000',
-    }
-    vendor_dict = {
-        'super_partition_groups': 'group_a group_b',
-        'dynamic_partition_list': 'vendor product',
-        'super_group_a_list': 'vendor',
-        'super_group_a_size': '1000',
-        'super_group_b_list': 'product',
-        'super_group_b_size': '2000',
-    }
-    merged_dict = common.MergeDynamicPartitionInfoDicts(
-        framework_dict=framework_dict,
-        vendor_dict=vendor_dict,
-        size_prefix='super_',
-        size_suffix='_size',
-        list_prefix='super_',
-        list_suffix='_list')
-    expected_merged_dict = {
-        'super_partition_groups': 'group_a group_b',
-        'dynamic_partition_list': 'system vendor product',
-        'super_group_a_list': 'system vendor',
-        'super_group_a_size': '1000',
-        'super_group_b_list': 'product',
-        'super_group_b_size': '2000',
-    }
-    self.assertEqual(merged_dict, expected_merged_dict)
-
-  def test_GetAvbPartitionArg(self):
-    info_dict = {}
-    cmd = common.GetAvbPartitionArg('system', '/path/to/system.img', info_dict)
-    self.assertEqual(
-        ['--include_descriptors_from_image', '/path/to/system.img'], cmd)
-
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_AppendVBMetaArgsForPartition_vendorAsChainedPartition(self):
-    testdata_dir = test_utils.get_testdata_dir()
-    pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
-    info_dict = {
-        'avb_avbtool': 'avbtool',
-        'avb_vendor_key_path': pubkey,
-        'avb_vendor_rollback_index_location': 5,
-    }
-    cmd = common.GetAvbPartitionArg('vendor', '/path/to/vendor.img', info_dict)
-    self.assertEqual(2, len(cmd))
-    self.assertEqual('--chain_partition', cmd[0])
-    chained_partition_args = cmd[1].split(':')
-    self.assertEqual(3, len(chained_partition_args))
-    self.assertEqual('vendor', chained_partition_args[0])
-    self.assertEqual('5', chained_partition_args[1])
-    self.assertTrue(os.path.exists(chained_partition_args[2]))
-
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_AppendVBMetaArgsForPartition_recoveryAsChainedPartition_nonAb(self):
-    testdata_dir = test_utils.get_testdata_dir()
-    pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
-    info_dict = {
-        'avb_avbtool': 'avbtool',
-        'avb_recovery_key_path': pubkey,
-        'avb_recovery_rollback_index_location': 3,
-    }
-    cmd = common.GetAvbPartitionArg(
-        'recovery', '/path/to/recovery.img', info_dict)
-    self.assertFalse(cmd)
-
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_AppendVBMetaArgsForPartition_recoveryAsChainedPartition_ab(self):
-    testdata_dir = test_utils.get_testdata_dir()
-    pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
-    info_dict = {
-        'ab_update': 'true',
-        'avb_avbtool': 'avbtool',
-        'avb_recovery_key_path': pubkey,
-        'avb_recovery_rollback_index_location': 3,
-    }
-    cmd = common.GetAvbPartitionArg(
-        'recovery', '/path/to/recovery.img', info_dict)
-    self.assertEqual(2, len(cmd))
-    self.assertEqual('--chain_partition', cmd[0])
-    chained_partition_args = cmd[1].split(':')
-    self.assertEqual(3, len(chained_partition_args))
-    self.assertEqual('recovery', chained_partition_args[0])
-    self.assertEqual('3', chained_partition_args[1])
-    self.assertTrue(os.path.exists(chained_partition_args[2]))
 
 
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
@@ -1437,7 +1053,7 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
     loc = os.path.join(self._tempdir, prefix, name)
     if not os.path.exists(os.path.dirname(loc)):
       os.makedirs(os.path.dirname(loc))
-    with open(loc, "wb") as f:
+    with open(loc, "w+") as f:
       f.write(data)
 
   def test_full_recovery(self):
@@ -1450,7 +1066,6 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
                                                         self._info)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_recovery_from_boot(self):
     recovery_image = common.File("recovery.img", self.recovery_data)
     self._out_tmp_sink("recovery.img", recovery_image.data, "IMAGES")
@@ -1462,20 +1077,33 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
                                                         self._info)
     # Validate 'recovery-from-boot' with bonus argument.
-    self._out_tmp_sink("etc/recovery-resource.dat", b"bonus", "SYSTEM")
+    self._out_tmp_sink("etc/recovery-resource.dat", "bonus", "SYSTEM")
     common.MakeRecoveryPatch(self._tempdir, self._out_tmp_sink,
                              recovery_image, boot_image, self._info)
     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
                                                         self._info)
 
 
-class MockBlockDifference(object):
+class MockScriptWriter(object):
+  """A class that mocks edify_generator.EdifyGenerator.
+  """
+  def __init__(self, enable_comments=False):
+    self.lines = []
+    self.enable_comments = enable_comments
+  def Comment(self, comment):
+    if self.enable_comments:
+      self.lines.append("# {}".format(comment))
+  def AppendExtra(self, extra):
+    self.lines.append(extra)
+  def __str__(self):
+    return "\n".join(self.lines)
 
+
+class MockBlockDifference(object):
   def __init__(self, partition, tgt, src=None):
     self.partition = partition
     self.tgt = tgt
     self.src = src
-
   def WriteScript(self, script, _, progress=None,
                   write_verify_script=False):
     if progress:
@@ -1483,13 +1111,11 @@ class MockBlockDifference(object):
     script.AppendExtra("patch({});".format(self.partition))
     if write_verify_script:
       self.WritePostInstallVerifyScript(script)
-
   def WritePostInstallVerifyScript(self, script):
     script.AppendExtra("verify({});".format(self.partition))
 
 
 class FakeSparseImage(object):
-
   def __init__(self, size):
     self.blocksize = 4096
     self.total_blocks = size // 4096
@@ -1497,16 +1123,15 @@ class FakeSparseImage(object):
 
 
 class DynamicPartitionsDifferenceTest(test_utils.ReleaseToolsTestCase):
-
   @staticmethod
   def get_op_list(output_path):
-    with zipfile.ZipFile(output_path) as output_zip:
-      with output_zip.open('dynamic_partitions_op_list') as op_list:
-        return [line.decode().strip() for line in op_list.readlines()
-                if not line.startswith(b'#')]
+    with zipfile.ZipFile(output_path, 'r') as output_zip:
+      with output_zip.open("dynamic_partitions_op_list") as op_list:
+        return [line.strip() for line in op_list.readlines()
+                if not line.startswith("#")]
 
   def setUp(self):
-    self.script = test_utils.MockScriptWriter()
+    self.script = MockScriptWriter()
     self.output_path = common.MakeTempFile(suffix='.zip')
 
   def test_full(self):
@@ -1525,12 +1150,12 @@ super_group_foo_partition_list=system vendor
 
     self.assertEqual(str(self.script).strip(), """
 assert(update_dynamic_partitions(package_extract_file("dynamic_partitions_op_list")));
-patch(system);
-verify(system);
-unmap_partition("system");
 patch(vendor);
 verify(vendor);
 unmap_partition("vendor");
+patch(system);
+verify(system);
+unmap_partition("system");
 """.strip())
 
     lines = self.get_op_list(self.output_path)
@@ -1578,17 +1203,16 @@ super_group_qux_group_size={group_qux_size}
     grown = lines.index("resize_group group_baz 4294967296")
     added = lines.index("add_group group_qux 1073741824")
 
-    self.assertLess(max(removed, shrunk),
-                    min(grown, added),
+    self.assertLess(max(removed, shrunk) < min(grown, added),
                     "ops that remove / shrink partitions must precede ops that "
                     "grow / add partitions")
 
   def test_incremental(self):
     source_info = common.LoadDictionaryFromLines("""
-dynamic_partition_list=system vendor product system_ext
+dynamic_partition_list=system vendor product product_services
 super_partition_groups=group_foo
 super_group_foo_group_size={group_foo_size}
-super_group_foo_partition_list=system vendor product system_ext
+super_group_foo_partition_list=system vendor product product_services
 """.format(group_foo_size=4 * GiB).split("\n"))
     target_info = common.LoadDictionaryFromLines("""
 dynamic_partition_list=system vendor product odm
@@ -1605,7 +1229,7 @@ super_group_bar_partition_list=product
                                        src=FakeSparseImage(1024 * MiB)),
                    MockBlockDifference("product", FakeSparseImage(1024 * MiB),
                                        src=FakeSparseImage(1024 * MiB)),
-                   MockBlockDifference("system_ext", None,
+                   MockBlockDifference("product_services", None,
                                        src=FakeSparseImage(1024 * MiB)),
                    MockBlockDifference("odm", FakeSparseImage(1024 * MiB),
                                        src=None)]
@@ -1628,11 +1252,11 @@ super_group_bar_partition_list=product
       self.assertLess(patch_idx, verify_idx,
                       "Should verify {} after patching".format(p))
 
-    self.assertNotIn("patch(system_ext);", self.script.lines)
+    self.assertNotIn("patch(product_services);", self.script.lines)
 
     lines = self.get_op_list(self.output_path)
 
-    remove = lines.index("remove system_ext")
+    remove = lines.index("remove product_services")
     move_product_out = lines.index("move product default")
     shrink = lines.index("resize vendor 536870912")
     shrink_group = lines.index("resize_group group_foo 3221225472")

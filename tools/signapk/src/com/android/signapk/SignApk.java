@@ -381,8 +381,9 @@ class SignApk {
         byte[] buffer = new byte[4096];
         int num;
 
-        List<Hints.PatternWithRange> pinPatterns = extractPinPatterns(in);
+        List<Pattern> pinPatterns = extractPinPatterns(in);
         ArrayList<Hints.ByteRange> pinByteRanges = pinPatterns == null ? null : new ArrayList<>();
+        HashSet<String> namesToPin = new HashSet<>();
 
         ArrayList<String> names = new ArrayList<String>();
         for (Enumeration<JarEntry> e = in.entries(); e.hasMoreElements();) {
@@ -397,6 +398,13 @@ class SignApk {
             }
             if (Hints.PIN_BYTE_RANGE_ZIP_ENTRY_NAME.equals(entryName)) {
                 continue;  // We regenerate it below.
+            }
+            if (pinPatterns != null) {
+                for (Pattern pinPattern : pinPatterns) {
+                    if (pinPattern.matcher(entryName).matches()) {
+                        namesToPin.add(entryName);
+                    }
+                }
             }
             names.add(entryName);
         }
@@ -477,7 +485,6 @@ class SignApk {
             DataSink entryDataSink =
                     (inspectEntryRequest != null) ? inspectEntryRequest.getDataSink() : null;
 
-            long entryDataStart = outCounter.getWrittenBytes();
             try (InputStream data = in.getInputStream(inEntry)) {
                 while ((num = data.read(buffer)) > 0) {
                     out.write(buffer, 0, num);
@@ -493,27 +500,11 @@ class SignApk {
                 inspectEntryRequest.done();
             }
 
-            if (pinPatterns != null) {
-                boolean pinFileHeader = false;
-                for (Hints.PatternWithRange pinPattern : pinPatterns) {
-                    if (!pinPattern.matcher(name).matches()) {
-                        continue;
-                    }
-                    Hints.ByteRange dataRange =
-                        new Hints.ByteRange(
-                            entryDataStart,
-                            outCounter.getWrittenBytes());
-                    Hints.ByteRange pinRange =
-                        pinPattern.ClampToAbsoluteByteRange(dataRange);
-                    if (pinRange != null) {
-                        pinFileHeader = true;
-                        pinByteRanges.add(pinRange);
-                    }
-                }
-                if (pinFileHeader) {
-                    pinByteRanges.add(new Hints.ByteRange(entryHeaderStart,
-                                                          entryDataStart));
-                }
+            if (namesToPin.contains(name)) {
+                pinByteRanges.add(
+                    new Hints.ByteRange(
+                        entryHeaderStart,
+                        outCounter.getWrittenBytes()));
             }
         }
 
@@ -537,7 +528,6 @@ class SignApk {
             DataSink entryDataSink =
                     (inspectEntryRequest != null) ? inspectEntryRequest.getDataSink() : null;
 
-            long entryDataStart = outCounter.getWrittenBytes();
             InputStream data = in.getInputStream(inEntry);
             while ((num = data.read(buffer)) > 0) {
                 out.write(buffer, 0, num);
@@ -551,27 +541,11 @@ class SignApk {
                 inspectEntryRequest.done();
             }
 
-            if (pinPatterns != null) {
-                boolean pinFileHeader = false;
-                for (Hints.PatternWithRange pinPattern : pinPatterns) {
-                    if (!pinPattern.matcher(name).matches()) {
-                        continue;
-                    }
-                    Hints.ByteRange dataRange =
-                        new Hints.ByteRange(
-                            entryDataStart,
-                            outCounter.getWrittenBytes());
-                    Hints.ByteRange pinRange =
-                        pinPattern.ClampToAbsoluteByteRange(dataRange);
-                    if (pinRange != null) {
-                        pinFileHeader = true;
-                        pinByteRanges.add(pinRange);
-                    }
-                }
-                if (pinFileHeader) {
-                    pinByteRanges.add(new Hints.ByteRange(entryHeaderStart,
-                                                          entryDataStart));
-                }
+            if (namesToPin.contains(name)) {
+                pinByteRanges.add(
+                    new Hints.ByteRange(
+                        entryHeaderStart,
+                        outCounter.getWrittenBytes()));
             }
         }
 
@@ -584,7 +558,7 @@ class SignApk {
         }
     }
 
-    private static List<Hints.PatternWithRange> extractPinPatterns(JarFile in) throws IOException {
+    private static List<Pattern> extractPinPatterns(JarFile in) throws IOException {
         ZipEntry pinMetaEntry = in.getEntry(Hints.PIN_HINT_ASSET_ZIP_ENTRY_NAME);
         if (pinMetaEntry == null) {
             return null;

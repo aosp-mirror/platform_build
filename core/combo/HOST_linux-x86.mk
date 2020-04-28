@@ -23,3 +23,8 @@ endef
 
 ############################################################
 ## Macros after this line are shared by the 64-bit config.
+
+# $(1): The file to check
+define get-file-size
+stat -c "%s" "$(1)" | tr -d '\n'
+endef

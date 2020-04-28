@@ -34,10 +34,10 @@ $(INSTALLED_OEMIMAGE_TARGET) : $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_OEMIMAGE_F
 	@mkdir -p $(TARGET_OUT_OEM)
 	@mkdir -p $(oemimage_intermediates) && rm -rf $(oemimage_intermediates)/oem_image_info.txt
 	$(call generate-image-prop-dictionary, $(oemimage_intermediates)/oem_image_info.txt,oem,skip_fsck=true)
-	PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-	    $(BUILD_IMAGE) \
-	        $(TARGET_OUT_OEM) $(oemimage_intermediates)/oem_image_info.txt $@ $(TARGET_OUT)
-	$(call assert-max-image-size,$@,$(BOARD_OEMIMAGE_PARTITION_SIZE))
+	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
+	  build/make/tools/releasetools/build_image.py \
+	  $(TARGET_OUT_OEM) $(oemimage_intermediates)/oem_image_info.txt $@ $(TARGET_OUT)
+	$(hide) $(call assert-max-image-size,$@,$(BOARD_OEMIMAGE_PARTITION_SIZE))
 
 .PHONY: oem_image
 oem_image : $(INSTALLED_OEMIMAGE_TARGET)

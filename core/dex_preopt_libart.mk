@@ -21,8 +21,10 @@ $(my_installed): $(my_installed_vdex_dir)% : $(my_built_vdex_dir)%
 	mkdir -p $(dir $@)/$(TARGET_ARCH)
 	ln -sfn ../$(notdir $@) $(dir $@)/$(TARGET_ARCH)
 ifdef TARGET_2ND_ARCH
+  ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
 	mkdir -p $(dir $@)/$(TARGET_2ND_ARCH)
 	ln -sfn ../$(notdir $@) $(dir $@)/$(TARGET_2ND_ARCH)
+  endif
 endif
 
 my_dexpreopt_image_extra_deps := $(firstword $(my_installed))
@@ -31,8 +33,10 @@ my_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/dex_preopt_libart_boot.mk
 
 ifdef TARGET_2ND_ARCH
-  my_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
-  include $(BUILD_SYSTEM)/dex_preopt_libart_boot.mk
+  ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+    my_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
+    include $(BUILD_SYSTEM)/dex_preopt_libart_boot.mk
+  endif
 endif
 
 my_2nd_arch_prefix :=

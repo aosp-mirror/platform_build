@@ -54,15 +54,9 @@ $(foreach m,$(CUSTOM_IMAGE_MODULES),\
       $(eval my_copy_pairs += $(bui):$(my_staging_dir)/$(my_copy_dest)))\
   ))
 
-my_kernel_module_copy_files :=
-my_custom_image_modules_var := BOARD_$(strip $(call to-upper,$(my_custom_image_name)))_KERNEL_MODULES
-ifdef $(my_custom_image_modules_var)
-  my_kernel_module_copy_files += $(call build-image-kernel-modules,$(my_custom_image_modules_var),$(my_staging_dir),$(my_custom_image_name)/,$(call intermediates-dir-for,PACKAGING,depmod_$(my_custom_image_name)))
-endif
-
 # Collect CUSTOM_IMAGE_COPY_FILES.
 my_image_copy_files :=
-$(foreach f,$(CUSTOM_IMAGE_COPY_FILES) $(my_kernel_module_copy_files),\
+$(foreach f,$(CUSTOM_IMAGE_COPY_FILES),\
   $(eval pair := $(subst :,$(space),$(f)))\
   $(eval src := $(word 1,$(pair)))\
   $(eval my_image_copy_files += $(src))\
@@ -108,6 +102,11 @@ endif
 ifeq (true,$(CUSTOM_IMAGE_SUPPORT_VERITY_FEC))
   $(my_built_custom_image): $(FEC)
 endif
+my_custom_image_modules_var:=BOARD_$(strip $(call to-upper,$(my_custom_image_name)))_KERNEL_MODULES
+my_custom_image_modules:=$($(my_custom_image_modules_var))
+my_custom_image_modules_dep:=$(if $(my_custom_image_modules),$(my_custom_image_modules) $(DEPMOD),)
+$(my_built_custom_image): PRIVATE_KERNEL_MODULES := $(my_custom_image_modules)
+$(my_built_custom_image): PRIVATE_IMAGE_NAME := $(my_custom_image_name)
 $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_image_copy_files) $(my_custom_image_modules_dep) \
   $(CUSTOM_IMAGE_DICT_FILE)
 	@echo "Build image $@"
@@ -118,6 +117,8 @@ $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_i
 	          $(eval pair := $(subst :,$(space),$(p)))\
 	          mkdir -p $(dir $(word 2,$(pair)));\
 	          cp -Rf $(word 1,$(pair)) $(word 2,$(pair));)
+	$(if $(PRIVATE_KERNEL_MODULES), \
+		$(call build-image-kernel-modules,$(PRIVATE_KERNEL_MODULES),$(PRIVATE_STAGING_DIR),$(PRIVATE_IMAGE_NAME)/,$(call intermediates-dir-for,PACKAGING,depmod_$(PRIVATE_IMAGE_NAME))))
 	$(if $($(PRIVATE_PICKUP_FILES)),$(hide) cp -Rf $(PRIVATE_PICKUP_FILES) $(PRIVATE_STAGING_DIR))
 	# Generate the dict.
 	$(hide) echo "# For all accepted properties, see BuildImage() in tools/releasetools/build_image.py" > $(PRIVATE_INTERMEDIATES)/image_info.txt
@@ -151,9 +152,9 @@ $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_i
 	# Generate the image.
 	$(if $(filter oem,$(PRIVATE_MOUNT_POINT)), \
 	  $(hide) echo "oem.buildnumber=$(BUILD_NUMBER_FROM_FILE)" >> $(PRIVATE_STAGING_DIR)/oem.prop)
-	$(hide) PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-	    $(BUILD_IMAGE) \
-	        $(PRIVATE_STAGING_DIR) $(PRIVATE_INTERMEDIATES)/image_info.txt $@ $(TARGET_OUT)
+	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
+	  build/make/tools/releasetools/build_image.py \
+	  $(PRIVATE_STAGING_DIR) $(PRIVATE_INTERMEDIATES)/image_info.txt $@ $(TARGET_OUT)
 
 my_installed_custom_image := $(PRODUCT_OUT)/$(notdir $(my_built_custom_image))
 $(my_installed_custom_image) : $(my_built_custom_image)

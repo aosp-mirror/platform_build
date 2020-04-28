@@ -73,6 +73,7 @@ $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 java_sources_deps := \
     $(java_sources) \
     $(java_resource_sources) \
+    $(proto_java_sources_file_stamp) \
     $(LOCAL_SRCJARS) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
@@ -103,6 +104,7 @@ $(full_classes_compiled_jar): \
 ifneq ($(TURBINE_ENABLED),false)
 
 $(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
+$(full_classes_turbine_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_turbine_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
 $(full_classes_turbine_jar): \
     $(java_source_list_file) \
@@ -140,7 +142,7 @@ $(full_classes_combined_jar): $(full_classes_compiled_jar) \
             $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf)
 	$(MERGE_ZIPS) -j --ignore-duplicates $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
             $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
-            $@ $< $(PRIVATE_STATIC_JAVA_LIBRARIES)
+            $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
 
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)

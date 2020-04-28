@@ -26,6 +26,12 @@ Ways to specify what to build:
       If no targets are specified, the build system will build the images
       for the configured product and variant.
 
+  An alternative to setting $TARGET_PRODUCT and $TARGET_BUILD_VARIANT,
+  which you may see in build servers, is to execute:
+
+    m PRODUCT-<product>-<variant>
+
+
   A target may be a file path. For example, out/host/linux-x86/bin/adb .
     Note that when giving a relative file path as a target, that path is
     interpreted relative to the root of the source tree (rather than relative

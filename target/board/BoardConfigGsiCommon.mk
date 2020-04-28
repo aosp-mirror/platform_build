@@ -19,9 +19,8 @@ TARGET_USERIMAGES_USE_F2FS := true
 # Enable dynamic system image size and reserved 64MB in it.
 BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
 
-# GSI forces product and system_ext packages to /system for now.
+# GSI forces product packages to /system for now.
 TARGET_COPY_OUT_PRODUCT := system/product
-TARGET_COPY_OUT_SYSTEM_EXT := system/system_ext
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE :=
 
 # Creates metadata partition mount point under root for
@@ -33,11 +32,17 @@ BOARD_USES_METADATA_PARTITION := true
 #   updating the last seen rollback index in the tamper-evident storage.
 BOARD_AVB_ROLLBACK_INDEX := 0
 
+# Enable chain partition for system.
+BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
+
 # GSI specific System Properties
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
-TARGET_SYSTEM_EXT_PROP := build/make/target/board/gsi_system_ext.prop
+TARGET_SYSTEM_PROP := build/make/target/board/gsi_system.prop
 else
-TARGET_SYSTEM_EXT_PROP := build/make/target/board/gsi_system_ext_user.prop
+TARGET_SYSTEM_PROP := build/make/target/board/gsi_system_user.prop
 endif
 
 # Set this to create /cache mount point for non-A/B devices that mounts /cache.
@@ -50,3 +55,7 @@ BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Disable 64 bit mediadrmserver
 TARGET_ENABLE_MEDIADRM_64 :=
+
+# Ordinary (non-flattened) APEX may require kernel changes. For maximum compatibility,
+# use flattened APEX for GSI
+TARGET_FLATTEN_APEX := true

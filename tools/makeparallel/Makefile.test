@@ -1,0 +1,12 @@
+MAKEPARALLEL ?= ./makeparallel
+
+.PHONY: test
+test:
+	@+echo MAKEFLAGS=$${MAKEFLAGS};              \
+	result=$$($(MAKEPARALLEL) echo $(ARGS));     \
+	echo result: $${result};                     \
+	if [ "$${result}" = "$(EXPECTED)" ]; then    \
+	  echo SUCCESS && echo;                      \
+	else                                         \
+	  echo FAILED expected $(EXPECTED) && false; \
+	fi

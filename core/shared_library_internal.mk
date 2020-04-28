@@ -73,7 +73,7 @@ $(linked_module): \
         $(my_target_libcrt_builtins) \
         $(my_target_libgcc) \
         $(my_target_libatomic) \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(CLANG_CXX)
+        $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-o-to-shared-lib)
 
 ifeq ($(my_native_coverage),true)

@@ -1,10 +1,10 @@
 ###############################################################
 ## Renderscript support for java
-## Adds rules to convert .rscript files to .java and .bc files
+## Adds rules to convert .rs files to .java and .bc files
 ###############################################################
 
-renderscript_sources := $(filter %.rscript,$(LOCAL_SRC_FILES))
-LOCAL_SRC_FILES := $(filter-out %.rscript,$(LOCAL_SRC_FILES))
+renderscript_sources := $(filter %.rs,$(LOCAL_SRC_FILES))
+LOCAL_SRC_FILES := $(filter-out %.rs,$(LOCAL_SRC_FILES))
 
 rs_generated_res_zip :=
 rs_generated_src_jar :=
@@ -67,7 +67,7 @@ ifneq ($(LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE),)
 LOCAL_RENDERSCRIPT_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE)
 endif
 
-bc_files := $(patsubst %.rscript,%.bc, $(notdir $(renderscript_sources)))
+bc_files := $(patsubst %.rs,%.bc, $(notdir $(renderscript_sources)))
 bc_dep_files := $(addprefix $(renderscript_intermediate.COMMON)/,$(patsubst %.bc,%.d,$(bc_files)))
 
 $(rs_generated_src_jar): PRIVATE_RS_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES)
@@ -139,7 +139,6 @@ $(rs_compatibility_jni_libs): $(RS_PREBUILT_CLCORE) \
     $(rs_support_lib) $(rs_support_io_lib) $(rs_jni_lib) $(rs_compiler_rt)
 $(rs_compatibility_jni_libs): $(BCC_COMPAT)
 $(rs_compatibility_jni_libs): PRIVATE_CXX := $(CXX_WRAPPER) $(CLANG_CXX)
-$(rs_compatibility_jni_libs): PRIVATE_CXX_LINK := $(CLANG_CXX)
 $(rs_compatibility_jni_libs): PRIVATE_SDK_VERSION := $(my_min_sdk_version)
 $(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
     $(renderscript_intermediate.bc_folder)%.bc \

@@ -18,13 +18,12 @@ import filecmp
 import os.path
 
 import common
-import test_utils
 from build_image import (
-    BuildImageError, CheckHeadroom, GetFilesystemCharacteristics,
-    SetUpInDirAndFsConfig)
+    BuildImageError, CheckHeadroom, GetFilesystemCharacteristics, SetUpInDirAndFsConfig)
+from test_utils import ReleaseToolsTestCase
 
 
-class BuildImageTest(test_utils.ReleaseToolsTestCase):
+class BuildImageTest(ReleaseToolsTestCase):
 
   # Available: 1000 blocks.
   EXT4FS_OUTPUT = (
@@ -49,7 +48,6 @@ class BuildImageTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(
         BuildImageError, CheckHeadroom, self.EXT4FS_OUTPUT, prop_dict)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_CheckHeadroom_WrongFsType(self):
     prop_dict = {
         'fs_type' : 'f2fs',
@@ -74,7 +72,6 @@ class BuildImageTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(
         AssertionError, CheckHeadroom, self.EXT4FS_OUTPUT, prop_dict)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_CheckHeadroom_WithMke2fsOutput(self):
     """Tests the result parsing from actual call to mke2fs."""
     input_dir = common.MakeTempDir()
@@ -180,14 +177,13 @@ class BuildImageTest(test_utils.ReleaseToolsTestCase):
     self.assertIn('fs-config-root\n', fs_config_data)
     self.assertEqual('/', prop_dict['mount_point'])
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetFilesystemCharacteristics(self):
     input_dir = common.MakeTempDir()
     output_image = common.MakeTempFile(suffix='.img')
     command = ['mkuserimg_mke2fs', input_dir, output_image, 'ext4',
                '/system', '409600', '-j', '0']
     proc = common.Run(command)
-    proc.communicate()
+    ext4fs_output, _ = proc.communicate()
     self.assertEqual(0, proc.returncode)
 
     output_file = common.MakeTempFile(suffix='.img')

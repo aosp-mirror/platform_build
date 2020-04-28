@@ -14,40 +14,50 @@
 # limitations under the License.
 #
 
-# Including this makefile will force AAPT2 on,
+# Including this makefile will force AAPT2 on if FORCE_AAPT2==true,
 # rewriting some properties to convert standard AAPT usage to AAPT2.
 
-ifeq ($(LOCAL_USE_AAPT2),false)
-  $(call pretty-error, LOCAL_USE_AAPT2 := false is no longer supported)
-endif
-
-# Filter out support library resources
-LOCAL_RESOURCE_DIR := $(filter-out \
-  prebuilts/sdk/current/% \
-  frameworks/support/%,\
-    $(LOCAL_RESOURCE_DIR))
-# Filter out unnecessary aapt flags
-ifneq (,$(filter --extra-packages,$(LOCAL_AAPT_FLAGS)))
-  LOCAL_AAPT_FLAGS := $(subst --extra-packages=,--extra-packages$(space), \
-    $(filter-out \
-      --extra-packages=android.support.% \
-      --extra-packages=androidx.%, \
-        $(subst --extra-packages$(space),--extra-packages=,$(LOCAL_AAPT_FLAGS))))
-    ifeq (,$(filter --extra-packages,$(LOCAL_AAPT_FLAGS)))
-      LOCAL_AAPT_FLAGS := $(filter-out --auto-add-overlay,$(LOCAL_AAPT_FLAGS))
+ifneq ($(FORCE_AAPT2),false)
+  ifeq ($(LOCAL_USE_AAPT2),)
+    # Force AAPT2 on
+    LOCAL_USE_AAPT2 := true
+    # Filter out support library resources
+    LOCAL_RESOURCE_DIR := $(filter-out \
+      prebuilts/sdk/current/% \
+      frameworks/support/%,\
+        $(LOCAL_RESOURCE_DIR))
+    # Filter out unnecessary aapt flags
+    ifneq (,$(filter --extra-packages,$(LOCAL_AAPT_FLAGS)))
+      LOCAL_AAPT_FLAGS := $(subst --extra-packages=,--extra-packages$(space), \
+        $(filter-out \
+          --extra-packages=android.support.% \
+          --extra-packages=androidx.%, \
+            $(subst --extra-packages$(space),--extra-packages=,$(LOCAL_AAPT_FLAGS))))
+        ifeq (,$(filter --extra-packages,$(LOCAL_AAPT_FLAGS)))
+          LOCAL_AAPT_FLAGS := $(filter-out --auto-add-overlay,$(LOCAL_AAPT_FLAGS))
+        endif
     endif
+
+    # AAPT2 is pickier about missing resources.  Support library may have references to resources
+    # added in current, so always treat LOCAL_SDK_VERSION as LOCAL_SDK_RES_VERSION := current.
+    ifdef LOCAL_SDK_VERSION
+      LOCAL_SDK_RES_VERSION := current
+    endif
+
+    ifeq (,$(strip $(LOCAL_MANIFEST_FILE)$(LOCAL_FULL_MANIFEST_FILE)))
+      ifeq (,$(wildcard $(LOCAL_PATH)/AndroidManifest.xml))
+        # work around missing manifests by creating a default one
+        LOCAL_FULL_MANIFEST_FILE := $(call local-intermediates-dir,COMMON)/DefaultManifest.xml
+        $(call create-default-manifest-file,$(LOCAL_FULL_MANIFEST_FILE),$(call module-min-sdk-version))
+      endif
+    endif
+  endif
 endif
 
-# AAPT2 is pickier about missing resources.  Support library may have references to resources
-# added in current, so always treat LOCAL_SDK_VERSION := <number> as LOCAL_SDK_RES_VERSION := current.
-ifneq (,$(filter-out current system_current test_current core_current,$(LOCAL_SDK_VERSION)))
-  LOCAL_SDK_RES_VERSION := current
-endif
-
-ifeq (,$(strip $(LOCAL_MANIFEST_FILE)$(LOCAL_FULL_MANIFEST_FILE)))
-  ifeq (,$(wildcard $(LOCAL_PATH)/AndroidManifest.xml))
-    # work around missing manifests by creating a default one
-    LOCAL_FULL_MANIFEST_FILE := $(call local-intermediates-dir,COMMON)/DefaultManifest.xml
-    $(call create-default-manifest-file,$(LOCAL_FULL_MANIFEST_FILE),$(call module-min-sdk-version))
+ifneq ($(LOCAL_USE_AAPT2),true)
+  ifneq ($(LOCAL_USE_AAPT2),false)
+    ifneq ($(LOCAL_USE_AAPT2),)
+      $(call pretty-error,Invalid value for LOCAL_USE_AAPT2: "$(LOCAL_USE_AAPT2)")
+    endif
   endif
 endif

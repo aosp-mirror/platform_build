@@ -55,15 +55,12 @@ ifdef LOCAL_INSTALLED_MODULE
   module_installed_filename := $(patsubst $(PRODUCT_OUT)/%,%,$(LOCAL_INSTALLED_MODULE))
 else
   # This module isn't installable
-  ifneq ($(filter  STATIC_LIBRARIES RLIB_LIBRARIES PROC_MACRO_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
+  ifneq ($(filter STATIC_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
     # Stick the static libraries with the dynamic libraries.
     # We can't use xxx_OUT_STATIC_LIBRARIES because it points into
     # device-obj or host-obj.
     module_installed_filename := \
         $(patsubst $(PRODUCT_OUT)/%,%,$($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_SHARED_LIBRARIES))/$(notdir $(LOCAL_BUILT_MODULE))
-  else ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
-    # Shared modules may be uninstallable(e.g. TARGET_SKIP_CURRENT_VNDK=true)
-    module_installed_filename :=
   else
     ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
       # Stick the static java libraries with the regular java libraries.
@@ -71,11 +68,8 @@ else
       # javalib.jar is the default name for the build module (and isn't meaningful)
       # If that's what we have, substitute the module name instead.  These files
       # aren't included on the device, so this name is synthetic anyway.
-      # Extra path "static" is added to try to avoid name conflict between the notice file of
-      # this 'uninstallable' Java module and the notice file for another 'installable' Java module
-      # whose stem is the same as this module's name.
       ifneq ($(filter javalib.jar,$(module_leaf)),)
-        module_leaf := static/$(LOCAL_MODULE).jar
+        module_leaf := $(LOCAL_MODULE).jar
       endif
       module_installed_filename := \
           $(patsubst $(PRODUCT_OUT)/%,%,$($(my_prefix)OUT_JAVA_LIBRARIES))/$(module_leaf)

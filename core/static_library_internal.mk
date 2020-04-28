@@ -21,7 +21,7 @@ endif
 include $(BUILD_SYSTEM)/binary.mk
 
 $(LOCAL_BUILT_MODULE) : $(built_whole_libraries)
-$(LOCAL_BUILT_MODULE) : $(all_objects) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_AR)
+$(LOCAL_BUILT_MODULE) : $(all_objects)
 	$(transform-o-to-static-lib)
 
 ifeq ($(NATIVE_COVERAGE),true)

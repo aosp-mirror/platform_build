@@ -28,7 +28,7 @@ combo_var_prefix := $(combo_2nd_arch_prefix)$(combo_target)
 
 # Set reasonable defaults for the various variables
 
-$(combo_var_prefix)GLOBAL_ARFLAGS := crsPD -format=gnu
+$(combo_var_prefix)GLOBAL_ARFLAGS := cqsD -format=gnu
 
 $(combo_var_prefix)STATIC_LIB_SUFFIX := .a
 

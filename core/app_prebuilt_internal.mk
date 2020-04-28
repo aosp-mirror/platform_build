@@ -41,7 +41,7 @@ endif  # LOCAL_COMPRESSED_MODULE
 include $(BUILD_SYSTEM)/base_rules.mk
 built_module := $(LOCAL_BUILT_MODULE)
 
-# Run veridex on product, system_ext and vendor modules.
+# Run veridex on product, product_services and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
 ifeq (true,$(non_system_module))
@@ -90,32 +90,6 @@ ifeq ($(PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK),true)
 # the APK.
 my_preopt_for_extracted_apk := true
 endif
-endif
-
-# Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES
-# If LOCAL_ENFORCE_USES_LIBRARIES is not set, default to true if either of LOCAL_USES_LIBRARIES or
-# LOCAL_OPTIONAL_USES_LIBRARIES are specified.
-# Will change the default to true unconditionally in the future.
-ifndef LOCAL_ENFORCE_USES_LIBRARIES
-  ifneq (,$(strip $(LOCAL_USES_LIBRARIES)$(LOCAL_OPTIONAL_USES_LIBRARIES)))
-    LOCAL_ENFORCE_USES_LIBRARIES := true
-  endif
-endif
-
-my_enforced_uses_libraries :=
-ifdef LOCAL_ENFORCE_USES_LIBRARIES
-  my_enforced_uses_libraries := $(intermediates.COMMON)/enforce_uses_libraries.timestamp
-  $(my_enforced_uses_libraries): PRIVATE_USES_LIBRARIES := $(LOCAL_USES_LIBRARIES)
-  $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(LOCAL_OPTIONAL_USES_LIBRARIES)
-  $(my_enforced_uses_libraries): $(BUILD_SYSTEM)/verify_uses_libraries.sh $(AAPT)
-  $(my_enforced_uses_libraries): $(my_prebuilt_src_file)
-	@echo Verifying uses-libraries: $<
-	aapt_binary=$(AAPT) \
-	  uses_library_names="$(strip $(PRIVATE_USES_LIBRARIES))" \
-	  optional_uses_library_names="$(strip $(PRIVATE_OPTIONAL_USES_LIBRARIES))" \
-	  $(BUILD_SYSTEM)/verify_uses_libraries.sh $<
-	touch $@
-  $(built_module) : $(my_enforced_uses_libraries)
 endif
 
 dex_preopt_profile_src_file := $(my_prebuilt_src_file)
@@ -215,6 +189,17 @@ $(built_module) : $(appcompat-files)
 $(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
 endif
 
+ifneq ($(BUILD_PLATFORM_ZIP),)
+$(built_module) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.dex.apk
+endif
+ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
+ifdef LOCAL_DEX_PREOPT
+$(built_module) : PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
+$(built_module) : $(intermediates)/strip.sh
+$(built_module) : | $(DEXPREOPT_STRIP_DEPS)
+$(built_module) : .KATI_DEPFILE := $(built_module).d
+endif
+endif
 ifeq ($(module_run_appcompat),true)
 $(built_module) : $(AAPT2)
 endif
@@ -224,11 +209,23 @@ $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	$(uncompress-dexs)
 endif  # LOCAL_UNCOMPRESS_DEX
+ifdef LOCAL_DEX_PREOPT
+ifneq ($(BUILD_PLATFORM_ZIP),)
+	@# Keep a copy of apk with classes.dex unstripped
+	$(hide) cp -f $@ $(dir $@)package.dex.apk
+endif  # BUILD_PLATFORM_ZIP
+endif  # LOCAL_DEX_PREOPT
 ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
+	@# Only strip out files if we can re-sign the package.
+# Run appcompat before stripping the classes.dex file.
 ifeq ($(module_run_appcompat),true)
 	$(call appcompat-header, aapt2)
 	$(run-appcompat)
 endif  # module_run_appcompat
+ifdef LOCAL_DEX_PREOPT
+	mv -f $@ $@.tmp
+	$(PRIVATE_STRIP_SCRIPT) $@.tmp $@
+endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 	# No need for align-package because sign-package takes care of alignment
 else  # LOCAL_CERTIFICATE == PRESIGNED

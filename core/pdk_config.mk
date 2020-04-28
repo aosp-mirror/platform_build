@@ -20,9 +20,8 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
   target/common/obj/JAVA_LIBRARIES/conscrypt_intermediates \
   target/common/obj/JAVA_LIBRARIES/core-oj_intermediates \
   target/common/obj/JAVA_LIBRARIES/core-libart_intermediates \
-  target/common/obj/JAVA_LIBRARIES/core-icu4j_intermediates \
   target/common/obj/JAVA_LIBRARIES/ext_intermediates \
-  target/common/obj/JAVA_LIBRARIES/framework-minus-apex_intermediates \
+  target/common/obj/JAVA_LIBRARIES/framework_intermediates \
   target/common/obj/JAVA_LIBRARIES/hwbinder_intermediates \
   target/common/obj/JAVA_LIBRARIES/ims-common_intermediates \
   target/common/obj/JAVA_LIBRARIES/okhttp_intermediates \

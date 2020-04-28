@@ -36,21 +36,20 @@ import logging
 import os.path
 import re
 import zipfile
-from hashlib import sha1
 
 import common
-import rangelib
 
 
 def _ReadFile(file_name, unpacked_name, round_up=False):
   """Constructs and returns a File object. Rounds up its size if needed."""
+
   assert os.path.exists(unpacked_name)
-  with open(unpacked_name, 'rb') as f:
+  with open(unpacked_name, 'r') as f:
     file_data = f.read()
   file_size = len(file_data)
   if round_up:
     file_size_rounded_up = common.RoundUpTo4K(file_size)
-    file_data += b'\0' * (file_size_rounded_up - file_size)
+    file_data += '\0' * (file_size_rounded_up - file_size)
   return common.File(file_name, file_data)
 
 
@@ -97,15 +96,13 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
         logging.warning('Skipping %s that has incomplete block list', entry)
         continue
 
-      # If the file has non-monotonic ranges, read each range in order.
+      # TODO(b/79951650): Handle files with non-monotonic ranges.
       if not file_ranges.monotonic:
-        h = sha1()
-        for file_range in file_ranges.extra['text_str'].split(' '):
-          for data in image.ReadRangeSet(rangelib.RangeSet(file_range)):
-            h.update(data)
-        blocks_sha1 = h.hexdigest()
-      else:
-        blocks_sha1 = image.RangeSha1(file_ranges)
+        logging.warning(
+            'Skipping %s that has non-monotonic ranges: %s', entry, file_ranges)
+        continue
+
+      blocks_sha1 = image.RangeSha1(file_ranges)
 
       # The filename under unpacked directory, such as SYSTEM/bin/sh.
       unpacked_name = os.path.join(
@@ -141,7 +138,7 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
   1. full recovery:
   ...
   if ! applypatch --check type:device:size:sha1; then
-    applypatch --flash /vendor/etc/recovery.img \\
+    applypatch --flash /system/etc/recovery.img \\
         type:device:size:sha1 && \\
   ...
 
@@ -149,26 +146,18 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
   ...
   if ! applypatch --check type:recovery_device:recovery_size:recovery_sha1; then
     applypatch [--bonus bonus_args] \\
-        --patch /vendor/recovery-from-boot.p \\
+        --patch /system/recovery-from-boot.p \\
         --source type:boot_device:boot_size:boot_sha1 \\
         --target type:recovery_device:recovery_size:recovery_sha1 && \\
   ...
 
-  For full recovery, we want to calculate the SHA-1 of /vendor/etc/recovery.img
+  For full recovery, we want to calculate the SHA-1 of /system/etc/recovery.img
   and compare it against the one embedded in the script. While for recovery
   from boot, we want to check the SHA-1 for both recovery.img and boot.img
   under IMAGES/.
   """
 
-  board_uses_vendorimage = info_dict.get("board_uses_vendorimage") == "true"
-
-  if board_uses_vendorimage:
-    script_path = 'VENDOR/bin/install-recovery.sh'
-    recovery_img = 'VENDOR/etc/recovery.img'
-  else:
-    script_path = 'SYSTEM/vendor/bin/install-recovery.sh'
-    recovery_img = 'SYSTEM/vendor/etc/recovery.img'
-
+  script_path = 'SYSTEM/bin/install-recovery.sh'
   if not os.path.exists(os.path.join(input_tmp, script_path)):
     logging.info('%s does not exist in input_tmp', script_path)
     return
@@ -199,7 +188,7 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
     # Validate the SHA-1 of the recovery image.
     recovery_sha1 = flash_partition.split(':')[3]
     ValidateFileAgainstSha1(
-        input_tmp, 'recovery.img', recovery_img, recovery_sha1)
+        input_tmp, 'recovery.img', 'SYSTEM/etc/recovery.img', recovery_sha1)
   else:
     assert len(lines) == 11, "Invalid line count: {}".format(lines)
 
@@ -268,10 +257,7 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
     if verity_key is None:
       verity_key = info_dict['verity_key'] + '.x509.pem'
     for image in ('boot.img', 'recovery.img', 'recovery-two-step.img'):
-      if image == 'recovery-two-step.img':
-        image_path = os.path.join(input_tmp, 'OTA', image)
-      else:
-        image_path = os.path.join(input_tmp, 'IMAGES', image)
+      image_path = os.path.join(input_tmp, 'IMAGES', image)
       if not os.path.exists(image_path):
         continue
 
@@ -287,12 +273,15 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   # Verify verity signed system images in Verified Boot 1.0. Note that not using
   # 'elif' here, since 'boot_signer' and 'verity' are not bundled in VB 1.0.
   if info_dict.get('verity') == 'true':
-    # First verify that the verity key is built into the root image (regardless
-    # of system-as-root).
-    verity_key_mincrypt = os.path.join(input_tmp, 'ROOT', 'verity_key')
+    # First verify that the verity key that's built into the root image (as
+    # /verity_key) matches the one given via command line, if any.
+    if info_dict.get("system_root_image") == "true":
+      verity_key_mincrypt = os.path.join(input_tmp, 'ROOT', 'verity_key')
+    else:
+      verity_key_mincrypt = os.path.join(
+          input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
     assert os.path.exists(verity_key_mincrypt), 'Missing verity_key'
 
-    # Verify /verity_key matches the one given via command line, if any.
     if options['verity_key_mincrypt'] is None:
       logging.warn(
           'Skipped checking the content of /verity_key, as the key file not '
@@ -302,18 +291,6 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
       assert filecmp.cmp(expected_key, verity_key_mincrypt, shallow=False), \
           "Mismatching mincrypt verity key files"
       logging.info('Verified the content of /verity_key')
-
-    # For devices with a separate ramdisk (i.e. non-system-as-root), there must
-    # be a copy in ramdisk.
-    if info_dict.get("system_root_image") != "true":
-      verity_key_ramdisk = os.path.join(
-          input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
-      assert os.path.exists(verity_key_ramdisk), 'Missing verity_key in ramdisk'
-
-      assert filecmp.cmp(
-          verity_key_mincrypt, verity_key_ramdisk, shallow=False), \
-              'Mismatching verity_key files in root and ramdisk'
-      logging.info('Verified the content of /verity_key in ramdisk')
 
     # Then verify the verity signed system/vendor/product images, against the
     # verity pubkey in mincrypt format.
@@ -346,25 +323,19 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
       key = info_dict['avb_vbmeta_key_path']
 
     # avbtool verifies all the images that have descriptors listed in vbmeta.
-    # Using `--follow_chain_partitions` so it would additionally verify chained
-    # vbmeta partitions (e.g. vbmeta_system).
     image = os.path.join(input_tmp, 'IMAGES', 'vbmeta.img')
-    cmd = [info_dict['avb_avbtool'], 'verify_image', '--image', image,
-           '--key', key, '--follow_chain_partitions']
+    cmd = ['avbtool', 'verify_image', '--image', image, '--key', key]
 
     # Append the args for chained partitions if any.
     for partition in common.AVB_PARTITIONS + common.AVB_VBMETA_PARTITIONS:
       key_name = 'avb_' + partition + '_key_path'
       if info_dict.get(key_name) is not None:
-        if info_dict.get('ab_update') != 'true' and partition == 'recovery':
-          continue
-
         # Use the key file from command line if specified; otherwise fall back
         # to the one in info dict.
         key_file = options.get(key_name, info_dict[key_name])
         chained_partition_arg = common.GetAvbChainedPartitionArg(
             partition, info_dict, key_file)
-        cmd.extend(['--expected_chain_partition', chained_partition_arg])
+        cmd.extend(["--expected_chain_partition", chained_partition_arg])
 
     proc = common.Run(cmd)
     stdoutdata, _ = proc.communicate()
@@ -375,22 +346,6 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
     logging.info(
         'Verified %s with avbtool (key: %s):\n%s', image, key,
         stdoutdata.rstrip())
-
-    # avbtool verifies recovery image for non-A/B devices.
-    if (info_dict.get('ab_update') != 'true' and
-        info_dict.get('no_recovery') != 'true'):
-      image = os.path.join(input_tmp, 'IMAGES', 'recovery.img')
-      key = info_dict['avb_recovery_key_path']
-      cmd = [info_dict['avb_avbtool'], 'verify_image', '--image', image,
-             '--key', key]
-      proc = common.Run(cmd)
-      stdoutdata, _ = proc.communicate()
-      assert proc.returncode == 0, \
-          'Failed to verify {} with avbtool (key: {}):\n{}'.format(
-              image, key, stdoutdata)
-      logging.info(
-          'Verified %s with avbtool (key: %s):\n%s', image, key,
-          stdoutdata.rstrip())
 
 
 def main():

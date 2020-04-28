@@ -61,8 +61,8 @@ endif
 
 # Always set --pseudo-localize, it will be stripped out later for release
 # builds that don't want it.
-$(my_res_resources_flat) $(my_overlay_resources_flat) $(my_resources_flata) $(my_generated_resources_flata) $(my_zippped_resources_flata): \
-  PRIVATE_AAPT2_CFLAGS := --pseudo-localize $(filter --legacy,$(LOCAL_AAPT_FLAGS))
+$(my_res_resources_flat) $(my_overlay_resources_flat) $(my_resources_flata): \
+  PRIVATE_AAPT2_CFLAGS := --pseudo-localize
 
 # TODO(b/78447299): Forbid LOCAL_STATIC_JAVA_AAR_LIBRARIES in aapt2 and remove
 # support for it.

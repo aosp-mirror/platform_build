@@ -6,4 +6,4 @@ $(call record-module-type,HOST_STATIC_TEST_LIBRARY)
 
 include $(BUILD_SYSTEM)/host_test_internal.mk
 
-include $(BUILD_SYSTEM)/host_static_library.mk
+include $(BUILD_HOST_STATIC_LIBRARY)
