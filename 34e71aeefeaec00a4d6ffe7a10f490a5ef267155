@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "701cbf5c_08aa5d70",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-04-28T18:53:17Z",
+      "side": 1,
+      "message": "So product_services is only used in source order validation, but we are not actually using it\u0027s fingerprint?",
+      "range": {
+        "startLine": 345,
+        "startChar": 7,
+        "endLine": 345,
+        "endChar": 23
+      },
+      "revId": "34e71aeefeaec00a4d6ffe7a10f490a5ef267155",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
