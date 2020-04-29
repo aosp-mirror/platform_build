@@ -795,9 +795,10 @@ $(foreach m,$($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))$(1)DEPENDENCIES_ON_SHARED_LI
     $($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))TARGET_OUT_INTERMEDIATES)/SHARED_LIBRARIES/%,\
     $(call module-built-files,$(mod)))))\
   \
-  $(if $(r),\
+  $(if $(and $(r),$(deps)),\
     $(eval stamp := $(dir $(r))check_elf_files.timestamp)\
-    $(eval $(call add-elf-file-check-shared-lib,$(stamp),$(deps)))\
+    $(if $(CHECK_ELF_FILES.$(stamp)),\
+      $(eval $(call add-elf-file-check-shared-lib,$(stamp),$(deps))))\
   ))
 endef
 
