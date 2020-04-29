@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "9800ee07_c21634ed",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-04-29T03:26:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "af409994_2c1f1fbd",
+      "range": {
+        "startLine": 437,
+        "startChar": 4,
+        "endLine": 437,
+        "endChar": 16
+      },
+      "revId": "1697671748ab9ce66f4545866a167e0303e4dc18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b87ae1b7_8418ffe0",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 6
@@ -71,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "6899a57b_5cbe316f",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-04-29T03:26:05Z",
+      "side": 1,
+      "message": "It was, then I realize the props in _RO_PRODUCT_RESOLVE_PROPS were expected be non empty as well. So I flips the logic back...",
+      "parentUuid": "b87ae1b7_8418ffe0",
+      "range": {
+        "startLine": 444,
+        "startChar": 0,
+        "endLine": 449,
+        "endChar": 50
+      },
+      "revId": "1697671748ab9ce66f4545866a167e0303e4dc18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "82da2f89_20bd82eb",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 6
@@ -82,6 +130,30 @@
       "writtenOn": "2020-04-28T23:02:02Z",
       "side": 1,
       "message": "nit: staticmethod and omit cls? You don\u0027t seem to be using cls here...",
+      "range": {
+        "startLine": 724,
+        "startChar": 2,
+        "endLine": 725,
+        "endChar": 24
+      },
+      "revId": "1697671748ab9ce66f4545866a167e0303e4dc18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bbb97f79_6985d54f",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-04-29T03:26:05Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "82da2f89_20bd82eb",
       "range": {
         "startLine": 724,
         "startChar": 2,
