@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "b64e7d98_3ac93099",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-29T08:17:18Z",
+      "side": 1,
+      "message": "what about the other aosp_*?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 38
+      },
+      "revId": "57ad4b254128f79b64efb557a975b5649d22a43e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "83e3d82d_4041c4a5",
         "filename": "target/product/aosp_arm64.mk",
         "patchSetId": 2
@@ -22,6 +45,30 @@
       "revId": "57ad4b254128f79b64efb557a975b5649d22a43e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3172e3b5_325a2512",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-29T08:17:18Z",
+      "side": 1,
+      "message": "Steve had a comment about this already",
+      "parentUuid": "83e3d82d_4041c4a5",
+      "range": {
+        "startLine": 54,
+        "startChar": 50,
+        "endLine": 54,
+        "endChar": 65
+      },
+      "revId": "57ad4b254128f79b64efb557a975b5649d22a43e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
