@@ -264,7 +264,7 @@ ifdef property_overrides_split_enabled
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_OUT)/etc/prop.default
 INSTALLED_DEFAULT_PROP_OLD_TARGET := $(TARGET_ROOT_OUT)/default.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_DEFAULT_PROP_OLD_TARGET)
-$(INSTALLED_DEFAULT_PROP_OLD_TARGET): $(INSTALLED_DEFAULT_PROP_TARGET)
+$(INSTALLED_DEFAULT_PROP_TARGET): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_DEFAULT_PROP_OLD_TARGET)
 else
 # legacy path
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_ROOT_OUT)/default.prop
@@ -1360,10 +1360,10 @@ endif # BUILDING_VENDOR_BOOT_IMAGE
 # original notice files instead of making rules to copy them somwehere.
 # Then we could traverse that without quite as much bash drama.
 define combine-notice-files
-$(2) $(3): PRIVATE_MESSAGE := $(4)
-$(2) $(3): PRIVATE_DIR := $(5)
-$(2) : $(3)
-$(3) : $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
+$(2): PRIVATE_MESSAGE := $(4)
+$(2): PRIVATE_DIR := $(5)
+$(2): .KATI_IMPLICIT_OUTPUTS := $(3)
+$(2): $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
 	build/make/tools/generate-notice-files.py --text-output $(2) $(foreach xdir, $(7), -e $(xdir) )\
 	    $(if $(filter $(1),xml_excluded_vendor_product_odm),-e vendor -e product -e system_ext -e odm --xml-output, \
 	      $(if $(filter $(1),xml_excluded_system_product_odm),-e system -e product -e system_ext -e odm --xml-output, \
