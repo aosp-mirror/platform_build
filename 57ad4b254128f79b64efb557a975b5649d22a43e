@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "83e3d82d_4041c4a5",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-04-29T06:49:43Z",
+      "side": 1,
+      "message": "Do we also need to remove this? if aosp_arm64 is a pure GSI build?\nI\u0027ll defer this to Szuwei.",
+      "range": {
+        "startLine": 54,
+        "startChar": 50,
+        "endLine": 54,
+        "endChar": 65
+      },
+      "revId": "57ad4b254128f79b64efb557a975b5649d22a43e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
