@@ -377,9 +377,11 @@ ifeq ($(need_compile_res),true)
 # they want to use this module's R.java file.
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 
+ifneq ($(full_classes_jar),)
 # The R.java file must exist by the time the java source
 # list is generated
 $(java_source_list_file): $(R_file_stamp)
+endif
 
 endif # need_compile_res
 
