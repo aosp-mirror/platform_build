@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "8eaa33c0_eb0ecfb0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-04-30T05:29:11Z",
+      "side": 1,
+      "message": "Let\u0027s clean up aosp_arm64 for pilot run. And then others.",
+      "parentUuid": "dc26f8bf_a5f375b1",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 38
+      },
+      "revId": "57ad4b254128f79b64efb557a975b5649d22a43e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "83e3d82d_4041c4a5",
         "filename": "target/product/aosp_arm64.mk",
         "patchSetId": 2
