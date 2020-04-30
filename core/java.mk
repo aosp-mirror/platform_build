@@ -501,9 +501,9 @@ else # !LOCAL_PROGUARD_ENABLED
 	$(transform-classes.jar-to-dex)
 endif
 
-ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)
-  $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)
-endif
+$(foreach pair,$(PRODUCT_BOOT_JARS), \
+  $(if $(filter $(LOCAL_MODULE),$(call word-colon,2,$(pair))), \
+    $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)))
 
 $(built_dex): $(built_dex_intermediate)
 	@echo Copying: $@
