@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d8d2c6b7_707d609b",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-04-30T16:27:17Z",
+      "side": 1,
+      "message": "Awesome! Thank you. Fixed.",
+      "parentUuid": "6bbbd407_bc122c4d",
+      "range": {
+        "startLine": 236,
+        "startChar": 2,
+        "endLine": 238,
+        "endChar": 43
+      },
+      "revId": "0c65af4c4f88f2ab329780a7f7145d9474a92da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8503b2cb_bf891597",
         "filename": "core/tasks/boot_jars_package_check.mk",
         "patchSetId": 4
@@ -36,6 +60,24 @@
       "writtenOn": "2020-04-30T14:39:07Z",
       "side": 1,
       "message": "the current impl has some risk with .platform in jar names, or apex names, or someone specifying com.android.art.release:foo\n\nmaybe you could use\n    apex :\u003d .$(pair)\n    apex :\u003d $(subst .platform:,,$(apex))\n    apex :\u003d $(subst .com.android.art:,com.android.art.release:,$(apex))\n    apex :\u003d $(patsubst :%,,$(apex))\n    $(jar)$(apex)\n\n(there may be better ways)",
+      "revId": "0c65af4c4f88f2ab329780a7f7145d9474a92da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d8bc7d1_fb9c89e9",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-04-30T16:27:17Z",
+      "side": 1,
+      "message": "I ended up with this (more verbose than your version, but I think it\u0027s more bulletproof because it checks for exact text match between quotes $(q) that cannot occur in $(apex)):\n\n   $(eval apex :\u003d $(call word-colon,1,$(pair))) \\\n   $(eval jar :\u003d $(call word-colon,2,$(pair))) \\\n   $(eval q :\u003d :) \\\n   $(eval sfx :\u003d $(q).$(apex)$(q)) \\\n   $(eval sfx :\u003d $(subst $(q).platform$(q),$(q)$(q),$(sfx))) \\\n   $(eval sfx :\u003d $(subst $(q).com.android.art$(q),$(q).com.android.art.release$(q),$(sfx))) \\\n   $(eval sfx :\u003d $(patsubst $(q)%$(q),%,$(sfx))) \\\n   $(jar)$(sfx))",
+      "parentUuid": "8503b2cb_bf891597",
       "revId": "0c65af4c4f88f2ab329780a7f7145d9474a92da9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -62,6 +104,30 @@
       "revId": "0c65af4c4f88f2ab329780a7f7145d9474a92da9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03d04228_19b7f862",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-04-30T16:27:17Z",
+      "side": 1,
+      "message": "It is. Changed back to foreach.\n\n(At some point I used patsubst out of desperation because something else didn\u0027t work and I blamed foreach.)",
+      "parentUuid": "bda724c4_4c4892d6",
+      "range": {
+        "startLine": 39,
+        "startChar": 19,
+        "endLine": 39,
+        "endChar": 32
+      },
+      "revId": "0c65af4c4f88f2ab329780a7f7145d9474a92da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
