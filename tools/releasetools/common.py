@@ -336,8 +336,11 @@ class BuildInfo(object):
   _RO_PRODUCT_RESOLVE_PROPS = ["ro.product.brand", "ro.product.device",
                                "ro.product.manufacturer", "ro.product.model",
                                "ro.product.name"]
-  _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER = ["product", "odm", "vendor",
-                                            "system_ext", "system"]
+  _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_CURRENT = [
+      "product", "odm", "vendor", "system_ext", "system"]
+  _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_ANDROID_10 = [
+      "product", "product_services", "odm", "vendor", "system"]
+  _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_LEGACY = []
 
   def __init__(self, info_dict, oem_dicts=None):
     """Initializes a BuildInfo instance with the given dicts.
@@ -447,16 +450,16 @@ class BuildInfo(object):
     if prop_val:
       return prop_val
 
+    default_source_order = self._GetRoProductPropsDefaultSourceOrder()
     source_order_val = self.info_dict.get("build.prop", {}).get(
         "ro.product.property_source_order")
     if source_order_val:
       source_order = source_order_val.split(",")
     else:
-      source_order = BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER
+      source_order = default_source_order
 
     # Check that all sources in ro.product.property_source_order are valid
-    if any([x not in BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER
-            for x in source_order]):
+    if any([x not in default_source_order for x in source_order]):
       raise ExternalError(
           "Invalid ro.product.property_source_order '{}'".format(source_order))
 
@@ -469,6 +472,27 @@ class BuildInfo(object):
         return prop_val
 
     raise ExternalError("couldn't resolve {}".format(prop))
+
+  def _GetRoProductPropsDefaultSourceOrder(self):
+    # NOTE: refer to CDDs and android.os.Build.VERSION for the definition and
+    # values of these properties for each Android release.
+    android_codename = self.info_dict.get("build.prop", {}).get(
+        "ro.build.version.codename")
+    if android_codename == "REL":
+      android_version = self.info_dict.get("build.prop", {}).get(
+          "ro.build.version.release")
+      if android_version == "10":
+        return BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_ANDROID_10
+      # NOTE: float() conversion of android_version will have rounding error.
+      # We are checking for "9" or less, and using "< 10" is well outside of
+      # possible floating point rounding.
+      try:
+        android_version_val = float(android_version)
+      except ValueError:
+        android_version_val = 0
+      if android_version_val < 10:
+        return BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_LEGACY
+    return BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_CURRENT
 
   def GetOemProperty(self, key):
     if self.oem_props is not None and key in self.oem_props:
