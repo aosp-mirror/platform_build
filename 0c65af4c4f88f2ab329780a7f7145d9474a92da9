@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6bbbd407_bc122c4d",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-30T14:39:07Z",
+      "side": 1,
+      "message": "maybe this is simpler:\n\n    $(if $(findstring :,$(pair)),,platform:)$(pair))",
+      "range": {
+        "startLine": 236,
+        "startChar": 2,
+        "endLine": 238,
+        "endChar": 43
+      },
+      "revId": "0c65af4c4f88f2ab329780a7f7145d9474a92da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8503b2cb_bf891597",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-30T14:39:07Z",
+      "side": 1,
+      "message": "the current impl has some risk with .platform in jar names, or apex names, or someone specifying com.android.art.release:foo\n\nmaybe you could use\n    apex :\u003d .$(pair)\n    apex :\u003d $(subst .platform:,,$(apex))\n    apex :\u003d $(subst .com.android.art:,com.android.art.release:,$(apex))\n    apex :\u003d $(patsubst :%,,$(apex))\n    $(jar)$(apex)\n\n(there may be better ways)",
+      "revId": "0c65af4c4f88f2ab329780a7f7145d9474a92da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bda724c4_4c4892d6",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-04-30T14:39:07Z",
+      "side": 1,
+      "message": "I thought a foreach here was clearer",
+      "range": {
+        "startLine": 39,
+        "startChar": 19,
+        "endLine": 39,
+        "endChar": 32
+      },
+      "revId": "0c65af4c4f88f2ab329780a7f7145d9474a92da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
