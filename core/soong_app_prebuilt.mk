@@ -157,6 +157,12 @@ endif
 include $(BUILD_SYSTEM)/app_certificate_validate.mk
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
+ifneq ($(LOCAL_MODULE_STEM),)
+  PACKAGES.$(LOCAL_MODULE).STEM := $(LOCAL_MODULE_STEM)
+else
+  PACKAGES.$(LOCAL_MODULE).STEM := $(LOCAL_MODULE)
+endif
+
 # Set a actual_partition_tag (calculated in base_rules.mk) for the package.
 PACKAGES.$(LOCAL_MODULE).PARTITION := $(actual_partition_tag)
 
