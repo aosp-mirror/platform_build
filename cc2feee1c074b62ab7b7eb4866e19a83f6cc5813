@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d0098e0_33cff7c9",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1674,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-05-01T22:47:56Z",
+      "side": 1,
+      "message": "Nit: Use indentation here too, like you did above?",
+      "range": {
+        "startLine": 1674,
+        "startChar": 0,
+        "endLine": 1674,
+        "endChar": 1
+      },
+      "revId": "cc2feee1c074b62ab7b7eb4866e19a83f6cc5813",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "122ff21b_f0e4cc03",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-05-01T22:47:56Z",
+      "side": 1,
+      "message": "Couldn\u0027t find any uses of these internally, so from that perspective it seems safe. What about partners/OEMs?",
+      "range": {
+        "startLine": 139,
+        "startChar": 0,
+        "endLine": 142,
+        "endChar": 37
+      },
+      "revId": "cc2feee1c074b62ab7b7eb4866e19a83f6cc5813",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
