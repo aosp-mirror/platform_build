@@ -22,6 +22,30 @@
       "revId": "bc2c0c1ec9affb1fc5336515cd018d1b2861b831",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43911eca_9a4c11bf",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-01T23:53:58Z",
+      "side": 1,
+      "message": "@Laver. I remembered ro.build.version.sdk isn\u0027t very accurate to represent the usage of product_service. As sdk 29 can be R. \n\nDo we have characters in version 10 as well, like 10.W? If that\u0027s the case, we probably need to find the first of \u0027.\u0027.",
+      "parentUuid": "96b6fa4b_e684de2a",
+      "range": {
+        "startLine": 493,
+        "startChar": 0,
+        "endLine": 495,
+        "endChar": 41
+      },
+      "revId": "bc2c0c1ec9affb1fc5336515cd018d1b2861b831",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
