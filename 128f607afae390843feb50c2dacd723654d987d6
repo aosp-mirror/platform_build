@@ -262,6 +262,30 @@
       "revId": "128f607afae390843feb50c2dacd723654d987d6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f44bb671_4d7c1843",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 1047684
+      },
+      "writtenOn": "2020-05-01T12:07:34Z",
+      "side": 1,
+      "message": "Did you modify my CLs to test your change? If you did, could you upload a new patchset for this CL?\n\nOf course, it\u0027s after you submit your changes and resolve all other potential issue.",
+      "parentUuid": "89356a25_28f7914c",
+      "range": {
+        "startLine": 329,
+        "startChar": 0,
+        "endLine": 329,
+        "endChar": 33
+      },
+      "revId": "128f607afae390843feb50c2dacd723654d987d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
