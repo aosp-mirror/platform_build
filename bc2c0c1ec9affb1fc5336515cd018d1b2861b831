@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "96b6fa4b_e684de2a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-05-01T23:46:52Z",
+      "side": 1,
+      "message": "I assume this is to handle strings like \"8.1\"?\n\nNote that it is also possible that the value is \"4.4W\" or \"2.3.3\", for example; so maybe searching for the first dot and trimming is more correct?\n\nAlso, can you use ro.build.version.sdk here?",
+      "range": {
+        "startLine": 493,
+        "startChar": 0,
+        "endLine": 495,
+        "endChar": 41
+      },
+      "revId": "bc2c0c1ec9affb1fc5336515cd018d1b2861b831",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
