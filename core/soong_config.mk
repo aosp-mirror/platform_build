@@ -121,7 +121,7 @@ $(call add_json_bool, SamplingPGO,                       $(filter true,$(SAMPLIN
 $(call add_json_bool, ArtUseReadBarrier,                 $(call invert_bool,$(filter false,$(PRODUCT_ART_USE_READ_BARRIER))))
 $(call add_json_bool, Binder32bit,                       $(BINDER32BIT))
 $(call add_json_str,  BtConfigIncludeDir,                $(BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR))
-$(call add_json_list, DeviceKernelHeaders,               $(TARGET_PROJECT_SYSTEM_INCLUDES))
+$(call add_json_list, DeviceKernelHeaders,               $(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS) $(TARGET_PRODUCT_KERNEL_HEADERS))
 $(call add_json_bool, DevicePrefer32BitApps,             $(filter true,$(TARGET_PREFER_32_BIT_APPS)))
 $(call add_json_bool, DevicePrefer32BitExecutables,      $(filter true,$(TARGET_PREFER_32_BIT_EXECUTABLES)))
 $(call add_json_str,  DeviceVndkVersion,                 $(BOARD_VNDK_VERSION))
