@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9ed902de_532a76d2",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-01T23:37:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2de2dfb3_22ef76bb",
+      "revId": "7e3738af00dfcace138ada400977955d168d5218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ff0c6fd5_91f5566f",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 10
@@ -30,6 +48,24 @@
       "writtenOn": "2020-05-01T20:10:44Z",
       "side": 1,
       "message": "To be more Pythonic, rather than implementing `GetProp`, should this class instead implement the Python mapping interface? https://docs.python.org/3.8/glossary.html#term-mapping",
+      "revId": "7e3738af00dfcace138ada400977955d168d5218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8e44a09_aa7d09af",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-01T23:37:14Z",
+      "side": 1,
+      "message": "I could implement __getitem__(). But I feel it\u0027s a bit weird if it doesn\u0027t raise an exception for missing keys. Also GetProp() is more explicit so people will realize it\u0027s not a dictionary..",
+      "parentUuid": "ff0c6fd5_91f5566f",
       "revId": "7e3738af00dfcace138ada400977955d168d5218",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
