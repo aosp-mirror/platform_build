@@ -69,6 +69,24 @@
       "revId": "7e3738af00dfcace138ada400977955d168d5218",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37081561_06fd5739",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2020-05-01T23:41:19Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b8e44a09_aa7d09af",
+      "revId": "7e3738af00dfcace138ada400977955d168d5218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
