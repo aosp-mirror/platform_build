@@ -108,6 +108,51 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
       },
   ]
 
+  TEST_INFO_DICT_PROPERTY_SOURCE_ORDER = {
+      'build.prop' : {
+          'ro.build.fingerprint' : 'build-fingerprint',
+          'ro.product.property_source_order' :
+              'product,odm,vendor,system_ext,system',
+      },
+      'system.build.prop' : {
+          'ro.product.system.device' : 'system-product-device',
+      },
+      'vendor.build.prop' : {
+          'ro.product.vendor.device' : 'vendor-product-device',
+      },
+  }
+
+  TEST_INFO_DICT_PROPERTY_SOURCE_ORDER_ANDROID_10 = {
+      'build.prop' : {
+          'ro.build.fingerprint' : 'build-fingerprint',
+          'ro.product.property_source_order' :
+              'product,product_services,odm,vendor,system',
+          'ro.build.version.release' : '10',
+          'ro.build.version.codename' : 'REL',
+      },
+      'system.build.prop' : {
+          'ro.product.system.device' : 'system-product-device',
+      },
+      'vendor.build.prop' : {
+          'ro.product.vendor.device' : 'vendor-product-device',
+      },
+  }
+
+  TEST_INFO_DICT_PROPERTY_SOURCE_ORDER_ANDROID_9 = {
+      'build.prop' : {
+          'ro.product.device' : 'product-device',
+          'ro.build.fingerprint' : 'build-fingerprint',
+          'ro.build.version.release' : '9',
+          'ro.build.version.codename' : 'REL',
+      },
+      'system.build.prop' : {
+          'ro.product.system.device' : 'system-product-device',
+      },
+      'vendor.build.prop' : {
+          'ro.product.vendor.device' : 'vendor-product-device',
+      },
+  }
+
   def test_init(self):
     target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
     self.assertEqual('product-device', target_info.device)
@@ -253,6 +298,41 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
              ['brand1', 'brand2', 'brand3'], False),
         ],
         script_writer.lines)
+
+  def test_ResolveRoProductProperty_FromVendor(self):
+    info_dict = copy.deepcopy(self.TEST_INFO_DICT_PROPERTY_SOURCE_ORDER)
+    info = common.BuildInfo(info_dict, None)
+    self.assertEqual('vendor-product-device',
+                     info.GetBuildProp('ro.product.device'))
+
+  def test_ResolveRoProductProperty_FromSystem(self):
+    info_dict = copy.deepcopy(self.TEST_INFO_DICT_PROPERTY_SOURCE_ORDER)
+    del info_dict['vendor.build.prop']['ro.product.vendor.device']
+    info = common.BuildInfo(info_dict, None)
+    self.assertEqual('system-product-device',
+                     info.GetBuildProp('ro.product.device'))
+
+  def test_ResolveRoProductProperty_InvalidPropertySearchOrder(self):
+    info_dict = copy.deepcopy(self.TEST_INFO_DICT_PROPERTY_SOURCE_ORDER)
+    info_dict['build.prop']['ro.product.property_source_order'] = 'bad-source'
+    with self.assertRaisesRegexp(common.ExternalError,
+        'Invalid ro.product.property_source_order'):
+      info = common.BuildInfo(info_dict, None)
+      info.GetBuildProp('ro.product.device')
+
+  def test_ResolveRoProductProperty_Android10PropertySearchOrder(self):
+    info_dict = copy.deepcopy(
+        self.TEST_INFO_DICT_PROPERTY_SOURCE_ORDER_ANDROID_10)
+    info = common.BuildInfo(info_dict, None)
+    self.assertEqual('vendor-product-device',
+                     info.GetBuildProp('ro.product.device'))
+
+  def test_ResolveRoProductProperty_Android9PropertySearchOrder(self):
+    info_dict = copy.deepcopy(
+        self.TEST_INFO_DICT_PROPERTY_SOURCE_ORDER_ANDROID_9)
+    info = common.BuildInfo(info_dict, None)
+    self.assertEqual('product-device',
+                     info.GetBuildProp('ro.product.device'))
 
 
 class CommonZipTest(test_utils.ReleaseToolsTestCase):
