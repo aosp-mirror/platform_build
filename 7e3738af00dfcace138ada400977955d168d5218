@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2de2dfb3_22ef76bb",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2020-05-01T20:10:44Z",
+      "side": 1,
+      "message": "MAYBE: for consistency, what about having `FromFile` instead of `LoadBuildProps`? IMO, that would make it clearer how to construct a PartitionBuildProps object, and also remove any confusion around whether a constructed object on which `LoadBuildsProps` has not been called can do anything useful (i.e. No).",
+      "revId": "7e3738af00dfcace138ada400977955d168d5218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff0c6fd5_91f5566f",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2020-05-01T20:10:44Z",
+      "side": 1,
+      "message": "To be more Pythonic, rather than implementing `GetProp`, should this class instead implement the Python mapping interface? https://docs.python.org/3.8/glossary.html#term-mapping",
+      "revId": "7e3738af00dfcace138ada400977955d168d5218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
