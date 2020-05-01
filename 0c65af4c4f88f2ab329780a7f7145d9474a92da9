@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "6d34587f_cce41a66",
+        "filename": "core/tasks/boot_jars_package_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-01T16:24:27Z",
+      "side": 1,
+      "message": "it\u0027s nice when you think of $(q) as a quote, but I suspect 0 readers will figure that out without reading this comment :)\n\nanyway, that\u0027s fine.",
+      "parentUuid": "6d8bc7d1_fb9c89e9",
+      "revId": "0c65af4c4f88f2ab329780a7f7145d9474a92da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bda724c4_4c4892d6",
         "filename": "core/tasks/boot_jars_package_check.mk",
         "patchSetId": 4
