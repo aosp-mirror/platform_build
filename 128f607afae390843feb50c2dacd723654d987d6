@@ -286,6 +286,30 @@
       "revId": "128f607afae390843feb50c2dacd723654d987d6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eabb8706_cc12878f",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-05-01T12:55:27Z",
+      "side": 1,
+      "message": "Sure, as soon as I merge https://r.android.com/1292863, I will re-test with this topic and upload the necessary changes to it. Hopefully the only necessary change will be to move core-icu4j from PRODUCT_UPDATABLE BOOT_JARS.",
+      "parentUuid": "f44bb671_4d7c1843",
+      "range": {
+        "startLine": 329,
+        "startChar": 0,
+        "endLine": 329,
+        "endChar": 33
+      },
+      "revId": "128f607afae390843feb50c2dacd723654d987d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
