@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b03bf232_a1a07a34",
+        "filename": "core/native_test_config_template.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-05-01T21:42:53Z",
+      "side": 1,
+      "message": "MAINLINE_MODULES",
+      "range": {
+        "startLine": 21,
+        "startChar": 5,
+        "endLine": 21,
+        "endChar": 26
+      },
+      "revId": "b1e228724f1ecb2c51591657129be8851b646147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
