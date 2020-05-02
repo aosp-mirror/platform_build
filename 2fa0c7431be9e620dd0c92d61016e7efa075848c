@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "339a02c5_0e80ab66",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-02T09:35:17Z",
+      "side": 1,
+      "message": "I think the new message is clearer for a build system engineer, but less clear for the typical android engineer. The intent is to convey \"you\u0027re installing something onto the /product partition, but this makefile should only install things on /system. I suspect out/target/product/\u003cproduct\u003e is just confusing the average engineer\n\nMild preference to leaving it as-is, but if you think it\u0027s really terrible, feel free to submit it",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 19
+      },
+      "revId": "2fa0c7431be9e620dd0c92d61016e7efa075848c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
