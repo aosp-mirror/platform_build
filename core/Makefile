@@ -863,7 +863,7 @@ endif
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
-# $1 package name
+# $1 stem name of the package
 # $2 certificate
 # $3 private key
 # $4 compressed
@@ -893,8 +893,8 @@ $(APKCERTS_FILE):
 	@rm -f $@
 	$(foreach p,$(sort $(PACKAGES)),\
 	  $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
-	    $(call _apkcerts_write_line,$(p),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
-	    $(call _apkcerts_write_line,$(p),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@)))
+	    $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
+	    $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@)))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
@@ -5156,6 +5156,20 @@ $(INSTALLED_QEMU_VENDORIMAGE): $(INSTALLED_VENDORIMAGE_TARGET) $(MK_QEMU_IMAGE_S
 vendorimage: $(INSTALLED_QEMU_VENDORIMAGE)
 droidcore: $(INSTALLED_QEMU_VENDORIMAGE)
 endif
+
+ifdef INSTALLED_RAMDISK_TARGET
+ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
+ifdef INTERNAL_VENDOR_RAMDISK_TARGET
+INSTALLED_QEMU_RAMDISKIMAGE := $(PRODUCT_OUT)/ramdisk-qemu.img
+$(INSTALLED_QEMU_RAMDISKIMAGE): $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_RAMDISK_TARGET)
+	@echo Create ramdisk-qemu.img
+	(cat $(INSTALLED_RAMDISK_TARGET) $(INTERNAL_VENDOR_RAMDISK_TARGET) > $(INSTALLED_QEMU_RAMDISKIMAGE))
+
+droidcore: $(INSTALLED_QEMU_RAMDISKIMAGE)
+endif
+endif
+endif
+
 ifdef INSTALLED_PRODUCTIMAGE_TARGET
 INSTALLED_QEMU_PRODUCTIMAGE := $(PRODUCT_OUT)/product-qemu.img
 $(INSTALLED_QEMU_PRODUCTIMAGE): $(INSTALLED_PRODUCTIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST) $(SIMG2IMG)
@@ -5293,6 +5307,7 @@ deps := \
 	$(APPCOMPAT_ZIP) \
 	$(INSTALLED_SYSTEMIMAGE_TARGET) \
 	$(INSTALLED_QEMU_SYSTEMIMAGE) \
+	$(INSTALLED_QEMU_RAMDISKIMAGE) \
 	$(INSTALLED_QEMU_VENDORIMAGE) \
 	$(QEMU_VERIFIED_BOOT_PARAMS) \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
