@@ -1160,6 +1160,18 @@ ifeq ($(LOCAL_USE_VNDK),)
     $(if $(filter $(l),$(VENDOR_PUBLIC_LIBRARIES)),$(l).vendorpublic,$(l)))
 endif
 
+###########################################################
+## When compiling against the NDK, use SDK variants of Soong libraries
+###########################################################
+
+ifneq ($(LOCAL_SDK_VERSION),)
+  my_whole_static_libraries := $(call use_soong_sdk_libraries,$(my_whole_static_libraries))
+  my_static_libraries := $(call use_soong_sdk_libraries,$(my_static_libraries))
+  my_shared_libraries := $(call use_soong_sdk_libraries,$(my_shared_libraries))
+  my_system_shared_libraries := $(call use_soong_sdk_libraries,$(my_system_shared_libraries))
+  my_header_libraries := $(call use_soong_sdk_libraries,$(my_header_libraries))
+endif
+
 ##########################################################
 ## Set up installed module dependency
 ## We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
