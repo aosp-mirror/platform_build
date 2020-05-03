@@ -172,6 +172,12 @@ else
   $(built_module): PRIVATE_CERTIFICATE_LINEAGE := $(LOCAL_CERTIFICATE_LINEAGE)
 endif
 
+ifneq ($(LOCAL_MODULE_STEM),)
+  PACKAGES.$(LOCAL_MODULE).STEM := $(LOCAL_MODULE_STEM)
+else
+  PACKAGES.$(LOCAL_MODULE).STEM := $(LOCAL_MODULE)
+endif
+
 include $(BUILD_SYSTEM)/app_certificate_validate.mk
 
 # Set a actual_partition_tag (calculated in base_rules.mk) for the package.
