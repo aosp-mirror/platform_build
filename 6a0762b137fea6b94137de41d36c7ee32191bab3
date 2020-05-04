@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "578941b8_bd3f337b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T19:23:09Z",
+      "side": 1,
+      "message": "It\u0027s for `make custom_images`. We build our oem images for with this command. I will remove this \"(oem)\" from commit message to avoid confusing.",
+      "parentUuid": "466797ec_41682745",
+      "range": {
+        "startLine": 7,
+        "startChar": 28,
+        "endLine": 7,
+        "endChar": 40
+      },
+      "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3b82e261_fe68b02c",
         "filename": "/COMMIT_MSG",
         "patchSetId": 10
@@ -45,6 +69,30 @@
       "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03b3e097_efd31eff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T19:23:09Z",
+      "side": 1,
+      "message": "I will do that.",
+      "parentUuid": "3b82e261_fe68b02c",
+      "range": {
+        "startLine": 9,
+        "startChar": 49,
+        "endLine": 9,
+        "endChar": 64
+      },
+      "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "f8e8abd8_561332ea",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T19:23:09Z",
+      "side": 1,
+      "message": "I know. But to resign them, those custom images have to be installed to target-zip package. By current make system, they can only be installed into RADIO.",
+      "parentUuid": "afdce284_5b8b0438",
+      "range": {
+        "startLine": 13,
+        "startChar": 43,
+        "endLine": 13,
+        "endChar": 48
+      },
+      "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "227dbac8_061f4534",
         "filename": "/COMMIT_MSG",
         "patchSetId": 10
@@ -91,6 +163,30 @@
       "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4c0f414_f61e4552",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T19:23:09Z",
+      "side": 1,
+      "message": "I noticed this different too. The keys in info_dict all end with \"_key_path\". But I inherit this name from https://source.corp.google.com/rvc-arc/build/make/tools/releasetools/sign_target_files_apks.py;l\u003d104?q\u003dsign_target_files_apks\u0026ss\u003dpiper%2FGoogle%2Frvc-arc as input parameter, like other keys, they all don\u0027t end with \"_key_path\". \n\nBut sure I have changed it to \"avb_custom_images_key\".",
+      "parentUuid": "227dbac8_061f4534",
+      "range": {
+        "startLine": 20,
+        "startChar": 23,
+        "endLine": 20,
+        "endChar": 37
+      },
+      "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "9073fafe_cde1724c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T19:23:09Z",
+      "side": 1,
+      "message": "ditto. I will update it.",
+      "parentUuid": "5fe102ea_20bd3713",
+      "range": {
+        "startLine": 21,
+        "startChar": 7,
+        "endLine": 21,
+        "endChar": 27
+      },
+      "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "104b789c_9b3c2821",
         "filename": "tools/releasetools/Android.bp",
         "patchSetId": 10
@@ -137,6 +257,30 @@
       "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26119a01_05ddccac",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 10
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T19:23:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "104b789c_9b3c2821",
+      "range": {
+        "startLine": 148,
+        "startChar": 24,
+        "endLine": 148,
+        "endChar": 30
+      },
+      "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "42214425_f16181ee",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 10
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T19:23:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1bad1ca8_89c8c663",
+      "range": {
+        "startLine": 151,
+        "startChar": 9,
+        "endLine": 151,
+        "endChar": 21
+      },
+      "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e8f3fa17_386b4413",
         "filename": "tools/releasetools/custom_utils.py",
         "patchSetId": 10
@@ -183,6 +351,30 @@
       "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0de7409a_6c2d7c92",
+        "filename": "tools/releasetools/custom_utils.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T19:23:09Z",
+      "side": 1,
+      "message": "This oem images we use may have many OEMs and 3rd apks, their size will be very large in that case. So I think \"add_hash_footer\" is more safe.",
+      "parentUuid": "e8f3fa17_386b4413",
+      "range": {
+        "startLine": 54,
+        "startChar": 21,
+        "endLine": 54,
+        "endChar": 40
+      },
+      "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
