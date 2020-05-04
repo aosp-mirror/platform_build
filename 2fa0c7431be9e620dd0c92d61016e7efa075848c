@@ -46,6 +46,30 @@
       "revId": "2fa0c7431be9e620dd0c92d61016e7efa075848c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7c4c54b_ab90a2c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-04T17:06:17Z",
+      "side": 1,
+      "message": "what, so is this a genuine error? do you have a link to the CL producing that error?",
+      "parentUuid": "5f362807_df25db09",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 19
+      },
+      "revId": "2fa0c7431be9e620dd0c92d61016e7efa075848c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
