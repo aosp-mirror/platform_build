@@ -1145,6 +1145,10 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
 
   if partition_name == "recovery":
     args = info_dict.get("recovery_mkbootimg_args")
+    if not args:
+      # Fall back to "mkbootimg_args" for recovery image
+      # in case "recovery_mkbootimg_args" is not set.
+      args = info_dict.get("mkbootimg_args")
   else:
     args = info_dict.get("mkbootimg_args")
   if args and args.strip():
