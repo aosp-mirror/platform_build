@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "986f17a5_61bdba94",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-04T03:00:57Z",
+      "side": 1,
+      "message": "This is used for fingerprint calculation and seems unrelated? Take extra caution as it may change the fingerprint calculation in runtime. Probably a separate cl if you indeed need it.",
+      "range": {
+        "startLine": 367,
+        "startChar": 0,
+        "endLine": 367,
+        "endChar": 45
+      },
+      "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f73ea7eb_ad5593a5",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-04T03:00:57Z",
+      "side": 1,
+      "message": "Do we assume to use the same key for all custom images in the future?",
+      "range": {
+        "startLine": 184,
+        "startChar": 0,
+        "endLine": 184,
+        "endChar": 52
+      },
+      "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4daa604b_7febafbc",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 643,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-04T03:00:57Z",
+      "side": 1,
+      "message": "add_img_to_target_files also write to RADIO. So you probably need to make sure the signed image isn\u0027t overridden. Or move the signing to add_img_to_target_files.",
+      "range": {
+        "startLine": 643,
+        "startChar": 0,
+        "endLine": 643,
+        "endChar": 42
+      },
+      "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94b2589b_55e70da4",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1244,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-04T03:00:57Z",
+      "side": 1,
+      "message": "what is it for.. is it [img.strip() for img in a]?",
+      "range": {
+        "startLine": 1244,
+        "startChar": 0,
+        "endLine": 1244,
+        "endChar": 43
+      },
+      "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
