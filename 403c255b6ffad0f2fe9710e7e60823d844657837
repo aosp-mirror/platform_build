@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3226c8d1_2ac01d78",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-05-04T11:43:10Z",
+      "side": 1,
+      "message": "What was the breakage and how is it fixed now?",
+      "revId": "403c255b6ffad0f2fe9710e7e60823d844657837",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
