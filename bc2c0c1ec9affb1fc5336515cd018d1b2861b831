@@ -46,6 +46,29 @@
       "revId": "bc2c0c1ec9affb1fc5336515cd018d1b2861b831",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0e1914d_8d5df590",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-05-04T18:02:30Z",
+      "side": 1,
+      "message": "nit: Can these (\u0026 other calls to `.build_props`) use GetProp() instead?",
+      "range": {
+        "startLine": 200,
+        "startChar": 28,
+        "endLine": 200,
+        "endChar": 39
+      },
+      "revId": "bc2c0c1ec9affb1fc5336515cd018d1b2861b831",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
