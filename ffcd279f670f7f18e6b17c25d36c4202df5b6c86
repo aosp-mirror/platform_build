@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "cd7b278b_d024680d",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T04:52:35Z",
+      "side": 1,
+      "message": "A separated https://android-review.googlesource.com/c/platform/build/+/1301053 was submitted to fix this.",
+      "parentUuid": "184f4793_d0e5d83d",
+      "range": {
+        "startLine": 367,
+        "startChar": 0,
+        "endLine": 367,
+        "endChar": 45
+      },
+      "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f73ea7eb_ad5593a5",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 7
@@ -187,6 +211,30 @@
       "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "206a37c9_be385930",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1244,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T04:52:35Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "16f5154e_508594fc",
+      "range": {
+        "startLine": 1244,
+        "startChar": 0,
+        "endLine": 1244,
+        "endChar": 43
+      },
+      "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
