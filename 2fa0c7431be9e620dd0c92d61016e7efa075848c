@@ -22,6 +22,30 @@
       "revId": "2fa0c7431be9e620dd0c92d61016e7efa075848c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f362807_df25db09",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-05-04T16:55:23Z",
+      "side": 1,
+      "message": "The current message makes little sense: `system/app/foo` is definitely under `system/`. I am not super happy with the new message, either, perhaps you can suggest something?",
+      "parentUuid": "339a02c5_0e80ab66",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 19
+      },
+      "revId": "2fa0c7431be9e620dd0c92d61016e7efa075848c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
