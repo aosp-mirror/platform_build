@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "184f4793_d0e5d83d",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T04:01:41Z",
+      "side": 1,
+      "message": "Okay, I will submit a separated CL to fix this. Our device is built with oem image, it will trigger this assert when sign_target_files_apks.",
+      "parentUuid": "986f17a5_61bdba94",
+      "range": {
+        "startLine": 367,
+        "startChar": 0,
+        "endLine": 367,
+        "endChar": 45
+      },
+      "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f73ea7eb_ad5593a5",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 7
@@ -45,6 +69,30 @@
       "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b9a4c58_d72ad3ba",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T04:01:41Z",
+      "side": 1,
+      "message": "Yes, all custom images will be the same key. We assume all custom images from OEM, so it\u0027s okay to use the same key to sign them.",
+      "parentUuid": "f73ea7eb_ad5593a5",
+      "range": {
+        "startLine": 184,
+        "startChar": 0,
+        "endLine": 184,
+        "endChar": 52
+      },
+      "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "a46f56f8_558f44b1",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 643,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T04:01:41Z",
+      "side": 1,
+      "message": "I confirmed add_img_to_target_files will not override this. Per my understanding and testing, the work to copy RADIO images from unsize target-zip file to signed target zip file is don by this script. add_img_to_target_files will only \"Copies images listed in META/pack_radioimages.txt from RADIO/ to IMAGES/\" \n\nhttps://cs.corp.google.com/aosp-master/build/make/tools/releasetools/add_img_to_target_files.py?q\u003dadd_img_to_target_files\u0026dr\u003dC\u0026l\u003d587",
+      "parentUuid": "4daa604b_7febafbc",
+      "range": {
+        "startLine": 643,
+        "startChar": 0,
+        "endLine": 643,
+        "endChar": 42
+      },
+      "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "94b2589b_55e70da4",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 7
@@ -82,6 +154,30 @@
       "writtenOn": "2020-05-04T03:00:57Z",
       "side": 1,
       "message": "what is it for.. is it [img.strip() for img in a]?",
+      "range": {
+        "startLine": 1244,
+        "startChar": 0,
+        "endLine": 1244,
+        "endChar": 43
+      },
+      "revId": "ffcd279f670f7f18e6b17c25d36c4202df5b6c86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "16f5154e_508594fc",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1244,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-04T04:01:41Z",
+      "side": 1,
+      "message": "Agree this is not right, I will fix it.",
+      "parentUuid": "94b2589b_55e70da4",
       "range": {
         "startLine": 1244,
         "startChar": 0,
