@@ -94,6 +94,30 @@
       "revId": "2fa0c7431be9e620dd0c92d61016e7efa075848c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa8f7e91_136c7eee",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-04T19:00:55Z",
+      "side": 1,
+      "message": "oh, ok, that seems like it should produce a different error, ideally sooner than this artifact claim check\n\n- Perhaps add a check that LOCAL_MODULE_PATH is inside out would be worthwhile\n\n- patching main.mk to error if product_FILES has any files outside $(PRODUCT_OUT) ?",
+      "parentUuid": "04060d40_8f7c2f52",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 19
+      },
+      "revId": "2fa0c7431be9e620dd0c92d61016e7efa075848c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
