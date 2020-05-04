@@ -70,6 +70,30 @@
       "revId": "2fa0c7431be9e620dd0c92d61016e7efa075848c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04060d40_8f7c2f52",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-05-04T17:51:23Z",
+      "side": 1,
+      "message": "Yes, it was a genuine error in my code: I am implementing importing APK sets, and my change was writing \n  LOCAL_MODULE_PATH :\u003d system/app/foo\ninstead of \n  LOCAL_MODULE_PATH :\u003d out/target/product/xxx/system/app/foo\nto the generated .mk file.",
+      "parentUuid": "e7c4c54b_ab90a2c1",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 19
+      },
+      "revId": "2fa0c7431be9e620dd0c92d61016e7efa075848c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
