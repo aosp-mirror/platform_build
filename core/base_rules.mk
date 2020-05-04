@@ -805,16 +805,6 @@ ifdef LOCAL_PICKUP_FILES
 ALL_MODULES.$(my_register_name).PICKUP_FILES := \
     $(ALL_MODULES.$(my_register_name).PICKUP_FILES) $(LOCAL_PICKUP_FILES)
 endif
-# Record the platform availability of this module. Note that the availability is not
-# meaningful for non-installable modules (e.g., static libs) or host modules.
-# We only care about modules that are installable to the device.
-ifeq (true,$(LOCAL_NOT_AVAILABLE_FOR_PLATFORM))
-  ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-    ifndef LOCAL_IS_HOST_MODULE
-      ALL_MODULES.$(my_register_name).NOT_AVAILABLE_FOR_PLATFORM := true
-    endif
-  endif
-endif
 
 my_required_modules := $(LOCAL_REQUIRED_MODULES) \
     $(LOCAL_REQUIRED_MODULES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
