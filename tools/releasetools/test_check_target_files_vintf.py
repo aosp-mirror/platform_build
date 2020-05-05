@@ -35,20 +35,20 @@ SKELETON_TARGET_FILE_STRUCTURE = {
     'SYSTEM_EXT/etc/build.prop': '',
 
     # Non-empty files
-    'SYSTEM/compatibility_matrix.xml':"""
-        <compatibility-matrix version="1.0" type="framework">
+    'SYSTEM/etc/vintf/compatibility_matrix.1.xml':"""
+        <compatibility-matrix version="1.0" level="1" type="framework">
             <sepolicy>
                 <sepolicy-version>0.0</sepolicy-version>
                 <kernel-sepolicy-version>0</kernel-sepolicy-version>
             </sepolicy>
         </compatibility-matrix>""",
     'SYSTEM/manifest.xml':
-        '<manifest version="1.0" type="framework" />',
+        '<manifest version="1.0" type="framework"/>',
     'VENDOR/build.prop': 'ro.product.first_api_level=29\n',
     'VENDOR/compatibility_matrix.xml':
         '<compatibility-matrix version="1.0" type="device" />',
-    'VENDOR/manifest.xml':
-        '<manifest version="1.0" type="device"/>',
+    'VENDOR/etc/vintf/manifest.xml':
+        '<manifest version="1.0" target-level="1" type="device"/>',
     'META/misc_info.txt':
         'recovery_api_version=3\nfstab_version=2\nvintf_enforce=true\n',
 }
@@ -140,6 +140,6 @@ class CheckTargetFilesVintfTest(test_utils.ReleaseToolsTestCase):
   def test_CheckVintf_bad_xml(self):
     test_dir = self.prepare_test_dir('does-not-exist')
     write_string_to_file('not an XML',
-                         os.path.join(test_dir, 'VENDOR/manifest.xml'))
+                         os.path.join(test_dir, 'VENDOR/etc/vintf/manifest.xml'))
     # Should raise an error because a file has invalid format.
     self.assertRaises(common.ExternalError, CheckVintf, test_dir)
