@@ -361,10 +361,13 @@ class BuildInfo(object):
     self.oem_dicts = oem_dicts
 
     self._is_ab = info_dict.get("ab_update") == "true"
-    self._oem_props = info_dict.get("oem_fingerprint_properties")
 
-    if self._oem_props:
-      assert oem_dicts, "OEM source required for this build"
+    # Skip _oem_props if oem_dicts is None to use BuildInfo in
+    # sign_target_files_apks
+    if self.oem_dicts:
+      self._oem_props = info_dict.get("oem_fingerprint_properties")
+    else:
+      self._oem_props = None
 
     def check_fingerprint(fingerprint):
       if (" " in fingerprint or any(ord(ch) > 127 for ch in fingerprint)):

@@ -176,10 +176,6 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual('brand3/product-name/device3:build-thumbprint',
                      target_info.fingerprint)
 
-    # Missing oem_dict should be rejected.
-    self.assertRaises(AssertionError, common.BuildInfo,
-                      self.TEST_INFO_DICT_USES_OEM_PROPS, None)
-
   def test_init_badFingerprint(self):
     info_dict = copy.deepcopy(self.TEST_INFO_DICT)
     info_dict['build.prop']['ro.build.fingerprint'] = 'bad fingerprint'
