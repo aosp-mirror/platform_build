@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6db59e08_ae4e0453",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 532,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2020-05-05T20:41:41Z",
+      "side": 1,
+      "message": "MAYBE: should this be `_CalculateFingerprint`? The value is cached at line 393, and has an accessor at line 405. We could cache whether or not the fingerprint is dynamic as well, which would make this method a bit cheaper.",
+      "revId": "5a6a9576c980aac52cbb894a75e3d36d84a9af84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7bf6a673_b5141710",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2020-05-05T20:41:41Z",
+      "side": 1,
+      "message": "AFAICT, this is only used by the test code. I\u0027m never excited about having non-trivial test-only functionality in a class/module/etc. Am I right in understanding that this is trying to find all possible permutations of the fingerprint for a given set of property files? If so, this seems a bit odd, as a set of property files should resolve to only one fingerprint. Only by changing ro.property_source_order could the fingerprint for a collection of images change (other than by an import statement, which parameterizes one or more properties). Could you elaborate a bit further on why this is necessary?",
+      "revId": "5a6a9576c980aac52cbb894a75e3d36d84a9af84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
