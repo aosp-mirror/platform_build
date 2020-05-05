@@ -26,7 +26,7 @@ stamp := $(intermediates)/stamp
 # Convert the colon-separated components <apex>:<jar> to <jar>.<apex> names
 # (e.g. com.android.media:updatable-media -> updatable-media.com.android.media).
 # Special cases:
-#   - for the "platform" apex drop the .<apex> suffix
+#   - for the "platform" or "system_ext" apex drop the .<apex> suffix
 #   - for the ART apex select release variant
 boot_jars := $(foreach pair,$(PRODUCT_BOOT_JARS) $(PRODUCT_UPDATABLE_BOOT_JARS), \
   $(eval apex := $(call word-colon,1,$(pair))) \
@@ -34,6 +34,7 @@ boot_jars := $(foreach pair,$(PRODUCT_BOOT_JARS) $(PRODUCT_UPDATABLE_BOOT_JARS),
   $(eval q := :) \
   $(eval sfx := $(q).$(apex)$(q)) \
   $(eval sfx := $(subst $(q).platform$(q),$(q)$(q),$(sfx))) \
+  $(eval sfx := $(subst $(q).system_ext$(q),$(q)$(q),$(sfx))) \
   $(eval sfx := $(subst $(q).com.android.art$(q),$(q).com.android.art.release$(q),$(sfx))) \
   $(eval sfx := $(patsubst $(q)%$(q),%,$(sfx))) \
   $(jar)$(sfx))
