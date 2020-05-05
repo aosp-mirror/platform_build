@@ -320,7 +320,6 @@ PRODUCT_BOOT_JARS := \
     $(ART_APEX_JARS) \
     framework-minus-apex \
     ext \
-    com.android.i18n:core-icu4j \
     telephony-common \
     voip-common \
     ims-common \
