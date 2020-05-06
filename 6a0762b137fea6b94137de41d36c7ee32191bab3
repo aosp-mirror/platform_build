@@ -190,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "57c02d8b_17df9c8a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "OK, sgtm!",
+      "parentUuid": "d4c0f414_f61e4552",
+      "range": {
+        "startLine": 20,
+        "startChar": 23,
+        "endLine": 20,
+        "endChar": 37
+      },
+      "revId": "6a0762b137fea6b94137de41d36c7ee32191bab3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5fe102ea_20bd3713",
         "filename": "/COMMIT_MSG",
         "patchSetId": 10

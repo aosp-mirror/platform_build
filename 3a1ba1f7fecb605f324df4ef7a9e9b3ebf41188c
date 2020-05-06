@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "70c589af_0370e7ad",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "Usually \u0027prebuilt\u0027 images means those images are built outside of Android build system. e.g., kernel image or dtbo.img (and basically Android build system just copy them to the $OUT dir).\n\nhttps://android.googlesource.com/device/google/bonito-kernel/+/refs/heads/master\n\nSince custom images are built by `make custom_images`, they shouldn\u0027t be prebuilt.",
+      "range": {
+        "startLine": 7,
+        "startChar": 19,
+        "endLine": 7,
+        "endChar": 27
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6489b53d_6f7b4324",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "Taking a closer look for the RADIO folder in exiting target files, looks like they\u0027re radio/bootloader related images. \n\nIIRC, we created a new \u0027PREBUILT_IMAGES\u0027 dir when adding the prebuilt dtbo.img. Can we create a new \u0027CUSTOM_IMAGES\u0027 for this change as well?\n\nNote: if Tianjie also thinks that using RADIO is good enough then I\u0027m fine with it.",
+      "range": {
+        "startLine": 14,
+        "startChar": 43,
+        "endLine": 14,
+        "endChar": 48
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89cfa431_66bc3e5a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "How about the name of other custom images?\n\nCan we provide an example here (just to ensure we\u0027re at the same page).\n\ne.g., the partition name is /oem, and we generated multiple custom images:\n\n 1. oem.img \n 2. oem-carrier1.img\n 3. oem-carrier2.img\n\nAlso, it might be helpful to describe the typical usage of the custom images. Are they to store custom wallpaper, ringtones, and carrier-specific apks?",
+      "range": {
+        "startLine": 14,
+        "startChar": 57,
+        "endLine": 15,
+        "endChar": 49
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66e76482_753ca126",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "nit: maybe also test with \u0027make dist\u0027 ?",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 5
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "102e623f_be838a4e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 966,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "Looks like both \u0027partition\u0027 and \u0027location\u0027 isn\u0027t used inside the function, but just return to the caller.\n\nSeems the caller can just call:\n  \nExtractAvbPublicKey(info_dict[\"avb_avbtool\"],\n                    info_dict[\"avb_custom_images_key_path\"])",
+      "range": {
+        "startLine": 965,
+        "startChar": 4,
+        "endLine": 966,
+        "endChar": 42
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d06dc151_58b14f78",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1075,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "Other partitions (e.g., boot, vbmeta_system) could be a chained partition as well.\n\nIt seems we\u0027ll also replace the chained-key to \"avb_custom_images_key_path\" for those non-custom images?",
+      "range": {
+        "startLine": 1075,
+        "startChar": 20,
+        "endLine": 1075,
+        "endChar": 37
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "633327da_f0453e5f",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1077,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "nit: let\u0027s be explicit:  chained_partition_name",
+      "range": {
+        "startLine": 1077,
+        "startChar": 8,
+        "endLine": 1077,
+        "endChar": 25
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "095c6b44_5246545b",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1078,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "location seems too general.\n\nI\u0027ll have to go to the definition of GetAvbChainedCustomPartitionArg() to learn that this is for rollback index.\n\nHow about: rollback_index_location?",
+      "range": {
+        "startLine": 1078,
+        "startChar": 8,
+        "endLine": 1078,
+        "endChar": 16
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7bfa8b07_a254ed93",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1080,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "How about:\n  \nchained_partition_name \u003d split_args[index + 1].split(\":\")[0]\nrollback_index_location \u003d split_args[index + 1].split(\":\")[1] \nnew_key_path \u003d ExtractAvbPublicKey(info_dict[\"avb_avbtool\"],\n                                   info_dict[\"avb_custom_images_key_path\"])\n  \nsplit_args[index + 1] \u003d \"{}:{}:{}\".format(chained_partition_name,\n                                          rollback_index_location,\n                                          new_key_path)",
+      "range": {
+        "startLine": 1077,
+        "startChar": 6,
+        "endLine": 1080,
+        "endChar": 59
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99fb1683_269b8cff",
+        "filename": "tools/releasetools/custom_images_utils.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-06T11:04:08Z",
+      "side": 1,
+      "message": "Not sure why need to do info_image here (IIRC, we don\u0027t do this when sign other images).\n\nCan we just replace the key/algorithm in the same place below ?\n\nhttps://android-review.googlesource.com/c/platform/build/+/1298342/15/tools/releasetools/sign_target_files_apks.py#989\n\nAnd let verity_utils.py sign those custom_images as well?\n\nhttps://android-review.googlesource.com/c/platform/build/+/1298342/15/tools/releasetools/verity_utils.py#195",
+      "range": {
+        "startLine": 103,
+        "startChar": 21,
+        "endLine": 103,
+        "endChar": 31
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
