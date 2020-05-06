@@ -33,6 +33,24 @@
       "revId": "5a6a9576c980aac52cbb894a75e3d36d84a9af84",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9f24348_02bcfcdc",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2020-05-06T00:52:35Z",
+      "side": 1,
+      "message": "Hi Tianjie, I took a look at the subsequent change, which adds the `--placeholder_file` parameter to ota_tools_from_target_files.py, and starts consuming this method.\n\nInstead of adding new methods to produce the dimension variants, couldn\u0027t we instead do something like:\n```\nvarying_property_definitions \u003d read_varying_properties_from_file()\nproperty_variants \u003d calculate_cartesian_product(varying_property_definitions)\nfingerprints \u003d set()\nfor pv in property_variants:\n  info_dict \u003d LoadInfoDict(input_file, externally_defined_properties\u003dpv)\n  build_info \u003d BuildInfo(info_dict)\n  fingerprints.add(build_info.fingerprint())\n```\n\nThis would certainly be a more expensive operation than what is defined here, but it has the (IMO) major advantage that it doesn\u0027t duplicate any logic. There is only one piece of code that needs to know about fingerprint construction, and that is `BuildInfo.CalculateFingerprint()`. The set of possible fingerprints is produced by iteration over the cartesian product of inputs to the fingerprint resolution algorithm.\n\nWDYT?",
+      "parentUuid": "7bf6a673_b5141710",
+      "revId": "5a6a9576c980aac52cbb894a75e3d36d84a9af84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
