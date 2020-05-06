@@ -69,6 +69,24 @@
       "revId": "5a6a9576c980aac52cbb894a75e3d36d84a9af84",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf56827b_90f1b256",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2020-05-06T02:54:36Z",
+      "side": 1,
+      "message": "Personally, if performance is not a concern, then yes, I\u0027d go with the simpler solution, so as to have less code to maintain and test. I will defer to your judgement here though, since this isn\u0027t a functional issue.",
+      "parentUuid": "15cfc1a2_90ce099b",
+      "revId": "5a6a9576c980aac52cbb894a75e3d36d84a9af84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
