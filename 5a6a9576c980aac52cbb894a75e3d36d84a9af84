@@ -51,6 +51,24 @@
       "revId": "5a6a9576c980aac52cbb894a75e3d36d84a9af84",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15cfc1a2_90ce099b",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-06T02:24:46Z",
+      "side": 1,
+      "message": "Yes, we would need to load the file multiple times, and that\u0027s the main reason I didn\u0027t implement it this way. But I can modify the logic if you think it\u0027s cleaner. And with this algorithm, we don\u0027t need the new class PartitionBuildProps at all.",
+      "parentUuid": "c9f24348_02bcfcdc",
+      "revId": "5a6a9576c980aac52cbb894a75e3d36d84a9af84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
