@@ -625,11 +625,51 @@ $(sort $(foreach m,$(1),\
     $(m))))
 endef
 
+# Resolves module bitness for PRODUCT_PACKAGES and PRODUCT_HOST_PACKAGES.
+# The returned list of module names can be used to access
+# ALL_MODULES.<module>.<*> variables.
+# Name resolution for PRODUCT_PACKAGES / PRODUCT_HOST_PACKAGES:
+#   foo:32 resolves to foo_32;
+#   foo:64 resolves to foo;
+#   foo resolves to both foo and foo_32 (if foo_32 is defined).
+#
+# Name resolution for HOST_CROSS modules:
+#   foo:32 resolves to foo;
+#   foo:64 resolves to foo_64;
+#   foo resolves to both foo and foo_64 (if foo_64 is defined).
+#
+# $(1): TARGET, HOST or HOST_CROSS
+# $(2): A list of simple module names with :32 and :64 suffix
+define resolve-bitness-for-modules
+$(strip \
+  $(eval modules_32 := $(patsubst %:32,%,$(filter %:32,$(2)))) \
+  $(eval modules_64 := $(patsubst %:64,%,$(filter %:64,$(2)))) \
+  $(eval modules_both := $(filter-out %:32 %:64,$(2))) \
+  $(eval ### For host cross modules, the primary arch is windows x86 and secondary is x86_64) \
+  $(if $(filter HOST_CROSS,$(1)), \
+    $(eval modules_1st_arch := $(modules_32)) \
+    $(eval modules_2nd_arch := $(modules_64)), \
+    $(eval modules_1st_arch := $(modules_64)) \
+    $(eval modules_2nd_arch := $(modules_32))) \
+  $(eval ### Note for 32-bit product, 32 and 64 will be added as their original module names.) \
+  $(eval modules := $(modules_1st_arch)) \
+  $(if $($(1)_2ND_ARCH), \
+    $(eval modules += $(call get-modules-for-2nd-arch,$(1),$(modules_2nd_arch))), \
+    $(eval modules += $(modules_2nd_arch))) \
+  $(eval ### For the rest we add both) \
+  $(eval modules += $(modules_both)) \
+  $(if $($(1)_2ND_ARCH), \
+    $(eval modules += $(call get-modules-for-2nd-arch,$(1),$(modules_both)))) \
+  $(modules) \
+)
+endef
+
 # TODO(b/7456955): error if a required module doesn't exist.
 # Resolve the required module names in ALL_MODULES.*.REQUIRED_FROM_TARGET,
 # ALL_MODULES.*.REQUIRED_FROM_HOST and ALL_MODULES.*.REQUIRED_FROM_HOST_CROSS
 # to 32-bit or 64-bit variant.
 # If a module is for cross host OS, the required modules are also for that OS.
+# Required modules explicitly suffixed with :32 or :64 resolve to that bitness.
 # Otherwise if the requiring module is native and the required module is shared
 # library or native test, then the required module resolves to the same bitness.
 # Otherwise the required module resolves to both variants, if they exist.
@@ -644,14 +684,16 @@ $(foreach m,$(ALL_MODULES), \
     $(eval module_is_native := \
       $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(ALL_MODULES.$(m).CLASS))) \
     $(eval r_r := $(foreach r_i,$(r), \
-      $(eval r_m := \
-        $(eval r_i_2nd := $(call get-modules-for-2nd-arch,$(1),$(r_i))) \
-        $(eval required_is_shared_library_or_native_test := \
-          $(filter SHARED_LIBRARIES NATIVE_TESTS, \
-            $(ALL_MODULES.$(r_i).CLASS) $(ALL_MODULES.$(r_i_2nd).CLASS))) \
-        $(if $(and $(module_is_native),$(required_is_shared_library_or_native_test)), \
-          $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),$(r_i_2nd),$(r_i)), \
-          $(r_i) $(r_i_2nd))) \
+      $(if $(filter %:32 %:64,$(r_i)), \
+        $(eval r_m := $(call resolve-bitness-for-modules,$(1),$(r_i))), \
+        $(eval r_m := \
+          $(eval r_i_2nd := $(call get-modules-for-2nd-arch,$(1),$(r_i))) \
+          $(eval required_is_shared_library_or_native_test := \
+            $(filter SHARED_LIBRARIES NATIVE_TESTS, \
+              $(ALL_MODULES.$(r_i).CLASS) $(ALL_MODULES.$(r_i_2nd).CLASS))) \
+          $(if $(and $(module_is_native),$(required_is_shared_library_or_native_test)), \
+            $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),$(r_i_2nd),$(r_i)), \
+            $(r_i) $(r_i_2nd)))) \
       $(eval ### TODO(b/7456955): error if r_m is empty / does not exist) \
       $(r_m))) \
     $(eval ALL_MODULES.$(m).REQUIRED_FROM_$(1) := $(sort $(r_r))) \
@@ -1113,45 +1155,6 @@ define auto-included-modules
   $(if $(ODM_MANIFEST_FILES),odm_manifest.xml) \
   $(if $(ODM_MANIFEST_SKUS),$(foreach sku, $(ODM_MANIFEST_SKUS),odm_manifest_$(sku).xml)) \
 
-endef
-
-# Resolves module bitness for PRODUCT_PACKAGES and PRODUCT_HOST_PACKAGES.
-# The returned list of module names can be used to access
-# ALL_MODULES.<module>.<*> variables.
-# Name resolution for PRODUCT_PACKAGES / PRODUCT_HOST_PACKAGES:
-#   foo:32 resolves to foo_32;
-#   foo:64 resolves to foo;
-#   foo resolves to both foo and foo_32 (if foo_32 is defined).
-#
-# Name resolution for HOST_CROSS modules:
-#   foo:32 resolves to foo;
-#   foo:64 resolves to foo_64;
-#   foo resolves to both foo and foo_64 (if foo_64 is defined).
-#
-# $(1): TARGET, HOST or HOST_CROSS
-# $(2): A list of simple module names with :32 and :64 suffix
-define resolve-bitness-for-modules
-$(strip \
-  $(eval modules_32 := $(patsubst %:32,%,$(filter %:32,$(2)))) \
-  $(eval modules_64 := $(patsubst %:64,%,$(filter %:64,$(2)))) \
-  $(eval modules_both := $(filter-out %:32 %:64,$(2))) \
-  $(eval ### For host cross modules, the primary arch is windows x86 and secondary is x86_64) \
-  $(if $(filter HOST_CROSS,$(1)), \
-    $(eval modules_1st_arch := $(modules_32)) \
-    $(eval modules_2nd_arch := $(modules_64)), \
-    $(eval modules_1st_arch := $(modules_64)) \
-    $(eval modules_2nd_arch := $(modules_32))) \
-  $(eval ### Note for 32-bit product, 32 and 64 will be added as their original module names.) \
-  $(eval modules := $(modules_1st_arch)) \
-  $(if $($(1)_2ND_ARCH), \
-    $(eval modules += $(call get-modules-for-2nd-arch,$(1),$(modules_2nd_arch))), \
-    $(eval modules += $(modules_2nd_arch))) \
-  $(eval ### For the rest we add both) \
-  $(eval modules += $(modules_both)) \
-  $(if $($(1)_2ND_ARCH), \
-    $(eval modules += $(call get-modules-for-2nd-arch,$(1),$(modules_both)))) \
-  $(modules) \
-)
 endef
 
 # Lists most of the files a particular product installs, including:
