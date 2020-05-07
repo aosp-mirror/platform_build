@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "91093302_41746958",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2020-05-07T23:57:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "96f53b50_f2ed37ef",
+      "revId": "6e2a3d4727bb35c6decf6ddf0f0435151f112952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0895bf3_b4cd1824",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 11
