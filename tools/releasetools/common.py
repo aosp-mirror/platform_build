@@ -738,18 +738,22 @@ class PartitionBuildProps(object):
     partition: name of the partition.
     props_allow_override: a list of build properties to search for the
         alternative values during runtime.
-    build_props: a dictionary of build properties for the given partition.
-    prop_overrides: a dict of list. And each list holds the overridden values
-        for props_allow_override.
+    build_props: a dict of build properties for the given partition.
+    prop_overrides: a set of props that are overridden by import.
+    placeholder_values: A dict of runtime variables' values to replace the
+        placeholders in the build.prop file. We expect exactly one value for
+        each of the variables.
   """
-
-  def __init__(self, input_file, name):
+  def __init__(self, input_file, name, placeholder_values=None):
     self.input_file = input_file
     self.partition = name
     self.props_allow_override = [props.format(name) for props in [
-        'ro.product.{}.name', 'ro.product.{}.device']]
+        'ro.product.{}.brand', 'ro.product.{}.name', 'ro.product.{}.device']]
     self.build_props = {}
-    self.prop_overrides = {}
+    self.prop_overrides = set()
+    self.placeholder_values = {}
+    if placeholder_values:
+      self.placeholder_values = copy.deepcopy(placeholder_values)
 
   @staticmethod
   def FromDictionary(name, build_props):
@@ -760,9 +764,8 @@ class PartitionBuildProps(object):
     return props
 
   @staticmethod
-  def FromInputFile(input_file, name):
+  def FromInputFile(input_file, name, placeholder_values=None):
     """Loads the build.prop file and builds the attributes."""
-
     data = ''
     for prop_file in ['{}/etc/build.prop'.format(name.upper()),
                       '{}/build.prop'.format(name.upper())]:
@@ -772,9 +775,61 @@ class PartitionBuildProps(object):
       except KeyError:
         logger.warning('Failed to read %s', prop_file)
 
-    props = PartitionBuildProps(input_file, name)
-    props.build_props = LoadDictionaryFromLines(data.split('\n'))
+    props = PartitionBuildProps(input_file, name, placeholder_values)
+    props._LoadBuildProp(data)
     return props
+
+  def _LoadBuildProp(self, data):
+    for line in data.split('\n'):
+      line = line.strip()
+      if not line or line.startswith("#"):
+        continue
+      if line.startswith("import"):
+        overrides = self._ImportParser(line)
+        duplicates = self.prop_overrides.intersection(overrides.keys())
+        if duplicates:
+          raise ValueError('prop {} is overridden multiple times'.format(
+              ','.join(duplicates)))
+        self.prop_overrides = self.prop_overrides.union(overrides.keys())
+        self.build_props.update(overrides)
+      elif "=" in line:
+        name, value = line.split("=", 1)
+        if name in self.prop_overrides:
+          raise ValueError('prop {} is set again after overridden by import '
+                           'statement'.format(name))
+        self.build_props[name] = value
+
+  def _ImportParser(self, line):
+    """Parses the build prop in a given import statement."""
+
+    tokens = line.split()
+    if len(tokens) != 2 or tokens[0] != 'import':
+      raise ValueError('Unrecognized import statement {}'.format(line))
+    import_path = tokens[1]
+    if not re.match(r'^/{}/.*\.prop$'.format(self.partition), import_path):
+      raise ValueError('Unrecognized import path {}'.format(line))
+
+    # We only recognize a subset of import statement that the init process
+    # supports. And we can loose the restriction based on how the dynamic
+    # fingerprint is used in practice. The placeholder format should be
+    # ${placeholder}, and its value should be provided by the caller through
+    # the placeholder_values.
+    for prop, value in self.placeholder_values.items():
+      prop_place_holder = '${{{}}}'.format(prop)
+      if prop_place_holder in import_path:
+        import_path = import_path.replace(prop_place_holder, value)
+    if '$' in import_path:
+      logger.info('Unresolved place holder in import path %s', import_path)
+      return {}
+
+    import_path = import_path.replace('/{}'.format(self.partition),
+                                      self.partition.upper())
+    logger.info('Parsing build props override from %s', import_path)
+
+    lines = ReadFromInputFile(self.input_file, import_path).split('\n')
+    d = LoadDictionaryFromLines(lines)
+    return {key: val for key, val in d.items()
+            if key in self.props_allow_override}
 
   def GetProp(self, prop):
     return self.build_props.get(prop)
