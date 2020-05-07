@@ -326,6 +326,7 @@ PRODUCT_BOOT_JARS := \
     framework-minus-apex \
     framework-graphics \
     ext \
+    com.android.i18n:core-icu4j \
     telephony-common \
     voip-common \
     ims-common
