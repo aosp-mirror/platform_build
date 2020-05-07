@@ -261,7 +261,6 @@ endef
 ART_APEX_JARS := \
     com.android.art:core-oj \
     com.android.art:core-libart \
-    com.android.art:core-icu4j \
     com.android.art:okhttp \
     com.android.art:bouncycastle \
     com.android.art:apache-xml
