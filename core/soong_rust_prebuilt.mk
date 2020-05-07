@@ -75,6 +75,23 @@ ifndef LOCAL_IS_HOST_MODULE
   endif
 endif
 
+
+ifeq ($(NATIVE_COVERAGE),true)
+  ifneq (,$(strip $(LOCAL_PREBUILT_COVERAGE_ARCHIVE)))
+    $(eval $(call copy-one-file,$(LOCAL_PREBUILT_COVERAGE_ARCHIVE),$(intermediates)/$(LOCAL_MODULE).zip))
+    ifneq ($(LOCAL_UNINSTALLABLE_MODULE),true)
+      ifdef LOCAL_IS_HOST_MODULE
+        my_coverage_path := $($(my_prefix)OUT_COVERAGE)/$(patsubst $($(my_prefix)OUT)/%,%,$(my_module_path))
+      else
+        my_coverage_path := $(TARGET_OUT_COVERAGE)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
+      endif
+      my_coverage_path := $(my_coverage_path)/$(patsubst %.so,%,$(my_installed_module_stem)).zip
+      $(eval $(call copy-one-file,$(LOCAL_PREBUILT_COVERAGE_ARCHIVE),$(my_coverage_path)))
+      $(LOCAL_BUILT_MODULE): $(my_coverage_path)
+    endif
+  endif
+endif
+
 # A product may be configured to strip everything in some build variants.
 # We do the stripping as a post-install command so that LOCAL_BUILT_MODULE
 # is still with the symbols and we don't need to clean it (and relink) when
