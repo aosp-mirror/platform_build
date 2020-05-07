@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "f5489889_e64f6be1",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-07T23:59:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "96f53b50_f2ed37ef",
+      "revId": "6e2a3d4727bb35c6decf6ddf0f0435151f112952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0895bf3_b4cd1824",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 11
@@ -48,6 +66,24 @@
       "writtenOn": "2020-05-07T18:17:01Z",
       "side": 1,
       "message": "Minor: this is the same way that info_dict[\"build.prop\"] was originally assigned. Since info_dict[\"system.build.prop\"] is a non-scalar value, info_dict[\"build.prop\"] should have a reference rather than a copy, and would be implicitly updated. It\u0027s harmless, but repeating it here leaks an implementation detail from common.py.",
+      "revId": "6e2a3d4727bb35c6decf6ddf0f0435151f112952",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef1693ca_31636178",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 1984,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-07T23:59:28Z",
+      "side": 1,
+      "message": "I feel we should still keep it. As the this file can have its own way of modifying the info_dict e.g. build.prop can point to system.build.prop if we want.",
+      "parentUuid": "b0895bf3_b4cd1824",
       "revId": "6e2a3d4727bb35c6decf6ddf0f0435151f112952",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
