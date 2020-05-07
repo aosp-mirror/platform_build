@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "457eae25_b57478a6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-07T08:44:49Z",
+      "side": 1,
+      "message": "+1, IMAGES/ looks a proper place",
+      "parentUuid": "ae43885b_58538a8d",
+      "range": {
+        "startLine": 14,
+        "startChar": 43,
+        "endLine": 14,
+        "endChar": 48
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "89cfa431_66bc3e5a",
         "filename": "/COMMIT_MSG",
         "patchSetId": 15
@@ -292,6 +316,30 @@
       "side": 1,
       "message": "where do we get these informations in general for prebuilt images, e.g. prebuilt vendor images? Or we never sign them.",
       "parentUuid": "8991f541_46f72c60",
+      "range": {
+        "startLine": 103,
+        "startChar": 21,
+        "endLine": 103,
+        "endChar": 31
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb067357_54c2f605",
+        "filename": "tools/releasetools/custom_images_utils.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-07T08:44:49Z",
+      "side": 1,
+      "message": "\u003e Parsing the image info is a bit fragile IMO.\n\n+1, also, it\u0027s better not to diverge the signing steps from other images.\n\n\u003e corresponding avb_{}_salt \n\nIIRC, we don\u0027t specify salt. (it will be random upon each signing).\nb/125540538#comment80\n\n\u003e where do we get these informations in general for prebuilt images,\n\nAll AVB signing params are at $OUT/misc_info.txt (check prefix avb_*).\ne.g., if we run `make dist` it will read misc_info.txt then perform the signing.",
+      "parentUuid": "5ca2a348_abb7ee10",
       "range": {
         "startLine": 103,
         "startChar": 21,
