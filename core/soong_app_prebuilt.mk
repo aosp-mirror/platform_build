@@ -110,7 +110,7 @@ $(my_all_targets): $(my_installed)
 
 # Copy test suite files.
 ifdef LOCAL_COMPATIBILITY_SUITE
-my_apks_to_install := $(foreach f,$(filter %.apk,$(LOCAL_SOONG_BUILT_INSTALLED)),$(call word-colon,1,$(f)))
+my_apks_to_install := $(foreach f,$(filter %.apk %.idsig,$(LOCAL_SOONG_BUILT_INSTALLED)),$(call word-colon,1,$(f)))
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(foreach a,$(my_apks_to_install),\
