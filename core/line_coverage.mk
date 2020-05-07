@@ -35,6 +35,7 @@ critical_components_static := \
 	libvold \
 	libyuv
 
+# Format is <module_name> or <module_name>:<apex_name>
 critical_components_shared := \
 	libaudioprocessing \
 	libbinder \
@@ -47,7 +48,7 @@ critical_components_shared := \
 	libopus \
 	libstagefright \
 	libunwind \
-	libvixl
+	libvixl:com.android.art.debug
 
 # Use the intermediates directory to avoid installing libraries to the device.
 intermediates := $(call intermediates-dir-for,PACKAGING,haiku-line-coverage)
@@ -60,7 +61,9 @@ critical_components_static_inputs := $(foreach lib,$(critical_components_static)
 	$(call intermediates-dir-for,STATIC_LIBRARIES,$(lib))/$(lib).a)
 
 critical_components_shared_inputs := $(foreach lib,$(critical_components_shared), \
-	$(call intermediates-dir-for,SHARED_LIBRARIES,$(lib))/$(lib).so)
+	$(eval filename := $(call word-colon,1,$(lib))) \
+	$(eval modulename := $(subst :,.,$(lib))) \
+	$(call intermediates-dir-for,SHARED_LIBRARIES,$(modulename))/$(filename).so)
 
 fuzz_target_inputs := $(foreach fuzz,$(fuzz_targets), \
 	$(call intermediates-dir-for,EXECUTABLES,$(fuzz))/$(fuzz))
