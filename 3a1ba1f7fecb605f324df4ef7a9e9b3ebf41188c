@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "ae43885b_58538a8d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-07T08:08:50Z",
+      "side": 1,
+      "message": "As I think about it again, IMAGES/ seems to be a better place to hold the oem.img. And we are already putting other AVB images there, e.g. dtbo, odm, vendor_boot etc. RADIO feels like bootloader and radio.img",
+      "parentUuid": "6489b53d_6f7b4324",
+      "range": {
+        "startLine": 14,
+        "startChar": 43,
+        "endLine": 14,
+        "endChar": 48
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "89cfa431_66bc3e5a",
         "filename": "/COMMIT_MSG",
         "patchSetId": 15
@@ -220,6 +244,30 @@
       "writtenOn": "2020-05-06T11:04:08Z",
       "side": 1,
       "message": "Not sure why need to do info_image here (IIRC, we don\u0027t do this when sign other images).\n\nCan we just replace the key/algorithm in the same place below ?\n\nhttps://android-review.googlesource.com/c/platform/build/+/1298342/15/tools/releasetools/sign_target_files_apks.py#989\n\nAnd let verity_utils.py sign those custom_images as well?\n\nhttps://android-review.googlesource.com/c/platform/build/+/1298342/15/tools/releasetools/verity_utils.py#195",
+      "range": {
+        "startLine": 103,
+        "startChar": 21,
+        "endLine": 103,
+        "endChar": 31
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8991f541_46f72c60",
+        "filename": "tools/releasetools/custom_images_utils.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-07T08:08:50Z",
+      "side": 1,
+      "message": "Parsing the image info is a bit fragile IMO. But I am not sure if there\u0027s a good alternative here to keep the salt and hash algorithm. Because the image is a prebuilt, I guess we don\u0027t have the corresponding avb_{}_salt in the info_dict. I\u0027d be glad if Hongguang@ can get the information elsewhere.",
+      "parentUuid": "99fb1683_269b8cff",
       "range": {
         "startLine": 103,
         "startChar": 21,
