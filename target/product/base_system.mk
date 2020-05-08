@@ -42,6 +42,7 @@ PRODUCT_PACKAGES += \
     bmgr \
     bootanimation \
     bootstat \
+    boringssl_self_test \
     bpfloader \
     bu \
     bugreport \
@@ -326,6 +327,7 @@ PRODUCT_BOOT_JARS := \
     framework-minus-apex \
     framework-graphics \
     ext \
+    com.android.i18n:core-icu4j \
     telephony-common \
     voip-common \
     ims-common
