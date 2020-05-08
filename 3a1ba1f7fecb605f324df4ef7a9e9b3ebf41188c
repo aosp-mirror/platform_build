@@ -332,6 +332,30 @@
     },
     {
       "key": {
+        "uuid": "838ac49f_dac136da",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1075,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-08T09:20:37Z",
+      "side": 1,
+      "message": "Oh, sorry for not being clear.\n\nI meant, when vbmeta_system.img is chained, it\u0027s public key will be embedded in vbmeta.img as well:\n  \nDescriptors:            \n    Chain Partition descriptor:\n      Partition Name:          vbmeta_system\n      Rollback Index Location: 1      \n      Public key (sha1):       cdbb77177f731920bbe0a0f94f84d9038ae0617d\n\nBut looks like the loop here will change the public key of vbmeta_system descriptor to avb_custom_images_key_path when making vbmeta.img.  Then when bootloader uses that key from vbmeta.img to verify vbmeta_system.img, it will lead to a verification error. Right?\n\nNote: --chain_partition is used whem making vbmeta.img.",
+      "parentUuid": "da7f724f_af5d4c02",
+      "range": {
+        "startLine": 1075,
+        "startChar": 20,
+        "endLine": 1075,
+        "endChar": 37
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "633327da_f0453e5f",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 15
