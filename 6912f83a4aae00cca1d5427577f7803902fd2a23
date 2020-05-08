@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4986c512_644af65f",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 810,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-05-08T01:17:07Z",
+      "side": 1,
+      "message": "why IGNORECASE? Shouldn\u0027t the import statement be exactly\n\n   /vendor/foo.prop\n\nfor example? With ignore case you can be matching\n\n   /VENDOR/foo.prop\n   /vendor/foo.PROP\n\netc. Is that expected?",
+      "range": {
+        "startLine": 810,
+        "startChar": 20,
+        "endLine": 810,
+        "endChar": 33
+      },
+      "revId": "6912f83a4aae00cca1d5427577f7803902fd2a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "273a6b1d_31fdcb55",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 826,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-05-08T01:17:07Z",
+      "side": 1,
+      "message": "For example, if import path is \"/vendor/foo.prop\" and self.partition is \"VENDOR\", this may not match.\n\nOn the other hand, if self.partition is always lower case, then L810 is not needed.",
+      "range": {
+        "startLine": 826,
+        "startChar": 38,
+        "endLine": 826,
+        "endChar": 67
+      },
+      "revId": "6912f83a4aae00cca1d5427577f7803902fd2a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
