@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f3f458f1_68b58c5a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T01:42:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "70c589af_0370e7ad",
+      "range": {
+        "startLine": 7,
+        "startChar": 19,
+        "endLine": 7,
+        "endChar": 27
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6489b53d_6f7b4324",
         "filename": "/COMMIT_MSG",
         "patchSetId": 15
@@ -96,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "ed4e70b7_5f3fb6a6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T01:42:20Z",
+      "side": 1,
+      "message": "Thanks, I will move to IMAGES/",
+      "parentUuid": "6489b53d_6f7b4324",
+      "range": {
+        "startLine": 14,
+        "startChar": 43,
+        "endLine": 14,
+        "endChar": 48
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "89cfa431_66bc3e5a",
         "filename": "/COMMIT_MSG",
         "patchSetId": 15
@@ -116,6 +164,30 @@
       "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85eae4e3_8ceb404a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T01:42:20Z",
+      "side": 1,
+      "message": "We are on the same page to the oem image. But oem image is just one example. The SoCs and OEMs can put more custom images. For example, some SoCs put TV stacks into another custom image to support different broadcast stacks in different regions. I added some more details.",
+      "parentUuid": "89cfa431_66bc3e5a",
+      "range": {
+        "startLine": 14,
+        "startChar": 57,
+        "endLine": 15,
+        "endChar": 49
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -142,6 +214,30 @@
     },
     {
       "key": {
+        "uuid": "a0b38c97_7a21ce3f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T01:42:20Z",
+      "side": 1,
+      "message": "yes, I added it.",
+      "parentUuid": "66e76482_753ca126",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 5
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "102e623f_be838a4e",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 15
@@ -162,6 +258,30 @@
       "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "39d7648d_4881b1e0",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 966,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T01:42:20Z",
+      "side": 1,
+      "message": "okay, I have moved to your suggestion",
+      "parentUuid": "102e623f_be838a4e",
+      "range": {
+        "startLine": 965,
+        "startChar": 4,
+        "endLine": 966,
+        "endChar": 42
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -188,6 +308,30 @@
     },
     {
       "key": {
+        "uuid": "da7f724f_af5d4c02",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1075,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T01:42:20Z",
+      "side": 1,
+      "message": "No, for the android droid images, they will be separated items in the misc_info.txt. They will not be in \"avb_{}_args\". The following are the items for vbmeta_system.\n\n\navb_vbmeta_system\u003dsystem\navb_vbmeta_system_args\u003d--padding_size 4096 --rollback_index 0\navb_vbmeta_system_key_path\u003dexternal/avb/test/data/testkey_rsa4096.pem\navb_vbmeta_system_algorithm\u003dSHA256_RSA4096\navb_vbmeta_system_rollback_index_location\u003d2",
+      "parentUuid": "d06dc151_58b14f78",
+      "range": {
+        "startLine": 1075,
+        "startChar": 20,
+        "endLine": 1075,
+        "endChar": 37
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "633327da_f0453e5f",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 15
@@ -208,6 +352,30 @@
       "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96229662_dd752410",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1077,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T01:42:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "633327da_f0453e5f",
+      "range": {
+        "startLine": 1077,
+        "startChar": 8,
+        "endLine": 1077,
+        "endChar": 25
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -234,6 +402,30 @@
     },
     {
       "key": {
+        "uuid": "5b89f45e_466978ee",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1078,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T01:42:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "095c6b44_5246545b",
+      "range": {
+        "startLine": 1078,
+        "startChar": 8,
+        "endLine": 1078,
+        "endChar": 16
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7bfa8b07_a254ed93",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 15
@@ -254,6 +446,30 @@
       "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a08fe9e9_ebc135ba",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1080,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T01:42:20Z",
+      "side": 1,
+      "message": "Thank you for your careful review, done",
+      "parentUuid": "7bfa8b07_a254ed93",
+      "range": {
+        "startLine": 1077,
+        "startChar": 6,
+        "endLine": 1080,
+        "endChar": 59
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -340,6 +556,30 @@
       "side": 1,
       "message": "\u003e Parsing the image info is a bit fragile IMO.\n\n+1, also, it\u0027s better not to diverge the signing steps from other images.\n\n\u003e corresponding avb_{}_salt \n\nIIRC, we don\u0027t specify salt. (it will be random upon each signing).\nb/125540538#comment80\n\n\u003e where do we get these informations in general for prebuilt images,\n\nAll AVB signing params are at $OUT/misc_info.txt (check prefix avb_*).\ne.g., if we run `make dist` it will read misc_info.txt then perform the signing.",
       "parentUuid": "5ca2a348_abb7ee10",
+      "range": {
+        "startLine": 103,
+        "startChar": 21,
+        "endLine": 103,
+        "endChar": 31
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d1026e6_08a2e1e0",
+        "filename": "tools/releasetools/custom_images_utils.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T01:42:20Z",
+      "side": 1,
+      "message": "I will move to random salt.\nI also thought to put those info (partition/image size, partition name and hash algorithm) into misc_info.txt at beginning. But the custom images can be any images, and there may be more than one types of custom images, like one type of custom images for /oem and and another type of custom image mounted at /broadcast for different broadcast stacks. Their partition size and name will be different. \n\nIn the new patch, following pack_radioimages.txt, I add a new pack_customimages.txt. The custom images should be signed and installed to IMAGES/ are listed in it. And the partition size and name info are also included.\n\nI have move this custom image signing function to verity_utils.py as you suggested. I agree it\u0027s a better place.",
+      "parentUuid": "99fb1683_269b8cff",
       "range": {
         "startLine": 103,
         "startChar": 21,
