@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "52d7c95c_471e499a",
+        "filename": "core/tasks/vts-core-tests.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-05-08T18:29:50Z",
+      "side": 1,
+      "message": "these 2 lines are from the removed mk file in \nhttps://android-review.googlesource.com/c/platform/test/vts/+/1305180\n\nThey are needed to build kself and ltp artifacts.",
+      "revId": "c4fa187094f04cdeceb06be7a556531bdbf5b377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
