@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2fa12322_19de7d53",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T15:29:39Z",
+      "side": 1,
+      "message": "I think you mean how to add custom chained info like public key to vbmeta images, right? It\u0027s added by \"BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS +\u003d --chain_partition oem:1:device/google/bonito/oem/oem.avbpubkey\", I will add this info to commit message",
+      "parentUuid": "e4e22c10_2eea8d2d",
+      "range": {
+        "startLine": 9,
+        "startChar": 43,
+        "endLine": 9,
+        "endChar": 70
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6955b362_3d56494d",
         "filename": "/COMMIT_MSG",
         "patchSetId": 16
@@ -36,6 +60,30 @@
       "writtenOn": "2020-05-08T13:56:18Z",
       "side": 1,
       "message": "As I mentioned in previous commit, this will change the public keys of all chained descriptors in vbmeta[_system|_vendor].img, right?\n\n\ne.g., if a vbmeta.img contains:\n  \nDescriptors:\n    Chain Partition descriptor:\n      Partition Name:          boot\n      Rollback Index Location: 2\n      Public key (sha1): abc...cba\n    Chain Partition descriptor:\n      Partition Name:          vbmeta_system\n      Rollback Index Location: 1\n      Public key (sha1): bca....bca\n    Chain Partition descriptor:\n      Partition Name:          oem       \u003c-- custom_images\n      Rollback Index Location: 3\n      Public key (sha1): cus...cus\n\nThen this change will change all the above public keys to \"cus...cus\", which incorrectly replaces the public key of boot and vbmeta_system, right?\n\n\nhttps://android.googlesource.com/platform/external/avb/#Build-System-Integration\n\nWe should probably decide this explicitly, e.g., for chained custom images:\n\nif:\n\nBOARD_AVB_VBMETA_SYSTEM :\u003d system system_ext oem\n \u003d\u003d\u003e then the \u0027oem\u0027 chained descriptor will be placed in vbmeta_system.img\n\nelse:\n\nBOARD_AVB_VBMETA_VENDOR :\u003d vendor broadcast\n \u003d\u003d\u003e then the \u0027broadcast\u0027 chained descriptor will be placed in vbmeta_vendor.img\n\nelse:\n\nThe custom image will be chained into vbmeta.img.",
+      "range": {
+        "startLine": 12,
+        "startChar": 39,
+        "endLine": 13,
+        "endChar": 53
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63d3a98c_5042700f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T15:29:39Z",
+      "side": 1,
+      "message": "No, it didn\u0027t. Please refer my reply in common.py. My change in it will only parse \"avb_{}_args\".format(name)\", line 1053 of that file. The driod images, like vebmeta_system\u0027s chained description, are not in this \"avb_{}_args\".format(name)\" at all.\n\nI will check \"BOARD_AVB_VBMETA_SYSTEM :\u003d system system_ext oem\" case as you said and come back to this.",
+      "parentUuid": "6955b362_3d56494d",
       "range": {
         "startLine": 12,
         "startChar": 39,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "4bc3dc5d_f0bc904f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T15:29:39Z",
+      "side": 1,
+      "message": "Yes, that still work. You https://android-review.googlesource.com/c/platform/build/+/399813 are used to generate the custom image when \"make custom_images\". My changes are actually used to add the custom images\u0027 public key into vbmeta images.",
+      "parentUuid": "caaaf0ba_f5db7390",
+      "range": {
+        "startLine": 22,
+        "startChar": 29,
+        "endLine": 23,
+        "endChar": 33
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0dd9792f_fde2e4fb",
         "filename": "/COMMIT_MSG",
         "patchSetId": 16
@@ -91,6 +163,30 @@
       "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c177bbd0_5ea35dbc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T15:29:39Z",
+      "side": 1,
+      "message": "Yes, they will be signed by same key. I agree we should consider to sign them by different keys. We don\u0027t have such user case now, let\u0027s do it in a new CL if we need it.",
+      "parentUuid": "0dd9792f_fde2e4fb",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 32
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "10fae6bd_7debd607",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T15:29:39Z",
+      "side": 1,
+      "message": "I will",
+      "parentUuid": "8aa80834_055c7b1f",
+      "range": {
+        "startLine": 29,
+        "startChar": 16,
+        "endLine": 29,
+        "endChar": 23
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "05ce00d3_7bbb2f0e",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 16
@@ -128,6 +248,30 @@
       "writtenOn": "2020-05-08T13:56:18Z",
       "side": 1,
       "message": "Just curious, who installs those custom images to the RADIO folder in the beginning?\n\nI\u0027m probably missing context here.",
+      "range": {
+        "startLine": 341,
+        "startChar": 54,
+        "endLine": 341,
+        "endChar": 59
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7138c5ad_aad32c7d",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T15:29:39Z",
+      "side": 1,
+      "message": "It\u0027s mentioned in https://android-review.googlesource.com/c/platform/build/+/1298342/16/core/Makefile. I will add more description to the commit message.",
+      "parentUuid": "05ce00d3_7bbb2f0e",
       "range": {
         "startLine": 341,
         "startChar": 54,

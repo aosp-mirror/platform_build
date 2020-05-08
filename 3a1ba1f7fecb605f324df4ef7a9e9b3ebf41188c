@@ -356,6 +356,30 @@
     },
     {
       "key": {
+        "uuid": "e5e10531_d40ee93b",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1075,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T15:29:39Z",
+      "side": 1,
+      "message": "This loop here will only parse \"avb_{}_args\".format(name)\", line 1053. The driod images, like vebmeta_system\u0027s chained description, are not in this \"avb_{}_args\".format(name)\" at all.",
+      "parentUuid": "838ac49f_dac136da",
+      "range": {
+        "startLine": 1075,
+        "startChar": 20,
+        "endLine": 1075,
+        "endChar": 37
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "633327da_f0453e5f",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 15
@@ -661,6 +685,30 @@
       "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f1eb1b1_0bfea3e8",
+        "filename": "tools/releasetools/custom_images_utils.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T15:29:39Z",
+      "side": 1,
+      "message": "This is good and it means we can use different keys to sign different custom images. I\u0027m just thinking how should I modify the Makefile to put those info into misc_info_txt. Or how about do it in new CL if we really need different keys for different custom images and keep current pack_radioimages.txt solution?",
+      "parentUuid": "f12c4125_72a42d6e",
+      "range": {
+        "startLine": 103,
+        "startChar": 21,
+        "endLine": 103,
+        "endChar": 31
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
