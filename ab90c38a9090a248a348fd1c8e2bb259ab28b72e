@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a61b1dd_7a47c386",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1072,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-08T17:52:31Z",
+      "side": 1,
+      "message": "this pesky typo...",
+      "range": {
+        "startLine": 1072,
+        "startChar": 32,
+        "endLine": 1072,
+        "endChar": 48
+      },
+      "revId": "ab90c38a9090a248a348fd1c8e2bb259ab28b72e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
