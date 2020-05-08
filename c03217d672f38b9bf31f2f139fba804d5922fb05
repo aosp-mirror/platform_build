@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "a0454626_7fbe9057",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T15:56:49Z",
+      "side": 1,
+      "message": "I double checked this \"BOARD_AVB_VBMETA_SYSTEM :\u003d system system_ext oem\", I think I can move to this to make it better. But I will use the same key to sign all of custom images in sign_target_files_apks. Is this okay to you?",
+      "parentUuid": "63d3a98c_5042700f",
+      "range": {
+        "startLine": 12,
+        "startChar": 39,
+        "endLine": 13,
+        "endChar": 53
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "caaaf0ba_f5db7390",
         "filename": "/COMMIT_MSG",
         "patchSetId": 16
