@@ -637,6 +637,30 @@
       "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f12c4125_72a42d6e",
+        "filename": "tools/releasetools/custom_images_utils.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-08T10:06:52Z",
+      "side": 1,
+      "message": "I see.\n\nMaybe we should have separated concepts of 1) custom partition and 2) multiple custom images per custom partition.\n\ne.g.,  support we have two custom partitions: oem and broadcast.\n\nThen in misc_info.txt, maybe we can have:\n\ncustom_partition_list\u003d oem broadcast \n  (learned from dynamic_partition_list\u003d  system vendor product system_ext).\n\navb_oem_add_hash_footer_args\navb_oem_key_path\navb_oem_algorithm\navb_oem_rollback_index_location\n\navb_broadcast_add_hash_footer_args\navb_broadcast_key_path\navb_broadcast_algorithm\navb_broadcast_rollback_index_location\n\n\nThen for each (avb_oem_*, avb_broadcast_*), supports signing/building multiple images.\nps: recently we used avb_boot_* to sign multiple boot.img files at b/151094943, where there are multiple boot.img files in lunch aosp_arm64). \n\nThought?",
+      "parentUuid": "41be9a6a_64eddcc9",
+      "range": {
+        "startLine": 103,
+        "startChar": 21,
+        "endLine": 103,
+        "endChar": 31
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
