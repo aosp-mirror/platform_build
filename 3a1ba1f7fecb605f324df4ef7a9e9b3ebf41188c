@@ -589,6 +589,30 @@
       "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41be9a6a_64eddcc9",
+        "filename": "tools/releasetools/custom_images_utils.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T04:19:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d1026e6_08a2e1e0",
+      "range": {
+        "startLine": 103,
+        "startChar": 21,
+        "endLine": 103,
+        "endChar": 31
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
