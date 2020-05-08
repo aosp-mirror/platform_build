@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e4e22c10_2eea8d2d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-08T13:56:18Z",
+      "side": 1,
+      "message": "How do we decide the chained is formed? \n\ne.g.,\n\nSome device might have:\n  \n  vbmeta.img: \n  | \n  --\u003e boot.img (a chained partition of vbmeta.img)\n  --\u003e vbmeta_system.img (a chained partition of vbmeta.img)\n  |   |\n  |   --\u003e oem.img (a chained partition of vbmeta_system.img)\n  |\n  --\u003e vbmeta_vendor.img\n      |\n      --\u003e broadcast.img (a chained partition of vbmeta_vendor.img)\n\n\nhttps://android.googlesource.com/platform/external/avb/#build-system-integration\n\ne.g., we have BOARD_AVB_VBMETA_SYSTEM to indicate what partitions are chained in vbmeta_system.img, and also \u0027BOARD_AVB_VBMETA_VENDOR\u0027 for vbmeta_vendor.img.",
+      "range": {
+        "startLine": 9,
+        "startChar": 43,
+        "endLine": 9,
+        "endChar": 70
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6955b362_3d56494d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-08T13:56:18Z",
+      "side": 1,
+      "message": "As I mentioned in previous commit, this will change the public keys of all chained descriptors in vbmeta[_system|_vendor].img, right?\n\n\ne.g., if a vbmeta.img contains:\n  \nDescriptors:\n    Chain Partition descriptor:\n      Partition Name:          boot\n      Rollback Index Location: 2\n      Public key (sha1): abc...cba\n    Chain Partition descriptor:\n      Partition Name:          vbmeta_system\n      Rollback Index Location: 1\n      Public key (sha1): bca....bca\n    Chain Partition descriptor:\n      Partition Name:          oem       \u003c-- custom_images\n      Rollback Index Location: 3\n      Public key (sha1): cus...cus\n\nThen this change will change all the above public keys to \"cus...cus\", which incorrectly replaces the public key of boot and vbmeta_system, right?\n\n\nhttps://android.googlesource.com/platform/external/avb/#Build-System-Integration\n\nWe should probably decide this explicitly, e.g., for chained custom images:\n\nif:\n\nBOARD_AVB_VBMETA_SYSTEM :\u003d system system_ext oem\n \u003d\u003d\u003e then the \u0027oem\u0027 chained descriptor will be placed in vbmeta_system.img\n\nelse:\n\nBOARD_AVB_VBMETA_VENDOR :\u003d vendor broadcast\n \u003d\u003d\u003e then the \u0027broadcast\u0027 chained descriptor will be placed in vbmeta_vendor.img\n\nelse:\n\nThe custom image will be chained into vbmeta.img.",
+      "range": {
+        "startLine": 12,
+        "startChar": 39,
+        "endLine": 13,
+        "endChar": 53
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "caaaf0ba_f5db7390",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-08T13:56:18Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/c/platform/build/+/399813\n\nPreviously, the signing of custom_images is specified by:\n\n CUSTOM_IMAGE_AVB_KEY_PATH :\u003d external/avb/test/data/testkey_rsa2048.pem\n  CUSTOM_IMAGE_AVB_ALGORITHM :\u003d SHA256_RSA2048\n  CUSTOM_IMAGE_AVB_ROLLBACK_INDEX :\u003d 1\n\nDoes it still work with the change here?  \nIf yes, maybe we should consolidate the settings to the same place?\n\nOr the above is no longer valid and can be ignored.",
+      "range": {
+        "startLine": 22,
+        "startChar": 29,
+        "endLine": 23,
+        "endChar": 33
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0dd9792f_fde2e4fb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-08T13:56:18Z",
+      "side": 1,
+      "message": "If a device has two custom partitions, e.g., /oem and /broadcast, looks like they\u0027ll by signed by the same key, right?\n\nMaybe we should consider allow specifying different keys for each custom partition, separately. But this can probably be a another CL if we see the use case.",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 32
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8aa80834_055c7b1f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-08T13:56:18Z",
+      "side": 1,
+      "message": "what\u0027s the number for?\n\nMaybe add some descriptions?",
+      "range": {
+        "startLine": 29,
+        "startChar": 16,
+        "endLine": 29,
+        "endChar": 23
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05ce00d3_7bbb2f0e",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-08T13:56:18Z",
+      "side": 1,
+      "message": "Just curious, who installs those custom images to the RADIO folder in the beginning?\n\nI\u0027m probably missing context here.",
+      "range": {
+        "startLine": 341,
+        "startChar": 54,
+        "endLine": 341,
+        "endChar": 59
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
