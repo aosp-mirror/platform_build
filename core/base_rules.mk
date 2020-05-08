@@ -197,6 +197,7 @@ my_module_path := $(strip $(LOCAL_MODULE_PATH))
 endif
 my_module_path := $(patsubst %/,%,$(my_module_path))
 my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
+
 ifdef LOCAL_IS_HOST_MODULE
   partition_tag :=
   actual_partition_tag :=
@@ -345,15 +346,15 @@ LOCAL_BUILT_MODULE := $(intermediates)/$(my_built_module_stem)
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Apk and its attachments reside in its own subdir.
   ifeq ($(LOCAL_MODULE_CLASS),APPS)
-  # framework-res.apk doesn't like the additional layer.
-  ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-  # Neither do Runtime Resource Overlay apks, which contain just the overlaid resources.
-  else ifeq ($(LOCAL_IS_RUNTIME_RESOURCE_OVERLAY),true)
-  else
-    ifneq ($(use_testcase_folder),true)
-      my_module_path := $(my_module_path)/$(LOCAL_MODULE)
+    # framework-res.apk doesn't like the additional layer.
+    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      # Neither do Runtime Resource Overlay apks, which contain just the overlaid resources.
+    else ifeq ($(LOCAL_IS_RUNTIME_RESOURCE_OVERLAY),true)
+    else
+      ifneq ($(use_testcase_folder),true)
+        my_module_path := $(my_module_path)/$(LOCAL_MODULE)
+      endif
     endif
-  endif
   endif
   LOCAL_INSTALLED_MODULE := $(my_module_path)/$(my_installed_module_stem)
 endif
