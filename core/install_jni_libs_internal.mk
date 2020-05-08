@@ -59,7 +59,7 @@ else ifneq ($(my_jni_shared_libraries),) # not my_embed_jni
       $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHARED_LIBRARIES))
   my_installed_library := $(addprefix $(my_shared_library_path)/, $(my_jni_filenames))
 
-  ALL_MODULES.$(LOCAL_MODULE).INSTALLED += $(my_installed_library)
+  ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_library)
 
   # Create symlink in the app specific lib path
   # Skip creating this symlink when running the second part of a target sanitization build.
@@ -72,7 +72,7 @@ else ifneq ($(my_jni_shared_libraries),) # not my_embed_jni
         $(my_symlink_target_dir)/$(lib), \
         $(my_app_lib_path)/$(lib)) \
       $(eval $$(LOCAL_INSTALLED_MODULE) : $$(my_app_lib_path)/$$(lib)) \
-      $(eval ALL_MODULES.$$(LOCAL_MODULE).INSTALLED += $$(my_app_lib_path)/$$(lib)))
+      $(eval ALL_MODULES.$(my_register_name).INSTALLED += $$(my_app_lib_path)/$$(lib)))
   endif
 
   # Clear jni_shared_libraries to not embed it into the apk.
@@ -100,7 +100,7 @@ ifdef my_prebuilt_jni_libs
       my_installed_library := $(addprefix $(my_app_lib_path)/, $(notdir $(my_prebuilt_jni_libs)))
       $(LOCAL_INSTALLED_MODULE) : $(my_installed_library)
 
-      ALL_MODULES.$(LOCAL_MODULE).INSTALLED += $(my_installed_library)
+      ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_library)
     endif  # my_embed_jni
   endif  # inner my_prebuilt_jni_libs
 endif  # outer my_prebuilt_jni_libs
