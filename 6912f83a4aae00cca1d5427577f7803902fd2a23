@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2a45e685_585929b9",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 810,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-08T06:55:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4986c512_644af65f",
+      "range": {
+        "startLine": 810,
+        "startChar": 20,
+        "endLine": 810,
+        "endChar": 33
+      },
+      "revId": "6912f83a4aae00cca1d5427577f7803902fd2a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "273a6b1d_31fdcb55",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "9b6a2fd2_c9db343a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 826,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-08T06:55:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "273a6b1d_31fdcb55",
+      "range": {
+        "startLine": 826,
+        "startChar": 38,
+        "endLine": 826,
+        "endChar": 67
+      },
+      "revId": "6912f83a4aae00cca1d5427577f7803902fd2a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a64b47b6_4dc5b0bf",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 12
@@ -59,6 +107,24 @@
       "writtenOn": "2020-05-08T01:28:04Z",
       "side": 1,
       "message": "docs for new args?",
+      "revId": "6912f83a4aae00cca1d5427577f7803902fd2a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89cb1522_50677b8e",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-08T06:55:09Z",
+      "side": 1,
+      "message": "Will do in the next cl when I add the new argument",
+      "parentUuid": "a64b47b6_4dc5b0bf",
       "revId": "6912f83a4aae00cca1d5427577f7803902fd2a23",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
