@@ -45,6 +45,23 @@
       "revId": "6912f83a4aae00cca1d5427577f7803902fd2a23",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a64b47b6_4dc5b0bf",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-05-08T01:28:04Z",
+      "side": 1,
+      "message": "docs for new args?",
+      "revId": "6912f83a4aae00cca1d5427577f7803902fd2a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
