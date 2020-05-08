@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "297f82eb_2b640697",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-08T16:07:44Z",
+      "side": 1,
+      "message": "oh, sorry, for the custom images, I don\u0027t think we should add them into BOARD_AVB_VBMETA_SYSTEM because the vbmeta_system should for the system only. The custom images (like oem) are more like product image which controlled by OEMs. Regrading the product\u0027s AVB description is in vbmeta.img, I will keep the custom images chained partition info in vbmeta.img",
+      "parentUuid": "a0454626_7fbe9057",
+      "range": {
+        "startLine": 12,
+        "startChar": 39,
+        "endLine": 13,
+        "endChar": 53
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "caaaf0ba_f5db7390",
         "filename": "/COMMIT_MSG",
         "patchSetId": 16
