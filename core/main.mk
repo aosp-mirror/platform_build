@@ -582,7 +582,6 @@ CUSTOM_MODULES := \
 #
 # Resolve the required module name to 32-bit or 64-bit variant.
 
-# TODO(b/155869107): Replace get-32-bit-modules with get-modules-for-2nd-arch
 # Get a list of corresponding module names for the second arch, if they exist.
 # $(1): TARGET, HOST or HOST_CROSS
 # $(2): A list of module names
@@ -594,37 +593,6 @@ $(strip \
     ) \
   ) \
 )
-endef
-
-# Get a list of corresponding 32-bit module names, if one exists.
-define get-32-bit-modules
-$(sort $(foreach m,$(1),\
-  $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),\
-    $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX))))
-endef
-# Get a list of corresponding 32-bit module names, if one exists;
-# otherwise return the original module name
-define get-32-bit-modules-if-we-can
-$(sort $(foreach m,$(1),\
-  $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),\
-    $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX), \
-    $(m))))
-endef
-
-# TODO: we can probably check to see if these modules are actually host
-# modules
-define get-host-32-bit-modules
-$(sort $(foreach m,$(1),\
-  $(if $(ALL_MODULES.$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX).CLASS),\
-    $(m)$(HOST_2ND_ARCH_MODULE_SUFFIX))))
-endef
-# Get a list of corresponding 32-bit module names, if one exists;
-# otherwise return the original module name
-define get-host-32-bit-modules-if-we-can
-$(sort $(foreach m,$(1),\
-  $(if $(ALL_MODULES.$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX).CLASS),\
-    $(m)$(HOST_2ND_ARCH_MODULE_SUFFIX),\
-    $(m))))
 endef
 
 # Resolves module bitness for PRODUCT_PACKAGES and PRODUCT_HOST_PACKAGES.
