@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "be0a094d_07086f06",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-10T06:19:06Z",
+      "side": 1,
+      "message": "Follow your suggestion, I dropped this original solution which enabled custom images\u0027 chained partitions by \"BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS +\u003d --chain_partition oem:1:device/google/bonito/oem/oem.avbpubkey\". Please refer my new commit message. In short, this new solution follow your suggestion, put every configurations into misc_info.txt.",
+      "parentUuid": "2fa12322_19de7d53",
+      "range": {
+        "startLine": 9,
+        "startChar": 43,
+        "endLine": 9,
+        "endChar": 70
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6955b362_3d56494d",
         "filename": "/COMMIT_MSG",
         "patchSetId": 16
@@ -141,6 +165,30 @@
       "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "acf586b4_479873ac",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-10T06:19:06Z",
+      "side": 1,
+      "message": "The new solutions put all custom images\u0027 chained partitions info into vbmeta.img, that\u0027s because the custom images are more like product image which is controlled by OEMs.",
+      "parentUuid": "297f82eb_2b640697",
+      "range": {
+        "startLine": 12,
+        "startChar": 39,
+        "endLine": 13,
+        "endChar": 53
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -285,6 +333,30 @@
     },
     {
       "key": {
+        "uuid": "7bc72ca0_507b36fe",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-10T06:19:06Z",
+      "side": 1,
+      "message": "I don\u0027t need this now in new solution.",
+      "parentUuid": "10fae6bd_7debd607",
+      "range": {
+        "startLine": 29,
+        "startChar": 16,
+        "endLine": 29,
+        "endChar": 23
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "05ce00d3_7bbb2f0e",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 16
@@ -329,6 +401,30 @@
       "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffa604ab_54dbca4a",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-10T06:19:06Z",
+      "side": 1,
+      "message": "I don\u0027t need this now. In the new solution, the prebuilt custom images are installed in PREBUILT_IMAGES and the signed ones are installed into IMAGES/. This follows dtbo.img",
+      "parentUuid": "7138c5ad_aad32c7d",
+      "range": {
+        "startLine": 341,
+        "startChar": 54,
+        "endLine": 341,
+        "endChar": 59
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

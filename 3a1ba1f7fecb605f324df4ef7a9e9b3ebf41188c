@@ -380,6 +380,30 @@
     },
     {
       "key": {
+        "uuid": "2d062e25_a77c6836",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1075,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-10T06:19:06Z",
+      "side": 1,
+      "message": "I don\u0027t need this now.",
+      "parentUuid": "e5e10531_d40ee93b",
+      "range": {
+        "startLine": 1075,
+        "startChar": 20,
+        "endLine": 1075,
+        "endChar": 37
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "633327da_f0453e5f",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 15
@@ -709,6 +733,30 @@
       "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c6819855_94c10f08",
+        "filename": "tools/releasetools/custom_images_utils.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-10T06:19:06Z",
+      "side": 1,
+      "message": "I moved to your suggestion, like your suggestion in May 8. Thank you for your suggestion, this is much clear.",
+      "parentUuid": "5f1eb1b1_0bfea3e8",
+      "range": {
+        "startLine": 103,
+        "startChar": 21,
+        "endLine": 103,
+        "endChar": 31
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
