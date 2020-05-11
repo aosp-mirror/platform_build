@@ -108,55 +108,58 @@ class LoadOemDictsTest(test_utils.ReleaseToolsTestCase):
 
 
 class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
-
   TEST_TARGET_INFO_DICT = {
-      'build.prop' : {
-          'ro.product.device' : 'product-device',
-          'ro.build.fingerprint' : 'build-fingerprint-target',
-          'ro.build.version.incremental' : 'build-version-incremental-target',
-          'ro.build.version.sdk' : '27',
-          'ro.build.version.security_patch' : '2017-12-01',
-          'ro.build.date.utc' : '1500000000',
-      },
+      'build.prop': common.PartitionBuildProps.FromDictionary(
+          'system', {
+              'ro.product.device': 'product-device',
+              'ro.build.fingerprint': 'build-fingerprint-target',
+              'ro.build.version.incremental': 'build-version-incremental-target',
+              'ro.build.version.sdk': '27',
+              'ro.build.version.security_patch': '2017-12-01',
+              'ro.build.date.utc': '1500000000'}
+      )
   }
 
   TEST_SOURCE_INFO_DICT = {
-      'build.prop' : {
-          'ro.product.device' : 'product-device',
-          'ro.build.fingerprint' : 'build-fingerprint-source',
-          'ro.build.version.incremental' : 'build-version-incremental-source',
-          'ro.build.version.sdk' : '25',
-          'ro.build.version.security_patch' : '2016-12-01',
-          'ro.build.date.utc' : '1400000000',
-      },
+      'build.prop': common.PartitionBuildProps.FromDictionary(
+          'system', {
+              'ro.product.device': 'product-device',
+              'ro.build.fingerprint': 'build-fingerprint-source',
+              'ro.build.version.incremental': 'build-version-incremental-source',
+              'ro.build.version.sdk': '25',
+              'ro.build.version.security_patch': '2016-12-01',
+              'ro.build.date.utc': '1400000000'}
+      )
   }
 
   TEST_INFO_DICT_USES_OEM_PROPS = {
-      'build.prop' : {
-          'ro.product.name' : 'product-name',
-          'ro.build.thumbprint' : 'build-thumbprint',
-          'ro.build.bar' : 'build-bar',
-      },
-      'vendor.build.prop' : {
-          'ro.vendor.build.fingerprint' : 'vendor-build-fingerprint',
-      },
-      'property1' : 'value1',
-      'property2' : 4096,
-      'oem_fingerprint_properties' : 'ro.product.device ro.product.brand',
+      'build.prop': common.PartitionBuildProps.FromDictionary(
+          'system', {
+              'ro.product.name': 'product-name',
+              'ro.build.thumbprint': 'build-thumbprint',
+              'ro.build.bar': 'build-bar'}
+      ),
+      'vendor.build.prop': common.PartitionBuildProps.FromDictionary(
+          'vendor', {
+               'ro.vendor.build.fingerprint': 'vendor-build-fingerprint'}
+      ),
+      'property1': 'value1',
+      'property2': 4096,
+      'oem_fingerprint_properties': 'ro.product.device ro.product.brand',
   }
 
   TEST_OEM_DICTS = [
       {
-          'ro.product.brand' : 'brand1',
-          'ro.product.device' : 'device1',
+          'ro.product.brand': 'brand1',
+          'ro.product.device': 'device1',
       },
       {
-          'ro.product.brand' : 'brand2',
-          'ro.product.device' : 'device2',
+          'ro.product.brand': 'brand2',
+          'ro.product.device': 'device2',
       },
       {
-          'ro.product.brand' : 'brand3',
-          'ro.product.device' : 'device3',
+          'ro.product.brand': 'brand3',
+          'ro.product.device': 'device3',
       },
   ]
 
@@ -288,10 +291,10 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
   @staticmethod
   def _test_GetPackageMetadata_swapBuildTimestamps(target_info, source_info):
-    (target_info['build.prop']['ro.build.date.utc'],
-     source_info['build.prop']['ro.build.date.utc']) = (
-         source_info['build.prop']['ro.build.date.utc'],
-         target_info['build.prop']['ro.build.date.utc'])
+    (target_info['build.prop'].build_props['ro.build.date.utc'],
+     source_info['build.prop'].build_props['ro.build.date.utc']) = (
+         source_info['build.prop'].build_props['ro.build.date.utc'],
+         target_info['build.prop'].build_props['ro.build.date.utc'])
 
   def test_GetPackageMetadata_unintentionalDowngradeDetected(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
@@ -528,7 +531,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
   def test_WriteFingerprintAssertion_without_oem_props(self):
     target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     source_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
-    source_info_dict['build.prop']['ro.build.fingerprint'] = (
+    source_info_dict['build.prop'].build_props['ro.build.fingerprint'] = (
         'source-build-fingerprint')
     source_info = common.BuildInfo(source_info_dict, None)
 
@@ -567,7 +570,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
                                    self.TEST_OEM_DICTS)
     source_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
-    source_info_dict['build.prop']['ro.build.thumbprint'] = (
+    source_info_dict['build.prop'].build_props['ro.build.thumbprint'] = (
         'source-build-thumbprint')
     source_info = common.BuildInfo(source_info_dict, self.TEST_OEM_DICTS)
 

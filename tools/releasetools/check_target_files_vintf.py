@@ -80,8 +80,9 @@ def GetArgsForSkus(info_dict):
            '--property', 'ro.boot.product.vendor.sku=' + vendor_sku]
           for odm_sku in odm_skus for vendor_sku in vendor_skus]
 
+
 def GetArgsForShippingApiLevel(info_dict):
-  shipping_api_level = info_dict['vendor.build.prop'].get(
+  shipping_api_level = info_dict['vendor.build.prop'].GetProp(
       'ro.product.first_api_level')
   if not shipping_api_level:
     logger.warning('Cannot determine ro.product.first_api_level')
