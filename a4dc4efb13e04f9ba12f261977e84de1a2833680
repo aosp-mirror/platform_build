@@ -22,6 +22,30 @@
       "revId": "a4dc4efb13e04f9ba12f261977e84de1a2833680",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29e6d16c_4609ca69",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-11T10:04:37Z",
+      "side": 0,
+      "message": "Done\nAdded KATI_obsolete_var in config.mk",
+      "parentUuid": "21ff85d1_1a23e85a",
+      "range": {
+        "startLine": 297,
+        "startChar": 31,
+        "endLine": 298,
+        "endChar": 38
+      },
+      "revId": "a4dc4efb13e04f9ba12f261977e84de1a2833680",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
