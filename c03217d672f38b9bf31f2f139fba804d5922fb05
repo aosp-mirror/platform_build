@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "9de799c7_e1061da6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-11T06:40:56Z",
+      "side": 1,
+      "message": "I see. But anyway, we don\u0027t need to parse this \"--chained_partition now\".",
+      "parentUuid": "7385a0ea_efe84818",
+      "range": {
+        "startLine": 9,
+        "startChar": 43,
+        "endLine": 9,
+        "endChar": 70
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6955b362_3d56494d",
         "filename": "/COMMIT_MSG",
         "patchSetId": 16
@@ -240,6 +264,30 @@
     },
     {
       "key": {
+        "uuid": "392caabf_dc4696d1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-11T06:40:56Z",
+      "side": 1,
+      "message": "By now the custom images can only be chained partitions of vbmeta.img. And per my checking, the current android makefile (build/core/Makefile) doesn\u0027t support to add any chained partitions to vbmeta_system and vbmeta_vendor.\n\nAnd in my opinion, we don\u0027t need to add chain custom partitions to them too. When a device builds its vbmeta.img, it will go to decide which partitions are in vbmeta_system and vbmeta_vendor. If that device wants to enable chained custom partitions, it can enable them like vbmeta_system and vbmeta_vendor, enable a chianed custom partition.",
+      "parentUuid": "5ea0d5bf_44631506",
+      "range": {
+        "startLine": 12,
+        "startChar": 39,
+        "endLine": 13,
+        "endChar": 53
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "caaaf0ba_f5db7390",
         "filename": "/COMMIT_MSG",
         "patchSetId": 16
@@ -299,6 +347,30 @@
       "side": 1,
       "message": "Just to be clear, so your change here only adds the public key into vbmeta.img, without re-signing each custom images (via add_hashtree_footer --key key --algorithm algo), right?\n\nIf so, will the verification fail because of the mis-match between the public key in vbmeta.img, and the key used to sign each custom images?",
       "parentUuid": "4bc3dc5d_f0bc904f",
+      "range": {
+        "startLine": 22,
+        "startChar": 29,
+        "endLine": 23,
+        "endChar": 33
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "34866278_7d768c30",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-11T06:40:56Z",
+      "side": 1,
+      "message": "No, it will go to resign all of custom images by \"add_hashtree_footer --key key --algorithm algo\" now.",
+      "parentUuid": "4458c820_3ebbd063",
       "range": {
         "startLine": 22,
         "startChar": 29,

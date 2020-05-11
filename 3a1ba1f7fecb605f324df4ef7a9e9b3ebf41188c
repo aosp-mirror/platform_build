@@ -262,6 +262,30 @@
     },
     {
       "key": {
+        "uuid": "0d3c7165_89ce9404",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-11T06:40:56Z",
+      "side": 1,
+      "message": "Yes, \"make dist\" doesn\u0027t build custom images. But \"make dist\" will call add_img_to_target_files.py. And in the new solution, \"make dist\" will resign the custom image images and install them to OUT.\n\nRight now, the \"make custom_images\" will help us to build out all of custom images. The \"make dist\" will resign the those custom images listed in BOARD_CUSTOMIMAGES_PARTITION_LIST and BOARD_AVB_$(PARTITION)_IMAGE_LIST. Please refer my change in Makefile and add_img_to_target_files.py. They have been resigned, not the replace the public key",
+      "parentUuid": "96d0e018_a7a0e3aa",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 5
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "102e623f_be838a4e",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 15
