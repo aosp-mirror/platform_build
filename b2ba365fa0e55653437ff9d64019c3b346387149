@@ -22,6 +22,30 @@
       "revId": "b2ba365fa0e55653437ff9d64019c3b346387149",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a0b74a87_6ae533f3",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1347,
+      "author": {
+        "id": 1365444
+      },
+      "writtenOn": "2020-05-11T22:24:00Z",
+      "side": 1,
+      "message": "That does look much better.\nDone that and edited the commit message accordingly.",
+      "parentUuid": "6790e0f6_f620731b",
+      "range": {
+        "startLine": 1347,
+        "startChar": 0,
+        "endLine": 1347,
+        "endChar": 119
+      },
+      "revId": "b2ba365fa0e55653437ff9d64019c3b346387149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
