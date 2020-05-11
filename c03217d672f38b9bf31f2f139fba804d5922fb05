@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "7385a0ea_efe84818",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-11T05:15:55Z",
+      "side": 1,
+      "message": "\u003e I think you mean how to add custom chained info like public key to vbmeta images, right? \n\nActually I meant how did you determine \"--chain_partition oem:1:device/google/bonito/oem/oem.avbpubkey\"\" is applied to vbmeta.img, or vbmeta_system.img or vbmeta_vendor.img. (or all of them?)\n\nAnd how can we ensure the same oem.avbpubkey is used to sign those oem-*img when using \u0027--add_hash_footer\u0027.",
+      "parentUuid": "be0a094d_07086f06",
+      "range": {
+        "startLine": 9,
+        "startChar": 43,
+        "endLine": 9,
+        "endChar": 70
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6955b362_3d56494d",
         "filename": "/COMMIT_MSG",
         "patchSetId": 16
@@ -192,6 +216,30 @@
     },
     {
       "key": {
+        "uuid": "5ea0d5bf_44631506",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-11T05:15:55Z",
+      "side": 1,
+      "message": "\u003e because the vbmeta_system should for the system only\n\nThis is not true (it might be a bit confusing tho).\n\nProject Treble (https://source.android.com/devices/architecture#hidl) defines the vendor interface (VINTF), to separate hardware-agnostic pieces on top of the VINTF and hardware-related pieces below that.\n\n\n       /system /system_ext /product    (/vbmeta_system)\n \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d VINTF  \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d \n        /vendor /odm /boot /dtbo       (/vbmeta_vendor)\n\nWith that, it\u0027s possible to support \"system-only\" OTA, by upgrading system/system_ext and product to the next release of Android without changing vendor/odm, etc.\n\nWith that, /vbmeta_system can be configured to include everything above VINTF, so they can be updated together in a \"system-only\" manner.\n\nBtw, is it possible to allow each device decide whether they want to put the chained custom_image into vbmeta.img or vbmeta_system.img or vbmeta_vendor.img?",
+      "parentUuid": "acf586b4_479873ac",
+      "range": {
+        "startLine": 12,
+        "startChar": 39,
+        "endLine": 13,
+        "endChar": 53
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "caaaf0ba_f5db7390",
         "filename": "/COMMIT_MSG",
         "patchSetId": 16
@@ -227,6 +275,30 @@
       "side": 1,
       "message": "Yes, that still work. You https://android-review.googlesource.com/c/platform/build/+/399813 are used to generate the custom image when \"make custom_images\". My changes are actually used to add the custom images\u0027 public key into vbmeta images.",
       "parentUuid": "caaaf0ba_f5db7390",
+      "range": {
+        "startLine": 22,
+        "startChar": 29,
+        "endLine": 23,
+        "endChar": 33
+      },
+      "revId": "c03217d672f38b9bf31f2f139fba804d5922fb05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4458c820_3ebbd063",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-11T05:15:55Z",
+      "side": 1,
+      "message": "Just to be clear, so your change here only adds the public key into vbmeta.img, without re-signing each custom images (via add_hashtree_footer --key key --algorithm algo), right?\n\nIf so, will the verification fail because of the mis-match between the public key in vbmeta.img, and the key used to sign each custom images?",
+      "parentUuid": "4bc3dc5d_f0bc904f",
       "range": {
         "startLine": 22,
         "startChar": 29,

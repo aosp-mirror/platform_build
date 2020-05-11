@@ -238,6 +238,30 @@
     },
     {
       "key": {
+        "uuid": "96d0e018_a7a0e3aa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-11T05:15:55Z",
+      "side": 1,
+      "message": "Sorry, my memory about \u0027custom_images\u0027 is a bit rusty.\n\n\nAfter a second thought, I think \u0027make dist\u0027 won\u0027t build custom_images by default, right? (and only build droid images)\n\nSo probably no need to mention \u0027make dist\u0027 here.\n\nInstead, maybe \u0027make custom_images\u0027 will be required?\n\nThe remaining concern to me is, how do we re-sign each custom_images with the right key (via add_hash_footer or add_hashtree_footer). Not just replace the \u0027expected public\u0027 key for verification in vbmeta.img.",
+      "parentUuid": "a0b38c97_7a21ce3f",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 5
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "102e623f_be838a4e",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 15
@@ -392,6 +416,30 @@
       "side": 1,
       "message": "I don\u0027t need this now.",
       "parentUuid": "e5e10531_d40ee93b",
+      "range": {
+        "startLine": 1075,
+        "startChar": 20,
+        "endLine": 1075,
+        "endChar": 37
+      },
+      "revId": "3a1ba1f7fecb605f324df4ef7a9e9b3ebf41188c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "627cbe01_f81d838f",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1075,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-11T05:15:55Z",
+      "side": 1,
+      "message": "I see, this function is to build vbmeta.img or vbmeta_system.img/vbmeta_vendor.img\n\nFrom L1032:\n  name: Name of the VBMeta partition, e.g. \u0027vbmeta\u0027, \u0027vbmeta_system\u0027.",
+      "parentUuid": "2d062e25_a77c6836",
       "range": {
         "startLine": 1075,
         "startChar": 20,
