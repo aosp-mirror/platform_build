@@ -128,13 +128,16 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'vendor_image_size' : 40960,
         'system_verity_block_device': '/dev/block/system',
         'vendor_verity_block_device': '/dev/block/vendor',
-        'system.build.prop': {
-            'ro.system.build.fingerprint':
-                'google/sailfish/12345:user/dev-keys',
-        },
-        'vendor.build.prop': {
-            'ro.vendor.build.fingerprint': 'google/sailfish/678:user/dev-keys',
-        },
+        'system.build.prop': common.PartitionBuildProps.FromDictionary(
+            'system', {
+                'ro.system.build.fingerprint':
+                'google/sailfish/12345:user/dev-keys'}
+        ),
+        'vendor.build.prop': common.PartitionBuildProps.FromDictionary(
+            'vendor', {
+                'ro.vendor.build.fingerprint':
+                'google/sailfish/678:user/dev-keys'}
+        ),
     }
 
     # Prepare the META/ folder.
@@ -206,18 +209,21 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     """Tests the case for device using AVB."""
     image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {
-        'extfs_sparse_flag' : '-s',
-        'system_image_size' : 65536,
-        'vendor_image_size' : 40960,
-        'avb_system_hashtree_enable' : 'true',
-        'avb_vendor_hashtree_enable' : 'true',
-        'system.build.prop': {
-            'ro.system.build.fingerprint':
-                'google/sailfish/12345:user/dev-keys',
-        },
-        'vendor.build.prop': {
-            'ro.vendor.build.fingerprint': 'google/sailfish/678:user/dev-keys',
-        }
+        'extfs_sparse_flag': '-s',
+        'system_image_size': 65536,
+        'vendor_image_size': 40960,
+        'avb_system_hashtree_enable': 'true',
+        'avb_vendor_hashtree_enable': 'true',
+        'system.build.prop': common.PartitionBuildProps.FromDictionary(
+            'system', {
+                'ro.system.build.fingerprint':
+                'google/sailfish/12345:user/dev-keys'}
+        ),
+        'vendor.build.prop': common.PartitionBuildProps.FromDictionary(
+            'vendor', {
+                'ro.vendor.build.fingerprint':
+                'google/sailfish/678:user/dev-keys'}
+        ),
     }
 
     AddCareMapForAbOta(None, ['system', 'vendor'], image_paths)
@@ -258,17 +264,21 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     """Tests the case for partitions with thumbprint."""
     image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {
-        'extfs_sparse_flag' : '-s',
-        'system_image_size' : 65536,
-        'vendor_image_size' : 40960,
+        'extfs_sparse_flag': '-s',
+        'system_image_size': 65536,
+        'vendor_image_size': 40960,
         'system_verity_block_device': '/dev/block/system',
         'vendor_verity_block_device': '/dev/block/vendor',
-        'system.build.prop': {
-            'ro.system.build.thumbprint': 'google/sailfish/123:user/dev-keys',
-        },
-        'vendor.build.prop' : {
-            'ro.vendor.build.thumbprint': 'google/sailfish/456:user/dev-keys',
-        },
+        'system.build.prop': common.PartitionBuildProps.FromDictionary(
+            'system', {
+                'ro.system.build.thumbprint':
+                'google/sailfish/123:user/dev-keys'}
+        ),
+        'vendor.build.prop': common.PartitionBuildProps.FromDictionary(
+            'vendor', {
+                'ro.vendor.build.thumbprint':
+                'google/sailfish/456:user/dev-keys'}
+        ),
     }
 
     AddCareMapForAbOta(None, ['system', 'vendor'], image_paths)
