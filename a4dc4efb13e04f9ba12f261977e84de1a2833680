@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21ff85d1_1a23e85a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-11T09:45:00Z",
+      "side": 0,
+      "message": "can you make LOCAL_NO_2ND_ARCH_MODULE_SUFFIX an obsolete var now, since it does nothing anymore? That should catch any existing users of it\n\n$(KATI_obsolete_var) is the syntax (probably only want to do it once, so should be somewhere other than base_rules.mk)",
+      "range": {
+        "startLine": 297,
+        "startChar": 31,
+        "endLine": 298,
+        "endChar": 38
+      },
+      "revId": "a4dc4efb13e04f9ba12f261977e84de1a2833680",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
