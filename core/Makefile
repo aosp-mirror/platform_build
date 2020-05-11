@@ -169,9 +169,9 @@ ifeq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
 endif
 
 # -----------------------------------------------------------------
-# FINAL_VENDOR_DEFAULT_PROPERTIES will be installed in vendor/default.prop if
+# FINAL_VENDOR_DEFAULT_PROPERTIES will be installed in vendor/build.prop if
 # property_overrides_split_enabled is true. Otherwise it will be installed in
-# ROOT/default.prop.
+# /system/etc/prop.default (which is a symlink from /default.prop)
 ifdef BOARD_VNDK_VERSION
   ifeq ($(BOARD_VNDK_VERSION),current)
     FINAL_VENDOR_DEFAULT_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
@@ -293,25 +293,6 @@ ifdef property_overrides_split_enabled
 	$(hide) mkdir -p $(TARGET_ROOT_OUT)
 	$(hide) ln -sf system/etc/prop.default $(INSTALLED_DEFAULT_PROP_OLD_TARGET)
 endif
-
-# -----------------------------------------------------------------
-# vendor default.prop
-INSTALLED_VENDOR_DEFAULT_PROP_TARGET :=
-ifdef property_overrides_split_enabled
-INSTALLED_VENDOR_DEFAULT_PROP_TARGET := $(TARGET_OUT_VENDOR)/default.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET)
-
-$(INSTALLED_VENDOR_DEFAULT_PROP_TARGET): $(INSTALLED_DEFAULT_PROP_TARGET) $(POST_PROCESS_PROPS)
-	@echo Target buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) echo "#" > $@; \
-	        echo "# ADDITIONAL VENDOR DEFAULT PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach line,$(FINAL_VENDOR_DEFAULT_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@
-
-endif  # property_overrides_split_enabled
 
 # -----------------------------------------------------------------
 # build.prop
@@ -529,6 +510,10 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PRO
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) rm -f $@ && touch $@
+ifdef property_overrides_split_enabled
+	$(hide) $(foreach line,$(FINAL_VENDOR_DEFAULT_PROPERTIES), \
+	  echo "$(line)" >> $@;)
+endif
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 	$(hide) echo ro.boot.dynamic_partitions=true >> $@
 endif
@@ -2114,7 +2099,6 @@ endef
 
 $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	    $(INSTALLED_DEFAULT_PROP_TARGET) \
-	    $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) \
 	    $(intermediate_system_build_prop) \
 	    $(INSTALLED_VENDOR_BUILD_PROP_TARGET) \
 	    $(INSTALLED_ODM_BUILD_PROP_TARGET) \
@@ -2124,7 +2108,6 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $@
 	$(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) > $@
-	$(hide) cat $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) >> $@
 	$(hide) cat $(intermediate_system_build_prop) >> $@
 	$(hide) cat $(INSTALLED_VENDOR_BUILD_PROP_TARGET) >> $@
 	$(hide) cat $(INSTALLED_ODM_BUILD_PROP_TARGET) >> $@
