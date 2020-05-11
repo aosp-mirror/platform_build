@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6790e0f6_f620731b",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1347,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2020-05-11T21:11:01Z",
+      "side": 1,
+      "message": "First of all, thank you for the contribution, Alessandro, it is greatly appreciated, and thanks for bringing up this case. The only problem I think this has is that here we have to startup the build system twice, but I agree we need to fix this problem.\n\nWould this work here instead? We could avoid assuming the format of the out directory by remove it as a prefix:\n\n    m ${ANDROID_PRODUCT_OUT#$ANDROID_BUILD_TOP/}/module-info.json\n\nI\u0027ll cc some build team members here who should be able to make a definitive statement.",
+      "range": {
+        "startLine": 1347,
+        "startChar": 0,
+        "endLine": 1347,
+        "endChar": 119
+      },
+      "revId": "b2ba365fa0e55653437ff9d64019c3b346387149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
