@@ -548,17 +548,19 @@ def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
       care_map_list += care_map
 
       # adds fingerprint field to the care_map
-      build_props = OPTIONS.info_dict.get(partition + ".build.prop", {})
+      # TODO(xunchang) revisit the fingerprint calculation for care_map.
+      partition_props = OPTIONS.info_dict.get(partition + ".build.prop")
       prop_name_list = ["ro.{}.build.fingerprint".format(partition),
                         "ro.{}.build.thumbprint".format(partition)]
 
-      present_props = [x for x in prop_name_list if x in build_props]
+      present_props = [x for x in prop_name_list if
+                       partition_props and partition_props.GetProp(x)]
       if not present_props:
         logger.warning("fingerprint is not present for partition %s", partition)
         property_id, fingerprint = "unknown", "unknown"
       else:
         property_id = present_props[0]
-        fingerprint = build_props[property_id]
+        fingerprint = partition_props.GetProp(property_id)
       care_map_list += [property_id, fingerprint]
 
   if not care_map_list:
