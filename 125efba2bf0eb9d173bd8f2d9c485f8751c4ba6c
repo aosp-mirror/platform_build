@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "37d2c64a_b7ddd356",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-12T03:13:08Z",
+      "side": 1,
+      "message": "Just curious, why not also define them for vendor_boot?",
+      "range": {
+        "startLine": 9,
+        "startChar": 34,
+        "endLine": 9,
+        "endChar": 49
+      },
+      "revId": "125efba2bf0eb9d173bd8f2d9c485f8751c4ba6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
