@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77ceafad_aa25c9f6",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-12T18:56:06Z",
+      "side": 1,
+      "message": "Is the plan to update this number everytime for a GKI change?",
+      "range": {
+        "startLine": 63,
+        "startChar": 45,
+        "endLine": 63,
+        "endChar": 53
+      },
+      "revId": "4fbf5ab6c58199dd994407436fd32e01acef5c71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1f1d2054_46a6bc8a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-12T18:56:06Z",
+      "side": 1,
+      "message": "not in this cl, but we might need to assert somewhere as \u0027boot_images\u0027 isn\u0027t compatible with OTA generation.",
+      "range": {
+        "startLine": 671,
+        "startChar": 6,
+        "endLine": 671,
+        "endChar": 17
+      },
+      "revId": "4fbf5ab6c58199dd994407436fd32e01acef5c71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d45176dd_f8a17bd2",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1230,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-12T18:56:06Z",
+      "side": 1,
+      "message": "nit, just recovery_size?",
+      "range": {
+        "startLine": 1230,
+        "startChar": 18,
+        "endLine": 1230,
+        "endChar": 27
+      },
+      "revId": "4fbf5ab6c58199dd994407436fd32e01acef5c71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
