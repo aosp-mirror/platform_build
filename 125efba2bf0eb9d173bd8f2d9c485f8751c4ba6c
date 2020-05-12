@@ -22,6 +22,30 @@
       "revId": "125efba2bf0eb9d173bd8f2d9c485f8751c4ba6c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c8f1085_88c62c0e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-05-12T04:40:30Z",
+      "side": 1,
+      "message": "I feel like these particular version numbers only really make sense for the kernel. Vendor boot will contain a small number of vendor kernel modules to be loaded during first stage init. It might be useful to have a version field that vendors can use in the vendor boot header as they wish. None exists currently and I don\u0027t know that we should change it for R, but perhaps we could add it in a later version.\n\nThen again, I\u0027m not even sure whether the os_version/os_patch_level are actually used in the boot header nowadays?",
+      "parentUuid": "37d2c64a_b7ddd356",
+      "range": {
+        "startLine": 9,
+        "startChar": 34,
+        "endLine": 9,
+        "endChar": 49
+      },
+      "revId": "125efba2bf0eb9d173bd8f2d9c485f8751c4ba6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
