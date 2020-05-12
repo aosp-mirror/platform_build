@@ -94,6 +94,30 @@
       "revId": "125efba2bf0eb9d173bd8f2d9c485f8751c4ba6c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd542e77_37be57a5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-12T09:07:42Z",
+      "side": 1,
+      "message": "Oh, I didn\u0027t know that there is a vendor_boot header, and it doesn\u0027t have os_version / patch_level.\n\nIf so, ignoring that for now seems ok.\n\nWe can add that back when needed in the future.",
+      "parentUuid": "cee53e98_b775f351",
+      "range": {
+        "startLine": 9,
+        "startChar": 34,
+        "endLine": 9,
+        "endChar": 49
+      },
+      "revId": "125efba2bf0eb9d173bd8f2d9c485f8751c4ba6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
