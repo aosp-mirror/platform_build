@@ -46,6 +46,30 @@
       "revId": "125efba2bf0eb9d173bd8f2d9c485f8751c4ba6c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f7bf623_a1639e39",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-12T04:51:52Z",
+      "side": 1,
+      "message": "\u003e I\u0027m not even sure whether the os_version/os_patch_level are actually used in the boot header nowadays?\n\nAs Treble attempts to modularize each partition, so things like fingerprint / os_version / patch_level are duplicated to each partition. (and they might be diverge after a system-only OTA).\n\nBefore Treble, all partitions are updated together so we just need one instance for each.\n\nSo this depends on how those info is used before Treble.\nIt just now we provide per-partition level info for them.\n\ne.g., I knew that os_version is used for keymaster version binding.",
+      "parentUuid": "6c8f1085_88c62c0e",
+      "range": {
+        "startLine": 9,
+        "startChar": 34,
+        "endLine": 9,
+        "endChar": 49
+      },
+      "revId": "125efba2bf0eb9d173bd8f2d9c485f8751c4ba6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
