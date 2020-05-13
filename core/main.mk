@@ -1186,15 +1186,17 @@ ifdef FULL_BUILD
 
   # Some modules produce only host installed files when building with TARGET_BUILD_APPS
   ifeq ($(TARGET_BUILD_APPS),)
-    _modules := $(foreach m,$(PRODUCT_PACKAGES) \
-                            $(PRODUCT_PACKAGES_DEBUG) \
-                            $(PRODUCT_PACKAGES_DEBUG_ASAN) \
-                            $(PRODUCT_PACKAGES_ENG) \
-                            $(PRODUCT_PACKAGES_TESTS),\
+    _modules := $(call resolve-bitness-for-modules,TARGET, \
+      $(PRODUCT_PACKAGES) \
+      $(PRODUCT_PACKAGES_DEBUG) \
+      $(PRODUCT_PACKAGES_DEBUG_ASAN) \
+      $(PRODUCT_PACKAGES_ENG) \
+      $(PRODUCT_PACKAGES_TESTS))
+    _host_modules := $(foreach m,$(_modules), \
                   $(if $(ALL_MODULES.$(m).INSTALLED),\
                     $(if $(filter-out $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,\
                       $(m))))
-    $(call maybe-print-list-and-error,$(sort $(_modules)),\
+    $(call maybe-print-list-and-error,$(sort $(_host_modules)),\
       Host modules should be in PRODUCT_HOST_PACKAGES$(comma) not PRODUCT_PACKAGES)
   endif
 

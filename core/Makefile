@@ -1019,7 +1019,7 @@ $(all_event_log_tags_file): $(all_event_log_tags_src) $(pdk_fusion_log_tags_file
 # directory).
 event_log_tags_src := \
     $(sort $(foreach m,\
-      $(PRODUCT_PACKAGES) \
+      $(call resolve-bitness-for-modules,TARGET,$(PRODUCT_PACKAGES)) \
       $(call module-names-for-tag-list,user), \
       $(ALL_MODULES.$(m).EVENT_LOG_TAGS)) \
       $(filter-out vendor/% device/% out/%,$(all_event_log_tags_src)))
