@@ -393,6 +393,13 @@ _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA
 # If set, device retrofits virtual A/B.
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA_RETROFIT
 
+# If set, forcefully generate a non-A/B update package.
+# Note: A device configuration should inherit from virtual_ab_ota_plus_non_ab.mk
+# instead of setting this variable directly.
+# Note: Use TARGET_OTA_ALLOW_NON_AB in the build system because
+# TARGET_OTA_ALLOW_NON_AB takes the value of AB_OTA_UPDATER into account.
+_product_single_value_vars += PRODUCT_OTA_FORCE_NON_AB_PACKAGE
+
 # If set, Java module in product partition cannot use hidden APIs.
 _product_single_value_vars += PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
 
