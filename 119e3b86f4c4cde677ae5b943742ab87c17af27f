@@ -1,0 +1,372 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8007ce61_7f3545fb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "options",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 10
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c1afcc8_97a57404",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "should be \u0027:\u0027 ?",
+      "range": {
+        "startLine": 20,
+        "startChar": 17,
+        "endLine": 20,
+        "endChar": 18
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "172521ba_d7bc4d50",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "nit: how about make it clear:\n\nThe custom images here are prebuilts, which can be built by `make custom_images` separately. BOARD_AVB_\u003cCUSTOM_PARTITION\u003e_IMAGE_LIST should include all custom images to apply AVB signing.",
+      "range": {
+        "startLine": 22,
+        "startChar": 57,
+        "endLine": 22,
+        "endChar": 67
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f36ac3e4_66b44727",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "why? as the options above has BOARD_AVB_OEM_KEY_PATH and BOARD_AVB_TEST_KEY_PATH, for \u0027oem\u0027 and \u0027test\u0027, respectively.",
+      "range": {
+        "startLine": 44,
+        "startChar": 52,
+        "endLine": 45,
+        "endChar": 10
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29de9be1_59391558",
+        "filename": "core/Makefile",
+        "patchSetId": 19
+      },
+      "lineNbr": 3367,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "let\u0027s make it clear: partition_name or partition",
+      "range": {
+        "startLine": 3367,
+        "startChar": 10,
+        "endLine": 3367,
+        "endChar": 11
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "014f4b35_e4930cf7",
+        "filename": "core/Makefile",
+        "patchSetId": 19
+      },
+      "lineNbr": 3368,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "nit: prebuilt_custom_image or image\n\nSame for the following",
+      "range": {
+        "startLine": 3368,
+        "startChar": 12,
+        "endLine": 3368,
+        "endChar": 13
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a6bba09_e4526104",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 896,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "maybe add a comment above:\n\n# Currently custom_partitions are all chained to VBMeta image.",
+      "range": {
+        "startLine": 896,
+        "startChar": 4,
+        "endLine": 896,
+        "endChar": 69
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45b1af00_fafed904",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 897,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "nit:\n\nIt looks a bit weird to me here:\n  If we added custom_partitions into vbmeta_partitons, why we still need to pass custom_partitions as the 2nd arg to AddVBMeta() at L920.\n\nMaybe just let AddVBMeta() get the custom_partitions inside?",
+      "range": {
+        "startLine": 897,
+        "startChar": 3,
+        "endLine": 897,
+        "endChar": 75
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a9ffa1a_fb20beb5",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 1017,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "how about just get the custom_partitions by the info_dict, without requiring the caller to pass in?\n\ncustom_partitions \u003d OPTIONS.info_dict.get(\n    \"avb_custom_images_partition_list\", \"\").strip().split()",
+      "range": {
+        "startLine": 1017,
+        "startChar": 4,
+        "endLine": 1017,
+        "endChar": 21
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb06f958_02f4b467",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 968,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "This seems a bit duplicated.\n\nHow about:\n  \nif partition \u003d\u003d \"custom_images\":\n  custom_partitions \u003d misc_info.get(\n      \"avb_custom_images_partition_list\", \"\").strip().split()\n  for custom_partition in custom_partitions:\n    ReplaceAvbPartitionSigningKey(custom_partition, True)\nelse:\n  ReplaceAvbPartitionSigningKey(partition)",
+      "range": {
+        "startLine": 966,
+        "startChar": 8,
+        "endLine": 968,
+        "endChar": 65
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a09b6284_39a9760f",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 969,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "partitions",
+      "range": {
+        "startLine": 969,
+        "startChar": 36,
+        "endLine": 969,
+        "endChar": 45
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d06a3c43_90fb8be6",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 969,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "custom",
+      "range": {
+        "startLine": 969,
+        "startChar": 10,
+        "endLine": 969,
+        "endChar": 15
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5feda8c0_1eba32fd",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 972,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "this looks weird, how about:\n\n   def ReplaceAvbPartitionSigningKey(partition, is_custom_partition\u003dFalse):",
+      "range": {
+        "startLine": 972,
+        "startChar": 36,
+        "endLine": 972,
+        "endChar": 56
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81e8a202_504545a9",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 1220,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "Ok, now I understand why all custom images are signed by the same key (didn\u0027t know this if just read the commit message).\n\nHow about (just like --extra_apex_payload_key at L1139-L1141):\n\n  elif o \u003d\u003d \"--avb_extra_custom_image_key\":\n      partition, key \u003d a.split(\"\u003d\")\n      OPTIONS.avb_keys[partition] \u003d key\n\nAnd the caller can specify them via (you can search \u0027extra_apex_payload_key\u0027 at cs/):\n  --avb_extra_custom_image_key oem\u003doem_pub.pem\n  --avb_extra_custom_image_key test\u003dtest_pub.pem\n\nSame for the following avb_algorithms / avb_extra_args.\n\n\nAlso, if you need our internal signer to support this, you might need to file a new feature request. e.g., b/156057827",
+      "range": {
+        "startLine": 1220,
+        "startChar": 17,
+        "endLine": 1220,
+        "endChar": 38
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07208db1_b696012a",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "Why do we need this special class, is it possible to fallback to the same place where other images are signed/verified?",
+      "range": {
+        "startLine": 719,
+        "startChar": 6,
+        "endLine": 719,
+        "endChar": 23
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7da7ca0d_55ce2ffd",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 752,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-13T08:51:07Z",
+      "side": 1,
+      "message": "note that by default, other AVB partitions have FEC enabled.",
+      "range": {
+        "startLine": 752,
+        "startChar": 12,
+        "endLine": 752,
+        "endChar": 31
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
