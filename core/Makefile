@@ -3402,10 +3402,10 @@ endif
 # When building a standalone recovery image for non-A/B devices, recovery image must be self-signed
 # to be verified independently, and cannot be chained into vbmeta.img. See the link below for
 # details.
-ifneq ($(AB_OTA_UPDATER),true)
+ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 $(if $(BOARD_AVB_RECOVERY_KEY_PATH),,\
-    $(error BOARD_AVB_RECOVERY_KEY_PATH must be defined for non-A/B devices. \
+    $(error BOARD_AVB_RECOVERY_KEY_PATH must be defined for if non-A/B is supported. \
             See https://android.googlesource.com/platform/external/avb/+/master/README.md#booting-into-recovery))
 endif
 endif
@@ -3496,7 +3496,7 @@ $(eval $(_signing_args) := \
 
 # The recovery partition in non-A/B devices should be verified separately. Skip adding the chain
 # partition descriptor for recovery partition into vbmeta.img.
-$(if $(or $(filter true,$(AB_OTA_UPDATER)),$(filter-out recovery,$(part))),\
+$(if $(or $(filter-out true,$(TARGET_OTA_ALLOW_NON_AB)),$(filter-out recovery,$(part))),\
     $(eval INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
         --chain_partition $(part):$($(_rollback_index_location)):$(AVB_CHAIN_KEY_DIR)/$(part).avbpubkey))
 
@@ -4289,6 +4289,9 @@ ifeq ($(AB_OTA_UPDATER),true)
 	$(hide) echo "build_type=$(TARGET_BUILD_VARIANT)" >> $@
 	$(hide) echo "ab_update=true" >> $@
 endif
+ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
+	$(hide) echo "allow_non_ab=true" >> $@
+endif
 ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) echo "has_dtbo=true" >> $@
 ifeq ($(BOARD_AVB_ENABLE),true)
@@ -4366,10 +4369,13 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSION := $(tool_extension)
 
 ifeq ($(AB_OTA_UPDATER),true)
 updater_dep := system/update_engine/update_engine.conf
-else
-# Build OTA tools if not using the AB Updater.
+endif
+
+# Build OTA tools if non-A/B is allowed
+ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
 updater_dep := $(built_ota_tools)
 endif
+
 $(BUILT_TARGET_FILES_PACKAGE): $(updater_dep)
 
 # If we are using recovery as boot, output recovery files to BOOT/.
@@ -4645,7 +4651,7 @@ endif
 	@# Extra contents of the OTA package
 	$(hide) mkdir -p $(zip_root)/OTA
 	$(hide) cp $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(zip_root)/OTA/
-ifneq ($(AB_OTA_UPDATER),true)
+ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
 ifneq ($(built_ota_tools),)
 	$(hide) mkdir -p $(zip_root)/OTA/bin
 	$(hide) cp $(PRIVATE_OTA_TOOLS) $(zip_root)/OTA/bin/
@@ -4682,7 +4688,7 @@ ifneq ($(PRODUCT_ODM_BASE_FS_PATH),)
 	$(hide) cp $(PRODUCT_ODM_BASE_FS_PATH) \
 	  $(zip_root)/META/$(notdir $(PRODUCT_ODM_BASE_FS_PATH))
 endif
-ifneq ($(AB_OTA_UPDATER),true)
+ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    $(MAKE_RECOVERY_PATCH) $(zip_root) $(zip_root)
