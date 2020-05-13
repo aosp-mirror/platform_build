@@ -22,6 +22,30 @@
       "revId": "92d94fa6d2998a671835abfefcf61ceb634b0bcc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f5f0b1d_c2e27406",
+        "filename": "tools/auto_gen_test_config.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1330217
+      },
+      "writtenOn": "2020-05-13T23:39:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "41e47d84_f3739b6d",
+      "range": {
+        "startLine": 50,
+        "startChar": 15,
+        "endLine": 50,
+        "endChar": 20
+      },
+      "revId": "92d94fa6d2998a671835abfefcf61ceb634b0bcc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
