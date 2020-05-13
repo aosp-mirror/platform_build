@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "84e43b5a_aacf68ae",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2020-05-13T16:18:53Z",
+      "side": 1,
+      "message": "We can drop this comment too now?",
+      "range": {
+        "startLine": 230,
+        "startChar": 2,
+        "endLine": 230,
+        "endChar": 14
+      },
+      "revId": "a6f990b60002fae4c89ed74170cac245d7aa7e8e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9606a66a_12ad1445",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2020-05-13T16:18:53Z",
+      "side": 1,
+      "message": "Can we collapse these properties into build.prop as well?  We shouldn\u0027t need to make any guarantees for non-Treble devices and it will be cleaner overall if all devices have a single /system/build.prop.",
+      "revId": "a6f990b60002fae4c89ed74170cac245d7aa7e8e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
