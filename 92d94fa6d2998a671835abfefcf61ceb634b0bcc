@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41e47d84_f3739b6d",
+        "filename": "tools/auto_gen_test_config.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-05-13T16:08:40Z",
+      "side": 1,
+      "message": "no need",
+      "range": {
+        "startLine": 50,
+        "startChar": 15,
+        "endLine": 50,
+        "endChar": 20
+      },
+      "revId": "92d94fa6d2998a671835abfefcf61ceb634b0bcc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
