@@ -1462,7 +1462,8 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
   required_cache_sizes = [diff.required_cache for diff in
                           block_diff_dict.values()]
   if updating_boot:
-    boot_type, boot_device = common.GetTypeAndDevice("/boot", source_info)
+    boot_type, boot_device_expr = common.GetTypeAndDeviceExpr("/boot",
+                                                              source_info)
     d = common.Difference(target_boot, source_boot)
     _, _, d = d.ComputePatch()
     if d is None:
@@ -1477,11 +1478,11 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
 
       common.ZipWriteStr(output_zip, "boot.img.p", d)
 
-      script.PatchPartitionCheck(
-          "{}:{}:{}:{}".format(
-              boot_type, boot_device, target_boot.size, target_boot.sha1),
-          "{}:{}:{}:{}".format(
-              boot_type, boot_device, source_boot.size, source_boot.sha1))
+      target_expr = 'concat("{}:",{},":{}:{}")'.format(
+          boot_type, boot_device_expr, target_boot.size, target_boot.sha1)
+      source_expr = 'concat("{}:",{},":{}:{}")'.format(
+          boot_type, boot_device_expr, source_boot.size, source_boot.sha1)
+      script.PatchPartitionExprCheck(target_expr, source_expr)
 
       required_cache_sizes.append(target_boot.size)
 
@@ -1549,12 +1550,11 @@ else
         logger.info("boot image changed; including patch.")
         script.Print("Patching boot image...")
         script.ShowProgress(0.1, 10)
-        script.PatchPartition(
-            '{}:{}:{}:{}'.format(
-                boot_type, boot_device, target_boot.size, target_boot.sha1),
-            '{}:{}:{}:{}'.format(
-                boot_type, boot_device, source_boot.size, source_boot.sha1),
-            'boot.img.p')
+        target_expr = 'concat("{}:",{},":{}:{}")'.format(
+            boot_type, boot_device_expr, target_boot.size, target_boot.sha1)
+        source_expr = 'concat("{}:",{},":{}:{}")'.format(
+            boot_type, boot_device_expr, source_boot.size, source_boot.sha1)
+        script.PatchPartitionExpr(target_expr, source_expr, '"boot.img.p"')
     else:
       logger.info("boot image unchanged; skipping.")
 
