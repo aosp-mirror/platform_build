@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "abb7f9bb_ef9b7fcb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 23
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-14T17:00:19Z",
+      "side": 1,
+      "message": "two spaces?",
+      "range": {
+        "startLine": 52,
+        "startChar": 8,
+        "endLine": 52,
+        "endChar": 10
+      },
+      "revId": "1ca6b901c94cccc705bb9710b3ca67a285fb2fb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "55f1f7a8_a189e80a",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-14T17:00:19Z",
+      "side": 1,
+      "message": "Let add a comment for what\u0027s this None for.\n\ne.g.,  None, # salt is None because custom images ....\n\nAnd can consider adding a TODO here if we think this might be needed in the future.",
+      "range": {
+        "startLine": 711,
+        "startChar": 8,
+        "endLine": 711,
+        "endChar": 12
+      },
+      "revId": "1ca6b901c94cccc705bb9710b3ca67a285fb2fb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6e380ca_1a4dd9cd",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-14T17:00:19Z",
+      "side": 1,
+      "message": "nit: signing_args \n\n(just to align the definition in VerifiedBootVersion2VerityImageBuilder()).",
+      "range": {
+        "startLine": 712,
+        "startChar": 8,
+        "endLine": 712,
+        "endChar": 18
+      },
+      "revId": "1ca6b901c94cccc705bb9710b3ca67a285fb2fb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
