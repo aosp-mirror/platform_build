@@ -275,7 +275,8 @@ RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 # 'system_other' and bootloader partitions.
 SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
     'boot', 'dtbo', 'modem', 'odm', 'product', 'radio', 'recovery',
-    'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor']
+    'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor',
+    'vendor_boot']
 
 
 class PayloadSigner(object):
