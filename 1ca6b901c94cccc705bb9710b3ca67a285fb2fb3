@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ca3b0110_ce50c56c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 23
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-14T18:53:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "abb7f9bb_ef9b7fcb",
+      "range": {
+        "startLine": 52,
+        "startChar": 8,
+        "endLine": 52,
+        "endChar": 10
+      },
+      "revId": "1ca6b901c94cccc705bb9710b3ca67a285fb2fb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "55f1f7a8_a189e80a",
         "filename": "tools/releasetools/verity_utils.py",
         "patchSetId": 23
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "703db1f3_172cac2f",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-14T18:53:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "55f1f7a8_a189e80a",
+      "range": {
+        "startLine": 711,
+        "startChar": 8,
+        "endLine": 711,
+        "endChar": 12
+      },
+      "revId": "1ca6b901c94cccc705bb9710b3ca67a285fb2fb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e6e380ca_1a4dd9cd",
         "filename": "tools/releasetools/verity_utils.py",
         "patchSetId": 23
@@ -68,6 +116,30 @@
       "revId": "1ca6b901c94cccc705bb9710b3ca67a285fb2fb3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae8cee46_26b26b60",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-14T18:53:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e6e380ca_1a4dd9cd",
+      "range": {
+        "startLine": 712,
+        "startChar": 8,
+        "endLine": 712,
+        "endChar": 18
+      },
+      "revId": "1ca6b901c94cccc705bb9710b3ca67a285fb2fb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
