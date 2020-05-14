@@ -803,8 +803,13 @@ class PartitionBuildProps(object):
     """Parses the build prop in a given import statement."""
 
     tokens = line.split()
-    if len(tokens) != 2 or tokens[0] != 'import':
+    if tokens[0] != 'import' or (len(tokens) != 2 and len(tokens) != 3) :
       raise ValueError('Unrecognized import statement {}'.format(line))
+
+    if len(tokens) == 3:
+      logger.info("Import %s from %s, skip", tokens[2], tokens[1])
+      return {}
+
     import_path = tokens[1]
     if not re.match(r'^/{}/.*\.prop$'.format(self.partition), import_path):
       raise ValueError('Unrecognized import path {}'.format(line))
