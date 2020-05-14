@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca87354a_9429e4f0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-14T14:24:30Z",
+      "side": 1,
+      "message": "When can we get rid of that?",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 59
+      },
+      "revId": "09153e244e8e1681b5083c102dec47934c19583d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1991f6e2_7ac6ff30",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 727,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-14T14:24:30Z",
+      "side": 1,
+      "message": "Don\u0027t actually need CleanSpecs anymore, just FYI",
+      "range": {
+        "startLine": 725,
+        "startChar": 65,
+        "endLine": 727,
+        "endChar": 0
+      },
+      "revId": "09153e244e8e1681b5083c102dec47934c19583d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5bf6735_a02b7b42",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-14T14:24:30Z",
+      "side": 1,
+      "message": "Isn\u0027t this variable only read below? Could you just inline it on line 404?",
+      "range": {
+        "startLine": 283,
+        "startChar": 38,
+        "endLine": 288,
+        "endChar": 34
+      },
+      "revId": "09153e244e8e1681b5083c102dec47934c19583d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
