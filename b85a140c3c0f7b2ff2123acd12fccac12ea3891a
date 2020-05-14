@@ -34,6 +34,52 @@
       "revId": "b85a140c3c0f7b2ff2123acd12fccac12ea3891a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce9fbd76_b7433783",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-14T14:05:59Z",
+      "side": 1,
+      "message": "the get-32-bit-modules stuff don\u0027t appear to look at this value. Presumably this is always true if the module exists? (looks good, just trying to understand).",
+      "range": {
+        "startLine": 498,
+        "startChar": 72,
+        "endLine": 498,
+        "endChar": 84
+      },
+      "revId": "b85a140c3c0f7b2ff2123acd12fccac12ea3891a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6d6ab83_03f30e0d",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1074,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-14T14:05:59Z",
+      "side": 1,
+      "message": "isn\u0027t it a little strange that we if we have a Module:64 in PRODUCT_PACKAGES that gets installed on a 32-bit product? This just maintains that, but it seems a little funny.",
+      "range": {
+        "startLine": 1074,
+        "startChar": 11,
+        "endLine": 1074,
+        "endChar": 93
+      },
+      "revId": "b85a140c3c0f7b2ff2123acd12fccac12ea3891a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
