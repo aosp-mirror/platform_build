@@ -550,13 +550,31 @@ endif
 .KATI_READONLY := BUILDING_ODM_IMAGE
 
 ###########################################
-# Ensure that only TARGET_RECOVERY_UPDATER_LIBS *or* AB_OTA_UPDATER is set.
+# Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
 TARGET_RECOVERY_UPDATER_LIBS ?=
 AB_OTA_UPDATER ?=
 .KATI_READONLY := TARGET_RECOVERY_UPDATER_LIBS AB_OTA_UPDATER
-ifeq ($(AB_OTA_UPDATER),true)
+
+# Ensure that if PRODUCT_OTA_FORCE_NON_AB_PACKAGE == true, then AB_OTA_UPDATER must be true
+ifeq ($(PRODUCT_OTA_FORCE_NON_AB_PACKAGE),true)
+  ifneq ($(AB_OTA_UPDATER),true)
+    $(error AB_OTA_UPDATER must be set to true when PRODUCT_OTA_FORCE_NON_AB_PACKAGE is true)
+  endif
+endif
+
+# In some configurations, A/B and non-A/B may coexist. Check TARGET_OTA_ALLOW_NON_AB
+# to see if non-A/B is supported.
+TARGET_OTA_ALLOW_NON_AB := false
+ifneq ($(AB_OTA_UPDATER),true)
+  TARGET_OTA_ALLOW_NON_AB := true
+else ifeq ($(PRODUCT_OTA_FORCE_NON_AB_PACKAGE),true)
+  TARGET_OTA_ALLOW_NON_AB := true
+endif
+.KATI_READONLY := TARGET_OTA_ALLOW_NON_AB
+
+ifneq ($(TARGET_OTA_ALLOW_NON_AB),true)
   ifneq ($(strip $(TARGET_RECOVERY_UPDATER_LIBS)),)
-    $(error Do not use TARGET_RECOVERY_UPDATER_LIBS when using AB_OTA_UPDATER)
+    $(error Do not use TARGET_RECOVERY_UPDATER_LIBS when using TARGET_OTA_ALLOW_NON_AB)
   endif
 endif
 
