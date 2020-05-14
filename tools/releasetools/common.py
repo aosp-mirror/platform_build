@@ -677,8 +677,13 @@ def LoadInfoDict(input_file, repacking=False):
   makeint("userdata_size")
   makeint("cache_size")
   makeint("recovery_size")
-  makeint("boot_size")
   makeint("fstab_version")
+
+  boot_images = "boot.img"
+  if "boot_images" in d:
+    boot_images = d["boot_images"]
+  for b in boot_images.split():
+    makeint(b.replace(".img","_size"))
 
   # Load recovery fstab if applicable.
   d["fstab"] = _FindAndLoadRecoveryFstab(d, input_file, read_helper)
@@ -1329,7 +1334,10 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   # AVB: if enabled, calculate and add hash to boot.img or recovery.img.
   if info_dict.get("avb_enable") == "true":
     avbtool = info_dict["avb_avbtool"]
-    part_size = info_dict[partition_name + "_size"]
+    if partition_name == "recovery":
+      part_size = info_dict["recovery_size"]
+    else:
+      part_size = info_dict[image_name.replace(".img","_size")]
     cmd = [avbtool, "add_hash_footer", "--image", img.name,
            "--partition_size", str(part_size), "--partition_name",
            partition_name]
