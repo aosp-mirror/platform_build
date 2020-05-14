@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9ac05872_7d481762",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 21
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-14T00:55:20Z",
+      "side": 1,
+      "message": "The custom images are chained. We just need to build their public keys into vbmeta.img. The vbmeta image build doesn\u0027t really need to access the custom images. So it doesn\u0027t mater which image image to be returned here.",
+      "parentUuid": "cded68ad_f9edf610",
+      "range": {
+        "startLine": 344,
+        "startChar": 0,
+        "endLine": 344,
+        "endChar": 58
+      },
+      "revId": "250d4fc94a3342042d3f1eb0514e8e0a04a9f373",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07279618_693431d9",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 21
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "2c04c92e_48f10016",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 21
+      },
+      "lineNbr": 970,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-14T00:55:20Z",
+      "side": 1,
+      "message": "Thank you! Great catch. I fixed it in new patch and it\u0027s verified.",
+      "parentUuid": "07279618_693431d9",
+      "range": {
+        "startLine": 970,
+        "startChar": 17,
+        "endLine": 970,
+        "endChar": 45
+      },
+      "revId": "250d4fc94a3342042d3f1eb0514e8e0a04a9f373",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "16ae1844_30519073",
         "filename": "tools/releasetools/verity_utils.py",
         "patchSetId": 21
@@ -68,6 +116,30 @@
       "revId": "250d4fc94a3342042d3f1eb0514e8e0a04a9f373",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b37ce123_a3f14155",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 21
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-14T00:55:20Z",
+      "side": 1,
+      "message": "Yes, it\u0027s checked line 498 of this file. But I think put it to be \"None\" here is much better because custom images don\u0027t have avb_salt at all. I have updated it in new patch",
+      "parentUuid": "16ae1844_30519073",
+      "range": {
+        "startLine": 712,
+        "startChar": 23,
+        "endLine": 712,
+        "endChar": 31
+      },
+      "revId": "250d4fc94a3342042d3f1eb0514e8e0a04a9f373",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

@@ -707,6 +707,30 @@
     },
     {
       "key": {
+        "uuid": "4c284c3c_9d249c94",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-14T00:55:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "70e62685_7f9d485e",
+      "range": {
+        "startLine": 719,
+        "startChar": 6,
+        "endLine": 719,
+        "endChar": 23
+      },
+      "revId": "119e3b86f4c4cde677ae5b943742ab87c17af27f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7da7ca0d_55ce2ffd",
         "filename": "tools/releasetools/verity_utils.py",
         "patchSetId": 19
