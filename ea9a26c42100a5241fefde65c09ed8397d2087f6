@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fab2744_9f6799f1",
+        "filename": "tools/auto_gen_test_config.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2020-05-14T07:43:50Z",
+      "side": 1,
+      "message": "nit: Change to \u0027?",
+      "range": {
+        "startLine": 58,
+        "startChar": 21,
+        "endLine": 58,
+        "endChar": 22
+      },
+      "revId": "ea9a26c42100a5241fefde65c09ed8397d2087f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
