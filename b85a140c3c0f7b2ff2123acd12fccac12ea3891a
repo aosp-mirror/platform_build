@@ -60,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "6eac558e_24662953",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-14T15:33:53Z",
+      "side": 1,
+      "message": "base_rules.mk set this for all second arch modules. (FYI: http://cs/android/build/make/core/base_rules.mk?l\u003d896\u0026rcl\u003df15ff83b07fbf59f020319a7e610deaeee51fa14)\nMy understanding is vars like \".CLASS\" / \".PATH\" is always set to some sensible value, so these can be used to check module existence.\n\".FOR_2ND_ARCH\" is set only when module is built for the second arch, so this function is stricter than get-32-bit-modules (checks existence *and* second arch-ness). However the aggregated output of product-installed-files is still the same.\nI\u0027m not sure if there is a way to identify host modules other than filtering the \".INSTALLED\", would like to know if there is one",
+      "parentUuid": "ce9fbd76_b7433783",
+      "range": {
+        "startLine": 498,
+        "startChar": 72,
+        "endLine": 498,
+        "endChar": 84
+      },
+      "revId": "b85a140c3c0f7b2ff2123acd12fccac12ea3891a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d6d6ab83_03f30e0d",
         "filename": "core/main.mk",
         "patchSetId": 5
@@ -71,6 +95,30 @@
       "writtenOn": "2020-05-14T14:05:59Z",
       "side": 1,
       "message": "isn\u0027t it a little strange that we if we have a Module:64 in PRODUCT_PACKAGES that gets installed on a 32-bit product? This just maintains that, but it seems a little funny.",
+      "range": {
+        "startLine": 1074,
+        "startChar": 11,
+        "endLine": 1074,
+        "endChar": 93
+      },
+      "revId": "b85a140c3c0f7b2ff2123acd12fccac12ea3891a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "401b0bb5_da97ec15",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1074,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-14T15:33:53Z",
+      "side": 1,
+      "message": "yeah I just maintain as much behavior as possible while doing my thing. Would not want to accidentally break something and get esoteric error in downstream like you said in the other comment.\n\nI don\u0027t know why this behavior too... cannot dig much information out of the git log. Perhaps it\u0027s just because there\u0027s no hurt building a few extra files and nobody complaints anyway 😕",
+      "parentUuid": "d6d6ab83_03f30e0d",
       "range": {
         "startLine": 1074,
         "startChar": 11,
