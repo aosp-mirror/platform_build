@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cded68ad_f9edf610",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 21
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-14T00:16:44Z",
+      "side": 1,
+      "message": "How do you plan to use the non default images. I guess the VB will fail if we build vbmeta with the default image?",
+      "range": {
+        "startLine": 344,
+        "startChar": 0,
+        "endLine": 344,
+        "endChar": 58
+      },
+      "revId": "250d4fc94a3342042d3f1eb0514e8e0a04a9f373",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07279618_693431d9",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 21
+      },
+      "lineNbr": 970,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-14T00:16:44Z",
+      "side": 1,
+      "message": "Will it cause a key error since custom partition isn\u0027t part of AVB_FOOTER_ARGS_BY_PARTITION?",
+      "range": {
+        "startLine": 970,
+        "startChar": 17,
+        "endLine": 970,
+        "endChar": 45
+      },
+      "revId": "250d4fc94a3342042d3f1eb0514e8e0a04a9f373",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "16ae1844_30519073",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 21
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-14T00:16:44Z",
+      "side": 1,
+      "message": "have you checked the \u0027avb_salt\u0027 exist? For other partitions, the salt is calculated based on the partition fingerprint\nhttps://source.corp.google.com/aosp-master/build/make/tools/releasetools/common.py;l\u003d701\n\nand later, it\u0027s copied to the partition specific build prop:\n    copy_prop(\"avb_system_salt\", \"avb_salt\")\nhttps://source.corp.google.com/aosp-master/build/make/tools/releasetools/build_image.py;l\u003d555",
+      "range": {
+        "startLine": 712,
+        "startChar": 23,
+        "endLine": 712,
+        "endChar": 31
+      },
+      "revId": "250d4fc94a3342042d3f1eb0514e8e0a04a9f373",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
