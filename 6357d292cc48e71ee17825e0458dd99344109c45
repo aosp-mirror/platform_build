@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af4d0677_14916e06",
+        "filename": "core/soong_android_app_set.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-05-14T22:36:01Z",
+      "side": 1,
+      "message": "You need to add this to make package overriding work\nPACKAGES.$(LOCAL_MODULE).OVERRIDES :\u003d $(strip $(LOCAL_OVERRIDES_PACKAGES))",
+      "revId": "6357d292cc48e71ee17825e0458dd99344109c45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
