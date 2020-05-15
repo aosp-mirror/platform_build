@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ded27b43_bb2bd5aa",
+        "filename": "core/instrumentation_test_config_template.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1330217
+      },
+      "writtenOn": "2020-05-15T04:56:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bfe1dc26_08e37469",
+      "revId": "ea9a26c42100a5241fefde65c09ed8397d2087f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1fab2744_9f6799f1",
         "filename": "tools/auto_gen_test_config.py",
         "patchSetId": 6
@@ -39,6 +57,30 @@
       "revId": "ea9a26c42100a5241fefde65c09ed8397d2087f6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc90a062_c1096dc6",
+        "filename": "tools/auto_gen_test_config.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1330217
+      },
+      "writtenOn": "2020-05-15T04:56:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1fab2744_9f6799f1",
+      "range": {
+        "startLine": 58,
+        "startChar": 21,
+        "endLine": 58,
+        "endChar": 22
+      },
+      "revId": "ea9a26c42100a5241fefde65c09ed8397d2087f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
