@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "bfe1dc26_08e37469",
+        "filename": "core/instrumentation_test_config_template.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-05-15T02:50:48Z",
+      "side": 1,
+      "message": "Why not {EXTRA_CONFIGS} like all the other config files?",
+      "revId": "ea9a26c42100a5241fefde65c09ed8397d2087f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1fab2744_9f6799f1",
         "filename": "tools/auto_gen_test_config.py",
         "patchSetId": 6
