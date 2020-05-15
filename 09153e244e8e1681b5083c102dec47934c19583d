@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d5642fb6_f9772409",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-05-15T02:05:37Z",
+      "side": 1,
+      "message": "Will be done in a follow-up CL, which I uploaded yesterday.",
+      "parentUuid": "ca87354a_9429e4f0",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 59
+      },
+      "revId": "09153e244e8e1681b5083c102dec47934c19583d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1991f6e2_7ac6ff30",
         "filename": "CleanSpec.mk",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2020-05-14T14:24:30Z",
       "side": 1,
       "message": "Don\u0027t actually need CleanSpecs anymore, just FYI",
+      "range": {
+        "startLine": 725,
+        "startChar": 65,
+        "endLine": 727,
+        "endChar": 0
+      },
+      "revId": "09153e244e8e1681b5083c102dec47934c19583d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "74326b55_f196dee7",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 727,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-05-15T02:05:37Z",
+      "side": 1,
+      "message": "Ah, I didn\u0027t know that. Thanks! But I don\u0027t want to update the change because it will get +2 away :)",
+      "parentUuid": "1991f6e2_7ac6ff30",
       "range": {
         "startLine": 725,
         "startChar": 65,
@@ -68,6 +116,30 @@
       "revId": "09153e244e8e1681b5083c102dec47934c19583d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd62fa7a_76c7f035",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-05-15T02:05:37Z",
+      "side": 1,
+      "message": "This could be in-lined there, but I am just following the established styles here.",
+      "parentUuid": "c5bf6735_a02b7b42",
+      "range": {
+        "startLine": 283,
+        "startChar": 38,
+        "endLine": 288,
+        "endChar": 34
+      },
+      "revId": "09153e244e8e1681b5083c102dec47934c19583d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
