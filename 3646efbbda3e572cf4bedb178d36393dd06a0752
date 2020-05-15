@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f327e4fa_7262182d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 753,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-05-15T23:08:54Z",
+      "side": 1,
+      "message": "this does not get called by module-load-list-copy-paths",
+      "parentUuid": "28982a01_4a6d9080",
+      "range": {
+        "startLine": 753,
+        "startChar": 1,
+        "endLine": 753,
+        "endChar": 31
+      },
+      "revId": "3646efbbda3e572cf4bedb178d36393dd06a0752",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a7dbebd_c70f6b66",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -124,6 +148,24 @@
       "side": 1,
       "message": "Resulted in a complaint that files were missing :-( I will continue to look into it to see if I can coerce the macro to build twice.",
       "parentUuid": "7d1cecd9_1305d867",
+      "revId": "3646efbbda3e572cf4bedb178d36393dd06a0752",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5cc334eb_62785645",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-05-15T23:08:54Z",
+      "side": 1,
+      "message": "Can you double check that you are calling module-load-list-copy-paths? I don\u0027t see offhand why it would cause a problem.",
+      "parentUuid": "61af990e_384e868b",
       "revId": "3646efbbda3e572cf4bedb178d36393dd06a0752",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
