@@ -22,6 +22,30 @@
       "revId": "2448eb598999b7120bd3fd6a593c2f7f28f2faff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "76bfb543_c97734dd",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 27
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-15T02:33:25Z",
+      "side": 1,
+      "message": "No, there is no fignerprint in oem image. It\u0027s not normal android image. I have updated it.",
+      "parentUuid": "f5d20f33_d44eff69",
+      "range": {
+        "startLine": 711,
+        "startChar": 37,
+        "endLine": 711,
+        "endChar": 50
+      },
+      "revId": "2448eb598999b7120bd3fd6a593c2f7f28f2faff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
