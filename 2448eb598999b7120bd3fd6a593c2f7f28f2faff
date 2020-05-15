@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5d20f33_d44eff69",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 27
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-15T02:13:26Z",
+      "side": 1,
+      "message": "nit: sorry for not being clear, can we add a more completed description.\n\ne.g.,\n # Salt is None because custom images has no fingerprint property be used as the salt\n None, \n\n\nBtw, if you build a custom image, did you see the fingerprint prop of it?\ne.g., ro.test.build.fingerprint if the custom partition is \u0027test\u0027. (maybe we can consider added it later).\n\n\nThe following are fingerprints for other partitions (adb shell getprop | grep finger)\n\n[ro.bootimage.build.fingerprint]: [google/flame/flame:11/RP1A.200512.002/6487717:userdebug/dev-keys]\n[ro.odm.build.fingerprint]: [google/flame/flame:11/RP1A.200512.002/6487717:userdebug/dev-keys]\n[ro.system.build.fingerprint]: [Android/aosp_arm64/generic_arm64:11/RP1A.200512.002/6487717:userdebug/test-keys]\n[ro.system_ext.build.fingerprint]: [Android/aosp_arm64/generic_arm64:11/RP1A.200512.002/6487717:userdebug/test-keys]\n[ro.vendor.build.fingerprint]: [google/flame/flame:11/RP1A.200512.002/6487717:userdebug/dev-keys]",
+      "range": {
+        "startLine": 711,
+        "startChar": 37,
+        "endLine": 711,
+        "endChar": 50
+      },
+      "revId": "2448eb598999b7120bd3fd6a593c2f7f28f2faff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
