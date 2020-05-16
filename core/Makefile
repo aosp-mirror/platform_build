@@ -171,7 +171,7 @@ endif
 # -----------------------------------------------------------------
 # FINAL_VENDOR_DEFAULT_PROPERTIES will be installed in vendor/build.prop if
 # property_overrides_split_enabled is true. Otherwise it will be installed in
-# /default.prop
+# /system/build.prop
 ifdef BOARD_VNDK_VERSION
   ifeq ($(BOARD_VNDK_VERSION),current)
     FINAL_VENDOR_DEFAULT_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
@@ -255,39 +255,19 @@ define generate-common-build-props-with-product-vars-set
 	bash $(BUILDINFO_COMMON_SH) "$(1)" >> $(2)
 endef
 
-# Legacy (non-Treble) path
-ifndef property_overrides_split_enabled
-INSTALLED_LEGACY_DEFAULT_PROP_TARGET := $(TARGET_ROOT_OUT)/default.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_LEGACY_DEFAULT_PROP_TARGET)
-
-$(INSTALLED_LEGACY_DEFAULT_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS)
-	@echo Target buildinfo: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) echo "#" > $@; \
-	        echo "# ADDITIONAL_DEFAULT_PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach line,$(call uniq-pairs-by-first-component, \
-	            $(call collapse-pairs, $(ADDITIONAL_DEFAULT_PROPERTIES)) \
-	            $(call collapse-pairs, $(PRODUCT_SYSTEM_DEFAULT_PROPERTIES)) \
-	            $(call collapse-pairs, $(FINAL_VENDOR_DEFAULT_PROPERTIES)),=), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@
-endif
-
 # -----------------------------------------------------------------
 # build.prop
 intermediate_system_build_prop := $(call intermediates-dir-for,ETC,system_build_prop)/build.prop
 INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_BUILD_PROP_TARGET)
+
 # TODO(b/117892318) merge DEFAULT into BUILD
-ifdef property_overrides_split_enabled
 FINAL_DEFAULT_PROPERTIES := \
     $(call collapse-pairs, $(ADDITIONAL_DEFAULT_PROPERTIES)) \
     $(call collapse-pairs, $(PRODUCT_SYSTEM_DEFAULT_PROPERTIES))
 FINAL_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_DEFAULT_PROPERTIES),=)
-endif
+
 FINAL_BUILD_PROPERTIES := \
     $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))
 FINAL_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
@@ -401,8 +381,10 @@ $(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTE
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) rm -f $@ && touch $@
-ifdef property_overrides_split_enabled
 	$(hide) $(foreach line,$(FINAL_DEFAULT_PROPERTIES), \
+	    echo "$(line)" >> $@;)
+ifndef property_overrides_split_enabled
+	$(hide) $(foreach line,$(FINAL_VENDOR_DEFAULT_PROPERTIES), \
 	    echo "$(line)" >> $@;)
 endif
 ifneq ($(PRODUCT_OEM_PROPERTIES),)
@@ -1284,7 +1266,7 @@ $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_VENDOR_RAMDISK_TAR
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOTIMAGE_KEY_PATH)
 	$(call pretty,"Target vendor_boot image: $@")
-	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_RAMDISK_TARGET) --vendor_boot $@
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_RAMDISK_TARGET) --vendor_boot $@
 	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
 	$(AVBTOOL) add_hash_footer \
            --image $@ \
@@ -1294,7 +1276,7 @@ $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOTIMAGE_KE
 else
 $(INSTALLED_VENDOR_BOOTIMAGE_TARGET):
 	$(call pretty,"Target vendor_boot image: $@")
-	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_RAMDISK_TARGET) --vendor_boot $@
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_RAMDISK_TARGET) --vendor_boot $@
 	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
 endif
 endif # BUILDING_VENDOR_BOOT_IMAGE
@@ -2093,7 +2075,6 @@ $(foreach prop,$(1), \
 endef
 
 $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
-	    $(INSTALLED_LEGACY_DEFAULT_PROP_TARGET) \
 	    $(intermediate_system_build_prop) \
 	    $(INSTALLED_VENDOR_BUILD_PROP_TARGET) \
 	    $(INSTALLED_ODM_BUILD_PROP_TARGET) \
@@ -2102,9 +2083,6 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	@echo "Target recovery buildinfo: $@"
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $@
-ifneq (,$(INSTALLED_LEGACY_DEFAULT_PROP_TARGET))
-	$(hide) cat $(INSTALLED_LEGACY_DEFAULT_PROP_TARGET) > $@
-endif
 	$(hide) cat $(intermediate_system_build_prop) >> $@
 	$(hide) cat $(INSTALLED_VENDOR_BUILD_PROP_TARGET) >> $@
 	$(hide) cat $(INSTALLED_ODM_BUILD_PROP_TARGET) >> $@
@@ -2492,7 +2470,7 @@ endif
 # Depends on vendor_boot.img and vendor-ramdisk-debug.cpio.gz to build the new vendor_boot-debug.img
 $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET)
 	$(call pretty,"Target vendor_boot debug image: $@")
-	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) --vendor_boot $@
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) --vendor_boot $@
 	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
 	$(if $(BOARD_AVB_VENDOR_BOOT_KEY_PATH),$(call test-key-sign-vendor-bootimage,$@))
 
