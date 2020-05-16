@@ -124,17 +124,15 @@ ifneq ($(strip $(LOCAL_JNI_SHARED_LIBRARIES)),)
     my_allowed_types := $(my_allowed_ndk_types) native:platform native:product native:vendor native:vndk native:vndk_private native:platform_vndk
   endif
 
-  ifneq (,$(LOCAL_SDK_VERSION))
-    ifeq ($(SOONG_ANDROID_MK),$(LOCAL_MODULE_MAKEFILE))
-      # SOONG_SDK_VARIANT_MODULES isn't complete yet while parsing Soong modules, and Soong has
-      # already ensured that apps link against the correct SDK variants, rewrite all JNI libraries
-      # to the SDK variant.
-      my_link_deps := $(addprefix SHARED_LIBRARIES:,$(addsuffix .sdk,$(LOCAL_JNI_SHARED_LIBRARIES)))
-    else
-      my_link_deps := $(addprefix SHARED_LIBRARIES:,$(call use_soong_sdk_libraries,$(LOCAL_JNI_SHARED_LIBRARIES)))
-    endif
+  ifeq ($(SOONG_ANDROID_MK),$(LOCAL_MODULE_MAKEFILE))
+    # SOONG_SDK_VARIANT_MODULES isn't complete yet while parsing Soong modules, and Soong has
+    # already ensured that apps link against the correct SDK variants, don't check them.
   else
-    my_link_deps := $(addprefix SHARED_LIBRARIES:,$(LOCAL_JNI_SHARED_LIBRARIES))
+    ifneq (,$(LOCAL_SDK_VERSION))
+      my_link_deps := $(addprefix SHARED_LIBRARIES:,$(call use_soong_sdk_libraries,$(LOCAL_JNI_SHARED_LIBRARIES)))
+    else
+      my_link_deps := $(addprefix SHARED_LIBRARIES:,$(LOCAL_JNI_SHARED_LIBRARIES))
+    endif
   endif
 
   my_common :=
