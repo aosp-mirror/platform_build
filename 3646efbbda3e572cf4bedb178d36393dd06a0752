@@ -49,6 +49,29 @@
     },
     {
       "key": {
+        "uuid": "9cf50aac_ee51f74e",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 789,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-17T16:57:15Z",
+      "side": 1,
+      "message": "This is a problem, $(2) (or rather any conventional $(*_LOAD) content) does not exists as module load list comes from modules_load from the kernel which is relative, and not from the fully qualified path names for the modules. Not sure if I should remove this dependency, or if we add facilities to translate $(*_LOAD) into full qualified path names (either original source from the caller, or in the staging directory which we can do here). eg:\n\n$(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): $(patsubst %,$(1)/%,$(2))",
+      "range": {
+        "startLine": 789,
+        "startChar": 0,
+        "endLine": 789,
+        "endChar": 40
+      },
+      "revId": "3646efbbda3e572cf4bedb178d36393dd06a0752",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5a7dbebd_c70f6b66",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -93,6 +116,30 @@
       "revId": "3646efbbda3e572cf4bedb178d36393dd06a0752",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fde93792_912860c0",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 828,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-17T16:57:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cf5aafcb_184b4f80",
+      "range": {
+        "startLine": 828,
+        "startChar": 12,
+        "endLine": 828,
+        "endChar": 46
+      },
+      "revId": "3646efbbda3e572cf4bedb178d36393dd06a0752",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -169,6 +216,24 @@
       "revId": "3646efbbda3e572cf4bedb178d36393dd06a0752",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44f92aeb_9ebd0cd4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-17T16:57:15Z",
+      "side": 1,
+      "message": "The problem was \u0027ramdisk_modules\u0027 in your example, it needed to be \u0027depmod_vendor_ramdisk\u0027, and a need to provide a fully qualified path to the source modules, which by definition BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD isn\u0027t ...",
+      "parentUuid": "5cc334eb_62785645",
+      "revId": "3646efbbda3e572cf4bedb178d36393dd06a0752",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
