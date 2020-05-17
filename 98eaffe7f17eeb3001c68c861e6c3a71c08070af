@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d461f2ad_6783acd9",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 815,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-17T17:01:53Z",
+      "side": 1,
+      "message": "This is broken because the load order in BOARD_VENDOR_RAMDDISK_RECOVERY_KERNEL_MODULES_LOAD is not preserved :-(\n\nWe need to fix the problem with module-load-list-copy-paths, or make our own version ...",
+      "range": {
+        "startLine": 815,
+        "startChar": 157,
+        "endLine": 815,
+        "endChar": 288
+      },
+      "revId": "98eaffe7f17eeb3001c68c861e6c3a71c08070af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
