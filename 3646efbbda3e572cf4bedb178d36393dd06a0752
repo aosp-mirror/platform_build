@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "d7d543cb_fe6d7048",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 789,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-17T16:59:32Z",
+      "side": 1,
+      "message": "I have not taken any action to fix this because it is outside the scope of my change, except that I had to react and provide fully qualified source files as argument $(2) to solve my immediate problem. What concerns me is the other user of this macro might not be so lucky, and I am not yet prepared to test the builds that would otherwise take advantage of it.",
+      "parentUuid": "9cf50aac_ee51f74e",
+      "range": {
+        "startLine": 789,
+        "startChar": 0,
+        "endLine": 789,
+        "endChar": 40
+      },
+      "revId": "3646efbbda3e572cf4bedb178d36393dd06a0752",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a7dbebd_c70f6b66",
         "filename": "core/Makefile",
         "patchSetId": 1
