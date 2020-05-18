@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "92b9d488_4bb422ca",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 29
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-18T02:31:57Z",
+      "side": 1,
+      "message": "Sorry for my previous typo: should be \u0027have\u0027, and add a \u0027to\u0027 later.\n\n# Salt is None because custom images have no fingerprint property to be used as the salt.",
+      "range": {
+        "startLine": 711,
+        "startChar": 45,
+        "endLine": 711,
+        "endChar": 48
+      },
+      "revId": "b11fa22e8f6e8a58e00aa9dba629b54328559b30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
