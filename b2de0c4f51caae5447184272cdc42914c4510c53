@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "32721be5_dc6207d4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 30
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-18T12:23:02Z",
+      "side": 1,
+      "message": "why are they called custom images, rather than something like \"unsigned prebuilt images\", if that\u0027s what they are? seems clearer, but I might be missing something",
+      "range": {
+        "startLine": 7,
+        "startChar": 24,
+        "endLine": 7,
+        "endChar": 37
+      },
+      "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
