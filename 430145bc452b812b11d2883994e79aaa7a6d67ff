@@ -22,6 +22,23 @@
       "revId": "430145bc452b812b11d2883994e79aaa7a6d67ff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48867969_b95702ea",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2090,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-05-18T18:24:40Z",
+      "side": 1,
+      "message": "does it belong to this CL?",
+      "revId": "430145bc452b812b11d2883994e79aaa7a6d67ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
