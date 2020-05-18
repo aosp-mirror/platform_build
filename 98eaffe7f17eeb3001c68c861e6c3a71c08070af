@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a3af159b_a141c99c",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 756,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-18T02:21:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7cdf16b_c6445386",
+      "range": {
+        "startLine": 756,
+        "startChar": 0,
+        "endLine": 756,
+        "endChar": 24
+      },
+      "revId": "98eaffe7f17eeb3001c68c861e6c3a71c08070af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d7e0ec20_2429e7ff",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "af8c55e3_b9f341d1",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 765,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-18T02:21:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d7e0ec20_2429e7ff",
+      "range": {
+        "startLine": 765,
+        "startChar": 0,
+        "endLine": 765,
+        "endChar": 24
+      },
+      "revId": "98eaffe7f17eeb3001c68c861e6c3a71c08070af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2e90d502_ac61a516",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -68,6 +116,30 @@
       "revId": "98eaffe7f17eeb3001c68c861e6c3a71c08070af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22415dd7_510d289c",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 771,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-18T02:21:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e90d502_ac61a516",
+      "range": {
+        "startLine": 771,
+        "startChar": 36,
+        "endLine": 771,
+        "endChar": 40
+      },
+      "revId": "98eaffe7f17eeb3001c68c861e6c3a71c08070af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -114,6 +186,30 @@
       "revId": "98eaffe7f17eeb3001c68c861e6c3a71c08070af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2184d16_7c07f2ff",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 815,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-18T02:21:43Z",
+      "side": 1,
+      "message": "The rm -rf I misspoke, we need a separate directory, the two copies interfere with each other. Added a modules list argument to modules-load-list-copy-paths to solve the ordering issue.",
+      "parentUuid": "d461f2ad_6783acd9",
+      "range": {
+        "startLine": 815,
+        "startChar": 157,
+        "endLine": 815,
+        "endChar": 288
+      },
+      "revId": "98eaffe7f17eeb3001c68c861e6c3a71c08070af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
