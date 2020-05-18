@@ -22,6 +22,30 @@
       "revId": "b11fa22e8f6e8a58e00aa9dba629b54328559b30",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7bc5d54_8bf55bd8",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 29
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-18T02:55:04Z",
+      "side": 1,
+      "message": "Sorry, I didn\u0027t read it too. I will be careful next time. \n\nDone",
+      "parentUuid": "92b9d488_4bb422ca",
+      "range": {
+        "startLine": 711,
+        "startChar": 45,
+        "endLine": 711,
+        "endChar": 48
+      },
+      "revId": "b11fa22e8f6e8a58e00aa9dba629b54328559b30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
