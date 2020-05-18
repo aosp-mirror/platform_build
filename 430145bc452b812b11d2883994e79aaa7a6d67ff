@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "db352766_f7eaa407",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-05-18T22:17:46Z",
+      "side": 1,
+      "message": "Alright, thank you for the clarification!",
+      "parentUuid": "a319d2a0_dc62f627",
+      "range": {
+        "startLine": 943,
+        "startChar": 6,
+        "endLine": 943,
+        "endChar": 68
+      },
+      "revId": "430145bc452b812b11d2883994e79aaa7a6d67ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3d2f6f50_96a12c7d",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 4
