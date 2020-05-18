@@ -32,7 +32,7 @@ PRODUCT_CFI_INCLUDE_PATHS :=  \
     system/bt \
     system/chre \
     system/core/libnetutils \
-    system/core/libziparchive \
+    system/libziparchive \
     system/gatekeeper \
     system/keymaster \
     system/nfc \
