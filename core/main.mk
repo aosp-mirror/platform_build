@@ -279,6 +279,40 @@ ADDITIONAL_VENDOR_PROPERTIES += \
     ro.minui.pixel_format=$(TARGET_RECOVERY_PIXEL_FORMAT)
 endif
 
+ifdef PRODUCT_USE_DYNAMIC_PARTITIONS
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.boot.dynamic_partitions=$(PRODUCT_USE_DYNAMIC_PARTITIONS)
+endif
+
+ifdef PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.boot.dynamic_partitions_retrofit=$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)
+endif
+
+ifdef PRODUCT_SHIPPING_API_LEVEL
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
+endif
+
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.vendor.build.security_patch=$(VENDOR_SECURITY_PATCH) \
+    ro.vendor.product.cpu.abilist=$(TARGET_CPU_ABI_LIST) \
+    ro.vendor.product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT) \
+    ro.vendor.product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT) \
+    ro.product.board=$(TARGET_BOOTLOADER_BOARD_NAME) \
+    ro.board.platform=$(TARGET_BOARD_PLATFORM) \
+    ro.hwui.use_vulkan=$(TARGET_USES_VULKAN)
+
+ifdef TARGET_SCREEN_DENSITY
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.sf.lcd_density=$(TARGET_SCREEN_DENSITY)
+endif
+
+ifdef AB_OTA_UPDATER
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.build.ab_update=$(AB_OTA_UPDATER)
+endif
+
 # Set ro.product.vndk.version to know the VNDK version required by product
 # modules. It uses the version in PRODUCT_PRODUCT_VNDK_VERSION. If the value
 # is "current", use PLATFORM_VNDK_VERSION.
