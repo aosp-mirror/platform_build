@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3d2f6f50_96a12c7d",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2090,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-18T18:24:29Z",
+      "side": 1,
+      "message": "will update the variable name",
+      "range": {
+        "startLine": 2090,
+        "startChar": 17,
+        "endLine": 2090,
+        "endChar": 33
+      },
+      "revId": "430145bc452b812b11d2883994e79aaa7a6d67ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
