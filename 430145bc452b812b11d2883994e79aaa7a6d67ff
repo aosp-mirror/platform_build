@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "e4d7eb67_acfa6bff",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-05-18T18:38:45Z",
+      "side": 1,
+      "message": "What reads this metadata? And is it already capable of supporting | separators?",
+      "range": {
+        "startLine": 943,
+        "startChar": 6,
+        "endLine": 943,
+        "endChar": 68
+      },
+      "revId": "430145bc452b812b11d2883994e79aaa7a6d67ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3d2f6f50_96a12c7d",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 4
