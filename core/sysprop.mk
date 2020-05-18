@@ -23,62 +23,6 @@ ifeq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
   property_overrides_split_enabled := true
 endif
 
-# -----------------------------------------------------------------
-# FINAL_VENDOR_DEFAULT_PROPERTIES will be installed in vendor/build.prop if
-# property_overrides_split_enabled is true. Otherwise it will be installed in
-# /system/build.prop
-ifdef BOARD_VNDK_VERSION
-  ifeq ($(BOARD_VNDK_VERSION),current)
-    FINAL_VENDOR_DEFAULT_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
-  else
-    FINAL_VENDOR_DEFAULT_PROPERTIES := ro.vndk.version=$(BOARD_VNDK_VERSION)
-  endif
-  ifdef BOARD_VNDK_RUNTIME_DISABLE
-    FINAL_VENDOR_DEFAULT_PROPERTIES += ro.vndk.lite=true
-  endif
-else
-  FINAL_VENDOR_DEFAULT_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
-  FINAL_VENDOR_DEFAULT_PROPERTIES += ro.vndk.lite=true
-endif
-FINAL_VENDOR_DEFAULT_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
-
-# Add cpu properties for bionic and ART.
-FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.arch=$(TARGET_ARCH)
-FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.cpu_variant=$(TARGET_CPU_VARIANT_RUNTIME)
-FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.2nd_arch=$(TARGET_2ND_ARCH)
-FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.2nd_cpu_variant=$(TARGET_2ND_CPU_VARIANT_RUNTIME)
-
-FINAL_VENDOR_DEFAULT_PROPERTIES += persist.sys.dalvik.vm.lib.2=libart.so
-FINAL_VENDOR_DEFAULT_PROPERTIES += dalvik.vm.isa.$(TARGET_ARCH).variant=$(DEX2OAT_TARGET_CPU_VARIANT_RUNTIME)
-ifneq ($(DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES),)
-  FINAL_VENDOR_DEFAULT_PROPERTIES += dalvik.vm.isa.$(TARGET_ARCH).features=$(DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES)
-endif
-
-ifdef TARGET_2ND_ARCH
-  FINAL_VENDOR_DEFAULT_PROPERTIES += dalvik.vm.isa.$(TARGET_2ND_ARCH).variant=$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT_RUNTIME)
-  ifneq ($($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES),)
-    FINAL_VENDOR_DEFAULT_PROPERTIES += dalvik.vm.isa.$(TARGET_2ND_ARCH).features=$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES)
-  endif
-endif
-
-# Although these variables are prefixed with TARGET_RECOVERY_, they are also needed under charger
-# mode (via libminui).
-ifdef TARGET_RECOVERY_DEFAULT_ROTATION
-FINAL_VENDOR_DEFAULT_PROPERTIES += \
-    ro.minui.default_rotation=$(TARGET_RECOVERY_DEFAULT_ROTATION)
-endif
-ifdef TARGET_RECOVERY_OVERSCAN_PERCENT
-FINAL_VENDOR_DEFAULT_PROPERTIES += \
-    ro.minui.overscan_percent=$(TARGET_RECOVERY_OVERSCAN_PERCENT)
-endif
-ifdef TARGET_RECOVERY_PIXEL_FORMAT
-FINAL_VENDOR_DEFAULT_PROPERTIES += \
-    ro.minui.pixel_format=$(TARGET_RECOVERY_PIXEL_FORMAT)
-endif
-FINAL_VENDOR_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_VENDOR_DEFAULT_PROPERTIES),=)
-
 BUILDINFO_SH := build/make/tools/buildinfo.sh
 BUILDINFO_COMMON_SH := build/make/tools/buildinfo_common.sh
 POST_PROCESS_PROPS :=$= build/make/tools/post_process_props.py
@@ -123,7 +67,14 @@ FINAL_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_DEFAULT_PROPERTIES),=)
 
 FINAL_BUILD_PROPERTIES := \
-    $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))
+    $(call collapse-pairs, $(ADDITIONAL_SYSTEM_PROPERTIES))
+
+# For non-Treble devices, consider vendor properties as system properties
+ifndef property_overrides_split_enabled
+FINAL_BUILD_PROPERTIES += \
+    $(call collapse-pairs, $(ADDITIONAL_VENDOR_PROPERTIES))
+endif
+
 FINAL_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_BUILD_PROPERTIES),=)
 
@@ -237,10 +188,6 @@ $(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTE
 	$(hide) rm -f $@ && touch $@
 	$(hide) $(foreach line,$(FINAL_DEFAULT_PROPERTIES), \
 	    echo "$(line)" >> $@;)
-ifndef property_overrides_split_enabled
-	$(hide) $(foreach line,$(FINAL_VENDOR_DEFAULT_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-endif
 ifneq ($(PRODUCT_OEM_PROPERTIES),)
 	$(hide) echo "#" >> $@; \
 	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
@@ -298,7 +245,7 @@ endif
 	$(if $(FINAL_BUILD_PROPERTIES), \
 	    $(hide) echo >> $@; \
 	            echo "#" >> $@; \
-	            echo "# ADDITIONAL_BUILD_PROPERTIES" >> $@; \
+	            echo "# ADDITIONAL_SYSTEM_PROPERTIES" >> $@; \
 	            echo "#" >> $@; )
 	$(hide) $(foreach line,$(FINAL_BUILD_PROPERTIES), \
 	    echo "$(line)" >> $@;)
@@ -325,7 +272,7 @@ endif
 
 ifdef property_overrides_split_enabled
 FINAL_VENDOR_BUILD_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES))
+    $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES) $(ADDITIONAL_VENDOR_PROPERTIES))
 FINAL_VENDOR_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_VENDOR_BUILD_PROPERTIES),=)
 endif  # property_overrides_split_enabled
@@ -334,10 +281,6 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PRO
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) rm -f $@ && touch $@
-ifdef property_overrides_split_enabled
-	$(hide) $(foreach line,$(FINAL_VENDOR_DEFAULT_PROPERTIES), \
-	  echo "$(line)" >> $@;)
-endif
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 	$(hide) echo ro.boot.dynamic_partitions=true >> $@
 endif
@@ -437,7 +380,7 @@ odm_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/odm.prop)
 endif
 
 FINAL_ODM_BUILD_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_ODM_PROPERTIES))
+    $(call collapse-pairs, $(PRODUCT_ODM_PROPERTIES) $(ADDITIONAL_ODM_PROPERTIES))
 FINAL_ODM_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_ODM_BUILD_PROPERTIES),=)
 
