@@ -23,19 +23,26 @@ ifdef PRODUCT_BOOT_JARS
 intermediates := $(call intermediates-dir-for, PACKAGING, boot-jars-package-check,,COMMON)
 stamp := $(intermediates)/stamp
 
-# The actual names for the updatable jars are <jar_name>.<apex_name> e.g., updatable-media.com.android.media
-updatable_boot_jars := $(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS),\
-  $(eval apex := $(call word-colon,1,$(pair)))\
-  $(eval jar := $(call word-colon,2,$(pair)))\
-  $(jar).$(apex)\
-)
-#TODO(jiyong) merge art_boot_jars into updatable_boot_jars
-art_boot_jars := $(addsuffix .com.android.art.release,$(filter $(ART_APEX_JARS),$(PRODUCT_BOOT_JARS)))
+# Convert the colon-separated components <apex>:<jar> to <jar>.<apex> names
+# (e.g. com.android.media:updatable-media -> updatable-media.com.android.media).
+# Special cases:
+#   - for the "platform" or "system_ext" apex drop the .<apex> suffix
+#   - for the ART apex select release variant
+boot_jars := $(foreach pair,$(PRODUCT_BOOT_JARS) $(PRODUCT_UPDATABLE_BOOT_JARS), \
+  $(eval apex := $(call word-colon,1,$(pair))) \
+  $(eval jar := $(call word-colon,2,$(pair))) \
+  $(eval q := :) \
+  $(eval sfx := $(q).$(apex)$(q)) \
+  $(eval sfx := $(subst $(q).platform$(q),$(q)$(q),$(sfx))) \
+  $(eval sfx := $(subst $(q).system_ext$(q),$(q)$(q),$(sfx))) \
+  $(eval sfx := $(subst $(q).com.android.art$(q),$(q).com.android.art.release$(q),$(sfx))) \
+  $(eval sfx := $(patsubst $(q)%$(q),%,$(sfx))) \
+  $(jar)$(sfx))
 
-platform_boot_jars := $(filter-out $(ART_APEX_JARS),$(PRODUCT_BOOT_JARS))
-
-built_boot_jars := $(foreach j, $(updatable_boot_jars) $(art_boot_jars) $(platform_boot_jars), \
+# Convert boot jar names to build paths.
+built_boot_jars := $(foreach j, $(boot_jars), \
   $(call intermediates-dir-for, JAVA_LIBRARIES, $(j),,COMMON)/classes.jar)
+
 script := build/make/core/tasks/check_boot_jars/check_boot_jars.py
 whitelist_file := build/make/core/tasks/check_boot_jars/package_whitelist.txt
 

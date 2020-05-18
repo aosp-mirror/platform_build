@@ -26,7 +26,8 @@ from ota_from_target_files import (
     GetPackageMetadata, GetTargetFilesZipForSecondaryImages,
     GetTargetFilesZipWithoutPostinstallConfig, NonAbOtaPropertyFiles,
     Payload, PayloadSigner, POSTINSTALL_CONFIG, PropertyFiles,
-    StreamingPropertyFiles, WriteFingerprintAssertion)
+    StreamingPropertyFiles, WriteFingerprintAssertion,
+    CalculateRuntimeFingerprints)
 
 
 def construct_target_files(secondary=False):
@@ -108,55 +109,58 @@ class LoadOemDictsTest(test_utils.ReleaseToolsTestCase):
 
 
 class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
-
   TEST_TARGET_INFO_DICT = {
-      'build.prop' : {
-          'ro.product.device' : 'product-device',
-          'ro.build.fingerprint' : 'build-fingerprint-target',
-          'ro.build.version.incremental' : 'build-version-incremental-target',
-          'ro.build.version.sdk' : '27',
-          'ro.build.version.security_patch' : '2017-12-01',
-          'ro.build.date.utc' : '1500000000',
-      },
+      'build.prop': common.PartitionBuildProps.FromDictionary(
+          'system', {
+              'ro.product.device': 'product-device',
+              'ro.build.fingerprint': 'build-fingerprint-target',
+              'ro.build.version.incremental': 'build-version-incremental-target',
+              'ro.build.version.sdk': '27',
+              'ro.build.version.security_patch': '2017-12-01',
+              'ro.build.date.utc': '1500000000'}
+      )
   }
 
   TEST_SOURCE_INFO_DICT = {
-      'build.prop' : {
-          'ro.product.device' : 'product-device',
-          'ro.build.fingerprint' : 'build-fingerprint-source',
-          'ro.build.version.incremental' : 'build-version-incremental-source',
-          'ro.build.version.sdk' : '25',
-          'ro.build.version.security_patch' : '2016-12-01',
-          'ro.build.date.utc' : '1400000000',
-      },
+      'build.prop': common.PartitionBuildProps.FromDictionary(
+          'system', {
+              'ro.product.device': 'product-device',
+              'ro.build.fingerprint': 'build-fingerprint-source',
+              'ro.build.version.incremental': 'build-version-incremental-source',
+              'ro.build.version.sdk': '25',
+              'ro.build.version.security_patch': '2016-12-01',
+              'ro.build.date.utc': '1400000000'}
+      )
   }
 
   TEST_INFO_DICT_USES_OEM_PROPS = {
-      'build.prop' : {
-          'ro.product.name' : 'product-name',
-          'ro.build.thumbprint' : 'build-thumbprint',
-          'ro.build.bar' : 'build-bar',
-      },
-      'vendor.build.prop' : {
-          'ro.vendor.build.fingerprint' : 'vendor-build-fingerprint',
-      },
-      'property1' : 'value1',
-      'property2' : 4096,
-      'oem_fingerprint_properties' : 'ro.product.device ro.product.brand',
+      'build.prop': common.PartitionBuildProps.FromDictionary(
+          'system', {
+              'ro.product.name': 'product-name',
+              'ro.build.thumbprint': 'build-thumbprint',
+              'ro.build.bar': 'build-bar'}
+      ),
+      'vendor.build.prop': common.PartitionBuildProps.FromDictionary(
+          'vendor', {
+               'ro.vendor.build.fingerprint': 'vendor-build-fingerprint'}
+      ),
+      'property1': 'value1',
+      'property2': 4096,
+      'oem_fingerprint_properties': 'ro.product.device ro.product.brand',
   }
 
   TEST_OEM_DICTS = [
       {
-          'ro.product.brand' : 'brand1',
-          'ro.product.device' : 'device1',
+          'ro.product.brand': 'brand1',
+          'ro.product.device': 'device1',
       },
       {
-          'ro.product.brand' : 'brand2',
-          'ro.product.device' : 'device2',
+          'ro.product.brand': 'brand2',
+          'ro.product.device': 'device2',
       },
       {
-          'ro.product.brand' : 'brand3',
-          'ro.product.device' : 'device3',
+          'ro.product.brand': 'brand3',
+          'ro.product.device': 'device3',
       },
   ]
 
@@ -288,10 +292,10 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
   @staticmethod
   def _test_GetPackageMetadata_swapBuildTimestamps(target_info, source_info):
-    (target_info['build.prop']['ro.build.date.utc'],
-     source_info['build.prop']['ro.build.date.utc']) = (
-         source_info['build.prop']['ro.build.date.utc'],
-         target_info['build.prop']['ro.build.date.utc'])
+    (target_info['build.prop'].build_props['ro.build.date.utc'],
+     source_info['build.prop'].build_props['ro.build.date.utc']) = (
+         source_info['build.prop'].build_props['ro.build.date.utc'],
+         target_info['build.prop'].build_props['ro.build.date.utc'])
 
   def test_GetPackageMetadata_unintentionalDowngradeDetected(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
@@ -528,7 +532,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
   def test_WriteFingerprintAssertion_without_oem_props(self):
     target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     source_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
-    source_info_dict['build.prop']['ro.build.fingerprint'] = (
+    source_info_dict['build.prop'].build_props['ro.build.fingerprint'] = (
         'source-build-fingerprint')
     source_info = common.BuildInfo(source_info_dict, None)
 
@@ -567,7 +571,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
                                    self.TEST_OEM_DICTS)
     source_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
-    source_info_dict['build.prop']['ro.build.thumbprint'] = (
+    source_info_dict['build.prop'].build_props['ro.build.thumbprint'] = (
         'source-build-thumbprint')
     source_info = common.BuildInfo(source_info_dict, self.TEST_OEM_DICTS)
 
@@ -1315,3 +1319,125 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
             Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT):
           continue
         self.assertEqual(zipfile.ZIP_STORED, entry_info.compress_type)
+
+
+class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
+  MISC_INFO = [
+      'recovery_api_version=3',
+      'fstab_version=2',
+      'recovery_as_boot=true',
+  ]
+
+  BUILD_PROP = [
+      'ro.build.version.release=version-release',
+      'ro.build.id=build-id',
+      'ro.build.version.incremental=version-incremental',
+      'ro.build.type=build-type',
+      'ro.build.tags=build-tags',
+  ]
+
+  VENDOR_BUILD_PROP = [
+      'ro.product.vendor.brand=vendor-product-brand',
+      'ro.product.vendor.name=vendor-product-name',
+      'ro.product.vendor.device=vendor-product-device'
+  ]
+
+  def setUp(self):
+    common.OPTIONS.oem_dicts = None
+    self.test_dir = common.MakeTempDir()
+    self.writeFiles({'META/misc_info.txt': '\n'.join(self.MISC_INFO)})
+
+  def writeFiles(self, contents_dict):
+    for path, content in contents_dict.items():
+      abs_path = os.path.join(self.test_dir, path)
+      dir_name = os.path.dirname(abs_path)
+      if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+      with open(abs_path, 'w') as f:
+        f.write(content)
+
+  @staticmethod
+  def constructFingerprint(prefix):
+    return '{}:version-release/build-id/version-incremental:' \
+           'build-type/build-tags'.format(prefix)
+
+  def test_CalculatePossibleFingerprints_no_dynamic_fingerprint(self):
+    build_prop = copy.deepcopy(self.BUILD_PROP)
+    build_prop.extend([
+        'ro.product.brand=product-brand',
+        'ro.product.name=product-name',
+        'ro.product.device=product-device',
+    ])
+    self.writeFiles({
+        'SYSTEM/build.prop': '\n'.join(build_prop),
+        'VENDOR/build.prop': '\n'.join(self.VENDOR_BUILD_PROP),
+    })
+    common.OPTIONS.info_dict = common.LoadInfoDict(self.test_dir)
+
+    self.assertEqual({
+        self.constructFingerprint('product-brand/product-name/product-device')
+    }, CalculateRuntimeFingerprints())
+
+  def test_CalculatePossibleFingerprints_single_override(self):
+    vendor_build_prop = copy.deepcopy(self.VENDOR_BUILD_PROP)
+    vendor_build_prop.extend([
+        'import /vendor/etc/build_${ro.boot.sku_name}.prop',
+    ])
+    self.writeFiles({
+        'SYSTEM/build.prop': '\n'.join(self.BUILD_PROP),
+        'VENDOR/build.prop': '\n'.join(vendor_build_prop),
+        'VENDOR/etc/build_std.prop':
+        'ro.product.vendor.name=vendor-product-std',
+        'VENDOR/etc/build_pro.prop':
+        'ro.product.vendor.name=vendor-product-pro',
+    })
+    common.OPTIONS.info_dict = common.LoadInfoDict(self.test_dir)
+    common.OPTIONS.boot_variable_values = {
+        'ro.boot.sku_name': ['std', 'pro']
+    }
+
+    self.assertEqual({
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-name/vendor-product-device'),
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-std/vendor-product-device'),
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-pro/vendor-product-device'),
+    }, CalculateRuntimeFingerprints())
+
+  def test_CalculatePossibleFingerprints_multiple_overrides(self):
+    vendor_build_prop = copy.deepcopy(self.VENDOR_BUILD_PROP)
+    vendor_build_prop.extend([
+        'import /vendor/etc/build_${ro.boot.sku_name}.prop',
+        'import /vendor/etc/build_${ro.boot.device_name}.prop',
+    ])
+    self.writeFiles({
+        'SYSTEM/build.prop': '\n'.join(self.BUILD_PROP),
+        'VENDOR/build.prop': '\n'.join(vendor_build_prop),
+        'VENDOR/etc/build_std.prop':
+        'ro.product.vendor.name=vendor-product-std',
+        'VENDOR/etc/build_product1.prop':
+        'ro.product.vendor.device=vendor-device-product1',
+        'VENDOR/etc/build_pro.prop':
+        'ro.product.vendor.name=vendor-product-pro',
+        'VENDOR/etc/build_product2.prop':
+        'ro.product.vendor.device=vendor-device-product2',
+    })
+    common.OPTIONS.info_dict = common.LoadInfoDict(self.test_dir)
+    common.OPTIONS.boot_variable_values = {
+        'ro.boot.sku_name': ['std', 'pro'],
+        'ro.boot.device_name': ['product1', 'product2'],
+    }
+
+    self.assertEqual({
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-name/vendor-product-device'),
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-std/vendor-device-product1'),
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-pro/vendor-device-product1'),
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-std/vendor-device-product2'),
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-pro/vendor-device-product2'),
+    }, CalculateRuntimeFingerprints())

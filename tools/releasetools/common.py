@@ -361,10 +361,13 @@ class BuildInfo(object):
     self.oem_dicts = oem_dicts
 
     self._is_ab = info_dict.get("ab_update") == "true"
-    self._oem_props = info_dict.get("oem_fingerprint_properties")
 
-    if self._oem_props:
-      assert oem_dicts, "OEM source required for this build"
+    # Skip _oem_props if oem_dicts is None to use BuildInfo in
+    # sign_target_files_apks
+    if self.oem_dicts:
+      self._oem_props = info_dict.get("oem_fingerprint_properties")
+    else:
+      self._oem_props = None
 
     def check_fingerprint(fingerprint):
       if (" " in fingerprint or any(ord(ch) > 127 for ch in fingerprint)):
@@ -420,6 +423,14 @@ class BuildInfo(object):
   def items(self):
     return self.info_dict.items()
 
+  def _GetRawBuildProp(self, prop, partition):
+    prop_file = '{}.build.prop'.format(
+        partition) if partition else 'build.prop'
+    partition_props = self.info_dict.get(prop_file)
+    if not partition_props:
+      return None
+    return partition_props.GetProp(prop)
+
   def GetPartitionBuildProp(self, prop, partition):
     """Returns the inquired build property for the provided partition."""
     # If provided a partition for this property, only look within that
@@ -428,31 +439,33 @@ class BuildInfo(object):
       prop = prop.replace("ro.product", "ro.product.{}".format(partition))
     else:
       prop = prop.replace("ro.", "ro.{}.".format(partition))
-    try:
-      return self.info_dict.get("{}.build.prop".format(partition), {})[prop]
-    except KeyError:
-      raise ExternalError("couldn't find %s in %s.build.prop" %
-                          (prop, partition))
+
+    prop_val = self._GetRawBuildProp(prop, partition)
+    if prop_val is not None:
+      return prop_val
+    raise ExternalError("couldn't find %s in %s.build.prop" %
+                        (prop, partition))
 
   def GetBuildProp(self, prop):
     """Returns the inquired build property from the standard build.prop file."""
     if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
       return self._ResolveRoProductBuildProp(prop)
 
-    try:
-      return self.info_dict.get("build.prop", {})[prop]
-    except KeyError:
-      raise ExternalError("couldn't find %s in build.prop" % (prop,))
+    prop_val = self._GetRawBuildProp(prop, None)
+    if prop_val is not None:
+      return prop_val
+
+    raise ExternalError("couldn't find %s in build.prop" % (prop,))
 
   def _ResolveRoProductBuildProp(self, prop):
     """Resolves the inquired ro.product.* build property"""
-    prop_val = self.info_dict.get("build.prop", {}).get(prop)
+    prop_val = self._GetRawBuildProp(prop, None)
     if prop_val:
       return prop_val
 
     default_source_order = self._GetRoProductPropsDefaultSourceOrder()
-    source_order_val = self.info_dict.get("build.prop", {}).get(
-        "ro.product.property_source_order")
+    source_order_val = self._GetRawBuildProp(
+        "ro.product.property_source_order", None)
     if source_order_val:
       source_order = source_order_val.split(",")
     else:
@@ -463,11 +476,10 @@ class BuildInfo(object):
       raise ExternalError(
           "Invalid ro.product.property_source_order '{}'".format(source_order))
 
-    for source in source_order:
+    for source_partition in source_order:
       source_prop = prop.replace(
-          "ro.product", "ro.product.{}".format(source), 1)
-      prop_val = self.info_dict.get(
-          "{}.build.prop".format(source), {}).get(source_prop)
+          "ro.product", "ro.product.{}".format(source_partition), 1)
+      prop_val = self._GetRawBuildProp(source_prop, source_partition)
       if prop_val:
         return prop_val
 
@@ -476,11 +488,9 @@ class BuildInfo(object):
   def _GetRoProductPropsDefaultSourceOrder(self):
     # NOTE: refer to CDDs and android.os.Build.VERSION for the definition and
     # values of these properties for each Android release.
-    android_codename = self.info_dict.get("build.prop", {}).get(
-        "ro.build.version.codename")
+    android_codename = self._GetRawBuildProp("ro.build.version.codename", None)
     if android_codename == "REL":
-      android_version = self.info_dict.get("build.prop", {}).get(
-          "ro.build.version.release")
+      android_version = self._GetRawBuildProp("ro.build.version.release", None)
       if android_version == "10":
         return BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_ANDROID_10
       # NOTE: float() conversion of android_version will have rounding error.
@@ -563,6 +573,20 @@ class BuildInfo(object):
       script.AssertOemProperty(prop, values, oem_no_mount)
 
 
+def ReadFromInputFile(input_file, fn):
+  """Reads the contents of fn from input zipfile or directory."""
+  if isinstance(input_file, zipfile.ZipFile):
+    return input_file.read(fn).decode()
+  else:
+    path = os.path.join(input_file, *fn.split("/"))
+    try:
+      with open(path) as f:
+        return f.read()
+    except IOError as e:
+      if e.errno == errno.ENOENT:
+        raise KeyError(fn)
+
+
 def LoadInfoDict(input_file, repacking=False):
   """Loads the key/value pairs from the given input target_files.
 
@@ -600,16 +624,7 @@ def LoadInfoDict(input_file, repacking=False):
         "input_file must be a path str when doing repacking"
 
   def read_helper(fn):
-    if isinstance(input_file, zipfile.ZipFile):
-      return input_file.read(fn).decode()
-    else:
-      path = os.path.join(input_file, *fn.split("/"))
-      try:
-        with open(path) as f:
-          return f.read()
-      except IOError as e:
-        if e.errno == errno.ENOENT:
-          raise KeyError(fn)
+    return ReadFromInputFile(input_file, fn)
 
   try:
     d = LoadDictionaryFromLines(read_helper("META/misc_info.txt").split("\n"))
@@ -672,13 +687,8 @@ def LoadInfoDict(input_file, repacking=False):
   # system and vendor.
   for partition in PARTITIONS_WITH_CARE_MAP:
     partition_prop = "{}.build.prop".format(partition)
-    d[partition_prop] = LoadBuildProp(
-        read_helper, "{}/build.prop".format(partition.upper()))
-    # Some partition might use /<partition>/etc/build.prop as the new path.
-    # TODO: try new path first when majority of them switch to the new path.
-    if not d[partition_prop]:
-      d[partition_prop] = LoadBuildProp(
-          read_helper, "{}/etc/build.prop".format(partition.upper()))
+    d[partition_prop] = PartitionBuildProps.FromInputFile(
+        input_file, partition)
   d["build.prop"] = d["system.build.prop"]
 
   # Set up the salt (based on fingerprint) that will be used when adding AVB
@@ -691,15 +701,6 @@ def LoadInfoDict(input_file, repacking=False):
         d["avb_{}_salt".format(partition)] = sha256(fingerprint).hexdigest()
 
   return d
-
-
-def LoadBuildProp(read_helper, prop_file):
-  try:
-    data = read_helper(prop_file)
-  except KeyError:
-    logger.warning("Failed to read %s", prop_file)
-    data = ""
-  return LoadDictionaryFromLines(data.split("\n"))
 
 
 def LoadListFromFile(file_path):
@@ -722,6 +723,121 @@ def LoadDictionaryFromLines(lines):
       name, value = line.split("=", 1)
       d[name] = value
   return d
+
+
+class PartitionBuildProps(object):
+  """The class holds the build prop of a particular partition.
+
+  This class loads the build.prop and holds the build properties for a given
+  partition. It also partially recognizes the 'import' statement in the
+  build.prop; and calculates alternative values of some specific build
+  properties during runtime.
+
+  Attributes:
+    input_file: a zipped target-file or an unzipped target-file directory.
+    partition: name of the partition.
+    props_allow_override: a list of build properties to search for the
+        alternative values during runtime.
+    build_props: a dict of build properties for the given partition.
+    prop_overrides: a set of props that are overridden by import.
+    placeholder_values: A dict of runtime variables' values to replace the
+        placeholders in the build.prop file. We expect exactly one value for
+        each of the variables.
+  """
+  def __init__(self, input_file, name, placeholder_values=None):
+    self.input_file = input_file
+    self.partition = name
+    self.props_allow_override = [props.format(name) for props in [
+        'ro.product.{}.brand', 'ro.product.{}.name', 'ro.product.{}.device']]
+    self.build_props = {}
+    self.prop_overrides = set()
+    self.placeholder_values = {}
+    if placeholder_values:
+      self.placeholder_values = copy.deepcopy(placeholder_values)
+
+  @staticmethod
+  def FromDictionary(name, build_props):
+    """Constructs an instance from a build prop dictionary."""
+
+    props = PartitionBuildProps("unknown", name)
+    props.build_props = build_props.copy()
+    return props
+
+  @staticmethod
+  def FromInputFile(input_file, name, placeholder_values=None):
+    """Loads the build.prop file and builds the attributes."""
+    data = ''
+    for prop_file in ['{}/etc/build.prop'.format(name.upper()),
+                      '{}/build.prop'.format(name.upper())]:
+      try:
+        data = ReadFromInputFile(input_file, prop_file)
+        break
+      except KeyError:
+        logger.warning('Failed to read %s', prop_file)
+
+    props = PartitionBuildProps(input_file, name, placeholder_values)
+    props._LoadBuildProp(data)
+    return props
+
+  def _LoadBuildProp(self, data):
+    for line in data.split('\n'):
+      line = line.strip()
+      if not line or line.startswith("#"):
+        continue
+      if line.startswith("import"):
+        overrides = self._ImportParser(line)
+        duplicates = self.prop_overrides.intersection(overrides.keys())
+        if duplicates:
+          raise ValueError('prop {} is overridden multiple times'.format(
+              ','.join(duplicates)))
+        self.prop_overrides = self.prop_overrides.union(overrides.keys())
+        self.build_props.update(overrides)
+      elif "=" in line:
+        name, value = line.split("=", 1)
+        if name in self.prop_overrides:
+          raise ValueError('prop {} is set again after overridden by import '
+                           'statement'.format(name))
+        self.build_props[name] = value
+
+  def _ImportParser(self, line):
+    """Parses the build prop in a given import statement."""
+
+    tokens = line.split()
+    if tokens[0] != 'import' or (len(tokens) != 2 and len(tokens) != 3) :
+      raise ValueError('Unrecognized import statement {}'.format(line))
+
+    if len(tokens) == 3:
+      logger.info("Import %s from %s, skip", tokens[2], tokens[1])
+      return {}
+
+    import_path = tokens[1]
+    if not re.match(r'^/{}/.*\.prop$'.format(self.partition), import_path):
+      raise ValueError('Unrecognized import path {}'.format(line))
+
+    # We only recognize a subset of import statement that the init process
+    # supports. And we can loose the restriction based on how the dynamic
+    # fingerprint is used in practice. The placeholder format should be
+    # ${placeholder}, and its value should be provided by the caller through
+    # the placeholder_values.
+    for prop, value in self.placeholder_values.items():
+      prop_place_holder = '${{{}}}'.format(prop)
+      if prop_place_holder in import_path:
+        import_path = import_path.replace(prop_place_holder, value)
+    if '$' in import_path:
+      logger.info('Unresolved place holder in import path %s', import_path)
+      return {}
+
+    import_path = import_path.replace('/{}'.format(self.partition),
+                                      self.partition.upper())
+    logger.info('Parsing build props override from %s', import_path)
+
+    lines = ReadFromInputFile(self.input_file, import_path).split('\n')
+    d = LoadDictionaryFromLines(lines)
+    return {key: val for key, val in d.items()
+            if key in self.props_allow_override}
+
+  def GetProp(self, prop):
+    return self.build_props.get(prop)
 
 
 def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
@@ -1145,6 +1261,10 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
 
   if partition_name == "recovery":
     args = info_dict.get("recovery_mkbootimg_args")
+    if not args:
+      # Fall back to "mkbootimg_args" for recovery image
+      # in case "recovery_mkbootimg_args" is not set.
+      args = info_dict.get("mkbootimg_args")
   else:
     args = info_dict.get("mkbootimg_args")
   if args and args.strip():

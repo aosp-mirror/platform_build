@@ -509,9 +509,9 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   d = {}
 
   if "build.prop" in glob_dict:
-    bp = glob_dict["build.prop"]
-    if "ro.build.date.utc" in bp:
-      d["timestamp"] = bp["ro.build.date.utc"]
+    timestamp = glob_dict["build.prop"].GetProp("ro.build.date.utc")
+    if timestamp:
+      d["timestamp"] = timestamp
 
   def copy_prop(src_p, dest_p):
     """Copy a property from the global dictionary.
