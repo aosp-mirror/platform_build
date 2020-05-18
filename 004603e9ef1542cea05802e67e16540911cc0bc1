@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "359a7426_a8655c07",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2020-05-18T12:15:26Z",
+      "side": 1,
+      "message": "I think you meant to check for `ifneq ($(ADDITIONAL_DEFAULT_PROPERTIES),)| here",
+      "revId": "004603e9ef1542cea05802e67e16540911cc0bc1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
