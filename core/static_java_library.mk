@@ -209,7 +209,7 @@ $(built_aar) : $(aar_classes_jar) $(full_android_manifest) $(intermediates.COMMO
 	  $(call jar-args-sorted-files-in-directory,$(dir $@)aar)
 
 # Register the aar file.
-ALL_MODULES.$(LOCAL_MODULE).AAR := $(built_aar)
+ALL_MODULES.$(my_register_name).AAR := $(built_aar)
 endif  # need_compile_res
 
 # Reset internal variables.

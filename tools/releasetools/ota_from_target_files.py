@@ -193,6 +193,8 @@ A/B OTA specific options
 from __future__ import print_function
 
 import collections
+import copy
+import itertools
 import logging
 import multiprocessing
 import os.path
@@ -229,6 +231,7 @@ OPTIONS.include_secondary = False
 OPTIONS.no_signing = False
 OPTIONS.block_based = True
 OPTIONS.updater_binary = None
+OPTIONS.oem_dicts = None
 OPTIONS.oem_source = None
 OPTIONS.oem_no_mount = False
 OPTIONS.full_radio = False
@@ -247,6 +250,7 @@ OPTIONS.retrofit_dynamic_partitions = False
 OPTIONS.skip_compatibility_check = False
 OPTIONS.output_metadata_path = None
 OPTIONS.disable_fec_computation = False
+OPTIONS.boot_variable_values = None
 
 
 METADATA_NAME = 'META-INF/com/android/metadata'
@@ -263,7 +267,8 @@ RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 # 'system_other' and bootloader partitions.
 SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
     'boot', 'dtbo', 'modem', 'odm', 'product', 'radio', 'recovery',
-    'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor']
+    'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor',
+    'vendor_boot']
 
 
 class PayloadSigner(object):
@@ -1957,6 +1962,36 @@ def GenerateNonAbOtaPackage(target_file, output_file, source_file=None):
           input_zip,
           source_zip,
           output_file)
+
+
+def CalculateRuntimeFingerprints():
+  """Returns a set of runtime fingerprints based on the boot variables."""
+
+  build_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
+  fingerprints = {build_info.fingerprint}
+
+  if not OPTIONS.boot_variable_values:
+    return fingerprints
+
+  # Calculate all possible combinations of the values for the boot variables.
+  keys = OPTIONS.boot_variable_values.keys()
+  value_list = OPTIONS.boot_variable_values.values()
+  combinations = [dict(zip(keys, values))
+                  for values in itertools.product(*value_list)]
+  for placeholder_values in combinations:
+    # Reload the info_dict as some build properties may change their values
+    # based on the value of ro.boot* properties.
+    info_dict = copy.deepcopy(OPTIONS.info_dict)
+    for partition in common.PARTITIONS_WITH_CARE_MAP:
+      partition_prop_key = "{}.build.prop".format(partition)
+      old_props = info_dict[partition_prop_key]
+      info_dict[partition_prop_key] = common.PartitionBuildProps.FromInputFile(
+          old_props.input_file, partition, placeholder_values)
+    info_dict["build.prop"] = info_dict["system.build.prop"]
+
+    build_info = common.BuildInfo(info_dict, OPTIONS.oem_dicts)
+    fingerprints.add(build_info.fingerprint)
+  return fingerprints
 
 
 def main(argv):

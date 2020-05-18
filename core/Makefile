@@ -40,11 +40,9 @@ $(if $(filter true,$(BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES)),, \
 )
 endef
 
-# TODO(b/140560012): Flip BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES to default
-# false after all problematic devices are tagged.
-check_elf_prebuilt_product_copy_files :=
-ifneq (,$(filter false,$(BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES)))
 check_elf_prebuilt_product_copy_files := true
+ifneq (,$(filter true,$(BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES)))
+check_elf_prebuilt_product_copy_files :=
 endif
 check_elf_prebuilt_product_copy_files_hint := \
     found ELF prebuilt in PRODUCT_COPY_FILES, use cc_prebuilt_binary / cc_prebuilt_library_shared instead.
@@ -171,9 +169,9 @@ ifeq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
 endif
 
 # -----------------------------------------------------------------
-# FINAL_VENDOR_DEFAULT_PROPERTIES will be installed in vendor/default.prop if
+# FINAL_VENDOR_DEFAULT_PROPERTIES will be installed in vendor/build.prop if
 # property_overrides_split_enabled is true. Otherwise it will be installed in
-# ROOT/default.prop.
+# /system/build.prop
 ifdef BOARD_VNDK_VERSION
   ifeq ($(BOARD_VNDK_VERSION),current)
     FINAL_VENDOR_DEFAULT_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
@@ -226,9 +224,6 @@ endif
 FINAL_VENDOR_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_VENDOR_DEFAULT_PROPERTIES),=)
 
-# -----------------------------------------------------------------
-# prop.default
-
 BUILDINFO_SH := build/make/tools/buildinfo.sh
 BUILDINFO_COMMON_SH := build/make/tools/buildinfo_common.sh
 POST_PROCESS_PROPS :=$= build/make/tools/post_process_props.py
@@ -259,66 +254,19 @@ define generate-common-build-props-with-product-vars-set
 	bash $(BUILDINFO_COMMON_SH) "$(1)" >> $(2)
 endef
 
-ifdef property_overrides_split_enabled
-INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_OUT)/etc/prop.default
-INSTALLED_DEFAULT_PROP_OLD_TARGET := $(TARGET_ROOT_OUT)/default.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_DEFAULT_PROP_OLD_TARGET)
-$(INSTALLED_DEFAULT_PROP_TARGET): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_DEFAULT_PROP_OLD_TARGET)
-else
-# legacy path
-INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_ROOT_OUT)/default.prop
-endif
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_DEFAULT_PROP_TARGET)
+# -----------------------------------------------------------------
+# build.prop
+intermediate_system_build_prop := $(call intermediates-dir-for,ETC,system_build_prop)/build.prop
+INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
+ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_BUILD_PROP_TARGET)
+
+# TODO(b/117892318) merge DEFAULT into BUILD
 FINAL_DEFAULT_PROPERTIES := \
     $(call collapse-pairs, $(ADDITIONAL_DEFAULT_PROPERTIES)) \
     $(call collapse-pairs, $(PRODUCT_SYSTEM_DEFAULT_PROPERTIES))
-ifndef property_overrides_split_enabled
-  FINAL_DEFAULT_PROPERTIES += \
-      $(call collapse-pairs, $(FINAL_VENDOR_DEFAULT_PROPERTIES))
-endif
 FINAL_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_DEFAULT_PROPERTIES),=)
 
-intermediate_system_build_prop := $(call intermediates-dir-for,ETC,system_build_prop)/build.prop
-
-$(INSTALLED_DEFAULT_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(intermediate_system_build_prop)
-	@echo Target buildinfo: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) echo "#" > $@; \
-	        echo "# ADDITIONAL_DEFAULT_PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach line,$(FINAL_DEFAULT_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@
-ifdef property_overrides_split_enabled
-	$(hide) mkdir -p $(TARGET_ROOT_OUT)
-	$(hide) ln -sf system/etc/prop.default $(INSTALLED_DEFAULT_PROP_OLD_TARGET)
-endif
-
-# -----------------------------------------------------------------
-# vendor default.prop
-INSTALLED_VENDOR_DEFAULT_PROP_TARGET :=
-ifdef property_overrides_split_enabled
-INSTALLED_VENDOR_DEFAULT_PROP_TARGET := $(TARGET_OUT_VENDOR)/default.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET)
-
-$(INSTALLED_VENDOR_DEFAULT_PROP_TARGET): $(INSTALLED_DEFAULT_PROP_TARGET) $(POST_PROCESS_PROPS)
-	@echo Target buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) echo "#" > $@; \
-	        echo "# ADDITIONAL VENDOR DEFAULT PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach line,$(FINAL_VENDOR_DEFAULT_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@
-
-endif  # property_overrides_split_enabled
-
-# -----------------------------------------------------------------
-# build.prop
-INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_BUILD_PROP_TARGET)
 FINAL_BUILD_PROPERTIES := \
     $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))
 FINAL_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
@@ -432,6 +380,12 @@ $(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTE
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) rm -f $@ && touch $@
+	$(hide) $(foreach line,$(FINAL_DEFAULT_PROPERTIES), \
+	    echo "$(line)" >> $@;)
+ifndef property_overrides_split_enabled
+	$(hide) $(foreach line,$(FINAL_VENDOR_DEFAULT_PROPERTIES), \
+	    echo "$(line)" >> $@;)
+endif
 ifneq ($(PRODUCT_OEM_PROPERTIES),)
 	$(hide) echo "#" >> $@; \
 	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
@@ -531,6 +485,10 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PRO
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) rm -f $@ && touch $@
+ifdef property_overrides_split_enabled
+	$(hide) $(foreach line,$(FINAL_VENDOR_DEFAULT_PROPERTIES), \
+	  echo "$(line)" >> $@;)
+endif
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 	$(hide) echo ro.boot.dynamic_partitions=true >> $@
 endif
@@ -874,7 +832,7 @@ endif
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
-# $1 package name
+# $1 stem name of the package
 # $2 certificate
 # $3 private key
 # $4 compressed
@@ -904,8 +862,8 @@ $(APKCERTS_FILE):
 	@rm -f $@
 	$(foreach p,$(sort $(PACKAGES)),\
 	  $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
-	    $(call _apkcerts_write_line,$(p),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
-	    $(call _apkcerts_write_line,$(p),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@)))
+	    $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
+	    $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@)))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
@@ -1306,7 +1264,7 @@ $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_VENDOR_RAMDISK_TAR
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOTIMAGE_KEY_PATH)
 	$(call pretty,"Target vendor_boot image: $@")
-	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_RAMDISK_TARGET) --vendor_boot $@
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_RAMDISK_TARGET) --vendor_boot $@
 	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
 	$(AVBTOOL) add_hash_footer \
            --image $@ \
@@ -1316,7 +1274,7 @@ $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOTIMAGE_KE
 else
 $(INSTALLED_VENDOR_BOOTIMAGE_TARGET):
 	$(call pretty,"Target vendor_boot image: $@")
-	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_RAMDISK_TARGET) --vendor_boot $@
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_RAMDISK_TARGET) --vendor_boot $@
 	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
 endif
 endif # BUILDING_VENDOR_BOOT_IMAGE
@@ -2115,8 +2073,6 @@ $(foreach prop,$(1), \
 endef
 
 $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
-	    $(INSTALLED_DEFAULT_PROP_TARGET) \
-	    $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) \
 	    $(intermediate_system_build_prop) \
 	    $(INSTALLED_VENDOR_BUILD_PROP_TARGET) \
 	    $(INSTALLED_ODM_BUILD_PROP_TARGET) \
@@ -2125,8 +2081,6 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	@echo "Target recovery buildinfo: $@"
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $@
-	$(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) > $@
-	$(hide) cat $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) >> $@
 	$(hide) cat $(intermediate_system_build_prop) >> $@
 	$(hide) cat $(INSTALLED_VENDOR_BUILD_PROP_TARGET) >> $@
 	$(hide) cat $(INSTALLED_ODM_BUILD_PROP_TARGET) >> $@
@@ -2514,7 +2468,7 @@ endif
 # Depends on vendor_boot.img and vendor-ramdisk-debug.cpio.gz to build the new vendor_boot-debug.img
 $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET)
 	$(call pretty,"Target vendor_boot debug image: $@")
-	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) --vendor_boot $@
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) --vendor_boot $@
 	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
 	$(if $(BOARD_AVB_VENDOR_BOOT_KEY_PATH),$(call test-key-sign-vendor-bootimage,$@))
 
@@ -3524,11 +3478,7 @@ $(if $(BOARD_AVB_$(call to-upper,$(1))_KEY_PATH),\
 endef
 
 ifdef INSTALLED_BOOTIMAGE_TARGET
-# multiple hashes for an image are not yet supported, fortunately this
-# only arises for GKI where the boot descriptor can be left out
-ifeq ($(strip $(BOARD_KERNEL_BINARIES)),)
 $(eval $(call check-and-set-avb-args,boot))
-endif
 endif
 
 ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET

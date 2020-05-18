@@ -207,7 +207,7 @@ ifdef full_classes_jar
 # allowing it to use the classes.jar as the "stubs" that would be use to link
 # against, for the cases where someone needs the jar to link against.
 $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_stubs_jar)))
-ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
+ALL_MODULES.$(my_register_name).STUBS := $(full_classes_stubs_jar)
 
 # The layers file allows you to enforce a layering between java packages.
 # Run build/make/tools/java-layers.py for more details.
@@ -501,9 +501,9 @@ else # !LOCAL_PROGUARD_ENABLED
 	$(transform-classes.jar-to-dex)
 endif
 
-ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)
-  $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)
-endif
+$(foreach pair,$(PRODUCT_BOOT_JARS), \
+  $(if $(filter $(LOCAL_MODULE),$(call word-colon,2,$(pair))), \
+    $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)))
 
 $(built_dex): $(built_dex_intermediate)
 	@echo Copying: $@
