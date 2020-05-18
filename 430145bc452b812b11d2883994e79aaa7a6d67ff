@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a73e6ad0_028d6f04",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-05-18T18:47:17Z",
+      "side": 1,
+      "message": "I think this is the metadata sent to OTA infra. OTA servers should be able to parse it if they were to support multiple fingerprints. Tianjie, CMIIW",
+      "parentUuid": "e4d7eb67_acfa6bff",
+      "range": {
+        "startLine": 943,
+        "startChar": 6,
+        "endLine": 943,
+        "endChar": 68
+      },
+      "revId": "430145bc452b812b11d2883994e79aaa7a6d67ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3d2f6f50_96a12c7d",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 4
