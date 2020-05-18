@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "a319d2a0_dc62f627",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-18T20:06:31Z",
+      "side": 1,
+      "message": "Right, I might paste the comment in a previous ps.\n\nGmscore parses the metadata. Since the separator code already exists in gmscore, so I didn\u0027t change it here.\nhttps://source.corp.google.com/piper///depot/google3/java/com/google/android/gmscore/integ/modules/ota/base/src/com/google/android/gms/update/config/PackageMetadatas.java;l\u003d58\n\nAnother user would be recovery mode, I plan to update it in a future cl.",
+      "parentUuid": "a73e6ad0_028d6f04",
+      "range": {
+        "startLine": 943,
+        "startChar": 6,
+        "endLine": 943,
+        "endChar": 68
+      },
+      "revId": "430145bc452b812b11d2883994e79aaa7a6d67ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3d2f6f50_96a12c7d",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 4
@@ -86,6 +110,48 @@
       "revId": "430145bc452b812b11d2883994e79aaa7a6d67ff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9303ba9e_90cdab4b",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2090,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-18T20:06:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "48867969_b95702ea",
+      "revId": "430145bc452b812b11d2883994e79aaa7a6d67ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f093a0c5_44f5622c",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2090,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-05-18T20:06:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d2f6f50_96a12c7d",
+      "range": {
+        "startLine": 2090,
+        "startChar": 17,
+        "endLine": 2090,
+        "endChar": 33
+      },
+      "revId": "430145bc452b812b11d2883994e79aaa7a6d67ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
