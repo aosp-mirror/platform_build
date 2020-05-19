@@ -3138,8 +3138,8 @@ fi
        'recovery_sha1': recovery_img.sha1,
        'boot_type': boot_type,
        'boot_device': boot_device + '$(getprop ro.boot.slot_suffix)',
-       'recovery_type': recovery_type + '$(getprop ro.boot.slot_suffix)',
-       'recovery_device': recovery_device,
+       'recovery_type': recovery_type,
+       'recovery_device': recovery_device + '$(getprop ro.boot.slot_suffix)',
        'bonus_args': bonus_args}
 
   # The install script location moved from /system/etc to /system/bin in the L
