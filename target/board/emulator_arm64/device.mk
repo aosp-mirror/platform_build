@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+PRODUCT_SOONG_NAMESPACES += device/generic/goldfish # for libwifi-hal-emu
+PRODUCT_SOONG_NAMESPACES += device/generic/goldfish-opengl # for goldfish deps.
+
 # Cuttlefish has GKI kernel prebuilts, so use those for the GKI boot.img.
 ifeq ($(TARGET_PREBUILT_KERNEL),)
     LOCAL_KERNEL := device/google/cuttlefish_kernel/5.4-arm64/kernel
