@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "55c826a0_48717cf6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 30
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-19T05:42:34Z",
+      "side": 1,
+      "message": "I added \"prebuilt\" in my new patch, together with the Makefile change.",
+      "parentUuid": "cd76a7cb_8447f69c",
+      "range": {
+        "startLine": 7,
+        "startChar": 24,
+        "endLine": 7,
+        "endChar": 37
+      },
+      "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dba3d699_66513be6",
         "filename": "core/Makefile",
         "patchSetId": 30
@@ -108,6 +132,30 @@
       "writtenOn": "2020-05-19T01:31:29Z",
       "side": 1,
       "message": "You can compute all of these paths up front, which means you could make individual rules to build these and get rid of the flag file.",
+      "range": {
+        "startLine": 3323,
+        "startChar": 16,
+        "endLine": 3323,
+        "endChar": 64
+      },
+      "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8dc18c3_a57a3553",
+        "filename": "core/Makefile",
+        "patchSetId": 30
+      },
+      "lineNbr": 3323,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-19T05:42:34Z",
+      "side": 1,
+      "message": "My new patch dropped the flag file and move those paths front. Not sure whether it\u0027s your meaning, please help review it again. Thank you!",
+      "parentUuid": "dba3d699_66513be6",
       "range": {
         "startLine": 3323,
         "startChar": 16,
@@ -140,6 +188,30 @@
       "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96ded5b0_43753ce9",
+        "filename": "core/Makefile",
+        "patchSetId": 30
+      },
+      "lineNbr": 3340,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-19T05:42:34Z",
+      "side": 1,
+      "message": "Done. My new patch doesn\u0027t need this anymore.",
+      "parentUuid": "bb4c473d_7d7dd668",
+      "range": {
+        "startLine": 3340,
+        "startChar": 1,
+        "endLine": 3340,
+        "endChar": 2
+      },
+      "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
