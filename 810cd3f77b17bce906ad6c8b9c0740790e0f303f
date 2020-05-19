@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d134be40_36b3cf97",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 771,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-19T22:33:24Z",
+      "side": 1,
+      "message": "As is PRIVATE_STAGING_DIR and PRIVATE_LOAD_FILENAME too, I added it for completeness, I can remove all the unused.",
+      "parentUuid": "f14b3b26_a2098210",
+      "revId": "810cd3f77b17bce906ad6c8b9c0740790e0f303f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "92ba1b37_a864235d",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -33,6 +51,24 @@
       "revId": "810cd3f77b17bce906ad6c8b9c0740790e0f303f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63c6b0cb_d0251b5e",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 774,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-19T22:33:24Z",
+      "side": 1,
+      "message": "Well, we could limit the list, but it will be an interesting game, and would be _wrong_.\n\nPRIVATE_MODULES is the fully qualified path names to the source modules.\nPRIVATE_LOAD_MODULES is a relative path from the module load directory (lib/modules/...), and thus we would need to use their basenames to form a filter around PRIVATE_MODULES. We would have to go to some trouble to restrict the list, and that trouble could result in corner cases, I prefer the less complicated the better.\n\nHowever, in reality, the boot modules and the recovery modules are required to generate the modules.dep file. All of them. The PRIVATE_LOAD_FILENAME although is a limited list for recovery, actually could reference the boot modules indirectly through modules.dep and load them. So it is actually more accurate to make this depend on them all because of the possible side effects from depmod constructing the other files.",
+      "parentUuid": "92ba1b37_a864235d",
+      "revId": "810cd3f77b17bce906ad6c8b9c0740790e0f303f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
