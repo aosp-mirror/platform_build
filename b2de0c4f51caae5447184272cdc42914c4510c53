@@ -46,6 +46,52 @@
       "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dba3d699_66513be6",
+        "filename": "core/Makefile",
+        "patchSetId": 30
+      },
+      "lineNbr": 3323,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-05-19T01:31:29Z",
+      "side": 1,
+      "message": "You can compute all of these paths up front, which means you could make individual rules to build these and get rid of the flag file.",
+      "range": {
+        "startLine": 3323,
+        "startChar": 16,
+        "endLine": 3323,
+        "endChar": 64
+      },
+      "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb4c473d_7d7dd668",
+        "filename": "core/Makefile",
+        "patchSetId": 30
+      },
+      "lineNbr": 3340,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-05-19T01:31:29Z",
+      "side": 1,
+      "message": "Drop the @ here, it doesn\u0027t do anything.  Leave the @ on the @echo, that is used by kati to recognize the title of the rule.",
+      "range": {
+        "startLine": 3340,
+        "startChar": 1,
+        "endLine": 3340,
+        "endChar": 2
+      },
+      "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
