@@ -22,6 +22,30 @@
       "revId": "7331fb7361b0ee9e619428dbe21a0adfd452360e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65b843f0_c40bd388",
+        "filename": "core/Makefile",
+        "patchSetId": 33
+      },
+      "lineNbr": 3318,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-19T07:29:27Z",
+      "side": 1,
+      "message": "changed to \"sign_custom_image\" in new patch",
+      "parentUuid": "41cc0f4a_5422c14a",
+      "range": {
+        "startLine": 3318,
+        "startChar": 7,
+        "endLine": 3318,
+        "endChar": 25
+      },
+      "revId": "7331fb7361b0ee9e619428dbe21a0adfd452360e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

@@ -145,6 +145,30 @@
     },
     {
       "key": {
+        "uuid": "56c7414f_2df8992a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 30
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-19T07:29:27Z",
+      "side": 1,
+      "message": "Okay, thank. I will keep \"custom\" image here because those prebuilt images are called \"custom\" images everywhere in this CL",
+      "parentUuid": "54bb5ad2_e83ea1ad",
+      "range": {
+        "startLine": 7,
+        "startChar": 24,
+        "endLine": 7,
+        "endChar": 37
+      },
+      "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dba3d699_66513be6",
         "filename": "core/Makefile",
         "patchSetId": 30
