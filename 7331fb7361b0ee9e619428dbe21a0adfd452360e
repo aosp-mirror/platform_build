@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41cc0f4a_5422c14a",
+        "filename": "core/Makefile",
+        "patchSetId": 33
+      },
+      "lineNbr": 3318,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-19T06:39:53Z",
+      "side": 1,
+      "message": "nit: how about sign_prebuilt_image or sign_custom_image?\n\nAs the main action here is just \u0027cp\u0027 then using \u0027avbtool\u0027, instead of \u0027build\u0027.",
+      "range": {
+        "startLine": 3318,
+        "startChar": 7,
+        "endLine": 3318,
+        "endChar": 25
+      },
+      "revId": "7331fb7361b0ee9e619428dbe21a0adfd452360e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
