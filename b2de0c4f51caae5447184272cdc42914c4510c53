@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "41506d48_d8c5cb31",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 30
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-19T05:24:49Z",
+      "side": 1,
+      "message": "\u0027prebuilt images\u0027 seems better fit for this CL.\n\nRight, \u0027make custom_images\u0027 can be used to build those prebuilt images. But in essence this CL is to sign \u0027prebuilt images\u0027 and \u0027make custom_images\u0027 is just one method to build them.\n\nAnyone may use other tools to make a prebuilt image as well.\n\nDoes that sound good?",
+      "parentUuid": "d869783d_5101659b",
+      "range": {
+        "startLine": 7,
+        "startChar": 24,
+        "endLine": 7,
+        "endChar": 37
+      },
+      "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dba3d699_66513be6",
         "filename": "core/Makefile",
         "patchSetId": 30
