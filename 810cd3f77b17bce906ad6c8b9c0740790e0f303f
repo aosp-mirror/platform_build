@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f14b3b26_a2098210",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 771,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-05-19T21:31:28Z",
+      "side": 1,
+      "message": "PRIVATE_MODULES seems to be unused",
+      "revId": "810cd3f77b17bce906ad6c8b9c0740790e0f303f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92ba1b37_a864235d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 774,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-05-19T21:31:28Z",
+      "side": 1,
+      "message": "Why does the target load file need to depend on all the kernel modules instead of just the recovery kernel modules?",
+      "revId": "810cd3f77b17bce906ad6c8b9c0740790e0f303f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
