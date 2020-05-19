@@ -133,7 +133,7 @@ ALL_MODULES.$(my_register_name).CLASSES_JAR := $(full_classes_jar)
 $(my_register_name): $(my_installed)
 
 ifdef LOCAL_SOONG_AAR
-  ALL_MODULES.$(LOCAL_MODULE).AAR := $(LOCAL_SOONG_AAR)
+  ALL_MODULES.$(my_register_name).AAR := $(LOCAL_SOONG_AAR)
 endif
 
 javac-check : $(full_classes_jar)

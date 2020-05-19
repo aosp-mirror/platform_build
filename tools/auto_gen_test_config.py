@@ -27,6 +27,7 @@ ATTRIBUTE_RUNNER = 'android:name'
 ATTRIBUTE_PACKAGE = 'package'
 
 PLACEHOLDER_LABEL = '{LABEL}'
+PLACEHOLDER_EXTRA_CONFIGS = '{EXTRA_CONFIGS}'
 PLACEHOLDER_MODULE = '{MODULE}'
 PLACEHOLDER_PACKAGE = '{PACKAGE}'
 PLACEHOLDER_RUNNER = '{RUNNER}'
@@ -41,16 +42,20 @@ def main(argv):
   Returns:
     0 if no error, otherwise 1.
   """
-  if len(argv) != 4:
+  if len(argv) != 4 and len(argv) != 6:
     sys.stderr.write(
-        'Invalid arguements. The script requires 4 arguments for file paths: '
+        'Invalid arguments. The script requires 4 arguments for file paths: '
         'target_config android_manifest empty_config '
-        'instrumentation_test_config_template.\n')
+        'instrumentation_test_config_template '
+        'and 2 optional arguments for extra configs: '
+        '--extra-configs \'EXTRA_CONFIGS\'.\n')
     return 1
+
   target_config = argv[0]
   android_manifest = argv[1]
   empty_config = argv[2]
   instrumentation_test_config_template = argv[3]
+  extra_configs = '\n'.join(argv[5].split('\\n')) if len(argv) == 6 else ''
 
   manifest = parse(android_manifest)
   instrumentation_elements = manifest.getElementsByTagName('instrumentation')
@@ -80,6 +85,7 @@ def main(argv):
     config = config.replace(PLACEHOLDER_MODULE, module)
     config = config.replace(PLACEHOLDER_PACKAGE, package)
     config = config.replace(PLACEHOLDER_TEST_TYPE, test_type)
+    config = config.replace(PLACEHOLDER_EXTRA_CONFIGS, extra_configs)
     config = config.replace(PLACEHOLDER_RUNNER, runner)
     with open(target_config, 'w') as config_file:
       config_file.write(config)
