@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "cd76a7cb_8447f69c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 30
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-19T05:32:39Z",
+      "side": 1,
+      "message": "I think those images can be built by whatever tools the OEMs want.\n \nHow about change it to \"prebuilt custom images\"? In my view, even though they are built by other tools, they are still custom images to Android.",
+      "parentUuid": "41506d48_d8c5cb31",
+      "range": {
+        "startLine": 7,
+        "startChar": 24,
+        "endLine": 7,
+        "endChar": 37
+      },
+      "revId": "b2de0c4f51caae5447184272cdc42914c4510c53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dba3d699_66513be6",
         "filename": "core/Makefile",
         "patchSetId": 30
