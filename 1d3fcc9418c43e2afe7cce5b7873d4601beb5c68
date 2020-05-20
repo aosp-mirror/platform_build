@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "11f0068c_d4c714ad",
+        "filename": "target/board/emulator_arm/device.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-05-20T08:39:21Z",
+      "side": 1,
+      "message": "Will also remove in generic/device.mk by further patch.",
+      "parentUuid": "94e63600_6fc38817",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 0
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eb73d973_e3563152",
         "filename": "target/board/emulator_arm/system_ext.prop",
         "patchSetId": 5
@@ -116,6 +140,30 @@
       "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24458cb1_6c5d2f06",
+        "filename": "target/board/emulator_arm/system_ext.prop",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-05-20T08:39:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eb73d973_e3563152",
+      "range": {
+        "startLine": 2,
+        "startChar": 29,
+        "endLine": 2,
+        "endChar": 30
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -142,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "a3afe6d4_f10ec0e2",
+        "filename": "target/product/sdk_phone_arm64.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-05-20T08:39:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "32c1f26b_000a313a",
+      "range": {
+        "startLine": 24,
+        "startChar": 31,
+        "endLine": 24,
+        "endChar": 36
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa0bd657_4b8a63a5",
         "filename": "target/product/sdk_phone_armv7.mk",
         "patchSetId": 5
@@ -162,6 +234,30 @@
       "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7116e90a_68f7772e",
+        "filename": "target/product/sdk_phone_armv7.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-05-20T08:39:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa0bd657_4b8a63a5",
+      "range": {
+        "startLine": 24,
+        "startChar": 31,
+        "endLine": 24,
+        "endChar": 36
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -188,6 +284,30 @@
     },
     {
       "key": {
+        "uuid": "ea27d6e1_314105b1",
+        "filename": "target/product/sdk_phone_armv7.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-05-20T08:39:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd9d23b5_9f16c808",
+      "range": {
+        "startLine": 50,
+        "startChar": 48,
+        "endLine": 50,
+        "endChar": 70
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e0d46ef1_ac43e07d",
         "filename": "target/product/sdk_phone_armv7.mk",
         "patchSetId": 5
@@ -202,6 +322,24 @@
       "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7639174_25ebf02f",
+        "filename": "target/product/sdk_phone_armv7.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-05-20T08:39:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0d46ef1_ac43e07d",
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
