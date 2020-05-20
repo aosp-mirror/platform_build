@@ -16,6 +16,24 @@
       "revId": "b53139597be96d97f9406f8f10a9838e53827e6e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "047c9a2c_176af38e",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 772,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-05-20T21:44:52Z",
+      "side": 1,
+      "message": "Done.\n\nThere are other spots with \u003e\u00262 in this file, I will remove only this one occurrence. The target will report */modules.load.recovery or */modules.load, combined with the load-list I expect it will have more meaning, but still short and sweet. I shortened it from build-load-list from my first iteration in my sandbox. This thing is loading the list argument $(3) into the file at argument $(4).",
+      "parentUuid": "187dc206_b67a73d4",
+      "revId": "b53139597be96d97f9406f8f10a9838e53827e6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
