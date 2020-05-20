@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "187dc206_b67a73d4",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 772,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-05-20T20:53:10Z",
+      "side": 1,
+      "message": "Ninja doesn\u0027t separate stderr, just make this @echo load-list $$(@) (or something more descriptive, loading a list isn\u0027t very clear).",
+      "revId": "b53139597be96d97f9406f8f10a9838e53827e6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
