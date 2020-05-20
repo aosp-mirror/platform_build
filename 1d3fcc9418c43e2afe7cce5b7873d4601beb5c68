@@ -22,6 +22,30 @@
       "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e006749b_d23414d4",
+        "filename": "target/board/emulator_arm/BoardConfig.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-05-20T07:31:34Z",
+      "side": 1,
+      "message": "Some configurations could be required by emulator.\nBt another patch, \nmy idea is we could move the setting in BoardConfigGsiCommon.mk (and not in BoardConfigEmuCommon.mk) to BoardConfigEmuCommon.mk, and inherit from BoardConfigMainelineCommon.mk directly.",
+      "parentUuid": "8651f607_68846462",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 55
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
