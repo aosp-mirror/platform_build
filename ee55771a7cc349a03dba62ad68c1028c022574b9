@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fce9dcf8_11ed4904",
+        "filename": "core/Makefile",
+        "patchSetId": 34
+      },
+      "lineNbr": 3311,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-05-20T02:53:02Z",
+      "side": 1,
+      "message": "Set INSTALLED_CUSTOMIMAGES_TARGET :\u003d outside the conditional, initializing it to empty is good in both cases because make has strange behavior for +\u003d on variables that have not previously been set with :\u003d.",
+      "revId": "ee55771a7cc349a03dba62ad68c1028c022574b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a51acf42_15314717",
+        "filename": "core/Makefile",
+        "patchSetId": 34
+      },
+      "lineNbr": 3317,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-05-20T02:53:02Z",
+      "side": 1,
+      "message": "I\u0027d suggest passing $(PRODUCT_OUT)/$(notdir $(1)) as $(3), it makes it easier to understand the macro from the caller, and you can use it for both the output file and to replace $$@ in the rule.",
+      "revId": "ee55771a7cc349a03dba62ad68c1028c022574b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
