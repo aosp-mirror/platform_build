@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "273189ed_2399a3b8",
+        "filename": "core/main.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 587,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-20T16:20:17Z",
+      "side": 1,
+      "message": "This imitates the as-is behavior. If we relax this limitation to something like \"always resolves to both variants\" then we would pull in a lot of additional (but harmless) dependencies, bloating the final build-*.ninja size.",
+      "range": {
+        "startLine": 586,
+        "startChar": 2,
+        "endLine": 587,
+        "endChar": 25
+      },
+      "revId": "d9edb27430686470bd1a91be86fd5076e35322fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
