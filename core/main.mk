@@ -117,7 +117,7 @@ endif
 # -----------------------------------------------------------------
 # Validate ADDITIONAL_DEFAULT_PROPERTIES.
 ifneq ($(ADDITIONAL_DEFAULT_PROPERTIES),)
-$(error ADDITIONAL_DEFAULT_PROPERTIES must not be set before here: $(ADDITIONAL_DEFAULT_PROPERTIES))
+$(error ADDITIONAL_DEFAULT_PROPERTIES is deprecated)
 endif
 
 #
@@ -209,9 +209,9 @@ $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
 # Sets ro.actionable_compatible_property.enabled to know on runtime whether the whitelist
 # of actionable compatible properties is enabled or not.
 ifeq ($(PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE),true)
-ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=false
+ADDITIONAL_BUILD_PROPERTIES += ro.actionable_compatible_property.enabled=false
 else
-ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
+ADDITIONAL_BUILD_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
 endif
 
 # Add the system server compiler filter if they are specified for the product.
@@ -231,7 +231,7 @@ endif
 #
 # It then uses ${ro.postinstall.fstab.prefix}/etc/fstab.postinstall to
 # mount system_other partition.
-ADDITIONAL_DEFAULT_PROPERTIES += ro.postinstall.fstab.prefix=/system
+ADDITIONAL_BUILD_PROPERTIES += ro.postinstall.fstab.prefix=/system
 
 # Set ro.product.vndk.version to know the VNDK version required by product
 # modules. It uses the version in PRODUCT_PRODUCT_VNDK_VERSION. If the value
@@ -263,11 +263,11 @@ enable_target_debugging := true
 tags_to_install :=
 ifneq (,$(user_variant))
   # Target is secure in user builds.
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
-  ADDITIONAL_DEFAULT_PROPERTIES += security.perf_harden=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.secure=1
+  ADDITIONAL_BUILD_PROPERTIES += security.perf_harden=1
 
   ifeq ($(user_variant),user)
-    ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=1
+    ADDITIONAL_BUILD_PROPERTIES += ro.adb.secure=1
   endif
 
   ifeq ($(user_variant),userdebug)
@@ -279,25 +279,25 @@ ifneq (,$(user_variant))
   endif
 
   # Disallow mock locations by default for user builds
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
+  ADDITIONAL_BUILD_PROPERTIES += ro.allow.mock.location=0
 
 else # !user_variant
   # Turn on checkjni for non-user builds.
   ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
   # Set device insecure for non-user builds.
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
+  ADDITIONAL_BUILD_PROPERTIES += ro.secure=0
   # Allow mock locations by default for non user builds
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.allow.mock.location=1
 endif # !user_variant
 
 ifeq (true,$(strip $(enable_target_debugging)))
   # Target is more debuggable and adbd is on by default
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.debuggable=1
   # Enable Dalvik lock contention logging.
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500
 else # !enable_target_debugging
   # Target is less debuggable and adbd is off by default
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0
+  ADDITIONAL_BUILD_PROPERTIES += ro.debuggable=0
 endif # !enable_target_debugging
 
 ## eng ##
@@ -390,8 +390,6 @@ endif
 
 # Strip and readonly a few more variables so they won't be modified.
 $(readonly-final-product-vars)
-ADDITIONAL_DEFAULT_PROPERTIES := $(strip $(ADDITIONAL_DEFAULT_PROPERTIES))
-.KATI_READONLY := ADDITIONAL_DEFAULT_PROPERTIES
 ADDITIONAL_BUILD_PROPERTIES := $(strip $(ADDITIONAL_BUILD_PROPERTIES))
 .KATI_READONLY := ADDITIONAL_BUILD_PROPERTIES
 ADDITIONAL_PRODUCT_PROPERTIES := $(strip $(ADDITIONAL_PRODUCT_PROPERTIES))
