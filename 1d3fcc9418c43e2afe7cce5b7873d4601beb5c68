@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8651f607_68846462",
+        "filename": "target/board/emulator_arm/BoardConfig.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-20T07:13:34Z",
+      "side": 1,
+      "message": "I suppose there is follow-up change to remove BoardConfigGsiCommon.mk from emulator BoardConfig?",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 55
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
