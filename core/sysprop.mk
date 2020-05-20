@@ -25,7 +25,7 @@ endif
 
 BUILDINFO_SH := build/make/tools/buildinfo.sh
 BUILDINFO_COMMON_SH := build/make/tools/buildinfo_common.sh
-POST_PROCESS_PROPS :=$= build/make/tools/post_process_props.py
+POST_PROCESS_PROPS := $(HOST_OUT_EXECUTABLES)/post_process_props$(HOST_EXECUTABLE_SUFFIX)
 
 # Generates a set of sysprops common to all partitions to a file.
 # $(1): Partition name

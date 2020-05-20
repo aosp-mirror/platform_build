@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2009 The Android Open Source Project
 #
@@ -24,104 +24,114 @@ import sys
 # so we decrease the value by 1 here.
 PROP_VALUE_MAX = 91
 
-# Put the modifications that you need to make into the /system/build.prop into this
-# function. The prop object has get(name) and put(name,value) methods.
-def mangle_build_prop(prop):
+# Put the modifications that you need to make into the */build.prop into this
+# function.
+def mangle_build_prop(prop_list):
   # If ro.debuggable is 1, then enable adb on USB by default
   # (this is for userdebug builds)
-  if prop.get("ro.debuggable") == "1":
-    val = prop.get("persist.sys.usb.config")
+  if prop_list.get("ro.debuggable") == "1":
+    val = prop_list.get("persist.sys.usb.config")
     if "adb" not in val:
       if val == "":
         val = "adb"
       else:
         val = val + ",adb"
-      prop.put("persist.sys.usb.config", val)
+      prop_list.put("persist.sys.usb.config", val)
   # UsbDeviceManager expects a value here.  If it doesn't get it, it will
   # default to "adb". That might not the right policy there, but it's better
   # to be explicit.
-  if not prop.get("persist.sys.usb.config"):
-    prop.put("persist.sys.usb.config", "none");
+  if not prop_list.get("persist.sys.usb.config"):
+    prop_list.put("persist.sys.usb.config", "none");
 
-def validate(prop):
+def validate(prop_list):
   """Validate the properties.
 
   Returns:
     True if nothing is wrong.
   """
   check_pass = True
-  buildprops = prop.to_dict()
-  for key, value in buildprops.iteritems():
-    # Check build properties' length.
-    if len(value) > PROP_VALUE_MAX and not key.startswith("ro."):
+  for p in prop_list.get_all():
+    if len(p.value) > PROP_VALUE_MAX and not p.name.startswith("ro."):
       check_pass = False
       sys.stderr.write("error: %s cannot exceed %d bytes: " %
-                       (key, PROP_VALUE_MAX))
-      sys.stderr.write("%s (%d)\n" % (value, len(value)))
+                       (p.name, PROP_VALUE_MAX))
+      sys.stderr.write("%s (%d)\n" % (p.value, len(p.value)))
   return check_pass
 
-class PropFile:
+class Prop:
 
-  def __init__(self, lines):
-    self.lines = [s.strip() for s in lines]
+  def __init__(self, name, value, comment=None):
+    self.name = name.strip()
+    self.value = value.strip()
+    self.comment = comment
 
-  def to_dict(self):
-    props = {}
-    for line in self.lines:
-      if not line or line.startswith("#"):
-        continue
-      if "=" in line:
-        key, value = line.split("=", 1)
-        props[key] = value
-    return props
+  @staticmethod
+  def from_line(line):
+    line = line.rstrip('\n')
+    if line.startswith("#"):
+      return Prop("", "", line)
+    elif "=" in line:
+      name, value = line.split("=", 1)
+      return Prop(name, value)
+    else:
+      # don't fail on invalid line
+      # TODO(jiyong) make this a hard error
+      return Prop("", "", line)
+
+  def is_comment(self):
+    return self.comment != None
+
+  def __str__(self):
+    if self.is_comment():
+      return self.comment
+    else:
+      return self.name + "=" + self.value
+
+class PropList:
+
+  def __init__(self, filename):
+    with open(filename) as f:
+      self.props = [Prop.from_line(l)
+                    for l in f.readlines() if l.strip() != ""]
+
+  def get_all(self):
+    return [p for p in self.props if not p.is_comment()]
 
   def get(self, name):
-    key = name + "="
-    for line in self.lines:
-      if line.startswith(key):
-        return line[len(key):]
-    return ""
+    return next((p.value for p in self.props if p.name == name), "")
 
   def put(self, name, value):
-    key = name + "="
-    for i in range(0,len(self.lines)):
-      if self.lines[i].startswith(key):
-        self.lines[i] = key + value
-        return
-    self.lines.append(key + value)
+    index = next((i for i,p in enumerate(self.props) if p.name == name), -1)
+    if index == -1:
+      self.props.append(Prop(name, value))
+    else:
+      self.props[index].value = value
 
   def delete(self, name):
-    key = name + "="
-    self.lines = [ line for line in self.lines if not line.startswith(key) ]
+    self.props = [p for p in self.props if p.name != name]
 
-  def write(self, f):
-    f.write("\n".join(self.lines))
-    f.write("\n")
+  def write(self, filename):
+    with open(filename, 'w+') as f:
+      for p in self.props:
+        f.write(str(p) + "\n")
 
 def main(argv):
   filename = argv[1]
-  f = open(filename)
-  lines = f.readlines()
-  f.close()
 
-  properties = PropFile(lines)
-
-  if filename.endswith("/build.prop"):
-    mangle_build_prop(properties)
-  else:
+  if not filename.endswith("/build.prop"):
     sys.stderr.write("bad command line: " + str(argv) + "\n")
     sys.exit(1)
 
-  if not validate(properties):
+  props = PropList(filename)
+  mangle_build_prop(props)
+  if not validate(props):
     sys.exit(1)
 
   # Drop any blacklisted keys
   for key in argv[2:]:
-    properties.delete(key)
+    props.delete(key)
 
-  f = open(filename, 'w+')
-  properties.write(f)
-  f.close()
+  props.write(filename)
 
 if __name__ == "__main__":
   main(sys.argv)
