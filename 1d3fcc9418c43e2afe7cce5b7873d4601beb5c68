@@ -46,6 +46,162 @@
       "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cd52080d_a40b5baa",
+        "filename": "target/board/emulator_arm/BoardConfig.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-20T07:54:34Z",
+      "side": 1,
+      "message": "SG",
+      "parentUuid": "e006749b_d23414d4",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 55
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "94e63600_6fc38817",
+        "filename": "target/board/emulator_arm/device.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-20T07:54:34Z",
+      "side": 1,
+      "message": "build/make/target/product/aosp_product.mk has this too. Do we really need this?",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 0
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb73d973_e3563152",
+        "filename": "target/board/emulator_arm/system_ext.prop",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-20T07:54:34Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "range": {
+        "startLine": 2,
+        "startChar": 29,
+        "endLine": 2,
+        "endChar": 30
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32c1f26b_000a313a",
+        "filename": "target/product/sdk_phone_arm64.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-20T07:54:34Z",
+      "side": 1,
+      "message": "exact",
+      "range": {
+        "startLine": 24,
+        "startChar": 31,
+        "endLine": 24,
+        "endChar": 36
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa0bd657_4b8a63a5",
+        "filename": "target/product/sdk_phone_armv7.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-20T07:54:34Z",
+      "side": 1,
+      "message": "exact",
+      "range": {
+        "startLine": 24,
+        "startChar": 31,
+        "endLine": 24,
+        "endChar": 36
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd9d23b5_9f16c808",
+        "filename": "target/product/sdk_phone_armv7.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-20T07:54:34Z",
+      "side": 1,
+      "message": "emulator_arm/device.mk",
+      "range": {
+        "startLine": 50,
+        "startChar": 48,
+        "endLine": 50,
+        "endChar": 70
+      },
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0d46ef1_ac43e07d",
+        "filename": "target/product/sdk_phone_armv7.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-20T07:54:34Z",
+      "side": 1,
+      "message": "Add\nPRODUCT_MODEL :\u003d Android SDK built for arm\nlike other products",
+      "revId": "1d3fcc9418c43e2afe7cce5b7873d4601beb5c68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
