@@ -24,8 +24,10 @@ $(LOCAL_BUILT_MODULE): $(1)
 endef
 
 $(eval $(call extract-master-from-apk-set,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_APK_SET_MASTER_FILE)))
+# unzip returns 11 it there was nothing to extract, which is expected,
+# $(LOCAL_APK_SET_MASTER_FILE) has is already there.
 LOCAL_POST_INSTALL_CMD := unzip -qo -j -d $(dir $(LOCAL_INSTALLED_MODULE)) \
-	$(LOCAL_PREBUILT_MODULE_FILE) -x $(LOCAL_APK_SET_MASTER_FILE)
+	$(LOCAL_PREBUILT_MODULE_FILE) -x $(LOCAL_APK_SET_MASTER_FILE) || [[ $$? -eq 11 ]]
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
