@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "053a5286_e56fceaa",
+        "filename": "target/board/emulator_arm/BoardConfig.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-20T14:02:53Z",
+      "side": 1,
+      "message": "don\u0027t think these apply for emulator (talks about GSI but this isn\u0027t the GSI board anymore).",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 67
+      },
+      "revId": "e3542d59aed36f34252b31564e5b4f92f8cf8ebb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56df86ca_fc4612f1",
+        "filename": "target/board/emulator_arm/device.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-20T14:02:53Z",
+      "side": 1,
+      "message": "remove?",
+      "revId": "e3542d59aed36f34252b31564e5b4f92f8cf8ebb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e533a1d3_1d8c48f7",
+        "filename": "target/board/emulator_x86_64_arm64/device.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-20T14:02:53Z",
+      "side": 1,
+      "message": "ditto",
+      "revId": "e3542d59aed36f34252b31564e5b4f92f8cf8ebb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
