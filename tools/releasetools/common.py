@@ -848,12 +848,13 @@ class PartitionBuildProps(object):
 def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
                       system_root_image=False):
   class Partition(object):
-    def __init__(self, mount_point, fs_type, device, length, context):
+    def __init__(self, mount_point, fs_type, device, length, context, slotselect):
       self.mount_point = mount_point
       self.fs_type = fs_type
       self.device = device
       self.length = length
       self.context = context
+      self.slotselect = slotselect
 
   try:
     data = read_helper(recovery_fstab_path)
@@ -881,10 +882,13 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
 
     # It's a good line, parse it.
     length = 0
+    slotselect = False
     options = options.split(",")
     for i in options:
       if i.startswith("length="):
         length = int(i[7:])
+      elif i == "slotselect":
+        slotselect = True
       else:
         # Ignore all unknown options in the unified fstab.
         continue
@@ -898,7 +902,8 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
 
     mount_point = pieces[1]
     d[mount_point] = Partition(mount_point=mount_point, fs_type=pieces[2],
-                               device=pieces[0], length=length, context=context)
+                               device=pieces[0], length=length, context=context,
+                               slotselect=slotselect)
 
   # / is used for the system mount point when the root directory is included in
   # system. Other areas assume system is always at "/system" so point /system
@@ -913,7 +918,8 @@ def _FindAndLoadRecoveryFstab(info_dict, input_file, read_helper):
   """Finds the path to recovery fstab and loads its contents."""
   # recovery fstab is only meaningful when installing an update via recovery
   # (i.e. non-A/B OTA). Skip loading fstab if device used A/B OTA.
-  if info_dict.get('ab_update') == 'true':
+  if info_dict.get('ab_update') == 'true' and \
+     info_dict.get("allow_non_ab") != "true":
     return None
 
   # We changed recovery.fstab path in Q, from ../RAMDISK/etc/recovery.fstab to
@@ -2680,11 +2686,12 @@ class BlockDifference(object):
       self.device = 'map_partition("%s")' % partition
     else:
       if OPTIONS.source_info_dict is None:
-        _, device_path = GetTypeAndDevice("/" + partition, OPTIONS.info_dict)
+        _, device_expr = GetTypeAndDeviceExpr("/" + partition,
+                                              OPTIONS.info_dict)
       else:
-        _, device_path = GetTypeAndDevice("/" + partition,
-                                          OPTIONS.source_info_dict)
-      self.device = '"%s"' % device_path
+        _, device_expr = GetTypeAndDeviceExpr("/" + partition,
+                                              OPTIONS.source_info_dict)
+      self.device = device_expr
 
   @property
   def required_cache(self):
@@ -2916,15 +2923,50 @@ PARTITION_TYPES = {
     "squashfs": "EMMC"
 }
 
-
-def GetTypeAndDevice(mount_point, info):
+def GetTypeAndDevice(mount_point, info, check_no_slot=True):
+  """
+  Use GetTypeAndDeviceExpr whenever possible. This function is kept for
+  backwards compatibility. It aborts if the fstab entry has slotselect option
+  (unless check_no_slot is explicitly set to False).
+  """
   fstab = info["fstab"]
   if fstab:
+    if check_no_slot:
+      assert not fstab[mount_point].slotselect, \
+             "Use GetTypeAndDeviceExpr instead"
     return (PARTITION_TYPES[fstab[mount_point].fs_type],
             fstab[mount_point].device)
   else:
     raise KeyError
 
+
+def GetTypeAndDeviceExpr(mount_point, info):
+  """
+  Return the filesystem of the partition, and an edify expression that evaluates
+  to the device at runtime.
+  """
+  fstab = info["fstab"]
+  if fstab:
+    p = fstab[mount_point]
+    device_expr = '"%s"' % fstab[mount_point].device
+    if p.slotselect:
+      device_expr = 'add_slot_suffix(%s)' % device_expr
+    return (PARTITION_TYPES[fstab[mount_point].fs_type], device_expr)
+  else:
+    raise KeyError
+
+
+def GetEntryForDevice(fstab, device):
+  """
+  Returns:
+    The first entry in fstab whose device is the given value.
+  """
+  if not fstab:
+    return None
+  for mount_point in fstab:
+    if fstab[mount_point].device == device:
+      return fstab[mount_point]
+  return None
 
 def ParseCertificate(data):
   """Parses and converts a PEM-encoded certificate into DER-encoded.
@@ -3050,8 +3092,10 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
   try:
     # The following GetTypeAndDevice()s need to use the path in the target
     # info_dict instead of source_info_dict.
-    boot_type, boot_device = GetTypeAndDevice("/boot", info_dict)
-    recovery_type, recovery_device = GetTypeAndDevice("/recovery", info_dict)
+    boot_type, boot_device = GetTypeAndDevice("/boot", info_dict,
+                                              check_no_slot=False)
+    recovery_type, recovery_device = GetTypeAndDevice("/recovery", info_dict,
+                                                      check_no_slot=False)
   except KeyError:
     return
 
@@ -3093,8 +3137,8 @@ fi
        'recovery_size': recovery_img.size,
        'recovery_sha1': recovery_img.sha1,
        'boot_type': boot_type,
-       'boot_device': boot_device,
-       'recovery_type': recovery_type,
+       'boot_device': boot_device + '$(getprop ro.boot.slot_suffix)',
+       'recovery_type': recovery_type + '$(getprop ro.boot.slot_suffix)',
        'recovery_device': recovery_device,
        'bonus_args': bonus_args}
 

@@ -78,6 +78,13 @@ Common options that apply to both of non-A/B and A/B OTAs
       Write a copy of the metadata to a separate file. Therefore, users can
       read the post build fingerprint without extracting the OTA package.
 
+  --force_non_ab
+      This flag can only be set on an A/B device that also supports non-A/B
+      updates. Implies --two_step.
+      If set, generate that non-A/B update package.
+      If not set, generates A/B package for A/B device and non-A/B package for
+      non-A/B device.
+
 Non-A/B OTA specific options
 
   -b  (--binary) <file>
@@ -251,6 +258,7 @@ OPTIONS.skip_compatibility_check = False
 OPTIONS.output_metadata_path = None
 OPTIONS.disable_fec_computation = False
 OPTIONS.boot_variable_values = None
+OPTIONS.force_non_ab = False
 
 
 METADATA_NAME = 'META-INF/com/android/metadata'
@@ -933,7 +941,7 @@ def GetPackageMetadata(target_info, source_info=None):
           'ro.build.version.security_patch'),
   }
 
-  if target_info.is_ab:
+  if target_info.is_ab and not OPTIONS.force_non_ab:
     metadata['ota-type'] = 'AB'
     metadata['ota-required-cache'] = '0'
   else:
@@ -1455,7 +1463,8 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
   required_cache_sizes = [diff.required_cache for diff in
                           block_diff_dict.values()]
   if updating_boot:
-    boot_type, boot_device = common.GetTypeAndDevice("/boot", source_info)
+    boot_type, boot_device_expr = common.GetTypeAndDeviceExpr("/boot",
+                                                              source_info)
     d = common.Difference(target_boot, source_boot)
     _, _, d = d.ComputePatch()
     if d is None:
@@ -1470,11 +1479,11 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
 
       common.ZipWriteStr(output_zip, "boot.img.p", d)
 
-      script.PatchPartitionCheck(
-          "{}:{}:{}:{}".format(
-              boot_type, boot_device, target_boot.size, target_boot.sha1),
-          "{}:{}:{}:{}".format(
-              boot_type, boot_device, source_boot.size, source_boot.sha1))
+      target_expr = 'concat("{}:",{},":{}:{}")'.format(
+          boot_type, boot_device_expr, target_boot.size, target_boot.sha1)
+      source_expr = 'concat("{}:",{},":{}:{}")'.format(
+          boot_type, boot_device_expr, source_boot.size, source_boot.sha1)
+      script.PatchPartitionExprCheck(target_expr, source_expr)
 
       required_cache_sizes.append(target_boot.size)
 
@@ -1542,12 +1551,11 @@ else
         logger.info("boot image changed; including patch.")
         script.Print("Patching boot image...")
         script.ShowProgress(0.1, 10)
-        script.PatchPartition(
-            '{}:{}:{}:{}'.format(
-                boot_type, boot_device, target_boot.size, target_boot.sha1),
-            '{}:{}:{}:{}'.format(
-                boot_type, boot_device, source_boot.size, source_boot.sha1),
-            'boot.img.p')
+        target_expr = 'concat("{}:",{},":{}:{}")'.format(
+            boot_type, boot_device_expr, target_boot.size, target_boot.sha1)
+        source_expr = 'concat("{}:",{},":{}:{}")'.format(
+            boot_type, boot_device_expr, source_boot.size, source_boot.sha1)
+        script.PatchPartitionExpr(target_expr, source_expr, '"boot.img.p"')
     else:
       logger.info("boot image unchanged; skipping.")
 
@@ -2067,6 +2075,8 @@ def main(argv):
       OPTIONS.output_metadata_path = a
     elif o == "--disable_fec_computation":
       OPTIONS.disable_fec_computation = True
+    elif o == "--force_non_ab":
+      OPTIONS.force_non_ab = True
     else:
       return False
     return True
@@ -2103,6 +2113,7 @@ def main(argv):
                                  "skip_compatibility_check",
                                  "output_metadata_path=",
                                  "disable_fec_computation",
+                                 "force_non_ab",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -2164,11 +2175,17 @@ def main(argv):
     OPTIONS.skip_postinstall = True
 
   ab_update = OPTIONS.info_dict.get("ab_update") == "true"
+  allow_non_ab = OPTIONS.info_dict.get("allow_non_ab") == "true"
+  if OPTIONS.force_non_ab:
+    assert allow_non_ab, "--force_non_ab only allowed on devices that supports non-A/B"
+    assert ab_update, "--force_non_ab only allowed on A/B devices"
+
+  generate_ab = not OPTIONS.force_non_ab and ab_update
 
   # Use the default key to sign the package if not specified with package_key.
   # package_keys are needed on ab_updates, so always define them if an
-  # ab_update is getting created.
-  if not OPTIONS.no_signing or ab_update:
+  # A/B update is getting created.
+  if not OPTIONS.no_signing or generate_ab:
     if OPTIONS.package_key is None:
       OPTIONS.package_key = OPTIONS.info_dict.get(
           "default_system_dev_certificate",
@@ -2176,7 +2193,7 @@ def main(argv):
     # Get signing keys
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
 
-  if ab_update:
+  if generate_ab:
     GenerateAbOtaPackage(
         target_file=args[0],
         output_file=args[1],
