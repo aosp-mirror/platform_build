@@ -352,8 +352,13 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
     cmd = [info_dict['avb_avbtool'], 'verify_image', '--image', image,
            '--follow_chain_partitions']
 
+    # Custom images.
+    custom_partitions = info_dict.get(
+        "avb_custom_images_partition_list", "").strip().split()
+
     # Append the args for chained partitions if any.
-    for partition in common.AVB_PARTITIONS + common.AVB_VBMETA_PARTITIONS:
+    for partition in (common.AVB_PARTITIONS + common.AVB_VBMETA_PARTITIONS +
+                      tuple(custom_partitions)):
       key_name = 'avb_' + partition + '_key_path'
       if info_dict.get(key_name) is not None:
         if info_dict.get('ab_update') != 'true' and partition == 'recovery':
