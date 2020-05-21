@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c164d42_8b204fbc",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1041813
+      },
+      "writtenOn": "2020-05-21T10:25:57Z",
+      "side": 1,
+      "message": "seems this line caused the get_build_var definition line to print \"{\", which caused the error.",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 148
+      },
+      "revId": "d92718356d8067eb33a971e00108a34a8fa92b32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
