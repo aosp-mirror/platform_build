@@ -112,6 +112,17 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
       the existing ones in info dict.
 
+  --avb_extra_custom_image_key <partition=key>
+  --avb_extra_custom_image_algorithm <partition=algorithm>
+      Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
+      the specified custom images mounted on the partition. Otherwise it uses
+      the existing values in info dict.
+
+  --avb_extra_custom_image_extra_args <partition=extra_args>
+      Specify any additional args that are needed to AVB-sign the custom images
+      mounted on the partition (e.g. "--signing_helper /path/to/helper"). The
+      args will be appended to the existing ones in info dict.
+
   --android_jar_path <path>
       Path to the android.jar to repack the apex file.
 """
@@ -956,11 +967,19 @@ def ReplaceAvbSigningKeys(misc_info):
     if extra_args:
       print('Setting extra AVB signing args for %s to "%s"' % (
           partition, extra_args))
-      args_key = AVB_FOOTER_ARGS_BY_PARTITION[partition]
+      if partition in AVB_FOOTER_ARGS_BY_PARTITION:
+        args_key = AVB_FOOTER_ARGS_BY_PARTITION[partition]
+      else:
+        # custom partition
+        args_key = "avb_{}_add_hashtree_footer_args".format(partition)
       misc_info[args_key] = (misc_info.get(args_key, '') + ' ' + extra_args)
 
   for partition in AVB_FOOTER_ARGS_BY_PARTITION:
     ReplaceAvbPartitionSigningKey(partition)
+
+  for custom_partition in misc_info.get(
+      "avb_custom_images_partition_list", "").strip().split():
+    ReplaceAvbPartitionSigningKey(custom_partition)
 
 
 def RewriteAvbProps(misc_info):
@@ -1208,6 +1227,15 @@ def main(argv):
       OPTIONS.avb_extra_args['vbmeta_vendor'] = a
     elif o == "--avb_apex_extra_args":
       OPTIONS.avb_extra_args['apex'] = a
+    elif o == "--avb_extra_custom_image_key":
+      partition, key = a.split("=")
+      OPTIONS.avb_keys[partition] = key
+    elif o == "--avb_extra_custom_image_algorithm":
+      partition, algorithm = a.split("=")
+      OPTIONS.avb_algorithms[partition] = algorithm
+    elif o == "--avb_extra_custom_image_extra_args":
+      partition, extra_args = a.split("=")
+      OPTIONS.avb_extra_args[partition] = extra_args
     else:
       return False
     return True
@@ -1252,6 +1280,9 @@ def main(argv):
           "avb_vbmeta_vendor_algorithm=",
           "avb_vbmeta_vendor_key=",
           "avb_vbmeta_vendor_extra_args=",
+          "avb_extra_custom_image_key=",
+          "avb_extra_custom_image_algorithm=",
+          "avb_extra_custom_image_extra_args=",
       ],
       extra_option_handler=option_handler)
 
