@@ -24,7 +24,6 @@ PARSE_TIME_MAKE_GOALS := \
 	continuous_native_tests \
 	cts \
 	custom_images \
-	deps-license \
 	dicttool_aosp \
 	dump-products \
 	eng \
