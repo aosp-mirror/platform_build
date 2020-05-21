@@ -19,3 +19,5 @@ PRODUCT_PROPERTY_OVERRIDES += external_storage.projid.enabled=1
 
 PRODUCT_FS_CASEFOLD := 1
 PRODUCT_PROPERTY_OVERRIDES += external_storage.casefold.enabled=1
+
+PRODUCT_PROPERTY_OVERRIDES += external_storage.sdcardfs.enabled=0
