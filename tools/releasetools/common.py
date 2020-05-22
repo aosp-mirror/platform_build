@@ -978,8 +978,9 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
   Args:
     image_path: The output path for the new VBMeta image.
     partitions: A dict that's keyed by partition names with image paths as
-        values. Only valid partition names are accepted, as listed in
-        common.AVB_PARTITIONS.
+        values. Only valid partition names are accepted, as partitions listed
+        in common.AVB_PARTITIONS and custom partitions listed in
+        OPTIONS.info_dict.get("avb_custom_images_partition_list")
     name: Name of the VBMeta partition, e.g. 'vbmeta', 'vbmeta_system'.
     needed_partitions: Partitions whose descriptors should be included into the
         generated VBMeta image.
@@ -991,11 +992,15 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
   cmd = [avbtool, "make_vbmeta_image", "--output", image_path]
   AppendAVBSigningArgs(cmd, name)
 
+  custom_partitions = OPTIONS.info_dict.get(
+      "avb_custom_images_partition_list", "").strip().split()
+
   for partition, path in partitions.items():
     if partition not in needed_partitions:
       continue
     assert (partition in AVB_PARTITIONS or
-            partition in AVB_VBMETA_PARTITIONS), \
+            partition in AVB_VBMETA_PARTITIONS or
+            partition in custom_partitions), \
         'Unknown partition: {}'.format(partition)
     assert os.path.exists(path), \
         'Failed to find {} for {}'.format(path, partition)
