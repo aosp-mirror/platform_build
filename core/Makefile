@@ -3310,6 +3310,41 @@ $(strip $(foreach item,$(1),$(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET)))
 endef
 
 # -----------------------------------------------------------------
+# custom images
+INSTALLED_CUSTOMIMAGES_TARGET :=
+
+ifneq ($(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)),)
+INTERNAL_AVB_CUSTOMIMAGES_SIGNING_ARGS :=
+
+# Sign custom image.
+# $(1): the prebuilt custom image.
+# $(2): the mount point of the prebuilt custom image.
+# $(3): the signed custom image target.
+define sign_custom_image
+$(3): $(1) $(INTERNAL_USERIMAGES_DEPS)
+	@echo Target custom image: $(3)
+	mkdir -p $(dir $(3))
+	cp $(1) $(3)
+ifeq ($(BOARD_AVB_ENABLE),true)
+	PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$$$PATH \
+          $(AVBTOOL) add_hashtree_footer \
+          --image $(3) \
+          --key $(BOARD_AVB_$(call to-upper,$(2))_KEY_PATH) \
+          --algorithm $(BOARD_AVB_$(call to-upper,$(2))_ALGORITHM) \
+          --partition_size $(BOARD_AVB_$(call to-upper,$(2))_PARTITION_SIZE) \
+          --partition_name $(2) \
+          $(INTERNAL_AVB_CUSTOMIMAGES_SIGNING_ARGS) \
+          $(BOARD_AVB_$(call to-upper,$(2))_ADD_HASHTREE_FOOTER_ARGS)
+endif
+INSTALLED_CUSTOMIMAGES_TARGET += $(3)
+endef
+
+$(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+  $(foreach image,$(BOARD_AVB_$(call to-upper,$(partition))_IMAGE_LIST), \
+     $(eval $(call sign_custom_image,$(image),$(partition),$(PRODUCT_OUT)/$(notdir $(image))))))
+endif
+
+# -----------------------------------------------------------------
 # vbmeta image
 ifeq ($(BOARD_AVB_ENABLE),true)
 
@@ -3480,6 +3515,18 @@ $(if $(BOARD_AVB_$(call to-upper,$(1))_KEY_PATH),\
             --include_descriptors_from_image $(call images-for-partitions,$(1)))))
 endef
 
+# Checks and sets build variables for a custom chained partition to include it into vbmeta.img.
+# $(1): the custom partition to enable AVB chain.
+define check-and-set-custom-avb-chain-args
+$(eval part := $(1))
+$(eval PART=$(call to-upper,$(part)))
+$(eval _rollback_index_location := BOARD_AVB_$(PART)_ROLLBACK_INDEX_LOCATION)
+$(if $($(_rollback_index_location)),,$(error $(_rollback_index_location) is not defined))
+
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+    --chain_partition $(part):$($(_rollback_index_location)):$(AVB_CHAIN_KEY_DIR)/$(part).avbpubkey
+endef
+
 ifdef INSTALLED_BOOTIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,boot))
 endif
@@ -3521,6 +3568,11 @@ endif
 
 ifdef BOARD_AVB_VBMETA_VENDOR
 $(eval $(call check-and-set-avb-args,vbmeta_vendor))
+endif
+
+ifneq ($(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)),)
+$(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+    $(eval $(call check-and-set-custom-avb-chain-args,$(partition))))
 endif
 
 # Add kernel cmdline descriptor for kernel to mount system.img as root with
@@ -3593,6 +3645,10 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_VBMETA_VENDOR_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VBMETA_VENDOR_KEY_PATH) \
         --output $(1)/vbmeta_vendor.avbpubkey)
+  $(if $(BOARD_CUSTOMIMAGES_PARTITION_LIST),\
+    $(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+        $(AVBTOOL) extract_public_key --key $(BOARD_AVB_$(call to-upper,$(partition))_KEY_PATH) \
+            --output $(1)/$(partition).avbpubkey;))
 endef
 
 # Builds a chained VBMeta image. This VBMeta image will contain the descriptors for the partitions
@@ -3660,6 +3716,7 @@ $(INSTALLED_VBMETAIMAGE_TARGET): \
 	    $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) \
 	    $(INSTALLED_ODMIMAGE_TARGET) \
 	    $(INSTALLED_DTBOIMAGE_TARGET) \
+	    $(INSTALLED_CUSTOMIMAGES_TARGET) \
 	    $(INSTALLED_RECOVERYIMAGE_TARGET) \
 	    $(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET) \
 	    $(INSTALLED_VBMETA_VENDORIMAGE_TARGET) \
@@ -4218,6 +4275,16 @@ ifdef BOARD_AVB_RECOVERY_KEY_PATH
 	$(hide) echo "avb_recovery_algorithm=$(BOARD_AVB_RECOVERY_ALGORITHM)" >> $@
 	$(hide) echo "avb_recovery_rollback_index_location=$(BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION)" >> $@
 endif # BOARD_AVB_RECOVERY_KEY_PATH
+ifneq (,$(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)))
+	$(hide) echo "avb_custom_images_partition_list=$(BOARD_CUSTOMIMAGES_PARTITION_LIST)" >> $@
+	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+	    echo "avb_$(partition)_key_path=$(BOARD_AVB_$(call to-upper,$(partition))_KEY_PATH)"  >> $@; \
+	    echo "avb_$(partition)_algorithm=$(BOARD_AVB_$(call to-upper,$(partition))_ALGORITHM)"  >> $@; \
+	    echo "avb_$(partition)_add_hashtree_footer_args=$(BOARD_AVB_$(call to-upper,$(partition))_ADD_HASHTREE_FOOTER_ARGS)"  >> $@; \
+	    echo "avb_$(partition)_rollback_index_location=$(BOARD_AVB_$(call to-upper,$(partition))_ROLLBACK_INDEX_LOCATION)"  >> $@; \
+	    echo "avb_$(partition)_partition_size=$(BOARD_AVB_$(call to-upper,$(partition))_PARTITION_SIZE)"  >> $@; \
+	    echo "avb_$(partition)_image_list=$(foreach image,$(BOARD_AVB_$(call to-upper,$(partition))_IMAGE_LIST),$(notdir $(image)))" >> $@;)
+endif # BOARD_CUSTOMIMAGES_PARTITION_LIST
 ifneq (,$(strip $(BOARD_AVB_VBMETA_SYSTEM)))
 	$(hide) echo "avb_vbmeta_system=$(BOARD_AVB_VBMETA_SYSTEM)" >> $@
 	$(hide) echo "avb_vbmeta_system_args=$(BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS)" >> $@
@@ -4451,6 +4518,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INSTALLED_VBMETAIMAGE_TARGET) \
 	    $(INSTALLED_ODMIMAGE_TARGET) \
 	    $(INSTALLED_DTBOIMAGE_TARGET) \
+	    $(INSTALLED_CUSTOMIMAGES_TARGET) \
 	    $(INTERNAL_SYSTEMOTHERIMAGE_FILES) \
 	    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 	    $(INSTALLED_KERNEL_TARGET) \
@@ -4695,6 +4763,11 @@ ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_DTBOIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 endif # BOARD_PREBUILT_DTBOIMAGE
+ifneq ($(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)),)
+	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
+	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+	    $(foreach image,$(BOARD_AVB_$(call to-upper,$(partition))_IMAGE_LIST),cp $(image) $(zip_root)/PREBUILT_IMAGES/;))
+endif # BOARD_CUSTOMIMAGES_PARTITION_LIST
 	@# The radio images in BOARD_PACK_RADIOIMAGES will be additionally copied from RADIO/ into
 	@# IMAGES/, which then will be added into <product>-img.zip. Such images must be listed in
 	@# INSTALLED_RADIOIMAGE_TARGET.
