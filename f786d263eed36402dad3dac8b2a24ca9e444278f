@@ -211,6 +211,30 @@
       "revId": "f786d263eed36402dad3dac8b2a24ca9e444278f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a1aa566_131f2259",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-05-25T05:42:37Z",
+      "side": 1,
+      "message": "Yeah, but deleting a prop requires updating of all indices. code got too complicated for the small performance gain.",
+      "parentUuid": "6144fe29_a8c8eb93",
+      "range": {
+        "startLine": 90,
+        "startChar": 6,
+        "endLine": 90,
+        "endChar": 14
+      },
+      "revId": "f786d263eed36402dad3dac8b2a24ca9e444278f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
