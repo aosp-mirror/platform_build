@@ -270,6 +270,12 @@ else
 vendor_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/vendor.prop)
 endif
 
+android_info_prop := $(call intermediates-dir-for,ETC,android_info_prop)/android_info.prop
+$(android_info_prop): $(INSTALLED_ANDROID_INFO_TXT_TARGET)
+	cat $< | grep 'require version-' | sed -e 's/require version-/ro.build.expect./g' > $@
+
+vendor_prop_files += $(android_info_prop)
+
 ifdef property_overrides_split_enabled
 FINAL_VENDOR_BUILD_PROPERTIES += \
     $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES) $(ADDITIONAL_VENDOR_PROPERTIES))
@@ -291,7 +297,6 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PRO
 	$(hide) echo "#" >> $@; \
 	        echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
 	        echo "#" >> $@;
-	$(hide) cat $(INSTALLED_ANDROID_INFO_TXT_TARGET) | grep 'require version-' | sed -e 's/require version-/ro.build.expect./g' >> $@
 ifdef property_overrides_split_enabled
 	$(hide) $(foreach file,$(vendor_prop_files), \
 	    if [ -f "$(file)" ]; then \
