@@ -1234,7 +1234,10 @@ def main(argv):
       partition, algorithm = a.split("=")
       OPTIONS.avb_algorithms[partition] = algorithm
     elif o == "--avb_extra_custom_image_extra_args":
-      partition, extra_args = a.split("=")
+      # Setting the maxsplit parameter to one, which will return a list with
+      # two elements. e.g., the second '=' should not be splitted for
+      # 'oem=--signing_helper_with_files=/tmp/avbsigner.sh'.
+      partition, extra_args = a.split("=", 1)
       OPTIONS.avb_extra_args[partition] = extra_args
     else:
       return False
