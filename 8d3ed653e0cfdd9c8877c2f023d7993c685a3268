@@ -22,6 +22,30 @@
       "revId": "8d3ed653e0cfdd9c8877c2f023d7993c685a3268",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3bd3a95_f6f3369c",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1237,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-05-25T04:18:04Z",
+      "side": 1,
+      "message": "Sure, it\u0027s added in the new patch",
+      "parentUuid": "f450434a_2cfd6d56",
+      "range": {
+        "startLine": 1237,
+        "startChar": 6,
+        "endLine": 1237,
+        "endChar": 45
+      },
+      "revId": "8d3ed653e0cfdd9c8877c2f023d7993c685a3268",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
