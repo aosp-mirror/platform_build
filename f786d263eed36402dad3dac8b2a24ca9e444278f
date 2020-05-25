@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e2f04482_350e698e",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2020-05-25T03:40:26Z",
+      "side": 1,
+      "message": "python3",
+      "range": {
+        "startLine": 1,
+        "startChar": 15,
+        "endLine": 1,
+        "endChar": 21
+      },
+      "revId": "f786d263eed36402dad3dac8b2a24ca9e444278f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49f995c3_14854be7",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2020-05-25T03:40:26Z",
+      "side": 1,
+      "message": "The if statement is long. How about keeping it in the loop as is?\n\n  check_pass \u003d True\n  for p in prop_list.get_all():\n    if ...",
+      "range": {
+        "startLine": 54,
+        "startChar": 2,
+        "endLine": 54,
+        "endChar": 20
+      },
+      "revId": "f786d263eed36402dad3dac8b2a24ca9e444278f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1ad9ee45_1c6a26a5",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2020-05-25T03:40:26Z",
+      "side": 1,
+      "message": "The line ends with \"\\n\", and there is an extra \"\\n\" at line 114.",
+      "range": {
+        "startLine": 70,
+        "startChar": 26,
+        "endLine": 70,
+        "endChar": 30
+      },
+      "revId": "f786d263eed36402dad3dac8b2a24ca9e444278f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2262edb5_3ca57ad5",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2020-05-25T03:40:26Z",
+      "side": 1,
+      "message": "The property names are assumed to be unqiue. You can use a dict to efficiently find the Prop in the list. For example,\n\n  # prop_index \u003d {name: index}\n\n  def delete(self, name):\n    if name not in self.prop_index:\n      return\n    index \u003d self.prop_index[name]\n    self.props[index] \u003d None\n    del self.prop_index[name]\n\n  def get_all(self):\n    return [p for p in self.props if p and not p.is_comment()]",
+      "range": {
+        "startLine": 90,
+        "startChar": 6,
+        "endLine": 90,
+        "endChar": 14
+      },
+      "revId": "f786d263eed36402dad3dac8b2a24ca9e444278f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
