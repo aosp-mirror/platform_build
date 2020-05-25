@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e32f71eb_11d90521",
+        "filename": "core/main.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-25T18:32:16Z",
+      "side": 1,
+      "message": "Nit -- can we make this:\n\n    _partitions :\u003d ADDITIONAL_SYSTEM_PROPERTIES ADDITIONAL_VENDOR_PROPERTIES ...\n\nJust to make it show up in search properly?",
+      "revId": "18d1a87ff6de9f5030e6b7929dc0b6213f1fc1e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
