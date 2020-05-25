@@ -368,9 +368,6 @@ $(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS)
 	@echo Target odm buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) rm -f $@ && touch $@
-	$(hide) echo ro.odm.product.cpu.abilist="$(TARGET_CPU_ABI_LIST)">>$@
-	$(hide) echo ro.odm.product.cpu.abilist32="$(TARGET_CPU_ABI_LIST_32_BIT)">>$@
-	$(hide) echo ro.odm.product.cpu.abilist64="$(TARGET_CPU_ABI_LIST_64_BIT)">>$@
 	$(hide) $(call generate-common-build-props,odm,$@)
 	$(hide) $(foreach file,$(odm_prop_files), \
 	    if [ -f "$(file)" ]; then \

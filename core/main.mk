@@ -313,6 +313,11 @@ ADDITIONAL_VENDOR_PROPERTIES += \
     ro.build.ab_update=$(AB_OTA_UPDATER)
 endif
 
+ADDITIONAL_ODM_PROPERTIES += \
+    ro.odm.product.cpu.abilist=$(TARGET_CPU_ABI_LIST) \
+    ro.odm.product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT) \
+    ro.odm.product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)
+
 # Set ro.product.vndk.version to know the VNDK version required by product
 # modules. It uses the version in PRODUCT_PRODUCT_VNDK_VERSION. If the value
 # is "current", use PLATFORM_VNDK_VERSION.
