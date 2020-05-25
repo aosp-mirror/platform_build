@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9fe453b0_50c60dc5",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2020-05-25T05:16:07Z",
+      "side": 1,
+      "message": "Does it need rstrip?",
+      "range": {
+        "startLine": 88,
+        "startChar": 26,
+        "endLine": 88,
+        "endChar": 30
+      },
+      "revId": "1fd88058021f5017e963420ef7cc2961cb643479",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

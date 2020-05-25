@@ -187,6 +187,30 @@
       "revId": "f786d263eed36402dad3dac8b2a24ca9e444278f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6144fe29_a8c8eb93",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2020-05-25T05:16:07Z",
+      "side": 1,
+      "message": "Ack\nYou can define prop_index \u003d {name: [index]} and use the dict to get the duplicates.",
+      "parentUuid": "445274eb_11687ded",
+      "range": {
+        "startLine": 90,
+        "startChar": 6,
+        "endLine": 90,
+        "endChar": 14
+      },
+      "revId": "f786d263eed36402dad3dac8b2a24ca9e444278f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
