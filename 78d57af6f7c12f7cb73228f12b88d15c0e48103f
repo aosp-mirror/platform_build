@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4087eff5_41317970",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-25T10:04:25Z",
+      "side": 1,
+      "message": "Could you please sort this list?",
+      "range": {
+        "startLine": 104,
+        "startChar": 27,
+        "endLine": 113,
+        "endChar": 0
+      },
+      "revId": "78d57af6f7c12f7cb73228f12b88d15c0e48103f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
