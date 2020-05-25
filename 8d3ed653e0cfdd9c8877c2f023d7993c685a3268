@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f450434a_2cfd6d56",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1237,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-05-25T03:25:47Z",
+      "side": 1,
+      "message": "how about adding a comment above?\n\n# Setting the maxsplit parameter to one, which will return a list with two elements.\n# e.g., the second \u0027\u003d\u0027 should not be splitted for \u0027oem\u003d--signing_helper_with_files\u003d/tmp/avbsigner.sh\u0027",
+      "range": {
+        "startLine": 1237,
+        "startChar": 6,
+        "endLine": 1237,
+        "endChar": 45
+      },
+      "revId": "8d3ed653e0cfdd9c8877c2f023d7993c685a3268",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
