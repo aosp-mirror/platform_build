@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "583fc088_aac8cf59",
+        "filename": "core/main.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-05-26T21:14:14Z",
+      "side": 0,
+      "message": "Can you use .KATI_OBSOLETE_VAR to prevent writes to ADDITIONAL_BUILD_PROPERTIES?",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 127,
+        "endChar": 0
+      },
+      "revId": "95fc5e76a607efc7a4673d5bce9ff60adc9fe65f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
