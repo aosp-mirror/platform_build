@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7cf9651_cb6ab7ba",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2020-05-26T06:47:39Z",
+      "side": 1,
+      "message": "\"Duplicate prop removed by post_process_props.py\"",
+      "revId": "6eef7de89c313706c9315dcf704298f50926b104",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
