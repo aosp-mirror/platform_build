@@ -406,9 +406,7 @@ $(INSTALLED_PRODUCT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PR
 	@echo Target product buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) rm -f $@ && touch $@
-ifdef BOARD_USES_PRODUCTIMAGE
 	$(hide) $(call generate-common-build-props,product,$@)
-endif  # BOARD_USES_PRODUCTIMAGE
 	$(hide) $(foreach file,$(product_prop_files), \
 	    if [ -f "$(file)" ]; then \
 	        echo Target product properties from: "$(file)"; \
