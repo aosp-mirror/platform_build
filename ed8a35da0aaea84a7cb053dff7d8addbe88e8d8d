@@ -46,6 +46,30 @@
       "revId": "ed8a35da0aaea84a7cb053dff7d8addbe88e8d8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5391af6_3ec5660a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-26T14:07:32Z",
+      "side": 1,
+      "message": "Please remove DNM, it\u0027s incorrect to use it here. If there are merge conflicts, you need to resolve them",
+      "parentUuid": "f118359f_8a3c60fd",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 37
+      },
+      "revId": "ed8a35da0aaea84a7cb053dff7d8addbe88e8d8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
