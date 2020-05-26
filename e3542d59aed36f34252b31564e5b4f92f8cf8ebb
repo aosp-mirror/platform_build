@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4d08b031_3f63732a",
+        "filename": "target/board/emulator_arm/BoardConfig.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-05-26T04:37:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "053a5286_e56fceaa",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 67
+      },
+      "revId": "e3542d59aed36f34252b31564e5b4f92f8cf8ebb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "56df86ca_fc4612f1",
         "filename": "target/board/emulator_arm/device.mk",
         "patchSetId": 7
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "4e1d80a5_6d2a2bfb",
+        "filename": "target/board/emulator_arm/device.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-05-26T04:37:22Z",
+      "side": 1,
+      "message": "Let\u0027s keep the file for being consistent with other architectures.",
+      "parentUuid": "56df86ca_fc4612f1",
+      "revId": "e3542d59aed36f34252b31564e5b4f92f8cf8ebb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e533a1d3_1d8c48f7",
         "filename": "target/board/emulator_x86_64_arm64/device.mk",
         "patchSetId": 7
@@ -56,6 +98,24 @@
       "revId": "e3542d59aed36f34252b31564e5b4f92f8cf8ebb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e9b36e9_2c08ca50",
+        "filename": "target/board/emulator_x86_64_arm64/device.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-05-26T04:37:22Z",
+      "side": 1,
+      "message": "Let\u0027s keep the file for being consistent with other architectures.",
+      "parentUuid": "e533a1d3_1d8c48f7",
+      "revId": "e3542d59aed36f34252b31564e5b4f92f8cf8ebb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
