@@ -22,6 +22,30 @@
       "revId": "ed8a35da0aaea84a7cb053dff7d8addbe88e8d8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f118359f_8a3c60fd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-26T13:56:54Z",
+      "side": 1,
+      "message": "Just to be extra sure that it won\u0027t flow to any downstream and cause any merge conflict again. The internal one you reviewed earlier is to solve the conflict, and I think use DNM here prevents the conflict to happen again?",
+      "parentUuid": "d6b244ed_c7869aec",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 37
+      },
+      "revId": "ed8a35da0aaea84a7cb053dff7d8addbe88e8d8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
