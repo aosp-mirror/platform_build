@@ -16,6 +16,24 @@
       "revId": "49b45296f64bc596e0647840904a3a2b9ae5aaf3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d95b692_a26e4318",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2601,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-05-26T19:23:03Z",
+      "side": 0,
+      "message": "Good catch. That\u0027s why I think keeping the strip() in the Python code is better.",
+      "parentUuid": "3c255efe_a8e099f3",
+      "revId": "49b45296f64bc596e0647840904a3a2b9ae5aaf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
