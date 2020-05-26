@@ -22,6 +22,29 @@
       "revId": "28ee1491487f4cc96978e83b56e2d17f595638a7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9de0ff4_f7a5fe8e",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-05-26T02:57:44Z",
+      "side": 1,
+      "message": "Shoud we add this to PRODUCT_PACKAGES instead of PRODUCT_PACKAGES_DEBUG? I think this is a testing tool for checking the bad blocks.",
+      "range": {
+        "startLine": 115,
+        "startChar": 4,
+        "endLine": 115,
+        "endChar": 13
+      },
+      "revId": "28ee1491487f4cc96978e83b56e2d17f595638a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
