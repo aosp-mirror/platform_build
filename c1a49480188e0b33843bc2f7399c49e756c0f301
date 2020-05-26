@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0bcf2e09_0ae71952",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-05-26T22:21:02Z",
+      "side": 1,
+      "message": "There are now four versions (v3 has been added)",
+      "revId": "c1a49480188e0b33843bc2f7399c49e756c0f301",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc2047bf_6747dba4",
+        "filename": "core/board_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-05-26T22:21:02Z",
+      "side": 1,
+      "message": "must be at least 2",
+      "revId": "c1a49480188e0b33843bc2f7399c49e756c0f301",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b554464_f1c60eef",
+        "filename": "core/board_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-05-26T22:21:02Z",
+      "side": 1,
+      "message": "must be greater than 0",
+      "revId": "c1a49480188e0b33843bc2f7399c49e756c0f301",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
