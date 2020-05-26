@@ -16,6 +16,42 @@
       "revId": "6eef7de89c313706c9315dcf704298f50926b104",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96a5591b_3420fb64",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2020-05-26T06:51:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7cf9651_cb6ab7ba",
+      "revId": "6eef7de89c313706c9315dcf704298f50926b104",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "284e0806_fdd4fdf8",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2020-05-26T06:51:15Z",
+      "side": 1,
+      "message": "Eh disregard my comment",
+      "parentUuid": "a7cf9651_cb6ab7ba",
+      "revId": "6eef7de89c313706c9315dcf704298f50926b104",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
