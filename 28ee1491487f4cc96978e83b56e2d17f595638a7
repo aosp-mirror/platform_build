@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "e5190de2_ae98117b",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-26T09:19:44Z",
+      "side": 1,
+      "message": "Please add a comment about why badblocks is here (and when/how it can be removed, if possible)",
+      "revId": "28ee1491487f4cc96978e83b56e2d17f595638a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a9c88808_11c66b44",
         "filename": "target/product/mainline_system.mk",
         "patchSetId": 1
@@ -137,6 +154,30 @@
         "startChar": 4,
         "endLine": 115,
         "endChar": 13
+      },
+      "revId": "28ee1491487f4cc96978e83b56e2d17f595638a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "89884690_fc3eedff",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-05-26T09:19:44Z",
+      "side": 1,
+      "message": "ok, that seems acceptable",
+      "parentUuid": "bee0308a_4edb39d8",
+      "range": {
+        "startLine": 115,
+        "startChar": 3,
+        "endLine": 115,
+        "endChar": 16
       },
       "revId": "28ee1491487f4cc96978e83b56e2d17f595638a7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
