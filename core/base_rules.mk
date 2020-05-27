@@ -197,6 +197,7 @@ my_module_path := $(strip $(LOCAL_MODULE_PATH))
 endif
 my_module_path := $(patsubst %/,%,$(my_module_path))
 my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
+
 ifdef LOCAL_IS_HOST_MODULE
   partition_tag :=
   actual_partition_tag :=
@@ -345,15 +346,15 @@ LOCAL_BUILT_MODULE := $(intermediates)/$(my_built_module_stem)
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Apk and its attachments reside in its own subdir.
   ifeq ($(LOCAL_MODULE_CLASS),APPS)
-  # framework-res.apk doesn't like the additional layer.
-  ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-  # Neither do Runtime Resource Overlay apks, which contain just the overlaid resources.
-  else ifeq ($(LOCAL_IS_RUNTIME_RESOURCE_OVERLAY),true)
-  else
-    ifneq ($(use_testcase_folder),true)
-      my_module_path := $(my_module_path)/$(LOCAL_MODULE)
+    # framework-res.apk doesn't like the additional layer.
+    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      # Neither do Runtime Resource Overlay apks, which contain just the overlaid resources.
+    else ifeq ($(LOCAL_IS_RUNTIME_RESOURCE_OVERLAY),true)
+    else
+      ifneq ($(use_testcase_folder),true)
+        my_module_path := $(my_module_path)/$(LOCAL_MODULE)
+      endif
     endif
-  endif
   endif
   LOCAL_INSTALLED_MODULE := $(my_module_path)/$(my_installed_module_stem)
 endif
@@ -805,6 +806,16 @@ ifdef LOCAL_PICKUP_FILES
 ALL_MODULES.$(my_register_name).PICKUP_FILES := \
     $(ALL_MODULES.$(my_register_name).PICKUP_FILES) $(LOCAL_PICKUP_FILES)
 endif
+# Record the platform availability of this module. Note that the availability is not
+# meaningful for non-installable modules (e.g., static libs) or host modules.
+# We only care about modules that are installable to the device.
+ifeq (true,$(LOCAL_NOT_AVAILABLE_FOR_PLATFORM))
+  ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+    ifndef LOCAL_IS_HOST_MODULE
+      ALL_MODULES.$(my_register_name).NOT_AVAILABLE_FOR_PLATFORM := true
+    endif
+  endif
+endif
 
 my_required_modules := $(LOCAL_REQUIRED_MODULES) \
     $(LOCAL_REQUIRED_MODULES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
@@ -895,7 +906,7 @@ INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 ##########################################################
 # Track module-level dependencies.
 # Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
-ifneq (,$(filter deps-license,$(MAKECMDGOALS)))
+ifdef RECORD_ALL_DEPS
 ALL_DEPS.MODULES := $(ALL_DEPS.MODULES) $(LOCAL_MODULE)
 ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) \

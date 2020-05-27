@@ -39,9 +39,9 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := RP1A
-MIN_PLATFORM_VERSION := RP1A
-MAX_PLATFORM_VERSION := RP1A
+DEFAULT_PLATFORM_VERSION := SP1A
+MIN_PLATFORM_VERSION := SP1A
+MAX_PLATFORM_VERSION := SP1A
 
 ALLOWED_VERSIONS := $(call allowed-platform-versions,\
   $(MIN_PLATFORM_VERSION),\
@@ -85,10 +85,12 @@ MAX_PLATFORM_VERSION :=
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
 PLATFORM_VERSION.RP1A := R
+PLATFORM_VERSION.SP1A := S
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
 PLATFORM_VERSION_CODENAME.RP1A := R
+PLATFORM_VERSION_CODENAME.SP1A := S
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
@@ -235,7 +237,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2020-04-05
+      PLATFORM_SECURITY_PATCH := 2020-05-05
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH
 

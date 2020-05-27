@@ -40,7 +40,7 @@ $(call symlink-file,$(my_module_path)/$(my_src_binary_name),$(my_src_binary_name
 
 # We need this so that the installed files could be picked up based on the
 # local module name
-ALL_MODULES.$(LOCAL_MODULE).INSTALLED += $(my_symlink)
+ALL_MODULES.$(my_register_name).INSTALLED += $(my_symlink)
 
 # Create the symlink when you run mm/mmm or "make <module_name>"
 $(LOCAL_MODULE) : $(my_symlink)
