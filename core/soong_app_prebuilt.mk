@@ -110,7 +110,7 @@ $(my_all_targets): $(my_installed)
 
 # Copy test suite files.
 ifdef LOCAL_COMPATIBILITY_SUITE
-my_apks_to_install := $(foreach f,$(filter %.apk,$(LOCAL_SOONG_BUILT_INSTALLED)),$(call word-colon,1,$(f)))
+my_apks_to_install := $(foreach f,$(filter %.apk %.idsig,$(LOCAL_SOONG_BUILT_INSTALLED)),$(call word-colon,1,$(f)))
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(foreach a,$(my_apks_to_install),\
@@ -157,11 +157,17 @@ endif
 include $(BUILD_SYSTEM)/app_certificate_validate.mk
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
+ifneq ($(LOCAL_MODULE_STEM),)
+  PACKAGES.$(LOCAL_MODULE).STEM := $(LOCAL_MODULE_STEM)
+else
+  PACKAGES.$(LOCAL_MODULE).STEM := $(LOCAL_MODULE)
+endif
+
 # Set a actual_partition_tag (calculated in base_rules.mk) for the package.
 PACKAGES.$(LOCAL_MODULE).PARTITION := $(actual_partition_tag)
 
 ifdef LOCAL_SOONG_BUNDLE
-  ALL_MODULES.$(LOCAL_MODULE).BUNDLE := $(LOCAL_SOONG_BUNDLE)
+  ALL_MODULES.$(my_register_name).BUNDLE := $(LOCAL_SOONG_BUNDLE)
 endif
 
 ifndef LOCAL_IS_HOST_MODULE

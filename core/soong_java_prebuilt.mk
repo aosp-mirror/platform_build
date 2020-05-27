@@ -91,7 +91,8 @@ endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
 ifdef LOCAL_SOONG_DEX_JAR
   ifndef LOCAL_IS_HOST_MODULE
-    ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)  # is_boot_jar
+    boot_jars := $(foreach pair,$(PRODUCT_BOOT_JARS), $(call word-colon,2,$(pair)))
+    ifneq ($(filter $(LOCAL_MODULE),$(boot_jars)),) # is_boot_jar
       ifeq (true,$(WITH_DEXPREOPT))
         # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
         # We use this installed_odex trick to get boot.art installed.
@@ -132,7 +133,7 @@ ALL_MODULES.$(my_register_name).CLASSES_JAR := $(full_classes_jar)
 $(my_register_name): $(my_installed)
 
 ifdef LOCAL_SOONG_AAR
-  ALL_MODULES.$(LOCAL_MODULE).AAR := $(LOCAL_SOONG_AAR)
+  ALL_MODULES.$(my_register_name).AAR := $(LOCAL_SOONG_AAR)
 endif
 
 javac-check : $(full_classes_jar)

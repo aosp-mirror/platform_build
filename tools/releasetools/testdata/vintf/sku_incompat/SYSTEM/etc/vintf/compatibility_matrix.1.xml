@@ -1,7 +1,7 @@
-<compatibility-matrix version="1.0" type="framework">
+<compatibility-matrix version="1.0" level="1" type="framework">
     <hal format="hidl" optional="false">
         <name>foo</name>
-        <version>1.0</version>
+        <version>1.1</version>
         <interface>
             <name>IFoo</name>
             <instance>default</instance>

@@ -115,7 +115,7 @@ endif
 # -----------------------------------------------------------------
 # Validate ADDITIONAL_DEFAULT_PROPERTIES.
 ifneq ($(ADDITIONAL_DEFAULT_PROPERTIES),)
-$(error ADDITIONAL_DEFAULT_PROPERTIES must not be set before here: $(ADDITIONAL_DEFAULT_PROPERTIES))
+$(error ADDITIONAL_DEFAULT_PROPERTIES is deprecated)
 endif
 
 #
@@ -207,9 +207,9 @@ $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
 # Sets ro.actionable_compatible_property.enabled to know on runtime whether the whitelist
 # of actionable compatible properties is enabled or not.
 ifeq ($(PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE),true)
-ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=false
+ADDITIONAL_BUILD_PROPERTIES += ro.actionable_compatible_property.enabled=false
 else
-ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
+ADDITIONAL_BUILD_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
 endif
 
 # Add the system server compiler filter if they are specified for the product.
@@ -229,7 +229,7 @@ endif
 #
 # It then uses ${ro.postinstall.fstab.prefix}/etc/fstab.postinstall to
 # mount system_other partition.
-ADDITIONAL_DEFAULT_PROPERTIES += ro.postinstall.fstab.prefix=/system
+ADDITIONAL_BUILD_PROPERTIES += ro.postinstall.fstab.prefix=/system
 
 # Set ro.product.vndk.version to know the VNDK version required by product
 # modules. It uses the version in PRODUCT_PRODUCT_VNDK_VERSION. If the value
@@ -261,11 +261,11 @@ enable_target_debugging := true
 tags_to_install :=
 ifneq (,$(user_variant))
   # Target is secure in user builds.
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
-  ADDITIONAL_DEFAULT_PROPERTIES += security.perf_harden=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.secure=1
+  ADDITIONAL_BUILD_PROPERTIES += security.perf_harden=1
 
   ifeq ($(user_variant),user)
-    ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=1
+    ADDITIONAL_BUILD_PROPERTIES += ro.adb.secure=1
   endif
 
   ifeq ($(user_variant),userdebug)
@@ -277,25 +277,25 @@ ifneq (,$(user_variant))
   endif
 
   # Disallow mock locations by default for user builds
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
+  ADDITIONAL_BUILD_PROPERTIES += ro.allow.mock.location=0
 
 else # !user_variant
   # Turn on checkjni for non-user builds.
   ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
   # Set device insecure for non-user builds.
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
+  ADDITIONAL_BUILD_PROPERTIES += ro.secure=0
   # Allow mock locations by default for non user builds
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.allow.mock.location=1
 endif # !user_variant
 
 ifeq (true,$(strip $(enable_target_debugging)))
   # Target is more debuggable and adbd is on by default
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.debuggable=1
   # Enable Dalvik lock contention logging.
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500
 else # !enable_target_debugging
   # Target is less debuggable and adbd is off by default
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0
+  ADDITIONAL_BUILD_PROPERTIES += ro.debuggable=0
 endif # !enable_target_debugging
 
 ## eng ##
@@ -388,8 +388,6 @@ endif
 
 # Strip and readonly a few more variables so they won't be modified.
 $(readonly-final-product-vars)
-ADDITIONAL_DEFAULT_PROPERTIES := $(strip $(ADDITIONAL_DEFAULT_PROPERTIES))
-.KATI_READONLY := ADDITIONAL_DEFAULT_PROPERTIES
 ADDITIONAL_BUILD_PROPERTIES := $(strip $(ADDITIONAL_BUILD_PROPERTIES))
 .KATI_READONLY := ADDITIONAL_BUILD_PROPERTIES
 ADDITIONAL_PRODUCT_PROPERTIES := $(strip $(ADDITIONAL_PRODUCT_PROPERTIES))
@@ -487,6 +485,21 @@ CUSTOM_MODULES := \
 # brought in as requirements of other modules.
 #
 # Resolve the required module name to 32-bit or 64-bit variant.
+
+# TODO(b/155869107): Replace get-32-bit-modules with get-modules-for-2nd-arch
+# Get a list of corresponding module names for the second arch, if they exist.
+# $(1): TARGET, HOST or HOST_CROSS
+# $(2): A list of module names
+define get-modules-for-2nd-arch
+$(strip \
+  $(foreach m,$(2), \
+    $(if $(filter true,$(ALL_MODULES.$(m)$($(1)_2ND_ARCH_MODULE_SUFFIX).FOR_2ND_ARCH)), \
+      $(m)$($(1)_2ND_ARCH_MODULE_SUFFIX) \
+    ) \
+  ) \
+)
+endef
+
 # Get a list of corresponding 32-bit module names, if one exists.
 define get-32-bit-modules
 $(sort $(foreach m,$(1),\
@@ -795,9 +808,10 @@ $(foreach m,$($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))$(1)DEPENDENCIES_ON_SHARED_LI
     $($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))TARGET_OUT_INTERMEDIATES)/SHARED_LIBRARIES/%,\
     $(call module-built-files,$(mod)))))\
   \
-  $(if $(r),\
+  $(if $(and $(r),$(deps)),\
     $(eval stamp := $(dir $(r))check_elf_files.timestamp)\
-    $(eval $(call add-elf-file-check-shared-lib,$(stamp),$(deps)))\
+    $(if $(CHECK_ELF_FILES.$(stamp)),\
+      $(eval $(call add-elf-file-check-shared-lib,$(stamp),$(deps))))\
   ))
 endef
 
@@ -1029,6 +1043,45 @@ define auto-included-modules
 
 endef
 
+# Resolves module bitness for PRODUCT_PACKAGES and PRODUCT_HOST_PACKAGES.
+# The returned list of module names can be used to access
+# ALL_MODULES.<module>.<*> variables.
+# Name resolution for PRODUCT_PACKAGES / PRODUCT_HOST_PACKAGES:
+#   foo:32 resolves to foo_32;
+#   foo:64 resolves to foo;
+#   foo resolves to both foo and foo_32 (if foo_32 is defined).
+#
+# Name resolution for HOST_CROSS modules:
+#   foo:32 resolves to foo;
+#   foo:64 resolves to foo_64;
+#   foo resolves to both foo and foo_64 (if foo_64 is defined).
+#
+# $(1): TARGET, HOST or HOST_CROSS
+# $(2): A list of simple module names with :32 and :64 suffix
+define resolve-bitness-for-modules
+$(strip \
+  $(eval modules_32 := $(patsubst %:32,%,$(filter %:32,$(2)))) \
+  $(eval modules_64 := $(patsubst %:64,%,$(filter %:64,$(2)))) \
+  $(eval modules_both := $(filter-out %:32 %:64,$(2))) \
+  $(eval ### For host cross modules, the primary arch is windows x86 and secondary is x86_64) \
+  $(if $(filter HOST_CROSS,$(1)), \
+    $(eval modules_1st_arch := $(modules_32)) \
+    $(eval modules_2nd_arch := $(modules_64)), \
+    $(eval modules_1st_arch := $(modules_64)) \
+    $(eval modules_2nd_arch := $(modules_32))) \
+  $(eval ### Note for 32-bit product, 32 and 64 will be added as their original module names.) \
+  $(eval modules := $(modules_1st_arch)) \
+  $(if $($(1)_2ND_ARCH), \
+    $(eval modules += $(call get-modules-for-2nd-arch,$(1),$(modules_2nd_arch))), \
+    $(eval modules += $(modules_2nd_arch))) \
+  $(eval ### For the rest we add both) \
+  $(eval modules += $(modules_both)) \
+  $(if $($(1)_2ND_ARCH), \
+    $(eval modules += $(call get-modules-for-2nd-arch,$(1),$(modules_both)))) \
+  $(modules) \
+)
+endef
+
 # Lists most of the files a particular product installs, including:
 # - PRODUCT_PACKAGES, and their LOCAL_REQUIRED_MODULES
 # - PRODUCT_COPY_FILES
@@ -1058,15 +1111,7 @@ define product-installed-files
   $(eval _pif_overrides := $(call module-overrides,$(_pif_modules))) \
   $(eval _pif_modules := $(filter-out $(_pif_overrides), $(_pif_modules))) \
   $(eval ### Resolve the :32 :64 module name) \
-  $(eval _pif_modules_32 := $(patsubst %:32,%,$(filter %:32, $(_pif_modules)))) \
-  $(eval _pif_modules_64 := $(patsubst %:64,%,$(filter %:64, $(_pif_modules)))) \
-  $(eval _pif_modules_rest := $(filter-out %:32 %:64,$(_pif_modules))) \
-  $(eval ### Note for 32-bit product, 32 and 64 will be added as their original module names.) \
-  $(eval _pif_modules := $(call get-32-bit-modules-if-we-can, $(_pif_modules_32))) \
-  $(eval _pif_modules += $(_pif_modules_64)) \
-  $(eval ### For the rest we add both) \
-  $(eval _pif_modules += $(call get-32-bit-modules, $(_pif_modules_rest))) \
-  $(eval _pif_modules += $(_pif_modules_rest)) \
+  $(eval _pif_modules := $(sort $(call resolve-bitness-for-modules,TARGET,$(_pif_modules)))) \
   $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \
   $(filter-out $(HOST_OUT_ROOT)/%,$(call module-installed-files, $(_pif_modules))) \
   $(call resolve-product-relative-paths,\
@@ -1077,18 +1122,12 @@ endef
 # This does support the :32 / :64 syntax, but does not support module overrides.
 define host-installed-files
   $(eval _hif_modules := $(call get-product-var,$(1),PRODUCT_HOST_PACKAGES)) \
-  $(eval ### Resolve the :32 :64 module name) \
-  $(eval _hif_modules_32 := $(patsubst %:32,%,$(filter %:32, $(_hif_modules)))) \
-  $(eval _hif_modules_64 := $(patsubst %:64,%,$(filter %:64, $(_hif_modules)))) \
-  $(eval _hif_modules_rest := $(filter-out %:32 %:64,$(_hif_modules))) \
-  $(eval _hif_modules := $(call get-host-32-bit-modules-if-we-can, $(_hif_modules_32))) \
-  $(eval _hif_modules += $(_hif_modules_64)) \
-  $(eval ### For the rest we add both) \
-  $(eval _hif_modules += $(call get-host-32-bit-modules, $(_hif_modules_rest))) \
-  $(eval _hif_modules += $(_hif_modules_rest)) \
   $(eval ### Split host vs host cross modules) \
   $(eval _hcif_modules := $(filter host_cross_%,$(_hif_modules))) \
   $(eval _hif_modules := $(filter-out host_cross_%,$(_hif_modules))) \
+  $(eval ### Resolve the :32 :64 module name) \
+  $(eval _hif_modules := $(sort $(call resolve-bitness-for-modules,HOST,$(_hif_modules)))) \
+  $(eval _hcif_modules := $(sort $(call resolve-bitness-for-modules,HOST_CROSS,$(_hcif_modules)))) \
   $(call expand-required-host-modules,_hif_modules,$(_hif_modules),HOST) \
   $(call expand-required-host-modules,_hcif_modules,$(_hcif_modules),HOST_CROSS) \
   $(filter $(HOST_OUT)/%,$(call module-installed-files, $(_hif_modules))) \
@@ -1145,15 +1184,17 @@ ifdef FULL_BUILD
 
   # Some modules produce only host installed files when building with TARGET_BUILD_APPS
   ifeq ($(TARGET_BUILD_APPS),)
-    _modules := $(foreach m,$(PRODUCT_PACKAGES) \
-                            $(PRODUCT_PACKAGES_DEBUG) \
-                            $(PRODUCT_PACKAGES_DEBUG_ASAN) \
-                            $(PRODUCT_PACKAGES_ENG) \
-                            $(PRODUCT_PACKAGES_TESTS),\
+    _modules := $(call resolve-bitness-for-modules,TARGET, \
+      $(PRODUCT_PACKAGES) \
+      $(PRODUCT_PACKAGES_DEBUG) \
+      $(PRODUCT_PACKAGES_DEBUG_ASAN) \
+      $(PRODUCT_PACKAGES_ENG) \
+      $(PRODUCT_PACKAGES_TESTS))
+    _host_modules := $(foreach m,$(_modules), \
                   $(if $(ALL_MODULES.$(m).INSTALLED),\
                     $(if $(filter-out $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,\
                       $(m))))
-    $(call maybe-print-list-and-error,$(sort $(_modules)),\
+    $(call maybe-print-list-and-error,$(sort $(_host_modules)),\
       Host modules should be in PRODUCT_HOST_PACKAGES$(comma) not PRODUCT_PACKAGES)
   endif
 

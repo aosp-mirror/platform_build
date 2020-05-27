@@ -135,6 +135,12 @@ $(KATI_obsolete_var \
   LOCAL_IS_AUX_MODULE \
   ,AUX support has been removed)
 $(KATI_obsolete_var HOST_OUT_TEST_CONFIG TARGET_OUT_TEST_CONFIG LOCAL_TEST_CONFIG_OPTIONS)
+$(KATI_obsolete_var \
+  TARGET_PROJECT_INCLUDES \
+  2ND_TARGET_PROJECT_INCLUDES \
+  TARGET_PROJECT_SYSTEM_INCLUDES \
+  2ND_TARGET_PROJECT_SYSTEM_INCLUDES \
+  ,Project include variables have been removed)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -857,6 +863,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     27.0 \
     28.0 \
     29.0 \
+    30.0 \
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
@@ -1057,16 +1064,6 @@ else
 RELATIVE_PWD :=
 endif
 
-TARGET_PROJECT_INCLUDES :=
-TARGET_PROJECT_SYSTEM_INCLUDES := \
-		$(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS) \
-		$(TARGET_PRODUCT_KERNEL_HEADERS)
-
-ifdef TARGET_2ND_ARCH
-$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_PROJECT_INCLUDES := $(TARGET_PROJECT_INCLUDES)
-$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_PROJECT_SYSTEM_INCLUDES := $(TARGET_PROJECT_SYSTEM_INCLUDES)
-endif
-
 # Flags for DEX2OAT
 first_non_empty_of_three = $(if $(1),$(1),$(if $(2),$(2),$(3)))
 DEX2OAT_TARGET_ARCH := $(TARGET_ARCH)
@@ -1217,5 +1214,8 @@ endif
 -include external/ltp/android/ltp_package_list.mk
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
+
+# Make RECORD_ALL_DEPS readonly.
+RECORD_ALL_DEPS :=$= $(filter true,$(RECORD_ALL_DEPS))
 
 include $(BUILD_SYSTEM)/dumpvar.mk
