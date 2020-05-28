@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2020 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=SP1A.200528.001
+PRODUCT_SOONG_NAMESPACES += device/generic/goldfish # for libwifi-hal-emu
+PRODUCT_SOONG_NAMESPACES += device/generic/goldfish-opengl # for goldfish deps.
+
+ifdef NET_ETH0_STARTONBOOT
+  PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
+endif
+
+# Ensure we package the BIOS files too.
+PRODUCT_HOST_PACKAGES += \
+	bios.bin \
+	vgabios-cirrus.bin \
