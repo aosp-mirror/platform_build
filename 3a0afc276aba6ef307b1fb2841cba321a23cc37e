@@ -46,6 +46,30 @@
       "revId": "3a0afc276aba6ef307b1fb2841cba321a23cc37e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe06ebea_bcf6ae68",
+        "filename": "core/install_jni_libs_internal.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-05-28T10:28:23Z",
+      "side": 1,
+      "message": "Do you want to take over this change?\n\u003e sure, but...\n\nWhat was driving it was me diffing /system|product|vendor with product_FILES and reducing that list, essentially\n\u003e Could you explain more because I don\u0027t get it. Diffing what with what? Reducing what list?",
+      "parentUuid": "b2cda388_4c35a9b1",
+      "range": {
+        "startLine": 63,
+        "startChar": 34,
+        "endLine": 63,
+        "endChar": 42
+      },
+      "revId": "3a0afc276aba6ef307b1fb2841cba321a23cc37e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
