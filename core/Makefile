@@ -793,24 +793,24 @@ $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1) $(6)
 endef
 
 # $(1): staging dir
-# $(2): module load list
-# $(3): module load list filename
-# $(4): output dir
+# $(2): modules list
+# $(3): module load list
+# $(4): module load list filename
+# $(5): output dir
 define module-load-list-copy-paths
-  $(eval $(call build-image-module-load-list,$(1),$(2),$(3))) \
-  $(1)/$(DEPMOD_STAGING_SUBDIR)/$(3):$(4)/lib/modules/$(3)
+  $(eval $(call build-image-module-load-list,$(1),$(2),$(3),$(4))) \
+  $(1)/$(DEPMOD_STAGING_SUBDIR)/$(4):$(5)/lib/modules/$(4)
 endef
 
 # $(1): staging dir
-# $(2): module load list
-# $(3): module load list filename
+# $(2): modules list
+# $(3): module load list
+# $(4): module load list filename
 define build-image-module-load-list
-$(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): PRIVATE_STAGING_DIR := $(1)
-$(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): PRIVATE_LOAD_MODULES := $(2)
-$(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): PRIVATE_LOAD_FILENAME := $(3)
-$(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): $(2)
-	rm -f $$@
-	(for MODULE in $$(PRIVATE_LOAD_MODULES); do basename $$$$MODULE >> $$@; done)
+$(1)/$(DEPMOD_STAGING_SUBDIR)/$(4): PRIVATE_LOAD_MODULES := $(3)
+$(1)/$(DEPMOD_STAGING_SUBDIR)/$(4): $(2)
+	@echo load-list $$(@)
+	@echo '$$(strip $$(notdir $$(PRIVATE_LOAD_MODULES)))' | tr ' ' '\n' > $$(@)
 endef
 
 ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
@@ -836,7 +836,7 @@ endif
 ifneq ($(strip $(BOARD_RECOVERY_KERNEL_MODULES))$(strip $(BOARD_RECOVERY_KERNEL_MODULES_ARCHIVE)),)
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
     ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD
-      ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,ramdisk_modules),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(TARGET_RECOVERY_ROOT_OUT)))
+      ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,ramdisk_modules),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(TARGET_RECOVERY_ROOT_OUT)))
     endif
   endif
   ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery),$(BOARD_RECOVERY_KERNEL_MODULES_LOAD),modules.load.recovery,$(BOARD_RECOVERY_KERNEL_MODULES_ARCHIVE),))
@@ -847,6 +847,13 @@ ifneq ($(strip $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES))$(strip $(BOARD_VENDOR_RAM
     BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD := $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES)
   endif
   ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES),$(TARGET_VENDOR_RAMDISK_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_vendor_ramdisk),$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_ARCHIVE),$(call intermediates-dir-for,PACKAGING,depmod_vendor_ramdisk_stripped)))
+  ifneq (,$(BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD))
+    # BOARD_VENDOR_RAMDISK_KERNEL_MODULES must be the full set, or super set,
+    # of copied modules represented by BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD
+    # and BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD which are mined
+    # from modules.load which will contain relative paths, represent load order.
+    ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,depmod_vendor_recovery_ramdisk),$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES),$(BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD),modules.load.recovery,$(TARGET_VENDOR_RAMDISK_OUT)))
+  endif
 endif
 
 ifneq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
