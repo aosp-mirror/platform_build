@@ -45,10 +45,13 @@ PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
 DIRTY_IMAGE_OBJECTS := $(call word-colon,1,$(firstword \
     $(filter %system/etc/dirty-image-objects,$(PRODUCT_COPY_FILES))))
 
+# Get value of a property. It is first searched from PRODUCT_VENDOR_PROPERTIES
+# and then falls back to PRODUCT_SYSTEM_PROPERTIES
+# $1: name of the property
 define get-product-default-property
 $(strip \
-  $(eval _prop := $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))))\
-  $(if $(_prop),$(_prop),$(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_SYSTEM_DEFAULT_PROPERTIES)))))
+  $(eval _prop := $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_VENDOR_PROPERTIES))))\
+  $(if $(_prop),$(_prop),$(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_SYSTEM_PROPERTIES)))))
 endef
 
 DEX2OAT_IMAGE_XMS := $(call get-product-default-property,dalvik.vm.image-dex2oat-Xms)
