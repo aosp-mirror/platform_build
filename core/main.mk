@@ -242,8 +242,6 @@ else
   ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
   ADDITIONAL_VENDOR_PROPERTIES += ro.vndk.lite=true
 endif
-ADDITIONAL_VENDOR_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
 
 # Add cpu properties for bionic and ART.
 ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.arch=$(TARGET_ARCH)
