@@ -458,8 +458,8 @@ define require-artifacts-in-path
     $(sort $(ARTIFACT_PATH_REQUIREMENT_PRODUCTS) $(current_mk)))
 endef
 
-# Makes including non-existant modules in PRODUCT_PACKAGES an error.
-# $(1): whitelist of non-existant modules to allow.
+# Makes including non-existent modules in PRODUCT_PACKAGES an error.
+# $(1): whitelist of non-existent modules to allow.
 define enforce-product-packages-exist
   $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
   $(eval PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST := true) \
