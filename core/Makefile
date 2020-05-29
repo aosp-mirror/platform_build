@@ -337,7 +337,7 @@ ifneq ($(strip $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES))$(strip $(BOARD_VENDOR_RAM
     # of copied modules represented by BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD
     # and BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD which are mined
     # from modules.load which will contain relative paths, represent load order.
-    ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,depmod_vendor_recovery_ramdisk),$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES),$(BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD),modules.load.recovery,$(TARGET_VENDOR_RAMDISK_OUT),))
+    ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,depmod_vendor_recovery_ramdisk),$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES),$(BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD),modules.load.recovery,$(TARGET_VENDOR_RAMDISK_OUT)))
   endif
 endif
 
