@@ -1176,6 +1176,10 @@ $(if $(filter $(2),system),\
     $(if $(PRODUCT_SYSTEM_HEADROOM),$(hide) echo "system_headroom=$(PRODUCT_SYSTEM_HEADROOM)" >> $(1))
     $(if $(BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "system_reserved_size=$(BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
     $(hide) echo "system_selinux_fc=$(SELINUX_FC)" >> $(1)
+    $(hide) echo "building_system_image=$(BUILDING_SYSTEM_IMAGE)" >> $(1)
+)
+$(if $(filter $(2),system_other),\
+    $(hide) echo "building_system_other_image=$(BUILDING_SYSTEM_OTHER_IMAGE)" >> $(1)
 )
 $(if $(filter $(2),userdata),\
     $(if $(BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "userdata_fs_type=$(BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
@@ -1183,11 +1187,13 @@ $(if $(filter $(2),userdata),\
     $(if $(PRODUCT_FS_CASEFOLD),$(hide) echo "needs_casefold=$(PRODUCT_FS_CASEFOLD)" >> $(1))
     $(if $(PRODUCT_QUOTA_PROJID),$(hide) echo "needs_projid=$(PRODUCT_QUOTA_PROJID)" >> $(1))
     $(hide) echo "userdata_selinux_fc=$(SELINUX_FC)" >> $(1)
+    $(hide) echo "building_userdata_image=$(BUILDING_USERDATA_IMAGE)" >> $(1)
 )
 $(if $(filter $(2),cache),\
     $(if $(BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "cache_fs_type=$(BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
     $(if $(BOARD_CACHEIMAGE_PARTITION_SIZE),$(hide) echo "cache_size=$(BOARD_CACHEIMAGE_PARTITION_SIZE)" >> $(1))
     $(hide) echo "cache_selinux_fc=$(SELINUX_FC)" >> $(1)
+    $(hide) echo "building_cache_image=$(BUILDING_CACHE_IMAGE)" >> $(1)
 )
 $(if $(filter $(2),vendor),\
     $(if $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "vendor_fs_type=$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
@@ -1202,6 +1208,7 @@ $(if $(filter $(2),vendor),\
     $(if $(PRODUCT_VENDOR_BASE_FS_PATH),$(hide) echo "vendor_base_fs_file=$(PRODUCT_VENDOR_BASE_FS_PATH)" >> $(1))
     $(if $(BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "vendor_reserved_size=$(BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
     $(hide) echo "vendor_selinux_fc=$(SELINUX_FC)" >> $(1)
+    $(hide) echo "building_vendor_image=$(BUILDING_VENDOR_IMAGE)" >> $(1)
 )
 $(if $(filter $(2),product),\
     $(if $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "product_fs_type=$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
@@ -1216,6 +1223,7 @@ $(if $(filter $(2),product),\
     $(if $(PRODUCT_PRODUCT_BASE_FS_PATH),$(hide) echo "product_base_fs_file=$(PRODUCT_PRODUCT_BASE_FS_PATH)" >> $(1))
     $(if $(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "product_reserved_size=$(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
     $(hide) echo "product_selinux_fc=$(SELINUX_FC)" >> $(1)
+    $(hide) echo "building_product_image=$(BUILDING_PRODUCT_IMAGE)" >> $(1)
 )
 $(if $(filter $(2),system_ext),\
     $(if $(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "system_ext_fs_type=$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
@@ -1229,6 +1237,7 @@ $(if $(filter $(2),system_ext),\
     $(if $(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "system_ext_squashfs_disable_4k_align=$(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
     $(if $(BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "system_ext_reserved_size=$(BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
     $(hide) echo "system_ext_selinux_fc=$(SELINUX_FC)" >> $(1)
+    $(hide) echo "building_system_ext_image=$(BUILDING_SYSTEM_EXT_IMAGE)" >> $(1)
 )
 $(if $(filter $(2),odm),\
     $(if $(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "odm_fs_type=$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
@@ -1243,6 +1252,7 @@ $(if $(filter $(2),odm),\
     $(if $(PRODUCT_ODM_BASE_FS_PATH),$(hide) echo "odm_base_fs_file=$(PRODUCT_ODM_BASE_FS_PATH)" >> $(1))
     $(if $(BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "odm_reserved_size=$(BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
     $(hide) echo "odm_selinux_fc=$(SELINUX_FC)" >> $(1)
+    $(hide) echo "building_odm_image=$(BUILDING_ODM_IMAGE)" >> $(1)
 )
 $(if $(filter $(2),oem),\
     $(if $(BOARD_OEMIMAGE_PARTITION_SIZE),$(hide) echo "oem_size=$(BOARD_OEMIMAGE_PARTITION_SIZE)" >> $(1))
@@ -1336,6 +1346,9 @@ ifdef BUILDING_CACHE_IMAGE
 endif
 ifdef BUILDING_SYSTEM_IMAGE
   PROP_DICTIONARY_IMAGES += system
+endif
+ifdef BUILDING_SYSTEM_OTHER_IMAGE
+  PROP_DICTIONARY_IMAGES += system_other
 endif
 ifdef BUILDING_USERDATA_IMAGE
   PROP_DICTIONARY_IMAGES += userdata

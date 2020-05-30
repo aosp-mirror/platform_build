@@ -741,23 +741,32 @@ def AddImagesToTargetFiles(filename):
   # target_files.zip as a prebuilt blob. We consider either of them as
   # {vendor,product,system_ext}.img being available, which could be
   # used when generating vbmeta.img for AVB.
-  has_vendor = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR")) or
-                os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
-                                            "vendor.img")))
-  has_odm = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "ODM")) or
-             os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
-                                         "odm.img")))
-  has_product = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) or
-                 os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
-                                             "product.img")))
-  has_system_ext = (os.path.isdir(os.path.join(OPTIONS.input_tmp,
-                                               "SYSTEM_EXT")) or
-                    os.path.exists(os.path.join(OPTIONS.input_tmp,
-                                                "IMAGES",
-                                                "system_ext.img")))
-  has_system = os.path.isdir(os.path.join(OPTIONS.input_tmp, "SYSTEM"))
-  has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
-                                                "SYSTEM_OTHER"))
+  has_vendor = ((os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR")) and
+                 OPTIONS.info_dict.get("building_vendor_image") == "true") or
+                os.path.exists(
+                    os.path.join(OPTIONS.input_tmp, "IMAGES", "vendor.img")))
+  has_odm = ((os.path.isdir(os.path.join(OPTIONS.input_tmp, "ODM")) and
+              OPTIONS.info_dict.get("building_odm_image") == "true") or
+             os.path.exists(
+                 os.path.join(OPTIONS.input_tmp, "IMAGES", "odm.img")))
+  has_product = ((os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) and
+                  OPTIONS.info_dict.get("building_product_image") == "true") or
+                 os.path.exists(
+                     os.path.join(OPTIONS.input_tmp, "IMAGES", "product.img")))
+  has_system_ext = (
+      (os.path.isdir(os.path.join(OPTIONS.input_tmp, "SYSTEM_EXT")) and
+       OPTIONS.info_dict.get("building_system_ext_image") == "true") or
+      os.path.exists(
+          os.path.join(OPTIONS.input_tmp, "IMAGES", "system_ext.img")))
+  has_system = (
+      os.path.isdir(os.path.join(OPTIONS.input_tmp, "SYSTEM")) and
+      OPTIONS.info_dict.get("building_system_image") == "true")
+
+  has_system_other = (
+      os.path.isdir(os.path.join(OPTIONS.input_tmp, "SYSTEM_OTHER")) and
+      OPTIONS.info_dict.get("building_system_other_image") == "true")
+  has_userdata = OPTIONS.info_dict.get("building_userdata_image") == "true"
+  has_cache = OPTIONS.info_dict.get("building_cache_image") == "true"
 
   # Set up the output destination. It writes to the given directory for dir
   # mode; otherwise appends to the given ZIP.

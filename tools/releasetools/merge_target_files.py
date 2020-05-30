@@ -175,6 +175,9 @@ DEFAULT_FRAMEWORK_MISC_INFO_KEYS = (
     'ab_update',
     'default_system_dev_certificate',
     'system_size',
+    'building_system_image',
+    'building_system_ext_image',
+    'building_product_image',
 )
 
 # DEFAULT_VENDOR_ITEM_LIST is a list of items to extract from the partial
