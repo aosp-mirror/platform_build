@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f20ab83_4f49dbbc",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-06-01T05:14:53Z",
+      "side": 1,
+      "message": "this breaks module archives, on line 267 we will end up copying the module subdirectory (5.4 for example) to /lib instead of /lib/modules",
+      "revId": "7a565f22d110c0e4da6512912a178dae801824aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
