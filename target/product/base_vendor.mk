@@ -57,6 +57,7 @@ PRODUCT_PACKAGES += \
     libdynproc \
     libeffectproxy \
     libeffects \
+    libhapticgenerator \
     libldnhncr \
     libreference-ril \
     libreverbwrapper \
