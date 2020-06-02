@@ -22,6 +22,30 @@
       "revId": "1a35129c18c331eff0c111f4bc701bd1c457890f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c25b96ee_32c21f58",
+        "filename": "core/main.mk",
+        "patchSetId": 21
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-02T12:57:46Z",
+      "side": 1,
+      "message": "I remember it\u0027s because a module\u0027s target and host variants are registered seperately, so there would be duplicating names in ALL_MODULES",
+      "parentUuid": "9e36936f_ca4b62b8",
+      "range": {
+        "startLine": 468,
+        "startChar": 19,
+        "endLine": 468,
+        "endChar": 47
+      },
+      "revId": "1a35129c18c331eff0c111f4bc701bd1c457890f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }

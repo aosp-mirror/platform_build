@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "c16c6b07_441b12be",
+        "filename": "core/main.mk",
+        "patchSetId": 22
+      },
+      "lineNbr": 674,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-02T12:57:46Z",
+      "side": 1,
+      "message": "It used to be\n1) If module is 2nd arch, then\n  a) If required module has 2nd arch variant, then resolve to second arch\n  b) Else resolve to first arch\n2) Else (module is first arch)\n  c) If module is native, then resolve to first arch\n  d) Else resolve to both arch\n\n\u003e I guess this is changed on the basis that there\u0027s no good reason to include just a single bitness executable?\n\nCorrect. I observe that when it\u0027s case 1) and the required module is EXECUTABLE, it almost always goes to case b), which is the same affect as \"resolve to both bitness\". Plus it doesn\u0027t hurt to require both bitness of executable, as the build system requires multilib executable to have different module stem, and we don\u0027t have much multilib executables to begin with.\nIMO only \"native requiring shared library\" should retain the bitness, I make \"native requiring native test\" to retain the bitness due to not having this restirction adds a bunch of \"test_a:64 -\u003e test_b:32\", \"test_a:32 -\u003e test_b:64\" dependencies for no good reason. So the \"if native requiring shared lib or native test, then same bitness\" is really a bunch of heuristic to remain the original logic and not bloat the build rules.\n\n\u003e separate changes\nAgreed. Actually 1) 2) 3) were separate changes, but it got to the point that there were 6 pending changes in my relation chain and the amending/rebasing was going crazy, so I meld some changes together because I thought it\u0027s easier to review this as a whole function.\nRN the parent changes are merged already, so if the high-level logic of the function is good, I think I can split 2) and 3) into another change for review. \nI feel like 2) refactoring the method and 3) changing semantics of existing usages must be in the same change due to the refactoring must change the semantic in some way (using get-modules-for-2nd-arch, checking module existence, \"fliping\" HOST_CROSS first and second arch)",
+      "parentUuid": "f6072897_41350051",
+      "range": {
+        "startLine": 674,
+        "startChar": 2,
+        "endLine": 674,
+        "endChar": 24
+      },
+      "revId": "af8b9fcab5a1f42d9a147c85dc22c3351e2bea5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5dad5ab1_dc0df73e",
         "filename": "core/main.mk",
         "patchSetId": 22
