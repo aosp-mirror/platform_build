@@ -188,6 +188,7 @@ python_library_host {
         "imgdiff",
         "minigzip",
         "mkbootfs",
+        "signapk",
     ],
 }
 
