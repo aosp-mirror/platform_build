@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e36936f_ca4b62b8",
+        "filename": "core/main.mk",
+        "patchSetId": 21
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-02T10:38:58Z",
+      "side": 1,
+      "message": "why do we have dupicates to begin with ?",
+      "range": {
+        "startLine": 468,
+        "startChar": 19,
+        "endLine": 468,
+        "endChar": 47
+      },
+      "revId": "1a35129c18c331eff0c111f4bc701bd1c457890f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

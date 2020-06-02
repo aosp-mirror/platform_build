@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "884ed1a1_2542bcd6",
+        "filename": "core/main.mk",
+        "patchSetId": 22
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-02T10:38:58Z",
+      "side": 1,
+      "message": "requiring?",
+      "range": {
+        "startLine": 673,
+        "startChar": 19,
+        "endLine": 673,
+        "endChar": 27
+      },
+      "revId": "af8b9fcab5a1f42d9a147c85dc22c3351e2bea5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6072897_41350051",
+        "filename": "core/main.mk",
+        "patchSetId": 22
+      },
+      "lineNbr": 674,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-02T10:38:58Z",
+      "side": 1,
+      "message": "am I reading things right that this used to include executables too? I guess this is changed on the basis that there\u0027s no good reason to include just a single bitness executable? I\u0027d still prefer if you\u0027d put semantic changes likely to have some impact into separate changes. It\u0027d make this change much easier to review if it was just adding support for additional syntax rather than 1) adding that support 2) refactoring the method 3) changing semantics of existing usages.",
+      "range": {
+        "startLine": 674,
+        "startChar": 2,
+        "endLine": 674,
+        "endChar": 24
+      },
+      "revId": "af8b9fcab5a1f42d9a147c85dc22c3351e2bea5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5dad5ab1_dc0df73e",
+        "filename": "core/main.mk",
+        "patchSetId": 22
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-02T10:38:58Z",
+      "side": 1,
+      "message": "I feel like the formatting here could be improved to make it clear both this and the following line is in the \"else\" clause.",
+      "range": {
+        "startLine": 689,
+        "startChar": 72,
+        "endLine": 689,
+        "endChar": 73
+      },
+      "revId": "af8b9fcab5a1f42d9a147c85dc22c3351e2bea5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
