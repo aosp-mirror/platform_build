@@ -2693,32 +2693,6 @@ $$(PRODUCT_OUT)/$(2) : $$(LOCAL_PATH)/$(1)
 	$$(transform-prebuilt-to-target)
 endef
 
-
-###########################################################
-## API Check
-###########################################################
-
-# eval this to define a rule that runs apicheck.
-#
-# Args:
-#    $(1)  target
-#    $(2)  stable api file
-#    $(3)  api file to be tested
-#    $(4)  stable removed api file
-#    $(5)  removed api file to be tested
-#    $(6)  arguments for apicheck
-#    $(7)  command to run if apicheck failed
-#    $(8)  target dependent on this api check
-#    $(9)  additional dependencies
-define check-api
-$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(4) $(APICHECK) $(9)
-	@echo "Checking API:" $(1)
-	$(hide) ( $(APICHECK_COMMAND) --check-api-files $(6) $(2) $(3) $(4) $(5) || ( $(7) ; exit 38 ) )
-	$(hide) mkdir -p $$(dir $$@)
-	$(hide) touch $$@
-$(8): $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp
-endef
-
 ## Whether to build from source if prebuilt alternative exists
 ###########################################################
 # $(1): module name
