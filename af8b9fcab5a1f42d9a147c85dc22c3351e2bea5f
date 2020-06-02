@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "f1b5a62b_85867946",
+        "filename": "core/main.mk",
+        "patchSetId": 22
+      },
+      "lineNbr": 674,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-02T13:56:40Z",
+      "side": 1,
+      "message": "okay, well I think this change is mostly submittable, but I can\u0027t say I\u0027ve done a very good job reviewing it, because it\u0027s really hard since there\u0027s quite a lot going on. Please improve the one nitpick comment I had below, at least",
+      "parentUuid": "32fde830_bbdbf84a",
+      "range": {
+        "startLine": 674,
+        "startChar": 2,
+        "endLine": 674,
+        "endChar": 24
+      },
+      "revId": "af8b9fcab5a1f42d9a147c85dc22c3351e2bea5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5dad5ab1_dc0df73e",
         "filename": "core/main.mk",
         "patchSetId": 22
