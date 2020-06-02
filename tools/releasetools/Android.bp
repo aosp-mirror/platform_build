@@ -73,9 +73,6 @@ python_defaults {
         "releasetools_build_super_image",
         "releasetools_common",
     ],
-    required: [
-        "zip2zip",
-    ],
 }
 
 python_defaults {
@@ -467,9 +464,6 @@ python_defaults {
     ],
     data: [
         "testdata/**/*",
-    ],
-    required: [
-        "otatools",
     ],
 }
 
