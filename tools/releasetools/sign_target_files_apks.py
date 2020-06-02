@@ -383,8 +383,8 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
 
 
 def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
-            is_compressed):
-  unsigned = tempfile.NamedTemporaryFile()
+            is_compressed, apk_name):
+  unsigned = tempfile.NamedTemporaryFile(suffix='_' + apk_name)
   unsigned.write(data)
   unsigned.flush()
 
@@ -402,7 +402,7 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
     unsigned.close()
     unsigned = uncompressed
 
-  signed = tempfile.NamedTemporaryFile()
+  signed = tempfile.NamedTemporaryFile(suffix='_' + apk_name)
 
   # For pre-N builds, don't upgrade to SHA-256 JAR signatures based on the APK's
   # minSdkVersion to avoid increasing incremental OTA update sizes. If an APK
@@ -488,7 +488,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if key not in common.SPECIAL_CERT_STRINGS:
         print("    signing: %-*s (%s)" % (maxsize, name, key))
         signed_data = SignApk(data, key, key_passwords[key], platform_api_level,
-                              codename_to_api_level_map, is_compressed)
+                              codename_to_api_level_map, is_compressed, name)
         common.ZipWriteStr(output_tf_zip, out_info, signed_data)
       else:
         # an APK we're not supposed to sign.
