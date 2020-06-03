@@ -46,6 +46,30 @@
       "revId": "1b8283358e757de930fdef24055b7086894d07bd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "583a9c0c_0caf3768",
+        "filename": "core/main.mk",
+        "patchSetId": 24
+      },
+      "lineNbr": 559,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-03T11:37:59Z",
+      "side": 1,
+      "message": "Thanks for explaining. SGTM",
+      "parentUuid": "c922ad58_8e25929b",
+      "range": {
+        "startLine": 552,
+        "startChar": 5,
+        "endLine": 559,
+        "endChar": 31
+      },
+      "revId": "1b8283358e757de930fdef24055b7086894d07bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
