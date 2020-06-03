@@ -22,6 +22,30 @@
       "revId": "1b8283358e757de930fdef24055b7086894d07bd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c922ad58_8e25929b",
+        "filename": "core/main.mk",
+        "patchSetId": 24
+      },
+      "lineNbr": 559,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-03T11:17:36Z",
+      "side": 1,
+      "message": "No this one has to stay here. If we don\u0027t remove duplicates then select-bitness-of-required-modules would return wrong results.\n\nExample:\n```\nALL_MODULES :\u003d libA_32 libA_32 libB_32\nALL_MODULES.libA_32.REQUIRED_FROM_TARGET :\u003d libB\n```\nthen when select-bitness-of-required-modules process libA_32 for the first time, libB would resolve to libB_32\nthen when select-bitness-of-required-modules process it the second time, it would resolve libB_32 to libB_32_32, which is undefined.\n\nThe original code doesn\u0027t have this problem because it uses get-32-bit-modules-if-we-can, so it falls back to original module name when the \"32 bit\" variant is not found",
+      "parentUuid": "56ee3e3d_9bfdab94",
+      "range": {
+        "startLine": 552,
+        "startChar": 5,
+        "endLine": 559,
+        "endChar": 31
+      },
+      "revId": "1b8283358e757de930fdef24055b7086894d07bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
