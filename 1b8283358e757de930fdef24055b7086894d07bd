@@ -94,6 +94,30 @@
       "revId": "1b8283358e757de930fdef24055b7086894d07bd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f34b923b_17dc9c76",
+        "filename": "core/main.mk",
+        "patchSetId": 24
+      },
+      "lineNbr": 559,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-03T11:45:50Z",
+      "side": 1,
+      "message": "makes sense.. That\u0027s also why I wanted to just set ALL_MODULES to readonly so people don\u0027t have to sort it everytime.\nI would hope this sort can save us a tiny bit of time since every $(ALL_MODULES) now expand to a smaller string",
+      "parentUuid": "73cb5163_6adbf07f",
+      "range": {
+        "startLine": 552,
+        "startChar": 5,
+        "endLine": 559,
+        "endChar": 31
+      },
+      "revId": "1b8283358e757de930fdef24055b7086894d07bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
