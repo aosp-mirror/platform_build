@@ -43,7 +43,6 @@ PRODUCT_PACKAGES += \
     CaptivePortalLogin \
     CertInstaller \
     clatd \
-    clatd.conf \
     DocumentsUI \
     DownloadProviderUi \
     EasterEgg \
