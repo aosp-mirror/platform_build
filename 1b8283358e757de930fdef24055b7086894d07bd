@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56ee3e3d_9bfdab94",
+        "filename": "core/main.mk",
+        "patchSetId": 24
+      },
+      "lineNbr": 559,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-03T10:42:38Z",
+      "side": 1,
+      "message": "Does this also belong in the follow-up ?",
+      "range": {
+        "startLine": 552,
+        "startChar": 5,
+        "endLine": 559,
+        "endChar": 31
+      },
+      "revId": "1b8283358e757de930fdef24055b7086894d07bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
