@@ -552,6 +552,13 @@ $(call generate_all_enforce_rro_packages)
 endif
 
 # -------------------------------------------------------------------
+# Sort ALL_MODULES to remove duplicate entries.
+# -------------------------------------------------------------------
+ALL_MODULES := $(sort $(ALL_MODULES))
+# Cannot set to readonly because Makefile extends ALL_MODULES
+# .KATI_READONLY := ALL_MODULES
+
+# -------------------------------------------------------------------
 # Fix up CUSTOM_MODULES to refer to installed files rather than
 # just bare module names.  Leave unknown modules alone in case
 # they're actually full paths to a particular file.
@@ -618,65 +625,43 @@ $(sort $(foreach m,$(1),\
     $(m))))
 endef
 
-# If a module is for a cross host os, the required modules must be for
-# that OS too.
-# If a module is built for 32-bit, the required modules must be 32-bit too;
-# Otherwise if the module is an executable or shared library,
-#   the required modules must be 64-bit;
-#   otherwise we require both 64-bit and 32-bit variant, if one exists.
-define target-select-bitness-of-required-modules
-$(foreach m,$(ALL_MODULES),\
-  $(eval r := $(ALL_MODULES.$(m).REQUIRED_FROM_TARGET))\
-  $(if $(r),\
-    $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),\
-      $(eval r_r := $(call get-32-bit-modules-if-we-can,$(r))),\
-      $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(ALL_MODULES.$(m).CLASS)),\
-        $(eval r_r := $(r)),\
-        $(eval r_r := $(r) $(call get-32-bit-modules,$(r)))\
-       )\
-     )\
-     $(eval ALL_MODULES.$(m).REQUIRED_FROM_TARGET := $(strip $(r_r)))\
-  )\
+# TODO(b/7456955): error if a required module doesn't exist.
+# Resolve the required module names in ALL_MODULES.*.REQUIRED_FROM_TARGET,
+# ALL_MODULES.*.REQUIRED_FROM_HOST and ALL_MODULES.*.REQUIRED_FROM_HOST_CROSS
+# to 32-bit or 64-bit variant.
+# If a module is for cross host OS, the required modules are also for that OS.
+# Otherwise if the requiring module is native and the required module is shared
+# library or native test, then the required module resolves to the same bitness.
+# Otherwise the required module resolves to both variants, if they exist.
+# $(1): TARGET, HOST or HOST_CROSS
+define select-bitness-of-required-modules
+$(foreach m,$(ALL_MODULES), \
+  $(eval r := $(ALL_MODULES.$(m).REQUIRED_FROM_$(1))) \
+  $(if $(r), \
+    $(if $(filter HOST_CROSS,$(1)), \
+      $(if $(ALL_MODULES.$(m).FOR_HOST_CROSS),,$(error Only expected REQUIRED_FROM_HOST_CROSS on FOR_HOST_CROSS modules - $(m))) \
+      $(eval r := $(addprefix host_cross_,$(r)))) \
+    $(eval module_is_native := \
+      $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(ALL_MODULES.$(m).CLASS))) \
+    $(eval r_r := $(foreach r_i,$(r), \
+      $(eval r_m := \
+        $(eval r_i_2nd := $(call get-modules-for-2nd-arch,$(1),$(r_i))) \
+        $(eval required_is_shared_library_or_native_test := \
+          $(filter SHARED_LIBRARIES NATIVE_TESTS, \
+            $(ALL_MODULES.$(r_i).CLASS) $(ALL_MODULES.$(r_i_2nd).CLASS))) \
+        $(if $(and $(module_is_native),$(required_is_shared_library_or_native_test)), \
+          $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),$(r_i_2nd),$(r_i)), \
+          $(r_i) $(r_i_2nd))) \
+      $(eval ### TODO(b/7456955): error if r_m is empty / does not exist) \
+      $(r_m))) \
+    $(eval ALL_MODULES.$(m).REQUIRED_FROM_$(1) := $(sort $(r_r))) \
+  ) \
 )
 endef
-$(call target-select-bitness-of-required-modules)
 
-define host-select-bitness-of-required-modules
-$(foreach m,$(ALL_MODULES),\
-  $(eval r := $(ALL_MODULES.$(m).REQUIRED_FROM_HOST))\
-  $(if $(r),\
-    $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),\
-      $(eval r_r := $(call get-host-32-bit-modules-if-we-can,$(r))),\
-      $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(ALL_MODULES.$(m).CLASS)),\
-        $(eval r_r := $(r)),\
-        $(eval r_r := $(r) $(call get-host-32-bit-modules,$(r)))\
-       )\
-     )\
-     $(eval ALL_MODULES.$(m).REQUIRED_FROM_HOST := $(strip $(r_r)))\
-  )\
-)
-endef
-$(call host-select-bitness-of-required-modules)
-
-define host-cross-select-bitness-of-required-modules
-$(foreach m,$(ALL_MODULES),\
-  $(eval r := $(ALL_MODULES.$(m).REQUIRED_FROM_HOST_CROSS))\
-  $(if $(r),\
-    $(if $(ALL_MODULES.$(m).FOR_HOST_CROSS),,$(error Only expected REQUIRED_FROM_HOST_CROSS on FOR_HOST_CROSS modules - $(m)))\
-    $(eval r := $(addprefix host_cross_,$(r)))\
-    $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),\
-      $(eval r_r := $(call get-host-32-bit-modules-if-we-can,$(r))),\
-      $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(ALL_MODULES.$(m).CLASS)),\
-        $(eval r_r := $(r)),\
-        $(eval r_r := $(r) $(call get-host-32-bit-modules,$(r)))\
-       )\
-     )\
-     $(eval ALL_MODULES.$(m).REQUIRED_FROM_HOST_CROSS := $(strip $(r_r)))\
-  )\
-)
-endef
-$(call host-cross-select-bitness-of-required-modules)
-r_r :=
+$(call select-bitness-of-required-modules,TARGET)
+$(call select-bitness-of-required-modules,HOST)
+$(call select-bitness-of-required-modules,HOST_CROSS)
 
 define add-required-deps
 $(1): | $(2)
@@ -1181,8 +1166,7 @@ endef
 #   foo resolves to both foo and foo_32 (if foo_32 is defined).
 #
 # Name resolution for LOCAL_REQUIRED_MODULES:
-#   If a module is built for 2nd arch, its required module resolves to
-#   32-bit variant, if it exits. See the select-bitness-of-required-modules definition.
+#   See the select-bitness-of-required-modules definition.
 # $(1): product makefile
 define product-installed-files
   $(eval _pif_modules := \
