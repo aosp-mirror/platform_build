@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3a8bc26_4774dcb8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-06-03T21:11:29Z",
+      "side": 1,
+      "message": "AOSP is clean, but qt-qpr1-dev-plus-aosp isn\u0027t, so let\u0027s just skip it there, it\u0027s good to have this in AOSP (it\u0027s already in rvc) even if it\u0027s not in qt-qpr1-dev-plus-aosp.",
+      "revId": "be15ded040ae41235eecdeb1242b977fc41facb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
