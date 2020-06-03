@@ -217,6 +217,7 @@ endef
 # $(6): module load list filename
 # $(7): module archive
 # $(8): staging dir for stripped modules
+# $(9): module directory name
 # Returns the a list of src:dest pairs to install the modules using copy-many-files.
 define build-image-kernel-modules
   $(foreach module,$(1), \
@@ -224,12 +225,12 @@ define build-image-kernel-modules
     $(if $(8), \
       $(eval _src := $(8)/$(notdir $(module))) \
       $(eval $(call copy-and-strip-kernel-module,$(module),$(_src)))) \
-    $(_src):$(2)/lib/modules/$(notdir $(module))) \
-  $(eval $(call build-image-kernel-modules-depmod,$(1),$(3),$(4),$(5),$(6),$(7),$(2))) \
-  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep:$(2)/lib/modules/modules.dep \
-  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias:$(2)/lib/modules/modules.alias \
-  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep:$(2)/lib/modules/modules.softdep \
-  $(4)/$(DEPMOD_STAGING_SUBDIR)/$(6):$(2)/lib/modules/$(6)
+    $(_src):$(2)/lib/modules/$(9)/$(notdir $(module))) \
+  $(eval $(call build-image-kernel-modules-depmod,$(1),$(3),$(4),$(5),$(6),$(7),$(2),$(9))) \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep:$(2)/lib/modules/$(9)/modules.dep \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias:$(2)/lib/modules/$(9)/modules.alias \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep:$(2)/lib/modules/$(9)/modules.softdep \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/$(6):$(2)/lib/modules/$(9)/$(6)
 endef
 
 # $(1): modules list
@@ -239,6 +240,7 @@ endef
 # $(5): module load list filename
 # $(6): module archive
 # $(7): output dir
+# $(8): module directory name
 # TODO(b/144844424): If a module archive is being used, this step (which
 # generates obj/PACKAGING/.../modules.dep) also unzips the module archive into
 # the output directory. This should be moved to a module with a
@@ -249,7 +251,7 @@ $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: .KATI_IMPLICIT_OUTPUTS := $(3)/$(DEPM
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(DEPMOD)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULES := $(1)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MOUNT_POINT := $(2)
-$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULE_DIR := $(3)/$(DEPMOD_STAGING_SUBDIR)/$(2)/lib/modules
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULE_DIR := $(3)/$(DEPMOD_STAGING_SUBDIR)/$(2)/lib/modules/$(8)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_STAGING_DIR := $(3)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_LOAD_MODULES := $(4)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_LOAD_FILE := $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
@@ -262,7 +264,7 @@ $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1) $(6)
 	$(if $(6),\
 	  unzip -qo -d $$(PRIVATE_MODULE_DIR) $$(PRIVATE_MODULE_ARCHIVE); \
 	  mkdir -p $$(PRIVATE_OUTPUT_DIR)/lib; \
-	  cp -r $$(PRIVATE_MODULE_DIR) $$(PRIVATE_OUTPUT_DIR)/lib/; \
+	  cp -r  $(3)/$(DEPMOD_STAGING_SUBDIR)/$(2)/lib/modules $$(PRIVATE_OUTPUT_DIR)/lib/; \
 	  find $$(PRIVATE_MODULE_DIR) -type f -name *.ko | xargs basename -a > $$(PRIVATE_LOAD_FILE); \
 	)
 	$(if $(1),\
@@ -298,6 +300,43 @@ $(1)/$(DEPMOD_STAGING_SUBDIR)/$(4): $(2)
 	@echo '$$(strip $$(notdir $$(PRIVATE_LOAD_MODULES)))' | tr ' ' '\n' > $$(@)
 endef
 
+# $(1): image name
+# $(2): build output directory (TARGET_OUT_VENDOR, TARGET_RECOVERY_ROOT_OUT, etc)
+# $(3): mount point
+# $(4): module load filename
+# $(5): stripped staging directory
+# $(6): kernel module directory name (top is an out of band value for no directory)
+define build-image-kernel-modules-dir
+$(if $(filter top,$(6)),\
+  $(eval _kver :=)$(eval _sep :=),\
+  $(eval _kver := $(6))$(eval _sep :=_))\
+$(if $(5),\
+  $(eval _stripped_staging_dir := $(5)$(_sep)$(_kver)),\
+  $(eval _stripped_staging_dir :=))\
+$(if $(strip $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver))$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver))),\
+  $(if $(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),,\
+    $(eval BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver) := $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)))) \
+  $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver))))
+endef
+
+# $(1): kernel module directory name (top is an out of band value for no directory)
+define build-recovery-as-boot-load
+$(if $(filter top,$(1)),\
+  $(eval _kver :=)$(eval _sep :=),\
+  $(eval _kver := $(1))$(eval _sep :=_))\
+  $(if $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD$(_sep)$(_kver)),\
+    $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,ramdisk_module_list$(_sep)$(_kver)),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES$(_sep)$(_kver)),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD$(_sep)$(_kver)),modules.load,$(TARGET_RECOVERY_ROOT_OUT))))
+endef
+
+# $(1): kernel module directory name (top is an out of band value for no directory)
+define build-vendor-ramdisk-recovery-load
+$(if $(filter top,$(1)),\
+  $(eval _kver :=)$(eval _sep :=),\
+  $(eval _kver := $(1))$(eval _sep :=_))\
+  $(if $(BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD$(_sep)$(_kver)),\
+    $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,vendor_ramdisk_recovery_module_list$(_sep)$(_kver)),$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES$(_sep)$(_kver)),$(BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD$(_sep)$(_kver)),modules.load.recovery,$(TARGET_VENDOR_RAMDISK_OUT))))
+endef
+
 ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
   # If there is no vendor boot partition, store vendor ramdisk kernel modules in the
   # boot ramdisk.
@@ -315,56 +354,22 @@ ifneq ($(strip $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)),)
   endif
 endif
 
-ifneq ($(strip $(BOARD_RECOVERY_KERNEL_MODULES))$(strip $(BOARD_RECOVERY_KERNEL_MODULES_ARCHIVE)),)
-  ifeq ($(BOARD_RECOVERY_KERNEL_MODULES_LOAD),)
-    BOARD_RECOVERY_KERNEL_MODULES_LOAD := $(BOARD_RECOVERY_KERNEL_MODULES)
-  endif
-  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery),$(BOARD_RECOVERY_KERNEL_MODULES_LOAD),modules.load.recovery,$(BOARD_RECOVERY_KERNEL_MODULES_ARCHIVE),))
-endif
-ifeq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
-  ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD
-    ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,ramdisk_modules),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(TARGET_RECOVERY_ROOT_OUT)))
-  endif
-endif
-
-ifneq ($(strip $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES))$(strip $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_ARCHIVE)),)
-  ifeq ($(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD),)
-    BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD := $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES)
-  endif
-  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES),$(TARGET_VENDOR_RAMDISK_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_vendor_ramdisk),$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_ARCHIVE),$(call intermediates-dir-for,PACKAGING,depmod_vendor_ramdisk_stripped)))
-endif
-ifneq (,$(BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD))
-  # BOARD_VENDOR_RAMDISK_KERNEL_MODULES must be the full set, or super set,
-  # of copied modules represented by BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD
-  # and BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD which are mined
-  # from modules.load which will contain relative paths, represent load order.
-  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,depmod_vendor_recovery_ramdisk),$(BOARD_VENDOR_RAMDISK_KERNEL_MODULES),$(BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD),modules.load.recovery,$(TARGET_VENDOR_RAMDISK_OUT)))
-endif
-
-ifneq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
-  ifneq ($(strip $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)),)
-    ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES),$(TARGET_RAMDISK_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_ramdisk),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),modules.load,,))
-  endif
-endif
-
 ifneq ($(BOARD_DO_NOT_STRIP_VENDOR_MODULES),true)
 	VENDOR_STRIPPED_MODULE_STAGING_DIR := $(call intermediates-dir-for,PACKAGING,depmod_vendor_stripped)
 else
 	VENDOR_STRIPPED_MODULE_STAGING_DIR :=
 endif
-ifneq ($(strip $(BOARD_VENDOR_KERNEL_MODULES)$(strip $(BOARD_VENDOR_KERNEL_MODULES_ARCHIVE))),)
-  ifeq ($(BOARD_VENDOR_KERNEL_MODULES_LOAD),)
-    BOARD_VENDOR_KERNEL_MODULES_LOAD := $(BOARD_VENDOR_KERNEL_MODULES)
-  endif
-  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_VENDOR_KERNEL_MODULES),$(TARGET_OUT_VENDOR),vendor,$(call intermediates-dir-for,PACKAGING,depmod_vendor),$(BOARD_VENDOR_KERNEL_MODULES_LOAD),modules.load,$(BOARD_VENDOR_KERNEL_MODULES_ARCHIVE),$(VENDOR_STRIPPED_MODULE_STAGING_DIR)))
-endif
 
-ifneq ($(strip $(BOARD_ODM_KERNEL_MODULES))$(strip $(BOARD_ODM_KERNEL_MODULES_ARCHIVE)),)
-  ifeq ($(BOARD_ODM_KERNEL_MODULES_LOAD),)
-    BOARD_ODM_KERNEL_MODULES_LOAD := $(BOARD_ODM_KERNEL_MODULES)
-  endif
-  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_ODM_KERNEL_MODULES),$(TARGET_OUT_ODM),odm,$(call intermediates-dir-for,PACKAGING,depmod_odm),$(BOARD_ODM_KERNEL_MODULES_LOAD),modules.load,$(BOARD_ODM_KERNEL_MODULES_ARCHIVE),))
-endif
+BOARD_KERNEL_MODULE_DIRS += top
+$(foreach dir,$(BOARD_KERNEL_MODULE_DIRS), \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,RECOVERY,$(TARGET_RECOVERY_ROOT_OUT),,modules.load.recovery,,$(dir))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR_RAMDISK,$(TARGET_VENDOR_RAMDISK_OUT),,modules.load,$(call intermediates-dir-for,PACKAGING,depmod_vendor_ramdisk_stripped),$(dir))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-ramdisk-recovery-load,$(dir))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR,$(TARGET_OUT_VENDOR),vendor,modules.load,$(VENDOR_STRIPPED_MODULE_STAGING_DIR),$(dir))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,ODM,$(TARGET_OUT_ODM),odm,modules.load,,$(dir))) \
+  $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
+    $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-recovery-as-boot-load,$(dir))),\
+    $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,,$(dir)))))
 
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
