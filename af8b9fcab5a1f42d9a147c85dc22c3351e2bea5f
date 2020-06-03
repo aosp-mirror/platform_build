@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8bf2d2b3_3c03a235",
+        "filename": "core/main.mk",
+        "patchSetId": 22
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-03T10:34:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "884ed1a1_2542bcd6",
+      "range": {
+        "startLine": 673,
+        "startChar": 19,
+        "endLine": 673,
+        "endChar": 27
+      },
+      "revId": "af8b9fcab5a1f42d9a147c85dc22c3351e2bea5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f6072897_41350051",
         "filename": "core/main.mk",
         "patchSetId": 22
@@ -120,6 +144,30 @@
     },
     {
       "key": {
+        "uuid": "a7273aad_b047fab6",
+        "filename": "core/main.mk",
+        "patchSetId": 22
+      },
+      "lineNbr": 674,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-03T10:34:15Z",
+      "side": 1,
+      "message": "Split semantic changes to follow-up aosp/1323335 and aosp/1306572. This now contains (mostly) refactor.",
+      "parentUuid": "f1b5a62b_85867946",
+      "range": {
+        "startLine": 674,
+        "startChar": 2,
+        "endLine": 674,
+        "endChar": 24
+      },
+      "revId": "af8b9fcab5a1f42d9a147c85dc22c3351e2bea5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5dad5ab1_dc0df73e",
         "filename": "core/main.mk",
         "patchSetId": 22
@@ -140,6 +188,30 @@
       "revId": "af8b9fcab5a1f42d9a147c85dc22c3351e2bea5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e620f02_66f5b6fe",
+        "filename": "core/main.mk",
+        "patchSetId": 22
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-03T10:34:15Z",
+      "side": 1,
+      "message": "Fixed in follow-up aosp/1323335.\nI added an extra indent level,hope that helps.",
+      "parentUuid": "5dad5ab1_dc0df73e",
+      "range": {
+        "startLine": 689,
+        "startChar": 72,
+        "endLine": 689,
+        "endChar": 73
+      },
+      "revId": "af8b9fcab5a1f42d9a147c85dc22c3351e2bea5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
