@@ -94,10 +94,24 @@ endif
 
 TARGET_BUILD_APPS ?=
 
+# Set to true for an unbundled build, i.e. a build without
+# support for platform targets like the system image. This also
+# disables consistency checks that only apply to full platform
+# builds.
+TARGET_BUILD_UNBUNDLED ?=
+
+# TARGET_BUILD_APPS implies unbundled build, otherwise we default
+# to bundled (i.e. platform targets such as the system image are
+# included).
+ifneq ($(TARGET_BUILD_APPS),)
+  TARGET_BUILD_UNBUNDLED := true
+endif
+
 .KATI_READONLY := \
   TARGET_PRODUCT \
   TARGET_BUILD_VARIANT \
-  TARGET_BUILD_APPS
+  TARGET_BUILD_APPS \
+  TARGET_BUILD_UNBUNDLED \
 
 # ---------------------------------------------------------------
 # Set up configuration for host machine.  We don't do cross-
