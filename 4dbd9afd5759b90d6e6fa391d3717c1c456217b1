@@ -1,0 +1,153 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1cf1bf9e_62190271",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-04T14:47:40Z",
+      "side": 1,
+      "message": "optional list",
+      "range": {
+        "startLine": 64,
+        "startChar": 8,
+        "endLine": 64,
+        "endChar": 12
+      },
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "083192f1_42aedd78",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-04T14:47:40Z",
+      "side": 1,
+      "message": "to clarify:\nfrom variable $(name)",
+      "range": {
+        "startLine": 91,
+        "startChar": 13,
+        "endLine": 91,
+        "endChar": 26
+      },
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa92ce35_05bf07e6",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-04T14:47:40Z",
+      "side": 1,
+      "message": "indent continuation please (a few of these), or maybe one arg per line for the $(call). Can strip inside the macro if necessary",
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0fb57891_5f90356c",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-04T14:47:40Z",
+      "side": 1,
+      "message": "indent",
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c9131f6_6e3a5cdb",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-04T14:47:40Z",
+      "side": 1,
+      "message": "just assign to _prop_files directly?",
+      "range": {
+        "startLine": 344,
+        "startChar": 0,
+        "endLine": 344,
+        "endChar": 17
+      },
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d3e4bdc_febbc92d",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-04T14:47:40Z",
+      "side": 1,
+      "message": "Don\u0027t believe you need to pass this empty var ?",
+      "range": {
+        "startLine": 356,
+        "startChar": 30,
+        "endLine": 357,
+        "endChar": 8
+      },
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5075ad92_a2fef7b5",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-04T14:47:40Z",
+      "side": 1,
+      "message": "typo here, missing M",
+      "range": {
+        "startLine": 392,
+        "startChar": 27,
+        "endLine": 392,
+        "endChar": 29
+      },
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
