@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9fa5d1e6_62a9255c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-04T14:48:49Z",
+      "side": 1,
+      "message": "can you maybe use a short form of Iaeefb35137de01c6ea57115d8830dd9bc30eccba instead? this link means nothing in aosp",
+      "range": {
+        "startLine": 7,
+        "startChar": 23,
+        "endLine": 7,
+        "endChar": 34
+      },
+      "revId": "b70f2261321764476eac1184fbe9b5bd4b4c63f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
