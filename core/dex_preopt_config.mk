@@ -1,5 +1,14 @@
 DEX_PREOPT_CONFIG := $(SOONG_OUT_DIR)/dexpreopt.config
 
+ENABLE_PREOPT := true
+ifneq (true,$(filter true,$(WITH_DEXPREOPT)))
+  ENABLE_PREOPT :=
+else ifneq (true,$(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)))
+  ENABLE_PREOPT :=
+else ifneq (,$(TARGET_BUILD_APPS))
+  ENABLE_PREOPT :=
+endif
+
 # The default value for LOCAL_DEX_PREOPT
 DEX_PREOPT_DEFAULT ?= true
 
@@ -60,7 +69,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
 
   $(call json_start)
 
-  $(call add_json_bool, DisablePreopt,                           $(call invert_bool,$(and $(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)),$(filter true,$(WITH_DEXPREOPT)))))
+  $(call add_json_bool, DisablePreopt,                           $(call invert_bool,$(ENABLE_PREOPT)))
   $(call add_json_list, DisablePreoptModules,                    $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer,      $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
   $(call add_json_bool, UseArtImage,                             $(filter true,$(DEXPREOPT_USE_ART_IMAGE)))
