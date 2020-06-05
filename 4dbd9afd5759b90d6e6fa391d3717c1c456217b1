@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c74316bf_56145f4a",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-06-05T01:47:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1cf1bf9e_62190271",
+      "range": {
+        "startLine": 64,
+        "startChar": 8,
+        "endLine": 64,
+        "endChar": 12
+      },
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "083192f1_42aedd78",
         "filename": "core/sysprop.mk",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "bb1fec5b_013cf7b4",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-06-05T01:47:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "083192f1_42aedd78",
+      "range": {
+        "startLine": 91,
+        "startChar": 13,
+        "endLine": 91,
+        "endChar": 26
+      },
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa92ce35_05bf07e6",
         "filename": "core/sysprop.mk",
         "patchSetId": 4
@@ -65,6 +113,24 @@
     },
     {
       "key": {
+        "uuid": "36e77f3a_023cc6ce",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-06-05T01:47:13Z",
+      "side": 1,
+      "message": "Done. I choose to have one arg per line.",
+      "parentUuid": "fa92ce35_05bf07e6",
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0fb57891_5f90356c",
         "filename": "core/sysprop.mk",
         "patchSetId": 4
@@ -79,6 +145,24 @@
       "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3afe0c07_7282e476",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-06-05T01:47:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0fb57891_5f90356c",
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -105,6 +189,30 @@
     },
     {
       "key": {
+        "uuid": "f6f51a96_10d4f0b5",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-06-05T01:47:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c9131f6_6e3a5cdb",
+      "range": {
+        "startLine": 344,
+        "startChar": 0,
+        "endLine": 344,
+        "endChar": 17
+      },
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8d3e4bdc_febbc92d",
         "filename": "core/sysprop.mk",
         "patchSetId": 4
@@ -128,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "74fa7b39_2dd63f91",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-06-05T01:47:13Z",
+      "side": 1,
+      "message": "Yeah, it is. I put it there just to emphasize that there is no blacklist here.",
+      "parentUuid": "8d3e4bdc_febbc92d",
+      "range": {
+        "startLine": 356,
+        "startChar": 30,
+        "endLine": 357,
+        "endChar": 8
+      },
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5075ad92_a2fef7b5",
         "filename": "core/sysprop.mk",
         "patchSetId": 4
@@ -148,6 +280,30 @@
       "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab164de8_61973305",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-06-05T01:47:13Z",
+      "side": 1,
+      "message": "Thanks!",
+      "parentUuid": "5075ad92_a2fef7b5",
+      "range": {
+        "startLine": 392,
+        "startChar": 27,
+        "endLine": 392,
+        "endChar": 29
+      },
+      "revId": "4dbd9afd5759b90d6e6fa391d3717c1c456217b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
