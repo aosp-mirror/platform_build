@@ -46,6 +46,30 @@
       "revId": "a04f7015d09f2d3e1458ddd1486af4d9a69b0dc8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f554686_d44b4bd4",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-05T18:24:32Z",
+      "side": 1,
+      "message": "\u003e Perhaps I can wrap this /system/etc/libnfc-nci.conf into a prebuilt_etc module, say \"libnfc-nci.conf-default\" and make libnfc-nci.so require it? +alisher\n\nyep, that\u0027s what I had in mind",
+      "parentUuid": "4e51cab8_fd2b248f",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 128,
+        "endChar": 0
+      },
+      "revId": "a04f7015d09f2d3e1458ddd1486af4d9a69b0dc8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
