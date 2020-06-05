@@ -22,6 +22,30 @@
       "revId": "a04f7015d09f2d3e1458ddd1486af4d9a69b0dc8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e51cab8_fd2b248f",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-05T18:18:21Z",
+      "side": 1,
+      "message": "So the relation chain is: mainline_system.mk -\u003e handheld_system.mk -\u003e NfcNci.apk -\u003e libnfc_nci_jni.so -\u003e libnfc-nci.so\nand libnfc-nci.so consumes libnfc-nci.conf as a \"default\" nfc config. This config is then combined with config from the /vendor partition, via the NFC HAL.\n\nI\u0027m not familiar with the NFC stack so I may be missing a few things.. but I believe libnfc-nci.so is the sole consumer of libnfc-nci.so\n\nPerhaps I can wrap this /system/etc/libnfc-nci.conf into a prebuilt_etc module, say \"libnfc-nci.conf-default\" and make libnfc-nci.so require it? +alisher",
+      "parentUuid": "1851b8bf_62c14f52",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 128,
+        "endChar": 0
+      },
+      "revId": "a04f7015d09f2d3e1458ddd1486af4d9a69b0dc8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
