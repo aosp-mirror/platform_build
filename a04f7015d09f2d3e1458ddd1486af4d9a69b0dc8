@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1851b8bf_62c14f52",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-05T14:52:09Z",
+      "side": 1,
+      "message": "presumably there is some other component that needs this file to be present. It would be preferable to install this file at the same time as that module is installed, using REQUIRED",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 128,
+        "endChar": 0
+      },
+      "revId": "a04f7015d09f2d3e1458ddd1486af4d9a69b0dc8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
