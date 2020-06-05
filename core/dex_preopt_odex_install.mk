@@ -234,7 +234,10 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_list, UsesLibraries,                  $(LOCAL_USES_LIBRARIES))
   $(call add_json_map,  LibraryPaths)
   $(foreach lib,$(my_dexpreopt_libs),\
-    $(call add_json_str, $(lib), $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar))
+    $(call add_json_map, $(lib)) \
+    $(call add_json_str, Host, $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
+    $(call add_json_str, Device, /system/framework/$(lib).jar) \
+    $(call end_json_map))
   $(call end_json_map)
   $(call add_json_list, Archs,                          $(my_dexpreopt_archs))
   $(call add_json_list, DexPreoptImages,                $(my_dexpreopt_images))
