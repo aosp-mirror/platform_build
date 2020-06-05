@@ -360,10 +360,16 @@ else
 	VENDOR_STRIPPED_MODULE_STAGING_DIR :=
 endif
 
+ifneq ($(BOARD_DO_NOT_STRIP_VENDOR_RAMDISK_MODULES),true)
+  VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR := $(call intermediates-dir-for,PACKAGING,depmod_vendor_ramdisk_stripped)
+else
+  VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR :=
+endif
+
 BOARD_KERNEL_MODULE_DIRS += top
 $(foreach dir,$(BOARD_KERNEL_MODULE_DIRS), \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,RECOVERY,$(TARGET_RECOVERY_ROOT_OUT),,modules.load.recovery,,$(dir))) \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR_RAMDISK,$(TARGET_VENDOR_RAMDISK_OUT),,modules.load,$(call intermediates-dir-for,PACKAGING,depmod_vendor_ramdisk_stripped),$(dir))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR_RAMDISK,$(TARGET_VENDOR_RAMDISK_OUT),,modules.load,$(VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR),$(dir))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-ramdisk-recovery-load,$(dir))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR,$(TARGET_OUT_VENDOR),vendor,modules.load,$(VENDOR_STRIPPED_MODULE_STAGING_DIR),$(dir))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,ODM,$(TARGET_OUT_ODM),odm,modules.load,,$(dir))) \
