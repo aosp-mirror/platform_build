@@ -574,17 +574,35 @@ ifneq ($(strip $(filter NATIVE_TESTS,$(LOCAL_MODULE_CLASS)) $(LOCAL_IS_FUZZ_TARG
 ifneq ($(strip $(LOCAL_TEST_DATA)),)
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 
-my_test_data_pairs := $(strip $(foreach td,$(LOCAL_TEST_DATA), \
-    $(eval _file := $(call word-colon,2,$(td))) \
-    $(if $(_file), \
-      $(eval _src_base := $(call word-colon,1,$(td))), \
-      $(eval _src_base := $(LOCAL_PATH)) \
-        $(eval _file := $(call word-colon,1,$(td)))) \
-    $(if $(call streq,$(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK)),, \
-      $(if $(findstring ..,$(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include '..': $(_file))) \
-      $(if $(filter /%,$(_src_base) $(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include absolute paths: $(_src_base) $(_file)))) \
-    $(eval my_test_data_file_pairs := $(my_test_data_file_pairs) $(call append-path,$(_src_base),$(_file)):$(_file)) \
-    $(call append-path,$(_src_base),$(_file)):$(call append-path,$(my_module_path),$(_file))))
+ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  define copy_test_data_pairs
+    _src_base := $$(call word-colon,1,$$(td))
+    _file := $$(call word-colon,2,$$(td))
+    my_test_data_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(call append-path,$$(my_module_path),$$(_file))
+    my_test_data_file_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(_file)
+  endef
+else
+  define copy_test_data_pairs
+    _src_base := $$(call word-colon,1,$$(td))
+    _file := $$(call word-colon,2,$$(td))
+    ifndef _file
+      _file := $$(_src_base)
+      _src_base := $$(LOCAL_PATH)
+    endif
+    ifneq (,$$(findstring ..,$$(_file)))
+      $$(call pretty-error,LOCAL_TEST_DATA may not include '..': $$(_file))
+    endif
+    ifneq (,$$(filter/%,$$(_src_base) $$(_file)))
+      $$(call pretty-error,LOCAL_TEST_DATA may not include absolute paths: $$(_src_base) $$(_file))
+    endif
+    my_test_data_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(call append-path,$$(my_module_path),$$(_file))
+    my_test_data_file_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(_file)
+  endef
+endif
+
+$(foreach td,$(LOCAL_TEST_DATA),$(eval $(copy_test_data_pairs)))
+
+copy_test_data_pairs :=
 
 my_installed_test_data := $(call copy-many-files,$(my_test_data_pairs))
 $(LOCAL_INSTALLED_MODULE): $(my_installed_test_data)
