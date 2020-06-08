@@ -118,6 +118,30 @@
       "revId": "cb43f38f54e20a604fcc71fd44b318066bdc2feb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "29483a52_d71fac3a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-08T11:16:16Z",
+      "side": 1,
+      "message": "Updated the Test lines.\n\nI verified locally that installing NfcNci also caused /system/etc/libnfc-nci.conf to be installed.\nNfcNci.apk -\u003e libnfc_nci_jni.so -\u003e libnfc-nci.so -\u003e libnfc-nci.conf",
+      "parentUuid": "a71a1914_ee8b87db",
+      "range": {
+        "startLine": 12,
+        "startChar": 14,
+        "endLine": 13,
+        "endChar": 38
+      },
+      "revId": "cb43f38f54e20a604fcc71fd44b318066bdc2feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
