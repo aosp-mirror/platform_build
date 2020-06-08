@@ -70,6 +70,30 @@
       "revId": "cb43f38f54e20a604fcc71fd44b318066bdc2feb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db1d91c6_911e1734",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-08T09:35:45Z",
+      "side": 1,
+      "message": "I don\u0027t understand what you mean? I just checked the latest aosp_arm64 \u0026 aosp_bonito build, both targets have /system/lib64/libnfc-nci.so installed?",
+      "parentUuid": "8137fcf1_9455b5f6",
+      "range": {
+        "startLine": 12,
+        "startChar": 14,
+        "endLine": 13,
+        "endChar": 38
+      },
+      "revId": "cb43f38f54e20a604fcc71fd44b318066bdc2feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
