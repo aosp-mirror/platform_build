@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "de48595d_8170f745",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-08T09:18:56Z",
+      "side": 1,
+      "message": "Could you be more explicit? What did you build? Please verify the /system nfc conf is installed correctly\n\nI don\u0027t think setting \"required: [..]\" does anything on a non-installed module (like the shared lib you added it to)?",
+      "range": {
+        "startLine": 12,
+        "startChar": 14,
+        "endLine": 13,
+        "endChar": 38
+      },
+      "revId": "cb43f38f54e20a604fcc71fd44b318066bdc2feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
