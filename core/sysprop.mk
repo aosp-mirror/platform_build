@@ -24,34 +24,39 @@ ifeq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
 endif
 
 BUILDINFO_SH := build/make/tools/buildinfo.sh
-BUILDINFO_COMMON_SH := build/make/tools/buildinfo_common.sh
 POST_PROCESS_PROPS := $(HOST_OUT_EXECUTABLES)/post_process_props$(HOST_EXECUTABLE_SUFFIX)
 
-# Generates a set of sysprops common to all partitions to a file.
+# Emits a set of sysprops common to all partitions to a file.
 # $(1): Partition name
 # $(2): Output file name
 define generate-common-build-props
-	PRODUCT_BRAND="$(PRODUCT_BRAND)" \
-	PRODUCT_DEVICE="$(TARGET_DEVICE)" \
-	PRODUCT_MANUFACTURER="$(PRODUCT_MANUFACTURER)" \
-	PRODUCT_MODEL="$(PRODUCT_MODEL)" \
-	PRODUCT_NAME="$(TARGET_PRODUCT)" \
-	$(call generate-common-build-props-with-product-vars-set,$(1),$(2))
-endef
+    echo "####################################" >> $(2);\
+    echo "# from generate-common-build-props" >> $(2);\
+    echo "# These properties identify this partition image." >> $(2);\
+    echo "####################################" >> $(2);\
+    $(if $(filter system,$(1)),\
+        echo "ro.product.$(1).brand=$(PRODUCT_SYSTEM_BRAND)" >> $(2);\
+        echo "ro.product.$(1).device=$(PRODUCT_SYSTEM_DEVICE)" >> $(2);\
+        echo "ro.product.$(1).manufacturer=$(PRODUCT_SYSTEM_MANUFACTURER)" >> $(2);\
+        echo "ro.product.$(1).model=$(PRODUCT_SYSTEM_MODEL)" >> $(2);\
+        echo "ro.product.$(1).name=$(PRODUCT_SYSTEM_NAME)" >> $(2);\
+      ,\
+        echo "ro.product.$(1).brand=$(PRODUCT_BRAND)" >> $(2);\
+        echo "ro.product.$(1).device=$(TARGET_DEVICE)" >> $(2);\
+        echo "ro.product.$(1).manufacturer=$(PRODUCT_MANUFACTURER)" >> $(2);\
+        echo "ro.product.$(1).model=$(PRODUCT_MODEL)" >> $(2);\
+        echo "ro.product.$(1).name=$(TARGET_PRODUCT)" >> $(2);\
+    )\
+    echo "ro.$(1).build.date=`$(DATE_FROM_FILE)`" >> $(2);\
+    echo "ro.$(1).build.date.utc=`$(DATE_FROM_FILE) +%s`" >> $(2);\
+    echo "ro.$(1).build.fingerprint=$(BUILD_FINGERPRINT_FROM_FILE)" >> $(2);\
+    echo "ro.$(1).build.id=$(BUILD_ID)" >> $(2);\
+    echo "ro.$(1).build.tags=$(BUILD_VERSION_TAGS)" >> $(2);\
+    echo "ro.$(1).build.type=$(TARGET_BUILD_VARIANT)" >> $(2);\
+    echo "ro.$(1).build.version.incremental=$(BUILD_NUMBER_FROM_FILE)" >> $(2);\
+    echo "ro.$(1).build.version.release=$(PLATFORM_VERSION)" >> $(2);\
+    echo "ro.$(1).build.version.sdk=$(PLATFORM_SDK_VERSION)" >> $(2);\
 
-# Like the above macro, but requiring the relevant PRODUCT_ environment
-# variables to be set when called.
-define generate-common-build-props-with-product-vars-set
-	BUILD_FINGERPRINT="$(BUILD_FINGERPRINT_FROM_FILE)" \
-	BUILD_ID="$(BUILD_ID)" \
-	BUILD_NUMBER="$(BUILD_NUMBER_FROM_FILE)" \
-	BUILD_VERSION_TAGS="$(BUILD_VERSION_TAGS)" \
-	DATE="$(DATE_FROM_FILE)" \
-	PLATFORM_SDK_VERSION="$(PLATFORM_SDK_VERSION)" \
-	PLATFORM_VERSION_LAST_STABLE="$(PLATFORM_VERSION_LAST_STABLE)" \
-	PLATFORM_VERSION="$(PLATFORM_VERSION)" \
-	TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
-	bash $(BUILDINFO_COMMON_SH) "$(1)" >> $(2)
 endef
 
 # Rule for generating <partition>/build.prop file
@@ -72,7 +77,7 @@ $(foreach name,$(strip $(4)),\
     $(eval _resolved_$(name) := $$(call collapse-pairs, $$(call uniq-pairs-by-first-component,$$($(name)),=)))\
 )
 
-$(2): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3)
+$(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3)
 	$(hide) echo Building $$@
 	$(hide) mkdir -p $$(dir $$@)
 	$(hide) rm -f $$@ && touch $$@
@@ -228,7 +233,7 @@ system_prop_file := $(TARGET_SYSTEM_PROP)
 else
 system_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
 endif
-$(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(API_FINGERPRINT) $(POST_PROCESS_PROPS)
+$(intermediate_system_build_prop): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(API_FINGERPRINT) $(POST_PROCESS_PROPS)
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) rm -f $@ && touch $@
@@ -241,12 +246,7 @@ ifneq ($(PRODUCT_OEM_PROPERTIES),)
 	$(hide) $(foreach prop,$(PRODUCT_OEM_PROPERTIES), \
 	    echo "import /oem/oem.prop $(prop)" >> $@;)
 endif
-	$(hide) PRODUCT_BRAND="$(PRODUCT_SYSTEM_BRAND)" \
-	        PRODUCT_MANUFACTURER="$(PRODUCT_SYSTEM_MANUFACTURER)" \
-	        PRODUCT_MODEL="$(PRODUCT_SYSTEM_MODEL)" \
-	        PRODUCT_NAME="$(PRODUCT_SYSTEM_NAME)" \
-	        PRODUCT_DEVICE="$(PRODUCT_SYSTEM_DEVICE)" \
-	        $(call generate-common-build-props-with-product-vars-set,system,$@)
+	$(hide) $(call generate-common-build-props,system,$@)
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 	        TARGET_BUILD_FLAVOR="$(TARGET_BUILD_FLAVOR)" \
 	        TARGET_DEVICE="$(TARGET_DEVICE)" \
