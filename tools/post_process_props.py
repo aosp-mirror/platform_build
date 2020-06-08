@@ -108,7 +108,10 @@ class PropList:
       self.props[index].value = value
 
   def delete(self, name):
-    self.props = [p for p in self.props if p.name != name]
+    index = next((i for i,p in enumerate(self.props) if p.name == name), -1)
+    if index != -1:
+      new_comment = "# removed by post_process_props.py\n#" + str(self.props[index])
+      self.props[index] = Prop.from_line(new_comment)
 
   def write(self, filename):
     with open(filename, 'w+') as f:
