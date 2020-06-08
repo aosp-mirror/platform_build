@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cd022606_3617b46d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-06-08T16:11:10Z",
+      "side": 1,
+      "message": "Wouldn\u0027t that cause the same file be installed twice? Don\u0027t we need to ensure the file names for the xmls are distinct (like rc files)?",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 59
+      },
+      "revId": "7b986d216d7cf46949c29b52901229323c0a8eea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
