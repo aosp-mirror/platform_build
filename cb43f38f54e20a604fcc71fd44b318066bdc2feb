@@ -46,6 +46,30 @@
       "revId": "cb43f38f54e20a604fcc71fd44b318066bdc2feb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8137fcf1_9455b5f6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-08T09:27:58Z",
+      "side": 1,
+      "message": "what I\u0027m saying is that libnfc-nci.so isn\u0027t installed. IIRC \"required\" only propagates from installed modules",
+      "parentUuid": "a52e3216_1aaec774",
+      "range": {
+        "startLine": 12,
+        "startChar": 14,
+        "endLine": 13,
+        "endChar": 38
+      },
+      "revId": "cb43f38f54e20a604fcc71fd44b318066bdc2feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
