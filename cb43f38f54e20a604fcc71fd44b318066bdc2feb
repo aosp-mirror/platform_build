@@ -94,6 +94,30 @@
       "revId": "cb43f38f54e20a604fcc71fd44b318066bdc2feb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a71a1914_ee8b87db",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-08T09:56:13Z",
+      "side": 1,
+      "message": "Ok, I\u0027m probably wrong. I thought an app depending on a nfc lib didn\u0027t count as \"installing\" the lib as far as make goes, but it seems like it does?\n\nAs long as you verify the config file gets installed on /system as expect, I don\u0027t have any concerns. But the Test: line could still be improved to verify the config file is where you expect it to be.",
+      "parentUuid": "db1d91c6_911e1734",
+      "range": {
+        "startLine": 12,
+        "startChar": 14,
+        "endLine": 13,
+        "endChar": 38
+      },
+      "revId": "cb43f38f54e20a604fcc71fd44b318066bdc2feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
