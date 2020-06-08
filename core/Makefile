@@ -1645,7 +1645,7 @@ $(foreach prop,$(1), \
 endef
 
 $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
-	    $(intermediate_system_build_prop) \
+	    $(INSTALLED_BUILD_PROP_TARGET) \
 	    $(INSTALLED_VENDOR_BUILD_PROP_TARGET) \
 	    $(INSTALLED_ODM_BUILD_PROP_TARGET) \
 	    $(INSTALLED_PRODUCT_BUILD_PROP_TARGET) \
@@ -1653,7 +1653,7 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	@echo "Target recovery buildinfo: $@"
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $@
-	$(hide) cat $(intermediate_system_build_prop) >> $@
+	$(hide) cat $(INSTALLED_BUILD_PROP_TARGET) >> $@
 	$(hide) cat $(INSTALLED_VENDOR_BUILD_PROP_TARGET) >> $@
 	$(hide) cat $(INSTALLED_ODM_BUILD_PROP_TARGET) >> $@
 	$(hide) cat $(INSTALLED_PRODUCT_BUILD_PROP_TARGET) >> $@
