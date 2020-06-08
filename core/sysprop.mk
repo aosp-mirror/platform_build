@@ -54,8 +54,54 @@ define generate-common-build-props-with-product-vars-set
 	bash $(BUILDINFO_COMMON_SH) "$(1)" >> $(2)
 endef
 
+# Rule for generating <partition>/build.prop file
+#
+# $(1): partition name
+# $(2): path to the output
+# $(3): path to the input *.prop files. The contents of the files are directly
+#       emitted to the output
+# $(4): list of variable names each of which contains name=value pairs
+# $(5): optional list of prop names to force remove from the output. Properties from both
+#       $(3) and (4) are affected.
+define build-properties
+ALL_DEFAULT_INSTALLED_MODULES += $(2)
+
+# TODO(b/117892318): eliminate the call to uniq-pairs-by-first-component when
+# it is guaranteed that there is no dup.
+$(foreach name,$(strip $(4)),\
+    $(eval _resolved_$(name) := $$(call collapse-pairs, $$(call uniq-pairs-by-first-component,$$($(name)),=)))\
+)
+
+$(2): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3)
+	$(hide) echo Building $$@
+	$(hide) mkdir -p $$(dir $$@)
+	$(hide) rm -f $$@ && touch $$@
+	$(hide) $$(call generate-common-build-props,$(call to-lower,$(strip $(1))),$$@)
+	$(hide) $(foreach file,$(strip $(3)),\
+	    if [ -f "$(file)" ]; then\
+	        echo "" >> $$@;\
+	        echo "####################################" >> $$@;\
+	        echo "# from $(file)" >> $$@;\
+	        echo "####################################" >> $$@;\
+	        cat $(file) >> $$@;\
+	    fi;)
+	$(hide) $(foreach name,$(strip $(4)),\
+	    echo "" >> $$@;\
+	    echo "####################################" >> $$@;\
+	    echo "# from variable $(name)" >> $$@;\
+	    echo "####################################" >> $$@;\
+	    $$(foreach line,$$(_resolved_$(name)),\
+	        echo "$$(line)" >> $$@;\
+	    )\
+	)
+	$(hide) $(POST_PROCESS_PROPS) $$@ $(5)
+	$(hide) echo "# end of file" >> $$@
+endef
+
+
 # -----------------------------------------------------------------
-# build.prop
+# system/build.prop
+#
 intermediate_system_build_prop := $(call intermediates-dir-for,ETC,system_build_prop)/build.prop
 INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_BUILD_PROP_TARGET)
@@ -258,167 +304,94 @@ $(INSTALLED_BUILD_PROP_TARGET): $(intermediate_system_build_prop)
 	$(hide) grep -v 'ro.product.first_api_level' $(intermediate_system_build_prop) > $@
 
 # -----------------------------------------------------------------
-# vendor build.prop
+# vendor/build.prop
 #
-# For verifying that the vendor build is what we think it is
-INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
-
-ifdef TARGET_VENDOR_PROP
-vendor_prop_files := $(TARGET_VENDOR_PROP)
-else
-vendor_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/vendor.prop)
-endif
+_prop_files_ := $(if $(TARGET_VENDOR_PROP),\
+    $(TARGET_VENDOR_PROP),\
+    $(wildcard $(TARGET_DEVICE_DIR)/vendor.prop))
 
 android_info_prop := $(call intermediates-dir-for,ETC,android_info_prop)/android_info.prop
 $(android_info_prop): $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 	cat $< | grep 'require version-' | sed -e 's/require version-/ro.build.expect./g' > $@
 
-vendor_prop_files += $(android_info_prop)
+_prop_files_ += $(android_info_pro)
 
 ifdef property_overrides_split_enabled
-FINAL_VENDOR_BUILD_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES) $(ADDITIONAL_VENDOR_PROPERTIES))
-FINAL_VENDOR_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_VENDOR_BUILD_PROPERTIES),=)
-endif  # property_overrides_split_enabled
-
-$(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(vendor_prop_files)
-	@echo Target vendor buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@ && touch $@
-	$(hide) $(call generate-common-build-props,vendor,$@)
-	$(hide) echo "#" >> $@; \
-	        echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-ifdef property_overrides_split_enabled
-	$(hide) $(foreach file,$(vendor_prop_files), \
-	    if [ -f "$(file)" ]; then \
-	        echo Target vendor properties from: "$(file)"; \
-	        echo "" >> $@; \
-	        echo "#" >> $@; \
-	        echo "# from $(file)" >> $@; \
-	        echo "#" >> $@; \
-	        cat $(file) >> $@; \
-	        echo "# end of $(file)" >> $@; \
-	    fi;)
-	$(hide) $(foreach line,$(FINAL_VENDOR_BUILD_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-endif  # property_overrides_split_enabled
-	$(hide) $(POST_PROCESS_PROPS) $@ $(PRODUCT_VENDOR_PROPERTY_BLACKLIST)
-
-
-# -----------------------------------------------------------------
-# product build.prop
-INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PRODUCT_BUILD_PROP_TARGET)
-
-ifdef TARGET_PRODUCT_PROP
-product_prop_files := $(TARGET_PRODUCT_PROP)
+# Order matters here. When there are duplicates, the last one wins.
+# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
+_prop_vars_ := \
+    ADDITIONAL_VENDOR_PROPERTIES \
+    PRODUCT_PROPERTY_OVERRIDES
 else
-product_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/product.prop)
+_prop_vars_ :=
 endif
 
-FINAL_PRODUCT_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_PRODUCT_PROPERTIES) $(ADDITIONAL_PRODUCT_PROPERTIES))
-FINAL_PRODUCT_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_PRODUCT_PROPERTIES),=)
+INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
+$(eval $(call build-properties,\
+    vendor,\
+    $(INSTALLED_VENDOR_BUILD_PROP_TARGET),\
+    $(_prop_files_),\
+    $(_prop_vars_),\
+    $(PRODUCT_VENDOR_PROPERTY_BLACKLIST)))
 
-$(INSTALLED_PRODUCT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(product_prop_files)
-	@echo Target product buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@ && touch $@
-	$(hide) $(call generate-common-build-props,product,$@)
-	$(hide) $(foreach file,$(product_prop_files), \
-	    if [ -f "$(file)" ]; then \
-	        echo Target product properties from: "$(file)"; \
-	        echo "" >> $@; \
-	        echo "#" >> $@; \
-	        echo "# from $(file)" >> $@; \
-	        echo "#" >> $@; \
-	        cat $(file) >> $@; \
-	        echo "# end of $(file)" >> $@; \
-	    fi;)
-	$(hide) echo "#" >> $@; \
-	        echo "# ADDITIONAL PRODUCT PROPERTIES" >> $@; \
-	        echo "#" >> $@; \
-	        echo "ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)" >> $@;
-	$(hide) $(foreach line,$(FINAL_PRODUCT_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@
+# -----------------------------------------------------------------
+# product/build.prop
+#
+
+_prop_files_ := $(if $(TARGET_PRODUCT_PROP),\
+    $(TARGET_PRODUCT_PROP),\
+    $(wildcard $(TARGET_DEVICE_DIR)/product.prop))
+
+# Order matters here. When there are duplicates, the last one wins.
+# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
+_prop_vars_ := \
+    ADDITIONAL_PRODUCT_PROPERTIES \
+    PRODUCT_PRODUCT_PROPERTIES
+
+INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/build.prop
+$(eval $(call build-properties,\
+    product,\
+    $(INSTALLED_PRODUCT_BUILD_PROP_TARGET),\
+    $(_prop_files_),\
+    $(_prop_vars_),\
+    $(empty)))
 
 # ----------------------------------------------------------------
-# odm build.prop
-INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_ODM_BUILD_PROP_TARGET)
+# odm/build.prop
+#
+_prop_files_ := $(if $(TARGET_ODM_PROP),\
+    $(TARGET_ODM_PROP),\
+    $(wildcard $(TARGET_DEVICE_DIR)/odm.prop))
 
-ifdef TARGET_ODM_PROP
-odm_prop_files := $(TARGET_ODM_PROP)
-else
-odm_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/odm.prop)
-endif
+# Order matters here. When there are duplicates, the last one wins.
+# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
+_prop_vars_ := \
+    ADDITIONAL_ODM_PROPERTIES \
+    PRODUCT_ODM_PROPERTIES
 
-FINAL_ODM_BUILD_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_ODM_PROPERTIES) $(ADDITIONAL_ODM_PROPERTIES))
-FINAL_ODM_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_ODM_BUILD_PROPERTIES),=)
-
-$(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(odm_prop_files)
-	@echo Target odm buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@ && touch $@
-	$(hide) $(call generate-common-build-props,odm,$@)
-	$(hide) $(foreach file,$(odm_prop_files), \
-	    if [ -f "$(file)" ]; then \
-	        echo Target odm properties from: "$(file)"; \
-	        echo "" >> $@; \
-	        echo "#" >> $@; \
-	        echo "# from $(file)" >> $@; \
-	        echo "#" >> $@; \
-	        cat $(file) >> $@; \
-	        echo "# end of $(file)" >> $@; \
-	    fi;)
-	$(hide) echo "#" >> $@; \
-	        echo "# ADDITIONAL ODM BUILD PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach line,$(FINAL_ODM_BUILD_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@
+INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/build.prop
+$(eval $(call build-properties,\
+    odm,\
+    $(INSTALLED_ODM_BUILD_PROP_TARGET),\
+    $(_prop_files),\
+    $(_prop_vars_),\
+    $(empty)))
 
 # -----------------------------------------------------------------
-# system_ext build.prop
+# system_ext/build.prop
+#
+_prop_files_ := $(if $(TARGET_SYSTEM_EXT_PROP),\
+    $(TARGET_SYSTEM_EXT_PROP),\
+    $(wildcard $(TARGET_DEVICE_DIR)/system_ext.prop))
+
+# Order matters here. When there are duplicates, the last one wins.
+# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
+_prop_vars_ := PRODUCT_SYSTEM_EXT_PROPERTIES
+
 INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET)
-
-ifdef TARGET_SYSTEM_EXT_PROP
-system_ext_prop_files := $(TARGET_SYSTEM_EXT_PROP)
-else
-system_ext_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/system_ext.prop)
-endif
-
-FINAL_SYSTEM_EXT_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_SYSTEM_EXT_PROPERTIES))
-FINAL_SYSTEM_EXT_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_SYSTEM_EXT_PROPERTIES),=)
-
-$(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(system_ext_prop_files)
-	@echo Target system_ext buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@ && touch $@
-	$(hide) $(call generate-common-build-props,system_ext,$@)
-	$(hide) $(foreach file,$(system_ext_prop_files), \
-	    if [ -f "$(file)" ]; then \
-	        echo Target system_ext properties from: "$(file)"; \
-	        echo "" >> $@; \
-	        echo "#" >> $@; \
-	        echo "# from $(file)" >> $@; \
-	        echo "#" >> $@; \
-	        cat $(file) >> $@; \
-	        echo "# end of $(file)" >> $@; \
-	    fi;)
-	$(hide) echo "#" >> $@; \
-	        echo "# ADDITIONAL SYSTEM_EXT BUILD PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach line,$(FINAL_SYSTEM_EXT_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@
+$(eval $(call build-properties,\
+    system_ext,\
+    $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET),\
+    $(_prop_files_),\
+    $(_prop_vars_),\
+    $(empty)))
