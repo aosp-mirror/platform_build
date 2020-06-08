@@ -22,6 +22,30 @@
       "revId": "7b986d216d7cf46949c29b52901229323c0a8eea",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b8edd21_282ed333",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-06-08T16:25:04Z",
+      "side": 1,
+      "message": "I think that\u0027s what my_vintf_new_pairs are for. A global list of vintf fragments is stored in ALL_VINTF_MANIFEST_FRAGMENTS_LIST and used for deduplication. And we only generate newly added vintf fragments.\n\nWe have tons of these duplication actually, when a cc_library generates multilib variants the two variants installs the same vintf fragment",
+      "parentUuid": "cd022606_3617b46d",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 59
+      },
+      "revId": "7b986d216d7cf46949c29b52901229323c0a8eea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
