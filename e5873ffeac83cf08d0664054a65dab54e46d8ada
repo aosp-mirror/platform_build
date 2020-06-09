@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "64b7604e_0a3c8009",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-06-09T23:46:54Z",
+      "side": 1,
+      "message": "oh, the treehugger failure is actually real. apparently people are using this variable for other things.",
+      "range": {
+        "startLine": 468,
+        "startChar": 0,
+        "endLine": 468,
+        "endChar": 13
+      },
+      "revId": "e5873ffeac83cf08d0664054a65dab54e46d8ada",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
