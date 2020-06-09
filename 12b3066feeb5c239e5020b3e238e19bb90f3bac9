@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b0f21f0_da11d82e",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2020-06-09T17:43:37Z",
+      "side": 1,
+      "message": "Won\u0027t this make *all* shared library paths start with /product? Note that there are shared libraries in /system.\n\n(If not, I suggest adding a comment around what the magic \"%\u003d%\" does).",
+      "range": {
+        "startLine": 240,
+        "startChar": 33,
+        "endLine": 240,
+        "endChar": 58
+      },
+      "revId": "12b3066feeb5c239e5020b3e238e19bb90f3bac9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
