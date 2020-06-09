@@ -51,7 +51,6 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.adbd \
-    com.android.apex.cts.shim.v1 \
     com.android.conscrypt \
     com.android.cronet \
     com.android.extservices \
@@ -71,6 +70,8 @@ PRODUCT_PACKAGES += \
     com.android.wifi \
     ContactsProvider \
     content \
+    CtsShimPrebuilt \
+    CtsShimPrivPrebuilt \
     debuggerd\
     device_config \
     dmctl \
