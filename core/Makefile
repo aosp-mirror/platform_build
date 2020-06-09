@@ -220,17 +220,20 @@ endef
 # $(9): module directory name
 # Returns the a list of src:dest pairs to install the modules using copy-many-files.
 define build-image-kernel-modules
+  $(if $(9), \
+    $(eval _dir := $(9)/), \
+    $(eval _dir :=)) \
   $(foreach module,$(1), \
     $(eval _src := $(module)) \
     $(if $(8), \
       $(eval _src := $(8)/$(notdir $(module))) \
       $(eval $(call copy-and-strip-kernel-module,$(module),$(_src)))) \
-    $(_src):$(2)/lib/modules/$(9)/$(notdir $(module))) \
+    $(_src):$(2)/lib/modules/$(_dir)$(notdir $(module))) \
   $(eval $(call build-image-kernel-modules-depmod,$(1),$(3),$(4),$(5),$(6),$(7),$(2),$(9))) \
-  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep:$(2)/lib/modules/$(9)/modules.dep \
-  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias:$(2)/lib/modules/$(9)/modules.alias \
-  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep:$(2)/lib/modules/$(9)/modules.softdep \
-  $(4)/$(DEPMOD_STAGING_SUBDIR)/$(6):$(2)/lib/modules/$(9)/$(6)
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep:$(2)/lib/modules/$(_dir)modules.dep \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias:$(2)/lib/modules/$(_dir)modules.alias \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep:$(2)/lib/modules/$(_dir)modules.softdep \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/$(6):$(2)/lib/modules/$(_dir)$(6)
 endef
 
 # $(1): modules list
@@ -1642,7 +1645,7 @@ $(foreach prop,$(1), \
 endef
 
 $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
-	    $(intermediate_system_build_prop) \
+	    $(INSTALLED_BUILD_PROP_TARGET) \
 	    $(INSTALLED_VENDOR_BUILD_PROP_TARGET) \
 	    $(INSTALLED_ODM_BUILD_PROP_TARGET) \
 	    $(INSTALLED_PRODUCT_BUILD_PROP_TARGET) \
@@ -1650,7 +1653,7 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	@echo "Target recovery buildinfo: $@"
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $@
-	$(hide) cat $(intermediate_system_build_prop) >> $@
+	$(hide) cat $(INSTALLED_BUILD_PROP_TARGET) >> $@
 	$(hide) cat $(INSTALLED_VENDOR_BUILD_PROP_TARGET) >> $@
 	$(hide) cat $(INSTALLED_ODM_BUILD_PROP_TARGET) >> $@
 	$(hide) cat $(INSTALLED_PRODUCT_BUILD_PROP_TARGET) >> $@
