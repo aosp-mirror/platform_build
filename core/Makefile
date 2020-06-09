@@ -3072,6 +3072,9 @@ endef
 # configured as a chained partition, if BOARD_AVB_<partition>_KEY_PATH is defined. Otherwise the
 # image descriptor will be included into vbmeta.img, unless it has been already added to any chained
 # VBMeta image.
+# Multiple boot images can be generated based on BOARD_KERNEL_BINARIES
+# but vbmeta would capture the image descriptor of only the first boot
+# image specified in BUILT_BOOTIMAGE_TARGET.
 # $(1): Partition name, e.g. boot or system.
 define check-and-set-avb-args
 $(eval _in_chained_vbmeta := $(filter $(1),$(INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES)))
@@ -3080,8 +3083,11 @@ $(if $(BOARD_AVB_$(call to-upper,$(1))_KEY_PATH),\
         $(error Chaining partition "$(1)" in chained VBMeta image is not supported)) \
     $(call _check-and-set-avb-chain-args,$(1)),\
     $(if $(_in_chained_vbmeta),,\
-        $(eval INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-            --include_descriptors_from_image $(call images-for-partitions,$(1)))))
+        $(if $(filter boot,$(1)),\
+            $(eval INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+                --include_descriptors_from_image $(firstword $(call images-for-partitions,$(1)))),\
+            $(eval INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+                --include_descriptors_from_image $(call images-for-partitions,$(1))))))
 endef
 
 # Checks and sets build variables for a custom chained partition to include it into vbmeta.img.
