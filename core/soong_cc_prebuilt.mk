@@ -51,7 +51,7 @@ include $(BUILD_SYSTEM)/base_rules.mk
 
 ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
   # Soong module is a static or shared library
-  EXPORTS_LIST := $(EXPORTS_LIST) $(intermediates)
+  EXPORTS_LIST += $(intermediates)
   EXPORTS.$(intermediates).FLAGS := $(LOCAL_EXPORT_CFLAGS)
   EXPORTS.$(intermediates).DEPS := $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 
@@ -61,7 +61,7 @@ ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODUL
     $(my_all_targets): $(LOCAL_BUILT_MODULE).toc
   endif
 
-  SOONG_ALREADY_CONV := $(SOONG_ALREADY_CONV) $(LOCAL_MODULE)
+  SOONG_ALREADY_CONV += $(LOCAL_MODULE)
 
   my_link_type := $(LOCAL_SOONG_LINK_TYPE)
   my_warn_types :=
