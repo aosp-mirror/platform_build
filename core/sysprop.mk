@@ -24,62 +24,92 @@ ifeq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
 endif
 
 BUILDINFO_SH := build/make/tools/buildinfo.sh
-BUILDINFO_COMMON_SH := build/make/tools/buildinfo_common.sh
 POST_PROCESS_PROPS := $(HOST_OUT_EXECUTABLES)/post_process_props$(HOST_EXECUTABLE_SUFFIX)
 
-# Generates a set of sysprops common to all partitions to a file.
+# Emits a set of sysprops common to all partitions to a file.
 # $(1): Partition name
 # $(2): Output file name
 define generate-common-build-props
-	PRODUCT_BRAND="$(PRODUCT_BRAND)" \
-	PRODUCT_DEVICE="$(TARGET_DEVICE)" \
-	PRODUCT_MANUFACTURER="$(PRODUCT_MANUFACTURER)" \
-	PRODUCT_MODEL="$(PRODUCT_MODEL)" \
-	PRODUCT_NAME="$(TARGET_PRODUCT)" \
-	$(call generate-common-build-props-with-product-vars-set,$(1),$(2))
+    echo "####################################" >> $(2);\
+    echo "# from generate-common-build-props" >> $(2);\
+    echo "# These properties identify this partition image." >> $(2);\
+    echo "####################################" >> $(2);\
+    $(if $(filter system,$(1)),\
+        echo "ro.product.$(1).brand=$(PRODUCT_SYSTEM_BRAND)" >> $(2);\
+        echo "ro.product.$(1).device=$(PRODUCT_SYSTEM_DEVICE)" >> $(2);\
+        echo "ro.product.$(1).manufacturer=$(PRODUCT_SYSTEM_MANUFACTURER)" >> $(2);\
+        echo "ro.product.$(1).model=$(PRODUCT_SYSTEM_MODEL)" >> $(2);\
+        echo "ro.product.$(1).name=$(PRODUCT_SYSTEM_NAME)" >> $(2);\
+      ,\
+        echo "ro.product.$(1).brand=$(PRODUCT_BRAND)" >> $(2);\
+        echo "ro.product.$(1).device=$(TARGET_DEVICE)" >> $(2);\
+        echo "ro.product.$(1).manufacturer=$(PRODUCT_MANUFACTURER)" >> $(2);\
+        echo "ro.product.$(1).model=$(PRODUCT_MODEL)" >> $(2);\
+        echo "ro.product.$(1).name=$(TARGET_PRODUCT)" >> $(2);\
+    )\
+    echo "ro.$(1).build.date=`$(DATE_FROM_FILE)`" >> $(2);\
+    echo "ro.$(1).build.date.utc=`$(DATE_FROM_FILE) +%s`" >> $(2);\
+    echo "ro.$(1).build.fingerprint=$(BUILD_FINGERPRINT_FROM_FILE)" >> $(2);\
+    echo "ro.$(1).build.id=$(BUILD_ID)" >> $(2);\
+    echo "ro.$(1).build.tags=$(BUILD_VERSION_TAGS)" >> $(2);\
+    echo "ro.$(1).build.type=$(TARGET_BUILD_VARIANT)" >> $(2);\
+    echo "ro.$(1).build.version.incremental=$(BUILD_NUMBER_FROM_FILE)" >> $(2);\
+    echo "ro.$(1).build.version.release=$(PLATFORM_VERSION)" >> $(2);\
+    echo "ro.$(1).build.version.sdk=$(PLATFORM_SDK_VERSION)" >> $(2);\
+
 endef
 
-# Like the above macro, but requiring the relevant PRODUCT_ environment
-# variables to be set when called.
-define generate-common-build-props-with-product-vars-set
-	BUILD_FINGERPRINT="$(BUILD_FINGERPRINT_FROM_FILE)" \
-	BUILD_ID="$(BUILD_ID)" \
-	BUILD_NUMBER="$(BUILD_NUMBER_FROM_FILE)" \
-	BUILD_VERSION_TAGS="$(BUILD_VERSION_TAGS)" \
-	DATE="$(DATE_FROM_FILE)" \
-	PLATFORM_SDK_VERSION="$(PLATFORM_SDK_VERSION)" \
-	PLATFORM_VERSION_LAST_STABLE="$(PLATFORM_VERSION_LAST_STABLE)" \
-	PLATFORM_VERSION="$(PLATFORM_VERSION)" \
-	TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
-	bash $(BUILDINFO_COMMON_SH) "$(1)" >> $(2)
+# Rule for generating <partition>/build.prop file
+#
+# $(1): partition name
+# $(2): path to the output
+# $(3): path to the input *.prop files. The contents of the files are directly
+#       emitted to the output
+# $(4): list of variable names each of which contains name=value pairs
+# $(5): optional list of prop names to force remove from the output. Properties from both
+#       $(3) and (4) are affected.
+define build-properties
+ALL_DEFAULT_INSTALLED_MODULES += $(2)
+
+# TODO(b/117892318): eliminate the call to uniq-pairs-by-first-component when
+# it is guaranteed that there is no dup.
+$(foreach name,$(strip $(4)),\
+    $(eval _resolved_$(name) := $$(call collapse-pairs, $$(call uniq-pairs-by-first-component,$$($(name)),=)))\
+)
+
+$(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3)
+	$(hide) echo Building $$@
+	$(hide) mkdir -p $$(dir $$@)
+	$(hide) rm -f $$@ && touch $$@
+	$(hide) $$(call generate-common-build-props,$(call to-lower,$(strip $(1))),$$@)
+	$(hide) $(foreach file,$(strip $(3)),\
+	    if [ -f "$(file)" ]; then\
+	        echo "" >> $$@;\
+	        echo "####################################" >> $$@;\
+	        echo "# from $(file)" >> $$@;\
+	        echo "####################################" >> $$@;\
+	        cat $(file) >> $$@;\
+	    fi;)
+	$(hide) $(foreach name,$(strip $(4)),\
+	    echo "" >> $$@;\
+	    echo "####################################" >> $$@;\
+	    echo "# from variable $(name)" >> $$@;\
+	    echo "####################################" >> $$@;\
+	    $$(foreach line,$$(_resolved_$(name)),\
+	        echo "$$(line)" >> $$@;\
+	    )\
+	)
+	$(hide) $(POST_PROCESS_PROPS) $$@ $(5)
+	$(hide) echo "# end of file" >> $$@
 endef
 
 # -----------------------------------------------------------------
-# build.prop
-intermediate_system_build_prop := $(call intermediates-dir-for,ETC,system_build_prop)/build.prop
-INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_BUILD_PROP_TARGET)
-
-# TODO(b/117892318) merge DEFAULT into BUILD
-FINAL_DEFAULT_PROPERTIES := \
-    $(call collapse-pairs, $(PRODUCT_SYSTEM_DEFAULT_PROPERTIES))
-FINAL_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_DEFAULT_PROPERTIES),=)
-
-FINAL_BUILD_PROPERTIES := \
-    $(call collapse-pairs, $(ADDITIONAL_SYSTEM_PROPERTIES))
-
-# For non-Treble devices, consider vendor properties as system properties
-ifndef property_overrides_split_enabled
-FINAL_BUILD_PROPERTIES += \
-    $(call collapse-pairs, $(ADDITIONAL_VENDOR_PROPERTIES))
-endif
-
-FINAL_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_BUILD_PROPERTIES),=)
-
-# A list of arbitrary tags describing the build configuration.
-# Force ":=" so we can use +=
+# Define fingerprint, thumbprint, and version tags for the current build
+#
+# BUILD_VERSION_TAGS is a comma-separated list of tags chosen by the device
+# implementer that further distinguishes the build. It's basically defined
+# by the device implementer. Here, we are adding a mandatory tag that
+# identifies the signing config of the build.
 BUILD_VERSION_TAGS := $(BUILD_VERSION_TAGS)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   BUILD_VERSION_TAGS += debug
@@ -97,11 +127,8 @@ endif
 BUILD_VERSION_TAGS += $(BUILD_KEYS)
 BUILD_VERSION_TAGS := $(subst $(space),$(comma),$(sort $(BUILD_VERSION_TAGS)))
 
-# A human-readable string that descibes this build in detail.
-build_desc := $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT) $(PLATFORM_VERSION) $(BUILD_ID) $(BUILD_NUMBER_FROM_FILE) $(BUILD_VERSION_TAGS)
-$(intermediate_system_build_prop): PRIVATE_BUILD_DESC := $(build_desc)
-
-# The string used to uniquely identify the combined build and product; used by the OTA server.
+# BUILD_FINGERPRINT is used used to uniquely identify the combined build and
+# product; used by the OTA server.
 ifeq (,$(strip $(BUILD_FINGERPRINT)))
   ifeq ($(strip $(HAS_BUILD_NUMBER)),false)
     BF_BUILD_NUMBER := $(BUILD_USERNAME)$$($(DATE_FROM_FILE) +%m%d%H%M)
@@ -121,8 +148,8 @@ BUILD_FINGERPRINT_FROM_FILE := $$(cat $(BUILD_FINGERPRINT_FILE))
 # unset it for safety.
 BUILD_FINGERPRINT :=
 
-# The string used to uniquely identify the system build; used by the OTA server.
-# This purposefully excludes any product-specific variables.
+# BUILD_THUMBPRINT is used to uniquely identify the system build; used by the
+# OTA server. This purposefully excludes any product-specific variables.
 ifeq (,$(strip $(BUILD_THUMBPRINT)))
   BUILD_THUMBPRINT := $(PLATFORM_VERSION)/$(BUILD_ID)/$(BUILD_NUMBER_FROM_FILE):$(TARGET_BUILD_VARIANT)/$(BUILD_VERSION_TAGS)
 endif
@@ -135,14 +162,14 @@ BUILD_THUMBPRINT_FROM_FILE := $$(cat $(BUILD_THUMBPRINT_FILE))
 # unset it for safety.
 BUILD_THUMBPRINT :=
 
-KNOWN_OEM_THUMBPRINT_PROPERTIES := \
-    ro.product.brand \
-    ro.product.name \
-    ro.product.device
-OEM_THUMBPRINT_PROPERTIES := $(filter $(KNOWN_OEM_THUMBPRINT_PROPERTIES),\
-    $(PRODUCT_OEM_PROPERTIES))
+# -----------------------------------------------------------------
+# Define human readable strings that describe this build
+#
 
-# Display parameters shown under Settings -> About Phone
+# BUILD_ID: detail info; has the same info as the build fingerprint
+BUILD_DESC := $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT) $(PLATFORM_VERSION) $(BUILD_ID) $(BUILD_NUMBER_FROM_FILE) $(BUILD_VERSION_TAGS)
+
+# BUILD_DISPLAY_ID is shown under Settings -> About Phone
 ifeq ($(TARGET_BUILD_VARIANT),user)
   # User builds should show:
   # release build number or branch.buld_number non-release builds
@@ -155,16 +182,8 @@ ifeq ($(TARGET_BUILD_VARIANT),user)
   endif
 else
   # Non-user builds should show detailed build information
-  BUILD_DISPLAY_ID := $(build_desc)
+  BUILD_DISPLAY_ID := $(BUILD_DESC)
 endif
-
-# Accepts a whitespace separated list of product locales such as
-# (en_US en_AU en_GB...) and returns the first locale in the list with
-# underscores replaced with hyphens. In the example above, this will
-# return "en-US".
-define get-default-product-locale
-$(strip $(subst _,-, $(firstword $(1))))
-endef
 
 # TARGET_BUILD_FLAVOR and ro.build.flavor are used only by the test
 # harness to distinguish builds. Only add _asan for a sanitized build
@@ -177,36 +196,36 @@ TARGET_BUILD_FLAVOR := $(TARGET_BUILD_FLAVOR)_asan
 endif
 endif
 
-ifdef TARGET_SYSTEM_PROP
-system_prop_file := $(TARGET_SYSTEM_PROP)
-else
-system_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
-endif
-$(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(API_FINGERPRINT) $(POST_PROCESS_PROPS)
-	@echo Target buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@ && touch $@
-	$(hide) $(foreach line,$(FINAL_DEFAULT_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-ifneq ($(PRODUCT_OEM_PROPERTIES),)
-	$(hide) echo "#" >> $@; \
-	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach prop,$(PRODUCT_OEM_PROPERTIES), \
-	    echo "import /oem/oem.prop $(prop)" >> $@;)
-endif
-	$(hide) PRODUCT_BRAND="$(PRODUCT_SYSTEM_BRAND)" \
-	        PRODUCT_MANUFACTURER="$(PRODUCT_SYSTEM_MANUFACTURER)" \
-	        PRODUCT_MODEL="$(PRODUCT_SYSTEM_MODEL)" \
-	        PRODUCT_NAME="$(PRODUCT_SYSTEM_NAME)" \
-	        PRODUCT_DEVICE="$(PRODUCT_SYSTEM_DEVICE)" \
-	        $(call generate-common-build-props-with-product-vars-set,system,$@)
+KNOWN_OEM_THUMBPRINT_PROPERTIES := \
+    ro.product.brand \
+    ro.product.name \
+    ro.product.device
+OEM_THUMBPRINT_PROPERTIES := $(filter $(KNOWN_OEM_THUMBPRINT_PROPERTIES),\
+    $(PRODUCT_OEM_PROPERTIES))
+KNOWN_OEM_THUMBPRINT_PROPERTIES:=
+
+# -----------------------------------------------------------------
+# system/build.prop
+#
+# Note: parts of this file that can't be generated by the build-properties
+# macro are manually created as separate files and then fed into the macro
+
+# Accepts a whitespace separated list of product locales such as
+# (en_US en_AU en_GB...) and returns the first locale in the list with
+# underscores replaced with hyphens. In the example above, this will
+# return "en-US".
+define get-default-product-locale
+$(strip $(subst _,-, $(firstword $(1))))
+endef
+
+gen_from_buildinfo_sh := $(call intermediates-dir-for,ETC,system_build_prop)/buildinfo.prop
+$(gen_from_buildinfo_sh): $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT)
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 	        TARGET_BUILD_FLAVOR="$(TARGET_BUILD_FLAVOR)" \
 	        TARGET_DEVICE="$(TARGET_DEVICE)" \
 	        PRODUCT_DEFAULT_LOCALE="$(call get-default-product-locale,$(PRODUCT_LOCALES))" \
 	        PRODUCT_DEFAULT_WIFI_CHANNELS="$(PRODUCT_DEFAULT_WIFI_CHANNELS)" \
-	        PRIVATE_BUILD_DESC="$(PRIVATE_BUILD_DESC)" \
+	        PRIVATE_BUILD_DESC="$(BUILD_DESC)" \
 	        BUILD_ID="$(BUILD_ID)" \
 	        BUILD_DISPLAY_ID="$(BUILD_DISPLAY_ID)" \
 	        DATE="$(DATE_FROM_FILE)" \
@@ -231,194 +250,143 @@ endif
 	        TARGET_CPU_ABI_LIST_64_BIT="$(TARGET_CPU_ABI_LIST_64_BIT)" \
 	        TARGET_CPU_ABI="$(TARGET_CPU_ABI)" \
 	        TARGET_CPU_ABI2="$(TARGET_CPU_ABI2)" \
-	        bash $(BUILDINFO_SH) >> $@
-	$(hide) $(foreach file,$(system_prop_file), \
-	    if [ -f "$(file)" ]; then \
-	        echo Target buildinfo from: "$(file)"; \
-	        echo "" >> $@; \
-	        echo "#" >> $@; \
-	        echo "# from $(file)" >> $@; \
-	        echo "#" >> $@; \
-	        cat $(file) >> $@; \
-	        echo "# end of $(file)" >> $@; \
-	    fi;)
-	$(if $(FINAL_BUILD_PROPERTIES), \
-	    $(hide) echo >> $@; \
-	            echo "#" >> $@; \
-	            echo "# ADDITIONAL_SYSTEM_PROPERTIES" >> $@; \
-	            echo "#" >> $@; )
-	$(hide) $(foreach line,$(FINAL_BUILD_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@ $(PRODUCT_SYSTEM_PROPERTY_BLACKLIST)
+	        bash $(BUILDINFO_SH) > $@
 
-build_desc :=
+ifneq ($(PRODUCT_OEM_PROPERTIES),)
+import_oem_prop := $(call intermediates-dir-for,ETC,system_build_prop)/oem.prop
 
-$(INSTALLED_BUILD_PROP_TARGET): $(intermediate_system_build_prop)
-	@echo "Target build info: $@"
-	$(hide) grep -v 'ro.product.first_api_level' $(intermediate_system_build_prop) > $@
+$(import_oem_prop):
+	$(hide) echo "#" >> $@; \
+	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
+	        echo "#" >> $@;
+	$(hide) $(foreach prop,$(PRODUCT_OEM_PROPERTIES), \
+	    echo "import /oem/oem.prop $(prop)" >> $@;)
+else
+import_oem_prop :=
+endif
+
+ifdef TARGET_SYSTEM_PROP
+system_prop_file := $(TARGET_SYSTEM_PROP)
+else
+system_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
+endif
+
+_prop_files_ := \
+  $(import_oem_prop) \
+  $(gen_from_buildinfo_sh) \
+  $(system_prop_file)
+
+# Order matters here. When there are duplicates, the last one wins.
+# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
+_prop_vars_ := \
+    ADDITIONAL_SYSTEM_PROPERTIES \
+    PRODUCT_SYSTEM_DEFAULT_PROPERTIES
+
+ifndef property_overrides_split_enabled
+_prop_vars_ += \
+    ADDITIONAL_VENDOR_PROPERTIES
+endif
+
+_blacklist_names_ := \
+    $(PRODUCT_SYSTEM_PROPERTY_BLACKLIST) \
+    ro.product.first_api_level
+
+INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
+
+$(eval $(call build-properties,system,$(INSTALLED_BUILD_PROP_TARGET),\
+$(_prop_files_),$(_prop_vars_),\
+$(_blacklist_names_)))
+
 
 # -----------------------------------------------------------------
-# vendor build.prop
+# vendor/build.prop
 #
-# For verifying that the vendor build is what we think it is
-INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
-
-ifdef TARGET_VENDOR_PROP
-vendor_prop_files := $(TARGET_VENDOR_PROP)
-else
-vendor_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/vendor.prop)
-endif
+_prop_files_ := $(if $(TARGET_VENDOR_PROP),\
+    $(TARGET_VENDOR_PROP),\
+    $(wildcard $(TARGET_DEVICE_DIR)/vendor.prop))
 
 android_info_prop := $(call intermediates-dir-for,ETC,android_info_prop)/android_info.prop
 $(android_info_prop): $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 	cat $< | grep 'require version-' | sed -e 's/require version-/ro.build.expect./g' > $@
 
-vendor_prop_files += $(android_info_prop)
+_prop_files_ += $(android_info_pro)
 
 ifdef property_overrides_split_enabled
-FINAL_VENDOR_BUILD_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES) $(ADDITIONAL_VENDOR_PROPERTIES))
-FINAL_VENDOR_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_VENDOR_BUILD_PROPERTIES),=)
-endif  # property_overrides_split_enabled
-
-$(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(vendor_prop_files)
-	@echo Target vendor buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@ && touch $@
-	$(hide) $(call generate-common-build-props,vendor,$@)
-	$(hide) echo "#" >> $@; \
-	        echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-ifdef property_overrides_split_enabled
-	$(hide) $(foreach file,$(vendor_prop_files), \
-	    if [ -f "$(file)" ]; then \
-	        echo Target vendor properties from: "$(file)"; \
-	        echo "" >> $@; \
-	        echo "#" >> $@; \
-	        echo "# from $(file)" >> $@; \
-	        echo "#" >> $@; \
-	        cat $(file) >> $@; \
-	        echo "# end of $(file)" >> $@; \
-	    fi;)
-	$(hide) $(foreach line,$(FINAL_VENDOR_BUILD_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-endif  # property_overrides_split_enabled
-	$(hide) $(POST_PROCESS_PROPS) $@ $(PRODUCT_VENDOR_PROPERTY_BLACKLIST)
-
-
-# -----------------------------------------------------------------
-# product build.prop
-INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PRODUCT_BUILD_PROP_TARGET)
-
-ifdef TARGET_PRODUCT_PROP
-product_prop_files := $(TARGET_PRODUCT_PROP)
+# Order matters here. When there are duplicates, the last one wins.
+# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
+_prop_vars_ := \
+    ADDITIONAL_VENDOR_PROPERTIES \
+    PRODUCT_PROPERTY_OVERRIDES
 else
-product_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/product.prop)
+_prop_vars_ :=
 endif
 
-FINAL_PRODUCT_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_PRODUCT_PROPERTIES) $(ADDITIONAL_PRODUCT_PROPERTIES))
-FINAL_PRODUCT_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_PRODUCT_PROPERTIES),=)
+INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
+$(eval $(call build-properties,\
+    vendor,\
+    $(INSTALLED_VENDOR_BUILD_PROP_TARGET),\
+    $(_prop_files_),\
+    $(_prop_vars_),\
+    $(PRODUCT_VENDOR_PROPERTY_BLACKLIST)))
 
-$(INSTALLED_PRODUCT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(product_prop_files)
-	@echo Target product buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@ && touch $@
-	$(hide) $(call generate-common-build-props,product,$@)
-	$(hide) $(foreach file,$(product_prop_files), \
-	    if [ -f "$(file)" ]; then \
-	        echo Target product properties from: "$(file)"; \
-	        echo "" >> $@; \
-	        echo "#" >> $@; \
-	        echo "# from $(file)" >> $@; \
-	        echo "#" >> $@; \
-	        cat $(file) >> $@; \
-	        echo "# end of $(file)" >> $@; \
-	    fi;)
-	$(hide) echo "#" >> $@; \
-	        echo "# ADDITIONAL PRODUCT PROPERTIES" >> $@; \
-	        echo "#" >> $@; \
-	        echo "ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)" >> $@;
-	$(hide) $(foreach line,$(FINAL_PRODUCT_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@
+# -----------------------------------------------------------------
+# product/build.prop
+#
+
+_prop_files_ := $(if $(TARGET_PRODUCT_PROP),\
+    $(TARGET_PRODUCT_PROP),\
+    $(wildcard $(TARGET_DEVICE_DIR)/product.prop))
+
+# Order matters here. When there are duplicates, the last one wins.
+# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
+_prop_vars_ := \
+    ADDITIONAL_PRODUCT_PROPERTIES \
+    PRODUCT_PRODUCT_PROPERTIES
+
+INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/build.prop
+$(eval $(call build-properties,\
+    product,\
+    $(INSTALLED_PRODUCT_BUILD_PROP_TARGET),\
+    $(_prop_files_),\
+    $(_prop_vars_),\
+    $(empty)))
 
 # ----------------------------------------------------------------
-# odm build.prop
-INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_ODM_BUILD_PROP_TARGET)
+# odm/build.prop
+#
+_prop_files_ := $(if $(TARGET_ODM_PROP),\
+    $(TARGET_ODM_PROP),\
+    $(wildcard $(TARGET_DEVICE_DIR)/odm.prop))
 
-ifdef TARGET_ODM_PROP
-odm_prop_files := $(TARGET_ODM_PROP)
-else
-odm_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/odm.prop)
-endif
+# Order matters here. When there are duplicates, the last one wins.
+# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
+_prop_vars_ := \
+    ADDITIONAL_ODM_PROPERTIES \
+    PRODUCT_ODM_PROPERTIES
 
-FINAL_ODM_BUILD_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_ODM_PROPERTIES) $(ADDITIONAL_ODM_PROPERTIES))
-FINAL_ODM_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_ODM_BUILD_PROPERTIES),=)
-
-$(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(odm_prop_files)
-	@echo Target odm buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@ && touch $@
-	$(hide) $(call generate-common-build-props,odm,$@)
-	$(hide) $(foreach file,$(odm_prop_files), \
-	    if [ -f "$(file)" ]; then \
-	        echo Target odm properties from: "$(file)"; \
-	        echo "" >> $@; \
-	        echo "#" >> $@; \
-	        echo "# from $(file)" >> $@; \
-	        echo "#" >> $@; \
-	        cat $(file) >> $@; \
-	        echo "# end of $(file)" >> $@; \
-	    fi;)
-	$(hide) echo "#" >> $@; \
-	        echo "# ADDITIONAL ODM BUILD PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach line,$(FINAL_ODM_BUILD_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@
+INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/build.prop
+$(eval $(call build-properties,\
+    odm,\
+    $(INSTALLED_ODM_BUILD_PROP_TARGET),\
+    $(_prop_files),\
+    $(_prop_vars_),\
+    $(empty)))
 
 # -----------------------------------------------------------------
-# system_ext build.prop
+# system_ext/build.prop
+#
+_prop_files_ := $(if $(TARGET_SYSTEM_EXT_PROP),\
+    $(TARGET_SYSTEM_EXT_PROP),\
+    $(wildcard $(TARGET_DEVICE_DIR)/system_ext.prop))
+
+# Order matters here. When there are duplicates, the last one wins.
+# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
+_prop_vars_ := PRODUCT_SYSTEM_EXT_PROPERTIES
+
 INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET)
-
-ifdef TARGET_SYSTEM_EXT_PROP
-system_ext_prop_files := $(TARGET_SYSTEM_EXT_PROP)
-else
-system_ext_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/system_ext.prop)
-endif
-
-FINAL_SYSTEM_EXT_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_SYSTEM_EXT_PROPERTIES))
-FINAL_SYSTEM_EXT_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_SYSTEM_EXT_PROPERTIES),=)
-
-$(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PROPS) $(system_ext_prop_files)
-	@echo Target system_ext buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) rm -f $@ && touch $@
-	$(hide) $(call generate-common-build-props,system_ext,$@)
-	$(hide) $(foreach file,$(system_ext_prop_files), \
-	    if [ -f "$(file)" ]; then \
-	        echo Target system_ext properties from: "$(file)"; \
-	        echo "" >> $@; \
-	        echo "#" >> $@; \
-	        echo "# from $(file)" >> $@; \
-	        echo "#" >> $@; \
-	        cat $(file) >> $@; \
-	        echo "# end of $(file)" >> $@; \
-	    fi;)
-	$(hide) echo "#" >> $@; \
-	        echo "# ADDITIONAL SYSTEM_EXT BUILD PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach line,$(FINAL_SYSTEM_EXT_PROPERTIES), \
-	    echo "$(line)" >> $@;)
-	$(hide) $(POST_PROCESS_PROPS) $@
+$(eval $(call build-properties,\
+    system_ext,\
+    $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET),\
+    $(_prop_files_),\
+    $(_prop_vars_),\
+    $(empty)))
