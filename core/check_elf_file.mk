@@ -38,6 +38,8 @@ $(check_elf_files_stamp): $(my_prebuilt_src_file) $(my_check_elf_file_shared_lib
 	    $<
 	$(hide) touch $@
 
+CHECK_ELF_FILES.$(check_elf_files_stamp) := 1
+
 ifneq ($(strip $(LOCAL_CHECK_ELF_FILES)),false)
 ifneq ($(strip $(BUILD_BROKEN_PREBUILT_ELF_FILES)),true)
 $(LOCAL_BUILT_MODULE): $(check_elf_files_stamp)

@@ -239,6 +239,12 @@ _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
 # List of system_server jars delivered via apex. Format = <apex name>:<jar name>.
 _product_list_vars += PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS
+# If true, then suboptimal order of system server jars does not cause an error.
+_product_list_vars += PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS
+
+# Additional system server jars to be appended at the end of the common list.
+# This is necessary to avoid jars reordering due to makefile inheritance order.
+_product_list_vars += PRODUCT_SYSTEM_SERVER_JARS_EXTRA
 
 # All of the apps that we force preopt, this overrides WITH_DEXPREOPT.
 _product_list_vars += PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK
@@ -389,6 +395,13 @@ _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA
 # If set, device retrofits virtual A/B.
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA_RETROFIT
 
+# If set, forcefully generate a non-A/B update package.
+# Note: A device configuration should inherit from virtual_ab_ota_plus_non_ab.mk
+# instead of setting this variable directly.
+# Note: Use TARGET_OTA_ALLOW_NON_AB in the build system because
+# TARGET_OTA_ALLOW_NON_AB takes the value of AB_OTA_UPDATER into account.
+_product_single_value_vars += PRODUCT_OTA_FORCE_NON_AB_PACKAGE
+
 # If set, Java module in product partition cannot use hidden APIs.
 _product_single_value_vars += PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
 
@@ -447,8 +460,8 @@ define require-artifacts-in-path
     $(sort $(ARTIFACT_PATH_REQUIREMENT_PRODUCTS) $(current_mk)))
 endef
 
-# Makes including non-existant modules in PRODUCT_PACKAGES an error.
-# $(1): whitelist of non-existant modules to allow.
+# Makes including non-existent modules in PRODUCT_PACKAGES an error.
+# $(1): whitelist of non-existent modules to allow.
 define enforce-product-packages-exist
   $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
   $(eval PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST := true) \

@@ -183,11 +183,30 @@ class EdifyGenerator(object):
     It checks the checksums of the given partitions. If none of them matches the
     expected checksum, updater will additionally look for a backup on /cache.
     """
+    self._CheckSecondTokenNotSlotSuffixed(target, "PatchPartitionExprCheck")
+    self._CheckSecondTokenNotSlotSuffixed(source, "PatchPartitionExprCheck")
+    self.PatchPartitionExprCheck('"%s"' % target, '"%s"' % source)
+
+  def PatchPartitionExprCheck(self, target_expr, source_expr):
+    """Checks whether updater can patch the given partitions.
+
+    It checks the checksums of the given partitions. If none of them matches the
+    expected checksum, updater will additionally look for a backup on /cache.
+
+    Args:
+      target_expr: an Edify expression that serves as the target arg to
+        patch_partition. Must be evaluated to a string in the form of
+        foo:bar:baz:quux
+      source_expr: an Edify expression that serves as the source arg to
+        patch_partition. Must be evaluated to a string in the form of
+        foo:bar:baz:quux
+    """
     self.script.append(self.WordWrap((
-        'patch_partition_check("{target}",\0"{source}") ||\n    abort('
-        '"E{code}: \\"{target}\\" or \\"{source}\\" has unexpected '
-        'contents.");').format(
-            target=target, source=source,
+        'patch_partition_check({target},\0{source}) ||\n    abort('
+        'concat("E{code}: \\"",{target},"\\" or \\"",{source},"\\" has '
+        'unexpected contents."));').format(
+            target=target_expr,
+            source=source_expr,
             code=common.ErrorCode.BAD_PATCH_FILE)))
 
   def CacheFreeSpaceCheck(self, amount):
@@ -218,8 +237,9 @@ class EdifyGenerator(object):
       mount_flags = mount_dict.get(p.fs_type, "")
       if p.context is not None:
         mount_flags = p.context + ("," + mount_flags if mount_flags else "")
-      self.script.append('mount("%s", "%s", "%s", "%s", "%s");' % (
-          p.fs_type, common.PARTITION_TYPES[p.fs_type], p.device,
+      self.script.append('mount("%s", "%s", %s, "%s", "%s");' % (
+          p.fs_type, common.PARTITION_TYPES[p.fs_type],
+          self._GetSlotSuffixDeviceForEntry(p),
           p.mount_point, mount_flags))
       self.mounts.add(p.mount_point)
 
@@ -242,8 +262,9 @@ class EdifyGenerator(object):
         raise ValueError("Partition %s cannot be tuned\n" % (partition,))
     self.script.append(
         'tune2fs(' + "".join(['"%s", ' % (i,) for i in options]) +
-        '"%s") || abort("E%d: Failed to tune partition %s");' % (
-            p.device, common.ErrorCode.TUNE_PARTITION_FAILURE, partition))
+        '%s) || abort("E%d: Failed to tune partition %s");' % (
+            self._GetSlotSuffixDeviceForEntry(p),
+            common.ErrorCode.TUNE_PARTITION_FAILURE, partition))
 
   def FormatPartition(self, partition):
     """Format the given partition, specified by its mount point (eg,
@@ -252,18 +273,19 @@ class EdifyGenerator(object):
     fstab = self.fstab
     if fstab:
       p = fstab[partition]
-      self.script.append('format("%s", "%s", "%s", "%s", "%s");' %
+      self.script.append('format("%s", "%s", %s, "%s", "%s");' %
                          (p.fs_type, common.PARTITION_TYPES[p.fs_type],
-                          p.device, p.length, p.mount_point))
+                          self._GetSlotSuffixDeviceForEntry(p),
+                          p.length, p.mount_point))
 
   def WipeBlockDevice(self, partition):
     if partition not in ("/system", "/vendor"):
       raise ValueError(("WipeBlockDevice doesn't work on %s\n") % (partition,))
     fstab = self.fstab
     size = self.info.get(partition.lstrip("/") + "_size", None)
-    device = fstab[partition].device
+    device = self._GetSlotSuffixDeviceForEntry(fstab[partition])
 
-    self.script.append('wipe_block_device("%s", %s);' % (device, size))
+    self.script.append('wipe_block_device(%s, %s);' % (device, size))
 
   def ApplyPatch(self, srcfile, tgtfile, tgtsize, tgtsha1, *patchpairs):
     """Apply binary patches (in *patchpairs) to the given srcfile to
@@ -296,13 +318,68 @@ class EdifyGenerator(object):
     self.PatchPartition(target, source, patch)
 
   def PatchPartition(self, target, source, patch):
-    """Applies the patch to the source partition and writes it to target."""
+    """
+    Applies the patch to the source partition and writes it to target.
+
+    Args:
+      target: the target arg to patch_partition. Must be in the form of
+        foo:bar:baz:quux
+      source: the source arg to patch_partition. Must be in the form of
+        foo:bar:baz:quux
+      patch: the patch arg to patch_partition. Must be an unquoted string.
+    """
+    self._CheckSecondTokenNotSlotSuffixed(target, "PatchPartitionExpr")
+    self._CheckSecondTokenNotSlotSuffixed(source, "PatchPartitionExpr")
+    self.PatchPartitionExpr('"%s"' % target, '"%s"' % source, '"%s"' % patch)
+
+  def PatchPartitionExpr(self, target_expr, source_expr, patch_expr):
+    """
+    Applies the patch to the source partition and writes it to target.
+
+    Args:
+      target_expr: an Edify expression that serves as the target arg to
+        patch_partition. Must be evaluated to a string in the form of
+        foo:bar:baz:quux
+      source_expr: an Edify expression that serves as the source arg to
+        patch_partition. Must be evaluated to a string in the form of
+        foo:bar:baz:quux
+      patch_expr: an Edify expression that serves as the patch arg to
+        patch_partition. Must be evaluated to a string.
+    """
     self.script.append(self.WordWrap((
-        'patch_partition("{target}",\0"{source}",\0'
-        'package_extract_file("{patch}")) ||\n'
-        '    abort("E{code}: Failed to apply patch to {source}");').format(
-            target=target, source=source, patch=patch,
+        'patch_partition({target},\0{source},\0'
+        'package_extract_file({patch})) ||\n'
+        '    abort(concat('
+        '        "E{code}: Failed to apply patch to ",{source}));').format(
+            target=target_expr,
+            source=source_expr,
+            patch=patch_expr,
             code=common.ErrorCode.APPLY_PATCH_FAILURE)))
+
+  def _GetSlotSuffixDeviceForEntry(self, entry=None):
+    """
+    Args:
+      entry: the fstab entry of device "foo"
+    Returns:
+      An edify expression. Caller must not quote result.
+      If foo is slot suffixed, it returns
+        'add_slot_suffix("foo")'
+      Otherwise it returns
+        '"foo"' (quoted)
+    """
+    assert entry is not None
+    if entry.slotselect:
+      return 'add_slot_suffix("%s")' % entry.device
+    return '"%s"' % entry.device
+
+  def _CheckSecondTokenNotSlotSuffixed(self, s, fn):
+    lst = s.split(':')
+    assert(len(s) == 4), "{} does not contain 4 tokens".format(s)
+    if self.fstab:
+      entry = common.GetEntryForDevice(s[1])
+      if entry is not None:
+        assert not entry.slotselect, \
+          "Use %s because %s is slot suffixed" % (fn, s[1])
 
   def WriteRawImage(self, mount_point, fn, mapfn=None):
     """Write the given package file into the partition for the given
@@ -312,15 +389,16 @@ class EdifyGenerator(object):
     if fstab:
       p = fstab[mount_point]
       partition_type = common.PARTITION_TYPES[p.fs_type]
-      args = {'device': p.device, 'fn': fn}
+      device = self._GetSlotSuffixDeviceForEntry(p)
+      args = {'device': device, 'fn': fn}
       if partition_type == "EMMC":
         if mapfn:
           args["map"] = mapfn
           self.script.append(
-              'package_extract_file("%(fn)s", "%(device)s", "%(map)s");' % args)
+              'package_extract_file("%(fn)s", %(device)s, "%(map)s");' % args)
         else:
           self.script.append(
-              'package_extract_file("%(fn)s", "%(device)s");' % args)
+              'package_extract_file("%(fn)s", %(device)s);' % args)
       else:
         raise ValueError(
             "don't know how to write \"%s\" partitions" % p.fs_type)

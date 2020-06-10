@@ -16,7 +16,7 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
-    adbd_system_binaries \
+    adbd_system_api \
     am \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
@@ -41,6 +41,7 @@ PRODUCT_PACKAGES += \
     bmgr \
     bootanimation \
     bootstat \
+    boringssl_self_test \
     bpfloader \
     bu \
     bugreport \
@@ -81,6 +82,7 @@ PRODUCT_PACKAGES += \
     framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
+    fsverity-release-cert-der \
     fs_config_files_system \
     fs_config_dirs_system \
     group_system \
@@ -319,6 +321,7 @@ PRODUCT_BOOT_JARS := \
     $(ART_APEX_JARS) \
     framework-minus-apex \
     ext \
+    com.android.i18n:core-icu4j \
     telephony-common \
     voip-common \
     ims-common \

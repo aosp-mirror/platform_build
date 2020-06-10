@@ -87,6 +87,7 @@ _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
+  BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES \
   BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
   BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
@@ -241,13 +242,8 @@ endif
 # build a list out of the TARGET_CPU_ABIs specified by the config.
 # Add NATIVE_BRIDGE_ABIs at the end to keep order of preference.
 ifeq (,$(TARGET_CPU_ABI_LIST))
-  ifeq ($(TARGET_IS_64_BIT)|$(TARGET_PREFER_32_BIT_APPS),true|true)
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT) \
-                           $(_target_native_bridge_abi_list_32_bit) $(_target_native_bridge_abi_list_64_bit)
-  else
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT) \
-                           $(_target_native_bridge_abi_list_64_bit) $(_target_native_bridge_abi_list_32_bit)
-  endif
+  TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT) \
+                         $(_target_native_bridge_abi_list_64_bit) $(_target_native_bridge_abi_list_32_bit)
 endif
 
 # Add NATIVE_BRIDGE_ABIs at the end of 32 and 64 bit CPU_ABIs to keep order of preference.
@@ -549,13 +545,31 @@ endif
 .KATI_READONLY := BUILDING_ODM_IMAGE
 
 ###########################################
-# Ensure that only TARGET_RECOVERY_UPDATER_LIBS *or* AB_OTA_UPDATER is set.
+# Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
 TARGET_RECOVERY_UPDATER_LIBS ?=
 AB_OTA_UPDATER ?=
 .KATI_READONLY := TARGET_RECOVERY_UPDATER_LIBS AB_OTA_UPDATER
-ifeq ($(AB_OTA_UPDATER),true)
+
+# Ensure that if PRODUCT_OTA_FORCE_NON_AB_PACKAGE == true, then AB_OTA_UPDATER must be true
+ifeq ($(PRODUCT_OTA_FORCE_NON_AB_PACKAGE),true)
+  ifneq ($(AB_OTA_UPDATER),true)
+    $(error AB_OTA_UPDATER must be set to true when PRODUCT_OTA_FORCE_NON_AB_PACKAGE is true)
+  endif
+endif
+
+# In some configurations, A/B and non-A/B may coexist. Check TARGET_OTA_ALLOW_NON_AB
+# to see if non-A/B is supported.
+TARGET_OTA_ALLOW_NON_AB := false
+ifneq ($(AB_OTA_UPDATER),true)
+  TARGET_OTA_ALLOW_NON_AB := true
+else ifeq ($(PRODUCT_OTA_FORCE_NON_AB_PACKAGE),true)
+  TARGET_OTA_ALLOW_NON_AB := true
+endif
+.KATI_READONLY := TARGET_OTA_ALLOW_NON_AB
+
+ifneq ($(TARGET_OTA_ALLOW_NON_AB),true)
   ifneq ($(strip $(TARGET_RECOVERY_UPDATER_LIBS)),)
-    $(error Do not use TARGET_RECOVERY_UPDATER_LIBS when using AB_OTA_UPDATER)
+    $(error Do not use TARGET_RECOVERY_UPDATER_LIBS when using TARGET_OTA_ALLOW_NON_AB)
   endif
 endif
 
