@@ -75,7 +75,7 @@ else  # my_strip_module not true
   built_module := $(LOCAL_BUILT_MODULE)
 
 ifdef prebuilt_module_is_a_library
-EXPORTS_LIST := $(EXPORTS_LIST) $(intermediates)
+EXPORTS_LIST += $(intermediates)
 EXPORTS.$(intermediates).FLAGS := $(foreach d,$(LOCAL_EXPORT_C_INCLUDE_DIRS),-I $(d))
 EXPORTS.$(intermediates).DEPS := $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 
