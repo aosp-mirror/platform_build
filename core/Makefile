@@ -3774,6 +3774,9 @@ ifeq ($(INSTALLED_BOOTIMAGE_TARGET),)
 else
 	echo "boot_images=$(foreach b,$(INSTALLED_BOOTIMAGE_TARGET),$(notdir $(b)))" >> $@
 endif
+ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
+	echo "lz4_ramdisks=true" >> $@
+endif
 ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	echo "vendor_boot=true" >> $@
 	echo "vendor_boot_size=$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE)" >> $@
