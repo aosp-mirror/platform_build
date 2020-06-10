@@ -16,6 +16,23 @@
       "revId": "60d276cebc38f31656ff2b871ed66933102521df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b25f1df5_39b507de",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-06-10T17:59:43Z",
+      "side": 1,
+      "message": "There\u0027s an additional complexity here, although maybe fine to ignore.  TARGET_BUILD_APPS is a list of apps, and is used as the dependency of the apps_only target, which is then set as the default target.  That means `m TARGET_BUILD_APPS\u003dfoo` will only build the `foo` module.  `TARGET_BUILD_UNBUNDLED\u003dtrue` won\u0027t have similar behavior.",
+      "revId": "60d276cebc38f31656ff2b871ed66933102521df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
