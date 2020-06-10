@@ -22,6 +22,30 @@
       "revId": "12b3066feeb5c239e5020b3e238e19bb90f3bac9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7607ab3_6d4543ca",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-06-10T08:51:30Z",
+      "side": 1,
+      "message": "Oh, it\u0027s just a way to turn install path to on-device path by cutting off $(PRODUCT_OUT) prefix. It turns paths like out/target/product/walleye/system/framework/ext.jar into /system/framework/ext.jar. This GNU Make syntax described here: https://www.gnu.org/software/make/manual/html_node/Text-Functions.html#Text-Functions, see `$(var:pattern\u003dreplacement)`.\n\nI added function install-path-to-on-device-path (there is one in Soong named InstallPathToOnDevicePath) and used a more familiar general form `$(patsubst pattern,replacement,$(var))` in it.",
+      "parentUuid": "6b0f21f0_da11d82e",
+      "range": {
+        "startLine": 240,
+        "startChar": 33,
+        "endLine": 240,
+        "endChar": 58
+      },
+      "revId": "12b3066feeb5c239e5020b3e238e19bb90f3bac9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
