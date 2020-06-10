@@ -34,7 +34,6 @@ endif
 $(call verify-module-name)
 
 LOCAL_IS_HOST_MODULE := $(strip $(LOCAL_IS_HOST_MODULE))
-LOCAL_IS_AUX_MODULE := $(strip $(LOCAL_IS_AUX_MODULE))
 ifdef LOCAL_IS_HOST_MODULE
   ifneq ($(LOCAL_IS_HOST_MODULE),true)
     $(error $(LOCAL_PATH): LOCAL_IS_HOST_MODULE must be "true" or empty, not "$(LOCAL_IS_HOST_MODULE)")
@@ -47,16 +46,8 @@ ifdef LOCAL_IS_HOST_MODULE
   my_host := host-
   my_kind := HOST
 else
-  ifdef LOCAL_IS_AUX_MODULE
-    ifneq ($(LOCAL_IS_AUX_MODULE),true)
-      $(error $(LOCAL_PATH): LOCAL_IS_AUX_MODULE must be "true" or empty, not "$(LOCAL_IS_AUX_MODULE)")
-    endif
-    my_prefix := AUX_
-    my_kind := AUX
-  else
-    my_prefix := TARGET_
-    my_kind :=
-  endif
+  my_prefix := TARGET_
+  my_kind :=
   my_host :=
 endif
 
@@ -183,11 +174,10 @@ endif
 # file, tag the module as "gnu".  Search for "*_GPL*", "*_LGPL*" and "*_MPL*"
 # so that we can also find files like MODULE_LICENSE_GPL_AND_AFL
 #
-license_files := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*)
 gpl_license_file := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*_GPL* MODULE_LICENSE*_MPL* MODULE_LICENSE*_LGPL*)
 ifneq ($(gpl_license_file),)
   my_module_tags += gnu
-  ALL_GPL_MODULE_LICENSE_FILES := $(sort $(ALL_GPL_MODULE_LICENSE_FILES) $(gpl_license_file))
+  ALL_GPL_MODULE_LICENSE_FILES += $(gpl_license_file)
 endif
 
 LOCAL_MODULE_CLASS := $(strip $(LOCAL_MODULE_CLASS))
@@ -206,6 +196,7 @@ my_module_path := $(strip $(LOCAL_MODULE_PATH))
 endif
 my_module_path := $(patsubst %/,%,$(my_module_path))
 my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
+
 ifdef LOCAL_IS_HOST_MODULE
   partition_tag :=
   actual_partition_tag :=
@@ -316,20 +307,27 @@ else
   my_all_targets := device_$(my_register_name)_all_targets
 endif
 
-# variant is enough to make nano class unique; it serves as a key to lookup (OS,ARCH) tuple
-aux_class := $($(my_prefix)OS_VARIANT)
 # Make sure that this IS_HOST/CLASS/MODULE combination is unique.
 module_id := MODULE.$(if \
-    $(LOCAL_IS_HOST_MODULE),$($(my_prefix)OS),$(if \
-    $(LOCAL_IS_AUX_MODULE),$(aux_class),TARGET)).$(LOCAL_MODULE_CLASS).$(my_register_name)
+    $(LOCAL_IS_HOST_MODULE),$($(my_prefix)OS),TARGET).$(LOCAL_MODULE_CLASS).$(my_register_name)
 ifdef $(module_id)
 $(error $(LOCAL_PATH): $(module_id) already defined by $($(module_id)))
 endif
 $(module_id) := $(LOCAL_PATH)
 
-intermediates := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))
-intermediates.COMMON := $(call local-intermediates-dir,COMMON)
-generated_sources_dir := $(call local-generated-sources-dir)
+# These are the same as local-intermediates-dir / local-generated-sources dir, but faster
+intermediates.COMMON := $($(my_prefix)OUT_COMMON_INTERMEDIATES)/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
+ifneq (,$(filter $(my_prefix)$(LOCAL_MODULE_CLASS),$(COMMON_MODULE_CLASSES)))
+  intermediates := $($(my_prefix)OUT_COMMON_INTERMEDIATES)/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
+  generated_sources_dir := $($(my_prefix)OUT_COMMON_GEN)/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
+else
+  ifneq (,$(filter $(LOCAL_MODULE_CLASS),$(PER_ARCH_MODULE_CLASSES)))
+    intermediates := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATES)/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
+  else
+    intermediates := $($(my_prefix)OUT_INTERMEDIATES)/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
+  endif
+  generated_sources_dir := $($(my_prefix)OUT_GEN)/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
+endif
 
 ifneq ($(LOCAL_OVERRIDES_MODULES),)
   ifndef LOCAL_IS_HOST_MODULE
@@ -357,15 +355,15 @@ LOCAL_BUILT_MODULE := $(intermediates)/$(my_built_module_stem)
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Apk and its attachments reside in its own subdir.
   ifeq ($(LOCAL_MODULE_CLASS),APPS)
-  # framework-res.apk doesn't like the additional layer.
-  ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-  # Neither do Runtime Resource Overlay apks, which contain just the overlaid resources.
-  else ifeq ($(LOCAL_IS_RUNTIME_RESOURCE_OVERLAY),true)
-  else
-    ifneq ($(use_testcase_folder),true)
-      my_module_path := $(my_module_path)/$(LOCAL_MODULE)
+    # framework-res.apk doesn't like the additional layer.
+    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      # Neither do Runtime Resource Overlay apks, which contain just the overlaid resources.
+    else ifeq ($(LOCAL_IS_RUNTIME_RESOURCE_OVERLAY),true)
+    else
+      ifneq ($(use_testcase_folder),true)
+        my_module_path := $(my_module_path)/$(LOCAL_MODULE)
+      endif
     endif
-  endif
   endif
   LOCAL_INSTALLED_MODULE := $(my_module_path)/$(my_installed_module_stem)
 endif
@@ -428,7 +426,6 @@ $(cleantarget)::
 ###########################################################
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_PATH:=$(LOCAL_PATH)
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_IS_HOST_MODULE := $(LOCAL_IS_HOST_MODULE)
-$(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_IS_AUX_MODULE := $(LOCAL_IS_AUX_MODULE)
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_HOST:= $(my_host)
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_PREFIX := $(my_prefix)
 
@@ -574,17 +571,35 @@ ifneq ($(strip $(filter NATIVE_TESTS,$(LOCAL_MODULE_CLASS)) $(LOCAL_IS_FUZZ_TARG
 ifneq ($(strip $(LOCAL_TEST_DATA)),)
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 
-my_test_data_pairs := $(strip $(foreach td,$(LOCAL_TEST_DATA), \
-    $(eval _file := $(call word-colon,2,$(td))) \
-    $(if $(_file), \
-      $(eval _src_base := $(call word-colon,1,$(td))), \
-      $(eval _src_base := $(LOCAL_PATH)) \
-        $(eval _file := $(call word-colon,1,$(td)))) \
-    $(if $(call streq,$(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK)),, \
-      $(if $(findstring ..,$(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include '..': $(_file))) \
-      $(if $(filter /%,$(_src_base) $(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include absolute paths: $(_src_base) $(_file)))) \
-    $(eval my_test_data_file_pairs := $(my_test_data_file_pairs) $(call append-path,$(_src_base),$(_file)):$(_file)) \
-    $(call append-path,$(_src_base),$(_file)):$(call append-path,$(my_module_path),$(_file))))
+ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  define copy_test_data_pairs
+    _src_base := $$(call word-colon,1,$$(td))
+    _file := $$(call word-colon,2,$$(td))
+    my_test_data_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(call append-path,$$(my_module_path),$$(_file))
+    my_test_data_file_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(_file)
+  endef
+else
+  define copy_test_data_pairs
+    _src_base := $$(call word-colon,1,$$(td))
+    _file := $$(call word-colon,2,$$(td))
+    ifndef _file
+      _file := $$(_src_base)
+      _src_base := $$(LOCAL_PATH)
+    endif
+    ifneq (,$$(findstring ..,$$(_file)))
+      $$(call pretty-error,LOCAL_TEST_DATA may not include '..': $$(_file))
+    endif
+    ifneq (,$$(filter/%,$$(_src_base) $$(_file)))
+      $$(call pretty-error,LOCAL_TEST_DATA may not include absolute paths: $$(_src_base) $$(_file))
+    endif
+    my_test_data_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(call append-path,$$(my_module_path),$$(_file))
+    my_test_data_file_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(_file)
+  endef
+endif
+
+$(foreach td,$(LOCAL_TEST_DATA),$(eval $(copy_test_data_pairs)))
+
+copy_test_data_pairs :=
 
 my_installed_test_data := $(call copy-many-files,$(my_test_data_pairs))
 $(LOCAL_INSTALLED_MODULE): $(my_installed_test_data)
@@ -818,6 +833,16 @@ ifdef LOCAL_PICKUP_FILES
 ALL_MODULES.$(my_register_name).PICKUP_FILES := \
     $(ALL_MODULES.$(my_register_name).PICKUP_FILES) $(LOCAL_PICKUP_FILES)
 endif
+# Record the platform availability of this module. Note that the availability is not
+# meaningful for non-installable modules (e.g., static libs) or host modules.
+# We only care about modules that are installable to the device.
+ifeq (true,$(LOCAL_NOT_AVAILABLE_FOR_PLATFORM))
+  ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+    ifndef LOCAL_IS_HOST_MODULE
+      ALL_MODULES.$(my_register_name).NOT_AVAILABLE_FOR_PLATFORM := true
+    endif
+  endif
+endif
 
 my_required_modules := $(LOCAL_REQUIRED_MODULES) \
     $(LOCAL_REQUIRED_MODULES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
@@ -908,8 +933,8 @@ INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 ##########################################################
 # Track module-level dependencies.
 # Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
-ifneq (,$(filter deps-license,$(MAKECMDGOALS)))
-ALL_DEPS.MODULES := $(ALL_DEPS.MODULES) $(LOCAL_MODULE)
+ifdef RECORD_ALL_DEPS
+ALL_DEPS.MODULES += $(LOCAL_MODULE)
 ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) \
   $(LOCAL_STATIC_LIBRARIES) \
@@ -923,6 +948,7 @@ ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(LOCAL_JAVA_LIBRARIES) \
   $(LOCAL_JNI_SHARED_LIBRARIES))
 
+license_files := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*)
 ALL_DEPS.$(LOCAL_MODULE).LICENSE := $(sort $(ALL_DEPS.$(LOCAL_MODULE).LICENSE) $(license_files))
 endif
 

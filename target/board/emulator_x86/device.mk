@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 The Android Open Source Project
+# Copyright (C) 2020 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
 # limitations under the License.
 #
 
-#
-# Common rules for building a TradeFed test XML file for host side tests.
-#
+PRODUCT_SOONG_NAMESPACES += device/generic/goldfish # for libwifi-hal-emu
+PRODUCT_SOONG_NAMESPACES += device/generic/goldfish-opengl # for goldfish deps.
 
-$(call record-module-type,HOST_TEST_CONFIG)
+ifdef NET_ETH0_STARTONBOOT
+  PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
+endif
 
-LOCAL_IS_HOST_MODULE := true
-
-include $(BUILD_SYSTEM)/test_config_common.mk
+# Ensure we package the BIOS files too.
+PRODUCT_HOST_PACKAGES += \
+	bios.bin \
+	vgabios-cirrus.bin \

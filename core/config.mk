@@ -122,6 +122,26 @@ $(KATI_obsolete_var PRODUCT_IOT)
 $(KATI_obsolete_var MD5SUM)
 $(KATI_obsolete_var BOARD_HAL_STATIC_LIBRARIES, See $(CHANGES_URL)#BOARD_HAL_STATIC_LIBRARIES)
 $(KATI_obsolete_var LOCAL_HAL_STATIC_LIBRARIES, See $(CHANGES_URL)#BOARD_HAL_STATIC_LIBRARIES)
+$(KATI_obsolete_var \
+  TARGET_AUX_OS_VARIANT_LIST \
+  LOCAL_AUX_ARCH \
+  LOCAL_AUX_CPU \
+  LOCAL_AUX_OS \
+  LOCAL_AUX_OS_VARIANT \
+  LOCAL_AUX_SUBARCH \
+  LOCAL_AUX_TOOLCHAIN \
+  LOCAL_CUSTOM_BUILD_STEP_INPUT \
+  LOCAL_CUSTOM_BUILD_STEP_OUTPUT \
+  LOCAL_IS_AUX_MODULE \
+  ,AUX support has been removed)
+$(KATI_obsolete_var HOST_OUT_TEST_CONFIG TARGET_OUT_TEST_CONFIG LOCAL_TEST_CONFIG_OPTIONS)
+$(KATI_obsolete_var \
+  TARGET_PROJECT_INCLUDES \
+  2ND_TARGET_PROJECT_INCLUDES \
+  TARGET_PROJECT_SYSTEM_INCLUDES \
+  2ND_TARGET_PROJECT_SYSTEM_INCLUDES \
+  ,Project include variables have been removed)
+$(KATI_obsolete_var TARGET_PREFER_32_BIT TARGET_PREFER_32_BIT_APPS TARGET_PREFER_32_BIT_EXECUTABLES)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -170,8 +190,6 @@ BUILD_HOST_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/host_static_library.mk
 BUILD_HOST_SHARED_LIBRARY :=$= $(BUILD_SYSTEM)/host_shared_library.mk
 BUILD_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/static_library.mk
 BUILD_HEADER_LIBRARY :=$= $(BUILD_SYSTEM)/header_library.mk
-BUILD_AUX_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/aux_static_library.mk
-BUILD_AUX_EXECUTABLE :=$= $(BUILD_SYSTEM)/aux_executable.mk
 BUILD_SHARED_LIBRARY :=$= $(BUILD_SYSTEM)/shared_library.mk
 BUILD_EXECUTABLE :=$= $(BUILD_SYSTEM)/executable.mk
 BUILD_HOST_EXECUTABLE :=$= $(BUILD_SYSTEM)/host_executable.mk
@@ -186,22 +204,11 @@ BUILD_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/static_java_library.mk
 BUILD_HOST_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_java_library.mk
 BUILD_COPY_HEADERS :=$= $(BUILD_SYSTEM)/copy_headers.mk
 BUILD_NATIVE_TEST :=$= $(BUILD_SYSTEM)/native_test.mk
-BUILD_NATIVE_BENCHMARK :=$= $(BUILD_SYSTEM)/native_benchmark.mk
-BUILD_HOST_NATIVE_TEST :=$= $(BUILD_SYSTEM)/host_native_test.mk
 BUILD_FUZZ_TEST :=$= $(BUILD_SYSTEM)/fuzz_test.mk
-BUILD_HOST_FUZZ_TEST :=$= $(BUILD_SYSTEM)/host_fuzz_test.mk
-
-BUILD_SHARED_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/shared_test_lib.mk
-BUILD_HOST_SHARED_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/host_shared_test_lib.mk
-BUILD_STATIC_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/static_test_lib.mk
-BUILD_HOST_STATIC_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/host_static_test_lib.mk
 
 BUILD_NOTICE_FILE :=$= $(BUILD_SYSTEM)/notice_files.mk
 BUILD_HOST_DALVIK_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_java_library.mk
 BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
-
-BUILD_HOST_TEST_CONFIG :=$= $(BUILD_SYSTEM)/host_test_config.mk
-BUILD_TARGET_TEST_CONFIG :=$= $(BUILD_SYSTEM)/target_test_config.mk
 
 include $(BUILD_SYSTEM)/deprecation.mk
 
@@ -367,11 +374,6 @@ ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
 include $(BUILD_SYSTEM)/rbe.mk
-endif
-
-ifdef TARGET_PREFER_32_BIT
-TARGET_PREFER_32_BIT_APPS := true
-TARGET_PREFER_32_BIT_EXECUTABLES := true
 endif
 
 # GCC version selection
@@ -579,7 +581,7 @@ LEX := $(prebuilt_build_tools_bin_noasan)/flex
 # prebuilts/build-tools/common/bison.
 # To run bison from elsewhere you need to set up enviromental variable
 # BISON_PKGDATADIR.
-BISON_PKGDATADIR := $(PWD)/prebuilts/build-tools/common/bison
+BISON_PKGDATADIR := $(prebuilt_build_tools)/common/bison
 BISON := $(prebuilt_build_tools_bin_noasan)/bison
 YACC := $(BISON) -d
 BISON_DATA := $(wildcard $(BISON_PKGDATADIR)/* $(BISON_PKGDATADIR)/*/*)
@@ -599,6 +601,7 @@ NANOPB_SRCS := $(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
 VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
+LZ4 := $(HOST_OUT_EXECUTABLES)/lz4$(HOST_EXECUTABLE_SUFFIX)
 ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
@@ -857,6 +860,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     27.0 \
     28.0 \
     29.0 \
+    30.0 \
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
@@ -1057,16 +1061,6 @@ else
 RELATIVE_PWD :=
 endif
 
-TARGET_PROJECT_INCLUDES :=
-TARGET_PROJECT_SYSTEM_INCLUDES := \
-		$(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS) \
-		$(TARGET_PRODUCT_KERNEL_HEADERS)
-
-ifdef TARGET_2ND_ARCH
-$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_PROJECT_INCLUDES := $(TARGET_PROJECT_INCLUDES)
-$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_PROJECT_SYSTEM_INCLUDES := $(TARGET_PROJECT_SYSTEM_INCLUDES)
-endif
-
 # Flags for DEX2OAT
 first_non_empty_of_three = $(if $(1),$(1),$(if $(2),$(2),$(3)))
 DEX2OAT_TARGET_ARCH := $(TARGET_ARCH)
@@ -1149,19 +1143,6 @@ TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
-ifndef INTERNAL_PLATFORM_PRIVATE_API_FILE
-INTERNAL_PLATFORM_PRIVATE_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/private.txt
-endif
-ifndef INTERNAL_PLATFORM_PRIVATE_DEX_API_FILE
-INTERNAL_PLATFORM_PRIVATE_DEX_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/private-dex.txt
-endif
-ifndef INTERNAL_PLATFORM_SYSTEM_PRIVATE_API_FILE
-INTERNAL_PLATFORM_SYSTEM_PRIVATE_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-private.txt
-endif
-ifndef INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE
-INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-private-dex.txt
-endif
-
 # Missing optional uses-libraries so that the platform doesn't create build rules that depend on
 # them.
 INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := \
@@ -1230,5 +1211,8 @@ endif
 -include external/ltp/android/ltp_package_list.mk
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
+
+# Make RECORD_ALL_DEPS readonly.
+RECORD_ALL_DEPS :=$= $(filter true,$(RECORD_ALL_DEPS))
 
 include $(BUILD_SYSTEM)/dumpvar.mk

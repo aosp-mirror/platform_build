@@ -12,25 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+-include external/linux-kselftest/android/kselftest_test_list.mk
+-include external/ltp/android/ltp_package_list.mk
+
 test_suite_name := vts
 test_suite_tradefed := vts-tradefed
 test_suite_readme := test/vts/tools/vts-core-tradefed/README
 
-# TODO(b/149249068): Clean up after all VTS tests are converted.
-vts_test_artifact_paths :=
-# Some repo may not include vts project.
--include test/vts/tools/build/tasks/framework/vts_for_core_suite.mk
+# Copy kernel test modules to testcases directories
+kernel_test_host_out := $(HOST_OUT_TESTCASES)/vts_kernel_tests
+kernel_test_vts_out := $(HOST_OUT)/$(test_suite_name)/android-$(test_suite_name)/testcases/vts_kernel_tests
+kernel_test_modules := \
+    $(kselftest_modules) \
+    ltp \
+    $(ltp_packages)
+
+kernel_test_copy_pairs := \
+  $(call target-native-copy-pairs,$(kernel_test_modules),$(kernel_test_vts_out)) \
+  $(call target-native-copy-pairs,$(kernel_test_modules),$(kernel_test_host_out))
+
+copy_kernel_tests := $(call copy-many-files,$(kernel_test_copy_pairs))
+
+# PHONY target to be used to build and test `vts_kernel_tests` without building full vts
+.PHONY: vts_kernel_tests
+vts_kernel_tests: $(copy_kernel_tests)
 
 include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 
+$(compatibility_zip): $(copy_kernel_tests)
+
 .PHONY: vts
-$(compatibility_zip): $(vts_test_artifact_paths)
 vts: $(compatibility_zip)
 $(call dist-for-goals, vts, $(compatibility_zip))
-
-# TODO(b/149249068): Remove vts-core phony target after it's removed from all
-# builders.
-.PHONY: vts-core
-vts-core: vts
 
 tests: vts

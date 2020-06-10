@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 The Android Open Source Project
+# Copyright (C) 2020 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,8 @@
 # limitations under the License.
 #
 
-#
-# Common rules for building a TradeFed test XML file for target side tests.
-#
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
-$(call record-module-type,TARGET_TEST_CONFIG)
+PRODUCT_OTA_FORCE_NON_AB_PACKAGE := true
 
-include $(BUILD_SYSTEM)/test_config_common.mk
+PRODUCT_PROPERTY_OVERRIDES += ro.virtual_ab.allow_non_ab=true

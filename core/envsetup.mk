@@ -258,7 +258,12 @@ endef
 # java code with dalvikvm/art.
 # Jars present in the ART apex. These should match exactly the list of
 # Java libraries in the ART apex build rule.
-ART_APEX_JARS := core-oj core-libart core-icu4j okhttp bouncycastle apache-xml
+ART_APEX_JARS := \
+    com.android.art:core-oj \
+    com.android.art:core-libart \
+    com.android.art:okhttp \
+    com.android.art:bouncycastle \
+    com.android.art:apache-xml
 #################################################################
 
 # Read the product specs so we can get TARGET_DEVICE and other
@@ -360,9 +365,6 @@ HOST_OUT_FAKE := $(HOST_OUT)/fake_packages
   HOST_OUT_COMMON_INTERMEDIATES \
   HOST_OUT_FAKE
 
-# Nano environment config
-include $(BUILD_SYSTEM)/aux_config.mk
-
 HOST_CROSS_OUT_INTERMEDIATES := $(HOST_CROSS_OUT)/obj
 HOST_CROSS_OUT_NOTICE_FILES := $(HOST_CROSS_OUT_INTERMEDIATES)/NOTICE_FILES
 .KATI_READONLY := \
@@ -377,9 +379,6 @@ HOST_OUT_COMMON_GEN := $(HOST_COMMON_OUT_ROOT)/gen
 
 HOST_CROSS_OUT_GEN := $(HOST_CROSS_OUT)/gen
 .KATI_READONLY := HOST_CROSS_OUT_GEN
-
-HOST_OUT_TEST_CONFIG := $(HOST_OUT)/test_config
-.KATI_READONLY := HOST_OUT_TEST_CONFIG
 
 # Out for HOST_2ND_ARCH
 $(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATES := $(HOST_OUT)/obj32
@@ -466,7 +465,6 @@ TARGET_OUT_ETC := $(TARGET_OUT)/etc
 TARGET_OUT_NOTICE_FILES := $(TARGET_OUT_INTERMEDIATES)/NOTICE_FILES
 TARGET_OUT_FAKE := $(PRODUCT_OUT)/fake_packages
 TARGET_OUT_TESTCASES := $(PRODUCT_OUT)/testcases
-TARGET_OUT_TEST_CONFIG := $(PRODUCT_OUT)/test_config
 .KATI_READONLY := \
   TARGET_OUT_EXECUTABLES \
   TARGET_OUT_OPTIONAL_EXECUTABLES \
@@ -480,8 +478,7 @@ TARGET_OUT_TEST_CONFIG := $(PRODUCT_OUT)/test_config
   TARGET_OUT_ETC \
   TARGET_OUT_NOTICE_FILES \
   TARGET_OUT_FAKE \
-  TARGET_OUT_TESTCASES \
-  TARGET_OUT_TEST_CONFIG
+  TARGET_OUT_TESTCASES
 
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
@@ -856,7 +853,7 @@ TARGET_INSTALLER_SYSTEM_OUT := $(TARGET_INSTALLER_OUT)/root/system
   TARGET_INSTALLER_ROOT_OUT \
   TARGET_INSTALLER_SYSTEM_OUT
 
-COMMON_MODULE_CLASSES := TARGET-NOTICE_FILES HOST-NOTICE_FILES HOST-JAVA_LIBRARIES
+COMMON_MODULE_CLASSES := TARGET_NOTICE_FILES HOST_NOTICE_FILES HOST_JAVA_LIBRARIES
 PER_ARCH_MODULE_CLASSES := SHARED_LIBRARIES STATIC_LIBRARIES EXECUTABLES GYP RENDERSCRIPT_BITCODE NATIVE_TESTS HEADER_LIBRARIES RLIB_LIBRARIES DYLIB_LIBRARIES
 .KATI_READONLY := COMMON_MODULE_CLASSES PER_ARCH_MODULE_CLASSES
 
