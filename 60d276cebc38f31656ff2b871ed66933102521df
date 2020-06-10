@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ec30c28_36a65d8c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-06-10T17:55:46Z",
+      "side": 1,
+      "message": "Can you also put this documentation somewhere checked in?  Maybe in envsetup.mk.",
+      "revId": "60d276cebc38f31656ff2b871ed66933102521df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
