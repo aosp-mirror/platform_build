@@ -141,6 +141,7 @@ $(KATI_obsolete_var \
   TARGET_PROJECT_SYSTEM_INCLUDES \
   2ND_TARGET_PROJECT_SYSTEM_INCLUDES \
   ,Project include variables have been removed)
+$(KATI_obsolete_var TARGET_PREFER_32_BIT TARGET_PREFER_32_BIT_APPS TARGET_PREFER_32_BIT_EXECUTABLES)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -373,11 +374,6 @@ ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
 include $(BUILD_SYSTEM)/rbe.mk
-endif
-
-ifdef TARGET_PREFER_32_BIT
-TARGET_PREFER_32_BIT_APPS := true
-TARGET_PREFER_32_BIT_EXECUTABLES := true
 endif
 
 # GCC version selection

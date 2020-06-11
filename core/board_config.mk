@@ -242,13 +242,8 @@ endif
 # build a list out of the TARGET_CPU_ABIs specified by the config.
 # Add NATIVE_BRIDGE_ABIs at the end to keep order of preference.
 ifeq (,$(TARGET_CPU_ABI_LIST))
-  ifeq ($(TARGET_IS_64_BIT)|$(TARGET_PREFER_32_BIT_APPS),true|true)
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT) \
-                           $(_target_native_bridge_abi_list_32_bit) $(_target_native_bridge_abi_list_64_bit)
-  else
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT) \
-                           $(_target_native_bridge_abi_list_64_bit) $(_target_native_bridge_abi_list_32_bit)
-  endif
+  TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT) \
+                         $(_target_native_bridge_abi_list_64_bit) $(_target_native_bridge_abi_list_32_bit)
 endif
 
 # Add NATIVE_BRIDGE_ABIs at the end of 32 and 64 bit CPU_ABIs to keep order of preference.
