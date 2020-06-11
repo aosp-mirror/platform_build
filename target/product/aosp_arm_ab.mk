@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# PRODUCT_PROPERTY_OVERRIDES cannot be used here because sysprops will be at
+# PRODUCT_VENDOR_PROPERTIES cannot be used here because sysprops will be at
 # /vendor/[build|default].prop when build split is on. In order to have sysprops
 # on the generic system image, place them in build/make/target/board/
 # gsi_system.prop.
