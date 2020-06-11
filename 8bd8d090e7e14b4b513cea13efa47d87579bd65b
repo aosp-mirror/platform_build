@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e707455c_c877f85b",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-11T05:21:52Z",
+      "side": 1,
+      "message": "I think this phrasing is a bit misleading .. \"host install path\" suggests to me somewhere under out/target/host.\n\nCan you just inline this PRODUCT_OUT stripping where it\u0027s used instead? It\u0027s simple enough and I doubt anyone else is going to find this function. There probably a dozen places where PRODUCT_OUT are stripped out already.",
+      "range": {
+        "startLine": 539,
+        "startChar": 11,
+        "endLine": 539,
+        "endChar": 31
+      },
+      "revId": "8bd8d090e7e14b4b513cea13efa47d87579bd65b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "199440b8_20dd3560",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-11T05:21:52Z",
+      "side": 1,
+      "message": "this part seems like an impl detail",
+      "range": {
+        "startLine": 540,
+        "startChar": 0,
+        "endLine": 540,
+        "endChar": 35
+      },
+      "revId": "8bd8d090e7e14b4b513cea13efa47d87579bd65b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
