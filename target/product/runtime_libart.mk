@@ -40,7 +40,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     hiddenapi-package-whitelist.xml \
 
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.image-dex2oat-Xms=64m \
     dalvik.vm.image-dex2oat-Xmx=64m \
     dalvik.vm.dex2oat-Xms=64m \
@@ -50,17 +50,17 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     dalvik.vm.dexopt.secondary=true \
     dalvik.vm.appimageformat=lz4
 
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+PRODUCT_SYSTEM_PROPERTIES += \
     ro.dalvik.vm.native.bridge=0
 
 # Different dexopt types for different package update/install times.
 # On eng builds, make "boot" reasons only extract for faster turnaround.
 ifeq (eng,$(TARGET_BUILD_VARIANT))
-    PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    PRODUCT_SYSTEM_PROPERTIES += \
         pm.dexopt.first-boot=extract \
         pm.dexopt.boot=extract
 else
-    PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    PRODUCT_SYSTEM_PROPERTIES += \
         pm.dexopt.first-boot=quicken \
         pm.dexopt.boot=verify
 endif
@@ -68,7 +68,7 @@ endif
 # The install filter is speed-profile in order to enable the use of
 # profiles from the dex metadata files. Note that if a profile is not provided
 # or if it is empty speed-profile is equivalent to (quicken + empty app image).
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.install=speed-profile \
     pm.dexopt.bg-dexopt=speed-profile \
     pm.dexopt.ab-ota=speed-profile \
@@ -76,24 +76,24 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     pm.dexopt.shared=speed
 
 # Pass file with the list of updatable boot class path packages to dex2oat.
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.dex2oat-updatable-bcp-packages-file=/system/etc/updatable-bcp-packages.txt
 
 # Enable resolution of startup const strings.
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.dex2oat-resolve-startup-strings=true
 
 # Specify default block size of 512K to enable parallel image decompression.
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.dex2oat-max-image-block-size=524288
 
 # Enable minidebuginfo generation unless overridden.
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.minidebuginfo=true \
     dalvik.vm.dex2oat-minidebuginfo=true
 
 # Enable iorapd by default
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+PRODUCT_SYSTEM_PROPERTIES += \
     ro.iorapd.enable=true
 
 PRODUCT_USES_DEFAULT_ART_CONFIG := true
