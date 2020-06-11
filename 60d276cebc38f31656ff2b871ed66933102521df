@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "442866ce_c983045c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-06-11T00:12:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ec30c28_36a65d8c",
+      "revId": "60d276cebc38f31656ff2b871ed66933102521df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b25f1df5_39b507de",
         "filename": "core/envsetup.mk",
         "patchSetId": 8
@@ -33,6 +51,24 @@
       "revId": "60d276cebc38f31656ff2b871ed66933102521df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d660831e_e0d7af44",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-06-11T00:12:10Z",
+      "side": 1,
+      "message": "Yes, \"m TARGET_BUILD_UNBUNDLED\u003dtrue\" just by itself doesn\u0027t do anything useful, it needs to be combined with specific build targets, maybe SOONG_ALLOW_MISSING_DEPENDENCIES, etc. I don\u0027t see the problem with that.",
+      "parentUuid": "b25f1df5_39b507de",
+      "revId": "60d276cebc38f31656ff2b871ed66933102521df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
