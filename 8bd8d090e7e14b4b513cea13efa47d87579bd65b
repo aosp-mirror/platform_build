@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "dfe88844_c8810812",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-06-11T10:14:54Z",
+      "side": 1,
+      "message": "Also note that in PS1 I had install-paths-to-on-device-paths inlined, which confused Nicolas to think I was implying paths on /product partition. With a separate function there won\u0027t be any confusion.",
+      "parentUuid": "420f95eb_4c70f5b0",
+      "range": {
+        "startLine": 539,
+        "startChar": 11,
+        "endLine": 539,
+        "endChar": 31
+      },
+      "revId": "8bd8d090e7e14b4b513cea13efa47d87579bd65b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "199440b8_20dd3560",
         "filename": "core/definitions.mk",
         "patchSetId": 4
