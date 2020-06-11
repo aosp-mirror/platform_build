@@ -1707,11 +1707,6 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
   $(call dist-for-goals, dist_files, $(api_xmls))
   api_xmls :=
 
-  ifdef CLANG_COVERAGE
-    $(foreach f,$(SOONG_NDK_API_XML), \
-        $(call dist-for-goals,droidcore,$(f):ndk_coverage_xml_dir/$(notdir $(f))))
-  endif
-
 # Building a full system-- the default is to build droidcore
 droid_targets: droidcore dist_files
 
