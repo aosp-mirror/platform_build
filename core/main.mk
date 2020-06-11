@@ -1221,8 +1221,8 @@ ifdef FULL_BUILD
     endif
   endif
 
-  # Some modules produce only host installed files when building with TARGET_BUILD_APPS
-  ifeq ($(TARGET_BUILD_APPS),)
+  # Modules may produce only host installed files in unbundled builds.
+  ifeq (,$(TARGET_BUILD_UNBUNDLED))
     _modules := $(call resolve-bitness-for-modules,TARGET, \
       $(PRODUCT_PACKAGES) \
       $(PRODUCT_PACKAGES_DEBUG) \
@@ -1611,7 +1611,7 @@ $(eval $(call combine-notice-files, html, \
     $(apps_only_installed_files)))
 
 
-else # TARGET_BUILD_APPS
+else ifeq (,$(TARGET_BUILD_UNBUNDLED))
   $(call dist-for-goals, droidcore, \
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
     $(INTERNAL_OTA_PACKAGE_TARGET) \
@@ -1710,7 +1710,7 @@ else # TARGET_BUILD_APPS
 # Building a full system-- the default is to build droidcore
 droid_targets: droidcore dist_files
 
-endif # TARGET_BUILD_APPS
+endif # !TARGET_BUILD_UNBUNDLED
 
 .PHONY: docs
 docs: $(ALL_DOCS)
