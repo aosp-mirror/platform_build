@@ -16,4 +16,4 @@
 
 # Inherit this when the target supports userspace reboot
 
-PRODUCT_PROPERTY_OVERRIDES := init.userspace_reboot.is_supported=true
+PRODUCT_VENDOR_PROPERTIES := init.userspace_reboot.is_supported=true
