@@ -12,7 +12,7 @@
 
 my_link_prefix := LINK_TYPE:$(call find-idf-prefix,$(my_kind),$(my_host_cross))$(if $(filter AUX,$(my_kind)),-$(AUX_OS_VARIANT)):$(if $(my_common),$(my_common):_,_:$(if $(my_2nd_arch_prefix),$(my_2nd_arch_prefix),_))
 link_type := $(my_link_prefix):$(LOCAL_MODULE_CLASS):$(LOCAL_MODULE)
-ALL_LINK_TYPES := $(ALL_LINK_TYPES) $(link_type)
+ALL_LINK_TYPES += $(link_type)
 $(link_type).TYPE := $(my_link_type)
 $(link_type).MAKEFILE := $(LOCAL_MODULE_MAKEFILE)
 $(link_type).WARN := $(my_warn_types)
