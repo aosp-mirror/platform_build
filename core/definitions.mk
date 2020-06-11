@@ -111,6 +111,15 @@ ALL_DISABLED_PRESUBMIT_TESTS :=
 # All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
 ALL_COMPATIBILITY_SUITES :=
 
+# All LINK_TYPE entries
+ALL_LINK_TYPES :=
+
+# All exported/imported include entries
+EXPORTS_LIST :=
+
+# All modules already converted to Soong
+SOONG_ALREADY_CONV :=
+
 ###########################################################
 ## Debugging; prints a variable list to stdout
 ###########################################################
