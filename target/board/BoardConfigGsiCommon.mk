@@ -58,7 +58,7 @@ endif
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
 
-# Setup a vendor image to let PRODUCT_PROPERTY_OVERRIDES does not affect GSI
+# Setup a vendor image to let PRODUCT_VENDOR_PROPERTIES does not affect GSI
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Disable 64 bit mediadrmserver

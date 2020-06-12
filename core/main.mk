@@ -244,8 +244,6 @@ else
   ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
   ADDITIONAL_VENDOR_PROPERTIES += ro.vndk.lite=true
 endif
-ADDITIONAL_VENDOR_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
 
 # Add cpu properties for bionic and ART.
 ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.arch=$(TARGET_ARCH)
@@ -510,7 +508,7 @@ FULL_BUILD := true
 # Include all of the makefiles in the system
 #
 
-subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
+subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)/.module_paths/Android.mk.list) $(SOONG_OUT_DIR)/late-$(TARGET_PRODUCT).mk
 subdir_makefiles_total := $(words int $(subdir_makefiles) post finish)
 .KATI_READONLY := subdir_makefiles_total
 
@@ -1223,8 +1221,8 @@ ifdef FULL_BUILD
     endif
   endif
 
-  # Some modules produce only host installed files when building with TARGET_BUILD_APPS
-  ifeq ($(TARGET_BUILD_APPS),)
+  # Modules may produce only host installed files in unbundled builds.
+  ifeq (,$(TARGET_BUILD_UNBUNDLED))
     _modules := $(call resolve-bitness-for-modules,TARGET, \
       $(PRODUCT_PACKAGES) \
       $(PRODUCT_PACKAGES_DEBUG) \
@@ -1613,7 +1611,7 @@ $(eval $(call combine-notice-files, html, \
     $(apps_only_installed_files)))
 
 
-else # TARGET_BUILD_APPS
+else ifeq (,$(TARGET_BUILD_UNBUNDLED))
   $(call dist-for-goals, droidcore, \
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
     $(INTERNAL_OTA_PACKAGE_TARGET) \
@@ -1709,10 +1707,15 @@ else # TARGET_BUILD_APPS
   $(call dist-for-goals, dist_files, $(api_xmls))
   api_xmls :=
 
+  ifdef CLANG_COVERAGE
+    $(foreach f,$(SOONG_NDK_API_XML), \
+        $(call dist-for-goals,droidcore,$(f):ndk_coverage_xml_dir/$(notdir $(f))))
+  endif
+
 # Building a full system-- the default is to build droidcore
 droid_targets: droidcore dist_files
 
-endif # TARGET_BUILD_APPS
+endif # !TARGET_BUILD_UNBUNDLED
 
 .PHONY: docs
 docs: $(ALL_DOCS)
