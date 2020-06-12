@@ -280,6 +280,10 @@ _prop_files_ := \
 # TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
 _prop_vars_ := \
     ADDITIONAL_SYSTEM_PROPERTIES \
+    PRODUCT_SYSTEM_PROPERTIES
+
+# TODO(b/117892318): deprecate this
+_prop_vars_ += \
     PRODUCT_SYSTEM_DEFAULT_PROPERTIES
 
 ifndef property_overrides_split_enabled
@@ -316,6 +320,11 @@ ifdef property_overrides_split_enabled
 # TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
 _prop_vars_ := \
     ADDITIONAL_VENDOR_PROPERTIES \
+    PRODUCT_VENDOR_PROPERTIES
+
+# TODO(b/117892318): deprecate this
+_prop_vars_ += \
+    PRODUCT_DEFAULT_PROPERTY_OVERRIDES \
     PRODUCT_PROPERTY_OVERRIDES
 else
 _prop_vars_ :=
