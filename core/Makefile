@@ -1761,52 +1761,37 @@ define build-recoveryimage-target
       $(AVBTOOL) add_hash_footer --image $(1) --partition_size $(BOARD_RECOVERYIMAGE_PARTITION_SIZE) --partition_name recovery $(INTERNAL_AVB_RECOVERY_SIGNING_ARGS) $(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)))
 endef
 
-ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+recoveryimage-deps := $(MKBOOTIMG) $(recovery_ramdisk) $(recovery_kernel)
 ifeq (true,$(PRODUCT_SUPPORTS_BOOT_SIGNER))
-$(INSTALLED_BOOTIMAGE_TARGET) : $(BOOT_SIGNER)
+  recoveryimage-deps += $(BOOT_SIGNER)
 endif
 ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
-$(INSTALLED_BOOTIMAGE_TARGET) : $(VBOOT_SIGNER)
+  recoveryimage-deps += $(VBOOT_SIGNER)
 endif
 ifeq (true,$(BOARD_AVB_ENABLE))
-$(INSTALLED_BOOTIMAGE_TARGET) : $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
+  recoveryimage-deps += $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
-ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
-$(INSTALLED_BOOTIMAGE_TARGET): $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE)
-else
-$(INSTALLED_BOOTIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
-endif
+  ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
+    recoveryimage-deps += $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE)
+  else
+    recoveryimage-deps += $(BOARD_PREBUILT_DTBOIMAGE)
+  endif
 endif
 ifdef BOARD_INCLUDE_RECOVERY_ACPIO
-$(INSTALLED_BOOTIMAGE_TARGET): $(BOARD_RECOVERY_ACPIO)
+  recoveryimage-deps += $(BOARD_RECOVERY_ACPIO)
 endif
 ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
-$(INSTALLED_BOOTIMAGE_TARGET): $(INSTALLED_DTBIMAGE_TARGET)
+  recoveryimage-deps += $(INSTALLED_DTBIMAGE_TARGET)
 endif
 
-$(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(recovery_ramdisk) \
-	    $(recovery_kernel)
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+$(INSTALLED_BOOTIMAGE_TARGET): $(recoveryimage-deps)
 	$(call pretty,"Target boot image from recovery: $@")
 	$(call build-recoveryimage-target, $@, $(PRODUCT_OUT)/$(subst .img,,$(subst boot,kernel,$(notdir $@))))
 endif # BOARD_USES_RECOVERY_AS_BOOT
 
-ifdef BOARD_INCLUDE_RECOVERY_DTBO
-ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
-$(INSTALLED_RECOVERYIMAGE_TARGET): $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE)
-else
-$(INSTALLED_RECOVERYIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
-endif
-endif
-ifdef BOARD_INCLUDE_RECOVERY_ACPIO
-$(INSTALLED_RECOVERYIMAGE_TARGET): $(BOARD_RECOVERY_ACPIO)
-endif
-ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
-$(INSTALLED_RECOVERYIMAGE_TARGET): $(INSTALLED_DTBIMAGE_TARGET)
-endif
-
-$(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTIMG) $(recovery_ramdisk) \
-	    $(recovery_kernel)
+$(INSTALLED_RECOVERYIMAGE_TARGET): $(recoveryimage-deps)
 	$(call build-recoveryimage-target, $@, $(recovery_kernel))
 
 ifdef RECOVERY_RESOURCE_ZIP
