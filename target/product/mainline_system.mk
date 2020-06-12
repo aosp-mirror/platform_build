@@ -139,13 +139,13 @@ PRODUCT_SYSTEM_MANUFACTURER := Android
 PRODUCT_SYSTEM_MODEL := mainline
 PRODUCT_SYSTEM_DEVICE := generic
 
-_base_mk_whitelist :=
+_base_mk_allowed_list :=
 
-_my_whitelist := $(_base_mk_whitelist)
+_my_allowed_list := $(_base_mk_allowed_list)
 
 # For mainline, system.img should be mounted at /, so we include ROOT here.
 _my_paths := \
   $(TARGET_COPY_OUT_ROOT)/ \
   $(TARGET_COPY_OUT_SYSTEM)/ \
 
-$(call require-artifacts-in-path, $(_my_paths), $(_my_whitelist))
+$(call require-artifacts-in-path, $(_my_paths), $(_my_allowed_list))
