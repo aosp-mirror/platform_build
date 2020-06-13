@@ -321,14 +321,15 @@ _product_list_vars += PRODUCT_EXTRA_VNDK_VERSIONS
 # partitions uses PLATFORM_VNDK_VERSION.
 _product_single_value_var += PRODUCT_PRODUCT_VNDK_VERSION
 
-# Whether the whitelist of actionable compatible properties should be disabled or not
+# Whether the list of allowed of actionable compatible properties should be disabled or not
 _product_single_value_vars += PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE
 
 _product_single_value_vars += PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS
 _product_single_value_vars += PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT
-_product_list_vars += PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_WHITELIST
+_product_list_vars += PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST
 _product_list_vars += PRODUCT_ARTIFACT_PATH_REQUIREMENT_HINT
 _product_list_vars += PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST
+_product_list_vars += PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST
 
 # List of modules that should be forcefully unmarked from being LOCAL_PRODUCT_MODULE, and hence
 # installed on /system directory by default.
@@ -448,19 +449,19 @@ endef
 define require-artifacts-in-path
   $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
   $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_REQUIREMENTS := $(strip $(1))) \
-  $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_WHITELIST := $(strip $(2))) \
+  $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_ALLOWED_LIST := $(strip $(2))) \
   $(eval ARTIFACT_PATH_REQUIREMENT_PRODUCTS := \
     $(sort $(ARTIFACT_PATH_REQUIREMENT_PRODUCTS) $(current_mk)))
 endef
 
 # Makes including non-existent modules in PRODUCT_PACKAGES an error.
-# $(1): whitelist of non-existent modules to allow.
+# $(1): list of non-existent modules to allow.
 define enforce-product-packages-exist
   $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
   $(eval PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST := true) \
-  $(eval PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST := $(1)) \
+  $(eval PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST_ALLOW_LIST := $(1)) \
   $(eval .KATI_READONLY := PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST) \
-  $(eval .KATI_READONLY := PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST)
+  $(eval .KATI_READONLY := PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST_ALLOW_LIST)
 endef
 
 #
@@ -582,7 +583,7 @@ define strip-product-vars
 $(foreach v,\
   $(_product_var_list) \
     PRODUCT_ENFORCE_PACKAGES_EXIST \
-    PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST, \
+    PRODUCT_ENFORCE_PACKAGES_EXIST_ALLOW_LIST, \
   $(eval $(v) := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).$(v)))) \
   $(eval get-product-var = $$(if $$(filter $$(1),$$(INTERNAL_PRODUCT)),$$($$(2)),$$(PRODUCTS.$$(strip $$(1)).$$(2)))) \
   $(KATI_obsolete_var PRODUCTS.$(INTERNAL_PRODUCT).$(v),Use $(v) instead) \

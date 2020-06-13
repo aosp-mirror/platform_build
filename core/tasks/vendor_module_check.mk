@@ -15,7 +15,7 @@
 #
 
 # Restrict the vendor module owners here.
-_vendor_owner_whitelist := \
+_vendor_owner_allowed_list := \
         asus \
         audience \
         atmel \
@@ -87,14 +87,14 @@ _vendor_check_copy_files := $(filter-out $(_vendor_exception_path_prefix),\
     $(filter vendor/%, $(PRODUCT_COPY_FILES)))
 ifneq (,$(_vendor_check_copy_files))
 $(foreach c, $(_vendor_check_copy_files), \
-  $(if $(filter $(_vendor_owner_whitelist), $(call word-colon,3,$(c))),,\
+  $(if $(filter $(_vendor_owner_allowed_list), $(call word-colon,3,$(c))),,\
     $(error Error: vendor PRODUCT_COPY_FILES file "$(c)" has unknown owner))\
   $(eval _vendor_module_owner_info += $(call word-colon,2,$(c)):$(call word-colon,3,$(c))))
 endif
 _vendor_check_copy_files :=
 
 $(foreach m, $(_vendor_check_modules), \
-  $(if $(filter $(_vendor_owner_whitelist), $(ALL_MODULES.$(m).OWNER)),,\
+  $(if $(filter $(_vendor_owner_allowed_list), $(ALL_MODULES.$(m).OWNER)),,\
     $(error Error: vendor module "$(m)" in $(ALL_MODULES.$(m).PATH) with unknown owner \
       "$(ALL_MODULES.$(m).OWNER)" in product "$(TARGET_PRODUCT)"))\
   $(if $(ALL_MODULES.$(m).INSTALLED),\
