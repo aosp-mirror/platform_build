@@ -14,5 +14,5 @@
 #
 
 # Enable Camera pinner by default
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+PRODUCT_PRODUCT_PROPERTIES += \
     pinner.pin_camera=true
