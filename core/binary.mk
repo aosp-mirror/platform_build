@@ -71,8 +71,12 @@ ifeq (,$(strip $(my_cc))$(strip $(my_cxx)))
   my_pool := $(GOMA_OR_RBE_POOL)
 endif
 
-ifneq (,$(strip $(foreach dir,$(COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
-ifeq (,$(strip $(foreach dir,$(COVERAGE_EXCLUDE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
+# TODO(b/158212027): Remove `$(COVERAGE_PATHS)` from this condition when all users have been moved
+# to `NATIVE_COVERAGE_PATHS`.
+ifneq (,$(strip $(foreach dir,$(COVERAGE_PATHS) $(NATIVE_COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
+# TODO(b/158212027): Remove `$(COVERAGE_EXCLUDE_PATHS)` from this condition when all users have been
+# moved to `NATIVE_COVERAGE_EXCLUDE_PATHS`.
+ifeq (,$(strip $(foreach dir,$(COVERAGE_EXCLUDE_PATHS) $(NATIVE_COVERAGE_EXCLUDE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
   my_native_coverage := true
 else
   my_native_coverage := false
