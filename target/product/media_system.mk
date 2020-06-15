@@ -73,11 +73,11 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 
 # On userdebug builds, collect more tombstones by default.
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+PRODUCT_VENDOR_PROPERTIES += \
     tombstoned.max_tombstone_count=50
 endif
 
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+PRODUCT_VENDOR_PROPERTIES += \
     ro.logd.size.stats=64K \
     log.tag.stats_log=I
 

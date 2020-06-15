@@ -18,4 +18,4 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
 PRODUCT_VIRTUAL_AB_OTA_RETROFIT := true
 
-PRODUCT_PROPERTY_OVERRIDES += ro.virtual_ab.retrofit=true
+PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.retrofit=true
