@@ -70,6 +70,30 @@
       "revId": "e5873ffeac83cf08d0664054a65dab54e46d8ada",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09d8eb71_e4ca86b0",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-06-16T22:36:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82eb68a8_8012193a",
+      "range": {
+        "startLine": 468,
+        "startChar": 0,
+        "endLine": 468,
+        "endChar": 13
+      },
+      "revId": "e5873ffeac83cf08d0664054a65dab54e46d8ada",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
