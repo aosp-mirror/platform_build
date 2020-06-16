@@ -9,7 +9,7 @@
 #
 # To run the make target set the coverage related envvars first:
 # 	NATIVE_LINE_COVERAGE=true NATIVE_COVERAGE=true \
-#	COVERAGE_PATHS=* make haiku-line-coverage
+#	NATIVE_COVERAGE_PATHS=* make haiku-line-coverage
 # -----------------------------------------------------------------
 
 # TODO(b/148306195): Due this issue some fuzz targets cannot be built with
