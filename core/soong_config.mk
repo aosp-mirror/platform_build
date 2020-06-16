@@ -110,11 +110,18 @@ $(call add_json_bool, DisableScudo,                      $(filter true,$(PRODUCT
 $(call add_json_bool, ClangTidy,                         $(filter 1 true,$(WITH_TIDY)))
 $(call add_json_str,  TidyChecks,                        $(WITH_TIDY_CHECKS))
 
+$(call add_json_list, JavaCoveragePaths,                 $(JAVA_COVERAGE_PATHS))
+$(call add_json_list, JavaCoverageExcludePaths,          $(JAVA_COVERAGE_EXCLUDE_PATHS))
+
 $(call add_json_bool, NativeLineCoverage,                $(filter true,$(NATIVE_LINE_COVERAGE)))
 $(call add_json_bool, Native_coverage,                   $(filter true,$(NATIVE_COVERAGE)))
 $(call add_json_bool, ClangCoverage,                     $(filter true,$(CLANG_COVERAGE)))
-$(call add_json_list, CoveragePaths,                     $(COVERAGE_PATHS))
-$(call add_json_list, CoverageExcludePaths,              $(COVERAGE_EXCLUDE_PATHS))
+# TODO(b/158212027): Remove `$(COVERAGE_PATHS)` from this list when all users have been moved to
+# `NATIVE_COVERAGE_PATHS`.
+$(call add_json_list, NativeCoveragePaths,               $(COVERAGE_PATHS) $(NATIVE_COVERAGE_PATHS))
+# TODO(b/158212027): Remove `$(COVERAGE_EXCLUDE_PATHS)` from this list when all users have been
+# moved to `NATIVE_COVERAGE_EXCLUDE_PATHS`.
+$(call add_json_list, NativeCoverageExcludePaths,        $(COVERAGE_EXCLUDE_PATHS) $(NATIVE_COVERAGE_EXCLUDE_PATHS))
 
 $(call add_json_bool, SamplingPGO,                       $(filter true,$(SAMPLING_PGO)))
 
