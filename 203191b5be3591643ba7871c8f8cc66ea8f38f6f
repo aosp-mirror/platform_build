@@ -22,6 +22,30 @@
       "revId": "203191b5be3591643ba7871c8f8cc66ea8f38f6f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a23316c2_b4cae9f0",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-06-16T20:13:29Z",
+      "side": 1,
+      "message": "Thanks for the review!\n\nTo give some context: I included the \"building_vendor_image\" \u003d\u003d \"true\" conditional with the detection of the path, since I felt that both needed to be true in order to build an image. Whereas the presence of an already built image I think implies that the build is using a prebuilt image for a given partition.\n\nAlso, when we use a prebuilt image we don\u0027t seem set the build_*_image flag in the makefiles: https://cs.android.com/android/platform/superproject/+/master:build/make/core/board_config.mk;l\u003d433\n\nI\u0027m happy to add a warning for that combination of flags, but it does seem like that is intentionally done in the prebuilt scenario.",
+      "parentUuid": "11c01976_28ccbd0a",
+      "range": {
+        "startLine": 744,
+        "startChar": 15,
+        "endLine": 744,
+        "endChar": 77
+      },
+      "revId": "203191b5be3591643ba7871c8f8cc66ea8f38f6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
