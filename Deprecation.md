@@ -1,5 +1,7 @@
 # Deprecation of Make
 
+test 2
+
 We've made significant progress converting AOSP from Make to Soong (Android.mk
 to Android.bp), and we're ready to start turning off pieces of Make. If you
 have any problems converting, please contact us via:
