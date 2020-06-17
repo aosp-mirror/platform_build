@@ -8,8 +8,7 @@
 # packs them into another zip file called `line_coverage_profiles.zip`.
 #
 # To run the make target set the coverage related envvars first:
-# 	NATIVE_LINE_COVERAGE=true NATIVE_COVERAGE=true \
-#	NATIVE_COVERAGE_PATHS=* make haiku-line-coverage
+# 	NATIVE_COVERAGE=true NATIVE_COVERAGE_PATHS=* make haiku-line-coverage
 # -----------------------------------------------------------------
 
 # TODO(b/148306195): Due this issue some fuzz targets cannot be built with
@@ -68,7 +67,7 @@ critical_components_shared_inputs := $(foreach lib,$(critical_components_shared)
 fuzz_target_inputs := $(foreach fuzz,$(fuzz_targets), \
 	$(call intermediates-dir-for,EXECUTABLES,$(fuzz))/$(fuzz))
 
-# When line coverage is enabled (NATIVE_LINE_COVERAGE is set), make creates
+# When coverage is enabled (NATIVE_COVERAGE is set), make creates
 # a "coverage" directory and stores all profile (*.gcno) files in inside.
 # We need everything that is stored inside this directory.
 $(line_coverage_profiles): $(fuzz_target_inputs)
