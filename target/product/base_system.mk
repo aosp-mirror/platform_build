@@ -27,7 +27,6 @@ PRODUCT_PACKAGES += \
     android.test.base \
     android.test.mock \
     android.test.runner \
-    ANGLE \
     apexd \
     appops \
     app_process \
