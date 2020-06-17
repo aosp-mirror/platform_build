@@ -452,12 +452,33 @@ endif
 
 # Set up phony targets that covers all modules under the given paths.
 # This allows us to build everything in given paths by running mmma/mma.
-my_path_components := $(subst /,$(space),$(LOCAL_PATH))
-my_path_prefix := MODULES-IN
-$(foreach c, $(my_path_components),\
-  $(eval my_path_prefix := $(my_path_prefix)-$(c))\
-  $(eval .PHONY : $(my_path_prefix))\
-  $(eval $(my_path_prefix) : $(my_all_targets)))
+define my_path_comp
+parent := $(patsubst %/,%,$(dir $(1)))
+parent_target := MODULES-IN-$$(subst /,-,$$(parent))
+.PHONY: $$(parent_target)
+$$(parent_target): $(2)
+ifndef $$(parent_target)
+  $$(parent_target) := true
+  ifneq (,$$(findstring /,$$(parent)))
+    $$(eval $$(call my_path_comp,$$(parent),$$(parent_target)))
+  endif
+endif
+endef
+
+_local_path := $(patsubst %/,%,$(LOCAL_PATH))
+_local_path_target := MODULES-IN-$(subst /,-,$(_local_path))
+
+.PHONY: $(_local_path_target)
+$(_local_path_target): $(my_register_name)
+
+ifndef $(_local_path_target)
+  $(_local_path_target) := true
+  $(eval $(call my_path_comp,$(_local_path),$(_local_path_target)))
+endif
+
+_local_path :=
+_local_path_target :=
+my_path_comp :=
 
 ###########################################################
 ## Module installation rule
