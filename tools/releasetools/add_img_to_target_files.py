@@ -788,16 +788,16 @@ def AddImagesToTargetFiles(filename):
     boot_images = OPTIONS.info_dict.get("boot_images")
     if boot_images is None:
       boot_images = "boot.img"
-    for b in boot_images.split():
+    for index,b in enumerate(boot_images.split()):
       # common.GetBootableImage() returns the image directly if present.
       boot_image = common.GetBootableImage(
           "IMAGES/" + b, b, OPTIONS.input_tmp, "BOOT")
       # boot.img may be unavailable in some targets (e.g. aosp_arm64).
       if boot_image:
         boot_image_path = os.path.join(OPTIONS.input_tmp, "IMAGES", b)
-        # vbmeta does not need to include boot.img with multiple boot.img files,
-        # which is only used for aosp_arm64 for GKI
-        if len(boot_images.split()) == 1:
+        # Although multiple boot images can be generated, include the image
+        # descriptor of only the first boot image in vbmeta
+        if index == 0:
           partitions['boot'] = boot_image_path
         if not os.path.exists(boot_image_path):
           boot_image.WriteToDir(OPTIONS.input_tmp)
