@@ -27,6 +27,7 @@ from ota_utils import (
     FinalizeMetadata, GetPackageMetadata, PropertyFiles)
 from ota_from_target_files import (
     _LoadOemDicts, AbOtaPropertyFiles,
+    GetTargetFilesZipForPartialUpdates,
     GetTargetFilesZipForSecondaryImages,
     GetTargetFilesZipWithoutPostinstallConfig,
     Payload, PayloadSigner, POSTINSTALL_CONFIG,
@@ -448,6 +449,86 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual(expected_misc_info, updated_misc_info)
     self.assertEqual(expected_dynamic_partitions_info,
                      updated_dynamic_partitions_info)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetTargetFilesZipForPartialUpdates_singlePartition(self):
+    input_file = construct_target_files()
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as append_zip:
+      common.ZipWriteStr(append_zip, 'IMAGES/system.map', 'fake map')
+
+    target_file = GetTargetFilesZipForPartialUpdates(input_file, ['system'])
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+      ab_partitions = verify_zip.read('META/ab_partitions.txt').decode()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertIn('META/update_engine_config.txt', namelist)
+    self.assertIn('IMAGES/system.img', namelist)
+    self.assertIn('IMAGES/system.map', namelist)
+
+    self.assertNotIn('IMAGES/boot.img', namelist)
+    self.assertNotIn('IMAGES/system_other.img', namelist)
+    self.assertNotIn('RADIO/bootloader.img', namelist)
+    self.assertNotIn('RADIO/modem.img', namelist)
+
+    self.assertEqual('system', ab_partitions)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetTargetFilesZipForPartialUpdates_unrecognizedPartition(self):
+    input_file = construct_target_files()
+    self.assertRaises(ValueError, GetTargetFilesZipForPartialUpdates,
+                      input_file, ['product'])
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetTargetFilesZipForPartialUpdates_dynamicPartitions(self):
+    input_file = construct_target_files(secondary=True)
+    misc_info = '\n'.join([
+        'use_dynamic_partition_size=true',
+        'use_dynamic_partitions=true',
+        'dynamic_partition_list=system vendor product',
+        'super_partition_groups=google_dynamic_partitions',
+        'super_google_dynamic_partitions_group_size=4873781248',
+        'super_google_dynamic_partitions_partition_list=system vendor product',
+    ])
+    dynamic_partitions_info = '\n'.join([
+        'super_partition_groups=google_dynamic_partitions',
+        'super_google_dynamic_partitions_group_size=4873781248',
+        'super_google_dynamic_partitions_partition_list=system vendor product',
+    ])
+
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as append_zip:
+      common.ZipWriteStr(append_zip, 'META/misc_info.txt', misc_info)
+      common.ZipWriteStr(append_zip, 'META/dynamic_partitions_info.txt',
+                         dynamic_partitions_info)
+
+    target_file = GetTargetFilesZipForPartialUpdates(input_file,
+                                                     ['boot', 'system'])
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+      ab_partitions = verify_zip.read('META/ab_partitions.txt').decode()
+      updated_misc_info = verify_zip.read('META/misc_info.txt').decode()
+      updated_dynamic_partitions_info = verify_zip.read(
+          'META/dynamic_partitions_info.txt').decode()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertIn('IMAGES/boot.img', namelist)
+    self.assertIn('IMAGES/system.img', namelist)
+    self.assertIn('META/misc_info.txt', namelist)
+    self.assertIn('META/dynamic_partitions_info.txt', namelist)
+
+    self.assertNotIn('IMAGES/system_other.img', namelist)
+    self.assertNotIn('RADIO/bootloader.img', namelist)
+    self.assertNotIn('RADIO/modem.img', namelist)
+
+    # Check the vendor & product are removed from the partitions list.
+    expected_misc_info = misc_info.replace('system vendor product',
+                                           'system')
+    expected_dynamic_partitions_info = dynamic_partitions_info.replace(
+        'system vendor product', 'system')
+    self.assertEqual(expected_misc_info, updated_misc_info)
+    self.assertEqual(expected_dynamic_partitions_info,
+                     updated_dynamic_partitions_info)
+    self.assertEqual('boot\nsystem', ab_partitions)
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetTargetFilesZipWithoutPostinstallConfig(self):
