@@ -2012,9 +2012,16 @@ def CalculateRuntimeDevicesAndFingerprints(build_info, boot_variable_values):
     info_dict = copy.deepcopy(build_info.info_dict)
     for partition in common.PARTITIONS_WITH_CARE_MAP:
       partition_prop_key = "{}.build.prop".format(partition)
-      old_props = info_dict[partition_prop_key]
-      info_dict[partition_prop_key] = common.PartitionBuildProps.FromInputFile(
-          old_props.input_file, partition, placeholder_values)
+      input_file = info_dict[partition_prop_key].input_file
+      if isinstance(input_file, zipfile.ZipFile):
+        with zipfile.ZipFile(input_file.filename) as input_zip:
+          info_dict[partition_prop_key] = \
+              common.PartitionBuildProps.FromInputFile(input_zip, partition,
+                                                       placeholder_values)
+      else:
+        info_dict[partition_prop_key] = \
+            common.PartitionBuildProps.FromInputFile(input_file, partition,
+                                                     placeholder_values)
     info_dict["build.prop"] = info_dict["system.build.prop"]
 
     new_build_info = common.BuildInfo(info_dict, build_info.oem_dicts)
