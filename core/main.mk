@@ -1710,7 +1710,7 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
 
   ifdef CLANG_COVERAGE
     $(foreach f,$(SOONG_NDK_API_XML), \
-        $(call dist-for-goals,droidcore,$(f):ndk_coverage_xml_dir/$(notdir $(f))))
+        $(call dist-for-goals,droidcore,$(f):ndk_apis/$(notdir $(f))))
   endif
 
 # Building a full system-- the default is to build droidcore
