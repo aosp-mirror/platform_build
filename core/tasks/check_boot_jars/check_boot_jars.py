@@ -49,8 +49,10 @@ def CheckJar(allow_list_path, jar):
   if p.returncode != 0:
     return False
   items = stdout.split()
+  classes = 0
   for f in items:
     if f.endswith('.class'):
+      classes += 1
       package_name = os.path.dirname(f)
       package_name = package_name.replace('/', '.')
       if not package_name or not allow_list_re.match(package_name):
@@ -58,6 +60,9 @@ def CheckJar(allow_list_path, jar):
                               ' not in the allow list %s of packages allowed on the bootclasspath.'
                               % (jar, f, package_name, allow_list_path))
         return False
+  if classes == 0:
+    print >> sys.stderr, ('Error: %s does not contain any class files.' % jar)
+    return False
   return True
 
 
