@@ -974,6 +974,8 @@ license_modules := $(filter-out $(TARGET_OUT_FAKE)/%,$(license_modules))
 license_modules := $(filter-out $(TARGET_OUT_TESTCASES)/%,$(license_modules))
 # filesystem images: system, vendor, product, system_ext, and odm
 license_modules_system := $(filter $(TARGET_OUT)/%,$(license_modules))
+# system_other is relevant to system partition.
+license_modules_system += $(filter $(TARGET_OUT_SYSTEM_OTHER)/%,$(license_modules))
 license_modules_vendor := $(filter $(TARGET_OUT_VENDOR)/%,$(license_modules))
 license_modules_product := $(filter $(TARGET_OUT_PRODUCT)/%,$(license_modules))
 license_modules_system_ext := $(filter $(TARGET_OUT_SYSTEM_EXT)/%,$(license_modules))
