@@ -13,6 +13,6 @@
 # limitations under the License.
 #
 
-# Enable Camera pinner by default
+# Disable Camera pinner by default
 PRODUCT_PRODUCT_PROPERTIES += \
-    pinner.pin_camera=true
+    pinner.pin_camera=false
