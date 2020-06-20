@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a71b8ce_28fd7ef6",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 1130703
+      },
+      "writtenOn": "2020-06-20T13:23:04Z",
+      "side": 1,
+      "message": "filter filters away everything ELSE, so the first ifneq-block in L#351 applies to user and userdebug-builds, leaving the property being set for eng only anyway. Do I miss something?",
+      "revId": "88172a9df5f64ea8f46b0eca1539d4001a812a1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
