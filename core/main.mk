@@ -633,9 +633,11 @@ $(strip \
 endef
 
 # TODO(b/7456955): error if a required module doesn't exist.
-# Resolve the required module names in ALL_MODULES.*.REQUIRED_FROM_TARGET,
-# ALL_MODULES.*.REQUIRED_FROM_HOST and ALL_MODULES.*.REQUIRED_FROM_HOST_CROSS
-# to 32-bit or 64-bit variant.
+# Resolve the required module names to 32-bit or 64-bit variant for:
+#   ALL_MODULES.<*>.REQUIRED_FROM_TARGET
+#   ALL_MODULES.<*>.REQUIRED_FROM_HOST
+#   ALL_MODULES.<*>.REQUIRED_FROM_HOST_CROSS
+#
 # If a module is for cross host OS, the required modules are also for that OS.
 # Required modules explicitly suffixed with :32 or :64 resolve to that bitness.
 # Otherwise if the requiring module is native and the required module is shared
@@ -651,20 +653,44 @@ $(foreach m,$(ALL_MODULES), \
       $(eval r := $(addprefix host_cross_,$(r)))) \
     $(eval module_is_native := \
       $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(ALL_MODULES.$(m).CLASS))) \
-    $(eval r_r := $(foreach r_i,$(r), \
-      $(if $(filter %:32 %:64,$(r_i)), \
-        $(eval r_m := $(call resolve-bitness-for-modules,$(1),$(r_i))), \
-        $(eval r_m := \
-          $(eval r_i_2nd := $(call get-modules-for-2nd-arch,$(1),$(r_i))) \
-          $(eval required_is_shared_library_or_native_test := \
-            $(filter SHARED_LIBRARIES NATIVE_TESTS, \
-              $(ALL_MODULES.$(r_i).CLASS) $(ALL_MODULES.$(r_i_2nd).CLASS))) \
-          $(if $(and $(module_is_native),$(required_is_shared_library_or_native_test)), \
-            $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),$(r_i_2nd),$(r_i)), \
-            $(r_i) $(r_i_2nd)))) \
-      $(eval ### TODO(b/7456955): error if r_m is empty / does not exist) \
-      $(r_m))) \
+    $(eval r_r := \
+      $(foreach r_i,$(r), \
+        $(if $(filter %:32 %:64,$(r_i)), \
+          $(eval r_m := $(call resolve-bitness-for-modules,$(1),$(r_i))), \
+          $(eval r_m := \
+            $(eval r_i_2nd := $(call get-modules-for-2nd-arch,$(1),$(r_i))) \
+            $(eval required_is_shared_library_or_native_test := \
+              $(filter SHARED_LIBRARIES NATIVE_TESTS, \
+                $(ALL_MODULES.$(r_i).CLASS) $(ALL_MODULES.$(r_i_2nd).CLASS))) \
+            $(if $(and $(module_is_native),$(required_is_shared_library_or_native_test)), \
+              $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),$(r_i_2nd),$(r_i)), \
+              $(r_i) $(r_i_2nd)))) \
+        $(eval ### TODO(b/7456955): error if r_m is empty / does not exist) \
+        $(r_m))) \
     $(eval ALL_MODULES.$(m).REQUIRED_FROM_$(1) := $(sort $(r_r))) \
+  ) \
+)
+endef
+
+# Resolve the required module names to 32-bit or 64-bit variant for:
+#   ALL_MODULES.<*>.TARGET_REQUIRED_FROM_HOST
+#   ALL_MODULES.<*>.HOST_REQUIRED_FROM_TARGET
+#
+# This is like select-bitness-of-required-modules, but it doesn't have
+# complicated logic for various module types.
+# Calls resolve-bitness-for-modules to resolve module names.
+# $(1): TARGET or HOST
+# $(2): HOST or TARGET
+define select-bitness-of-target-host-required-modules
+$(foreach m,$(ALL_MODULES), \
+  $(eval r := $(ALL_MODULES.$(m).$(1)_REQUIRED_FROM_$(2))) \
+  $(if $(r), \
+    $(eval r_r := \
+      $(foreach r_i,$(r), \
+        $(eval r_m := $(call resolve-bitness-for-modules,$(1),$(r_i))) \
+        $(eval ### TODO(b/7456955): error if r_m is empty / does not exist) \
+        $(r_m))) \
+    $(eval ALL_MODULES.$(m).$(1)_REQUIRED_FROM_$(2) := $(sort $(r_r))) \
   ) \
 )
 endef
@@ -672,6 +698,8 @@ endef
 $(call select-bitness-of-required-modules,TARGET)
 $(call select-bitness-of-required-modules,HOST)
 $(call select-bitness-of-required-modules,HOST_CROSS)
+$(call select-bitness-of-target-host-required-modules,TARGET,HOST)
+$(call select-bitness-of-target-host-required-modules,HOST,TARGET)
 
 define add-required-deps
 $(1): | $(2)
