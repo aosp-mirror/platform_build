@@ -1288,8 +1288,7 @@ $(call dist-for-goals,droidcore,$(CERTIFICATE_VIOLATION_MODULES_FILENAME))
     $(eval extra_files := $(filter-out $(files) $(HOST_OUT)/%,$(product_target_FILES))) \
     $(eval files_in_requirement := $(filter $(path_patterns),$(extra_files))) \
     $(eval all_offending_files += $(files_in_requirement)) \
-    $(eval allowed := $(strip $(PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST) \
-      $(PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST))) \
+    $(eval allowed := $(PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST)) \
     $(eval allowed_patterns := $(call resolve-product-relative-paths,$(allowed))) \
     $(eval offending_files := $(filter-out $(allowed_patterns),$(files_in_requirement))) \
     $(eval enforcement := $(PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS)) \
