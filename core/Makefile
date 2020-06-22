@@ -206,7 +206,7 @@ DEPMOD_STAGING_SUBDIR :=$= lib/modules/0.0
 
 define copy-and-strip-kernel-module
 $(2): $(1)
-	$($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP) -o $(2) --strip-debug $(1)
+	$(LLVM_STRIP) -o $(2) --strip-debug $(1)
 endef
 
 # $(1): modules list
