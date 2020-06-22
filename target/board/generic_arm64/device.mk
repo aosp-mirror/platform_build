@@ -18,7 +18,3 @@ PRODUCT_COPY_FILES += \
     device/google/cuttlefish_kernel/5.4-arm64/kernel-5.4:kernel-5.4 \
     device/google/cuttlefish_kernel/5.4-arm64/kernel-5.4-gz:kernel-5.4-gz \
     device/google/cuttlefish_kernel/5.4-arm64/kernel-5.4-lz4:kernel-5.4-lz4
-
-# Adjust the Dalvik heap to be appropriate for a tablet.
-$(call inherit-product-if-exists, frameworks/base/build/tablet-dalvik-heap.mk)
-$(call inherit-product-if-exists, frameworks/native/build/tablet-dalvik-heap.mk)
