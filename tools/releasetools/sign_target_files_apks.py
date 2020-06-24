@@ -608,22 +608,22 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif (OPTIONS.remove_avb_public_keys and
           (filename.startswith("BOOT/RAMDISK/avb/") or
            filename.startswith("BOOT/RAMDISK/first_stage_ramdisk/avb/"))):
-        matched_removal = False
-        for key_to_remove in OPTIONS.remove_avb_public_keys:
-          if filename.endswith(key_to_remove):
-            matched_removal = True
-            print("Removing AVB public key from ramdisk: %s" % filename)
-            break
-        if not matched_removal:
-          # Copy it verbatim if we don't want to remove it.
-          common.ZipWriteStr(output_tf_zip, out_info, data)
+      matched_removal = False
+      for key_to_remove in OPTIONS.remove_avb_public_keys:
+        if filename.endswith(key_to_remove):
+          matched_removal = True
+          print("Removing AVB public key from ramdisk: %s" % filename)
+          break
+      if not matched_removal:
+        # Copy it verbatim if we don't want to remove it.
+        common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # Skip verity keyid (for system_root_image use) if we will replace it.
     elif OPTIONS.replace_verity_keyid and filename == "BOOT/cmdline":
       pass
 
     # Skip the care_map as we will regenerate the system/vendor images.
-    elif filename == "META/care_map.pb" or filename == "META/care_map.txt":
+    elif filename in ["META/care_map.pb", "META/care_map.txt"]:
       pass
 
     # Updates system_other.avbpubkey in /product/etc/.
@@ -967,11 +967,10 @@ def ReplaceAvbSigningKeys(misc_info):
     if extra_args:
       print('Setting extra AVB signing args for %s to "%s"' % (
           partition, extra_args))
-      if partition in AVB_FOOTER_ARGS_BY_PARTITION:
-        args_key = AVB_FOOTER_ARGS_BY_PARTITION[partition]
-      else:
-        # custom partition
-        args_key = "avb_{}_add_hashtree_footer_args".format(partition)
+      args_key = AVB_FOOTER_ARGS_BY_PARTITION.get(
+          partition,
+          # custom partition
+          "avb_{}_add_hashtree_footer_args".format(partition))
       misc_info[args_key] = (misc_info.get(args_key, '') + ' ' + extra_args)
 
   for partition in AVB_FOOTER_ARGS_BY_PARTITION:
