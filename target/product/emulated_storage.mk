@@ -15,7 +15,7 @@
 #
 
 PRODUCT_QUOTA_PROJID := 1
-PRODUCT_PROPERTY_OVERRIDES += external_storage.projid.enabled=1
+PRODUCT_VENDOR_PROPERTIES += external_storage.projid.enabled=1
 
 PRODUCT_FS_CASEFOLD := 1
-PRODUCT_PROPERTY_OVERRIDES += external_storage.casefold.enabled=1
+PRODUCT_VENDOR_PROPERTIES += external_storage.casefold.enabled=1

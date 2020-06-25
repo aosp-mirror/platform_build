@@ -78,6 +78,13 @@ Common options that apply to both of non-A/B and A/B OTAs
       Write a copy of the metadata to a separate file. Therefore, users can
       read the post build fingerprint without extracting the OTA package.
 
+  --force_non_ab
+      This flag can only be set on an A/B device that also supports non-A/B
+      updates. Implies --two_step.
+      If set, generate that non-A/B update package.
+      If not set, generates A/B package for A/B device and non-A/B package for
+      non-A/B device.
+
 Non-A/B OTA specific options
 
   -b  (--binary) <file>
@@ -182,6 +189,13 @@ A/B OTA specific options
   --payload_signer_key_size <key_size>
       Deprecated. Use the '--payload_signer_maximum_signature_size' instead.
 
+  --boot_variable_file <path>
+      A file that contains the possible values of ro.boot.* properties. It's
+      used to calculate the possible runtime fingerprints when some
+      ro.product.* properties are overridden by the 'import' statement.
+      The file expects one property per line, and each line has the following
+      format: 'prop_name=value1,value2'. e.g. 'ro.boot.product.sku=std,pro'
+
   --skip_postinstall
       Skip the postinstall hooks when generating an A/B OTA package (default:
       False). Note that this discards ALL the hooks, including non-optional
@@ -207,7 +221,9 @@ import zipfile
 import check_target_files_vintf
 import common
 import edify_generator
+import target_files_diff
 import verity_utils
+
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -250,7 +266,8 @@ OPTIONS.retrofit_dynamic_partitions = False
 OPTIONS.skip_compatibility_check = False
 OPTIONS.output_metadata_path = None
 OPTIONS.disable_fec_computation = False
-OPTIONS.boot_variable_values = None
+OPTIONS.force_non_ab = False
+OPTIONS.boot_variable_file = None
 
 
 METADATA_NAME = 'META-INF/com/android/metadata'
@@ -530,10 +547,10 @@ def HasRecoveryPatch(target_files_zip, info_dict):
     target_files_dir = "SYSTEM/vendor"
 
   patch = "%s/recovery-from-boot.p" % target_files_dir
-  img = "%s/etc/recovery.img" %target_files_dir
+  img = "%s/etc/recovery.img" % target_files_dir
 
-  namelist = [name for name in target_files_zip.namelist()]
-  return (patch in namelist or img in namelist)
+  namelist = target_files_zip.namelist()
+  return patch in namelist or img in namelist
 
 
 def HasPartition(target_files_zip, partition):
@@ -611,7 +628,8 @@ def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
 
   def GetIncrementalBlockDifferenceForPartition(name):
     if not HasPartition(source_zip, name):
-      raise RuntimeError("can't generate incremental that adds {}".format(name))
+      raise RuntimeError(
+          "can't generate incremental that adds {}".format(name))
 
     partition_src = common.GetUserImage(name, OPTIONS.source_tmp, source_zip,
                                         info_dict=source_info,
@@ -622,8 +640,7 @@ def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
     partition_tgt = common.GetUserImage(name, OPTIONS.target_tmp, target_zip,
                                         info_dict=target_info,
                                         allow_shared_blocks=allow_shared_blocks,
-                                        hashtree_info_generator=
-                                        hashtree_info_generator)
+                                        hashtree_info_generator=hashtree_info_generator)
 
     # Check the first block of the source system partition for remount R/W only
     # if the filesystem is ext4.
@@ -923,17 +940,27 @@ def GetPackageMetadata(target_info, source_info=None):
   assert isinstance(target_info, common.BuildInfo)
   assert source_info is None or isinstance(source_info, common.BuildInfo)
 
+  separator = '|'
+
+  boot_variable_values = {}
+  if OPTIONS.boot_variable_file:
+    d = common.LoadDictionaryFromFile(OPTIONS.boot_variable_file)
+    for key, values in d.items():
+      boot_variable_values[key] = [val.strip() for val in values.split(',')]
+
+  post_build_devices, post_build_fingerprints = \
+      CalculateRuntimeDevicesAndFingerprints(target_info, boot_variable_values)
   metadata = {
-      'post-build' : target_info.fingerprint,
-      'post-build-incremental' : target_info.GetBuildProp(
+      'post-build': separator.join(sorted(post_build_fingerprints)),
+      'post-build-incremental': target_info.GetBuildProp(
           'ro.build.version.incremental'),
-      'post-sdk-level' : target_info.GetBuildProp(
+      'post-sdk-level': target_info.GetBuildProp(
           'ro.build.version.sdk'),
-      'post-security-patch-level' : target_info.GetBuildProp(
+      'post-security-patch-level': target_info.GetBuildProp(
           'ro.build.version.security_patch'),
   }
 
-  if target_info.is_ab:
+  if target_info.is_ab and not OPTIONS.force_non_ab:
     metadata['ota-type'] = 'AB'
     metadata['ota-required-cache'] = '0'
   else:
@@ -947,12 +974,15 @@ def GetPackageMetadata(target_info, source_info=None):
 
   is_incremental = source_info is not None
   if is_incremental:
-    metadata['pre-build'] = source_info.fingerprint
+    pre_build_devices, pre_build_fingerprints = \
+        CalculateRuntimeDevicesAndFingerprints(source_info,
+                                               boot_variable_values)
+    metadata['pre-build'] = separator.join(sorted(pre_build_fingerprints))
     metadata['pre-build-incremental'] = source_info.GetBuildProp(
         'ro.build.version.incremental')
-    metadata['pre-device'] = source_info.device
+    metadata['pre-device'] = separator.join(sorted(pre_build_devices))
   else:
-    metadata['pre-device'] = target_info.device
+    metadata['pre-device'] = separator.join(sorted(post_build_devices))
 
   # Use the actual post-timestamp, even for a downgrade case.
   metadata['post-timestamp'] = target_info.GetBuildProp('ro.build.date.utc')
@@ -1422,7 +1452,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
     fs = source_info["fstab"]["/misc"]
     assert fs.fs_type.upper() == "EMMC", \
         "two-step packages only supported on devices with EMMC /misc partitions"
-    bcb_dev = {"bcb_dev" : fs.device}
+    bcb_dev = {"bcb_dev": fs.device}
     common.ZipWriteStr(output_zip, "recovery.img", target_recovery.data)
     script.AppendExtra("""
 if get_stage("%(bcb_dev)s") == "2/3" then
@@ -1455,7 +1485,8 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
   required_cache_sizes = [diff.required_cache for diff in
                           block_diff_dict.values()]
   if updating_boot:
-    boot_type, boot_device = common.GetTypeAndDevice("/boot", source_info)
+    boot_type, boot_device_expr = common.GetTypeAndDeviceExpr("/boot",
+                                                              source_info)
     d = common.Difference(target_boot, source_boot)
     _, _, d = d.ComputePatch()
     if d is None:
@@ -1470,11 +1501,11 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
 
       common.ZipWriteStr(output_zip, "boot.img.p", d)
 
-      script.PatchPartitionCheck(
-          "{}:{}:{}:{}".format(
-              boot_type, boot_device, target_boot.size, target_boot.sha1),
-          "{}:{}:{}:{}".format(
-              boot_type, boot_device, source_boot.size, source_boot.sha1))
+      target_expr = 'concat("{}:",{},":{}:{}")'.format(
+          boot_type, boot_device_expr, target_boot.size, target_boot.sha1)
+      source_expr = 'concat("{}:",{},":{}:{}")'.format(
+          boot_type, boot_device_expr, source_boot.size, source_boot.sha1)
+      script.PatchPartitionExprCheck(target_expr, source_expr)
 
       required_cache_sizes.append(target_boot.size)
 
@@ -1542,12 +1573,11 @@ else
         logger.info("boot image changed; including patch.")
         script.Print("Patching boot image...")
         script.ShowProgress(0.1, 10)
-        script.PatchPartition(
-            '{}:{}:{}:{}'.format(
-                boot_type, boot_device, target_boot.size, target_boot.sha1),
-            '{}:{}:{}:{}'.format(
-                boot_type, boot_device, source_boot.size, source_boot.sha1),
-            'boot.img.p')
+        target_expr = 'concat("{}:",{},":{}:{}")'.format(
+            boot_type, boot_device_expr, target_boot.size, target_boot.sha1)
+        source_expr = 'concat("{}:",{},":{}:{}")'.format(
+            boot_type, boot_device_expr, source_boot.size, source_boot.sha1)
+        script.PatchPartitionExpr(target_expr, source_expr, '"boot.img.p"')
     else:
       logger.info("boot image unchanged; skipping.")
 
@@ -1640,7 +1670,7 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
         partitions = [partition for partition in partitions if partition
                       not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
         output_list.append('{}={}'.format(key, ' '.join(partitions)))
-      elif key == 'virtual_ab' or key == "virtual_ab_retrofit":
+      elif key in ['virtual_ab', "virtual_ab_retrofit"]:
         # Remove virtual_ab flag from secondary payload so that OTA client
         # don't use snapshots for secondary update
         pass
@@ -1684,7 +1714,8 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
           partition_list = f.read().splitlines()
         partition_list = [partition for partition in partition_list if partition
                           and partition not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
-        common.ZipWriteStr(target_zip, info.filename, '\n'.join(partition_list))
+        common.ZipWriteStr(target_zip, info.filename,
+                           '\n'.join(partition_list))
       # Remove the unnecessary partitions from the dynamic partitions list.
       elif (info.filename == 'META/misc_info.txt' or
             info.filename == DYNAMIC_PARTITION_INFO):
@@ -1767,7 +1798,8 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
       "{} is in super_block_devices but not in {}".format(
           super_device_not_updated, AB_PARTITIONS)
   # ab_partitions -= (dynamic_partition_list - super_block_devices)
-  new_ab_partitions = common.MakeTempFile(prefix="ab_partitions", suffix=".txt")
+  new_ab_partitions = common.MakeTempFile(
+      prefix="ab_partitions", suffix=".txt")
   with open(new_ab_partitions, 'w') as f:
     for partition in ab_partitions:
       if (partition in dynamic_partition_list and
@@ -1957,41 +1989,49 @@ def GenerateNonAbOtaPackage(target_file, output_file, source_file=None):
     OPTIONS.source_tmp = common.UnzipTemp(
         OPTIONS.incremental_source, UNZIP_PATTERN)
     with zipfile.ZipFile(target_file) as input_zip, \
-        zipfile.ZipFile(source_file) as source_zip:
+            zipfile.ZipFile(source_file) as source_zip:
       WriteBlockIncrementalOTAPackage(
           input_zip,
           source_zip,
           output_file)
 
 
-def CalculateRuntimeFingerprints():
-  """Returns a set of runtime fingerprints based on the boot variables."""
+def CalculateRuntimeDevicesAndFingerprints(build_info, boot_variable_values):
+  """Returns a tuple of sets for runtime devices and fingerprints"""
 
-  build_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
+  device_names = {build_info.device}
   fingerprints = {build_info.fingerprint}
 
-  if not OPTIONS.boot_variable_values:
-    return fingerprints
+  if not boot_variable_values:
+    return device_names, fingerprints
 
   # Calculate all possible combinations of the values for the boot variables.
-  keys = OPTIONS.boot_variable_values.keys()
-  value_list = OPTIONS.boot_variable_values.values()
+  keys = boot_variable_values.keys()
+  value_list = boot_variable_values.values()
   combinations = [dict(zip(keys, values))
                   for values in itertools.product(*value_list)]
   for placeholder_values in combinations:
     # Reload the info_dict as some build properties may change their values
     # based on the value of ro.boot* properties.
-    info_dict = copy.deepcopy(OPTIONS.info_dict)
+    info_dict = copy.deepcopy(build_info.info_dict)
     for partition in common.PARTITIONS_WITH_CARE_MAP:
       partition_prop_key = "{}.build.prop".format(partition)
-      old_props = info_dict[partition_prop_key]
-      info_dict[partition_prop_key] = common.PartitionBuildProps.FromInputFile(
-          old_props.input_file, partition, placeholder_values)
+      input_file = info_dict[partition_prop_key].input_file
+      if isinstance(input_file, zipfile.ZipFile):
+        with zipfile.ZipFile(input_file.filename) as input_zip:
+          info_dict[partition_prop_key] = \
+              common.PartitionBuildProps.FromInputFile(input_zip, partition,
+                                                       placeholder_values)
+      else:
+        info_dict[partition_prop_key] = \
+            common.PartitionBuildProps.FromInputFile(input_file, partition,
+                                                     placeholder_values)
     info_dict["build.prop"] = info_dict["system.build.prop"]
 
-    build_info = common.BuildInfo(info_dict, OPTIONS.oem_dicts)
-    fingerprints.add(build_info.fingerprint)
-  return fingerprints
+    new_build_info = common.BuildInfo(info_dict, build_info.oem_dicts)
+    device_names.add(new_build_info.device)
+    fingerprints.add(new_build_info.fingerprint)
+  return device_names, fingerprints
 
 
 def main(argv):
@@ -2067,6 +2107,10 @@ def main(argv):
       OPTIONS.output_metadata_path = a
     elif o == "--disable_fec_computation":
       OPTIONS.disable_fec_computation = True
+    elif o == "--force_non_ab":
+      OPTIONS.force_non_ab = True
+    elif o == "--boot_variable_file":
+      OPTIONS.boot_variable_file = a
     else:
       return False
     return True
@@ -2103,6 +2147,8 @@ def main(argv):
                                  "skip_compatibility_check",
                                  "output_metadata_path=",
                                  "disable_fec_computation",
+                                 "force_non_ab",
+                                 "boot_variable_file=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -2164,11 +2210,17 @@ def main(argv):
     OPTIONS.skip_postinstall = True
 
   ab_update = OPTIONS.info_dict.get("ab_update") == "true"
+  allow_non_ab = OPTIONS.info_dict.get("allow_non_ab") == "true"
+  if OPTIONS.force_non_ab:
+    assert allow_non_ab, "--force_non_ab only allowed on devices that supports non-A/B"
+    assert ab_update, "--force_non_ab only allowed on A/B devices"
+
+  generate_ab = not OPTIONS.force_non_ab and ab_update
 
   # Use the default key to sign the package if not specified with package_key.
   # package_keys are needed on ab_updates, so always define them if an
-  # ab_update is getting created.
-  if not OPTIONS.no_signing or ab_update:
+  # A/B update is getting created.
+  if not OPTIONS.no_signing or generate_ab:
     if OPTIONS.package_key is None:
       OPTIONS.package_key = OPTIONS.info_dict.get(
           "default_system_dev_certificate",
@@ -2176,7 +2228,7 @@ def main(argv):
     # Get signing keys
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
 
-  if ab_update:
+  if generate_ab:
     GenerateAbOtaPackage(
         target_file=args[0],
         output_file=args[1],
@@ -2197,7 +2249,6 @@ def main(argv):
         OPTIONS.incremental_source, TARGET_DIFFING_UNZIP_PATTERN)
 
     with open(OPTIONS.log_diff, 'w') as out_file:
-      import target_files_diff
       target_files_diff.recursiveDiff(
           '', source_dir, target_dir, out_file)
 

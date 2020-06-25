@@ -57,9 +57,9 @@ else ifneq ($(my_jni_shared_libraries),) # not my_embed_jni
   # Make sure the JNI libraries get installed
   my_shared_library_path := $(call get_non_asan_path,\
       $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHARED_LIBRARIES))
-  my_installed_library := $(addprefix $(my_shared_library_path)/, $(my_jni_filenames))
 
-  ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_library)
+  bit_suffix := $(if $(filter %64,$(TARGET_$(my_2nd_arch_prefix)ARCH)),:64,:32)
+  ALL_MODULES.$(my_register_name).REQUIRED_FROM_TARGET += $(addsuffix $(bit_suffix),$(LOCAL_JNI_SHARED_LIBRARIES))
 
   # Create symlink in the app specific lib path
   # Skip creating this symlink when running the second part of a target sanitization build.

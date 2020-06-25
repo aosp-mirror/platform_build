@@ -14,13 +14,17 @@
 # limitations under the License.
 #
 QEMU_USE_SYSTEM_EXT_PARTITIONS := true
-
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # This is a build configuration for a full-featured build of the
 # Open-Source part of the tree. It's geared toward a US-centric
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
+
+# Enable mainline checking for exact this product name
+ifeq (sdk_phone_arm64,$(TARGET_PRODUCT))
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+endif
 
 #
 # All components inherited here go to system image

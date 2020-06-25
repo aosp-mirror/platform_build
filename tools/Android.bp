@@ -24,3 +24,16 @@ python_binary_host {
     },
   },
 }
+
+python_binary_host {
+  name: "post_process_props",
+  srcs: ["post_process_props.py"],
+  version: {
+    py2: {
+      enabled: false,
+    },
+    py3: {
+      enabled: true,
+    },
+  },
+}

@@ -19,7 +19,7 @@
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
 
-PRODUCT_PROPERTY_OVERRIDES := \
+PRODUCT_VENDOR_PROPERTIES := \
     keyguard.no_require_sim=true \
     ro.com.android.dataroaming=true
 

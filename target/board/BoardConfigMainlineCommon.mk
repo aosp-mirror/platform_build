@@ -6,6 +6,8 @@
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_RECOVERY := true
 
+BOARD_EXT4_SHARE_DUP_BLOCKS := true
+
 TARGET_USERIMAGES_USE_EXT4 := true
 
 # Mainline devices must have /system_ext, /vendor and /product partitions.

@@ -112,6 +112,17 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
       the existing ones in info dict.
 
+  --avb_extra_custom_image_key <partition=key>
+  --avb_extra_custom_image_algorithm <partition=algorithm>
+      Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
+      the specified custom images mounted on the partition. Otherwise it uses
+      the existing values in info dict.
+
+  --avb_extra_custom_image_extra_args <partition=extra_args>
+      Specify any additional args that are needed to AVB-sign the custom images
+      mounted on the partition (e.g. "--signing_helper /path/to/helper"). The
+      args will be appended to the existing ones in info dict.
+
   --android_jar_path <path>
       Path to the android.jar to repack the apex file.
 """
@@ -372,8 +383,8 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
 
 
 def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
-            is_compressed):
-  unsigned = tempfile.NamedTemporaryFile()
+            is_compressed, apk_name):
+  unsigned = tempfile.NamedTemporaryFile(suffix='_' + apk_name)
   unsigned.write(data)
   unsigned.flush()
 
@@ -391,7 +402,7 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
     unsigned.close()
     unsigned = uncompressed
 
-  signed = tempfile.NamedTemporaryFile()
+  signed = tempfile.NamedTemporaryFile(suffix='_' + apk_name)
 
   # For pre-N builds, don't upgrade to SHA-256 JAR signatures based on the APK's
   # minSdkVersion to avoid increasing incremental OTA update sizes. If an APK
@@ -477,7 +488,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if key not in common.SPECIAL_CERT_STRINGS:
         print("    signing: %-*s (%s)" % (maxsize, name, key))
         signed_data = SignApk(data, key, key_passwords[key], platform_api_level,
-                              codename_to_api_level_map, is_compressed)
+                              codename_to_api_level_map, is_compressed, name)
         common.ZipWriteStr(output_tf_zip, out_info, signed_data)
       else:
         # an APK we're not supposed to sign.
@@ -597,22 +608,22 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif (OPTIONS.remove_avb_public_keys and
           (filename.startswith("BOOT/RAMDISK/avb/") or
            filename.startswith("BOOT/RAMDISK/first_stage_ramdisk/avb/"))):
-        matched_removal = False
-        for key_to_remove in OPTIONS.remove_avb_public_keys:
-          if filename.endswith(key_to_remove):
-            matched_removal = True
-            print("Removing AVB public key from ramdisk: %s" % filename)
-            break
-        if not matched_removal:
-          # Copy it verbatim if we don't want to remove it.
-          common.ZipWriteStr(output_tf_zip, out_info, data)
+      matched_removal = False
+      for key_to_remove in OPTIONS.remove_avb_public_keys:
+        if filename.endswith(key_to_remove):
+          matched_removal = True
+          print("Removing AVB public key from ramdisk: %s" % filename)
+          break
+      if not matched_removal:
+        # Copy it verbatim if we don't want to remove it.
+        common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # Skip verity keyid (for system_root_image use) if we will replace it.
     elif OPTIONS.replace_verity_keyid and filename == "BOOT/cmdline":
       pass
 
     # Skip the care_map as we will regenerate the system/vendor images.
-    elif filename == "META/care_map.pb" or filename == "META/care_map.txt":
+    elif filename in ["META/care_map.pb", "META/care_map.txt"]:
       pass
 
     # Updates system_other.avbpubkey in /product/etc/.
@@ -956,11 +967,18 @@ def ReplaceAvbSigningKeys(misc_info):
     if extra_args:
       print('Setting extra AVB signing args for %s to "%s"' % (
           partition, extra_args))
-      args_key = AVB_FOOTER_ARGS_BY_PARTITION[partition]
+      args_key = AVB_FOOTER_ARGS_BY_PARTITION.get(
+          partition,
+          # custom partition
+          "avb_{}_add_hashtree_footer_args".format(partition))
       misc_info[args_key] = (misc_info.get(args_key, '') + ' ' + extra_args)
 
   for partition in AVB_FOOTER_ARGS_BY_PARTITION:
     ReplaceAvbPartitionSigningKey(partition)
+
+  for custom_partition in misc_info.get(
+      "avb_custom_images_partition_list", "").strip().split():
+    ReplaceAvbPartitionSigningKey(custom_partition)
 
 
 def RewriteAvbProps(misc_info):
@@ -1208,6 +1226,18 @@ def main(argv):
       OPTIONS.avb_extra_args['vbmeta_vendor'] = a
     elif o == "--avb_apex_extra_args":
       OPTIONS.avb_extra_args['apex'] = a
+    elif o == "--avb_extra_custom_image_key":
+      partition, key = a.split("=")
+      OPTIONS.avb_keys[partition] = key
+    elif o == "--avb_extra_custom_image_algorithm":
+      partition, algorithm = a.split("=")
+      OPTIONS.avb_algorithms[partition] = algorithm
+    elif o == "--avb_extra_custom_image_extra_args":
+      # Setting the maxsplit parameter to one, which will return a list with
+      # two elements. e.g., the second '=' should not be splitted for
+      # 'oem=--signing_helper_with_files=/tmp/avbsigner.sh'.
+      partition, extra_args = a.split("=", 1)
+      OPTIONS.avb_extra_args[partition] = extra_args
     else:
       return False
     return True
@@ -1252,6 +1282,9 @@ def main(argv):
           "avb_vbmeta_vendor_algorithm=",
           "avb_vbmeta_vendor_key=",
           "avb_vbmeta_vendor_extra_args=",
+          "avb_extra_custom_image_key=",
+          "avb_extra_custom_image_algorithm=",
+          "avb_extra_custom_image_extra_args=",
       ],
       extra_option_handler=option_handler)
 

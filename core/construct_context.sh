@@ -67,6 +67,10 @@ if [[ "${target_sdk_version}" -lt "29" ]]; then
   add_to_contexts "${conditional_host_libs_29}" "${conditional_target_libs_29}"
 fi
 
+if [[ "${target_sdk_version}" -lt "30" ]]; then
+  add_to_contexts "${conditional_host_libs_30}" "${conditional_target_libs_30}"
+fi
+
 add_to_contexts "${dex_preopt_host_libraries}" "${dex_preopt_target_libraries}"
 
 # Generate the actual context string.
