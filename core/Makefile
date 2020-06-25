@@ -4107,6 +4107,7 @@ INTERNAL_OTATOOLS_MODULES := \
   libconscrypt_openjdk_jni \
   lpmake \
   lpunpack \
+  lz4 \
   make_f2fs \
   merge_target_files \
   minigzip \
