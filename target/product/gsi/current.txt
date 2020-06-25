@@ -89,6 +89,7 @@ VNDK-core: android.hardware.biometrics.face@1.0.so
 VNDK-core: android.hardware.biometrics.face@1.1.so
 VNDK-core: android.hardware.biometrics.fingerprint@2.1.so
 VNDK-core: android.hardware.biometrics.fingerprint@2.2.so
+VNDK-core: android.hardware.biometrics.fingerprint@2.3.so
 VNDK-core: android.hardware.bluetooth.a2dp@1.0.so
 VNDK-core: android.hardware.bluetooth.audio@2.0.so
 VNDK-core: android.hardware.bluetooth@1.0.so
@@ -138,6 +139,7 @@ VNDK-core: android.hardware.gnss@1.0.so
 VNDK-core: android.hardware.gnss@1.1.so
 VNDK-core: android.hardware.gnss@2.0.so
 VNDK-core: android.hardware.gnss@2.1.so
+VNDK-core: android.hardware.gnss@3.0.so
 VNDK-core: android.hardware.graphics.allocator@2.0.so
 VNDK-core: android.hardware.graphics.allocator@3.0.so
 VNDK-core: android.hardware.graphics.allocator@4.0.so

@@ -104,6 +104,15 @@ ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 EMMA_INSTRUMENT := true
 endif
 
+# TODO(b/158212027): Turn this into an error when all users have been moved to
+# `NATIVE_COVERAGE_PATHS` and `NATIVE_COVERAGE_EXCLUDE_PATHS`.
+ifneq ($(COVERAGE_PATHS),)
+  $(warning Variable COVERAGE_PATHS is deprecated. Please use NATIVE_COVERAGE_PATHS instead.)
+endif
+ifneq ($(COVERAGE_EXCLUDE_PATHS),)
+  $(warning Variable COVERAGE_EXCLUDE_PATHS is deprecated. Please use NATIVE_COVERAGE_EXCLUDE_PATHS instead.)
+endif
+
 ifeq (true,$(EMMA_INSTRUMENT))
 # Adding the jacoco library can cause the inclusion of
 # some typically banned classes
@@ -1290,8 +1299,7 @@ $(call dist-for-goals,droidcore,$(CERTIFICATE_VIOLATION_MODULES_FILENAME))
     $(eval extra_files := $(filter-out $(files) $(HOST_OUT)/%,$(product_target_FILES))) \
     $(eval files_in_requirement := $(filter $(path_patterns),$(extra_files))) \
     $(eval all_offending_files += $(files_in_requirement)) \
-    $(eval allowed := $(strip $(PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST) \
-      $(PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST))) \
+    $(eval allowed := $(PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST)) \
     $(eval allowed_patterns := $(call resolve-product-relative-paths,$(allowed))) \
     $(eval offending_files := $(filter-out $(allowed_patterns),$(files_in_requirement))) \
     $(eval enforcement := $(PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS)) \
