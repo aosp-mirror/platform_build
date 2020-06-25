@@ -18,7 +18,7 @@
 
 
 # Set lowram options and enable traced by default
-PRODUCT_PROPERTY_OVERRIDES += \
+PRODUCT_VENDOR_PROPERTIES += \
      ro.config.low_ram=true \
      persist.traced.enable=1 \
 

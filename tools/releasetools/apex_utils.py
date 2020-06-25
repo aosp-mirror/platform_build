@@ -169,7 +169,7 @@ class ApexApkSigner(object):
 
 
 def SignApexPayload(avbtool, payload_file, payload_key_path, payload_key_name,
-                    algorithm, salt, no_hashtree, signing_args=None):
+                    algorithm, salt, hash_algorithm, no_hashtree, signing_args=None):
   """Signs a given payload_file with the payload key."""
   # Add the new footer. Old footer, if any, will be replaced by avbtool.
   cmd = [avbtool, 'add_hashtree_footer',
@@ -178,7 +178,8 @@ def SignApexPayload(avbtool, payload_file, payload_key_path, payload_key_name,
          '--key', payload_key_path,
          '--prop', 'apex.key:{}'.format(payload_key_name),
          '--image', payload_file,
-         '--salt', salt]
+         '--salt', salt,
+         '--hash_algorithm', hash_algorithm]
   if no_hashtree:
     cmd.append('--no_hashtree')
   if signing_args:
@@ -235,11 +236,11 @@ def ParseApexPayloadInfo(avbtool, payload_path):
         'Failed to get APEX payload info for {}:\n{}'.format(
             payload_path, e))
 
-  # Extract the Algorithm / Salt / Prop info / Tree size from payload (i.e. an
-  # image signed with avbtool). For example,
+  # Extract the Algorithm / Hash Algorithm / Salt / Prop info / Tree size from
+  # payload (i.e. an image signed with avbtool). For example,
   # Algorithm:                SHA256_RSA4096
   PAYLOAD_INFO_PATTERN = (
-      r'^\s*(?P<key>Algorithm|Salt|Prop|Tree Size)\:\s*(?P<value>.*?)$')
+      r'^\s*(?P<key>Algorithm|Hash Algorithm|Salt|Prop|Tree Size)\:\s*(?P<value>.*?)$')
   payload_info_matcher = re.compile(PAYLOAD_INFO_PATTERN)
 
   payload_info = {}
@@ -273,7 +274,7 @@ def ParseApexPayloadInfo(avbtool, payload_path):
       payload_info[key] = value
 
   # Sanity check.
-  for key in ('Algorithm', 'Salt', 'apex.key'):
+  for key in ('Algorithm', 'Salt', 'apex.key', 'Hash Algorithm'):
     if key not in payload_info:
       raise ApexInfoError(
           'Failed to find {} prop in {}'.format(key, payload_path))
@@ -326,6 +327,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
       payload_info['apex.key'],
       payload_info['Algorithm'],
       payload_info['Salt'],
+      payload_info['Hash Algorithm'],
       no_hashtree,
       signing_args)
 

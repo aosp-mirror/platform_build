@@ -16,7 +16,7 @@
 
 include $(SRC_TARGET_DIR)/product/gsi_release.mk
 
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/etc/init/init.legacy-gsi.rc \
     system/etc/init/gsi/init.vndk-27.rc \
     system/etc/ld.config.vndk_lite.txt \

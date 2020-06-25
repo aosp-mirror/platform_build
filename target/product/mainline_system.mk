@@ -104,10 +104,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES_DEBUG += \
     avbctl \
     bootctl \
-    tinyplay \
     tinycap \
+    tinyhostless \
     tinymix \
     tinypcminfo \
+    tinyplay \
     update_engine_client \
 
 PRODUCT_HOST_PACKAGES += \
@@ -117,7 +118,6 @@ PRODUCT_HOST_PACKAGES += \
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc \
     system/core/rootdir/init.zygote64.rc:system/etc/init/hw/init.zygote64.rc \
-    system/core/rootdir/init.zygote32_64.rc:system/etc/init/hw/init.zygote32_64.rc \
     system/core/rootdir/init.zygote64_32.rc:system/etc/init/hw/init.zygote64_32.rc \
 
 # Enable dynamic partition size
@@ -139,13 +139,13 @@ PRODUCT_SYSTEM_MANUFACTURER := Android
 PRODUCT_SYSTEM_MODEL := mainline
 PRODUCT_SYSTEM_DEVICE := generic
 
-_base_mk_whitelist :=
+_base_mk_allowed_list :=
 
-_my_whitelist := $(_base_mk_whitelist)
+_my_allowed_list := $(_base_mk_allowed_list)
 
 # For mainline, system.img should be mounted at /, so we include ROOT here.
 _my_paths := \
   $(TARGET_COPY_OUT_ROOT)/ \
   $(TARGET_COPY_OUT_SYSTEM)/ \
 
-$(call require-artifacts-in-path, $(_my_paths), $(_my_whitelist))
+$(call require-artifacts-in-path, $(_my_paths), $(_my_allowed_list))

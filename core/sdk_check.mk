@@ -6,7 +6,7 @@
 # be set to a particular module class to enable warnings and errors for that
 # subtype.
 
-whitelisted_modules := framework-res__auto_generated_rro
+allowed_modules := framework-res__auto_generated_rro
 
 
 ifeq (,$(JAVA_SDK_ENFORCEMENT_ERROR))
@@ -14,7 +14,7 @@ ifeq (,$(JAVA_SDK_ENFORCEMENT_ERROR))
 endif
 
 ifeq ($(LOCAL_SDK_VERSION)$(LOCAL_PRIVATE_PLATFORM_APIS),)
-  ifeq (,$(filter $(LOCAL_MODULE),$(whitelisted_modules)))
+  ifeq (,$(filter $(LOCAL_MODULE),$(allowed_modules)))
     ifneq ($(JAVA_SDK_ENFORCEMENT_WARNING)$(JAVA_SDK_ENFORCEMENT_ERROR),)
       my_message := Must specify LOCAL_SDK_VERSION or LOCAL_PRIVATE_PLATFORM_APIS,
       ifeq ($(LOCAL_MODULE_CLASS),$(JAVA_SDK_ENFORCEMENT_ERROR))

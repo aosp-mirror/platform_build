@@ -22,6 +22,13 @@ BUILD_SYSTEM_COMMON :=$= build/make/common
 
 include $(BUILD_SYSTEM_COMMON)/core.mk
 
+# -----------------------------------------------------------------
+# Rules and functions to help copy important files to DIST_DIR
+# when requested. This must be included once only, and must be included before
+# soong_config (as soong_config calls make_vars-$(TARGET).mk, and soong may
+# propagate calls to dist-for-goals there).
+include $(BUILD_SYSTEM)/distdir.mk
+
 # Mark variables that should be coming as environment variables from soong_ui
 # as readonly
 .KATI_READONLY := OUT_DIR TMPDIR BUILD_DATETIME_FILE
@@ -141,6 +148,9 @@ $(KATI_obsolete_var \
   TARGET_PROJECT_SYSTEM_INCLUDES \
   2ND_TARGET_PROJECT_SYSTEM_INCLUDES \
   ,Project include variables have been removed)
+$(KATI_obsolete_var TARGET_PREFER_32_BIT TARGET_PREFER_32_BIT_APPS TARGET_PREFER_32_BIT_EXECUTABLES)
+$(KATI_obsolete_var PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_WHITELIST,Use PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST.)
+$(KATI_obsolete_var PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST,Use PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST.)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -375,11 +385,6 @@ include $(BUILD_SYSTEM)/goma.mk
 include $(BUILD_SYSTEM)/rbe.mk
 endif
 
-ifdef TARGET_PREFER_32_BIT
-TARGET_PREFER_32_BIT_APPS := true
-TARGET_PREFER_32_BIT_EXECUTABLES := true
-endif
-
 # GCC version selection
 TARGET_GCC_VERSION := 4.9
 ifdef TARGET_2ND_ARCH
@@ -605,6 +610,7 @@ NANOPB_SRCS := $(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
 VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
+LZ4 := $(HOST_OUT_EXECUTABLES)/lz4$(HOST_EXECUTABLE_SUFFIX)
 ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
@@ -670,9 +676,9 @@ EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 # Path to tools.jar
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 
-APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner --compatible-output=yes
+APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner --compatible-output=no
 
-# Boolean variable determining if the whitelist for compatible properties is enabled
+# Boolean variable determining if the allow list for compatible properties is enabled
 PRODUCT_COMPATIBLE_PROPERTY := false
 ifneq ($(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE),)
   PRODUCT_COMPATIBLE_PROPERTY := $(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE)
@@ -1215,7 +1221,7 @@ endif
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
 
-# Make RECORD_ALL_DEPS readonly and also set it if deps-license is a goal.
-RECORD_ALL_DEPS :=$= $(filter true,$(RECORD_ALL_DEPS))$(filter deps-license,$(MAKECMDGOALS))
+# Make RECORD_ALL_DEPS readonly.
+RECORD_ALL_DEPS :=$= $(filter true,$(RECORD_ALL_DEPS))
 
 include $(BUILD_SYSTEM)/dumpvar.mk

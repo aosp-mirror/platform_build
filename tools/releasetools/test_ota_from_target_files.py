@@ -27,7 +27,7 @@ from ota_from_target_files import (
     GetTargetFilesZipWithoutPostinstallConfig, NonAbOtaPropertyFiles,
     Payload, PayloadSigner, POSTINSTALL_CONFIG, PropertyFiles,
     StreamingPropertyFiles, WriteFingerprintAssertion,
-    CalculateRuntimeFingerprints)
+    CalculateRuntimeDevicesAndFingerprints)
 
 
 def construct_target_files(secondary=False):
@@ -1334,6 +1334,9 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
       'ro.build.version.incremental=version-incremental',
       'ro.build.type=build-type',
       'ro.build.tags=build-tags',
+      'ro.build.version.sdk=30',
+      'ro.build.version.security_patch=2020',
+      'ro.build.date.utc=12345678'
   ]
 
   VENDOR_BUILD_PROP = [
@@ -1345,11 +1348,12 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
   def setUp(self):
     common.OPTIONS.oem_dicts = None
     self.test_dir = common.MakeTempDir()
-    self.writeFiles({'META/misc_info.txt': '\n'.join(self.MISC_INFO)})
+    self.writeFiles({'META/misc_info.txt': '\n'.join(self.MISC_INFO)},
+                    self.test_dir)
 
-  def writeFiles(self, contents_dict):
+  def writeFiles(self, contents_dict, out_dir):
     for path, content in contents_dict.items():
-      abs_path = os.path.join(self.test_dir, path)
+      abs_path = os.path.join(out_dir, path)
       dir_name = os.path.dirname(abs_path)
       if not os.path.exists(dir_name):
         os.makedirs(dir_name)
@@ -1371,12 +1375,14 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
     self.writeFiles({
         'SYSTEM/build.prop': '\n'.join(build_prop),
         'VENDOR/build.prop': '\n'.join(self.VENDOR_BUILD_PROP),
-    })
-    common.OPTIONS.info_dict = common.LoadInfoDict(self.test_dir)
+    }, self.test_dir)
 
-    self.assertEqual({
-        self.constructFingerprint('product-brand/product-name/product-device')
-    }, CalculateRuntimeFingerprints())
+    build_info = common.BuildInfo(common.LoadInfoDict(self.test_dir))
+    expected = ({'product-device'},
+                {self.constructFingerprint(
+                    'product-brand/product-name/product-device')})
+    self.assertEqual(expected,
+                     CalculateRuntimeDevicesAndFingerprints(build_info, {}))
 
   def test_CalculatePossibleFingerprints_single_override(self):
     vendor_build_prop = copy.deepcopy(self.VENDOR_BUILD_PROP)
@@ -1390,20 +1396,22 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
         'ro.product.vendor.name=vendor-product-std',
         'VENDOR/etc/build_pro.prop':
         'ro.product.vendor.name=vendor-product-pro',
-    })
-    common.OPTIONS.info_dict = common.LoadInfoDict(self.test_dir)
-    common.OPTIONS.boot_variable_values = {
-        'ro.boot.sku_name': ['std', 'pro']
-    }
+    }, self.test_dir)
 
-    self.assertEqual({
+    build_info = common.BuildInfo(common.LoadInfoDict(self.test_dir))
+    boot_variable_values = {'ro.boot.sku_name': ['std', 'pro']}
+
+    expected = ({'vendor-product-device'}, {
         self.constructFingerprint(
             'vendor-product-brand/vendor-product-name/vendor-product-device'),
         self.constructFingerprint(
             'vendor-product-brand/vendor-product-std/vendor-product-device'),
         self.constructFingerprint(
             'vendor-product-brand/vendor-product-pro/vendor-product-device'),
-    }, CalculateRuntimeFingerprints())
+    })
+    self.assertEqual(
+        expected, CalculateRuntimeDevicesAndFingerprints(
+            build_info, boot_variable_values))
 
   def test_CalculatePossibleFingerprints_multiple_overrides(self):
     vendor_build_prop = copy.deepcopy(self.VENDOR_BUILD_PROP)
@@ -1422,14 +1430,17 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
         'ro.product.vendor.name=vendor-product-pro',
         'VENDOR/etc/build_product2.prop':
         'ro.product.vendor.device=vendor-device-product2',
-    })
-    common.OPTIONS.info_dict = common.LoadInfoDict(self.test_dir)
-    common.OPTIONS.boot_variable_values = {
+    }, self.test_dir)
+
+    build_info = common.BuildInfo(common.LoadInfoDict(self.test_dir))
+    boot_variable_values = {
         'ro.boot.sku_name': ['std', 'pro'],
         'ro.boot.device_name': ['product1', 'product2'],
     }
 
-    self.assertEqual({
+    expected_devices = {'vendor-product-device', 'vendor-device-product1',
+                        'vendor-device-product2'}
+    expected_fingerprints = {
         self.constructFingerprint(
             'vendor-product-brand/vendor-product-name/vendor-product-device'),
         self.constructFingerprint(
@@ -1439,5 +1450,108 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
         self.constructFingerprint(
             'vendor-product-brand/vendor-product-std/vendor-device-product2'),
         self.constructFingerprint(
-            'vendor-product-brand/vendor-product-pro/vendor-device-product2'),
-    }, CalculateRuntimeFingerprints())
+            'vendor-product-brand/vendor-product-pro/vendor-device-product2')
+    }
+    self.assertEqual((expected_devices, expected_fingerprints),
+                     CalculateRuntimeDevicesAndFingerprints(
+                         build_info, boot_variable_values))
+
+  def test_GetPackageMetadata_full_package(self):
+    vendor_build_prop = copy.deepcopy(self.VENDOR_BUILD_PROP)
+    vendor_build_prop.extend([
+        'import /vendor/etc/build_${ro.boot.sku_name}.prop',
+    ])
+    self.writeFiles({
+        'SYSTEM/build.prop': '\n'.join(self.BUILD_PROP),
+        'VENDOR/build.prop': '\n'.join(vendor_build_prop),
+        'VENDOR/etc/build_std.prop':
+        'ro.product.vendor.name=vendor-product-std',
+        'VENDOR/etc/build_pro.prop':
+        'ro.product.vendor.name=vendor-product-pro',
+    }, self.test_dir)
+
+    common.OPTIONS.boot_variable_file = common.MakeTempFile()
+    with open(common.OPTIONS.boot_variable_file, 'w') as f:
+      f.write('ro.boot.sku_name=std,pro')
+
+    build_info = common.BuildInfo(common.LoadInfoDict(self.test_dir))
+    metadata = GetPackageMetadata(build_info)
+    self.assertEqual('vendor-product-device', metadata['pre-device'])
+    fingerprints = [
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-name/vendor-product-device'),
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-pro/vendor-product-device'),
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-std/vendor-product-device'),
+    ]
+    self.assertEqual('|'.join(fingerprints), metadata['post-build'])
+
+  def test_GetPackageMetadata_incremental_package(self):
+    vendor_build_prop = copy.deepcopy(self.VENDOR_BUILD_PROP)
+    vendor_build_prop.extend([
+        'import /vendor/etc/build_${ro.boot.sku_name}.prop',
+    ])
+    self.writeFiles({
+        'SYSTEM/build.prop': '\n'.join(self.BUILD_PROP),
+        'VENDOR/build.prop': '\n'.join(vendor_build_prop),
+        'VENDOR/etc/build_std.prop':
+        'ro.product.vendor.device=vendor-device-std',
+        'VENDOR/etc/build_pro.prop':
+        'ro.product.vendor.device=vendor-device-pro',
+    }, self.test_dir)
+
+    common.OPTIONS.boot_variable_file = common.MakeTempFile()
+    with open(common.OPTIONS.boot_variable_file, 'w') as f:
+      f.write('ro.boot.sku_name=std,pro')
+
+    source_dir = common.MakeTempDir()
+    source_build_prop = [
+        'ro.build.version.release=source-version-release',
+        'ro.build.id=source-build-id',
+        'ro.build.version.incremental=source-version-incremental',
+        'ro.build.type=build-type',
+        'ro.build.tags=build-tags',
+        'ro.build.version.sdk=29',
+        'ro.build.version.security_patch=2020',
+        'ro.build.date.utc=12340000'
+    ]
+    self.writeFiles({
+        'META/misc_info.txt': '\n'.join(self.MISC_INFO),
+        'SYSTEM/build.prop': '\n'.join(source_build_prop),
+        'VENDOR/build.prop': '\n'.join(vendor_build_prop),
+        'VENDOR/etc/build_std.prop':
+        'ro.product.vendor.device=vendor-device-std',
+        'VENDOR/etc/build_pro.prop':
+        'ro.product.vendor.device=vendor-device-pro',
+    }, source_dir)
+    common.OPTIONS.incremental_source = source_dir
+
+    target_info = common.BuildInfo(common.LoadInfoDict(self.test_dir))
+    source_info = common.BuildInfo(common.LoadInfoDict(source_dir))
+
+    metadata = GetPackageMetadata(target_info, source_info)
+    self.assertEqual(
+        'vendor-device-pro|vendor-device-std|vendor-product-device',
+        metadata['pre-device'])
+    suffix = ':source-version-release/source-build-id/' \
+             'source-version-incremental:build-type/build-tags'
+    pre_fingerprints = [
+        'vendor-product-brand/vendor-product-name/vendor-device-pro'
+        '{}'.format(suffix),
+        'vendor-product-brand/vendor-product-name/vendor-device-std'
+        '{}'.format(suffix),
+        'vendor-product-brand/vendor-product-name/vendor-product-device'
+        '{}'.format(suffix),
+    ]
+    self.assertEqual('|'.join(pre_fingerprints), metadata['pre-build'])
+
+    post_fingerprints = [
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-name/vendor-device-pro'),
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-name/vendor-device-std'),
+        self.constructFingerprint(
+            'vendor-product-brand/vendor-product-name/vendor-product-device'),
+    ]
+    self.assertEqual('|'.join(post_fingerprints), metadata['post-build'])

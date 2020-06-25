@@ -94,10 +94,24 @@ endif
 
 TARGET_BUILD_APPS ?=
 
+# Set to true for an unbundled build, i.e. a build without
+# support for platform targets like the system image. This also
+# disables consistency checks that only apply to full platform
+# builds.
+TARGET_BUILD_UNBUNDLED ?=
+
+# TARGET_BUILD_APPS implies unbundled build, otherwise we default
+# to bundled (i.e. platform targets such as the system image are
+# included).
+ifneq ($(TARGET_BUILD_APPS),)
+  TARGET_BUILD_UNBUNDLED := true
+endif
+
 .KATI_READONLY := \
   TARGET_PRODUCT \
   TARGET_BUILD_VARIANT \
-  TARGET_BUILD_APPS
+  TARGET_BUILD_APPS \
+  TARGET_BUILD_UNBUNDLED \
 
 # ---------------------------------------------------------------
 # Set up configuration for host machine.  We don't do cross-
@@ -853,7 +867,7 @@ TARGET_INSTALLER_SYSTEM_OUT := $(TARGET_INSTALLER_OUT)/root/system
   TARGET_INSTALLER_ROOT_OUT \
   TARGET_INSTALLER_SYSTEM_OUT
 
-COMMON_MODULE_CLASSES := TARGET-NOTICE_FILES HOST-NOTICE_FILES HOST-JAVA_LIBRARIES
+COMMON_MODULE_CLASSES := TARGET_NOTICE_FILES HOST_NOTICE_FILES HOST_JAVA_LIBRARIES
 PER_ARCH_MODULE_CLASSES := SHARED_LIBRARIES STATIC_LIBRARIES EXECUTABLES GYP RENDERSCRIPT_BITCODE NATIVE_TESTS HEADER_LIBRARIES RLIB_LIBRARIES DYLIB_LIBRARIES
 .KATI_READONLY := COMMON_MODULE_CLASSES PER_ARCH_MODULE_CLASSES
 

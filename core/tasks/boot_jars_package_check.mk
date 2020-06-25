@@ -13,7 +13,7 @@
 # limitations under the License.
 
 #
-# Rules to check if classes in the boot jars are from the whitelisted packages.
+# Rules to check if classes in the boot jars are from the list of allowed packages.
 #
 
 ifneq ($(SKIP_BOOT_JARS_CHECK),true)
@@ -44,14 +44,14 @@ built_boot_jars := $(foreach j, $(boot_jars), \
   $(call intermediates-dir-for, JAVA_LIBRARIES, $(j),,COMMON)/classes.jar)
 
 script := build/make/core/tasks/check_boot_jars/check_boot_jars.py
-whitelist_file := build/make/core/tasks/check_boot_jars/package_whitelist.txt
+allowed_file := build/make/core/tasks/check_boot_jars/package_allowed_list.txt
 
 $(stamp): PRIVATE_BOOT_JARS := $(built_boot_jars)
 $(stamp): PRIVATE_SCRIPT := $(script)
-$(stamp): PRIVATE_WHITELIST := $(whitelist_file)
-$(stamp) : $(built_boot_jars) $(script) $(whitelist_file)
+$(stamp): PRIVATE_ALLOWED := $(allowed_file)
+$(stamp) : $(built_boot_jars) $(script) $(allowed_file)
 	@echo "Check package name for $(PRIVATE_BOOT_JARS)"
-	$(hide) $(PRIVATE_SCRIPT) $(PRIVATE_WHITELIST) $(PRIVATE_BOOT_JARS)
+	$(hide) $(PRIVATE_SCRIPT) $(PRIVATE_ALLOWED) $(PRIVATE_BOOT_JARS)
 	$(hide) mkdir -p $(dir $@) && touch $@
 
 .PHONY: check-boot-jars
