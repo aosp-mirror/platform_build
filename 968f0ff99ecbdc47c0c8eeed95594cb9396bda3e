@@ -22,6 +22,30 @@
       "revId": "968f0ff99ecbdc47c0c8eeed95594cb9396bda3e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8097165d_037f0cce",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2020-06-25T15:58:55Z",
+      "side": 1,
+      "message": "BOARD_VENDOR_KERNEL_MODULES_LOAD ... yes, fifth spelling correction to this in the lifetime of this patch in sandbox+posting \u003csigh\u003e",
+      "parentUuid": "8969dc02_547a782c",
+      "range": {
+        "startLine": 9,
+        "startChar": 27,
+        "endLine": 9,
+        "endChar": 52
+      },
+      "revId": "968f0ff99ecbdc47c0c8eeed95594cb9396bda3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
