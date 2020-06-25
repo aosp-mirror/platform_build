@@ -46,6 +46,30 @@
       "revId": "968f0ff99ecbdc47c0c8eeed95594cb9396bda3e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d4c1751_a245fc34",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-06-25T18:38:43Z",
+      "side": 1,
+      "message": "I was more thinking that it is not necessary for BOARD_VENDOR_KERNEL_MODULES_LOAD to be defined in order to generate a modules.load.charger file - only BOARD_VENDOR_KERNEL_MODULES, so that there are some kernel modules on /vendor. Not really important though.",
+      "parentUuid": "8097165d_037f0cce",
+      "range": {
+        "startLine": 9,
+        "startChar": 27,
+        "endLine": 9,
+        "endChar": 52
+      },
+      "revId": "968f0ff99ecbdc47c0c8eeed95594cb9396bda3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
