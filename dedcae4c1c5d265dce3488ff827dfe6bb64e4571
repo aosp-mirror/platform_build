@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a2d8064c_ebf539a0",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-06-26T00:43:29Z",
+      "side": 1,
+      "message": "We may add the check under this line.\nThe `check_vndk_version` macro is called multiple times to check the PRODUCT_EXTRA_VNDK_VERSIONS. That is not required for checking only the BOARD_VNDK_VERSION.\n\nAlso, how about adding the check for vendor snapshot directory if BOARD_VNDK_VERSION !\u003d current?",
+      "revId": "dedcae4c1c5d265dce3488ff827dfe6bb64e4571",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
