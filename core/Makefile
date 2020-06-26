@@ -3445,8 +3445,8 @@ my_decompress_tools := \
 $(BUILT_KERNEL_CONFIGS_FILE): .KATI_IMPLICIT_OUTPUTS := $(BUILT_KERNEL_VERSION_FILE)
 $(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
 $(BUILT_KERNEL_CONFIGS_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
-$(BUILT_KERNEL_CONFIGS_FILE): $(EXTRACT_KERNEL) $(INSTALLED_KERNEL_TARGET)
-	$< --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(INSTALLED_KERNEL_TARGET) \
+$(BUILT_KERNEL_CONFIGS_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_TARGET))
+	$< --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(firstword $(INSTALLED_KERNEL_TARGET)) \
 	  --output-configs $@ \
 	  --output-version $(BUILT_KERNEL_VERSION_FILE)
 
