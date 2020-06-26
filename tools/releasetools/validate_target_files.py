@@ -236,6 +236,15 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
 
   logging.info('Done checking %s', script_path)
 
+# Symlink files in `src` to `dst`, if the files do not
+# already exists in `dst` directory.
+def symlinkIfNotExists(src, dst):
+  if not os.path.isdir(src):
+    return
+  for filename in os.listdir(src):
+    if os.path.exists(os.path.join(dst, filename)):
+      continue
+    os.symlink(os.path.join(src, filename), os.path.join(dst, filename))
 
 def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   """Validates the Verified Boot related images.
@@ -257,6 +266,12 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   Raises:
     AssertionError: On any verification failure.
   """
+  # See bug 159299583
+  # After commit 5277d1015, some images (e.g. acpio.img and tos.img) are no
+  # longer copied from RADIO to the IMAGES folder. But avbtool assumes that
+  # images are in IMAGES folder. So we symlink them.
+  symlinkIfNotExists(os.path.join(input_tmp, "RADIO"),
+                    os.path.join(input_tmp, "IMAGES"))
   # Verified boot 1.0 (images signed with boot_signer and verity_signer).
   if info_dict.get('boot_signer') == 'true':
     logging.info('Verifying Verified Boot images...')
