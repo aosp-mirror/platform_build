@@ -361,7 +361,7 @@ $(eval $(call build-properties,\
     $(empty)))
 
 # ----------------------------------------------------------------
-# odm/build.prop
+# odm/etc/build.prop
 #
 _prop_files_ := $(if $(TARGET_ODM_PROP),\
     $(TARGET_ODM_PROP),\
@@ -373,7 +373,9 @@ _prop_vars_ := \
     ADDITIONAL_ODM_PROPERTIES \
     PRODUCT_ODM_PROPERTIES
 
-INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/build.prop
+# Note the 'etc' sub directory. For the reason, see
+# I0733c277baa67c549bb45599abb70aba13fbdbcf
+INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
 $(eval $(call build-properties,\
     odm,\
     $(INSTALLED_ODM_BUILD_PROP_TARGET),\
