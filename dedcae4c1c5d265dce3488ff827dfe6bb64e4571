@@ -16,6 +16,24 @@
       "revId": "dedcae4c1c5d265dce3488ff827dfe6bb64e4571",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b0eb74b_fc348f00",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-06-26T15:21:38Z",
+      "side": 1,
+      "message": "Done.\n\nFor the vendor snapshot directory checking part, I\u0027d like to do in a separate CL.",
+      "parentUuid": "a2d8064c_ebf539a0",
+      "revId": "dedcae4c1c5d265dce3488ff827dfe6bb64e4571",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
