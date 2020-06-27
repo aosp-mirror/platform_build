@@ -371,6 +371,17 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
             partition, info_dict, key_file)
         cmd.extend(['--expected_chain_partition', chained_partition_arg])
 
+    # Handle the boot image with a non-default name, e.g. boot-5.4.img
+    boot_images = info_dict.get("boot_images")
+    if boot_images:
+      # we used the 1st boot image to generate the vbmeta. Rename the filename
+      # to boot.img so that avbtool can find it correctly.
+      first_image_name = boot_images.split()[0]
+      first_image_path = os.path.join(input_tmp, 'IMAGES', first_image_name)
+      assert os.path.isfile(first_image_path)
+      renamed_boot_image_path = os.path.join(input_tmp, 'IMAGES', 'boot.img')
+      os.rename(first_image_path, renamed_boot_image_path)
+
     proc = common.Run(cmd)
     stdoutdata, _ = proc.communicate()
     assert proc.returncode == 0, \
