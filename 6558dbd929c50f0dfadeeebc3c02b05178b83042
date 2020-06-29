@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "861487ee_4c13d001",
+        "filename": "tools/releasetools/validate_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-06-29T19:05:38Z",
+      "side": 1,
+      "message": "nit remove.",
+      "range": {
+        "startLine": 270,
+        "startChar": 75,
+        "endLine": 270,
+        "endChar": 76
+      },
+      "revId": "6558dbd929c50f0dfadeeebc3c02b05178b83042",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2dc7c13a_6f5e9b3c",
+        "filename": "tools/releasetools/validate_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-06-29T19:05:38Z",
+      "side": 1,
+      "message": "nit lenth 80",
+      "range": {
+        "startLine": 273,
+        "startChar": 0,
+        "endLine": 273,
+        "endChar": 89
+      },
+      "revId": "6558dbd929c50f0dfadeeebc3c02b05178b83042",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
