@@ -703,7 +703,7 @@ def LoadInfoDict(input_file, repacking=False):
     for partition in PARTITIONS_WITH_CARE_MAP:
       fingerprint = build_info.GetPartitionFingerprint(partition)
       if fingerprint:
-        d["avb_{}_salt".format(partition)] = sha256(fingerprint).hexdigest()
+        d["avb_{}_salt".format(partition)] = sha256(fingerprint.encode()).hexdigest()
 
   return d
 
