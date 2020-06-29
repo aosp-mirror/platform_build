@@ -70,6 +70,30 @@
       "revId": "d1a463750a89714fa308cabf6c4c485ef11b4668",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e637cff_2ff55a5b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-06-29T11:36:09Z",
+      "side": 1,
+      "message": "The path is not part of the API. We have the right to change the path. But the problem is that many tools (including CTS, VTS, etc.) depend on the path.",
+      "parentUuid": "f72c1582_4863d0b3",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 31
+      },
+      "revId": "d1a463750a89714fa308cabf6c4c485ef11b4668",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
