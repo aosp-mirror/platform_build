@@ -118,6 +118,30 @@
       "revId": "d1a463750a89714fa308cabf6c4c485ef11b4668",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "550eea2c_fbf73e17",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-06-29T11:42:59Z",
+      "side": 1,
+      "message": "No. For the same reason, I think I can\u0027t submit this change (even if the remaining 100+ cases are all fixed). We can\u0027t just break those existing tools.\n\nI am seeking to change the paths for other (non-system) build.prop files only.",
+      "parentUuid": "7fa84f38_bf3cac76",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 31
+      },
+      "revId": "d1a463750a89714fa308cabf6c4c485ef11b4668",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
