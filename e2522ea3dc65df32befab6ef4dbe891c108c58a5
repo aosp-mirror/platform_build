@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3cf6c80_ceee1907",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 783,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-06-29T23:31:52Z",
+      "side": 1,
+      "message": "The code doesn\u0027t belong to this class. Because you are validating all build props in the target-file, while this class is specified to the prop of a single partition. Just move the logic to validate_target_file? And you probably don\u0027t need is_zipfile, since it\u0027s extracted in the caller.",
+      "range": {
+        "startLine": 783,
+        "startChar": 0,
+        "endLine": 783,
+        "endChar": 41
+      },
+      "revId": "e2522ea3dc65df32befab6ef4dbe891c108c58a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
