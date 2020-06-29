@@ -22,6 +22,30 @@
       "revId": "e2522ea3dc65df32befab6ef4dbe891c108c58a5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "46e435b4_de08da83",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 783,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-06-29T23:48:27Z",
+      "side": 1,
+      "message": "I plan to also invoke this method from ota_from_target_files.py, which doesn\u0027t extract the zip... Maybe leave this in common.py but outside this class?",
+      "parentUuid": "a3cf6c80_ceee1907",
+      "range": {
+        "startLine": 783,
+        "startChar": 0,
+        "endLine": 783,
+        "endChar": 41
+      },
+      "revId": "e2522ea3dc65df32befab6ef4dbe891c108c58a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
