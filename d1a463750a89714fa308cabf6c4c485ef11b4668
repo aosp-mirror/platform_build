@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57ca90aa_831a2128",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-29T08:36:14Z",
+      "side": 1,
+      "message": "FYI I see 100+ references in aosp-master for /system/build.prop",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 31
+      },
+      "revId": "d1a463750a89714fa308cabf6c4c485ef11b4668",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
