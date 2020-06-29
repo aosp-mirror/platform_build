@@ -235,12 +235,6 @@ ifdef BOARD_VNDK_VERSION
   else
     ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(BOARD_VNDK_VERSION)
   endif
-  ifdef BOARD_VNDK_RUNTIME_DISABLE
-    ADDITIONAL_VENDOR_PROPERTIES += ro.vndk.lite=true
-  endif
-else
-  ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
-  ADDITIONAL_VENDOR_PROPERTIES += ro.vndk.lite=true
 endif
 
 # Add cpu properties for bionic and ART.
