@@ -94,6 +94,30 @@
       "revId": "d1a463750a89714fa308cabf6c4c485ef11b4668",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7fa84f38_bf3cac76",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-29T11:38:48Z",
+      "side": 1,
+      "message": "Yes, I know, but we care about app compat even when they\u0027re using non-official APIs. Best reach out to compat-team@ about this change and get their take on it",
+      "parentUuid": "2e637cff_2ff55a5b",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 31
+      },
+      "revId": "d1a463750a89714fa308cabf6c4c485ef11b4668",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
