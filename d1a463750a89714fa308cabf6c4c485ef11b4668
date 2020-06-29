@@ -46,6 +46,30 @@
       "revId": "d1a463750a89714fa308cabf6c4c485ef11b4668",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f72c1582_4863d0b3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-06-29T11:31:59Z",
+      "side": 1,
+      "message": "well, no harm done yet 😊\n\nIt makes me wonder though -- if we have hundreds of references ourselves, how many exist in the wild? This seems like a potentially large app compat problem",
+      "parentUuid": "c62fceeb_0b76ede1",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 31
+      },
+      "revId": "d1a463750a89714fa308cabf6c4c485ef11b4668",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
