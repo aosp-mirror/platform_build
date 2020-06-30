@@ -221,10 +221,16 @@ class PropListTestcase(unittest.TestCase):
       stderr_redirect = io.StringIO()
       with contextlib.redirect_stderr(stderr_redirect):
         props = PropList("hello")
+        optional_prop = props.get_props("foo")[2] # the last foo?=false one
 
         # we have duplicated foo=true and foo=true, but that's allowed
         # since they have the same value
         self.assertTrue(override_optional_props(props))
+
+        # foo?=false should be commented out
+        self.assertEqual("# Removed by post_process_props.py because " +
+                         "overridden by foo=true\n#foo?=false",
+                         str(optional_prop))
 
   def test_allowDuplicates(self):
     content = """
