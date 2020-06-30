@@ -88,6 +88,8 @@ def override_optional_props(prop_list, allow_dup=False):
     if len(overriding_props) > 1:
       # duplicated props are allowed when the all have the same value
       if all(overriding_props[0].value == p.value for p in overriding_props):
+        for p in optional_props:
+          p.delete("overridden by %s" % str(overriding_props[0]))
         continue
       # or if dup is explicitly allowed for compat reason
       if allow_dup:
