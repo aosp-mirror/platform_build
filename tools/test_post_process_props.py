@@ -226,5 +226,24 @@ class PropListTestcase(unittest.TestCase):
         # since they have the same value
         self.assertTrue(override_optional_props(props))
 
+  def test_allowDuplicates(self):
+    content = """
+    # comment
+    foo=true
+    bar=false
+    qux?=1
+    foo=false
+    # another comment
+    foo?=false
+    """
+    with patch("post_process_props.open", mock_open(read_data=content)) as m:
+      stderr_redirect = io.StringIO()
+      with contextlib.redirect_stderr(stderr_redirect):
+        props = PropList("hello")
+
+        # we have duplicated foo=true and foo=false, but that's allowed
+        # because it's explicitly allowed
+        self.assertTrue(override_optional_props(props, allow_dup=True))
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
