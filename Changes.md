@@ -1,5 +1,92 @@
 # Build System Changes for Android.mk Writers
 
+## Changes in system properties settings
+
+### Product variables
+
+System properties for each of the partition is supposed to be set via following
+product config variables.
+
+For system partititon,
+
+* `PRODUCT_SYSTEM_PROPERITES`
+* `PRODUCT_SYSTEM_DEFAULT_PROPERTIES` is highly discouraged. Will be deprecated.
+
+For vendor partition,
+
+* `PRODUCT_VENDOR_PROPERTIES`
+* `PRODUCT_PROPERTY_OVERRIDES` is highly discouraged. Will be deprecated.
+* `PRODUCT_DEFAULT_PROPERTY_OVERRIDES` is also discouraged. Will be deprecated.
+
+For odm partition,
+
+* `PRODUCT_ODM_PROPERTIES`
+
+For system_ext partition,
+
+* `PRODUCT_SYSTEM_EXT_PROPERTIES`
+
+For product partition,
+
+* `PRODUCT_PRODUCT_PROPERTIES`
+
+### Duplication is not allowed within a partition
+
+For each partition, having multiple sysprop assignments for the same name is
+prohibited. For example, the following will now trigger an error:
+
+`PRODUCT_VENDOR_PROPERTIES += foo=true foo=false`
+
+Having duplication across partitions are still allowed. So, the following is
+not an error:
+
+`PRODUCT_VENDOR_PROPERTIES += foo=true`
+`PRODUCT_SYSTEM_PROPERTIES += foo=false`
+
+In that case, the final value is determined at runtime. The precedence is
+
+* product
+* odm
+* vendor
+* system_ext
+* system
+
+So, `foo` becomes `true` because vendor has higher priority than system.
+
+To temporarily turn the build-time restriction off, use
+
+`BUILD_BROKEN_DUP_SYSPROP := true`
+
+### Optional assignments
+
+System properties can now be set as optional using the new syntax:
+
+`name ?= value`
+
+Then the system property named `name` gets the value `value` only when there
+is no other non-optional assignments having the same name. For example, the
+following is allowed and `foo` gets `true`
+
+`PRODUCT_VENDOR_PROPERTIES += foo=true foo?=false`
+
+Note that the order between the optional and the non-optional assignments
+doesn't matter. The following gives the same result as above.
+
+`PRODUCT_VENDOR_PROPERTIES += foo?=false foo=true`
+
+Optional assignments can be duplicated and in that case their order matters.
+Specifically, the last one eclipses others.
+
+`PRODUCT_VENDOR_PROPERTIES += foo?=apple foo?=banana foo?=mango`
+
+With above, `foo` becomes `mango` since its the last one.
+
+Note that this behavior is different from the previous behavior of preferring
+the first one. To go back to the original behavior for compatability reason,
+use:
+
+`BUILD_BROKEN_DUP_SYSPROP := true`
+
 ## ELF prebuilts in PRODUCT_COPY_FILES
 
 ELF prebuilts in PRODUCT_COPY_FILES that are installed into these paths are an
