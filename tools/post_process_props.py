@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
 import sys
 
 # Usage: post_process_props.py file.prop [disallowed_key, ...]
@@ -69,7 +70,7 @@ def validate(prop_list):
 
   return check_pass
 
-def override_optional_props(prop_list):
+def override_optional_props(prop_list, allow_dup=False):
   """Override a?=b with a=c, if the latter exists
 
   Overriding is done by deleting a?=b
@@ -88,6 +89,15 @@ def override_optional_props(prop_list):
       # duplicated props are allowed when the all have the same value
       if all(overriding_props[0].value == p.value for p in overriding_props):
         continue
+      # or if dup is explicitly allowed for compat reason
+      if allow_dup:
+        # this could left one or more optional props unresolved.
+        # Convert them into non-optional because init doesn't understand ?=
+        # syntax
+        for p in optional_props:
+          p.optional = False
+        continue
+
       success = False
       sys.stderr.write("error: found duplicate sysprop assignments:\n")
       for p in overriding_props:
@@ -198,25 +208,30 @@ class PropList:
         f.write(str(p) + "\n")
 
 def main(argv):
-  filename = argv[1]
+  parser = argparse.ArgumentParser(description="Post-process build.prop file")
+  parser.add_argument("--allow-dup", dest="allow_dup", action="store_true",
+                      default=False)
+  parser.add_argument("filename")
+  parser.add_argument("disallowed_keys", metavar="KEY", type=str, nargs="*")
+  args = parser.parse_args()
 
-  if not filename.endswith("/build.prop"):
+  if not args.filename.endswith("/build.prop"):
     sys.stderr.write("bad command line: " + str(argv) + "\n")
     sys.exit(1)
 
-  props = PropList(filename)
+  props = PropList(args.filename)
   mangle_build_prop(props)
-  if not override_optional_props(props):
+  if not override_optional_props(props, args.allow_dup):
     sys.exit(1)
   if not validate(props):
     sys.exit(1)
 
   # Drop any disallowed keys
-  for key in argv[2:]:
+  for key in args.disallowed_keys:
     for p in props.get_props(key):
       p.delete("%s is a disallowed key" % key)
 
-  props.write(filename)
+  props.write(args.filename)
 
 if __name__ == "__main__":
   main(sys.argv)
