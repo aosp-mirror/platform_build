@@ -407,6 +407,16 @@ $(hide) echo '' >> $6
 
 endef
 
+# -----------------------------------------------------------------
+# Merge an individual apkcerts output into the final apkcerts.txt output.
+# Use a macro to make it compatible with _apkcerts_write_line
+# $1 apkcerts file to be merged
+# $2 output file
+define _apkcerts_merge
+$(hide) cat $1 >> $2
+
+endef
+
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   name := $(name)_debug
@@ -415,6 +425,8 @@ name := $(name)-apkcerts-$(FILE_NAME_TAG)
 intermediates := \
 	$(call intermediates-dir-for,PACKAGING,apkcerts)
 APKCERTS_FILE := $(intermediates)/$(name).txt
+all_apkcerts_files := $(sort $(foreach p,$(PACKAGES),$(PACKAGES.$(p).APKCERTS_FILE)))
+$(APKCERTS_FILE): $(all_apkcerts_files)
 # We don't need to really build all the modules.
 # TODO: rebuild APKCERTS_FILE if any app change its cert.
 $(APKCERTS_FILE):
@@ -422,9 +434,11 @@ $(APKCERTS_FILE):
 	@mkdir -p $(dir $@)
 	@rm -f $@
 	$(foreach p,$(sort $(PACKAGES)),\
-	  $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
-	    $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
-	    $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@)))
+	  $(if $(PACKAGES.$(p).APKCERTS_FILE),\
+	    $(call _apkcerts_merge,$(PACKAGES.$(p).APKCERTS_FILE), $@),\
+	    $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
+	      $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
+	      $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@))))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
