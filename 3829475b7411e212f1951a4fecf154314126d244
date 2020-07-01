@@ -94,6 +94,30 @@
       "revId": "3829475b7411e212f1951a4fecf154314126d244",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f88ea16_a420fbc7",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-01T17:01:49Z",
+      "side": 1,
+      "message": "\"framework\" SGTM.",
+      "parentUuid": "fc8662ff_fda3a9b6",
+      "range": {
+        "startLine": 396,
+        "startChar": 106,
+        "endLine": 396,
+        "endChar": 125
+      },
+      "revId": "3829475b7411e212f1951a4fecf154314126d244",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
