@@ -71,10 +71,22 @@ endef
 define build-properties
 ALL_DEFAULT_INSTALLED_MODULES += $(2)
 
-# TODO(b/117892318): eliminate the call to uniq-pairs-by-first-component when
-# it is guaranteed that there is no dup.
+$(eval # Properties can be assigned using `prop ?= value` or `prop = value` syntax.)
+$(eval # Eliminate spaces around the ?= and = separators.)
 $(foreach name,$(strip $(4)),\
-    $(eval _resolved_$(name) := $$(call collapse-pairs, $$(call uniq-pairs-by-first-component,$$($(name)),=)))\
+    $(eval _temp := $$(call collapse-pairs,$$($(name)),?=))\
+    $(eval _resolved_$(name) := $$(call collapse-pairs,$$(_temp),=))\
+)
+
+$(eval # Implement the legacy behavior when BUILD_BROKEN_DUP_SYSPROP is on.)
+$(eval # Optional assignments are all converted to normal assignments and)
+$(eval # when their duplicates the first one wins)
+$(if $(filter true,$(BUILD_BROKEN_DUP_SYSPROP)),\
+    $(foreach name,$(strip $(4)),\
+        $(eval _temp := $$(subst ?=,=,$$(_resolved_$(name))))\
+        $(eval _resolved_$(name) := $$(call uniq-pairs-by-first-component,$$(_resolved_$(name)),=))\
+    )\
+    $(eval _option := --allow-dup)\
 )
 
 $(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3)
@@ -99,7 +111,7 @@ $(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3
 	        echo "$$(line)" >> $$@;\
 	    )\
 	)
-	$(hide) $(POST_PROCESS_PROPS) $$@ $(5)
+	$(hide) $(POST_PROCESS_PROPS) $$(_option) $$@ $(5)
 	$(hide) echo "# end of file" >> $$@
 endef
 
