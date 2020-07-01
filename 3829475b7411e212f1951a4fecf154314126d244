@@ -46,6 +46,30 @@
       "revId": "3829475b7411e212f1951a4fecf154314126d244",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "616d5fda_b4882749",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-07-01T14:43:25Z",
+      "side": 1,
+      "message": "ok, +colin who might have an opinion.",
+      "parentUuid": "5b55ddec_725dac27",
+      "range": {
+        "startLine": 396,
+        "startChar": 106,
+        "endLine": 396,
+        "endChar": 125
+      },
+      "revId": "3829475b7411e212f1951a4fecf154314126d244",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
