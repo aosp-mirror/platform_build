@@ -26,7 +26,3 @@ endif
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_KERNEL):kernel
-
-# Adjust the Dalvik heap to be appropriate for a tablet.
-$(call inherit-product-if-exists, frameworks/base/build/tablet-dalvik-heap.mk)
-$(call inherit-product-if-exists, frameworks/native/build/tablet-dalvik-heap.mk)
