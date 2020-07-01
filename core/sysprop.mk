@@ -71,10 +71,11 @@ endef
 define build-properties
 ALL_DEFAULT_INSTALLED_MODULES += $(2)
 
-# TODO(b/117892318): eliminate the call to uniq-pairs-by-first-component when
-# it is guaranteed that there is no dup.
+$(eval # Properties can be assigned using `prop ?= value` or `prop = value` syntax.)
+$(eval # Eliminate spaces around the ?= and = separators.)
 $(foreach name,$(strip $(4)),\
-    $(eval _resolved_$(name) := $$(call collapse-pairs, $$(call uniq-pairs-by-first-component,$$($(name)),=)))\
+    $(eval _temp := $$(call collapse-pairs,$$($(name)),?=))\
+    $(eval _resolved_$(name) := $$(call collapse-pairs,$$(_temp),=))\
 )
 
 $(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3)
