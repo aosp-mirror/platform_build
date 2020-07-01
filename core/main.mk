@@ -150,9 +150,6 @@ endif
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
 
-# Bring in dex_preopt.mk
-include $(BUILD_SYSTEM)/dex_preopt.mk
-
 ifneq ($(filter user userdebug eng,$(MAKECMDGOALS)),)
 $(info ***************************************************************)
 $(info ***************************************************************)
@@ -472,6 +469,12 @@ endif
 #
 # Typical build; include any Android.mk files we can find.
 #
+
+# Bring in dex_preopt.mk
+# This creates some modules so it needs to be included after
+# should-install-to-system is defined (in order for base_rules.mk to function
+# properly), but before readonly-final-product-vars is called.
+include $(BUILD_SYSTEM)/dex_preopt.mk
 
 # Strip and readonly a few more variables so they won't be modified.
 $(readonly-final-product-vars)
