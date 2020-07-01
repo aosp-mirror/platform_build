@@ -265,11 +265,11 @@ ifndef LOCAL_IS_HOST_MODULE
       # Most users of LOCAL_NO_STANDARD_LIBRARIES really mean no framework libs,
       # and manually add back the core libs.  The ones that don't are in soong
       # now, so just always assume that they want the default system modules
-      my_system_modules := $(DEFAULT_SYSTEM_MODULES)
+      my_system_modules := $(LEGACY_CORE_PLATFORM_SYSTEM_MODULES)
     else  # LOCAL_NO_STANDARD_LIBRARIES
-      full_java_bootclasspath_libs := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
-      LOCAL_JAVA_LIBRARIES := $(filter-out $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
-      my_system_modules := $(DEFAULT_SYSTEM_MODULES)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,$(LEGACY_CORE_PLATFORM_BOOTCLASSPATH_LIBRARIES) $(FRAMEWORK_LIBRARIES))
+      LOCAL_JAVA_LIBRARIES := $(filter-out $(LEGACY_CORE_PLATFORM_BOOTCLASSPATH_LIBRARIES) $(FRAMEWORK_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
+      my_system_modules := $(LEGACY_CORE_PLATFORM_SYSTEM_MODULES)
     endif  # LOCAL_NO_STANDARD_LIBRARIES
 
     ifneq (,$(TARGET_BUILD_APPS_USE_PREBUILT_SDK))
@@ -352,10 +352,10 @@ else # LOCAL_IS_HOST_MODULE
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
       empty_bootclasspath := ""
     else
-      full_java_bootclasspath_libs := $(call java-lib-header-files,$(addsuffix -hostdex,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES)),true)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,$(addsuffix -hostdex,$(LEGACY_CORE_PLATFORM_BOOTCLASSPATH_LIBRARIES)),true)
     endif
 
-    my_system_modules := $(DEFAULT_SYSTEM_MODULES)
+    my_system_modules := $(LEGACY_CORE_PLATFORM_SYSTEM_MODULES)
     full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
     full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),true)
   else # !USE_CORE_LIB_BOOTCLASSPATH
