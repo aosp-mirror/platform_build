@@ -593,6 +593,9 @@ define check_vndk_version
 endef
 
 ifdef BOARD_VNDK_VERSION
+  ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
+    $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current))
+  endif
   ifneq ($(BOARD_VNDK_VERSION),current)
     $(call check_vndk_version,$(BOARD_VNDK_VERSION))
   endif
