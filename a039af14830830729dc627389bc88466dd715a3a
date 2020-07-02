@@ -46,6 +46,30 @@
       "revId": "a039af14830830729dc627389bc88466dd715a3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5ba3f6a_92698cfd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-02T10:17:48Z",
+      "side": 1,
+      "message": "Thanks. But according to https://cs.android.com/android/_/android/platform/external/mesa3d/+/e1d80571606684af869317837902abc6f6e82017, \n\nlibexpat is statically linked (after Oreo).\n\nAlso, the stack trace you shared doesn\u0027t say anything about libexpat.so. Could you let me know where libexpat.so is dynamically linked?",
+      "parentUuid": "fe0b05de_8819d09c",
+      "range": {
+        "startLine": 9,
+        "startChar": 2,
+        "endLine": 9,
+        "endChar": 35
+      },
+      "revId": "a039af14830830729dc627389bc88466dd715a3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
