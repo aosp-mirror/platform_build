@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6abaed80_76f08d37",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-02T13:57:40Z",
+      "side": 1,
+      "message": "Can we instead have one module per combination (\u003cname\u003e, \u003carch\u003e), where \u003cname\u003e is the name of boot image (\"boot\" or \"art\"), and \u003carch\u003e is the target architecture, and add all files to it? (Instead of having a separate module for .vdex files.) It can be named:\n\n  dexpreopt_bootjars_install.\u003cname\u003e_\u003carch\u003e\n\nAnd it should contain the following files (where * expands to the names of various Java libraries):\n\n  \u003cinstall-dir\u003e/\u003carch\u003e/\u003cname\u003e-*.{art,oat,vdex}\n  \u003cinstall-dir\u003e/\u003cname\u003e-*.vdex\n\nThen perhaps phony module is not needed?",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 0
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be7dbbec_7507ac88",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-02T13:57:40Z",
+      "side": 1,
+      "message": "I think we only need these install logic for the Framework boot image extension that has name \"boot\", but not for the primary ART boot image that has name \"art\" (the latter is installed as a part of ART apex already).\n\nI realize this must sound extremely confusing, as I use ART-specific terms like \"boot image extension\" and \"primary boot image\". They are explained in this doc: go/art-images (firs few sections should be enough).",
+      "range": {
+        "startLine": 16,
+        "startChar": 21,
+        "endLine": 16,
+        "endChar": 24
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83d92d99_3b75f50c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-02T13:57:40Z",
+      "side": 1,
+      "message": "What does this mean?",
+      "range": {
+        "startLine": 22,
+        "startChar": 6,
+        "endLine": 22,
+        "endChar": 29
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "738061af_745eaf1c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-02T13:57:40Z",
+      "side": 1,
+      "message": "Can you list the contents of one such module in the commit message (possibly abbreviated), just to make sure all necessary files are in place. I\u0027m a bit worried that .vdex\u0027es should have both symlinks and non-symlinks.",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 68
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
