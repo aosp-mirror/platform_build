@@ -22,6 +22,30 @@
       "revId": "a039af14830830729dc627389bc88466dd715a3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe0b05de_8819d09c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1043346
+      },
+      "writtenOn": "2020-07-02T09:44:25Z",
+      "side": 1,
+      "message": "I use i965_dri.so (src/mesa/drivers/dri/i965/Android.mk)\nAnd it use libexpat (src/mesa/drivers/dri/Android.mk)\n\ni965_dri.so is opened by dri2_initialize_android()\n\nIf libexpat didn\u0027t include in sp-hal,\nI encounter the below logs. (This log is Android 10, but I think that master also same situation)\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n07-02 09:38:00.939   290   290 D libEGL  : loaded /vendor/lib64/egl/libGLES_mesa.so\n07-02 09:38:00.950   290   290 W EGL-MAIN: DRI2: failed to open i965 (search paths /vendor/lib64/dri)\n07-02 09:38:00.950   290   290 W EGL-MAIN: Failed to open desired DRM device, using fallback\n07-02 09:38:00.951   290   290 W EGL-MAIN: DRI2: failed to open i965 (search paths /vendor/lib64/dri)\n07-02 09:38:00.951   290   290 W libEGL  : eglInitialize(0x7f5dcadbf000) failed (EGL_NOT_INITIALIZED)\n07-02 09:38:00.951   290   290 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 290 (surfaceflinger), pid 290 (surfaceflinger)\n07-02 09:38:00.960   303   303 I crash_dump64: performing dump of process 290 (target tid \u003d 290)\n07-02 09:38:00.960   303   303 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***\n07-02 09:38:00.960   303   303 F DEBUG   : Build fingerprint: \u0027LGE/lac_car_intel_mesa/lac_intel_mesa:10/QP1A.190711.020/eng.min.yu.20200702.180444:userdebug/test-keys\u0027\n07-02 09:38:00.960   303   303 F DEBUG   : Revision: \u00270\u0027\n07-02 09:38:00.960   303   303 F DEBUG   : ABI: \u0027x86_64\u0027\n07-02 09:38:00.961   303   303 F DEBUG   : Timestamp: 2020-07-02 09:38:00+0000\n07-02 09:38:00.961   303   303 F DEBUG   : pid: 290, tid: 290, name: surfaceflinger  \u003e\u003e\u003e /system/bin/surfaceflinger \u003c\u003c\u003c\n07-02 09:38:00.961   303   303 F DEBUG   : uid: 1000\n07-02 09:38:00.961   303   303 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0\n07-02 09:38:00.961   303   303 F DEBUG   : Cause: null pointer dereference\n07-02 09:38:00.961   303   303 F DEBUG   :     rax 0000000000000000  rbx 0000000000000000  rcx 0000000000000000  rdx 0000000000000000\n07-02 09:38:00.961   303   303 F DEBUG   :     r8  0000000000000000  r9  0000000000000000  r10 0000000000000000  r11 0000000000000246\n07-02 09:38:00.961   303   303 F DEBUG   :     r12 0000000000000000  r13 00007ffce5a49318  r14 00007f5dcad7c440  r15 00007f5dcad7c468\n07-02 09:38:00.961   303   303 F DEBUG   :     rdi 0000000000000000  rsi 0000000000000000\n07-02 09:38:00.961   303   303 F DEBUG   :     rbp 0000000000000000  rsp 00007ffce5a48b68  rip 00007f5dc9596fc1\n07-02 09:38:00.967   303   303 F DEBUG   :\n07-02 09:38:00.967   303   303 F DEBUG   : backtrace:\n07-02 09:38:00.967   303   303 F DEBUG   :       #00 pc 000000000008dfc1  /system/lib64/libc.so (strlen+17) (BuildId: a08a19770d6696739c847e29c3f5f650)\n07-02 09:38:00.967   303   303 F DEBUG   :       #01 pc 0000000000011898  /system/lib64/libutils.so (android::String8::setTo(char const*)+24) (BuildId: 20c01acb58e07a2d146da9c81d857370)\n07-02 09:38:00.967   303   303 F DEBUG   :       #02 pc 000000000014a125  /system/lib64/libsurfaceflinger.so (android::renderengine::gl::GLExtensions::initWithEGLStrings(char const*, char const*)+37) (BuildId: 0d529f152643e29b129bf7f73e7882cb)\n07-02 09:38:00.967   303   303 F DEBUG   :       #03 pc 000000000013eced  /system/lib64/libsurfaceflinger.so (android::renderengine::gl::GLESRenderEngine::create(int, unsigned int, unsigned int)+125) (BuildId: 0d529f152643e29b129bf7f73e7882cb)\n07-02 09:38:00.967   303   303 F DEBUG   :       #04 pc 000000000013eb32  /system/lib64/libsurfaceflinger.so (android::renderengine::RenderEngine::create(int, unsigned int, unsigned int)+146) (BuildId: 0d529f152643e29b129bf7f73e7882cb)\n07-02 09:38:00.967   303   303 F DEBUG   :       #05 pc 00000000000ea313  /system/lib64/libsurfaceflinger.so (android::SurfaceFlinger::init()+1331) (BuildId: 0d529f152643e29b129bf7f73e7882cb)\n07-02 09:38:00.967   303   303 F DEBUG   :       #06 pc 00000000000031d9  /system/bin/surfaceflinger (main+377) (BuildId: 4e6c2550f1649fd903970809a4ec8e3e)\n07-02 09:38:00.967   303   303 F DEBUG   :       #07 pc 000000000008a985  /system/lib64/libc.so (__libc_init+117) (BuildId: a08a19770d6696739c847e29c3f5f650)",
+      "parentUuid": "fb864a24_e0d04034",
+      "range": {
+        "startLine": 9,
+        "startChar": 2,
+        "endLine": 9,
+        "endChar": 35
+      },
+      "revId": "a039af14830830729dc627389bc88466dd715a3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
