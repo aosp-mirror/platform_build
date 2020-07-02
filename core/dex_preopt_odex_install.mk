@@ -189,8 +189,8 @@ ifdef LOCAL_DEX_PREOPT
   my_filtered_optional_uses_libraries := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
     $(LOCAL_OPTIONAL_USES_LIBRARIES))
 
-  # dexpreopt needs the paths to the dex jars of these libraries in case
-  # construct_context.sh needs to pass them to dex2oat.
+  # dexpreopt needs the paths to the dex jars of these libraries in order to
+  # construct class loader context for dex2oat.
   my_extra_dexpreopt_libs := \
     org.apache.http.legacy \
     android.hidl.base-V1.0-java \
