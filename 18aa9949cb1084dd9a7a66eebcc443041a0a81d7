@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "30a4352a_875ea7a7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-02T17:46:17Z",
+      "side": 1,
+      "message": "I think that\u0027s doable, that is one of my options when I started this CL.\nIs there any reason we don\u0027t want phony package? IMO both approaches yield the same effect",
+      "parentUuid": "6abaed80_76f08d37",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 0
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "be7dbbec_7507ac88",
         "filename": "/COMMIT_MSG",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2020-07-02T13:57:40Z",
       "side": 1,
       "message": "I think we only need these install logic for the Framework boot image extension that has name \"boot\", but not for the primary ART boot image that has name \"art\" (the latter is installed as a part of ART apex already).\n\nI realize this must sound extremely confusing, as I use ART-specific terms like \"boot image extension\" and \"primary boot image\". They are explained in this doc: go/art-images (firs few sections should be enough).",
+      "range": {
+        "startLine": 16,
+        "startChar": 21,
+        "endLine": 16,
+        "endChar": 24
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "35fe2461_b1914552",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-02T17:46:17Z",
+      "side": 1,
+      "message": "No that actually makes total sense, TBH I\u0027ve been wondering why there are two set of images, ART APEX and framework boot images. The \"primary\" and \"extension\" relation totally makes sense!\n\nTBH I\u0027m just imitating the original logic, right now DEFAULT_DEX_PREOPT_INSTALLED_IMAGE gets set to \"/apex/com.android.art/.../boot.art /system/framework/.../boot-framework.art\". With this change DEFAULT_DEX_PREOPT_INSTALLED_MODULE gets set to \"dexpreopt_bootjar.art_arm64 dexpreopt_bootjar.boot_arm64\", which correspond to the \"art\" and \"boot\" image.\nI agree the apex image \"art\" is actually a fake install path (it\u0027s pointing to the apex staging directory), so removing it from DEFAULT_DEX_PREOPT_INSTALLED_MODULE is probably harmless, but I\u0027ll suggest we put semantic changes in a follow-up change.\n\nThere\u0027s also an oddity I noticed, when building for userdebug build, the apex installed on device is \"com.android.art.debug\", but the \"art\" image path listed in DEXPREOPT_IMAGE_BUILT_INSTALLED_art_arm still refers to \"com.android.art\". I guess this is harmless though because like you said apex are installed with another rule.\n\nMaybe instead of treating \"art\" image specially here, we should just make soong not output apex images into DEXPREOPT_IMAGE_NAMES?\nRight now the value of DEXPREOPT_IMAGE_NAMES (for aosp_arm64) is \"art boot\", maybe it should not contain \"art\" because it\u0027s apex and installed differently?",
+      "parentUuid": "be7dbbec_7507ac88",
       "range": {
         "startLine": 16,
         "startChar": 21,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "fcb97927_42fcd79b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-02T17:46:17Z",
+      "side": 1,
+      "message": "Verify that the built artifact doesn\u0027t change with Treehugger. This change only affects the build rules, build artifacts (*-target_files-*.zip) shouldn\u0027t change. I compare the contents of *-target_files-*.zip with and without this change",
+      "parentUuid": "83d92d99_3b75f50c",
+      "range": {
+        "startLine": 22,
+        "startChar": 6,
+        "endLine": 22,
+        "endChar": 29
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "738061af_745eaf1c",
         "filename": "/COMMIT_MSG",
         "patchSetId": 4
@@ -82,6 +154,30 @@
       "writtenOn": "2020-07-02T13:57:40Z",
       "side": 1,
       "message": "Can you list the contents of one such module in the commit message (possibly abbreviated), just to make sure all necessary files are in place. I\u0027m a bit worried that .vdex\u0027es should have both symlinks and non-symlinks.",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 68
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "411c5d2d_275c36e7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-02T17:46:17Z",
+      "side": 1,
+      "message": "The list of files is exactly the list I listed in the bug, such as \n- system/framework/arm/boot-core-icu4j.art\n- system/framework/arm/boot-core-icu4j.oat\n- system/framework/arm/boot-core-icu4j.vdex\n- system/framework/arm64/boot-core-icu4j.art\n- system/framework/arm64/boot-core-icu4j.oat\n- system/framework/arm64/boot-core-icu4j.vdex\n- system/framework/boot-core-icu4j.vdex\n\nI make it that vdex symlinks is a dependency of the actual vdex file, so it\u0027s roughly like:\n\nboot-core-icu4j.vdex.dexpreopt_bootjar.boot: system/framework/boot-core-icu4j.vdex system/framework/arm64/boot-core-icu4j.vdex system/framework/arm/boot-core-icu4j.vdex",
+      "parentUuid": "738061af_745eaf1c",
       "range": {
         "startLine": 25,
         "startChar": 0,
