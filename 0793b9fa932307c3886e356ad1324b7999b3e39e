@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "129c8e4e_0d7c72ce",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 525,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-02T14:53:19Z",
+      "side": 1,
+      "message": "This is one example that I\u0027d rather not be implied by TARGET_BUILD_UNBUNDLED. What\u0027s the purpose of this?",
+      "range": {
+        "startLine": 525,
+        "startChar": 4,
+        "endLine": 525,
+        "endChar": 46
+      },
+      "revId": "0793b9fa932307c3886e356ad1324b7999b3e39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f2a38f4_0b286bb4",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-02T14:53:19Z",
+      "side": 1,
+      "message": "We need a flag that allow us to build in reduced manifest trees without affecting dexpreopting. TARGET_BUILD_UNBUNDLED was introduced to be that flag.",
+      "range": {
+        "startLine": 8,
+        "startChar": 15,
+        "endLine": 8,
+        "endChar": 37
+      },
+      "revId": "0793b9fa932307c3886e356ad1324b7999b3e39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
