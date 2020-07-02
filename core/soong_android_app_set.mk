@@ -31,17 +31,9 @@ LOCAL_POST_INSTALL_CMD := unzip -qo -j -d $(dir $(LOCAL_INSTALLED_MODULE)) \
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
-# android_app_set modules are always presigned
-PACKAGES.$(LOCAL_MODULE).CERTIFICATE := PRESIGNED
 PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
-
-ifneq ($(LOCAL_MODULE_STEM),)
-  PACKAGES.$(LOCAL_MODULE).STEM := $(LOCAL_MODULE_STEM)
-else
-  PACKAGES.$(LOCAL_MODULE).STEM := $(LOCAL_MODULE)
-endif
-
-# Set a actual_partition_tag (calculated in base_rules.mk) for the package.
-PACKAGES.$(LOCAL_MODULE).PARTITION := $(actual_partition_tag)
+# We can't know exactly what apk files would be outputted yet.
+# Let extract_apks generate apkcerts.txt and merge it later.
+PACKAGES.$(LOCAL_MODULE).APKCERTS_FILE := $(LOCAL_APKCERTS_FILE)
 
 SOONG_ALREADY_CONV += $(LOCAL_MODULE)
