@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb864a24_e0d04034",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-02T09:27:11Z",
+      "side": 1,
+      "message": "Does it? I don\u0027t see libexpat being depended on from libGLES_mesa. See https://cs.android.com/android/platform/superproject/+/master:external/mesa3d/src/egl/Android.mk",
+      "range": {
+        "startLine": 9,
+        "startChar": 2,
+        "endLine": 9,
+        "endChar": 35
+      },
+      "revId": "a039af14830830729dc627389bc88466dd715a3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
