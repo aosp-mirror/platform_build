@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "ba634beb_1013997d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-03T16:04:13Z",
+      "side": 1,
+      "message": "Right now I think we have too many modules (from looking at the code I got the impression that we have one module per each .art, .oat and .vdex file). See the comments below.\n\nI just want to avoid creating many tiny modules when one large module is enough.",
+      "parentUuid": "30a4352a_875ea7a7",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 0
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "be7dbbec_7507ac88",
         "filename": "/COMMIT_MSG",
         "patchSetId": 4
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "No that actually makes total sense, TBH I\u0027ve been wondering why there are two set of images, ART APEX and framework boot images. The \"primary\" and \"extension\" relation totally makes sense!\n\nTBH I\u0027m just imitating the original logic, right now DEFAULT_DEX_PREOPT_INSTALLED_IMAGE gets set to \"/apex/com.android.art/.../boot.art /system/framework/.../boot-framework.art\". With this change DEFAULT_DEX_PREOPT_INSTALLED_MODULE gets set to \"dexpreopt_bootjar.art_arm64 dexpreopt_bootjar.boot_arm64\", which correspond to the \"art\" and \"boot\" image.\nI agree the apex image \"art\" is actually a fake install path (it\u0027s pointing to the apex staging directory), so removing it from DEFAULT_DEX_PREOPT_INSTALLED_MODULE is probably harmless, but I\u0027ll suggest we put semantic changes in a follow-up change.\n\nThere\u0027s also an oddity I noticed, when building for userdebug build, the apex installed on device is \"com.android.art.debug\", but the \"art\" image path listed in DEXPREOPT_IMAGE_BUILT_INSTALLED_art_arm still refers to \"com.android.art\". I guess this is harmless though because like you said apex are installed with another rule.\n\nMaybe instead of treating \"art\" image specially here, we should just make soong not output apex images into DEXPREOPT_IMAGE_NAMES?\nRight now the value of DEXPREOPT_IMAGE_NAMES (for aosp_arm64) is \"art boot\", maybe it should not contain \"art\" because it\u0027s apex and installed differently?",
       "parentUuid": "be7dbbec_7507ac88",
+      "range": {
+        "startLine": 16,
+        "startChar": 21,
+        "endLine": 16,
+        "endChar": 24
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "885111ec_f21cffe7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-03T16:04:13Z",
+      "side": 1,
+      "message": "\u003e suggest we put semantic changes in a follow-up change\n \nAgreed. I did some investigation and experiments (aosp/1354650) and realized that we have a few obstacles for removing \"art\" image (like USE_ART_APEX_IMAGE variable). The code can be cleaned up, but it\u0027s not that trivial.\n\n\u003e There\u0027s also an oddity I noticed\n\nYes, I suppose that on device it would be named just com.android.art, so on-device paths differ from on-host paths.",
+      "parentUuid": "35fe2461_b1914552",
       "range": {
         "startLine": 16,
         "startChar": 21,
@@ -183,6 +231,122 @@
         "startChar": 0,
         "endLine": 25,
         "endChar": 68
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56a4af17_1f38af3a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-03T16:04:13Z",
+      "side": 1,
+      "message": "Ok, thanks.",
+      "parentUuid": "411c5d2d_275c36e7",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 68
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "be855a2e_68943da4",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-03T16:04:13Z",
+      "side": 1,
+      "message": "Can you keep copy-vdex-file and the logic that skipped vdex installation if my_boot_image_arch is one of TARGET_2ND_ARCH HOST_2ND_ARCH instead of passing another variable my_boot_image_vdex_extra_symlink_arch? It is somewhat easier to read, as you don\u0027t have the extra variable. (And you already have is_primary_arch below.)",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 99
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "741306c0_cbb9a6ad",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-03T16:04:13Z",
+      "side": 1,
+      "message": "Please add the comment like:\n\n  # We don\u0027t have a LOCAL_PATH for the auto-generated modules, so let it be the $(BUILD_SYSTEM).",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 29
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0674ac97_a5d3b15f",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-03T16:04:13Z",
+      "side": 1,
+      "message": "I would expand comment a bit to give more context, something like:\n\n  # Define a module that gathers together all dexpreopt files for a given boot jar.",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 45
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1739a0fc_81e13e62",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-03T16:04:13Z",
+      "side": 1,
+      "message": "This ranges over all .art and .oat file pairs, right? And creates a separate module for each file using $(call dexpreopt-bootjar-module ...). It think what we want instead is either of the two:\n\n  - one module per boot jar, containing .art, .oat, .vdex and .vdex symlink\n  - one module for all boot jars, containing all .art, .oat, .vdex and .vdex symlink files",
+      "range": {
+        "startLine": 42,
+        "startChar": 2,
+        "endLine": 42,
+        "endChar": 64
       },
       "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
