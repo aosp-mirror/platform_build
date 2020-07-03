@@ -285,6 +285,30 @@
     },
     {
       "key": {
+        "uuid": "c144e4fe_431930d7",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-03T18:14:23Z",
+      "side": 1,
+      "message": "I add ..._extra_symlink_... because I don\u0027t want arm image to depend on arm64 image. That is,\n\nboot_arm64 installs .vdex and lib64 symlink.\nboot_arm installs lib symlink and depend on .vdex file which is installed by the arm64 image?\n\nThis would mean I\u0027ll have to create a dependency from boot_arm to boot_arm64, which means I\u0027ll need to pass the primary arch via an extra variable when creating the second arch image.\n\nHow about just merge all arches into one module? Do we need one module per arch?",
+      "parentUuid": "be855a2e_68943da4",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 99
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "741306c0_cbb9a6ad",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 4
