@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "9397e4ec_9334e738",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-05T06:30:28Z",
+      "side": 1,
+      "message": "\u003e (from looking at the code I got the impression that we have one module per each .art, .oat and .vdex file)\n\nRight I\u0027m creating one module for each file that\u0027s being installed (like the way APEX modules are done).\nWhen I\u0027m writing this I try to write as little \"native makefile target\" as possible, and use as much predefined macros as possible.\nMy reasoning is that the more this piece of code is decoupled from native Make syntax (direct manipulation of ALL_MODULES.*.INSTALLED vars) and rely on the Android build system\u0027s abstraction (LOCAL_* vars), the less likely this is going to break in the future.\n\n\u003e I just want to avoid creating many tiny modules when one large module is enough.\n\nFair point, but I\u0027d like to point out that creating one large module that installs all files may actually bloat the build rule more than creating many tiny modules, let me explain..\n\nLet\u0027s say we have module A B C that belong to a boot image.\nIf we have a single meta module M that installs all boot images, then M would install boot-{A,B,C}.{art,odex,vdex}. When A B C depend on M the generated build rule  would be \"{A,B,C}.jar : boot-{A,B,C}.{art,odex,vdex}, which leads to 3xN^2 of dependency edges.\nIf we have one tiny module for each file and a phony module P (or the first \"boot-*.art\") to represent the whole set of files, then A B C would depend on P and P would depend on boot-{A,B,C}.{art,odex,vdex}. The generated build rule would be \"{A,B,C}.jar : P AND P : boot-{A,B,C}.{art,odex,vdex}\", which leads to 4xN dependency edges.\n\nBut I\u0027d also like to point out that as the number of files in the boot image isn\u0027t that big to begin with, this difference is probably neglectable.\nSo all that being said, I don\u0027t have a very strong opinion. I could change this to generate one module per boot image per arch, or just one module per boot image (one module to include both arch)?",
+      "parentUuid": "ba634beb_1013997d",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 0
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "be7dbbec_7507ac88",
         "filename": "/COMMIT_MSG",
         "patchSetId": 4
@@ -141,6 +165,30 @@
       "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07e775f2_3206f736",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-05T06:30:28Z",
+      "side": 1,
+      "message": "got it.",
+      "parentUuid": "885111ec_f21cffe7",
+      "range": {
+        "startLine": 16,
+        "startChar": 21,
+        "endLine": 16,
+        "endChar": 24
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -375,6 +423,30 @@
       "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b738f8c_b7b4d1ae",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-05T06:30:28Z",
+      "side": 1,
+      "message": "replied in comments above",
+      "parentUuid": "1739a0fc_81e13e62",
+      "range": {
+        "startLine": 42,
+        "startChar": 2,
+        "endLine": 42,
+        "endChar": 64
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
