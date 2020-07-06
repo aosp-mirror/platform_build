@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "2b711f4d_ebc57157",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-06T09:17:05Z",
+      "side": 1,
+      "message": "Just one module per boot image (including all arches) seems like a good idea. Especially if it simplifies the implementation.\n\nTo clarify, my previous idea was to have the following dependency structure:\n\n  A.jar : boot-A.{art,oat,vdex}\n  B.jar : boot-B.{art,oat,vdex}\n  C.jar : boot-C.{art,oat,vdex}\n\nIt\u0027s 3*N edges, not 3*N^2. I see the difficulty with the shared .vdex file, but I\u0027d probably put it only int the primary arch dependencies. Merging arches as you suggested is even better.\n\nThanks for pointing out at the possible increase of build graph edges as opposed to the increase of nodes (modules). I think both metrics matter, because parsing .mk files with lots of tiny modules also takes time (and the fact that we do so for apexes doesn\u0027t justify it). Not that I did any measurements, it\u0027s pure speculation.",
+      "parentUuid": "9397e4ec_9334e738",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 0
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "be7dbbec_7507ac88",
         "filename": "/COMMIT_MSG",
         "patchSetId": 4
@@ -345,6 +369,30 @@
       "side": 1,
       "message": "I add ..._extra_symlink_... because I don\u0027t want arm image to depend on arm64 image. That is,\n\nboot_arm64 installs .vdex and lib64 symlink.\nboot_arm installs lib symlink and depend on .vdex file which is installed by the arm64 image?\n\nThis would mean I\u0027ll have to create a dependency from boot_arm to boot_arm64, which means I\u0027ll need to pass the primary arch via an extra variable when creating the second arch image.\n\nHow about just merge all arches into one module? Do we need one module per arch?",
       "parentUuid": "be855a2e_68943da4",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 99
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57ec4f6f_8bc3afeb",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-06T09:17:05Z",
+      "side": 1,
+      "message": "Merging sounds good! I don\u0027t think there is a use case when they would need to be used separately.",
+      "parentUuid": "c144e4fe_431930d7",
       "range": {
         "startLine": 9,
         "startChar": 0,
