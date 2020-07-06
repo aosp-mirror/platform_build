@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "03c28405_cecee4fa",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-07-06T23:29:10Z",
+      "side": 1,
+      "message": "The MODULE_LICENSE_* files are only used for the tarball and for filtering gnu modules from the sdk build. This change is a stepping stone to putting all of that into the build system a la aiuto@\u0027s v2 stuff.\n\nI don\u0027t see how dyndep would work for the tarball because it kind of has 2 dependency lists: a list of files and a list of directories. But that particular makefile doesn\u0027t do anything until you explicitly request the tarball output so calling shell from there does no harm.\n\nIf we didn\u0027t have to worry about the module-level logic, it would be a piece of cake to move the shell call to collect_gpl_sources.mk, but that gnu module tag used in main.mk stops us.\n\nIt looks like the gnu module stuff only gets run for is_sdk_build. If we isolate the shell call to inside that ifdef block, might that limit the performance issue to a suitably small set of targets?\n\nHow many times does the block in main.mk run compared to the block in base_rules.mk ?",
+      "parentUuid": "3254e954_94156ff9",
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d2c8fad4_4de700be",
         "filename": "core/definitions.mk",
         "patchSetId": 3
