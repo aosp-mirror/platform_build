@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8555cd04_7e1e2df4",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 706,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-07-06T13:44:21Z",
+      "side": 1,
+      "message": "Without .encode() this does not work for python3",
+      "parentUuid": "c65947ba_b6dc2815",
+      "range": {
+        "startLine": 706,
+        "startChar": 63,
+        "endLine": 706,
+        "endChar": 72
+      },
+      "revId": "39e21a3a831d8048ace7c1b7c30bebde91462dd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b1d1fd79_8e4e5b74",
         "filename": "tools/releasetools/validate_target_files.py",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "481fca0f_90f046b5",
+        "filename": "tools/releasetools/validate_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-07-06T13:44:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b1d1fd79_8e4e5b74",
+      "range": {
+        "startLine": 414,
+        "startChar": 0,
+        "endLine": 414,
+        "endChar": 35
+      },
+      "revId": "39e21a3a831d8048ace7c1b7c30bebde91462dd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e9c93427_43e93412",
         "filename": "tools/releasetools/validate_target_files.py",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "39e21a3a831d8048ace7c1b7c30bebde91462dd9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "607ee1d5_d3f3aef2",
+        "filename": "tools/releasetools/validate_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-07-06T13:44:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9c93427_43e93412",
+      "range": {
+        "startLine": 437,
+        "startChar": 6,
+        "endLine": 437,
+        "endChar": 11
+      },
+      "revId": "39e21a3a831d8048ace7c1b7c30bebde91462dd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
