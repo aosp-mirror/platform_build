@@ -42,6 +42,24 @@
     },
     {
       "key": {
+        "uuid": "6c792557_39167636",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 523,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-06T19:33:18Z",
+      "side": 1,
+      "message": "I guess you\u0027re referring to https://cs.android.com/android/platform/superproject/+/master:build/soong/android/config.go;l\u003d735;drc\u003d2f748692dd0ebdd9677b44f43e8a49f042727db2. The condition there might very well be wrong, and it should rather look at c.productVariables.Unbundled_build_apps (aka UnbundledBuildApps()). Or, to fit your use case, it needs a new flag that is a subset of TARGET_BUILD_APPS/UnbundledBuildApps().",
+      "parentUuid": "3433a990_86f81d22",
+      "revId": "0c286e6ec594ac8a60de01fb9338533c55c368a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3b9f9880_36652b58",
         "filename": "core/install_jni_libs.mk",
         "patchSetId": 5
@@ -53,6 +71,30 @@
       "writtenOn": "2020-07-06T10:41:17Z",
       "side": 1,
       "message": "https://source.corp.google.com/android/build/soong/java/app.go;l\u003d500;bpv\u003d1;bpt\u003d0",
+      "range": {
+        "startLine": 15,
+        "startChar": 9,
+        "endLine": 15,
+        "endChar": 31
+      },
+      "revId": "0c286e6ec594ac8a60de01fb9338533c55c368a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59ec21d3_ff860351",
+        "filename": "core/install_jni_libs.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-06T19:33:18Z",
+      "side": 1,
+      "message": "Same thing there - it might very well be wrong in Soong.",
+      "parentUuid": "3b9f9880_36652b58",
       "range": {
         "startLine": 15,
         "startChar": 9,

@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63d94abe_295093c3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-06T19:33:18Z",
+      "side": 1,
+      "message": "Note that Soong behaviour when it comes to UnbundledBuild vs UnbundledBuildApps likely isn\u0027t conceptually correct - there may be several UnbundledBuild() checks in Soong that should be UnbundledBuildApps() instead.",
+      "range": {
+        "startLine": 7,
+        "startChar": 35,
+        "endLine": 7,
+        "endChar": 56
+      },
+      "revId": "04fc57f4c3f85acdddb3b710634829b6bbf57984",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e262edda_42c82488",
+        "filename": "core/android_manifest.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-06T19:33:18Z",
+      "side": 1,
+      "message": "What does this entail for system libraries in TARGET_BUILD_UNBUNDLED mode?",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 53
+      },
+      "revId": "04fc57f4c3f85acdddb3b710634829b6bbf57984",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41977ef4_dc97261c",
+        "filename": "core/config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 525,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-06T19:33:18Z",
+      "side": 1,
+      "message": "I\u0027m still dubious about activating this in TARGET_BUILD_UNBUNDLED mode, although tbh its exact semantics isn\u0027t clear to me. Can\u0027t you add a different TARGET_BUILD_something to control it, or else set TARGET_BUILD_USE_PREBUILT_SDK directly in your build environment (and propagate it into Soong)?\n\nBoth here and elsewhere I see several changes from TARGET_BUILD_APPS to TARGET_BUILD_UNBUNDLED that look like they enable \"unbundled\" building in the sense that the resulting apps are to be distributed unbundled from the system image. As I said on the ticket, that was not my intention with TARGET_BUILD_UNBUNDLED; it\u0027s only to allow building in an incomplete tree, nothing else (preferably). E.g. SDK selection should be an orthogonal setting. TARGET_BUILD_UNBUNDLED and the Soong counterpart UnbundledBuild() probably aren\u0027t semantically clean in this regard, but these changes don\u0027t appear to go in the right direction.\n\nIow, my impression is that we have different goals and hence need to introduce another variable for either of them. TARGET_BUILD_UNBUNDLED cannot satisfy both.",
+      "range": {
+        "startLine": 525,
+        "startChar": 4,
+        "endLine": 525,
+        "endChar": 33
+      },
+      "revId": "04fc57f4c3f85acdddb3b710634829b6bbf57984",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
