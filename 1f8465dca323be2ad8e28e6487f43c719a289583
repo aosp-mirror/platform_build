@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "61f4a1be_0ad14a34",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-06T11:37:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f41e414_bb5a33f6",
+      "range": {
+        "startLine": 272,
+        "startChar": 0,
+        "endLine": 272,
+        "endChar": 1
+      },
+      "revId": "1f8465dca323be2ad8e28e6487f43c719a289583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "75b578cf_97442a17",
         "filename": "core/java_common.mk",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "1f8465dca323be2ad8e28e6487f43c719a289583",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f79bdc38_73a97abf",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-06T11:37:42Z",
+      "side": 1,
+      "message": "make it consider core_current as well.\ncore_current is supposed to be treated as other *_current.\n\nhttps://source.corp.google.com/android/build/soong/java/sdk.go;l\u003d405?q\u003dcore-current-stubs-system-modules\u0026sq\u003dpackage:%5Eandroid$",
+      "parentUuid": "75b578cf_97442a17",
+      "range": {
+        "startLine": 291,
+        "startChar": 4,
+        "endLine": 291,
+        "endChar": 84
+      },
+      "revId": "1f8465dca323be2ad8e28e6487f43c719a289583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
