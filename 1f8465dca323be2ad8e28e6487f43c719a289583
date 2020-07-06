@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f41e414_bb5a33f6",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-06T10:55:38Z",
+      "side": 1,
+      "message": "nit: convert tabs into spaces",
+      "range": {
+        "startLine": 272,
+        "startChar": 0,
+        "endLine": 272,
+        "endChar": 1
+      },
+      "revId": "1f8465dca323be2ad8e28e6487f43c719a289583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75b578cf_97442a17",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-06T10:55:38Z",
+      "side": 1,
+      "message": "what will happen when LOCAL_SDK_VERSION is core_current?",
+      "range": {
+        "startLine": 291,
+        "startChar": 4,
+        "endLine": 291,
+        "endChar": 84
+      },
+      "revId": "1f8465dca323be2ad8e28e6487f43c719a289583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
