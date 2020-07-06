@@ -169,6 +169,30 @@
     },
     {
       "key": {
+        "uuid": "59753836_51e67c2a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-06T19:05:50Z",
+      "side": 1,
+      "message": "\u003e But I suggest trying your other idea (adding everything to one module) first\n\nTurns out I *have* to go this route (at least for now). Due to the jacoco coverage files requirement, I need to maintain the `$(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE): $(LOCAL_BUILT_MODULE)` logic so that jacoco of each bootjar is generated. (core/soong_java_prebuilt.mk)\n\nhmm but adding all files to ALL_MODULES.M.INSTALLED would be the O(N^2) edges case, i.e.\n```\nALL_MODULES.M.INSTALLED :\u003d boot-A.art boot-B.art boot-C.art\nALL_MODULES.A.INSTALLED :\u003d A.jar\nALL_MODULES.B.INSTALLED :\u003d B.jar\nALL_MODULES.C.INSTALLED :\u003d C.jar\n\n$(ALL_MODULES.A.INSTALLED) : $(ALL_MODULES.M.INSTALLED)\n$(ALL_MODULES.B.INSTALLED) : $(ALL_MODULES.M.INSTALLED)\n$(ALL_MODULES.C.INSTALLED) : $(ALL_MODULES.M.INSTALLED)\n```\n\nThe CL right now uses O(N) edges because I used an extra Phony module and the phony depends on each module (extra layer of indirection).\n\nSo it\u0027s either\n1. O(N) edges with many tiny modules or\n2. O(N^2) edges with small number of modules\n\nCan\u0027t really tell which is better. Probably go (2) for simplicity.\n\nFeels like the most \"right\" way is to attribute each boot-\u003cmodule\u003e.* back to \u003cmodule\u003e (O(N) edges, no extra module), but this may break jacoco so no :(",
+      "parentUuid": "d793ba9c_65e31d47",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 0
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "be7dbbec_7507ac88",
         "filename": "/COMMIT_MSG",
         "patchSetId": 4
