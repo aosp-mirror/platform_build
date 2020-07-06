@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "3254e954_94156ff9",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T22:13:43Z",
+      "side": 1,
+      "message": "We\u0027d have to get rid of all of the users before removing the MODULE_LICENSE*_GPL/etc files. It\u0027s not performant to read the metadata files in any makefile (other than inside a rule, as that\u0027s executed as needed by ninja -- but the tag isn\u0027t used like that last I checked).\n\nI wonder if this would be a good use case of the dyndep functionality in ninja (we haven\u0027t ported it over to our fork yet). I\u0027m pretty sure it would work for the gpl_source_tgz at least, I haven\u0027t looked at the other users. (I do wonder if the gpl_source_tgz would be better suited as an offline static process rather than inside the build -- I\u0027m not familiar with how it\u0027s used though)",
+      "parentUuid": "31a0333f_8036d581",
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d2c8fad4_4de700be",
         "filename": "core/definitions.mk",
         "patchSetId": 3
