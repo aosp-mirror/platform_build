@@ -1,0 +1,307 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae5e9696_ac5e5045",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "CONV",
+      "range": {
+        "startLine": 9,
+        "startChar": 59,
+        "endLine": 9,
+        "endChar": 63
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc3c8d55_e47c5a01",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "Very neat!",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f433b058_cc7656f0",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "Can we execute this new script like we do the old one, so that the output is in every build result? That makes it much simpler for us to view (and have a go link to the latest results)\n\nThough I guess it also depends on how long it takes the script to run (and whether we\u0027re interested in having it depend on all of the files it reads)",
+      "range": {
+        "startLine": 467,
+        "startChar": 0,
+        "endLine": 472,
+        "endChar": 52
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ca94927_5070663e",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "ifdef/ifndef too",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "535a3b73_fe09c6ee",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "sinclude is used as well (it\u0027s the same as -include)",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c6a6dbc7_f1a0de35",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "define is really just a multi-line variable, so it\u0027s not inherently bad, but I guess it\u0027s a good indication that something abnormal is happening",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "35bc7078_4234799c",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "we can support dist-for-goals in Soong, but they aren\u0027t auto-converted",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7633292b_f8077907",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "I don\u0027t think jni libs are a problem anymore, we should drop them from the my_soong_problems list",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "46912027_47eeb703",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "Any chance a soft-hyphen(/zero-width space) would work here? I see that you\u0027re doing this and the space in COPY_HEADERS for the table headers to wrap, but they look weird when not wrapped.",
+      "range": {
+        "startLine": 101,
+        "startChar": 18,
+        "endLine": 101,
+        "endChar": 19
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7b1e369_e63eb8ad",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "There\u0027s some more nuance here that I was going to ignore, but looking at the results:\n\n  test/sts hasn\u0027t been open-sourced, it should be marked under is_google\n\nThere are a number of projects under device/ and hardware/ that are both AOSP and google|vendor, but I suppose it\u0027s fine to label them as the other categories",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "06fa46dd_997f9f56",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "count",
+      "range": {
+        "startLine": 219,
+        "startChar": 50,
+        "endLine": 219,
+        "endChar": 55
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b35addc4_8d2080a3",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "just drop this in case we ever want to run this on a mac -- out/host/ should be a unique enough prefix",
+      "range": {
+        "startLine": 246,
+        "startChar": 26,
+        "endLine": 246,
+        "endChar": 36
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b91a8f9_e85cad09",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "If we do run this automatically, we need to handle other out directories",
+      "range": {
+        "startLine": 276,
+        "startChar": 17,
+        "endLine": 276,
+        "endChar": 21
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6fa6d993_aaf17cf1",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "Are you actually finding makefiles in the out directory?",
+      "range": {
+        "startLine": 592,
+        "startChar": 6,
+        "endLine": 592,
+        "endChar": 41
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9276eb3_8607de24",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 809,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:06:32Z",
+      "side": 1,
+      "message": "Can you make this configurable so that AOSP results can link to cs.android.com?",
+      "range": {
+        "startLine": 809,
+        "startChar": 28,
+        "endLine": 809,
+        "endChar": 67
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
