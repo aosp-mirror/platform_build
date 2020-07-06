@@ -145,6 +145,30 @@
     },
     {
       "key": {
+        "uuid": "d793ba9c_65e31d47",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-06T17:03:25Z",
+      "side": 1,
+      "message": "\u003e I guess I\u0027ll have to modify dexpreopt_bootjars.go [...]\n\nYes, if you go via that route, then I would just make dexpreopt_bootjars.go generate variables with the necessary contents. But I suggest trying your other idea (adding everything to one module) first, it seems simpler. Have one phony module M and add all necessary files to ALL_MODULES.M.INSTALLED.\n\n\u003e Do we need not to keep this logic?\n\nWe do need to install those files somehow. If you can make it cleaner, feel free to do so (but please make it in a separate Cl, either before or after this one).",
+      "parentUuid": "a6013f3e_35d5da77",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 0
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "be7dbbec_7507ac88",
         "filename": "/COMMIT_MSG",
         "patchSetId": 4
