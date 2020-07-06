@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b47ad30b_18e174a9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1067098
+      },
+      "writtenOn": "2020-07-06T20:02:03Z",
+      "side": 1,
+      "message": "\u003e Patch Set 1:\n\u003e \n\u003e \u003e Patch Set 1:\n\u003e \u003e \n\u003e \u003e We\u0027ve had minimal targets before that pretty quickly stopped working. If we\u0027re going to add one of these generic/reusable makefile we need to have clear guidance for when something belongs in this target. Is that \"never\", unless your new lunch target stops booting to shell successfully? If so, how is that going to be monitored?\n\u003e \n\u003e The guidance could be:\n\u003e If adding to base_system.mk, consider if the component is needed to boot to shell. If so, add it here instead.\n\u003e \n\u003e If something does not fit to base_system.mk, but is required to boot to shell, it should go to the launch target.\n\u003e \n\u003e There will be some monitoring needed. We intend to have CI that will monitor this and fix any issues, but this is not publicly viewable.\n\u003e Also Peter Collingbourne is currently using fvp-eng. He might have another idea...\n\nOne idea may be to consider creating a \"nano\" cuttlefish target that uses this to boot to shell. That should be easier to set up public CI for (on ci.android.com) than FVP.",
+      "revId": "f3d88e59931fc009278068a55ce25b52e102eb56",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
