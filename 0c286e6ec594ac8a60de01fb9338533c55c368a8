@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15b8aa8e_3a26f986",
+        "filename": "core/android_manifest.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-06T10:41:17Z",
+      "side": 1,
+      "message": "https://source.corp.google.com/android/build/soong/java/sdk.go;l\u003d55?q\u003dUnbundledBuild%5C(%5C)\u0026sq\u003dpackage:%5Eandroid$",
+      "range": {
+        "startLine": 48,
+        "startChar": 9,
+        "endLine": 48,
+        "endChar": 38
+      },
+      "revId": "0c286e6ec594ac8a60de01fb9338533c55c368a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3433a990_86f81d22",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 523,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-06T10:41:17Z",
+      "side": 1,
+      "message": "Using the same condition as what Soong has used.",
+      "revId": "0c286e6ec594ac8a60de01fb9338533c55c368a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b9f9880_36652b58",
+        "filename": "core/install_jni_libs.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-06T10:41:17Z",
+      "side": 1,
+      "message": "https://source.corp.google.com/android/build/soong/java/app.go;l\u003d500;bpv\u003d1;bpt\u003d0",
+      "range": {
+        "startLine": 15,
+        "startChar": 9,
+        "endLine": 15,
+        "endChar": 31
+      },
+      "revId": "0c286e6ec594ac8a60de01fb9338533c55c368a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

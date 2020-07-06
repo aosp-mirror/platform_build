@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "277ef9eb_fb2b4c8b",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-06T10:41:17Z",
+      "side": 0,
+      "message": "Turbine has a prebuilt executable now. (https://source.corp.google.com/android/build/soong/java/config/config.go;l\u003d129?q\u003dturbine%20unbundle%20f:%5C.go\u0026sq\u003dpackage:%5Eandroid$)",
+      "revId": "1f8465dca323be2ad8e28e6487f43c719a289583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

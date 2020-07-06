@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "44309d16_9fe723b7",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 525,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-06T10:41:17Z",
+      "side": 1,
+      "message": "Actually, it is equal to UnbundledBuildUsePrebuiltSdks() in Soong, which indicates  using prebuilt sdk instead sdk from source.\n\nIn Soong, UnbundledBuildUsePrebuiltSdks \u003d Unbundled_build \u0026\u0026 ! Unbundled_build_sdks_from_source, so make this use the same condition.",
+      "parentUuid": "129c8e4e_0d7c72ce",
+      "range": {
+        "startLine": 525,
+        "startChar": 4,
+        "endLine": 525,
+        "endChar": 46
+      },
+      "revId": "0793b9fa932307c3886e356ad1324b7999b3e39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8f2a38f4_0b286bb4",
         "filename": "core/dex_preopt_config.mk",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "0793b9fa932307c3886e356ad1324b7999b3e39e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0f81d0f_4355b260",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-06T10:41:17Z",
+      "side": 1,
+      "message": "Let them back to the original.",
+      "parentUuid": "8f2a38f4_0b286bb4",
+      "range": {
+        "startLine": 8,
+        "startChar": 15,
+        "endLine": 8,
+        "endChar": 37
+      },
+      "revId": "0793b9fa932307c3886e356ad1324b7999b3e39e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
