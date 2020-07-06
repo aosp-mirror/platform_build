@@ -121,6 +121,30 @@
     },
     {
       "key": {
+        "uuid": "a6013f3e_35d5da77",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-06T13:19:25Z",
+      "side": 1,
+      "message": "\u003e To clarify, my previous idea was to have the following dependency structure:\n\nAhh thanks for clarifying. I think that\u0027s almost doable, but a problem I can think of is that it might be hard to attribute each boot-\u003cmodule\u003e.{art,odex,vdex} back to the original module.\n\nBecause the image \"stem\" (\"boot\" or possibly other name) is not known to Make and in some cases the installed file is named \"boot.{art,odex,vdex}\" without the middle part that indicates the original module name.\n\nI guess I\u0027ll have to modify dexpreopt_bootjars.go to expose more information if I go this route (attribute each boot-\u003cmodule\u003e.* to \u003cmodule\u003e)?\n\n\nAnother question is, in the original logic there is a dependency of:\n\nboot.art : boot.{odex,vdex} boot-B.{art,odex,vdex} boot-C.{art,odex,vdex}\n\nDo we need not to keep this logic? This makes \"installing boot.art\" to automatically install the whole set of boot images. This is also the reason why I thought there need N^2 edges because for each {A,B,C}.jar need to depend on every boot-{A,B,C}.* ?\n\n\u003e Not that I did any measurements, it\u0027s pure speculation.\n\nNeither do I. And I think the number of files is too small that makes it hard to measure.",
+      "parentUuid": "2b711f4d_ebc57157",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 0
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "be7dbbec_7507ac88",
         "filename": "/COMMIT_MSG",
         "patchSetId": 4
