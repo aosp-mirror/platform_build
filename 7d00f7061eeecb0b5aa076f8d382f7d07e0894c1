@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "e14b8d9e_d98332d1",
+        "filename": "tools/releasetools/test_validate_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-07-06T18:46:37Z",
+      "side": 1,
+      "message": "do we have it in python 2 though...the releasetools test may fail on presubmit.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 24
+      },
+      "revId": "7d00f7061eeecb0b5aa076f8d382f7d07e0894c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e5c1f61e_979bd265",
         "filename": "tools/releasetools/test_validate_target_files.py",
         "patchSetId": 7
