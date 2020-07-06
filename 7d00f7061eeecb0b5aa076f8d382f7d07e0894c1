@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e5c1f61e_979bd265",
+        "filename": "tools/releasetools/test_validate_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-07-06T18:45:16Z",
+      "side": 1,
+      "message": "make the code consistent with L339?",
+      "range": {
+        "startLine": 337,
+        "startChar": 17,
+        "endLine": 337,
+        "endChar": 39
+      },
+      "revId": "7d00f7061eeecb0b5aa076f8d382f7d07e0894c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e4d57c4_8b85de26",
+        "filename": "tools/releasetools/test_validate_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-07-06T18:45:16Z",
+      "side": 1,
+      "message": "newline at the end",
+      "revId": "7d00f7061eeecb0b5aa076f8d382f7d07e0894c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

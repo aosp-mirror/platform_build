@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "4abeff5a_ac8dfd90",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 706,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-07-06T18:45:16Z",
+      "side": 1,
+      "message": "ack",
+      "parentUuid": "8555cd04_7e1e2df4",
+      "range": {
+        "startLine": 706,
+        "startChar": 63,
+        "endLine": 706,
+        "endChar": 72
+      },
+      "revId": "39e21a3a831d8048ace7c1b7c30bebde91462dd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b1d1fd79_8e4e5b74",
         "filename": "tools/releasetools/validate_target_files.py",
         "patchSetId": 3
