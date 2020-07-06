@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "31a0333f_8036d581",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-07-06T21:17:51Z",
+      "side": 1,
+      "message": "Unless we can drop the gnu my_module_tags, we don\u0027t really have a choice. It does add about 2 minutes to an \u0027m -j 70 nothing\u0027 build on my specialist workstation.\n\nI believe the gnu module tag gets used in build/make/core/main.mk\n\nIs it safe to run shell scripts there? Perhaps we can get rid of the tag?",
+      "parentUuid": "309ea733_4c4b5566",
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d2c8fad4_4de700be",
         "filename": "core/definitions.mk",
         "patchSetId": 3
@@ -50,6 +68,24 @@
       "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a974ab09_8d138714",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-07-06T21:17:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2c8fad4_4de700be",
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -73,6 +109,30 @@
       "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a78fe88_bc7d5b65",
+        "filename": "core/tasks/collect_gpl_sources.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-07-06T21:17:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a77b6a1a_05e08806",
+      "range": {
+        "startLine": 21,
+        "startChar": 20,
+        "endLine": 21,
+        "endChar": 35
+      },
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
