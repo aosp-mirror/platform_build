@@ -190,6 +190,24 @@
     },
     {
       "key": {
+        "uuid": "2eee0728_67535638",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-06T21:09:45Z",
+      "side": 1,
+      "message": "And forgot to finish looking through the lists:\n\n  hardware/interfaces is AOSP\n  hardware/libhardware is AOSP\n  hardware/ril is AOSP\n  vendor/widevine is Google",
+      "parentUuid": "c7b1e369_e63eb8ad",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "06fa46dd_997f9f56",
         "filename": "tools/mk2bp_catalog.py",
         "patchSetId": 2
