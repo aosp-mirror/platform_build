@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0535d50b_4fd98229",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-07-06T17:33:45Z",
+      "side": 1,
+      "message": "\u003e Patch Set 6:\n\u003e \n\u003e I\u0027ll monitor instances of these warnings on the buildbots in the coming days, as per https://android-review.googlesource.com/c/platform/build/+/1325807/2/core/main.mk#108.\n\nI\u0027ve started a query with the `bass` tool.",
+      "revId": "bececf9e92457869a644866dabdc3acf7404d2a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
