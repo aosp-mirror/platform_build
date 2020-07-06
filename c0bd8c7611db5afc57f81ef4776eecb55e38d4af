@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d9e0a9c9_73934bcc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-06T23:28:15Z",
+      "side": 1,
+      "message": "Anton, could you vote for the ORV bit?",
+      "revId": "c0bd8c7611db5afc57f81ef4776eecb55e38d4af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
