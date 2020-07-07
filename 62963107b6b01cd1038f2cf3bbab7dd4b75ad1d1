@@ -108,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "ec55acc5_6428c0db",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-07-07T08:07:46Z",
+      "side": 1,
+      "message": "Your suspicion misled you. After moving the logic into main.mk, the difference in performance when not building the source tarball dropped to a few seconds.\n\nBuilding the source tarball increased by about 40s when there was work to do, which is acceptable given that Google does not generally build that target.\n\nI did not know an is_sdk_build target to time, but I expect that subset of builds will also increase by about 30s to 40s when there is work to do. Interestingly, \"build everything cold\" was in the \"only a few seconds\" difference so presumably the is_sdk_build target(s) must be explicitly requested.\n\n$ time m -j 70\nbefore:\n#### build completed successfully (29:35 (mm:ss)) ####\n\nreal\t29m36.028s\nuser\t1578m56.487s\nsys\t90m9.061s\n\nafter:\n#### build completed successfully (29:59 (mm:ss)) ####\n\nreal\t29m58.829s\nuser\t1582m21.025s\nsys\t90m10.685s\n\n\n$ time m -j 70 nothing\nbefore:\nwildcard(out/target/product/taimen/clean_steps.mk) was changed, regenerating...\n[100% 32352/32352] Successfully read the makefiles.\n\n#### build completed successfully (31 seconds) ####\n\nreal\t0m31.852s\nuser\t1m46.418s\nsys\t2m55.229s\n\nafter:\nwildcard(out/target/product/taimen/clean_steps.mk) was changed, regenerating...\n[100% 32352/32352] Successfully read the makefiles.\n\n#### build completed successfully (36 seconds) ####\n\nreal\t0m36.411s\nuser\t1m52.721s\nsys\t2m56.530s\n\n\n$ time m -j 70 out/target/product/taimen/obj/PACKAGING/gpl_source_intermediates/gpl_source.tgz\nbefore:\n#### build completed successfully (13 seconds) ####\n\nreal\t0m13.383s\nuser\t0m36.436s\nsys\t0m11.636s\n\nafter:\n#### build completed successfully (51 seconds) ####\n\n\nreal\t0m51.798s\nuser\t1m11.133s\nsys\t0m21.135s\n\n\n$ time m -j 70 nothing\nbefore:\n#### build completed successfully (4 seconds) ####\n\nreal\t0m3.903s\nuser\t0m26.333s\nsys\t0m10.591s\n\nafter:\n#### build completed successfully (10 seconds) ####\n\nreal\t0m10.734s\nuser\t0m30.721s\nsys\t0m13.057s\n\n\n$ time m -j 70 out/target/product/taimen/obj/PACKAGING/gpl_source_intermediates/gpl_source.tgz\nbefore:\n#### build completed successfully (3 seconds) ####\n\nreal\t0m3.957s\nuser\t0m26.415s\nsys\t0m10.500s\n\nafter:\n#### build completed successfully (10 seconds) ####\n\n\nreal\t0m10.667s\nuser\t0m31.276s\nsys\t0m13.828s\n\n\n$ rm out/target/product/taimen/obj/PACKAGING/gpl_source_intermediates/gpl_source.tgz\n$ time m -j 70 out/target/product/taimen/obj/PACKAGING/gpl_source_intermediates/gpl_source.tgz\nbefore:\n#### build completed successfully (14 seconds) ####\n\nreal\t0m13.506s\nuser\t0m36.483s\nsys\t0m12.292s\n\nafter:\n#### build completed successfully (52 seconds) ####\n\nreal\t0m51.337s\nuser\t1m12.605s\nsys\t0m19.149s\n\n\n$ rm -fr out\n$ time m -j 70 nothing\nbefore:\n#### build completed successfully (02:12 (mm:ss)) ####\n\nreal\t2m12.415s\nuser\t20m59.342s\nsys\t3m0.228s\n\nafter:\n#### build completed successfully (02:18 (mm:ss)) ####\n\nreal\t2m17.927s\nuser\t20m52.324s\nsys\t2m59.086s",
+      "parentUuid": "0d1ebc1b_5f000d91",
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d2c8fad4_4de700be",
         "filename": "core/definitions.mk",
         "patchSetId": 3
