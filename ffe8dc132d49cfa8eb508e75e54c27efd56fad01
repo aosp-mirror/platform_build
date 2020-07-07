@@ -34,6 +34,24 @@
       "revId": "ffe8dc132d49cfa8eb508e75e54c27efd56fad01",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a8dd569_824a74c0",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-07T20:15:27Z",
+      "side": 1,
+      "message": "But you explicitly don\u0027t want a TARGET_BUILD_APPS build, so it seems strange to use a flag called TARGET_BUILD_APPS_USE_PREBUILT_SDK to turn on prebuilt SDKs.\n\nI\u0027d suggest leaving TARGET_BUILD_APPS_USE_PREBUILT_SDK as an internal flag, and add a new flag like UNBUNDLED_BUILD_SDKS_FROM_SOURCE that turns it on for your use case.  TARGET_BUILD_APPS_USE_PREBUILT_SDK could also be renamed to not include TARGET_BUILD_APPS for clarity.",
+      "parentUuid": "f5d5c3e2_80f163ea",
+      "revId": "ffe8dc132d49cfa8eb508e75e54c27efd56fad01",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
