@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4b3cb86_c25db781",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-07T18:43:12Z",
+      "side": 1,
+      "message": "This is already configurable through UNBUNDLED_BUILD_SDKS_FROM_SOURCE, does it also need to be configurable separately?",
+      "revId": "ffe8dc132d49cfa8eb508e75e54c27efd56fad01",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
