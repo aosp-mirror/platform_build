@@ -16,6 +16,24 @@
       "revId": "c0bd8c7611db5afc57f81ef4776eecb55e38d4af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5e4b4aeb_f0494666",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-07-07T10:34:34Z",
+      "side": 1,
+      "message": "Done. I\u0027m not convinced it\u0027s an improvement to have the prop file be in \u003cp\u003e/etc on some partitions but not others, I guess I\u0027m in the \"neutral\" camp :)",
+      "parentUuid": "d9e0a9c9_73934bcc",
+      "revId": "c0bd8c7611db5afc57f81ef4776eecb55e38d4af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
