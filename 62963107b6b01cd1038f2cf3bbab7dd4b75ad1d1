@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "e806690d_0a9b1f63",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-07T23:24:39Z",
+      "side": 1,
+      "message": "Yes, the numbers we\u0027re particularly worried about is this one, where `m nothing` is at a stable state (as that\u0027s the minimum in Edit-Compile-Test cycles):\n\nreal\t0m3.903s\n-\u003e\nreal\t0m10.734s\n\nThat\u0027s a 175% increase in time spent, a significant regression. This is why we don\u0027t support reading other files from makefiles (we\u0027ve optimized reading filesystem state, we can\u0027t optimize $(shell) as they can have arbitrary side-effects)",
+      "parentUuid": "ec55acc5_6428c0db",
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d2c8fad4_4de700be",
         "filename": "core/definitions.mk",
         "patchSetId": 3
