@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aefcdf37_b9b62b37",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-07-07T18:34:16Z",
+      "side": 1,
+      "message": "nit, I\u0027d specify vendor dlkms here",
+      "revId": "a4f32392d8b55cc089152c483cafa5e7a515aad2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
