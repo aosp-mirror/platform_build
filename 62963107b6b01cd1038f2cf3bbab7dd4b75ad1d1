@@ -144,6 +144,24 @@
     },
     {
       "key": {
+        "uuid": "0cc9e624_609d9684",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-07-07T23:52:11Z",
+      "side": 1,
+      "message": "I don\u0027t see a path where we don\u0027t pay that cost. What do you propose?",
+      "parentUuid": "e806690d_0a9b1f63",
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d2c8fad4_4de700be",
         "filename": "core/definitions.mk",
         "patchSetId": 3
