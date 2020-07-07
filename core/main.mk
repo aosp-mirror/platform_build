@@ -781,10 +781,13 @@ $(foreach m,$(ALL_MODULES), \
     $(eval req_files := )\
     $(foreach req_mod,$(req_mods), \
       $(eval req_file := $(filter $(TARGET_OUT_ROOT)/%, $(call module-installed-files,$(req_mod)))) \
-      $(if $(strip $(req_file)),\
-        ,\
-        $(error $(m).LOCAL_TARGET_REQUIRED_MODULES : illegal value $(req_mod) : not a device module. If you want to specify host modules to be required to be installed along with your host module, add those module names to LOCAL_REQUIRED_MODULES instead)\
-      )\
+      $(if $(filter true,$(ALLOW_MISSING_DEPENDENCIES)), \
+        , \
+        $(if $(strip $(req_file)), \
+          , \
+          $(error $(m).LOCAL_TARGET_REQUIRED_MODULES : illegal value $(req_mod) : not a device module. If you want to specify host modules to be required to be installed along with your host module, add those module names to LOCAL_REQUIRED_MODULES instead) \
+        ) \
+      ) \
       $(eval req_files := $(req_files)$(space)$(req_file))\
     )\
     $(eval req_files := $(strip $(req_files)))\
@@ -807,10 +810,13 @@ $(foreach m,$(ALL_MODULES), \
     $(eval req_files := )\
     $(foreach req_mod,$(req_mods), \
       $(eval req_file := $(filter $(HOST_OUT)/%, $(call module-installed-files,$(req_mod)))) \
-      $(if $(strip $(req_file)),\
-        ,\
-        $(error $(m).LOCAL_HOST_REQUIRED_MODULES : illegal value $(req_mod) : not a host module. If you want to specify target modules to be required to be installed along with your target module, add those module names to LOCAL_REQUIRED_MODULES instead)\
-      )\
+      $(if $(filter true,$(ALLOW_MISSING_DEPENDENCIES)), \
+        , \
+        $(if $(strip $(req_file)), \
+          , \
+          $(error $(m).LOCAL_HOST_REQUIRED_MODULES : illegal value $(req_mod) : not a host module. If you want to specify target modules to be required to be installed along with your target module, add those module names to LOCAL_REQUIRED_MODULES instead) \
+        ) \
+      ) \
       $(eval req_files := $(req_files)$(space)$(req_file))\
     )\
     $(eval req_files := $(strip $(req_files)))\
@@ -1673,7 +1679,11 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     $(INSTALLED_FILES_FILE_RECOVERY) \
     $(INSTALLED_FILES_JSON_RECOVERY) \
-    $(INSTALLED_BUILD_PROP_TARGET) \
+    $(INSTALLED_BUILD_PROP_TARGET):build.prop \
+    $(INSTALLED_VENDOR_BUILD_PROP_TARGET):build.prop-vendor \
+    $(INSTALLED_PRODUCT_BUILD_PROP_TARGET):build.prop-product \
+    $(INSTALLED_ODM_BUILD_PROP_TARGET):build.prop-odm \
+    $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET):build.prop-system_ext \
     $(BUILT_TARGET_FILES_PACKAGE) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_MISC_INFO_TARGET) \
