@@ -34,6 +34,24 @@
       "revId": "c0bd8c7611db5afc57f81ef4776eecb55e38d4af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "514b413c_ffbf7d25",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-07T11:20:30Z",
+      "side": 1,
+      "message": "It already has been the case. We have mixed \u003cp\u003e/build.prop and \u003cp\u003e/etc/build.prop. This is a step toward \u003cp\u003e/etc/build.prop for all partitions.",
+      "parentUuid": "5e4b4aeb_f0494666",
+      "revId": "c0bd8c7611db5afc57f81ef4776eecb55e38d4af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
