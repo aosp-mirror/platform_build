@@ -16,6 +16,24 @@
       "revId": "ffe8dc132d49cfa8eb508e75e54c27efd56fad01",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5d5c3e2_80f163ea",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-07T19:12:58Z",
+      "side": 1,
+      "message": "Hmm, actually it was set only if TARGET_BUILD_APPS was set and UNBUNDLED_BUILD_SDKS_FROM_SOURCE wasn\u0027t defined. It means there was no way to configure TARGET_BUILD_APPS_USE_PREBUILT_SDK without TARGET_BUILD_APPS, so that\u0027s why it needs.\n\nBTW, we should raise an error if both UNBUNDLED_BUILD_SDKS_FROM_SOURCE and TARGET_BUILD_APPS_USE_PREBUILT_SDK are set.",
+      "parentUuid": "c4b3cb86_c25db781",
+      "revId": "ffe8dc132d49cfa8eb508e75e54c27efd56fad01",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
