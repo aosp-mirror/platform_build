@@ -162,6 +162,24 @@
     },
     {
       "key": {
+        "uuid": "5431fc21_f28a6856",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-08T01:56:15Z",
+      "side": 1,
+      "message": "That\u0027s why we have the MODULE_LICENSE_GPL files, so we don\u0027t pay that cost. An alternative would be to get rid of the gpl_source.tgz tarball creation (and probably the SDK stuff -- that entire area is significantly crusty and doesn\u0027t particularly match what we ship, so I don\u0027t know how necessary the gpl logic is, or why it\u0027s there in the first place)",
+      "parentUuid": "0cc9e624_609d9684",
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d2c8fad4_4de700be",
         "filename": "core/definitions.mk",
         "patchSetId": 3
