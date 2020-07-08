@@ -52,6 +52,24 @@
       "revId": "ffe8dc132d49cfa8eb508e75e54c27efd56fad01",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f82473a_e5bceb3f",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-08T02:02:25Z",
+      "side": 1,
+      "message": "Introduced UNBUNDLED_BUILD_USE_PREBUILT_SDK indicating prebuilt SDK usage, and renamed TARGET_BUILD_APPS_USE_PREBUILT_SDK to TARGET_BUILD_USE_PREBUILT_SDK(dropped \u0027APPS\u0027).\n\nI am not sure if the name of flags is proper enough.",
+      "parentUuid": "3a8dd569_824a74c0",
+      "revId": "ffe8dc132d49cfa8eb508e75e54c27efd56fad01",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
