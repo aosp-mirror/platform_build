@@ -198,6 +198,24 @@
     },
     {
       "key": {
+        "uuid": "92f424b2_077ef169",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-07-08T16:10:19Z",
+      "side": 1,
+      "message": "There is at least one continuous build using an sdk target. See: http://aosp/1357983",
+      "parentUuid": "b7f51b38_e1cf4e3c",
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d2c8fad4_4de700be",
         "filename": "core/definitions.mk",
         "patchSetId": 3
