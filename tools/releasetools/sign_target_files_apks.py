@@ -383,8 +383,8 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
 
 
 def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
-            is_compressed):
-  unsigned = tempfile.NamedTemporaryFile()
+            is_compressed, apk_name):
+  unsigned = tempfile.NamedTemporaryFile(suffix='_' + apk_name)
   unsigned.write(data)
   unsigned.flush()
 
@@ -402,7 +402,7 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
     unsigned.close()
     unsigned = uncompressed
 
-  signed = tempfile.NamedTemporaryFile()
+  signed = tempfile.NamedTemporaryFile(suffix='_' + apk_name)
 
   # For pre-N builds, don't upgrade to SHA-256 JAR signatures based on the APK's
   # minSdkVersion to avoid increasing incremental OTA update sizes. If an APK
@@ -488,7 +488,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if key not in common.SPECIAL_CERT_STRINGS:
         print("    signing: %-*s (%s)" % (maxsize, name, key))
         signed_data = SignApk(data, key, key_passwords[key], platform_api_level,
-                              codename_to_api_level_map, is_compressed)
+                              codename_to_api_level_map, is_compressed, name)
         common.ZipWriteStr(output_tf_zip, out_info, signed_data)
       else:
         # an APK we're not supposed to sign.
@@ -608,22 +608,22 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif (OPTIONS.remove_avb_public_keys and
           (filename.startswith("BOOT/RAMDISK/avb/") or
            filename.startswith("BOOT/RAMDISK/first_stage_ramdisk/avb/"))):
-        matched_removal = False
-        for key_to_remove in OPTIONS.remove_avb_public_keys:
-          if filename.endswith(key_to_remove):
-            matched_removal = True
-            print("Removing AVB public key from ramdisk: %s" % filename)
-            break
-        if not matched_removal:
-          # Copy it verbatim if we don't want to remove it.
-          common.ZipWriteStr(output_tf_zip, out_info, data)
+      matched_removal = False
+      for key_to_remove in OPTIONS.remove_avb_public_keys:
+        if filename.endswith(key_to_remove):
+          matched_removal = True
+          print("Removing AVB public key from ramdisk: %s" % filename)
+          break
+      if not matched_removal:
+        # Copy it verbatim if we don't want to remove it.
+        common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # Skip verity keyid (for system_root_image use) if we will replace it.
     elif OPTIONS.replace_verity_keyid and filename == "BOOT/cmdline":
       pass
 
     # Skip the care_map as we will regenerate the system/vendor images.
-    elif filename == "META/care_map.pb" or filename == "META/care_map.txt":
+    elif filename in ["META/care_map.pb", "META/care_map.txt"]:
       pass
 
     # Updates system_other.avbpubkey in /product/etc/.
@@ -967,11 +967,10 @@ def ReplaceAvbSigningKeys(misc_info):
     if extra_args:
       print('Setting extra AVB signing args for %s to "%s"' % (
           partition, extra_args))
-      if partition in AVB_FOOTER_ARGS_BY_PARTITION:
-        args_key = AVB_FOOTER_ARGS_BY_PARTITION[partition]
-      else:
-        # custom partition
-        args_key = "avb_{}_add_hashtree_footer_args".format(partition)
+      args_key = AVB_FOOTER_ARGS_BY_PARTITION.get(
+          partition,
+          # custom partition
+          "avb_{}_add_hashtree_footer_args".format(partition))
       misc_info[args_key] = (misc_info.get(args_key, '') + ' ' + extra_args)
 
   for partition in AVB_FOOTER_ARGS_BY_PARTITION:

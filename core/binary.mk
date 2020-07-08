@@ -71,8 +71,12 @@ ifeq (,$(strip $(my_cc))$(strip $(my_cxx)))
   my_pool := $(GOMA_OR_RBE_POOL)
 endif
 
-ifneq (,$(strip $(foreach dir,$(COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
-ifeq (,$(strip $(foreach dir,$(COVERAGE_EXCLUDE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
+# TODO(b/158212027): Remove `$(COVERAGE_PATHS)` from this condition when all users have been moved
+# to `NATIVE_COVERAGE_PATHS`.
+ifneq (,$(strip $(foreach dir,$(COVERAGE_PATHS) $(NATIVE_COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
+# TODO(b/158212027): Remove `$(COVERAGE_EXCLUDE_PATHS)` from this condition when all users have been
+# moved to `NATIVE_COVERAGE_EXCLUDE_PATHS`.
+ifeq (,$(strip $(foreach dir,$(COVERAGE_EXCLUDE_PATHS) $(NATIVE_COVERAGE_EXCLUDE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
   my_native_coverage := true
 else
   my_native_coverage := false
@@ -84,7 +88,7 @@ ifneq ($(NATIVE_COVERAGE),true)
   my_native_coverage := false
 endif
 
-# Exclude directories from manual binder interface whitelisting.
+# Exclude directories from checking allowed manual binder interface lists.
 # TODO(b/145621474): Move this check into IInterface.h when clang-tidy no longer uses absolute paths.
 ifneq (,$(filter $(addsuffix %,$(ALLOWED_MANUAL_INTERFACE_PATHS)),$(LOCAL_PATH)))
   my_cflags += -DDO_NOT_CHECK_MANUAL_BINDER_INTERFACES
@@ -282,8 +286,7 @@ else # LOCAL_IS_HOST_MODULE
 endif
 
 ifneq ($(LOCAL_SDK_VERSION),)
-  my_all_ndk_libraries := \
-      $(NDK_MIGRATED_LIBS) $(addprefix lib,$(NDK_PREBUILT_SHARED_LIBRARIES))
+  my_all_ndk_libraries := $(NDK_KNOWN_LIBS)
   my_ndk_shared_libraries := \
       $(filter $(my_all_ndk_libraries),\
         $(my_shared_libraries) $(my_system_shared_libraries))
@@ -1350,7 +1353,7 @@ my_system_shared_libraries_fullpath := \
 # lists and use addprefix.
 my_ndk_shared_libraries_fullpath := \
     $(foreach _lib,$(my_ndk_shared_libraries),\
-        $(if $(filter $(NDK_MIGRATED_LIBS),$(_lib)),\
+        $(if $(filter $(NDK_KNOWN_LIBS),$(_lib)),\
             $(my_built_ndk_libs)/$(_lib)$(so_suffix),\
             $(my_ndk_sysroot_lib)/$(_lib)$(so_suffix)))
 
@@ -1551,7 +1554,7 @@ my_ldflags := $(filter-out -l%,$(my_ldlib_flags))
 my_allowed_ldlibs :=
 ifndef LOCAL_IS_HOST_MODULE
   ifneq ($(LOCAL_SDK_VERSION),)
-    my_allowed_ldlibs := $(addprefix -l,$(NDK_PREBUILT_SHARED_LIBRARIES))
+    my_allowed_ldlibs := $(NDK_KNOWN_LIBS:lib%=-l%)
   endif
 else
   my_allowed_ldlibs := $($(my_prefix)AVAILABLE_LIBRARIES)
@@ -1799,7 +1802,7 @@ export_include_deps += $(strip \
      $(call intermediates-dir-for,HEADER_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))))
 
 ifneq ($(strip $(my_export_c_include_dirs)$(export_include_deps)),)
-  EXPORTS_LIST := $(EXPORTS_LIST) $(intermediates)
+  EXPORTS_LIST += $(intermediates)
   EXPORTS.$(intermediates).FLAGS := $(foreach d,$(my_export_c_include_dirs),-I $(call clean-path,$(d)))
   EXPORTS.$(intermediates).REEXPORT := $(export_include_deps)
   EXPORTS.$(intermediates).DEPS := $(my_export_c_include_deps) $(my_generated_sources) $(LOCAL_EXPORT_C_INCLUDE_DEPS)

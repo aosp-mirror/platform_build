@@ -173,4 +173,4 @@ $(my_exported_sdk_libs_file):
 		$(hide) echo $(PRIVATE_EXPORTED_SDK_LIBS) | tr ' ' '\n' > $@,\
 		$(hide) touch $@)
 
-SOONG_ALREADY_CONV := $(SOONG_ALREADY_CONV) $(LOCAL_MODULE)
+SOONG_ALREADY_CONV += $(LOCAL_MODULE)

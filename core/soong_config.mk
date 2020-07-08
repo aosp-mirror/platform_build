@@ -39,7 +39,8 @@ $(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
 $(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION))
 
 $(call add_json_bool, Allow_missing_dependencies,        $(ALLOW_MISSING_DEPENDENCIES))
-$(call add_json_bool, Unbundled_build,                   $(TARGET_BUILD_APPS))
+$(call add_json_bool, Unbundled_build,                   $(TARGET_BUILD_UNBUNDLED))
+$(call add_json_bool, Unbundled_build_apps,              $(TARGET_BUILD_APPS))
 $(call add_json_bool, Unbundled_build_sdks_from_source,  $(UNBUNDLED_BUILD_SDKS_FROM_SOURCE))
 $(call add_json_bool, Pdk,                               $(filter true,$(TARGET_BUILD_PDK)))
 
@@ -110,11 +111,17 @@ $(call add_json_bool, DisableScudo,                      $(filter true,$(PRODUCT
 $(call add_json_bool, ClangTidy,                         $(filter 1 true,$(WITH_TIDY)))
 $(call add_json_str,  TidyChecks,                        $(WITH_TIDY_CHECKS))
 
-$(call add_json_bool, NativeLineCoverage,                $(filter true,$(NATIVE_LINE_COVERAGE)))
-$(call add_json_bool, Native_coverage,                   $(filter true,$(NATIVE_COVERAGE)))
+$(call add_json_list, JavaCoveragePaths,                 $(JAVA_COVERAGE_PATHS))
+$(call add_json_list, JavaCoverageExcludePaths,          $(JAVA_COVERAGE_EXCLUDE_PATHS))
+
+$(call add_json_bool, GcovCoverage,                      $(filter true,$(NATIVE_COVERAGE)))
 $(call add_json_bool, ClangCoverage,                     $(filter true,$(CLANG_COVERAGE)))
-$(call add_json_list, CoveragePaths,                     $(COVERAGE_PATHS))
-$(call add_json_list, CoverageExcludePaths,              $(COVERAGE_EXCLUDE_PATHS))
+# TODO(b/158212027): Remove `$(COVERAGE_PATHS)` from this list when all users have been moved to
+# `NATIVE_COVERAGE_PATHS`.
+$(call add_json_list, NativeCoveragePaths,               $(COVERAGE_PATHS) $(NATIVE_COVERAGE_PATHS))
+# TODO(b/158212027): Remove `$(COVERAGE_EXCLUDE_PATHS)` from this list when all users have been
+# moved to `NATIVE_COVERAGE_EXCLUDE_PATHS`.
+$(call add_json_list, NativeCoverageExcludePaths,        $(COVERAGE_EXCLUDE_PATHS) $(NATIVE_COVERAGE_EXCLUDE_PATHS))
 
 $(call add_json_bool, SamplingPGO,                       $(filter true,$(SAMPLING_PGO)))
 
@@ -122,8 +129,6 @@ $(call add_json_bool, ArtUseReadBarrier,                 $(call invert_bool,$(fi
 $(call add_json_bool, Binder32bit,                       $(BINDER32BIT))
 $(call add_json_str,  BtConfigIncludeDir,                $(BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR))
 $(call add_json_list, DeviceKernelHeaders,               $(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS) $(TARGET_PRODUCT_KERNEL_HEADERS))
-$(call add_json_bool, DevicePrefer32BitApps,             $(filter true,$(TARGET_PREFER_32_BIT_APPS)))
-$(call add_json_bool, DevicePrefer32BitExecutables,      $(filter true,$(TARGET_PREFER_32_BIT_EXECUTABLES)))
 $(call add_json_str,  DeviceVndkVersion,                 $(BOARD_VNDK_VERSION))
 $(call add_json_str,  Platform_vndk_version,             $(PLATFORM_VNDK_VERSION))
 $(call add_json_str,  ProductVndkVersion,                $(PRODUCT_PRODUCT_VNDK_VERSION))
@@ -184,7 +189,7 @@ $(call add_json_list, PackageNameOverrides,              $(PRODUCT_PACKAGE_NAME_
 $(call add_json_list, CertificateOverrides,              $(PRODUCT_CERTIFICATE_OVERRIDES))
 
 $(call add_json_bool, EnforceSystemCertificate,          $(ENFORCE_SYSTEM_CERTIFICATE))
-$(call add_json_list, EnforceSystemCertificateWhitelist, $(ENFORCE_SYSTEM_CERTIFICATE_WHITELIST))
+$(call add_json_list, EnforceSystemCertificateAllowList, $(ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST))
 
 $(call add_json_list, ProductHiddenAPIStubs,             $(PRODUCT_HIDDENAPI_STUBS))
 $(call add_json_list, ProductHiddenAPIStubsSystem,       $(PRODUCT_HIDDENAPI_STUBS_SYSTEM))
