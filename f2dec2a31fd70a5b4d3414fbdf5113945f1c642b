@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2a2ebce2_b856e6a3",
+        "filename": "core/config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-08T15:29:56Z",
+      "side": 1,
+      "message": "SDKS? .. because we have SDKS in UNBUNDLED_BUILD_SDKS_FROM_SOURCE?",
+      "range": {
+        "startLine": 522,
+        "startChar": 35,
+        "endLine": 522,
+        "endChar": 38
+      },
+      "revId": "f2dec2a31fd70a5b4d3414fbdf5113945f1c642b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23dd816a_4c7e2acf",
+        "filename": "core/config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 561,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-08T15:29:56Z",
+      "side": 1,
+      "message": "Yeah, with this change, it got much clearer than before",
+      "range": {
+        "startLine": 561,
+        "startChar": 6,
+        "endLine": 561,
+        "endChar": 38
+      },
+      "revId": "f2dec2a31fd70a5b4d3414fbdf5113945f1c642b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
