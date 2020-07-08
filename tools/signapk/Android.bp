@@ -16,7 +16,7 @@
 
 // the signapk tool (a .jar application used to sign packages)
 // ============================================================
-java_library_host {
+java_binary_host {
     name: "signapk",
     srcs: ["src/**/*.java"],
     manifest: "SignApk.mf",
@@ -32,6 +32,7 @@ java_library_host {
     // The post-build signing tools need signapk.jar (and its shared libraries,
     // handled in their own Android.bp files)
     dist: {
+        tag: ".jar",
         targets: ["droidcore"],
     },
 }
