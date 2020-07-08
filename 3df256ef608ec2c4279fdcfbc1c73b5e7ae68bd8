@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ad47c6c_b29f5f37",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-08T11:09:44Z",
+      "side": 1,
+      "message": "Small differences in spelling here vs the make variable. Better avoided?",
+      "range": {
+        "startLine": 44,
+        "startChar": 38,
+        "endLine": 44,
+        "endChar": 56
+      },
+      "revId": "3df256ef608ec2c4279fdcfbc1c73b5e7ae68bd8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

@@ -140,6 +140,30 @@
       "revId": "04fc57f4c3f85acdddb3b710634829b6bbf57984",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "314c740a_7176433a",
+        "filename": "core/config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 525,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-08T11:09:44Z",
+      "side": 1,
+      "message": "Sounds good, thanks!",
+      "parentUuid": "8d89b0a9_c7216d96",
+      "range": {
+        "startLine": 525,
+        "startChar": 4,
+        "endLine": 525,
+        "endChar": 33
+      },
+      "revId": "04fc57f4c3f85acdddb3b710634829b6bbf57984",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
