@@ -74,7 +74,7 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 # On userdebug builds, collect more tombstones by default.
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 PRODUCT_VENDOR_PROPERTIES += \
-    tombstoned.max_tombstone_count=50
+    tombstoned.max_tombstone_count?=50
 endif
 
 PRODUCT_VENDOR_PROPERTIES += \
