@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a180b5da_2c35ed40",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-08T16:05:24Z",
+      "side": 1,
+      "message": "I\u0027d prefer if this was a new feature flag TARGET_BUILD_APPS_DISABLE_PREOPT that was set based on user flags like UNBUNDLED_BUILD_SDKS_FROM_SOURCE.\n\nThe whole point of TARGET_BUILD_APPS_USE_PREBUILT_SDK was to break it out from the overloaded TARGET_BUILD_APPS to make the reason for each usage clear.",
+      "revId": "a5b8adf1972f87cd4943657c70c934c0c03193c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
