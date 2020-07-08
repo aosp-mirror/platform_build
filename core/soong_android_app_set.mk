@@ -31,4 +31,9 @@ LOCAL_POST_INSTALL_CMD := unzip -qo -j -d $(dir $(LOCAL_INSTALLED_MODULE)) \
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
+PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
+# We can't know exactly what apk files would be outputted yet.
+# Let extract_apks generate apkcerts.txt and merge it later.
+PACKAGES.$(LOCAL_MODULE).APKCERTS_FILE := $(LOCAL_APKCERTS_FILE)
+
 SOONG_ALREADY_CONV += $(LOCAL_MODULE)

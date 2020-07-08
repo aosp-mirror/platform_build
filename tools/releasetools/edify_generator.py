@@ -374,12 +374,12 @@ class EdifyGenerator(object):
 
   def _CheckSecondTokenNotSlotSuffixed(self, s, fn):
     lst = s.split(':')
-    assert(len(s) == 4), "{} does not contain 4 tokens".format(s)
+    assert(len(lst) == 4), "{} does not contain 4 tokens".format(s)
     if self.fstab:
-      entry = common.GetEntryForDevice(s[1])
+      entry = common.GetEntryForDevice(self.fstab, lst[1])
       if entry is not None:
         assert not entry.slotselect, \
-          "Use %s because %s is slot suffixed" % (fn, s[1])
+          "Use %s because %s is slot suffixed" % (fn, lst[1])
 
   def WriteRawImage(self, mount_point, fn, mapfn=None):
     """Write the given package file into the partition for the given

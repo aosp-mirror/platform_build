@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# sysprop.mk defines rules for generating <partition>/build.prop files
+# sysprop.mk defines rules for generating <partition>/[etc/]build.prop files
 
 # -----------------------------------------------------------------
 # property_overrides_split_enabled
@@ -59,7 +59,7 @@ define generate-common-build-props
 
 endef
 
-# Rule for generating <partition>/build.prop file
+# Rule for generating <partition>/[etc/]build.prop file
 #
 # $(1): partition name
 # $(2): path to the output
@@ -71,10 +71,22 @@ endef
 define build-properties
 ALL_DEFAULT_INSTALLED_MODULES += $(2)
 
-# TODO(b/117892318): eliminate the call to uniq-pairs-by-first-component when
-# it is guaranteed that there is no dup.
+$(eval # Properties can be assigned using `prop ?= value` or `prop = value` syntax.)
+$(eval # Eliminate spaces around the ?= and = separators.)
 $(foreach name,$(strip $(4)),\
-    $(eval _resolved_$(name) := $$(call collapse-pairs, $$(call uniq-pairs-by-first-component,$$($(name)),=)))\
+    $(eval _temp := $$(call collapse-pairs,$$($(name)),?=))\
+    $(eval _resolved_$(name) := $$(call collapse-pairs,$$(_temp),=))\
+)
+
+$(eval # Implement the legacy behavior when BUILD_BROKEN_DUP_SYSPROP is on.)
+$(eval # Optional assignments are all converted to normal assignments and)
+$(eval # when their duplicates the first one wins)
+$(if $(filter true,$(BUILD_BROKEN_DUP_SYSPROP)),\
+    $(foreach name,$(strip $(4)),\
+        $(eval _temp := $$(subst ?=,=,$$(_resolved_$(name))))\
+        $(eval _resolved_$(name) := $$(call uniq-pairs-by-first-component,$$(_resolved_$(name)),=))\
+    )\
+    $(eval _option := --allow-dup)\
 )
 
 $(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3)
@@ -99,7 +111,7 @@ $(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3
 	        echo "$$(line)" >> $$@;\
 	    )\
 	)
-	$(hide) $(POST_PROCESS_PROPS) $$@ $(5)
+	$(hide) $(POST_PROCESS_PROPS) $$(_option) $$@ $(5)
 	$(hide) echo "# end of file" >> $$@
 endef
 
@@ -301,7 +313,6 @@ $(eval $(call build-properties,system,$(INSTALLED_BUILD_PROP_TARGET),\
 $(_prop_files_),$(_prop_vars_),\
 $(_blacklist_names_)))
 
-
 # -----------------------------------------------------------------
 # vendor/build.prop
 #
@@ -339,7 +350,7 @@ $(eval $(call build-properties,\
     $(PRODUCT_VENDOR_PROPERTY_BLACKLIST)))
 
 # -----------------------------------------------------------------
-# product/build.prop
+# product/etc/build.prop
 #
 
 _prop_files_ := $(if $(TARGET_PRODUCT_PROP),\
@@ -352,7 +363,7 @@ _prop_vars_ := \
     ADDITIONAL_PRODUCT_PROPERTIES \
     PRODUCT_PRODUCT_PROPERTIES
 
-INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/build.prop
+INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/etc/build.prop
 $(eval $(call build-properties,\
     product,\
     $(INSTALLED_PRODUCT_BUILD_PROP_TARGET),\
@@ -361,7 +372,7 @@ $(eval $(call build-properties,\
     $(empty)))
 
 # ----------------------------------------------------------------
-# odm/build.prop
+# odm/etc/build.prop
 #
 _prop_files_ := $(if $(TARGET_ODM_PROP),\
     $(TARGET_ODM_PROP),\
@@ -373,7 +384,7 @@ _prop_vars_ := \
     ADDITIONAL_ODM_PROPERTIES \
     PRODUCT_ODM_PROPERTIES
 
-INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/build.prop
+INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
 $(eval $(call build-properties,\
     odm,\
     $(INSTALLED_ODM_BUILD_PROP_TARGET),\
@@ -382,7 +393,7 @@ $(eval $(call build-properties,\
     $(empty)))
 
 # -----------------------------------------------------------------
-# system_ext/build.prop
+# system_ext/etc/build.prop
 #
 _prop_files_ := $(if $(TARGET_SYSTEM_EXT_PROP),\
     $(TARGET_SYSTEM_EXT_PROP),\
@@ -392,7 +403,7 @@ _prop_files_ := $(if $(TARGET_SYSTEM_EXT_PROP),\
 # TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
 _prop_vars_ := PRODUCT_SYSTEM_EXT_PROPERTIES
 
-INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/build.prop
+INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/etc/build.prop
 $(eval $(call build-properties,\
     system_ext,\
     $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET),\

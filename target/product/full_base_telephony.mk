@@ -20,8 +20,8 @@
 # entirely appropriate to inherit from for on-device configurations.
 
 PRODUCT_VENDOR_PROPERTIES := \
-    keyguard.no_require_sim=true \
-    ro.com.android.dataroaming=true
+    keyguard.no_require_sim?=true \
+    ro.com.android.dataroaming?=true
 
 PRODUCT_COPY_FILES := \
     device/sample/etc/apns-full-conf.xml:system/etc/apns-conf.xml \
