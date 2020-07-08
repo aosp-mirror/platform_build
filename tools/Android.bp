@@ -24,3 +24,35 @@ python_binary_host {
     },
   },
 }
+
+python_binary_host {
+  name: "post_process_props",
+  srcs: ["post_process_props.py"],
+  version: {
+    py2: {
+      enabled: false,
+    },
+    py3: {
+      enabled: true,
+    },
+  },
+}
+
+python_test_host {
+  name: "post_process_props_unittest",
+  main: "test_post_process_props.py",
+  srcs: [
+    "post_process_props.py",
+    "test_post_process_props.py",
+  ],
+  version: {
+    py2: {
+      enabled: false,
+    },
+    py3: {
+      enabled: true,
+    },
+  },
+  test_config: "post_process_props_unittest.xml",
+  test_suites: ["general-tests"],
+}

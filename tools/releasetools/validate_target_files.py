@@ -371,6 +371,17 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
             partition, info_dict, key_file)
         cmd.extend(['--expected_chain_partition', chained_partition_arg])
 
+    # Handle the boot image with a non-default name, e.g. boot-5.4.img
+    boot_images = info_dict.get("boot_images")
+    if boot_images:
+      # we used the 1st boot image to generate the vbmeta. Rename the filename
+      # to boot.img so that avbtool can find it correctly.
+      first_image_name = boot_images.split()[0]
+      first_image_path = os.path.join(input_tmp, 'IMAGES', first_image_name)
+      assert os.path.isfile(first_image_path)
+      renamed_boot_image_path = os.path.join(input_tmp, 'IMAGES', 'boot.img')
+      os.rename(first_image_path, renamed_boot_image_path)
+
     proc = common.Run(cmd)
     stdoutdata, _ = proc.communicate()
     assert proc.returncode == 0, \
@@ -397,6 +408,34 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
           'Verified %s with avbtool (key: %s):\n%s', image, key,
           stdoutdata.rstrip())
 
+def CheckDataDuplicity(lines):
+    build_prop = {}
+    for line in lines:
+      if line.startswith("import") or line.startswith("#"):
+        continue
+      key, value = line.split("=", 1)
+      if key in build_prop:
+        return key
+      build_prop[key] = value
+
+def CheckBuildPropDuplicity(input_tmp):
+  """Check all buld.prop files inside directory input_tmp, raise error
+  if they contain duplicates"""
+
+  if not os.path.isdir(input_tmp):
+    raise ValueError("Expect {} to be a directory".format(input_tmp))
+  for name in os.listdir(input_tmp):
+    if not name.isupper():
+      continue
+    for prop_file in ['build.prop', 'etc/build.prop']:
+      path = os.path.join(input_tmp, name, prop_file)
+      if not os.path.exists(path):
+        continue
+      logging.info("Checking {}".format(path))
+      with open(path, 'r') as fp:
+        dupKey = CheckDataDuplicity(fp.readlines())
+        if dupKey:
+          raise ValueError("{} contains duplicate keys for {}", path, dupKey)
 
 def main():
   parser = argparse.ArgumentParser(
@@ -435,6 +474,8 @@ def main():
   info_dict = common.LoadInfoDict(input_tmp)
   with zipfile.ZipFile(args.target_files, 'r') as input_zip:
     ValidateFileConsistency(input_zip, input_tmp, info_dict)
+
+  CheckBuildPropDuplicity(input_tmp)
 
   ValidateInstallRecoveryScript(input_tmp, info_dict)
 

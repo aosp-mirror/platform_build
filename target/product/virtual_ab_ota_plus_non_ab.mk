@@ -18,4 +18,4 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
 PRODUCT_OTA_FORCE_NON_AB_PACKAGE := true
 
-PRODUCT_PROPERTY_OVERRIDES += ro.virtual_ab.allow_non_ab=true
+PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.allow_non_ab=true

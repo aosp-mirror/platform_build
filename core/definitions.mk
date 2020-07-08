@@ -110,6 +110,18 @@ ALL_DISABLED_PRESUBMIT_TESTS :=
 # All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
 ALL_COMPATIBILITY_SUITES :=
 
+# All LINK_TYPE entries
+ALL_LINK_TYPES :=
+
+# All exported/imported include entries
+EXPORTS_LIST :=
+
+# All modules already converted to Soong
+SOONG_ALREADY_CONV :=
+
+# ALL_DEPS.*.ALL_DEPS keys
+ALL_DEPS.MODULES :=
+
 ###########################################################
 ## Debugging; prints a variable list to stdout
 ###########################################################
@@ -527,6 +539,14 @@ $(strip \
 endef
 
 ###########################################################
+## Convert install path to on-device path.
+###########################################################
+# $(1): install path
+define install-path-to-on-device-path
+$(patsubst $(PRODUCT_OUT)%,%,$(1))
+endef
+
+###########################################################
 ## The intermediates directory.  Where object files go for
 ## a given target.  We could technically get away without
 ## the "_intermediates" suffix on the directory, but it's
@@ -550,7 +570,7 @@ $(strip \
         $(error $(LOCAL_PATH): Name not defined in call to intermediates-dir-for)) \
     $(eval _idfPrefix := $(call find-idf-prefix,$(3),$(6))) \
     $(eval _idf2ndArchPrefix := $(if $(strip $(5)),$(TARGET_2ND_ARCH_VAR_PREFIX))) \
-    $(if $(filter $(_idfPrefix)-$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
+    $(if $(filter $(_idfPrefix)_$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_COMMON_INTERMEDIATES)) \
       ,$(if $(filter $(_idfClass),$(PER_ARCH_MODULE_CLASSES)),\
           $(eval _idfIntBase := $($(_idf2ndArchPrefix)$(_idfPrefix)_OUT_INTERMEDIATES)) \
@@ -599,7 +619,7 @@ $(strip \
     $(if $(_idfName),, \
         $(error $(LOCAL_PATH): Name not defined in call to generated-sources-dir-for)) \
     $(eval _idfPrefix := $(call find-idf-prefix,$(3),)) \
-    $(if $(filter $(_idfPrefix)-$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
+    $(if $(filter $(_idfPrefix)_$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_COMMON_GEN)) \
       , \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_GEN)) \
@@ -2693,32 +2713,6 @@ $$(PRODUCT_OUT)/$(2) : $$(LOCAL_PATH)/$(1)
 	$$(transform-prebuilt-to-target)
 endef
 
-
-###########################################################
-## API Check
-###########################################################
-
-# eval this to define a rule that runs apicheck.
-#
-# Args:
-#    $(1)  target
-#    $(2)  stable api file
-#    $(3)  api file to be tested
-#    $(4)  stable removed api file
-#    $(5)  removed api file to be tested
-#    $(6)  arguments for apicheck
-#    $(7)  command to run if apicheck failed
-#    $(8)  target dependent on this api check
-#    $(9)  additional dependencies
-define check-api
-$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(4) $(APICHECK) $(9)
-	@echo "Checking API:" $(1)
-	$(hide) ( $(APICHECK_COMMAND) --check-api-files $(6) $(2) $(3) $(4) $(5) || ( $(7) ; exit 38 ) )
-	$(hide) mkdir -p $$(dir $$@)
-	$(hide) touch $$@
-$(8): $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp
-endef
-
 ## Whether to build from source if prebuilt alternative exists
 ###########################################################
 # $(1): module name
@@ -2822,13 +2816,15 @@ endef
 #    and use my_compat_dist_$(suite) to define the others.
 define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,$(eval ALL_COMPATIBILITY_SUITES += $(suite))) \
-  $(eval COMPATIBILITY.$(suite).FILES := \
-    $$(COMPATIBILITY.$(suite).FILES) $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
-      $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f))) \
-      $$(my_compat_dist_test_data_$(suite))) \
-  $(eval COMPATIBILITY.$(suite).MODULES := \
-    $$(COMPATIBILITY.$(suite).MODULES) $$(my_register_name))) \
+  $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,\
+    $(eval ALL_COMPATIBILITY_SUITES += $(suite)) \
+    $(eval COMPATIBILITY.$(suite).FILES :=) \
+    $(eval COMPATIBILITY.$(suite).MODULES :=)) \
+  $(eval COMPATIBILITY.$(suite).FILES += \
+    $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
+    $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f))) \
+    $$(my_compat_dist_test_data_$(suite))) \
+  $(eval COMPATIBILITY.$(suite).MODULES += $$(my_register_name))) \
 $(eval $(my_all_targets) : $(call copy-many-files, \
   $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE),$(my_compat_dist_$(suite))))) \
   $(call copy-many-xml-files-checked, \
@@ -3089,11 +3085,6 @@ endef
 ###########################################################
 ## Other includes
 ###########################################################
-
-# -----------------------------------------------------------------
-# Rules and functions to help copy important files to DIST_DIR
-# when requested.
-include $(BUILD_SYSTEM)/distdir.mk
 
 # Include any vendor specific definitions.mk file
 -include $(TOPDIR)vendor/*/build/core/definitions.mk
