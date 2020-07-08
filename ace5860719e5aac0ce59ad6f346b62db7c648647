@@ -16,6 +16,41 @@
       "revId": "ace5860719e5aac0ce59ad6f346b62db7c648647",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "317b92b6_09c9ce4f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-07-08T10:07:43Z",
+      "side": 1,
+      "message": "\u003e This change should not be submitted before cl/319993696 is merged.\n\nThat CL has landed, so I\u0027ll merge this one. I also found no occurrence of `COVERAGE_PATHS` and `COVERAGE_EXCLUDE_PATHS` in AOSP and downstream branches using `bass`.",
+      "parentUuid": "1c5378e1_c7bdf7b5",
+      "revId": "ace5860719e5aac0ce59ad6f346b62db7c648647",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba4ad3c8_ecfa1c7e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-07-08T10:07:43Z",
+      "side": 1,
+      "message": "Thanks Colin.",
+      "revId": "ace5860719e5aac0ce59ad6f346b62db7c648647",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
