@@ -102,13 +102,14 @@ ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 EMMA_INSTRUMENT := true
 endif
 
-# TODO(b/158212027): Turn this into an error when all users have been moved to
-# `NATIVE_COVERAGE_PATHS` and `NATIVE_COVERAGE_EXCLUDE_PATHS`.
+# TODO(b/158212027): Remove this when we are certain these assertions are not
+# breaking any continuous build; then turn `COVERAGE_PATHS` and
+# `COVERAGE_EXCLUDE_PATHS` into kati obsolete variables.
 ifneq ($(COVERAGE_PATHS),)
-  $(warning Variable COVERAGE_PATHS is deprecated. Please use NATIVE_COVERAGE_PATHS instead.)
+  $(error Variable COVERAGE_PATHS is obsolete. Use NATIVE_COVERAGE_PATHS instead)
 endif
 ifneq ($(COVERAGE_EXCLUDE_PATHS),)
-  $(warning Variable COVERAGE_EXCLUDE_PATHS is deprecated. Please use NATIVE_COVERAGE_EXCLUDE_PATHS instead.)
+  $(error Variable COVERAGE_EXCLUDE_PATHS is obsolete. Use NATIVE_COVERAGE_EXCLUDE_PATHS instead)
 endif
 
 ifeq (true,$(EMMA_INSTRUMENT))
