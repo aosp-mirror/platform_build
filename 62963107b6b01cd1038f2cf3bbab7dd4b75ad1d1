@@ -180,6 +180,24 @@
     },
     {
       "key": {
+        "uuid": "b7f51b38_e1cf4e3c",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-07-08T13:33:22Z",
+      "side": 1,
+      "message": "As near as I can tell, the tarball is there to support partners\u0027 compliance needs, and it does not contribute to the increase in the minimum build time.\n\nWhat are the sdk, win_sdk, and sdk_addon targets for? Who uses those? How realistic is simply removing them?",
+      "parentUuid": "5431fc21_f28a6856",
+      "revId": "62963107b6b01cd1038f2cf3bbab7dd4b75ad1d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d2c8fad4_4de700be",
         "filename": "core/definitions.mk",
         "patchSetId": 3
