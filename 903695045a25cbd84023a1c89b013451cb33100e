@@ -1,0 +1,159 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0f286a1d_4b743811",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-08T15:16:31Z",
+      "side": 1,
+      "message": "I am not sure if this document is actively being managed or this is the right place to document these flags. The HTML format seems to be too old-fashined.",
+      "revId": "903695045a25cbd84023a1c89b013451cb33100e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9dba6d73_248f3d5d",
+        "filename": "core/build-system.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-08T15:16:31Z",
+      "side": 1,
+      "message": "Why just app? Why can\u0027t we build others (APEX, libs, etc.) unbundled?",
+      "range": {
+        "startLine": 444,
+        "startChar": 110,
+        "endLine": 444,
+        "endChar": 116
+      },
+      "revId": "903695045a25cbd84023a1c89b013451cb33100e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0806fb10_525eee17",
+        "filename": "core/build-system.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-08T15:16:31Z",
+      "side": 1,
+      "message": "line length seems to be too wrong",
+      "range": {
+        "startLine": 444,
+        "startChar": 100,
+        "endLine": 444,
+        "endChar": 101
+      },
+      "revId": "903695045a25cbd84023a1c89b013451cb33100e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "529a9866_994a3ef3",
+        "filename": "core/build-system.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-08T15:16:31Z",
+      "side": 1,
+      "message": "I don\u0027t think this statement is true",
+      "range": {
+        "startLine": 444,
+        "startChar": 14,
+        "endLine": 444,
+        "endChar": 74
+      },
+      "revId": "903695045a25cbd84023a1c89b013451cb33100e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d531611f_b55f28c8",
+        "filename": "core/build-system.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-08T15:16:31Z",
+      "side": 1,
+      "message": "Are native modules unaffected?",
+      "range": {
+        "startLine": 448,
+        "startChar": 12,
+        "endLine": 448,
+        "endChar": 16
+      },
+      "revId": "903695045a25cbd84023a1c89b013451cb33100e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "464f7921_fd0dfcf9",
+        "filename": "core/build-system.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-08T15:16:31Z",
+      "side": 1,
+      "message": "why only apps?",
+      "range": {
+        "startLine": 453,
+        "startChar": 17,
+        "endLine": 453,
+        "endChar": 21
+      },
+      "revId": "903695045a25cbd84023a1c89b013451cb33100e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c48287a3_e575e84c",
+        "filename": "core/build-system.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-08T15:16:31Z",
+      "side": 1,
+      "message": "I think this description is too vague. What does \u0027without full platform sources\u0027 mean? Does it mean the absence of frameworks/base, or something else? How the behavior of the build system changes with this flag?",
+      "range": {
+        "startLine": 456,
+        "startChar": 3,
+        "endLine": 456,
+        "endChar": 42
+      },
+      "revId": "903695045a25cbd84023a1c89b013451cb33100e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
