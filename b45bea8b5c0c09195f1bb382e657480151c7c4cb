@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15052c8b_107b90ea",
+        "filename": "core/config.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 536,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-09T15:41:19Z",
+      "side": 1,
+      "message": "FTR, this could be simplified:\n\nifeq (true,$(TARGET_BUILD_UNBUNDLED)) \n   TARGET_BUILD_USE_PREBUILT_SDKS ?\u003d true\nendif\nifeq (,$(TARGET_BUILD_USE_PREBUILT_SDK))\n   TARGET_BUILD_USE_PREBUILT_SDKS :\u003d false\nendif",
+      "range": {
+        "startLine": 522,
+        "startChar": 0,
+        "endLine": 536,
+        "endChar": 5
+      },
+      "revId": "b45bea8b5c0c09195f1bb382e657480151c7c4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
