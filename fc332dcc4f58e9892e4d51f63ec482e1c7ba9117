@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "48127dc3_4af3fce0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-09T10:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47d37226_056722bc",
+      "range": {
+        "startLine": 11,
+        "startChar": 7,
+        "endLine": 11,
+        "endChar": 15
+      },
+      "revId": "fc332dcc4f58e9892e4d51f63ec482e1c7ba9117",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cf0164a7_2efbf68c",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 6
@@ -62,6 +86,30 @@
       "revId": "fc332dcc4f58e9892e4d51f63ec482e1c7ba9117",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85dc8852_e01320b8",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-09T10:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6792ab69_7ab98f93",
+      "range": {
+        "startLine": 8,
+        "startChar": 4,
+        "endLine": 8,
+        "endChar": 22
+      },
+      "revId": "fc332dcc4f58e9892e4d51f63ec482e1c7ba9117",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
