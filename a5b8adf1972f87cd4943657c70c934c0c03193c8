@@ -16,6 +16,24 @@
       "revId": "a5b8adf1972f87cd4943657c70c934c0c03193c8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d119b41a_89e5be4a",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-09T15:02:26Z",
+      "side": 1,
+      "message": "Introduced `TARGET_BUILD_DISABLE_PREOPT` for the purpose.",
+      "parentUuid": "a180b5da_2c35ed40",
+      "revId": "a5b8adf1972f87cd4943657c70c934c0c03193c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
