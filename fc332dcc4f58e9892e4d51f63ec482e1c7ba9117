@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47d37226_056722bc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-09T10:38:19Z",
+      "side": 1,
+      "message": "Nit: duplicate word",
+      "range": {
+        "startLine": 11,
+        "startChar": 7,
+        "endLine": 11,
+        "endChar": 15
+      },
+      "revId": "fc332dcc4f58e9892e4d51f63ec482e1c7ba9117",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf0164a7_2efbf68c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-09T10:38:19Z",
+      "side": 1,
+      "message": "Awesome, thanks for reworking. This PS is much simpler. I have only a few minor minor comments.\n\nI\u0027m running one additional test on forrest: https://android-build.googleplex.com/builds/forrest/run/L75600000629234391\n\nAdding David to reviewers as the author of the modified code, PTAL.",
+      "revId": "fc332dcc4f58e9892e4d51f63ec482e1c7ba9117",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6792ab69_7ab98f93",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-09T10:38:19Z",
+      "side": 1,
+      "message": "Nit: if it\u0027s a module name, better rename it as \"my_boot_image_module\".",
+      "range": {
+        "startLine": 8,
+        "startChar": 4,
+        "endLine": 8,
+        "endChar": 22
+      },
+      "revId": "fc332dcc4f58e9892e4d51f63ec482e1c7ba9117",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
