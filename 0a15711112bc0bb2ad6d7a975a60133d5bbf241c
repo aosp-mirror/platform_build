@@ -16,6 +16,121 @@
       "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d465fc77_0dec4846",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-09T15:47:51Z",
+      "side": 1,
+      "message": "What happens when this is set to true for \"non\"-unbundled builds?",
+      "range": {
+        "startLine": 447,
+        "startChar": 4,
+        "endLine": 447,
+        "endChar": 37
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5cca66f_7e333cfb",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-09T15:47:51Z",
+      "side": 1,
+      "message": "Before you reference TARGET_BUILD_UNBUNDLED, you should explain TARGET_BUILD_UNBUNDLED first.",
+      "range": {
+        "startLine": 452,
+        "startChar": 6,
+        "endLine": 452,
+        "endChar": 28
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb40a139_f5c1bbf0",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-09T15:47:51Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 452,
+        "startChar": 46,
+        "endLine": 452,
+        "endChar": 78
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c13d6e8_6116c5cd",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-09T15:47:51Z",
+      "side": 1,
+      "message": "Instead",
+      "range": {
+        "startLine": 455,
+        "startChar": 3,
+        "endLine": 455,
+        "endChar": 10
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d533613_88c87ce8",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-09T15:47:51Z",
+      "side": 1,
+      "message": "Move this to the top",
+      "range": {
+        "startLine": 458,
+        "startChar": 0,
+        "endLine": 460,
+        "endChar": 67
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
