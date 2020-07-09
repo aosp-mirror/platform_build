@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bff534f4_a1a46173",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-09T15:42:39Z",
+      "side": 1,
+      "message": "why can\u0027t we use WITH_DEXPREOPT\u003dfalse ?",
+      "range": {
+        "startLine": 8,
+        "startChar": 32,
+        "endLine": 8,
+        "endChar": 59
+      },
+      "revId": "f604a6dae046c3069f04fe3b69c1ce313c7cfa6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
