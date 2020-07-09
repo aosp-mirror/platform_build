@@ -193,6 +193,30 @@
     },
     {
       "key": {
+        "uuid": "d822f618_d63e04a1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-09T05:44:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59753836_51e67c2a",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 0
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "be7dbbec_7507ac88",
         "filename": "/COMMIT_MSG",
         "patchSetId": 4
@@ -477,6 +501,30 @@
     },
     {
       "key": {
+        "uuid": "1b789904_ba184f87",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-09T05:44:41Z",
+      "side": 1,
+      "message": "Couldn\u0027t merge the two arches because host tests needs separate sets of boot images for 32/64 arch :( (http://cs/aosp-master/art/build/Android.gtest.mk?l\u003d207\u0026rcl\u003d671d34d917aae4f9dd402f71a2632556f53d9e13)",
+      "parentUuid": "57ec4f6f_8bc3afeb",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 99
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "741306c0_cbb9a6ad",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 4
@@ -500,6 +548,30 @@
     },
     {
       "key": {
+        "uuid": "9e911891_4e788931",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-09T05:44:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "741306c0_cbb9a6ad",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 29
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0674ac97_a5d3b15f",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 4
@@ -520,6 +592,30 @@
       "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa9da169_60ac487d",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-09T05:44:41Z",
+      "side": 1,
+      "message": "Explained in the file header comment block",
+      "parentUuid": "0674ac97_a5d3b15f",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 45
+      },
+      "revId": "18aa9949cb1084dd9a7a66eebcc443041a0a81d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
