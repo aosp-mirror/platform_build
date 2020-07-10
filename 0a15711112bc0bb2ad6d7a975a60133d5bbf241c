@@ -66,6 +66,30 @@
     },
     {
       "key": {
+        "uuid": "1db6b9b0_8a27f37a",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-10T03:43:02Z",
+      "side": 1,
+      "message": "\u003e it\u0027d better drop UNBUNDLED in the name\n\nYeah, I agree. I think that\u0027s where all these confusions came from.",
+      "parentUuid": "c99f3d82_a4eef1f0",
+      "range": {
+        "startLine": 447,
+        "startChar": 4,
+        "endLine": 447,
+        "endChar": 37
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d5cca66f_7e333cfb",
         "filename": "core/build-system.html",
         "patchSetId": 3
