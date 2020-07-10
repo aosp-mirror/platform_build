@@ -34,6 +34,24 @@
       "revId": "be3c3719d4b3b727d6911cab2d8aa7d6dbf39e62",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "777298a6_704bfe1f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-07-10T14:15:54Z",
+      "side": 1,
+      "message": "\u003e \u003e * https://android-build.googleplex.com/builds/forrest/run/L98300000630692831\n\u003e \n\u003e There is one build failure on this run, but it seems unrelated to this change; I\u0027ll re-try that specific build.\n\nNew Forrest run here: https://android-build.googleplex.com/builds/forrest/run/L02300000630792316",
+      "parentUuid": "6c9a66e9_9995e53f",
+      "revId": "be3c3719d4b3b727d6911cab2d8aa7d6dbf39e62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
