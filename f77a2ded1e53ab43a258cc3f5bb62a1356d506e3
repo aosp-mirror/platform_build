@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "eae80162_c1037f76",
+        "filename": "core/android_manifest.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-10T07:13:37Z",
+      "side": 1,
+      "message": "oops 😞, made it simple as before because TARGET_BUILD_USE_PREBUILT_SDKS must be true or empty as before.",
+      "parentUuid": "fe30fecf_3e2e79d3",
+      "range": {
+        "startLine": 48,
+        "startChar": 2,
+        "endLine": 48,
+        "endChar": 79
+      },
+      "revId": "f77a2ded1e53ab43a258cc3f5bb62a1356d506e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8c4781ec_9682cf8b",
         "filename": "core/java.mk",
         "patchSetId": 14
@@ -45,6 +69,30 @@
       "revId": "f77a2ded1e53ab43a258cc3f5bb62a1356d506e3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31e785dc_b42c1fce",
+        "filename": "core/java.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-10T07:13:37Z",
+      "side": 1,
+      "message": "Done. And let every usage simple as before.",
+      "parentUuid": "8c4781ec_9682cf8b",
+      "range": {
+        "startLine": 109,
+        "startChar": 86,
+        "endLine": 109,
+        "endChar": 133
+      },
+      "revId": "f77a2ded1e53ab43a258cc3f5bb62a1356d506e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
