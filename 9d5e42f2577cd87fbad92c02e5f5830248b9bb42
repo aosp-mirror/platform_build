@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "619afe6b_0a3562c4",
+        "filename": "core/config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-10T03:38:49Z",
+      "side": 1,
+      "message": "This also deserves some explanation about why",
+      "range": {
+        "startLine": 538,
+        "startChar": 0,
+        "endLine": 540,
+        "endChar": 46
+      },
+      "revId": "9d5e42f2577cd87fbad92c02e5f5830248b9bb42",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc027833_f5242e7c",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-10T03:38:49Z",
+      "side": 1,
+      "message": "It\u0027d be better to explain \u0027why\u0027. Perhaps, that explanation needs to move to config.mk where TARGET_BUILD_DISABLE_PREOPT is set to true.",
+      "range": {
+        "startLine": 43,
+        "startChar": 2,
+        "endLine": 43,
+        "endChar": 48
+      },
+      "revId": "9d5e42f2577cd87fbad92c02e5f5830248b9bb42",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4b6f8a8_f2d2fb4a",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-10T03:38:49Z",
+      "side": 1,
+      "message": "This is a behavior change right? Previously, TARGET_BUILD_APPS unconditionally turn the dexpreopt off, but now it could be turned on if TARGET_BUILD_DISABLE_PREOPT is explicitly set to false. Is it intentional?",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 57
+      },
+      "revId": "9d5e42f2577cd87fbad92c02e5f5830248b9bb42",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
