@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fe30fecf_3e2e79d3",
+        "filename": "core/android_manifest.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-10T03:55:39Z",
+      "side": 1,
+      "message": "wait... what does this actually mean? :) Can you make it simpler? Otherwise, please put some comment.",
+      "range": {
+        "startLine": 48,
+        "startChar": 2,
+        "endLine": 48,
+        "endChar": 79
+      },
+      "revId": "f77a2ded1e53ab43a258cc3f5bb62a1356d506e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c4781ec_9682cf8b",
+        "filename": "core/java.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-10T03:55:39Z",
+      "side": 1,
+      "message": "This is repeated several times and makes reading the code more difficult.\n\nWhy don\u0027t we reset it when its value is not true? e.g.\n\nifneq (true,$(XXX))\n  XXX :\u003d\nendif\n.KATI_READONLY :\u003d XXX",
+      "range": {
+        "startLine": 109,
+        "startChar": 86,
+        "endLine": 109,
+        "endChar": 133
+      },
+      "revId": "f77a2ded1e53ab43a258cc3f5bb62a1356d506e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
