@@ -52,6 +52,24 @@
       "revId": "be3c3719d4b3b727d6911cab2d8aa7d6dbf39e62",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "246be5b2_3d7491dd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-07-10T14:29:20Z",
+      "side": 1,
+      "message": "\u003e https://android-build.googleplex.com/builds/forrest/run/L02500000630689700\n\nThat Forrest run was successful.\n\nWaiting for https://android-build.googleplex.com/builds/forrest/run/L02300000630792316 now.",
+      "parentUuid": "777298a6_704bfe1f",
+      "revId": "be3c3719d4b3b727d6911cab2d8aa7d6dbf39e62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
