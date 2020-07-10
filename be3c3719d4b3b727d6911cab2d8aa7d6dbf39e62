@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6edc1398_b0565365",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-07-10T12:00:56Z",
+      "side": 1,
+      "message": "Thanks Orion.\n\nI\u0027ve started two Forrest runs to verify that this CL is not breaking the targets that were broken by the original change:\n* https://android-build.googleplex.com/builds/forrest/run/L02500000630689700\n* https://android-build.googleplex.com/builds/forrest/run/L98300000630692831\n",
+      "revId": "be3c3719d4b3b727d6911cab2d8aa7d6dbf39e62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
