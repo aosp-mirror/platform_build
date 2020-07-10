@@ -68,6 +68,30 @@
       "revId": "9d5e42f2577cd87fbad92c02e5f5830248b9bb42",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8bea9e03_4a5a157d",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-10T05:28:45Z",
+      "side": 1,
+      "message": "Yes, it was intentional to make it configurable even though TARGET_BUILD_APPS.\nBut on second thought, it looks like there is no use case. I think we\u0027d better keep TARGET_BUILD_DISABLE_PREOPT as just an internal flag. WDYT?",
+      "parentUuid": "b4b6f8a8_f2d2fb4a",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 57
+      },
+      "revId": "9d5e42f2577cd87fbad92c02e5f5830248b9bb42",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
