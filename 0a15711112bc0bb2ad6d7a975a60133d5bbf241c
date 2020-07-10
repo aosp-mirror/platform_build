@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "c99f3d82_a4eef1f0",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-10T03:09:11Z",
+      "side": 1,
+      "message": "Actually, it is an orthogonal thing, it just uses prebuilt SDKs. Expected use case is building unbundled(rely on defined SDKs) partition, not apps. (e.g. `TARGET_BUILD_USE_PREBUILT_SDKS\u003dtrue m vendorimage`)\n\nAccordingly, it\u0027d better drop UNBUNDLED in the name because it can be set regardless of `TARGET_BUILD_UNBUNDLED`, fortunately, I changed it to TARGET_BUILD_USE_PREBUILT_SDKS in the other CLs.",
+      "parentUuid": "d465fc77_0dec4846",
+      "range": {
+        "startLine": 447,
+        "startChar": 4,
+        "endLine": 447,
+        "endChar": 37
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d5cca66f_7e333cfb",
         "filename": "core/build-system.html",
         "patchSetId": 3
@@ -88,6 +112,54 @@
     },
     {
       "key": {
+        "uuid": "88e8d07c_3382594b",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-10T03:09:11Z",
+      "side": 1,
+      "message": "UNBUNDLED_BUILD_SDKS_FROM_SOURCE gonna be removed, so remove it from a document.",
+      "parentUuid": "bb40a139_f5c1bbf0",
+      "range": {
+        "startLine": 452,
+        "startChar": 46,
+        "endLine": 452,
+        "endChar": 78
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08ddda3a_d59e7e71",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-10T03:09:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d5cca66f_7e333cfb",
+      "range": {
+        "startLine": 452,
+        "startChar": 6,
+        "endLine": 452,
+        "endChar": 28
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0c13d6e8_6116c5cd",
         "filename": "core/build-system.html",
         "patchSetId": 3
@@ -111,6 +183,30 @@
     },
     {
       "key": {
+        "uuid": "dff4ddd3_097a9548",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-10T03:09:11Z",
+      "side": 1,
+      "message": "UNBUNDLED_BUILD_SDKS_FROM_SOURCE gonna be removed, so remove it from a document.",
+      "parentUuid": "0c13d6e8_6116c5cd",
+      "range": {
+        "startLine": 455,
+        "startChar": 3,
+        "endLine": 455,
+        "endChar": 10
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7d533613_88c87ce8",
         "filename": "core/build-system.html",
         "patchSetId": 3
@@ -131,6 +227,30 @@
       "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df5088d0_739b40cd",
+        "filename": "core/build-system.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-10T03:09:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d533613_88c87ce8",
+      "range": {
+        "startLine": 458,
+        "startChar": 0,
+        "endLine": 460,
+        "endChar": 67
+      },
+      "revId": "0a15711112bc0bb2ad6d7a975a60133d5bbf241c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
