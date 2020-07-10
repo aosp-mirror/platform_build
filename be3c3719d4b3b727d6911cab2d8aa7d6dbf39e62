@@ -70,6 +70,41 @@
       "revId": "be3c3719d4b3b727d6911cab2d8aa7d6dbf39e62",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "412aacab_6d6dd8fa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-07-10T16:00:09Z",
+      "side": 1,
+      "message": "All Forrest runs have now succeeded; it should be safe to reland that change now; PTAL.",
+      "revId": "be3c3719d4b3b727d6911cab2d8aa7d6dbf39e62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2bf02899_aa6ed7ff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-07-10T16:00:09Z",
+      "side": 1,
+      "message": "\u003e Waiting for https://android-build.googleplex.com/builds/forrest/run/L02300000630792316 now.\n\nThat run ended up green.",
+      "parentUuid": "246be5b2_3d7491dd",
+      "revId": "be3c3719d4b3b727d6911cab2d8aa7d6dbf39e62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
