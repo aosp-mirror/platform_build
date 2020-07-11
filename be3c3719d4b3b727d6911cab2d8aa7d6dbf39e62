@@ -105,6 +105,23 @@
       "revId": "be3c3719d4b3b727d6911cab2d8aa7d6dbf39e62",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fd2a537b_1b8c80a9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2020-07-11T14:31:43Z",
+      "side": 1,
+      "message": "Thanks Colin.",
+      "revId": "be3c3719d4b3b727d6911cab2d8aa7d6dbf39e62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
