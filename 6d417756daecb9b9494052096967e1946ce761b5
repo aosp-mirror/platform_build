@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99ea6f1b_7e9533a8",
+        "filename": "core/build-system.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-11T00:07:29Z",
+      "side": 1,
+      "message": "I suggest removing this",
+      "range": {
+        "startLine": 444,
+        "startChar": 3,
+        "endLine": 444,
+        "endChar": 12
+      },
+      "revId": "6d417756daecb9b9494052096967e1946ce761b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a4e7074_c03fbd2c",
+        "filename": "core/build-system.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-11T00:07:29Z",
+      "side": 1,
+      "message": "This is only one of the many meanings of unbundled builds, and is not specific to unbundled builds.  We do plenty of builds of \"part of android\" in a non-unbundled build, for example when we do `m cts`.\n\nThe original meaning was to build an app that can be distributed outside the platform.  That led to a bunch of changes in the way apps built, all lumped together under \"TARGET_BUILD_APPS\" and called an \"unbundled build\":\n - It turned off platform optimizations that don\u0027t make sense for a play store app, like dexpreopt.\n - The app may need to support old platform versions, so it turned off things like uncompressed JNI libraries supported only in newer platforms.\n - Devs working on unbundled apps could get away with a subset of the source tree, so it used prebuilts of the SDK to break the frameworks/base dependency.\n\nTARGET_BUILD_APPS builds happen in a full source tree or in a partial source tree.  The partial source trees are always called \"unbundled builds\", but the TARGET_BUILD_APPS builds in the full source tree are also sometimes called \"unbundled builds\".\n\nOver time a bunch of other uses of \"unbundled\" have cropped up, first building mainline modules, and now building vendor images.  I don\u0027t think it makes sense to try to clearly define \"unbundled\", because it doesn\u0027t have a clear definition.  Instead, I think it is better to clearly define the behavior of these different flags and how they can satisfy the various \"unbundled\" use cases.",
+      "range": {
+        "startLine": 444,
+        "startChar": 36,
+        "endLine": 444,
+        "endChar": 67
+      },
+      "revId": "6d417756daecb9b9494052096967e1946ce761b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab9e18f2_57802178",
+        "filename": "core/build-system.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-11T00:07:29Z",
+      "side": 1,
+      "message": "The key difference here is that the result is intended for distribution separately from the platform, not that it is only a part of Android.",
+      "range": {
+        "startLine": 448,
+        "startChar": 3,
+        "endLine": 448,
+        "endChar": 31
+      },
+      "revId": "6d417756daecb9b9494052096967e1946ce761b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc103a0d_07ba9333",
+        "filename": "core/build-system.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-11T00:07:29Z",
+      "side": 1,
+      "message": "build current SDKs?",
+      "range": {
+        "startLine": 453,
+        "startChar": 29,
+        "endLine": 453,
+        "endChar": 39
+      },
+      "revId": "6d417756daecb9b9494052096967e1946ce761b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
