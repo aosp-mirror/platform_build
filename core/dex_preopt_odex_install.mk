@@ -299,7 +299,7 @@ ifdef LOCAL_DEX_PREOPT
     for i in $$(zipinfo -1 $(my_dexpreopt_zip)); \
       do mkdir -p $(PRODUCT_OUT)/$$(dirname $$i); \
     done && \
-    ( unzip -qo -d $(PRODUCT_OUT) $(my_dexpreopt_zip) 2>&1 | grep -v "zipfile is empty"; exit $${PIPESTATUS[0]} ) || \
+    ( unzip -qoDD -d $(PRODUCT_OUT) $(my_dexpreopt_zip) 2>&1 | grep -v "zipfile is empty"; exit $${PIPESTATUS[0]} ) || \
       ( code=$$?; if [ $$code -ne 0 -a $$code -ne 1 ]; then exit $$code; fi )
 
   $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
