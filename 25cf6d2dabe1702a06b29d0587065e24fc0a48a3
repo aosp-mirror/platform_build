@@ -33,6 +33,52 @@
       "revId": "25cf6d2dabe1702a06b29d0587065e24fc0a48a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "766dfe71_47ab80f6",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-07-13T16:02:49Z",
+      "side": 1,
+      "message": "Why would you include BoardConfigGsiCommon if you\u0027re not building GSI? Something here smells",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 19
+      },
+      "revId": "25cf6d2dabe1702a06b29d0587065e24fc0a48a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "745c8504_a981ec24",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-07-13T16:02:49Z",
+      "side": 1,
+      "message": "I thought we were getting rid of the Emu-specific bits from generic, as we\u0027ve created emulator_* devices? SzuWei said he would work on that.",
+      "range": {
+        "startLine": 26,
+        "startChar": 55,
+        "endLine": 28,
+        "endChar": 55
+      },
+      "revId": "25cf6d2dabe1702a06b29d0587065e24fc0a48a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
