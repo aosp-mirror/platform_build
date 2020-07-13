@@ -23,3 +23,14 @@ function use_rbe() {
   RBE_re_proxy="${RBE_BINARIES_DIR}/reproxy" \
   $@
 }
+
+# This function detects if the uploader is available and sets the path of it to
+# ANDROID_ENABLE_METRICS_UPLOAD.
+function _export_metrics_uploader() {
+  local uploader_path="$(gettop)/vendor/google/misc/metrics_uploader_prebuilt/metrics_uploader.sh"
+  if [ -x "${uploader_path}" ]; then
+    export ANDROID_ENABLE_METRICS_UPLOAD="${uploader_path}"
+  fi
+}
+
+_export_metrics_uploader
