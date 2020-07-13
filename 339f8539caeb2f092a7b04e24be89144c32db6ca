@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "eb7fc1a8_9cc155a3",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-13T11:45:47Z",
+      "side": 1,
+      "message": "Yes this is a variable name used to store the module names. SG I\u0027ll change in next patchset",
+      "parentUuid": "a9a2c720_c7dbca76",
+      "range": {
+        "startLine": 24,
+        "startChar": 24,
+        "endLine": 24,
+        "endChar": 65
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b844b7b3_1116fb0d",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 7
@@ -118,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "b6624293_5670b027",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-13T11:45:47Z",
+      "side": 1,
+      "message": "When building primary image, the first entry has a special stem:\n- http://cs/android/build/soong/java/dexpreopt_config.go?l\u003d158\u0026rcl\u003d8640ab9c26a2135d77884906665250ba5ae144a1\n- http://go/art-images (Image classification \u003e Primary boot images \u003e third paragraph)\n\nFirst entry also has a special dependency, Line 71 of this file:\n`$(LOCAL_INSTALLED_MODULE): $(my_installed)`",
+      "parentUuid": "10228e32_85af65d0",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 0
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a9e33a29_0474e7b9",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 7
@@ -129,6 +177,30 @@
       "writtenOn": "2020-07-13T11:05:15Z",
       "side": 1,
       "message": "This whole file is run via $(eval include \u003cf\u003e). I assume you verified the module gets defined as you\u0027d expect, but worth knowing the double evaluation can lead to some funny/unexpected effects sometimes. It\u0027s not clear to me exactly what order things will happen here...",
+      "range": {
+        "startLine": 66,
+        "startChar": 25,
+        "endLine": 67,
+        "endChar": 25
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a08f1067_5c3344e1",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-13T11:45:47Z",
+      "side": 1,
+      "message": "Sorry, I don\u0027t understand. I thought \"include\" is a standard construct, as we do things like `\u003cA.mk\u003e include \u003cB.mk\u003e include $(BUILD_*)` to register modules all the time?",
+      "parentUuid": "a9e33a29_0474e7b9",
       "range": {
         "startLine": 66,
         "startChar": 25,
