@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "bdd768d7_94f1e255",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-07-13T11:29:19Z",
+      "side": 1,
+      "message": "A bit of a bikeshed, but I\u0027d rather keep my_boot_image_name. There are a few free variables here, one is the name and another one is the arch. Since my_boot_image_arch is used separately anyway, passing suffix instead of name wouldn\u0027t reduce the number of parameters, so I\u0027d rather keep the parameters orthogonal.",
+      "parentUuid": "b844b7b3_1116fb0d",
+      "range": {
+        "startLine": 40,
+        "startChar": 15,
+        "endLine": 40,
+        "endChar": 33
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "446a200d_f541d4c5",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 7
