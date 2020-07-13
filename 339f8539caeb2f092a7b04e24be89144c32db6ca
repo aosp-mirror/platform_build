@@ -210,6 +210,30 @@
       "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cde527c1_eba22090",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-07-13T11:57:55Z",
+      "side": 1,
+      "message": "It is, it\u0027s just that $(eval) sometimes leads to unexpected behavior, especially together with $(call), but I think include probably doesn\u0027t have the same eval behavior that $(call) does. I think you\u0027re fine in this case (though I\u0027m not confident)\n\nFor example, the following prints \"y x\"\n\n    LOCAL_MODULE :\u003d x\n    define hi\n    LOCAL_MODULE :\u003d y\n    LOCAL_OTHER :\u003d $(LOCAL_MODULE)\n    endef\n    $(eval $(call hi))\n    $(warning $(LOCAL_MODULE) $(LOCAL_OTHER))",
+      "parentUuid": "a08f1067_5c3344e1",
+      "range": {
+        "startLine": 66,
+        "startChar": 25,
+        "endLine": 67,
+        "endChar": 25
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
