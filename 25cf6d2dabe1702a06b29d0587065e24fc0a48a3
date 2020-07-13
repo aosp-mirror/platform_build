@@ -59,6 +59,31 @@
     },
     {
       "key": {
+        "uuid": "0dbe50dc_f684eecd",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2020-07-13T16:44:30Z",
+      "side": 1,
+      "message": "It\u0027s been included indirectly.",
+      "parentUuid": "766dfe71_47ab80f6",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 19
+      },
+      "tag": "mailMessageId\u003d\u003cCAKmfrZX\u003dMXobvW+auH4__6bLhykRhCwJ_tvjU1Oi5mvmppWwWg@mail.gmail.com\u003e",
+      "revId": "25cf6d2dabe1702a06b29d0587065e24fc0a48a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "745c8504_a981ec24",
         "filename": "target/board/generic_x86_64/BoardConfig.mk",
         "patchSetId": 4
@@ -76,6 +101,31 @@
         "endLine": 28,
         "endChar": 55
       },
+      "revId": "25cf6d2dabe1702a06b29d0587065e24fc0a48a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9e6d000_879c4415",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2020-07-13T16:44:30Z",
+      "side": 1,
+      "message": "Right, SzuWei is working on that and that takes time because we need to migrate all non-GSI targets to the new emu boards. However, we need a solution to make GSI R run on CF Q now. So we\u0027d like to land this one first.",
+      "parentUuid": "745c8504_a981ec24",
+      "range": {
+        "startLine": 26,
+        "startChar": 55,
+        "endLine": 28,
+        "endChar": 55
+      },
+      "tag": "mailMessageId\u003d\u003cCAKmfrZX\u003dMXobvW+auH4__6bLhykRhCwJ_tvjU1Oi5mvmppWwWg@mail.gmail.com\u003e",
       "revId": "25cf6d2dabe1702a06b29d0587065e24fc0a48a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
