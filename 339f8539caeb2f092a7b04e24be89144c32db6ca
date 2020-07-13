@@ -234,6 +234,30 @@
       "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b590a15b_1aa25d8a",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-13T12:19:48Z",
+      "side": 1,
+      "message": "I guess the problematic case is caused by $(eval)-ing a $(call) result. If the $(eval) statement is within the `define...endef` then it\u0027s probably alright?\n\nSo I think it\u0027s fine in this case, as core/dex_preopt.mk always do $(eval include $(BUILD_SYSTEM)/dex_preopt_libart.mk), and dex_preopt_libart.mk does all its $(eval) within itself",
+      "parentUuid": "cde527c1_eba22090",
+      "range": {
+        "startLine": 66,
+        "startChar": 25,
+        "endLine": 67,
+        "endChar": 25
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
