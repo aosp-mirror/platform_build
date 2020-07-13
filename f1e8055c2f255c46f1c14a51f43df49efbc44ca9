@@ -39,6 +39,30 @@
       "revId": "f1e8055c2f255c46f1c14a51f43df49efbc44ca9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0874ac5a_8008ba3b",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2020-07-13T05:14:29Z",
+      "side": 1,
+      "message": "Done. This is much better. Covers all GSI targets without explicitly listing them here.",
+      "parentUuid": "7839d6c9_426f9b93",
+      "range": {
+        "startLine": 36,
+        "startChar": 15,
+        "endLine": 36,
+        "endChar": 108
+      },
+      "revId": "f1e8055c2f255c46f1c14a51f43df49efbc44ca9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
