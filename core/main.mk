@@ -606,8 +606,8 @@ $(strip \
   $(eval modules_32 := $(patsubst %:32,%,$(filter %:32,$(2)))) \
   $(eval modules_64 := $(patsubst %:64,%,$(filter %:64,$(2)))) \
   $(eval modules_both := $(filter-out %:32 %:64,$(2))) \
-  $(eval ### For host cross modules, the primary arch is windows x86 and secondary is x86_64) \
-  $(if $(filter HOST_CROSS,$(1)), \
+  $(eval ### if 2ND_HOST_CROSS_IS_64_BIT, then primary/secondary are reversed for HOST_CROSS modules) \
+  $(if $(filter HOST_CROSS_true,$(1)_$(2ND_HOST_CROSS_IS_64_BIT)), \
     $(eval modules_1st_arch := $(modules_32)) \
     $(eval modules_2nd_arch := $(modules_64)), \
     $(eval modules_1st_arch := $(modules_64)) \
