@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "6d8a6058_73a57a16",
+        "filename": "core/build-system.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-13T13:54:09Z",
+      "side": 1,
+      "message": "Thanks for the clarification, Colin!\nI\u0027d rather supplement the explanation about each flag instead of unbundled build itself.",
+      "parentUuid": "5a4e7074_c03fbd2c",
+      "range": {
+        "startLine": 444,
+        "startChar": 36,
+        "endLine": 444,
+        "endChar": 67
+      },
+      "revId": "6d417756daecb9b9494052096967e1946ce761b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "457f3918_f99f47dc",
+        "filename": "core/build-system.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-13T13:54:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "99ea6f1b_7e9533a8",
+      "range": {
+        "startLine": 444,
+        "startChar": 3,
+        "endLine": 444,
+        "endChar": 12
+      },
+      "revId": "6d417756daecb9b9494052096967e1946ce761b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ab9e18f2_57802178",
         "filename": "core/build-system.html",
         "patchSetId": 4
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "2d8d3613_9393e1e4",
+        "filename": "core/build-system.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-13T13:54:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ab9e18f2_57802178",
+      "range": {
+        "startLine": 448,
+        "startChar": 3,
+        "endLine": 448,
+        "endChar": 31
+      },
+      "revId": "6d417756daecb9b9494052096967e1946ce761b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc103a0d_07ba9333",
         "filename": "core/build-system.html",
         "patchSetId": 4
@@ -91,6 +163,30 @@
       "revId": "6d417756daecb9b9494052096967e1946ce761b5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f792a49_3ab958f7",
+        "filename": "core/build-system.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-13T13:54:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc103a0d_07ba9333",
+      "range": {
+        "startLine": 453,
+        "startChar": 29,
+        "endLine": 453,
+        "endChar": 39
+      },
+      "revId": "6d417756daecb9b9494052096967e1946ce761b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
