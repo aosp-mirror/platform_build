@@ -102,16 +102,6 @@ ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 EMMA_INSTRUMENT := true
 endif
 
-# TODO(b/158212027): Remove this when we are certain these assertions are not
-# breaking any continuous build; then turn `COVERAGE_PATHS` and
-# `COVERAGE_EXCLUDE_PATHS` into kati obsolete variables.
-ifneq ($(COVERAGE_PATHS),)
-  $(error Variable COVERAGE_PATHS is obsolete. Use NATIVE_COVERAGE_PATHS instead)
-endif
-ifneq ($(COVERAGE_EXCLUDE_PATHS),)
-  $(error Variable COVERAGE_EXCLUDE_PATHS is obsolete. Use NATIVE_COVERAGE_EXCLUDE_PATHS instead)
-endif
-
 ifeq (true,$(EMMA_INSTRUMENT))
 # Adding the jacoco library can cause the inclusion of
 # some typically banned classes
