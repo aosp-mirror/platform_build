@@ -126,11 +126,8 @@ $(my_src_jar) : .KATI_IMPLICIT_OUTPUTS := $(my_src_proguard_options)
 $(my_src_jar) : .KATI_IMPLICIT_OUTPUTS += $(my_src_android_manifest)
 $(my_src_jar) : $(my_src_aar)
 	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@) $(dir $@)/res
-	$(hide) unzip -qo -d $(dir $@) $<
-	# Make sure the extracted classes.jar has a new timestamp.
-	$(hide) touch $@
+	$(hide) unzip -qoDD -d $(dir $@) $<
 	# Make sure the proguard and AndroidManifest.xml files exist
-	# and have a new timestamp.
 	$(hide) touch $(dir $@)/proguard.txt
 	$(hide) touch $(dir $@)/AndroidManifest.xml
 
