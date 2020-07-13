@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a9a2c720_c7dbca76",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-07-13T11:05:15Z",
+      "side": 1,
+      "message": "this is a variable name right, not a module name? seems like boot_image_module_var might be better",
+      "range": {
+        "startLine": 24,
+        "startChar": 24,
+        "endLine": 24,
+        "endChar": 65
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b844b7b3_1116fb0d",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-07-13T11:05:15Z",
+      "side": 1,
+      "message": "looks like the only use of my_boot_image_name, so my_suffix could be the input instead I guess (optional).",
+      "range": {
+        "startLine": 40,
+        "startChar": 15,
+        "endLine": 40,
+        "endChar": 33
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "446a200d_f541d4c5",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-07-13T11:05:15Z",
+      "side": 1,
+      "message": "Indent the contents of this if ?",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 25
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "10228e32_85af65d0",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-07-13T11:05:15Z",
+      "side": 1,
+      "message": "so the first entry in DEXPREOPT_IMAGE_BUILT_INSTALLED_* is special? is that documented somewhere?",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 0
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9e33a29_0474e7b9",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-07-13T11:05:15Z",
+      "side": 1,
+      "message": "This whole file is run via $(eval include \u003cf\u003e). I assume you verified the module gets defined as you\u0027d expect, but worth knowing the double evaluation can lead to some funny/unexpected effects sometimes. It\u0027s not clear to me exactly what order things will happen here...",
+      "range": {
+        "startLine": 66,
+        "startChar": 25,
+        "endLine": 67,
+        "endChar": 25
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
