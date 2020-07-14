@@ -107,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "e9d5bcc9_518559e9",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2020-07-14T16:14:35Z",
+      "side": 1,
+      "message": "Revised with a link to the doc that explains AVB chained partition.",
+      "parentUuid": "a78b5c75_3e6fe67b",
+      "range": {
+        "startLine": 38,
+        "startChar": 2,
+        "endLine": 38,
+        "endChar": 50
+      },
+      "revId": "25cf6d2dabe1702a06b29d0587065e24fc0a48a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "745c8504_a981ec24",
         "filename": "target/board/generic_x86_64/BoardConfig.mk",
         "patchSetId": 4
@@ -167,6 +191,30 @@
       "side": 1,
       "message": "When is that work going to land? Conditionals of this sort makes the build more difficult to understand",
       "parentUuid": "f9e6d000_879c4415",
+      "range": {
+        "startLine": 26,
+        "startChar": 55,
+        "endLine": 28,
+        "endChar": 55
+      },
+      "revId": "25cf6d2dabe1702a06b29d0587065e24fc0a48a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97276b9b_827a55de",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2020-07-14T16:14:35Z",
+      "side": 1,
+      "message": "Probably in two weeks if he can resume it now.\nForgot to mention that we will need to cherry pick the change back to GSI R. It\u0027ll be unlikely to cherry pick SzuWei\u0027s work back to R.",
+      "parentUuid": "606012f8_132d288b",
       "range": {
         "startLine": 26,
         "startChar": 55,
