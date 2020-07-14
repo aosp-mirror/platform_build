@@ -22,6 +22,30 @@
       "revId": "5666f5d9fed7f5a622527ac56868724d93d6ea9b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1d76889_fd222c2a",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-14T14:09:15Z",
+      "side": 1,
+      "message": "\"image\" sounds more proper, accordingly, I should change the flag to TARGET_BUILD_UNBUNDLED_IMAGE as well.",
+      "parentUuid": "ae75e4f3_472bc1e0",
+      "range": {
+        "startLine": 112,
+        "startChar": 61,
+        "endLine": 113,
+        "endChar": 25
+      },
+      "revId": "5666f5d9fed7f5a622527ac56868724d93d6ea9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
