@@ -22,6 +22,30 @@
       "revId": "2b5cdf7425e7182df0ffdd8e937a1c4e8dfd21d8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24bff394_2d0afedb",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-14T16:52:23Z",
+      "side": 1,
+      "message": "Thanks, done.",
+      "parentUuid": "cc1c1cd1_d90ea365",
+      "range": {
+        "startLine": 8,
+        "startChar": 5,
+        "endLine": 8,
+        "endChar": 10
+      },
+      "revId": "2b5cdf7425e7182df0ffdd8e937a1c4e8dfd21d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
