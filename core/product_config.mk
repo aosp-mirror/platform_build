@@ -399,6 +399,7 @@ $(foreach image, \
     PRODUCT \
     SYSTEM_EXT \
     ODM \
+    VENDOR_DLKM \
     CACHE \
     RAMDISK \
     USERDATA \
