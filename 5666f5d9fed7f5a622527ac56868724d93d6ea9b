@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae75e4f3_472bc1e0",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-14T12:39:45Z",
+      "side": 1,
+      "message": "I didn\u0027t understand what \"partition\" meant in this context until this point. Isn\u0027t the common term \"image\"? I thought that\u0027s what the build system creates - images can then be flashed onto partitions, but the partitions only exist on the storage device.",
+      "range": {
+        "startLine": 112,
+        "startChar": 61,
+        "endLine": 113,
+        "endChar": 25
+      },
+      "revId": "5666f5d9fed7f5a622527ac56868724d93d6ea9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
