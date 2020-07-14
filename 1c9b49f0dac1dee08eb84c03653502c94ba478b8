@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dcc3d9a6_ee1dec75",
+        "filename": "core/build-system.html",
+        "patchSetId": 5
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-14T13:42:44Z",
+      "side": 1,
+      "message": "Describe TARGET_BUILD_DISABLE_PREOPT as well? Useful mainly to complete the descriptions of TARGET_BUILD_APPS and TARGET_BUILD_UNBUNDLED_PARTITION.",
+      "revId": "1c9b49f0dac1dee08eb84c03653502c94ba478b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "1b8fe9ee_9d84e067",
+        "filename": "core/build-system.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-14T13:42:44Z",
+      "side": 1,
+      "message": "Unfortunately I have to argue against that: the way I set up TARGET_BUILD_UNBUNDLED for master-art use, its key characteristic is that build targets that require a full platform source tree (basically the system image) aren\u0027t supported. If anything I\u0027d prefer to make a point that separate distribution *isn\u0027t* implied by this flag, to avoid that it takes on other behaviours (like deciding on SDK use etc, as been discussed). It\u0027s the other flags that have that meaning; they imply this flag, not the other way around.",
+      "parentUuid": "2d8d3613_9393e1e4",
+      "range": {
+        "startLine": 448,
+        "startChar": 3,
+        "endLine": 448,
+        "endChar": 31
+      },
+      "revId": "6d417756daecb9b9494052096967e1946ce761b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fc103a0d_07ba9333",
         "filename": "core/build-system.html",
         "patchSetId": 4
