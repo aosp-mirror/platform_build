@@ -281,6 +281,22 @@ def AddOdm(output_zip):
   return img.name
 
 
+def AddVendorDlkm(output_zip):
+  """Turn the contents of VENDOR_DLKM into an vendor_dlkm image and store it in output_zip."""
+
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vendor_dlkm.img")
+  if os.path.exists(img.name):
+    logger.info("vendor_dlkm.img already exists; no need to rebuild...")
+    return img.name
+
+  block_list = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "vendor_dlkm.map")
+  CreateImage(
+      OPTIONS.input_tmp, OPTIONS.info_dict, "vendor_dlkm", img,
+      block_list=block_list)
+  return img.name
+
+
 def AddDtbo(output_zip):
   """Adds the DTBO image.
 
@@ -736,7 +752,7 @@ def AddImagesToTargetFiles(filename):
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
   has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
 
-  # {vendor,odm,product,system_ext}.img are unlike system.img or
+  # {vendor,odm,product,system_ext,vendor_dlkm}.img are unlike system.img or
   # system_other.img. Because it could be built from source, or dropped into
   # target_files.zip as a prebuilt blob. We consider either of them as
   # {vendor,product,system_ext}.img being available, which could be
@@ -749,6 +765,13 @@ def AddImagesToTargetFiles(filename):
               OPTIONS.info_dict.get("building_odm_image") == "true") or
              os.path.exists(
                  os.path.join(OPTIONS.input_tmp, "IMAGES", "odm.img")))
+  has_vendor_dlkm = ((os.path.isdir(os.path.join(OPTIONS.input_tmp,
+                                                 "VENDOR_DLKM")) and
+                      OPTIONS.info_dict.get("building_vendor_dlkm_image")
+                      == "true") or
+                     os.path.exists(
+                         os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                      "vendor_dlkm.img")))
   has_product = ((os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) and
                   OPTIONS.info_dict.get("building_product_image") == "true") or
                  os.path.exists(
@@ -873,6 +896,10 @@ def AddImagesToTargetFiles(filename):
   if has_odm:
     banner("odm")
     partitions['odm'] = AddOdm(output_zip)
+
+  if has_vendor_dlkm:
+    banner("vendor_dlkm")
+    partitions['vendor_dlkm'] = AddVendorDlkm(output_zip)
 
   if has_system_other:
     banner("system_other")
