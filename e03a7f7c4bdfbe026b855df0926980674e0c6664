@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a0254d4_212cf247",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-07-14T00:33:20Z",
+      "side": 1,
+      "message": "(cloned from https://android-review.googlesource.com/c/platform/build/+/1341038 (this was once for hikey960 and outdated). sorry about that...",
+      "revId": "e03a7f7c4bdfbe026b855df0926980674e0c6664",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
