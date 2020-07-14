@@ -108,10 +108,10 @@ ifneq (,$(filter path all, $(_restrictions)))
 
 $(foreach m, $(_vendor_check_modules), \
   $(if $(filter-out ,$(ALL_MODULES.$(m).INSTALLED)),\
-    $(if $(filter $(TARGET_OUT_VENDOR)/% $(TARGET_OUT_ODM)/% $(HOST_OUT)/%, $(ALL_MODULES.$(m).INSTALLED)),,\
+    $(if $(filter $(TARGET_OUT_VENDOR)/% $(TARGET_OUT_ODM)/% $(TARGET_OUT_VENDOR_DLKM)/% $(HOST_OUT)/%, $(ALL_MODULES.$(m).INSTALLED)),,\
       $(error Error: vendor module "$(m)" in $(ALL_MODULES.$(m).PATH) \
         in product "$(TARGET_PRODUCT)" being installed to \
-        $(ALL_MODULES.$(m).INSTALLED) which is not in the vendor tree or odm tree))))
+        $(ALL_MODULES.$(m).INSTALLED) which is not in the vendor, odm or vendor_dlkm tree))))
 
 endif
 

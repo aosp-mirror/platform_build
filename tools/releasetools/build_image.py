@@ -708,6 +708,29 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("odm_reserved_size", "partition_reserved_size")
     copy_prop("odm_selinux_fc", "selinux_fc")
+  elif mount_point == "vendor_dlkm":
+    copy_prop("avb_vendor_dlkm_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_vendor_dlkm_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
+    copy_prop("avb_vendor_dlkm_key_path", "avb_key_path")
+    copy_prop("avb_vendor_dlkm_algorithm", "avb_algorithm")
+    copy_prop("avb_vendor_dlkm_salt", "avb_salt")
+    copy_prop("vendor_dlkm_fs_type", "fs_type")
+    copy_prop("vendor_dlkm_size", "partition_size")
+    if not copy_prop("vendor_dlkm_journal_size", "journal_size"):
+      d["journal_size"] = "0"
+    copy_prop("vendor_dlkm_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
+    copy_prop("vendor_dlkm_squashfs_compressor", "squashfs_compressor")
+    copy_prop("vendor_dlkm_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("vendor_dlkm_squashfs_block_size", "squashfs_block_size")
+    copy_prop("vendor_dlkm_squashfs_disable_4k_align", "squashfs_disable_4k_align")
+    copy_prop("vendor_dlkm_base_fs_file", "base_fs_file")
+    copy_prop("vendor_dlkm_extfs_inode_count", "extfs_inode_count")
+    if not copy_prop("vendor_dlkm_extfs_rsv_pct", "extfs_rsv_pct"):
+      d["extfs_rsv_pct"] = "0"
+    copy_prop("vendor_dlkm_reserved_size", "partition_reserved_size")
+    copy_prop("vendor_dlkm_selinux_fc", "selinux_fc")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
@@ -752,6 +775,8 @@ def GlobalDictFromImageProp(image_prop, mount_point):
     copy_prop("partition_size", "vendor_size")
   elif mount_point == "odm":
     copy_prop("partition_size", "odm_size")
+  elif mount_point == "vendor_dlkm":
+    copy_prop("partition_size", "vendor_dlkm_size")
   elif mount_point == "product":
     copy_prop("partition_size", "product_size")
   elif mount_point == "system_ext":
@@ -791,6 +816,8 @@ def main(argv):
       mount_point = "vendor"
     elif image_filename == "odm.img":
       mount_point = "odm"
+    elif image_filename == "vendor_dlkm.img":
+      mount_point = "vendor_dlkm"
     elif image_filename == "oem.img":
       mount_point = "oem"
     elif image_filename == "product.img":
