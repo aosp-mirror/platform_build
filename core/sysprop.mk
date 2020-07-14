@@ -392,6 +392,15 @@ $(eval $(call build-properties,\
     $(_prop_vars_),\
     $(empty)))
 
+# ----------------------------------------------------------------
+# vendor_dlkm/etc/build.prop
+#
+
+INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR_DLKM)/etc/build.prop
+$(eval $(call build-properties,\
+    vendor_dlkm,\
+    $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET)))
+
 # -----------------------------------------------------------------
 # system_ext/etc/build.prop
 #
