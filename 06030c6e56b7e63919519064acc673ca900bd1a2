@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58ad4003_32e9a752",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-07-14T00:30:24Z",
+      "side": 1,
+      "message": "Hi Sandeep,\n\nSorry, it seems two aosp commits for this change by mistake.... And this change is outdated, also Alistair and David commented on the other commit....\nI will abandon this change and use\n\nhttps://android-review.googlesource.com/c/platform/build/+/1353441\n\ninstead (will assign another change to David, sorry for this....)\n\nThanks,\nGao Xiang",
+      "revId": "06030c6e56b7e63919519064acc673ca900bd1a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
