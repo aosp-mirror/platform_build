@@ -46,6 +46,7 @@ DIR_SEARCH_PATHS = {
     '/product': ('PRODUCT', 'SYSTEM/product'),
     '/odm': ('ODM', 'VENDOR/odm', 'SYSTEM/vendor/odm'),
     '/system_ext': ('SYSTEM_EXT', 'SYSTEM/system_ext'),
+    # vendor_dlkm does not have VINTF files.
 }
 
 UNZIP_PATTERN = ['META/*', '*/build.prop']

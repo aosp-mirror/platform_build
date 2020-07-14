@@ -1143,7 +1143,8 @@ define resolve-product-relative-paths
     $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
       $(subst $(_system_ext_path_placeholder),$(TARGET_COPY_OUT_SYSTEM_EXT),\
         $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),\
-          $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))
+          $(subst $(_vendor_dlkm_path_placeholder),$(TARGET_COPY_OUT_VENDOR_DLKM),\
+            $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2))))))))
 endef
 
 # Returns modules included automatically as a result of certain BoardConfig
@@ -1521,6 +1522,9 @@ systemextimage: $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
 .PHONY: odmimage
 odmimage: $(INSTALLED_ODMIMAGE_TARGET)
 
+.PHONY: vendor_dlkmimage
+vendor_dlkmimage: $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
+
 .PHONY: systemotherimage
 systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 
@@ -1558,6 +1562,7 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) \
     $(INSTALLED_SUPERIMAGE_EMPTY_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
     $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
@@ -1567,6 +1572,8 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_VENDOR) \
     $(INSTALLED_FILES_FILE_ODM) \
     $(INSTALLED_FILES_JSON_ODM) \
+    $(INSTALLED_FILES_FILE_VENDOR_DLKM) \
+    $(INSTALLED_FILES_JSON_VENDOR_DLKM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
     $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
@@ -1662,6 +1669,8 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
     $(INSTALLED_FILES_JSON_VENDOR) \
     $(INSTALLED_FILES_FILE_ODM) \
     $(INSTALLED_FILES_JSON_ODM) \
+    $(INSTALLED_FILES_FILE_VENDOR_DLKM) \
+    $(INSTALLED_FILES_JSON_VENDOR_DLKM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
     $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
