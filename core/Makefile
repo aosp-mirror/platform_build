@@ -889,8 +889,9 @@ endif # BUILDING_VENDOR_BOOT_IMAGE
 .PHONY: notice_files
 
 # Create the rule to combine the files into text and html/xml forms
-# $(1) - xml_excluded_system_product_odm|xml_excluded_vendor_product_odm
-#        xml_product|xml_odm|xml_system_ext|xml_system|html
+# $(1) - xml_excluded_system_product_odm_vendor_dlkm|
+#        xml_excluded_vendor_product_odm_vendor_dlkm|
+#        xml_product|xml_odm|xml_system_ext|xml_system|xml_vendor_dlkm|html
 # $(2) - Plain text output file
 # $(3) - HTML/XML output file
 # $(4) - File title
@@ -916,13 +917,14 @@ $(2): PRIVATE_DIR := $(5)
 $(2): .KATI_IMPLICIT_OUTPUTS := $(3)
 $(2): $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
 	build/make/tools/generate-notice-files.py --text-output $(2) $(foreach xdir, $(7), -e $(xdir) )\
-	    $(if $(filter $(1),xml_excluded_vendor_product_odm),-e vendor -e product -e system_ext -e odm --xml-output, \
-	      $(if $(filter $(1),xml_excluded_system_product_odm),-e system -e product -e system_ext -e odm --xml-output, \
+	    $(if $(filter $(1),xml_excluded_vendor_product_odm_vendor_dlkm),-e vendor -e product -e system_ext -e odm -e vendor_dlkm --xml-output, \
+	      $(if $(filter $(1),xml_excluded_system_product_odm_vendor_dlkm),-e system -e product -e system_ext -e odm -e vendor_dlkm --xml-output, \
 	        $(if $(filter $(1),xml_product),-i product --xml-output, \
 	          $(if $(filter $(1),xml_system_ext),-i system_ext --xml-output, \
 	            $(if $(filter $(1),xml_system),-i system --xml-output, \
 	              $(if $(filter $(1),xml_odm),-i odm --xml-output, \
-	                --html-output)))))) $(3) \
+	                $(if $(filter $(1),xml_vendor_dlkm),-i vendor_dlkm --xml-output, \
+	                  --html-output))))))) $(3) \
 	    -t $$(PRIVATE_MESSAGE) -s $$(PRIVATE_DIR)/src
 notice_files: $(2) $(3)
 endef
@@ -986,6 +988,11 @@ target_odm_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE_ODM.xml
 target_odm_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_ODM.xml.gz
 installed_odm_notice_xml_gz := $(TARGET_OUT_ODM)/etc/NOTICE.xml.gz
 
+target_vendor_dlkm_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE_VENDOR_DLKM.txt
+target_vendor_dlkm_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE_VENDOR_DLKM.xml
+target_vendor_dlkm_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_VENDOR_DLKM.xml.gz
+installed_vendor_dlkm_notice_xml_gz := $(TARGET_OUT_VENDOR_DLKM)/etc/NOTICE.xml.gz
+
 # Notice files are copied to TARGET_OUT_NOTICE_FILES as a side-effect of their module
 # being built. A notice xml file must depend on all modules that could potentially
 # install a license file relevant to it.
@@ -996,17 +1003,19 @@ license_modules := $(filter $(PRODUCT_OUT)/%,$(license_modules))
 license_modules := $(filter-out $(TARGET_OUT_FAKE)/%,$(license_modules))
 # testcases are not relevant to the system image.
 license_modules := $(filter-out $(TARGET_OUT_TESTCASES)/%,$(license_modules))
-# filesystem images: system, vendor, product, system_ext, and odm
+# filesystem images: system, vendor, product, system_ext, odm, and vendor_dlkm
 license_modules_system := $(filter $(TARGET_OUT)/%,$(license_modules))
 license_modules_vendor := $(filter $(TARGET_OUT_VENDOR)/%,$(license_modules))
 license_modules_product := $(filter $(TARGET_OUT_PRODUCT)/%,$(license_modules))
 license_modules_system_ext := $(filter $(TARGET_OUT_SYSTEM_EXT)/%,$(license_modules))
 license_modules_odm := $(filter $(TARGET_OUT_ODM)/%,$(license_modules))
+license_modules_vendor_dlkm := $(filter $(TARGET_OUT_VENDOR_DLKM)/%,$(license_modules))
 license_modules_agg := $(license_modules_system) \
                        $(license_modules_vendor) \
                        $(license_modules_product) \
                        $(license_modules_system_ext) \
-                       $(license_modules_odm)
+                       $(license_modules_odm) \
+                       $(license_modules_vendor_dlkm)
 # targets used for debug symbols only and do not get copied to the device
 license_modules_symbols_only := $(filter $(PRODUCT_OUT)/apex/%,$(license_modules))
 
@@ -1041,8 +1050,8 @@ $(call maybe-print-list-and-error, $(license_modules_rest), \
 # update its notice file, so include those notices in the system partition instead
 ifdef BOARD_PREBUILT_VENDORIMAGE
 license_modules_system += $(license_modules_rehomed)
-system_xml_directories := xml_excluded_vendor_product_odm
-system_notice_file_message := "Notices for files contained in all filesystem images except vendor/system_ext/product/odm in this directory:"
+system_xml_directories := xml_excluded_vendor_product_odm_vendor_dlkm
+system_notice_file_message := "Notices for files contained in all filesystem images except vendor/system_ext/product/odm/vendor_dlkm in this directory:"
 else
 license_modules_vendor += $(license_modules_rehomed)
 system_xml_directories := xml_system
@@ -1056,10 +1065,10 @@ $(eval $(call combine-notice-files, $(system_xml_directories), \
 	        $(TARGET_OUT_NOTICE_FILES), \
 	        $(license_modules_system), \
 	        $(exclude_target_dirs)))
-$(eval $(call combine-notice-files, xml_excluded_system_product_odm, \
+$(eval $(call combine-notice-files, xml_excluded_system_product_odm_vendor_dlkm, \
 	        $(target_vendor_notice_file_txt), \
 	        $(target_vendor_notice_file_xml), \
-	        "Notices for files contained in all filesystem images except system/system_ext/product/odm in this directory:", \
+	        "Notices for files contained in all filesystem images except system/system_ext/product/odm/vendor_dlkm in this directory:", \
 	        $(TARGET_OUT_NOTICE_FILES), \
 	        $(license_modules_vendor), \
 	        $(exclude_target_dirs)))
@@ -1084,6 +1093,13 @@ $(eval $(call combine-notice-files, xml_odm, \
 	        $(TARGET_OUT_NOTICE_FILES), \
 	        $(license_modules_odm), \
 	        $(exclude_target_dirs)))
+$(eval $(call combine-notice-files, xml_vendor_dlkm, \
+	        $(target_vendor_dlkm_notice_file_txt), \
+	        $(target_vendor_dlkm_notice_file_xml), \
+	        "Notices for files contained in the vendor_dlkm filesystem image in this directory:", \
+	        $(TARGET_OUT_NOTICE_FILES), \
+	        $(license_modules_vendor_dlkm), \
+	        $(exclude_target_dirs)))
 
 $(target_notice_file_xml_gz): $(target_notice_file_xml) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
@@ -1095,6 +1111,8 @@ $(target_system_ext_notice_file_xml_gz): $(target_system_ext_notice_file_xml) | 
 	$(hide) $(MINIGZIP) -9 < $< > $@
 $(target_odm_notice_file_xml_gz): $(target_odm_notice_file_xml) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
+$(target_vendor_dlkm_notice_file_xml_gz): $(target_vendor_dlkm_notice_file_xml) | $(MINIGZIP)
+	$(hide) $(MINIGZIP) -9 < $< > $@
 $(installed_notice_html_or_xml_gz): $(target_notice_file_xml_gz)
 	$(copy-file-to-target)
 $(installed_vendor_notice_xml_gz): $(target_vendor_notice_file_xml_gz)
@@ -1105,12 +1123,15 @@ $(installed_system_ext_notice_xml_gz): $(target_system_ext_notice_file_xml_gz)
 	$(copy-file-to-target)
 $(installed_odm_notice_xml_gz): $(target_odm_notice_file_xml_gz)
 	$(copy-file-to-target)
+$(installed_vendor_dlkm_notice_xml_gz): $(target_vendor_dlkm_notice_file_xml_gz)
+	$(copy-file-to-target)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_notice_xml_gz)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_ext_notice_xml_gz)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_odm_notice_xml_gz)
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_dlkm_notice_xml_gz)
 endif # PRODUCT_NOTICE_SPLIT
 
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
