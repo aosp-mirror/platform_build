@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc1c1cd1_d90ea365",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-14T11:42:45Z",
+      "side": 1,
+      "message": "This can be a bit treacherous because it doesn\u0027t check the expanded value in all cases (https://www.gnu.org/software/make/manual/html_node/Conditional-Syntax.html). It probably works here as things look now, but I\u0027d prefer the classic test for emptiness to avoid the worry.",
+      "range": {
+        "startLine": 8,
+        "startChar": 5,
+        "endLine": 8,
+        "endChar": 10
+      },
+      "revId": "2b5cdf7425e7182df0ffdd8e937a1c4e8dfd21d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
