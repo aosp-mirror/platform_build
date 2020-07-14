@@ -70,6 +70,24 @@
       "revId": "ffe8dc132d49cfa8eb508e75e54c27efd56fad01",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f87b97e9_d0fccf08",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-14T01:47:46Z",
+      "side": 1,
+      "message": "Added TARGET_BUILD_UNBUNDLED_PARTITION. Done.",
+      "parentUuid": "4f82473a_e5bceb3f",
+      "revId": "ffe8dc132d49cfa8eb508e75e54c27efd56fad01",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
