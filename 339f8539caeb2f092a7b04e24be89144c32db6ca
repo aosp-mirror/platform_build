@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "e34684f9_97f50f42",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-14T07:59:31Z",
+      "side": 1,
+      "message": "Reformatted this bit of code to eliminate the indirection. Now my_boot_image_module is just the output of dex_preopt_libart.mk and expands to a module name (or empty). The value of my_boot_image_module is then stored in DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE",
+      "parentUuid": "eb7fc1a8_9cc155a3",
+      "range": {
+        "startLine": 24,
+        "startChar": 24,
+        "endLine": 24,
+        "endChar": 65
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b844b7b3_1116fb0d",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 7
@@ -116,6 +140,30 @@
       "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1c0b0b1_0f7ad240",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-07-14T07:59:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "446a200d_f541d4c5",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 25
+      },
+      "revId": "339f8539caeb2f092a7b04e24be89144c32db6ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
