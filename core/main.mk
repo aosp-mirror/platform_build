@@ -304,14 +304,8 @@ ADDITIONAL_VENDOR_PROPERTIES += \
     ro.hwui.use_vulkan=$(TARGET_USES_VULKAN)
 
 ifdef TARGET_SCREEN_DENSITY
-# TODO(b/160823761): using ?= because otherwise it cannot be overridden by
-# 'phone_car' targets (like coral-car) because they use the same BoardConfig.mk
-# as the 'phone' counterparts (like coral). Once we fix those builds to use the
-# proper TARGET_DEVICE (like coral-car instead of coral), we should change it
-# to:
-#    ro.sf.lcd_density=$(TARGET_SCREEN_DENSITY)
 ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.sf.lcd_density?=$(TARGET_SCREEN_DENSITY)
+    ro.sf.lcd_density=$(TARGET_SCREEN_DENSITY)
 endif
 
 ifdef AB_OTA_UPDATER
