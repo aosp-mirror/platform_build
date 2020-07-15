@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4c518fd8_a13e3892",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-15T00:09:02Z",
+      "side": 1,
+      "message": "Switched to $(call intermediates-dir-for,PACKAGING).",
+      "revId": "c60c514e1adacaa3e635c376ce42437030d32443",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
