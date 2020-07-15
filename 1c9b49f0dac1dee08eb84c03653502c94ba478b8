@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "ff54f52a_37cf7f86",
+        "filename": "core/build-system.html",
+        "patchSetId": 5
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-15T04:41:59Z",
+      "side": 1,
+      "message": "IMAGE?",
+      "range": {
+        "startLine": 449,
+        "startChar": 63,
+        "endLine": 449,
+        "endChar": 72
+      },
+      "revId": "1c9b49f0dac1dee08eb84c03653502c94ba478b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dcc3d9a6_ee1dec75",
         "filename": "core/build-system.html",
         "patchSetId": 5
@@ -13,6 +36,29 @@
       "writtenOn": "2020-07-14T13:42:44Z",
       "side": 1,
       "message": "Describe TARGET_BUILD_DISABLE_PREOPT as well? Useful mainly to complete the descriptions of TARGET_BUILD_APPS and TARGET_BUILD_UNBUNDLED_PARTITION.",
+      "revId": "1c9b49f0dac1dee08eb84c03653502c94ba478b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a42d997_7610a285",
+        "filename": "core/build-system.html",
+        "patchSetId": 5
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-15T04:41:59Z",
+      "side": 1,
+      "message": "IMAGE?",
+      "range": {
+        "startLine": 459,
+        "startChar": 27,
+        "endLine": 459,
+        "endChar": 36
+      },
       "revId": "1c9b49f0dac1dee08eb84c03653502c94ba478b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
