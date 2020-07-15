@@ -43,19 +43,29 @@ test_tools := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar \
 
 test_tools += $(test_suite_tools)
 
+compatibility_zip_deps := $(test_artifacts) $(test_tools) $(test_suite_prebuilt_tools) $(test_suite_dynamic_config) $(SOONG_ZIP)
+compatibility_zip_resources := $(out_dir)/tools $(out_dir)/testcases
+ifdef test_suite_notice
+	compatibility_zip_deps += $(test_suite_notice)
+	compatibility_zip_resources += $(out_dir)/$(notdir $(test_suite_notice))
+endif
+
 compatibility_zip := $(out_dir).zip
 $(compatibility_zip): PRIVATE_NAME := android-$(test_suite_name)
 $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
 $(compatibility_zip): PRIVATE_TOOLS := $(test_tools) $(test_suite_prebuilt_tools)
 $(compatibility_zip): PRIVATE_SUITE_NAME := $(test_suite_name)
 $(compatibility_zip): PRIVATE_DYNAMIC_CONFIG := $(test_suite_dynamic_config)
-$(compatibility_zip): $(test_artifacts) $(test_tools) $(test_suite_prebuilt_tools) $(test_suite_dynamic_config) $(SOONG_ZIP) | $(ADB) $(ACP)
+$(compatibility_zip): PRIVATE_NOTICE := $(test_suite_notice)
+$(compatibility_zip): PRIVATE_RESOURCES := $(compatibility_zip_resources)
+$(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 # Make dir structure
 	$(hide) mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases
 # Copy tools
 	$(hide) $(ACP) -fp $(PRIVATE_TOOLS) $(PRIVATE_OUT_DIR)/tools
 	$(if $(PRIVATE_DYNAMIC_CONFIG),$(hide) $(ACP) -fp $(PRIVATE_DYNAMIC_CONFIG) $(PRIVATE_OUT_DIR)/testcases/$(PRIVATE_SUITE_NAME).dynamic)
-	$(hide) find $(dir $@)/$(PRIVATE_NAME) | sort >$@.list
+	$(if $(PRIVATE_NOTICE),$(hide) $(ACP) -fp $(PRIVATE_NOTICE) $(PRIVATE_OUT_DIR))
+	$(hide) find $(PRIVATE_RESOURCES) | sort >$@.list
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(dir $@) -l $@.list
 
 # Reset all input variables
@@ -65,3 +75,4 @@ test_suite_dynamic_config :=
 test_suite_readme :=
 test_suite_prebuilt_tools :=
 test_suite_tools :=
+test_suite_notice :=
