@@ -16,6 +16,29 @@
       "revId": "3b3f5a8476f67b255030d4662482c1b97599519a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99559353_5b6b10cd",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 18
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-15T04:37:18Z",
+      "side": 1,
+      "message": "So, this isn\u0027t supposed to be set by users, right?",
+      "range": {
+        "startLine": 115,
+        "startChar": 2,
+        "endLine": 115,
+        "endChar": 24
+      },
+      "revId": "3b3f5a8476f67b255030d4662482c1b97599519a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
