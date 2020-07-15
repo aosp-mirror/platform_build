@@ -39,6 +39,30 @@
       "revId": "3b3f5a8476f67b255030d4662482c1b97599519a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "496fde00_9ecee12d",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 18
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-15T14:44:24Z",
+      "side": 1,
+      "message": "AFAIK, it is set by users only when art modules are built in master-art branch.",
+      "parentUuid": "99559353_5b6b10cd",
+      "range": {
+        "startLine": 115,
+        "startChar": 2,
+        "endLine": 115,
+        "endChar": 24
+      },
+      "revId": "3b3f5a8476f67b255030d4662482c1b97599519a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
