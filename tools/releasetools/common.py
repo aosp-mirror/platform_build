@@ -110,7 +110,8 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # that system_other is not in the list because we don't want to include its
 # descriptor into vbmeta.img.
 AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'recovery', 'system',
-                  'system_ext', 'vendor', 'vendor_boot', 'vendor_dlkm')
+                  'system_ext', 'vendor', 'vendor_boot', 'vendor_dlkm',
+                  'odm_dlkm')
 
 # Chained VBMeta partitions.
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
@@ -123,6 +124,7 @@ PARTITIONS_WITH_CARE_MAP = (
     'system_ext',
     'odm',
     'vendor_dlkm',
+    'odm_dlkm',
 )
 
 
@@ -663,7 +665,7 @@ def LoadInfoDict(input_file, repacking=False):
 
     # Redirect {partition}_base_fs_file for each of the named partitions.
     for part_name in ["system", "vendor", "system_ext", "product", "odm",
-                      "vendor_dlkm"]:
+                      "vendor_dlkm", "odm_dlkm"]:
       key_name = part_name + "_base_fs_file"
       if key_name not in d:
         continue
