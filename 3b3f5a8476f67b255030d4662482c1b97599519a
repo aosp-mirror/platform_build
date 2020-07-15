@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "90e8466a_6e99e553",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 18
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-15T01:49:24Z",
+      "side": 1,
+      "message": "I think these CLs in the topic is ready for review again. PTAL.",
+      "revId": "3b3f5a8476f67b255030d4662482c1b97599519a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
