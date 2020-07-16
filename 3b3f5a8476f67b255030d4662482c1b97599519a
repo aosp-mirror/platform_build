@@ -63,6 +63,30 @@
       "revId": "3b3f5a8476f67b255030d4662482c1b97599519a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4144d255_d12d68bc",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 18
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-07-16T00:19:43Z",
+      "side": 1,
+      "message": "Yes, it\u0027s used by us ART users. We set it in various different scripts and configs for test environments.",
+      "parentUuid": "496fde00_9ecee12d",
+      "range": {
+        "startLine": 115,
+        "startChar": 2,
+        "endLine": 115,
+        "endChar": 24
+      },
+      "revId": "3b3f5a8476f67b255030d4662482c1b97599519a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
