@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6e51547b_ab9f8e6b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-16T01:02:19Z",
+      "side": 1,
+      "message": "Colin, could you review the CLs in the topic?",
+      "revId": "d3e66fa60e9d0d3d9a8a260a7e1f7ad75e5ecd4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
