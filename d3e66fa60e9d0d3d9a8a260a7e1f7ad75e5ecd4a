@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "16aaf304_4f8aa7ad",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-16T02:52:20Z",
+      "side": 1,
+      "message": "How is this anything like TARGET_BUILD_APPS? Doesn\u0027t this still rely upon TARGET_PRODUCT, and the product configuration is what selects which images are being built?",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 57
+      },
+      "revId": "d3e66fa60e9d0d3d9a8a260a7e1f7ad75e5ecd4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6e51547b_ab9f8e6b",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 19
