@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d4bd78f5_6b9d3685",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ae5e9696_ac5e5045",
+      "range": {
+        "startLine": 9,
+        "startChar": 59,
+        "endLine": 9,
+        "endChar": 63
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dc3c8d55_e47c5a01",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
@@ -65,6 +89,30 @@
     },
     {
       "key": {
+        "uuid": "d56298cd_4376a08c",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "The first version of it took quite a while to walk the whole tree (30 sec), but after a little bit of optimization that I already did it\u0027s only 2 seconds now, so I think I\u0027ll add it here.",
+      "parentUuid": "f433b058_cc7656f0",
+      "range": {
+        "startLine": 467,
+        "startChar": 0,
+        "endLine": 472,
+        "endChar": 52
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ca94927_5070663e",
         "filename": "tools/mk2bp_catalog.py",
         "patchSetId": 2
@@ -79,6 +127,24 @@
       "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21bd5c84_d5cb750c",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ca94927_5070663e",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -99,6 +165,24 @@
     },
     {
       "key": {
+        "uuid": "7f391f96_c2d20d04",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "535a3b73_fe09c6ee",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c6a6dbc7_f1a0de35",
         "filename": "tools/mk2bp_catalog.py",
         "patchSetId": 2
@@ -110,6 +194,24 @@
       "writtenOn": "2020-07-06T21:06:32Z",
       "side": 1,
       "message": "define is really just a multi-line variable, so it\u0027s not inherently bad, but I guess it\u0027s a good indication that something abnormal is happening",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "23e62c06_bcd49665",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "Yeah, I was thinking that they\u0027re more of a red flag than necessarily bad on their own.",
+      "parentUuid": "c6a6dbc7_f1a0de35",
       "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -133,6 +235,24 @@
     },
     {
       "key": {
+        "uuid": "ba0b6217_c46a050c",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "ack",
+      "parentUuid": "35bc7078_4234799c",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7633292b_f8077907",
         "filename": "tools/mk2bp_catalog.py",
         "patchSetId": 2
@@ -147,6 +267,24 @@
       "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9e6b1fa_6e312566",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "Dropping here, will do follow up CL to remove from java_common.mk.",
+      "parentUuid": "7633292b_f8077907",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -170,6 +308,30 @@
       "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8eea34e_ac4424cb",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "I forgot about zero width space. Good idea.  It makes the chips in the tables look better too.",
+      "parentUuid": "46912027_47eeb703",
+      "range": {
+        "startLine": 101,
+        "startChar": 18,
+        "endLine": 101,
+        "endChar": 19
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -208,6 +370,24 @@
     },
     {
       "key": {
+        "uuid": "11e74926_4b5abc45",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2eee0728_67535638",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "06fa46dd_997f9f56",
         "filename": "tools/mk2bp_catalog.py",
         "patchSetId": 2
@@ -228,6 +408,30 @@
       "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7617517_f945ac76",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06fa46dd_997f9f56",
+      "range": {
+        "startLine": 219,
+        "startChar": 50,
+        "endLine": 219,
+        "endChar": 55
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -254,6 +458,30 @@
     },
     {
       "key": {
+        "uuid": "430b0399_d5905f5a",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b35addc4_8d2080a3",
+      "range": {
+        "startLine": 246,
+        "startChar": 26,
+        "endLine": 246,
+        "endChar": 36
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7b91a8f9_e85cad09",
         "filename": "tools/mk2bp_catalog.py",
         "patchSetId": 2
@@ -274,6 +502,30 @@
       "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f8209e5_b5e033b4",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b91a8f9_e85cad09",
+      "range": {
+        "startLine": 276,
+        "startChar": 17,
+        "endLine": 276,
+        "endChar": 21
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -300,6 +552,30 @@
     },
     {
       "key": {
+        "uuid": "6844a50c_6dacef1d",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "They\u0027re all explainable, but yeah.\n\n$ find . -name \"*.mk\"\n./Android.mk\n./soong/late-coral.mk\n./soong/make_vars-coral.mk\n./soong/Android-coral.mk\n./target/product/coral/previous_build_config.mk\n./target/product/coral/obj/CONFIG/kati_packaging/dist.mk\n./target/product/coral/clean_steps.mk\n./CleanSpec.mk",
+      "parentUuid": "6fa6d993_aaf17cf1",
+      "range": {
+        "startLine": 592,
+        "startChar": 6,
+        "endLine": 592,
+        "endChar": 41
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f9276eb3_8607de24",
         "filename": "tools/mk2bp_catalog.py",
         "patchSetId": 2
@@ -320,6 +596,30 @@
       "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d056a8d4_5a612ed1",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 809,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-16T05:25:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9276eb3_8607de24",
+      "range": {
+        "startLine": 809,
+        "startChar": 28,
+        "endLine": 809,
+        "endChar": 67
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
