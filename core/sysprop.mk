@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# sysprop.mk defines rules for generating <partition>/build.prop files
+# sysprop.mk defines rules for generating <partition>/[etc/]build.prop files
 
 # -----------------------------------------------------------------
 # property_overrides_split_enabled
@@ -59,7 +59,7 @@ define generate-common-build-props
 
 endef
 
-# Rule for generating <partition>/build.prop file
+# Rule for generating <partition>/[etc/]build.prop file
 #
 # $(1): partition name
 # $(2): path to the output
@@ -313,7 +313,6 @@ $(eval $(call build-properties,system,$(INSTALLED_BUILD_PROP_TARGET),\
 $(_prop_files_),$(_prop_vars_),\
 $(_blacklist_names_)))
 
-
 # -----------------------------------------------------------------
 # vendor/build.prop
 #
@@ -351,7 +350,7 @@ $(eval $(call build-properties,\
     $(PRODUCT_VENDOR_PROPERTY_BLACKLIST)))
 
 # -----------------------------------------------------------------
-# product/build.prop
+# product/etc/build.prop
 #
 
 _prop_files_ := $(if $(TARGET_PRODUCT_PROP),\
@@ -364,7 +363,7 @@ _prop_vars_ := \
     ADDITIONAL_PRODUCT_PROPERTIES \
     PRODUCT_PRODUCT_PROPERTIES
 
-INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/build.prop
+INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/etc/build.prop
 $(eval $(call build-properties,\
     product,\
     $(INSTALLED_PRODUCT_BUILD_PROP_TARGET),\
@@ -385,8 +384,6 @@ _prop_vars_ := \
     ADDITIONAL_ODM_PROPERTIES \
     PRODUCT_ODM_PROPERTIES
 
-# Note the 'etc' sub directory. For the reason, see
-# I0733c277baa67c549bb45599abb70aba13fbdbcf
 INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
 $(eval $(call build-properties,\
     odm,\
@@ -395,8 +392,17 @@ $(eval $(call build-properties,\
     $(_prop_vars_),\
     $(empty)))
 
+# ----------------------------------------------------------------
+# vendor_dlkm/etc/build.prop
+#
+
+INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR_DLKM)/etc/build.prop
+$(eval $(call build-properties,\
+    vendor_dlkm,\
+    $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET)))
+
 # -----------------------------------------------------------------
-# system_ext/build.prop
+# system_ext/etc/build.prop
 #
 _prop_files_ := $(if $(TARGET_SYSTEM_EXT_PROP),\
     $(TARGET_SYSTEM_EXT_PROP),\
@@ -406,7 +412,7 @@ _prop_files_ := $(if $(TARGET_SYSTEM_EXT_PROP),\
 # TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
 _prop_vars_ := PRODUCT_SYSTEM_EXT_PROPERTIES
 
-INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/build.prop
+INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/etc/build.prop
 $(eval $(call build-properties,\
     system_ext,\
     $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET),\
