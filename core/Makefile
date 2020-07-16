@@ -2791,6 +2791,7 @@ endif
 # are not guaranteed to exist on all devices.
 ifdef BOARD_USES_VENDOR_DLKMIMAGE
 define create-vendor-vendor_dlkm-symlink
+$(hide) mkdir -p $(TARGET_OUT_VENDOR)/lib
 $(hide) if [ -d $(TARGET_OUT_VENDOR)/lib/modules ] && [ ! -h $(TARGET_OUT_VENDOR)/lib/modules ]; then \
   echo 'Non-symlink $(TARGET_OUT_VENDOR)/lib/modules detected!' 1>&2; \
   echo 'You cannot install files to $(TARGET_OUT_VENDOR)/lib/modules while building a separate vendor_dlkm.img!' 1>&2; \
@@ -2819,6 +2820,7 @@ endif
 # are not guaranteed to exist on all devices.
 ifdef BOARD_USES_ODM_DLKMIMAGE
 define create-odm-odm_dlkm-symlink
+$(hide) mkdir -p $(TARGET_OUT_ODM)/lib
 $(hide) if [ -d $(TARGET_OUT_ODM)/lib/modules ] && [ ! -h $(TARGET_OUT_ODM)/lib/modules ]; then \
   echo 'Non-symlink $(TARGET_OUT_ODM)/lib/modules detected!' 1>&2; \
   echo 'You cannot install files to $(TARGET_OUT_ODM)/lib/modules while building a separate odm_dlkm.img!' 1>&2; \
