@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "06ade16a_d91b8144",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-16T22:18:24Z",
+      "side": 1,
+      "message": "--?",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 6
+      },
+      "revId": "ac54b1f9d604fb615fe333177b2f0ec11c2eff9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "685d2d67_1a55cf49",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-16T22:18:24Z",
+      "side": 1,
+      "message": "I\u0027d assume this will be a different go link (but I\u0027d also claim that it\u0027s probably not necessary to put in this sample)",
+      "range": {
+        "startLine": 16,
+        "startChar": 103,
+        "endLine": 16,
+        "endChar": 126
+      },
+      "revId": "ac54b1f9d604fb615fe333177b2f0ec11c2eff9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

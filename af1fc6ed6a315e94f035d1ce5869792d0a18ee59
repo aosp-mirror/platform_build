@@ -306,6 +306,24 @@
     },
     {
       "key": {
+        "uuid": "b2d0ddc5_4804fe98",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-16T22:18:24Z",
+      "side": 1,
+      "message": "Looks like it isn\u0027t removed, but yeah, it makes sense to do that separately.",
+      "parentUuid": "c26e4e80_ec7155e5",
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "46912027_47eeb703",
         "filename": "tools/mk2bp_catalog.py",
         "patchSetId": 2
@@ -582,6 +600,30 @@
       "side": 1,
       "message": "They\u0027re all explainable, but yeah.\n\n$ find . -name \"*.mk\"\n./Android.mk\n./soong/late-coral.mk\n./soong/make_vars-coral.mk\n./soong/Android-coral.mk\n./target/product/coral/previous_build_config.mk\n./target/product/coral/obj/CONFIG/kati_packaging/dist.mk\n./target/product/coral/clean_steps.mk\n./CleanSpec.mk",
       "parentUuid": "6fa6d993_aaf17cf1",
+      "range": {
+        "startLine": 592,
+        "startChar": 6,
+        "endLine": 592,
+        "endChar": 41
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c0972084_4881fe47",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-07-16T22:18:24Z",
+      "side": 1,
+      "message": "Ah, I had assumed we\u0027d only get makefiles that had unconverted modules (none of those should, as soong/Android-coral.mk is the only one that has any module definitions, and those come from Soong, so they should be counted as converted)",
+      "parentUuid": "6844a50c_6dacef1d",
       "range": {
         "startLine": 592,
         "startChar": 6,
