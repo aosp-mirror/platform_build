@@ -401,6 +401,15 @@ $(eval $(call build-properties,\
     vendor_dlkm,\
     $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET)))
 
+# ----------------------------------------------------------------
+# odm_dlkm/etc/build.prop
+#
+
+INSTALLED_ODM_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM_DLKM)/etc/build.prop
+$(eval $(call build-properties,\
+    odm_dlkm,\
+    $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET)))
+
 # -----------------------------------------------------------------
 # system_ext/etc/build.prop
 #
