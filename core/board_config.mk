@@ -74,6 +74,8 @@ _board_strip_readonly_list += \
   BOARD_ODMIMAGE_FILE_SYSTEM_TYPE \
   BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE \
   BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_ODM_DLKMIMAGE_PARTITION_SIZE \
+  BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE \
 
 # Logical partitions related variables.
 _dynamic_partitions_var_list += \
@@ -81,6 +83,7 @@ _dynamic_partitions_var_list += \
   BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_VENDOR_DLKMIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_ODM_DLKMIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_SUPER_PARTITION_SIZE \
@@ -581,6 +584,41 @@ ifdef BOARD_PREBUILT_ODMIMAGE
   BUILDING_ODM_IMAGE :=
 endif
 .KATI_READONLY := BUILDING_ODM_IMAGE
+
+
+###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_ODM_DLKM
+ifeq ($(TARGET_COPY_OUT_ODM_DLKM),$(_odm_dlkm_path_placeholder))
+  TARGET_COPY_OUT_ODM_DLKM := $(TARGET_COPY_OUT_VENDOR)/odm_dlkm
+else ifeq ($(filter odm_dlkm system/vendor/odm_dlkm vendor/odm_dlkm,$(TARGET_COPY_OUT_ODM_DLKM)),)
+  $(error TARGET_COPY_OUT_ODM_DLKM must be either 'odm_dlkm', 'system/vendor/odm_dlkm' or 'vendor/odm_dlkm', seeing '$(TARGET_COPY_OUT_ODM_DLKM)'.)
+endif
+PRODUCT_COPY_FILES := $(subst $(_odm_dlkm_path_placeholder),$(TARGET_COPY_OUT_ODM_DLKM),$(PRODUCT_COPY_FILES))
+
+BOARD_USES_ODM_DLKMIMAGE :=
+ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
+  BOARD_USES_ODM_DLKMIMAGE := true
+endif
+ifdef BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
+  BOARD_USES_ODM_DLKMIMAGE := true
+endif
+$(call check_image_config,odm_dlkm)
+
+BUILDING_ODM_DLKM_IMAGE :=
+ifeq ($(PRODUCT_BUILD_ODM_DLKM_IMAGE),)
+  ifdef BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_ODM_DLKM_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_ODM_DLKM_IMAGE),true)
+  BUILDING_ODM_DLKM_IMAGE := true
+  ifndef BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_ODM_DLKM_IMAGE set to true, but BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
+  BUILDING_ODM_DLKM_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_ODM_DLKM_IMAGE
 
 ###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
