@@ -278,15 +278,15 @@ UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
 # Files to be unzipped for target diffing purpose.
 TARGET_DIFFING_UNZIP_PATTERN = ['BOOT', 'RECOVERY', 'SYSTEM/*', 'VENDOR/*',
                                 'PRODUCT/*', 'SYSTEM_EXT/*', 'ODM/*',
-                                'VENDOR_DLKM/*']
+                                'VENDOR_DLKM/*', 'ODM_DLKM/*']
 RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 
 # Images to be excluded from secondary payload. We essentially only keep
 # 'system_other' and bootloader partitions.
 SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
-    'boot', 'dtbo', 'modem', 'odm', 'product', 'radio', 'recovery',
+    'boot', 'dtbo', 'modem', 'odm', 'odm_dlkm', 'product', 'radio', 'recovery',
     'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor',
-    'vendor_boot', 'vendor_dlkm']
+    'vendor_boot']
 
 
 class PayloadSigner(object):
@@ -670,7 +670,7 @@ def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
 
   block_diff_dict = collections.OrderedDict()
   partition_names = ["system", "vendor", "product", "odm", "system_ext",
-                     "vendor_dlkm"]
+                     "vendor_dlkm", "odm_dlkm"]
   for partition in partition_names:
     if not HasPartition(target_zip, partition):
       continue
