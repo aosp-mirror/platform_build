@@ -296,6 +296,21 @@ def AddVendorDlkm(output_zip):
       block_list=block_list)
   return img.name
 
+def AddOdmDlkm(output_zip):
+  """Turn the contents of OdmDlkm into an odm_dlkm image and store it in output_zip."""
+
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "odm_dlkm.img")
+  if os.path.exists(img.name):
+    logger.info("odm_dlkm.img already exists; no need to rebuild...")
+    return img.name
+
+  block_list = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "odm_dlkm.map")
+  CreateImage(
+      OPTIONS.input_tmp, OPTIONS.info_dict, "odm_dlkm", img,
+      block_list=block_list)
+  return img.name
+
 
 def AddDtbo(output_zip):
   """Adds the DTBO image.
@@ -752,8 +767,9 @@ def AddImagesToTargetFiles(filename):
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
   has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
 
-  # {vendor,odm,product,system_ext,vendor_dlkm}.img are unlike system.img or
-  # system_other.img. Because it could be built from source, or dropped into
+  # {vendor,odm,product,system_ext,vendor_dlkm,odm_dlkm}.img
+  # are unlike system.img or
+  # system_other.img, because it could be built from source, or  dropped into
   # target_files.zip as a prebuilt blob. We consider either of them as
   # {vendor,product,system_ext}.img being available, which could be
   # used when generating vbmeta.img for AVB.
@@ -772,6 +788,12 @@ def AddImagesToTargetFiles(filename):
                      os.path.exists(
                          os.path.join(OPTIONS.input_tmp, "IMAGES",
                                       "vendor_dlkm.img")))
+  has_odm_dlkm = ((os.path.isdir(os.path.join(OPTIONS.input_tmp,
+                                              "ODM_DLKM")) and
+                   OPTIONS.info_dict.get("building_odm_dlkm_image")
+                   == "true") or
+                  os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                              "odm_dlkm.img")))
   has_product = ((os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) and
                   OPTIONS.info_dict.get("building_product_image") == "true") or
                  os.path.exists(
@@ -900,6 +922,10 @@ def AddImagesToTargetFiles(filename):
   if has_vendor_dlkm:
     banner("vendor_dlkm")
     partitions['vendor_dlkm'] = AddVendorDlkm(output_zip)
+
+  if has_odm_dlkm:
+    banner("odm_dlkm")
+    partitions['odm_dlkm'] = AddOdmDlkm(output_zip)
 
   if has_system_other:
     banner("system_other")
