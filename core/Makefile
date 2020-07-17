@@ -385,7 +385,7 @@ $(foreach dir,$(BOARD_KERNEL_MODULE_DIRS), \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-ramdisk-recovery-load,$(dir))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR,$(if $(filter true,$(BOARD_USES_VENDOR_DLKMIMAGE)),$(TARGET_OUT_VENDOR_DLKM),$(TARGET_OUT_VENDOR)),vendor,modules.load,$(VENDOR_STRIPPED_MODULE_STAGING_DIR),$(dir))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-charger-load,$(dir))) \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,ODM,$(TARGET_OUT_ODM),odm,modules.load,,$(dir))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,ODM,$(if $(filter true,$(BOARD_USES_ODM_DLKMIMAGE)),$(TARGET_OUT_ODM_DLKM),$(TARGET_OUT_ODM)),odm,modules.load,,$(dir))) \
   $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-recovery-as-boot-load,$(dir))),\
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,,$(dir)))))
@@ -2818,6 +2818,34 @@ define create-vendor-vendor_dlkm-symlink
 endef
 endif
 
+# Create symlinks for odm_dlkm on devices with a odm_dlkm partition:
+# /odm/lib/modules -> /odm_dlkm/lib/modules
+#
+# On devices with a odm_dlkm partition,
+# - /odm/lib/modules is a symlink to a directory that stores odm DLKMs.
+# - /odm_dlkm/{etc,...} store other odm_dlkm files directly. The odm_dlkm partition is
+#   mounted at /odm_dlkm at runtime and the symlinks created in system/core/rootdir/Android.mk
+#   are hidden.
+# On devices without a odm_dlkm partition,
+# - /odm/lib/modules stores odm DLKMs directly.
+# - /odm_dlkm/{etc,...} are symlinks to directories that store other odm_dlkm files.
+#   See system/core/rootdir/Android.mk for a list of created symlinks.
+# The odm DLKMs and other odm_dlkm files must not be accessed using other paths because they
+# are not guaranteed to exist on all devices.
+ifdef BOARD_USES_ODM_DLKMIMAGE
+define create-odm-odm_dlkm-symlink
+$(hide) if [ -d $(TARGET_OUT_ODM)/lib/modules ] && [ ! -h $(TARGET_OUT_ODM)/lib/modules ]; then \
+  echo 'Non-symlink $(TARGET_OUT_ODM)/lib/modules detected!' 1>&2; \
+  echo 'You cannot install files to $(TARGET_OUT_ODM)/lib/modules while building a separate odm_dlkm.img!' 1>&2; \
+  exit 1; \
+fi
+$(hide) ln -sf /odm_dlkm/lib/modules $(TARGET_OUT_ODM)/lib/modules
+endef
+else
+define create-odm-odm_dlkm-symlink
+endef
+endif
+
 vendorimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,vendor)
 BUILT_VENDORIMAGE_TARGET := $(PRODUCT_OUT)/vendor.img
@@ -2826,6 +2854,7 @@ define build-vendorimage-target
   @mkdir -p $(TARGET_OUT_VENDOR)
   $(call create-vendor-odm-symlink)
   $(call create-vendor-vendor_dlkm-symlink)
+  $(call create-odm-odm_dlkm-symlink)
   @mkdir -p $(vendorimage_intermediates) && rm -rf $(vendorimage_intermediates)/vendor_image_info.txt
   $(call generate-image-prop-dictionary, $(vendorimage_intermediates)/vendor_image_info.txt,vendor,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
@@ -4457,6 +4486,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	$(call create-system-system_ext-symlink)
 	$(call create-vendor-odm-symlink)
 	$(call create-vendor-vendor_dlkm-symlink)
+	$(call create-odm-odm_dlkm-symlink)
 	$(hide) rm -rf $@ $@.list $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
 ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
