@@ -130,6 +130,8 @@ ifneq ($(LOCAL_SDK_VERSION),)
     my_ndk_api := $(call math_max,$(my_ndk_api),$(my_min_sdk_version))
   endif
 
+  my_ndk_crt_version := $(my_ndk_api)
+
   my_ndk_hist_api := $(my_ndk_api)
   ifeq ($(my_ndk_api),current)
     # The last API level supported by the old prebuilt NDKs.
