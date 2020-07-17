@@ -119,6 +119,15 @@ class Summary(object):
     self.makefiles[makefile.filename] = makefile
     self.directories.setdefault(directory_group(makefile.filename), []).append(makefile)
 
+  def IsClean(self, filename):
+    """Also returns true if filename isn't present, with the assumption that it's already
+       converted.
+    """
+    makefile = self.makefiles.get(filename)
+    if not makefile:
+      return True
+    return is_clean(makefile)
+
 class Makefile(object):
   def __init__(self, filename):
     self.filename = filename
@@ -223,6 +232,16 @@ class SoongData(object):
       for f in installed.strip().split(' '):
         self.installed[f] = module
 
+  def transitive_deps(self, module):
+    results = set()
+    def traverse(module):
+      for dep in self.deps.get(module, []):
+        if not dep in results:
+          results.add(dep)
+          traverse(module)
+    traverse(module)
+    return results
+
 def count_deps(depsdb, module, seen):
   """Based on the depsdb, count the number of transitive dependencies.
 
@@ -273,6 +292,84 @@ def format_module_link(module):
 def format_module_list(modules):
   return "".join(["<div>%s</div>" % format_module_link(m) for m in modules])
 
+def traverse_ready_makefiles(soong, summary, makefiles):
+  def clean_and_only_blocked_by_clean(makefile):
+    if not is_clean(makefile):
+      return False
+    modules = soong.reverse_makefiles[makefile.filename]
+    for module in modules:
+      for dep in soong.transitive_deps(module):
+        for m in soong.makefiles.get(dep, []):
+          if not summary.IsClean(m):
+            return False
+    return True
+
+  return [Analysis(makefile.filename, []) for makefile in makefiles
+      if clean_and_only_blocked_by_clean(makefile)]
+
+def print_analysis_header(link, title):
+  print("""
+    <a name="%(link)s"></a>
+    <h2>%(title)s</h2>
+    <table>
+      <tr>
+        <th class="RowTitle">Directory</th>
+        <th class="Count">Total</th>
+        <th class="Count Clean">Easy</th>
+        <th class="Count Clean">Unblocked Clean</th>
+        <th class="Count Unblocked">Unblocked</th>
+        <th class="Count Blocked">Blocked</th>
+        <th class="Count Clean">Clean</th>
+  """ % {
+    "link": link,
+    "title": title
+  })
+  for analyzer in ANALYZERS:
+    print("""<th class="Count Warning">%s</th>""" % analyzer.title)
+  print("      </tr>")
+
+
+def print_analysis_row(soong, summary, annotations, modules, rowtitle, rowclass, makefiles):
+  all_makefiles = [Analysis(makefile.filename, []) for makefile in makefiles]
+  clean_makefiles = [Analysis(makefile.filename, []) for makefile in makefiles
+      if is_clean(makefile)]
+  easy_makefiles = traverse_ready_makefiles(soong, summary, makefiles)
+  unblocked_clean_makefiles = [Analysis(makefile.filename, []) for makefile in makefiles
+      if (contains_unblocked_modules(soong, soong.reverse_makefiles[makefile.filename])
+          and is_clean(makefile))]
+  unblocked_makefiles = [Analysis(makefile.filename, []) for makefile in makefiles
+      if contains_unblocked_modules(soong,
+        soong.reverse_makefiles[makefile.filename])]
+  blocked_makefiles = [Analysis(makefile.filename, []) for makefile in makefiles
+      if contains_blocked_modules(soong, soong.reverse_makefiles[makefile.filename])]
+
+  print("""
+    <tr class="%(rowclass)s">
+      <td class="RowTitle">%(rowtitle)s</td>
+      <td class="Count">%(makefiles)s</td>
+      <td class="Count">%(easy)s</td>
+      <td class="Count">%(unblocked_clean)s</td>
+      <td class="Count">%(unblocked)s</td>
+      <td class="Count">%(blocked)s</td>
+      <td class="Count">%(clean)s</td>
+  """ % {
+    "rowclass": rowclass,
+    "rowtitle": rowtitle,
+    "makefiles": make_annotation_link(annotations, all_makefiles, modules),
+    "unblocked": make_annotation_link(annotations, unblocked_makefiles, modules),
+    "blocked": make_annotation_link(annotations, blocked_makefiles, modules),
+    "clean": make_annotation_link(annotations, clean_makefiles, modules),
+    "unblocked_clean": make_annotation_link(annotations, unblocked_clean_makefiles, modules),
+    "easy": make_annotation_link(annotations, easy_makefiles, modules),
+  })
+
+  for analyzer in ANALYZERS:
+    analyses = [m.analyses.get(analyzer) for m in makefiles if m.analyses.get(analyzer)]
+    print("""<td class="Count">%s</td>"""
+        % make_annotation_link(annotations, analyses, modules))
+
+  print("      </tr>")
+
 def main():
   parser = argparse.ArgumentParser(description="Info about remaining Android.mk files.")
   parser.add_argument("--device", type=str, required=True,
@@ -297,7 +394,7 @@ def main():
     args.out_dir = args.out_dir[:-1]
 
   TARGET_DEVICE = args.device
-  HOST_OUT_ROOT = args.out_dir + "host"
+  HOST_OUT_ROOT = args.out_dir + "/host"
   PRODUCT_OUT = args.out_dir + "/target/product/%s" % TARGET_DEVICE
 
   if args.title:
@@ -343,7 +440,7 @@ def main():
           overflow: hidden;
         }
         #tables {
-          padding: 0 20px 0 20px;
+          padding: 0 20px 40px 20px;
           overflow: scroll;
           flex: 2 2 600px;
         }
@@ -359,7 +456,7 @@ def main():
         h2 {
           margin: 12px 0 4px 0;
         }
-        .DirName {
+        .RowTitle {
           text-align: left;
           width: 200px;
           min-width: 200px;
@@ -394,6 +491,10 @@ def main():
         td, th {
           padding: 2px 4px;
           border-right: 2px solid white;
+        }
+        tr.TotalRow td {
+          background-color: white;
+          border-right-color: white;
         }
         tr.AospDir td {
           background-color: #e6f4ea;
@@ -501,6 +602,7 @@ def main():
 
   print("""
         <span class='NavSpacer'></span><span class='NavSpacer'> </span>
+        <a href='#summary'>Overall Summary</a>
       </div>
       <div id="container">
         <div id="tables">
@@ -529,6 +631,16 @@ def main():
               <th>Total</th>
               <td>The total number of makefiles in this each directory.</td>
             </tr>
+            <tr>
+              <th class="Clean">Easy</th>
+              <td>The number of makefiles that have no warnings themselves, and also
+                  none of their dependencies have warnings either.</td>
+            </tr>
+            <tr>
+              <th class="Clean">Unblocked Clean</th>
+              <td>The number of makefiles that are both Unblocked and Clean.</td>
+            </tr>
+
             <tr>
               <th class="Unblocked">Unblocked</th>
               <td>Makefiles containing one or more modules that don't have any
@@ -598,6 +710,7 @@ def main():
   """)
 
   annotations = Annotations()
+  overall_summary = Summary()
 
   # For each partition
   makefiles_for_partitions = dict()
@@ -612,6 +725,7 @@ def main():
     for filename in makefiles:
       if not filename.startswith(args.out_dir + "/"):
         summary.Add(Makefile(filename))
+        overall_summary.Add(Makefile(filename))
 
     # Categorize directories by who is responsible
     aosp_dirs = []
@@ -625,61 +739,18 @@ def main():
       else:
         partner_dirs.append(dirname)
 
-    print("""
-      <a name="partition_%(partition)s"></a>
-      <h2>%(partition)s</h2>
-      <table>
-        <tr>
-          <th class="DirName">Directory</th>
-          <th class="Count">Total</th>
-          <th class="Count Unblocked">Unblocked</th>
-          <th class="Count Blocked">Blocked</th>
-          <th class="Count Clean">Clean</th>
-    """ % {
-      "partition": partition
-    })
+    print_analysis_header("partition_" + partition, partition)
 
-    for analyzer in ANALYZERS:
-      print("""<th class="Count Warning">%s</th>""" % analyzer.title)
-
-    print("      </tr>")
     for dirgroup, rowclass in [(aosp_dirs, "AospDir"),
                                (google_dirs, "GoogleDir"),
                                (partner_dirs, "PartnerDir"),]:
       for dirname in dirgroup:
-        makefiles = summary.directories[dirname]
+        print_analysis_row(soong, summary, annotations, modules,
+                             dirname, rowclass, summary.directories[dirname])
 
-        all_makefiles = [Analysis(makefile.filename, []) for makefile in makefiles]
-        clean_makefiles = [Analysis(makefile.filename, []) for makefile in makefiles
-            if is_clean(makefile)]
-        unblocked_makefiles = [Analysis(makefile.filename, []) for makefile in makefiles
-            if contains_unblocked_modules(soong,
-              soong.reverse_makefiles[makefile.filename])]
-        blocked_makefiles = [Analysis(makefile.filename, []) for makefile in makefiles
-            if contains_blocked_modules(soong,
-              soong.reverse_makefiles[makefile.filename])]
-
-        print("""
-          <tr class="%(rowclass)s">
-            <td class="DirName">%(dirname)s</td>
-            <td class="Count">%(makefiles)s</td>
-            <td class="Count">%(unblocked)s</td>
-            <td class="Count">%(blocked)s</td>
-            <td class="Count">%(clean)s</td>
-        """ % {
-          "rowclass": rowclass,
-          "dirname": dirname,
-          "makefiles": make_annotation_link(annotations, all_makefiles, modules),
-          "unblocked": make_annotation_link(annotations, unblocked_makefiles, modules),
-          "blocked": make_annotation_link(annotations, blocked_makefiles, modules),
-          "clean": make_annotation_link(annotations, clean_makefiles, modules),
-        })
-        for analyzer in ANALYZERS:
-          analyses = [m.analyses.get(analyzer) for m in makefiles if m.analyses.get(analyzer)]
-          print("""<td class="Count">%s</td>"""
-              % make_annotation_link(annotations, analyses, modules))
-
-        print("      </tr>")
+    print_analysis_row(soong, summary, annotations, modules,
+                         "Total", "TotalRow",
+                         set(itertools.chain.from_iterable(summary.directories.values())))
     print("""
       </table>
     """)
@@ -717,6 +788,16 @@ def main():
       print("  <td>%s</td>" % format_module_list(soong.reverse_deps.get(module, [])))
       print("</tr>")
     print("""</table>""")
+
+  print_analysis_header("summary", "Overall Summary")
+
+  modules = [module for installed, module in soong.installed.items()]
+  print_analysis_row(soong, overall_summary, annotations, modules,
+                       "All Makefiles", "TotalRow",
+                       set(itertools.chain.from_iterable(overall_summary.directories.values())))
+  print("""
+      </table>
+  """)
 
   print("""
     <script type="text/javascript">
