@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2979c4d8_f4504f66",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-17T01:24:03Z",
+      "side": 1,
+      "message": "Typo, but this comment was actually just my scratch notes.  It\u0027s in the build now, so just removing the whole thing and replacing it with a 2 liner about what this command is for.",
+      "parentUuid": "06ade16a_d91b8144",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 6
+      },
+      "revId": "ac54b1f9d604fb615fe333177b2f0ec11c2eff9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "685d2d67_1a55cf49",
         "filename": "tools/mk2bp_catalog.py",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "ac54b1f9d604fb615fe333177b2f0ec11c2eff9d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8da9077_ebecdff1",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-17T01:24:03Z",
+      "side": 1,
+      "message": "see above",
+      "parentUuid": "685d2d67_1a55cf49",
+      "range": {
+        "startLine": 16,
+        "startChar": 103,
+        "endLine": 16,
+        "endChar": 126
+      },
+      "revId": "ac54b1f9d604fb615fe333177b2f0ec11c2eff9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

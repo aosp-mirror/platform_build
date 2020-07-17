@@ -636,6 +636,30 @@
     },
     {
       "key": {
+        "uuid": "04757f2a_f26b5211",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-07-17T01:24:03Z",
+      "side": 1,
+      "message": "For the SOONG_CONV stuff that\u0027s true, but my regex based scanning was catching it.  It might not be anymore, because I pivoted everything to be based on what SOONG_CONV outputs, so I guess this check is vestigial, but it\u0027s also harmless...",
+      "parentUuid": "c0972084_4881fe47",
+      "range": {
+        "startLine": 592,
+        "startChar": 6,
+        "endLine": 592,
+        "endChar": 41
+      },
+      "revId": "af1fc6ed6a315e94f035d1ce5869792d0a18ee59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f9276eb3_8607de24",
         "filename": "tools/mk2bp_catalog.py",
         "patchSetId": 2
