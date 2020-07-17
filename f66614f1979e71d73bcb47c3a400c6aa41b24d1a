@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "cd4167fe_5b127802",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-07-17T09:44:29Z",
+      "side": 1,
+      "message": "Probably this is a bit confusing. I didn\u0027t mean vbmeta.img shouldn\u0027t depend on system.img or vendor.img.\n\nLet me rephrase it a bit. Thanks!",
+      "range": {
+        "startLine": 9,
+        "startChar": 45,
+        "endLine": 11,
+        "endChar": 19
+      },
+      "revId": "f66614f1979e71d73bcb47c3a400c6aa41b24d1a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7d09eaa1_d26c8823",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 3482,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-07-17T09:44:29Z",
+      "side": 1,
+      "message": "vbmeta.img depends on system.img and vendor.img here.",
+      "range": {
+        "startLine": 3481,
+        "startChar": 0,
+        "endLine": 3482,
+        "endChar": 38
+      },
+      "revId": "f66614f1979e71d73bcb47c3a400c6aa41b24d1a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "584e46e2_2ee23d37",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 3491,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-07-17T09:44:29Z",
+      "side": 1,
+      "message": "vbmeta.img also depends on vbmeta_system.img and vbmeta_vendor.img.",
+      "range": {
+        "startLine": 3490,
+        "startChar": 0,
+        "endLine": 3491,
+        "endChar": 45
+      },
+      "revId": "f66614f1979e71d73bcb47c3a400c6aa41b24d1a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6d567fa8_452b52fa",
         "filename": "core/main.mk",
         "patchSetId": 2
@@ -37,6 +106,30 @@
       "side": 1,
       "message": "uhh, I guess INSTALLED_VBMETAIMAGE_TARGET would have to depend on them. Perhaps that doesn\u0027t make sense together with what you wrote in the CL description.",
       "parentUuid": "6d567fa8_452b52fa",
+      "range": {
+        "startLine": 1542,
+        "startChar": 0,
+        "endLine": 1542,
+        "endChar": 11
+      },
+      "revId": "f66614f1979e71d73bcb47c3a400c6aa41b24d1a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f38c7ad6_d81811fe",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1542,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-07-17T09:44:29Z",
+      "side": 1,
+      "message": "vbmeta.img should depend on system.img / vendor.img / vbmeta_system.img and vbmeta_vendor.img (it\u0027s no problem).\n\nThe problem is that when we skip building vbmeta.img in a system-only builds (or vendor-only), no-one depends on vbmeta_system.img / vbmeta_vendor.img so they won\u0027t be built.",
+      "parentUuid": "ebcfb0c8_975d8ccb",
       "range": {
         "startLine": 1542,
         "startChar": 0,
