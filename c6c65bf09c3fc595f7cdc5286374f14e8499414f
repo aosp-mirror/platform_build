@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "df726f16_38549a9a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2020-07-17T21:11:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9fb7652_6e4a5a1c",
+      "revId": "c6c65bf09c3fc595f7cdc5286374f14e8499414f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "02e17d70_b43322da",
         "filename": "core/base_rules.mk",
         "patchSetId": 2
@@ -39,6 +57,30 @@
       "revId": "c6c65bf09c3fc595f7cdc5286374f14e8499414f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cead62ae_12a6fa4f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2020-07-17T21:11:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "02e17d70_b43322da",
+      "range": {
+        "startLine": 605,
+        "startChar": 0,
+        "endLine": 605,
+        "endChar": 1
+      },
+      "revId": "c6c65bf09c3fc595f7cdc5286374f14e8499414f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
