@@ -400,6 +400,7 @@ $(foreach image, \
     SYSTEM_EXT \
     ODM \
     VENDOR_DLKM \
+    ODM_DLKM \
     CACHE \
     RAMDISK \
     USERDATA \
