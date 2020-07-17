@@ -6,10 +6,6 @@ ifneq ($(filter ../%,$(LOCAL_SRC_FILES)),)
 my_soong_problems += dotdot_srcs
 endif
 
-ifneq (,$(LOCAL_JNI_SHARED_LIBRARIES))
-my_soong_problems += jni_libs
-endif
-
 ###########################################################
 ## Java version
 ###########################################################
