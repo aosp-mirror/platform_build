@@ -6,10 +6,6 @@ ifneq ($(filter ../%,$(LOCAL_SRC_FILES)),)
 my_soong_problems += dotdot_srcs
 endif
 
-ifneq (,$(LOCAL_JNI_SHARED_LIBRARIES))
-my_soong_problems += jni_libs
-endif
-
 ###########################################################
 ## Java version
 ###########################################################
@@ -546,6 +542,10 @@ SOONG_CONV.$(LOCAL_MODULE).DEPS := \
     $(LOCAL_JAVA_LIBRARIES) \
     $(LOCAL_JNI_SHARED_LIBRARIES)
 SOONG_CONV.$(LOCAL_MODULE).TYPE := java
+SOONG_CONV.$(LOCAL_MODULE).MAKEFILES := \
+    $(SOONG_CONV.$(LOCAL_MODULE).MAKEFILES) $(LOCAL_MODULE_MAKEFILE)
+SOONG_CONV.$(LOCAL_MODULE).INSTALLED := \
+    $(SOONG_CONV.$(LOCAL_MODULE).INSTALLED) $(LOCAL_INSTALLED_MODULE)
 SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
 
 endif

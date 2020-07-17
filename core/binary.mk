@@ -1818,6 +1818,10 @@ SOONG_CONV.$(LOCAL_MODULE).DEPS := \
         $(my_shared_libraries) \
         $(my_system_shared_libraries))
 SOONG_CONV.$(LOCAL_MODULE).TYPE := native
+SOONG_CONV.$(LOCAL_MODULE).MAKEFILES := \
+    $(SOONG_CONV.$(LOCAL_MODULE).MAKEFILES) $(LOCAL_MODULE_MAKEFILE)
+SOONG_CONV.$(LOCAL_MODULE).INSTALLED:= \
+    $(SOONG_CONV.$(LOCAL_MODULE).INSTALLED) $(LOCAL_INSTALLED_MODULE)
 SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
 
 ###########################################################

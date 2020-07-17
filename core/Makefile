@@ -476,7 +476,7 @@ SOONG_CONV := $(sort $(SOONG_CONV))
 SOONG_CONV_DATA := $(call intermediates-dir-for,PACKAGING,soong_conversion)/soong_conv_data
 $(SOONG_CONV_DATA):
 	@rm -f $@
-	@$(foreach s,$(SOONG_CONV),echo "$(s),$(SOONG_CONV.$(s).TYPE),$(sort $(SOONG_CONV.$(s).PROBLEMS)),$(sort $(filter-out $(SOONG_ALREADY_CONV),$(SOONG_CONV.$(s).DEPS)))" >>$@;)
+	@$(foreach s,$(SOONG_CONV),echo "$(s),$(SOONG_CONV.$(s).TYPE),$(sort $(SOONG_CONV.$(s).PROBLEMS)),$(sort $(filter-out $(SOONG_ALREADY_CONV),$(SOONG_CONV.$(s).DEPS))),$(sort $(SOONG_CONV.$(s).MAKEFILES)),$(sort $(SOONG_CONV.$(s).INSTALLED))" >>$@;)
 
 SOONG_TO_CONVERT_SCRIPT := build/make/tools/soong_to_convert.py
 SOONG_TO_CONVERT := $(PRODUCT_OUT)/soong_to_convert.txt
@@ -484,6 +484,19 @@ $(SOONG_TO_CONVERT): $(SOONG_CONV_DATA) $(SOONG_TO_CONVERT_SCRIPT)
 	@rm -f $@
 	$(hide) $(SOONG_TO_CONVERT_SCRIPT) $< >$@
 $(call dist-for-goals,droidcore,$(SOONG_TO_CONVERT))
+
+MK2BP_CATALOG_SCRIPT := build/make/tools/mk2bp_catalog.py
+MK2BP_REMAINING_HTML := $(PRODUCT_OUT)/mk2bp_remaining.html
+$(MK2BP_REMAINING_HTML): PRIVATE_CODE_SEARCH_BASE_URL := "https://cs.android.com/android/platform/superproject/+/master:"
+$(MK2BP_REMAINING_HTML): $(SOONG_CONV_DATA) $(MK2BP_CATALOG_SCRIPT)
+	@rm -f $@
+	$(hide) $(MK2BP_CATALOG_SCRIPT) \
+		--device=$(TARGET_DEVICE) \
+		--title="Remaining Android.mk files for $(TARGET_DEVICE)-$(TARGET_BUILD_VARIANT)" \
+		--codesearch=$(PRIVATE_CODE_SEARCH_BASE_URL) \
+		--out_dir="$(OUT_DIR)" \
+		> $@
+$(call dist-for-goals,droidcore,$(MK2BP_REMAINING_HTML))
 
 # -----------------------------------------------------------------
 # Modules use -Wno-error, or added default -Wall -Werror
