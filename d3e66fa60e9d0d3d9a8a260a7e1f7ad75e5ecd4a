@@ -63,6 +63,23 @@
       "revId": "d3e66fa60e9d0d3d9a8a260a7e1f7ad75e5ecd4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c440c66_aed6d923",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-18T00:44:57Z",
+      "side": 1,
+      "message": "Colin, do you have any concern on the CL? If so, please let me know.",
+      "revId": "d3e66fa60e9d0d3d9a8a260a7e1f7ad75e5ecd4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
