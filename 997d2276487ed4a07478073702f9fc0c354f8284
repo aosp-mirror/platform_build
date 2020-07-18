@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "792960f8_62e9ff99",
+        "filename": "target/board/gsi_system_ext.prop",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2020-07-18T18:26:38Z",
+      "side": 0,
+      "message": "That is true. In AOSP the default timeout is 100ms. However, that is not the case in Android R, so please keep it there.",
+      "parentUuid": "0d927242_f46fc949",
+      "revId": "997d2276487ed4a07478073702f9fc0c354f8284",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f7ce5a07_d70fd058",
         "filename": "target/board/gsi_system_ext_user.prop",
         "patchSetId": 1
