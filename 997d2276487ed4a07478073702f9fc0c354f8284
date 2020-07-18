@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "3d71df54_d6b027c7",
+        "filename": "target/board/gsi_system_ext.prop",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1561214
+      },
+      "writtenOn": "2020-07-18T19:07:43Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "792960f8_62e9ff99",
+      "revId": "997d2276487ed4a07478073702f9fc0c354f8284",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f7ce5a07_d70fd058",
         "filename": "target/board/gsi_system_ext_user.prop",
         "patchSetId": 1
@@ -51,6 +69,24 @@
       "revId": "997d2276487ed4a07478073702f9fc0c354f8284",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e304426_eb933f19",
+        "filename": "target/board/gsi_system_ext_user.prop",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1561214
+      },
+      "writtenOn": "2020-07-18T19:07:43Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "f7ce5a07_d70fd058",
+      "revId": "997d2276487ed4a07478073702f9fc0c354f8284",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
