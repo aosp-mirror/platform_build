@@ -11,6 +11,7 @@
 # LOCAL_SOONG_RRO_DIRS
 # LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH)
 # LOCAL_SOONG_JNI_LIBS_$(TARGET_2ND_ARCH)
+# LOCAL_SOONG_JNI_LIBS_SYMBOLS
 
 ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   $(call pretty-error,soong_app_prebuilt.mk may only be used from Soong)
@@ -118,6 +119,11 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
 $(call create-suite-dependencies)
 endif
 
+# install symbol files of JNI libraries
+my_jni_lib_symbols_copy_files := $(foreach f,$(LOCAL_SOONG_JNI_LIBS_SYMBOLS),\
+  $(call word-colon,1,$(f)):$(patsubst $(PRODUCT_OUT)/%,$(TARGET_OUT_UNSTRIPPED)/%,$(call word-colon,2,$(f))))
+$(LOCAL_BUILT_MODULE): $(call copy-many-files, $(my_jni_lib_symbols_copy_files))
+
 # embedded JNI will already have been handled by soong
 my_embed_jni :=
 my_prebuilt_jni_libs :=
@@ -168,6 +174,10 @@ PACKAGES.$(LOCAL_MODULE).PARTITION := $(actual_partition_tag)
 
 ifdef LOCAL_SOONG_BUNDLE
   ALL_MODULES.$(LOCAL_MODULE).BUNDLE := $(LOCAL_SOONG_BUNDLE)
+endif
+
+ifdef LOCAL_SOONG_LINT_REPORTS
+  ALL_MODULES.$(my_register_name).LINT_REPORTS := $(LOCAL_SOONG_LINT_REPORTS)
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
