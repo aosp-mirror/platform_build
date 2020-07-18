@@ -1508,6 +1508,14 @@ ifneq ($(TARGET_BUILD_APPS),)
     $(if $(ALL_MODULES.$(m).BUNDLE),$(ALL_MODULES.$(m).BUNDLE):$(m)-base.zip))
   $(call dist-for-goals,apps_only, $(apps_only_bundle_files))
 
+  # Dist the lint reports if they exist.
+  apps_only_lint_report_files := $(foreach m,$(unbundled_build_modules),\
+    $(foreach report,$(ALL_MODULES.$(m).LINT_REPORTS),\
+      $(report):$(m)-$(notdir $(report))))
+  .PHONY: lint-check
+  lint-check: $(foreach f, $(apps_only_lint_report_files), $(call word-colon,1,$(f)))
+  $(call dist-for-goals,lint-check, $(apps_only_lint_report_files))
+
   # For uninstallable modules such as static Java library, we have to dist the built file,
   # as <module_name>.<suffix>
   apps_only_dist_built_files := $(foreach m,$(unbundled_build_modules),$(if $(ALL_MODULES.$(m).INSTALLED),,\
