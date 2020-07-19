@@ -16,6 +16,24 @@
       "revId": "338d6d5ee42045a7878a89ffd3e5e3929c263ff6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e562170_ed0840c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1561214
+      },
+      "writtenOn": "2020-07-19T18:40:11Z",
+      "side": 1,
+      "message": "Good catch. There is another CL ag/12184946 which is slighgly different from this one but it\u0027s on rvc-dev, so eventually they will conflict in downstreams. Looks like the \"RESTRICT AUTOMERGE\" should be applied in ag/12184946",
+      "parentUuid": "1df8f066_aa9899f3",
+      "revId": "338d6d5ee42045a7878a89ffd3e5e3929c263ff6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
