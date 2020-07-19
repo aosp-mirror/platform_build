@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1df8f066_aa9899f3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-19T15:52:23Z",
+      "side": 1,
+      "message": "Why do you need RESTRICT AUTOMERGE?  It is usually better to use Merged-In to stop merging into whichever branches shouldn\u0027t get this.",
+      "revId": "338d6d5ee42045a7878a89ffd3e5e3929c263ff6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
