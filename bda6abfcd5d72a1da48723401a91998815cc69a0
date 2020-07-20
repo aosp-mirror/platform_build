@@ -52,6 +52,24 @@
       "revId": "bda6abfcd5d72a1da48723401a91998815cc69a0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ba27bd4_61acef5e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1115178
+      },
+      "writtenOn": "2020-07-20T17:47:30Z",
+      "side": 1,
+      "message": "Ah, thanks! The Soong CLs now emit ETCs, so this CL can be abandoned.",
+      "parentUuid": "30245eb8_32bacfda",
+      "revId": "bda6abfcd5d72a1da48723401a91998815cc69a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
