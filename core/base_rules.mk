@@ -592,12 +592,22 @@ ifneq ($(strip $(filter NATIVE_TESTS,$(LOCAL_MODULE_CLASS)) $(LOCAL_IS_FUZZ_TARG
 ifneq ($(strip $(LOCAL_TEST_DATA)),)
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 
+# Soong LOCAL_TEST_DATA is of the form <from_base>:<file>:<relative_install_path>
+# or <from_base>:<file>, to be installed to
+# <install_root>/<relative_install_path>/<file> or <install_root>/<file>,
+# respectively.
 ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   define copy_test_data_pairs
     _src_base := $$(call word-colon,1,$$(td))
     _file := $$(call word-colon,2,$$(td))
-    my_test_data_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(call append-path,$$(my_module_path),$$(_file))
-    my_test_data_file_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(_file)
+    _relative_install_path := $$(call word-colon,3,$$(td))
+    ifeq (,$$(_relative_install_path))
+        _relative_dest_file := $$(_file)
+    else
+        _relative_dest_file := $$(call append-path,$$(_relative_install_path),$$(_file))
+    endif
+    my_test_data_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(call append-path,$$(my_module_path),$$(_relative_dest_file))
+    my_test_data_file_pairs += $$(call append-path,$$(_src_base),$$(_file)):$$(_relative_dest_file)
   endef
 else
   define copy_test_data_pairs
