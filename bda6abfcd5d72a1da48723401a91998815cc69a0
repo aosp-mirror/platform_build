@@ -16,6 +16,24 @@
       "revId": "bda6abfcd5d72a1da48723401a91998815cc69a0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46cce9ef_9bfce357",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1115178
+      },
+      "writtenOn": "2020-07-20T14:04:38Z",
+      "side": 1,
+      "message": "I think we want to expose them to Make so that they can be generated using \u0027m \u003cmodule_name\u003e\u0027 (this isn\u0027t strictly necessary, but nice for developers to easily check the generated output).\n\nI just tried using ETC modules and I get an error about overriding commands for a target. I think it\u0027s because these are meant to be per-arch modules, so they need a class included in PER_ARCH_MODULE_CLASSES. (Adding ETC here confirms the issue is removed). \n\nRather than adding ETC to PER_ARCH_MODULE_CLASSES and impacting other module types, it might be cleaner to just have this be it\u0027s own class. But if you think we should avoid a adding another class I can go with ETC and add that to PER_ARCH_MODULE_CLASSES.",
+      "parentUuid": "72587b6c_e4c4d07b",
+      "revId": "bda6abfcd5d72a1da48723401a91998815cc69a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
