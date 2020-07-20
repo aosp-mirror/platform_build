@@ -34,6 +34,24 @@
       "revId": "bda6abfcd5d72a1da48723401a91998815cc69a0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30245eb8_32bacfda",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-20T17:09:00Z",
+      "side": 1,
+      "message": "ETC shouldn\u0027t be in PER_ARCH_MODULE_CLASSES.  Follow the pattern in genrule/genrule.go, that works for cc_genrule which has per-arch variants.",
+      "parentUuid": "46cce9ef_9bfce357",
+      "revId": "bda6abfcd5d72a1da48723401a91998815cc69a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
