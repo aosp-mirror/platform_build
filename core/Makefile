@@ -940,7 +940,7 @@ $(2): $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
 	                $(if $(filter $(1),xml_vendor_dlkm),-i vendor_dlkm --xml-output, \
 	                  $(if $(filter $(1),xml_odm_dlkm),-i odm_dlkm --xml-output, \
 	                    --html-output)))))))) $(3) \
-	    -t $$(PRIVATE_MESSAGE) -s $$(PRIVATE_DIR)/src
+	    -t $$(PRIVATE_MESSAGE) $$(foreach dir,$$(sort $$(PRIVATE_DIR)), -s $$(dir)/src)
 notice_files: $(2) $(3)
 endef
 
