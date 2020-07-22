@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f6b6717_61720ec9",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-07-22T16:05:26Z",
+      "side": 1,
+      "message": "typo: \u0027if\u0027",
+      "range": {
+        "startLine": 131,
+        "startChar": 19,
+        "endLine": 131,
+        "endChar": 21
+      },
+      "revId": "7e93856d088a210bc3c2b2bd2f5ce8887d0510e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
