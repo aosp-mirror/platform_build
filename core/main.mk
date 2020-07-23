@@ -102,15 +102,6 @@ ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 EMMA_INSTRUMENT := true
 endif
 
-# TODO(b/158212027): Turn this into an error when all users have been moved to
-# `NATIVE_COVERAGE_PATHS` and `NATIVE_COVERAGE_EXCLUDE_PATHS`.
-ifneq ($(COVERAGE_PATHS),)
-  $(warning Variable COVERAGE_PATHS is deprecated. Please use NATIVE_COVERAGE_PATHS instead.)
-endif
-ifneq ($(COVERAGE_EXCLUDE_PATHS),)
-  $(warning Variable COVERAGE_EXCLUDE_PATHS is deprecated. Please use NATIVE_COVERAGE_EXCLUDE_PATHS instead.)
-endif
-
 ifeq (true,$(EMMA_INSTRUMENT))
 # Adding the jacoco library can cause the inclusion of
 # some typically banned classes
@@ -158,9 +149,6 @@ endif
 
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
-
-# Bring in dex_preopt.mk
-include $(BUILD_SYSTEM)/dex_preopt.mk
 
 ifneq ($(filter user userdebug eng,$(MAKECMDGOALS)),)
 $(info ***************************************************************)
@@ -481,6 +469,12 @@ endif
 #
 # Typical build; include any Android.mk files we can find.
 #
+
+# Bring in dex_preopt.mk
+# This creates some modules so it needs to be included after
+# should-install-to-system is defined (in order for base_rules.mk to function
+# properly), but before readonly-final-product-vars is called.
+include $(BUILD_SYSTEM)/dex_preopt.mk
 
 # Strip and readonly a few more variables so they won't be modified.
 $(readonly-final-product-vars)
@@ -1150,7 +1144,9 @@ define resolve-product-relative-paths
     $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
       $(subst $(_system_ext_path_placeholder),$(TARGET_COPY_OUT_SYSTEM_EXT),\
         $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),\
-          $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))
+          $(subst $(_vendor_dlkm_path_placeholder),$(TARGET_COPY_OUT_VENDOR_DLKM),\
+            $(subst $(_odm_dlkm_path_placeholder),$(TARGET_COPY_OUT_ODM_DLKM),\
+              $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))))
 endef
 
 # Returns modules included automatically as a result of certain BoardConfig
@@ -1528,6 +1524,12 @@ systemextimage: $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
 .PHONY: odmimage
 odmimage: $(INSTALLED_ODMIMAGE_TARGET)
 
+.PHONY: vendor_dlkmimage
+vendor_dlkmimage: $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
+
+.PHONY: odm_dlkmimage
+odm_dlkmimage: $(INSTALLED_ODM_DLKMIMAGE_TARGET)
+
 .PHONY: systemotherimage
 systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 
@@ -1546,6 +1548,12 @@ bootimage_test_harness: $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET)
 .PHONY: vbmetaimage
 vbmetaimage: $(INSTALLED_VBMETAIMAGE_TARGET)
 
+.PHONY: vbmetasystemimage
+vbmetasystemimage: $(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET)
+
+.PHONY: vbmetavendorimage
+vbmetavendorimage: $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
+
 # Build files and then package it into the rom formats
 .PHONY: droidcore
 droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
@@ -1557,6 +1565,8 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
     $(INSTALLED_RECOVERYIMAGE_TARGET) \
     $(INSTALLED_VBMETAIMAGE_TARGET) \
+    $(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET) \
+    $(INSTALLED_VBMETA_VENDORIMAGE_TARGET) \
     $(INSTALLED_USERDATAIMAGE_TARGET) \
     $(INSTALLED_CACHEIMAGE_TARGET) \
     $(INSTALLED_BPTIMAGE_TARGET) \
@@ -1565,6 +1575,8 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) \
+    $(INSTALLED_ODM_DLKMIMAGE_TARGET) \
     $(INSTALLED_SUPERIMAGE_EMPTY_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
     $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
@@ -1574,6 +1586,10 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_VENDOR) \
     $(INSTALLED_FILES_FILE_ODM) \
     $(INSTALLED_FILES_JSON_ODM) \
+    $(INSTALLED_FILES_FILE_VENDOR_DLKM) \
+    $(INSTALLED_FILES_JSON_VENDOR_DLKM) \
+    $(INSTALLED_FILES_FILE_ODM_DLKM) \
+    $(INSTALLED_FILES_JSON_ODM_DLKM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
     $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
@@ -1616,6 +1632,14 @@ ifneq ($(TARGET_BUILD_APPS),)
   apps_only_bundle_files := $(foreach m,$(unbundled_build_modules),\
     $(if $(ALL_MODULES.$(m).BUNDLE),$(ALL_MODULES.$(m).BUNDLE):$(m)-base.zip))
   $(call dist-for-goals,apps_only, $(apps_only_bundle_files))
+
+  # Dist the lint reports if they exist.
+  apps_only_lint_report_files := $(foreach m,$(unbundled_build_modules),\
+    $(foreach report,$(ALL_MODULES.$(m).LINT_REPORTS),\
+      $(report):$(m)-$(notdir $(report))))
+  .PHONY: lint-check
+  lint-check: $(foreach f, $(apps_only_lint_report_files), $(call word-colon,1,$(f)))
+  $(call dist-for-goals,lint-check, $(apps_only_lint_report_files))
 
   # For uninstallable modules such as static Java library, we have to dist the built file,
   # as <module_name>.<suffix>
@@ -1669,6 +1693,10 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
     $(INSTALLED_FILES_JSON_VENDOR) \
     $(INSTALLED_FILES_FILE_ODM) \
     $(INSTALLED_FILES_JSON_ODM) \
+    $(INSTALLED_FILES_FILE_VENDOR_DLKM) \
+    $(INSTALLED_FILES_JSON_VENDOR_DLKM) \
+    $(INSTALLED_FILES_FILE_ODM_DLKM) \
+    $(INSTALLED_FILES_JSON_ODM_DLKM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
     $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
@@ -1819,9 +1847,9 @@ modules:
 
 .PHONY: dump-files
 dump-files:
-	$(info product_target_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
-	$(foreach p,$(sort $(product_target_FILES)),$(info :   $(p)))
-	@echo Successfully dumped product file list
+	@echo "Target files for $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT) ($(INTERNAL_PRODUCT)):"
+	@echo $(sort $(patsubst $(PRODUCT_OUT)/%,%,$(filter $(PRODUCT_OUT)/%,$(modules_to_install)))) | tr -s ' ' '\n'
+	@echo Successfully dumped product target file list.
 
 .PHONY: nothing
 nothing:
