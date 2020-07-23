@@ -33,8 +33,6 @@ endif
 
 include $(SOONG_MAKEVARS_MK)
 
-YACC :=$= $(BISON) -d
-
 include $(BUILD_SYSTEM)/clang/config.mk
 
 # Write the build number to a file so it can be read back in
