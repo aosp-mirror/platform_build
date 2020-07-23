@@ -230,7 +230,7 @@ define get-default-product-locale
 $(strip $(subst _,-, $(firstword $(1))))
 endef
 
-gen_from_buildinfo_sh := $(call intermediates-dir-for,ETC,system_build_prop)/buildinfo.prop
+gen_from_buildinfo_sh := $(call intermediates-dir-for,PACKAGING,system_build_prop)/buildinfo.prop
 $(gen_from_buildinfo_sh): $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT)
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 	        TARGET_BUILD_FLAVOR="$(TARGET_BUILD_FLAVOR)" \
@@ -391,6 +391,24 @@ $(eval $(call build-properties,\
     $(_prop_files),\
     $(_prop_vars_),\
     $(empty)))
+
+# ----------------------------------------------------------------
+# vendor_dlkm/etc/build.prop
+#
+
+INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR_DLKM)/etc/build.prop
+$(eval $(call build-properties,\
+    vendor_dlkm,\
+    $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET)))
+
+# ----------------------------------------------------------------
+# odm_dlkm/etc/build.prop
+#
+
+INSTALLED_ODM_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM_DLKM)/etc/build.prop
+$(eval $(call build-properties,\
+    odm_dlkm,\
+    $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET)))
 
 # -----------------------------------------------------------------
 # system_ext/etc/build.prop

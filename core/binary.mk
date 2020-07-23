@@ -71,12 +71,8 @@ ifeq (,$(strip $(my_cc))$(strip $(my_cxx)))
   my_pool := $(GOMA_OR_RBE_POOL)
 endif
 
-# TODO(b/158212027): Remove `$(COVERAGE_PATHS)` from this condition when all users have been moved
-# to `NATIVE_COVERAGE_PATHS`.
-ifneq (,$(strip $(foreach dir,$(COVERAGE_PATHS) $(NATIVE_COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
-# TODO(b/158212027): Remove `$(COVERAGE_EXCLUDE_PATHS)` from this condition when all users have been
-# moved to `NATIVE_COVERAGE_EXCLUDE_PATHS`.
-ifeq (,$(strip $(foreach dir,$(COVERAGE_EXCLUDE_PATHS) $(NATIVE_COVERAGE_EXCLUDE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
+ifneq (,$(strip $(foreach dir,$(NATIVE_COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
+ifeq (,$(strip $(foreach dir,$(NATIVE_COVERAGE_EXCLUDE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
   my_native_coverage := true
 else
   my_native_coverage := false
@@ -1822,6 +1818,10 @@ SOONG_CONV.$(LOCAL_MODULE).DEPS := \
         $(my_shared_libraries) \
         $(my_system_shared_libraries))
 SOONG_CONV.$(LOCAL_MODULE).TYPE := native
+SOONG_CONV.$(LOCAL_MODULE).MAKEFILES := \
+    $(SOONG_CONV.$(LOCAL_MODULE).MAKEFILES) $(LOCAL_MODULE_MAKEFILE)
+SOONG_CONV.$(LOCAL_MODULE).INSTALLED:= \
+    $(SOONG_CONV.$(LOCAL_MODULE).INSTALLED) $(LOCAL_INSTALLED_MODULE)
 SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
 
 ###########################################################

@@ -87,16 +87,16 @@ use:
 
 `BUILD_BROKEN_DUP_SYSPROP := true`
 
-## ELF prebuilts in PRODUCT_COPY_FILES
+## ELF prebuilts in `PRODUCT_COPY_FILES` {#BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES}
 
-ELF prebuilts in PRODUCT_COPY_FILES that are installed into these paths are an
+ELF prebuilts in `PRODUCT_COPY_FILES` that are installed into these paths are an
 error:
 
 * `<partition>/bin/*`
 * `<partition>/lib/*`
 * `<partition>/lib64/*`
 
-Define prebuilt modules and add them to PRODUCT_PACKAGES instead.
+Define prebuilt modules and add them to `PRODUCT_PACKAGES` instead.
 To temporarily relax this check and restore the behavior prior to this change,
 set `BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true` in `BoardConfig.mk`.
 
