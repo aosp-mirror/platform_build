@@ -46,20 +46,40 @@ test_tools += $(test_suite_tools)
 # Include host shared libraries
 host_shared_libs := $(call copy-many-files, $(COMPATIBILITY.$(test_suite_name).HOST_SHARED_LIBRARY.FILES))
 
+compatibility_zip_deps := $(test_artifacts) $(test_tools) $(test_suite_prebuilt_tools) $(test_suite_dynamic_config) $(SOONG_ZIP) $(host_shared_libs)
+compatibility_zip_resources := $(out_dir)/tools $(out_dir)/testcases
+
+# Test Suite NOTICE files
+test_suite_notice_txt := $(out_dir)/NOTICE.txt
+test_suite_notice_html := $(out_dir)/NOTICE.html
+
+$(eval $(call combine-notice-files, html, \
+         $(test_suite_notice_txt), \
+         $(test_suite_notice_html), \
+         "Notices for files contained in the test suites filesystem image in this directory:", \
+         $(HOST_OUT_NOTICE_FILES) $(TARGET_OUT_NOTICE_FILES), \
+         $(compatibility_zip_deps)))
+
+ifeq ($(include_test_suite_notice),true)
+  compatibility_zip_deps += $(test_suite_notice_txt)
+  compatibility_zip_resources += $(test_suite_notice_txt)
+endif
+
 compatibility_zip := $(out_dir).zip
 $(compatibility_zip): PRIVATE_NAME := android-$(test_suite_name)
 $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
 $(compatibility_zip): PRIVATE_TOOLS := $(test_tools) $(test_suite_prebuilt_tools)
 $(compatibility_zip): PRIVATE_SUITE_NAME := $(test_suite_name)
 $(compatibility_zip): PRIVATE_DYNAMIC_CONFIG := $(test_suite_dynamic_config)
-$(compatibility_zip): $(test_artifacts) $(test_tools) $(test_suite_prebuilt_tools) $(test_suite_dynamic_config) $(SOONG_ZIP) $(host_shared_libs) | $(ADB) $(ACP)
+$(compatibility_zip): PRIVATE_RESOURCES := $(compatibility_zip_resources)
+$(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 # Make dir structure
 	$(hide) mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases
 	$(hide) echo $(BUILD_NUMBER_FROM_FILE) > $(PRIVATE_OUT_DIR)/tools/version.txt
 # Copy tools
 	$(hide) cp $(PRIVATE_TOOLS) $(PRIVATE_OUT_DIR)/tools
 	$(if $(PRIVATE_DYNAMIC_CONFIG),$(hide) cp $(PRIVATE_DYNAMIC_CONFIG) $(PRIVATE_OUT_DIR)/testcases/$(PRIVATE_SUITE_NAME).dynamic)
-	$(hide) find $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases | sort >$@.list
+	$(hide) find $(PRIVATE_RESOURCES) | sort >$@.list
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(dir $@) -l $@.list
 
 # Reset all input variables
@@ -69,4 +89,5 @@ test_suite_dynamic_config :=
 test_suite_readme :=
 test_suite_prebuilt_tools :=
 test_suite_tools :=
+include_test_suite_notice :=
 host_shared_libs :=
