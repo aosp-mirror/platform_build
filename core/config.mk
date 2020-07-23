@@ -587,8 +587,16 @@ SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
 # ---------------------------------------------------------------
 # Generic tools.
 
-# These dependencies are now handled via dependencies on prebuilt_build_tool
-BISON_DATA :=$=
+LEX := $(prebuilt_build_tools_bin_noasan)/flex
+# The default PKGDATADIR built in the prebuilt bison is a relative path
+# prebuilts/build-tools/common/bison.
+# To run bison from elsewhere you need to set up enviromental variable
+# BISON_PKGDATADIR.
+BISON_PKGDATADIR := $(prebuilt_build_tools)/common/bison
+BISON := $(prebuilt_build_tools_bin_noasan)/bison
+YACC := $(BISON) -d
+BISON_DATA := $(wildcard $(BISON_PKGDATADIR)/* $(BISON_PKGDATADIR)/*/*)
+M4 :=$= $(prebuilt_build_tools_bin_noasan)/m4
 
 YASM := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/yasm/yasm
 
