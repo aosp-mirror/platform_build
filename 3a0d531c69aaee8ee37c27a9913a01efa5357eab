@@ -51,6 +51,23 @@
       "revId": "3a0d531c69aaee8ee37c27a9913a01efa5357eab",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4653626_5df94a12",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2020-07-24T17:06:57Z",
+      "side": 1,
+      "message": "Inseob, I\u0027ll confess to not being entirely clear why we need to disable CFI for the snapshots. Let\u0027s find some time to chat about this quickly first.",
+      "revId": "3a0d531c69aaee8ee37c27a9913a01efa5357eab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
