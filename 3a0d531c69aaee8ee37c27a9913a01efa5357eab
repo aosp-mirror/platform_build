@@ -86,6 +86,23 @@
       "revId": "3a0d531c69aaee8ee37c27a9913a01efa5357eab",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "651f7290_6850d169",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2020-07-24T17:36:11Z",
+      "side": 1,
+      "message": "Disabling CFI is not the right path here. Working with Bill to find a way to have the CFI variants correctly generated instead.",
+      "revId": "3a0d531c69aaee8ee37c27a9913a01efa5357eab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
