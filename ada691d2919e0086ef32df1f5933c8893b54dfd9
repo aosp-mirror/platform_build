@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff53c978_2f334393",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1135739
+      },
+      "writtenOn": "2020-07-28T06:44:12Z",
+      "side": 1,
+      "message": "Hi Anton, this CL resolves the build error in the presubmit test in aosp/1371698. Would you take a look and comment?",
+      "revId": "ada691d2919e0086ef32df1f5933c8893b54dfd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
