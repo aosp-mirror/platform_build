@@ -234,7 +234,7 @@ class VerifiedBootVersion1VerityImageBuilderTest(ReleaseToolsTestCase):
 
   @SkipIfExternalToolsUnavailable()
   def test_Build_SanityCheck(self):
-    # A sanity check for the test itself: the image shouldn't be verifiable
+    # A validity check for the test itself: the image shouldn't be verifiable
     # with wrong key.
     self.assertRaises(
         common.ExternalError,
