@@ -1116,7 +1116,7 @@ def ReadApexKeysInfo(tf_zip):
               privkey.endswith(privkey_suffix) and
               pubkey[:-pubkey_suffix_len] == privkey[:-privkey_suffix_len])
 
-    # Sanity check on the container key names, as we'll carry them without the
+    # Check the container key names, as we'll carry them without the
     # extensions. This doesn't apply to payload keys though, which we will use
     # full names only.
     container_cert = matches.group("CONTAINER_CERT")
