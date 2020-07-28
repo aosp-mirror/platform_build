@@ -61,7 +61,7 @@ def construct_target_files(secondary=False):
         'META/ab_partitions.txt',
         '\n'.join([partition[1] for partition in ab_partitions]))
 
-    # Create dummy images for each of them.
+    # Create fake images for each of them.
     for path, partition in ab_partitions:
       target_files_zip.writestr(
           '{}/{}.img'.format(path, partition),
@@ -754,7 +754,7 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
 
 
 class StreamingPropertyFilesTest(PropertyFilesTest):
-  """Additional sanity checks specialized for StreamingPropertyFiles."""
+  """Additional validity checks specialized for StreamingPropertyFiles."""
 
   def test_init(self):
     property_files = StreamingPropertyFiles()
@@ -835,7 +835,7 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
 
 
 class AbOtaPropertyFilesTest(PropertyFilesTest):
-  """Additional sanity checks specialized for AbOtaPropertyFiles."""
+  """Additional validity checks specialized for AbOtaPropertyFiles."""
 
   # The size for payload and metadata signature size.
   SIGNATURE_SIZE = 256
@@ -1003,7 +1003,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
 
 
 class NonAbOtaPropertyFilesTest(PropertyFilesTest):
-  """Additional sanity checks specialized for NonAbOtaPropertyFiles."""
+  """Additional validity checks specialized for NonAbOtaPropertyFiles."""
 
   def test_init(self):
     property_files = NonAbOtaPropertyFiles()
