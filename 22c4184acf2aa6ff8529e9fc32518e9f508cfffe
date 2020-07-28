@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1648c553_adb17b1f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2020-07-28T06:56:53Z",
+      "side": 1,
+      "message": "Hi Anton, please owner approve the CL.\nThe original change has unfortunately the side effect of getting the avb signing at the end of GSI removed. After discussing with Bowgo, we will pursue a different solution without introducing vbmeta_system.",
+      "revId": "22c4184acf2aa6ff8529e9fc32518e9f508cfffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
