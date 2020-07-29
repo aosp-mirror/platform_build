@@ -1940,7 +1940,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
 def GenerateNonAbOtaPackage(target_file, output_file, source_file=None):
   """Generates a non-A/B OTA package."""
-  # Sanity check the loaded info dicts first.
+  # Check the loaded info dicts first.
   if OPTIONS.info_dict.get("no_recovery") == "true":
     raise common.ExternalError(
         "--- target build has specified no recovery ---")
