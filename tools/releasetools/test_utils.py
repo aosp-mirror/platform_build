@@ -25,6 +25,7 @@ import os.path
 import struct
 import sys
 import unittest
+import zipfile
 
 import common
 
@@ -191,6 +192,41 @@ class ReleaseToolsTestCase(unittest.TestCase):
 
   def tearDown(self):
     common.Cleanup()
+
+class PropertyFilesTestCase(ReleaseToolsTestCase):
+
+  @staticmethod
+  def construct_zip_package(entries):
+    zip_file = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(zip_file, 'w') as zip_fp:
+      for entry in entries:
+        zip_fp.writestr(
+            entry,
+            entry.replace('.', '-').upper(),
+            zipfile.ZIP_STORED)
+    return zip_file
+
+  @staticmethod
+  def _parse_property_files_string(data):
+    result = {}
+    for token in data.split(','):
+      name, info = token.split(':', 1)
+      result[name] = info
+    return result
+
+  def setUp(self):
+    common.OPTIONS.no_signing = False
+
+  def _verify_entries(self, input_file, tokens, entries):
+    for entry in entries:
+      offset, size = map(int, tokens[entry].split(':'))
+      with open(input_file, 'rb') as input_fp:
+        input_fp.seek(offset)
+        if entry == 'metadata':
+          expected = b'META-INF/COM/ANDROID/METADATA'
+        else:
+          expected = entry.replace('.', '-').upper().encode()
+        self.assertEqual(expected, input_fp.read(size))
 
 
 if __name__ == '__main__':
