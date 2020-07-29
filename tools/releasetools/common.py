@@ -1177,7 +1177,7 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
   if args and args.strip():
     split_args = shlex.split(args)
     for index, arg in enumerate(split_args[:-1]):
-      # Sanity check that the image file exists. Some images might be defined
+      # Check that the image file exists. Some images might be defined
       # as a path relative to source tree, which may not be available at the
       # same location when running this script (we have the input target_files
       # zip only). For such cases, we additionally scan other locations (e.g.
