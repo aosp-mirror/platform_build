@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0dfe69e1_aa604d09",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-30T03:49:39Z",
+      "side": 1,
+      "message": "Could you please do this via ADDITIONAL_PRODUCT_PROPERTIES in core/main.mk?",
+      "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
