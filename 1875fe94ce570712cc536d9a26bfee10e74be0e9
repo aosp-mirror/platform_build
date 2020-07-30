@@ -34,6 +34,24 @@
       "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aa217de3_d5092ced",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-07-30T04:13:09Z",
+      "side": 1,
+      "message": "e.g. the variable AB_OTA_PARTITIONS is updated in \nhttps://source.corp.google.com/android/vendor/google_devices/coral/prebuilts/Android.mk;l\u003d18",
+      "parentUuid": "c42d8db0_c1aac4aa",
+      "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
