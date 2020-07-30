@@ -1226,7 +1226,7 @@ ifdef FULL_BUILD
       # Strip :32 and :64 suffixes
       _modules := $(patsubst %:32,%,$(_modules))
       _modules := $(patsubst %:64,%,$(_modules))
-      # Sanity check all modules in PRODUCT_PACKAGES exist. We check for the
+      # Quickly check all modules in PRODUCT_PACKAGES exist. We check for the
       # existence if either <module> or the <module>_32 variant.
       _nonexistent_modules := $(foreach m,$(_modules), \
         $(if $(or $(ALL_MODULES.$(m).PATH),$(call get-modules-for-2nd-arch,TARGET,$(m))),,$(m)))
