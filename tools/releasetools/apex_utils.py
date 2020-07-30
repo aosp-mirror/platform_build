@@ -273,7 +273,7 @@ def ParseApexPayloadInfo(avbtool, payload_path):
     else:
       payload_info[key] = value
 
-  # Sanity check.
+  # Validation check.
   for key in ('Algorithm', 'Salt', 'apex.key', 'Hash Algorithm'):
     if key not in payload_info:
       raise ApexInfoError(
