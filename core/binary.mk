@@ -594,7 +594,7 @@ rs_generated_cpps := $(addprefix \
 
 $(call track-src-file-gen,$(renderscript_sources),$(rs_generated_cpps))
 
-# This is just a dummy rule to make sure gmake doesn't skip updating the dependents.
+# This is just a no-op rule to make sure gmake doesn't skip updating the dependents.
 $(rs_generated_cpps) : $(RenderScript_file_stamp)
 	@echo "Updated RS generated cpp file $@."
 	$(hide) touch $@
