@@ -52,6 +52,24 @@
       "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "275c0ac4_ca5b06d7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-30T04:16:26Z",
+      "side": 1,
+      "message": "Adding INSTALLED_RADIOIMAGE_TARGET to the dependency list doesn\u0027t make it possible to modify AB_OTA_PARTITIONS in Android.mk files.\n\nAnd I don\u0027t think it\u0027s a good idea to let Android.mk modify global configs like AB_OTA_PARTITIONS. It should be done in BoardConfig.mk files.",
+      "parentUuid": "c42d8db0_c1aac4aa",
+      "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
