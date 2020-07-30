@@ -16,6 +16,24 @@
       "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c42d8db0_c1aac4aa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-07-30T04:08:37Z",
+      "side": 1,
+      "message": "tried in PS1. Is there a clean way to let ADDITIONAL_PRODUCT_PROPERTIES depend on INSTALLED_RADIOIMAGE_TARGET? Otherwise it won\u0027t include the bootloader \u0026 radio images.",
+      "parentUuid": "0dfe69e1_aa604d09",
+      "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
