@@ -70,6 +70,24 @@
       "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cfaaac2a_cc57e30c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-07-30T04:26:41Z",
+      "side": 1,
+      "message": "If you looked at https://source.corp.google.com/android/vendor/google_devices/coral/prebuilts/Android.mk;l\u003d18, the AB_OTA_PARTITIONS list is already modified in Android.mk (by extending the original list with AB_OTA_BOOTLOADER_PARTITIONS). Here we are just dumping the modified list.\n\nI assume many partners have been modifying the AB_OTA_PARTITIONS in android.mk... But we still want to set the product property in a common place, so partners require minimal work to support gki.\n\nWe can file a separate bug to investigate if it\u0027s possible to move the entire list of AB_OTA_PARTITIONS into BoardConfig.mk for new devices.",
+      "parentUuid": "275c0ac4_ca5b06d7",
+      "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
