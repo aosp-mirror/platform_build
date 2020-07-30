@@ -88,6 +88,24 @@
       "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c9e7643f_3a891069",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-07-30T04:43:44Z",
+      "side": 1,
+      "message": "I don\u0027t think is impossible or difficult to set AB_OTA_PARTITIONS in BoardConfig.mk. Why do you want to do that only for new devices? I found that we have only 11 places to fix. https://source.corp.google.com/search?q\u003dAB_OTA_PARTITIONS%20f:Android%5C.mk\u0026sq\u003dpackage:%5Eandroid$\n\nPartners could do the same.\n\nIn addition, I think https://source.android.com/devices/tech/ota/ab/ab_implement#build-variables should be updated to make the places where the build variables mean to be set explicit. Most of the variables in the page (like PRODUCT_PACKAGES, BOARD_USES_RECOVERY_AS_BOOT, etc.) are already not settable in Android.mk. AB_OTA_PARTITIONS doesn\u0027t need to be an exception.",
+      "parentUuid": "cfaaac2a_cc57e30c",
+      "revId": "1875fe94ce570712cc536d9a26bfee10e74be0e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
