@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fc81c5c_90d77034",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-07-31T19:33:33Z",
+      "side": 1,
+      "message": " I am debating if the dict should be part of Payload. Though this seems to be the most convenient way.",
+      "revId": "8e332ff3a76c1f90db1e2e71dbc0ef9f1b2d8bd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c0b7b7ac_2a165848",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-07-31T19:33:33Z",
+      "side": 1,
+      "message": "what does this do.",
+      "range": {
+        "startLine": 247,
+        "startChar": 0,
+        "endLine": 247,
+        "endChar": 18
+      },
+      "revId": "8e332ff3a76c1f90db1e2e71dbc0ef9f1b2d8bd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
