@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "66d0a0b8_03bb7ff4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-07-31T22:43:26Z",
+      "side": 1,
+      "message": "I think of doing that, but I think this is a problem with releasetools scripts in general (that binaries are referred to by their name, not by their full path, hence they can\u0027t run in Soong sandboxes). Hence I put the fix in common instead.",
+      "parentUuid": "1fc81c5c_90d77034",
+      "revId": "8e332ff3a76c1f90db1e2e71dbc0ef9f1b2d8bd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c0b7b7ac_2a165848",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 3
