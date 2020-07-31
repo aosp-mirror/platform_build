@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea10c57e_c1e3975d",
+        "filename": "core/config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-07-31T18:05:35Z",
+      "side": 1,
+      "message": "What is the use case for making this settable from the command line?  If it\u0027s necessary, similar to TARGET_BUILD_USE_PREBUILT_SDKS, I\u0027d prefer to separate use-case based command line options from the implementation details like TARGET_BUILD_DISABLE_PREOPT.",
+      "revId": "8cae5a97c10d7f5ee4b21c992d27b58439553305",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
