@@ -56,3 +56,23 @@ python_test_host {
   test_config: "post_process_props_unittest.xml",
   test_suites: ["general-tests"],
 }
+
+python_binary_host {
+  name: "extract_kernel",
+  srcs: ["extract_kernel.py"],
+  version: {
+    py2: {
+      enabled: true,
+    },
+    py3: {
+      enabled: false,
+    },
+  },
+}
+
+genrule_defaults {
+  name: "extract_kernel_release_defaults",
+  tools: ["extract_kernel", "lz4"],
+  out: ["kernel_release.txt"],
+  cmd: "$(location) --tools lz4:$(location lz4) --input $(in) --output-release > $(out)"
+}
