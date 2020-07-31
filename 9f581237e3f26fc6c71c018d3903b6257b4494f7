@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "378a60ce_2cc80f69",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-07-31T20:26:07Z",
+      "side": 1,
+      "message": "back to PS1. We also made the change so AB_OTA_PARTITIONS won\u0027t depend on building radio images. Sample:\nhttps://googleplex-android-review.git.corp.google.com/q/topic:%22ab_partitions%22+(status:open%20OR%20status:merged)\n\nAnd we probably need to doc this property so that partners will have the correct setup to receive GKI.",
+      "revId": "9f581237e3f26fc6c71c018d3903b6257b4494f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
