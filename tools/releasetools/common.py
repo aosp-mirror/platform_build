@@ -601,7 +601,7 @@ def ReadFromInputFile(input_file, fn):
 def LoadInfoDict(input_file, repacking=False):
   """Loads the key/value pairs from the given input target_files.
 
-  It reads `META/misc_info.txt` file in the target_files input, does sanity
+  It reads `META/misc_info.txt` file in the target_files input, does validation
   checks and returns the parsed key/value pairs for to the given build. It's
   usually called early when working on input target_files files, e.g. when
   generating OTAs, or signing builds. Note that the function may be called
