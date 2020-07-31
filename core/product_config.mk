@@ -166,7 +166,7 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(if $(filter-out $(makefile),$(PRODUCTS)),$(eval $(call import-products,$(makefile))))\
 )
 
-# Sanity check
+# Quick check
 $(check-all-products)
 
 ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
@@ -201,7 +201,7 @@ endif # EMMA_INSTRUMENT
 $(call strip-product-vars)
 
 #############################################################################
-# Sanity check and assign default values
+# Quick check and assign default values
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
 
