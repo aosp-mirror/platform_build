@@ -1149,7 +1149,7 @@ def main(argv):
       apex_name, key = a.split("=")
       OPTIONS.extra_apex_payload_keys[apex_name] = key
     elif o == "--skip_apks_with_path_prefix":
-      # Sanity check the prefix, which must be in all upper case.
+      # Check the prefix, which must be in all upper case.
       prefix = a.split('/')[0]
       if not prefix or prefix != prefix.upper():
         raise ValueError("Invalid path prefix '%s'" % (a,))
