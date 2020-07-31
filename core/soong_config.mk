@@ -216,6 +216,8 @@ $(call add_json_bool, InstallExtraFlattenedApexes, $(PRODUCT_INSTALL_EXTRA_FLATT
 
 $(call add_json_bool, BoardUsesRecoveryAsBoot, $(BOARD_USES_RECOVERY_AS_BOOT))
 
+$(call add_json_list, BoardKernelBinaries, $(BOARD_KERNEL_BINARIES))
+
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
