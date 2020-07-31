@@ -703,9 +703,6 @@ $(call select-bitness-of-target-host-required-modules,TARGET,HOST)
 $(call select-bitness-of-target-host-required-modules,HOST,TARGET)
 _nonexistent_required := $(sort $(_nonexistent_required))
 
-# HOST OS darwin build is broken, disable this check for darwin for now.
-# TODO(b/162102724): Remove this
-ifeq (,$(filter $(HOST_OS),darwin))
 ifeq (,$(filter true,$(ALLOW_MISSING_DEPENDENCIES) $(BUILD_BROKEN_MISSING_REQUIRED_MODULES)))
 ifneq (,$(_nonexistent_required))
   $(warning Missing required dependencies:)
@@ -717,7 +714,6 @@ ifneq (,$(_nonexistent_required))
   $(error Build failed)
 endif # _nonexistent_required != empty
 endif # ALLOW_MISSING_DEPENDENCIES != true && BUILD_BROKEN_MISSING_REQUIRED_MODULES != true
-endif # HOST_OS != darwin
 
 define add-required-deps
 $(1): | $(2)
