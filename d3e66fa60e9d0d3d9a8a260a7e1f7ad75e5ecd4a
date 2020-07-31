@@ -80,6 +80,23 @@
       "revId": "d3e66fa60e9d0d3d9a8a260a7e1f7ad75e5ecd4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "76d0f778_b7b910d7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-07-31T06:08:35Z",
+      "side": 1,
+      "message": "To the owners, this topic has been ready to be reviewed. please take a look at the CLs 😊, it still requires ORV.",
+      "revId": "d3e66fa60e9d0d3d9a8a260a7e1f7ad75e5ecd4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
