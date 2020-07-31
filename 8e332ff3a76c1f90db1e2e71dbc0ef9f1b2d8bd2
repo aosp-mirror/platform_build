@@ -39,6 +39,30 @@
       "revId": "8e332ff3a76c1f90db1e2e71dbc0ef9f1b2d8bd2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2487edd3_827761a0",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-07-31T22:40:58Z",
+      "side": 1,
+      "message": "See the comment above.\n\n  Make a copy of args in case client relies on the content of args later.\n\ne.g. if the caller do:\n\n  SetHostToolLocation(\"brillo_update_payload\", \"/path/to/brillo_update_payload\")\n  Run([\"brillo_update_payload\"])\n  assert args[0] \u003d\u003d \"brillo_update_payload\"\n\nit will pass. I don\u0027t want to change the list that caller gives me.",
+      "parentUuid": "c0b7b7ac_2a165848",
+      "range": {
+        "startLine": 247,
+        "startChar": 0,
+        "endLine": 247,
+        "endChar": 18
+      },
+      "revId": "8e332ff3a76c1f90db1e2e71dbc0ef9f1b2d8bd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
