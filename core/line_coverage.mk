@@ -12,11 +12,11 @@
 # -----------------------------------------------------------------
 
 # TODO(b/148306195): Due this issue some fuzz targets cannot be built with
-# line coverage instrumentation. For now we just blacklist them.
-blacklisted_fuzz_targets := libneuralnetworks_fuzzer
+# line coverage instrumentation. For now we just block them.
+blocked_fuzz_targets := libneuralnetworks_fuzzer
 
 fuzz_targets := $(ALL_FUZZ_TARGETS)
-fuzz_targets := $(filter-out $(blacklisted_fuzz_targets),$(fuzz_targets))
+fuzz_targets := $(filter-out $(blocked_fuzz_targets),$(fuzz_targets))
 
 
 # Android components that considered critical.
