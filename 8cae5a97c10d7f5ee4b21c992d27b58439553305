@@ -16,6 +16,24 @@
       "revId": "8cae5a97c10d7f5ee4b21c992d27b58439553305",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abbca535_84cfff6a",
+        "filename": "core/config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-08-01T04:30:49Z",
+      "side": 1,
+      "message": "For now, there seems to be no use case for setting it explicitly false when TARGET_BUILD_USE_PREBUILT_SDKS is set. I just wanted to give some flexibility, but it looks like I\u0027d better let TARGET_BUILD_DISABLE_PREOPT just an internal flag, instead a configurable flag. And it might be renamed to DISABLE_PREOPT accordingly?",
+      "parentUuid": "ea10c57e_c1e3975d",
+      "revId": "8cae5a97c10d7f5ee4b21c992d27b58439553305",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
