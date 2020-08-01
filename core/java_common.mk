@@ -231,7 +231,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAVA_SOURCE_LIST := $(java_source_list_fi
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 
-# Sanity check class path vars.
+# Quickly check class path vars.
 disallowed_deps := $(foreach sdk,$(TARGET_AVAILABLE_SDK_VERSIONS),$(call resolve-prebuilt-sdk-module,$(sdk)))
 disallowed_deps += $(foreach sdk,$(TARGET_AVAILABLE_SDK_VERSIONS),\
   $(foreach sdk_lib,$(JAVA_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,$(sdk),$(sdk_lib))))
