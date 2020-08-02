@@ -96,6 +96,7 @@ class Options(object):
     self.cache_size = None
     self.stash_threshold = 0.8
     self.logfile = None
+    self.host_tools = {}
 
 
 OPTIONS = Options()
@@ -213,6 +214,10 @@ def InitLogging():
   logging.config.dictConfig(config)
 
 
+def SetHostToolLocation(tool_name, location):
+  OPTIONS.host_tools[tool_name] = location
+
+
 def Run(args, verbose=None, **kwargs):
   """Creates and returns a subprocess.Popen object.
 
@@ -234,6 +239,14 @@ def Run(args, verbose=None, **kwargs):
     kwargs['stderr'] = subprocess.STDOUT
   if 'universal_newlines' not in kwargs:
     kwargs['universal_newlines'] = True
+
+  # If explicitly set host tool location before, use that location to avoid
+  # PATH violation. Make a copy of args in case client relies on the content
+  # of args later.
+  if args and args[0] in OPTIONS.host_tools:
+    args = args[:]
+    args[0] = OPTIONS.host_tools[args[0]]
+
   # Don't log any if caller explicitly says so.
   if verbose:
     logger.info("  Running: \"%s\"", " ".join(args))
@@ -601,7 +614,7 @@ def ReadFromInputFile(input_file, fn):
 def LoadInfoDict(input_file, repacking=False):
   """Loads the key/value pairs from the given input target_files.
 
-  It reads `META/misc_info.txt` file in the target_files input, does sanity
+  It reads `META/misc_info.txt` file in the target_files input, does validation
   checks and returns the parsed key/value pairs for to the given build. It's
   usually called early when working on input target_files files, e.g. when
   generating OTAs, or signing builds. Note that the function may be called
