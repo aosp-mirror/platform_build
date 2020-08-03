@@ -77,6 +77,20 @@ LOCAL_SYSTEM_EXT_MODULE := true
 endif
 _path :=
 
+ifeq ($(LOCAL_HOST_MODULE),true)
+my_image_variant := host
+else ifeq ($(LOCAL_VENDOR_MODULE),true)
+my_image_variant := vendor
+else ifeq ($(LOCAL_OEM_MODULE),true)
+my_image_variant := vendor
+else ifeq ($(LOCAL_ODM_MODULE),true)
+my_image_variant := vendor
+else ifeq ($(LOCAL_PRODUCT_MODULE),true)
+my_image_variant := product
+else
+my_image_variant := core
+endif
+
 # TODO(b/135957588) Remove following workaround
 # LOCAL_PRODUCT_SERVICES_MODULE to LOCAL_PRODUCT_MODULE for all Android.mk
 ifndef LOCAL_PRODUCT_MODULE
