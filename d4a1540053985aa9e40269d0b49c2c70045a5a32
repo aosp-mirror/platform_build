@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d40eaba_e7800818",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1684042
+      },
+      "writtenOn": "2020-08-03T06:52:20Z",
+      "side": 1,
+      "message": "This fix cannot fix GKI kernel - NONAB build condition.\nPlease check my comment.",
+      "revId": "d4a1540053985aa9e40269d0b49c2c70045a5a32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "18a3285e_e3110088",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1684042
+      },
+      "writtenOn": "2020-08-03T06:52:20Z",
+      "side": 1,
+      "message": "debug_ramdisk copy to vendor_debug_ramdisk while building.\nSo, TARGET_COPY_OUT_DEBUG_RAMDISK also has debug_ramdisk/first_stage_ramdisk when \"BOARD_USES_RECOVERY_AS_BOOT\" false case.\n\nDo you also think \"TARGET_COPY_OUT_DEBUG_RAMDISK\"\n\nplease refer https://partnerissuetracker.corp.google.com/issues/161579556",
+      "range": {
+        "startLine": 244,
+        "startChar": 0,
+        "endLine": 244,
+        "endChar": 46
+      },
+      "revId": "d4a1540053985aa9e40269d0b49c2c70045a5a32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
