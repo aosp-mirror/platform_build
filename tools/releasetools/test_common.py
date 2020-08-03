@@ -1619,12 +1619,12 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     self._tempdir = common.MakeTempDir()
-    # Create a dummy dict that contains the fstab info for boot&recovery.
+    # Create a fake dict that contains the fstab info for boot&recovery.
     self._info = {"fstab" : {}}
-    dummy_fstab = [
+    fake_fstab = [
         "/dev/soc.0/by-name/boot /boot emmc defaults defaults",
         "/dev/soc.0/by-name/recovery /recovery emmc defaults defaults"]
-    self._info["fstab"] = common.LoadRecoveryFSTab("\n".join, 2, dummy_fstab)
+    self._info["fstab"] = common.LoadRecoveryFSTab("\n".join, 2, fake_fstab)
     # Construct the gzipped recovery.img and boot.img
     self.recovery_data = bytearray([
         0x1f, 0x8b, 0x08, 0x00, 0x81, 0x11, 0x02, 0x5a, 0x00, 0x03, 0x2b, 0x4a,

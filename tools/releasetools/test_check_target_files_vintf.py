@@ -87,8 +87,8 @@ class CheckTargetFilesVintfTest(test_utils.ReleaseToolsTestCase):
     return test_dir
 
   @test_utils.SkipIfExternalToolsUnavailable()
-  def test_CheckVintf_sanity(self):
-    msg = 'Sanity check with skeleton target files failed.'
+  def test_CheckVintf_skeleton(self):
+    msg = 'vintf check with skeleton target files failed.'
     test_dir = self.prepare_test_dir('does-not-exist')
     self.assertTrue(CheckVintf(test_dir), msg=msg)
 
