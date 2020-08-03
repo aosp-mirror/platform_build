@@ -1,3 +1,0 @@
-on early-init
-    # Set ro.vndk.version to 27 so that O-MR1-VENDOR can run latest GSI.
-    setprop ro.vndk.version 27
