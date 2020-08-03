@@ -232,12 +232,6 @@ ifdef BOARD_VNDK_VERSION
   else
     ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(BOARD_VNDK_VERSION)
   endif
-  ifdef BOARD_VNDK_RUNTIME_DISABLE
-    ADDITIONAL_VENDOR_PROPERTIES += ro.vndk.lite=true
-  endif
-else
-  ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
-  ADDITIONAL_VENDOR_PROPERTIES += ro.vndk.lite=true
 endif
 
 # Add cpu properties for bionic and ART.
@@ -1232,7 +1226,7 @@ ifdef FULL_BUILD
       # Strip :32 and :64 suffixes
       _modules := $(patsubst %:32,%,$(_modules))
       _modules := $(patsubst %:64,%,$(_modules))
-      # Sanity check all modules in PRODUCT_PACKAGES exist. We check for the
+      # Quickly check all modules in PRODUCT_PACKAGES exist. We check for the
       # existence if either <module> or the <module>_32 variant.
       _nonexistent_modules := $(foreach m,$(_modules), \
         $(if $(or $(ALL_MODULES.$(m).PATH),$(call get-modules-for-2nd-arch,TARGET,$(m))),,$(m)))

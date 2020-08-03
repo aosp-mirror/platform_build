@@ -16,7 +16,7 @@
 
 # ###############################################################
 # This file includes BoardConfig.mk for the device being built,
-# and sanity-checks the variable defined therein.
+# and checks the variable defined therein.
 # ###############################################################
 
 _board_strip_readonly_list := \
@@ -167,7 +167,7 @@ $(foreach var,$(_board_true_false_vars), \
 TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
 TARGET_2ND_CPU_VARIANT_RUNTIME := $(or $(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_CPU_VARIANT))
 
-# The combo makefiles sanity-check and set defaults for various CPU configuration
+# The combo makefiles check and set defaults for various CPU configuration
 combo_target := TARGET_
 combo_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/combo/select.mk
@@ -191,7 +191,7 @@ ifeq (,$(filter true,$(TARGET_SUPPORTS_32_BIT_APPS) $(TARGET_SUPPORTS_64_BIT_APP
   TARGET_SUPPORTS_32_BIT_APPS := true
 endif
 
-# Sanity check to warn about likely cryptic errors later in the build.
+# Quick check to warn about likely cryptic errors later in the build.
 ifeq ($(TARGET_IS_64_BIT),true)
   ifeq (,$(filter true false,$(TARGET_SUPPORTS_64_BIT_APPS)))
     $(error Building a 32-bit-app-only product on a 64-bit device. \
@@ -649,7 +649,7 @@ ifneq ($(TARGET_OTA_ALLOW_NON_AB),true)
   endif
 endif
 
-# Sanity check for building generic OTA packages. Currently it only supports A/B OTAs.
+# Quick check for building generic OTA packages. Currently it only supports A/B OTAs.
 ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
   ifneq ($(AB_OTA_UPDATER),true)
     $(error PRODUCT_BUILD_GENERIC_OTA_PACKAGE with 'AB_OTA_UPDATER != true' is not supported)
