@@ -16,6 +16,24 @@
       "revId": "f3d88e59931fc009278068a55ce25b52e102eb56",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a891fa3b_f7df9451",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1322766
+      },
+      "writtenOn": "2020-08-04T09:41:13Z",
+      "side": 1,
+      "message": "I have created a cuttlefish target here:\nhttps://android-review.googlesource.com/c/device/google/cuttlefish/+/1382667",
+      "parentUuid": "b47ad30b_18e174a9",
+      "revId": "f3d88e59931fc009278068a55ce25b52e102eb56",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
