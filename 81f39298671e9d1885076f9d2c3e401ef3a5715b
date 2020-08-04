@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "195f2c32_9a2fd87b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2020-08-04T09:33:05Z",
+      "side": 1,
+      "message": "Anton, we have finally gotten this right with internal conflict resolved. Please take a look.",
+      "revId": "81f39298671e9d1885076f9d2c3e401ef3a5715b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
