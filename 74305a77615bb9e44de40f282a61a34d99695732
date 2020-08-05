@@ -69,6 +69,30 @@
       "revId": "74305a77615bb9e44de40f282a61a34d99695732",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04aa6304_4b732ffd",
+        "filename": "target/product/gsi/init.vndk-nodef.rc",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-08-05T13:58:39Z",
+      "side": 1,
+      "message": "Got it. Thanks.",
+      "parentUuid": "c84ddf01_bb1c42a2",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 36
+      },
+      "revId": "74305a77615bb9e44de40f282a61a34d99695732",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
