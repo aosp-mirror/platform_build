@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2643ed1f_b0aaef2c",
+        "filename": "core/build-system.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-05T16:54:34Z",
+      "side": 1,
+      "message": "Nit: \"if\" (I read \"though\" here as stating as a fact that LOCAL_SDK_VERSION is \"current\", \"system_current\" or \"core_current\" and nothing else, which is probably not intended.)",
+      "range": {
+        "startLine": 450,
+        "startChar": 70,
+        "endLine": 450,
+        "endChar": 76
+      },
+      "revId": "846fff21e7b8018f4fa765e36f7cf8b1b8ad71a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "569ad27a_87e45345",
+        "filename": "core/build-system.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-05T16:54:34Z",
+      "side": 1,
+      "message": "Nit: Missing space.",
+      "range": {
+        "startLine": 451,
+        "startChar": 53,
+        "endLine": 451,
+        "endChar": 55
+      },
+      "revId": "846fff21e7b8018f4fa765e36f7cf8b1b8ad71a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37aac878_63ea883a",
+        "filename": "core/build-system.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-05T16:54:34Z",
+      "side": 1,
+      "message": "Using \u003ccode\u003e here makes it looks like we\u0027re talking about the literal value \"unset\".",
+      "range": {
+        "startLine": 452,
+        "startChar": 48,
+        "endLine": 452,
+        "endChar": 66
+      },
+      "revId": "846fff21e7b8018f4fa765e36f7cf8b1b8ad71a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86b9492b_f5f923a9",
+        "filename": "core/build-system.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-05T16:54:34Z",
+      "side": 1,
+      "message": "And DISABLE_PREOPT.",
+      "range": {
+        "startLine": 459,
+        "startChar": 67,
+        "endLine": 460,
+        "endChar": 35
+      },
+      "revId": "846fff21e7b8018f4fa765e36f7cf8b1b8ad71a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94afe202_6f459359",
+        "filename": "core/build-system.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 463,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-05T16:54:34Z",
+      "side": 1,
+      "message": "Nit: \"an\"",
+      "range": {
+        "startLine": 463,
+        "startChar": 70,
+        "endLine": 463,
+        "endChar": 73
+      },
+      "revId": "846fff21e7b8018f4fa765e36f7cf8b1b8ad71a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "389f1a31_ea3672e5",
+        "filename": "core/build-system.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-05T16:54:34Z",
+      "side": 1,
+      "message": "And DISABLE_PREOPT.",
+      "range": {
+        "startLine": 464,
+        "startChar": 45,
+        "endLine": 464,
+        "endChar": 88
+      },
+      "revId": "846fff21e7b8018f4fa765e36f7cf8b1b8ad71a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
