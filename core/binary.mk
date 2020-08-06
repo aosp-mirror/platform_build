@@ -102,6 +102,8 @@ my_ndk_sysroot_include :=
 my_ndk_sysroot_lib :=
 my_api_level := 10000
 
+my_arch := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+
 ifneq ($(LOCAL_SDK_VERSION),)
   ifdef LOCAL_IS_HOST_MODULE
     $(error $(LOCAL_PATH): LOCAL_SDK_VERSION cannot be used in host module)
@@ -110,7 +112,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
   # Make sure we've built the NDK.
   my_additional_dependencies += $(SOONG_OUT_DIR)/ndk_base.timestamp
 
-  my_arch := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
   ifneq (,$(filter arm64 x86_64,$(my_arch)))
     my_min_sdk_version := 21
   else
@@ -1060,37 +1061,39 @@ asm_objects += $(asm_objects_asm)
 endif
 
 ###################################################################
+## Convert to sanitized names where they exist.
+## These lists come from sanitizerStaticLibsMap; see
+## build/soong/cc/sanitize.go
+##
+## $(1): list of static dependencies
+## $(2): name of sanitizer (e.g. cfi, hwasan)
+##################################################################
+define use_soong_sanitized_static_libraries
+  $(foreach lib,$(1),$(if $(filter $(lib),\
+      $(SOONG_$(2)_$(my_image_variant)_$(my_arch)_STATIC_LIBRARIES)),\
+      $(lib).$(2),$(lib)))
+endef
+
+###################################################################
 ## When compiling a CFI enabled target, use the .cfi variant of any
 ## static dependencies (where they exist).
 ##################################################################
-define use_soong_cfi_static_libraries
-  $(foreach l,$(1),$(if $(filter $(l),$(SOONG_CFI_STATIC_LIBRARIES)),\
-      $(l).cfi,$(l)))
-endef
-
 ifneq ($(filter cfi,$(my_sanitize)),)
-  my_whole_static_libraries := $(call use_soong_cfi_static_libraries,\
-    $(my_whole_static_libraries))
-  my_static_libraries := $(call use_soong_cfi_static_libraries,\
-    $(my_static_libraries))
+  my_whole_static_libraries := $(call use_soong_sanitized_static_libraries,\
+    $(my_whole_static_libraries),cfi)
+  my_static_libraries := $(call use_soong_sanitized_static_libraries,\
+    $(my_static_libraries),cfi)
 endif
 
-ifneq ($(LOCAL_USE_VNDK),)
-  my_soong_hwasan_static_libraries := $(SOONG_HWASAN_VENDOR_STATIC_LIBRARIES)
-else
-  my_soong_hwasan_static_libraries = $(SOONG_HWASAN_STATIC_LIBRARIES)
-endif
-
-define use_soong_hwasan_static_libraries
-  $(foreach l,$(1),$(if $(filter $(l),$(my_soong_hwasan_static_libraries)),\
-      $(l).hwasan,$(l)))
-endef
-
+###################################################################
+## When compiling a hwasan enabled target, use the .hwasan variant
+## of any static dependencies (where they exist).
+##################################################################
 ifneq ($(filter hwaddress,$(my_sanitize)),)
-  my_whole_static_libraries := $(call use_soong_hwasan_static_libraries,\
-    $(my_whole_static_libraries))
-  my_static_libraries := $(call use_soong_hwasan_static_libraries,\
-    $(my_static_libraries))
+  my_whole_static_libraries := $(call use_soong_sanitized_static_libraries,\
+    $(my_whole_static_libraries),hwasan)
+  my_static_libraries := $(call use_soong_sanitized_static_libraries,\
+    $(my_static_libraries),hwasan)
 endif
 
 ###########################################################
