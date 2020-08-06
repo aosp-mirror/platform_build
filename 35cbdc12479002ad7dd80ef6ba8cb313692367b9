@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4bca49a5_68ad5d1e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 3412,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-06T04:08:07Z",
+      "side": 1,
+      "message": "let\u0027s have a new file, e.g. ota_utils. The common file is already 4k lines long...",
+      "range": {
+        "startLine": 3412,
+        "startChar": 0,
+        "endLine": 3412,
+        "endChar": 0
+      },
+      "revId": "35cbdc12479002ad7dd80ef6ba8cb313692367b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70fec6f4_967067e7",
+        "filename": "tools/releasetools/test_ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 538,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-06T04:08:07Z",
+      "side": 1,
+      "message": "this dups with the logic in test_utils? The code looks very fragmented if we split the test_ota_from_target_files... Maybe we should keep the test in one file, but reorder the non-a/b tests into one place (to simplify future deletion)",
+      "range": {
+        "startLine": 538,
+        "startChar": 6,
+        "endLine": 538,
+        "endChar": 27
+      },
+      "revId": "35cbdc12479002ad7dd80ef6ba8cb313692367b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
