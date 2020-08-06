@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "51d91770_07ad96d0",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 3412,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-06T22:12:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4bca49a5_68ad5d1e",
+      "range": {
+        "startLine": 3412,
+        "startChar": 0,
+        "endLine": 3412,
+        "endChar": 0
+      },
+      "revId": "35cbdc12479002ad7dd80ef6ba8cb313692367b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "70fec6f4_967067e7",
         "filename": "tools/releasetools/test_ota_from_target_files.py",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "35cbdc12479002ad7dd80ef6ba8cb313692367b9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c572a4bb_8ce6455c",
+        "filename": "tools/releasetools/test_ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 538,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-06T22:12:30Z",
+      "side": 1,
+      "message": "Deleted this staticmethod. WE don\u0027t actually need this, I just forgot to delete it...",
+      "parentUuid": "70fec6f4_967067e7",
+      "range": {
+        "startLine": 538,
+        "startChar": 6,
+        "endLine": 538,
+        "endChar": 27
+      },
+      "revId": "35cbdc12479002ad7dd80ef6ba8cb313692367b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
