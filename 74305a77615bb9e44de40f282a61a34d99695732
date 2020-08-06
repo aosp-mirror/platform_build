@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "cdf79748_7d195f9d",
+        "filename": "target/product/gsi/init.gsi.rc",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-08-06T06:07:41Z",
+      "side": 1,
+      "message": "Good catch! Thanks Luca!",
+      "parentUuid": "7dfec76a_fe2d4e6e",
+      "range": {
+        "startLine": 5,
+        "startChar": 35,
+        "endLine": 5,
+        "endChar": 38
+      },
+      "revId": "74305a77615bb9e44de40f282a61a34d99695732",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6191cffb_35f325ba",
         "filename": "target/product/gsi/init.vndk-nodef.rc",
         "patchSetId": 1
