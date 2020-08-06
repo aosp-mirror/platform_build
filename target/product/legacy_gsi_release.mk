@@ -16,22 +16,8 @@
 
 include $(SRC_TARGET_DIR)/product/gsi_release.mk
 
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
-    system/etc/init/init.legacy-gsi.rc \
-    system/etc/init/gsi/init.vndk-27.rc \
-    system/etc/ld.config.vndk_lite.txt \
-
 # Legacy GSI support additional O-MR1 interface
 PRODUCT_EXTRA_VNDK_VERSIONS += 27
-
-# Support for the O-MR1 devices
-PRODUCT_COPY_FILES += \
-    build/make/target/product/gsi/init.legacy-gsi.rc:system/etc/init/init.legacy-gsi.rc \
-    build/make/target/product/gsi/init.vndk-27.rc:system/etc/init/gsi/init.vndk-27.rc
-
-# Namespace configuration file for non-enforcing VNDK
-PRODUCT_PACKAGES += \
-    ld.config.vndk_lite.txt
 
 # Legacy GSI relax the compatible property checking
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := false
