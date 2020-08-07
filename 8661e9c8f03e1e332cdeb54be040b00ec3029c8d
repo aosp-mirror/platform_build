@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8f666e85_89a6dcc4",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 7
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "My editor defaulted to tab while others use space most often.. fixed.",
+      "parentUuid": "7d9950d0_f9c78100",
+      "range": {
+        "startLine": 98,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 17
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f42313c_cdd5707c",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 7
@@ -45,6 +69,30 @@
       "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0bc4a428_3235fc76",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f42313c_cdd5707c",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 58
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "b8cc2d90_9f857bcc",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 3412,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d5ae7318_fc777af2",
+      "range": {
+        "startLine": 3412,
+        "startChar": 0,
+        "endLine": 3412,
+        "endChar": 0
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8f13bc20_fe3b652b",
         "filename": "tools/releasetools/non_ab_ota.py",
         "patchSetId": 7
@@ -91,6 +163,30 @@
       "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bdba1fa_196c338a",
+        "filename": "tools/releasetools/non_ab_ota.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f13bc20_fe3b652b",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 0
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "a5528e6f_4590f64f",
+        "filename": "tools/releasetools/non_ab_ota.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "OPTIONS is used in this file.. Can\u0027t do that",
+      "parentUuid": "e93f06b0_daa0a792",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 43
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "791550f1_ce2eb485",
         "filename": "tools/releasetools/non_ab_ota.py",
         "patchSetId": 7
@@ -137,6 +257,30 @@
       "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea28a7ff_3942b089",
+        "filename": "tools/releasetools/non_ab_ota.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "791550f1_ce2eb485",
+      "range": {
+        "startLine": 11,
+        "startChar": 37,
+        "endLine": 11,
+        "endChar": 38
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "13082b3c_8dde6f53",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "Ack. Go-lang is under code freeze, have to wait until https://android-review.googlesource.com/c/platform/build/soong/+/1381161 is merged.",
+      "parentUuid": "b50329ee_bda875fc",
+      "range": {
+        "startLine": 606,
+        "startChar": 4,
+        "endLine": 606,
+        "endChar": 39
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "47348835_fdfef193",
         "filename": "tools/releasetools/ota_utils.py",
         "patchSetId": 7
@@ -183,6 +351,30 @@
       "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "480b2e8a_59a6593f",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47348835_fdfef193",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 14
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "d2812a9b_c31647bc",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4c2ca09d_3059c743",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 20
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3b130fe_91c6f289",
         "filename": "tools/releasetools/test_ota_from_target_files.py",
         "patchSetId": 7
@@ -232,6 +448,30 @@
     },
     {
       "key": {
+        "uuid": "7e42dd30_8955e67f",
+        "filename": "tools/releasetools/test_ota_from_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3b130fe_91c6f289",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 71
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fd30a58e_26f05a24",
         "filename": "tools/releasetools/test_ota_from_target_files.py",
         "patchSetId": 7
@@ -252,6 +492,30 @@
       "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98a7e2f3_79a71976",
+        "filename": "tools/releasetools/test_ota_from_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-07T15:08:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fd30a58e_26f05a24",
+      "range": {
+        "startLine": 537,
+        "startChar": 0,
+        "endLine": 537,
+        "endChar": 57
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
