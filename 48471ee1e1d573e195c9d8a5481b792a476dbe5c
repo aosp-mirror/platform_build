@@ -62,6 +62,30 @@
       "revId": "48471ee1e1d573e195c9d8a5481b792a476dbe5c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc1f274a_9c5b350e",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T22:47:59Z",
+      "side": 1,
+      "message": "You can run additional builds for amlogic from the forrest UI:\nhttps://android-build.googleplex.com/builds/forrest/create?run_type\u003dbuild\u0026build_type\u003dcl\u0026base_build_type\u003dbranch\u0026branch\u003daosp-master-art\u0026changes\u003dhttps%3A%2F%2Fandroid-review.googlesource.com%2Fc%2F1378776%2F8",
+      "parentUuid": "ed567543_9f28e90e",
+      "range": {
+        "startLine": 224,
+        "startChar": 0,
+        "endLine": 224,
+        "endChar": 73
+      },
+      "revId": "48471ee1e1d573e195c9d8a5481b792a476dbe5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
