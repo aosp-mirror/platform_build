@@ -94,6 +94,7 @@ _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 # Kernel related variables
 _board_strip_readonly_list += \
   BOARD_KERNEL_BINARIES \
+  BOARD_KERNEL_MODULE_INTERFACE_VERSIONS \
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
