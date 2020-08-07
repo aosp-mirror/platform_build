@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7d9950d0_f9c78100",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 7
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "indent..",
+      "range": {
+        "startLine": 98,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 17
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f42313c_cdd5707c",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "move to ota utils?",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 58
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5ae7318_fc777af2",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 3412,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "extra line",
+      "range": {
+        "startLine": 3412,
+        "startChar": 0,
+        "endLine": 3412,
+        "endChar": 0
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f13bc20_fe3b652b",
+        "filename": "tools/releasetools/non_ab_ota.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "copyright header",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 0
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e93f06b0_daa0a792",
+        "filename": "tools/releasetools/non_ab_ota.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 43
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "791550f1_ce2eb485",
+        "filename": "tools/releasetools/non_ab_ota.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "nit: remove to keep the code consistent",
+      "range": {
+        "startLine": 11,
+        "startChar": 37,
+        "endLine": 11,
+        "endChar": 38
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b50329ee_bda875fc",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "we can use zip2zip once you fixed the go library..",
+      "range": {
+        "startLine": 606,
+        "startChar": 4,
+        "endLine": 606,
+        "endChar": 39
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47348835_fdfef193",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "copyright header",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 14
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c2ca09d_3059c743",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "if there are not many places, just import common?",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 20
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3b130fe_91c6f289",
+        "filename": "tools/releasetools/test_ota_from_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "not needed?",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 71
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd30a58e_26f05a24",
+        "filename": "tools/releasetools/test_ota_from_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-07T07:55:44Z",
+      "side": 1,
+      "message": "is it inherited also",
+      "range": {
+        "startLine": 537,
+        "startChar": 0,
+        "endLine": 537,
+        "endChar": 57
+      },
+      "revId": "8661e9c8f03e1e332cdeb54be040b00ec3029c8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
