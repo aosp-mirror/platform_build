@@ -487,7 +487,9 @@ $(_local_path_target): $(my_register_name)
 
 ifndef $(_local_path_target)
   $(_local_path_target) := true
-  $(eval $(call my_path_comp,$(_local_path),$(_local_path_target)))
+  ifneq (,$(findstring /,$(_local_path)))
+    $(eval $(call my_path_comp,$(_local_path),$(_local_path_target)))
+  endif
 endif
 
 _local_path :=
