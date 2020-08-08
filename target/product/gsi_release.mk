@@ -54,7 +54,8 @@ PRODUCT_PACKAGES += com.android.apex.cts.shim.v1_with_prebuilts.flattened
 # GSI specific tasks on boot
 PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
-    init.gsi.rc
+    init.gsi.rc \
+    init.vndk-nodef.rc \
 
 # Support additional P, Q and R VNDK packages
 PRODUCT_EXTRA_VNDK_VERSIONS := 28 29 30
