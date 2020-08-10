@@ -22,6 +22,30 @@
       "revId": "2aeb2cba9b2ed51ac9ae9080ccbf455abe86ca18",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bc0b11d_f2b256f5",
+        "filename": "tools/releasetools/test_non_ab_ota.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-10T20:20:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "802ba455_99a76f51",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 0
+      },
+      "revId": "2aeb2cba9b2ed51ac9ae9080ccbf455abe86ca18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
