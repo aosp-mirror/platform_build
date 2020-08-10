@@ -119,15 +119,6 @@ class Summary(object):
     self.makefiles[makefile.filename] = makefile
     self.directories.setdefault(directory_group(makefile.filename), []).append(makefile)
 
-  def IsClean(self, filename):
-    """Also returns true if filename isn't present, with the assumption that it's already
-       converted.
-    """
-    makefile = self.makefiles.get(filename)
-    if not makefile:
-      return True
-    return is_clean(makefile)
-
 class Makefile(object):
   def __init__(self, filename):
     self.filename = filename
@@ -183,6 +174,18 @@ def is_clean(makefile):
       return False
   return True
 
+def clean_and_only_blocked_by_clean(soong, all_makefiles, makefile):
+  if not is_clean(makefile):
+    return False
+  modules = soong.reverse_makefiles[makefile.filename]
+  for module in modules:
+    for dep in soong.transitive_deps(module):
+      for filename in soong.makefiles.get(dep, []):
+        m = all_makefiles.get(filename)
+        if m and not is_clean(m):
+          return False
+  return True
+
 class Annotations(object):
   def __init__(self):
     self.entries = []
@@ -204,6 +207,7 @@ class SoongData(object):
     self.makefiles = dict()
     self.reverse_makefiles = dict()
     self.installed = dict()
+    self.reverse_installed = dict()
     self.modules = set()
 
     for (module, module_type, problem, dependencies, makefiles, installed) in reader:
@@ -221,6 +225,7 @@ class SoongData(object):
         self.reverse_makefiles.setdefault(f, []).append(module)
       for f in installed.strip().split(' '):
         self.installed[f] = module
+        self.reverse_installed.setdefault(module, []).append(f)
 
   def transitive_deps(self, module):
     results = set()
@@ -317,6 +322,9 @@ def main():
                       help="Equivalent of $OUT_DIR, which will also be checked if"
                         + " --out_dir is unset. If neither is set, default is"
                         + " 'out'.")
+  parser.add_argument("--mode", type=str,
+                      default="html",
+                      help="output format: csv or html")
 
   args = parser.parse_args()
 
@@ -346,7 +354,10 @@ def main():
       continue
     all_makefiles[filename] = Makefile(filename)
 
-  HtmlProcessor(args=args, soong=soong, all_makefiles=all_makefiles).execute()
+  if args.mode == "html":
+    HtmlProcessor(args=args, soong=soong, all_makefiles=all_makefiles).execute()
+  elif args.mode == "csv":
+    CsvProcessor(args=args, soong=soong, all_makefiles=all_makefiles).execute()
 
 class HtmlProcessor(object):
   def __init__(self, args, soong, all_makefiles):
@@ -921,19 +932,8 @@ class HtmlProcessor(object):
     """)
 
   def traverse_ready_makefiles(self, summary, makefiles):
-    def clean_and_only_blocked_by_clean(makefile):
-      if not is_clean(makefile):
-        return False
-      modules = self.soong.reverse_makefiles[makefile.filename]
-      for module in modules:
-        for dep in self.soong.transitive_deps(module):
-          for m in self.soong.makefiles.get(dep, []):
-            if not summary.IsClean(m):
-              return False
-      return True
-
     return [Analysis(makefile.filename, []) for makefile in makefiles
-        if clean_and_only_blocked_by_clean(makefile)]
+        if clean_and_only_blocked_by_clean(self.soong, self.all_makefiles, makefile)]
 
   def print_analysis_row(self, summary, modules, rowtitle, rowclass, makefiles):
     all_makefiles = [Analysis(makefile.filename, []) for makefile in makefiles]
@@ -983,6 +983,52 @@ class HtmlProcessor(object):
       )
     else:
       return "";
+
+class CsvProcessor(object):
+  def __init__(self, args, soong, all_makefiles):
+    self.args = args
+    self.soong = soong
+    self.all_makefiles = all_makefiles
+
+  def execute(self):
+    csvout = csv.writer(sys.stdout)
+
+    # Title row
+    row = ["Filename", "Module", "Partitions", "Easy", "Unblocked Clean", "Unblocked",
+           "Blocked", "Clean"]
+    for analyzer in ANALYZERS:
+      row.append(analyzer.title)
+    csvout.writerow(row)
+
+    # Makefile & module data
+    for filename in sorted(self.all_makefiles.keys()):
+      makefile = self.all_makefiles[filename]
+      for module in self.soong.reverse_makefiles[filename]:
+        row = [filename, module]
+        # Partitions
+        row.append(";".join(sorted(set([get_partition_from_installed(HOST_OUT_ROOT, PRODUCT_OUT,
+                                         installed)
+                                        for installed
+                                        in self.soong.reverse_installed.get(module, [])]))))
+        # Easy
+        row.append(1
+            if clean_and_only_blocked_by_clean(self.soong, self.all_makefiles, makefile)
+            else "")
+        # Unblocked Clean
+        row.append(1
+            if (self.soong.contains_unblocked_modules(makefile.filename) and is_clean(makefile))
+            else "")
+        # Unblocked
+        row.append(1 if self.soong.contains_unblocked_modules(makefile.filename) else "")
+        # Blocked
+        row.append(1 if self.soong.contains_blocked_modules(makefile.filename) else "")
+        # Clean
+        row.append(1 if is_clean(makefile) else "")
+        # Analysis
+        for analyzer in ANALYZERS:
+          row.append(1 if makefile.analyses.get(analyzer) else "")
+        # Write results
+        csvout.writerow(row)
 
 if __name__ == "__main__":
   main()

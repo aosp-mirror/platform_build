@@ -495,8 +495,19 @@ $(MK2BP_REMAINING_HTML): $(SOONG_CONV_DATA) $(MK2BP_CATALOG_SCRIPT)
 		--title="Remaining Android.mk files for $(TARGET_DEVICE)-$(TARGET_BUILD_VARIANT)" \
 		--codesearch=$(PRIVATE_CODE_SEARCH_BASE_URL) \
 		--out_dir="$(OUT_DIR)" \
+		--mode=html \
 		> $@
 $(call dist-for-goals,droidcore,$(MK2BP_REMAINING_HTML))
+
+MK2BP_REMAINING_CSV := $(PRODUCT_OUT)/mk2bp_remaining.csv
+$(MK2BP_REMAINING_CSV): $(SOONG_CONV_DATA) $(MK2BP_CATALOG_SCRIPT)
+	@rm -f $@
+	$(hide) $(MK2BP_CATALOG_SCRIPT) \
+		--device=$(TARGET_DEVICE) \
+		--out_dir="$(OUT_DIR)" \
+		--mode=csv \
+		> $@
+$(call dist-for-goals,droidcore,$(MK2BP_REMAINING_CSV))
 
 # -----------------------------------------------------------------
 # Modules use -Wno-error, or added default -Wall -Werror
