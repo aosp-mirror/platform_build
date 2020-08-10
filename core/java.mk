@@ -106,8 +106,8 @@ ifneq ($(strip $(aidl_sources)),)
 
 aidl_preprocess_import :=
 ifdef LOCAL_SDK_VERSION
-ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS_USE_PREBUILT_SDK)),)
-  # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
+ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_USE_PREBUILT_SDKS)),)
+  # LOCAL_SDK_VERSION is current and no TARGET_BUILD_USE_PREBUILT_SDKS
   aidl_preprocess_import := $(FRAMEWORK_AIDL)
 else
   aidl_preprocess_import := $(call resolve-prebuilt-sdk-aidl-path,$(LOCAL_SDK_VERSION))
