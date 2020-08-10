@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1bf6aacc_c7fe1f2b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-08-10T23:53:30Z",
+      "side": 1,
+      "message": "LGTM, but Jeongik should take a look.",
+      "revId": "446a82ddc39d1aee24f36c3b4faef01ace3b6bf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
