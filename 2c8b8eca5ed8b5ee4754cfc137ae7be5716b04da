@@ -50,6 +50,23 @@
       "revId": "2c8b8eca5ed8b5ee4754cfc137ae7be5716b04da",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b721c2c0_90d2cbb9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-08-10T20:08:16Z",
+      "side": 1,
+      "message": "Ooops Tianjie is not an owner. Dan?",
+      "revId": "2c8b8eca5ed8b5ee4754cfc137ae7be5716b04da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
