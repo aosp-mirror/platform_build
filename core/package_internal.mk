@@ -401,7 +401,7 @@ ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 # resources.
 ifeq ($(LOCAL_SDK_RES_VERSION),core_current)
 # core_current doesn't contain any framework resources.
-else ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS_USE_PREBUILT_SDK),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
+else ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_USE_PREBUILT_SDKS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
 # for released sdk versions, the platform resources were built into android.jar.
 framework_res_package_export := \
     $(call resolve-prebuilt-sdk-jar-path,$(LOCAL_SDK_RES_VERSION))
