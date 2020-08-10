@@ -70,6 +70,30 @@
       "revId": "2aeb2cba9b2ed51ac9ae9080ccbf455abe86ca18",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5644d9a_da9af431",
+        "filename": "tools/releasetools/test_non_ab_ota.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-10T20:22:49Z",
+      "side": 1,
+      "message": "Opps sorry",
+      "parentUuid": "d18db3d1_0a6d39d3",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 0
+      },
+      "revId": "2aeb2cba9b2ed51ac9ae9080ccbf455abe86ca18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
