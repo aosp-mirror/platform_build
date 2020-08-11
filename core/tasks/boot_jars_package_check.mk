@@ -17,7 +17,6 @@
 #
 
 ifneq ($(SKIP_BOOT_JARS_CHECK),true)
-ifneq ($(TARGET_BUILD_PDK),true)
 ifdef PRODUCT_BOOT_JARS
 
 intermediates := $(call intermediates-dir-for, PACKAGING, boot-jars-package-check,,COMMON)
@@ -61,5 +60,4 @@ check-boot-jars : $(stamp)
 droidcore : check-boot-jars
 
 endif  # PRODUCT_BOOT_JARS
-endif  # TARGET_BUILD_PDK not true
 endif  # SKIP_BOOT_JARS_CHECK not true
