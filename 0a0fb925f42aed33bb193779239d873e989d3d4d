@@ -34,6 +34,24 @@
       "revId": "0a0fb925f42aed33bb193779239d873e989d3d4d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96e5cb1c_6c88b923",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-08-11T03:31:29Z",
+      "side": 1,
+      "message": "Alternate fix, unroll my_comp_path in a way that \"ifneq (,$$(findstring /,$$(_local_path)))\" is unrolled too: aosp/1396208\nError if LOCAL_PATH is empty: aosp/1396207",
+      "parentUuid": "f989a6f5_8e462c35",
+      "revId": "0a0fb925f42aed33bb193779239d873e989d3d4d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
