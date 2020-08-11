@@ -93,7 +93,9 @@ python_defaults {
     srcs: [
         "edify_generator.py",
         "ota_from_target_files.py",
+        "non_ab_ota.py",
         "target_files_diff.py",
+        "ota_utils.py",
     ],
     libs: [
         "releasetools_check_target_files_vintf",
