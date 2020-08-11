@@ -46,6 +46,30 @@
       "revId": "f5e68d93280528b796582a5580302e3966fb1bfa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "156708bd_d5ac297c",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-08-11T15:51:20Z",
+      "side": 1,
+      "message": "I don\u0027t see any references to this prop yet. What I mean is.. I expect you\u0027re planning on adding something like this:\n    if (getprop(ro.gfx.angle.supported) is true) { .. }\n\nYou could instead make it opt-out and not add the prop by default:\n    if (getprop(ro.gfx.angle.supported) is not false) { ... }\n\nIf you have other planned uses of the prop, it\u0027s fine to add this as-is too. Just wanted to check",
+      "parentUuid": "681bbb8f_1a88addd",
+      "range": {
+        "startLine": 354,
+        "startChar": 0,
+        "endLine": 355,
+        "endChar": 57
+      },
+      "revId": "f5e68d93280528b796582a5580302e3966fb1bfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
