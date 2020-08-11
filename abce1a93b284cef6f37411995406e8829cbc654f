@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "27d07fc7_9e1d163a",
+        "filename": "core/tasks/tools/compatibility.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-11T23:36:56Z",
+      "side": 1,
+      "message": "I don\u0027t think so, it should produce approximately the correct compatibility zip for running on the test infrastructure when run on Mac.",
+      "parentUuid": "509e97d2_ed5c56a9",
+      "range": {
+        "startLine": 48,
+        "startChar": 52,
+        "endLine": 48,
+        "endChar": 81
+      },
+      "revId": "abce1a93b284cef6f37411995406e8829cbc654f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "201858f8_b679e441",
         "filename": "core/tasks/tools/compatibility.mk",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "abce1a93b284cef6f37411995406e8829cbc654f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51c0b735_a6465456",
+        "filename": "core/tasks/tools/compatibility.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-11T23:36:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "201858f8_b679e441",
+      "range": {
+        "startLine": 53,
+        "startChar": 19,
+        "endLine": 53,
+        "endChar": 62
+      },
+      "revId": "abce1a93b284cef6f37411995406e8829cbc654f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
