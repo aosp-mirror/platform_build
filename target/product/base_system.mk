@@ -265,6 +265,7 @@ PRODUCT_PACKAGES += \
     tune2fs \
     tzdatacheck \
     uiautomator \
+    uinput \
     uncrypt \
     usbd \
     vdc \
