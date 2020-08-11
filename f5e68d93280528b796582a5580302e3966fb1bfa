@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fe9c74d_666fc3c5",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-08-11T15:40:36Z",
+      "side": 1,
+      "message": "if we\u0027re adding this to base_system .. is there an argument to just default the getter to \"true\" and and instead only add it if it is false?",
+      "range": {
+        "startLine": 354,
+        "startChar": 0,
+        "endLine": 355,
+        "endChar": 57
+      },
+      "revId": "f5e68d93280528b796582a5580302e3966fb1bfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
