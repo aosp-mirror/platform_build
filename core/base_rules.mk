@@ -27,11 +27,6 @@ endif
 ## Common instructions for a generic module.
 ###########################################################
 
-LOCAL_PATH := $(strip $(LOCAL_PATH))
-ifeq ($(LOCAL_PATH),)
-  $(error LOCAL_PATH is not defined)
-endif
-
 LOCAL_MODULE := $(strip $(LOCAL_MODULE))
 ifeq ($(LOCAL_MODULE),)
   $(error $(LOCAL_PATH): LOCAL_MODULE is not defined)
