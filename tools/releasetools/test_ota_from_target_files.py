@@ -21,14 +21,15 @@ import zipfile
 
 import common
 import test_utils
+from ota_utils import CalculateRuntimeDevicesAndFingerprints
 from ota_from_target_files import (
     _LoadOemDicts, AbOtaPropertyFiles, FinalizeMetadata,
     GetPackageMetadata, GetTargetFilesZipForSecondaryImages,
-    GetTargetFilesZipWithoutPostinstallConfig, NonAbOtaPropertyFiles,
+    GetTargetFilesZipWithoutPostinstallConfig,
     Payload, PayloadSigner, POSTINSTALL_CONFIG, PropertyFiles,
-    StreamingPropertyFiles, WriteFingerprintAssertion,
-    CalculateRuntimeDevicesAndFingerprints)
-
+    StreamingPropertyFiles)
+from non_ab_ota import NonAbOtaPropertyFiles
+from test_utils import PropertyFilesTestCase
 
 def construct_target_files(secondary=False):
   """Returns a target-files.zip file for generating OTA packages."""
@@ -149,20 +150,6 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
       'oem_fingerprint_properties': 'ro.product.device ro.product.brand',
   }
 
-  TEST_OEM_DICTS = [
-      {
-          'ro.product.brand': 'brand1',
-          'ro.product.device': 'device1',
-      },
-      {
-          'ro.product.brand': 'brand2',
-          'ro.product.device': 'device2',
-      },
-      {
-          'ro.product.brand': 'brand3',
-          'ro.product.device': 'device3',
-      },
-  ]
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
@@ -529,59 +516,6 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     FinalizeMetadata(metadata, zip_file, output_file, needed_property_files)
     self.assertIn('ota-test-property-files', metadata)
 
-  def test_WriteFingerprintAssertion_without_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
-    source_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
-    source_info_dict['build.prop'].build_props['ro.build.fingerprint'] = (
-        'source-build-fingerprint')
-    source_info = common.BuildInfo(source_info_dict, None)
-
-    script_writer = test_utils.MockScriptWriter()
-    WriteFingerprintAssertion(script_writer, target_info, source_info)
-    self.assertEqual(
-        [('AssertSomeFingerprint', 'source-build-fingerprint',
-          'build-fingerprint-target')],
-        script_writer.lines)
-
-  def test_WriteFingerprintAssertion_with_source_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
-    source_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-
-    script_writer = test_utils.MockScriptWriter()
-    WriteFingerprintAssertion(script_writer, target_info, source_info)
-    self.assertEqual(
-        [('AssertFingerprintOrThumbprint', 'build-fingerprint-target',
-          'build-thumbprint')],
-        script_writer.lines)
-
-  def test_WriteFingerprintAssertion_with_target_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    source_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
-
-    script_writer = test_utils.MockScriptWriter()
-    WriteFingerprintAssertion(script_writer, target_info, source_info)
-    self.assertEqual(
-        [('AssertFingerprintOrThumbprint', 'build-fingerprint-target',
-          'build-thumbprint')],
-        script_writer.lines)
-
-  def test_WriteFingerprintAssertion_with_both_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    source_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
-    source_info_dict['build.prop'].build_props['ro.build.thumbprint'] = (
-        'source-build-thumbprint')
-    source_info = common.BuildInfo(source_info_dict, self.TEST_OEM_DICTS)
-
-    script_writer = test_utils.MockScriptWriter()
-    WriteFingerprintAssertion(script_writer, target_info, source_info)
-    self.assertEqual(
-        [('AssertSomeThumbprint', 'build-thumbprint',
-          'source-build-thumbprint')],
-        script_writer.lines)
-
 
 class TestPropertyFiles(PropertyFiles):
   """A class that extends PropertyFiles for testing purpose."""
@@ -598,41 +532,8 @@ class TestPropertyFiles(PropertyFiles):
         'optional-entry2',
     )
 
+class PropertyFilesTest(PropertyFilesTestCase):
 
-class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
-
-  def setUp(self):
-    common.OPTIONS.no_signing = False
-
-  @staticmethod
-  def construct_zip_package(entries):
-    zip_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(zip_file, 'w') as zip_fp:
-      for entry in entries:
-        zip_fp.writestr(
-            entry,
-            entry.replace('.', '-').upper(),
-            zipfile.ZIP_STORED)
-    return zip_file
-
-  @staticmethod
-  def _parse_property_files_string(data):
-    result = {}
-    for token in data.split(','):
-      name, info = token.split(':', 1)
-      result[name] = info
-    return result
-
-  def _verify_entries(self, input_file, tokens, entries):
-    for entry in entries:
-      offset, size = map(int, tokens[entry].split(':'))
-      with open(input_file, 'rb') as input_fp:
-        input_fp.seek(offset)
-        if entry == 'metadata':
-          expected = b'META-INF/COM/ANDROID/METADATA'
-        else:
-          expected = entry.replace('.', '-').upper().encode()
-        self.assertEqual(expected, input_fp.read(size))
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_Compute(self):
@@ -753,7 +654,7 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
           AssertionError, property_files.Verify, zip_fp, raw_metadata + 'x')
 
 
-class StreamingPropertyFilesTest(PropertyFilesTest):
+class StreamingPropertyFilesTest(PropertyFilesTestCase):
   """Additional validity checks specialized for StreamingPropertyFiles."""
 
   def test_init(self):
@@ -834,7 +735,7 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
           AssertionError, property_files.Verify, zip_fp, raw_metadata + 'x')
 
 
-class AbOtaPropertyFilesTest(PropertyFilesTest):
+class AbOtaPropertyFilesTest(PropertyFilesTestCase):
   """Additional validity checks specialized for AbOtaPropertyFiles."""
 
   # The size for payload and metadata signature size.
@@ -996,56 +897,6 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
     zip_file = self.construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
-      raw_metadata = property_files.GetPropertyFilesString(
-          zip_fp, reserve_space=False)
-
-      property_files.Verify(zip_fp, raw_metadata)
-
-
-class NonAbOtaPropertyFilesTest(PropertyFilesTest):
-  """Additional validity checks specialized for NonAbOtaPropertyFiles."""
-
-  def test_init(self):
-    property_files = NonAbOtaPropertyFiles()
-    self.assertEqual('ota-property-files', property_files.name)
-    self.assertEqual((), property_files.required)
-    self.assertEqual((), property_files.optional)
-
-  def test_Compute(self):
-    entries = ()
-    zip_file = self.construct_zip_package(entries)
-    property_files = NonAbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file) as zip_fp:
-      property_files_string = property_files.Compute(zip_fp)
-
-    tokens = self._parse_property_files_string(property_files_string)
-    self.assertEqual(1, len(tokens))
-    self._verify_entries(zip_file, tokens, entries)
-
-  def test_Finalize(self):
-    entries = [
-        'META-INF/com/android/metadata',
-    ]
-    zip_file = self.construct_zip_package(entries)
-    property_files = NonAbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file) as zip_fp:
-      raw_metadata = property_files.GetPropertyFilesString(
-          zip_fp, reserve_space=False)
-      property_files_string = property_files.Finalize(zip_fp, len(raw_metadata))
-    tokens = self._parse_property_files_string(property_files_string)
-
-    self.assertEqual(1, len(tokens))
-    # 'META-INF/com/android/metadata' will be key'd as 'metadata'.
-    entries[0] = 'metadata'
-    self._verify_entries(zip_file, tokens, entries)
-
-  def test_Verify(self):
-    entries = (
-        'META-INF/com/android/metadata',
-    )
-    zip_file = self.construct_zip_package(entries)
-    property_files = NonAbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file) as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
 
