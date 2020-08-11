@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "509e97d2_ed5c56a9",
+        "filename": "core/tasks/tools/compatibility.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-08-11T22:10:50Z",
+      "side": 1,
+      "message": "does this mean we should turn off the entire compatibility zip file for Mac?",
+      "range": {
+        "startLine": 48,
+        "startChar": 52,
+        "endLine": 48,
+        "endChar": 81
+      },
+      "revId": "abce1a93b284cef6f37411995406e8829cbc654f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "201858f8_b679e441",
+        "filename": "core/tasks/tools/compatibility.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-08-11T22:10:50Z",
+      "side": 1,
+      "message": "Can we sort this to ensure that the ninja file stays the same between checkouts? (I don\u0027t think anything else would be providing ordering here)",
+      "range": {
+        "startLine": 53,
+        "startChar": 19,
+        "endLine": 53,
+        "endChar": 62
+      },
+      "revId": "abce1a93b284cef6f37411995406e8829cbc654f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
