@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "51f5eb16_07e5f3bc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-08-11T16:37:06Z",
+      "side": 1,
+      "message": "This CL is required only if it is the branch in which android.hardware.common and android.hardware.graphics.common haven\u0027t been frozen yet.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 12
+      },
+      "revId": "48998e76b7d38064178b7dfb7eaa4a7a6afb643a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
