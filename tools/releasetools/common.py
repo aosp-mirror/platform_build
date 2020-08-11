@@ -1227,7 +1227,7 @@ def _MakeRamdisk(sourcedir, fs_config_file=None, lz4_ramdisks=False):
     cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
   p1 = Run(cmd, stdout=subprocess.PIPE)
   if lz4_ramdisks:
-    p2 = Run(["lz4", "-l", "-12" , "--favor-decSpeed"], stdin=p1.stdout,
+    p2 = Run(["lz4", "-l", "-12", "--favor-decSpeed"], stdin=p1.stdout,
              stdout=ramdisk_img.file.fileno())
   else:
     p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
