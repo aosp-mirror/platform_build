@@ -16,6 +16,23 @@
       "revId": "3769a205b6f2d702dd0c727b6551d8d46ffdac35",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dac78f59_2f8f8782",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-08-12T15:07:50Z",
+      "side": 1,
+      "message": "This CL requires ORV.",
+      "revId": "3769a205b6f2d702dd0c727b6551d8d46ffdac35",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
