@@ -118,6 +118,30 @@
       "revId": "f5e68d93280528b796582a5580302e3966fb1bfa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f99b4a6_49bfa56b",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-08-12T09:07:45Z",
+      "side": 1,
+      "message": "What\u0027s the reason for disabling in internal? What about the other branches between this one and internal master?",
+      "parentUuid": "3d417e14_ebbca290",
+      "range": {
+        "startLine": 354,
+        "startChar": 0,
+        "endLine": 355,
+        "endChar": 57
+      },
+      "revId": "f5e68d93280528b796582a5580302e3966fb1bfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
