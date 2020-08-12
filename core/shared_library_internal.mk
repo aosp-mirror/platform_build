@@ -51,8 +51,8 @@ my_target_crtbegin_so_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crt
 my_target_crtend_so_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtend_so)
 endif
 ifneq ($(LOCAL_SDK_VERSION),)
-my_target_crtbegin_so_o := $(wildcard $(my_ndk_sysroot_lib)/crtbegin_so.o)
-my_target_crtend_so_o := $(wildcard $(my_ndk_sysroot_lib)/crtend_so.o)
+my_target_crtbegin_so_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_so.sdk.$(my_ndk_crt_version))
+my_target_crtend_so_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtend_so.sdk.$(my_ndk_crt_version))
 endif
 $(linked_module): PRIVATE_TARGET_LIBCRT_BUILTINS := $(my_target_libcrt_builtins)
 $(linked_module): PRIVATE_TARGET_LIBATOMIC := $(my_target_libatomic)
