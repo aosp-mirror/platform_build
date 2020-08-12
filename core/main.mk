@@ -623,7 +623,6 @@ $(strip \
 )
 endef
 
-# TODO(b/7456955): error if a required module doesn't exist.
 # Resolve the required module names to 32-bit or 64-bit variant for:
 #   ALL_MODULES.<*>.REQUIRED_FROM_TARGET
 #   ALL_MODULES.<*>.REQUIRED_FROM_HOST
@@ -656,7 +655,8 @@ $(foreach m,$(ALL_MODULES), \
             $(if $(and $(module_is_native),$(required_is_shared_library_or_native_test)), \
               $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),$(r_i_2nd),$(r_i)), \
               $(r_i) $(r_i_2nd)))) \
-        $(eval ### TODO(b/7456955): error if r_m is empty / does not exist) \
+        $(eval r_m := $(foreach r_j,$(r_m),$(if $(ALL_MODULES.$(r_j).PATH),$(r_j)))) \
+        $(if $(r_m),,$(eval _nonexistent_required += $(1)$(comma)$(m)$(comma)$(1)$(comma)$(r_i))) \
         $(r_m))) \
     $(eval ALL_MODULES.$(m).REQUIRED_FROM_$(1) := $(sort $(r_r))) \
   ) \
@@ -679,18 +679,37 @@ $(foreach m,$(ALL_MODULES), \
     $(eval r_r := \
       $(foreach r_i,$(r), \
         $(eval r_m := $(call resolve-bitness-for-modules,$(1),$(r_i))) \
-        $(eval ### TODO(b/7456955): error if r_m is empty / does not exist) \
+        $(eval r_m := $(foreach r_j,$(r_m),$(if $(ALL_MODULES.$(r_j).PATH),$(r_j)))) \
+        $(if $(r_m),,$(eval _nonexistent_required += $(2)$(comma)$(m)$(comma)$(1)$(comma)$(r_i))) \
         $(r_m))) \
     $(eval ALL_MODULES.$(m).$(1)_REQUIRED_FROM_$(2) := $(sort $(r_r))) \
   ) \
 )
 endef
 
+_nonexistent_required :=
 $(call select-bitness-of-required-modules,TARGET)
 $(call select-bitness-of-required-modules,HOST)
 $(call select-bitness-of-required-modules,HOST_CROSS)
 $(call select-bitness-of-target-host-required-modules,TARGET,HOST)
 $(call select-bitness-of-target-host-required-modules,HOST,TARGET)
+_nonexistent_required := $(sort $(_nonexistent_required))
+
+# HOST OS darwin build is broken, disable this check for darwin for now.
+# TODO(b/162102724): Remove this
+ifeq (,$(filter $(HOST_OS),darwin))
+ifeq (,$(filter true,$(ALLOW_MISSING_DEPENDENCIES) $(BUILD_BROKEN_MISSING_REQUIRED_MODULES)))
+ifneq (,$(_nonexistent_required))
+  $(warning Missing required dependencies:)
+  $(foreach r_i,$(_nonexistent_required), \
+    $(eval r := $(subst $(comma),$(space),$(r_i))) \
+    $(info $(word 1,$(r)) module $(word 2,$(r)) requires non-existent $(word 3,$(r)) module: $(word 4,$(r))) \
+  )
+  $(warning Set BUILD_BROKEN_MISSING_REQUIRED_MODULES := true to bypass this check if this is intentional)
+  $(error Build failed)
+endif # _nonexistent_required != empty
+endif # ALLOW_MISSING_DEPENDENCIES != true && BUILD_BROKEN_MISSING_REQUIRED_MODULES != true
+endif # HOST_OS != darwin
 
 define add-required-deps
 $(1): | $(2)
