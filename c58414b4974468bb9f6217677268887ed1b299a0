@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "11fb7ed8_c2a50aad",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-08-12T09:03:59Z",
+      "side": 1,
+      "message": "Do not add entries to this list.\n\nIf you want to change the contents of /system, you need to modify mainline_system (soon to be called generic_system, or one of its parents).",
+      "revId": "c58414b4974468bb9f6217677268887ed1b299a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6250ad76_a2f8e8ca",
         "filename": "target/product/gsi_release.mk",
         "patchSetId": 1
