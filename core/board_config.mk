@@ -91,15 +91,21 @@ _dynamic_partitions_var_list += \
 
 _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 
+# Kernel related variables
+_board_strip_readonly_list += \
+  BOARD_KERNEL_BINARIES \
+  BOARD_KERNEL_MODULE_INTERFACE_VERSIONS \
+
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
+  BUILD_BROKEN_DUP_SYSPROP \
   BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES \
+  BUILD_BROKEN_MISSING_REQUIRED_MODULES \
   BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
   BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
   BUILD_BROKEN_USES_NETWORK \
   BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES \
-  BUILD_BROKEN_DUP_SYSPROP \
 
 _build_broken_var_list += \
   $(foreach m,$(AVAILABLE_BUILD_MODULE_TYPES) \

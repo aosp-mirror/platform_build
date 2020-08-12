@@ -93,6 +93,20 @@ ifneq ($(filter-out $(LOCAL_PROPRIETARY_MODULE),$(LOCAL_VENDOR_MODULE))$(filter-
 $(call pretty-error,Only one of LOCAL_PROPRIETARY_MODULE[$(LOCAL_PROPRIETARY_MODULE)] and LOCAL_VENDOR_MODULE[$(LOCAL_VENDOR_MODULE)] may be set, or they must be equal)
 endif
 
+ifeq ($(LOCAL_HOST_MODULE),true)
+my_image_variant := host
+else ifeq ($(LOCAL_VENDOR_MODULE),true)
+my_image_variant := vendor
+else ifeq ($(LOCAL_OEM_MODULE),true)
+my_image_variant := vendor
+else ifeq ($(LOCAL_ODM_MODULE),true)
+my_image_variant := vendor
+else ifeq ($(LOCAL_PRODUCT_MODULE),true)
+my_image_variant := product
+else
+my_image_variant := core
+endif
+
 non_system_module := $(filter true, \
    $(LOCAL_PRODUCT_MODULE) \
    $(LOCAL_SYSTEM_EXT_MODULE) \
@@ -473,7 +487,9 @@ $(_local_path_target): $(my_register_name)
 
 ifndef $(_local_path_target)
   $(_local_path_target) := true
-  $(eval $(call my_path_comp,$(_local_path),$(_local_path_target)))
+  ifneq (,$(findstring /,$(_local_path)))
+    $(eval $(call my_path_comp,$(_local_path),$(_local_path_target)))
+  endif
 endif
 
 _local_path :=

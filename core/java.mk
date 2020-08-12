@@ -4,17 +4,6 @@
 # LOCAL_MODULE_CLASS
 # all_res_assets
 
-ifeq ($(TARGET_BUILD_PDK),true)
-ifeq ($(TARGET_BUILD_PDK_JAVA_PLATFORM),)
-# LOCAL_SDK not defined or set to current
-ifeq ($(filter-out current,$(LOCAL_SDK_VERSION)),)
-ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-LOCAL_SDK_VERSION := $(PDK_BUILD_SDK_VERSION)
-endif #!LOCAL_NO_STANDARD_LIBRARIES
-endif
-endif # !PDK_JAVA
-endif #PDK
-
 LOCAL_NO_STANDARD_LIBRARIES:=$(strip $(LOCAL_NO_STANDARD_LIBRARIES))
 LOCAL_SDK_VERSION:=$(strip $(LOCAL_SDK_VERSION))
 
@@ -106,8 +95,8 @@ ifneq ($(strip $(aidl_sources)),)
 
 aidl_preprocess_import :=
 ifdef LOCAL_SDK_VERSION
-ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS_USE_PREBUILT_SDK)),)
-  # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
+ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_USE_PREBUILT_SDKS)),)
+  # LOCAL_SDK_VERSION is current and no TARGET_BUILD_USE_PREBUILT_SDKS
   aidl_preprocess_import := $(FRAMEWORK_AIDL)
 else
   aidl_preprocess_import := $(call resolve-prebuilt-sdk-aidl-path,$(LOCAL_SDK_VERSION))
