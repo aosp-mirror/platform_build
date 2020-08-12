@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "2058a886_02b9cd64",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-08-12T19:33:26Z",
+      "side": 1,
+      "message": "Done\n\nHi Mikhail, I also added libpolicy-subsystem, please have a look.",
+      "parentUuid": "11fb7ed8_c2a50aad",
+      "revId": "c58414b4974468bb9f6217677268887ed1b299a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6250ad76_a2f8e8ca",
         "filename": "target/product/gsi_release.mk",
         "patchSetId": 1
