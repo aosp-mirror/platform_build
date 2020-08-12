@@ -19,7 +19,7 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   ifdef RBE_DIR
     rbe_dir := $(RBE_DIR)
   else
-    rbe_dir := $(HOME)/rbe
+    rbe_dir := prebuilts/remoteexecution-client/live/
   endif
 
   ifdef RBE_CXX_EXEC_STRATEGY
@@ -31,19 +31,19 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   ifdef RBE_JAVAC_EXEC_STRATEGY
     javac_exec_strategy := $(RBE_JAVAC_EXEC_STRATEGY)
   else
-    javac_exec_strategy := "local"
+    javac_exec_strategy := remote_local_fallback
   endif
 
   ifdef RBE_R8_EXEC_STRATEGY
     r8_exec_strategy := $(RBE_R8_EXEC_STRATEGY)
   else
-    r8_exec_strategy := "local"
+    r8_exec_strategy := remote_local_fallback
   endif
 
   ifdef RBE_D8_EXEC_STRATEGY
     d8_exec_strategy := $(RBE_D8_EXEC_STRATEGY)
   else
-    d8_exec_strategy := "local"
+    d8_exec_strategy := remote_local_fallback
   endif
 
   platform := "container-image=docker://gcr.io/androidbuild-re-dockerimage/android-build-remoteexec-image@sha256:582efb38f0c229ea39952fff9e132ccbe183e14869b39888010dacf56b360d62"
