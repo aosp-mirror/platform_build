@@ -154,6 +154,7 @@ $(KATI_obsolete_var PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST,Use PRODUCT_ARTI
 $(KATI_obsolete_var COVERAGE_PATHS,Use NATIVE_COVERAGE_PATHS instead)
 $(KATI_obsolete_var COVERAGE_EXCLUDE_PATHS,Use NATIVE_COVERAGE_EXCLUDE_PATHS instead)
 $(KATI_obsolete_var BOARD_VNDK_RUNTIME_DISABLE,VNDK-Lite is no longer supported.)
+$(KATI_obsolete_var LOCAL_SANITIZE_BLACKLIST,Use LOCAL_SANITIZE_BLOCKLIST instead.)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -428,93 +429,10 @@ endif
 endif
 endif
 
-# Set up PDK so we can use TARGET_BUILD_PDK to select prebuilt tools below
-.PHONY: pdk fusion
-pdk fusion: $(DEFAULT_GOAL)
-
-# What to build:
-# pdk fusion if:
-# 1) PDK_FUSION_PLATFORM_ZIP / PDK_FUSION_PLATFORM_DIR is passed in from the environment
-# or
-# 2) the platform.zip / pdk.mk exists in the default location
-# or
-# 3) fusion is a command line build goal,
-#    PDK_FUSION_PLATFORM_ZIP is needed anyway, then do we need the 'fusion' goal?
-# otherwise pdk only if:
-# 1) pdk is a command line build goal
-# or
-# 2) TARGET_BUILD_PDK is passed in from the environment
-
-# if PDK_FUSION_PLATFORM_ZIP or PDK_FUSION_PLATFORM_DIR is specified, do not override.
-ifeq (,$(strip $(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR)))
-  # Most PDK project paths should be using vendor/pdk/TARGET_DEVICE
-  # but some legacy ones (e.g. mini_armv7a_neon generic PDK) were setup
-  # with vendor/pdk/TARGET_PRODUCT.
-  # Others are set up with vendor/pdk/TARGET_DEVICE/TARGET_DEVICE-userdebug
-  _pdk_fusion_search_paths := \
-    vendor/pdk/$(TARGET_DEVICE)/$(TARGET_DEVICE)-$(TARGET_BUILD_VARIANT)/platform \
-    vendor/pdk/$(TARGET_DEVICE)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform \
-    vendor/pdk/$(TARGET_DEVICE)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform \
-    vendor/pdk/$(TARGET_PRODUCT)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform \
-    vendor/pdk/$(TARGET_PRODUCT)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform
-
-  _pdk_fusion_default_platform_zip := $(strip $(foreach p,$(_pdk_fusion_search_paths),$(wildcard $(p)/platform.zip)))
-  ifneq (,$(_pdk_fusion_default_platform_zip))
-    PDK_FUSION_PLATFORM_ZIP := $(word 1, $(_pdk_fusion_default_platform_zip))
-    _pdk_fusion_default_platform_zip :=
-  else
-    _pdk_fusion_default_platform_mk := $(strip $(foreach p,$(_pdk_fusion_search_paths),$(wildcard $(p)/pdk.mk)))
-    ifneq (,$(_pdk_fusion_default_platform_mk))
-      PDK_FUSION_PLATFORM_DIR := $(dir $(word 1,$(_pdk_fusion_default_platform_mk)))
-      _pdk_fusion_default_platform_mk :=
-    endif
-  endif # _pdk_fusion_default_platform_zip
-  _pdk_fusion_search_paths :=
-endif # !PDK_FUSION_PLATFORM_ZIP && !PDK_FUSION_PLATFORM_DIR
-
-ifneq (,$(PDK_FUSION_PLATFORM_ZIP))
-  ifneq (,$(PDK_FUSION_PLATFORM_DIR))
-    $(error Only one of PDK_FUSION_PLATFORM_ZIP or PDK_FUSION_PLATFORM_DIR may be specified)
-  endif
-endif
-
-ifneq (,$(filter pdk fusion, $(MAKECMDGOALS)))
-TARGET_BUILD_PDK := true
-ifneq (,$(filter fusion, $(MAKECMDGOALS)))
-ifeq (,$(strip $(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR)))
-  $(error Specify PDK_FUSION_PLATFORM_ZIP or PDK_FUSION_PLATFORM_DIR to do a PDK fusion.)
-endif
-endif  # fusion
-endif  # pdk or fusion
-
-ifdef PDK_FUSION_PLATFORM_ZIP
-TARGET_BUILD_PDK := true
-ifeq (,$(wildcard $(PDK_FUSION_PLATFORM_ZIP)))
-  ifneq (,$(wildcard $(patsubst %.zip,%,$(PDK_FUSION_PLATFORM_ZIP))/pdk.mk))
-    PDK_FUSION_PLATFORM_DIR := $(patsubst %.zip,%,$(PDK_FUSION_PLATFORM_ZIP))
-    PDK_FUSION_PLATFORM_ZIP :=
-  else
-    $(error Cannot find file $(PDK_FUSION_PLATFORM_ZIP).)
-  endif
-endif
-endif
-
-ifdef PDK_FUSION_PLATFORM_DIR
-TARGET_BUILD_PDK := true
-ifeq (,$(wildcard $(PDK_FUSION_PLATFORM_DIR)/pdk.mk))
-  $(error Cannot find file $(PDK_FUSION_PLATFORM_DIR)/pdk.mk.)
-endif
-endif
-
-BUILD_PLATFORM_ZIP := $(filter platform platform-java,$(MAKECMDGOALS))
-
 # ---------------------------------------------------------------
 # Whether we can expect a full build graph
 ALLOW_MISSING_DEPENDENCIES := $(filter true,$(ALLOW_MISSING_DEPENDENCIES))
 ifneq ($(TARGET_BUILD_APPS),)
-ALLOW_MISSING_DEPENDENCIES := true
-endif
-ifeq ($(TARGET_BUILD_PDK),true)
 ALLOW_MISSING_DEPENDENCIES := true
 endif
 ifeq ($(TARGET_BUILD_UNBUNDLED_IMAGE),true)
@@ -561,23 +479,23 @@ USE_D8 := true
 #
 # Tools that are prebuilts for TARGET_BUILD_USE_PREBUILT_SDKS
 #
-ifeq (,$(TARGET_BUILD_USE_PREBUILT_SDKS)$(filter true,$(TARGET_BUILD_PDK)))
+ifeq (,$(TARGET_BUILD_USE_PREBUILT_SDKS))
   AAPT := $(HOST_OUT_EXECUTABLES)/aapt
   MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
 
-else # TARGET_BUILD_USE_PREBUILT_SDKS || TARGET_BUILD_PDK
+else # TARGET_BUILD_USE_PREBUILT_SDKS
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
   MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
-endif # TARGET_BUILD_USE_PREBUILT_SDKS || TARGET_BUILD_PDK
+endif # TARGET_BUILD_USE_PREBUILT_SDKS
 
 ifeq (,$(TARGET_BUILD_USE_PREBUILT_SDKS))
-  # Use RenderScript prebuilts for unbundled builds but not PDK builds
+  # Use RenderScript prebuilts for unbundled builds
   LLVM_RS_CC := $(HOST_OUT_EXECUTABLES)/llvm-rs-cc
   BCC_COMPAT := $(HOST_OUT_EXECUTABLES)/bcc_compat
 else
   LLVM_RS_CC := $(prebuilt_sdk_tools_bin)/llvm-rs-cc
   BCC_COMPAT := $(prebuilt_sdk_tools_bin)/bcc_compat
-endif # TARGET_BUILD_PDK
+endif
 
 prebuilt_sdk_tools :=
 prebuilt_sdk_tools_bin :=
