@@ -94,6 +94,30 @@
       "revId": "f5e68d93280528b796582a5580302e3966fb1bfa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d417e14_ebbca290",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1368430
+      },
+      "writtenOn": "2020-08-12T00:12:15Z",
+      "side": 1,
+      "message": "I\u0027ve taken a look at this from the goog/master perspective also, and I prefer enabling this property here while also disabling it in goog/master.\n\nThis should make it more explicit where it\u0027s enabled/disabled when attempting to chase down any CTS failures, rather than relying on undocumented behavior on either side (internal or AOSP).\n\nHere\u0027s the goog/master CL that I\u0027d like to land first, so the CTS tests continue to stay disabled there, and then deal with the merge conflict (by keeping it \u0027false\u0027) when this CL is auto-merged in:\nhttps://googleplex-android-review.git.corp.google.com/c/platform/build/+/12353698",
+      "parentUuid": "afdd0c40_341c0e5c",
+      "range": {
+        "startLine": 354,
+        "startChar": 0,
+        "endLine": 355,
+        "endChar": 57
+      },
+      "revId": "f5e68d93280528b796582a5580302e3966fb1bfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
