@@ -69,6 +69,30 @@
       "revId": "48998e76b7d38064178b7dfb7eaa4a7a6afb643a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb8ff102_e88570b6",
+        "filename": "target/product/gsi/current.txt",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-08-12T08:16:25Z",
+      "side": 1,
+      "message": "du-duped them, but for now it is \u0027unstable\u0027 version, but in a release mode, it gonna be \u0027versioned\u0027 module as the previous comment.\nmoreover, it will be roll-backed after aosp push.",
+      "parentUuid": "2e01583d_16326985",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 57
+      },
+      "revId": "48998e76b7d38064178b7dfb7eaa4a7a6afb643a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
