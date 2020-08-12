@@ -33,6 +33,8 @@ endif
 
 include $(SOONG_MAKEVARS_MK)
 
+YACC :=$= $(BISON) -d
+
 include $(BUILD_SYSTEM)/clang/config.mk
 
 # Write the build number to a file so it can be read back in
@@ -175,16 +177,8 @@ $(error stopping)
 endif
 
 # -----------------------------------------------------------------
-# Variable to check java support level inside PDK build.
-# Not necessary if the components is not in PDK.
-# not defined : not supported
-# "sdk" : sdk API only
-# "platform" : platform API supproted
-TARGET_BUILD_JAVA_SUPPORT_LEVEL := platform
-
-# -----------------------------------------------------------------
-# The pdk (Platform Development Kit) build
-include build/make/core/pdk_config.mk
+# PDK builds are no longer supported, this is always platform
+TARGET_BUILD_JAVA_SUPPORT_LEVEL :=$= platform
 
 # -----------------------------------------------------------------
 
@@ -212,6 +206,9 @@ endif
 ifneq ($(TARGET_BUILD_VARIANT),user)
 ADDITIONAL_SYSTEM_PROPERTIES += persist.debug.dalvik.vm.core_platform_api_policy=just-warn
 endif
+
+# Define ro.sanitize.<name> properties for all global sanitizers.
+ADDITIONAL_SYSTEM_PROPERTIES += $(foreach s,$(SANITIZE_TARGET),ro.sanitize.$(s)=true)
 
 # Sets the default value of ro.postinstall.fstab.prefix to /system.
 # Device board config should override the value to /product when needed by:
@@ -319,6 +316,10 @@ endif
 endif
 
 ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)
+
+ifeq ($(AB_OTA_UPDATER),true)
+ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(AB_OTA_PARTITIONS))
+endif
 
 # -----------------------------------------------------------------
 ###
@@ -509,11 +510,6 @@ subdir_makefiles_total := $(words int $(subdir_makefiles) post finish)
 
 $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
 
-ifneq (,$(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR))
-# Bring in the PDK platform.zip modules.
-include $(BUILD_SYSTEM)/pdk_fusion_modules.mk
-endif # PDK_FUSION_PLATFORM_ZIP || PDK_FUSION_PLATFORM_DIR
-
 droid_targets : blueprint_tools
 
 endif # dont_bother
@@ -629,7 +625,6 @@ $(strip \
 )
 endef
 
-# TODO(b/7456955): error if a required module doesn't exist.
 # Resolve the required module names to 32-bit or 64-bit variant for:
 #   ALL_MODULES.<*>.REQUIRED_FROM_TARGET
 #   ALL_MODULES.<*>.REQUIRED_FROM_HOST
@@ -662,7 +657,8 @@ $(foreach m,$(ALL_MODULES), \
             $(if $(and $(module_is_native),$(required_is_shared_library_or_native_test)), \
               $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),$(r_i_2nd),$(r_i)), \
               $(r_i) $(r_i_2nd)))) \
-        $(eval ### TODO(b/7456955): error if r_m is empty / does not exist) \
+        $(eval r_m := $(foreach r_j,$(r_m),$(if $(ALL_MODULES.$(r_j).PATH),$(r_j)))) \
+        $(if $(r_m),,$(eval _nonexistent_required += $(1)$(comma)$(m)$(comma)$(1)$(comma)$(r_i))) \
         $(r_m))) \
     $(eval ALL_MODULES.$(m).REQUIRED_FROM_$(1) := $(sort $(r_r))) \
   ) \
@@ -685,18 +681,37 @@ $(foreach m,$(ALL_MODULES), \
     $(eval r_r := \
       $(foreach r_i,$(r), \
         $(eval r_m := $(call resolve-bitness-for-modules,$(1),$(r_i))) \
-        $(eval ### TODO(b/7456955): error if r_m is empty / does not exist) \
+        $(eval r_m := $(foreach r_j,$(r_m),$(if $(ALL_MODULES.$(r_j).PATH),$(r_j)))) \
+        $(if $(r_m),,$(eval _nonexistent_required += $(2)$(comma)$(m)$(comma)$(1)$(comma)$(r_i))) \
         $(r_m))) \
     $(eval ALL_MODULES.$(m).$(1)_REQUIRED_FROM_$(2) := $(sort $(r_r))) \
   ) \
 )
 endef
 
+_nonexistent_required :=
 $(call select-bitness-of-required-modules,TARGET)
 $(call select-bitness-of-required-modules,HOST)
 $(call select-bitness-of-required-modules,HOST_CROSS)
 $(call select-bitness-of-target-host-required-modules,TARGET,HOST)
 $(call select-bitness-of-target-host-required-modules,HOST,TARGET)
+_nonexistent_required := $(sort $(_nonexistent_required))
+
+# HOST OS darwin build is broken, disable this check for darwin for now.
+# TODO(b/162102724): Remove this
+ifeq (,$(filter $(HOST_OS),darwin))
+ifeq (,$(filter true,$(ALLOW_MISSING_DEPENDENCIES) $(BUILD_BROKEN_MISSING_REQUIRED_MODULES)))
+ifneq (,$(_nonexistent_required))
+  $(warning Missing required dependencies:)
+  $(foreach r_i,$(_nonexistent_required), \
+    $(eval r := $(subst $(comma),$(space),$(r_i))) \
+    $(info $(word 1,$(r)) module $(word 2,$(r)) requires non-existent $(word 3,$(r)) module: $(word 4,$(r))) \
+  )
+  $(warning Set BUILD_BROKEN_MISSING_REQUIRED_MODULES := true to bypass this check if this is intentional)
+  $(error Build failed)
+endif # _nonexistent_required != empty
+endif # ALLOW_MISSING_DEPENDENCIES != true && BUILD_BROKEN_MISSING_REQUIRED_MODULES != true
+endif # HOST_OS != darwin
 
 define add-required-deps
 $(1): | $(2)
@@ -1715,12 +1730,10 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
     $(call dist-for-goals, droidcore, $(f)))
 
   ifneq ($(ANDROID_BUILD_EMBEDDED),true)
-  ifneq ($(TARGET_BUILD_PDK),true)
     $(call dist-for-goals, droidcore, \
       $(APPS_ZIP) \
       $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
     )
-  endif
   endif
 
   $(call dist-for-goals, droidcore, \

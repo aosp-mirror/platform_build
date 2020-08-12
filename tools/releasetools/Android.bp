@@ -93,7 +93,9 @@ python_defaults {
     srcs: [
         "edify_generator.py",
         "ota_from_target_files.py",
+        "non_ab_ota.py",
         "target_files_diff.py",
+        "ota_utils.py",
     ],
     libs: [
         "releasetools_check_target_files_vintf",
@@ -104,6 +106,12 @@ python_defaults {
         "brillo_update_payload",
         "checkvintf",
     ],
+    target: {
+        darwin: {
+            // required module "brillo_update_payload" is disabled on darwin
+            enabled: false,
+        },
+    },
 }
 
 //
@@ -297,6 +305,12 @@ python_binary_host {
     required: [
         "delta_generator",
     ],
+    target: {
+        darwin: {
+            // required module "delta_generator" is disabled on darwin
+            enabled: false,
+        },
+    },
 }
 
 python_binary_host {
@@ -369,6 +383,12 @@ python_binary_host {
     required: [
         "checkvintf",
     ],
+    target: {
+        darwin: {
+            // libs dep "releasetools_ota_from_target_files" is disabled on darwin
+            enabled: false,
+        },
+    },
 }
 
 python_binary_host {
@@ -466,6 +486,12 @@ python_defaults {
     data: [
         "testdata/**/*",
     ],
+    target: {
+        darwin: {
+            // libs dep "releasetools_ota_from_target_files" is disabled on darwin
+            enabled: false,
+        },
+    },
 }
 
 python_test_host {

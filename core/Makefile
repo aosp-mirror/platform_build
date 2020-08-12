@@ -553,12 +553,8 @@ event_log_tags_file := $(TARGET_OUT)/etc/event-log-tags
 all_event_log_tags_src := \
     $(sort $(foreach m, $(ALL_MODULES), $(ALL_MODULES.$(m).EVENT_LOG_TAGS)))
 
-# PDK builds will already have a full list of tags that needs to get merged
-# in with the ones from source
-pdk_fusion_log_tags_file := $(patsubst $(PRODUCT_OUT)/%,$(_pdk_fusion_intermediates)/%,$(filter $(event_log_tags_file),$(ALL_PDK_FUSION_FILES)))
-
-$(all_event_log_tags_file): PRIVATE_SRC_FILES := $(all_event_log_tags_src) $(pdk_fusion_log_tags_file)
-$(all_event_log_tags_file): $(all_event_log_tags_src) $(pdk_fusion_log_tags_file) $(MERGETAGS) build/make/tools/event_log_tags.py
+$(all_event_log_tags_file): PRIVATE_SRC_FILES := $(all_event_log_tags_src)
+$(all_event_log_tags_file): $(all_event_log_tags_src) $(MERGETAGS) build/make/tools/event_log_tags.py
 	$(hide) mkdir -p $(dir $@)
 	$(hide) $(MERGETAGS) -o $@ $(PRIVATE_SRC_FILES)
 
@@ -572,9 +568,9 @@ event_log_tags_src := \
       $(ALL_MODULES.$(m).EVENT_LOG_TAGS)) \
       $(filter-out vendor/% device/% out/%,$(all_event_log_tags_src)))
 
-$(event_log_tags_file): PRIVATE_SRC_FILES := $(event_log_tags_src) $(pdk_fusion_log_tags_file)
+$(event_log_tags_file): PRIVATE_SRC_FILES := $(event_log_tags_src)
 $(event_log_tags_file): PRIVATE_MERGED_FILE := $(all_event_log_tags_file)
-$(event_log_tags_file): $(event_log_tags_src) $(all_event_log_tags_file) $(pdk_fusion_log_tags_file) $(MERGETAGS) build/make/tools/event_log_tags.py
+$(event_log_tags_file): $(event_log_tags_src) $(all_event_log_tags_file) $(MERGETAGS) build/make/tools/event_log_tags.py
 	$(hide) mkdir -p $(dir $@)
 	$(hide) $(MERGETAGS) -o $@ -m $(PRIVATE_MERGED_FILE) $(PRIVATE_SRC_FILES)
 
@@ -955,7 +951,6 @@ tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
 tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
 kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
 winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
-pdk_fusion_notice_files := $(filter $(TARGET_OUT_NOTICE_FILES)/%, $(ALL_PDK_FUSION_FILES))
 
 # Some targets get included under $(PRODUCT_OUT) for debug symbols or other
 # reasons--not to be flashed onto any device. Targets under these directories
@@ -972,7 +967,7 @@ $(eval $(call combine-notice-files, html, \
 	        $(target_notice_file_html), \
 	        "Notices for files contained in the filesystem images in this directory:", \
 	        $(TARGET_OUT_NOTICE_FILES), \
-	        $(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files), \
+	        $(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file), \
 	        $(exclude_target_dirs)))
 $(target_notice_file_html_gz): $(target_notice_file_html) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
@@ -1016,7 +1011,7 @@ installed_odm_dlkm_notice_xml_gz := $(TARGET_OUT_ODM_DLKM)/etc/NOTICE.xml.gz
 # Notice files are copied to TARGET_OUT_NOTICE_FILES as a side-effect of their module
 # being built. A notice xml file must depend on all modules that could potentially
 # install a license file relevant to it.
-license_modules := $(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)
+license_modules := $(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file)
 # Only files copied to a system image need system image notices.
 license_modules := $(filter $(PRODUCT_OUT)/%,$(license_modules))
 # Phonys/fakes don't have notice files (though their deps might)
@@ -2275,17 +2270,10 @@ endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
 
 # -----------------------------------------------------------------
 # system image
-#
-# Remove overridden packages from $(ALL_PDK_FUSION_FILES)
-PDK_FUSION_SYSIMG_FILES := \
-    $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk), \
-        $(ALL_PDK_FUSION_FILES))
 
 INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
     $(ALL_GENERATED_SOURCES) \
-    $(ALL_DEFAULT_INSTALLED_MODULES) \
-    $(PDK_FUSION_SYSIMG_FILES)) \
-    $(PDK_FUSION_SYMLINK_STAMP))
+    $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
 
@@ -2453,111 +2441,14 @@ endif # BUILDING_SYSTEM_IMAGE
 sync syncsys: $(INTERNAL_SYSTEMIMAGE_FILES)
 
 # -----------------------------------------------------------------
-## platform.zip: system, plus other files to be used in PDK fusion build,
-## in a zip file
-##
-## PDK_PLATFORM_ZIP_PRODUCT_BINARIES is used to store specified files to platform.zip.
-## The variable will be typically set from BoardConfig.mk.
-## Files under out dir will be rejected to prevent possible conflicts with other rules.
-ifneq (,$(BUILD_PLATFORM_ZIP))
-pdk_odex_javalibs := $(strip $(foreach m,$(DEXPREOPT.MODULES.JAVA_LIBRARIES),\
-  $(if $(filter $(DEXPREOPT.$(m).INSTALLED_STRIPPED),$(ALL_DEFAULT_INSTALLED_MODULES)),$(m))))
-pdk_odex_apps := $(strip $(foreach m,$(DEXPREOPT.MODULES.APPS),\
-  $(if $(filter $(DEXPREOPT.$(m).INSTALLED_STRIPPED),$(ALL_DEFAULT_INSTALLED_MODULES)),$(m))))
-pdk_classes_dex := $(strip \
-  $(foreach m,$(pdk_odex_javalibs),$(call intermediates-dir-for,JAVA_LIBRARIES,$(m),,COMMON)/javalib.jar) \
-  $(foreach m,$(pdk_odex_apps),$(call intermediates-dir-for,APPS,$(m))/package.apk))
-
-pdk_odex_config_mk := $(PRODUCT_OUT)/pdk_dexpreopt_config.mk
-$(pdk_odex_config_mk): PRIVATE_JAVA_LIBRARIES := $(pdk_odex_javalibs)
-$(pdk_odex_config_mk): PRIVATE_APPS := $(pdk_odex_apps)
-$(pdk_odex_config_mk) :
-	@echo "PDK odex config makefile: $@"
-	$(hide) mkdir -p $(dir $@)
-	$(hide) echo "# Auto-generated. Do not modify." > $@
-	$(hide) echo "PDK.DEXPREOPT.JAVA_LIBRARIES:=$(PRIVATE_JAVA_LIBRARIES)" >> $@
-	$(hide) echo "PDK.DEXPREOPT.APPS:=$(PRIVATE_APPS)" >> $@
-	$(foreach m,$(PRIVATE_JAVA_LIBRARIES),\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).SRC:=$(patsubst $(OUT_DIR)/%,%,$(call intermediates-dir-for,JAVA_LIBRARIES,$(m),,COMMON)/javalib.jar)" >> $@$(newline)\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).DEX_PREOPT:=$(DEXPREOPT.$(m).DEX_PREOPT)" >> $@$(newline)\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).MULTILIB:=$(DEXPREOPT.$(m).MULTILIB)" >> $@$(newline)\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).DEX_PREOPT_FLAGS:=$(DEXPREOPT.$(m).DEX_PREOPT_FLAGS)" >> $@$(newline)\
-	  )
-	$(foreach m,$(PRIVATE_APPS),\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).SRC:=$(patsubst $(OUT_DIR)/%,%,$(call intermediates-dir-for,APPS,$(m))/package.apk)" >> $@$(newline)\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).DEX_PREOPT:=$(DEXPREOPT.$(m).DEX_PREOPT)" >> $@$(newline)\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).MULTILIB:=$(DEXPREOPT.$(m).MULTILIB)" >> $@$(newline)\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).DEX_PREOPT_FLAGS:=$(DEXPREOPT.$(m).DEX_PREOPT_FLAGS)" >> $@$(newline)\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).PRIVILEGED_MODULE:=$(DEXPREOPT.$(m).PRIVILEGED_MODULE)" >> $@$(newline)\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).VENDOR_MODULE:=$(DEXPREOPT.$(m).VENDOR_MODULE)" >> $@$(newline)\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).TARGET_ARCH:=$(DEXPREOPT.$(m).TARGET_ARCH)" >> $@$(newline)\
-	  $(hide) echo "PDK.DEXPREOPT.$(m).STRIPPED_SRC:=$(patsubst $(PRODUCT_OUT)/%,%,$(DEXPREOPT.$(m).INSTALLED_STRIPPED))" >> $@$(newline)\
-	  )
-
-PDK_PLATFORM_ZIP_PRODUCT_BINARIES := $(filter-out $(OUT_DIR)/%,$(PDK_PLATFORM_ZIP_PRODUCT_BINARIES))
-INSTALLED_PLATFORM_ZIP := $(PRODUCT_OUT)/platform.zip
-
-$(INSTALLED_PLATFORM_ZIP): PRIVATE_DEX_FILES := $(pdk_classes_dex)
-$(INSTALLED_PLATFORM_ZIP): PRIVATE_ODEX_CONFIG := $(pdk_odex_config_mk)
-$(INSTALLED_PLATFORM_ZIP) : $(SOONG_ZIP)
-# dependencies for the other partitions are defined below after their file lists
-# are known
-$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES) $(pdk_classes_dex) $(pdk_odex_config_mk) $(API_FINGERPRINT)
-	$(call pretty,"Platform zip package: $(INSTALLED_PLATFORM_ZIP)")
-	rm -f $@ $@.lst
-	echo "-C $(PRODUCT_OUT)" >> $@.lst
-	echo "-D $(TARGET_OUT)" >> $@.lst
-	echo "-D $(TARGET_OUT_NOTICE_FILES)" >> $@.lst
-	echo "$(addprefix -f $(TARGET_OUT_UNSTRIPPED)/,$(PDK_SYMBOL_FILES_LIST))" >> $@.lst
-ifdef BUILDING_VENDOR_IMAGE
-	echo "-D $(TARGET_OUT_VENDOR)" >> $@.lst
-endif
-ifdef BUILDING_PRODUCT_IMAGE
-	echo "-D $(TARGET_OUT_PRODUCT)" >> $@.lst
-endif
-ifdef BUILDING_SYSTEM_EXT_IMAGE
-	echo "-D $(TARGET_OUT_SYSTEM_EXT)" >> $@.lst
-endif
-ifdef BUILDING_ODM_IMAGE
-	echo "-D $(TARGET_OUT_ODM)" >> $@.lst
-endif
-ifdef BUILDING_VENDOR_DLKM_IMAGE
-	echo "-D $(TARGET_OUT_VENDOR_DLKM)" >> $@.lst
-endif
-ifdef BUILDING_ODM_DLKM_IMAGE
-	echo "-D $(TARGET_OUT_ODM_DLKM)" >> $@.lst
-endif
-ifneq ($(PDK_PLATFORM_JAVA_ZIP_CONTENTS),)
-	echo "-C $(OUT_DIR)" >> $@.lst
-	for f in $(filter-out $(PRIVATE_DEX_FILES),$(addprefix -f $(OUT_DIR)/,$(PDK_PLATFORM_JAVA_ZIP_CONTENTS))); do \
-	  if [ -e $$f ]; then \
-	    echo "-f $$f"; \
-	  fi \
-	done >> $@.lst
-endif
-ifneq ($(PDK_PLATFORM_ZIP_PRODUCT_BINARIES),)
-        echo "-C . $(addprefix -f ,$(PDK_PLATFORM_ZIP_PRODUCT_BINARIES))" >> $@.lst
-endif
-	@# Add dex-preopt files and config.
-	$(if $(PRIVATE_DEX_FILES),\
-	  echo "-C $(OUT_DIR) $(addprefix -f ,$(PRIVATE_DEX_FILES))") >> $@.lst
-	echo "-C $(dir $(API_FINGERPRINT)) -f $(API_FINGERPRINT)" >> $@.lst
-	touch $(PRODUCT_OUT)/pdk.mk
-	echo "-C $(PRODUCT_OUT) -f $(PRIVATE_ODEX_CONFIG) -f $(PRODUCT_OUT)/pdk.mk" >> $@.lst
-	$(SOONG_ZIP) --ignore_missing_files -o $@ @$@.lst
-
+# Old PDK fusion targets
 .PHONY: platform
-platform: $(INSTALLED_PLATFORM_ZIP)
+platform:
+	echo "Warning: 'platform' is obsolete"
 
 .PHONY: platform-java
-platform-java: platform
-
-# Dist the platform.zip
-ifneq (,$(filter platform platform-java, $(MAKECMDGOALS)))
-$(call dist-for-goals, platform platform-java, $(INSTALLED_PLATFORM_ZIP))
-endif
-
-endif # BUILD_PLATFORM_ZIP
+platform-java:
+	echo "Warning: 'platform-java' is obsolete"
 
 # -----------------------------------------------------------------
 # data partition image
@@ -2691,9 +2582,7 @@ endif
 
 INTERNAL_SYSTEMOTHERIMAGE_FILES := \
     $(filter $(TARGET_OUT_SYSTEM_OTHER)/%,\
-      $(ALL_DEFAULT_INSTALLED_MODULES)\
-      $(ALL_PDK_FUSION_FILES)) \
-    $(PDK_FUSION_SYMLINK_STAMP)
+      $(ALL_DEFAULT_INSTALLED_MODULES))
 
 # system_other dex files are installed as a side-effect of installing system image files
 INTERNAL_SYSTEMOTHERIMAGE_FILES += $(INTERNAL_SYSTEMIMAGE_FILES)
@@ -2756,12 +2645,7 @@ endif # BUILDING_SYSTEM_OTHER_IMAGE
 ifdef BUILDING_VENDOR_IMAGE
 INTERNAL_VENDORIMAGE_FILES := \
     $(filter $(TARGET_OUT_VENDOR)/%,\
-      $(ALL_DEFAULT_INSTALLED_MODULES)\
-      $(ALL_PDK_FUSION_FILES)) \
-    $(PDK_FUSION_SYMLINK_STAMP)
-
-# platform.zip depends on $(INTERNAL_VENDORIMAGE_FILES).
-$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_VENDORIMAGE_FILES)
+      $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INSTALLED_FILES_FILE_VENDOR := $(PRODUCT_OUT)/installed-files-vendor.txt
 INSTALLED_FILES_JSON_VENDOR := $(INSTALLED_FILES_FILE_VENDOR:.txt=.json)
@@ -2889,12 +2773,7 @@ endif
 ifdef BUILDING_PRODUCT_IMAGE
 INTERNAL_PRODUCTIMAGE_FILES := \
     $(filter $(TARGET_OUT_PRODUCT)/%,\
-      $(ALL_DEFAULT_INSTALLED_MODULES)\
-      $(ALL_PDK_FUSION_FILES)) \
-    $(PDK_FUSION_SYMLINK_STAMP)
-
-# platform.zip depends on $(INTERNAL_PRODUCTIMAGE_FILES).
-$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_PRODUCTIMAGE_FILES)
+      $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INSTALLED_FILES_FILE_PRODUCT := $(PRODUCT_OUT)/installed-files-product.txt
 INSTALLED_FILES_JSON_PRODUCT := $(INSTALLED_FILES_FILE_PRODUCT:.txt=.json)
@@ -2945,12 +2824,7 @@ endif
 ifdef BUILDING_SYSTEM_EXT_IMAGE
 INTERNAL_SYSTEM_EXTIMAGE_FILES := \
     $(filter $(TARGET_OUT_SYSTEM_EXT)/%,\
-      $(ALL_DEFAULT_INSTALLED_MODULES)\
-      $(ALL_PDK_FUSION_FILES)) \
-    $(PDK_FUSION_SYMLINK_STAMP)
-
-# platform.zip depends on $(INTERNAL_SYSTEM_EXTIMAGE_FILES).
-$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEM_EXTIMAGE_FILES)
+      $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INSTALLED_FILES_FILE_SYSTEM_EXT := $(PRODUCT_OUT)/installed-files-system_ext.txt
 INSTALLED_FILES_JSON_SYSTEM_EXT := $(INSTALLED_FILES_FILE_SYSTEM_EXT:.txt=.json)
@@ -3003,11 +2877,7 @@ endif
 ifdef BUILDING_ODM_IMAGE
 INTERNAL_ODMIMAGE_FILES := \
     $(filter $(TARGET_OUT_ODM)/%,\
-      $(ALL_DEFAULT_INSTALLED_MODULES)\
-      $(ALL_PDK_FUSION_FILES)) \
-    $(PDK_FUSION_SYMLINK_STAMP)
-# platform.zip depends on $(INTERNAL_ODMIMAGE_FILES).
-$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_ODMIMAGE_FILES)
+      $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INSTALLED_FILES_FILE_ODM := $(PRODUCT_OUT)/installed-files-odm.txt
 INSTALLED_FILES_JSON_ODM := $(INSTALLED_FILES_FILE_ODM:.txt=.json)
@@ -3058,11 +2928,7 @@ endif
 ifdef BUILDING_VENDOR_DLKM_IMAGE
 INTERNAL_VENDOR_DLKMIMAGE_FILES := \
     $(filter $(TARGET_OUT_VENDOR_DLKM)/%,\
-      $(ALL_DEFAULT_INSTALLED_MODULES)\
-      $(ALL_PDK_FUSION_FILES)) \
-    $(PDK_FUSION_SYMLINK_STAMP)
-# platform.zip depends on $(INTERNAL_VENDOR_DLKMIMAGE_FILES).
-$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
+      $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INSTALLED_FILES_FILE_VENDOR_DLKM := $(PRODUCT_OUT)/installed-files-vendor_dlkm.txt
 INSTALLED_FILES_JSON_VENDOR_DLKM := $(INSTALLED_FILES_FILE_VENDOR_DLKM:.txt=.json)
@@ -3113,11 +2979,7 @@ endif
 ifdef BUILDING_ODM_DLKM_IMAGE
 INTERNAL_ODM_DLKMIMAGE_FILES := \
     $(filter $(TARGET_OUT_ODM_DLKM)/%,\
-      $(ALL_DEFAULT_INSTALLED_MODULES)\
-      $(ALL_PDK_FUSION_FILES)) \
-    $(PDK_FUSION_SYMLINK_STAMP)
-# platform.zip depends on $(INTERNAL_ODM_DLKMIMAGE_FILES).
-$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_ODM_DLKMIMAGE_FILES)
+      $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INSTALLED_FILES_FILE_ODM_DLKM := $(PRODUCT_OUT)/installed-files-odm_dlkm.txt
 INSTALLED_FILES_JSON_ODM_DLKM := $(INSTALLED_FILES_FILE_ODM_DLKM:.txt=.json)
@@ -3937,9 +3799,6 @@ else
   ifeq ($(TARGET_PRODUCT),sdk)
     build_ota_package := false
   endif
-  ifeq ($(TARGET_BUILD_PDK),true)
-    build_ota_package := false
-  endif
   ifneq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
     ifneq ($(filter generic%,$(TARGET_DEVICE)),)
       build_ota_package := false
@@ -3997,6 +3856,7 @@ INTERNAL_OTATOOLS_MODULES := \
   lpunpack \
   lz4 \
   make_f2fs \
+  make_f2fs_casefold \
   merge_target_files \
   minigzip \
   mk_combined_img \
@@ -5310,13 +5170,6 @@ $(INTERNAL_EMULATOR_PACKAGE_TARGET): $(INTERNAL_EMULATOR_PACKAGE_FILES)
 	$(hide) zip -qjX $@ $(INTERNAL_EMULATOR_PACKAGE_FILES)
 
 endif
-# -----------------------------------------------------------------
-# Old PDK stuffs, retired
-# The pdk package (Platform Development Kit)
-
-#ifneq (,$(filter pdk,$(MAKECMDGOALS)))
-#  include development/pdk/Pdk.mk
-#endif
 
 
 # -----------------------------------------------------------------

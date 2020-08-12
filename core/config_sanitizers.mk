@@ -144,9 +144,6 @@ endif
 
 # Support for local sanitize blacklist paths.
 ifneq ($(my_sanitize)$(my_global_sanitize),)
-  ifneq ($(LOCAL_SANITIZE_BLACKLIST),)
-    my_cflags += -fsanitize-blacklist=$(LOCAL_PATH)/$(LOCAL_SANITIZE_BLACKLIST)
-  endif
   ifneq ($(LOCAL_SANITIZE_BLOCKLIST),)
     my_cflags += -fsanitize-blacklist=$(LOCAL_PATH)/$(LOCAL_SANITIZE_BLOCKLIST)
   endif

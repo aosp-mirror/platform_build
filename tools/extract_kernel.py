@@ -40,7 +40,7 @@ COMPRESSION_ALGO = (
 # LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION "\n";
 LINUX_BANNER_PREFIX = b'Linux version '
 LINUX_BANNER_REGEX = LINUX_BANNER_PREFIX + \
-    r'(?P<release>(?P<version>[0-9]+[.][0-9]+[.][0-9]+).*) \(.*@.*\) \(.*\) .*\n'
+    r'(?P<release>(?P<version>[0-9]+[.][0-9]+[.][0-9]+).*) \(.*@.*\) \((?P<compiler>.*)\) .*\n'
 
 
 def get_from_release(input_bytes, start_idx, key):
@@ -80,6 +80,14 @@ def dump_version(input_bytes):
   "Linux version " and do pattern matching after it. See LINUX_BANNER_REGEX.
   """
   return dump_from_release(input_bytes, "version")
+
+
+def dump_compiler(input_bytes):
+  """
+  Dump kernel version, w.x.y, from input_bytes. Search for the string
+  "Linux version " and do pattern matching after it. See LINUX_BANNER_REGEX.
+  """
+  return dump_from_release(input_bytes, "compiler")
 
 
 def dump_release(input_bytes):
@@ -208,6 +216,13 @@ def main():
                       nargs='?',
                       type=argparse.FileType('wb'),
                       const=sys.stdout)
+  parser.add_argument('--output-compiler',
+                      help='If specified, write the compiler information. Use stdout if no file '
+                           'is specified.',
+                      metavar='FILE',
+                      nargs='?',
+                      type=argparse.FileType('wb'),
+                      const=sys.stdout)
   parser.add_argument('--tools',
                       help='Decompression tools to use. If not specified, PATH '
                            'is searched.',
@@ -232,6 +247,10 @@ def main():
     ret = 1
   if not dump_to_file(args.output_release, dump_release, input_bytes,
                       "kernel release in {}".format(args.input.name)):
+    ret = 1
+
+  if not dump_to_file(args.output_compiler, dump_compiler, input_bytes,
+                      "kernel compiler in {}".format(args.input.name)):
     ret = 1
 
   return ret
