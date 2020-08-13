@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "31e2c49a_c4b2101c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-13T20:45:35Z",
+      "side": 1,
+      "message": "SGTM if it doesn\u0027t break existing use cases.",
+      "revId": "712bfb5d49acd086063129093052eacc3d3d8354",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
