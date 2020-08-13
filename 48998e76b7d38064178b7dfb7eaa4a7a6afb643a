@@ -117,6 +117,30 @@
       "revId": "48998e76b7d38064178b7dfb7eaa4a7a6afb643a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d60c6ce_abda1b5e",
+        "filename": "target/product/gsi/current.txt",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-08-13T03:01:57Z",
+      "side": 1,
+      "message": "I also think putting V1 looks better, but as I said in aosp/1397768, it requires a kind of override logic. And also, the changes in release time has happened by freezing versioned modules as well. I think it might be acceptable.\nIf we want to put V1, we need override logic like aosp/1150616, but it looks like it requires time.. (and i don\u0027t want to block FMQ)",
+      "parentUuid": "d8d29a44_eb831dcc",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 57
+      },
+      "revId": "48998e76b7d38064178b7dfb7eaa4a7a6afb643a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
