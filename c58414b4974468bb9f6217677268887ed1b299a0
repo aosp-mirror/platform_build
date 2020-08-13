@@ -108,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "666183c2_f1634fa3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1042638
+      },
+      "writtenOn": "2020-08-13T18:22:50Z",
+      "side": 1,
+      "message": "In fact, the engine is chosen at runtime using a configuration parameter in the audio_policy_configuration.xml file, see this attribute: https://cs.android.com/android/platform/superproject/+/master:hardware/interfaces/audio/6.0/config/audio_policy_configuration.xsd;l\u003d69;drc\u003df28217177630205d0b6c606aa69d0114311c7409",
+      "parentUuid": "02dc69df_4803efda",
+      "revId": "c58414b4974468bb9f6217677268887ed1b299a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6250ad76_a2f8e8ca",
         "filename": "target/product/gsi_release.mk",
         "patchSetId": 1
