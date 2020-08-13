@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "c34a3e81_a49d388d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-08-13T03:26:20Z",
+      "side": 1,
+      "message": "gsi_release.mk is the specific settings for packing GSI. (detail: go/android-gsi/faq#h.q2qpqw36a43a) \n\nJust like Anton said, just modify mainline_system.mk (or its including makefiles) to change the system contents.",
+      "parentUuid": "2058a886_02b9cd64",
+      "revId": "c58414b4974468bb9f6217677268887ed1b299a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6250ad76_a2f8e8ca",
         "filename": "target/product/gsi_release.mk",
         "patchSetId": 1
