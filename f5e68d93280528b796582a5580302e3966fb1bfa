@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "406f9cf1_439952d6",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1368430
+      },
+      "writtenOn": "2020-08-13T15:51:05Z",
+      "side": 1,
+      "message": "ref",
+      "revId": "f5e68d93280528b796582a5580302e3966fb1bfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1fe9c74d_666fc3c5",
         "filename": "target/product/base_system.mk",
         "patchSetId": 1
@@ -133,6 +150,30 @@
       "side": 1,
       "message": "What\u0027s the reason for disabling in internal? What about the other branches between this one and internal master?",
       "parentUuid": "3d417e14_ebbca290",
+      "range": {
+        "startLine": 354,
+        "startChar": 0,
+        "endLine": 355,
+        "endChar": 57
+      },
+      "revId": "f5e68d93280528b796582a5580302e3966fb1bfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "189b8b0c_fa0a46b3",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1368430
+      },
+      "writtenOn": "2020-08-13T15:51:05Z",
+      "side": 1,
+      "message": "We want it disabled in internal, since we aren\u0027t ready to ship ANGLE to devices yet.   It will be enabled in internal eventually (we are targeting CF this quarter), but we aren\u0027t ready for it everywhere just yet.   Additionally, we are working on creating a \u0027main-angle-testing\u0027 branch off of internal to re-enable ANGLE for testing on devices running internal (the branch just got created yesterday) in preparation for enabling it further.\n\nAdmittedly, I don\u0027t know about the builds between AOSP and internal.   ANGLE was included in here so we can build/test it (see the ref on line 30 above), but we missed this property.   We haven\u0027t had any complaints yet, but maybe we\u0027ve just been lucky?\n\nCL that added \u0027ANGLE\u0027 here:\nhttps://android-review.googlesource.com/c/platform/build/+/1224079",
+      "parentUuid": "9f99b4a6_49bfa56b",
       "range": {
         "startLine": 354,
         "startChar": 0,
