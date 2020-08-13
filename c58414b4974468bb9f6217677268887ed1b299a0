@@ -90,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "02dc69df_4803efda",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-08-13T04:48:51Z",
+      "side": 1,
+      "message": "sorry for typo.\n\nWhich audio policy engine (default or configurable) to use is decided by vendor partition. So I think the GSI and CSI should build in both of them because GSI and CSI should be common for all vendor images. For non CSU/GSI builds, the device can decide which audio policy engine to use in its device.mk.",
+      "parentUuid": "b9a6808a_004eb744",
+      "revId": "c58414b4974468bb9f6217677268887ed1b299a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6250ad76_a2f8e8ca",
         "filename": "target/product/gsi_release.mk",
         "patchSetId": 1
