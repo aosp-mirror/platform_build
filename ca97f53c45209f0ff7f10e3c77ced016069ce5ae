@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2a1b6934_2ae621f6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-08-13T19:05:42Z",
+      "side": 1,
+      "message": "Hi Anton and SzuWei, please help review this change agin. Thanks.",
+      "revId": "ca97f53c45209f0ff7f10e3c77ced016069ce5ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
