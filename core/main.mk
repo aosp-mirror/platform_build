@@ -695,10 +695,23 @@ $(call select-bitness-of-target-host-required-modules,TARGET,HOST)
 $(call select-bitness-of-target-host-required-modules,HOST,TARGET)
 _nonexistent_required := $(sort $(_nonexistent_required))
 
+check_missing_required_modules := true
+ifneq (,$(filter true,$(ALLOW_MISSING_DEPENDENCIES) $(BUILD_BROKEN_MISSING_REQUIRED_MODULES)))
+  check_missing_required_modules :=
+endif # ALLOW_MISSING_DEPENDENCIES == true || BUILD_BROKEN_MISSING_REQUIRED_MODULES == true
+
+# Some executables are skipped in ASAN SANITIZE_TARGET build, thus breaking their dependencies.
+ifneq (,$(filter address,$(SANITIZE_TARGET)))
+  check_missing_required_modules :=
+endif # SANITIZE_TARGET has ASAN
+
 # HOST OS darwin build is broken, disable this check for darwin for now.
-# TODO(b/162102724): Remove this
-ifeq (,$(filter $(HOST_OS),darwin))
-ifeq (,$(filter true,$(ALLOW_MISSING_DEPENDENCIES) $(BUILD_BROKEN_MISSING_REQUIRED_MODULES)))
+# TODO(b/162102724): Remove this when darwin host has no broken dependency.
+ifneq (,$(filter $(HOST_OS),darwin))
+  check_missing_required_modules :=
+endif # HOST_OS == darwin
+
+ifeq (true,$(check_missing_required_modules))
 ifneq (,$(_nonexistent_required))
   $(warning Missing required dependencies:)
   $(foreach r_i,$(_nonexistent_required), \
@@ -708,8 +721,7 @@ ifneq (,$(_nonexistent_required))
   $(warning Set BUILD_BROKEN_MISSING_REQUIRED_MODULES := true to bypass this check if this is intentional)
   $(error Build failed)
 endif # _nonexistent_required != empty
-endif # ALLOW_MISSING_DEPENDENCIES != true && BUILD_BROKEN_MISSING_REQUIRED_MODULES != true
-endif # HOST_OS != darwin
+endif # check_missing_required_modules == true
 
 define add-required-deps
 $(1): | $(2)
