@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3d45aedb_dea6644b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-08-14T16:25:50Z",
+      "side": 1,
+      "message": "Hi SzuWei and Anton,\nCould you help review this AOSP cherry pick too?",
+      "revId": "370a65b4c30eea3695b9542d1869ef3ec64ab9a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
