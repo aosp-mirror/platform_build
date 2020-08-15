@@ -1666,6 +1666,9 @@ ifneq ($(TARGET_BUILD_APPS),)
   $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(PROGUARD_DICT_ZIP))
 
+  $(PROGUARD_USAGE_ZIP) : $(apps_only_installed_files)
+  $(call dist-for-goals,apps_only, $(PROGUARD_USAGE_ZIP))
+
   $(SYMBOLS_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(SYMBOLS_ZIP))
 
@@ -1694,6 +1697,7 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
     $(BUILT_OTATOOLS_PACKAGE) \
     $(SYMBOLS_ZIP) \
     $(PROGUARD_DICT_ZIP) \
+    $(PROGUARD_USAGE_ZIP) \
     $(COVERAGE_ZIP) \
     $(APPCOMPAT_ZIP) \
     $(INSTALLED_FILES_FILE) \
