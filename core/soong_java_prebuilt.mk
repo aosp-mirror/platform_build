@@ -58,6 +58,14 @@ ifdef LOCAL_SOONG_PROGUARD_DICT
     $(intermediates.COMMON)/proguard_dictionary)
 endif
 
+ifdef LOCAL_SOONG_PROGUARD_USAGE
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_USAGE_ZIP),\
+    $(intermediates.COMMON)/proguard_usage.zip))
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(intermediates.COMMON)/proguard_usage.zip)
+endif
+
+
 ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
   my_res_package := $(intermediates.COMMON)/package-res.apk
 
