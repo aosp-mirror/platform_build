@@ -300,7 +300,8 @@ _prop_vars_ += \
 
 ifndef property_overrides_split_enabled
 _prop_vars_ += \
-    ADDITIONAL_VENDOR_PROPERTIES
+    ADDITIONAL_VENDOR_PROPERTIES \
+    PRODUCT_VENDOR_PROPERTIES
 endif
 
 _blacklist_names_ := \
