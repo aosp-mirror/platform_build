@@ -33,4 +33,15 @@ function _export_metrics_uploader() {
   fi
 }
 
+# This function sets RBE specific environment variables needed for the build to
+# executed by RBE. This file should be sourced once per checkout of Android code.
+function _set_rbe_vars() {
+  export USE_RBE="true"
+  export RBE_CXX_EXEC_STRATEGY="remote_local_fallback"
+  export RBE_JAVAC=1
+  export RBE_R8=1
+  export RBE_D8=1
+}
+
 _export_metrics_uploader
+_set_rbe_vars
