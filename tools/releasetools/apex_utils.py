@@ -61,7 +61,14 @@ class ApexApkSigner(object):
     Returns:
       The repacked apex file containing the signed apk files.
     """
-    list_cmd = ['deapexer', 'list', self.apex_path]
+    debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
+    if not os.path.exists(debugfs_path):
+      raise ApexSigningError(
+          "Couldn't find location of debugfs_static: " +
+          "Path {} does not exist. ".format(debugfs_path) +
+          "Make sure bin/debugfs_static can be found in -p <path>")
+    list_cmd = ['deapexer', '--debugfs_path',
+                debugfs_path, 'list', self.apex_path]
     entries_names = common.RunAndCheckOutput(list_cmd).split()
     apk_entries = [name for name in entries_names if name.endswith('.apk')]
 
@@ -149,7 +156,8 @@ class ApexApkSigner(object):
     # Add quote to the signing_args as we will pass
     # --signing_args "--signing_helper_with_files=%path" to apexer
     if signing_args:
-      generate_image_cmd.extend(['--signing_args', '"{}"'.format(signing_args)])
+      generate_image_cmd.extend(
+          ['--signing_args', '"{}"'.format(signing_args)])
 
     # optional arguments for apex repacking
     manifest_json = os.path.join(apex_dir, 'apex_manifest.json')
