@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a092f035_a9ad10cc",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2020-08-19T07:07:14Z",
+      "side": 1,
+      "message": "Should be below to make it as a list instead.\n\n\u0027\"extra_test_configs\": [$(foreach w,$(sort $(ALL_MODULES.$(m).EXTRA_TEST_CONFIGS)),\"$(w)\", )], \u0027 \\",
+      "range": {
+        "startLine": 18,
+        "startChar": 3,
+        "endLine": 18,
+        "endChar": 112
+      },
+      "revId": "81358f337ff3c0642d29bf464066fab499500cf6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
