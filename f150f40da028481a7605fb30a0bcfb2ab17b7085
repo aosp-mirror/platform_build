@@ -16,6 +16,24 @@
       "revId": "f150f40da028481a7605fb30a0bcfb2ab17b7085",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68cfd2ff_8e3dd1b7",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-08-20T04:23:12Z",
+      "side": 1,
+      "message": "Configs in EXTRA_TEST_CONFIGS behave just like the original TEST_CONFIG, should be the same TradeFed XML file.",
+      "parentUuid": "167fbc30_70c24482",
+      "revId": "f150f40da028481a7605fb30a0bcfb2ab17b7085",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
