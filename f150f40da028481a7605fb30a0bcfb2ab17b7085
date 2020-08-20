@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "167fbc30_70c24482",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-20T04:11:45Z",
+      "side": 1,
+      "message": "It might matter in the future that these stay in order.  I\u0027d suggest putting TEST_CONFIG before EXTRA_TEST_CONFIGS and replacing $(sort) with $(strip) to handle the case where one is empty.\n\nAlso, is there any need for EXTRA_TEST_CONFIGS, or could the whole list go in TEST_CONFIG?",
+      "revId": "f150f40da028481a7605fb30a0bcfb2ab17b7085",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
