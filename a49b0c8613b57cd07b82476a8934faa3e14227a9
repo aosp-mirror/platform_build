@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff6a5072_23393752",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1718267
+      },
+      "writtenOn": "2020-08-20T05:10:46Z",
+      "side": 1,
+      "message": "I\u0027ve checked with Board config variable\n\n/vendor_debug_ramdisk/first_stage_ramdisk$\n adb_debug.prop\n force_debuggable\n fstab.exynos2100\n userdebug_plat_sepolicy.cil\n\nand I flashed vendor_boot-debug.img, and successfully done: adb root.\n\nThanks.",
+      "revId": "a49b0c8613b57cd07b82476a8934faa3e14227a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
