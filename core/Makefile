@@ -584,6 +584,10 @@ ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
 # #################################################################
 ifneq ($(strip $(TARGET_NO_BOOTLOADER)),true)
   INSTALLED_BOOTLOADER_MODULE := $(PRODUCT_OUT)/bootloader
+  ifdef BOARD_PREBUILT_BOOTLOADER
+    $(eval $(call copy-one-file,$(BOARD_PREBUILT_BOOTLOADER),$(INSTALLED_BOOTLOADER_MODULE)))
+    $(call dist-for-goals,dist_files,$(INSTALLED_BOOTLOADER_MODULE))
+  endif # BOARD_PREBUILT_BOOTLOADER
   ifeq ($(strip $(TARGET_BOOTLOADER_IS_2ND)),true)
     INSTALLED_2NDBOOTLOADER_TARGET := $(PRODUCT_OUT)/2ndbootloader
   else
@@ -4138,6 +4142,9 @@ endif
 ifdef DEVICE_MANIFEST_FILE
 	$(hide) echo "vintf_include_empty_vendor_sku=true" >> $@
 endif
+ifeq ($(BOARD_BOOTLOADER_IN_UPDATE_PACKAGE),true)
+	$(hide) echo "bootloader_in_update_package=true" >> $@
+endif
 
 .PHONY: misc_info
 misc_info: $(INSTALLED_MISC_INFO_TARGET)
@@ -4317,6 +4324,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 	    $(INSTALLED_KERNEL_TARGET) \
 	    $(INSTALLED_DTBIMAGE_TARGET) \
+	    $(INSTALLED_BOOTLOADER_MODULE) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(BOARD_PREBUILT_DTBOIMAGE) \
 	    $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE) \
@@ -4583,6 +4591,10 @@ ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_DTBOIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 endif # BOARD_PREBUILT_DTBOIMAGE
+ifdef BOARD_PREBUILT_BOOTLOADER
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_BOOTLOADER_MODULE) $(zip_root)/IMAGES/
+endif
 ifneq ($(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)),)
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
