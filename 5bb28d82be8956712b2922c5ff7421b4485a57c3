@@ -46,6 +46,30 @@
       "revId": "5bb28d82be8956712b2922c5ff7421b4485a57c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dddb51de_1fccd9bb",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2020-08-20T03:32:42Z",
+      "side": 1,
+      "message": "I think that should be fine, currently the test config arg ATest use for judgement if the module is testable and finding more build dependency, and we already handle that as list.",
+      "parentUuid": "d4b39461_22e450b5",
+      "range": {
+        "startLine": 17,
+        "startChar": 19,
+        "endLine": 17,
+        "endChar": 92
+      },
+      "revId": "5bb28d82be8956712b2922c5ff7421b4485a57c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
