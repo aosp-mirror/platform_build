@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57403106_f8e873e6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-20T21:51:53Z",
+      "side": 1,
+      "message": "Is there any way to check the BOARD_CURRENT_SDK_VERSION for validity?  Setting it to a too-low value is likely to break everything.  Is there a lower bound on what it can be?\n\nI also have all the usual conditional concerns here, it will be easy to check in a change that uses a new API and break an obscure build that sets BUILD_CURRENT_SDK_VERSION to only use released APIs.",
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc3632bd_3affcce6",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-20T21:51:53Z",
+      "side": 1,
+      "message": "Set BOARD_CURRENT_SDK_VERSION read only",
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
