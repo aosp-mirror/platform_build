@@ -276,7 +276,7 @@ endif;
 
   script.SetProgress(1)
   script.AddToZip(input_zip, output_zip, input_path=OPTIONS.updater_binary)
-  metadata["ota-required-cache"] = str(script.required_cache)
+  metadata.required_cache = script.required_cache
 
   # We haven't written the metadata entry, which will be done in
   # FinalizeMetadata.
@@ -530,7 +530,7 @@ endif;
     script.AddToZip(source_zip, output_zip, input_path=OPTIONS.updater_binary)
   else:
     script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
-  metadata["ota-required-cache"] = str(script.required_cache)
+  metadata.required_cache = script.required_cache
 
   # We haven't written the metadata entry yet, which will be handled in
   # FinalizeMetadata().

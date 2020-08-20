@@ -89,16 +89,35 @@ python_defaults {
     ],
 }
 
+python_library_host {
+    name: "ota_metadata_proto",
+    version: {
+        py2: {
+            enabled: true,
+        },
+        py3: {
+            enabled: true,
+        },
+    },
+    srcs: [
+       "ota_metadata.proto",
+    ],
+    proto: {
+        canonical_path_from_root: false,
+    },
+}
+
 python_defaults {
     name: "releasetools_ota_from_target_files_defaults",
     srcs: [
         "edify_generator.py",
-        "ota_from_target_files.py",
         "non_ab_ota.py",
-        "target_files_diff.py",
+        "ota_from_target_files.py",
         "ota_utils.py",
+        "target_files_diff.py",
     ],
     libs: [
+        "ota_metadata_proto",
         "releasetools_check_target_files_vintf",
         "releasetools_common",
         "releasetools_verity_utils",
