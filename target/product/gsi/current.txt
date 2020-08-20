@@ -73,6 +73,7 @@ VNDK-core: android.hardware.media.omx@1.0.so
 VNDK-core: android.hardware.media@1.0.so
 VNDK-core: android.hardware.memtrack@1.0.so
 VNDK-core: android.hardware.power-V1-ndk_platform.so
+VNDK-core: android.hardware.powerstats-V1-ndk_platform.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk_platform.so
 VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
