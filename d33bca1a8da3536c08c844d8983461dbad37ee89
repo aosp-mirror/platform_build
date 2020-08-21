@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "e3c1aa18_f5f37374",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-08-21T00:25:25Z",
+      "side": 1,
+      "message": "I don\u0027t think it replaces \u0027all\u0027 modules with this condition. Could you please give more details for the target modules?",
+      "range": {
+        "startLine": 9,
+        "startChar": 62,
+        "endLine": 10,
+        "endChar": 19
+      },
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "57403106_f8e873e6",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -30,6 +53,29 @@
       "writtenOn": "2020-08-20T21:51:53Z",
       "side": 1,
       "message": "Set BOARD_CURRENT_SDK_VERSION read only",
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "675fe776_4979be9c",
+        "filename": "core/local_current_sdk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-08-21T00:25:25Z",
+      "side": 1,
+      "message": "BOARD_CURRENT_SDK_VERSION is only for the vendor source trees, not all vendor modules.",
+      "range": {
+        "startLine": 18,
+        "startChar": 26,
+        "endLine": 18,
+        "endChar": 96
+      },
       "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
