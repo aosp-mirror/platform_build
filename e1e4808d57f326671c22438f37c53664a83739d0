@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8eb1217c_98570774",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 3813,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-08-21T22:57:08Z",
+      "side": 1,
+      "message": "This is defined in L3891. How does moving it not break it?",
+      "range": {
+        "startLine": 3813,
+        "startChar": 8,
+        "endLine": 3813,
+        "endChar": 36
+      },
+      "revId": "e1e4808d57f326671c22438f37c53664a83739d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
