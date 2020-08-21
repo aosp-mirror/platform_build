@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "3911a1bc_aed18cff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-08-21T14:23:23Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9badf4d4_1433c13e",
+      "range": {
+        "startLine": 9,
+        "startChar": 62,
+        "endLine": 10,
+        "endChar": 19
+      },
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "57403106_f8e873e6",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -154,6 +178,30 @@
       "side": 1,
       "message": "The goal is leaving a vendor partition as where it was originally built regardless platform code, isn\u0027t it? In this case, focusing installed path sounds reasonable.",
       "parentUuid": "675fe776_4979be9c",
+      "range": {
+        "startLine": 18,
+        "startChar": 26,
+        "endLine": 18,
+        "endChar": 96
+      },
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6cdbda54_eadd84bd",
+        "filename": "core/local_current_sdk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-08-21T14:23:23Z",
+      "side": 1,
+      "message": "This must be true only if we don\u0027t install the apps with SDK version of \"*current\" from the AOSP to the vendor partition.\nI think we don\u0027t have those apps in AOSP. (https://cs.android.com/search?q\u003df:Android.mk%20content:LOCAL_(VENDOR%7CPROPRIETARY)%20content:current%20case:yes\u0026ss\u003dandroid)\nIt is also true in Android.bp.\nShould we block these cases in build system, though?",
+      "parentUuid": "c3b9a85d_465cd2f3",
       "range": {
         "startLine": 18,
         "startChar": 26,
