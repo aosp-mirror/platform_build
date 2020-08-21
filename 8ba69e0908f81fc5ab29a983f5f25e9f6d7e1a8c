@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "417aedbc_c2f41fb8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-08-21T03:43:38Z",
+      "side": 1,
+      "message": "I agree with the need for this, but I am not sure about the name BOARD_CURRENT_SDK_VERSION. I think it sounds too general although it affects vendor modules only. Perhaps, BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES or something similar might be better. Colin and other may have a different opinion.\n\n",
+      "revId": "8ba69e0908f81fc5ab29a983f5f25e9f6d7e1a8c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
