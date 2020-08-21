@@ -2551,6 +2551,18 @@ $(hide) rm -f $@
 $(hide) cp $< $@
 endef
 
+# The same as copy-file-to-new-target, but preserve symlinks. Symlinks are
+# converted to absolute to not break.
+define copy-file-or-link-to-new-target
+@mkdir -p $(dir $@)
+$(hide) rm -f $@
+$(hide) if [ -h $< ]; then \
+  ln -s $$(realpath $<) $@; \
+else \
+  cp $< $@; \
+fi
+endef
+
 # Copy a prebuilt file to a target location.
 define transform-prebuilt-to-target
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Prebuilt: $(PRIVATE_MODULE) ($@)"
@@ -2561,6 +2573,13 @@ endef
 define transform-prebuilt-to-target-strip-comments
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Prebuilt: $(PRIVATE_MODULE) ($@)"
 $(copy-file-to-target-strip-comments)
+endef
+
+# Copy a prebuilt file to a target location, but preserve symlinks rather than
+# dereference them.
+define copy-or-link-prebuilt-to-target
+@echo "$($(PRIVATE_PREFIX)DISPLAY) Prebuilt: $(PRIVATE_MODULE) ($@)"
+$(copy-file-or-link-to-new-target)
 endef
 
 # Copy a list of files/directories to target location, with sub dir structure preserved.
