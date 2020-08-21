@@ -22,6 +22,30 @@
       "revId": "e1e4808d57f326671c22438f37c53664a83739d0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5324736_44811e43",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 3813,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-08-21T23:02:31Z",
+      "side": 1,
+      "message": "Nevermind, as long as the procedure is not unset later, this is okay.",
+      "parentUuid": "8eb1217c_98570774",
+      "range": {
+        "startLine": 3813,
+        "startChar": 8,
+        "endLine": 3813,
+        "endChar": 36
+      },
+      "revId": "e1e4808d57f326671c22438f37c53664a83739d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
