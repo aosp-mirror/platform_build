@@ -757,6 +757,13 @@ else
         $(test_config):$(dir)/$(LOCAL_MODULE).config)))
   endif
 
+  ifneq (,$(LOCAL_EXTRA_FULL_TEST_CONFIGS))
+    $(foreach test_config_file, $(LOCAL_EXTRA_FULL_TEST_CONFIGS), \
+      $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+        $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+          $(test_config_file):$(dir)/$(notdir $(test_config_file))))))
+  endif
+
   ifneq (,$(wildcard $(LOCAL_PATH)/DynamicConfig.xml))
     $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
       $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
@@ -973,6 +980,7 @@ ALL_MODULES.$(my_register_name).FOR_HOST_CROSS := $(my_host_cross)
 ALL_MODULES.$(my_register_name).MODULE_NAME := $(LOCAL_MODULE)
 ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES := $(LOCAL_COMPATIBILITY_SUITE)
 ALL_MODULES.$(my_register_name).TEST_CONFIG := $(test_config)
+ALL_MODULES.$(my_register_name).EXTRA_TEST_CONFIGS := $(LOCAL_EXTRA_FULL_TEST_CONFIGS)
 test_config :=
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
