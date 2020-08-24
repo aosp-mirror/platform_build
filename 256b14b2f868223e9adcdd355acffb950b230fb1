@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "299c4bc5_fcf5a3b8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1676406
+      },
+      "writtenOn": "2020-08-24T19:22:31Z",
+      "side": 1,
+      "message": "\u003e Patch Set 1: Verified; Looks good to me, approved\n\u003e \n\u003e Same change went into Google\u0027s internal tree\n\n",
+      "revId": "256b14b2f868223e9adcdd355acffb950b230fb1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
