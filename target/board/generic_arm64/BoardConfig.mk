@@ -79,6 +79,7 @@ BOARD_KERNEL_BINARIES := kernel-5.4 kernel-5.4-gz kernel-5.4-lz4 \
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 BOARD_KERNEL_BINARIES += kernel-5.4-allsyms kernel-5.4-gz-allsyms kernel-5.4-lz4-allsyms
 endif
+BOARD_KERNEL_MODULE_INTERFACE_VERSIONS := 5.4-android12-0
 
 # Some vendors still haven't cleaned up all device specific directories under
 # root!
