@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6875143d_3c904f53",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-24T22:29:31Z",
+      "side": 1,
+      "message": "Group them by non-A/B \u0026 A/B. Then sort each one with alphabetical order since you are already here? BTW, do you think it\u0027s cleaner to move all OPTIONS here to ota_utils?",
+      "range": {
+        "startLine": 232,
+        "startChar": 0,
+        "endLine": 232,
+        "endChar": 27
+      },
+      "revId": "fbe07b6bf1be1b48c8a222d45141d621598c819e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed67f5fc_9ebedc44",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-24T22:29:31Z",
+      "side": 1,
+      "message": "nit add two lines",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 26
+      },
+      "revId": "fbe07b6bf1be1b48c8a222d45141d621598c819e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
