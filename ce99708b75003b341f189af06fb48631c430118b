@@ -59,6 +59,24 @@
     },
     {
       "key": {
+        "uuid": "db6db4e1_62ddbd9e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-24T21:41:57Z",
+      "side": 1,
+      "message": "I didn\u0027t see any issues in the checkbuild comparison I did - all the links I listed earlier are absolute symlinks. Given that I was hoping to get away without complicating the logic with more conditionals, but you mean the risk of problems elsewhere is too high?",
+      "parentUuid": "e7ab8e38_671f2b02",
+      "revId": "ce99708b75003b341f189af06fb48631c430118b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8a995bd8_53853587",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -79,6 +97,30 @@
       "revId": "ce99708b75003b341f189af06fb48631c430118b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8b0a211_3817028b",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2555,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-24T21:41:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8a995bd8_53853587",
+      "range": {
+        "startLine": 2555,
+        "startChar": 7,
+        "endLine": 2555,
+        "endChar": 38
+      },
+      "revId": "ce99708b75003b341f189af06fb48631c430118b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

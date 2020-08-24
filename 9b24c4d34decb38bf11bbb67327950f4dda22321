@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "767631de_59f05b74",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-24T21:41:57Z",
+      "side": 1,
+      "message": "I cannot reproduce the TH build problem, so starting another run.",
+      "revId": "9b24c4d34decb38bf11bbb67327950f4dda22321",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
