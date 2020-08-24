@@ -211,6 +211,30 @@
       "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ab53a65_8d045416",
+        "filename": "core/local_current_sdk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-08-24T04:04:06Z",
+      "side": 1,
+      "message": "It might be problematic, but as long as a vendor module from aosp isn\u0027t actually used, it doesn\u0027t cause a problem, does it? And also, it\u0027s hard to block the case because there isn\u0027t a concrete definition about which directories come from aosp or not.",
+      "parentUuid": "6cdbda54_eadd84bd",
+      "range": {
+        "startLine": 18,
+        "startChar": 26,
+        "endLine": 18,
+        "endChar": 96
+      },
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }

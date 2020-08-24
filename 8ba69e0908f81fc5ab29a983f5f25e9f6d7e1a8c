@@ -16,6 +16,24 @@
       "revId": "8ba69e0908f81fc5ab29a983f5f25e9f6d7e1a8c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f01c946d_5c79a73b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-08-24T04:04:06Z",
+      "side": 1,
+      "message": "BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES sounds better and more explicit, if there isn\u0027t a different opinion, I\u0027ll change the flag to it.",
+      "parentUuid": "417aedbc_c2f41fb8",
+      "revId": "8ba69e0908f81fc5ab29a983f5f25e9f6d7e1a8c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
