@@ -235,6 +235,30 @@
       "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20703fd1_34f369d6",
+        "filename": "core/local_current_sdk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-08-24T06:06:29Z",
+      "side": 1,
+      "message": "You\u0027re right. I think this is also blocked by b/158256185. Let\u0027s address it again after that.",
+      "parentUuid": "4ab53a65_8d045416",
+      "range": {
+        "startLine": 18,
+        "startChar": 26,
+        "endLine": 18,
+        "endChar": 96
+      },
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
