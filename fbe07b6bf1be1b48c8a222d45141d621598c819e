@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "c91a8973_e0e6ec6f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-25T17:46:37Z",
+      "side": 1,
+      "message": "Moved these options out in the next CL.",
+      "parentUuid": "6fcb4c02_19ddfb5a",
+      "range": {
+        "startLine": 232,
+        "startChar": 0,
+        "endLine": 232,
+        "endChar": 27
+      },
+      "revId": "fbe07b6bf1be1b48c8a222d45141d621598c819e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ed67f5fc_9ebedc44",
         "filename": "tools/releasetools/ota_utils.py",
         "patchSetId": 2
