@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a9b4c11_45e030e1",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-25T21:03:24Z",
+      "side": 1,
+      "message": "I believe we should put the OPTIONS for ota generation in a central place, e.g. ota_utils? Or we can just leave all the rest of them here in pair with the parsing logic in L912. At any rate, do it in a separate cl. And most of the options are non-A/B only.",
+      "range": {
+        "startLine": 232,
+        "startChar": 0,
+        "endLine": 232,
+        "endChar": 27
+      },
+      "revId": "699a4b04f2e43c8e42255561e567a9f46798b83f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24165f74_7a2dd2be",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-25T21:03:24Z",
+      "side": 1,
+      "message": "non-a/b",
+      "range": {
+        "startLine": 233,
+        "startChar": 0,
+        "endLine": 235,
+        "endChar": 25
+      },
+      "revId": "699a4b04f2e43c8e42255561e567a9f46798b83f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "388968cf_974339a8",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-25T21:03:24Z",
+      "side": 1,
+      "message": "non-a/b",
+      "range": {
+        "startLine": 238,
+        "startChar": 0,
+        "endLine": 240,
+        "endChar": 26
+      },
+      "revId": "699a4b04f2e43c8e42255561e567a9f46798b83f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa32265f_4ab3c966",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-25T21:03:24Z",
+      "side": 1,
+      "message": "non-a/b",
+      "range": {
+        "startLine": 245,
+        "startChar": 0,
+        "endLine": 245,
+        "endChar": 30
+      },
+      "revId": "699a4b04f2e43c8e42255561e567a9f46798b83f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cddccec9_3abb5923",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-25T21:03:24Z",
+      "side": 1,
+      "message": "non-a/b",
+      "range": {
+        "startLine": 251,
+        "startChar": 0,
+        "endLine": 251,
+        "endChar": 29
+      },
+      "revId": "699a4b04f2e43c8e42255561e567a9f46798b83f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40bc9f94_0cf999f6",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-25T21:03:24Z",
+      "side": 1,
+      "message": "non-a/b",
+      "range": {
+        "startLine": 253,
+        "startChar": 0,
+        "endLine": 255,
+        "endChar": 28
+      },
+      "revId": "699a4b04f2e43c8e42255561e567a9f46798b83f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
