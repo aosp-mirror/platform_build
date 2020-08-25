@@ -70,6 +70,30 @@
       "revId": "525c316416e8b74f5a81505e5848310ec199e002",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00861c8f_69a9cef6",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1466604
+      },
+      "writtenOn": "2020-08-25T21:30:48Z",
+      "side": 1,
+      "message": "I\u0027d prefer to stick to one name of the bootloader in the core Makefile. That precedent\u0027s already been set by https://android.googlesource.com/platform/build/+/refs/heads/master/core/Makefile#586 so I\u0027ll stick to this naming choice to avoid confusion.",
+      "parentUuid": "a5781ef0_e0fc4d36",
+      "range": {
+        "startLine": 588,
+        "startChar": 61,
+        "endLine": 588,
+        "endChar": 88
+      },
+      "revId": "525c316416e8b74f5a81505e5848310ec199e002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
