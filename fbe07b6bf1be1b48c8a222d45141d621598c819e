@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "6fcb4c02_19ddfb5a",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-25T00:17:25Z",
+      "side": 1,
+      "message": "Since you already have a non_ab.py, should be able to tell. Otherwise, we are just deferring the work to future when we are removing non-A/B codes. Just find out the options not used in A/B OTA, then sort the group by names.",
+      "parentUuid": "c4557e31_8db2c34a",
+      "range": {
+        "startLine": 232,
+        "startChar": 0,
+        "endLine": 232,
+        "endChar": 27
+      },
+      "revId": "fbe07b6bf1be1b48c8a222d45141d621598c819e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ed67f5fc_9ebedc44",
         "filename": "tools/releasetools/ota_utils.py",
         "patchSetId": 2
