@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e5b985b6_45ce9133",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 4145,
+      "author": {
+        "id": 1466604
+      },
+      "writtenOn": "2020-08-25T03:05:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a8b38a9e_27aac0e4",
+      "revId": "2134faf3f139cc3f74a97a8beb35525562c0acd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf33cb93_ddc041bc",
         "filename": "core/Makefile",
         "patchSetId": 6
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "6f7f58f9_84e89b2f",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 4276,
+      "author": {
+        "id": 1466604
+      },
+      "writtenOn": "2020-08-25T03:05:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bf33cb93_ddc041bc",
+      "range": {
+        "startLine": 4275,
+        "startChar": 0,
+        "endLine": 4276,
+        "endChar": 53
+      },
+      "revId": "2134faf3f139cc3f74a97a8beb35525562c0acd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0b9c6bd4_758f71bc",
         "filename": "core/board_config.mk",
         "patchSetId": 6
@@ -56,6 +98,24 @@
       "revId": "2134faf3f139cc3f74a97a8beb35525562c0acd9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71cb4b08_aa9f1d9d",
+        "filename": "core/board_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1466604
+      },
+      "writtenOn": "2020-08-25T03:05:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b9c6bd4_758f71bc",
+      "revId": "2134faf3f139cc3f74a97a8beb35525562c0acd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
