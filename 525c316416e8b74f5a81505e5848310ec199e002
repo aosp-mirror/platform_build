@@ -117,6 +117,30 @@
       "revId": "525c316416e8b74f5a81505e5848310ec199e002",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8289346_1df91785",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1466604
+      },
+      "writtenOn": "2020-08-25T22:13:06Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c297d278_d60b3387",
+      "range": {
+        "startLine": 588,
+        "startChar": 2,
+        "endLine": 589,
+        "endChar": 66
+      },
+      "revId": "525c316416e8b74f5a81505e5848310ec199e002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
