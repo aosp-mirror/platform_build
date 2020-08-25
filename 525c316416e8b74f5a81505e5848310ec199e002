@@ -22,6 +22,30 @@
       "revId": "525c316416e8b74f5a81505e5848310ec199e002",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dcb6cad4_da54a71b",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1466604
+      },
+      "writtenOn": "2020-08-25T20:58:06Z",
+      "side": 1,
+      "message": "This shouldn\u0027t affect pixel since the virtual devices are the only clients who can act on the bootloader image in the update package. In the event they want this change, they can set BOARD_BOOTLOADER_IN_UPDATE_PACKAGE.\n\nThe rename for u-boot.rom is done as a part of https://android-review.googlesource.com/c/device/google/cuttlefish/+/1402265 when I copy the u-boot.rom to the bootloader path.\n\nThe filename `bootloader` was chosen specifically to accommodate https://android.googlesource.com/platform/build/+/refs/heads/master/core/Makefile#586 which expects a bootloader to be located at $(PRODUCT_OUT)/bootloader.",
+      "parentUuid": "64fb5380_63157754",
+      "range": {
+        "startLine": 588,
+        "startChar": 61,
+        "endLine": 588,
+        "endChar": 88
+      },
+      "revId": "525c316416e8b74f5a81505e5848310ec199e002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
