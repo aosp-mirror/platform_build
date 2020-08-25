@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "64fb5380_63157754",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-25T20:49:19Z",
+      "side": 1,
+      "message": "This might cause some confusion because we already install a bootloader.img to INSTALLED_RADIOIMAGE_MODULE for Pixels\nhttps://source.corp.google.com/android/vendor/google_devices/coral/prebuilts/bootloader.img\n\nBTW, where do we rename u-boot.rom to bootloader? should it keep its name, or use bootloader.img?",
+      "range": {
+        "startLine": 588,
+        "startChar": 61,
+        "endLine": 588,
+        "endChar": 88
+      },
+      "revId": "525c316416e8b74f5a81505e5848310ec199e002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
