@@ -46,6 +46,30 @@
       "revId": "525c316416e8b74f5a81505e5848310ec199e002",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5781ef0_e0fc4d36",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-25T21:09:44Z",
+      "side": 1,
+      "message": "ack. But when we copy the bootloader module to the target-file, should we name the path as BOOTLOADER/bootloader.img, to pair with INSTALLED_RADIOIMAGE_MODULE?",
+      "parentUuid": "dcb6cad4_da54a71b",
+      "range": {
+        "startLine": 588,
+        "startChar": 61,
+        "endLine": 588,
+        "endChar": 88
+      },
+      "revId": "525c316416e8b74f5a81505e5848310ec199e002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
