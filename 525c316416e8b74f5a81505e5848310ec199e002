@@ -94,6 +94,29 @@
       "revId": "525c316416e8b74f5a81505e5848310ec199e002",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c297d278_d60b3387",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-25T22:03:52Z",
+      "side": 1,
+      "message": "Indent these two lines",
+      "range": {
+        "startLine": 588,
+        "startChar": 2,
+        "endLine": 589,
+        "endChar": 66
+      },
+      "revId": "525c316416e8b74f5a81505e5848310ec199e002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
