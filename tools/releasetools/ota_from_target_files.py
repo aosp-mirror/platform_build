@@ -216,6 +216,7 @@ import sys
 import zipfile
 
 import common
+import ota_utils
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
@@ -228,20 +229,16 @@ if sys.hexversion < 0x02070000:
 
 logger = logging.getLogger(__name__)
 
-OPTIONS = common.OPTIONS
-OPTIONS.package_key = None
-OPTIONS.incremental_source = None
+OPTIONS = ota_utils.OPTIONS
 OPTIONS.verify = False
 OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
-OPTIONS.downgrade = False
 OPTIONS.extra_script = None
 OPTIONS.worker_threads = multiprocessing.cpu_count() // 2
 if OPTIONS.worker_threads == 0:
   OPTIONS.worker_threads = 1
 OPTIONS.two_step = False
 OPTIONS.include_secondary = False
-OPTIONS.no_signing = False
 OPTIONS.block_based = True
 OPTIONS.updater_binary = None
 OPTIONS.oem_dicts = None
@@ -257,14 +254,9 @@ OPTIONS.payload_signer = None
 OPTIONS.payload_signer_args = []
 OPTIONS.payload_signer_maximum_signature_size = None
 OPTIONS.extracted_input = None
-OPTIONS.key_passwords = []
 OPTIONS.skip_postinstall = False
-OPTIONS.retrofit_dynamic_partitions = False
 OPTIONS.skip_compatibility_check = False
-OPTIONS.output_metadata_path = None
 OPTIONS.disable_fec_computation = False
-OPTIONS.force_non_ab = False
-OPTIONS.boot_variable_file = None
 
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
