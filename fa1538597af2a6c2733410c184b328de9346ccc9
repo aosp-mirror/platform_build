@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c23cf762_48dda468",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-08-26T23:10:00Z",
+      "side": 1,
+      "message": "Sorry I meant that not only {output} is written, but also {output}.pb will be written. The metadata proto is actually written to {output}.pb.",
+      "parentUuid": "07db9048_3866d525",
+      "revId": "fa1538597af2a6c2733410c184b328de9346ccc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "688c83d1_b86118ad",
         "filename": "tools/releasetools/ota_utils.py",
         "patchSetId": 8
