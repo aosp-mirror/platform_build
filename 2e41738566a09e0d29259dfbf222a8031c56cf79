@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2eba6ed4_59f73bd6",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-26T00:41:16Z",
+      "side": 0,
+      "message": "non-A/b. feel free to remove in future cls.",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 24
+      },
+      "revId": "2e41738566a09e0d29259dfbf222a8031c56cf79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

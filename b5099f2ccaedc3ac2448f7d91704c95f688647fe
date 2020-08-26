@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "444c07f1_0a2d6be1",
+        "filename": "tools/releasetools/non_ab_ota.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-26T00:41:16Z",
+      "side": 1,
+      "message": "I believe these changes will break vendor space code like https://source.corp.google.com/android/device/amlogic/common/ota_amlogic.py;l\u003d716?q\u003dDeviceSpecificParams\u0026sq\u003dp:%5Eandroid\n\nThe same applies to BlockDifference. A cleaner way is to move them into non_ab_util.py. And in common, do from non_ab_util import *?",
+      "range": {
+        "startLine": 56,
+        "startChar": 6,
+        "endLine": 56,
+        "endChar": 26
+      },
+      "revId": "b5099f2ccaedc3ac2448f7d91704c95f688647fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
