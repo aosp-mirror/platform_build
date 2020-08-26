@@ -49,6 +49,7 @@ python_defaults {
     required: [
         "blk_alloc_to_base_fs",
         "e2fsck",
+        "mkuserimg_mke2fs",
         "simg2img",
         "tune2fs",
     ],
