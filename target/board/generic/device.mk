@@ -16,12 +16,3 @@
 
 PRODUCT_SOONG_NAMESPACES += device/generic/goldfish # for libwifi-hal-emu
 PRODUCT_SOONG_NAMESPACES += device/generic/goldfish-opengl # for goldfish deps.
-
-# NFC:
-#   Provide default libnfc-nci.conf file for devices that does not have one in
-#   vendor/etc because aosp system image (of aosp_$arch products) is going to
-#   be used as GSI.
-#   May need to remove the following for newly launched devices in P since this
-#   NFC configuration file should be in vendor/etc, instead of system/etc
-PRODUCT_COPY_FILES += \
-    device/generic/common/nfc/libnfc-nci.conf:system/etc/libnfc-nci.conf

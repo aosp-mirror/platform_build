@@ -113,7 +113,10 @@ my_check_same_vndk_variants :=
 ifeq ($(LOCAL_CHECK_SAME_VNDK_VARIANTS),true)
   ifeq ($(filter hwaddress address, $(SANITIZE_TARGET)),)
     ifneq ($(CLANG_COVERAGE),true)
-      my_check_same_vndk_variants := true
+        # Do not compare VNDK variant for special cases e.g. coverage builds.
+        ifneq ($(SKIP_VNDK_VARIANTS_CHECK),true)
+            my_check_same_vndk_variants := true
+        endif
     endif
   endif
 endif

@@ -145,25 +145,27 @@ _product_single_value_vars += \
     PRODUCT_SYSTEM_BRAND \
     PRODUCT_SYSTEM_MANUFACTURER \
 
-# A list of property assignments, like "key = value", with zero or more
-# whitespace characters on either side of the '='.
-_product_list_vars += PRODUCT_PROPERTY_OVERRIDES
+# PRODUCT_<PARTITION>_PROPERTIES are lists of property assignments
+# that go to <partition>/build.prop. Each property assignment is
+# "key = value" with zero or more whitespace characters on either
+# side of the '='.
+_product_list_vars += \
+    PRODUCT_SYSTEM_PROPERTIES \
+    PRODUCT_SYSTEM_EXT_PROPERTIES \
+    PRODUCT_VENDOR_PROPERTIES \
+    PRODUCT_ODM_PROPERTIES \
+    PRODUCT_PRODUCT_PROPERTIES
 
-# A list of property assignments, like "key = value", with zero or more
-# whitespace characters on either side of the '='.
-# used for adding properties to default.prop
+# TODO(b/117892318) deprecate these:
+# ... in favor or PRODUCT_SYSTEM_PROPERTIES
+_product_list_vars += PRODUCT_SYSTEM_DEFAULT_PROPERTIES
+# ... in favor of PRODUCT_VENDOR_PROPERTIES
+_product_list_vars += PRODUCT_PROPERTY_OVERRIDES
 _product_list_vars += PRODUCT_DEFAULT_PROPERTY_OVERRIDES
 
-# A list of property assignments, like "key = value", with zero or more
-# whitespace characters on either side of the '='.
-# used for adding properties to build.prop of product partition
-_product_list_vars += PRODUCT_PRODUCT_PROPERTIES
-
-# A list of property assignments, like "key = value", with zero or more
-# whitespace characters on either side of the '='.
-# used for adding properties to build.prop of system_ext and odm partitions
-_product_list_vars += PRODUCT_SYSTEM_EXT_PROPERTIES
-_product_list_vars += PRODUCT_ODM_PROPERTIES
+# TODO(b/117892318) consider deprecating these too
+_product_list_vars += PRODUCT_SYSTEM_PROPERTY_BLACKLIST
+_product_list_vars += PRODUCT_VENDOR_PROPERTY_BLACKLIST
 
 # The characteristics of the product, which among other things is passed to aapt
 _product_single_value_vars += PRODUCT_CHARACTERISTICS
@@ -226,15 +228,6 @@ _product_list_vars += PRODUCT_SUPPORTS_BOOT_SIGNER
 _product_list_vars += PRODUCT_SUPPORTS_VBOOT
 _product_list_vars += PRODUCT_SUPPORTS_VERITY
 _product_list_vars += PRODUCT_SUPPORTS_VERITY_FEC
-_product_list_vars += PRODUCT_OEM_PROPERTIES
-
-# A list of property assignments, like "key = value", with zero or more
-# whitespace characters on either side of the '='.
-# used for adding properties to default.prop of system partition
-_product_list_vars += PRODUCT_SYSTEM_DEFAULT_PROPERTIES
-
-_product_list_vars += PRODUCT_SYSTEM_PROPERTY_BLACKLIST
-_product_list_vars += PRODUCT_VENDOR_PROPERTY_BLACKLIST
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
 # List of system_server jars delivered via apex. Format = <apex name>:<jar name>.
@@ -258,6 +251,8 @@ _product_single_value_vars += PRODUCT_VENDOR_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_PRODUCT_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_SYSTEM_EXT_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_ODM_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_VENDOR_DLKM_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_ODM_DLKM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_SYSTEM_SERVER_DEBUG_INFO
 _product_single_value_vars += PRODUCT_OTHER_JAVA_DEBUG_INFO
 
@@ -285,6 +280,8 @@ _product_single_value_vars += PRODUCT_VENDOR_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_PRODUCT_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_SYSTEM_EXT_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_ODM_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_VENDOR_DLKM_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_ODM_DLKM_BASE_FS_PATH
 
 # The first API level this product shipped with
 _product_single_value_vars += PRODUCT_SHIPPING_API_LEVEL
@@ -328,14 +325,14 @@ _product_list_vars += PRODUCT_EXTRA_VNDK_VERSIONS
 # partitions uses PLATFORM_VNDK_VERSION.
 _product_single_value_var += PRODUCT_PRODUCT_VNDK_VERSION
 
-# Whether the whitelist of actionable compatible properties should be disabled or not
+# Whether the list of allowed of actionable compatible properties should be disabled or not
 _product_single_value_vars += PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE
 
 _product_single_value_vars += PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS
 _product_single_value_vars += PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT
-_product_list_vars += PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_WHITELIST
+_product_list_vars += PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST
 _product_list_vars += PRODUCT_ARTIFACT_PATH_REQUIREMENT_HINT
-_product_list_vars += PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST
+_product_list_vars += PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST
 
 # List of modules that should be forcefully unmarked from being LOCAL_PRODUCT_MODULE, and hence
 # installed on /system directory by default.
@@ -376,6 +373,8 @@ _product_single_value_vars += PRODUCT_BUILD_VENDOR_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_PRODUCT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_EXT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_ODM_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_VENDOR_DLKM_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_ODM_DLKM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_CACHE_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_USERDATA_IMAGE
@@ -455,19 +454,19 @@ endef
 define require-artifacts-in-path
   $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
   $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_REQUIREMENTS := $(strip $(1))) \
-  $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_WHITELIST := $(strip $(2))) \
+  $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_ALLOWED_LIST := $(strip $(2))) \
   $(eval ARTIFACT_PATH_REQUIREMENT_PRODUCTS := \
     $(sort $(ARTIFACT_PATH_REQUIREMENT_PRODUCTS) $(current_mk)))
 endef
 
 # Makes including non-existent modules in PRODUCT_PACKAGES an error.
-# $(1): whitelist of non-existent modules to allow.
+# $(1): list of non-existent modules to allow.
 define enforce-product-packages-exist
   $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
   $(eval PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST := true) \
-  $(eval PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST := $(1)) \
+  $(eval PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST_ALLOW_LIST := $(1)) \
   $(eval .KATI_READONLY := PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST) \
-  $(eval .KATI_READONLY := PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST)
+  $(eval .KATI_READONLY := PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST_ALLOW_LIST)
 endef
 
 #
@@ -589,7 +588,7 @@ define strip-product-vars
 $(foreach v,\
   $(_product_var_list) \
     PRODUCT_ENFORCE_PACKAGES_EXIST \
-    PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST, \
+    PRODUCT_ENFORCE_PACKAGES_EXIST_ALLOW_LIST, \
   $(eval $(v) := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).$(v)))) \
   $(eval get-product-var = $$(if $$(filter $$(1),$$(INTERNAL_PRODUCT)),$$($$(2)),$$(PRODUCTS.$$(strip $$(1)).$$(2)))) \
   $(KATI_obsolete_var PRODUCTS.$(INTERNAL_PRODUCT).$(v),Use $(v) instead) \

@@ -16,7 +16,7 @@
 
 # ###############################################################
 # This file includes BoardConfig.mk for the device being built,
-# and sanity-checks the variable defined therein.
+# and checks the variable defined therein.
 # ###############################################################
 
 _board_strip_readonly_list := \
@@ -72,12 +72,18 @@ _board_strip_readonly_list += \
   BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE \
   BOARD_ODMIMAGE_PARTITION_SIZE \
   BOARD_ODMIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE \
+  BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_ODM_DLKMIMAGE_PARTITION_SIZE \
+  BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE \
 
 # Logical partitions related variables.
 _dynamic_partitions_var_list += \
   BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_VENDOR_DLKMIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_ODM_DLKMIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_SUPER_PARTITION_SIZE \
@@ -85,9 +91,16 @@ _dynamic_partitions_var_list += \
 
 _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 
+# Kernel related variables
+_board_strip_readonly_list += \
+  BOARD_KERNEL_BINARIES \
+  BOARD_KERNEL_MODULE_INTERFACE_VERSIONS \
+
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
+  BUILD_BROKEN_DUP_SYSPROP \
   BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES \
+  BUILD_BROKEN_MISSING_REQUIRED_MODULES \
   BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
   BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
@@ -160,7 +173,7 @@ $(foreach var,$(_board_true_false_vars), \
 TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
 TARGET_2ND_CPU_VARIANT_RUNTIME := $(or $(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_CPU_VARIANT))
 
-# The combo makefiles sanity-check and set defaults for various CPU configuration
+# The combo makefiles check and set defaults for various CPU configuration
 combo_target := TARGET_
 combo_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/combo/select.mk
@@ -184,7 +197,7 @@ ifeq (,$(filter true,$(TARGET_SUPPORTS_32_BIT_APPS) $(TARGET_SUPPORTS_64_BIT_APP
   TARGET_SUPPORTS_32_BIT_APPS := true
 endif
 
-# Sanity check to warn about likely cryptic errors later in the build.
+# Quick check to warn about likely cryptic errors later in the build.
 ifeq ($(TARGET_IS_64_BIT),true)
   ifeq (,$(filter true false,$(TARGET_SUPPORTS_64_BIT_APPS)))
     $(error Building a 32-bit-app-only product on a 64-bit device. \
@@ -276,7 +289,7 @@ endif
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_DEBUG_RAMDISK
-ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+ifneq (,$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT) $(BOARD_GKI_NONAB_COMPAT)))
 TARGET_COPY_OUT_DEBUG_RAMDISK := debug_ramdisk/first_stage_ramdisk
 TARGET_COPY_OUT_VENDOR_DEBUG_RAMDISK := vendor_debug_ramdisk/first_stage_ramdisk
 TARGET_COPY_OUT_TEST_HARNESS_RAMDISK := test_harness_ramdisk/first_stage_ramdisk
@@ -511,6 +524,40 @@ endif
 .KATI_READONLY := BUILDING_SYSTEM_EXT_IMAGE
 
 ###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR_DLKM
+ifeq ($(TARGET_COPY_OUT_VENDOR_DLKM),$(_vendor_dlkm_path_placeholder))
+  TARGET_COPY_OUT_VENDOR_DLKM := $(TARGET_COPY_OUT_VENDOR)/vendor_dlkm
+else ifeq ($(filter vendor_dlkm system/vendor/vendor_dlkm vendor/vendor_dlkm,$(TARGET_COPY_OUT_VENDOR_DLKM)),)
+  $(error TARGET_COPY_OUT_VENDOR_DLKM must be either 'vendor_dlkm', 'system/vendor/vendor_dlkm' or 'vendor/vendor_dlkm', seeing '$(TARGET_COPY_OUT_VENDOR_DLKM)'.)
+endif
+PRODUCT_COPY_FILES := $(subst $(_vendor_dlkm_path_placeholder),$(TARGET_COPY_OUT_VENDOR_DLKM),$(PRODUCT_COPY_FILES))
+
+BOARD_USES_VENDOR_DLKMIMAGE :=
+ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
+  BOARD_USES_VENDOR_DLKMIMAGE := true
+endif
+ifdef BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE
+  BOARD_USES_VENDOR_DLKMIMAGE := true
+endif
+$(call check_image_config,vendor_dlkm)
+
+BUILDING_VENDOR_DLKM_IMAGE :=
+ifeq ($(PRODUCT_BUILD_VENDOR_DLKM_IMAGE),)
+  ifdef BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_VENDOR_DLKM_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_VENDOR_DLKM_IMAGE),true)
+  BUILDING_VENDOR_DLKM_IMAGE := true
+  ifndef BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_VENDOR_DLKM_IMAGE set to true, but BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
+  BUILDING_VENDOR_DLKM_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_VENDOR_DLKM_IMAGE
+
+###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_ODM
 ifeq ($(TARGET_COPY_OUT_ODM),$(_odm_path_placeholder))
   TARGET_COPY_OUT_ODM := $(TARGET_COPY_OUT_VENDOR)/odm
@@ -544,6 +591,41 @@ ifdef BOARD_PREBUILT_ODMIMAGE
 endif
 .KATI_READONLY := BUILDING_ODM_IMAGE
 
+
+###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_ODM_DLKM
+ifeq ($(TARGET_COPY_OUT_ODM_DLKM),$(_odm_dlkm_path_placeholder))
+  TARGET_COPY_OUT_ODM_DLKM := $(TARGET_COPY_OUT_VENDOR)/odm_dlkm
+else ifeq ($(filter odm_dlkm system/vendor/odm_dlkm vendor/odm_dlkm,$(TARGET_COPY_OUT_ODM_DLKM)),)
+  $(error TARGET_COPY_OUT_ODM_DLKM must be either 'odm_dlkm', 'system/vendor/odm_dlkm' or 'vendor/odm_dlkm', seeing '$(TARGET_COPY_OUT_ODM_DLKM)'.)
+endif
+PRODUCT_COPY_FILES := $(subst $(_odm_dlkm_path_placeholder),$(TARGET_COPY_OUT_ODM_DLKM),$(PRODUCT_COPY_FILES))
+
+BOARD_USES_ODM_DLKMIMAGE :=
+ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
+  BOARD_USES_ODM_DLKMIMAGE := true
+endif
+ifdef BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
+  BOARD_USES_ODM_DLKMIMAGE := true
+endif
+$(call check_image_config,odm_dlkm)
+
+BUILDING_ODM_DLKM_IMAGE :=
+ifeq ($(PRODUCT_BUILD_ODM_DLKM_IMAGE),)
+  ifdef BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_ODM_DLKM_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_ODM_DLKM_IMAGE),true)
+  BUILDING_ODM_DLKM_IMAGE := true
+  ifndef BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_ODM_DLKM_IMAGE set to true, but BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
+  BUILDING_ODM_DLKM_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_ODM_DLKM_IMAGE
+
 ###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
 TARGET_RECOVERY_UPDATER_LIBS ?=
@@ -573,7 +655,7 @@ ifneq ($(TARGET_OTA_ALLOW_NON_AB),true)
   endif
 endif
 
-# Sanity check for building generic OTA packages. Currently it only supports A/B OTAs.
+# Quick check for building generic OTA packages. Currently it only supports A/B OTAs.
 ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
   ifneq ($(AB_OTA_UPDATER),true)
     $(error PRODUCT_BUILD_GENERIC_OTA_PACKAGE with 'AB_OTA_UPDATER != true' is not supported)
@@ -593,6 +675,9 @@ define check_vndk_version
 endef
 
 ifdef BOARD_VNDK_VERSION
+  ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
+    $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current))
+  endif
   ifneq ($(BOARD_VNDK_VERSION),current)
     $(call check_vndk_version,$(BOARD_VNDK_VERSION))
   endif
@@ -617,7 +702,7 @@ else
   endif
 endif
 
-ifeq (,$(TARGET_BUILD_APPS))
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
 ifdef PRODUCT_EXTRA_VNDK_VERSIONS
   $(foreach v,$(PRODUCT_EXTRA_VNDK_VERSIONS),$(call check_vndk_version,$(v)))
 endif

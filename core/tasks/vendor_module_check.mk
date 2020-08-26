@@ -15,7 +15,7 @@
 #
 
 # Restrict the vendor module owners here.
-_vendor_owner_whitelist := \
+_vendor_owner_allowed_list := \
         asus \
         audience \
         atmel \
@@ -87,14 +87,14 @@ _vendor_check_copy_files := $(filter-out $(_vendor_exception_path_prefix),\
     $(filter vendor/%, $(PRODUCT_COPY_FILES)))
 ifneq (,$(_vendor_check_copy_files))
 $(foreach c, $(_vendor_check_copy_files), \
-  $(if $(filter $(_vendor_owner_whitelist), $(call word-colon,3,$(c))),,\
+  $(if $(filter $(_vendor_owner_allowed_list), $(call word-colon,3,$(c))),,\
     $(error Error: vendor PRODUCT_COPY_FILES file "$(c)" has unknown owner))\
   $(eval _vendor_module_owner_info += $(call word-colon,2,$(c)):$(call word-colon,3,$(c))))
 endif
 _vendor_check_copy_files :=
 
 $(foreach m, $(_vendor_check_modules), \
-  $(if $(filter $(_vendor_owner_whitelist), $(ALL_MODULES.$(m).OWNER)),,\
+  $(if $(filter $(_vendor_owner_allowed_list), $(ALL_MODULES.$(m).OWNER)),,\
     $(error Error: vendor module "$(m)" in $(ALL_MODULES.$(m).PATH) with unknown owner \
       "$(ALL_MODULES.$(m).OWNER)" in product "$(TARGET_PRODUCT)"))\
   $(if $(ALL_MODULES.$(m).INSTALLED),\
@@ -108,10 +108,10 @@ ifneq (,$(filter path all, $(_restrictions)))
 
 $(foreach m, $(_vendor_check_modules), \
   $(if $(filter-out ,$(ALL_MODULES.$(m).INSTALLED)),\
-    $(if $(filter $(TARGET_OUT_VENDOR)/% $(TARGET_OUT_ODM)/% $(HOST_OUT)/%, $(ALL_MODULES.$(m).INSTALLED)),,\
+    $(if $(filter $(TARGET_OUT_VENDOR)/% $(TARGET_OUT_ODM)/% $(TARGET_OUT_VENDOR_DLKM)/% $(TARGET_OUT_ODM_DLKM)/% $(HOST_OUT)/%, $(ALL_MODULES.$(m).INSTALLED)),,\
       $(error Error: vendor module "$(m)" in $(ALL_MODULES.$(m).PATH) \
         in product "$(TARGET_PRODUCT)" being installed to \
-        $(ALL_MODULES.$(m).INSTALLED) which is not in the vendor tree or odm tree))))
+        $(ALL_MODULES.$(m).INSTALLED) which is not in the vendor, odm, vendor_dlkm or odm_dlkm tree))))
 
 endif
 

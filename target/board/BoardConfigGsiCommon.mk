@@ -33,12 +33,19 @@ BOARD_USES_METADATA_PARTITION := true
 #   updating the last seen rollback index in the tamper-evident storage.
 BOARD_AVB_ROLLBACK_INDEX := 0
 
-# Enable chain partition for system.
-# GSI need to sign on system.img instead of vbmeta.
+# Enable AVB chained partition for system.
+# https://android.googlesource.com/platform/external/avb/+/master/README.md
 BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
+ifdef BUILDING_GSI
+# super.img spec for GSI targets
+BOARD_SUPER_PARTITION_SIZE := 3229614080
+BOARD_SUPER_PARTITION_GROUPS := gsi_dynamic_partitions
+BOARD_GSI_DYNAMIC_PARTITIONS_PARTITION_LIST := system
+BOARD_GSI_DYNAMIC_PARTITIONS_SIZE := 3221225472
+endif
 
 # Enable chain partition for boot, mainly for GKI images.
 BOARD_AVB_BOOT_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
@@ -58,7 +65,7 @@ endif
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
 
-# Setup a vendor image to let PRODUCT_PROPERTY_OVERRIDES does not affect GSI
+# Setup a vendor image to let PRODUCT_VENDOR_PROPERTIES does not affect GSI
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Disable 64 bit mediadrmserver

@@ -40,8 +40,8 @@ ifneq (,$(filter $(LOCAL_MODULE),$(DEXPREOPT_DISABLED_MODULES)))
   LOCAL_DEX_PREOPT :=
 endif
 
-# Disable preopt for TARGET_BUILD_APPS
-ifneq (,$(TARGET_BUILD_APPS))
+# Disable preopt for DISABLE_PREOPT
+ifeq (true,$(DISABLE_PREOPT))
   LOCAL_DEX_PREOPT :=
 endif
 
@@ -189,8 +189,8 @@ ifdef LOCAL_DEX_PREOPT
   my_filtered_optional_uses_libraries := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
     $(LOCAL_OPTIONAL_USES_LIBRARIES))
 
-  # dexpreopt needs the paths to the dex jars of these libraries in case
-  # construct_context.sh needs to pass them to dex2oat.
+  # dexpreopt needs the paths to the dex jars of these libraries in order to
+  # construct class loader context for dex2oat.
   my_extra_dexpreopt_libs := \
     org.apache.http.legacy \
     android.hidl.base-V1.0-java \
@@ -235,8 +235,9 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_map,  LibraryPaths)
   $(foreach lib,$(my_dexpreopt_libs),\
     $(call add_json_map, $(lib)) \
-    $(call add_json_str, Host, $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
-    $(call add_json_str, Device, /system/framework/$(lib).jar) \
+    $(eval file := $(filter %/$(lib).jar, $(call module-installed-files,$(lib)))) \
+    $(call add_json_str, Host,   $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
+    $(call add_json_str, Device, $(call install-path-to-on-device-path,$(file))) \
     $(call end_json_map))
   $(call end_json_map)
   $(call add_json_list, Archs,                          $(my_dexpreopt_archs))
@@ -303,7 +304,7 @@ ifdef LOCAL_DEX_PREOPT
     for i in $$(zipinfo -1 $(my_dexpreopt_zip)); \
       do mkdir -p $(PRODUCT_OUT)/$$(dirname $$i); \
     done && \
-    ( unzip -qo -d $(PRODUCT_OUT) $(my_dexpreopt_zip) 2>&1 | grep -v "zipfile is empty"; exit $${PIPESTATUS[0]} ) || \
+    ( unzip -qoDD -d $(PRODUCT_OUT) $(my_dexpreopt_zip) 2>&1 | grep -v "zipfile is empty"; exit $${PIPESTATUS[0]} ) || \
       ( code=$$?; if [ $$code -ne 0 -a $$code -ne 1 ]; then exit $$code; fi )
 
   $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)

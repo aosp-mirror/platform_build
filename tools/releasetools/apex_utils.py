@@ -51,6 +51,8 @@ class ApexApkSigner(object):
     self.apex_path = apex_path
     self.key_passwords = key_passwords
     self.codename_to_api_level_map = codename_to_api_level_map
+    self.debugfs_path = os.path.join(
+        OPTIONS.search_path, "bin", "debugfs_static")
 
   def ProcessApexFile(self, apk_keys, payload_key, signing_args=None):
     """Scans and signs the apk files and repack the apex
@@ -61,7 +63,13 @@ class ApexApkSigner(object):
     Returns:
       The repacked apex file containing the signed apk files.
     """
-    list_cmd = ['deapexer', 'list', self.apex_path]
+    if not os.path.exists(self.debugfs_path):
+      raise ApexSigningError(
+          "Couldn't find location of debugfs_static: " +
+          "Path {} does not exist. ".format(debugfs_path) +
+          "Make sure bin/debugfs_static can be found in -p <path>")
+    list_cmd = ['deapexer', '--debugfs_path',
+                self.debugfs_path, 'list', self.apex_path]
     entries_names = common.RunAndCheckOutput(list_cmd).split()
     apk_entries = [name for name in entries_names if name.endswith('.apk')]
 
@@ -91,8 +99,14 @@ class ApexApkSigner(object):
 
   def ExtractApexPayloadAndSignApks(self, apk_entries, apk_keys):
     """Extracts the payload image and signs the containing apk files."""
+    if not os.path.exists(self.debugfs_path):
+      raise ApexSigningError(
+          "Couldn't find location of debugfs_static: " +
+          "Path {} does not exist. ".format(debugfs_path) +
+          "Make sure bin/debugfs_static can be found in -p <path>")
     payload_dir = common.MakeTempDir()
-    extract_cmd = ['deapexer', 'extract', self.apex_path, payload_dir]
+    extract_cmd = ['deapexer', '--debugfs_path',
+                   self.debugfs_path, 'extract', self.apex_path, payload_dir]
     common.RunAndCheckOutput(extract_cmd)
 
     has_signed_apk = False
@@ -149,7 +163,8 @@ class ApexApkSigner(object):
     # Add quote to the signing_args as we will pass
     # --signing_args "--signing_helper_with_files=%path" to apexer
     if signing_args:
-      generate_image_cmd.extend(['--signing_args', '"{}"'.format(signing_args)])
+      generate_image_cmd.extend(
+          ['--signing_args', '"{}"'.format(signing_args)])
 
     # optional arguments for apex repacking
     manifest_json = os.path.join(apex_dir, 'apex_manifest.json')
@@ -273,7 +288,7 @@ def ParseApexPayloadInfo(avbtool, payload_path):
     else:
       payload_info[key] = value
 
-  # Sanity check.
+  # Validation check.
   for key in ('Algorithm', 'Salt', 'apex.key', 'Hash Algorithm'):
     if key not in payload_info:
       raise ApexInfoError(

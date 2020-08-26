@@ -19,7 +19,7 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 #
 # All components inherited here go to system image
 #
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_system.mk)
 
 # Enable mainline checking
 ifeq (aosp_x86_arm,$(TARGET_PRODUCT))
@@ -27,7 +27,7 @@ PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 endif
 
 # TODO (b/138382074): remove following setting after enable product/system_ext
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/product/% \
     system/system_ext/%
 

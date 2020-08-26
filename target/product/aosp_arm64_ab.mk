@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# PRODUCT_PROPERTY_OVERRIDES cannot be used here because sysprops will be at
+# PRODUCT_VENDOR_PROPERTIES cannot be used here because sysprops will be at
 # /vendor/[build|default].prop when build split is on. In order to have sysprops
 # on the generic system image, place them in build/make/target/board/
 # gsi_system.prop.
@@ -29,7 +29,7 @@
 # (The system image of Legacy GSI is not CSI)
 #
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_system.mk)
 
 # Enable mainline checking for excat this product name
 ifeq (aosp_arm64_ab,$(TARGET_PRODUCT))

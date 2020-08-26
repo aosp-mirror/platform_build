@@ -1,4 +1,4 @@
-# Boot jar package name whitelist.
+# Boot jar package name allowed list.
 # Each line is interpreted as a regular expression.
 
 ###################################################
