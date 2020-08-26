@@ -22,6 +22,30 @@
       "revId": "b5099f2ccaedc3ac2448f7d91704c95f688647fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e80fb7e_d6193baa",
+        "filename": "tools/releasetools/non_ab_ota.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-26T13:39:18Z",
+      "side": 1,
+      "message": "Let\u0027s just from non_ab_ota import * in common.py. Once non-AB is deprecated it\u0027s easy to remove.",
+      "parentUuid": "444c07f1_0a2d6be1",
+      "range": {
+        "startLine": 56,
+        "startChar": 6,
+        "endLine": 56,
+        "endChar": 26
+      },
+      "revId": "b5099f2ccaedc3ac2448f7d91704c95f688647fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
