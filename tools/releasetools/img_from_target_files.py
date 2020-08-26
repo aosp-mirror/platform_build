@@ -58,7 +58,6 @@ OPTIONS = common.OPTIONS
 OPTIONS.additional_entries = []
 OPTIONS.bootable_only = False
 OPTIONS.put_super = None
-OPTIONS.put_bootloader = None
 OPTIONS.dynamic_partition_list = None
 OPTIONS.super_device_list = None
 OPTIONS.retrofit_dap = None
@@ -76,7 +75,6 @@ def LoadOptions(input_file):
     info = OPTIONS.info_dict = common.LoadInfoDict(input_zip)
 
   OPTIONS.put_super = info.get('super_image_in_update_package') == 'true'
-  OPTIONS.put_bootloader = info.get('bootloader_in_update_package') == 'true'
   OPTIONS.dynamic_partition_list = info.get('dynamic_partition_list',
                                             '').strip().split()
   OPTIONS.super_device_list = info.get('super_block_devices',
@@ -124,11 +122,9 @@ def EntriesForUserImages(input_file):
 
   for image_path in [name for name in namelist if name.startswith('IMAGES/')]:
     image = os.path.basename(image_path)
-    if OPTIONS.bootable_only and image not in('boot.img', 'recovery.img', 'bootloader'):
+    if OPTIONS.bootable_only and image not in ('boot.img', 'recovery.img'):
       continue
-    if not image.endswith('.img') and image != 'bootloader':
-      continue
-    if image == 'bootloader' and not OPTIONS.put_bootloader:
+    if not image.endswith('.img'):
       continue
     # Filter out super_empty and the images that are already in super partition.
     if OPTIONS.put_super:
