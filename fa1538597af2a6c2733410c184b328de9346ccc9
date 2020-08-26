@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07db9048_3866d525",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-08-26T21:55:43Z",
+      "side": 1,
+      "message": "nit: comment that \"{output}.pb\" will be written to",
+      "revId": "fa1538597af2a6c2733410c184b328de9346ccc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "688c83d1_b86118ad",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-08-26T21:55:43Z",
+      "side": 1,
+      "message": "Comparing to the original code, this sets an additional postcondition.devices field, which was not set before (there was no \"post-device\"). Is this correct?\n\nI have no concerns on this, but I just want to confirm my understanding.",
+      "range": {
+        "startLine": 192,
+        "startChar": 2,
+        "endLine": 192,
+        "endChar": 19
+      },
+      "revId": "fa1538597af2a6c2733410c184b328de9346ccc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f99a99ea_98e32a04",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-08-26T21:55:43Z",
+      "side": 1,
+      "message": "When we add new fields to the protobuf, do we need to add new keys here? Can you put a comment to explain this?",
+      "revId": "fa1538597af2a6c2733410c184b328de9346ccc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
