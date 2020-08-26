@@ -539,6 +539,14 @@ $(strip \
 endef
 
 ###########################################################
+## Convert install path to on-device path.
+###########################################################
+# $(1): install path
+define install-path-to-on-device-path
+$(patsubst $(PRODUCT_OUT)%,%,$(1))
+endef
+
+###########################################################
 ## The intermediates directory.  Where object files go for
 ## a given target.  We could technically get away without
 ## the "_intermediates" suffix on the directory, but it's
@@ -3077,11 +3085,6 @@ endef
 ###########################################################
 ## Other includes
 ###########################################################
-
-# -----------------------------------------------------------------
-# Rules and functions to help copy important files to DIST_DIR
-# when requested.
-include $(BUILD_SYSTEM)/distdir.mk
 
 # Include any vendor specific definitions.mk file
 -include $(TOPDIR)vendor/*/build/core/definitions.mk

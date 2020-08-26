@@ -174,7 +174,7 @@ class ELFParser(object):
   @classmethod
   def open(cls, elf_file_path, llvm_readobj):
     """Open and parse the ELF file."""
-    # Parse the ELF header for simple sanity checks.
+    # Parse the ELF header to check the magic word.
     header = cls._read_elf_header(elf_file_path)
     if not header or header.ei_magic != _ELF_MAGIC:
       raise ELFInvalidMagicError()

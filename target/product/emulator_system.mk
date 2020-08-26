@@ -16,7 +16,7 @@
 # This file lists emulator experimental modules added to PRODUCT_PACKAGES,
 # only included by targets sdk_phone_x86/64 and sdk_gphone_x86/64
 
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST := \
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST := \
     system/lib/libemulator_multidisplay_jni.so \
     system/lib64/libemulator_multidisplay_jni.so \
     system/priv-app/MultiDisplayProvider/MultiDisplayProvider.apk \

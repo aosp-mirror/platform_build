@@ -166,7 +166,7 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(if $(filter-out $(makefile),$(PRODUCTS)),$(eval $(call import-products,$(makefile))))\
 )
 
-# Sanity check
+# Quick check
 $(check-all-products)
 
 ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
@@ -201,7 +201,7 @@ endif # EMMA_INSTRUMENT
 $(call strip-product-vars)
 
 #############################################################################
-# Sanity check and assign default values
+# Quick check and assign default values
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
 
@@ -280,7 +280,7 @@ $(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS), \
     $(error A jar in PRODUCT_UPDATABLE_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(jar) is)))
 
 ENFORCE_SYSTEM_CERTIFICATE := $(PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT)
-ENFORCE_SYSTEM_CERTIFICATE_WHITELIST := $(PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_WHITELIST)
+ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST := $(PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST)
 
 PRODUCT_OTA_PUBLIC_KEYS := $(sort $(PRODUCT_OTA_PUBLIC_KEYS))
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort $(PRODUCT_EXTRA_RECOVERY_KEYS))
@@ -399,6 +399,8 @@ $(foreach image, \
     PRODUCT \
     SYSTEM_EXT \
     ODM \
+    VENDOR_DLKM \
+    ODM_DLKM \
     CACHE \
     RAMDISK \
     USERDATA \
