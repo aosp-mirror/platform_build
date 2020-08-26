@@ -2268,12 +2268,47 @@ bootimage_test_harness-nodeps: $(MKBOOTIMG)
 endif # TARGET_NO_KERNEL
 endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
 
+# Creates a compatibility symlink between two partitions, e.g. /system/vendor to /vendor
+# $1: from location (e.g $(TARGET_OUT)/vendor)
+# $2: destination location (e.g. /vendor)
+# $3: partition image name (e.g. vendor.img)
+define create-partition-compat-symlink
+$(eval \
+$1:
+	@echo Symlink $(patsubst $(PRODUCT_OUT)/%,%,$1) to $2
+	mkdir -p $(dir $1)
+	if [ -d $1 ] && [ ! -h $1 ]; then \
+	  echo 'Non-symlink $1 detected!' 1>&2; \
+	  echo 'You cannot install files to $1 while building a separate $3!' 1>&2; \
+	  exit 1; \
+	fi
+	ln -sfn $2 $1
+)
+$1
+endef
+
+
 # -----------------------------------------------------------------
 # system image
 
 INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
     $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES)))
+
+# Create symlink /system/vendor to /vendor if necessary.
+ifdef BOARD_USES_VENDORIMAGE
+  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/vendor,/vendor,vendor.img)
+endif
+
+# Create symlink /system/product to /product if necessary.
+ifdef BOARD_USES_PRODUCTIMAGE
+  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/product,/product,product.img)
+endif
+
+# Create symlink /system/system_ext to /system_ext if necessary.
+ifdef BOARD_USES_SYSTEM_EXTIMAGE
+  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/system_ext,/system_ext,system_ext.img)
+endif
 
 FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
 
@@ -2314,57 +2349,9 @@ systemimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,systemimage)
 BUILT_SYSTEMIMAGE := $(systemimage_intermediates)/system.img
 
-# Create symlink /system/vendor to /vendor if necessary.
-ifdef BOARD_USES_VENDORIMAGE
-define create-system-vendor-symlink
-$(hide) if [ -d $(TARGET_OUT)/vendor ] && [ ! -h $(TARGET_OUT)/vendor ]; then \
-  echo 'Non-symlink $(TARGET_OUT)/vendor detected!' 1>&2; \
-  echo 'You cannot install files to $(TARGET_OUT)/vendor while building a separate vendor.img!' 1>&2; \
-  exit 1; \
-fi
-$(hide) ln -sf /vendor $(TARGET_OUT)/vendor
-endef
-else
-define create-system-vendor-symlink
-endef
-endif
-
-# Create symlink /system/product to /product if necessary.
-ifdef BOARD_USES_PRODUCTIMAGE
-define create-system-product-symlink
-$(hide) if [ -d $(TARGET_OUT)/product ] && [ ! -h $(TARGET_OUT)/product ]; then \
-  echo 'Non-symlink $(TARGET_OUT)/product detected!' 1>&2; \
-  echo 'You cannot install files to $(TARGET_OUT)/product while building a separate product.img!' 1>&2; \
-  exit 1; \
-fi
-$(hide) ln -sf /product $(TARGET_OUT)/product
-endef
-else
-define create-system-product-symlink
-endef
-endif
-
-# Create symlink /system/system_ext to /system_ext if necessary.
-ifdef BOARD_USES_SYSTEM_EXTIMAGE
-define create-system-system_ext-symlink
-$(hide) if [ -d $(TARGET_OUT)/system_ext ] && [ ! -h $(TARGET_OUT)/system_ext ]; then \
-  echo 'Non-symlink $(TARGET_OUT)/system_ext detected!' 1>&2; \
-  echo 'You cannot install files to $(TARGET_OUT)/system_ext while building a separate system_ext.img!' 1>&2; \
-  exit 1; \
-fi
-$(hide) ln -sf /system_ext $(TARGET_OUT)/system_ext
-endef
-else
-define create-system-system_ext-symlink
-endef
-endif
-
 # $(1): output file
 define build-systemimage-target
   @echo "Target system fs image: $(1)"
-  $(call create-system-vendor-symlink)
-  $(call create-system-product-symlink)
-  $(call create-system-system_ext-symlink)
   @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf $(systemimage_intermediates)/system_image_info.txt
   $(call generate-image-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt,system, \
       skip_fsck=true)
@@ -2647,29 +2634,10 @@ INTERNAL_VENDORIMAGE_FILES := \
     $(filter $(TARGET_OUT_VENDOR)/%,\
       $(ALL_DEFAULT_INSTALLED_MODULES))
 
-INSTALLED_FILES_FILE_VENDOR := $(PRODUCT_OUT)/installed-files-vendor.txt
-INSTALLED_FILES_JSON_VENDOR := $(INSTALLED_FILES_FILE_VENDOR:.txt=.json)
-$(INSTALLED_FILES_FILE_VENDOR): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR)
-$(INSTALLED_FILES_FILE_VENDOR) : $(INTERNAL_VENDORIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
-	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_OUT_VENDOR) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 # Create symlink /vendor/odm to /odm if necessary.
 ifdef BOARD_USES_ODMIMAGE
-define create-vendor-odm-symlink
-$(hide) if [ -d $(TARGET_OUT_VENDOR)/odm ] && [ ! -h $(TARGET_OUT_VENDOR)/odm ]; then \
-  echo 'Non-symlink $(TARGET_OUT_VENDOR)/odm detected!' 1>&2; \
-  echo 'You cannot install files to $(TARGET_OUT_VENDOR)/odm while building a separate odm.img!' 1>&2; \
-  exit 1; \
-fi
-$(hide) ln -sf /odm $(TARGET_OUT_VENDOR)/odm
-endef
-else
-define create-vendor-odm-symlink
-endef
+  INTERNAL_VENDORIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/odm,/odm,odm.img)
 endif
 
 # Create symlinks for vendor_dlkm on devices with a vendor_dlkm partition:
@@ -2687,48 +2655,18 @@ endif
 # The vendor DLKMs and other vendor_dlkm files must not be accessed using other paths because they
 # are not guaranteed to exist on all devices.
 ifdef BOARD_USES_VENDOR_DLKMIMAGE
-define create-vendor-vendor_dlkm-symlink
-$(hide) mkdir -p $(TARGET_OUT_VENDOR)/lib
-$(hide) if [ -d $(TARGET_OUT_VENDOR)/lib/modules ] && [ ! -h $(TARGET_OUT_VENDOR)/lib/modules ]; then \
-  echo 'Non-symlink $(TARGET_OUT_VENDOR)/lib/modules detected!' 1>&2; \
-  echo 'You cannot install files to $(TARGET_OUT_VENDOR)/lib/modules while building a separate vendor_dlkm.img!' 1>&2; \
-  exit 1; \
-fi
-$(hide) ln -sf /vendor_dlkm/lib/modules $(TARGET_OUT_VENDOR)/lib/modules
-endef
-else
-define create-vendor-vendor_dlkm-symlink
-endef
+  INTERNAL_VENDORIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/lib/modules,/vendor_dlkm/lib/modules,vendor_dlkm.img)
 endif
 
-# Create symlinks for odm_dlkm on devices with a odm_dlkm partition:
-# /odm/lib/modules -> /odm_dlkm/lib/modules
-#
-# On devices with a odm_dlkm partition,
-# - /odm/lib/modules is a symlink to a directory that stores odm DLKMs.
-# - /odm_dlkm/{etc,...} store other odm_dlkm files directly. The odm_dlkm partition is
-#   mounted at /odm_dlkm at runtime and the symlinks created in system/core/rootdir/Android.mk
-#   are hidden.
-# On devices without a odm_dlkm partition,
-# - /odm/lib/modules stores odm DLKMs directly.
-# - /odm_dlkm/{etc,...} are symlinks to directories that store other odm_dlkm files.
-#   See system/core/rootdir/Android.mk for a list of created symlinks.
-# The odm DLKMs and other odm_dlkm files must not be accessed using other paths because they
-# are not guaranteed to exist on all devices.
-ifdef BOARD_USES_ODM_DLKMIMAGE
-define create-odm-odm_dlkm-symlink
-$(hide) mkdir -p $(TARGET_OUT_ODM)/lib
-$(hide) if [ -d $(TARGET_OUT_ODM)/lib/modules ] && [ ! -h $(TARGET_OUT_ODM)/lib/modules ]; then \
-  echo 'Non-symlink $(TARGET_OUT_ODM)/lib/modules detected!' 1>&2; \
-  echo 'You cannot install files to $(TARGET_OUT_ODM)/lib/modules while building a separate odm_dlkm.img!' 1>&2; \
-  exit 1; \
-fi
-$(hide) ln -sf /odm_dlkm/lib/modules $(TARGET_OUT_ODM)/lib/modules
-endef
-else
-define create-odm-odm_dlkm-symlink
-endef
-endif
+INSTALLED_FILES_FILE_VENDOR := $(PRODUCT_OUT)/installed-files-vendor.txt
+INSTALLED_FILES_JSON_VENDOR := $(INSTALLED_FILES_FILE_VENDOR:.txt=.json)
+$(INSTALLED_FILES_FILE_VENDOR): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR)
+$(INSTALLED_FILES_FILE_VENDOR) : $(INTERNAL_VENDORIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
+	@echo Installed file list: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(hide) $(FILESLIST) $(TARGET_OUT_VENDOR) > $(@:.txt=.json)
+	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 vendorimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,vendor)
@@ -2736,9 +2674,6 @@ BUILT_VENDORIMAGE_TARGET := $(PRODUCT_OUT)/vendor.img
 define build-vendorimage-target
   $(call pretty,"Target vendor fs image: $(INSTALLED_VENDORIMAGE_TARGET)")
   @mkdir -p $(TARGET_OUT_VENDOR)
-  $(call create-vendor-odm-symlink)
-  $(call create-vendor-vendor_dlkm-symlink)
-  $(call create-odm-odm_dlkm-symlink)
   @mkdir -p $(vendorimage_intermediates) && rm -rf $(vendorimage_intermediates)/vendor_image_info.txt
   $(call generate-image-prop-dictionary, $(vendorimage_intermediates)/vendor_image_info.txt,vendor,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
@@ -2878,6 +2813,24 @@ ifdef BUILDING_ODM_IMAGE
 INTERNAL_ODMIMAGE_FILES := \
     $(filter $(TARGET_OUT_ODM)/%,\
       $(ALL_DEFAULT_INSTALLED_MODULES))
+
+# Create symlinks for odm_dlkm on devices with a odm_dlkm partition:
+# /odm/lib/modules -> /odm_dlkm/lib/modules
+#
+# On devices with a odm_dlkm partition,
+# - /odm/lib/modules is a symlink to a directory that stores odm DLKMs.
+# - /odm_dlkm/{etc,...} store other odm_dlkm files directly. The odm_dlkm partition is
+#   mounted at /odm_dlkm at runtime and the symlinks created in system/core/rootdir/Android.mk
+#   are hidden.
+# On devices without a odm_dlkm partition,
+# - /odm/lib/modules stores odm DLKMs directly.
+# - /odm_dlkm/{etc,...} are symlinks to directories that store other odm_dlkm files.
+#   See system/core/rootdir/Android.mk for a list of created symlinks.
+# The odm DLKMs and other odm_dlkm files must not be accessed using other paths because they
+# are not guaranteed to exist on all devices.
+ifdef BOARD_USES_ODM_DLKMIMAGE
+  INTERNAL_ODMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_ODM)/lib/modules,/odm_dlkm/lib/modules,odm_dlkm.img)
+endif
 
 INSTALLED_FILES_FILE_ODM := $(PRODUCT_OUT)/installed-files-odm.txt
 INSTALLED_FILES_JSON_ODM := $(INSTALLED_FILES_FILE_ODM:.txt=.json)
@@ -4341,12 +4294,6 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(BUILT_KERNEL_VERSION_FILE) \
 	    | $(ACP)
 	@echo "Package target files: $@"
-	$(call create-system-vendor-symlink)
-	$(call create-system-product-symlink)
-	$(call create-system-system_ext-symlink)
-	$(call create-vendor-odm-symlink)
-	$(call create-vendor-vendor_dlkm-symlink)
-	$(call create-odm-odm_dlkm-symlink)
 	$(hide) rm -rf $@ $@.list $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
 ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
