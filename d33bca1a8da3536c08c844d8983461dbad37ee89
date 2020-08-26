@@ -108,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "e2b9d69f_deca3a4f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-26T19:57:49Z",
+      "side": 1,
+      "message": "Is the vendor source tree frozen as a single unit?  Don\u0027t vendors put GMS app drops somewhere under vendor, and might those need a newer SDK version?",
+      "parentUuid": "246c21bc_b7393e36",
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fc3632bd_3affcce6",
         "filename": "core/config.mk",
         "patchSetId": 3
