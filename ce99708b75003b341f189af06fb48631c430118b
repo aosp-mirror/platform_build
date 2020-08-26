@@ -95,6 +95,24 @@
     },
     {
       "key": {
+        "uuid": "1abb7eb7_5fe920db",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-26T14:45:29Z",
+      "side": 1,
+      "message": "The problem wasn\u0027t with make installs, rather it\u0027s due to relative symlinks in the source tree, so I have to convert relative symlinks. I restricted the scope anyway, this is enough for my purposes. PTAL.",
+      "parentUuid": "84f89ec9_546c2431",
+      "revId": "ce99708b75003b341f189af06fb48631c430118b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8a995bd8_53853587",
         "filename": "core/definitions.mk",
         "patchSetId": 1
