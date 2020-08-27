@@ -22,6 +22,30 @@
       "revId": "f6cb0b4fa49515bc5a51ddedd91de8b9c4368360",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc213592_36019023",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2561,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-27T13:49:54Z",
+      "side": 1,
+      "message": "Yes, because symlinks in the sources may still be relative. E.g. the TH error for hwasan in PS3 was due to this one: http://cs/android/prebuilts/clang/host/linux-x86/clang-r399163/lib64/clang/11.0.4/lib/linux/libclang_rt.hwasan_static-aarch64-android.a",
+      "parentUuid": "b1af5451_27453705",
+      "range": {
+        "startLine": 2559,
+        "startChar": 0,
+        "endLine": 2561,
+        "endChar": 5
+      },
+      "revId": "f6cb0b4fa49515bc5a51ddedd91de8b9c4368360",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
