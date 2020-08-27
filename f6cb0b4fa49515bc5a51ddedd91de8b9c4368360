@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b1af5451_27453705",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2561,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-27T00:48:09Z",
+      "side": 1,
+      "message": "If Soong always creates absolute symlinks do we need this logic?",
+      "range": {
+        "startLine": 2559,
+        "startChar": 0,
+        "endLine": 2561,
+        "endChar": 5
+      },
+      "revId": "f6cb0b4fa49515bc5a51ddedd91de8b9c4368360",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
