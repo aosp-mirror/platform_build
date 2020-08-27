@@ -73,6 +73,23 @@
     },
     {
       "key": {
+        "uuid": "c1a23853_06ee05b4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-08-27T09:55:14Z",
+      "side": 1,
+      "message": "thanks for adding, I have something similar in my bashrc but never thought to \"upstream\" it 😊",
+      "revId": "25d74efc9594a8020d681faa87c3846d9d7a5d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ffe91390_38c6a3a2",
         "filename": "envsetup.sh",
         "patchSetId": 1
@@ -107,6 +124,30 @@
       "writtenOn": "2020-08-26T23:05:00Z",
       "side": 1,
       "message": "I wonder if this should just be a shortcut to:\n\n  NINJA_ARGS\u003d\"-t commands $@\" m",
+      "range": {
+        "startLine": 1637,
+        "startChar": 4,
+        "endLine": 1639,
+        "endChar": 25
+      },
+      "revId": "25d74efc9594a8020d681faa87c3846d9d7a5d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4c5800d_1ea28b50",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1639,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-08-27T09:55:14Z",
+      "side": 1,
+      "message": "that does have the downside of re-running soong/kati. It\u0027d be nice to have both options (I\u0027d expect this function to only really be run by folks who understand when the ninja file needs re-generating and not)",
+      "parentUuid": "b208b72e_93a0f8f7",
       "range": {
         "startLine": 1637,
         "startChar": 4,
