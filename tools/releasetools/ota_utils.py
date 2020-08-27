@@ -21,6 +21,18 @@ from common import (ZipDelete, ZipClose, OPTIONS, MakeTempFile,
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
                     SignFile, PARTITIONS_WITH_CARE_MAP, PartitionBuildProps)
 
+
+OPTIONS.no_signing = False
+OPTIONS.force_non_ab = False
+OPTIONS.wipe_user_data = False
+OPTIONS.downgrade = False
+OPTIONS.key_passwords = {}
+OPTIONS.package_key = None
+OPTIONS.incremental_source = None
+OPTIONS.retrofit_dynamic_partitions = False
+OPTIONS.output_metadata_path = None
+OPTIONS.boot_variable_file = None
+
 METADATA_NAME = 'META-INF/com/android/metadata'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
 
