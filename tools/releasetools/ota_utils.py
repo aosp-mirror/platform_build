@@ -17,6 +17,7 @@ import itertools
 import os
 import zipfile
 
+import ota_metadata_pb2
 from common import (ZipDelete, ZipClose, OPTIONS, MakeTempFile,
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
                     SignFile, PARTITIONS_WITH_CARE_MAP, PartitionBuildProps)
@@ -34,6 +35,7 @@ OPTIONS.output_metadata_path = None
 OPTIONS.boot_variable_file = None
 
 METADATA_NAME = 'META-INF/com/android/metadata'
+METADATA_PROTO_NAME = 'META-INF/com/android/metadata.pb'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
 
 
@@ -62,11 +64,12 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
     # Write the current metadata entry with placeholders.
     with zipfile.ZipFile(input_file) as input_zip:
       for property_files in needed_property_files:
-        metadata[property_files.name] = property_files.Compute(input_zip)
+        metadata.property_files[property_files.name] = property_files.Compute(
+            input_zip)
       namelist = input_zip.namelist()
 
-    if METADATA_NAME in namelist:
-      ZipDelete(input_file, METADATA_NAME)
+    if METADATA_NAME in namelist or METADATA_PROTO_NAME in namelist:
+      ZipDelete(input_file, [METADATA_NAME, METADATA_PROTO_NAME])
     output_zip = zipfile.ZipFile(input_file, 'a')
     WriteMetadata(metadata, output_zip)
     ZipClose(output_zip)
@@ -81,8 +84,9 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   def FinalizeAllPropertyFiles(prelim_signing, needed_property_files):
     with zipfile.ZipFile(prelim_signing) as prelim_signing_zip:
       for property_files in needed_property_files:
-        metadata[property_files.name] = property_files.Finalize(
-            prelim_signing_zip, len(metadata[property_files.name]))
+        metadata.property_files[property_files.name] = property_files.Finalize(
+            prelim_signing_zip,
+            len(metadata.property_files[property_files.name]))
 
   # SignOutput(), which in turn calls signapk.jar, will possibly reorder the ZIP
   # entries, as well as padding the entry headers. We do a preliminary signing
@@ -103,7 +107,7 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
     FinalizeAllPropertyFiles(prelim_signing, needed_property_files)
 
   # Replace the METADATA entry.
-  ZipDelete(prelim_signing, METADATA_NAME)
+  ZipDelete(prelim_signing, [METADATA_NAME, METADATA_PROTO_NAME])
   output_zip = zipfile.ZipFile(prelim_signing, 'a')
   WriteMetadata(metadata, output_zip)
   ZipClose(output_zip)
@@ -117,7 +121,8 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   # Reopen the final signed zip to double check the streaming metadata.
   with zipfile.ZipFile(output_file) as output_zip:
     for property_files in needed_property_files:
-      property_files.Verify(output_zip, metadata[property_files.name].strip())
+      property_files.Verify(
+          output_zip, metadata.property_files[property_files.name].strip())
 
   # If requested, dump the metadata to a separate file.
   output_metadata_path = OPTIONS.output_metadata_path
@@ -125,30 +130,60 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
     WriteMetadata(metadata, output_metadata_path)
 
 
-def WriteMetadata(metadata, output):
+def WriteMetadata(metadata_proto, output):
   """Writes the metadata to the zip archive or a file.
 
   Args:
-    metadata: The metadata dict for the package.
-    output: A ZipFile object or a string of the output file path.
+    metadata_proto: The metadata protobuf for the package.
+    output: A ZipFile object or a string of the output file path. If a string
+      path is given, the metadata in the protobuf format will be written to
+      {output}.pb, e.g. ota_metadata.pb
   """
 
-  value = "".join(["%s=%s\n" % kv for kv in sorted(metadata.items())])
+  metadata_dict = BuildLegacyOtaMetadata(metadata_proto)
+  legacy_metadata = "".join(["%s=%s\n" % kv for kv in
+                             sorted(metadata_dict.items())])
   if isinstance(output, zipfile.ZipFile):
-    ZipWriteStr(output, METADATA_NAME, value,
+    ZipWriteStr(output, METADATA_PROTO_NAME, metadata_proto.SerializeToString(),
+                compress_type=zipfile.ZIP_STORED)
+    ZipWriteStr(output, METADATA_NAME, legacy_metadata,
                 compress_type=zipfile.ZIP_STORED)
     return
 
+  with open('{}.pb'.format(output), 'w') as f:
+    f.write(metadata_proto.SerializeToString())
   with open(output, 'w') as f:
-    f.write(value)
+    f.write(legacy_metadata)
+
+
+def UpdateDeviceState(device_state, build_info, boot_variable_values,
+                      is_post_build):
+  """Update the fields of the DeviceState proto with build info."""
+
+  build_devices, build_fingerprints = \
+      CalculateRuntimeDevicesAndFingerprints(build_info, boot_variable_values)
+  device_state.device.extend(sorted(build_devices))
+  device_state.build.extend(sorted(build_fingerprints))
+  device_state.build_incremental = build_info.GetBuildProp(
+      'ro.build.version.incremental')
+
+  # TODO(xunchang) update the partition state
+
+  if is_post_build:
+    device_state.sdk_level = build_info.GetBuildProp(
+        'ro.build.version.sdk')
+    device_state.security_patch_level = build_info.GetBuildProp(
+        'ro.build.version.security_patch')
+    # Use the actual post-timestamp, even for a downgrade case.
+    device_state.timestamp = int(build_info.GetBuildProp('ro.build.date.utc'))
 
 
 def GetPackageMetadata(target_info, source_info=None):
-  """Generates and returns the metadata dict.
+  """Generates and returns the metadata proto.
 
-  It generates a dict() that contains the info to be written into an OTA
-  package (META-INF/com/android/metadata). It also handles the detection of
-  downgrade / data wipe based on the global options.
+  It generates a ota_metadata protobuf that contains the info to be written
+  into an OTA package (META-INF/com/android/metadata.pb). It also handles the
+  detection of downgrade / data wipe based on the global options.
 
   Args:
     target_info: The BuildInfo instance that holds the target build info.
@@ -156,12 +191,10 @@ def GetPackageMetadata(target_info, source_info=None):
         None if generating full OTA.
 
   Returns:
-    A dict to be written into package metadata entry.
+    A protobuf to be written into package metadata entry.
   """
   assert isinstance(target_info, BuildInfo)
   assert source_info is None or isinstance(source_info, BuildInfo)
-
-  separator = '|'
 
   boot_variable_values = {}
   if OPTIONS.boot_variable_file:
@@ -169,53 +202,85 @@ def GetPackageMetadata(target_info, source_info=None):
     for key, values in d.items():
       boot_variable_values[key] = [val.strip() for val in values.split(',')]
 
-  post_build_devices, post_build_fingerprints = \
-      CalculateRuntimeDevicesAndFingerprints(target_info, boot_variable_values)
-  metadata = {
-      'post-build': separator.join(sorted(post_build_fingerprints)),
-      'post-build-incremental': target_info.GetBuildProp(
-          'ro.build.version.incremental'),
-      'post-sdk-level': target_info.GetBuildProp(
-          'ro.build.version.sdk'),
-      'post-security-patch-level': target_info.GetBuildProp(
-          'ro.build.version.security_patch'),
-  }
+  metadata_proto = ota_metadata_pb2.OtaMetadata()
+  # TODO(xunchang) some fields, e.g. post-device isn't necessary. We can
+  # consider skipping them if they aren't used by clients.
+  UpdateDeviceState(metadata_proto.postcondition, target_info,
+                    boot_variable_values, True)
 
   if target_info.is_ab and not OPTIONS.force_non_ab:
-    metadata['ota-type'] = 'AB'
-    metadata['ota-required-cache'] = '0'
+    metadata_proto.type = ota_metadata_pb2.OtaMetadata.AB
+    metadata_proto.required_cache = 0
   else:
-    metadata['ota-type'] = 'BLOCK'
+    metadata_proto.type = ota_metadata_pb2.OtaMetadata.BLOCK
+    # cache requirement will be updated by the non-A/B codes.
 
   if OPTIONS.wipe_user_data:
-    metadata['ota-wipe'] = 'yes'
+    metadata_proto.wipe = True
 
   if OPTIONS.retrofit_dynamic_partitions:
-    metadata['ota-retrofit-dynamic-partitions'] = 'yes'
+    metadata_proto.retrofit_dynamic_partitions = True
 
   is_incremental = source_info is not None
   if is_incremental:
-    pre_build_devices, pre_build_fingerprints = \
-        CalculateRuntimeDevicesAndFingerprints(source_info,
-                                               boot_variable_values)
-    metadata['pre-build'] = separator.join(sorted(pre_build_fingerprints))
-    metadata['pre-build-incremental'] = source_info.GetBuildProp(
-        'ro.build.version.incremental')
-    metadata['pre-device'] = separator.join(sorted(pre_build_devices))
+    UpdateDeviceState(metadata_proto.precondition, source_info,
+                      boot_variable_values, False)
   else:
-    metadata['pre-device'] = separator.join(sorted(post_build_devices))
-
-  # Use the actual post-timestamp, even for a downgrade case.
-  metadata['post-timestamp'] = target_info.GetBuildProp('ro.build.date.utc')
+    metadata_proto.precondition.device.extend(
+        metadata_proto.postcondition.device)
 
   # Detect downgrades and set up downgrade flags accordingly.
   if is_incremental:
-    HandleDowngradeMetadata(metadata, target_info, source_info)
+    HandleDowngradeMetadata(metadata_proto, target_info, source_info)
 
-  return metadata
+  return metadata_proto
 
 
-def HandleDowngradeMetadata(metadata, target_info, source_info):
+def BuildLegacyOtaMetadata(metadata_proto):
+  """Converts the metadata proto to a legacy metadata dict.
+
+  This metadata dict is used to build the legacy metadata text file for
+  backward compatibility. We won't add new keys to the legacy metadata format.
+  If new information is needed, we should add it as a new field in OtaMetadata
+  proto definition.
+  """
+
+  separator = '|'
+
+  metadata_dict = {}
+  if metadata_proto.type == ota_metadata_pb2.OtaMetadata.AB:
+    metadata_dict['ota-type'] = 'AB'
+  elif metadata_proto.type == ota_metadata_pb2.OtaMetadata.BLOCK:
+    metadata_dict['ota-type'] = 'BLOCK'
+  if metadata_proto.wipe:
+    metadata_dict['ota-wipe'] = 'yes'
+  if metadata_proto.retrofit_dynamic_partitions:
+    metadata_dict['ota-retrofit-dynamic-partitions'] = 'yes'
+  if metadata_proto.downgrade:
+    metadata_dict['ota-downgrade'] = 'yes'
+
+  metadata_dict['ota-required-cache'] = str(metadata_proto.required_cache)
+
+  post_build = metadata_proto.postcondition
+  metadata_dict['post-build'] = separator.join(post_build.build)
+  metadata_dict['post-build-incremental'] = post_build.build_incremental
+  metadata_dict['post-sdk-level'] = post_build.sdk_level
+  metadata_dict['post-security-patch-level'] = post_build.security_patch_level
+  metadata_dict['post-timestamp'] = str(post_build.timestamp)
+
+  pre_build = metadata_proto.precondition
+  metadata_dict['pre-device'] = separator.join(pre_build.device)
+  # incremental updates
+  if len(pre_build.build) != 0:
+    metadata_dict['pre-build'] = separator.join(pre_build.build)
+    metadata_dict['pre-build-incremental'] = pre_build.build_incremental
+
+  metadata_dict.update(metadata_proto.property_files)
+
+  return metadata_dict
+
+
+def HandleDowngradeMetadata(metadata_proto, target_info, source_info):
   # Only incremental OTAs are allowed to reach here.
   assert OPTIONS.incremental_source is not None
 
@@ -228,7 +293,7 @@ def HandleDowngradeMetadata(metadata, target_info, source_info):
       raise RuntimeError(
           "--downgrade or --override_timestamp specified but no downgrade "
           "detected: pre: %s, post: %s" % (pre_timestamp, post_timestamp))
-    metadata["ota-downgrade"] = "yes"
+    metadata_proto.downgrade = True
   else:
     if is_downgrade:
       raise RuntimeError(
@@ -415,8 +480,10 @@ class PropertyFiles(object):
     # reserved space serves the metadata entry only.
     if reserve_space:
       tokens.append('metadata:' + ' ' * 15)
+      tokens.append('metadata.pb:' + ' ' * 15)
     else:
       tokens.append(ComputeEntryOffsetSize(METADATA_NAME))
+      tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
 
     return ','.join(tokens)
 

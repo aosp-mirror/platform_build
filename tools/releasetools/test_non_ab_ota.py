@@ -42,12 +42,13 @@ class NonAbOtaPropertyFilesTest(PropertyFilesTestCase):
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
-    self.assertEqual(1, len(tokens))
+    self.assertEqual(2, len(tokens))
     self._verify_entries(zip_file, tokens, entries)
 
   def test_Finalize(self):
     entries = [
         'META-INF/com/android/metadata',
+        'META-INF/com/android/metadata.pb',
     ]
     zip_file = self.construct_zip_package(entries)
     property_files = NonAbOtaPropertyFiles()
@@ -57,14 +58,16 @@ class NonAbOtaPropertyFilesTest(PropertyFilesTestCase):
       property_files_string = property_files.Finalize(zip_fp, len(raw_metadata))
     tokens = self._parse_property_files_string(property_files_string)
 
-    self.assertEqual(1, len(tokens))
+    self.assertEqual(2, len(tokens))
     # 'META-INF/com/android/metadata' will be key'd as 'metadata'.
     entries[0] = 'metadata'
+    entries[1] = 'metadata.pb'
     self._verify_entries(zip_file, tokens, entries)
 
   def test_Verify(self):
     entries = (
         'META-INF/com/android/metadata',
+        'META-INF/com/android/metadata.pb',
     )
     zip_file = self.construct_zip_package(entries)
     property_files = NonAbOtaPropertyFiles()
