@@ -16,6 +16,24 @@
       "revId": "ca4c69d996a9da7ffe23c0f5fe03df3402ad1ae6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "45b3bd5f_2332f106",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-27T18:53:08Z",
+      "side": 1,
+      "message": "The version field is already added to `PartitionUpdate` object in OTA payload. Do we want to duplicate them in PartitionState as well?",
+      "parentUuid": "6fd83803_692901f1",
+      "revId": "ca4c69d996a9da7ffe23c0f5fe03df3402ad1ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
