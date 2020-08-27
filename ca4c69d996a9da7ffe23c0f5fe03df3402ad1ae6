@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6fd83803_692901f1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-27T18:26:07Z",
+      "side": 1,
+      "message": "oh.. I just submitted http://go/aog/1401993. Let\u0027s fill in the partition fields in the new ota meta and reuse them. ",
+      "revId": "ca4c69d996a9da7ffe23c0f5fe03df3402ad1ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
