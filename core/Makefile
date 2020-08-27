@@ -4609,9 +4609,13 @@ ifdef BOARD_PREBUILT_ODMIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_ODMIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
-ifdef BOARD_PREBUILT_VENDOR_DLKIMMAGE
+ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
-	$(hide) cp $(INSTALLED_VENDOR_DLKIMMAGE_TARGET) $(zip_root)/IMAGES/
+	$(hide) cp $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) $(zip_root)/IMAGES/
+endif
+ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_ODM_DLKMIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
 ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
