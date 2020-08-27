@@ -4419,7 +4419,7 @@ endif
 ifdef BOARD_KERNEL_PAGESIZE
 	echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/pagesize
 endif
-endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET not defined
+endif # not (BUILDING_VENDOR_BOOT_IMAGE and AB_OTA_UPDATER)
 endif # INSTALLED_RECOVERYIMAGE_TARGET defined or BOARD_USES_RECOVERY_AS_BOOT is true
 	@# Components of the boot image
 	$(hide) mkdir -p $(zip_root)/BOOT
