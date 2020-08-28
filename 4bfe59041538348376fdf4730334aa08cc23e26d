@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7228f67b_4e70bd47",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-28T22:22:08Z",
+      "side": 1,
+      "message": "Include NATIVE_TESTS here too, since they are basically executables.",
+      "range": {
+        "startLine": 150,
+        "startChar": 44,
+        "endLine": 150,
+        "endChar": 55
+      },
+      "revId": "4bfe59041538348376fdf4730334aa08cc23e26d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38833319_4d471bc2",
+        "filename": "core/soong_rust_prebuilt.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-28T22:22:08Z",
+      "side": 1,
+      "message": "This function doesn\u0027t exist any more",
+      "revId": "4bfe59041538348376fdf4730334aa08cc23e26d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
