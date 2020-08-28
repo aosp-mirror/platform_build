@@ -198,6 +198,24 @@
     },
     {
       "key": {
+        "uuid": "ed7eafeb_666b30a7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-08-28T02:52:37Z",
+      "side": 1,
+      "message": "Ah, I confused the vendor/ source tree with the vendor partition.",
+      "parentUuid": "56696330_60359b37",
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc3632bd_3affcce6",
         "filename": "core/config.mk",
         "patchSetId": 3
