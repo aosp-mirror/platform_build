@@ -77,7 +77,7 @@ $(linked_module): \
 	$(transform-o-to-shared-lib)
 
 ifeq ($(my_native_coverage),true)
-gcno_suffix := .gcnodir
+gcno_suffix := .zip
 
 built_whole_gcno_libraries := \
     $(foreach lib,$(my_whole_static_libraries), \
@@ -99,11 +99,11 @@ endif
 
 GCNO_ARCHIVE := $(basename $(my_installed_module_stem))$(gcno_suffix)
 
+$(intermediates)/$(GCNO_ARCHIVE) : $(SOONG_ZIP) $(MERGE_ZIPS)
 $(intermediates)/$(GCNO_ARCHIVE) : PRIVATE_ALL_OBJECTS := $(strip $(LOCAL_GCNO_FILES))
 $(intermediates)/$(GCNO_ARCHIVE) : PRIVATE_ALL_WHOLE_STATIC_LIBRARIES := $(strip $(built_whole_gcno_libraries)) $(strip $(built_static_gcno_libraries))
-$(intermediates)/$(GCNO_ARCHIVE) : PRIVATE_INTERMEDIATES_DIR := $(intermediates)
 $(intermediates)/$(GCNO_ARCHIVE) : $(LOCAL_GCNO_FILES) $(built_whole_gcno_libraries) $(built_static_gcno_libraries)
-	$(transform-o-to-static-lib)
+	$(package-coverage-files)
 
 $(my_coverage_path)/$(GCNO_ARCHIVE) : $(intermediates)/$(GCNO_ARCHIVE)
 	$(copy-file-to-target)
