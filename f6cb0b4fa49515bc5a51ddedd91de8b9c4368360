@@ -46,6 +46,30 @@
       "revId": "f6cb0b4fa49515bc5a51ddedd91de8b9c4368360",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8d578a43_cabdcedf",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2561,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-08-28T17:49:20Z",
+      "side": 1,
+      "message": "I restricted the rule in soong_cc_prebuilt.mk as discussed yesterday, but kept this since I\u0027m not sure the same situation can\u0027t occur with shared libs.",
+      "parentUuid": "bc213592_36019023",
+      "range": {
+        "startLine": 2559,
+        "startChar": 0,
+        "endLine": 2561,
+        "endChar": 5
+      },
+      "revId": "f6cb0b4fa49515bc5a51ddedd91de8b9c4368360",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
