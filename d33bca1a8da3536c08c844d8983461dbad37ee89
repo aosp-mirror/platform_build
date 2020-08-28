@@ -180,6 +180,24 @@
     },
     {
       "key": {
+        "uuid": "56696330_60359b37",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-08-28T02:39:23Z",
+      "side": 1,
+      "message": "GMS must not have SoC specific implementations, that means they must be installed in system_ext or product partition.\nSo I don\u0027t think GMS is the blocker for this.\nAlso, we don\u0027t have such cases now. But can we avoid the cases with a protection as a future work? Vendor apps may have unexpected API level when they are actually installed from the system source tree and have dependency to the current APIs, which must not be allowed. They must be installed to product or system_ext partition instead.",
+      "parentUuid": "ab0496ad_d590bd65",
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fc3632bd_3affcce6",
         "filename": "core/config.mk",
         "patchSetId": 3
