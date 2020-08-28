@@ -162,6 +162,24 @@
     },
     {
       "key": {
+        "uuid": "ab0496ad_d590bd65",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2020-08-28T01:40:32Z",
+      "side": 1,
+      "message": "I thought GMS apps are installed in the product partition, aren\u0027t they? This CL only affects the module which is \u0027installed\u0027 in the vendor partition.",
+      "parentUuid": "bd554d51_24960235",
+      "revId": "d33bca1a8da3536c08c844d8983461dbad37ee89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fc3632bd_3affcce6",
         "filename": "core/config.mk",
         "patchSetId": 3
