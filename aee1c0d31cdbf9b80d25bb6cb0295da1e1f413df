@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f277fbe7_34d0ba31",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 872,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-28T05:44:36Z",
+      "side": 1,
+      "message": "Just realize I should prepare the cl to set the partition_state.version in GetPackageMetadata first. So you don\u0027t need to get the timestamp here again.\n\nWe do want two separate version copies. One in payload manifest, another in ota metadata.",
+      "range": {
+        "startLine": 872,
+        "startChar": 27,
+        "endLine": 872,
+        "endChar": 54
+      },
+      "revId": "aee1c0d31cdbf9b80d25bb6cb0295da1e1f413df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
