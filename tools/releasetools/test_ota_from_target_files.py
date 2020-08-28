@@ -146,7 +146,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
       ),
       'vendor.build.prop': common.PartitionBuildProps.FromDictionary(
           'vendor', {
-               'ro.vendor.build.fingerprint': 'vendor-build-fingerprint'}
+              'ro.vendor.build.fingerprint': 'vendor-build-fingerprint'}
       ),
       'property1': 'value1',
       'property2': 4096,
@@ -1402,7 +1402,7 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
                      int(metadata_dict.get('ota-required-cache', 0)))
     self.assertEqual(metadata_proto.retrofit_dynamic_partitions,
                      metadata_dict.get(
-                        'ota-retrofit-dynamic-partitions') == 'yes')
+                         'ota-retrofit-dynamic-partitions') == 'yes')
 
   def test_GetPackageMetadata_incremental_package(self):
     vendor_build_prop = copy.deepcopy(self.VENDOR_BUILD_PROP)
@@ -1463,15 +1463,15 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual(
         'vendor-device-pro|vendor-device-std|vendor-product-device',
         metadata_dict['pre-device'])
-    suffix = ':source-version-release/source-build-id/' \
-             'source-version-incremental:build-type/build-tags'
+    source_suffix = ':source-version-release/source-build-id/' \
+                    'source-version-incremental:build-type/build-tags'
     pre_fingerprints = [
         'vendor-product-brand/vendor-product-name/vendor-device-pro'
-        '{}'.format(suffix),
+        '{}'.format(source_suffix),
         'vendor-product-brand/vendor-product-name/vendor-device-std'
-        '{}'.format(suffix),
+        '{}'.format(source_suffix),
         'vendor-product-brand/vendor-product-name/vendor-product-device'
-        '{}'.format(suffix),
+        '{}'.format(source_suffix),
     ]
     self.assertEqual('|'.join(pre_fingerprints), metadata_dict['pre-build'])
 
@@ -1486,3 +1486,28 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual('|'.join(post_fingerprints), metadata_dict['post-build'])
 
     self.CheckMetadataEqual(metadata_dict, metadata_proto)
+
+    pre_partition_states = metadata_proto.precondition.partition_state
+    self.assertEqual(2, len(pre_partition_states))
+    self.assertEqual('system', pre_partition_states[0].partition_name)
+    self.assertEqual(['generic'], pre_partition_states[0].device)
+    self.assertEqual(['generic/generic/generic{}'.format(source_suffix)],
+                     pre_partition_states[0].build)
+
+    self.assertEqual('vendor', pre_partition_states[1].partition_name)
+    self.assertEqual(['vendor-device-pro', 'vendor-device-std',
+                      'vendor-product-device'], pre_partition_states[1].device)
+    vendor_fingerprints = post_fingerprints
+    self.assertEqual(vendor_fingerprints, pre_partition_states[1].build)
+
+    post_partition_states = metadata_proto.postcondition.partition_state
+    self.assertEqual(2, len(post_partition_states))
+    self.assertEqual('system', post_partition_states[0].partition_name)
+    self.assertEqual(['generic'], post_partition_states[0].device)
+    self.assertEqual([self.constructFingerprint('generic/generic/generic')],
+                     post_partition_states[0].build)
+
+    self.assertEqual('vendor', post_partition_states[1].partition_name)
+    self.assertEqual(['vendor-device-pro', 'vendor-device-std',
+                      'vendor-product-device'], post_partition_states[1].device)
+    self.assertEqual(vendor_fingerprints, post_partition_states[1].build)
