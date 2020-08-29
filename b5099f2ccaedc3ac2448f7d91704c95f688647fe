@@ -46,6 +46,30 @@
       "revId": "b5099f2ccaedc3ac2448f7d91704c95f688647fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b5285ed_d632b586",
+        "filename": "tools/releasetools/non_ab_ota.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-29T19:23:29Z",
+      "side": 1,
+      "message": "yeah, you cannot move to non_ab_ota.py,  probably a new file like non_ab_common_util",
+      "parentUuid": "2e80fb7e_d6193baa",
+      "range": {
+        "startLine": 56,
+        "startChar": 6,
+        "endLine": 56,
+        "endChar": 26
+      },
+      "revId": "b5099f2ccaedc3ac2448f7d91704c95f688647fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
