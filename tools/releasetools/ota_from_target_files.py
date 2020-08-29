@@ -848,7 +848,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   if OPTIONS.downgrade:
     max_timestamp = source_info.GetBuildProp("ro.build.date.utc")
   else:
-    max_timestamp = metadata["post-timestamp"]
+    max_timestamp = str(metadata.postcondition.timestamp)
   additional_args = ["--max_timestamp", max_timestamp]
 
   payload.Generate(target_file, source_file, additional_args)
