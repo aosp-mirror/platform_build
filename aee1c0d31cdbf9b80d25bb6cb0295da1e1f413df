@@ -22,6 +22,30 @@
       "revId": "aee1c0d31cdbf9b80d25bb6cb0295da1e1f413df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93d17214_b0d7c240",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 872,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-08-29T02:27:49Z",
+      "side": 1,
+      "message": "FYI: CL:1415316. How should I replicate that logic in releasetools to write the correct \"version\" field for the boot image for non-partial updates?",
+      "parentUuid": "f277fbe7_34d0ba31",
+      "range": {
+        "startLine": 872,
+        "startChar": 27,
+        "endLine": 872,
+        "endChar": 54
+      },
+      "revId": "aee1c0d31cdbf9b80d25bb6cb0295da1e1f413df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
