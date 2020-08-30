@@ -70,6 +70,30 @@
       "revId": "b5099f2ccaedc3ac2448f7d91704c95f688647fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4ed8c024_e5afedaa",
+        "filename": "tools/releasetools/non_ab_ota.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-08-30T00:57:19Z",
+      "side": 1,
+      "message": "Tried that.... Didn\u0027t work... As things like DeviceSpecificparams have dependency on common.py, if we move them to a new python file(non_ab_common.py), then non_ab_common.py must import commont, resulting in circular dependency.",
+      "parentUuid": "9b5285ed_d632b586",
+      "range": {
+        "startLine": 56,
+        "startChar": 6,
+        "endLine": 56,
+        "endChar": 26
+      },
+      "revId": "b5099f2ccaedc3ac2448f7d91704c95f688647fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
