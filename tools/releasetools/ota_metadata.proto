@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+// If you change this file,
+// Please update ota_metadata_pb2.py by executing
+// protoc ota_metadata.proto --python_out $ANDROID_BUILD_TOP/build/tools/releasetools
+
+
 syntax = "proto3";
 
 package build.tools.releasetools;
