@@ -33,6 +33,24 @@
       "revId": "88503e06ff1d83ff98f9be5149b688880476b527",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "513b33fc_af058428",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-08-31T20:52:02Z",
+      "side": 1,
+      "message": "I believe it\u0027s available as part of the common build props.\nhttps://source.corp.google.com/aosp-master/build/make/core/sysprop.mk;l\u003d51\n\nAnd the exception makes sense because we need them to correctly install the ota package.",
+      "parentUuid": "7ddd50ae_88f77dd4",
+      "revId": "88503e06ff1d83ff98f9be5149b688880476b527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
