@@ -4591,6 +4591,7 @@ endif
 
 ifdef BOARD_PREBUILT_BOOTLOADER
 $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_BOOTLOADER_MODULE)
+droidcore: $(INSTALLED_BOOTLOADER_MODULE)
 endif
 
 # Depending on the various images guarantees that the underlying
