@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "36198fd7_f4ba7e8f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1368430
+      },
+      "writtenOn": "2020-08-31T23:26:18Z",
+      "side": 1,
+      "message": "Hi Anton,\n\nFriendly ping on this CL.\n\nJust as a reminder, the corresponding change in goog/master that disables this value landed with the following CL:\nhttps://googleplex-android-review.git.corp.google.com/c/platform/build/+/12353698",
+      "revId": "f5e68d93280528b796582a5580302e3966fb1bfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "406f9cf1_439952d6",
         "filename": "target/product/base_system.mk",
         "patchSetId": 1
