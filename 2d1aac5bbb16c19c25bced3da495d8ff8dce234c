@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7dd90071_16b4a264",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-01T20:37:46Z",
+      "side": 1,
+      "message": "put a bug #",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 25
+      },
+      "revId": "2d1aac5bbb16c19c25bced3da495d8ff8dce234c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dac12534_9eae3454",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 849,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-01T20:37:46Z",
+      "side": 1,
+      "message": "maybe we should assert downgrade package isn\u0027t partial in a separate cl",
+      "range": {
+        "startLine": 849,
+        "startChar": 0,
+        "endLine": 849,
+        "endChar": 23
+      },
+      "revId": "2d1aac5bbb16c19c25bced3da495d8ff8dce234c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6966ff75_048cda45",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-01T20:37:46Z",
+      "side": 1,
+      "message": "remove or log info?",
+      "range": {
+        "startLine": 863,
+        "startChar": 0,
+        "endLine": 863,
+        "endChar": 17
+      },
+      "revId": "2d1aac5bbb16c19c25bced3da495d8ff8dce234c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
