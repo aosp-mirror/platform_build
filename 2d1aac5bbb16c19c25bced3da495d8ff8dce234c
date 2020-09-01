@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "751b82e8_88fbba11",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-09-01T20:45:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7dd90071_16b4a264",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 25
+      },
+      "revId": "2d1aac5bbb16c19c25bced3da495d8ff8dce234c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dac12534_9eae3454",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "2d1aac5bbb16c19c25bced3da495d8ff8dce234c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed6088d2_d8cc17b1",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 849,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-09-01T20:45:58Z",
+      "side": 1,
+      "message": "I don\u0027t think ota_from_target_files script can generate partial update as of right now",
+      "parentUuid": "dac12534_9eae3454",
+      "range": {
+        "startLine": 849,
+        "startChar": 0,
+        "endLine": 849,
+        "endChar": 23
+      },
+      "revId": "2d1aac5bbb16c19c25bced3da495d8ff8dce234c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "e3c344be_e59ad618",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 854,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-09-01T20:45:58Z",
+      "side": 1,
+      "message": "Empty version: permit update. Invalid version: reject update.",
+      "parentUuid": "1704f989_b27eb1f6",
+      "range": {
+        "startLine": 854,
+        "startChar": 0,
+        "endLine": 854,
+        "endChar": 48
+      },
+      "revId": "2d1aac5bbb16c19c25bced3da495d8ff8dce234c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6966ff75_048cda45",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 4
@@ -91,6 +163,30 @@
       "revId": "2d1aac5bbb16c19c25bced3da495d8ff8dce234c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3557f41e_d6a9d3a7",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-09-01T20:45:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6966ff75_048cda45",
+      "range": {
+        "startLine": 863,
+        "startChar": 0,
+        "endLine": 863,
+        "endChar": 17
+      },
+      "revId": "2d1aac5bbb16c19c25bced3da495d8ff8dce234c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
