@@ -115,6 +115,7 @@ non_system_module := $(filter true, \
 
 include $(BUILD_SYSTEM)/local_vndk.mk
 include $(BUILD_SYSTEM)/local_systemsdk.mk
+include $(BUILD_SYSTEM)/local_current_sdk.mk
 
 my_module_tags := $(LOCAL_MODULE_TAGS)
 ifeq ($(my_host_cross),true)
@@ -515,7 +516,11 @@ ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
 $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@"
+ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+	$(copy-file-or-link-to-new-target)
+else
 	$(copy-file-to-new-target)
+endif
 	$(PRIVATE_POST_INSTALL_CMD)
 endif
 
