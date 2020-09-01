@@ -380,6 +380,9 @@ PRODUCT_PACKAGES_DEBUG_ASAN := \
     fuzz \
     honggfuzz
 
+PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
+    libdumpcoverage
+
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
 
