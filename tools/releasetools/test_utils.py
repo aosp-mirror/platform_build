@@ -22,6 +22,7 @@ Utils for running unittests.
 import logging
 import os
 import os.path
+import re
 import struct
 import sys
 import unittest
@@ -224,13 +225,26 @@ class PropertyFilesTestCase(ReleaseToolsTestCase):
         input_fp.seek(offset)
         if entry == 'metadata':
           expected = b'META-INF/COM/ANDROID/METADATA'
+        elif entry == 'metadata.pb':
+          expected = b'META-INF/COM/ANDROID/METADATA-PB'
         else:
           expected = entry.replace('.', '-').upper().encode()
         self.assertEqual(expected, input_fp.read(size))
 
 
 if __name__ == '__main__':
-  testsuite = unittest.TestLoader().discover(
-      os.path.dirname(os.path.realpath(__file__)))
+  # We only want to run tests from the top level directory. Unfortunately the
+  # pattern option of unittest.discover, internally using fnmatch, doesn't
+  # provide a good API to filter the test files based on directory. So we do an
+  # os walk and load them manually.
+  test_modules = []
+  base_path = os.path.dirname(os.path.realpath(__file__))
+  for dirpath, _, files in os.walk(base_path):
+    for fn in files:
+      if dirpath == base_path and re.match('test_.*\\.py$', fn):
+        test_modules.append(fn[:-3])
+
+  test_suite = unittest.TestLoader().loadTestsFromNames(test_modules)
+
   # atest needs a verbosity level of >= 2 to correctly parse the result.
-  unittest.TextTestRunner(verbosity=2).run(testsuite)
+  unittest.TextTestRunner(verbosity=2).run(test_suite)

@@ -584,6 +584,10 @@ ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
 # #################################################################
 ifneq ($(strip $(TARGET_NO_BOOTLOADER)),true)
   INSTALLED_BOOTLOADER_MODULE := $(PRODUCT_OUT)/bootloader
+  ifdef BOARD_PREBUILT_BOOTLOADER
+    $(eval $(call copy-one-file,$(BOARD_PREBUILT_BOOTLOADER),$(INSTALLED_BOOTLOADER_MODULE)))
+    $(call dist-for-goals,dist_files,$(INSTALLED_BOOTLOADER_MODULE))
+  endif # BOARD_PREBUILT_BOOTLOADER
   ifeq ($(strip $(TARGET_BOOTLOADER_IS_2ND)),true)
     INSTALLED_2NDBOOTLOADER_TARGET := $(PRODUCT_OUT)/2ndbootloader
   else
@@ -4156,6 +4160,9 @@ endif
 ifdef DEVICE_MANIFEST_FILE
 	$(hide) echo "vintf_include_empty_vendor_sku=true" >> $@
 endif
+ifeq ($(BOARD_BOOTLOADER_IN_UPDATE_PACKAGE),true)
+	$(hide) echo "bootloader_in_update_package=true" >> $@
+endif
 
 .PHONY: misc_info
 misc_info: $(INSTALLED_MISC_INFO_TARGET)
@@ -4312,6 +4319,11 @@ MK_VBMETA_BOOT_KERNEL_CMDLINE_SH := device/generic/goldfish/tools/mk_vbmeta_boot
 $(BUILT_TARGET_FILES_PACKAGE): $(MK_VBMETA_BOOT_KERNEL_CMDLINE_SH)
 endif
 
+ifdef BOARD_PREBUILT_BOOTLOADER
+$(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_BOOTLOADER_MODULE)
+droidcore: $(INSTALLED_BOOTLOADER_MODULE)
+endif
+
 # Depending on the various images guarantees that the underlying
 # directories are up-to-date.
 $(BUILT_TARGET_FILES_PACKAGE): \
@@ -4407,7 +4419,7 @@ endif
 ifdef BOARD_KERNEL_PAGESIZE
 	echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/pagesize
 endif
-endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET not defined
+endif # not (BUILDING_VENDOR_BOOT_IMAGE and AB_OTA_UPDATER)
 endif # INSTALLED_RECOVERYIMAGE_TARGET defined or BOARD_USES_RECOVERY_AS_BOOT is true
 	@# Components of the boot image
 	$(hide) mkdir -p $(zip_root)/BOOT
@@ -4597,14 +4609,22 @@ ifdef BOARD_PREBUILT_ODMIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_ODMIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
-ifdef BOARD_PREBUILT_VENDOR_DLKIMMAGE
+ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
-	$(hide) cp $(INSTALLED_VENDOR_DLKIMMAGE_TARGET) $(zip_root)/IMAGES/
+	$(hide) cp $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) $(zip_root)/IMAGES/
+endif
+ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_ODM_DLKMIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
 ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_DTBOIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 endif # BOARD_PREBUILT_DTBOIMAGE
+ifdef BOARD_PREBUILT_BOOTLOADER
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_BOOTLOADER_MODULE) $(zip_root)/IMAGES/
+endif
 ifneq ($(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)),)
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
