@@ -64,8 +64,10 @@ message DeviceState {
 // and prerequisite to install the update correctly.
 message OtaMetadata {
   enum OtaType {
-    AB = 0;
-    BLOCK = 1;
+    UNKNOWN = 0;
+    AB = 1;
+    BLOCK = 2;
+    BRICK = 3;
   };
   OtaType type = 1;
   // True if we need to wipe after the update.
