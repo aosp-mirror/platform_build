@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a1b39d34_d08556ba",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-02T19:28:25Z",
+      "side": 1,
+      "message": "why not checking \"ab_update\" when you initialize \"ab_partitions\"...",
+      "range": {
+        "startLine": 388,
+        "startChar": 0,
+        "endLine": 388,
+        "endChar": 21
+      },
+      "revId": "17843dfc1d599c9e18d7a40207625d1628df1ee0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e855fdd1_4b322525",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-02T19:28:25Z",
+      "side": 1,
+      "message": "assert ab_partitions is not None",
+      "range": {
+        "startLine": 169,
+        "startChar": 65,
+        "endLine": 169,
+        "endChar": 69
+      },
+      "revId": "17843dfc1d599c9e18d7a40207625d1628df1ee0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85442532_6fefbff0",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-02T19:28:25Z",
+      "side": 1,
+      "message": "let\u0027s use a list as well to get deterministic order of the partitions.",
+      "range": {
+        "startLine": 174,
+        "startChar": 21,
+        "endLine": 174,
+        "endChar": 66
+      },
+      "revId": "17843dfc1d599c9e18d7a40207625d1628df1ee0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7880bfe3_7990e56a",
+        "filename": "tools/releasetools/test_ota_from_target_files.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 1497,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-02T19:28:25Z",
+      "side": 1,
+      "message": "now we can remove the sort here",
+      "range": {
+        "startLine": 1497,
+        "startChar": 27,
+        "endLine": 1497,
+        "endChar": 33
+      },
+      "revId": "17843dfc1d599c9e18d7a40207625d1628df1ee0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
