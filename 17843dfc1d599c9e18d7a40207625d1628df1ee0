@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e8e59ea2_bc48db0e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-09-02T19:37:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a1b39d34_d08556ba",
+      "range": {
+        "startLine": 388,
+        "startChar": 0,
+        "endLine": 388,
+        "endChar": 21
+      },
+      "revId": "17843dfc1d599c9e18d7a40207625d1628df1ee0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e855fdd1_4b322525",
         "filename": "tools/releasetools/ota_utils.py",
         "patchSetId": 16
@@ -45,6 +69,30 @@
       "revId": "17843dfc1d599c9e18d7a40207625d1628df1ee0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75af5e25_03eb2c17",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-09-02T19:37:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e855fdd1_4b322525",
+      "range": {
+        "startLine": 169,
+        "startChar": 65,
+        "endLine": 169,
+        "endChar": 69
+      },
+      "revId": "17843dfc1d599c9e18d7a40207625d1628df1ee0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "7766798d_bc36b2bb",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-09-02T19:37:08Z",
+      "side": 1,
+      "message": "... Can\u0027t do set intersection with lists though. If we want deterministic order we could sort them?",
+      "parentUuid": "85442532_6fefbff0",
+      "range": {
+        "startLine": 174,
+        "startChar": 21,
+        "endLine": 174,
+        "endChar": 66
+      },
+      "revId": "17843dfc1d599c9e18d7a40207625d1628df1ee0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7880bfe3_7990e56a",
         "filename": "tools/releasetools/test_ota_from_target_files.py",
         "patchSetId": 16
@@ -91,6 +163,30 @@
       "revId": "17843dfc1d599c9e18d7a40207625d1628df1ee0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5acb25f9_ca1fec98",
+        "filename": "tools/releasetools/test_ota_from_target_files.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 1497,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-09-02T19:37:08Z",
+      "side": 1,
+      "message": "Doesn\u0027t hurt to sort it... As the generator doesn\u0027t guarantee any particular ordering.",
+      "parentUuid": "7880bfe3_7990e56a",
+      "range": {
+        "startLine": 1497,
+        "startChar": 27,
+        "endLine": 1497,
+        "endChar": 33
+      },
+      "revId": "17843dfc1d599c9e18d7a40207625d1628df1ee0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
