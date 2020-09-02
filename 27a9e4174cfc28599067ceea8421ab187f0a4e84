@@ -16,6 +16,23 @@
       "revId": "27a9e4174cfc28599067ceea8421ab187f0a4e84",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c1b3fed3_be1b9a01",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-09-02T12:55:29Z",
+      "side": 1,
+      "message": "Looks like you don\u0027t need my vote, but LGTM",
+      "revId": "27a9e4174cfc28599067ceea8421ab187f0a4e84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
