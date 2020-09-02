@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a129edd6_1aabeee8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-09-02T09:08:06Z",
+      "side": 1,
+      "message": "Judging by presubmit, it looks like case doesn\u0027t matter",
+      "parentUuid": "0a4ea7a7_90d74b07",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 9
+      },
+      "revId": "d38244210f04c13b4c238c30f93ccd40c69ce5fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "df71a79a_17e364b1",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2
