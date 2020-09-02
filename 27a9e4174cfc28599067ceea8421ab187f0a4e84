@@ -33,6 +33,24 @@
       "revId": "27a9e4174cfc28599067ceea8421ab187f0a4e84",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "42b4e3f6_5590a35e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-09-02T13:13:13Z",
+      "side": 1,
+      "message": "Ah, seems so, sorry for the interrupt.\n(it still shows \"you don\u0027t have permission to submit\" after your +2).\n\nThe only method to submit is auto-submit +1.",
+      "parentUuid": "c1b3fed3_be1b9a01",
+      "revId": "27a9e4174cfc28599067ceea8421ab187f0a4e84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
