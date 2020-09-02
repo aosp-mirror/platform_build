@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ecaf097_f1b83a36",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-09-02T12:44:39Z",
+      "side": 1,
+      "message": "Hi Anton,\n\nCan you help for the OWNER vote?  \nThis is just a cherry-pick to android10-gsi.\n\nThanks,",
+      "revId": "27a9e4174cfc28599067ceea8421ab187f0a4e84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
