@@ -21,12 +21,25 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   else
     rbe_dir := $(HOME)/rbe
   endif
-  RBE_WRAPPER := $(rbe_dir)/rewrapper --labels=type=compile,lang=cpp,compiler=clang --env_var_whitelist=PWD
+  RBE_WRAPPER := $(rbe_dir)/rewrapper
+  RBE_CXX := --labels=type=compile,lang=cpp,compiler=clang --env_var_whitelist=PWD
 
   # Append rewrapper to existing *_WRAPPER variables so it's possible to
   # use both ccache and rewrapper.
-  CC_WRAPPER := $(strip $(CC_WRAPPER) $(RBE_WRAPPER))
-  CXX_WRAPPER := $(strip $(CXX_WRAPPER) $(RBE_WRAPPER))
+  CC_WRAPPER := $(strip $(CC_WRAPPER) $(RBE_WRAPPER) $(RBE_CXX))
+  CXX_WRAPPER := $(strip $(CXX_WRAPPER) $(RBE_WRAPPER) $(RBE_CXX))
+
+  ifdef RBE_JAVAC
+    JAVAC_WRAPPER := $(strip $(JAVAC_WRAPPER) $(RBE_WRAPPER) --labels=type=compile,lang=java,compiler=javac,shallow=true)
+  endif
+
+  ifdef RBE_R8
+    R8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=r8,shallow=true)
+  endif
+
+  ifdef RBE_D8
+    D8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=d8,shallow=true)
+  endif
 
   rbe_dir :=
 endif
