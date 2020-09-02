@@ -139,6 +139,7 @@ $(call add_json_str,  ProductServicesPath,               $(TARGET_COPY_OUT_PRODU
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
 
 $(call add_json_bool, UseGoma,                           $(filter-out false,$(USE_GOMA)))
+$(call add_json_bool, UseRBE,                            $(filter-out false,$(USE_RBE)))
 $(call add_json_bool, Arc,                               $(filter true,$(TARGET_ARC)))
 
 $(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPACES))
