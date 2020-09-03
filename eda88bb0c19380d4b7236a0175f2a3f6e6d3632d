@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "913a9a37_681f50d5",
+        "filename": "tools/releasetools/test_ota_from_target_files.py",
+        "patchSetId": 22
+      },
+      "lineNbr": 1501,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-03T17:19:34Z",
+      "side": 1,
+      "message": "no longer needed?",
+      "range": {
+        "startLine": 1500,
+        "startChar": 3,
+        "endLine": 1501,
+        "endChar": 65
+      },
+      "revId": "eda88bb0c19380d4b7236a0175f2a3f6e6d3632d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
