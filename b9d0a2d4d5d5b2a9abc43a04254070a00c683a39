@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e90f23c_0398c0eb",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-09-04T16:37:07Z",
+      "side": 0,
+      "message": "This write fails once the typo is fixed, as this variable is now (correctly) read-only.",
+      "revId": "b9d0a2d4d5d5b2a9abc43a04254070a00c683a39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
