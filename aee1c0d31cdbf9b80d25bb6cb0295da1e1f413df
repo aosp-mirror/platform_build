@@ -70,6 +70,30 @@
       "revId": "aee1c0d31cdbf9b80d25bb6cb0295da1e1f413df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54e8cfed_fb625586",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 872,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-09-04T12:22:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f78c442b_5e8ce0d2",
+      "range": {
+        "startLine": 872,
+        "startChar": 27,
+        "endLine": 872,
+        "endChar": 54
+      },
+      "revId": "aee1c0d31cdbf9b80d25bb6cb0295da1e1f413df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
