@@ -162,10 +162,18 @@ def UpdateDeviceState(device_state, build_info, boot_variable_values,
 
   def UpdatePartitionStates(partition_states):
     """Update the per-partition state according to its build.prop"""
-
+    if not build_info.is_ab:
+      return
     build_info_set = ComputeRuntimeBuildInfos(build_info,
                                               boot_variable_values)
-    for partition in PARTITIONS_WITH_CARE_MAP:
+    assert "ab_partitions" in build_info.info_dict,\
+      "ab_partitions property required for ab update."
+    ab_partitions = set(build_info.info_dict.get("ab_partitions"))
+
+    # delta_generator will error out on unused timestamps,
+    # so only generate timestamps for dynamic partitions
+    # used in OTA update.
+    for partition in sorted(set(PARTITIONS_WITH_CARE_MAP) & ab_partitions):
       partition_prop = build_info.info_dict.get(
           '{}.build.prop'.format(partition))
       # Skip if the partition is missing, or it doesn't have a build.prop

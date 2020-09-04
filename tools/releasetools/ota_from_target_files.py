@@ -778,7 +778,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   with open(new_ab_partitions, 'w') as f:
     for partition in ab_partitions:
       if (partition in dynamic_partition_list and
-          partition not in super_block_devices):
+              partition not in super_block_devices):
         logger.info("Dropping %s from ab_partitions.txt", partition)
         continue
       f.write(partition + "\n")
@@ -825,14 +825,17 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
                                compression=zipfile.ZIP_DEFLATED)
 
   if source_file is not None:
+    assert "ab_partitions" in OPTIONS.source_info_dict, \
+        "META/ab_partitions.txt is required for ab_update."
+    assert "ab_partitions" in OPTIONS.target_info_dict, \
+        "META/ab_partitions.txt is required for ab_update."
     target_info = common.BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
     source_info = common.BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
   else:
+    assert "ab_partitions" in OPTIONS.info_dict, \
+        "META/ab_partitions.txt is required for ab_update."
     target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
     source_info = None
-
-  # Metadata to comply with Android OTA package format.
-  metadata = GetPackageMetadata(target_info, source_info)
 
   if OPTIONS.retrofit_dynamic_partitions:
     target_file = GetTargetFilesZipForRetrofitDynamicPartitions(
@@ -840,16 +843,31 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         target_info.get("dynamic_partition_list").strip().split())
   elif OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
+  # Target_file may have been modified, reparse ab_partitions
+  with zipfile.ZipFile(target_file, allowZip64=True) as zfp:
+    target_info.info_dict['ab_partitions'] = zfp.read(
+        AB_PARTITIONS).strip().split("\n")
 
+  # Metadata to comply with Android OTA package format.
+  metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
   payload = Payload()
 
+  partition_timestamps = []
   # Enforce a max timestamp this payload can be applied on top of.
   if OPTIONS.downgrade:
     max_timestamp = source_info.GetBuildProp("ro.build.date.utc")
   else:
     max_timestamp = str(metadata.postcondition.timestamp)
+    partition_timestamps = [
+        part.partition_name + ":" + part.version
+        for part in metadata.postcondition.partition_state]
   additional_args = ["--max_timestamp", max_timestamp]
+  if partition_timestamps:
+    additional_args.extend(
+        ["--partition_timestamps", ",".join(
+            partition_timestamps)]
+    )
 
   payload.Generate(target_file, source_file, additional_args)
 
@@ -877,7 +895,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # into A/B OTA package.
   target_zip = zipfile.ZipFile(target_file, "r")
   if (target_info.get("verity") == "true" or
-      target_info.get("avb_enable") == "true"):
+          target_info.get("avb_enable") == "true"):
     care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
                      "META/" + x in target_zip.namelist()]
 
@@ -1073,7 +1091,7 @@ def main(argv):
   # use_dynamic_partitions but target build does.
   if (OPTIONS.source_info_dict and
       OPTIONS.source_info_dict.get("use_dynamic_partitions") != "true" and
-      OPTIONS.target_info_dict.get("use_dynamic_partitions") == "true"):
+          OPTIONS.target_info_dict.get("use_dynamic_partitions") == "true"):
     if OPTIONS.target_info_dict.get("dynamic_partition_retrofit") != "true":
       raise common.ExternalError(
           "Expect to generate incremental OTA for retrofitting dynamic "
