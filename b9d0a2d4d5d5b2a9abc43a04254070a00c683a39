@@ -16,6 +16,24 @@
       "revId": "b9d0a2d4d5d5b2a9abc43a04254070a00c683a39",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6abf6d2d_24bb3d01",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-09-07T10:46:10Z",
+      "side": 0,
+      "message": "Thanks for finding this. I uploaded a fix for it (aosp/1420908).",
+      "parentUuid": "5e90f23c_0398c0eb",
+      "revId": "b9d0a2d4d5d5b2a9abc43a04254070a00c683a39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
