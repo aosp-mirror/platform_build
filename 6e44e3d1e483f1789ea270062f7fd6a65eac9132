@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c2b0010_09d5ca81",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-09-07T11:03:53Z",
+      "side": 1,
+      "message": "Thank you Qi for uploading the CL.\n\nI uploaded an additional CL to fix the bug that was hidden behind the typo.\nThese two CLs must be submitted together.",
+      "revId": "6e44e3d1e483f1789ea270062f7fd6a65eac9132",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
