@@ -323,7 +323,7 @@ _product_list_vars += PRODUCT_EXTRA_VNDK_VERSIONS
 
 # VNDK version of product partition. It can be 'current' if the product
 # partitions uses PLATFORM_VNDK_VERSION.
-_product_single_value_var += PRODUCT_PRODUCT_VNDK_VERSION
+_product_single_value_vars += PRODUCT_PRODUCT_VNDK_VERSION
 
 # Whether the list of allowed of actionable compatible properties should be disabled or not
 _product_single_value_vars += PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE
