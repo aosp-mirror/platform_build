@@ -188,6 +188,7 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     linker \
     linkerconfig \
+    llkd \
     lmkd \
     LocalTransport \
     locksettings \
