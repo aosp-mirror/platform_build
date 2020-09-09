@@ -39,9 +39,6 @@ PRODUCT_PACKAGES += \
     Tag \
     TimeZoneUpdater \
 
-# Binaries
-PRODUCT_PACKAGES += llkd
-
 # OTA support
 PRODUCT_PACKAGES += \
     recovery-refresh \

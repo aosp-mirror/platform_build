@@ -419,7 +419,7 @@ ifdef is_sdk_build
 sdk_repo_goal := $(strip $(filter sdk_repo,$(MAKECMDGOALS)))
 MAKECMDGOALS := $(strip $(filter-out sdk_repo,$(MAKECMDGOALS)))
 
-ifneq ($(words $(sort $(filter-out $(INTERNAL_MODIFIER_TARGETS) checkbuild emulator_tests target-files-package,$(MAKECMDGOALS)))),1)
+ifneq ($(words $(sort $(filter-out $(INTERNAL_MODIFIER_TARGETS) checkbuild emulator_tests,$(MAKECMDGOALS)))),1)
 $(error The 'sdk' target may not be specified with any other targets)
 endif
 
@@ -1406,6 +1406,10 @@ $(file >$(HOST_OUT)/.installable_test_files,$(sort \
 test_files :=
 endif
 
+# Dedpulicate compatibility suite dist files across modules and packages before
+# copying them to their requested locations. Assign the eval result to an unused
+# var to prevent Make from trying to make a sense of it.
+_unused := $(call copy-many-files, $(sort $(ALL_COMPATIBILITY_DIST_FILES)))
 
 # Don't include any GNU General Public License shared objects or static
 # libraries in SDK images.  GPL executables (not static/dynamic libraries)
