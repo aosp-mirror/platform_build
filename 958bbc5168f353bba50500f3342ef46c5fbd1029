@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46a056bf_9bcb046e",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3072,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-09-09T21:53:45Z",
+      "side": 1,
+      "message": "The PDK has been removed, so these lines can be as well",
+      "range": {
+        "startLine": 3069,
+        "startChar": 0,
+        "endLine": 3072,
+        "endChar": 58
+      },
+      "revId": "958bbc5168f353bba50500f3342ef46c5fbd1029",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
