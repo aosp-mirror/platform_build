@@ -142,8 +142,16 @@ ifeq ($(my_check_same_vndk_variants),true)
   $(LOCAL_BUILT_MODULE): $(same_vndk_variants_stamp)
 endif
 
+# Use copy-or-link-prebuilt-to-target for host executables and shared libraries,
+# to preserve symlinks to the source trees. They can then run directly from the
+# prebuilt directories where the linker can load their dependencies using
+# relative RUNPATHs.
 $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
+ifeq ($(LOCAL_IS_HOST_MODULE) $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),true,),true true)
+	$(copy-or-link-prebuilt-to-target)
+else
 	$(transform-prebuilt-to-target)
+endif
 ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
 	$(hide) chmod +x $@
 endif
