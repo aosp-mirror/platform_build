@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2020 The Android Open-Source Project
+# Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,12 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-PRODUCT_QUOTA_PROJID := 1
-PRODUCT_VENDOR_PROPERTIES += external_storage.projid.enabled=1
+test_suite_name := csuite
+test_suite_tradefed := csuite-tradefed
+test_suite_readme := test/app_compat/csuite/README.md
 
-PRODUCT_FS_CASEFOLD := 1
-PRODUCT_VENDOR_PROPERTIES += external_storage.casefold.enabled=1
+include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 
-PRODUCT_VENDOR_PROPERTIES += external_storage.sdcardfs.enabled=0
+.PHONY: csuite
+csuite: $(compatibility_zip)
+$(call dist-for-goals, csuite, $(compatibility_zip))

@@ -20,7 +20,6 @@
 # Set lowram options and enable traced by default
 PRODUCT_VENDOR_PROPERTIES += \
      ro.config.low_ram=true \
-     persist.traced.enable=1 \
 
 # Speed profile services and wifi-service to reduce RAM and storage.
 PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := speed-profile
@@ -40,6 +39,7 @@ PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
 # Do not spin up a separate process for the network stack on go devices, use an in-process APK.
 PRODUCT_PACKAGES += InProcessNetworkStack
 PRODUCT_PACKAGES += CellBroadcastAppPlatform
+PRODUCT_PACKAGES += CellBroadcastServiceModulePlatform
 PRODUCT_PACKAGES += com.android.tethering.inprocess
 
 # Strip the local variable table and the local variable type table to reduce
