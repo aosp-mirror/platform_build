@@ -22,6 +22,30 @@
       "revId": "3f0ceef37e71e5ccea3a1aa0f08871bb7c0f0d26",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ebdb20f_3b619c03",
+        "filename": "tools/mk2bp_catalog.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-09-10T21:10:50Z",
+      "side": 1,
+      "message": "Yeah, I had done something fancier here and undid it because it ended up making it clearer to just be procedural.",
+      "parentUuid": "3fe06578_906ed7fb",
+      "range": {
+        "startLine": 1013,
+        "startChar": 0,
+        "endLine": 1029,
+        "endChar": 66
+      },
+      "revId": "3f0ceef37e71e5ccea3a1aa0f08871bb7c0f0d26",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
