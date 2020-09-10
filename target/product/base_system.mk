@@ -186,7 +186,6 @@ PRODUCT_PACKAGES += \
     libstagefright_foundation \
     libstagefright_omx \
     libstdc++ \
-    libsurfaceflinger \
     libsysutils \
     libui \
     libusbhost \
