@@ -753,7 +753,7 @@ endif
 endif
 
 INTERNAL_MKBOOTIMG_VERSION_ARGS := \
-    --os_version $(PLATFORM_VERSION) \
+    --os_version $(PLATFORM_VERSION_LAST_STABLE) \
     --os_patch_level $(PLATFORM_SECURITY_PATCH)
 
 # Define these only if we are building boot
@@ -1040,6 +1040,8 @@ license_modules := $(filter-out $(TARGET_OUT_FAKE)/%,$(license_modules))
 license_modules := $(filter-out $(TARGET_OUT_TESTCASES)/%,$(license_modules))
 # filesystem images: system, vendor, product, system_ext, odm, vendor_dlkm, and odm_dlkm
 license_modules_system := $(filter $(TARGET_OUT)/%,$(license_modules))
+# system_other is relevant to system partition.
+license_modules_system += $(filter $(TARGET_OUT_SYSTEM_OTHER)/%,$(license_modules))
 license_modules_vendor := $(filter $(TARGET_OUT_VENDOR)/%,$(license_modules))
 license_modules_product := $(filter $(TARGET_OUT_PRODUCT)/%,$(license_modules))
 license_modules_system_ext := $(filter $(TARGET_OUT_SYSTEM_EXT)/%,$(license_modules))
@@ -3126,22 +3128,22 @@ endif
 
 BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.system.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.system.os_version:$(PLATFORM_VERSION) \
+    --prop com.android.build.system.os_version:$(PLATFORM_VERSION_LAST_STABLE) \
     --prop com.android.build.system.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.product.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.product.os_version:$(PLATFORM_VERSION) \
+    --prop com.android.build.product.os_version:$(PLATFORM_VERSION_LAST_STABLE) \
     --prop com.android.build.product.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 BOARD_AVB_SYSTEM_EXT_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.system_ext.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.system_ext.os_version:$(PLATFORM_VERSION) \
+    --prop com.android.build.system_ext.os_version:$(PLATFORM_VERSION_LAST_STABLE) \
     --prop com.android.build.system_ext.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.boot.os_version:$(PLATFORM_VERSION)
+    --prop com.android.build.boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
 
 BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.vendor_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
@@ -3151,11 +3153,11 @@ BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS += \
 
 BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.vendor.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.vendor.os_version:$(PLATFORM_VERSION)
+    --prop com.android.build.vendor.os_version:$(PLATFORM_VERSION_LAST_STABLE)
 
 BOARD_AVB_ODM_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.odm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.odm.os_version:$(PLATFORM_VERSION)
+    --prop com.android.build.odm.os_version:$(PLATFORM_VERSION_LAST_STABLE)
 
 BOARD_AVB_VENDOR_DLKM_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.vendor_dlkm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
