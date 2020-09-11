@@ -628,6 +628,31 @@ endif
 .KATI_READONLY := BUILDING_ODM_DLKM_IMAGE
 
 ###########################################
+# Are we building modules image
+BOARD_USES_MODULESIMAGE :=
+ifdef BOARD_PREBUILT_MODULESIMAGE
+  $(error BOARD_PREBUILT_MODULESIMAGE must not be set. Prebuilt modules image is not allowed. Instead, install prebuilt APEXes.)
+endif
+ifdef BOARD_MODULESIMAGE_FILE_SYSTEM_TYPE
+  BOARD_USES_MODULESIMAGE := true
+endif
+
+BUILDING_MODULES_IMAGE :=
+ifeq ($(PRODUCT_BUILD_MODULES_IMAGE),)
+  ifdef BOARD_MODULESIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_MODULES_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_MODULES_IMAGE),true)
+  BUILDING_MODULES_IMAGE := true
+  ifndef BOARD_MODULESIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_MODULES_IMAGE set to true, but BOARD_MODULESIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+# BOARD_PREBUILT_MODULESIMAGE is not allowed.
+# The prebuilt for an individual module should be provided instead.
+.KATI_READONLY := BUILDING_MODULES_IMAGE
+
+###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
 TARGET_RECOVERY_UPDATER_LIBS ?=
 AB_OTA_UPDATER ?=
