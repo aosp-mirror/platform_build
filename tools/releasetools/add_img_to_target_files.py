@@ -296,6 +296,7 @@ def AddVendorDlkm(output_zip):
       block_list=block_list)
   return img.name
 
+
 def AddOdmDlkm(output_zip):
   """Turn the contents of OdmDlkm into an odm_dlkm image and store it in output_zip."""
 
@@ -308,6 +309,22 @@ def AddOdmDlkm(output_zip):
       output_zip, OPTIONS.input_tmp, "IMAGES", "odm_dlkm.map")
   CreateImage(
       OPTIONS.input_tmp, OPTIONS.info_dict, "odm_dlkm", img,
+      block_list=block_list)
+  return img.name
+
+
+def AddModules(output_zip):
+  """Turn the contents of Modules into an modules image and store it in output_zip."""
+
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "modules.img")
+  if os.path.exists(img.name):
+    logger.info("modules.img already exists; no need to rebuild...")
+    return img.name
+
+  block_list = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "modules.map")
+  CreateImage(
+      OPTIONS.input_tmp, OPTIONS.info_dict, "modules", img,
       block_list=block_list)
   return img.name
 
@@ -420,7 +437,9 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   # Use repeatable ext4 FS UUID and hash_seed UUID (based on partition name and
   # build fingerprint).
   build_info = common.BuildInfo(info_dict)
-  uuid_seed = what + "-" + build_info.GetPartitionFingerprint(what)
+  uuid_seed = what
+  if what != "modules":
+    uuid_seed += "-" + build_info.GetPartitionFingerprint(what)
   image_props["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_seed))
   hash_seed = "hash_seed-" + uuid_seed
   image_props["hash_seed"] = str(uuid.uuid5(uuid.NAMESPACE_URL, hash_seed))
@@ -798,6 +817,12 @@ def AddImagesToTargetFiles(filename):
                   OPTIONS.info_dict.get("building_product_image") == "true") or
                  os.path.exists(
                      os.path.join(OPTIONS.input_tmp, "IMAGES", "product.img")))
+  has_modules = ((os.path.isdir(os.path.join(OPTIONS.input_tmp,
+                                              "MODULES")) and
+                   OPTIONS.info_dict.get("building_modules_image")
+                   == "true") or
+                  os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                              "modules.img")))
   has_system_ext = (
       (os.path.isdir(os.path.join(OPTIONS.input_tmp, "SYSTEM_EXT")) and
        OPTIONS.info_dict.get("building_system_ext_image") == "true") or
@@ -926,6 +951,10 @@ def AddImagesToTargetFiles(filename):
   if has_odm_dlkm:
     banner("odm_dlkm")
     partitions['odm_dlkm'] = AddOdmDlkm(output_zip)
+
+  if has_modules:
+    banner("modules")
+    partitions['modules'] = AddModules(output_zip)
 
   if has_system_other:
     banner("system_other")
