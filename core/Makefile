@@ -1409,20 +1409,6 @@ $(if $(filter $(2),odm_dlkm),\
     $(hide) echo "odm_dlkm_selinux_fc=$(SELINUX_FC)" >> $(1)
     $(hide) echo "building_odm_dlkm_image=$(BUILDING_ODM_DLKM_IMAGE)" >> $(1)
 )
-$(if $(filter $(2),modules),\
-    $(if $(BOARD_MODULESIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "modules_fs_type=$(BOARD_MODULESIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
-    $(if $(BOARD_MODULESIMAGE_EXTFS_INODE_COUNT),$(hide) echo "modules_extfs_inode_count=$(BOARD_MODULESIMAGE_EXTFS_INODE_COUNT)" >> $(1))
-    $(if $(BOARD_MODULESIMAGE_EXTFS_RSV_PCT),$(hide) echo "modules_extfs_rsv_pct=$(BOARD_MODULESIMAGE_EXTFS_RSV_PCT)" >> $(1))
-    $(if $(BOARD_MODULESIMAGE_PARTITION_SIZE),$(hide) echo "modules_size=$(BOARD_MODULESIMAGE_PARTITION_SIZE)" >> $(1))
-    $(if $(BOARD_MODULESIMAGE_JOURNAL_SIZE),$(hide) echo "modules_journal_size=$(BOARD_MODULESIMAGE_JOURNAL_SIZE)" >> $(1))
-    $(if $(BOARD_MODULESIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "modules_squashfs_compressor=$(BOARD_MODULESIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
-    $(if $(BOARD_MODULESIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "modules_squashfs_compressor_opt=$(BOARD_MODULESIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
-    $(if $(BOARD_MODULESIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "modules_squashfs_block_size=$(BOARD_MODULESIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
-    $(if $(BOARD_MODULESIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "modules_squashfs_disable_4k_align=$(BOARD_MODULESIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
-    $(if $(BOARD_MODULESIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "modules_reserved_size=$(BOARD_MODULESIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
-    $(hide) echo "modules_selinux_fc=$(SELINUX_FC)" >> $(1)
-    $(hide) echo "building_modules_image=$(BUILDING_MODULES_IMAGE)" >> $(1)
-)
 $(if $(filter $(2),oem),\
     $(if $(BOARD_OEMIMAGE_PARTITION_SIZE),$(hide) echo "oem_size=$(BOARD_OEMIMAGE_PARTITION_SIZE)" >> $(1))
     $(if $(BOARD_OEMIMAGE_JOURNAL_SIZE),$(hide) echo "oem_journal_size=$(BOARD_OEMIMAGE_JOURNAL_SIZE)" >> $(1))
@@ -1557,9 +1543,6 @@ ifdef BUILDING_VENDOR_DLKM_IMAGE
 endif
 ifdef BUILDING_ODM_DLKM_IMAGE
   PROP_DICTIONARY_IMAGES += odm_dlkm
-endif
-ifdef BUILDING_MODULES_IMAGE
-  PROP_DICTIONARY_IMAGES += modules
 endif
 define generate-userimage-prop-dictionary
   $(call generate-image-prop-dictionary,$(1),$(PROP_DICTIONARY_IMAGES),$(2))
@@ -3017,54 +3000,6 @@ INSTALLED_ODM_DLKMIMAGE_TARGET := $(PRODUCT_OUT)/odm_dlkm.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_ODM_DLKMIMAGE),$(INSTALLED_ODM_DLKMIMAGE_TARGET)))
 endif
 
-# -----------------------------------------------------------------
-# modules partition image
-ifdef BUILDING_MODULES_IMAGE
-INTERNAL_MODULESIMAGE_FILES := \
-    $(filter $(TARGET_OUT_MODULES)/%,\
-      $(ALL_DEFAULT_INSTALLED_MODULES))
-
-INSTALLED_FILES_FILE_MODULES := $(PRODUCT_OUT)/installed-files-modules.txt
-INSTALLED_FILES_JSON_MODULES := $(INSTALLED_FILES_FILE_MODULES:.txt=.json)
-$(INSTALLED_FILES_FILE_MODULES): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_MODULES)
-$(INSTALLED_FILES_FILE_MODULES) : $(INTERNAL_MODULESIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
-	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	@mkdir -p $(TARGET_OUT_MODULES)
-	$(hide) $(FILESLIST) $(TARGET_OUT_MODULES) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
-
-modulesimage_intermediates := \
-    $(call intermediates-dir-for,PACKAGING,modules)
-BUILT_MODULESIMAGE_TARGET := $(PRODUCT_OUT)/modules.img
-define build-modulesimage-target
-  $(call pretty,"Target modules fs image: $(INSTALLED_MODULESIMAGE_TARGET)")
-  @mkdir -p $(TARGET_OUT_MODULES)
-  @mkdir -p $(modulesimage_intermediates) && rm -rf $(modulesimage_intermediates)/modules_image_info.txt
-  $(call generate-userimage-prop-dictionary, $(modulesimage_intermediates)/modules_image_info.txt, skip_fsck=true)
-  PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-      $(BUILD_IMAGE) \
-          $(TARGET_OUT_MODULES) $(modulesimage_intermediates)/modules_image_info.txt \
-          $(INSTALLED_MODULESIMAGE_TARGET) $(TARGET_OUT)
-  $(call assert-max-image-size,$(INSTALLED_MODULESIMAGE_TARGET),$(BOARD_MODULESIMAGE_PARTITION_SIZE))
-endef
-
-# We just build this directly to the install location.
-INSTALLED_MODULESIMAGE_TARGET := $(BUILT_MODULESIMAGE_TARGET)
-$(INSTALLED_MODULESIMAGE_TARGET): \
-    $(INTERNAL_USERIMAGES_DEPS) \
-    $(INTERNAL_MODULESIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_MODULES)
-	$(build-modulesimage-target)
-
-.PHONY: modulesimage-nodeps mnod
-modulesimage-nodeps mnod: | $(INTERNAL_USERIMAGES_DEPS)
-	$(build-modulesimage-target)
-
-sync: $(INTERNAL_MODULESIMAGE_FILES)
-# BOARD_PREBUILT_MODULESIMAGE is not allowed.
-endif
 
 # -----------------------------------------------------------------
 # dtbo image
@@ -3564,10 +3499,7 @@ endif # BOARD_AVB_ENABLE
 # -----------------------------------------------------------------
 # Check VINTF of build
 
-# Note: the following do not have VINTF files:
-# - vendor_dlkm
-# - odm_dlkm
-# - modules
+# Note: vendor_dlkm and odm_dlkm does not have VINTF files.
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
 
 intermediates := $(call intermediates-dir-for,PACKAGING,check_vintf_all)
@@ -4590,11 +4522,6 @@ ifdef BUILDING_SYSTEM_OTHER_IMAGE
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_OUT_SYSTEM_OTHER),$(zip_root)/SYSTEM_OTHER)
 endif
-ifdef BUILDING_MODULES_IMAGE
-	@# Contents of the modules image
-	$(hide) $(call package_files-copy-root, \
-	    $(TARGET_OUT_MODULES),$(zip_root)/MODULES)
-endif
 	@# Extra contents of the OTA package
 	$(hide) mkdir -p $(zip_root)/OTA
 	$(hide) cp $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(zip_root)/OTA/
@@ -4643,7 +4570,6 @@ ifneq ($(PRODUCT_ODM_DLKM_BASE_FS_PATH),)
 	$(hide) cp $(PRODUCT_ODM_DLKM_BASE_FS_PATH) \
 	  $(zip_root)/META/$(notdir $(PRODUCT_ODM_DLKM_BASE_FS_PATH))
 endif
-# No PRODUCT_MODULES_BASE_FS_PATH for modules partition
 ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
@@ -4737,9 +4663,6 @@ ifdef BUILDING_VENDOR_DLKM_IMAGE
 endif
 ifdef BUILDING_ODM_DLKM_IMAGE
 	$(hide) $(call fs_config,$(zip_root)/ODM_DLKM,odm_dlkm/) > $(zip_root)/META/odm_dlkm_filesystem_config.txt
-endif
-ifdef BUILDING_MODULES_IMAGE
-	$(hide) $(call fs_config,$(zip_root)/MODULES,modules/) > $(zip_root)/META/modules_filesystem_config.txt
 endif
 	@# ROOT always contains the files for the root under normal boot.
 	$(hide) $(call fs_config,$(zip_root)/ROOT,) > $(zip_root)/META/root_filesystem_config.txt
@@ -5282,16 +5205,6 @@ $(INSTALLED_QEMU_ODM_DLKMIMAGE): $(INSTALLED_ODM_DLKMIMAGE_TARGET) $(MK_QEMU_IMA
 
 odm_dlkmimage: $(INSTALLED_QEMU_ODM_DLKMIMAGE)
 droidcore: $(INSTALLED_QEMU_ODM_DLKMIMAGE)
-endif
-
-ifdef INSTALLED_MODULESIMAGE_TARGET
-INSTALLED_QEMU_MODULESIMAGE := $(PRODUCT_OUT)/modules-qemu.img
-$(INSTALLED_QEMU_MODULESIMAGE): $(INSTALLED_MODULESIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST)
-	@echo Create modules-qemu.img
-	(export SGDISK=$(SGDISK_HOST); $(MK_QEMU_IMAGE_SH) $(INSTALLED_MODULESIMAGE_TARGET))
-
-modulesimage: $(INSTALLED_QEMU_MODULESIMAGE)
-droidcore: $(INSTALLED_QEMU_MODULESIMAGE)
 endif
 
 QEMU_VERIFIED_BOOT_PARAMS := $(PRODUCT_OUT)/VerifiedBootParams.textproto
