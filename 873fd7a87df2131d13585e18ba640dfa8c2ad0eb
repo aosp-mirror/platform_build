@@ -22,6 +22,30 @@
       "revId": "873fd7a87df2131d13585e18ba640dfa8c2ad0eb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40489a07_1a06009f",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 839,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-09-16T16:45:19Z",
+      "side": 1,
+      "message": "Also the comment above this block may need updating... since system.img can be \u0027prebuilt\u0027 (as in, not rebuilt)",
+      "parentUuid": "413e3cb4_961a33fd",
+      "range": {
+        "startLine": 795,
+        "startChar": 2,
+        "endLine": 839,
+        "endChar": 68
+      },
+      "revId": "873fd7a87df2131d13585e18ba640dfa8c2ad0eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
