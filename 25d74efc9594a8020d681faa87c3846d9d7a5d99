@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "8f0117c5_e1c48f87",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2020-09-16T23:22:33Z",
+      "side": 1,
+      "message": "Ah, that\u0027d be the issue.",
+      "parentUuid": "72dbc802_520b232b",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 8
+      },
+      "revId": "25d74efc9594a8020d681faa87c3846d9d7a5d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c1a23853_06ee05b4",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -110,6 +134,30 @@
       "revId": "25d74efc9594a8020d681faa87c3846d9d7a5d99",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7f84177_28f563d1",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1636,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2020-09-16T23:22:33Z",
+      "side": 1,
+      "message": "Not really sure what that does, but borrowed from https://cs.android.com/android/platform/superproject/+/master:art/tools/buildbot-build.sh;l\u003d33;drc\u003d7914e8946fce44193a0bc1771ac6a0d8b2938e74",
+      "parentUuid": "ffe91390_38c6a3a2",
+      "range": {
+        "startLine": 1634,
+        "startChar": 4,
+        "endLine": 1636,
+        "endChar": 6
+      },
+      "revId": "25d74efc9594a8020d681faa87c3846d9d7a5d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -157,6 +205,30 @@
       "revId": "25d74efc9594a8020d681faa87c3846d9d7a5d99",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a0cd155_c41ff9ad",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1639,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2020-09-16T23:22:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4c5800d_1ea28b50",
+      "range": {
+        "startLine": 1637,
+        "startChar": 4,
+        "endLine": 1639,
+        "endChar": 25
+      },
+      "revId": "25d74efc9594a8020d681faa87c3846d9d7a5d99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
