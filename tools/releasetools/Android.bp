@@ -272,7 +272,9 @@ python_defaults {
         "bsdiff",
         "imgdiff",
         "minigzip",
+        "lz4",
         "mkbootfs",
+        "signapk",
     ],
 }
 
