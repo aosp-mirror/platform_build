@@ -22,6 +22,30 @@
       "revId": "a1612bc211f9aff29a8fe65d6f37dc48b083a509",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1348b2df_ae6f332c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1290458
+      },
+      "writtenOn": "2020-09-16T16:53:50Z",
+      "side": 1,
+      "message": "I guess then we\u0027d also need a virtual_ab_ota_compression_retrofit.mk? (Which would be for VAB retrofit, we don\u0027t particularly care about a flag for retrofitting only the compression feature.)",
+      "parentUuid": "13dc17f7_276e938a",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 68
+      },
+      "revId": "a1612bc211f9aff29a8fe65d6f37dc48b083a509",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
