@@ -678,33 +678,22 @@ else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),27),true)
   PRODUCT_USE_VNDK := $(PRODUCT_FULL_TREBLE)
 endif
 
-# Define PRODUCT_PRODUCT_VNDK_VERSION if PRODUCT_USE_VNDK is true and
-# PRODUCT_SHIPPING_API_LEVEL is greater than 29.
-PRODUCT_USE_PRODUCT_VNDK := false
 ifeq ($(PRODUCT_USE_VNDK),true)
-  ifneq ($(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE),)
-    PRODUCT_USE_PRODUCT_VNDK := $(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE)
-  else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-    # No shipping level defined
-  else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
-    PRODUCT_USE_PRODUCT_VNDK := true
-  endif
-
   ifndef BOARD_VNDK_VERSION
     BOARD_VNDK_VERSION := current
-  endif
-
-  ifeq ($(PRODUCT_USE_PRODUCT_VNDK),true)
-    ifndef PRODUCT_PRODUCT_VNDK_VERSION
-      PRODUCT_PRODUCT_VNDK_VERSION := current
-    endif
   endif
 endif
 
 $(KATI_obsolete_var PRODUCT_USE_VNDK,Use BOARD_VNDK_VERSION instead)
 $(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use BOARD_VNDK_VERSION instead)
-$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
-$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK_OVERRIDE,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
+
+ifdef PRODUCT_PRODUCT_VNDK_VERSION
+  ifndef BOARD_VNDK_VERSION
+    # VNDK for product partition is not available unless BOARD_VNDK_VERSION
+    # defined.
+    $(error PRODUCT_PRODUCT_VNDK_VERSION cannot be defined without defining BOARD_VNDK_VERSION)
+  endif
+endif
 
 # Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
 # devices if unset.
@@ -779,7 +768,7 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 # is made which breaks compatibility with the previous platform sepolicy version,
 # not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
 # be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 29
+sepolicy_major_vers := 30
 sepolicy_minor_vers := 0
 
 ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))

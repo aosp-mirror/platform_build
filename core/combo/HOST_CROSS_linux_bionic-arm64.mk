@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020 The Android Open-Source Project
+# Copyright (C) 2020 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
 # limitations under the License.
 #
 
-PRODUCT_QUOTA_PROJID := 1
-PRODUCT_VENDOR_PROPERTIES += external_storage.projid.enabled=1
+# Configuration for builds hosted on linux_arm-arm64
+# Included by combo/select.mk
 
-PRODUCT_FS_CASEFOLD := 1
-PRODUCT_VENDOR_PROPERTIES += external_storage.casefold.enabled=1
-
-PRODUCT_VENDOR_PROPERTIES += external_storage.sdcardfs.enabled=0
+define $(combo_var_prefix)transform-shared-lib-to-toc
+$(call _gen_toc_command_for_elf,$(1),$(2))
+endef

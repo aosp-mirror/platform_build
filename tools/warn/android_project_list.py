@@ -102,6 +102,7 @@ project_list = [
     create_pattern('ndk'),
     # match vendor/unbungled_google/packages before other packages
     create_pattern('unbundled_google'),
+    create_pattern('packages/providers/MediaProvider'),
     create_pattern('packages'),
     create_pattern('pdk'),
     create_pattern('prebuilts'),
