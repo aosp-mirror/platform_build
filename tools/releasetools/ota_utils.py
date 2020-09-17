@@ -160,6 +160,47 @@ def UpdateDeviceState(device_state, build_info, boot_variable_values,
                       is_post_build):
   """Update the fields of the DeviceState proto with build info."""
 
+  def UpdatePartitionStates(partition_states):
+    """Update the per-partition state according to its build.prop"""
+    if not build_info.is_ab:
+      return
+    build_info_set = ComputeRuntimeBuildInfos(build_info,
+                                              boot_variable_values)
+    assert "ab_partitions" in build_info.info_dict,\
+      "ab_partitions property required for ab update."
+    ab_partitions = set(build_info.info_dict.get("ab_partitions"))
+
+    # delta_generator will error out on unused timestamps,
+    # so only generate timestamps for dynamic partitions
+    # used in OTA update.
+    for partition in sorted(set(PARTITIONS_WITH_CARE_MAP) & ab_partitions):
+      partition_prop = build_info.info_dict.get(
+          '{}.build.prop'.format(partition))
+      # Skip if the partition is missing, or it doesn't have a build.prop
+      if not partition_prop or not partition_prop.build_props:
+        continue
+
+      partition_state = partition_states.add()
+      partition_state.partition_name = partition
+      # Update the partition's runtime device names and fingerprints
+      partition_devices = set()
+      partition_fingerprints = set()
+      for runtime_build_info in build_info_set:
+        partition_devices.add(
+            runtime_build_info.GetPartitionBuildProp('ro.product.device',
+                                                     partition))
+        partition_fingerprints.add(
+            runtime_build_info.GetPartitionFingerprint(partition))
+
+      partition_state.device.extend(sorted(partition_devices))
+      partition_state.build.extend(sorted(partition_fingerprints))
+
+      # TODO(xunchang) set the boot image's version with kmi. Note the boot
+      # image doesn't have a file map.
+      partition_state.version = build_info.GetPartitionBuildProp(
+          'ro.build.date.utc', partition)
+
+  # TODO(xunchang), we can save a call to ComputeRuntimeBuildInfos.
   build_devices, build_fingerprints = \
       CalculateRuntimeDevicesAndFingerprints(build_info, boot_variable_values)
   device_state.device.extend(sorted(build_devices))
@@ -167,7 +208,7 @@ def UpdateDeviceState(device_state, build_info, boot_variable_values,
   device_state.build_incremental = build_info.GetBuildProp(
       'ro.build.version.incremental')
 
-  # TODO(xunchang) update the partition state
+  UpdatePartitionStates(device_state.partition_state)
 
   if is_post_build:
     device_state.sdk_level = build_info.GetBuildProp(
@@ -302,14 +343,12 @@ def HandleDowngradeMetadata(metadata_proto, target_info, source_info):
           "building the incremental." % (pre_timestamp, post_timestamp))
 
 
-def CalculateRuntimeDevicesAndFingerprints(build_info, boot_variable_values):
-  """Returns a tuple of sets for runtime devices and fingerprints"""
+def ComputeRuntimeBuildInfos(default_build_info, boot_variable_values):
+  """Returns a set of build info objects that may exist during runtime."""
 
-  device_names = {build_info.device}
-  fingerprints = {build_info.fingerprint}
-
+  build_info_set = {default_build_info}
   if not boot_variable_values:
-    return device_names, fingerprints
+    return build_info_set
 
   # Calculate all possible combinations of the values for the boot variables.
   keys = boot_variable_values.keys()
@@ -319,7 +358,7 @@ def CalculateRuntimeDevicesAndFingerprints(build_info, boot_variable_values):
   for placeholder_values in combinations:
     # Reload the info_dict as some build properties may change their values
     # based on the value of ro.boot* properties.
-    info_dict = copy.deepcopy(build_info.info_dict)
+    info_dict = copy.deepcopy(default_build_info.info_dict)
     for partition in PARTITIONS_WITH_CARE_MAP:
       partition_prop_key = "{}.build.prop".format(partition)
       input_file = info_dict[partition_prop_key].input_file
@@ -333,10 +372,22 @@ def CalculateRuntimeDevicesAndFingerprints(build_info, boot_variable_values):
             PartitionBuildProps.FromInputFile(input_file, partition,
                                               placeholder_values)
     info_dict["build.prop"] = info_dict["system.build.prop"]
+    build_info_set.add(BuildInfo(info_dict, default_build_info.oem_dicts))
 
-    new_build_info = BuildInfo(info_dict, build_info.oem_dicts)
-    device_names.add(new_build_info.device)
-    fingerprints.add(new_build_info.fingerprint)
+  return build_info_set
+
+
+def CalculateRuntimeDevicesAndFingerprints(default_build_info,
+                                           boot_variable_values):
+  """Returns a tuple of sets for runtime devices and fingerprints"""
+
+  device_names = set()
+  fingerprints = set()
+  build_info_set = ComputeRuntimeBuildInfos(default_build_info,
+                                            boot_variable_values)
+  for runtime_build_info in build_info_set:
+    device_names.add(runtime_build_info.device)
+    fingerprints.add(runtime_build_info.fingerprint)
   return device_names, fingerprints
 
 

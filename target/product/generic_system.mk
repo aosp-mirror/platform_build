@@ -39,9 +39,6 @@ PRODUCT_PACKAGES += \
     Tag \
     TimeZoneUpdater \
 
-# Binaries
-PRODUCT_PACKAGES += llkd
-
 # OTA support
 PRODUCT_PACKAGES += \
     recovery-refresh \
@@ -95,11 +92,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libhidltransport \
     libhwbinder \
-
-# Camera service uses 'libdepthphoto' for adding dynamic depth
-# metadata inside depth jpegs.
-PRODUCT_PACKAGES += \
-    libdepthphoto \
 
 PRODUCT_PACKAGES_DEBUG += \
     avbctl \

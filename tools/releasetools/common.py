@@ -118,7 +118,7 @@ AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'recovery', 'system',
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
 
 # Partitions that should have their care_map added to META/care_map.pb
-PARTITIONS_WITH_CARE_MAP = (
+PARTITIONS_WITH_CARE_MAP = [
     'system',
     'vendor',
     'product',
@@ -126,7 +126,7 @@ PARTITIONS_WITH_CARE_MAP = (
     'odm',
     'vendor_dlkm',
     'odm_dlkm',
-)
+]
 
 
 class ErrorCode(object):
@@ -729,8 +729,12 @@ def LoadInfoDict(input_file, repacking=False):
       fingerprint = build_info.GetPartitionFingerprint(partition)
       if fingerprint:
         d["avb_{}_salt".format(partition)] = sha256(fingerprint.encode()).hexdigest()
-
+  try:
+    d["ab_partitions"] = read_helper("META/ab_partitions.txt").split("\n")
+  except KeyError:
+    logger.warning("Can't find META/ab_partitions.txt")
   return d
+
 
 
 def LoadListFromFile(file_path):

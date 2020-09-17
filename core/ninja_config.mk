@@ -35,7 +35,6 @@ PARSE_TIME_MAKE_GOALS := \
 	sdk_addon \
 	sdk_repo \
 	stnod \
-	target-files-package \
 	test-art% \
 	user \
 	userdataimage \

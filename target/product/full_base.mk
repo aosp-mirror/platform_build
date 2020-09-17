@@ -25,7 +25,8 @@ PRODUCT_PACKAGES := \
 
 PRODUCT_PACKAGES += \
     LiveWallpapersPicker \
-    PhotoTable
+    PhotoTable \
+    preinstalled-packages-platform-full-base.xml
 
 # Bluetooth:
 #   audio.a2dp.default is a system module. Generic system image includes
