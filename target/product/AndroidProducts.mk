@@ -43,6 +43,7 @@ PRODUCT_MAKEFILES := \
 
 else
 PRODUCT_MAKEFILES := \
+    $(LOCAL_DIR)/aosp_64bitonly_x86_64.mk \
     $(LOCAL_DIR)/aosp_arm64_ab.mk \
     $(LOCAL_DIR)/aosp_arm64.mk \
     $(LOCAL_DIR)/aosp_arm_ab.mk \
