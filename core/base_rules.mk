@@ -766,7 +766,7 @@ else
     $(foreach test_config_file, $(LOCAL_EXTRA_FULL_TEST_CONFIGS), \
       $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
         $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
-          $(test_config_file):$(dir)/$(notdir $(test_config_file))))))
+          $(test_config_file):$(dir)/$(basename $(notdir $(test_config_file))).config))))
   endif
 
   ifneq (,$(wildcard $(LOCAL_PATH)/DynamicConfig.xml))
