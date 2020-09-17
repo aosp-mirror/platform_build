@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3d819f33_4e7ddd6c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1368430
+      },
+      "writtenOn": "2020-09-17T22:16:28Z",
+      "side": 1,
+      "message": "PTAL\n\nThis relands this CL:\nhttps://android-review.googlesource.com/c/platform/build/+/1224079\n\nIt looks like the rvc merge overwrote it.",
+      "revId": "486e199b44b58d56b0e43fa776319372530761b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
