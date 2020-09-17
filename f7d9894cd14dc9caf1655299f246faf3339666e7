@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "dc61f2cb_069009eb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2020-09-17T23:45:35Z",
+      "side": 1,
+      "message": "Yeah - eng builds already have verity disabled.",
+      "parentUuid": "7ed59e6f_cf312cd4",
+      "revId": "f7d9894cd14dc9caf1655299f246faf3339666e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9ccd9c43_2fcdbcc3",
         "filename": "envsetup.sh",
         "patchSetId": 1
