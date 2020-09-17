@@ -70,6 +70,23 @@
       "revId": "a1612bc211f9aff29a8fe65d6f37dc48b083a509",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ef9829a_0517932a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-09-17T03:16:35Z",
+      "side": 1,
+      "message": "Where is this property used?",
+      "revId": "a1612bc211f9aff29a8fe65d6f37dc48b083a509",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
