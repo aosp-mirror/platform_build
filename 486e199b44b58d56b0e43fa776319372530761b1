@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e8591593_7fd82f49",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1368430
+      },
+      "writtenOn": "2020-09-18T16:41:30Z",
+      "side": 1,
+      "message": "Ah, too big of a hammer.   Good catch.\n\nI want it to flow through the rest of AOSP, but not back into goog/master.   Sounds like I should use the Change-Id from a CL that landed in goog/master recently, but wasn\u0027t part of the RVC branch?\n\n12353698: Indicate ANGLE is not enabled by default | https://googleplex-android-review.git.corp.google.com/c/platform/build/+/12353698",
+      "parentUuid": "103c5f87_73df3d13",
+      "range": {
+        "startLine": 16,
+        "startChar": 52,
+        "endLine": 17,
+        "endChar": 52
+      },
+      "revId": "486e199b44b58d56b0e43fa776319372530761b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3d819f33_4e7ddd6c",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
