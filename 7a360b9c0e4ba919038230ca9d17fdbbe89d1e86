@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fbb0d7c3_d4f41c1e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2020-09-18T17:38:28Z",
+      "side": 1,
+      "message": "This is still a flake 😞",
+      "revId": "7a360b9c0e4ba919038230ca9d17fdbbe89d1e86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
