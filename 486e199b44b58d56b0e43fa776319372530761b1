@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "103c5f87_73df3d13",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-09-18T07:12:58Z",
+      "side": 1,
+      "message": "I think you want to remove this? The effect of this line is that your CL will only land in aosp/master and not get merged anywhere else.",
+      "range": {
+        "startLine": 16,
+        "startChar": 52,
+        "endLine": 17,
+        "endChar": 52
+      },
+      "revId": "486e199b44b58d56b0e43fa776319372530761b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3d819f33_4e7ddd6c",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
