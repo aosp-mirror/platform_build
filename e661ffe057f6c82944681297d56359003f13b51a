@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca0e8678_7b29f20d",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 743,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-20T21:49:54Z",
+      "side": 1,
+      "message": "nit add a line",
+      "range": {
+        "startLine": 743,
+        "startChar": 75,
+        "endLine": 743,
+        "endChar": 78
+      },
+      "revId": "e661ffe057f6c82944681297d56359003f13b51a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "723c1a21_86999775",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-20T21:49:54Z",
+      "side": 1,
+      "message": "nit: not needed?",
+      "range": {
+        "startLine": 744,
+        "startChar": 9,
+        "endLine": 744,
+        "endChar": 10
+      },
+      "revId": "e661ffe057f6c82944681297d56359003f13b51a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "718b12c9_7b724bdc",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-09-20T21:49:54Z",
+      "side": 1,
+      "message": "nit: other places in the file use \"{}\".format()",
+      "range": {
+        "startLine": 749,
+        "startChar": 36,
+        "endLine": 749,
+        "endChar": 37
+      },
+      "revId": "e661ffe057f6c82944681297d56359003f13b51a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
