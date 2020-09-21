@@ -28,9 +28,9 @@ else
   $(call pretty-error,Unsupported LOCAL_MODULE_$(my_prefix)ARCH=$(LOCAL_MODULE_$(my_prefix)ARCH))
 endif
 
-# Don't install rlib/proc_macro libraries.
+# Don't install static/rlib/proc_macro libraries.
 ifndef LOCAL_UNINSTALLABLE_MODULE
-  ifneq ($(filter RLIB_LIBRARIES PROC_MACRO_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
+  ifneq ($(filter STATIC_LIBRARIES RLIB_LIBRARIES PROC_MACRO_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
     LOCAL_UNINSTALLABLE_MODULE := true
   endif
 endif
