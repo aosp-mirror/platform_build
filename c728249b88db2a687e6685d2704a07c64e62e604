@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "9dc855c6_8cbaaa23",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-09-21T07:20:27Z",
+      "side": 1,
+      "message": "Please add\nMerged-In: I57116fe67cbe1322f348c9d0506655f32a900dcc\nas well",
+      "range": {
+        "startLine": 10,
+        "startChar": 9,
+        "endLine": 11,
+        "endChar": 52
+      },
+      "revId": "c728249b88db2a687e6685d2704a07c64e62e604",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bbe5b8fc_2644c466",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
