@@ -16,6 +16,23 @@
       "revId": "74114f1e69b38aab019fb599d83b1f9078c22640",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0694f45f_e7ba882e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2020-09-21T20:56:37Z",
+      "side": 1,
+      "message": "I see some platform/build TH runs passing. This Android.bp-specific failure on a downstream branch shouldn\u0027t be possible from this change.",
+      "revId": "74114f1e69b38aab019fb599d83b1f9078c22640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
