@@ -164,15 +164,15 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         "veritykeyid=id:d24f2590e9abab5cff5f59da4c4f0366e3f43e94\n")
 
     input_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'w') as input_zip:
+    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
       input_zip.writestr('BOOT/cmdline', BOOT_CMDLINE1)
 
     # Test with the first certificate.
     cert_file = os.path.join(self.testdata_dir, 'verity.x509.pem')
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'r') as input_zip, \
-         zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip, \
+         zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       ReplaceVerityKeyId(input_zip, output_zip, cert_file)
 
     with zipfile.ZipFile(output_file) as output_zip:
@@ -181,8 +181,8 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     # Test with the second certificate.
     cert_file = os.path.join(self.testdata_dir, 'testkey.x509.pem')
 
-    with zipfile.ZipFile(input_file, 'r') as input_zip, \
-         zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip, \
+         zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       ReplaceVerityKeyId(input_zip, output_zip, cert_file)
 
     with zipfile.ZipFile(output_file) as output_zip:
@@ -195,12 +195,12 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         "loop.max_part=7\n")
 
     input_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'w') as input_zip:
+    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
       input_zip.writestr('BOOT/cmdline', BOOT_CMDLINE)
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'r') as input_zip, \
-         zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip, \
+         zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       ReplaceVerityKeyId(input_zip, output_zip, None)
 
     with zipfile.ZipFile(output_file) as output_zip:
@@ -284,7 +284,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     ]
     entry_name = 'SYSTEM/etc/security/otacerts.zip'
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       WriteOtacerts(output_zip, entry_name, certs)
     with zipfile.ZipFile(output_file) as input_zip:
       self.assertIn(entry_name, input_zip.namelist())
@@ -294,7 +294,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
 
   def test_CheckApkAndApexKeysAvailable(self):
     input_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'w') as input_zip:
+    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
       input_zip.writestr('SYSTEM/app/App1.apk', "App1-content")
       input_zip.writestr('SYSTEM/app/App2.apk.gz', "App2-content")
 
@@ -318,7 +318,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
 
   def test_CheckApkAndApexKeysAvailable_invalidApexKeys(self):
     input_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'w') as input_zip:
+    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
       input_zip.writestr('SYSTEM/apex/Apex1.apex', "Apex1-content")
       input_zip.writestr('SYSTEM/apex/Apex2.apex', "Apex2-content")
 
@@ -466,10 +466,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
 
   def test_ReadApexKeysInfo(self):
     target_files = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+    with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', self.APEX_KEYS_TXT)
 
-    with zipfile.ZipFile(target_files) as target_files_zip:
+    with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
       keys_info = ReadApexKeysInfo(target_files_zip)
 
     self.assertEqual({
@@ -491,10 +491,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         'container_private_key="build/make/target/product/security/testkey2.pk8" '
         'partition="system"')
     target_files = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+    with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
 
-    with zipfile.ZipFile(target_files) as target_files_zip:
+    with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
       self.assertRaises(ValueError, ReadApexKeysInfo, target_files_zip)
 
   def test_ReadApexKeysInfo_missingPayloadPrivateKey(self):
@@ -505,10 +505,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         'container_certificate="build/make/target/product/security/testkey.x509.pem" '
         'container_private_key="build/make/target/product/security/testkey.pk8"')
     target_files = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+    with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
 
-    with zipfile.ZipFile(target_files) as target_files_zip:
+    with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
       keys_info = ReadApexKeysInfo(target_files_zip)
 
     self.assertEqual({
@@ -528,10 +528,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         'container_certificate="build/make/target/product/security/testkey.x509.pem" '
         'container_private_key="build/make/target/product/security/testkey.pk8"')
     target_files = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+    with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
 
-    with zipfile.ZipFile(target_files) as target_files_zip:
+    with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
       keys_info = ReadApexKeysInfo(target_files_zip)
 
     self.assertEqual({
@@ -551,10 +551,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         'container_certificate="PRESIGNED" '
         'container_private_key="PRESIGNED"')
     target_files = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+    with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
 
-    with zipfile.ZipFile(target_files) as target_files_zip:
+    with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
       keys_info = ReadApexKeysInfo(target_files_zip)
 
     self.assertEqual({
@@ -574,10 +574,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         'container_certificate="PRESIGNED" '
         'container_private_key="PRESIGNED"')
     target_files = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+    with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
 
-    with zipfile.ZipFile(target_files) as target_files_zip:
+    with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
       keys_info = ReadApexKeysInfo(target_files_zip)
 
     self.assertEqual({

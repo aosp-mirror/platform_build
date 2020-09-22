@@ -37,7 +37,7 @@ from test_utils import PropertyFilesTestCase
 def construct_target_files(secondary=False):
   """Returns a target-files.zip file for generating OTA packages."""
   target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
-  with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+  with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
     # META/update_engine_config.txt
     target_files_zip.writestr(
         'META/update_engine_config.txt',
@@ -417,7 +417,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'super_google_dynamic_partitions_partition_list=system vendor product',
     ])
 
-    with zipfile.ZipFile(input_file, 'a') as append_zip:
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as append_zip:
       common.ZipWriteStr(append_zip, 'META/misc_info.txt', misc_info)
       common.ZipWriteStr(append_zip, 'META/dynamic_partitions_info.txt',
                          dynamic_partitions_info)
@@ -472,7 +472,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     zip_file = PropertyFilesTest.construct_zip_package(entries)
     # Add a large entry of 1 GiB if requested.
     if large_entry:
-      with zipfile.ZipFile(zip_file, 'a') as zip_fp:
+      with zipfile.ZipFile(zip_file, 'a', allowZip64=True) as zip_fp:
         zip_fp.writestr(
             # Using 'zoo' so that the entry stays behind others after signing.
             'zoo',
@@ -514,7 +514,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'optional-entry2',
     ]
     zip_file = PropertyFilesTest.construct_zip_package(entries)
-    with zipfile.ZipFile(zip_file, 'a') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'a', allowZip64=True) as zip_fp:
       zip_fp.writestr(
           # 'foo-entry1' will appear ahead of all other entries (in alphabetical
           # order) after the signing, which will in turn trigger the
@@ -558,7 +558,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
@@ -574,7 +574,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
@@ -587,7 +587,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       self.assertRaises(KeyError, property_files.Compute, zip_fp)
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -600,7 +600,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     ]
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
       streaming_metadata = property_files.Finalize(zip_fp, len(raw_metadata))
@@ -625,7 +625,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
@@ -660,7 +660,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
@@ -702,7 +702,7 @@ class StreamingPropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
@@ -720,7 +720,7 @@ class StreamingPropertyFilesTest(PropertyFilesTestCase):
     ]
     zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
       streaming_metadata = property_files.Finalize(zip_fp, len(raw_metadata))
@@ -744,7 +744,7 @@ class StreamingPropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
@@ -802,7 +802,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
     payload.Sign(payload_signer)
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       payload.WriteToZip(output_zip)
 
     # Find out the payload metadata offset and size.
@@ -867,7 +867,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
     payload.Sign(payload_signer)
 
     zip_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(zip_file, 'w') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'w', allowZip64=True) as zip_fp:
       # 'payload.bin',
       payload.WriteToZip(zip_fp)
 
@@ -889,7 +889,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
   def test_Compute(self):
     zip_file = self.construct_zip_package_withValidPayload()
     property_files = AbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
@@ -903,7 +903,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
   def test_Finalize(self):
     zip_file = self.construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
       property_files_string = property_files.Finalize(
@@ -920,7 +920,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
   def test_Verify(self):
     zip_file = self.construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
 
@@ -1087,7 +1087,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload.Sign(PayloadSigner())
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       payload.WriteToZip(output_zip)
 
     import check_ota_package_signature
@@ -1101,7 +1101,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload.Sign(PayloadSigner())
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       payload.WriteToZip(output_zip)
 
     import check_ota_package_signature
@@ -1140,7 +1140,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload.Sign(PayloadSigner())
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       payload.WriteToZip(output_zip)
 
     with zipfile.ZipFile(output_file) as verify_zip:
@@ -1162,14 +1162,14 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload = self._create_payload_full()
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       self.assertRaises(AssertionError, payload.WriteToZip, output_zip)
 
     # Also test with incremental payload.
     payload = self._create_payload_incremental()
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       self.assertRaises(AssertionError, payload.WriteToZip, output_zip)
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -1178,7 +1178,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload.Sign(PayloadSigner())
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       payload.WriteToZip(output_zip)
 
     with zipfile.ZipFile(output_file) as verify_zip:

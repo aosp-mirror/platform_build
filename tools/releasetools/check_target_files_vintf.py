@@ -252,7 +252,7 @@ def HasTrebleEnabled(target_files, target_info):
     if os.path.isdir(target_files):
       return os.path.isdir(os.path.join(target_files, "VENDOR"))
     if zipfile.is_zipfile(target_files):
-      return HasPartition(zipfile.ZipFile(target_files), "vendor")
+      return HasPartition(zipfile.ZipFile(target_files, allowZip64=True), "vendor")
     raise ValueError("Unknown target_files argument")
 
   return (HasVendorPartition(target_files) and

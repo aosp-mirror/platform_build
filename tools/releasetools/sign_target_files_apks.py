@@ -813,7 +813,7 @@ def WriteOtacerts(output_zip, filename, keys):
     keys: A list of public keys to use during OTA package verification.
   """
   temp_file = io.BytesIO()
-  certs_zip = zipfile.ZipFile(temp_file, "w")
+  certs_zip = zipfile.ZipFile(temp_file, "w", allowZip64=True)
   for k in keys:
     common.ZipWrite(certs_zip, k)
   common.ZipClose(certs_zip)
@@ -1294,7 +1294,7 @@ def main(argv):
 
   common.InitLogging()
 
-  input_zip = zipfile.ZipFile(args[0], "r")
+  input_zip = zipfile.ZipFile(args[0], "r", allowZip64=True)
   output_zip = zipfile.ZipFile(args[1], "w",
                                compression=zipfile.ZIP_DEFLATED,
                                allowZip64=True)

@@ -656,7 +656,7 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   target_zip = zipfile.ZipFile(target_file, 'w', allowZip64=True)
 
-  with zipfile.ZipFile(input_file, 'r') as input_zip:
+  with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip:
     infolist = input_zip.infolist()
 
   input_tmp = common.UnzipTemp(input_file, UNZIP_PATTERN)
@@ -719,7 +719,7 @@ def GetTargetFilesZipWithoutPostinstallConfig(input_file):
     The filename of target-files.zip that doesn't contain postinstall config.
   """
   # We should only make a copy if postinstall_config entry exists.
-  with zipfile.ZipFile(input_file, 'r') as input_zip:
+  with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip:
     if POSTINSTALL_CONFIG not in input_zip.namelist():
       return input_file
 
@@ -754,7 +754,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   shutil.copyfile(input_file, target_file)
 
-  with zipfile.ZipFile(input_file) as input_zip:
+  with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
     namelist = input_zip.namelist()
 
   input_tmp = common.UnzipTemp(input_file, RETROFIT_DAP_UNZIP_PATTERN)
@@ -822,7 +822,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   else:
     staging_file = output_file
   output_zip = zipfile.ZipFile(staging_file, "w",
-                               compression=zipfile.ZIP_DEFLATED)
+                               compression=zipfile.ZIP_DEFLATED, allowZip64=True)
 
   if source_file is not None:
     assert "ab_partitions" in OPTIONS.source_info_dict, \
@@ -893,7 +893,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
-  target_zip = zipfile.ZipFile(target_file, "r")
+  target_zip = zipfile.ZipFile(target_file, "r", allowZip64=True)
   if (target_info.get("verity") == "true" or
           target_info.get("avb_enable") == "true"):
     care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
@@ -1069,7 +1069,7 @@ def main(argv):
   if OPTIONS.extracted_input is not None:
     OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input)
   else:
-    with zipfile.ZipFile(args[0], 'r') as input_zip:
+    with zipfile.ZipFile(args[0], 'r', allowZip64=True) as input_zip:
       OPTIONS.info_dict = common.LoadInfoDict(input_zip)
 
   logger.info("--- target info ---")
@@ -1078,7 +1078,7 @@ def main(argv):
   # Load the source build dict if applicable.
   if OPTIONS.incremental_source is not None:
     OPTIONS.target_info_dict = OPTIONS.info_dict
-    with zipfile.ZipFile(OPTIONS.incremental_source, 'r') as source_zip:
+    with zipfile.ZipFile(OPTIONS.incremental_source, 'r', allowZip64=True) as source_zip:
       OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
 
     logger.info("--- source info ---")
