@@ -26,7 +26,7 @@ TARGET_2ND_ARCH := arm
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 
-ifneq ($(TARGET_BUILD_APPS)$(filter cts sdk,$(MAKECMDGOALS)),)
+ifneq ($(TARGET_BUILD_APPS)$(filter cts vts sdk,$(MAKECMDGOALS)),)
 # DO NOT USE
 # DO NOT USE
 #
