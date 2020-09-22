@@ -34,6 +34,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - gomod:      Go to the directory containing a module.
 - pathmod:    Get the directory containing a module.
 - refreshmod: Refresh list of modules for allmod/gomod/pathmod.
+- syswrite:   Remount partitions (e.g. system.img) as writable, rebooting if necessary.
 
 Environment options:
 - SANITIZE_HOST: Set to 'address' to use ASAN for all host modules.
@@ -855,6 +856,18 @@ function qpid() {
             | tr -d '\r' \
             | sed -e 1d -e 's/^[^ ]* *\([0-9]*\).* \([^ ]*\)$/\1 \2/'
     fi
+}
+
+# syswrite - disable verity, reboot if needed, and remount image
+#
+# Easy way to make system.img/etc writable
+function syswrite() {
+  adb wait-for-device && adb root || return 1
+  if [[ $(adb disable-verity | grep "reboot") ]]; then
+      echo "rebooting"
+      adb reboot && adb wait-for-device && adb root || return 1
+  fi
+  adb wait-for-device && adb remount || return 1
 }
 
 # coredump_setup - enable core dumps globally for any process
