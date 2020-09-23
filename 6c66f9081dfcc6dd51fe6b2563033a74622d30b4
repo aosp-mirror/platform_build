@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "269ed033_57129453",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-09-23T16:35:42Z",
+      "side": 1,
+      "message": "Do you want to use $(.KATI_obsolete_var BOARD_PLAT_PUBLIC_SEPOLICY_DIR, \u003cmessage\u003e) to make this a warning now?",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
