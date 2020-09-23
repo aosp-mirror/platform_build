@@ -24,7 +24,7 @@ ifneq ($(wildcard $(TARGET_DEVICE_DIR)/android_filesystem_config.h),)
 $(error Using $(TARGET_DEVICE_DIR)/android_filesystem_config.h is deprecated, please use TARGET_FS_CONFIG_GEN instead)
 endif
 
-system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
+system_android_filesystem_config := system/core/libcutils/include/private/android_filesystem_config.h
 system_capability_header := bionic/libc/kernel/uapi/linux/capability.h
 
 # List of supported vendor, oem, odm, vendor_dlkm, odm_dlkm, product and system_ext Partitions
