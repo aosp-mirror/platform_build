@@ -22,6 +22,30 @@
       "revId": "b5ac6e6f3de55a7c7859b1a90a4e705177cecac4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8da7184_0d843923",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1689978
+      },
+      "writtenOn": "2020-09-23T11:30:41Z",
+      "side": 1,
+      "message": "I agree with Justin. When I looked details about that, it looks like per-partition fingerprint and avb_salt is already resolved. In that case, the only remain problem is fingerprint of BuildInfo object(current build\u0027s fingerprint) that is using system partition\u0027s fingerprint default. If we don\u0027t have system.img, we need to use another image\u0027s fingerprint. So, if the calculation process of fingerprint will not be changed, I think this code doesn\u0027t need to be reverted. I think I need owner\u0027s confirm.",
+      "parentUuid": "914699d8_73189309",
+      "range": {
+        "startLine": 558,
+        "startChar": 8,
+        "endLine": 558,
+        "endChar": 63
+      },
+      "revId": "b5ac6e6f3de55a7c7859b1a90a4e705177cecac4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
