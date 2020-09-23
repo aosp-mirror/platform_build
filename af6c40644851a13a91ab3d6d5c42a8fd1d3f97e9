@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "36653943_2387210a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-09-23T17:28:15Z",
+      "side": 1,
+      "message": "Dan is OOO until next week. Colin could you grant OWNER approve to these changes? There are a bunch of them.",
+      "revId": "af6c40644851a13a91ab3d6d5c42a8fd1d3f97e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
