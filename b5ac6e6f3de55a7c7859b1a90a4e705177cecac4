@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "914699d8_73189309",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-09-23T10:34:16Z",
+      "side": 1,
+      "message": "Do we need to revert this?\nIf this CL is a workaround, what should be the right solution for this? Without this line, the build always fails if we don\u0027t build the system image.",
+      "range": {
+        "startLine": 558,
+        "startChar": 8,
+        "endLine": 558,
+        "endChar": 63
+      },
+      "revId": "b5ac6e6f3de55a7c7859b1a90a4e705177cecac4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
