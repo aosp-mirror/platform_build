@@ -16,6 +16,24 @@
       "revId": "b27c2e8af953bf78701b6f0a8c07db070f4e9e68",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e667f45_789f7d3f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2020-09-24T09:32:37Z",
+      "side": 1,
+      "message": "Oh, it passed. Idk if the test is flaky or not. Just in case here\u0027s the build-error link: https://android-build.googleplex.com/builds/pending/P16911943/art-linux-bionic-zipapex/latest/view/logs/build_error.log",
+      "parentUuid": "eccb4a18_799245cd",
+      "revId": "b27c2e8af953bf78701b6f0a8c07db070f4e9e68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
