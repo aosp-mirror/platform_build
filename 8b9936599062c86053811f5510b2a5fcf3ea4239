@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "225e1ee3_c117f5fe",
+        "filename": "core/tasks/tools/compatibility.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1352021
+      },
+      "writtenOn": "2020-09-24T05:13:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "48174cb4_5b31b7c8",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 106
+      },
+      "revId": "8b9936599062c86053811f5510b2a5fcf3ea4239",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cae959be_7b1f29b1",
         "filename": "core/tasks/tools/compatibility.mk",
         "patchSetId": 2
@@ -62,6 +86,30 @@
       "revId": "8b9936599062c86053811f5510b2a5fcf3ea4239",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1cbf8821_0d2fb272",
+        "filename": "core/tasks/tools/compatibility.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1352021
+      },
+      "writtenOn": "2020-09-24T05:13:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cae959be_7b1f29b1",
+      "range": {
+        "startLine": 46,
+        "startChar": 129,
+        "endLine": 46,
+        "endChar": 148
+      },
+      "revId": "8b9936599062c86053811f5510b2a5fcf3ea4239",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -88,6 +136,30 @@
     },
     {
       "key": {
+        "uuid": "bac4a0ce_4477aa2d",
+        "filename": "core/tasks/tools/compatibility.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1352021
+      },
+      "writtenOn": "2020-09-24T05:13:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03a80bea_5642325d",
+      "range": {
+        "startLine": 65,
+        "startChar": 9,
+        "endLine": 65,
+        "endChar": 11
+      },
+      "revId": "8b9936599062c86053811f5510b2a5fcf3ea4239",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5953a4ac_02687647",
         "filename": "core/tasks/tools/compatibility.mk",
         "patchSetId": 2
@@ -111,6 +183,30 @@
     },
     {
       "key": {
+        "uuid": "56835d6f_3f247f92",
+        "filename": "core/tasks/tools/compatibility.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1352021
+      },
+      "writtenOn": "2020-09-24T05:13:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5953a4ac_02687647",
+      "range": {
+        "startLine": 77,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 19
+      },
+      "revId": "8b9936599062c86053811f5510b2a5fcf3ea4239",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f90d2703_fa545946",
         "filename": "core/tasks/tools/compatibility.mk",
         "patchSetId": 2
@@ -131,6 +227,30 @@
       "revId": "8b9936599062c86053811f5510b2a5fcf3ea4239",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e19e2f5_adfe0589",
+        "filename": "core/tasks/tools/compatibility.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1352021
+      },
+      "writtenOn": "2020-09-24T05:13:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f90d2703_fa545946",
+      "range": {
+        "startLine": 79,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 19
+      },
+      "revId": "8b9936599062c86053811f5510b2a5fcf3ea4239",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
