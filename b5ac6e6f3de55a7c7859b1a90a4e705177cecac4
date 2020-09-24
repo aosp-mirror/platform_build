@@ -46,6 +46,30 @@
       "revId": "b5ac6e6f3de55a7c7859b1a90a4e705177cecac4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6302b0a9_ba39601e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2020-09-24T23:28:11Z",
+      "side": 1,
+      "message": "Right, the idea here was to fall back to vendor as a reasonable default if the other attempts failed, which likely indicates a system image wasn\u0027t built.",
+      "parentUuid": "f8da7184_0d843923",
+      "range": {
+        "startLine": 558,
+        "startChar": 8,
+        "endLine": 558,
+        "endChar": 63
+      },
+      "revId": "b5ac6e6f3de55a7c7859b1a90a4e705177cecac4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
