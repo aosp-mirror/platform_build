@@ -4879,7 +4879,7 @@ ifeq (true,$(CLANG_COVERAGE))
   $(PROFDATA_ZIP): $(SOONG_ZIP)
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION) -f $(LLVM_PROFDATA) -f $(LIBCXX)
 
-  $(call dist-for-goals,droidcore,$(PROFDATA_ZIP))
+  $(call dist-for-goals,droidcore apps_only,$(PROFDATA_ZIP))
 endif
 
 # -----------------------------------------------------------------
@@ -5460,7 +5460,3 @@ FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INS
 .PHONY: haiku
 haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
 $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
-
-# -----------------------------------------------------------------
-# The makefile for haiku line coverage.
-include $(BUILD_SYSTEM)/line_coverage.mk

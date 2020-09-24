@@ -207,8 +207,8 @@ class ELFParser(object):
   def _parse_llvm_readobj(cls, elf_file_path, header, lines):
     """Parse the output of llvm-readobj."""
     lines_it = iter(lines)
-    imported, exported = cls._parse_dynamic_symbols(lines_it)
     dt_soname, dt_needed = cls._parse_dynamic_table(elf_file_path, lines_it)
+    imported, exported = cls._parse_dynamic_symbols(lines_it)
     return ELF(dt_soname, dt_needed, imported, exported, header)
 
 
