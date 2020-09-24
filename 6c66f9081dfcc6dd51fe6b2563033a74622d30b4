@@ -16,6 +16,24 @@
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cc95a11_ffc19857",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-09-24T05:07:54Z",
+      "side": 1,
+      "message": "Nice, thanks for the suggestion.\n\nHi Felix,\nWould you upload a new patchset for this or prefer us to do so?\nFeel free to let us know.\n\nThanks,",
+      "parentUuid": "269ed033_57129453",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
