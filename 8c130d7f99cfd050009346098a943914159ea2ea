@@ -70,6 +70,30 @@
       "revId": "8c130d7f99cfd050009346098a943914159ea2ea",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "98f9179e_a7cef82a",
+        "filename": "core/board_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-09-25T07:45:39Z",
+      "side": 1,
+      "message": "I think you should probably discuss with the build team how to best achieve these \"no system image\" builds if you haven\u0027t already, before submitting random changes moving in this direction",
+      "parentUuid": "c4d28453_53ffe931",
+      "range": {
+        "startLine": 170,
+        "startChar": 0,
+        "endLine": 172,
+        "endChar": 5
+      },
+      "revId": "8c130d7f99cfd050009346098a943914159ea2ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
