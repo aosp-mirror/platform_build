@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e50fd6e_4bc33785",
+        "filename": "core/board_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-09-25T06:50:39Z",
+      "side": 1,
+      "message": "Why are we adding system to the list in the first place if WITHOUT_SYSTEM_IMAGE is set ?",
+      "range": {
+        "startLine": 170,
+        "startChar": 0,
+        "endLine": 172,
+        "endChar": 5
+      },
+      "revId": "8c130d7f99cfd050009346098a943914159ea2ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
