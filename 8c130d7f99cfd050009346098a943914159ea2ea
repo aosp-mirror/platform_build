@@ -94,6 +94,30 @@
       "revId": "8c130d7f99cfd050009346098a943914159ea2ea",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9ee9653_e4b7e937",
+        "filename": "core/board_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1689978
+      },
+      "writtenOn": "2020-09-25T08:00:55Z",
+      "side": 1,
+      "message": "Thank you for your comment. I\u0027ll discuss with build team to achieve this.",
+      "parentUuid": "98f9179e_a7cef82a",
+      "range": {
+        "startLine": 170,
+        "startChar": 0,
+        "endLine": 172,
+        "endChar": 5
+      },
+      "revId": "8c130d7f99cfd050009346098a943914159ea2ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
