@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5595c494_487d7746",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2020-09-26T09:36:28Z",
+      "side": 1,
+      "message": "I\u0027d rather get the variable change in the build system merged first, actual users can follow later. Else it\u0027s a neverending dance with Treehugger and expiring votes.",
+      "parentUuid": "fe52dffc_ca4928b2",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "269ed033_57129453",
         "filename": "core/soong_config.mk",
         "patchSetId": 7
