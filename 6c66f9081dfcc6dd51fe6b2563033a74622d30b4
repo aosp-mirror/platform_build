@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fe52dffc_ca4928b2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-09-26T09:05:36Z",
+      "side": 1,
+      "message": "Hi,\n\nhttps://android-review.googlesource.com/c/device/google/marlin/+/1316515      (+2-ed)\nhttps://android-review.googlesource.com/c/device/google/cuttlefish/+/1316477  (need rebase)\nhttps://android-review.googlesource.com/c/device/google/wahoo/+/1316478       (+2-ed)\n\nDo you want to include the above three CLs into the same topic \"board-system-ext-sepolicy\" ?\nIt\u0027s ok to submit them separately as well.\n\nhttps://android-review.googlesource.com/c/platform/packages/services/Car/+/1321014  (not needed)\nhttps://android-review.googlesource.com/c/platform/packages/services/Car/+/1321015  (will loop in Car team to +2, can probably be submitted separately).",
+      "parentUuid": "281a9072_f3f3cdd8",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "269ed033_57129453",
         "filename": "core/soong_config.mk",
         "patchSetId": 7
