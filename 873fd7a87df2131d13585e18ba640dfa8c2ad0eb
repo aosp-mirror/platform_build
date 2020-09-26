@@ -46,6 +46,30 @@
       "revId": "873fd7a87df2131d13585e18ba640dfa8c2ad0eb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e53ca89e_c31254a8",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 839,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-09-26T18:13:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "40489a07_1a06009f",
+      "range": {
+        "startLine": 795,
+        "startChar": 2,
+        "endLine": 839,
+        "endChar": 68
+      },
+      "revId": "873fd7a87df2131d13585e18ba640dfa8c2ad0eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

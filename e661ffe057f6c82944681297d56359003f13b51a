@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "6bcdb609_2cf0c23c",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-09-26T18:13:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47fbeca6_6ac99fd0",
+      "range": {
+        "startLine": 744,
+        "startChar": 9,
+        "endLine": 744,
+        "endChar": 10
+      },
+      "revId": "e661ffe057f6c82944681297d56359003f13b51a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "718b12c9_7b724bdc",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 6
