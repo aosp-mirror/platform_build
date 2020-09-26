@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "281a9072_f3f3cdd8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2020-09-26T08:36:08Z",
+      "side": 1,
+      "message": "Instead of https://android-review.googlesource.com/c/platform/system/sepolicy/+/1362721 enforcement of the new variable could be moved into platform/build with `KATI_obsolete_var`.\n\nBut for now, I\u0027d like to get this merged first and move to the enforcement later.\n\n@Bowgo @Jiyong could you get your colleagues to +2 the whole topic? I\u0027ve only included the variable change in the topic so far.\n\nThe devices using the old var have received CLs as well:\nhttps://android-review.googlesource.com/c/device/google/marlin/+/1316515\nhttps://android-review.googlesource.com/c/device/google/cuttlefish/+/1316477\nhttps://android-review.googlesource.com/c/device/google/wahoo/+/1316478\nhttps://android-review.googlesource.com/c/platform/packages/services/Car/+/1321014\nhttps://android-review.googlesource.com/c/platform/packages/services/Car/+/1321015",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "269ed033_57129453",
         "filename": "core/soong_config.mk",
         "patchSetId": 7
@@ -31,6 +48,24 @@
       "side": 1,
       "message": "Nice, thanks for the suggestion.\n\nHi Felix,\nWould you upload a new patchset for this or prefer us to do so?\nFeel free to let us know.\n\nThanks,",
       "parentUuid": "269ed033_57129453",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec4c364f_63713668",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2020-09-26T08:36:08Z",
+      "side": 1,
+      "message": "There are many places where I could emit that message, which seems most appropriate?\n\n```\n$ rg \u0027KATI_obsolete_var\u0027 -l\ncore/deprecation.mk\ncore/base_rules.mk\ncore/version_defaults.mk\ncore/product_config.mk\ncore/product.mk\ncore/main.mk\ncore/envsetup.mk\ncore/distdir.mk\ncore/config.mk\ncore/board_config.mk\ncore/definitions.mk\n```",
+      "parentUuid": "3cc95a11_ffc19857",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
