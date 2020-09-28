@@ -59,11 +59,14 @@ endif
 $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
 ifeq ($(LOCAL_IS_HOST_MODULE) $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),true,),true true)
 	$(copy-or-link-prebuilt-to-target)
+  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+	[ -x $@ ] || $(call echo-error,$@,Target of symlink is not executable)
+  endif
 else
 	$(transform-prebuilt-to-target)
-endif
-ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
 	$(hide) chmod +x $@
+  endif
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
