@@ -91,6 +91,7 @@ endif
 ifdef LOCAL_INSTALLED_MODULE
   ifneq ($(LOCAL_CHECK_ELF_FILES),)
     my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
+    my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
     include $(BUILD_SYSTEM)/check_elf_file.mk
   endif
 endif
