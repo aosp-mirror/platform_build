@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47399b26_ffe0b3d3",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1641,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-09-28T22:03:11Z",
+      "side": 1,
+      "message": "I\u0027d suggeest putting it here, it\u0027s currently in both the TARGET_BUILD_APPS and !TARGET_BUILD_UNBUNDLED cases, it might as well apply everywhere.",
+      "revId": "6b5dbcb43a7b5df1de7eaa9e2271d5b26524f9a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
