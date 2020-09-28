@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e297edc0_6f5b3c9d",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1684,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-09-28T20:15:53Z",
+      "side": 1,
+      "message": "This doesn\u0027t seem specific to EMMA_INSTRUMENT or TARGET_BUILD_APPS, maybe put it outside the conditionals?",
+      "range": {
+        "startLine": 1682,
+        "startChar": 4,
+        "endLine": 1684,
+        "endChar": 9
+      },
+      "revId": "6391e70c81474df528e3cb2b331bcaed3220974b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
