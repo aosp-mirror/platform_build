@@ -92,8 +92,8 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.minidebuginfo=true \
     dalvik.vm.dex2oat-minidebuginfo=true
 
-# Disable iorapd by default
+# Enable iorapd by default
 PRODUCT_SYSTEM_PROPERTIES += \
-    ro.iorapd.enable=false
+    ro.iorapd.enable=true
 
 PRODUCT_USES_DEFAULT_ART_CONFIG := true

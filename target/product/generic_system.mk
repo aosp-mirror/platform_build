@@ -34,7 +34,6 @@ PRODUCT_PACKAGES += \
     PartnerBookmarksProvider \
     PresencePolling \
     RcsService \
-    SafetyRegulatoryInfo \
     Stk \
     Tag \
     TimeZoneUpdater \
@@ -92,11 +91,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libhidltransport \
     libhwbinder \
-
-# Camera service uses 'libdepthphoto' for adding dynamic depth
-# metadata inside depth jpegs.
-PRODUCT_PACKAGES += \
-    libdepthphoto \
 
 PRODUCT_PACKAGES_DEBUG += \
     avbctl \
