@@ -34,6 +34,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - gomod:      Go to the directory containing a module.
 - pathmod:    Get the directory containing a module.
 - refreshmod: Refresh list of modules for allmod/gomod/pathmod.
+- syswrite:   Remount partitions (e.g. system.img) as writable, rebooting if necessary.
 
 Environment options:
 - SANITIZE_HOST: Set to 'address' to use ASAN for all host modules.
@@ -857,6 +858,18 @@ function qpid() {
     fi
 }
 
+# syswrite - disable verity, reboot if needed, and remount image
+#
+# Easy way to make system.img/etc writable
+function syswrite() {
+  adb wait-for-device && adb root || return 1
+  if [[ $(adb disable-verity | grep "reboot") ]]; then
+      echo "rebooting"
+      adb reboot && adb wait-for-device && adb root || return 1
+  fi
+  adb wait-for-device && adb remount || return 1
+}
+
 # coredump_setup - enable core dumps globally for any process
 #                  that has the core-file-size limit set correctly
 #
@@ -1611,6 +1624,41 @@ function source_vendorsetup() {
             fi
         done
     done
+}
+
+function showcommands() {
+    local T=$(gettop)
+    if [[ -z "$TARGET_PRODUCT" ]]; then
+        >&2 echo "TARGET_PRODUCT not set. Run lunch."
+        return
+    fi
+    case $(uname -s) in
+        Darwin)
+            PREBUILT_NAME=darwin-x86
+            ;;
+        Linux)
+            PREBUILT_NAME=linux-x86
+            ;;
+        *)
+            >&2 echo Unknown host $(uname -s)
+            return
+            ;;
+    esac
+    if [[ -z "$OUT_DIR" ]]; then
+      if [[ -z "$OUT_DIR_COMMON_BASE" ]]; then
+        OUT_DIR=out
+      else
+        OUT_DIR=${OUT_DIR_COMMON_BASE}/${PWD##*/}
+      fi
+    fi
+    if [[ "$1" == "--regenerate" ]]; then
+      shift 1
+      NINJA_ARGS="-t commands $@" m
+    else
+      (cd $T && prebuilts/build-tools/$PREBUILT_NAME/bin/ninja \
+          -f $OUT_DIR/combined-${TARGET_PRODUCT}.ninja \
+          -t commands "$@")
+    fi
 }
 
 validate_current_shell
