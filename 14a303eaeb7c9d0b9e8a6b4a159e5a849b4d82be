@@ -68,6 +68,24 @@
       "revId": "14a303eaeb7c9d0b9e8a6b4a159e5a849b4d82be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d357957_51a13874",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1453040
+      },
+      "writtenOn": "2020-09-29T22:51:21Z",
+      "side": 1,
+      "message": "I added ccross as a reviewer as I don\u0027t have owner permission in make repo. Without owner\u0027s approval, the CL cannot be submitted.",
+      "parentUuid": "cd503401_8900cb3b",
+      "revId": "14a303eaeb7c9d0b9e8a6b4a159e5a849b4d82be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
