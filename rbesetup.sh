@@ -1,4 +1,31 @@
-source build/envsetup.sh
+function _source_env_setup_script() {
+  local -r ENV_SETUP_SCRIPT="build/make/envsetup.sh"
+  local -r TOP_DIR=$(
+    while [[ ! -f "${ENV_SETUP_SCRIPT}" ]] && [[ "${PWD}" != "/" ]]; do
+      \cd ..
+    done
+    if [[ -f "${ENV_SETUP_SCRIPT}" ]]; then
+      echo "$(PWD= /bin/pwd -P)"
+    fi
+  )
+
+  local -r FULL_PATH_ENV_SETUP_SCRIPT="${TOP_DIR}/${ENV_SETUP_SCRIPT}"
+  if [[ ! -f "${FULL_PATH_ENV_SETUP_SCRIPT}" ]]; then
+    echo "ERROR: Unable to source ${ENV_SETUP_SCRIPT}"
+    return 1
+  fi
+
+  # Need to change directory to the repo root so vendor scripts can be sourced
+  # as well.
+  local -r CUR_DIR=$PWD
+  \cd "${TOP_DIR}"
+  source "${FULL_PATH_ENV_SETUP_SCRIPT}"
+  \cd "${CUR_DIR}"
+}
+
+# This function needs to run first as the remaining defining functions may be
+# using the envsetup.sh defined functions.
+_source_env_setup_script || return
 
 # This function prefixes the given command with appropriate variables needed
 # for the build to be executed with RBE.
@@ -28,7 +55,7 @@ function use_rbe() {
 # ANDROID_ENABLE_METRICS_UPLOAD.
 function _export_metrics_uploader() {
   local uploader_path="$(gettop)/vendor/google/misc/metrics_uploader_prebuilt/metrics_uploader.sh"
-  if [ -x "${uploader_path}" ]; then
+  if [[ -x "${uploader_path}" ]]; then
     export ANDROID_ENABLE_METRICS_UPLOAD="${uploader_path}"
   fi
 }
