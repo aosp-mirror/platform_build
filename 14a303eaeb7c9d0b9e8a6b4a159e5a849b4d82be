@@ -86,6 +86,24 @@
       "revId": "14a303eaeb7c9d0b9e8a6b4a159e5a849b4d82be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36190ded_01e2f10e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1452040
+      },
+      "writtenOn": "2020-09-29T22:54:47Z",
+      "side": 1,
+      "message": "Thanks! Sorry about all the back and forth for a one-line commit, but at least now I know how it works for the future 😊",
+      "parentUuid": "2d357957_51a13874",
+      "revId": "14a303eaeb7c9d0b9e8a6b4a159e5a849b4d82be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
