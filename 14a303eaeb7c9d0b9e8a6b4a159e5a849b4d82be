@@ -50,6 +50,24 @@
       "revId": "14a303eaeb7c9d0b9e8a6b4a159e5a849b4d82be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cd503401_8900cb3b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1452040
+      },
+      "writtenOn": "2020-09-29T22:49:04Z",
+      "side": 1,
+      "message": "That\u0027s what I set previously, but it never got automerged. I tried clicking \"Rebase\" (not sure why) and I just gave +1 to Autosubmit, but I\u0027m wondering if there are additional votes needed (like from owners)?",
+      "parentUuid": "4d39df1b_656b5171",
+      "revId": "14a303eaeb7c9d0b9e8a6b4a159e5a849b4d82be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
