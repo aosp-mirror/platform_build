@@ -16,6 +16,23 @@
       "revId": "14a303eaeb7c9d0b9e8a6b4a159e5a849b4d82be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d39df1b_656b5171",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1453040
+      },
+      "writtenOn": "2020-09-29T15:27:31Z",
+      "side": 1,
+      "message": "Just set the \"Presubmit-Ready\" to +1 (was removed because the previous vote was too old). Once presubmit is passed, the change will be submitted automatically and automerger will cherrypick to all other branches. ",
+      "revId": "14a303eaeb7c9d0b9e8a6b4a159e5a849b4d82be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
