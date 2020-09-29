@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "294c24b7_4bed7067",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1452040
+      },
+      "writtenOn": "2020-09-29T04:19:31Z",
+      "side": 1,
+      "message": "I haven\u0027t pushed to AOSP before. What\u0027s the next step I\u0027m supposed to take to get this merged?",
+      "revId": "14a303eaeb7c9d0b9e8a6b4a159e5a849b4d82be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
