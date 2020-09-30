@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9b9d670f_b216d2f5",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-09-30T15:52:29Z",
+      "side": 1,
+      "message": "Can this describe why it\u0027s different from all of the other tools that compare build results to identify various issues?\n\nbuild/soong/cmd/diff_target_files/...\nbuild/soong/scripts/diff_build_graphs.sh\nbuild/make/tools/releasetools/target_files_diff.py\ndevelopment/vndk/tools/image-diff-tool/...\nvendor/google/tools/diff_system/diff_system.sh\n(and probably more that I don\u0027t know of)\n\nIt does have some unique features, but there\u0027s a bunch of logical overlaps",
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b9a68e1c_e831e9a8",
         "filename": "tools/compare_builds.py",
         "patchSetId": 1
@@ -16,6 +33,29 @@
       "range": {
         "startLine": 4,
         "startChar": 1,
+        "endLine": 4,
+        "endChar": 79
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7bb9f072_59e1575f",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-09-30T15:52:29Z",
+      "side": 1,
+      "message": "This doesn\u0027t seem to cover a lot of the remaining hermeticity issues:\n\n * file system ordering (different checkouts on different machines will return different orders from tools like `find`)\n * changes in system-level configuration like `umask`\n * other tool differences between machines\n * changing absolute paths of the source directory (it looks like this only checks the output directory?)",
+      "range": {
+        "startLine": 4,
+        "startChar": 71,
         "endLine": 4,
         "endChar": 79
       },
@@ -41,6 +81,29 @@
         "startChar": 32,
         "endLine": 6,
         "endChar": 58
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f978123f_2afb69e0",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-09-30T15:52:29Z",
+      "side": 1,
+      "message": "This works mostly okay if there\u0027s only a single problem, but makes it tough to understand if there are other top-level issues. My plan had been to implement most of this in ninja once RBE made it feasible to actually run things multiple times during a single build, and then it could be efficiently tracked down to the actual problem points as you\u0027ve got the graph to reference. We\u0027ve already had a lot of success detecting rare clang reproducibility bugs through the RBE compare mode.",
+      "range": {
+        "startLine": 20,
+        "startChar": 56,
+        "endLine": 22,
+        "endChar": 14
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
