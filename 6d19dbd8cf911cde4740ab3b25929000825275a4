@@ -1,0 +1,303 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b9a68e1c_e831e9a8",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "Python style typically has the docstring not indented (and that seems to be what other tools I spot checked in this directory do). Any reason to have it indented here?",
+      "range": {
+        "startLine": 4,
+        "startChar": 1,
+        "endLine": 4,
+        "endChar": 79
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b0f2366_ea811d9b",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "\"have improperly have been regenerated\" -\u003e \"have been improperly regenerated\"?",
+      "range": {
+        "startLine": 6,
+        "startChar": 32,
+        "endLine": 6,
+        "endChar": 58
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d58ce14e_77545767",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "Also it seems that this is used when --subdirs is set but not empty, maybe \"when --subdirs is specified with no value\"?",
+      "range": {
+        "startLine": 132,
+        "startChar": 40,
+        "endLine": 132,
+        "endChar": 60
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a3f6b60_4f457bf5",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "--subdirs?",
+      "range": {
+        "startLine": 132,
+        "startChar": 33,
+        "endLine": 132,
+        "endChar": 39
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2592eea7_514a75da",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "What does \u0027other\u0027 refer to? Maybe just \"Mode bits differ\"?",
+      "range": {
+        "startLine": 172,
+        "startChar": 35,
+        "endLine": 172,
+        "endChar": 42
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81302342_8ec9a220",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "is not?",
+      "range": {
+        "startLine": 301,
+        "startChar": 26,
+        "endLine": 301,
+        "endChar": 31
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9b2eebf_d60e75fc",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "Copy/paste?",
+      "range": {
+        "startLine": 338,
+        "startChar": 5,
+        "endLine": 338,
+        "endChar": 61
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d67ef272_a94e6474",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "extra space",
+      "range": {
+        "startLine": 345,
+        "startChar": 19,
+        "endLine": 345,
+        "endChar": 21
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd8add79_300efed0",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "I\u0027m slightly confused about the use of work_dir vs out_dir, maybe a comment either here or where you are setting them in main() would be useful?",
+      "range": {
+        "startLine": 349,
+        "startChar": 5,
+        "endLine": 349,
+        "endChar": 25
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5fc8b2a2_b7c9badc",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "Should stderr be printed also, or does the build typically not print to stderr?",
+      "range": {
+        "startLine": 354,
+        "startChar": 30,
+        "endLine": 354,
+        "endChar": 43
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec080406_b777ef83",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "This seems like it could be significantly simplified by converting the file lists into sets and just doing a few set operations\n\ne.g.\nshared \u003d fileset1.intersection(fileset2)\nadded \u003d fileset1.difference(shared)\nremoved \u003d fileset2.difference(shared)\n# go over shared to compute the compute the diffs in the shared set",
+      "range": {
+        "startLine": 377,
+        "startChar": 2,
+        "endLine": 406,
+        "endChar": 21
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb88da5b_50539b0b",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "missing end of comment?",
+      "range": {
+        "startLine": 414,
+        "startChar": 31,
+        "endLine": 414,
+        "endChar": 32
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7982699b_c9121645",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-09-30T02:59:17Z",
+      "side": 1,
+      "message": "Might be slightly simplified by just computing the hashes of the two files.",
+      "range": {
+        "startLine": 472,
+        "startChar": 6,
+        "endLine": 472,
+        "endChar": 25
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
