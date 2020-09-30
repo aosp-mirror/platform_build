@@ -177,6 +177,24 @@
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8fef5a37_eb638a7b",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-09-30T07:05:13Z",
+      "side": 1,
+      "message": "Adding KATI_obsolete_var in core/config.mk looks better to me (I don\u0027t have strong preference tho)",
+      "parentUuid": "a1b54459_95f5602b",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
