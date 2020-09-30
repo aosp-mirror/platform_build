@@ -36,7 +36,6 @@ PRODUCT_PACKAGES += \
     RcsService \
     Stk \
     Tag \
-    TimeZoneUpdater \
 
 # OTA support
 PRODUCT_PACKAGES += \
