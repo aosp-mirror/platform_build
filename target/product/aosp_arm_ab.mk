@@ -28,7 +28,7 @@
 # All components inherited here go to system image
 # (The system image of Legacy GSI is not CSI)
 #
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_system.mk)
 
 # Enable mainline checking for excat this product name
 ifeq (aosp_arm_ab,$(TARGET_PRODUCT))

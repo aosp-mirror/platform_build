@@ -143,6 +143,8 @@ warn_patterns = [
     # Yacc warnings
     yacc('deprecate directive',
          [r".*\.yy?:.*: warning: deprecated directive: "]),
+    yacc('reduce/reduce conflicts',
+         [r".*\.yy?: warning: .+ reduce/reduce conflicts "]),
     yacc('shift/reduce conflicts',
          [r".*\.yy?: warning: .+ shift/reduce conflicts "]),
     {'category': 'yacc', 'severity': Severity.SKIP,

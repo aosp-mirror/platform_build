@@ -20,14 +20,18 @@ import os.path
 import zipfile
 
 import common
+import ota_metadata_pb2
 import test_utils
+from ota_utils import (
+    BuildLegacyOtaMetadata, CalculateRuntimeDevicesAndFingerprints,
+    FinalizeMetadata, GetPackageMetadata, PropertyFiles)
 from ota_from_target_files import (
-    _LoadOemDicts, AbOtaPropertyFiles, FinalizeMetadata,
-    GetPackageMetadata, GetTargetFilesZipForSecondaryImages,
-    GetTargetFilesZipWithoutPostinstallConfig, NonAbOtaPropertyFiles,
-    Payload, PayloadSigner, POSTINSTALL_CONFIG, PropertyFiles,
-    StreamingPropertyFiles, WriteFingerprintAssertion,
-    CalculateRuntimeDevicesAndFingerprints)
+    _LoadOemDicts, AbOtaPropertyFiles,
+    GetTargetFilesZipForSecondaryImages,
+    GetTargetFilesZipWithoutPostinstallConfig,
+    Payload, PayloadSigner, POSTINSTALL_CONFIG,
+    StreamingPropertyFiles, AB_PARTITIONS)
+from test_utils import PropertyFilesTestCase
 
 
 def construct_target_files(secondary=False):
@@ -61,7 +65,7 @@ def construct_target_files(secondary=False):
         'META/ab_partitions.txt',
         '\n'.join([partition[1] for partition in ab_partitions]))
 
-    # Create dummy images for each of them.
+    # Create fake images for each of them.
     for path, partition in ab_partitions:
       target_files_zip.writestr(
           '{}/{}.img'.format(path, partition),
@@ -142,27 +146,12 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
       ),
       'vendor.build.prop': common.PartitionBuildProps.FromDictionary(
           'vendor', {
-               'ro.vendor.build.fingerprint': 'vendor-build-fingerprint'}
+              'ro.vendor.build.fingerprint': 'vendor-build-fingerprint'}
       ),
       'property1': 'value1',
       'property2': 4096,
       'oem_fingerprint_properties': 'ro.product.device ro.product.brand',
   }
-
-  TEST_OEM_DICTS = [
-      {
-          'ro.product.brand': 'brand1',
-          'ro.product.device': 'device1',
-      },
-      {
-          'ro.product.brand': 'brand2',
-          'ro.product.device': 'device2',
-      },
-      {
-          'ro.product.brand': 'brand3',
-          'ro.product.device': 'device3',
-      },
-  ]
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
@@ -177,63 +166,71 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     common.OPTIONS.no_signing = False
     common.OPTIONS.package_key = os.path.join(self.testdata_dir, 'testkey')
     common.OPTIONS.key_passwords = {
-        common.OPTIONS.package_key : None,
+        common.OPTIONS.package_key: None,
     }
 
     common.OPTIONS.search_path = test_utils.get_search_path()
 
+  @staticmethod
+  def GetLegacyOtaMetadata(target_info, source_info=None):
+    metadata_proto = GetPackageMetadata(target_info, source_info)
+    return BuildLegacyOtaMetadata(metadata_proto)
+
   def test_GetPackageMetadata_abOta_full(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     target_info_dict['ab_update'] = 'true'
+    target_info_dict['ab_partitions'] = []
     target_info = common.BuildInfo(target_info_dict, None)
-    metadata = GetPackageMetadata(target_info)
+    metadata = self.GetLegacyOtaMetadata(target_info)
     self.assertDictEqual(
         {
-            'ota-type' : 'AB',
-            'ota-required-cache' : '0',
-            'post-build' : 'build-fingerprint-target',
-            'post-build-incremental' : 'build-version-incremental-target',
-            'post-sdk-level' : '27',
-            'post-security-patch-level' : '2017-12-01',
-            'post-timestamp' : '1500000000',
-            'pre-device' : 'product-device',
+            'ota-type': 'AB',
+            'ota-required-cache': '0',
+            'post-build': 'build-fingerprint-target',
+            'post-build-incremental': 'build-version-incremental-target',
+            'post-sdk-level': '27',
+            'post-security-patch-level': '2017-12-01',
+            'post-timestamp': '1500000000',
+            'pre-device': 'product-device',
         },
         metadata)
 
   def test_GetPackageMetadata_abOta_incremental(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     target_info_dict['ab_update'] = 'true'
+    target_info_dict['ab_partitions'] = []
     target_info = common.BuildInfo(target_info_dict, None)
     source_info = common.BuildInfo(self.TEST_SOURCE_INFO_DICT, None)
     common.OPTIONS.incremental_source = ''
-    metadata = GetPackageMetadata(target_info, source_info)
+    metadata = self.GetLegacyOtaMetadata(target_info, source_info)
     self.assertDictEqual(
         {
-            'ota-type' : 'AB',
-            'ota-required-cache' : '0',
-            'post-build' : 'build-fingerprint-target',
-            'post-build-incremental' : 'build-version-incremental-target',
-            'post-sdk-level' : '27',
-            'post-security-patch-level' : '2017-12-01',
-            'post-timestamp' : '1500000000',
-            'pre-device' : 'product-device',
-            'pre-build' : 'build-fingerprint-source',
-            'pre-build-incremental' : 'build-version-incremental-source',
+            'ota-type': 'AB',
+            'ota-required-cache': '0',
+            'post-build': 'build-fingerprint-target',
+            'post-build-incremental': 'build-version-incremental-target',
+            'post-sdk-level': '27',
+            'post-security-patch-level': '2017-12-01',
+            'post-timestamp': '1500000000',
+            'pre-device': 'product-device',
+            'pre-build': 'build-fingerprint-source',
+            'pre-build-incremental': 'build-version-incremental-source',
         },
         metadata)
 
   def test_GetPackageMetadata_nonAbOta_full(self):
     target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
-    metadata = GetPackageMetadata(target_info)
+    metadata = self.GetLegacyOtaMetadata(target_info)
     self.assertDictEqual(
         {
-            'ota-type' : 'BLOCK',
-            'post-build' : 'build-fingerprint-target',
-            'post-build-incremental' : 'build-version-incremental-target',
-            'post-sdk-level' : '27',
-            'post-security-patch-level' : '2017-12-01',
-            'post-timestamp' : '1500000000',
-            'pre-device' : 'product-device',
+            'ota-type': 'BLOCK',
+            'ota-required-cache': '0',
+            'post-build': 'build-fingerprint-target',
+            'post-build-incremental': 'build-version-incremental-target',
+            'post-sdk-level': '27',
+            'post-security-patch-level': '2017-12-01',
+            'post-timestamp': '1500000000',
+            'pre-device': 'product-device',
         },
         metadata)
 
@@ -241,52 +238,55 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     source_info = common.BuildInfo(self.TEST_SOURCE_INFO_DICT, None)
     common.OPTIONS.incremental_source = ''
-    metadata = GetPackageMetadata(target_info, source_info)
+    metadata = self.GetLegacyOtaMetadata(target_info, source_info)
     self.assertDictEqual(
         {
-            'ota-type' : 'BLOCK',
-            'post-build' : 'build-fingerprint-target',
-            'post-build-incremental' : 'build-version-incremental-target',
-            'post-sdk-level' : '27',
-            'post-security-patch-level' : '2017-12-01',
-            'post-timestamp' : '1500000000',
-            'pre-device' : 'product-device',
-            'pre-build' : 'build-fingerprint-source',
-            'pre-build-incremental' : 'build-version-incremental-source',
+            'ota-type': 'BLOCK',
+            'ota-required-cache': '0',
+            'post-build': 'build-fingerprint-target',
+            'post-build-incremental': 'build-version-incremental-target',
+            'post-sdk-level': '27',
+            'post-security-patch-level': '2017-12-01',
+            'post-timestamp': '1500000000',
+            'pre-device': 'product-device',
+            'pre-build': 'build-fingerprint-source',
+            'pre-build-incremental': 'build-version-incremental-source',
         },
         metadata)
 
   def test_GetPackageMetadata_wipe(self):
     target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     common.OPTIONS.wipe_user_data = True
-    metadata = GetPackageMetadata(target_info)
+    metadata = self.GetLegacyOtaMetadata(target_info)
     self.assertDictEqual(
         {
-            'ota-type' : 'BLOCK',
-            'ota-wipe' : 'yes',
-            'post-build' : 'build-fingerprint-target',
-            'post-build-incremental' : 'build-version-incremental-target',
-            'post-sdk-level' : '27',
-            'post-security-patch-level' : '2017-12-01',
-            'post-timestamp' : '1500000000',
-            'pre-device' : 'product-device',
+            'ota-type': 'BLOCK',
+            'ota-required-cache': '0',
+            'ota-wipe': 'yes',
+            'post-build': 'build-fingerprint-target',
+            'post-build-incremental': 'build-version-incremental-target',
+            'post-sdk-level': '27',
+            'post-security-patch-level': '2017-12-01',
+            'post-timestamp': '1500000000',
+            'pre-device': 'product-device',
         },
         metadata)
 
   def test_GetPackageMetadata_retrofitDynamicPartitions(self):
     target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     common.OPTIONS.retrofit_dynamic_partitions = True
-    metadata = GetPackageMetadata(target_info)
+    metadata = self.GetLegacyOtaMetadata(target_info)
     self.assertDictEqual(
         {
-            'ota-retrofit-dynamic-partitions' : 'yes',
-            'ota-type' : 'BLOCK',
-            'post-build' : 'build-fingerprint-target',
-            'post-build-incremental' : 'build-version-incremental-target',
-            'post-sdk-level' : '27',
-            'post-security-patch-level' : '2017-12-01',
-            'post-timestamp' : '1500000000',
-            'pre-device' : 'product-device',
+            'ota-retrofit-dynamic-partitions': 'yes',
+            'ota-type': 'BLOCK',
+            'ota-required-cache': '0',
+            'post-build': 'build-fingerprint-target',
+            'post-build-incremental': 'build-version-incremental-target',
+            'post-sdk-level': '27',
+            'post-security-patch-level': '2017-12-01',
+            'post-timestamp': '1500000000',
+            'pre-device': 'product-device',
         },
         metadata)
 
@@ -306,7 +306,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     target_info = common.BuildInfo(target_info_dict, None)
     source_info = common.BuildInfo(source_info_dict, None)
     common.OPTIONS.incremental_source = ''
-    self.assertRaises(RuntimeError, GetPackageMetadata, target_info,
+    self.assertRaises(RuntimeError, self.GetLegacyOtaMetadata, target_info,
                       source_info)
 
   def test_GetPackageMetadata_downgrade(self):
@@ -320,20 +320,22 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     common.OPTIONS.incremental_source = ''
     common.OPTIONS.downgrade = True
     common.OPTIONS.wipe_user_data = True
-    metadata = GetPackageMetadata(target_info, source_info)
+    metadata = self.GetLegacyOtaMetadata(target_info, source_info)
+
     self.assertDictEqual(
         {
-            'ota-downgrade' : 'yes',
-            'ota-type' : 'BLOCK',
-            'ota-wipe' : 'yes',
-            'post-build' : 'build-fingerprint-target',
-            'post-build-incremental' : 'build-version-incremental-target',
-            'post-sdk-level' : '27',
-            'post-security-patch-level' : '2017-12-01',
-            'post-timestamp' : '1400000000',
-            'pre-device' : 'product-device',
-            'pre-build' : 'build-fingerprint-source',
-            'pre-build-incremental' : 'build-version-incremental-source',
+            'ota-downgrade': 'yes',
+            'ota-type': 'BLOCK',
+            'ota-required-cache': '0',
+            'ota-wipe': 'yes',
+            'post-build': 'build-fingerprint-target',
+            'post-build-incremental': 'build-version-incremental-target',
+            'post-sdk-level': '27',
+            'post-security-patch-level': '2017-12-01',
+            'post-timestamp': '1400000000',
+            'pre-device': 'product-device',
+            'pre-build': 'build-fingerprint-source',
+            'pre-build-incremental': 'build-version-incremental-source',
         },
         metadata)
 
@@ -477,13 +479,13 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
             'A' * 1024 * 1024 * 1024,
             zipfile.ZIP_STORED)
 
-    metadata = {}
+    metadata = ota_metadata_pb2.OtaMetadata()
     output_file = common.MakeTempFile(suffix='.zip')
     needed_property_files = (
         TestPropertyFiles(),
     )
     FinalizeMetadata(metadata, zip_file, output_file, needed_property_files)
-    self.assertIn('ota-test-property-files', metadata)
+    self.assertIn('ota-test-property-files', metadata.property_files)
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_FinalizeMetadata(self):
@@ -521,66 +523,13 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
           'A' * 1024 * 1024,
           zipfile.ZIP_STORED)
 
-    metadata = {}
+    metadata = ota_metadata_pb2.OtaMetadata()
     needed_property_files = (
         TestPropertyFiles(),
     )
     output_file = common.MakeTempFile(suffix='.zip')
     FinalizeMetadata(metadata, zip_file, output_file, needed_property_files)
-    self.assertIn('ota-test-property-files', metadata)
-
-  def test_WriteFingerprintAssertion_without_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
-    source_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
-    source_info_dict['build.prop'].build_props['ro.build.fingerprint'] = (
-        'source-build-fingerprint')
-    source_info = common.BuildInfo(source_info_dict, None)
-
-    script_writer = test_utils.MockScriptWriter()
-    WriteFingerprintAssertion(script_writer, target_info, source_info)
-    self.assertEqual(
-        [('AssertSomeFingerprint', 'source-build-fingerprint',
-          'build-fingerprint-target')],
-        script_writer.lines)
-
-  def test_WriteFingerprintAssertion_with_source_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
-    source_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-
-    script_writer = test_utils.MockScriptWriter()
-    WriteFingerprintAssertion(script_writer, target_info, source_info)
-    self.assertEqual(
-        [('AssertFingerprintOrThumbprint', 'build-fingerprint-target',
-          'build-thumbprint')],
-        script_writer.lines)
-
-  def test_WriteFingerprintAssertion_with_target_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    source_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
-
-    script_writer = test_utils.MockScriptWriter()
-    WriteFingerprintAssertion(script_writer, target_info, source_info)
-    self.assertEqual(
-        [('AssertFingerprintOrThumbprint', 'build-fingerprint-target',
-          'build-thumbprint')],
-        script_writer.lines)
-
-  def test_WriteFingerprintAssertion_with_both_oem_props(self):
-    target_info = common.BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
-                                   self.TEST_OEM_DICTS)
-    source_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
-    source_info_dict['build.prop'].build_props['ro.build.thumbprint'] = (
-        'source-build-thumbprint')
-    source_info = common.BuildInfo(source_info_dict, self.TEST_OEM_DICTS)
-
-    script_writer = test_utils.MockScriptWriter()
-    WriteFingerprintAssertion(script_writer, target_info, source_info)
-    self.assertEqual(
-        [('AssertSomeThumbprint', 'build-thumbprint',
-          'source-build-thumbprint')],
-        script_writer.lines)
+    self.assertIn('ota-test-property-files', metadata.property_files)
 
 
 class TestPropertyFiles(PropertyFiles):
@@ -599,40 +548,7 @@ class TestPropertyFiles(PropertyFiles):
     )
 
 
-class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
-
-  def setUp(self):
-    common.OPTIONS.no_signing = False
-
-  @staticmethod
-  def construct_zip_package(entries):
-    zip_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(zip_file, 'w') as zip_fp:
-      for entry in entries:
-        zip_fp.writestr(
-            entry,
-            entry.replace('.', '-').upper(),
-            zipfile.ZIP_STORED)
-    return zip_file
-
-  @staticmethod
-  def _parse_property_files_string(data):
-    result = {}
-    for token in data.split(','):
-      name, info = token.split(':', 1)
-      result[name] = info
-    return result
-
-  def _verify_entries(self, input_file, tokens, entries):
-    for entry in entries:
-      offset, size = map(int, tokens[entry].split(':'))
-      with open(input_file, 'rb') as input_fp:
-        input_fp.seek(offset)
-        if entry == 'metadata':
-          expected = b'META-INF/COM/ANDROID/METADATA'
-        else:
-          expected = entry.replace('.', '-').upper().encode()
-        self.assertEqual(expected, input_fp.read(size))
+class PropertyFilesTest(PropertyFilesTestCase):
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_Compute(self):
@@ -646,7 +562,7 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
-    self.assertEqual(3, len(tokens))
+    self.assertEqual(4, len(tokens))
     self._verify_entries(zip_file, tokens, entries)
 
   def test_Compute_withOptionalEntries(self):
@@ -662,7 +578,7 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
-    self.assertEqual(5, len(tokens))
+    self.assertEqual(6, len(tokens))
     self._verify_entries(zip_file, tokens, entries)
 
   def test_Compute_missingRequiredEntry(self):
@@ -680,6 +596,7 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
         'required-entry1',
         'required-entry2',
         'META-INF/com/android/metadata',
+        'META-INF/com/android/metadata.pb',
     ]
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
@@ -689,10 +606,11 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
       streaming_metadata = property_files.Finalize(zip_fp, len(raw_metadata))
     tokens = self._parse_property_files_string(streaming_metadata)
 
-    self.assertEqual(3, len(tokens))
+    self.assertEqual(4, len(tokens))
     # 'META-INF/com/android/metadata' will be key'd as 'metadata' in the
     # streaming metadata.
     entries[2] = 'metadata'
+    entries[3] = 'metadata.pb'
     self._verify_entries(zip_file, tokens, entries)
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -703,6 +621,7 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
         'optional-entry1',
         'optional-entry2',
         'META-INF/com/android/metadata',
+        'META-INF/com/android/metadata.pb',
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
@@ -737,6 +656,7 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
         'optional-entry1',
         'optional-entry2',
         'META-INF/com/android/metadata',
+        'META-INF/com/android/metadata.pb',
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
@@ -753,8 +673,8 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
           AssertionError, property_files.Verify, zip_fp, raw_metadata + 'x')
 
 
-class StreamingPropertyFilesTest(PropertyFilesTest):
-  """Additional sanity checks specialized for StreamingPropertyFiles."""
+class StreamingPropertyFilesTest(PropertyFilesTestCase):
+  """Additional validity checks specialized for StreamingPropertyFiles."""
 
   def test_init(self):
     property_files = StreamingPropertyFiles()
@@ -786,7 +706,7 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
-    self.assertEqual(5, len(tokens))
+    self.assertEqual(6, len(tokens))
     self._verify_entries(zip_file, tokens, entries)
 
   def test_Finalize(self):
@@ -796,6 +716,7 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
         'care_map.txt',
         'compatibility.zip',
         'META-INF/com/android/metadata',
+        'META-INF/com/android/metadata.pb',
     ]
     zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
@@ -805,10 +726,11 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
       streaming_metadata = property_files.Finalize(zip_fp, len(raw_metadata))
     tokens = self._parse_property_files_string(streaming_metadata)
 
-    self.assertEqual(5, len(tokens))
+    self.assertEqual(6, len(tokens))
     # 'META-INF/com/android/metadata' will be key'd as 'metadata' in the
     # streaming metadata.
     entries[4] = 'metadata'
+    entries[5] = 'metadata.pb'
     self._verify_entries(zip_file, tokens, entries)
 
   def test_Verify(self):
@@ -818,6 +740,7 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
         'care_map.txt',
         'compatibility.zip',
         'META-INF/com/android/metadata',
+        'META-INF/com/android/metadata.pb',
     )
     zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
@@ -834,8 +757,8 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
           AssertionError, property_files.Verify, zip_fp, raw_metadata + 'x')
 
 
-class AbOtaPropertyFilesTest(PropertyFilesTest):
-  """Additional sanity checks specialized for AbOtaPropertyFiles."""
+class AbOtaPropertyFilesTest(PropertyFilesTestCase):
+  """Additional validity checks specialized for AbOtaPropertyFiles."""
 
   # The size for payload and metadata signature size.
   SIGNATURE_SIZE = 256
@@ -849,7 +772,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
     common.OPTIONS.payload_signer_args = None
     common.OPTIONS.package_key = os.path.join(self.testdata_dir, 'testkey')
     common.OPTIONS.key_passwords = {
-        common.OPTIONS.package_key : None,
+        common.OPTIONS.package_key: None,
     }
 
   def test_init(self):
@@ -954,6 +877,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
       # Put META-INF/com/android/metadata if needed.
       if with_metadata:
         entries.append('META-INF/com/android/metadata')
+        entries.append('META-INF/com/android/metadata.pb')
 
       for entry in entries:
         zip_fp.writestr(
@@ -969,9 +893,9 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
-    # "6" indcludes the four entries above, one metadata entry, and one entry
+    # "7" indcludes the four entries above, two metadata entries, and one entry
     # for payload-metadata.bin.
-    self.assertEqual(6, len(tokens))
+    self.assertEqual(7, len(tokens))
     self._verify_entries(
         zip_file, tokens, ('care_map.txt', 'compatibility.zip'))
 
@@ -982,12 +906,13 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
-      property_files_string = property_files.Finalize(zip_fp, len(raw_metadata))
+      property_files_string = property_files.Finalize(
+          zip_fp, len(raw_metadata))
 
     tokens = self._parse_property_files_string(property_files_string)
-    # "6" indcludes the four entries above, one metadata entry, and one entry
+    # "7" includes the four entries above, two metadata entries, and one entry
     # for payload-metadata.bin.
-    self.assertEqual(6, len(tokens))
+    self.assertEqual(7, len(tokens))
     self._verify_entries(
         zip_file, tokens, ('care_map.txt', 'compatibility.zip'))
 
@@ -996,56 +921,6 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
     zip_file = self.construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
-      raw_metadata = property_files.GetPropertyFilesString(
-          zip_fp, reserve_space=False)
-
-      property_files.Verify(zip_fp, raw_metadata)
-
-
-class NonAbOtaPropertyFilesTest(PropertyFilesTest):
-  """Additional sanity checks specialized for NonAbOtaPropertyFiles."""
-
-  def test_init(self):
-    property_files = NonAbOtaPropertyFiles()
-    self.assertEqual('ota-property-files', property_files.name)
-    self.assertEqual((), property_files.required)
-    self.assertEqual((), property_files.optional)
-
-  def test_Compute(self):
-    entries = ()
-    zip_file = self.construct_zip_package(entries)
-    property_files = NonAbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file) as zip_fp:
-      property_files_string = property_files.Compute(zip_fp)
-
-    tokens = self._parse_property_files_string(property_files_string)
-    self.assertEqual(1, len(tokens))
-    self._verify_entries(zip_file, tokens, entries)
-
-  def test_Finalize(self):
-    entries = [
-        'META-INF/com/android/metadata',
-    ]
-    zip_file = self.construct_zip_package(entries)
-    property_files = NonAbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file) as zip_fp:
-      raw_metadata = property_files.GetPropertyFilesString(
-          zip_fp, reserve_space=False)
-      property_files_string = property_files.Finalize(zip_fp, len(raw_metadata))
-    tokens = self._parse_property_files_string(property_files_string)
-
-    self.assertEqual(1, len(tokens))
-    # 'META-INF/com/android/metadata' will be key'd as 'metadata'.
-    entries[0] = 'metadata'
-    self._verify_entries(zip_file, tokens, entries)
-
-  def test_Verify(self):
-    entries = (
-        'META-INF/com/android/metadata',
-    )
-    zip_file = self.construct_zip_package(entries)
-    property_files = NonAbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file) as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
 
@@ -1065,7 +940,7 @@ class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
     common.OPTIONS.payload_signer_args = []
     common.OPTIONS.package_key = os.path.join(self.testdata_dir, 'testkey')
     common.OPTIONS.key_passwords = {
-        common.OPTIONS.package_key : None,
+        common.OPTIONS.package_key: None,
     }
 
   def _assertFilesEqual(self, file1, file2):
@@ -1083,7 +958,7 @@ class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
     common.OPTIONS.package_key = os.path.join(
         self.testdata_dir, 'testkey_with_passwd')
     common.OPTIONS.key_passwords = {
-        common.OPTIONS.package_key : 'foo',
+        common.OPTIONS.package_key: 'foo',
     }
     payload_signer = PayloadSigner()
     self.assertEqual('openssl', payload_signer.signer)
@@ -1160,7 +1035,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     common.OPTIONS.payload_signer_args = None
     common.OPTIONS.package_key = os.path.join(self.testdata_dir, 'testkey')
     common.OPTIONS.key_passwords = {
-        common.OPTIONS.package_key : None,
+        common.OPTIONS.package_key: None,
     }
 
   @staticmethod
@@ -1315,8 +1190,8 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
       # Then assert these entries are stored.
       for entry_info in verify_zip.infolist():
         if entry_info.filename not in (
-            Payload.SECONDARY_PAYLOAD_BIN,
-            Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT):
+                Payload.SECONDARY_PAYLOAD_BIN,
+                Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT):
           continue
         self.assertEqual(zipfile.ZIP_STORED, entry_info.compress_type)
 
@@ -1326,6 +1201,7 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
       'recovery_api_version=3',
       'fstab_version=2',
       'recovery_as_boot=true',
+      'ab_update=true',
   ]
 
   BUILD_PROP = [
@@ -1336,10 +1212,29 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
       'ro.build.tags=build-tags',
       'ro.build.version.sdk=30',
       'ro.build.version.security_patch=2020',
-      'ro.build.date.utc=12345678'
+      'ro.build.date.utc=12345678',
+      'ro.system.build.version.release=version-release',
+      'ro.system.build.id=build-id',
+      'ro.system.build.version.incremental=version-incremental',
+      'ro.system.build.type=build-type',
+      'ro.system.build.tags=build-tags',
+      'ro.system.build.version.sdk=30',
+      'ro.system.build.version.security_patch=2020',
+      'ro.system.build.date.utc=12345678',
+      'ro.product.system.brand=generic',
+      'ro.product.system.name=generic',
+      'ro.product.system.device=generic',
   ]
 
   VENDOR_BUILD_PROP = [
+      'ro.vendor.build.version.release=version-release',
+      'ro.vendor.build.id=build-id',
+      'ro.vendor.build.version.incremental=version-incremental',
+      'ro.vendor.build.type=build-type',
+      'ro.vendor.build.tags=build-tags',
+      'ro.vendor.build.version.sdk=30',
+      'ro.vendor.build.version.security_patch=2020',
+      'ro.vendor.build.date.utc=12345678',
       'ro.product.vendor.brand=vendor-product-brand',
       'ro.product.vendor.name=vendor-product-name',
       'ro.product.vendor.device=vendor-product-device'
@@ -1468,6 +1363,7 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
         'ro.product.vendor.name=vendor-product-std',
         'VENDOR/etc/build_pro.prop':
         'ro.product.vendor.name=vendor-product-pro',
+        AB_PARTITIONS: '\n'.join(['system', 'vendor']),
     }, self.test_dir)
 
     common.OPTIONS.boot_variable_file = common.MakeTempFile()
@@ -1475,8 +1371,8 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
       f.write('ro.boot.sku_name=std,pro')
 
     build_info = common.BuildInfo(common.LoadInfoDict(self.test_dir))
-    metadata = GetPackageMetadata(build_info)
-    self.assertEqual('vendor-product-device', metadata['pre-device'])
+    metadata_dict = BuildLegacyOtaMetadata(GetPackageMetadata(build_info))
+    self.assertEqual('vendor-product-device', metadata_dict['pre-device'])
     fingerprints = [
         self.constructFingerprint(
             'vendor-product-brand/vendor-product-name/vendor-product-device'),
@@ -1485,7 +1381,33 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
         self.constructFingerprint(
             'vendor-product-brand/vendor-product-std/vendor-product-device'),
     ]
-    self.assertEqual('|'.join(fingerprints), metadata['post-build'])
+    self.assertEqual('|'.join(fingerprints), metadata_dict['post-build'])
+
+  def CheckMetadataEqual(self, metadata_dict, metadata_proto):
+    post_build = metadata_proto.postcondition
+    self.assertEqual('|'.join(post_build.build),
+                     metadata_dict['post-build'])
+    self.assertEqual(post_build.build_incremental,
+                     metadata_dict['post-build-incremental'])
+    self.assertEqual(post_build.sdk_level,
+                     metadata_dict['post-sdk-level'])
+    self.assertEqual(post_build.security_patch_level,
+                     metadata_dict['post-security-patch-level'])
+
+    if metadata_proto.type == ota_metadata_pb2.OtaMetadata.AB:
+      ota_type = 'AB'
+    elif metadata_proto.type == ota_metadata_pb2.OtaMetadata.BLOCK:
+      ota_type = 'BLOCK'
+    else:
+      ota_type = ''
+    self.assertEqual(ota_type, metadata_dict['ota-type'])
+    self.assertEqual(metadata_proto.wipe,
+                     metadata_dict.get('ota-wipe') == 'yes')
+    self.assertEqual(metadata_proto.required_cache,
+                     int(metadata_dict.get('ota-required-cache', 0)))
+    self.assertEqual(metadata_proto.retrofit_dynamic_partitions,
+                     metadata_dict.get(
+                         'ota-retrofit-dynamic-partitions') == 'yes')
 
   def test_GetPackageMetadata_incremental_package(self):
     vendor_build_prop = copy.deepcopy(self.VENDOR_BUILD_PROP)
@@ -1493,6 +1415,8 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
         'import /vendor/etc/build_${ro.boot.sku_name}.prop',
     ])
     self.writeFiles({
+        'META/misc_info.txt': '\n'.join(self.MISC_INFO),
+        'META/ab_partitions.txt': '\n'.join(['system', 'vendor', 'product']),
         'SYSTEM/build.prop': '\n'.join(self.BUILD_PROP),
         'VENDOR/build.prop': '\n'.join(vendor_build_prop),
         'VENDOR/etc/build_std.prop':
@@ -1514,10 +1438,22 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
         'ro.build.tags=build-tags',
         'ro.build.version.sdk=29',
         'ro.build.version.security_patch=2020',
-        'ro.build.date.utc=12340000'
+        'ro.build.date.utc=12340000',
+        'ro.system.build.version.release=source-version-release',
+        'ro.system.build.id=source-build-id',
+        'ro.system.build.version.incremental=source-version-incremental',
+        'ro.system.build.type=build-type',
+        'ro.system.build.tags=build-tags',
+        'ro.system.build.version.sdk=29',
+        'ro.system.build.version.security_patch=2020',
+        'ro.system.build.date.utc=12340000',
+        'ro.product.system.brand=generic',
+        'ro.product.system.name=generic',
+        'ro.product.system.device=generic',
     ]
     self.writeFiles({
         'META/misc_info.txt': '\n'.join(self.MISC_INFO),
+        'META/ab_partitions.txt': '\n'.join(['system', 'vendor', 'product']),
         'SYSTEM/build.prop': '\n'.join(source_build_prop),
         'VENDOR/build.prop': '\n'.join(vendor_build_prop),
         'VENDOR/etc/build_std.prop':
@@ -1530,21 +1466,22 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
     target_info = common.BuildInfo(common.LoadInfoDict(self.test_dir))
     source_info = common.BuildInfo(common.LoadInfoDict(source_dir))
 
-    metadata = GetPackageMetadata(target_info, source_info)
+    metadata_proto = GetPackageMetadata(target_info, source_info)
+    metadata_dict = BuildLegacyOtaMetadata(metadata_proto)
     self.assertEqual(
         'vendor-device-pro|vendor-device-std|vendor-product-device',
-        metadata['pre-device'])
-    suffix = ':source-version-release/source-build-id/' \
-             'source-version-incremental:build-type/build-tags'
+        metadata_dict['pre-device'])
+    source_suffix = ':source-version-release/source-build-id/' \
+                    'source-version-incremental:build-type/build-tags'
     pre_fingerprints = [
         'vendor-product-brand/vendor-product-name/vendor-device-pro'
-        '{}'.format(suffix),
+        '{}'.format(source_suffix),
         'vendor-product-brand/vendor-product-name/vendor-device-std'
-        '{}'.format(suffix),
+        '{}'.format(source_suffix),
         'vendor-product-brand/vendor-product-name/vendor-product-device'
-        '{}'.format(suffix),
+        '{}'.format(source_suffix),
     ]
-    self.assertEqual('|'.join(pre_fingerprints), metadata['pre-build'])
+    self.assertEqual('|'.join(pre_fingerprints), metadata_dict['pre-build'])
 
     post_fingerprints = [
         self.constructFingerprint(
@@ -1554,4 +1491,31 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
         self.constructFingerprint(
             'vendor-product-brand/vendor-product-name/vendor-product-device'),
     ]
-    self.assertEqual('|'.join(post_fingerprints), metadata['post-build'])
+    self.assertEqual('|'.join(post_fingerprints), metadata_dict['post-build'])
+
+    self.CheckMetadataEqual(metadata_dict, metadata_proto)
+
+    pre_partition_states = metadata_proto.precondition.partition_state
+    self.assertEqual(2, len(pre_partition_states))
+    self.assertEqual('system', pre_partition_states[0].partition_name)
+    self.assertEqual(['generic'], pre_partition_states[0].device)
+    self.assertEqual(['generic/generic/generic{}'.format(source_suffix)],
+                     pre_partition_states[0].build)
+
+    self.assertEqual('vendor', pre_partition_states[1].partition_name)
+    self.assertEqual(['vendor-device-pro', 'vendor-device-std',
+                      'vendor-product-device'], pre_partition_states[1].device)
+    vendor_fingerprints = post_fingerprints
+    self.assertEqual(vendor_fingerprints, pre_partition_states[1].build)
+
+    post_partition_states = metadata_proto.postcondition.partition_state
+    self.assertEqual(2, len(post_partition_states))
+    self.assertEqual('system', post_partition_states[0].partition_name)
+    self.assertEqual(['generic'], post_partition_states[0].device)
+    self.assertEqual([self.constructFingerprint('generic/generic/generic')],
+                     post_partition_states[0].build)
+
+    self.assertEqual('vendor', post_partition_states[1].partition_name)
+    self.assertEqual(['vendor-device-pro', 'vendor-device-std',
+                      'vendor-product-device'], post_partition_states[1].device)
+    self.assertEqual(vendor_fingerprints, post_partition_states[1].build)

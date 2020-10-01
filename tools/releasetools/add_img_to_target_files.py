@@ -296,6 +296,21 @@ def AddVendorDlkm(output_zip):
       block_list=block_list)
   return img.name
 
+def AddOdmDlkm(output_zip):
+  """Turn the contents of OdmDlkm into an odm_dlkm image and store it in output_zip."""
+
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "odm_dlkm.img")
+  if os.path.exists(img.name):
+    logger.info("odm_dlkm.img already exists; no need to rebuild...")
+    return img.name
+
+  block_list = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "odm_dlkm.map")
+  CreateImage(
+      OPTIONS.input_tmp, OPTIONS.info_dict, "odm_dlkm", img,
+      block_list=block_list)
+  return img.name
+
 
 def AddDtbo(output_zip):
   """Adds the DTBO image.
@@ -724,6 +739,18 @@ def ReplaceUpdatedFiles(zip_filename, files_list):
   common.ZipClose(output_zip)
 
 
+def HasPartition(partition_name):
+  """Determines if the target files archive should build a given partition."""
+
+  return ((os.path.isdir(
+      os.path.join(OPTIONS.input_tmp, partition_name.upper())) and
+           OPTIONS.info_dict.get(
+               "building_{}_image".format(partition_name)) == "true") or
+          os.path.exists(
+              os.path.join(OPTIONS.input_tmp, "IMAGES",
+                           "{}.img".format(partition_name))))
+
+
 def AddImagesToTargetFiles(filename):
   """Creates and adds images (boot/recovery/system/...) to a target_files.zip.
 
@@ -752,42 +779,16 @@ def AddImagesToTargetFiles(filename):
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
   has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
 
-  # {vendor,odm,product,system_ext,vendor_dlkm}.img are unlike system.img or
-  # system_other.img. Because it could be built from source, or dropped into
-  # target_files.zip as a prebuilt blob. We consider either of them as
-  # {vendor,product,system_ext}.img being available, which could be
-  # used when generating vbmeta.img for AVB.
-  has_vendor = ((os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR")) and
-                 OPTIONS.info_dict.get("building_vendor_image") == "true") or
-                os.path.exists(
-                    os.path.join(OPTIONS.input_tmp, "IMAGES", "vendor.img")))
-  has_odm = ((os.path.isdir(os.path.join(OPTIONS.input_tmp, "ODM")) and
-              OPTIONS.info_dict.get("building_odm_image") == "true") or
-             os.path.exists(
-                 os.path.join(OPTIONS.input_tmp, "IMAGES", "odm.img")))
-  has_vendor_dlkm = ((os.path.isdir(os.path.join(OPTIONS.input_tmp,
-                                                 "VENDOR_DLKM")) and
-                      OPTIONS.info_dict.get("building_vendor_dlkm_image")
-                      == "true") or
-                     os.path.exists(
-                         os.path.join(OPTIONS.input_tmp, "IMAGES",
-                                      "vendor_dlkm.img")))
-  has_product = ((os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) and
-                  OPTIONS.info_dict.get("building_product_image") == "true") or
-                 os.path.exists(
-                     os.path.join(OPTIONS.input_tmp, "IMAGES", "product.img")))
-  has_system_ext = (
-      (os.path.isdir(os.path.join(OPTIONS.input_tmp, "SYSTEM_EXT")) and
-       OPTIONS.info_dict.get("building_system_ext_image") == "true") or
-      os.path.exists(
-          os.path.join(OPTIONS.input_tmp, "IMAGES", "system_ext.img")))
-  has_system = (
-      os.path.isdir(os.path.join(OPTIONS.input_tmp, "SYSTEM")) and
-      OPTIONS.info_dict.get("building_system_image") == "true")
-
-  has_system_other = (
-      os.path.isdir(os.path.join(OPTIONS.input_tmp, "SYSTEM_OTHER")) and
-      OPTIONS.info_dict.get("building_system_other_image") == "true")
+  # {vendor,odm,product,system_ext,vendor_dlkm,odm_dlkm, system, system_other}.img
+  # can be built from source, or  dropped into target_files.zip as a prebuilt blob.
+  has_vendor = HasPartition("vendor")
+  has_odm = HasPartition("odm")
+  has_vendor_dlkm = HasPartition("vendor_dlkm")
+  has_odm_dlkm = HasPartition("odm_dlkm")
+  has_product = HasPartition("product")
+  has_system_ext = HasPartition("system_ext")
+  has_system = HasPartition("system")
+  has_system_other = HasPartition("system_other")
   has_userdata = OPTIONS.info_dict.get("building_userdata_image") == "true"
   has_cache = OPTIONS.info_dict.get("building_cache_image") == "true"
 
@@ -900,6 +901,10 @@ def AddImagesToTargetFiles(filename):
   if has_vendor_dlkm:
     banner("vendor_dlkm")
     partitions['vendor_dlkm'] = AddVendorDlkm(output_zip)
+
+  if has_odm_dlkm:
+    banner("odm_dlkm")
+    partitions['odm_dlkm'] = AddOdmDlkm(output_zip)
 
   if has_system_other:
     banner("system_other")

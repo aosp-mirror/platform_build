@@ -73,10 +73,10 @@ body { padding: 0; font-family: sans-serif; }
 </style>
 """
 
-def combine_notice_files_html(file_hash, input_dir, output_filename):
+def combine_notice_files_html(file_hash, input_dirs, output_filename):
     """Combine notice files in FILE_HASH and output a HTML version to OUTPUT_FILENAME."""
 
-    SRC_DIR_STRIP_RE = re.compile(input_dir + "(/.*).txt")
+    SRC_DIR_STRIP_RE = re.compile("(?:" + "|".join(input_dirs) + ")(/.*).txt")
 
     # Set up a filename to row id table (anchors inside tables don't work in
     # most browsers, but href's to table row ids do)
@@ -131,10 +131,10 @@ def combine_notice_files_html(file_hash, input_dir, output_filename):
     print >> output_file, "</body></html>"
     output_file.close()
 
-def combine_notice_files_text(file_hash, input_dir, output_filename, file_title):
+def combine_notice_files_text(file_hash, input_dirs, output_filename, file_title):
     """Combine notice files in FILE_HASH and output a text version to OUTPUT_FILENAME."""
 
-    SRC_DIR_STRIP_RE = re.compile(input_dir + "(/.*).txt")
+    SRC_DIR_STRIP_RE = re.compile("(?:" + "|".join(input_dirs) + ")(/.*).txt")
     output_file = open(output_filename, "wb")
     print >> output_file, file_title
     for value in file_hash:
@@ -146,10 +146,10 @@ def combine_notice_files_text(file_hash, input_dir, output_filename, file_title)
       print >> output_file, open(value[0]).read()
     output_file.close()
 
-def combine_notice_files_xml(files_with_same_hash, input_dir, output_filename):
+def combine_notice_files_xml(files_with_same_hash, input_dirs, output_filename):
     """Combine notice files in FILE_HASH and output a XML version to OUTPUT_FILENAME."""
 
-    SRC_DIR_STRIP_RE = re.compile(input_dir + "(/.*).txt")
+    SRC_DIR_STRIP_RE = re.compile("(?:" + "|".join(input_dirs) + ")(/.*).txt")
 
     # Set up a filename to row id table (anchors inside tables don't work in
     # most browsers, but href's to table row ids do)
@@ -205,7 +205,7 @@ def get_args():
         '-t', '--title', required=True,
         help='The file title.')
     parser.add_argument(
-        '-s', '--source-dir', required=True,
+        '-s', '--source-dir', required=True, action='append',
         help='The directory containing notices.')
     parser.add_argument(
         '-i', '--included-subdirs', action='append',
@@ -229,39 +229,40 @@ def main(argv):
     if args.excluded_subdirs is not None:
         excluded_subdirs = args.excluded_subdirs
 
+    input_dirs = [os.path.normpath(source_dir) for source_dir in args.source_dir]
     # Find all the notice files and md5 them
-    input_dir = os.path.normpath(args.source_dir)
-    files_with_same_hash = defaultdict(list)
-    for root, dir, files in os.walk(input_dir):
-        for file in files:
-            matched = True
-            if len(included_subdirs) > 0:
-                matched = False
-                for subdir in included_subdirs:
-                    if (root == (input_dir + '/' + subdir) or
-                        root.startswith(input_dir + '/' + subdir + '/')):
-                        matched = True
-                        break
-            elif len(excluded_subdirs) > 0:
-                for subdir in excluded_subdirs:
-                    if (root == (input_dir + '/' + subdir) or
-                        root.startswith(input_dir + '/' + subdir + '/')):
-                        matched = False
-                        break
-            if matched and file.endswith(".txt"):
-                filename = os.path.join(root, file)
-                file_md5sum = md5sum(filename)
-                files_with_same_hash[file_md5sum].append(filename)
+    for input_dir in input_dirs:
+        files_with_same_hash = defaultdict(list)
+        for root, dir, files in os.walk(input_dir):
+            for file in files:
+                matched = True
+                if len(included_subdirs) > 0:
+                    matched = False
+                    for subdir in included_subdirs:
+                        if (root == (input_dir + '/' + subdir) or
+                            root.startswith(input_dir + '/' + subdir + '/')):
+                            matched = True
+                            break
+                elif len(excluded_subdirs) > 0:
+                    for subdir in excluded_subdirs:
+                        if (root == (input_dir + '/' + subdir) or
+                            root.startswith(input_dir + '/' + subdir + '/')):
+                            matched = False
+                            break
+                if matched and file.endswith(".txt"):
+                    filename = os.path.join(root, file)
+                    file_md5sum = md5sum(filename)
+                    files_with_same_hash[file_md5sum].append(filename)
 
-    filesets = [sorted(files_with_same_hash[md5]) for md5 in sorted(files_with_same_hash.keys())]
+        filesets = [sorted(files_with_same_hash[md5]) for md5 in sorted(files_with_same_hash.keys())]
 
-    combine_notice_files_text(filesets, input_dir, txt_output_file, file_title)
+    combine_notice_files_text(filesets, input_dirs, txt_output_file, file_title)
 
     if html_output_file is not None:
-        combine_notice_files_html(filesets, input_dir, html_output_file)
+        combine_notice_files_html(filesets, input_dirs, html_output_file)
 
     if xml_output_file is not None:
-        combine_notice_files_xml(files_with_same_hash, input_dir, xml_output_file)
+        combine_notice_files_xml(files_with_same_hash, input_dirs, xml_output_file)
 
 if __name__ == "__main__":
     main(sys.argv)

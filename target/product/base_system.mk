@@ -38,6 +38,7 @@ PRODUCT_PACKAGES += \
     bcc \
     blank_screen \
     blkid \
+    service-blobstore \
     bmgr \
     bootanimation \
     bootstat \
@@ -50,21 +51,27 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.adbd \
-    com.android.apex.cts.shim.v1 \
     com.android.conscrypt \
     com.android.cronet \
+    com.android.extservices \
     com.android.i18n \
     com.android.ipsec \
     com.android.location.provider \
     com.android.media \
     com.android.media.swcodec \
+    com.android.mediaprovider \
+    com.android.os.statsd \
+    com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.sdkext \
     com.android.tethering \
     com.android.tzdata \
+    com.android.wifi \
     ContactsProvider \
     content \
+    CtsShimPrebuilt \
+    CtsShimPrivPrebuilt \
     debuggerd\
     device_config \
     dmctl \
@@ -75,7 +82,6 @@ PRODUCT_PACKAGES += \
     dumpsys \
     DynamicSystemInstallationService \
     e2fsck \
-    ExtServices \
     ExtShared \
     flags_health_check \
     framework-minus-apex \
@@ -94,7 +100,6 @@ PRODUCT_PACKAGES += \
     gpuservice \
     hid \
     hwservicemanager \
-    idmap \
     idmap2 \
     idmap2d \
     ime \
@@ -102,6 +107,7 @@ PRODUCT_PACKAGES += \
     incident \
     incidentd \
     incident_helper \
+    incident-helper-cmd \
     init.environ.rc \
     init_system \
     input \
@@ -111,7 +117,9 @@ PRODUCT_PACKAGES += \
     iptables \
     ip-up-vpn \
     javax.obex \
+    service-jobscheduler \
     keystore \
+    credstore \
     ld.mc \
     libaaudio \
     libamidi \
@@ -161,7 +169,6 @@ PRODUCT_PACKAGES += \
     libOpenMAXAL \
     libOpenSLES \
     libpdfium \
-    libpixelflinger \
     libpower \
     libpowermanager \
     libradio_metadata \
@@ -184,10 +191,10 @@ PRODUCT_PACKAGES += \
     libusbhost \
     libutils \
     libvulkan \
-    libwifi-service \
     libwilhelm \
     linker \
     linkerconfig \
+    llkd \
     lmkd \
     LocalTransport \
     locksettings \
@@ -196,13 +203,11 @@ PRODUCT_PACKAGES += \
     lpdump \
     lshal \
     mdnsd \
-    media \
     mediacodec.policy \
-    mediadrmserver \
     mediaextractor \
     mediametrics \
     media_profiles_V1_0.dtd \
-    MediaProvider \
+    MediaProviderLegacy \
     mediaserver \
     mke2fs \
     monkey \
@@ -215,12 +220,12 @@ PRODUCT_PACKAGES += \
     PackageInstaller \
     passwd_system \
     perfetto \
-    PermissionController \
     ping \
     ping6 \
     platform.xml \
     pm \
     pppd \
+    preinstalled-packages-platform.xml \
     privapp-permissions-platform.xml \
     racoon \
     recovery-persist \
@@ -245,7 +250,7 @@ PRODUCT_PACKAGES += \
     shell_and_utilities_system \
     sm \
     snapshotctl \
-    statsd \
+    SoundPicker \
     storaged \
     surfaceflinger \
     svc \
@@ -268,7 +273,7 @@ PRODUCT_PACKAGES += \
     WallpaperBackup \
     watchdogd \
     wificond \
-    wifi-service \
+    wifi.rc \
     wm \
 
 # VINTF data for system image
@@ -324,12 +329,16 @@ PRODUCT_BOOT_JARS := \
     com.android.i18n:core-icu4j \
     telephony-common \
     voip-common \
-    ims-common \
+    ims-common
 
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
     com.android.media:updatable-media \
+    com.android.mediaprovider:framework-mediaprovider \
+    com.android.os.statsd:framework-statsd \
+    com.android.permission:framework-permission \
     com.android.sdkext:framework-sdkextensions \
+    com.android.wifi:framework-wifi \
     com.android.tethering:framework-tethering
 
 PRODUCT_COPY_FILES += \
@@ -351,6 +360,9 @@ PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/in
 PRODUCT_SYSTEM_PROPERTIES += ro.zygote?=zygote32
 
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
+PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
+
+PRODUCT_PROPERTY_OVERRIDES += ro.gfx.angle.supported=true
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \

@@ -299,11 +299,10 @@ class AIDHeaderParser(object):
     Parses a C header file and extracts lines starting with #define AID_<name>
     while capturing the OEM defined ranges and ignoring other ranges. It also
     skips some hardcoded AIDs it doesn't need to generate a mapping for.
-    It provides some basic sanity checks. The information extracted from this
-    file can later be used to sanity check other things (like oem ranges) as
-    well as generating a mapping of names to uids. It was primarily designed to
-    parse the private/android_filesystem_config.h, but any C header should
-    work.
+    It provides some basic checks. The information extracted from this file can
+    later be used to quickly check other things (like oem ranges) as well as
+    generating a mapping of names to uids. It was primarily designed to parse
+    the private/android_filesystem_config.h, but any C header should work.
     """
 
     _SKIP_AIDS = [
@@ -394,7 +393,7 @@ class AIDHeaderParser(object):
     def _handle_aid(self, identifier, value):
         """Handle an AID C #define.
 
-        Handles an AID, sanity checking, generating the friendly name and
+        Handles an AID, quick checking, generating the friendly name and
         adding it to the internal maps. Internal use only.
 
         Args:
@@ -422,7 +421,7 @@ class AIDHeaderParser(object):
         """Process, check and populate internal data structures.
 
         After parsing and generating the internal data structures, this method
-        is responsible for sanity checking ALL of the acquired data.
+        is responsible for quickly checking ALL of the acquired data.
 
         Raises:
             ValueError: With the message set to indicate the specific error.

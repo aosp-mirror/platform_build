@@ -46,6 +46,8 @@ Common goals are:
                             Stands for "Odm, NO Dependencies"
     vdnod                   Quickly rebuild the vendor_dlkm image from built packages
                             Stands for "VendorDlkm, NO Dependencies"
+    odnod                   Quickly rebuild the odm_dlkm image from built packages
+                            Stands for "OdmDlkm, NO Dependencies"
 
 
 So, for example, you could run:

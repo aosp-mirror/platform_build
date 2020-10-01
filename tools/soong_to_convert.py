@@ -78,7 +78,7 @@ def process(reader):
     reverse_deps = dict()
     module_types = dict()
 
-    for (module, module_type, problem, dependencies) in reader:
+    for (module, module_type, problem, dependencies, makefiles, installed) in reader:
         module_types[module] = module_type
         problems[module] = problem
         deps[module] = [d for d in dependencies.strip().split(' ') if d != ""]

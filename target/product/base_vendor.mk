@@ -40,7 +40,7 @@ PRODUCT_HOST_PACKAGES += \
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
-    android.hardware.cas@1.1-service \
+    android.hardware.cas@1.2-service \
     android.hardware.media.omx@1.0-service \
     boringssl_self_test_vendor \
     dumpsys_vendor \
@@ -66,11 +66,11 @@ PRODUCT_PACKAGES += \
     passwd_vendor \
     selinux_policy_nonsystem \
     shell_and_utilities_vendor \
-    vndservice \
 
 # Base module when shipping api level is less than or equal to 29
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29 += \
     android.hardware.configstore@1.1-service \
+    vndservice \
     vndservicemanager \
 
 # VINTF data for vendor image

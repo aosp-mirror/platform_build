@@ -11,7 +11,9 @@ TARGET_NO_KERNEL := true
 # This flag is set by mainline but isn't desired for GSI.
 BOARD_USES_SYSTEM_OTHER_ODEX :=
 
-# system.img is always ext4 with sparse option
+# system.img is always ext4 and non-sparsed.
+TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+
 # GSI also includes make_f2fs to support userdata parition in f2fs
 # for some devices
 TARGET_USERIMAGES_USE_F2FS := true
@@ -33,20 +35,14 @@ BOARD_USES_METADATA_PARTITION := true
 #   updating the last seen rollback index in the tamper-evident storage.
 BOARD_AVB_ROLLBACK_INDEX := 0
 
-ifndef BUILDING_GSI
 # Enable AVB chained partition for system.
 # https://android.googlesource.com/platform/external/avb/+/master/README.md
 BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
-else
-# Enable vbmeta_system on GSI targets
-BOARD_AVB_VBMETA_SYSTEM := system
-BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
+ifdef BUILDING_GSI
+# super.img spec for GSI targets
 BOARD_SUPER_PARTITION_SIZE := 3229614080
 BOARD_SUPER_PARTITION_GROUPS := gsi_dynamic_partitions
 BOARD_GSI_DYNAMIC_PARTITIONS_PARTITION_LIST := system

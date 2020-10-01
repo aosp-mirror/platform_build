@@ -18,12 +18,15 @@ LLNDK: libselinux.so
 LLNDK: libsync.so
 LLNDK: libvndksupport.so
 LLNDK: libvulkan.so
+VNDK-SP: android.hardware.common-V1-ndk_platform.so
+VNDK-SP: android.hardware.graphics.common-V1-ndk_platform.so
 VNDK-SP: android.hardware.graphics.common@1.0.so
 VNDK-SP: android.hardware.graphics.common@1.1.so
 VNDK-SP: android.hardware.graphics.common@1.2.so
 VNDK-SP: android.hardware.graphics.mapper@2.0.so
 VNDK-SP: android.hardware.graphics.mapper@2.1.so
 VNDK-SP: android.hardware.graphics.mapper@3.0.so
+VNDK-SP: android.hardware.graphics.mapper@4.0.so
 VNDK-SP: android.hardware.renderscript@1.0.so
 VNDK-SP: android.hidl.memory.token@1.0.so
 VNDK-SP: android.hidl.memory@1.0-impl.so
@@ -39,6 +42,7 @@ VNDK-SP: libblas.so
 VNDK-SP: libc++.so
 VNDK-SP: libcompiler_rt.so
 VNDK-SP: libcutils.so
+VNDK-SP: libgralloctypes.so
 VNDK-SP: libhardware.so
 VNDK-SP: libhidlbase.so
 VNDK-SP: libhidlmemory.so
@@ -51,12 +55,14 @@ VNDK-SP: libutils.so
 VNDK-SP: libutilscallstack.so
 VNDK-SP: libz.so
 VNDK-core: android.hardware.audio.common@2.0.so
+VNDK-core: android.hardware.automotive.occupant_awareness-V1-ndk_platform.so
 VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
 VNDK-core: android.hardware.configstore@1.1.so
 VNDK-core: android.hardware.confirmationui-support-lib.so
 VNDK-core: android.hardware.graphics.allocator@2.0.so
 VNDK-core: android.hardware.graphics.allocator@3.0.so
+VNDK-core: android.hardware.graphics.allocator@4.0.so
 VNDK-core: android.hardware.graphics.bufferqueue@1.0.so
 VNDK-core: android.hardware.graphics.bufferqueue@2.0.so
 VNDK-core: android.hardware.identity-V2-ndk_platform.so
@@ -67,6 +73,7 @@ VNDK-core: android.hardware.media.omx@1.0.so
 VNDK-core: android.hardware.media@1.0.so
 VNDK-core: android.hardware.memtrack@1.0.so
 VNDK-core: android.hardware.power-V1-ndk_platform.so
+VNDK-core: android.hardware.rebootescrow-V1-ndk_platform.so
 VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
 VNDK-core: android.hardware.vibrator-V1-ndk_platform.so
@@ -77,6 +84,7 @@ VNDK-core: libadf.so
 VNDK-core: libaudioroute.so
 VNDK-core: libaudioutils.so
 VNDK-core: libbinder.so
+VNDK-core: libbufferqueueconverter.so
 VNDK-core: libcamera_metadata.so
 VNDK-core: libcap.so
 VNDK-core: libcn-cbor.so

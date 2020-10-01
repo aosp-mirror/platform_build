@@ -233,8 +233,8 @@ class VerifiedBootVersion1VerityImageBuilderTest(ReleaseToolsTestCase):
         os.path.join(get_testdata_dir(), 'testkey_mincrypt'))
 
   @SkipIfExternalToolsUnavailable()
-  def test_Build_SanityCheck(self):
-    # A sanity check for the test itself: the image shouldn't be verifiable
+  def test_Build_ValidationCheck(self):
+    # A validity check for the test itself: the image shouldn't be verifiable
     # with wrong key.
     self.assertRaises(
         common.ExternalError,

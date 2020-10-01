@@ -110,6 +110,9 @@ ALL_DISABLED_PRESUBMIT_TESTS :=
 # All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
 ALL_COMPATIBILITY_SUITES :=
 
+# All compatibility suite files to dist.
+ALL_COMPATIBILITY_DIST_FILES :=
+
 # All LINK_TYPE entries
 ALL_LINK_TYPES :=
 
@@ -2551,6 +2554,18 @@ $(hide) rm -f $@
 $(hide) cp $< $@
 endef
 
+# The same as copy-file-to-new-target, but preserve symlinks. Symlinks are
+# converted to absolute to not break.
+define copy-file-or-link-to-new-target
+@mkdir -p $(dir $@)
+$(hide) rm -f $@
+$(hide) if [ -h $< ]; then \
+  ln -s $$(realpath $<) $@; \
+else \
+  cp $< $@; \
+fi
+endef
+
 # Copy a prebuilt file to a target location.
 define transform-prebuilt-to-target
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Prebuilt: $(PRIVATE_MODULE) ($@)"
@@ -2561,6 +2576,13 @@ endef
 define transform-prebuilt-to-target-strip-comments
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Prebuilt: $(PRIVATE_MODULE) ($@)"
 $(copy-file-to-target-strip-comments)
+endef
+
+# Copy a prebuilt file to a target location, but preserve symlinks rather than
+# dereference them.
+define copy-or-link-prebuilt-to-target
+@echo "$($(PRIVATE_PREFIX)DISPLAY) Prebuilt: $(PRIVATE_MODULE) ($@)"
+$(copy-file-or-link-to-new-target)
 endef
 
 # Copy a list of files/directories to target location, with sub dir structure preserved.
@@ -2812,6 +2834,7 @@ endef
 # 2. Add all the files to each suite's dependent files list.
 # 3. Do the dependency addition to my_all_targets.
 # 4. Save the module name to COMPATIBILITY.$(suite).MODULES for each suite.
+# 5. Collect files to dist to ALL_COMPATIBILITY_DIST_FILES.
 # Requires for each suite: use my_compat_dist_config_$(suite) to define the test config.
 #    and use my_compat_dist_$(suite) to define the others.
 define create-suite-dependencies
@@ -2824,9 +2847,11 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
     $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f))) \
     $$(my_compat_dist_test_data_$(suite))) \
+  $(eval ALL_COMPATIBILITY_DIST_FILES += $$(my_compat_dist_$(suite))) \
   $(eval COMPATIBILITY.$(suite).MODULES += $$(my_register_name))) \
-$(eval $(my_all_targets) : $(call copy-many-files, \
-  $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE),$(my_compat_dist_$(suite))))) \
+$(eval $(my_all_targets) : \
+  $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE), \
+    $(foreach f,$(my_compat_dist_$(suite)), $(call word-colon,2,$(f))))) \
   $(call copy-many-xml-files-checked, \
     $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE),$(my_compat_dist_config_$(suite))))))
 endef
@@ -3162,11 +3187,12 @@ endef
 
 ###########################################################
 ## Find system_$(VER) in LOCAL_SDK_VERSION
+## note: system_server_* is excluded. It's a different API surface
 ##
 ## $(1): LOCAL_SDK_VERSION
 ###########################################################
 define has-system-sdk-version
-$(filter system_%,$(1))
+$(filter-out system_server_%,$(filter system_%,$(1)))
 endef
 
 ###########################################################

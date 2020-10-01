@@ -1,5 +1,15 @@
 # Build System Changes for Android.mk Writers
 
+## `LOCAL_REQUIRED_MODULES` requires listed modules to exist {#BUILD_BROKEN_MISSING_REQUIRED_MODULES}
+
+Modules listed in `LOCAL_REQUIRED_MODULES`, `LOCAL_HOST_REQUIRED_MODULES` and
+`LOCAL_TARGET_REQUIRED_MODULES` need to exist unless `ALLOW_MISSING_DEPENDENCIES`
+is set.
+
+To temporarily relax missing required modules check, use:
+
+`BUILD_BROKEN_MISSING_REQUIRED_MODULES := true`
+
 ## Changes in system properties settings
 
 ### Product variables
