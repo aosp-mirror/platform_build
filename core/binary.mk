@@ -64,10 +64,64 @@ my_export_c_include_dirs := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
 my_export_c_include_deps := $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 my_arflags :=
 
+# Disable clang-tidy if it is not found.
+ifeq ($(PATH_TO_CLANG_TIDY),)
+  my_tidy_enabled := false
+else
+  # If LOCAL_TIDY is not defined, use global WITH_TIDY
+  my_tidy_enabled := $(LOCAL_TIDY)
+  ifeq ($(my_tidy_enabled),)
+    my_tidy_enabled := $(WITH_TIDY)
+  endif
+endif
+
+# my_tidy_checks is empty if clang-tidy is disabled.
+my_tidy_checks :=
+my_tidy_flags :=
+ifneq (,$(filter 1 true,$(my_tidy_enabled)))
+  # Set up global default checks
+  my_tidy_checks := $(WITH_TIDY_CHECKS)
+  ifeq ($(my_tidy_checks),)
+    my_tidy_checks := $(call default_global_tidy_checks,$(LOCAL_PATH))
+  endif
+  # Append local clang-tidy checks.
+  ifneq ($(LOCAL_TIDY_CHECKS),)
+    my_tidy_checks := $(my_tidy_checks),$(LOCAL_TIDY_CHECKS)
+  endif
+  my_tidy_flags := $(strip $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS))
+  # If tidy flags are not specified, default to check all header files.
+  ifeq ($(my_tidy_flags),)
+    my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
+  endif
+  # If clang-tidy is not enabled globally, add the -quiet flag.
+  ifeq (,$(filter 1 true,$(WITH_TIDY)))
+    my_tidy_flags += -quiet -extra-arg-before=-fno-caret-diagnostics
+  endif
+
+  ifneq ($(my_tidy_checks),)
+    # We might be using the static analyzer through clang-tidy.
+    # https://bugs.llvm.org/show_bug.cgi?id=32914
+    my_tidy_flags += -extra-arg-before=-D__clang_analyzer__
+
+    # A recent change in clang-tidy (r328258) enabled destructor inlining,
+    # which appears to cause a number of false positives. Until that's
+    # resolved, this turns off the effects of r328258.
+    # https://bugs.llvm.org/show_bug.cgi?id=37459
+    my_tidy_flags += -extra-arg-before=-Xclang
+    my_tidy_flags += -extra-arg-before=-analyzer-config
+    my_tidy_flags += -extra-arg-before=-Xclang
+    my_tidy_flags += -extra-arg-before=c++-temp-dtor-inlining=false
+  endif
+endif
+
+my_tidy_checks := $(subst $(space),,$(my_tidy_checks))
+
 # Configure the pool to use for clang rules.
 # If LOCAL_CC or LOCAL_CXX is set don't use goma or RBE.
+# If clang-tidy is being used, don't use the RBE pool (as clang-tidy runs in
+# the same action, and is not remoted)
 my_pool :=
-ifeq (,$(strip $(my_cc))$(strip $(my_cxx)))
+ifeq (,$(strip $(my_cc))$(strip $(my_cxx))$(strip $(my_tidy_checks)))
   my_pool := $(GOMA_OR_RBE_POOL)
 endif
 
@@ -1509,61 +1563,10 @@ ifneq (,$(filter -Weverything,$(my_all_cflags)))
   endif
 endif
 
-# Disable clang-tidy if it is not found.
-ifeq ($(PATH_TO_CLANG_TIDY),)
-  my_tidy_enabled := false
-else
-  # If LOCAL_TIDY is not defined, use global WITH_TIDY
-  my_tidy_enabled := $(LOCAL_TIDY)
-  ifeq ($(my_tidy_enabled),)
-    my_tidy_enabled := $(WITH_TIDY)
-  endif
-endif
-
-# my_tidy_checks is empty if clang-tidy is disabled.
-my_tidy_checks :=
-my_tidy_flags :=
-ifneq (,$(filter 1 true,$(my_tidy_enabled)))
-  tidy_only: $(cpp_objects) $(c_objects) $(gen_c_objects) $(gen_cpp_objects)
-  # Set up global default checks
-  my_tidy_checks := $(WITH_TIDY_CHECKS)
-  ifeq ($(my_tidy_checks),)
-    my_tidy_checks := $(call default_global_tidy_checks,$(LOCAL_PATH))
-  endif
-  # Append local clang-tidy checks.
-  ifneq ($(LOCAL_TIDY_CHECKS),)
-    my_tidy_checks := $(my_tidy_checks),$(LOCAL_TIDY_CHECKS)
-  endif
-  my_tidy_flags := $(strip $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS))
-  # If tidy flags are not specified, default to check all header files.
-  ifeq ($(my_tidy_flags),)
-    my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
-  endif
-  # If clang-tidy is not enabled globally, add the -quiet flag.
-  ifeq (,$(filter 1 true,$(WITH_TIDY)))
-    my_tidy_flags += -quiet -extra-arg-before=-fno-caret-diagnostics
-  endif
-
-  ifneq ($(my_tidy_checks),)
-    # We might be using the static analyzer through clang-tidy.
-    # https://bugs.llvm.org/show_bug.cgi?id=32914
-    my_tidy_flags += -extra-arg-before=-D__clang_analyzer__
-
-    # A recent change in clang-tidy (r328258) enabled destructor inlining,
-    # which appears to cause a number of false positives. Until that's
-    # resolved, this turns off the effects of r328258.
-    # https://bugs.llvm.org/show_bug.cgi?id=37459
-    my_tidy_flags += -extra-arg-before=-Xclang
-    my_tidy_flags += -extra-arg-before=-analyzer-config
-    my_tidy_flags += -extra-arg-before=-Xclang
-    my_tidy_flags += -extra-arg-before=c++-temp-dtor-inlining=false
-  endif
-endif
-
-my_tidy_checks := $(subst $(space),,$(my_tidy_checks))
-
-# Add dependency of clang-tidy and clang-tidy.sh
 ifneq ($(my_tidy_checks),)
+  tidy_only: $(cpp_objects) $(c_objects) $(gen_c_objects) $(gen_cpp_objects)
+
+  # Add dependency of clang-tidy and clang-tidy.sh
   $(cpp_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
   $(c_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
   $(gen_cpp_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
