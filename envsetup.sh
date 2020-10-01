@@ -356,7 +356,7 @@ function should_add_completion() {
 
 function addcompletions()
 {
-    local T dir f
+    local f=
 
     # Keep us from trying to run in something that's neither bash nor zsh.
     if [ -z "$BASH_VERSION" -a -z "$ZSH_VERSION" ]; then
