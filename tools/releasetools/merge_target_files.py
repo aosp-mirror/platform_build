@@ -197,7 +197,6 @@ DEFAULT_VENDOR_ITEM_LIST = (
     'PREBUILT_IMAGES/*',
     'RADIO/*',
     'VENDOR/*',
-    'VENDOR_DLKM/*',
 )
 
 # VENDOR_EXTRACT_SPECIAL_ITEM_LIST is a list of items to extract from the
@@ -225,6 +224,7 @@ SINGLE_BUILD_PARTITIONS = (
     'SYSTEM_OTHER/',
     'VENDOR/',
     'VENDOR_DLKM/',
+    'ODM_DLKM/',
 )
 
 

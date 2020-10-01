@@ -41,8 +41,7 @@ $(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_
 $(call add_json_bool, Allow_missing_dependencies,        $(ALLOW_MISSING_DEPENDENCIES))
 $(call add_json_bool, Unbundled_build,                   $(TARGET_BUILD_UNBUNDLED))
 $(call add_json_bool, Unbundled_build_apps,              $(TARGET_BUILD_APPS))
-$(call add_json_bool, Unbundled_build_sdks_from_source,  $(UNBUNDLED_BUILD_SDKS_FROM_SOURCE))
-$(call add_json_bool, Pdk,                               $(filter true,$(TARGET_BUILD_PDK)))
+$(call add_json_bool, Always_use_prebuilt_sdks,          $(TARGET_BUILD_USE_PREBUILT_SDKS))
 
 $(call add_json_bool, Debuggable,                        $(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 $(call add_json_bool, Eng,                               $(filter eng,$(TARGET_BUILD_VARIANT)))
@@ -129,7 +128,6 @@ $(call add_json_str,  DeviceVndkVersion,                 $(BOARD_VNDK_VERSION))
 $(call add_json_str,  Platform_vndk_version,             $(PLATFORM_VNDK_VERSION))
 $(call add_json_str,  ProductVndkVersion,                $(PRODUCT_PRODUCT_VNDK_VERSION))
 $(call add_json_list, ExtraVndkVersions,                 $(PRODUCT_EXTRA_VNDK_VERSIONS))
-$(call add_json_bool, BoardVndkRuntimeDisable,           $(BOARD_VNDK_RUNTIME_DISABLE))
 $(call add_json_list, DeviceSystemSdkVersions,           $(BOARD_SYSTEMSDK_VERSIONS))
 $(call add_json_list, Platform_systemsdk_versions,       $(PLATFORM_SYSTEMSDK_VERSIONS))
 $(call add_json_bool, Malloc_not_svelte,                 $(call invert_bool,$(filter true,$(MALLOC_SVELTE))))
@@ -156,6 +154,7 @@ $(call add_json_bool, Use_lmkd_stats_log,                $(filter true,$(TARGET_
 $(call add_json_str,  VendorPath,                        $(TARGET_COPY_OUT_VENDOR))
 $(call add_json_str,  OdmPath,                           $(TARGET_COPY_OUT_ODM))
 $(call add_json_str,  VendorDlkmPath,                    $(TARGET_COPY_OUT_VENDOR_DLKM))
+$(call add_json_str,  OdmDlkmPath,                       $(TARGET_COPY_OUT_ODM_DLKM))
 $(call add_json_str,  ProductPath,                       $(TARGET_COPY_OUT_PRODUCT))
 $(call add_json_str,  SystemExtPath,                     $(TARGET_COPY_OUT_SYSTEM_EXT))
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
@@ -174,6 +173,7 @@ $(call add_json_list, PgoAdditionalProfileDirs,          $(PGO_ADDITIONAL_PROFIL
 $(call add_json_list, BoardVendorSepolicyDirs,           $(BOARD_VENDOR_SEPOLICY_DIRS) $(BOARD_SEPOLICY_DIRS))
 $(call add_json_list, BoardOdmSepolicyDirs,              $(BOARD_ODM_SEPOLICY_DIRS))
 $(call add_json_list, BoardVendorDlkmSepolicyDirs,       $(BOARD_VENDOR_DLKM_SEPOLICY_DIRS))
+$(call add_json_list, BoardOdmDlkmSepolicyDirs,          $(BOARD_ODM_DLKM_SEPOLICY_DIRS))
 $(call add_json_list, BoardPlatPublicSepolicyDirs,       $(BOARD_PLAT_PUBLIC_SEPOLICY_DIR))
 $(call add_json_list, BoardPlatPrivateSepolicyDirs,      $(BOARD_PLAT_PRIVATE_SEPOLICY_DIR))
 $(call add_json_list, BoardSepolicyM4Defs,               $(BOARD_SEPOLICY_M4DEFS))
@@ -210,10 +210,14 @@ $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
 $(call end_json_map)
 
 $(call add_json_bool, EnforceProductPartitionInterface,  $(PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE))
+$(call add_json_str,  DeviceCurrentApiLevelForVendorModules,  $(BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES))
 
 $(call add_json_bool, InstallExtraFlattenedApexes, $(PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES))
 
 $(call add_json_bool, BoardUsesRecoveryAsBoot, $(BOARD_USES_RECOVERY_AS_BOOT))
+
+$(call add_json_list, BoardKernelBinaries, $(BOARD_KERNEL_BINARIES))
+$(call add_json_list, BoardKernelModuleInterfaceVersions, $(BOARD_KERNEL_MODULE_INTERFACE_VERSIONS))
 
 $(call json_end)
 

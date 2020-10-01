@@ -160,7 +160,7 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
 
     self.payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
     apex_file = signer.ProcessApexFile(apk_keys, self.payload_key)
-    package_name_extract_cmd = ['aapt', 'dump', 'badging', apex_file]
+    package_name_extract_cmd = ['aapt2', 'dump', 'badging', apex_file]
     output = common.RunAndCheckOutput(package_name_extract_cmd)
     for line in output.splitlines():
       # Sample output from aapt: "package: name='com.google.android.wifi'

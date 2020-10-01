@@ -166,7 +166,7 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(if $(filter-out $(makefile),$(PRODUCTS)),$(eval $(call import-products,$(makefile))))\
 )
 
-# Sanity check
+# Quick check
 $(check-all-products)
 
 ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
@@ -201,7 +201,7 @@ endif # EMMA_INSTRUMENT
 $(call strip-product-vars)
 
 #############################################################################
-# Sanity check and assign default values
+# Quick check and assign default values
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
 
@@ -358,6 +358,12 @@ endif
 $(KATI_obsolete_var OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS \
     ,Use PRODUCT_EXTRA_VNDK_VERSIONS instead)
 
+# If build command defines OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE,
+# override PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE with it unless it is
+# defined as `false`. If the value is `false` clear
+# PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
+# OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE can be used for
+# testing only.
 ifdef OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
   ifeq (false,$(OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE))
     PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE :=
@@ -367,10 +373,34 @@ ifdef OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
   # No shipping level defined
 else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
+  # Enforce product interface if PRODUCT_SHIPPING_API_LEVEL is greater than 29.
   PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
 endif
 
 $(KATI_obsolete_var OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE,Use PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE instead)
+
+# If build command defines PRODUCT_USE_PRODUCT_VNDK_OVERRIDE as `false`,
+# PRODUCT_PRODUCT_VNDK_VERSION will not be defined automatically.
+# PRODUCT_USE_PRODUCT_VNDK_OVERRIDE can be used for testing only.
+PRODUCT_USE_PRODUCT_VNDK := false
+ifneq ($(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE),)
+  PRODUCT_USE_PRODUCT_VNDK := $(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE)
+else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+  # No shipping level defined
+else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
+  # Enforce product interface for VNDK if PRODUCT_SHIPPING_API_LEVEL is greater
+  # than 29.
+  PRODUCT_USE_PRODUCT_VNDK := true
+endif
+
+ifeq ($(PRODUCT_USE_PRODUCT_VNDK),true)
+  ifndef PRODUCT_PRODUCT_VNDK_VERSION
+    PRODUCT_PRODUCT_VNDK_VERSION := current
+  endif
+endif
+
+$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK_OVERRIDE,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
 
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
@@ -400,6 +430,7 @@ $(foreach image, \
     SYSTEM_EXT \
     ODM \
     VENDOR_DLKM \
+    ODM_DLKM \
     CACHE \
     RAMDISK \
     USERDATA \

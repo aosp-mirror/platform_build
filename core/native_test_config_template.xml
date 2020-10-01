@@ -22,11 +22,11 @@
 
     <target_preparer class="com.android.tradefed.targetprep.PushFilePreparer">
         <option name="cleanup" value="true" />
-        <option name="push" value="{MODULE}->/data/local/tmp/{MODULE}" />
+        <option name="push" value="{MODULE}->{TEST_INSTALL_BASE}/{MODULE}" />
     </target_preparer>
 
     <test class="com.android.tradefed.testtype.GTest" >
-        <option name="native-test-device-path" value="/data/local/tmp" />
+        <option name="native-test-device-path" value="{TEST_INSTALL_BASE}" />
         <option name="module-name" value="{MODULE}" />
     </test>
 </configuration>

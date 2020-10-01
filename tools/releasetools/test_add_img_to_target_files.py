@@ -370,7 +370,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(output_file, 'w') as output_zip:
       # Create an existing META/care_map.pb entry.
       common.ZipWriteStr(output_zip, 'META/care_map.pb',
-                         'dummy care_map.pb')
+                         'fake care_map.pb')
 
       # Request to add META/care_map.pb again.
       AddCareMapForAbOta(output_zip, ['system', 'vendor'], image_paths)

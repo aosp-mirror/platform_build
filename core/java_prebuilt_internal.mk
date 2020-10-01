@@ -173,7 +173,7 @@ endif
 framework_res_package_export :=
 # Please refer to package.mk
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
+ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_USE_PREBUILT_SDKS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
 framework_res_package_export := \
     $(call resolve-prebuilt-sdk-jar-path,$(LOCAL_SDK_RES_VERSION))
 else

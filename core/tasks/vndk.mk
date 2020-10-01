@@ -20,17 +20,10 @@ ifeq ($(BOARD_VNDK_VERSION),current)
 # PLATFORM_VNDK_VERSION must be set.
 ifneq (,$(PLATFORM_VNDK_VERSION))
 
-# BOARD_VNDK_RUNTIME_DISABLE must not be set to 'true'.
-ifneq ($(BOARD_VNDK_RUNTIME_DISABLE),true)
-
 .PHONY: vndk
 vndk: $(SOONG_VNDK_SNAPSHOT_ZIP)
 
 $(call dist-for-goals, vndk, $(SOONG_VNDK_SNAPSHOT_ZIP))
-
-else # BOARD_VNDK_RUNTIME_DISABLE is set to 'true'
-error_msg := "CANNOT generate VNDK snapshot. BOARD_VNDK_RUNTIME_DISABLE must not be set to 'true'."
-endif # BOARD_VNDK_RUNTIME_DISABLE
 
 else # PLATFORM_VNDK_VERSION is NOT set
 error_msg := "CANNOT generate VNDK snapshot. PLATFORM_VNDK_VERSION must be set."

@@ -29,7 +29,7 @@
 # (The system image of Legacy GSI is not CSI)
 #
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_system.mk)
 
 # Enable mainline checking for excat this product name
 ifeq (aosp_x86_64_ab,$(TARGET_PRODUCT))

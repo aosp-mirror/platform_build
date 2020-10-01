@@ -1,5 +1,5 @@
 name="com.android.conscrypt.apex" public_key="not_selected" private_key="not_selected" container_certificate="not_selected" container_private_key="not_selected" partition="system"
-name="com.android.dummy_product.apex" public_key="not_selected" private_key="not_selected" container_certificate="not_selected" container_private_key="not_selected" partition="product"
+name="com.android.fake_product.apex" public_key="not_selected" private_key="not_selected" container_certificate="not_selected" container_private_key="not_selected" partition="product"
 name="com.android.runtime.apex" public_key="not_selected" private_key="not_selected" container_certificate="not_selected" container_private_key="not_selected" partition="system"
 name="com.android.vndk.current.on_vendor.apex" public_key="packages/modules/vndk/apex/com.android.vndk.current.pubkey" private_key="packages/modules/vndk/apex/com.android.vndk.current.pem" container_certificate="packages/modules/vndk/apex/com.android.vndk.current.x509.pem" container_private_key="packages/modules/vndk/apex/com.android.vndk.current.pk8" partition="vendor"
 name="com.android.vndk.v27.apex" public_key="not_selected" private_key="not_selected" container_certificate="not_selected" container_private_key="not_selected" partition="system_ext"

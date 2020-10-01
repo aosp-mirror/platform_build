@@ -93,6 +93,7 @@ TARGET_BUILD_VARIANT := eng
 endif
 
 TARGET_BUILD_APPS ?=
+TARGET_BUILD_UNBUNDLED_IMAGE ?=
 
 # Set to true for an unbundled build, i.e. a build without
 # support for platform targets like the system image. This also
@@ -107,11 +108,19 @@ ifneq ($(TARGET_BUILD_APPS),)
   TARGET_BUILD_UNBUNDLED := true
 endif
 
+# TARGET_BUILD_UNBUNDLED_IMAGE also implies unbundled build.
+# (i.e. it targets to only unbundled image, such as the vendor image,
+# ,or the product image). 
+ifneq ($(TARGET_BUILD_UNBUNDLED_IMAGE),)
+  TARGET_BUILD_UNBUNDLED := true
+endif
+
 .KATI_READONLY := \
   TARGET_PRODUCT \
   TARGET_BUILD_VARIANT \
   TARGET_BUILD_APPS \
   TARGET_BUILD_UNBUNDLED \
+  TARGET_BUILD_UNBUNDLED_IMAGE \
 
 # ---------------------------------------------------------------
 # Set up configuration for host machine.  We don't do cross-
@@ -139,15 +148,25 @@ HOST_OS_EXTRA := $(subst $(space),-,$(HOST_OS_EXTRA))
 # BUILD_OS is the real host doing the build.
 BUILD_OS := $(HOST_OS)
 
-HOST_CROSS_OS :=
-# We can cross-build Windows binaries on Linux
+# We can do the cross-build only on Linux
 ifeq ($(HOST_OS),linux)
-ifeq ($(BUILD_HOST_static),)
-HOST_CROSS_OS := windows
-HOST_CROSS_ARCH := x86
-HOST_CROSS_2ND_ARCH := x86_64
-2ND_HOST_CROSS_IS_64_BIT := true
-endif
+  # Windows has been the default host_cross OS
+  ifeq (,$(filter-out windows,$(HOST_CROSS_OS)))
+    # We can only create static host binaries for Linux, so if static host
+    # binaries are requested, turn off Windows cross-builds.
+    ifeq ($(BUILD_HOST_static),)
+      HOST_CROSS_OS := windows
+      HOST_CROSS_ARCH := x86
+      HOST_CROSS_2ND_ARCH := x86_64
+      2ND_HOST_CROSS_IS_64_BIT := true
+    endif
+  else ifeq ($(HOST_CROSS_OS),linux_bionic)
+    ifeq (,$(HOST_CROSS_ARCH))
+      $(error HOST_CROSS_ARCH missing.)
+    endif
+  else
+    $(error Unsupported HOST_CROSS_OS $(HOST_CROSS_OS))
+  endif
 endif
 
 ifeq ($(HOST_OS),)
@@ -254,6 +273,7 @@ _product_path_placeholder := ||PRODUCT-PATH-PH||
 _system_ext_path_placeholder := ||SYSTEM_EXT-PATH-PH||
 _odm_path_placeholder := ||ODM-PATH-PH||
 _vendor_dlkm_path_placeholder := ||VENDOR_DLKM-PATH-PH||
+_odm_dlkm_path_placeholder := ||ODM_DLKM-PATH-PH||
 TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
 TARGET_COPY_OUT_VENDOR_RAMDISK := vendor-ramdisk
 TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
@@ -263,6 +283,7 @@ TARGET_COPY_OUT_PRODUCT_SERVICES := $(_product_path_placeholder)
 TARGET_COPY_OUT_SYSTEM_EXT := $(_system_ext_path_placeholder)
 TARGET_COPY_OUT_ODM := $(_odm_path_placeholder)
 TARGET_COPY_OUT_VENDOR_DLKM := $(_vendor_dlkm_path_placeholder)
+TARGET_COPY_OUT_ODM_DLKM := $(_odm_dlkm_path_placeholder)
 
 # Returns the non-sanitized version of the path provided in $1.
 define get_non_asan_path
@@ -317,7 +338,7 @@ HOST_OUT_ROOT := $(OUT_DIR)/host
 HOST_OUT := $(HOST_OUT_ROOT)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 SOONG_HOST_OUT := $(SOONG_OUT_DIR)/host/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 
-HOST_CROSS_OUT := $(HOST_OUT_ROOT)/windows-$(HOST_PREBUILT_ARCH)
+HOST_CROSS_OUT := $(HOST_OUT_ROOT)/$(HOST_CROSS_OS)-$(HOST_CROSS_ARCH)
 
 .KATI_READONLY := HOST_OUT SOONG_HOST_OUT HOST_CROSS_OUT
 
@@ -754,6 +775,40 @@ $(KATI_obsolete_var \
     $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_APPS \
     $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_APPS_PRIVILEGED \
     , vendor_dlkm should not contain any executables, libraries, or apps)
+
+TARGET_OUT_ODM_DLKM := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ODM_DLKM)
+
+TARGET_OUT_ODM_DLKM_ETC := $(TARGET_OUT_ODM_DLKM)/etc
+.KATI_READONLY := \
+  TARGET_OUT_ODM_DLKM_ETC
+
+# Unlike other partitions, odm_dlkm should only contain kernel modules.
+TARGET_OUT_ODM_DLKM_EXECUTABLES :=
+TARGET_OUT_ODM_DLKM_OPTIONAL_EXECUTABLES :=
+TARGET_OUT_ODM_DLKM_SHARED_LIBRARIES :=
+TARGET_OUT_ODM_DLKM_RENDERSCRIPT_BITCODE :=
+TARGET_OUT_ODM_DLKM_JAVA_LIBRARIES :=
+TARGET_OUT_ODM_DLKM_APPS :=
+TARGET_OUT_ODM_DLKM_APPS_PRIVILEGED :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_EXECUTABLES :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_SHARED_LIBRARIES :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_RENDERSCRIPT_BITCODE :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_APPS :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_APPS_PRIVILEGED :=
+$(KATI_obsolete_var \
+    TARGET_OUT_ODM_DLKM_EXECUTABLES \
+    TARGET_OUT_ODM_DLKM_OPTIONAL_EXECUTABLES \
+    TARGET_OUT_ODM_DLKM_SHARED_LIBRARIES \
+    TARGET_OUT_ODM_DLKM_RENDERSCRIPT_BITCODE \
+    TARGET_OUT_ODM_DLKM_JAVA_LIBRARIES \
+    TARGET_OUT_ODM_DLKM_APPS \
+    TARGET_OUT_ODM_DLKM_APPS_PRIVILEGED \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_EXECUTABLES \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_SHARED_LIBRARIES \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_RENDERSCRIPT_BITCODE \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_APPS \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_APPS_PRIVILEGED \
+    , odm_dlkm should not contain any executables, libraries, or apps)
 
 TARGET_OUT_PRODUCT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT)
 TARGET_OUT_PRODUCT_EXECUTABLES := $(TARGET_OUT_PRODUCT)/bin

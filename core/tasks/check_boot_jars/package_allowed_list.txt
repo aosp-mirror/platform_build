@@ -122,8 +122,6 @@ dalvik\..*
 libcore\..*
 android\..*
 com\.android\..*
-
-
 ###################################################
 # android.test.base.jar
 junit\.extensions
@@ -241,6 +239,8 @@ org\.apache\.xalan\.xslt
 # Packages in the google namespace across all bootclasspath jars.
 com\.google\.android\..*
 com\.google\.vr\.platform.*
+com\.google\.i18n\.phonenumbers\..*
+com\.google\.i18n\.phonenumbers
 
 ###################################################
 # Packages used for Android in Chrome OS

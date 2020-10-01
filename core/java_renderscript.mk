@@ -50,8 +50,8 @@ renderscript_flags := -Wall -Werror
 renderscript_flags += $(LOCAL_RENDERSCRIPT_FLAGS)
 
 # prepend the RenderScript system include path
-ifneq ($(filter-out current system_current test_current core_current,$(LOCAL_SDK_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_VERSION))),)
-# if a numeric LOCAL_SDK_VERSION, or current LOCAL_SDK_VERSION with TARGET_BUILD_APPS
+ifneq ($(filter-out current system_current test_current core_current,$(LOCAL_SDK_VERSION))$(if $(TARGET_BUILD_USE_PREBUILT_SDKS),$(filter current system_current test_current,$(LOCAL_SDK_VERSION))),)
+# if a numeric LOCAL_SDK_VERSION, or current LOCAL_SDK_VERSION with TARGET_BUILD_USE_PREBUILT_SDKS
 LOCAL_RENDERSCRIPT_INCLUDES := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/renderscript/clang-include \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/renderscript/include \
@@ -110,7 +110,7 @@ renderscript_intermediate := $(intermediates)/renderscript
 rs_jni_lib := $(call intermediates-dir-for,SHARED_LIBRARIES,librsjni.so)/librsjni.so
 LOCAL_JNI_SHARED_LIBRARIES += librsjni
 
-ifneq (,$(TARGET_BUILD_APPS)$(FORCE_BUILD_RS_COMPAT))
+ifneq (,$(TARGET_BUILD_USE_PREBUILT_SDKS)$(FORCE_BUILD_RS_COMPAT))
 
 rs_compatibility_jni_libs := $(addprefix \
     $(renderscript_intermediate)/librs., \

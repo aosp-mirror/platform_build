@@ -28,7 +28,7 @@ _all_dist_src_dst_pairs :=
 # certain files with certain goals.  When those goals are built
 # and "dist" is specified, the marked files will be copied to DIST_DIR.
 #
-# $(1): a list of goals  (e.g. droid, sdk, pdk, ndk). These must be PHONY
+# $(1): a list of goals  (e.g. droid, sdk, ndk). These must be PHONY
 # $(2): the dist files to add to those goals.  If the file contains ':',
 #       the text following the colon is the name that the file is copied
 #       to under the dist directory.  Subdirs are ok, and will be created

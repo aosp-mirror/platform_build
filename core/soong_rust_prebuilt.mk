@@ -28,9 +28,9 @@ else
   $(call pretty-error,Unsupported LOCAL_MODULE_$(my_prefix)ARCH=$(LOCAL_MODULE_$(my_prefix)ARCH))
 endif
 
-# Don't install rlib/proc_macro libraries.
+# Don't install static/rlib/proc_macro libraries.
 ifndef LOCAL_UNINSTALLABLE_MODULE
-  ifneq ($(filter RLIB_LIBRARIES PROC_MACRO_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
+  ifneq ($(filter STATIC_LIBRARIES RLIB_LIBRARIES PROC_MACRO_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
     LOCAL_UNINSTALLABLE_MODULE := true
   endif
 endif
@@ -57,9 +57,16 @@ ifdef LOCAL_INSTALLED_MODULE
 endif
 
 $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
+ifeq ($(LOCAL_IS_HOST_MODULE) $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),true,),true true)
+	$(copy-or-link-prebuilt-to-target)
+  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+	[ -x $@ ] || $(call echo-error,$@,Target of symlink is not executable)
+  endif
+else
 	$(transform-prebuilt-to-target)
-ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
 	$(hide) chmod +x $@
+  endif
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
