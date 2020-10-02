@@ -281,6 +281,12 @@ PRODUCT_PACKAGES += \
     system_manifest.xml \
     system_compatibility_matrix.xml \
 
+# HWASAN runtime for SANITIZE_TARGET=hwaddress builds
+ifneq (,$(filter hwaddress,$(SANITIZE_TARGET)))
+  PRODUCT_PACKAGES += \
+   libclang_rt.hwasan-aarch64-android.bootstrap
+endif
+
 # Host tools to install
 PRODUCT_HOST_PACKAGES += \
     BugReport \
