@@ -67,6 +67,24 @@
       "revId": "3769a205b6f2d702dd0c727b6551d8d46ffdac35",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f84654d2_0a3be155",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-10-05T19:51:55Z",
+      "side": 1,
+      "message": "It was a sync timeout unrelated to your change, retrying.",
+      "parentUuid": "df73a6cf_5d43b95a",
+      "revId": "3769a205b6f2d702dd0c727b6551d8d46ffdac35",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
