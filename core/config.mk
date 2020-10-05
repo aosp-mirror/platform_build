@@ -605,13 +605,9 @@ HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner --compatible-output=no
 
 # Boolean variable determining if the allow list for compatible properties is enabled
-PRODUCT_COMPATIBLE_PROPERTY := false
-ifneq ($(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE),)
-  PRODUCT_COMPATIBLE_PROPERTY := $(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE)
-else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  #$(warning no product shipping level defined)
-else ifneq ($(call math_lt,27,$(PRODUCT_SHIPPING_API_LEVEL)),)
-  PRODUCT_COMPATIBLE_PROPERTY := true
+PRODUCT_COMPATIBLE_PROPERTY := true
+ifeq ($(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE),false)
+  $(error PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE is obsolete)
 endif
 
 .KATI_READONLY := \
