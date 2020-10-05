@@ -90,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "a8912b4c_a52b1b07",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-10-05T05:14:55Z",
+      "side": 1,
+      "message": "Sure, we can do that.\n\nLooks like KATI_obsolete_var will cause a build break, so we can only add it after internal usages of BOARD_PLAT_PUBLIC_SEPOLICY_DIR is removed.",
+      "parentUuid": "adceaf46_cdbdafff",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "269ed033_57129453",
         "filename": "core/soong_config.mk",
         "patchSetId": 7
