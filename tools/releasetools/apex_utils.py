@@ -49,7 +49,10 @@ class ApexApkSigner(object):
 
   def __init__(self, apex_path, key_passwords, codename_to_api_level_map):
     self.apex_path = apex_path
-    self.key_passwords = key_passwords
+    if not key_passwords:
+      self.key_passwords = dict()
+    else:
+      self.key_passwords = key_passwords
     self.codename_to_api_level_map = codename_to_api_level_map
 
   def ProcessApexFile(self, apk_keys, payload_key, signing_args=None):
@@ -110,7 +113,7 @@ class ApexApkSigner(object):
       # signed apk file.
       unsigned_apk = common.MakeTempFile()
       os.rename(apk_path, unsigned_apk)
-      common.SignFile(unsigned_apk, apk_path, key_name, self.key_passwords,
+      common.SignFile(unsigned_apk, apk_path, key_name, self.key_passwords.get(key_name),
                       codename_to_api_level_map=self.codename_to_api_level_map)
       has_signed_apk = True
     return payload_dir, has_signed_apk
@@ -356,7 +359,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
       aligned_apex,
       signed_apex,
       container_key,
-      container_pw,
+      container_pw.get(container_key),
       codename_to_api_level_map=codename_to_api_level_map,
       extra_signapk_args=extra_signapk_args)
 
