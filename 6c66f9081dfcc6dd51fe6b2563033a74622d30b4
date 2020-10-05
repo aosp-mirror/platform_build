@@ -108,6 +108,23 @@
     },
     {
       "key": {
+        "uuid": "277536d9_5d270ef8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-10-05T09:28:15Z",
+      "side": 1,
+      "message": "Hi Colin, Dan,\nCould you help for the owner vote?\nThanks,",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "269ed033_57129453",
         "filename": "core/soong_config.mk",
         "patchSetId": 7
