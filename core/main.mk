@@ -1639,6 +1639,10 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
 
+ifeq ($(SOONG_COLLECT_JAVA_DEPS), true)
+  $(call dist-for-goals, dist_files, $(SOONG_OUT_DIR)/module_bp_java_deps.json)
+endif
+
 .PHONY: apps_only
 ifneq ($(TARGET_BUILD_APPS),)
   # If this build is just for apps, only build apps and not the full system by default.
