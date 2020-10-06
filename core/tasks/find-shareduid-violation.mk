@@ -28,5 +28,13 @@ $(shareduid_violation_modules_filename): $(INSTALLED_SYSTEMIMAGE_TARGET) \
 
 $(shareduid_violation_modules_filename): $(find_shareduid_script)
 $(shareduid_violation_modules_filename): $(AAPT2)
-	$(find_shareduid_script) $(PRODUCT_OUT) $(AAPT2) > $@
+	$(find_shareduid_script) \
+		--product_out $(PRODUCT_OUT) \
+		--aapt $(AAPT2) \
+		--copy_out_system $(TARGET_COPY_OUT_SYSTEM) \
+		--copy_out_vendor $(TARGET_COPY_OUT_VENDOR) \
+		--copy_out_product $(TARGET_COPY_OUT_PRODUCT) \
+		--copy_out_system_ext $(TARGET_COPY_OUT_SYSTEM_EXT) \
+		> $@
+
 $(call dist-for-goals,droidcore,$(shareduid_violation_modules_filename))
