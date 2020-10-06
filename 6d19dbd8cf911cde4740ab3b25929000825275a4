@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": true,
       "key": {
         "uuid": "9b9d670f_b216d2f5",
         "filename": "tools/compare_builds.py",
@@ -14,10 +15,28 @@
       "side": 1,
       "message": "Can this describe why it\u0027s different from all of the other tools that compare build results to identify various issues?\n\nbuild/soong/cmd/diff_target_files/...\nbuild/soong/scripts/diff_build_graphs.sh\nbuild/make/tools/releasetools/target_files_diff.py\ndevelopment/vndk/tools/image-diff-tool/...\nvendor/google/tools/diff_system/diff_system.sh\n(and probably more that I don\u0027t know of)\n\nIt does have some unique features, but there\u0027s a bunch of logical overlaps",
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "fc426dcd_4b67aeec",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "It\u0027s hard to know what those were all intended to do.  It\u0027s never easy to decide whether to write a new tool or modify a preexisting one.  I didn\u0027t want to needlessly duplicate stuff, but the diffing logic is pretty simple in all of them.  There are also a few more scripts floating around that deal with pulling builds from the build server, and for those that\u0027s where the complexity is.",
+      "parentUuid": "9b9d670f_b216d2f5",
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "b9a68e1c_e831e9a8",
         "filename": "tools/compare_builds.py",
@@ -37,10 +56,10 @@
         "endChar": 79
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "7bb9f072_59e1575f",
         "filename": "tools/compare_builds.py",
@@ -60,10 +79,58 @@
         "endChar": 79
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b77c3328_f7b30111",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "For sure.  I think the RBE compare mode will catch the hard stuff, and locking down the path is probably the best way to fix the majority of those.  e.g. We should either patch find to keep it sorted, (or alias it to pipe it through sort or something).  Moving the source tree is another option, but it\u0027s complicated enough that I didn\u0027t try in this first pass.",
+      "parentUuid": "7bb9f072_59e1575f",
+      "range": {
+        "startLine": 4,
+        "startChar": 71,
+        "endLine": 4,
+        "endChar": 79
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "19be682e_489b9c67",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "No reason other than I don\u0027t know python style well. Fixed.",
+      "parentUuid": "b9a68e1c_e831e9a8",
+      "range": {
+        "startLine": 4,
+        "startChar": 1,
+        "endLine": 4,
+        "endChar": 79
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "6b0f2366_ea811d9b",
         "filename": "tools/compare_builds.py",
@@ -83,10 +150,34 @@
         "endChar": 58
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aaf87d02_390f1720",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b0f2366_ea811d9b",
+      "range": {
+        "startLine": 6,
+        "startChar": 32,
+        "endLine": 6,
+        "endChar": 58
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "f978123f_2afb69e0",
         "filename": "tools/compare_builds.py",
@@ -106,10 +197,34 @@
         "endChar": 14
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc00cc7c_2600f063",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Yeah agreed.  After the first file in the list it\u0027s too hard to keep track of the chain of dependencies.  Mostly I sorted it this way because it\u0027s slightly more useful than alphabetic or no sorting.",
+      "parentUuid": "f978123f_2afb69e0",
+      "range": {
+        "startLine": 20,
+        "startChar": 56,
+        "endLine": 22,
+        "endChar": 14
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "d58ce14e_77545767",
         "filename": "tools/compare_builds.py",
@@ -129,10 +244,10 @@
         "endChar": 60
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "5a3f6b60_4f457bf5",
         "filename": "tools/compare_builds.py",
@@ -152,10 +267,58 @@
         "endChar": 39
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "94f1776a_b44e86af",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f6b60_4f457bf5",
+      "range": {
+        "startLine": 132,
+        "startChar": 33,
+        "endLine": 132,
+        "endChar": 39
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef165af4_20da7fea",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "It took a couple iterations to get flag combinations that made sense. Thanks for catching this. Fixed.",
+      "parentUuid": "d58ce14e_77545767",
+      "range": {
+        "startLine": 132,
+        "startChar": 40,
+        "endLine": 132,
+        "endChar": 60
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "2592eea7_514a75da",
         "filename": "tools/compare_builds.py",
@@ -175,10 +338,34 @@
         "endChar": 42
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9693c465_f3ebfcd5",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "I had previously been doing the symlink checking first, so other meant non-symlink bits. That\u0027s not the case any more so just clarified it to stat mode bits.",
+      "parentUuid": "2592eea7_514a75da",
+      "range": {
+        "startLine": 172,
+        "startChar": 35,
+        "endLine": 172,
+        "endChar": 42
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "81302342_8ec9a220",
         "filename": "tools/compare_builds.py",
@@ -198,10 +385,34 @@
         "endChar": 31
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "587940c4_e2715af2",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "81302342_8ec9a220",
+      "range": {
+        "startLine": 301,
+        "startChar": 26,
+        "endLine": 301,
+        "endChar": 31
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "e9b2eebf_d60e75fc",
         "filename": "tools/compare_builds.py",
@@ -221,10 +432,34 @@
         "endChar": 61
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "875df9bc_c56b0462",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9b2eebf_d60e75fc",
+      "range": {
+        "startLine": 338,
+        "startChar": 5,
+        "endLine": 338,
+        "endChar": 61
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "d67ef272_a94e6474",
         "filename": "tools/compare_builds.py",
@@ -244,10 +479,34 @@
         "endChar": 21
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d98ed3da_c0d8c1da",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d67ef272_a94e6474",
+      "range": {
+        "startLine": 345,
+        "startChar": 19,
+        "endLine": 345,
+        "endChar": 21
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "bd8add79_300efed0",
         "filename": "tools/compare_builds.py",
@@ -267,10 +526,34 @@
         "endChar": 25
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0817c47b_b14c42e7",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Added in main, where they\u0027re all set.",
+      "parentUuid": "bd8add79_300efed0",
+      "range": {
+        "startLine": 349,
+        "startChar": 5,
+        "endLine": 349,
+        "endChar": 25
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "5fc8b2a2_b7c9badc",
         "filename": "tools/compare_builds.py",
@@ -290,10 +573,34 @@
         "endChar": 43
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "43ad657e_6f5788ee",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Yes. Good catch. I thought that capture_output on subprocess.run did that, but it doesn\u0027t.",
+      "parentUuid": "5fc8b2a2_b7c9badc",
+      "range": {
+        "startLine": 354,
+        "startChar": 30,
+        "endLine": 354,
+        "endChar": 43
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "ec080406_b777ef83",
         "filename": "tools/compare_builds.py",
@@ -313,10 +620,34 @@
         "endChar": 21
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0903868c_339e9bdd",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Probably, but this is matching the common keys on the relative filename, and then doing the DiffFiles and adding the full filenames to the output lists.  I don\u0027t think it would end up being much less code after flipping back and forth between the two kinds of filenames.",
+      "parentUuid": "ec080406_b777ef83",
+      "range": {
+        "startLine": 377,
+        "startChar": 2,
+        "endLine": 406,
+        "endChar": 21
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "bb88da5b_50539b0b",
         "filename": "tools/compare_builds.py",
@@ -336,10 +667,34 @@
         "endChar": 32
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2defecf9_1c77a9c7",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Another comment victim of refactoring.",
+      "parentUuid": "bb88da5b_50539b0b",
+      "range": {
+        "startLine": 414,
+        "startChar": 31,
+        "endLine": 414,
+        "endChar": 32
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "7982699b_c9121645",
         "filename": "tools/compare_builds.py",
@@ -359,8 +714,31 @@
         "endChar": 25
       },
       "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3bed6af3_ba8c0c3d",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-06T23:36:23Z",
+      "side": 1,
+      "message": "Sort of.  Reading the whole file isn\u0027t really harder than hashing it.  I\u0027ll just leave this.",
+      "parentUuid": "7982699b_c9121645",
+      "range": {
+        "startLine": 472,
+        "startChar": 6,
+        "endLine": 472,
+        "endChar": 25
+      },
+      "revId": "6d19dbd8cf911cde4740ab3b25929000825275a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
