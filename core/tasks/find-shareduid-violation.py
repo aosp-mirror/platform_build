@@ -14,19 +14,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import argparse
+import json
 import os
 import subprocess
-from glob import glob
-from collections import defaultdict
 import sys
-import json
 
-if len(sys.argv) < 3:
-    product_out = os.environ["PRODUCT_OUT"]
-    aapt = "aapt2"
-else:
-    product_out = sys.argv[1]
-    aapt = sys.argv[2]
+from collections import defaultdict
+from glob import glob
+
+def parse_args():
+    """Parse commandline arguments."""
+    parser = argparse.ArgumentParser(description='Find sharedUserId violators')
+    parser.add_argument('--product_out', help='PRODUCT_OUT directory',
+                        default=os.environ.get("PRODUCT_OUT"))
+    parser.add_argument('--aapt', help='Path to aapt or aapt2',
+                        default="aapt2")
+    parser.add_argument('--copy_out_system', help='TARGET_COPY_OUT_SYSTEM',
+                        default="system")
+    parser.add_argument('--copy_out_vendor', help='TARGET_COPY_OUT_VENDOR',
+                        default="vendor")
+    parser.add_argument('--copy_out_product', help='TARGET_COPY_OUT_PRODUCT',
+                        default="product")
+    parser.add_argument('--copy_out_system_ext', help='TARGET_COPY_OUT_SYSTEM_EXT',
+                        default="system_ext")
+    return parser.parse_args()
 
 def execute(cmd):
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -45,7 +57,6 @@ def extract_shared_uid(file):
     else:
         print(error_msg, file=sys.stderr)
         sys.exit()
-        return None
 
     for l in manifest.split('\n'):
         if "sharedUserId" in l:
@@ -53,18 +64,28 @@ def extract_shared_uid(file):
     return None
 
 
-partitions = ["system", "vendor", "product"]
+args = parse_args()
+
+product_out = args.product_out
+aapt = args.aapt
+
+partitions = (
+        ("system", args.copy_out_system),
+        ("vendor", args.copy_out_vendor),
+        ("product", args.copy_out_product),
+        ("system_ext", args.copy_out_system_ext),
+)
 
 shareduid_app_dict = defaultdict(list)
 
-for p in partitions:
-    for f in glob(os.path.join(product_out, p, "*", "*", "*.apk")):
+for part, location in partitions:
+    for f in glob(os.path.join(product_out, location, "*", "*", "*.apk")):
         apk_file = os.path.basename(f)
         shared_uid = extract_shared_uid(f)
 
         if shared_uid is None:
             continue
-        shareduid_app_dict[shared_uid].append((p, apk_file))
+        shareduid_app_dict[shared_uid].append((part, apk_file))
 
 
 output = defaultdict(lambda: defaultdict(list))

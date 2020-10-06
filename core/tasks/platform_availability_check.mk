@@ -51,6 +51,6 @@ it depends on other modules that are not available for platform.)
   endef
 
   $(foreach m,$(_modules_not_available_for_platform),\
-    $(foreach i,$(ALL_MODULES.$(m).INSTALLED),\
+    $(foreach i,$(filter-out $(HOST_OUT)/%,$(ALL_MODULES.$(m).INSTALLED)),\
       $(eval $(call not_available_for_platform_rule,$(i),$(m)))))
 endif
