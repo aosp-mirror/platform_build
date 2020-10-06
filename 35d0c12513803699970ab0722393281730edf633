@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c83812f6_dc871487",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-06T17:07:51Z",
+      "side": 1,
+      "message": "I had assumed these were typos to begin with -- if we\u0027re only supporting a single file, can we do something that\u0027s more obvious without documentation? For example, something like:\n\n  PRODUCT_SYSTEM_FREEZE :\u003d vendor/foo/aosp_bar-installed-files.txt\n  PRODUCT_SYSTEM_FREEZE_MODE :\u003d disallow_new_files disallow_removed_files\n\n(That may be unnecessarily verbose, but it\u0027s just an example)\n\nYou also may want to look at how a similar restriction has been handled previously, which has file-based allow lists:\n\n  PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS / PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST (and friends)\n\nThat has the advantage of finding problems very early in the build, but can miss some files installed without the build system\u0027s knowledge. So depending on your requirements, if you used that, you may also need to use something like this.\n\nI\u0027m a little worried that this is fairly error-prone for local users -- this is likely to break builds after running `mm`/`mma` and extra things are installed into the system image.",
+      "range": {
+        "startLine": 17,
+        "startChar": 64,
+        "endLine": 17,
+        "endChar": 67
+      },
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b7c4e4d0_54754103",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2371,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-06T17:07:51Z",
+      "side": 1,
+      "message": "This will need to depend on the file within PRODUCT_SYSTEM_FREEZE (which means splitting the value with today\u0027s implementation)",
+      "range": {
+        "startLine": 2371,
+        "startChar": 0,
+        "endLine": 2371,
+        "endChar": 80
+      },
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84559134_0fa8638d",
+        "filename": "tools/fileslist_util.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-06T17:07:51Z",
+      "side": 1,
+      "message": "Can it not spam the build log with this message when PRODUCT_SYSTEM_FREEZE is not set (which is the default)? I\u0027d recommend conditionalizing the caller (ifdef PRODUCT_SYSTEM_FREEZE / ... filelist ... / endif), and then turning this into an error. It\u0027s less likely to silently break in the future that way.",
+      "range": {
+        "startLine": 91,
+        "startChar": 8,
+        "endLine": 91,
+        "endChar": 55
+      },
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
