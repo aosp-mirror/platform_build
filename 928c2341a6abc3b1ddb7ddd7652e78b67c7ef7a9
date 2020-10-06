@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "704933df_ab7e2b4f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-06T17:39:42Z",
+      "side": 1,
+      "message": "I\u0027ll leave this to Tianjie to respond. I don\u0027t know if there\u0027re some backwards compatibility issues where some old builds of recovery/update_engine does not recognize zip64.\n\nChange LGTM overall.",
+      "revId": "928c2341a6abc3b1ddb7ddd7652e78b67c7ef7a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
