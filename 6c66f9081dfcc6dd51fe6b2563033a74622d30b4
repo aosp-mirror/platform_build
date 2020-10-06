@@ -143,6 +143,24 @@
     },
     {
       "key": {
+        "uuid": "3aa9b8c4_8a454c59",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-10-06T03:22:43Z",
+      "side": 1,
+      "message": "Ack, Felix, do you want to add KATI_deprecated_var now?",
+      "parentUuid": "c960e746_d805f8ee",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "269ed033_57129453",
         "filename": "core/soong_config.mk",
         "patchSetId": 7
