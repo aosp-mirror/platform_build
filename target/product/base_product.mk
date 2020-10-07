@@ -21,3 +21,4 @@ PRODUCT_PACKAGES += \
     passwd_product \
     product_compatibility_matrix.xml \
     product_manifest.xml \
+    selinux_policy_product \
