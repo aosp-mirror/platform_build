@@ -178,6 +178,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "747584fa_e3b10a01",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-10-07T08:01:22Z",
+      "side": 1,
+      "message": "Thanks for letting us know.\nLet me just amend this CL to include KATI_deprecated_var (as it\u0027s a small change).",
+      "parentUuid": "0cc43ea2_61b119d8",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "269ed033_57129453",
