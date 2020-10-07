@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9b9d9be_57ea273d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-07T23:12:33Z",
+      "side": 1,
+      "message": "Tianjie, this change does not affect OTA, but only GKI APEX itself. I will upload a separate change to set the boot image timestamp for OTA.\n\nHence, the otatools-\u003ecpio dependency is not needed for this change in particular.\n\nPTAL.",
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
