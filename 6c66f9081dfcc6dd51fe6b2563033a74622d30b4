@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": false,
       "key": {
         "uuid": "281a9072_f3f3cdd8",
         "filename": "/PATCHSET_LEVEL",
@@ -14,10 +15,10 @@
       "side": 1,
       "message": "Instead of https://android-review.googlesource.com/c/platform/system/sepolicy/+/1362721 enforcement of the new variable could be moved into platform/build with `KATI_obsolete_var`.\n\nBut for now, I\u0027d like to get this merged first and move to the enforcement later.\n\n@Bowgo @Jiyong could you get your colleagues to +2 the whole topic? I\u0027ve only included the variable change in the topic so far.\n\nThe devices using the old var have received CLs as well:\nhttps://android-review.googlesource.com/c/device/google/marlin/+/1316515\nhttps://android-review.googlesource.com/c/device/google/cuttlefish/+/1316477\nhttps://android-review.googlesource.com/c/device/google/wahoo/+/1316478\nhttps://android-review.googlesource.com/c/platform/packages/services/Car/+/1321014\nhttps://android-review.googlesource.com/c/platform/packages/services/Car/+/1321015",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": false
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "fe52dffc_ca4928b2",
         "filename": "/PATCHSET_LEVEL",
@@ -32,10 +33,10 @@
       "message": "Hi,\n\nhttps://android-review.googlesource.com/c/device/google/marlin/+/1316515      (+2-ed)\nhttps://android-review.googlesource.com/c/device/google/cuttlefish/+/1316477  (need rebase)\nhttps://android-review.googlesource.com/c/device/google/wahoo/+/1316478       (+2-ed)\n\nDo you want to include the above three CLs into the same topic \"board-system-ext-sepolicy\" ?\nIt\u0027s ok to submit them separately as well.\n\nhttps://android-review.googlesource.com/c/platform/packages/services/Car/+/1321014  (not needed)\nhttps://android-review.googlesource.com/c/platform/packages/services/Car/+/1321015  (will loop in Car team to +2, can probably be submitted separately).",
       "parentUuid": "281a9072_f3f3cdd8",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": false
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "5595c494_487d7746",
         "filename": "/PATCHSET_LEVEL",
@@ -50,10 +51,10 @@
       "message": "I\u0027d rather get the variable change in the build system merged first, actual users can follow later. Else it\u0027s a neverending dance with Treehugger and expiring votes.",
       "parentUuid": "fe52dffc_ca4928b2",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": false
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "9654bce9_3cb1507d",
         "filename": "/PATCHSET_LEVEL",
@@ -68,10 +69,10 @@
       "message": "Ok, SGTM.\n\nIt already passed Presubmit recently, shouldn\u0027t be difficult to pass again.",
       "parentUuid": "5595c494_487d7746",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": false
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "adceaf46_cdbdafff",
         "filename": "/PATCHSET_LEVEL",
@@ -85,10 +86,10 @@
       "side": 1,
       "message": "Could someone submit this now please?",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": false
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "a8912b4c_a52b1b07",
         "filename": "/PATCHSET_LEVEL",
@@ -103,10 +104,10 @@
       "message": "Sure, we can do that.\n\nLooks like KATI_obsolete_var will cause a build break, so we can only add it after internal usages of BOARD_PLAT_PUBLIC_SEPOLICY_DIR is removed.",
       "parentUuid": "adceaf46_cdbdafff",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": false
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "277536d9_5d270ef8",
         "filename": "/PATCHSET_LEVEL",
@@ -120,10 +121,10 @@
       "side": 1,
       "message": "Hi Colin, Dan,\nCould you help for the owner vote?\nThanks,",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": false
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "c960e746_d805f8ee",
         "filename": "/PATCHSET_LEVEL",
@@ -138,10 +139,10 @@
       "message": "KATI_deprecated_var is the version that will warn instead of error.",
       "parentUuid": "a8912b4c_a52b1b07",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "3aa9b8c4_8a454c59",
         "filename": "/PATCHSET_LEVEL",
@@ -156,10 +157,28 @@
       "message": "Ack, Felix, do you want to add KATI_deprecated_var now?",
       "parentUuid": "c960e746_d805f8ee",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0cc43ea2_61b119d8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2020-10-07T05:53:31Z",
+      "side": 1,
+      "message": "I\u0027d prefer to submit this CL first and follow up with the KATI_deprecated_var in a later CL.\n\nI\u0027m fine with you CL\u0027ing the deprecation since I do not have access to a build environment at the moment.",
+      "parentUuid": "3aa9b8c4_8a454c59",
+      "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "269ed033_57129453",
         "filename": "core/soong_config.mk",
@@ -173,10 +192,10 @@
       "side": 1,
       "message": "Do you want to use $(.KATI_obsolete_var BOARD_PLAT_PUBLIC_SEPOLICY_DIR, \u003cmessage\u003e) to make this a warning now?",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "3cc95a11_ffc19857",
         "filename": "core/soong_config.mk",
@@ -191,10 +210,10 @@
       "message": "Nice, thanks for the suggestion.\n\nHi Felix,\nWould you upload a new patchset for this or prefer us to do so?\nFeel free to let us know.\n\nThanks,",
       "parentUuid": "269ed033_57129453",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "ec4c364f_63713668",
         "filename": "core/soong_config.mk",
@@ -209,10 +228,10 @@
       "message": "There are many places where I could emit that message, which seems most appropriate?\n\n```\n$ rg \u0027KATI_obsolete_var\u0027 -l\ncore/deprecation.mk\ncore/base_rules.mk\ncore/version_defaults.mk\ncore/product_config.mk\ncore/product.mk\ncore/main.mk\ncore/envsetup.mk\ncore/distdir.mk\ncore/config.mk\ncore/board_config.mk\ncore/definitions.mk\n```",
       "parentUuid": "3cc95a11_ffc19857",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "5c0aa10f_8378efef",
         "filename": "core/soong_config.mk",
@@ -227,10 +246,10 @@
       "message": "Didn\u0027t mean to leave this \"unresolved\" as that would block merging.",
       "parentUuid": "ec4c364f_63713668",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": false
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "8ac90801_a855a9a9",
         "filename": "core/soong_config.mk",
@@ -245,10 +264,10 @@
       "message": "I\u0027m not sure about the location, Colin might know?\n(can it be under system/sepolicy/Android.mk?)\n\nJust FYI, `cs.android.com` is useful for code search as well. \nhttps://cs.android.com/search?q\u003dKATI_obsolete_var\u0026sq\u003d\n\nThere is another CL that enforces this to a build error instead of warning (applies to new launched devices only):\n https://android-review.googlesource.com/c/platform/system/sepolicy/+/1362721\n\nThe overall plan is probably (just to align):\n  1) Add the warning message\n  2) Clean up Google internal sources\n  3) Add the enforcement above (build break)",
       "parentUuid": "5c0aa10f_8378efef",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "a1b54459_95f5602b",
         "filename": "core/soong_config.mk",
@@ -263,10 +282,10 @@
       "message": "\u003e I\u0027m not sure about the location, Colin might know?\n\u003e (can it be under system/sepolicy/Android.mk?)\n\nHaven\u0027t seen KATI_obsolete_var outside out build/make so far.\n\nMy question would be where it\u0027d be most appropriate. core/config.mk seems to be like the catch-all place for deprecated vars, whereas core/soong_config.mk (file changed in this CL) would keep the deprecation within the logical unit of make-\u003esoong variable transmogrification.\n\nI\u0027d prefer to keep the depreation inside core/config.mk, as it would mean not scattering deprecated vars over the whole build system.\n\n\u003e Just FYI, `cs.android.com` is useful for code search as well. \n\u003e https://cs.android.com/search?q\u003dKATI_obsolete_var\u0026sq\u003d\n\nYes, it\u0027s a great tool. It\u0027s a very nice gesture of you Google guys to open it up to everyone.\n\n\u003e There is another CL that enforces this to a build error instead of warning (applies to new launched devices only):\n\u003e  https://android-review.googlesource.com/c/platform/system/sepolicy/+/1362721\n\u003e \n\u003e The overall plan is probably (just to align):\n\u003e   1) Add the warning message\n\u003e   2) Clean up Google internal sources\n\u003e   3) Add the enforcement above (build break)\n\nWould probably make more sense to discuss the deprecation notice there instead of in this CL ;)",
       "parentUuid": "8ac90801_a855a9a9",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": false
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "8fef5a37_eb638a7b",
         "filename": "core/soong_config.mk",
@@ -281,10 +300,10 @@
       "message": "Adding KATI_obsolete_var in core/config.mk looks better to me (I don\u0027t have strong preference tho)",
       "parentUuid": "a1b54459_95f5602b",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "a24693d6_cffd20d7",
         "filename": "core/soong_config.mk",
@@ -299,8 +318,7 @@
       "message": "Alright, I\u0027ll add it there.",
       "parentUuid": "8fef5a37_eb638a7b",
       "revId": "6c66f9081dfcc6dd51fe6b2563033a74622d30b4",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": false
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
