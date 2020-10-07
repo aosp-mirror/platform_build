@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": true,
       "key": {
         "uuid": "5223d624_0a28db34",
         "filename": "/COMMIT_MSG",
@@ -14,10 +15,10 @@
       "side": 1,
       "message": "Why is there a symlink?  Init doesn\u0027t read files through a symlink for security reasons, so it won\u0027t help init loading the file, and I don\u0027t believe there are any other readers.  \n\nCan we pick one location that works well for both targets?  The purpose of having a /first_stage_ramdisk directory in the recovery image is that after 1st stage init switches root to that directory, that it should be identical to the dedicated ramdisk partition devices.  \n\nCould we install the file to\nrecovery-as-ramdisk: /first_stage_ramdisk/etc/build.prop\ndedicated-ramdisk: /etc/build.prop\n?",
       "revId": "5d0cedea04993e09ff85b6afd39b84e011019b66",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "bb685852_066a8ffa",
         "filename": "/COMMIT_MSG",
@@ -32,10 +33,10 @@
       "message": "For GKI, we can\u0027t distinguish the build based on recovery-as-ramdisk or dedicated ramdisk, because we don\u0027t know what device this GKI will install to. If init doesn\u0027t read symlinks for security reasons, there are two ways I can think of to get around this:\n\n(1) install to both locations\n(2) Only install to /first_stage_ramdisk/boot/etc/build.prop, but:\n(2a) in init, try /first_stage_ramdisk/boot/etc/build.prop; if that failed, try /boot/etc/build.prop\n(2b) store the file to tmpfs before switching root to /first_stage_ramdisk\n\nWDYT?",
       "parentUuid": "5223d624_0a28db34",
       "revId": "5d0cedea04993e09ff85b6afd39b84e011019b66",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "0ceb0932_197d56fe",
         "filename": "/COMMIT_MSG",
@@ -50,10 +51,10 @@
       "message": "(1) install to both locations\n(2) Only install to /first_stage_ramdisk/boot/etc/build.prop, but in init, try /first_stage_ramdisk/boot/etc/build.prop; if that failed, try /boot/etc/build.prop\n(3) Only install to /boot/etc/build.prop, but store the file to tmpfs before switching root to /first_stage_ramdisk",
       "parentUuid": "bb685852_066a8ffa",
       "revId": "5d0cedea04993e09ff85b6afd39b84e011019b66",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "efcfda1a_416126cf",
         "filename": "/COMMIT_MSG",
@@ -68,8 +69,25 @@
       "message": "How is GKI built that it cannot distinguish between recovery-as-ramdisk or dedicated ramdisk?  The build process and contents for those partitions is totally different.  \n\nDon\u0027t you need to distribute GKI in both forms?  Otherwise how do you go from a single GKI to either form?",
       "parentUuid": "bb685852_066a8ffa",
       "revId": "5d0cedea04993e09ff85b6afd39b84e011019b66",
-      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
-      "unresolved": true
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e9c0213_60bdcdc2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-07T01:26:50Z",
+      "side": 1,
+      "message": "Talked offline, symlink is removed.",
+      "parentUuid": "efcfda1a_416126cf",
+      "revId": "5d0cedea04993e09ff85b6afd39b84e011019b66",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
