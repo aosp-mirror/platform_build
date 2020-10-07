@@ -46,6 +46,30 @@
       },
       "revId": "e2b5215ee088df15a20398f5e8090e404d9b08f6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a26d54c0_bbb9bdf5",
+        "filename": "core/soong_rust_prebuilt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-10-07T20:32:45Z",
+      "side": 1,
+      "message": "Mostly because I had to look up what curly braces did, which probably means they aren\u0027t used anywhere else in the build.  They also have strange semantics (required whitespace around them, must have a trailing semicolon).",
+      "parentUuid": "ae479bb3_b8d3d295",
+      "range": {
+        "startLine": 63,
+        "startChar": 14,
+        "endLine": 63,
+        "endChar": 15
+      },
+      "revId": "e2b5215ee088df15a20398f5e8090e404d9b08f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
