@@ -65,6 +65,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a874084d_9fcb094a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-10-08T08:27:18Z",
+      "side": 1,
+      "message": "I\u0027m skeptical of this change, primarily because I think it will be a great pain to add new things to the system partition (e.g. base_system.mk or another \"common\" makefile). All such additions would require updating all of the allow-lists that have been checked into various branches relying on this feature.\n\nIsn\u0027t this creating a huge maintenance burden?",
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b7c4e4d0_54754103",
