@@ -16,6 +16,24 @@
       "message": "This has to be before the variable is set to have a useful warning.  Most uses are in core/config.mk.",
       "revId": "6b72291e2f618104c4a2b84423a351f2daaaea97",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73539fd4_dd9f2697",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-10-08T22:33:04Z",
+      "side": 1,
+      "message": "Discussed over chat: KATI_deprecated_var gives excess warnings when you still want to support the variable in the build system (which I am doing here until all users are moved off). Tracking moving users to the new var in b/170423509.",
+      "parentUuid": "c3edd4f8_c8cca674",
+      "revId": "6b72291e2f618104c4a2b84423a351f2daaaea97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
