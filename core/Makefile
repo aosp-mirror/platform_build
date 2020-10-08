@@ -1851,6 +1851,15 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	$(hide) cat $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET) >> $@
 	$(call append-recovery-ui-properties,$(PRIVATE_RECOVERY_UI_PROPERTIES),$@)
 
+# Only install boot/etc/build.prop to recovery image on recovery_as_boot.
+# On device with dedicated recovery partition, the file should come from the boot
+# ramdisk.
+ifeq (true,$(BOARD_USES_RECOVERY_AS_BOOT))
+INSTALLED_RECOVERY_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RECOVERY_ROOT_OUT)/$(RAMDISK_BUILD_PROP_REL_PATH)
+$(INSTALLED_RECOVERY_RAMDISK_BUILD_PROP_TARGET): $(INSTALLED_RAMDISK_BUILD_PROP_TARGET)
+	$(copy-file-to-target)
+endif
+
 ifeq (truetrue,$(strip $(BUILDING_VENDOR_BOOT_IMAGE))$(strip $(AB_OTA_UPDATER)))
   INTERNAL_RECOVERYIMAGE_ARGS := --ramdisk $(recovery_ramdisk)
 ifdef GENERIC_KERNEL_CMDLINE
@@ -1895,6 +1904,7 @@ $(recovery_ramdisk): $(MKBOOTFS) $(COMPRESSION_COMMAND_DEPS) \
 	    $(recovery_sepolicy) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
+	    $(INSTALLED_RECOVERY_RAMDISK_BUILD_PROP_TARGET) \
 	    $(recovery_resource_deps) \
 	    $(recovery_fstab)
 	# Making recovery image
