@@ -33,6 +33,24 @@
       "message": ".KATI_deprecated_var would print a warning at the site that writes TARGET_NO_VENDOR_BOOT.",
       "revId": "73ba4ba8e097bbdfdbdf740a2caac882327cec6d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b6fa0760_90afe0ec",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-10-08T16:52:48Z",
+      "side": 1,
+      "message": "Done. Thanks for pointing out that function!",
+      "parentUuid": "727f0b20_54406e32",
+      "revId": "73ba4ba8e097bbdfdbdf740a2caac882327cec6d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
