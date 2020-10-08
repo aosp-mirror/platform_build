@@ -26,6 +26,47 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3692d5e5_6baf15a5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1135739
+      },
+      "writtenOn": "2020-10-08T04:41:50Z",
+      "side": 1,
+      "message": "Ack to using PRODUCT_SYSTEM_FREEZE and PRODUCT_SYSTEM_FREEZE_MODE. For local user cases, this will be transparent to them if they use different build targets. For example, suppose we enable this for cf_x86_phone, this will be visible to users that are using the cf_x86_phone only and transparent to others.",
+      "parentUuid": "c83812f6_dc871487",
+      "range": {
+        "startLine": 17,
+        "startChar": 64,
+        "endLine": 17,
+        "endChar": 67
+      },
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "38f58ba7_aa2345ae",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1135739
+      },
+      "writtenOn": "2020-10-08T04:41:50Z",
+      "side": 1,
+      "message": "Thanks for the comments, I\u0027ll refine it according.",
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b7c4e4d0_54754103",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -37,6 +78,30 @@
       "writtenOn": "2020-10-06T17:07:51Z",
       "side": 1,
       "message": "This will need to depend on the file within PRODUCT_SYSTEM_FREEZE (which means splitting the value with today\u0027s implementation)",
+      "range": {
+        "startLine": 2371,
+        "startChar": 0,
+        "endLine": 2371,
+        "endChar": 80
+      },
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc6d977e_685ad432",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2371,
+      "author": {
+        "id": 1135739
+      },
+      "writtenOn": "2020-10-08T04:41:50Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b7c4e4d0_54754103",
       "range": {
         "startLine": 2371,
         "startChar": 0,
@@ -60,6 +125,30 @@
       "writtenOn": "2020-10-06T17:07:51Z",
       "side": 1,
       "message": "Can it not spam the build log with this message when PRODUCT_SYSTEM_FREEZE is not set (which is the default)? I\u0027d recommend conditionalizing the caller (ifdef PRODUCT_SYSTEM_FREEZE / ... filelist ... / endif), and then turning this into an error. It\u0027s less likely to silently break in the future that way.",
+      "range": {
+        "startLine": 91,
+        "startChar": 8,
+        "endLine": 91,
+        "endChar": 55
+      },
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "77fa52f4_62e6fe42",
+        "filename": "tools/fileslist_util.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1135739
+      },
+      "writtenOn": "2020-10-08T04:41:50Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "84559134_0fa8638d",
       "range": {
         "startLine": 91,
         "startChar": 8,
