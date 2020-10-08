@@ -84,6 +84,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "14f157f2_a25f6002",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-10-08T08:27:50Z",
+      "side": 1,
+      "message": "(un-resolve)",
+      "parentUuid": "a874084d_9fcb094a",
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b7c4e4d0_54754103",
         "filename": "core/Makefile",
         "patchSetId": 2
