@@ -429,3 +429,13 @@ $(eval $(call build-properties,\
     $(_prop_files_),\
     $(_prop_vars_),\
     $(empty)))
+
+# ----------------------------------------------------------------
+# ramdisk/boot/etc/build.prop
+#
+
+RAMDISK_BUILD_PROP_REL_PATH := boot/etc/build.prop
+INSTALLED_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RAMDISK_OUT)/$(RAMDISK_BUILD_PROP_REL_PATH)
+$(eval $(call build-properties,\
+    bootimage,\
+    $(INSTALLED_RAMDISK_BUILD_PROP_TARGET)))
