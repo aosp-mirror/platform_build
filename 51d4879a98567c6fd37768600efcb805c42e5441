@@ -16,6 +16,98 @@
       "message": "Tianjie, this change does not affect OTA, but only GKI APEX itself. I will upload a separate change to set the boot image timestamp for OTA.\n\nHence, the otatools-\u003ecpio dependency is not needed for this change in particular.\n\nPTAL.",
       "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ce00d99d_fd51f9ac",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-08T07:20:49Z",
+      "side": 1,
+      "message": "make a new function below this line, so OTA can use it as well?",
+      "range": {
+        "startLine": 600,
+        "startChar": 4,
+        "endLine": 600,
+        "endChar": 20
+      },
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "73ed4c1b_1c59929d",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-08T07:20:49Z",
+      "side": 1,
+      "message": "should be safe to use: if not prop_file. Or just inline the logic below.",
+      "range": {
+        "startLine": 607,
+        "startChar": 0,
+        "endLine": 607,
+        "endChar": 25
+      },
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f3416cf_4e0466b3",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 612,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-08T07:20:49Z",
+      "side": 1,
+      "message": "should be safe to use: if timestamp",
+      "range": {
+        "startLine": 612,
+        "startChar": 7,
+        "endLine": 612,
+        "endChar": 27
+      },
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d4a32f4_e33194f7",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-08T07:20:49Z",
+      "side": 1,
+      "message": "I am actually unsure about the exception handling, does it just fail silently if we catch here? Should we just abort the GKI generation instead.",
+      "range": {
+        "startLine": 617,
+        "startChar": 9,
+        "endLine": 617,
+        "endChar": 22
+      },
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
