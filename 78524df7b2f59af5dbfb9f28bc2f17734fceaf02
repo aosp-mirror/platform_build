@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "62fa5669_3044c22f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-08T14:27:48Z",
+      "side": 1,
+      "message": "Note: forward fix is in CL:1454915",
+      "revId": "78524df7b2f59af5dbfb9f28bc2f17734fceaf02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
