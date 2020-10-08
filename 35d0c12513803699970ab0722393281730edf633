@@ -102,6 +102,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8aab1e27_902c08a8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1135739
+      },
+      "writtenOn": "2020-10-08T09:49:34Z",
+      "side": 1,
+      "message": "Now the content of the CSI depends on the dependency calculated by the build system and the files within the CSI changes over time. This makes the boundary between system and system_ext unstable and makes issues on OEM side like this example\n\nhttps://docs.google.com/document/d/1BEwfgbyjsuR7LbqdJZ-yfn42wWnd4A7kdhFVayHow_Q/edit#bookmark\u003did.5wfa2zxtoymf\n\nAgree that to disallow added files are impractical during development time but the ability to detect deleted files in advance are something we need to consider in order to land CSI to OEM smoothly.",
+      "parentUuid": "14f157f2_a25f6002",
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b7c4e4d0_54754103",
         "filename": "core/Makefile",
         "patchSetId": 2
