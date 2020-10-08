@@ -41,6 +41,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "daa1e1f1_d57dce33",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-08T16:23:59Z",
+      "side": 1,
+      "message": "For OTA, I want the timestamp to be extracted from boot image directly. With a prebuilt GKI APEX, a prebuilt boot image will be used, and the prop file should be extracted from the boot image. Therefore, OTA should use GetBootImageTimestamp() as well.\n\nSee CL:1433469",
+      "parentUuid": "ce00d99d_fd51f9ac",
+      "range": {
+        "startLine": 600,
+        "startChar": 4,
+        "endLine": 600,
+        "endChar": 20
+      },
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "73ed4c1b_1c59929d",
@@ -100,6 +124,30 @@
       "writtenOn": "2020-10-08T07:20:49Z",
       "side": 1,
       "message": "I am actually unsure about the exception handling, does it just fail silently if we catch here? Should we just abort the GKI generation instead.",
+      "range": {
+        "startLine": 617,
+        "startChar": 9,
+        "endLine": 617,
+        "endChar": 22
+      },
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aacbeb82_bffb8166",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-08T16:23:59Z",
+      "side": 1,
+      "message": "The docstring says \"return None if (the boot image) has an unknown format\", hence the last line.\n\nIn such case, GKI APEX build process should abort, but OTA shouldn\u0027t, because the OTA script may be invoked on devices that doesn\u0027t support GKI. Hence I return \"None\" here and let the caller decide.",
+      "parentUuid": "4d4a32f4_e33194f7",
       "range": {
         "startLine": 617,
         "startChar": 9,
