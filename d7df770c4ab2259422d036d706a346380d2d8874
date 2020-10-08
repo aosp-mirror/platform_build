@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7e9d368_77f40413",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-10-08T05:49:38Z",
+      "side": 1,
+      "message": "Unrelated pre-submit failure, re-trying ...\n\n  File \"/usr/local/google/buildbot/scripts/source_fetcher.py\", line 500, in _SyncInner\n    timeout_projects\u003dunfinished_projects_names)\nSyncTimeoutError: Sync operation timed out after 3600 second\n,\n error: Sync operation timed out after 3600 second",
+      "revId": "d7df770c4ab2259422d036d706a346380d2d8874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
