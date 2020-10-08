@@ -140,7 +140,7 @@ def VerifyPackage(cert, package):
 
 def VerifyAbOtaPayload(cert, package):
   """Verifies the payload and metadata signatures in an A/B OTA payload."""
-  package_zip = zipfile.ZipFile(package, 'r')
+  package_zip = zipfile.ZipFile(package, 'r', allowZip64=True)
   if 'payload.bin' not in package_zip.namelist():
     common.ZipClose(package_zip)
     return
