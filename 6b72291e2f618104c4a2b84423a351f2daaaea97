@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3edd4f8_c8cca674",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-10-08T18:22:17Z",
+      "side": 1,
+      "message": "This has to be before the variable is set to have a useful warning.  Most uses are in core/config.mk.",
+      "revId": "6b72291e2f618104c4a2b84423a351f2daaaea97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
