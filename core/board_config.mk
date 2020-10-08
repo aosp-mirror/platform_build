@@ -97,6 +97,13 @@ _board_strip_readonly_list += \
   BOARD_KERNEL_BINARIES \
   BOARD_KERNEL_MODULE_INTERFACE_VERSIONS \
 
+# Variables related to generic kernel image (GKI) and generic boot image
+# - BOARD_USES_GENERIC_KERNEL_IMAGE is the global variable that defines if the
+#   board uses GKI and generic boot image.
+#   Update mechanism of the boot image is not enforced by this variable.
+_board_strip_readonly_list += \
+  BOARD_USES_GENERIC_KERNEL_IMAGE \
+
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_DUP_SYSPROP \
