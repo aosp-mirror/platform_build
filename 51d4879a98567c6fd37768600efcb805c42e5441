@@ -89,6 +89,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8ecb164_ec152f44",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-08T16:49:49Z",
+      "side": 1,
+      "message": "If we are not using the prebuilt, then we use the timestamp from info_dict?\n\nI still like extracting it from the boot image because it is the only source of truth. Let\u0027s discuss it in the CL that actually puts the timestamp in the OTA package; it wouldn\u0027t be hard to add a few lines here in that CL.",
+      "parentUuid": "7bbf7526_2868b05b",
+      "range": {
+        "startLine": 600,
+        "startChar": 4,
+        "endLine": 600,
+        "endChar": 20
+      },
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "73ed4c1b_1c59929d",
@@ -196,6 +220,30 @@
       "side": 1,
       "message": "Should we explicitly distinguish the GKI support for OTA generation? Otherwise, we are missing the boot timestamp in the package\u0027s metadata?",
       "parentUuid": "aacbeb82_bffb8166",
+      "range": {
+        "startLine": 617,
+        "startChar": 9,
+        "endLine": 617,
+        "endChar": 22
+      },
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3a817c8_d15e3145",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-08T16:49:49Z",
+      "side": 1,
+      "message": "Hence, it is up to the caller to decide. \n\nFor GKI, always abort if returned None.\n\nFor OTA, if device supports GKI but this fails, abort, otherwise, skip boot image timestamp.",
+      "parentUuid": "75e5e8ae_8b1292f4",
       "range": {
         "startLine": 617,
         "startChar": 9,
