@@ -79,8 +79,9 @@ else
       endif
       module_installed_filename := \
           $(patsubst $(PRODUCT_OUT)/%,%,$($(my_prefix)OUT_JAVA_LIBRARIES))/$(module_leaf)
-    else ifeq ($(LOCAL_MODULE_CLASS),ETC)
-      # ETC modules may be uninstallable, yet still have a NOTICE file. e.g. apex components
+    else ifneq ($(filter ETC DATA,$(LOCAL_MODULE_CLASS)),)
+      # ETC and DATA modules may be uninstallable, yet still have a NOTICE file.
+      # e.g. apex components
       module_installed_filename :=
     else ifneq (,$(and $(filter %.sdk,$(LOCAL_MODULE)),$(filter $(patsubst %.sdk,%,$(LOCAL_MODULE)),$(SOONG_SDK_VARIANT_MODULES))))
       # Soong produces uninstallable *.sdk shared libraries for embedding in APKs.
