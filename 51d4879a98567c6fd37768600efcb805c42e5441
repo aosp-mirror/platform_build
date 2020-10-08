@@ -65,6 +65,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bbf7526_2868b05b",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-08T16:42:09Z",
+      "side": 1,
+      "message": "Should we explicitly distinguish the prebuilt case? If we are not using prebuilt, we can just skip the extraction of boot image.",
+      "parentUuid": "daa1e1f1_d57dce33",
+      "range": {
+        "startLine": 600,
+        "startChar": 4,
+        "endLine": 600,
+        "endChar": 20
+      },
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "73ed4c1b_1c59929d",
@@ -148,6 +172,30 @@
       "side": 1,
       "message": "The docstring says \"return None if (the boot image) has an unknown format\", hence the last line.\n\nIn such case, GKI APEX build process should abort, but OTA shouldn\u0027t, because the OTA script may be invoked on devices that doesn\u0027t support GKI. Hence I return \"None\" here and let the caller decide.",
       "parentUuid": "4d4a32f4_e33194f7",
+      "range": {
+        "startLine": 617,
+        "startChar": 9,
+        "endLine": 617,
+        "endChar": 22
+      },
+      "revId": "51d4879a98567c6fd37768600efcb805c42e5441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "75e5e8ae_8b1292f4",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-08T16:42:09Z",
+      "side": 1,
+      "message": "Should we explicitly distinguish the GKI support for OTA generation? Otherwise, we are missing the boot timestamp in the package\u0027s metadata?",
+      "parentUuid": "aacbeb82_bffb8166",
       "range": {
         "startLine": 617,
         "startChar": 9,
