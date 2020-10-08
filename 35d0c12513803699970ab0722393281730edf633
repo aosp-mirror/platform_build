@@ -120,6 +120,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f159a4b4_36606401",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-10-08T10:02:00Z",
+      "side": 1,
+      "message": "\u003e This makes the boundary between system and system_ext unstable\n\nNo, this is not that makes the boundary unstable. The boundary is already unstable. You can\u0027t fix that by just defining all of /system \"stable\", as that would make it impossible to make any changes.\n\nYou need to work on decoupling system_ext, and extending existing stable interfaces.",
+      "parentUuid": "8aab1e27_902c08a8",
+      "revId": "35d0c12513803699970ab0722393281730edf633",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b7c4e4d0_54754103",
         "filename": "core/Makefile",
         "patchSetId": 2
