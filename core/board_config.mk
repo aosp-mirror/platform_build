@@ -101,8 +101,11 @@ _board_strip_readonly_list += \
 # - BOARD_USES_GENERIC_KERNEL_IMAGE is the global variable that defines if the
 #   board uses GKI and generic boot image.
 #   Update mechanism of the boot image is not enforced by this variable.
+# - BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE controls whether the recovery image
+#   contains a kernel or not.
 _board_strip_readonly_list += \
   BOARD_USES_GENERIC_KERNEL_IMAGE \
+  BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE \
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
@@ -752,3 +755,9 @@ $(foreach m,$(filter-out BUILD_COPY_HEADERS,$(DEFAULT_ERROR_BUILD_MODULE_TYPES))
   $(if $(filter true,$(BUILD_BROKEN_USES_$(m))),\
     $(KATI_deprecated_var $(m),Please convert to Soong),\
     $(KATI_obsolete_var $(m),Please convert to Soong)))
+
+ifndef BUILDING_RECOVERY_IMAGE
+  ifeq (true,$(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE))
+    $(error Should not set BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE if not building recovery image)
+  endif
+endif

@@ -1257,22 +1257,26 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   for building the requested image.
   """
 
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
   # "boot" or "recovery", without extension.
   partition_name = os.path.basename(sourcedir).lower()
 
+  kernel = None
   if partition_name == "recovery":
-    kernel = "kernel"
+    if info_dict.get("exclude_kernel_from_recovery_image") == "true":
+      logger.info("Excluded kernel binary from recovery image.")
+    else:
+      kernel = "kernel"
   else:
     kernel = image_name.replace("boot", "kernel")
     kernel = kernel.replace(".img", "")
-  if not os.access(os.path.join(sourcedir, kernel), os.F_OK):
+  if kernel and not os.access(os.path.join(sourcedir, kernel), os.F_OK):
     return None
 
   if has_ramdisk and not os.access(os.path.join(sourcedir, "RAMDISK"), os.F_OK):
     return None
-
-  if info_dict is None:
-    info_dict = OPTIONS.info_dict
 
   img = tempfile.NamedTemporaryFile()
 
@@ -1283,7 +1287,9 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
 
-  cmd = [mkbootimg, "--kernel", os.path.join(sourcedir, kernel)]
+  cmd = [mkbootimg]
+  if kernel:
+    cmd += ["--kernel", os.path.join(sourcedir, kernel)]
 
   fn = os.path.join(sourcedir, "second")
   if os.access(fn, os.F_OK):
