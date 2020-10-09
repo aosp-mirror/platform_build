@@ -19,3 +19,4 @@ PRODUCT_PACKAGES += \
     group_system_ext \
     system_ext_manifest.xml \
     passwd_system_ext \
+    selinux_policy_system_ext \
