@@ -272,7 +272,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     input_file = common.MakeTempFile()
     all_entries = ['SYSTEM/', 'SYSTEM/b', 'SYSTEM/a', 'IMAGES/',
                    'IMAGES/system.map', 'IMAGES/system.img']
-    with zipfile.ZipFile(input_file, 'w') as input_zip:
+    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
       for name in all_entries:
         input_zip.write(os.path.join(input_tmp, name), arcname=name)
 
@@ -321,7 +321,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     input_file = common.MakeTempFile()
     all_entries = ['SYSTEM/', 'SYSTEM/abc', 'IMAGES/',
                    'IMAGES/system.map', 'IMAGES/system.img']
-    with zipfile.ZipFile(input_file, 'w') as input_zip:
+    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
       for name in all_entries:
         input_zip.write(os.path.join(input_tmp, name), arcname=name)
 
