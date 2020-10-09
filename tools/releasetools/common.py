@@ -1568,7 +1568,7 @@ def UnzipToDir(filename, dirname, patterns=None):
   cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
   if patterns is not None:
     # Filter out non-matching patterns. unzip will complain otherwise.
-    with zipfile.ZipFile(filename) as input_zip:
+    with zipfile.ZipFile(filename, allowZip64=True) as input_zip:
       names = input_zip.namelist()
     filtered = [
         pattern for pattern in patterns if fnmatch.filter(names, pattern)]

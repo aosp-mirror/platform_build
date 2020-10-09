@@ -177,7 +177,7 @@ class ApexApkSigner(object):
 
     # Add the payload image back to the apex file.
     common.ZipDelete(self.apex_path, APEX_PAYLOAD_IMAGE)
-    with zipfile.ZipFile(self.apex_path, 'a') as output_apex:
+    with zipfile.ZipFile(self.apex_path, 'a', allowZip64=True) as output_apex:
       common.ZipWrite(output_apex, payload_img, APEX_PAYLOAD_IMAGE,
                       compress_type=zipfile.ZIP_STORED)
     return self.apex_path
@@ -351,7 +351,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
   common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
   if APEX_PUBKEY in zip_items:
     common.ZipDelete(apex_file, APEX_PUBKEY)
-  apex_zip = zipfile.ZipFile(apex_file, 'a')
+  apex_zip = zipfile.ZipFile(apex_file, 'a', allowZip64=True)
   common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
   common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
   common.ZipClose(apex_zip)
