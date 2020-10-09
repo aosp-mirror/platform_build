@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "85481293_94630645",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4751,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-09T18:05:38Z",
+      "side": 1,
+      "message": "is it already part of otatools.",
+      "range": {
+        "startLine": 4751,
+        "startChar": 64,
+        "endLine": 4751,
+        "endChar": 85
+      },
+      "revId": "5c1b199b87dad22be432c2a6ca854663f11a5e02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
