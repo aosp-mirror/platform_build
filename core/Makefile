@@ -2094,6 +2094,7 @@ endif # BUILDING_RAMDISK_IMAGE
 #
 # Note: it's intentional to skip signing for boot-debug.img, because it
 # can only be used if the device is unlocked with verification error.
+ifdef BUILDING_BOOT_IMAGE
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
   INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(foreach k,$(subst kernel,boot-debug,$(BOARD_KERNEL_BINARIES)), \
@@ -2148,6 +2149,7 @@ bootimage_debug-nodeps: $(MKBOOTIMG)
 	$(foreach b,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(call build-debug-bootimage-target,$b))
 
 endif # TARGET_NO_KERNEL
+endif # BUILDING_BOOT_IMAGE
 
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifeq ($(BUILDING_RAMDISK_IMAGE),true)
@@ -4771,7 +4773,7 @@ INTERNAL_OTA_METADATA := $(PRODUCT_OUT)/ota_metadata
 
 $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
 $(INTERNAL_OTA_PACKAGE_TARGET): .KATI_IMPLICIT_OUTPUTS := $(INTERNAL_OTA_METADATA)
-$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTA_FROM_TARGET_FILES)
+$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTA_FROM_TARGET_FILES) $(INTERNAL_OTATOOLS_FILES)
 	@echo "Package OTA: $@"
 	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR) --output_metadata_path $(INTERNAL_OTA_METADATA))
 
@@ -4789,7 +4791,8 @@ INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name
 $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
 $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): \
     $(BUILT_TARGET_FILES_PACKAGE) \
-    $(OTA_FROM_TARGET_FILES)
+    $(OTA_FROM_TARGET_FILES) \
+    $(INTERNAL_OTATOOLS_FILES)
 	@echo "Package OTA (retrofit dynamic partitions): $@"
 	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR) --retrofit_dynamic_partitions)
 

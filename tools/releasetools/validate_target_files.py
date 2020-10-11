@@ -487,7 +487,7 @@ def main():
   input_tmp = common.UnzipTemp(args.target_files)
 
   info_dict = common.LoadInfoDict(input_tmp)
-  with zipfile.ZipFile(args.target_files, 'r') as input_zip:
+  with zipfile.ZipFile(args.target_files, 'r', allowZip64=True) as input_zip:
     ValidateFileConsistency(input_zip, input_tmp, info_dict)
 
   CheckBuildPropDuplicity(input_tmp)
