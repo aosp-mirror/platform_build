@@ -19,7 +19,7 @@ PRODUCT_SOONG_NAMESPACES += device/generic/goldfish-opengl # for goldfish deps.
 
 # Cuttlefish has GKI kernel prebuilts, so use those for the GKI boot.img.
 ifeq ($(TARGET_PREBUILT_KERNEL),)
-    LOCAL_KERNEL := device/google/cuttlefish_kernel/5.4-arm64/kernel
+    LOCAL_KERNEL := kernel/prebuilts/5.4/arm64/kernel-5.4-lz4
 else
     LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
 endif
