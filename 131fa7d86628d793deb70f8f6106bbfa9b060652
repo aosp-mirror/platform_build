@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d5eb92ca_85038d0c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-10-13T18:55:22Z",
+      "side": 1,
+      "message": "Running the presubmit again, it timed out earlier...\n\n(https://android-build.googleplex.com/builds/pending/P17225969/build_test/latest/view/logs/build_error.log)",
+      "revId": "131fa7d86628d793deb70f8f6106bbfa9b060652",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
