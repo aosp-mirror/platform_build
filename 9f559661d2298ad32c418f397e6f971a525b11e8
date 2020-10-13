@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3deb5469_1672db35",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-13T21:06:49Z",
+      "side": 1,
+      "message": "Sees some error in the presubmit\n\n10-12 16:02:42 D/FileUtil: Creating temp file at /tmp/stage-android-build-api/git_master/P17215698/test-mapping-host-presubmit/inv_7269706759311639815 with prefix \"ota_from_raw_image_test-stdout_\" suffix \".txt\"\n10-12 16:02:42 I/LogFileSaver: Saved log file /tmp/stage-android-build-api/git_master/P17215698/test-mapping-host-presubmit/inv_7269706759311639815/ota_from_raw_image_test-stdout_11711362090320126665.txt\n10-12 16:02:42 I/PythonBinaryHostTest: \nstderr:\nWarning: releasetools script should be invoked as hermetic Python executable -- build and run `ota_from_raw_image_test` directly.\nTraceback (most recent call last):\n  File \"/tmp/Soong.python_I_4bbl/ota_from_raw_image_test.py\", line 18, in \u003cmodule\u003e\n    from ota_from_raw_image import _GetKernelRelease\nImportError: cannot import name \u0027_GetKernelRelease\u0027 from \u0027ota_from_raw_image\u0027 (/tmp/Soong.python_I_4bbl/ota_from_raw_image.py)",
+      "revId": "9f559661d2298ad32c418f397e6f971a525b11e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
