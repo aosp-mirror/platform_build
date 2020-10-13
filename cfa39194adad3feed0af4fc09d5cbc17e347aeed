@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "764bb936_9faa9166",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1604,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-10-13T18:24:47Z",
+      "side": 0,
+      "message": "Wouldn\u0027t this work without having to go through read:\n\n   for f in $(cd $T; find ...\n\nYou would also have to use $T/$allowed to read the file.",
+      "range": {
+        "startLine": 1604,
+        "startChar": 13,
+        "endLine": 1604,
+        "endChar": 19
+      },
+      "revId": "cfa39194adad3feed0af4fc09d5cbc17e347aeed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
