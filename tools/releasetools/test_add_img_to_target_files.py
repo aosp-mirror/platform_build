@@ -93,10 +93,10 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     # Set up the output zip.
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       AddPackRadioImages(output_zip, images)
 
-    with zipfile.ZipFile(output_file, 'r') as verify_zip:
+    with zipfile.ZipFile(output_file, 'r', allowZip64=True) as verify_zip:
       for image in images:
         self.assertIn('IMAGES/' + image + '.img', verify_zip.namelist())
 
@@ -344,12 +344,12 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     image_paths = self._test_AddCareMapForAbOta()
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       AddCareMapForAbOta(output_zip, ['system', 'vendor'], image_paths)
 
     care_map_name = "META/care_map.pb"
     temp_dir = common.MakeTempDir()
-    with zipfile.ZipFile(output_file, 'r') as verify_zip:
+    with zipfile.ZipFile(output_file, 'r', allowZip64=True) as verify_zip:
       self.assertTrue(care_map_name in verify_zip.namelist())
       verify_zip.extract(care_map_name, path=temp_dir)
 
@@ -367,7 +367,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     image_paths = self._test_AddCareMapForAbOta()
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       # Create an existing META/care_map.pb entry.
       common.ZipWriteStr(output_zip, 'META/care_map.pb',
                          'fake care_map.pb')
