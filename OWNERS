@@ -1,11 +1,1 @@
-# Core build team (MTV)
-ccross@android.com
-dwillemsen@google.com
-asmundak@google.com
-jungjw@google.com
-
-# To expedite LON reviews
-hansson@google.com
-
-# For version updates
-per-file version_defaults.mk = aseaton@google.com,elisapascual@google.com,lubomir@google.com,pscovanner@google.com
+include platform/build/soong:/OWNERS
