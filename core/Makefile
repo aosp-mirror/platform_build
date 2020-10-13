@@ -1851,6 +1851,15 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 	$(hide) cat $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET) >> $@
 	$(call append-recovery-ui-properties,$(PRIVATE_RECOVERY_UI_PROPERTIES),$@)
 
+# Only install boot/etc/build.prop to recovery image on recovery_as_boot.
+# On device with dedicated recovery partition, the file should come from the boot
+# ramdisk.
+ifeq (true,$(BOARD_USES_RECOVERY_AS_BOOT))
+INSTALLED_RECOVERY_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RECOVERY_ROOT_OUT)/$(RAMDISK_BUILD_PROP_REL_PATH)
+$(INSTALLED_RECOVERY_RAMDISK_BUILD_PROP_TARGET): $(INSTALLED_RAMDISK_BUILD_PROP_TARGET)
+	$(copy-file-to-target)
+endif
+
 ifeq (truetrue,$(strip $(BUILDING_VENDOR_BOOT_IMAGE))$(strip $(AB_OTA_UPDATER)))
   INTERNAL_RECOVERYIMAGE_ARGS := --ramdisk $(recovery_ramdisk)
 ifdef GENERIC_KERNEL_CMDLINE
@@ -1895,6 +1904,7 @@ $(recovery_ramdisk): $(MKBOOTFS) $(COMPRESSION_COMMAND_DEPS) \
 	    $(recovery_sepolicy) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
+	    $(INSTALLED_RECOVERY_RAMDISK_BUILD_PROP_TARGET) \
 	    $(recovery_resource_deps) \
 	    $(recovery_fstab)
 	# Making recovery image
@@ -4928,7 +4938,7 @@ ifeq (true,$(EMMA_INSTRUMENT))
 JACOCO_REPORT_CLASSES_ALL := $(PRODUCT_OUT)/jacoco-report-classes-all.jar
 $(JACOCO_REPORT_CLASSES_ALL) :
 	@echo "Collecting uninstrumented classes"
-	find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" 2>/dev/null | sort > $@.list
+	find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" -o -name "proguard_usage.zip" 2>/dev/null | sort > $@.list
 	$(SOONG_ZIP) -o $@ -L 0 -C $(OUT_DIR) -P out -l $@.list
 
 endif # EMMA_INSTRUMENT=true
