@@ -822,7 +822,7 @@ function gettop
     local TOPFILE=build/make/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
         # The following circumlocution ensures we remove symlinks from TOP.
-        (cd $TOP; PWD= /bin/pwd)
+        (cd "$TOP"; PWD= /bin/pwd)
     else
         if [ -f $TOPFILE ] ; then
             # The following circumlocution (repeated below as well) ensures
@@ -832,13 +832,13 @@ function gettop
         else
             local HERE=$PWD
             local T=
-            while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
+            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
                 \cd ..
                 T=`PWD= /bin/pwd -P`
             done
-            \cd $HERE
+            \cd "$HERE"
             if [ -f "$T/$TOPFILE" ]; then
-                echo $T
+                echo "$T"
             fi
         fi
     fi
@@ -1653,25 +1653,26 @@ function validate_current_shell() {
 # This allows loading only approved vendorsetup.sh files
 function source_vendorsetup() {
     unset VENDOR_PYTHONPATH
+    local T="$(gettop)"
     allowed=
-    for f in $(find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
+    for f in $(cd "$T" && find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
         if [ -n "$allowed" ]; then
             echo "More than one 'allowed_vendorsetup_sh-files' file found, not including any vendorsetup.sh files:"
             echo "  $allowed"
             echo "  $f"
             return
         fi
-        allowed="$f"
+        allowed="$T/$f"
     done
 
     allowed_files=
     [ -n "$allowed" ] && allowed_files=$(cat "$allowed")
     for dir in device vendor product; do
-        for f in $(test -d $dir && \
+        for f in $(cd "$T" && test -d $dir && \
             find -L $dir -maxdepth 4 -name 'vendorsetup.sh' 2>/dev/null | sort); do
 
             if [[ -z "$allowed" || "$allowed_files" =~ $f ]]; then
-                echo "including $f"; . "$f"
+                echo "including $f"; . "$T/$f"
             else
                 echo "ignoring $f, not in $allowed"
             fi
