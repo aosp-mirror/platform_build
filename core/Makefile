@@ -4393,6 +4393,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INSTALLED_CUSTOMIMAGES_TARGET) \
 	    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 	    $(INSTALLED_KERNEL_TARGET) \
+	    $(INSTALLED_RAMDISK_TARGET) \
 	    $(INSTALLED_DTBIMAGE_TARGET) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(BOARD_PREBUILT_DTBOIMAGE) \
@@ -4560,6 +4561,13 @@ endif
 	@# Extra contents of the OTA package
 	$(hide) mkdir -p $(zip_root)/OTA
 	$(hide) cp $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(zip_root)/OTA/
+ifdef BUILDING_RAMDISK_IMAGE
+ifeq (true,$(BOARD_IMG_USE_RAMDISK))
+	@# Contents of the ramdisk image
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_RAMDISK_TARGET) $(zip_root)/IMAGES/
+endif
+endif
 ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
 ifneq ($(built_ota_tools),)
 	$(hide) mkdir -p $(zip_root)/OTA/bin
