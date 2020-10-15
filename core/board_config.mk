@@ -363,6 +363,8 @@ ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),)
     BUILDING_BOOT_IMAGE :=
   else ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
     BUILDING_BOOT_IMAGE := true
+  else ifneq (,$(foreach kernel,$(BOARD_KERNEL_BINARIES),$(BOARD_$(call to-upper,$(kernel))_BOOTIMAGE_PARTITION_SIZE)))
+    BUILDING_BOOT_IMAGE := true
   endif
 else ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),true)
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
