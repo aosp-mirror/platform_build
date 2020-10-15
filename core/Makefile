@@ -1335,6 +1335,7 @@ $(if $(filter $(2),userdata),\
     $(if $(BOARD_USERDATAIMAGE_PARTITION_SIZE),$(hide) echo "userdata_size=$(BOARD_USERDATAIMAGE_PARTITION_SIZE)" >> $(1))
     $(if $(PRODUCT_FS_CASEFOLD),$(hide) echo "needs_casefold=$(PRODUCT_FS_CASEFOLD)" >> $(1))
     $(if $(PRODUCT_QUOTA_PROJID),$(hide) echo "needs_projid=$(PRODUCT_QUOTA_PROJID)" >> $(1))
+    $(if $(PRODUCT_FS_COMPRESSION),$(hide) echo "needs_compress=$(PRODUCT_FS_COMPRESSION)" >> $(1))
     $(hide) echo "userdata_selinux_fc=$(SELINUX_FC)" >> $(1)
     $(hide) echo "building_userdata_image=$(BUILDING_USERDATA_IMAGE)" >> $(1)
 )
@@ -2104,7 +2105,7 @@ endif # BUILDING_RAMDISK_IMAGE
 #
 # Note: it's intentional to skip signing for boot-debug.img, because it
 # can only be used if the device is unlocked with verification error.
-ifdef BUILDING_BOOT_IMAGE
+ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
   INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(foreach k,$(subst kernel,boot-debug,$(BOARD_KERNEL_BINARIES)), \
@@ -2159,7 +2160,7 @@ bootimage_debug-nodeps: $(MKBOOTIMG)
 	$(foreach b,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(call build-debug-bootimage-target,$b))
 
 endif # TARGET_NO_KERNEL
-endif # BUILDING_BOOT_IMAGE
+endif # INSTALLED_BOOTIMAGE_TARGET
 
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifeq ($(BUILDING_RAMDISK_IMAGE),true)
