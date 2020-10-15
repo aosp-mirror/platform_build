@@ -814,6 +814,15 @@ class PartitionBuildProps(object):
     props._LoadBuildProp(data)
     return props
 
+  @staticmethod
+  def FromBuildPropFile(name, build_prop_file):
+    """Constructs an instance from a build prop file."""
+
+    props = PartitionBuildProps("unknown", name)
+    with open(build_prop_file) as f:
+      props._LoadBuildProp(f.read())
+    return props
+
   def _LoadBuildProp(self, data):
     for line in data.split('\n'):
       line = line.strip()
