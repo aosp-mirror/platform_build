@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4e6ea61_6447401b",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1008,
+      "author": {
+        "id": 1514973
+      },
+      "writtenOn": "2020-10-15T19:57:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "39b60200_4a5af0a9",
+      "range": {
+        "startLine": 999,
+        "startChar": 0,
+        "endLine": 1008,
+        "endChar": 0
+      },
+      "revId": "8698d525b80b95ec668d8598ff7523373b66cb4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a028fe6b_da99e3f7",
@@ -37,6 +61,30 @@
       "writtenOn": "2020-10-15T17:35:48Z",
       "side": 1,
       "message": "This can be removed, and 5 more below.",
+      "range": {
+        "startLine": 1182,
+        "startChar": 8,
+        "endLine": 1182,
+        "endChar": 23
+      },
+      "revId": "8698d525b80b95ec668d8598ff7523373b66cb4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0e178ac_77b64d28",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1182,
+      "author": {
+        "id": 1514973
+      },
+      "writtenOn": "2020-10-15T19:57:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a028fe6b_da99e3f7",
       "range": {
         "startLine": 1182,
         "startChar": 8,
