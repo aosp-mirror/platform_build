@@ -3887,6 +3887,7 @@ INTERNAL_OTATOOLS_MODULES := \
   signapk \
   simg2img \
   sload_f2fs \
+  toybox \
   tune2fs \
   unpack_bootimg \
   update_host_simulator \
