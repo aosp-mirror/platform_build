@@ -125,6 +125,9 @@ python_defaults {
     required: [
         "brillo_update_payload",
         "checkvintf",
+        "lz4",
+        "toybox",
+        "unpack_bootimg"
     ],
     target: {
         darwin: {
