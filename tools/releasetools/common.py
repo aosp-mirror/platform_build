@@ -527,6 +527,27 @@ class BuildInfo(object):
         return BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_LEGACY
     return BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_CURRENT
 
+  def _GetPlatformVersion(self):
+    version_sdk = self.GetBuildProp("ro.build.version.sdk")
+    # init code switches to version_release_or_codename (see b/158483506). After
+    # API finalization, release_or_codename will be the same as release. This
+    # is the best effort to support pre-S dev stage builds.
+    if int(version_sdk) >= 30:
+      try:
+        return self.GetBuildProp("ro.build.version.release_or_codename")
+      except ExternalError:
+        logger.warning('Failed to find ro.build.version.release_or_codename')
+
+    return self.GetBuildProp("ro.build.version.release")
+
+  def _GetPartitionPlatformVersion(self, partition):
+    try:
+      return self.GetPartitionBuildProp("ro.build.version.release_or_codename",
+                                        partition)
+    except ExternalError:
+      return self.GetPartitionBuildProp("ro.build.version.release",
+                                        partition)
+
   def GetOemProperty(self, key):
     if self.oem_props is not None and key in self.oem_props:
       return self.oem_dicts[0][key]
@@ -543,7 +564,7 @@ class BuildInfo(object):
           self.GetPartitionBuildProp("ro.product.brand", partition),
           self.GetPartitionBuildProp("ro.product.name", partition),
           self.GetPartitionBuildProp("ro.product.device", partition),
-          self.GetPartitionBuildProp("ro.build.version.release", partition),
+          self._GetPartitionPlatformVersion(partition),
           self.GetPartitionBuildProp("ro.build.id", partition),
           self.GetPartitionBuildProp(
               "ro.build.version.incremental", partition),
@@ -559,7 +580,7 @@ class BuildInfo(object):
             self.GetBuildProp("ro.product.brand"),
             self.GetBuildProp("ro.product.name"),
             self.GetBuildProp("ro.product.device"),
-            self.GetBuildProp("ro.build.version.release"),
+            self._GetPlatformVersion(),
             self.GetBuildProp("ro.build.id"),
             self.GetBuildProp("ro.build.version.incremental"),
             self.GetBuildProp("ro.build.type"),
