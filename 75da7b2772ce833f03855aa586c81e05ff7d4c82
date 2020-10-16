@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f51374b_ce65d951",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-10-16T02:59:56Z",
+      "side": 1,
+      "message": "A couple of minor suggestions.",
+      "revId": "75da7b2772ce833f03855aa586c81e05ff7d4c82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "985a9f32_9cf75743",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-10-16T02:59:56Z",
+      "side": 1,
+      "message": "Minor python style guide, top level functions/classes/etc should be surrounded by two blank lines, so:\n\nBUILD_INTERNAL_SUFFIX_SKIP \u003d (\n...\n)\n\n\nclass DiffType(object):\n  ...\n\n\nDIF_NONE \u003d DiffType(...)\n\n(also applies in many places below)",
+      "range": {
+        "startLine": 164,
+        "startChar": 0,
+        "endLine": 165,
+        "endChar": 3
+      },
+      "revId": "75da7b2772ce833f03855aa586c81e05ff7d4c82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c08246b6_c901072f",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 1160213
+      },
+      "writtenOn": "2020-10-16T02:59:56Z",
+      "side": 1,
+      "message": "Nit: unneeded extra blank line",
+      "range": {
+        "startLine": 421,
+        "startChar": 0,
+        "endLine": 421,
+        "endChar": 0
+      },
+      "revId": "75da7b2772ce833f03855aa586c81e05ff7d4c82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
