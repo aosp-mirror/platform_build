@@ -33,6 +33,24 @@
       "message": "Add elsk@ since it relates to dynamic partitions \n\nDo you also care about the update group? I see examples like\nsuper_partition_groups\u003dgoogle_dynamic_partitions\nsuper_google_dynamic_partitions_group_size\u003d4873781248\nsuper_google_dynamic_partitions_partition_list\u003d system vendor product system_ext",
       "revId": "b0c75911b84c4131d83674269621ff2f154f365d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc37ec0c_91e8c9a0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-16T19:22:08Z",
+      "side": 1,
+      "message": "Then I wonder if it makes more sense for system images to use a separate partitions_group than the vendor partitions. Then you will also need to adjust the group size.",
+      "parentUuid": "e83d26f9_45a95a86",
+      "revId": "b0c75911b84c4131d83674269621ff2f154f365d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
