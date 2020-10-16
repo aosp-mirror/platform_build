@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "61e5c9ac_2d244b92",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-10-16T15:42:40Z",
+      "side": 1,
+      "message": "Hey Tianjie, do you have a moment to check this small update to merging dynamic partition dictionaries in common.py?",
+      "revId": "b0c75911b84c4131d83674269621ff2f154f365d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
