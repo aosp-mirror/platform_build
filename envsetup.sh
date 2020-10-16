@@ -318,6 +318,59 @@ function setpaths()
     #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
 }
 
+function abazel()
+{
+    local T="$(gettop)"
+    if [ ! "$T" ]; then
+        echo "Couldn't locate the top of the tree.  Try setting TOP."
+        return
+    fi
+
+    case $(uname -s) in
+        Darwin)
+            ANDROID_BAZEL_PATH="${T}/prebuilts/bazel/darwin-x86_64/bazel"
+            ANDROID_BAZELRC_PATH="${T}/build/bazel/darwin.bazelrc"
+            ANDROID_BAZEL_JDK_PATH="${T}/prebuilts/jdk/jdk11/darwin-x86"
+            ;;
+        Linux)
+            ANDROID_BAZEL_PATH="${T}/prebuilts/bazel/linux-x86_64/bazel"
+            ANDROID_BAZELRC_PATH="${T}/build/bazel/linux.bazelrc"
+            ANDROID_BAZEL_JDK_PATH="${T}/prebuilts/jdk/jdk11/linux-x86"
+            ;;
+        *)
+            ANDROID_BAZEL_PATH=
+            ANDROID_BAZELRC_PATH=
+            ANDROID_BAZEL_JDK_PATH=
+            ;;
+    esac
+
+    if [ -n "$ANDROID_BAZEL_PATH" -a -f "$ANDROID_BAZEL_PATH" ]; then
+        export ANDROID_BAZEL_PATH
+    else
+        echo "Couldn't locate Bazel binary"
+        return
+    fi
+
+    if [ -n "$ANDROID_BAZELRC_PATH" -a -f "$ANDROID_BAZELRC_PATH" ]; then
+        export ANDROID_BAZELRC_PATH
+    else
+        echo "Couldn't locate bazelrc file for Bazel"
+        return
+    fi
+
+    if [ -n "$ANDROID_BAZEL_JDK_PATH" -a -d "$ANDROID_BAZEL_JDK_PATH" ]; then
+        export ANDROID_BAZEL_JDK_PATH
+    else
+        echo "Couldn't locate JDK to use for Bazel"
+        return
+    fi
+
+    echo "WARNING: Bazel support for the Android Platform is experimental and is undergoing development."
+    echo "WARNING: Currently, build stability is not guaranteed. Thank you."
+    echo
+    "${ANDROID_BAZEL_PATH}" --server_javabase="${ANDROID_BAZEL_JDK_PATH}" --bazelrc="${ANDROID_BAZELRC_PATH}" "$@"
+}
+
 function printconfig()
 {
     local T=$(gettop)
@@ -769,7 +822,7 @@ function gettop
     local TOPFILE=build/make/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
         # The following circumlocution ensures we remove symlinks from TOP.
-        (cd $TOP; PWD= /bin/pwd)
+        (cd "$TOP"; PWD= /bin/pwd)
     else
         if [ -f $TOPFILE ] ; then
             # The following circumlocution (repeated below as well) ensures
@@ -779,13 +832,13 @@ function gettop
         else
             local HERE=$PWD
             local T=
-            while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
+            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
                 \cd ..
                 T=`PWD= /bin/pwd -P`
             done
-            \cd $HERE
+            \cd "$HERE"
             if [ -f "$T/$TOPFILE" ]; then
-                echo $T
+                echo "$T"
             fi
         fi
     fi
@@ -1600,25 +1653,26 @@ function validate_current_shell() {
 # This allows loading only approved vendorsetup.sh files
 function source_vendorsetup() {
     unset VENDOR_PYTHONPATH
+    local T="$(gettop)"
     allowed=
-    for f in $(find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
+    for f in $(cd "$T" && find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
         if [ -n "$allowed" ]; then
             echo "More than one 'allowed_vendorsetup_sh-files' file found, not including any vendorsetup.sh files:"
             echo "  $allowed"
             echo "  $f"
             return
         fi
-        allowed="$f"
+        allowed="$T/$f"
     done
 
     allowed_files=
     [ -n "$allowed" ] && allowed_files=$(cat "$allowed")
     for dir in device vendor product; do
-        for f in $(test -d $dir && \
+        for f in $(cd "$T" && test -d $dir && \
             find -L $dir -maxdepth 4 -name 'vendorsetup.sh' 2>/dev/null | sort); do
 
             if [[ -z "$allowed" || "$allowed_files" =~ $f ]]; then
-                echo "including $f"; . "$f"
+                echo "including $f"; . "$T/$f"
             else
                 echo "ignoring $f, not in $allowed"
             fi
