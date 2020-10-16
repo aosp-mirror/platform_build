@@ -38,7 +38,6 @@ PRODUCT_PACKAGES += \
     bcc \
     blank_screen \
     blkid \
-    service-blobstore \
     bmgr \
     bootanimation \
     bootstat \
@@ -117,7 +116,6 @@ PRODUCT_PACKAGES += \
     iptables \
     ip-up-vpn \
     javax.obex \
-    service-jobscheduler \
     keystore \
     credstore \
     ld.mc \
