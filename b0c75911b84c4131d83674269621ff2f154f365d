@@ -16,6 +16,23 @@
       "message": "Hey Tianjie, do you have a moment to check this small update to merging dynamic partition dictionaries in common.py?",
       "revId": "b0c75911b84c4131d83674269621ff2f154f365d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e83d26f9_45a95a86",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-16T19:18:18Z",
+      "side": 1,
+      "message": "Add elsk@ since it relates to dynamic partitions \n\nDo you also care about the update group? I see examples like\nsuper_partition_groups\u003dgoogle_dynamic_partitions\nsuper_google_dynamic_partitions_group_size\u003d4873781248\nsuper_google_dynamic_partitions_partition_list\u003d system vendor product system_ext",
+      "revId": "b0c75911b84c4131d83674269621ff2f154f365d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
