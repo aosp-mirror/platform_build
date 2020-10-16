@@ -14,14 +14,17 @@
 
 import copy
 import itertools
+import logging
 import os
 import zipfile
 
 import ota_metadata_pb2
 from common import (ZipDelete, ZipClose, OPTIONS, MakeTempFile,
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
-                    SignFile, PARTITIONS_WITH_CARE_MAP, PartitionBuildProps)
+                    SignFile, PARTITIONS_WITH_CARE_MAP, PartitionBuildProps,
+                    MakeTempDir, RunAndCheckOutput, ExternalError)
 
+logger = logging.getLogger(__name__)
 
 OPTIONS.no_signing = False
 OPTIONS.force_non_ab = False
@@ -38,6 +41,9 @@ METADATA_NAME = 'META-INF/com/android/metadata'
 METADATA_PROTO_NAME = 'META-INF/com/android/metadata.pb'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
 
+# See sysprop.mk. If file is moved, add new search paths here; don't remove
+# existing search paths.
+RAMDISK_BUILD_PROP_REL_PATHS = ['system/etc/ramdisk/build.prop']
 
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   """Finalizes the metadata and signs an A/B OTA package.
@@ -561,3 +567,55 @@ def SignOutput(temp_zip_name, output_zip_name):
 
   SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw,
            whole_file=True)
+
+
+def GetBootImageTimestamp(boot_img):
+  """
+  Get timestamp from ramdisk within the boot image
+
+  Args:
+    boot_img: the boot image file. Ramdisk must be compressed with lz4 format.
+
+  Return:
+    An integer that corresponds to the timestamp of the boot image, or None
+    if file has unknown format. Raise exception if an unexpected error has
+    occurred.
+  """
+
+  tmp_dir = MakeTempDir('boot_', suffix='.img')
+  try:
+    RunAndCheckOutput(['unpack_bootimg', '--boot_img', boot_img, '--out', tmp_dir])
+    ramdisk = os.path.join(tmp_dir, 'ramdisk')
+    if not os.path.isfile(ramdisk):
+      logger.warning('Unable to get boot image timestamp: no ramdisk in boot')
+      return None
+    uncompressed_ramdisk = os.path.join(tmp_dir, 'uncompressed_ramdisk')
+    RunAndCheckOutput(['lz4', '-d', ramdisk, uncompressed_ramdisk])
+
+    abs_uncompressed_ramdisk = os.path.abspath(uncompressed_ramdisk)
+    extracted_ramdisk = MakeTempDir('extracted_ramdisk')
+    # Use "toybox cpio" instead of "cpio" because the latter invokes cpio from
+    # the host environment.
+    RunAndCheckOutput(['toybox', 'cpio', '-F', abs_uncompressed_ramdisk, '-i'],
+               cwd=extracted_ramdisk)
+
+    prop_file = None
+    for search_path in RAMDISK_BUILD_PROP_REL_PATHS:
+      prop_file = os.path.join(extracted_ramdisk, search_path)
+      if os.path.isfile(prop_file):
+        break
+      logger.warning('Unable to get boot image timestamp: no %s in ramdisk', search_path)
+
+    if not prop_file:
+      return None
+
+    props = PartitionBuildProps.FromBuildPropFile('boot', prop_file)
+    timestamp = props.GetProp('ro.bootimage.build.date.utc')
+    if timestamp:
+      return int(timestamp)
+    logger.warning('Unable to get boot image timestamp: ro.bootimage.build.date.utc is undefined')
+    return None
+
+  except ExternalError as e:
+    logger.warning('Unable to get boot image timestamp: %s', e)
+    return None
