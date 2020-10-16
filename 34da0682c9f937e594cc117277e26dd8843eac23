@@ -16,6 +16,46 @@
       "message": "interestingly, some build like aosp_coral 6677242 don\u0027t set ro.build.version.release_or_codename. So we need the fallback in this case.",
       "revId": "34da0682c9f937e594cc117277e26dd8843eac23",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4bd1f7ad_794c3021",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 532,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-10-16T18:29:40Z",
+      "side": 1,
+      "message": "This change was also landed in rvc-dev in ag/10260813",
+      "range": {
+        "startLine": 532,
+        "startChar": 59,
+        "endLine": 532,
+        "endChar": 71
+      },
+      "revId": "34da0682c9f937e594cc117277e26dd8843eac23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ed57f93_0c5356ca",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 535,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-10-16T18:29:40Z",
+      "side": 1,
+      "message": "Is the conditional necessary?  release_or_codename won\u0027t exist on those older devices, so falling back to ro.build.version.release should always work.",
+      "revId": "34da0682c9f937e594cc117277e26dd8843eac23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
