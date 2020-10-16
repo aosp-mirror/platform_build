@@ -51,6 +51,24 @@
       "parentUuid": "e83d26f9_45a95a86",
       "revId": "b0c75911b84c4131d83674269621ff2f154f365d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e07a1aa8_6ff276a6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-10-16T21:34:54Z",
+      "side": 1,
+      "message": "super_partition_groups is handled on lines 1032-1046 (existing code before this change). It currently uses the vendor image as the source-of-truth on allowed super partition groups and group sizes, although the partitions *in* those groups can be defined by either build. Adding eslk@ to double-check.",
+      "parentUuid": "bc37ec0c_91e8c9a0",
+      "revId": "b0c75911b84c4131d83674269621ff2f154f365d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
