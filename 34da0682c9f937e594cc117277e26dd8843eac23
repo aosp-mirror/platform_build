@@ -67,6 +67,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6149f7e4_a7f8e024",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 532,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-10-16T18:39:17Z",
+      "side": 1,
+      "message": "It\u0027s just a little misleading, because if you look at aosp/145902 you will find it was not in R.  Maybe use the change-id instead?",
+      "parentUuid": "12ccdadf_1898b485",
+      "range": {
+        "startLine": 532,
+        "startChar": 59,
+        "endLine": 532,
+        "endChar": 71
+      },
+      "revId": "34da0682c9f937e594cc117277e26dd8843eac23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9ed57f93_0c5356ca",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 1
@@ -96,6 +120,24 @@
       "side": 1,
       "message": "it does for some early R devices. (Maybe it only matters for developers, or preview builds). I feel we can remove them later since we are rolling out R builds now.",
       "parentUuid": "9ed57f93_0c5356ca",
+      "revId": "34da0682c9f937e594cc117277e26dd8843eac23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1b581f1_033fb7ba",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 535,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-10-16T18:39:17Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "77738ac3_8e45ea96",
       "revId": "34da0682c9f937e594cc117277e26dd8843eac23",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
