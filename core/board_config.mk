@@ -378,12 +378,7 @@ endif
 BUILDING_VENDOR_BOOT_IMAGE :=
 ifdef BOARD_BOOT_HEADER_VERSION
   ifneq ($(call math_gt_or_eq,$(BOARD_BOOT_HEADER_VERSION),3),)
-    ifneq ($(TARGET_NO_VENDOR_BOOT),)
-      $(warning TARGET_NO_VENDOR_BOOT has been deprecated. Please use PRODUCT_BUILD_VENDOR_BOOT_IMAGE.)
-      ifneq ($(TARGET_NO_VENDOR_BOOT),true)
-        BUILDING_VENDOR_BOOT_IMAGE := true
-      endif
-    else ifeq ($(PRODUCT_BUILD_VENDOR_BOOT_IMAGE),)
+    ifeq ($(PRODUCT_BUILD_VENDOR_BOOT_IMAGE),)
       BUILDING_VENDOR_BOOT_IMAGE := true
     else ifeq ($(PRODUCT_BUILD_VENDOR_BOOT_IMAGE),true)
       BUILDING_VENDOR_BOOT_IMAGE := true
