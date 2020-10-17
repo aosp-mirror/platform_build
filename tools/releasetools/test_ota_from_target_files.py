@@ -1205,11 +1205,12 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
   ]
 
   BUILD_PROP = [
-      'ro.build.version.release=version-release',
       'ro.build.id=build-id',
       'ro.build.version.incremental=version-incremental',
       'ro.build.type=build-type',
       'ro.build.tags=build-tags',
+      'ro.build.version.release=version-release',
+      'ro.build.version.release_or_codename=version-release',
       'ro.build.version.sdk=30',
       'ro.build.version.security_patch=2020',
       'ro.build.date.utc=12345678',
