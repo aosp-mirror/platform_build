@@ -98,6 +98,19 @@ _board_strip_readonly_list += \
   BOARD_KERNEL_BINARIES \
   BOARD_KERNEL_MODULE_INTERFACE_VERSIONS \
 
+# Variables related to generic kernel image (GKI) and generic boot image
+# - BOARD_USES_GENERIC_KERNEL_IMAGE is the global variable that defines if the
+#   board uses GKI and generic boot image.
+#   Update mechanism of the boot image is not enforced by this variable.
+# - BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE controls whether the recovery image
+#   contains a kernel or not.
+# - BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT controls whether ramdisk
+#   recovery resources are built to vendor_boot.
+_board_strip_readonly_list += \
+  BOARD_USES_GENERIC_KERNEL_IMAGE \
+  BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE \
+  BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT \
+
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_DUP_SYSPROP \
@@ -364,6 +377,9 @@ endif
 BUILDING_RECOVERY_IMAGE :=
 ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),)
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    BUILDING_RECOVERY_IMAGE := true
+  else ifeq ($(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT),true)
+    # Set to true to build recovery resources for vendor_boot
     BUILDING_RECOVERY_IMAGE := true
   else ifdef BOARD_RECOVERYIMAGE_PARTITION_SIZE
     ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
@@ -746,3 +762,25 @@ $(foreach m,$(filter-out BUILD_COPY_HEADERS,$(DEFAULT_ERROR_BUILD_MODULE_TYPES))
   $(if $(filter true,$(BUILD_BROKEN_USES_$(m))),\
     $(KATI_deprecated_var $(m),Please convert to Soong),\
     $(KATI_obsolete_var $(m),Please convert to Soong)))
+
+ifndef BUILDING_RECOVERY_IMAGE
+  ifeq (true,$(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE))
+    $(error Should not set BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE if not building recovery image)
+  endif
+endif
+
+ifndef BUILDING_VENDOR_BOOT_IMAGE
+  ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+    $(error Should not set BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT if not building vendor_boot image)
+  endif
+endif
+
+# If BOARD_USES_GENERIC_KERNEL_IMAGE is set, BOARD_USES_RECOVERY_AS_BOOT must not be set.
+# Devices without a dedicated recovery partition uses BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT to
+# build recovery into vendor_boot.
+ifeq (true,$(BOARD_USES_GENERIC_KERNEL_IMAGE))
+  ifeq (true,$(BOARD_USES_RECOVERY_AS_BOOT))
+    $(error BOARD_USES_RECOVERY_AS_BOOT cannot be true if BOARD_USES_GENERIC_KERNEL_IMAGE is true. \
+      Use BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT instead)
+  endif
+endif
