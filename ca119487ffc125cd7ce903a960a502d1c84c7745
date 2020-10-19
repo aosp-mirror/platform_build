@@ -46,6 +46,30 @@
       },
       "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1859b1f5_baedc0f1",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4872,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-19T21:17:31Z",
+      "side": 1,
+      "message": "hmm, I feel it\u0027s an overkill for now; and we prefer a simple configuration for this example? We can see what the real usage \u0026 request come up in practice and adjust accordingly. If we want, the AVB board variable would be \u0027BOARD_AVB_VBMETA_SYSTEM\u0027 + vbmeta_system. \n\nIMO, partial update with non-generic partitions (other than system \u0026 boot) are not very useful in practice. Because we are not using them on Pixels for now. And partners always need a unique update package for the device specific partitions, so they can just generate a \u0027complete\u0027 packages for with extra source_copy commands.",
+      "parentUuid": "df6d1bff_406d42f3",
+      "range": {
+        "startLine": 4872,
+        "startChar": 9,
+        "endLine": 4872,
+        "endChar": 49
+      },
+      "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
