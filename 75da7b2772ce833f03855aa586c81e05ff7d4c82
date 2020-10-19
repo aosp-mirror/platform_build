@@ -41,6 +41,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "932e8154_0cf8b5e3",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-19T19:10:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "985a9f32_9cf75743",
+      "range": {
+        "startLine": 164,
+        "startChar": 0,
+        "endLine": 165,
+        "endChar": 3
+      },
+      "revId": "75da7b2772ce833f03855aa586c81e05ff7d4c82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c08246b6_c901072f",
@@ -54,6 +78,30 @@
       "writtenOn": "2020-10-16T02:59:56Z",
       "side": 1,
       "message": "Nit: unneeded extra blank line",
+      "range": {
+        "startLine": 421,
+        "startChar": 0,
+        "endLine": 421,
+        "endChar": 0
+      },
+      "revId": "75da7b2772ce833f03855aa586c81e05ff7d4c82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c508f142_06d72e51",
+        "filename": "tools/compare_builds.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-19T19:10:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c08246b6_c901072f",
       "range": {
         "startLine": 421,
         "startChar": 0,
