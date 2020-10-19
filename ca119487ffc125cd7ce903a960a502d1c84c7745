@@ -22,6 +22,30 @@
       },
       "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df6d1bff_406d42f3",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4872,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-19T20:46:40Z",
+      "side": 1,
+      "message": "Or, if BOARD_AVB_VBMETA_SYSTEM isn\u0027t good enough to use, you can ask OEMs to do\n\n  BOARD_GOOGLE_SYSTEM_DYNAMIC_PARTITIONS_STATIC_PARTITION_LIST :\u003d vbmeta_system\n\nand here, generate a partial update for each group\u0027s PARTITION_LIST + STATIC_PARTITION_LIST.",
+      "parentUuid": "997b796c_3504aa7d",
+      "range": {
+        "startLine": 4872,
+        "startChar": 9,
+        "endLine": 4872,
+        "endChar": 49
+      },
+      "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
