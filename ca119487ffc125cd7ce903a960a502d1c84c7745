@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "997b796c_3504aa7d",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4872,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-19T20:44:56Z",
+      "side": 1,
+      "message": "Maybe consult some other variables to know that vbmeta_system is with product/system_ext/system, and generate a package for each group?\n\nFor vbmeta_system, in particular, are there any AVB related board variables that gives this information?\n\nIf partners need other partitions to go with the partial update, then maybe invent another variable like BOARD_(group)_STATIC_PARTITION_LIST, e.g.\n\n  BOARD_GOOGLE_SYSTEM_DYNAMIC_PARTITIONS_STATIC_PARTITION_LIST :\u003d some_oem_partition\n\n... and here, you can generate a partial update package for each update group.",
+      "range": {
+        "startLine": 4872,
+        "startChar": 9,
+        "endLine": 4872,
+        "endChar": 49
+      },
+      "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
