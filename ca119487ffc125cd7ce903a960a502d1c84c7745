@@ -94,6 +94,30 @@
       },
       "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3efff06b_be95500d",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4872,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-19T21:23:41Z",
+      "side": 1,
+      "message": "Sorry, I mean to check that the arguments provided in --partial, minus static partitions, contains the whole update group; i.e. if it contains a partition from some group, it must contain other partitions in the group.",
+      "parentUuid": "7927703e_d0d4836d",
+      "range": {
+        "startLine": 4872,
+        "startChar": 9,
+        "endLine": 4872,
+        "endChar": 49
+      },
+      "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
