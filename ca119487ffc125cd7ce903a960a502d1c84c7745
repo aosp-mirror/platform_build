@@ -70,6 +70,30 @@
       },
       "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7927703e_d0d4836d",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4872,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-19T21:22:08Z",
+      "side": 1,
+      "message": "I agree. The one small thing I don\u0027t like is that BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST is always a superset of BOARD_(group)_PARTITION_LIST for some (group) name that\u0027s OEM defined, so an OEM may configure the device incorrectly so that only part of an update group is updated.\n\nAlternatively, maybe we can have a check in ota_from_target_files that the arguments provided in --partial, minus static partitions, all belong to the same group?",
+      "parentUuid": "1859b1f5_baedc0f1",
+      "range": {
+        "startLine": 4872,
+        "startChar": 9,
+        "endLine": 4872,
+        "endChar": 49
+      },
+      "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
