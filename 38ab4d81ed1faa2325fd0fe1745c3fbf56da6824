@@ -33,6 +33,23 @@
       "message": "I wrote some of the code. Does my +2 count?",
       "revId": "38ab4d81ed1faa2325fd0fe1745c3fbf56da6824",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf60137e_985775f2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-10-19T15:22:43Z",
+      "side": 1,
+      "message": "CL LGTM. But some high level considerations:\n\n1. delta_generator already accepts a list of partitions, it should be possible generate a partial updates by only passing a subset of all partitions.\n2. This CL works, but rewriting the entire zip seems inefficient? It seems like we are trying to work around `brillo_update_payload` as an immutable stone.",
+      "revId": "38ab4d81ed1faa2325fd0fe1745c3fbf56da6824",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
