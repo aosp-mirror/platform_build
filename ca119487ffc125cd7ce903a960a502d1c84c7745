@@ -118,6 +118,30 @@
       },
       "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea25591e_a29e0721",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4872,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-19T21:25:35Z",
+      "side": 1,
+      "message": "Yeah, that makes sense. That\u0027s the TODO I haven\u0027t addressed. (Make sure the entire update group is updated or omitted).",
+      "parentUuid": "3efff06b_be95500d",
+      "range": {
+        "startLine": 4872,
+        "startChar": 9,
+        "endLine": 4872,
+        "endChar": 49
+      },
+      "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
