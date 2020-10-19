@@ -85,6 +85,13 @@ Common options that apply to both of non-A/B and A/B OTAs
       If not set, generates A/B package for A/B device and non-A/B package for
       non-A/B device.
 
+  -o  (--oem_settings) <main_file[,additional_files...]>
+      Comma separated list of files used to specify the expected OEM-specific
+      properties on the OEM partition of the intended device. Multiple expected
+      values can be used by providing multiple files. Only the first dict will
+      be used to compute fingerprint, while the rest will be used to assert
+      OEM-specific properties.
+
 Non-A/B OTA specific options
 
   -b  (--binary) <file>
@@ -113,13 +120,6 @@ Non-A/B OTA specific options
       Generate a log file that shows the differences in the source and target
       builds for an incremental package. This option is only meaningful when -i
       is specified.
-
-  -o  (--oem_settings) <main_file[,additional_files...]>
-      Comma seperated list of files used to specify the expected OEM-specific
-      properties on the OEM partition of the intended device. Multiple expected
-      values can be used by providing multiple files. Only the first dict will
-      be used to compute fingerprint, while the rest will be used to assert
-      OEM-specific properties.
 
   --oem_no_mount
       For devices with OEM-specific properties but without an OEM partition, do
@@ -206,6 +206,11 @@ A/B OTA specific options
   --partial "<PARTITION> [<PARTITION>[...]]"
       Generate partial updates, overriding ab_partitions list with the given
       list.
+
+  --custom_image <custom_partition=custom_image>
+      Use the specified custom_image to update custom_partition when generating
+      an A/B OTA package. e.g. "--custom_image oem=oem.img --custom_image
+      cus=cus_test.img"
 """
 
 from __future__ import print_function
@@ -262,7 +267,7 @@ OPTIONS.skip_postinstall = False
 OPTIONS.skip_compatibility_check = False
 OPTIONS.disable_fec_computation = False
 OPTIONS.partial = None
-
+OPTIONS.custom_images = {}
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -901,6 +906,43 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
 
   return target_file
 
+def GetTargetFilesZipForCustomImagesUpdates(input_file, custom_images):
+  """Returns a target-files.zip for custom partitions update.
+
+  This function modifies ab_partitions list with the desired custom partitions
+  and puts the custom images into the target target-files.zip.
+
+  Args:
+    input_file: The input target-files.zip filename.
+    custom_images: A map of custom partitions and custom images.
+
+  Returns:
+    The filename of a target-files.zip which has renamed the custom images in
+    the IMAGS/ to their partition names.
+  """
+  # Use zip2zip to avoid extracting the zipfile.
+  target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
+  cmd = ['zip2zip', '-i', input_file, '-o', target_file]
+
+  with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
+    namelist = input_zip.namelist()
+
+  # Write {custom_image}.img as {custom_partition}.img.
+  for custom_partition, custom_image in custom_images.items():
+    default_custom_image = '{}.img'.format(custom_partition)
+    if default_custom_image != custom_image:
+      logger.info("Update custom partition '%s' with '%s'",
+                  custom_partition, custom_image)
+      # Default custom image need to be deleted first.
+      namelist.remove('IMAGES/{}'.format(default_custom_image))
+      # IMAGES/{custom_image}.img:IMAGES/{custom_partition}.img.
+      cmd.extend(['IMAGES/{}:IMAGES/{}'.format(custom_image,
+                                               default_custom_image)])
+
+  cmd.extend(['{}:{}'.format(name, name) for name in namelist])
+  common.RunAndCheckOutput(cmd)
+
+  return target_file
 
 def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
@@ -926,6 +968,11 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     source_info = None
 
   additional_args = []
+
+  # Prepare custom images.
+  if OPTIONS.custom_images:
+    target_file = GetTargetFilesZipForCustomImagesUpdates(
+        target_file, OPTIONS.custom_images)
 
   if OPTIONS.retrofit_dynamic_partitions:
     target_file = GetTargetFilesZipForRetrofitDynamicPartitions(
@@ -1105,6 +1152,9 @@ def main(argv):
       if not partitions:
         raise ValueError("Cannot parse partitions in {}".format(a))
       OPTIONS.partial = partitions
+    elif o == "--custom_image":
+      custom_partition, custom_image = a.split("=")
+      OPTIONS.custom_images[custom_partition] = custom_image
     else:
       return False
     return True
@@ -1144,6 +1194,7 @@ def main(argv):
                                  "force_non_ab",
                                  "boot_variable_file=",
                                  "partial=",
+                                 "custom_image=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
