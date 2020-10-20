@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b0d26afc_abbe1df2",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 929,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-20T22:16:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b3df76b_279db64d",
+      "range": {
+        "startLine": 929,
+        "startChar": 0,
+        "endLine": 929,
+        "endChar": 71
+      },
+      "revId": "55f6dca2698906d2a8cc35dccd3d17e0f971a2b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "09c167a4_206064f4",
@@ -37,6 +61,30 @@
       "writtenOn": "2020-10-20T18:59:28Z",
       "side": 1,
       "message": "I don\u0027t think we should add items to ab_partitions. And this list has been exposed as a sysprop for https://source.corp.google.com/android/build/make/core/main.mk;l\u003d323 in the internal branch. So adding a partition may cause unexpected problem for the update process.\n\nIs custom_images just oem? I believe the right fix is to add the partition to the board config of that device. Because the list of partitions to update in OTA should have determined upfront. If the target-file contains multiple oem* images, just rename IMAGES/oem_foo.img to IMAGES/oem.img for that particular ota pkg?",
+      "range": {
+        "startLine": 942,
+        "startChar": 23,
+        "endLine": 942,
+        "endChar": 36
+      },
+      "revId": "55f6dca2698906d2a8cc35dccd3d17e0f971a2b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6016fe02_4d558a5f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 942,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-20T22:16:39Z",
+      "side": 1,
+      "message": "Got your point. I will keep it in the device\u0027s \"AB_OTA_PARTITIONS\" configuration.\n\noem is just one example of custom images. It can be any image added by partners.",
+      "parentUuid": "09c167a4_206064f4",
       "range": {
         "startLine": 942,
         "startChar": 23,

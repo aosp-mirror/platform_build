@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1074b62c_6b80ca85",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-20T22:16:39Z",
+      "side": 1,
+      "message": "To use zip2zip tool, https://android-review.googlesource.com/c/platform/build/+/1464827 should be merged first. But CL itself is ready to review.",
+      "revId": "b5e6a173450632983203de3e765a68a84bfa1f5a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
