@@ -23,3 +23,25 @@ function use_rbe() {
   RBE_re_proxy="${RBE_BINARIES_DIR}/reproxy" \
   $@
 }
+
+# This function detects if the uploader is available and sets the path of it to
+# ANDROID_ENABLE_METRICS_UPLOAD.
+function _export_metrics_uploader() {
+  local uploader_path="$(gettop)/vendor/google/misc/metrics_uploader_prebuilt/metrics_uploader.sh"
+  if [ -x "${uploader_path}" ]; then
+    export ANDROID_ENABLE_METRICS_UPLOAD="${uploader_path}"
+  fi
+}
+
+# This function sets RBE specific environment variables needed for the build to
+# executed by RBE. This file should be sourced once per checkout of Android code.
+function _set_rbe_vars() {
+  export USE_RBE="true"
+  export RBE_CXX_EXEC_STRATEGY="remote_local_fallback"
+  export RBE_JAVAC=1
+  export RBE_R8=1
+  export RBE_D8=1
+}
+
+_export_metrics_uploader
+_set_rbe_vars

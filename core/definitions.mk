@@ -111,6 +111,9 @@ ALL_DISABLED_PRESUBMIT_TESTS :=
 # All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
 ALL_COMPATIBILITY_SUITES :=
 
+# All compatibility suite files to dist.
+ALL_COMPATIBILITY_DIST_FILES :=
+
 # All LINK_TYPE entries
 ALL_LINK_TYPES :=
 
@@ -2903,6 +2906,7 @@ endef
 # 2. Add all the files to each suite's dependent files list.
 # 3. Do the dependency addition to my_all_targets.
 # 4. Save the module name to COMPATIBILITY.$(suite).MODULES for each suite.
+# 5. Collect files to dist to ALL_COMPATIBILITY_DIST_FILES.
 # Requires for each suite: use my_compat_dist_config_$(suite) to define the test config.
 #    and use my_compat_dist_$(suite) to define the others.
 define create-suite-dependencies
@@ -2913,10 +2917,13 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $(eval COMPATIBILITY.$(suite).MODULES :=)) \
   $(eval COMPATIBILITY.$(suite).FILES += \
     $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
-    $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f)))) \
+    $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f))) \
+    $$(my_compat_dist_test_data_$(suite))) \
+  $(eval ALL_COMPATIBILITY_DIST_FILES += $$(my_compat_dist_$(suite))) \
   $(eval COMPATIBILITY.$(suite).MODULES += $$(my_register_name))) \
-$(eval $(my_all_targets) : $(call copy-many-files, \
-  $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE),$(my_compat_dist_$(suite))))) \
+$(eval $(my_all_targets) : \
+  $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE), \
+    $(foreach f,$(my_compat_dist_$(suite)), $(call word-colon,2,$(f))))) \
   $(call copy-many-xml-files-checked, \
     $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE),$(my_compat_dist_config_$(suite))))))
 endef
