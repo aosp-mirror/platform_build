@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b3df76b_279db64d",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 929,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-20T18:59:28Z",
+      "side": 1,
+      "message": "fyi, zip2zip is a lot faster (\u003c1min) when creating temp zipfiles. See sample in:\n https://source.corp.google.com/aosp-master/build/make/tools/releasetools/ota_from_target_files.py;l\u003d796",
+      "range": {
+        "startLine": 929,
+        "startChar": 0,
+        "endLine": 929,
+        "endChar": 71
+      },
+      "revId": "55f6dca2698906d2a8cc35dccd3d17e0f971a2b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09c167a4_206064f4",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 942,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-20T18:59:28Z",
+      "side": 1,
+      "message": "I don\u0027t think we should add items to ab_partitions. And this list has been exposed as a sysprop for https://source.corp.google.com/android/build/make/core/main.mk;l\u003d323 in the internal branch. So adding a partition may cause unexpected problem for the update process.\n\nIs custom_images just oem? I believe the right fix is to add the partition to the board config of that device. Because the list of partitions to update in OTA should have determined upfront. If the target-file contains multiple oem* images, just rename IMAGES/oem_foo.img to IMAGES/oem.img for that particular ota pkg?",
+      "range": {
+        "startLine": 942,
+        "startChar": 23,
+        "endLine": 942,
+        "endChar": 36
+      },
+      "revId": "55f6dca2698906d2a8cc35dccd3d17e0f971a2b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
