@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1757d5da_3f6c08ab",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-10-20T18:12:36Z",
+      "side": 1,
+      "message": "doesn\u0027t this still depend on the vendor, product and system_ext modules? and it\u0027s added in base_vendor",
+      "range": {
+        "startLine": 70,
+        "startChar": 16,
+        "endLine": 70,
+        "endChar": 40
+      },
+      "revId": "7e0cfcb77f32955d91f867b39a25d2c4634c566e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
