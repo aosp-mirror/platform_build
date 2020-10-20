@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fbfb734f_3e4c36f3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-10-20T00:29:53Z",
+      "side": 1,
+      "message": "Checked treehugger presubmit builds:\n\nsdk_gphone_x86_64-userdebug *does* have vendor_boot.img\naosp_arm64-userdebug *does not* have vendor_boot.img\n\n(As expected)",
+      "revId": "ad6293c098fd6f04c87a2673ca92cddb58ae263b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
