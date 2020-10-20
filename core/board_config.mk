@@ -105,10 +105,13 @@ _board_strip_readonly_list += \
 #   contains a kernel or not.
 # - BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT controls whether ramdisk
 #   recovery resources are built to vendor_boot.
+# - BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT controls whether GSI AVB keys are
+#   built to vendor_boot.
 _board_strip_readonly_list += \
   BOARD_USES_GENERIC_KERNEL_IMAGE \
   BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE \
   BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT \
+  BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT \
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
@@ -771,6 +774,9 @@ endif
 ifndef BUILDING_VENDOR_BOOT_IMAGE
   ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
     $(error Should not set BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT if not building vendor_boot image)
+  endif
+  ifeq (true,$(BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT))
+    $(error Should not set BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT if not building vendor_boot image)
   endif
 endif
 
