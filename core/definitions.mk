@@ -1179,7 +1179,7 @@ define transform-cpp-to-o
 @echo "$($(PRIVATE_PREFIX)DISPLAY) $(PRIVATE_ARM_MODE) C++: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
 $(if $(PRIVATE_TIDY_CHECKS),$(clang-tidy-cpp))
-$(hide) $(PRIVATE_CXX) \
+$(hide) $(RELATIVE_PWD) $(PRIVATE_CXX) \
   $(transform-cpp-to-o-compiler-args) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
@@ -1225,7 +1225,7 @@ define transform-c-to-o
 @echo "$($(PRIVATE_PREFIX)DISPLAY) $(PRIVATE_ARM_MODE) C: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
 $(if $(PRIVATE_TIDY_CHECKS),$(clang-tidy-c))
-$(hide) $(PRIVATE_CC) \
+$(hide) $(RELATIVE_PWD) $(PRIVATE_CC) \
   $(transform-c-to-o-compiler-args) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
@@ -1234,7 +1234,7 @@ endif
 define transform-s-to-o
 @echo "$($(PRIVATE_PREFIX)DISPLAY) asm: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
-$(PRIVATE_CC) \
+$(RELATIVE_PWD) $(PRIVATE_CC) \
   $(call transform-c-or-s-to-o-compiler-args, $(PRIVATE_ASFLAGS)) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
@@ -1293,7 +1293,7 @@ define transform-host-cpp-to-o
 @echo "$($(PRIVATE_PREFIX)DISPLAY) C++: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
 $(if $(PRIVATE_TIDY_CHECKS),$(clang-tidy-host-cpp))
-$(hide) $(PRIVATE_CXX) \
+$(hide) $(RELATIVE_PWD) $(PRIVATE_CXX) \
   $(transform-host-cpp-to-o-compiler-args) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
@@ -1316,7 +1316,7 @@ endef
 # $(1): extra flags
 define transform-host-c-or-s-to-o
 @mkdir -p $(dir $@)
-$(hide) $(PRIVATE_CC) \
+$(hide) $(RELATIVE_PWD) $(PRIVATE_CC) \
   $(transform-host-c-or-s-to-o-common-args) \
   $(1) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
@@ -1343,7 +1343,7 @@ define transform-host-c-to-o
 @echo "$($(PRIVATE_PREFIX)DISPLAY) C: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
 $(if $(PRIVATE_TIDY_CHECKS), $(clang-tidy-host-c))
-$(hide) $(PRIVATE_CC) \
+$(hide) $(RELATIVE_PWD) $(PRIVATE_CC) \
   $(transform-host-c-to-o-compiler-args) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
