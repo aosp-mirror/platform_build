@@ -1418,13 +1418,17 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
 
   def test_MergeDynamicPartitionInfoDicts_ReturnsMergedDict(self):
     framework_dict = {
+        'use_dynamic_partitions': 'true',
         'super_partition_groups': 'group_a',
         'dynamic_partition_list': 'system',
         'super_group_a_partition_list': 'system',
     }
     vendor_dict = {
+        'use_dynamic_partitions': 'true',
         'super_partition_groups': 'group_a group_b',
         'dynamic_partition_list': 'vendor product',
+        'super_block_devices': 'super',
+        'super_super_device_size': '3000',
         'super_group_a_partition_list': 'vendor',
         'super_group_a_group_size': '1000',
         'super_group_b_partition_list': 'product',
@@ -1434,8 +1438,11 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         framework_dict=framework_dict,
         vendor_dict=vendor_dict)
     expected_merged_dict = {
+        'use_dynamic_partitions': 'true',
         'super_partition_groups': 'group_a group_b',
-        'dynamic_partition_list': 'system vendor product',
+        'dynamic_partition_list': 'product system vendor',
+        'super_block_devices': 'super',
+        'super_super_device_size': '3000',
         'super_group_a_partition_list': 'system vendor',
         'super_group_a_group_size': '1000',
         'super_group_b_partition_list': 'product',
@@ -1445,12 +1452,14 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
 
   def test_MergeDynamicPartitionInfoDicts_IgnoringFrameworkGroupSize(self):
     framework_dict = {
+        'use_dynamic_partitions': 'true',
         'super_partition_groups': 'group_a',
         'dynamic_partition_list': 'system',
         'super_group_a_partition_list': 'system',
         'super_group_a_group_size': '5000',
     }
     vendor_dict = {
+        'use_dynamic_partitions': 'true',
         'super_partition_groups': 'group_a group_b',
         'dynamic_partition_list': 'vendor product',
         'super_group_a_partition_list': 'vendor',
@@ -1462,8 +1471,9 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         framework_dict=framework_dict,
         vendor_dict=vendor_dict)
     expected_merged_dict = {
+        'use_dynamic_partitions': 'true',
         'super_partition_groups': 'group_a group_b',
-        'dynamic_partition_list': 'system vendor product',
+        'dynamic_partition_list': 'product system vendor',
         'super_group_a_partition_list': 'system vendor',
         'super_group_a_group_size': '1000',
         'super_group_b_partition_list': 'product',

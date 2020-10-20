@@ -70,6 +70,10 @@ Usage: merge_target_files.py [args]
   --rebuild_recovery
       Deprecated; does nothing.
 
+  --allow-duplicate-apkapex-keys
+      If provided, duplicate APK/APEX keys are ignored and the value from the
+      framework is used.
+
   --keep-tmp
       Keep tempoary files for debugging purposes.
 """
@@ -110,6 +114,8 @@ OPTIONS.output_img = None
 OPTIONS.output_super_empty = None
 # TODO(b/132730255): Remove this option.
 OPTIONS.rebuild_recovery = False
+# TODO(b/150582573): Remove this option.
+OPTIONS.allow_duplicate_apkapex_keys = False
 OPTIONS.keep_tmp = False
 
 # In an item list (framework or vendor), we may see entries that select whole
@@ -526,6 +532,7 @@ def item_list_to_partition_set(item_list):
 
   Args:
     item_list: A list of items in a target files package.
+
   Returns:
     A set of partitions extracted from the list of items.
   """
@@ -547,7 +554,6 @@ def process_apex_keys_apk_certs_common(framework_target_files_dir,
                                        output_target_files_dir,
                                        framework_partition_set,
                                        vendor_partition_set, file_name):
-
   """Performs special processing for META/apexkeys.txt or META/apkcerts.txt.
 
   This function merges the contents of the META/apexkeys.txt or
@@ -597,7 +603,12 @@ def process_apex_keys_apk_certs_common(framework_target_files_dir,
 
       if partition_tag in partition_set:
         if key in merged_dict:
-          raise ValueError('Duplicate key %s' % key)
+          if OPTIONS.allow_duplicate_apkapex_keys:
+            # TODO(b/150582573) Always raise on duplicates.
+            logger.warning('Duplicate key %s' % key)
+            continue
+          else:
+            raise ValueError('Duplicate key %s' % key)
 
         merged_dict[key] = value
 
@@ -647,8 +658,7 @@ def copy_file_contexts(framework_target_files_dir, vendor_target_files_dir,
 def process_special_cases(framework_target_files_temp_dir,
                           vendor_target_files_temp_dir,
                           output_target_files_temp_dir,
-                          framework_misc_info_keys,
-                          framework_partition_set,
+                          framework_misc_info_keys, framework_partition_set,
                           vendor_partition_set):
   """Performs special-case processing for certain target files items.
 
@@ -967,7 +977,7 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
       rebuild_recovery)
 
   if not check_target_files_vintf.CheckVintf(output_target_files_temp_dir):
-    raise RuntimeError("Incompatible VINTF metadata")
+    raise RuntimeError('Incompatible VINTF metadata')
 
   generate_images(output_target_files_temp_dir, rebuild_recovery)
 
@@ -1075,8 +1085,10 @@ def main():
       OPTIONS.output_img = a
     elif o == '--output-super-empty':
       OPTIONS.output_super_empty = a
-    elif o == '--rebuild_recovery': # TODO(b/132730255): Warn
+    elif o == '--rebuild_recovery':  # TODO(b/132730255): Warn
       OPTIONS.rebuild_recovery = True
+    elif o == '--allow-duplicate-apkapex-keys':
+      OPTIONS.allow_duplicate_apkapex_keys = True
     elif o == '--keep-tmp':
       OPTIONS.keep_tmp = True
     else:
@@ -1104,6 +1116,7 @@ def main():
           'output-img=',
           'output-super-empty=',
           'rebuild_recovery',
+          'allow-duplicate-apkapex-keys',
           'keep-tmp',
       ],
       extra_option_handler=option_handler)
