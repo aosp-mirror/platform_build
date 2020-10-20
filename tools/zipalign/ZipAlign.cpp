@@ -47,7 +47,6 @@ static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfl
 {
     int numEntries = pZin->getNumEntries();
     ZipEntry* pEntry;
-    int bias = 0;
     status_t status;
 
     for (int i = 0; i < numEntries; i++) {
@@ -68,30 +67,20 @@ static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfl
 
             if (zopfli) {
                 status = pZout->addRecompress(pZin, pEntry, &pNewEntry);
-                bias += pNewEntry->getCompressedLen() - pEntry->getCompressedLen();
             } else {
                 status = pZout->add(pZin, pEntry, padding, &pNewEntry);
             }
         } else {
             const int alignTo = getAlignment(pageAlignSharedLibs, alignment, pEntry);
 
-            /*
-             * Copy the entry, adjusting as required.  We assume that the
-             * file position in the new file will be equal to the file
-             * position in the original.
-             */
-            off_t newOffset = pEntry->getFileOffset() + bias;
-            padding = (alignTo - (newOffset % alignTo)) % alignTo;
-
             //printf("--- %s: orig at %ld(+%d) len=%ld, adding pad=%d\n",
             //    pEntry->getFileName(), (long) pEntry->getFileOffset(),
             //    bias, (long) pEntry->getUncompressedLen(), padding);
-            status = pZout->add(pZin, pEntry, padding, &pNewEntry);
+            status = pZout->add(pZin, pEntry, alignTo, &pNewEntry);
         }
 
         if (status != OK)
             return 1;
-        bias += padding;
         //printf(" added '%s' at %ld (pad=%d)\n",
         //    pNewEntry->getFileName(), (long) pNewEntry->getFileOffset(),
         //    padding);
