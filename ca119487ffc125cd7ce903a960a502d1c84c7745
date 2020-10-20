@@ -142,6 +142,30 @@
       },
       "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a392ce6_698d5706",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 4872,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-10-20T03:38:54Z",
+      "side": 1,
+      "message": "\u003e BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST is always a superset of BOARD_(group)_PARTITION_LIST \n\n\u003e I mean to check that the arguments provided in --partial, minus static partitions, contains the whole update group; \n\nIf so, how about just specifying the partial update GROUP instead?\n  e.g., BOARD_PARTIAL_OTA_UPDATE_GROUPS_LIST\n\nThen derives the partition list from BOARD_(group)_PARTITION_LIST.\nBtw, adding a check also LGTM.\n\n\nFor vbmeta static partitions, we can either do a check or add it automatically, if any of the partitions it verifies against will be updated.\n\nhttps://android-review.googlesource.com/c/platform/external/avb/+/1450375/2/README.md\n\ne.g., BOARD_AVB_VBMETA_SYSTEM :\u003d system system_ext product\n\nIf any of (system, system_ext, product) will be updated, then vbmeta_system.img should be updated as well (either do a check, or adding vbmeta_system.img to the update partition automatically).",
+      "parentUuid": "ea25591e_a29e0721",
+      "range": {
+        "startLine": 4872,
+        "startChar": 9,
+        "endLine": 4872,
+        "endChar": 49
+      },
+      "revId": "ca119487ffc125cd7ce903a960a502d1c84c7745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
