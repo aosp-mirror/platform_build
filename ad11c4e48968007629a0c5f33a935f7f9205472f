@@ -142,6 +142,24 @@
       "parentUuid": "98174c11_03c0abe8",
       "revId": "ad11c4e48968007629a0c5f33a935f7f9205472f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0bc08383_5d29847f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-21T23:13:50Z",
+      "side": 1,
+      "message": "first_stage_console is started before switching root. So, installing the recovery variant of those modules seems to be the right way to go, and they should continue to work on devices without a dedicated recovery partition.\n\nOn devices with a dedicated recovery partition, if booting normally, first_stage_console does not work with Soong-only modules, before and after my change. \n\nBefore my change, there are no ramdisk variant for sh/toybox/adbd\n\nAfter my change, there are no vendor_ramdisk variant for sh/toybox/adbd.",
+      "parentUuid": "38d68fc4_d6489e7d",
+      "revId": "ad11c4e48968007629a0c5f33a935f7f9205472f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
