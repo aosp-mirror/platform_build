@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "becc7f76_bd9ad8b5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-21T00:37:51Z",
+      "side": 1,
+      "message": "Hi Reviewers, I updated this this and add zip2zip to the PATH when making ota package. It will remove dependency to other changes. Please review it.",
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
