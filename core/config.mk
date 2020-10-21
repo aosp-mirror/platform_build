@@ -304,6 +304,7 @@ endef
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
+include $(BUILD_SYSTEM)/rbe.mk
 endif
 
 ifdef TARGET_PREFER_32_BIT
