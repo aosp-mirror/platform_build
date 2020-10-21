@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "102ca0a5_34d3e2f6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1786640
+      },
+      "writtenOn": "2020-10-21T20:05:47Z",
+      "side": 1,
+      "message": "I appreciate you all helping me. im really new and just starting college for this stuff in two weeks. can u help add a way to stop remote access on device? thank u guys",
+      "revId": "4e20965769497598c5be2d3096f828b7efa2ae68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
