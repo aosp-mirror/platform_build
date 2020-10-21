@@ -22,6 +22,30 @@
       },
       "revId": "7e0cfcb77f32955d91f867b39a25d2c4634c566e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "695afc31_777f8268",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-10-21T00:02:06Z",
+      "side": 1,
+      "message": "That\u0027s true.\nI had focused on defining the modules for system_ext and product, but it would be better to remove them from fs_config_dirs_nonsystem.\nLet me update with it.",
+      "parentUuid": "1757d5da_3f6c08ab",
+      "range": {
+        "startLine": 70,
+        "startChar": 16,
+        "endLine": 70,
+        "endChar": 40
+      },
+      "revId": "7e0cfcb77f32955d91f867b39a25d2c4634c566e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
