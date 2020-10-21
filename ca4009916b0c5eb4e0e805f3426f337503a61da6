@@ -58,6 +58,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ff5ecd8e_1716d3b6",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-21T18:39:35Z",
+      "side": 1,
+      "message": "Yes, it\u0027s repeatable. I add an example in my new patch.",
+      "parentUuid": "94784cde_8d30aef9",
+      "range": {
+        "startLine": 210,
+        "startChar": 4,
+        "endLine": 210,
+        "endChar": 16
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "45af807f_c48e2608",
@@ -71,6 +95,30 @@
       "writtenOn": "2020-10-21T06:52:39Z",
       "side": 1,
       "message": ".keys() is redundant",
+      "range": {
+        "startLine": 931,
+        "startChar": 39,
+        "endLine": 931,
+        "endChar": 46
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "77c2992e_bf093a76",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-21T18:39:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "45af807f_c48e2608",
       "range": {
         "startLine": 931,
         "startChar": 39,
@@ -129,6 +177,54 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e8a3190a_a6eff87e",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 941,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-21T18:39:35Z",
+      "side": 1,
+      "message": "I found this too. I merged these two loops to one in my new patch. Please check whether my change is good to you. In short, I directly put it into the cmd, instead of using a new additional_entries. Thanks.",
+      "parentUuid": "58921cdb_9438f809",
+      "range": {
+        "startLine": 941,
+        "startChar": 0,
+        "endLine": 941,
+        "endChar": 47
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11c91eaa_8624d011",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 941,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-21T18:39:35Z",
+      "side": 1,
+      "message": "Done. Thanks for your reviewing.",
+      "parentUuid": "a024d84f_f2ff0f88",
+      "range": {
+        "startLine": 941,
+        "startChar": 39,
+        "endLine": 941,
+        "endChar": 46
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "657cdaac_56339146",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 8
@@ -140,6 +236,30 @@
       "writtenOn": "2020-10-21T18:10:41Z",
       "side": 1,
       "message": "is it used..",
+      "range": {
+        "startLine": 953,
+        "startChar": 0,
+        "endLine": 953,
+        "endChar": 65
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f17ba5d_fdbce872",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 953,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-21T18:39:35Z",
+      "side": 1,
+      "message": "My bad! I removed them.",
+      "parentUuid": "657cdaac_56339146",
       "range": {
         "startLine": 953,
         "startChar": 0,
