@@ -241,6 +241,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "272546b8_ba3ec3fa",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 941,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-21T21:58:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e8a3190a_a6eff87e",
+      "range": {
+        "startLine": 941,
+        "startChar": 0,
+        "endLine": 941,
+        "endChar": 47
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "657cdaac_56339146",
