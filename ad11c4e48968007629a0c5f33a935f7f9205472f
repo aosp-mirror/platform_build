@@ -88,6 +88,24 @@
       "parentUuid": "cd8bb8f0_d51bf100",
       "revId": "ad11c4e48968007629a0c5f33a935f7f9205472f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6890e21d_7ef5df09",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-10-21T22:08:32Z",
+      "side": 1,
+      "message": "First stage console is just being used (AFAIK) for GKI development, and GKI is currently built with recovery-as-boot.\n\nThis may also be an issue for adbd and toybox as well which are useful for a first stage console environment.",
+      "parentUuid": "97f1e145_1551d42e",
+      "revId": "ad11c4e48968007629a0c5f33a935f7f9205472f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
