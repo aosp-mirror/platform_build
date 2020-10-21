@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "98467305_091a0b47",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1608690
+      },
+      "writtenOn": "2020-10-21T18:44:03Z",
+      "side": 1,
+      "message": "Yes, it will be handled in the caller site, like go/ab. https://critique-ng.corp.google.com/cl/338151137 is a change in go/ab to support this. Not sure whether you can see it or not. I still don\u0027t publish this CL because I need this android side change to be finalized and merged first.",
+      "parentUuid": "3887313f_ac2fdfd9",
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "94784cde_8d30aef9",
