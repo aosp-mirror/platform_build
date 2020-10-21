@@ -16,6 +16,52 @@
       "message": "Hi Reviewers, I updated this this and add zip2zip to the PATH when making ota package. It will remove dependency to other changes. Please review it.",
       "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45af807f_c48e2608",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-10-21T06:52:39Z",
+      "side": 1,
+      "message": ".keys() is redundant",
+      "range": {
+        "startLine": 931,
+        "startChar": 39,
+        "endLine": 931,
+        "endChar": 46
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a024d84f_f2ff0f88",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 941,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-10-21T06:52:39Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 941,
+        "startChar": 39,
+        "endLine": 941,
+        "endChar": 46
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
