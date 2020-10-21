@@ -124,6 +124,24 @@
       "parentUuid": "6890e21d_7ef5df09",
       "revId": "ad11c4e48968007629a0c5f33a935f7f9205472f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "38d68fc4_d6489e7d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-21T23:05:00Z",
+      "side": 1,
+      "message": "Also, regardless of that CL, I doubt whether sh/adbd/toybox works in first_stage_init right now, because they are installed to recovery/root/system/bin, which means that they will disappear once first_stage_init switch root to /first_stage_ramdisk. Does first_stage_console happen before or after switching root?",
+      "parentUuid": "98174c11_03c0abe8",
+      "revId": "ad11c4e48968007629a0c5f33a935f7f9205472f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
