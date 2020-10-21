@@ -46,6 +46,30 @@
       },
       "revId": "7e0cfcb77f32955d91f867b39a25d2c4634c566e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "402cbfff_59ad670f",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-10-21T03:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "695afc31_777f8268",
+      "range": {
+        "startLine": 70,
+        "startChar": 16,
+        "endLine": 70,
+        "endChar": 40
+      },
+      "revId": "7e0cfcb77f32955d91f867b39a25d2c4634c566e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
