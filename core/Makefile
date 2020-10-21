@@ -2384,6 +2384,7 @@ $1:
 	  exit 1; \
 	fi
 	ln -sfn $2 $1
+$1: .KATI_SYMLINK_OUTPUTS := $1
 )
 $1
 endef
