@@ -106,6 +106,24 @@
       "parentUuid": "97f1e145_1551d42e",
       "revId": "ad11c4e48968007629a0c5f33a935f7f9205472f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98174c11_03c0abe8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-21T22:27:57Z",
+      "side": 1,
+      "message": "This change should allow an OEM to install whatever Soong module in vendor_ramdisk: CL:1470045.\n\nRegarding sh / adbd / toybox, they are marked as recovery or recovery_available, so any device that uses recovery-as-boot will build them to the boot ramdisk instead, and any device that uses BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT will build them to vendor_boot instead. There\u0027s no need to mark ramdisk_available / vendor_ramdisk_available for them.\n\nThe ramdisk_available and vendor_ramdisk_available options in CL:1470045 are only useful on devices with a dedicated recovery partition, in which recovery/recovery_available will build into the dedicated recovery partition, hence it is not visible during first stage init.\n\nDoes that answer your concern?",
+      "parentUuid": "6890e21d_7ef5df09",
+      "revId": "ad11c4e48968007629a0c5f33a935f7f9205472f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
