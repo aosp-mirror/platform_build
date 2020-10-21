@@ -18,6 +18,46 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3887313f_ac2fdfd9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-21T18:10:41Z",
+      "side": 1,
+      "message": "what\u0027s the plan to generate multiple ota pkgs, is it handled in the callsite?",
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "94784cde_8d30aef9",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-21T18:10:41Z",
+      "side": 1,
+      "message": "give an example? from the code, the option seems repeatable.",
+      "range": {
+        "startLine": 210,
+        "startChar": 4,
+        "endLine": 210,
+        "endChar": 16
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "45af807f_c48e2608",
@@ -59,6 +99,52 @@
         "startChar": 39,
         "endLine": 941,
         "endChar": 46
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "58921cdb_9438f809",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 941,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-21T18:10:41Z",
+      "side": 1,
+      "message": "The two for loops seems identical? You can something like say\nadditional_entries \u003d {}\nif default_custom_image !\u003d custom_image:\n  additional_entries[custom_image] \u003d default_custom_image",
+      "range": {
+        "startLine": 941,
+        "startChar": 0,
+        "endLine": 941,
+        "endChar": 47
+      },
+      "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "657cdaac_56339146",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 953,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-21T18:10:41Z",
+      "side": 1,
+      "message": "is it used..",
+      "range": {
+        "startLine": 953,
+        "startChar": 0,
+        "endLine": 953,
+        "endChar": 65
       },
       "revId": "ca4009916b0c5eb4e0e805f3426f337503a61da6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
