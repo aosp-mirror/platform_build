@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf7fdd2f_2aba4636",
+        "filename": "tools/product_config/src/com/android/build/config/Errors.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-10-21T20:40:01Z",
+      "side": 1,
+      "message": "This class serves two purposes. The first one is to maintain the list of errors encountered during the processing. The second purpose is error reporting: using the supplied about error types, filter out errors, check if there were warnings or serious errors, etc. If this were to be eventually offered as a library, these two purposes would be better served as two separate classes: an error container which is passed to various methods (or kept in the processing context) to the methods processing the input, and a separate error reporter that keeps error processing configuration and returns the encountered errors as string or writes them to the output stream.\nI am also uncertain why an error category does not contain error message -- this makes localization difficult, for instance. If a category provided an error message, a call to add an error message about an unknown variable might look like\n```\n    errors.add(UNKNOWN_VAR, varLoc, String.format(UNKNOWN_VAR.getText(),varName))\n```",
+      "revId": "87effd61e5a529d9b38cf4b41feb2a9c0dce6e4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89f5a4e8_a27d2fab",
+        "filename": "tools/product_config/src/com/android/build/config/Errors.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-10-21T20:40:01Z",
+      "side": 1,
+      "message": "s/compatibilty/compatibility/",
+      "range": {
+        "startLine": 39,
+        "startChar": 23,
+        "endLine": 39,
+        "endChar": 35
+      },
+      "revId": "87effd61e5a529d9b38cf4b41feb2a9c0dce6e4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "038db448_0ef24ed9",
+        "filename": "tools/product_config/src/com/android/build/config/Options.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-10-21T20:40:01Z",
+      "side": 1,
+      "message": "An alternative design would be to allow a single argument to be a comma-separated list of error codes, e.g., \n```\n  product_config --hide 42,245\n```\nThe advantage is that a non-option argument can then be a number.",
+      "range": {
+        "startLine": 39,
+        "startChar": 63,
+        "endLine": 39,
+        "endChar": 69
+      },
+      "revId": "87effd61e5a529d9b38cf4b41feb2a9c0dce6e4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
