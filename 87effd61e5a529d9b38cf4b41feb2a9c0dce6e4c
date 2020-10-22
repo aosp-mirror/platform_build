@@ -36,6 +36,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "95371082_952e2cbd",
+        "filename": "tools/product_config/src/com/android/build/config/Errors.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-10-22T22:51:04Z",
+      "side": 1,
+      "message": "I had somewhat different class rearrangement in mind but failed to explain it. Actually, at this point it does not matter much. This can be revisited later if necessary.",
+      "parentUuid": "2b942598_b7c2f18d",
+      "revId": "87effd61e5a529d9b38cf4b41feb2a9c0dce6e4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "89f5a4e8_a27d2fab",
