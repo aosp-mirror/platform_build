@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b942598_b7c2f18d",
+        "filename": "tools/product_config/src/com/android/build/config/Errors.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-22T19:47:00Z",
+      "side": 1,
+      "message": "I\u0027ll split this into a base class ErrorReporter with all the mechanism and a subclass with the constants. It also makes the test cleaner.\n\nIn a bigger tool, I\u0027d probably put the errors strings into this class, but I think here it\u0027s not a big advantage.  I started to do that, but then there were a bunch of ERROR_COMMAND_LINE errors with different enough strings that I thought that concatenating it all in the caller was just easier.",
+      "parentUuid": "cf7fdd2f_2aba4636",
+      "revId": "87effd61e5a529d9b38cf4b41feb2a9c0dce6e4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "89f5a4e8_a27d2fab",
@@ -41,6 +59,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "baa3b3fa_d7fa2137",
+        "filename": "tools/product_config/src/com/android/build/config/Errors.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-22T19:47:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "89f5a4e8_a27d2fab",
+      "range": {
+        "startLine": 39,
+        "startChar": 23,
+        "endLine": 39,
+        "endChar": 35
+      },
+      "revId": "87effd61e5a529d9b38cf4b41feb2a9c0dce6e4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "038db448_0ef24ed9",
@@ -54,6 +96,30 @@
       "writtenOn": "2020-10-21T20:40:01Z",
       "side": 1,
       "message": "An alternative design would be to allow a single argument to be a comma-separated list of error codes, e.g., \n```\n  product_config --hide 42,245\n```\nThe advantage is that a non-option argument can then be a number.",
+      "range": {
+        "startLine": 39,
+        "startChar": 63,
+        "endLine": 39,
+        "endChar": 69
+      },
+      "revId": "87effd61e5a529d9b38cf4b41feb2a9c0dce6e4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "392c6a26_bd57ecdb",
+        "filename": "tools/product_config/src/com/android/build/config/Options.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2020-10-22T19:47:00Z",
+      "side": 1,
+      "message": "Even easier, I\u0027ll just allow you to pass one number per flag. I think I was overcomplicating it.",
+      "parentUuid": "038db448_0ef24ed9",
       "range": {
         "startLine": 39,
         "startChar": 63,
