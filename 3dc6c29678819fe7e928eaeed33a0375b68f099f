@@ -16,6 +16,24 @@
       "message": "Waiting on decision of sh/toybox in the generic boot image. See https://android-review.googlesource.com/q/topic:%22vendor_ramdisk%22+(status:open%20OR%20status:merged) .",
       "revId": "3dc6c29678819fe7e928eaeed33a0375b68f099f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7792b399_5bc0b5f9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-22T00:10:27Z",
+      "side": 1,
+      "message": "Also blocked on e2fsck. See b/171326057",
+      "parentUuid": "cbd10337_342ad272",
+      "revId": "3dc6c29678819fe7e928eaeed33a0375b68f099f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
