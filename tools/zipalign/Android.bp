@@ -58,6 +58,7 @@ cc_test_host {
         "tests/src/*_test.cpp",
     ],
     static_libs: [
+        "libbase",
         "libzipalign",
         "libgmock",
     ],
