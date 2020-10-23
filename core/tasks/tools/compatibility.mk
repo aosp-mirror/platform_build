@@ -79,10 +79,8 @@ $(eval $(call combine-notice-files, html, \
          $(HOST_OUT_NOTICE_FILES) $(TARGET_OUT_NOTICE_FILES), \
          $(compatibility_zip_deps)))
 
-ifeq ($(include_test_suite_notice),true)
-  compatibility_zip_deps += $(test_suite_notice_txt)
-  compatibility_zip_resources += $(test_suite_notice_txt)
-endif
+compatibility_zip_deps += $(test_suite_notice_txt)
+compatibility_zip_resources += $(test_suite_notice_txt)
 
 compatibility_zip := $(out_dir).zip
 $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
@@ -111,7 +109,6 @@ test_suite_dynamic_config :=
 test_suite_readme :=
 test_suite_prebuilt_tools :=
 test_suite_tools :=
-include_test_suite_notice :=
 test_suite_jdk :=
 test_suite_jdk_dir :=
 host_shared_libs :=
