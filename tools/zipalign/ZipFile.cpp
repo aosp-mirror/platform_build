@@ -35,7 +35,7 @@
 #include <assert.h>
 #include <inttypes.h>
 
-using namespace android;
+namespace android {
 
 /*
  * Some environments require the "b", some choke on it.
@@ -134,7 +134,7 @@ status_t ZipFile::open(const char* zipFileName, int flags)
 /*
  * Return the Nth entry in the archive.
  */
-android::ZipEntry* ZipFile::getEntryByIndex(int idx) const
+ZipEntry* ZipFile::getEntryByIndex(int idx) const
 {
     if (idx < 0 || idx >= (int) mEntries.size())
         return NULL;
@@ -145,7 +145,7 @@ android::ZipEntry* ZipFile::getEntryByIndex(int idx) const
 /*
  * Find an entry by name.
  */
-android::ZipEntry* ZipFile::getEntryByName(const char* fileName) const
+ZipEntry* ZipFile::getEntryByName(const char* fileName) const
 {
     /*
      * Do a stupid linear string-compare search.
@@ -1397,3 +1397,4 @@ void ZipFile::EndOfCentralDir::dump(void) const
         mCentralDirSize, mCentralDirOffset, mCommentLen);
 }
 
+} // namespace android
