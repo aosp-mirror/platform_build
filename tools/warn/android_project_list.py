@@ -109,7 +109,7 @@ project_list = [
     create_pattern('system/bt'),
     create_pattern('system/connectivity'),
     create_pattern('system/core/adb'),
-    create_pattern('system/core/base'),
+    create_pattern('system/libbase'),
     create_pattern('system/core/debuggerd'),
     create_pattern('system/core/fastboot'),
     create_pattern('system/core/fingerprintd'),
