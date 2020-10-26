@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "18cce745_68402def",
+        "filename": "tools/zipalign/Android.bp",
+        "patchSetId": 6
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-10-26T19:07:30Z",
+      "side": 1,
+      "message": "Wow. You have good eyes! Thanks for catching this!",
+      "parentUuid": "2bacd9dd_1888ac11",
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9b9af1b9_1df7bccd",
@@ -48,6 +66,24 @@
       "writtenOn": "2020-10-26T18:05:37Z",
       "side": 1,
       "message": "`#pragma once`?",
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4c42157_f9d05f52",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-10-26T19:07:30Z",
+      "side": 1,
+      "message": "This is not the style of guard used by the rest of this lib. Additionally, \"#pragma once\" is a nonstandard C++ extensions which is both flawed and not universally supported (see https://groups.google.com/a/google.com/g/c-users/c/cn__Osvpuuk/discussion).",
+      "parentUuid": "9b9af1b9_1df7bccd",
       "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -75,6 +111,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d07a73ed_e9c621ba",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-10-26T19:07:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5f178af3_367f9a03",
+      "range": {
+        "startLine": 24,
+        "startChar": 24,
+        "endLine": 24,
+        "endChar": 32
+      },
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5446f64c_f8ba3212",
@@ -88,6 +148,24 @@
       "writtenOn": "2020-10-26T18:05:37Z",
       "side": 1,
       "message": "why is this a separate option rather than just alignTo\u003d\u003d4096?",
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a886f451_d2ec519b",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-10-26T19:07:30Z",
+      "side": 1,
+      "message": ".so get special treatment to allow Framework to dlopen them directly from an apk without having to extract it from their own file. This works only if the offset in the file is page aligned.\n\nOther entries like png can be mapped but require only a 4 bytes alignment. \n\nI think this option (-p) was added to save space (otherwise each entry would have to be padded to 4k).",
+      "parentUuid": "5446f64c_f8ba3212",
       "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -115,6 +193,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffe34bfe_1a61734a",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-10-26T19:07:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "50bf8624_3290581b",
+      "range": {
+        "startLine": 33,
+        "startChar": 42,
+        "endLine": 33,
+        "endChar": 43
+      },
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "598f9e20_4f6f6a6f",
@@ -128,6 +230,30 @@
       "writtenOn": "2020-10-26T18:05:37Z",
       "side": 1,
       "message": "same question",
+      "range": {
+        "startLine": 38,
+        "startChar": 5,
+        "endLine": 38,
+        "endChar": 24
+      },
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "308c4e84_7cad02fe",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-10-26T19:07:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "598f9e20_4f6f6a6f",
       "range": {
         "startLine": 38,
         "startChar": 5,
