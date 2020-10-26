@@ -52,6 +52,24 @@
       "parentUuid": "11a4d40b_f0c765af",
       "revId": "2a37692a81d2da1afb406df78b9dc03718951145",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "35599d2f_2bfcf483",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-10-26T17:53:49Z",
+      "side": 1,
+      "message": "Will these suites to get license review done before S release? If that\u0027s the case, making it the default might be OK?",
+      "parentUuid": "ab0fabf5_74795ed0",
+      "revId": "2a37692a81d2da1afb406df78b9dc03718951145",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
