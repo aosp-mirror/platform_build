@@ -70,6 +70,30 @@
       },
       "revId": "3da04f73ebf886e0a823ae5e38fba7d5c73f4ba8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5fdb7bd_71a7e4f4",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-10-26T09:17:24Z",
+      "side": 1,
+      "message": "Here\u0027s a CL to add a tools/bazel symlink\n\nhttps://android-review.googlesource.com/c/platform/manifest/+/1473916",
+      "parentUuid": "2b10908e_aebb8fce",
+      "range": {
+        "startLine": 334,
+        "startChar": 4,
+        "endLine": 334,
+        "endChar": 29
+      },
+      "revId": "3da04f73ebf886e0a823ae5e38fba7d5c73f4ba8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
