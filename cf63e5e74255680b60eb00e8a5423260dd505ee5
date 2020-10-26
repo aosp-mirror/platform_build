@@ -177,6 +177,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2bb0da75_551d7e90",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-10-26T19:32:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c75024f_06323063",
+      "range": {
+        "startLine": 24,
+        "startChar": 24,
+        "endLine": 24,
+        "endChar": 32
+      },
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5446f64c_f8ba3212",
@@ -226,6 +250,24 @@
       "side": 1,
       "message": "oh, i see what you were trying to say now. i think the word \"only\" would help clarify :-)\n\nor something like:\n\n * - pageAlignSharedLibs: Align .so files to 4096 and other files to alignTo, or all files to alignTo if false.",
       "parentUuid": "a886f451_d2ec519b",
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "25b60c93_1b66d5ad",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-10-26T19:32:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "26098065_b937dbc4",
       "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -337,6 +379,30 @@
       "writtenOn": "2020-10-26T19:18:36Z",
       "side": 1,
       "message": "(change these to match whatever you do for `process`.)",
+      "range": {
+        "startLine": 37,
+        "startChar": 5,
+        "endLine": 38,
+        "endChar": 75
+      },
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2e84f63c_e74e3325",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-10-26T19:32:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd6b035e_29f48d6b",
       "range": {
         "startLine": 37,
         "startChar": 5,
