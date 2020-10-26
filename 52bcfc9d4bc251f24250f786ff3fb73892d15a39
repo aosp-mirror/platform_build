@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e582692_6b1efd83",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2020-10-26T19:18:36Z",
+      "side": 1,
+      "message": "oh, apparently my eyes aren\u0027t that sharp: i only just noticed that the docs are out of order with respect to the arguments :-)",
+      "revId": "52bcfc9d4bc251f24250f786ff3fb73892d15a39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

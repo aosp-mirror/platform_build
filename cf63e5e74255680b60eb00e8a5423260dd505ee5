@@ -88,6 +88,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0db6a1b_af5e0a69",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2020-10-26T19:18:36Z",
+      "side": 1,
+      "message": "that was written in 2013! we\u0027ve been using this for new code in Android, and most of the C library uses it. it\u0027s less bad than polluting the namespace with random symbols.\n\n(this is the only zipalign header file, right, so although i\u0027d normally consider the \"following existing practice\" argument a good one, it\u0027s a bit weak here.)\n\n((leaving \"resolved\" because this is only a style nit, even though i strongly prefer `#pragma once` for new code.))",
+      "parentUuid": "e4c42157_f9d05f52",
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5f178af3_367f9a03",
@@ -137,6 +155,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8c75024f_06323063",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2020-10-26T19:18:36Z",
+      "side": 1,
+      "message": "no, sorry, i meant \"what are the units?\". i think the answer is just \"bytes\", but i\u0027d prefer to be explicit because of (say) .align/.balign/.p2align having caused so much confusion.\n\ni\u0027m making my usual assumption of \"if you add a header file, folks you don\u0027t expect to will start using it\". a perfectly acceptable alternative would be to just use visibility: in the Android.bp to avoid that...",
+      "parentUuid": "d07a73ed_e9c621ba",
+      "range": {
+        "startLine": 24,
+        "startChar": 24,
+        "endLine": 24,
+        "endChar": 32
+      },
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5446f64c_f8ba3212",
         "filename": "tools/zipalign/include/ZipAlign.h",
         "patchSetId": 6
@@ -166,6 +208,24 @@
       "side": 1,
       "message": ".so get special treatment to allow Framework to dlopen them directly from an apk without having to extract it from their own file. This works only if the offset in the file is page aligned.\n\nOther entries like png can be mapped but require only a 4 bytes alignment. \n\nI think this option (-p) was added to save space (otherwise each entry would have to be padded to 4k).",
       "parentUuid": "5446f64c_f8ba3212",
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "26098065_b937dbc4",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2020-10-26T19:18:36Z",
+      "side": 1,
+      "message": "oh, i see what you were trying to say now. i think the word \"only\" would help clarify :-)\n\nor something like:\n\n * - pageAlignSharedLibs: Align .so files to 4096 and other files to alignTo, or all files to alignTo if false.",
+      "parentUuid": "a886f451_d2ec519b",
       "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -259,6 +319,29 @@
         "startChar": 5,
         "endLine": 38,
         "endChar": 24
+      },
+      "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd6b035e_29f48d6b",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2020-10-26T19:18:36Z",
+      "side": 1,
+      "message": "(change these to match whatever you do for `process`.)",
+      "range": {
+        "startLine": 37,
+        "startChar": 5,
+        "endLine": 38,
+        "endChar": 75
       },
       "revId": "cf63e5e74255680b60eb00e8a5423260dd505ee5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
