@@ -33,6 +33,29 @@
       "message": "Can any build peers help us review these EROFS changes? Thanks!",
       "revId": "1f7516940043e777fdb3a74229d507455575f062",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "41e6c32c_2556207e",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-27T17:01:44Z",
+      "side": 1,
+      "message": "Add this to the \"required\" section in releasetools/Android.bp where build_image.py is used.",
+      "range": {
+        "startLine": 300,
+        "startChar": 22,
+        "endLine": 300,
+        "endChar": 37
+      },
+      "revId": "1f7516940043e777fdb3a74229d507455575f062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
