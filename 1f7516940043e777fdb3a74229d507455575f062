@@ -35,6 +35,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e16e46c5_43c6b481",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-10-27T17:14:03Z",
+      "side": 1,
+      "message": "Thanks!\n\nGao Xiang",
+      "revId": "1f7516940043e777fdb3a74229d507455575f062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "41e6c32c_2556207e",
@@ -48,6 +65,30 @@
       "writtenOn": "2020-10-27T17:01:44Z",
       "side": 1,
       "message": "Add this to the \"required\" section in releasetools/Android.bp where build_image.py is used.",
+      "range": {
+        "startLine": 300,
+        "startChar": 22,
+        "endLine": 300,
+        "endChar": 37
+      },
+      "revId": "1f7516940043e777fdb3a74229d507455575f062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4086e1cb_a8c171ea",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-10-27T17:14:03Z",
+      "side": 1,
+      "message": "Hi, Thanks!\n\nis there some templete about this?\ne.g. I searched \"squashfs\" for some templete in\nhttps://android.googlesource.com/platform/build/+/refs/heads/master/tools/releasetools/Android.bp\nbut with no finding...",
+      "parentUuid": "41e6c32c_2556207e",
       "range": {
         "startLine": 300,
         "startChar": 22,
