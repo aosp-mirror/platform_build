@@ -22,6 +22,30 @@
       },
       "revId": "9ee2b7a2076de18387517b6008e32a94e9d7b1a6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8a61156_ec02e324",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-27T19:18:29Z",
+      "side": 1,
+      "message": "It should only complain if it\u0027s \"only\" a host module, not \"also\" (that complaint is in there to push host-only modules over to PRODUCT_HOST_PACKAGES). It looks like this is disabled for 32-bit devices, which would trigger that check on those devices... hmm",
+      "parentUuid": "6da8a46e_1869be3a",
+      "range": {
+        "startLine": 375,
+        "startChar": 4,
+        "endLine": 375,
+        "endChar": 10
+      },
+      "revId": "9ee2b7a2076de18387517b6008e32a94e9d7b1a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
