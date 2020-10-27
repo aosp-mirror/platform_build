@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1891e61_fd37558f",
+        "filename": "tools/releasetools/find_shareduid_violation.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-10-27T18:35:31Z",
+      "side": 1,
+      "message": "Reviewer note: This file was moved from core/tasks to tools/releasetools.\n\nThe only content changes were to use the releasetools-style argument parser as well as wrapping up logic in a main() and FindShareduidViolation() function.",
+      "revId": "38dd30507ed898035a629a4f365fc9ce4f88afcd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
