@@ -145,6 +145,30 @@
       },
       "revId": "1f7516940043e777fdb3a74229d507455575f062",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "408fbeb1_73cb0b18",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-27T17:26:29Z",
+      "side": 1,
+      "message": "Yes. Change the repo manifest before merging this CL, preferably.\n\nDavid, is the manifest updated to include erofs-utils?",
+      "parentUuid": "aa7674b2_1039d2dc",
+      "range": {
+        "startLine": 300,
+        "startChar": 22,
+        "endLine": 300,
+        "endChar": 37
+      },
+      "revId": "1f7516940043e777fdb3a74229d507455575f062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
