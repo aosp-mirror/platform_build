@@ -16,6 +16,23 @@
       "message": "ping...",
       "revId": "1f7516940043e777fdb3a74229d507455575f062",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89d14713_4d2e9304",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1290458
+      },
+      "writtenOn": "2020-10-27T16:55:41Z",
+      "side": 1,
+      "message": "Can any build peers help us review these EROFS changes? Thanks!",
+      "revId": "1f7516940043e777fdb3a74229d507455575f062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
