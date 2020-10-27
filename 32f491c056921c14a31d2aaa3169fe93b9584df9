@@ -22,6 +22,30 @@
       },
       "revId": "32f491c056921c14a31d2aaa3169fe93b9584df9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ced066c7_67d97887",
+        "filename": "tools/product_config_go/README.md",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-10-27T17:26:12Z",
+      "side": 1,
+      "message": "This is to help extracting configuration variables from makefiles: loadGenerated invokes the extractor which generates \u0027set(\"VAR\", \"value\")\u0027 statements. They are executed just as \u0027set/setFinal/appendTo\u0027 read from .star files.\nIs your concern that this is not OS-neutral?",
+      "parentUuid": "eb04c65c_f177ead3",
+      "range": {
+        "startLine": 61,
+        "startChar": 6,
+        "endLine": 61,
+        "endChar": 19
+      },
+      "revId": "32f491c056921c14a31d2aaa3169fe93b9584df9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
