@@ -45,6 +45,30 @@
       },
       "revId": "fdf30c2be15a8b129f0cf40c27416d81668bc2cc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6259c688_8f871764",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1280469
+      },
+      "writtenOn": "2020-10-27T19:03:14Z",
+      "side": 1,
+      "message": "The variable name is LOCAL_SRC_FILES, Plural form of the variable name implies it should support multiple files， existing code only support one single input. \n\nIf the bug the concern, I can file a different bug for this change.",
+      "parentUuid": "180ee380_07919217",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 28
+      },
+      "revId": "fdf30c2be15a8b129f0cf40c27416d81668bc2cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
