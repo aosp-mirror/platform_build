@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "c7ac651f_6972a87b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-27T02:46:51Z",
+      "side": 1,
+      "message": "Git commit messages should have a short (single-lined) subject, then a blank line, then the body. This is so that it fits in email subject lines / gerrit lists / `git log --oneline` / etc.",
+      "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "061f5067_20103117",
@@ -49,6 +66,23 @@
       "writtenOn": "2020-10-27T00:40:40Z",
       "side": 1,
       "message": "The presubmit errors look unrelated, but I will retry once more to see if they go away",
+      "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "957818d7_55ae0565",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-27T02:46:51Z",
+      "side": 1,
+      "message": "This completely breaks `bazel` in your terminal for non-Android use cases once you\u0027ve sourced this file -- you don\u0027t even get the `NOTE: ...` below unless you\u0027re in an android tree, since $(gettop) will fail.\n\nSee get_make_command for how we fixed this for make.",
       "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
