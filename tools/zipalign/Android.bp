@@ -4,8 +4,8 @@
 // Zip alignment tool
 //
 
-cc_binary_host {
-    name: "zipalign",
+cc_library_host_static {
+    name: "libzipalign",
 
     srcs: [
         "ZipAlign.cpp",
@@ -13,11 +13,15 @@ cc_binary_host {
         "ZipFile.cpp",
     ],
 
+    export_include_dirs: [
+        "include",
+    ],
+
     cflags: ["-Wall", "-Werror"],
 
     // NOTE: Do not add any shared_libs dependencies because they will break the
     // static_sdk_tools target.
-    static_libs: [
+    whole_static_libs: [
         "libutils",
         "libcutils",
         "liblog",
@@ -33,4 +37,32 @@ cc_binary_host {
             enabled: true,
         },
     },
+}
+
+cc_binary_host {
+    name: "zipalign",
+
+    srcs: [
+        "ZipAlignMain.cpp",
+    ],
+
+    cflags: ["-Wall", "-Werror"],
+
+    static_libs: [
+        "libzipalign",
+    ]
+}
+
+cc_test_host {
+    name: "zipalign_tests",
+    srcs: [
+        "tests/src/*_test.cpp",
+    ],
+    static_libs: [
+        "libzipalign",
+        "libgmock",
+    ],
+    data: [
+         "tests/data/unaligned.zip",
+    ],
 }
