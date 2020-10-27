@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "b4efcc53_12fcc32e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-10-27T03:09:28Z",
+      "side": 1,
+      "message": "Ack, sorry.",
+      "parentUuid": "c7ac651f_6972a87b",
+      "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "061f5067_20103117",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -83,6 +101,24 @@
       "writtenOn": "2020-10-27T02:46:51Z",
       "side": 1,
       "message": "This completely breaks `bazel` in your terminal for non-Android use cases once you\u0027ve sourced this file -- you don\u0027t even get the `NOTE: ...` below unless you\u0027re in an android tree, since $(gettop) will fail.\n\nSee get_make_command for how we fixed this for make.",
+      "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "768654ca_7f215274",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-10-27T03:09:28Z",
+      "side": 1,
+      "message": "Ahh, didn\u0027t realize gettop would fail like that. Will investigate and post a fix.\n\nFWIW, we are trying to move away from build/envsetup.sh needing to be used. If anyone already has a system Bazel installed (your example of Bazel being broken outside of the AOSP tree would imply that they have a system Bazel installed), then they don\u0027t need to source build/envsetup.sh. Instead, if they are in the AOSP tree and type bazel then the system Bazel will use tools/bazel (the AOSP Bazel) for them automatically.",
+      "parentUuid": "957818d7_55ae0565",
       "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
