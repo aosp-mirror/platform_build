@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49c6dfb2_a47f0072",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-27T18:10:13Z",
+      "side": 1,
+      "message": "Can you specify that this is for BUILD_PREBUILT? LOCAL_SRC_FILES in other places already supports multiple files.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 38
+      },
+      "revId": "fdf30c2be15a8b129f0cf40c27416d81668bc2cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "180ee380_07919217",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-27T18:10:13Z",
+      "side": 1,
+      "message": "Yes, but why is this changing? It was intentional to only support a single file in the cases I can think of.\n\nKeep in mind that this commit message needs to describe the problem and why it\u0027s changing (not just what\u0027s changing), as the bug isn\u0027t generally accessible.",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 28
+      },
+      "revId": "fdf30c2be15a8b129f0cf40c27416d81668bc2cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
