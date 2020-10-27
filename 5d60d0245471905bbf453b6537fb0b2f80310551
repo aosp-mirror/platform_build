@@ -34,6 +34,23 @@
       "parentUuid": "061f5067_20103117",
       "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "84056a69_95b64baa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-10-27T00:40:40Z",
+      "side": 1,
+      "message": "The presubmit errors look unrelated, but I will retry once more to see if they go away",
+      "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
