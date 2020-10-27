@@ -121,6 +121,30 @@
       },
       "revId": "1f7516940043e777fdb3a74229d507455575f062",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa7674b2_1039d2dc",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-10-27T17:20:57Z",
+      "side": 1,
+      "message": "ok, thanks! will update in minutes.\n\nBTW, there could be another repo (external/erofs-utils) to add, should I modify manifest.git as well? (yet I have no experience about manifest.git as well...)\n\nThanks,\nGao Xiang",
+      "parentUuid": "6aed5d1b_c202033c",
+      "range": {
+        "startLine": 300,
+        "startChar": 22,
+        "endLine": 300,
+        "endChar": 37
+      },
+      "revId": "1f7516940043e777fdb3a74229d507455575f062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
