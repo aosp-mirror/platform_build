@@ -16,6 +16,24 @@
       "message": "Apologies if I\u0027m out of the loop.\n\nWhy this change? \n\n1. Last time I was part of the conversations about adding bazel() to envsetup, I was under the impression we were not going to suggest to users that they should use something other than `m`. If they wanted to use bazel mode, they would use `USE_BAZEL\u003d1 m`, and they would never invoke `abazel` or `bazel` directly. What changed?\n2. Why do we prefer `bazel` to `abazel` here? We have a good reason to be concerned users might be confused that it overrides the normal system `bazel` if you\u0027ve sourced envsetup. Even with a disclaimer: why add to the potential confusion?",
       "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "260ae515_4d839d2d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-10-27T00:38:50Z",
+      "side": 1,
+      "message": "There is some discussion at http://b/160564433, but in summary, we do want people to be able to execute Bazel directly, either for queries, or experiments, or eventually for doing builds (if you picture that one day AOSP has BUILD files everywhere). \n\nSeveral of us were not fans of the abazel() name, especially Joe Hicks and other members of the Bazel team, and it seems safe to use the bazel() name instead if we add a warning like this. \n\nWe are also not requiring people to source build/envsetup.sh anymore - as an alternative, they could install a system bazel, which will use our special bazel by it being available at tools/bazel in the AOSP tree. See the doc linked from http://b/160564433 for more info.\n\ncc jingwen@",
+      "parentUuid": "061f5067_20103117",
+      "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
