@@ -93,6 +93,30 @@
       },
       "revId": "fdf30c2be15a8b129f0cf40c27416d81668bc2cc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "675fef0c_d4f5df66",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1280469
+      },
+      "writtenOn": "2020-10-27T19:35:45Z",
+      "side": 1,
+      "message": "The situation I have is: There HW depend files need to be preloaded to the device.  Depends on HW revision, sku, build info, even some parameters programmed by the factory, each of them will require a different config file. \n\nThe current implementation is to define a unique module for each of the file need to be pre-loaded as one module only accept one SRC file. So there are hundreds of different modules in the product makefile .  Especially in this case . when factory want to program a new item it end up with Make file changes every time, that does not sounds good.\n\nSo the change is make module accept more than one SRC as input.  Is there any special reason to limit one module only can have one SRC ?",
+      "parentUuid": "eb254a4a_b35ab88a",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 28
+      },
+      "revId": "fdf30c2be15a8b129f0cf40c27416d81668bc2cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
