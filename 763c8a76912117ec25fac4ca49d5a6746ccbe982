@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c4a7ffa_2018e25e",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1347,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-10-27T12:19:20Z",
+      "side": 0,
+      "message": "Could you instead replace this with $(get_build_var PRODUCT_OUT) ?",
+      "range": {
+        "startLine": 1347,
+        "startChar": 6,
+        "endLine": 1347,
+        "endChar": 55
+      },
+      "revId": "763c8a76912117ec25fac4ca49d5a6746ccbe982",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
