@@ -69,6 +69,30 @@
       },
       "revId": "fdf30c2be15a8b129f0cf40c27416d81668bc2cc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eb254a4a_b35ab88a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-27T19:13:20Z",
+      "side": 1,
+      "message": "Yes, it\u0027s a historical artifact that it uses the same LOCAL_SRC_FILES variable as everything else, and that\u0027s been fixed in Soong (where the prebuilt definitions often use \u0027src\u0027 instead of \u0027srcs\u0027). I\u0027d believe there may be a path where prebuilts can work with more than one source file, but that\u0027s not the general case, so I\u0027d more data here on why this is changing.\n\nEven if you can file a bug that all Googlers can see, this is a public change in public review, so it\u0027s still useful to declare why this change is taking place. (Even for internal changes, not everyone can see all bugs, and sometimes they can be deleted, unlike changes)",
+      "parentUuid": "6259c688_8f871764",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 28
+      },
+      "revId": "fdf30c2be15a8b129f0cf40c27416d81668bc2cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
