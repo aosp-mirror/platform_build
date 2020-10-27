@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b0e3287_200f8468",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-10-27T22:03:38Z",
+      "side": 1,
+      "message": "Changing this is not sufficient, as downstream users of my_prebuilt_src_file expect it to be a single file.  For example, cc_prebuilt_internal.mk uses it as a dependency to a rule that calls transform-prebuilt-to-target, which calls copy-file-to-target, which copies $\u003c to $@.  $\u003c is the first prerequisite, so any additional LOCAL_SRC_FILES past the first will be ignored.\n\nMaybe a better change would be checking if there is more than one word in LOCAL_SRC_FILES, and if so print an error suggesting BUILD_MULTI_PREBUILT instead of BUILD_PREBUILT.",
+      "revId": "3b1558cb7567c5f6da755d086b0e2d5be6f97dc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
