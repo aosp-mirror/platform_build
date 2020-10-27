@@ -29,7 +29,7 @@
 #include <string.h>
 #include <time.h>
 
-namespace android {
+using namespace android;
 
 /*
  * Initialize a new ZipEntry structure from a FILE* positioned at a
@@ -695,6 +695,4 @@ void ZipEntry::CentralDirEntry::dump(void) const
     if (mFileComment != NULL)
         ALOGD("  comment: '%s'\n", mFileComment);
 }
-
-} // namespace android
 
