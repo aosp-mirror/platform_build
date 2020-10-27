@@ -69,6 +69,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d242523_5d239f34",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-27T17:27:21Z",
+      "side": 1,
+      "message": "Also dropping attention for Dan",
+      "revId": "1f7516940043e777fdb3a74229d507455575f062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "41e6c32c_2556207e",
