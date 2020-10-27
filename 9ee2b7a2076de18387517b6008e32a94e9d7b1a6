@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6da8a46e_1869be3a",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2020-10-27T19:02:40Z",
+      "side": 1,
+      "message": "Hmm, this is complaining that \u0027crosvm\u0027 is (also) a host module. We might have to split it into two Soong targets.",
+      "range": {
+        "startLine": 375,
+        "startChar": 4,
+        "endLine": 375,
+        "endChar": 10
+      },
+      "revId": "9ee2b7a2076de18387517b6008e32a94e9d7b1a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
