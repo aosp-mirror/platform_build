@@ -97,6 +97,30 @@
       },
       "revId": "1f7516940043e777fdb3a74229d507455575f062",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6aed5d1b_c202033c",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-10-27T17:16:39Z",
+      "side": 1,
+      "message": "Search for build_image.py\n\nhttps://android.googlesource.com/platform/build/+/refs/heads/master/tools/releasetools/Android.bp#41\n\nmksquashfsimage.sh should be in the required section, too, so it is actually a small bug there. It is unrelated to your change, though.\n\nThat is, add to this line:\n\nhttps://android.googlesource.com/platform/build/+/refs/heads/master/tools/releasetools/Android.bp#52\n\nand keep list ordered, please",
+      "parentUuid": "4086e1cb_a8c171ea",
+      "range": {
+        "startLine": 300,
+        "startChar": 22,
+        "endLine": 300,
+        "endChar": 37
+      },
+      "revId": "1f7516940043e777fdb3a74229d507455575f062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
