@@ -119,7 +119,7 @@ project_list = [
     create_pattern('system/core/include'),
     create_pattern('system/core/init'),
     create_pattern('system/core/libbacktrace'),
-    create_pattern('system/core/liblog'),
+    create_pattern('system/logging/liblog'),
     create_pattern('system/core/libpixelflinger'),
     create_pattern('system/core/libprocessgroup'),
     create_pattern('system/core/libsysutils'),
