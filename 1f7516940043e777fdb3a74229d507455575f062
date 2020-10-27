@@ -203,6 +203,30 @@
       },
       "revId": "1f7516940043e777fdb3a74229d507455575f062",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "380327cb_1d7290cc",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-10-27T17:30:40Z",
+      "side": 1,
+      "message": "I’ve updated the commit. Please kindly help review again, Thanks!",
+      "parentUuid": "408fbeb1_73cb0b18",
+      "range": {
+        "startLine": 300,
+        "startChar": 22,
+        "endLine": 300,
+        "endChar": 37
+      },
+      "revId": "1f7516940043e777fdb3a74229d507455575f062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
