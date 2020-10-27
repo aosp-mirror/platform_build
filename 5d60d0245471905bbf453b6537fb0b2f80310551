@@ -121,6 +121,24 @@
       "parentUuid": "957818d7_55ae0565",
       "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec9a681b_1eca8e81",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-27T03:12:54Z",
+      "side": 1,
+      "message": "There\u0027s \"don\u0027t need to\" vs \"I forgot I sourced that into my environment a week ago, why doesn\u0027t bazel work anymore?\". We don\u0027t want sourcing envsetup to break other things.\n\n(And it\u0027s less gettop fails, but more that it\u0027ll be caught on line 325 when it can\u0027t locate the top of the tree)",
+      "parentUuid": "768654ca_7f215274",
+      "revId": "5d60d0245471905bbf453b6537fb0b2f80310551",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
