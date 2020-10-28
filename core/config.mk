@@ -157,6 +157,7 @@ $(KATI_obsolete_var BOARD_VNDK_RUNTIME_DISABLE,VNDK-Lite is no longer supported.
 $(KATI_obsolete_var LOCAL_SANITIZE_BLACKLIST,Use LOCAL_SANITIZE_BLOCKLIST instead.)
 $(KATI_deprecated_var BOARD_PLAT_PUBLIC_SEPOLICY_DIR,Use SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS instead.)
 $(KATI_deprecated_var BOARD_PLAT_PRIVATE_SEPOLICY_DIR,Use SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS instead.)
+$(KATI_obsolete_var TARGET_NO_VENDOR_BOOT,Use PRODUCT_BUILD_VENDOR_BOOT_IMAGE instead)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -995,6 +996,16 @@ endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 # ###############################################################
 # Set up final options.
 # ###############################################################
+
+# We run gcc/clang with PWD=/proc/self/cwd to remove the $TOP
+# from the debug output. That way two builds in two different
+# directories will create the same output.
+# /proc doesn't exist on Darwin.
+ifeq ($(HOST_OS),linux)
+RELATIVE_PWD := PWD=/proc/self/cwd
+else
+RELATIVE_PWD :=
+endif
 
 # Flags for DEX2OAT
 first_non_empty_of_three = $(if $(1),$(1),$(if $(2),$(2),$(3)))
