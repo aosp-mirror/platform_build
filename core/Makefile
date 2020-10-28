@@ -711,6 +711,10 @@ else
   BUILT_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 endif
 
+# kernel cmdline for GKI
+GENERIC_KERNEL_CMDLINE := rw
+.KATI_READONLY := GENERIC_KERNEL_CMDLINE
+
 # $1: boot image target
 # returns the kernel used to make the bootimage
 define bootimage-to-kernel
