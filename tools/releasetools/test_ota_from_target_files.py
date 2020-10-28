@@ -27,6 +27,7 @@ from ota_utils import (
     FinalizeMetadata, GetPackageMetadata, PropertyFiles)
 from ota_from_target_files import (
     _LoadOemDicts, AbOtaPropertyFiles,
+    GetTargetFilesZipForCustomImagesUpdates,
     GetTargetFilesZipForPartialUpdates,
     GetTargetFilesZipForSecondaryImages,
     GetTargetFilesZipWithoutPostinstallConfig,
@@ -544,6 +545,46 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     target_file = GetTargetFilesZipWithoutPostinstallConfig(input_file)
     with zipfile.ZipFile(target_file) as verify_zip:
       self.assertNotIn(POSTINSTALL_CONFIG, verify_zip.namelist())
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetTargetFilesZipForCustomImagesUpdates_oemDefaultImage(self):
+    input_file = construct_target_files()
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as append_zip:
+      common.ZipWriteStr(append_zip, 'IMAGES/oem.img', 'oem')
+      common.ZipWriteStr(append_zip, 'IMAGES/oem_test.img', 'oem_test')
+
+    target_file = GetTargetFilesZipForCustomImagesUpdates(
+        input_file, {'oem': 'oem.img'})
+
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+      ab_partitions = verify_zip.read('META/ab_partitions.txt').decode()
+      oem_image = verify_zip.read('IMAGES/oem.img').decode()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertEqual('boot\nsystem\nvendor\nbootloader\nmodem', ab_partitions)
+    self.assertIn('IMAGES/oem.img', namelist)
+    self.assertEqual('oem', oem_image)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetTargetFilesZipForCustomImagesUpdates_oemTestImage(self):
+    input_file = construct_target_files()
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as append_zip:
+      common.ZipWriteStr(append_zip, 'IMAGES/oem.img', 'oem')
+      common.ZipWriteStr(append_zip, 'IMAGES/oem_test.img', 'oem_test')
+
+    target_file = GetTargetFilesZipForCustomImagesUpdates(
+        input_file, {'oem': 'oem_test.img'})
+
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+      ab_partitions = verify_zip.read('META/ab_partitions.txt').decode()
+      oem_image = verify_zip.read('IMAGES/oem.img').decode()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertEqual('boot\nsystem\nvendor\nbootloader\nmodem', ab_partitions)
+    self.assertIn('IMAGES/oem.img', namelist)
+    self.assertEqual('oem_test', oem_image)
 
   def _test_FinalizeMetadata(self, large_entry=False):
     entries = [

@@ -105,15 +105,19 @@ _board_strip_readonly_list += \
 #   contains a kernel or not.
 # - BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT controls whether ramdisk
 #   recovery resources are built to vendor_boot.
+# - BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT controls whether GSI AVB keys are
+#   built to vendor_boot.
 _board_strip_readonly_list += \
   BOARD_USES_GENERIC_KERNEL_IMAGE \
   BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE \
   BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT \
+  BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT \
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_DUP_SYSPROP \
   BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES \
+  BUILD_BROKEN_ENFORCE_SYSPROP_OWNER \
   BUILD_BROKEN_MISSING_REQUIRED_MODULES \
   BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
@@ -360,6 +364,8 @@ ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),)
     BUILDING_BOOT_IMAGE :=
   else ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
     BUILDING_BOOT_IMAGE := true
+  else ifneq (,$(foreach kernel,$(BOARD_KERNEL_BINARIES),$(BOARD_$(call to-upper,$(kernel))_BOOTIMAGE_PARTITION_SIZE)))
+    BUILDING_BOOT_IMAGE := true
   endif
 else ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),true)
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
@@ -394,12 +400,7 @@ endif
 BUILDING_VENDOR_BOOT_IMAGE :=
 ifdef BOARD_BOOT_HEADER_VERSION
   ifneq ($(call math_gt_or_eq,$(BOARD_BOOT_HEADER_VERSION),3),)
-    ifneq ($(TARGET_NO_VENDOR_BOOT),)
-      $(warning TARGET_NO_VENDOR_BOOT has been deprecated. Please use PRODUCT_BUILD_VENDOR_BOOT_IMAGE.)
-      ifneq ($(TARGET_NO_VENDOR_BOOT),true)
-        BUILDING_VENDOR_BOOT_IMAGE := true
-      endif
-    else ifeq ($(PRODUCT_BUILD_VENDOR_BOOT_IMAGE),)
+    ifeq ($(PRODUCT_BUILD_VENDOR_BOOT_IMAGE),)
       BUILDING_VENDOR_BOOT_IMAGE := true
     else ifeq ($(PRODUCT_BUILD_VENDOR_BOOT_IMAGE),true)
       BUILDING_VENDOR_BOOT_IMAGE := true
@@ -771,6 +772,9 @@ endif
 ifndef BUILDING_VENDOR_BOOT_IMAGE
   ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
     $(error Should not set BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT if not building vendor_boot image)
+  endif
+  ifeq (true,$(BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT))
+    $(error Should not set BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT if not building vendor_boot image)
   endif
 endif
 
