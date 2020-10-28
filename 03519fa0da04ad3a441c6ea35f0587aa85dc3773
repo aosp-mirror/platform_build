@@ -33,6 +33,24 @@
       "message": "What\u0027s the incentive of this change though. Isn\u0027t the hermetic binary already available in otatools?",
       "revId": "03519fa0da04ad3a441c6ea35f0587aa85dc3773",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8049ab9f_6b0f6772",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-10-28T17:41:24Z",
+      "side": 1,
+      "message": "Oh! I hadn\u0027t realized that for some reason. Thanks. If they are in the zip file then we can abandon this change.",
+      "parentUuid": "0f434166_abbc80f5",
+      "revId": "03519fa0da04ad3a441c6ea35f0587aa85dc3773",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
