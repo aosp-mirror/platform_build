@@ -1890,8 +1890,9 @@ $(INSTALLED_RECOVERY_RAMDISK_BUILD_PROP_TARGET): $(INSTALLED_RAMDISK_BUILD_PROP_
 	$(copy-file-to-target)
 endif
 
+INTERNAL_RECOVERYIMAGE_ARGS := --ramdisk $(recovery_ramdisk)
+
 ifeq (truetrue,$(strip $(BUILDING_VENDOR_BOOT_IMAGE))$(strip $(BOARD_USES_RECOVERY_AS_BOOT)))
-  INTERNAL_RECOVERYIMAGE_ARGS := --ramdisk $(recovery_ramdisk)
 
 ifneq (true,$(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE))
 ifdef GENERIC_KERNEL_CMDLINE
@@ -1900,9 +1901,7 @@ endif # GENERIC_KERNEL_CMDLINE != ""
 endif # BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE != true
 
 else # not (BUILDING_VENDOR_BOOT_IMAGE and BOARD_USES_RECOVERY_AS_BOOT)
-  INTERNAL_RECOVERYIMAGE_ARGS := \
-      $(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
-      --ramdisk $(recovery_ramdisk)
+INTERNAL_RECOVERYIMAGE_ARGS += $(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET))
 # Assumes this has already been stripped
 ifneq (true,$(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE))
 ifdef INTERNAL_KERNEL_CMDLINE
