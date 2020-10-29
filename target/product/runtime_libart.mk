@@ -70,6 +70,11 @@ endif
 # or if it is empty speed-profile is equivalent to (quicken + empty app image).
 PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.install?=speed-profile \
+    pm.dexopt.install-fast?=skip \
+    pm.dexopt.install-bulk?=speed-profile \
+    pm.dexopt.install-bulk-secondary?=verify \
+    pm.dexopt.install-bulk-downgraded?=verify \
+    pm.dexopt.install-bulk-secondary-downgraded?=extract \
     pm.dexopt.bg-dexopt?=speed-profile \
     pm.dexopt.ab-ota?=speed-profile \
     pm.dexopt.inactive?=verify \
