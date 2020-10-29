@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "da2d5ec5_fc21d978",
+        "filename": "tools/releasetools/find_shareduid_violation.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-29T06:10:49Z",
+      "side": 1,
+      "message": "consider a regex? this looks fragile..",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 29
+      },
+      "revId": "ab17d1b155d618f9458a63604d54c3132f2a9d5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37525a7c_1cfdc6f7",
+        "filename": "tools/releasetools/find_shareduid_violation.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-10-29T06:10:49Z",
+      "side": 1,
+      "message": "nit：wondering if you can use shareduid_app_dict as output\nshareduid_app_dict \u003d defaultdict(lambda: defaultdict(list))\nshareduid_app_dict[shared_uid][part].append(apk_file)",
+      "range": {
+        "startLine": 111,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 61
+      },
+      "revId": "ab17d1b155d618f9458a63604d54c3132f2a9d5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
