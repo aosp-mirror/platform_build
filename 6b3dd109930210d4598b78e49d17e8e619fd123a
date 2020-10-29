@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c95f730f_ae3064f6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2020-10-29T18:43:30Z",
+      "side": 1,
+      "message": "add \ncherry-pick from \u003ccommit-id\u003e\nand \nMerged-In: Changed-Id ",
+      "revId": "6b3dd109930210d4598b78e49d17e8e619fd123a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
