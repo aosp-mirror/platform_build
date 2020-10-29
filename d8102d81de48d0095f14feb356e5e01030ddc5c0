@@ -93,6 +93,30 @@
       },
       "revId": "d8102d81de48d0095f14feb356e5e01030ddc5c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1638445d_1038ad1c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-10-29T08:58:16Z",
+      "side": 1,
+      "message": "Evolving existing modules in this way is largely uncharted territory with a couple of known problems. Though it explains the planned logistics of the build rules, it does not explain how this is going to work, specifically on R devices which tethering-with-connectivity will also get pushed with this plan",
+      "parentUuid": "bb3928e2_3482abc3",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 14
+      },
+      "revId": "d8102d81de48d0095f14feb356e5e01030ddc5c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
