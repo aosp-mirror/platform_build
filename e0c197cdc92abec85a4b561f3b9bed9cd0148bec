@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ee2ddf11_7400d6f0",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1088,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-10-29T23:02:46Z",
+      "side": 1,
+      "message": "nit: SharedUidPartitionViolations?",
+      "revId": "e0c197cdc92abec85a4b561f3b9bed9cd0148bec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e86b7925_2fc6d463",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1102,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-10-29T23:02:46Z",
+      "side": 1,
+      "message": "nit: \"update group\" is a term (at least for me) that\u0027s associate with dynamic partition update groups. I think here it means something slightly different? Since some builds have all their partial builds in the same dynamic partition update group. Maybe something like \"that belong to the same partial build\"?",
+      "range": {
+        "startLine": 1102,
+        "startChar": 30,
+        "endLine": 1102,
+        "endChar": 42
+      },
+      "revId": "e0c197cdc92abec85a4b561f3b9bed9cd0148bec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d31b1ee_ddf4e67e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1110,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-10-29T23:02:46Z",
+      "side": 1,
+      "message": "nit: for partitions, _ in partitions.items()?",
+      "revId": "e0c197cdc92abec85a4b561f3b9bed9cd0148bec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
