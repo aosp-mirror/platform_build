@@ -117,6 +117,30 @@
       },
       "revId": "d8102d81de48d0095f14feb356e5e01030ddc5c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a1da30cd_75a8c0a5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1308504
+      },
+      "writtenOn": "2020-10-29T09:27:00Z",
+      "side": 1,
+      "message": "When tethering-with-connectivity is installed into R device, I assume only tethering staff is running and connectivity staff is just stay there(waste a little disk ?) without launching. But I don\u0027t have clear path about how to deal with rename which is plan to rename from S+ ?",
+      "parentUuid": "1638445d_1038ad1c",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 14
+      },
+      "revId": "d8102d81de48d0095f14feb356e5e01030ddc5c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
