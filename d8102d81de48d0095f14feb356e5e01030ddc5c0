@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "07c09d4a_8020fba3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1288034
+      },
+      "writtenOn": "2020-10-29T08:41:17Z",
+      "side": 1,
+      "message": "This APEX itself should not ship with S, it\u0027s a transition measure to allow us to do modularization work before the ConnectivityService libraries are ready to be added to the main (production, monthly pushes) Tethering apex.\n\nUpdated the commit message.",
+      "parentUuid": "7bf9718f_365ee22f",
+      "range": {
+        "startLine": 10,
+        "startChar": 20,
+        "endLine": 10,
+        "endChar": 26
+      },
+      "revId": "d8102d81de48d0095f14feb356e5e01030ddc5c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7c517a61_68103ad2",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -37,6 +61,30 @@
       "writtenOn": "2020-10-28T11:21:01Z",
       "side": 1,
       "message": "curious.. how and when? is there a design doc for this?",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 14
+      },
+      "revId": "d8102d81de48d0095f14feb356e5e01030ddc5c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb3928e2_3482abc3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1288034
+      },
+      "writtenOn": "2020-10-29T08:41:17Z",
+      "side": 1,
+      "message": "I put together a doc explaining this, although I won\u0027t dare calling this a design doc:\nhttps://docs.google.com/document/d/1NgREQY9rfxSAzWuIh-1Kp3KiG_FUW37WGU6N-QP0w1c/edit#bookmark\u003did.un7zj3svjtu",
+      "parentUuid": "7c517a61_68103ad2",
       "range": {
         "startLine": 12,
         "startChar": 0,
