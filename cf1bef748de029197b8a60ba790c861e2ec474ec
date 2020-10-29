@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4310753b_0a2e0286",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2494,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-10-29T17:15:13Z",
+      "side": 1,
+      "message": "This is a very generic name, can you clear it at the end of the function?  Or combine it into check_non_elf_file_timestamp.",
+      "range": {
+        "startLine": 2494,
+        "startChar": 7,
+        "endLine": 2494,
+        "endChar": 21
+      },
+      "revId": "cf1bef748de029197b8a60ba790c861e2ec474ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
