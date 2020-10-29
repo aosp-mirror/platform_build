@@ -16,6 +16,23 @@
       "message": "PTAL",
       "revId": "bbd4fae4d7cce67486d43317386f41b3dba464f9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d88d5008_d984de9c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-10-29T11:53:26Z",
+      "side": 1,
+      "message": "I added some comments about testing to the Soong part of the patch set.",
+      "revId": "bbd4fae4d7cce67486d43317386f41b3dba464f9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
