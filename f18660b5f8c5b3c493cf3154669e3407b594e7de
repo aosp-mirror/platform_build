@@ -16,6 +16,29 @@
       "message": "Dan/Colin, could you PTAL, please?",
       "revId": "f18660b5f8c5b3c493cf3154669e3407b594e7de",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "546b90d1_66ae6f76",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-10-30T19:32:50Z",
+      "side": 1,
+      "message": "This variable isn\u0027t set until after the BoardConfig.mk is loaded, so this change is a no-op.\n\nhttps://cs.android.com/android/platform/superproject/+/master:build/make/core/board_config.mk;l\u003d210\n\nIn general, these product configurations generally can\u0027t use conditionals safely (with a handful of exceptions)\n\nIf this really only does work on 64-bit devices, maybe put it in build/make/target/product/core_64_bit[_only].mk?",
+      "range": {
+        "startLine": 399,
+        "startChar": 8,
+        "endLine": 399,
+        "endChar": 24
+      },
+      "revId": "f18660b5f8c5b3c493cf3154669e3407b594e7de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
