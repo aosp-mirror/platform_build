@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "719b61e1_c102e806",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1598726
+      },
+      "writtenOn": "2020-10-30T23:47:16Z",
+      "side": 1,
+      "message": "So presumably this one will need https://android-review.googlesource.com/c/platform/system/core/+/1478508 to build the daemon.  I\u0027m not sure how to associate these two, though.",
+      "revId": "b5948f38bf66385a1d56cbc8e1878f5e028624b3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
