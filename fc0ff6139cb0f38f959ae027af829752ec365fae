@@ -41,6 +41,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4e92713d_cb0e0015",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1014,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-10-30T18:30:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "68d28505_16d5eb28",
+      "range": {
+        "startLine": 1014,
+        "startChar": 103,
+        "endLine": 1014,
+        "endChar": 104
+      },
+      "revId": "fc0ff6139cb0f38f959ae027af829752ec365fae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4193f320_31981b2b",
@@ -64,6 +88,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e29b839d_07a4213a",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1035,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-10-30T18:30:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4193f320_31981b2b",
+      "range": {
+        "startLine": 1035,
+        "startChar": 0,
+        "endLine": 1035,
+        "endChar": 29
+      },
+      "revId": "fc0ff6139cb0f38f959ae027af829752ec365fae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "56b05808_056254da",
@@ -77,6 +125,30 @@
       "writtenOn": "2020-10-30T18:15:13Z",
       "side": 1,
       "message": "In fact....Factory OTA cannot be partial at all. I guess we can just construct a new additional_args with max_timestamp (and partition_timestamps_flags is optional)",
+      "range": {
+        "startLine": 1042,
+        "startChar": 47,
+        "endLine": 1042,
+        "endChar": 62
+      },
+      "revId": "fc0ff6139cb0f38f959ae027af829752ec365fae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f06d09f_de05e4a6",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-10-30T18:30:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56b05808_056254da",
       "range": {
         "startLine": 1042,
         "startChar": 47,
