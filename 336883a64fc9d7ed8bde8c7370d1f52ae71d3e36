@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6473c3fe_3b1362dd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 2495,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-11-02T06:24:46Z",
+      "side": 1,
+      "message": "We cannot use \"$(1)\" here because the source of the copy pairs may not be unique. Use \"$(2)\" for unique pathnames. There isn\u0027t much loss of information of not using \"$(1)\" here because the pathnames of the source file, \"$(1)\", are still printed with the error message.",
+      "range": {
+        "startLine": 2495,
+        "startChar": 69,
+        "endLine": 2495,
+        "endChar": 73
+      },
+      "revId": "336883a64fc9d7ed8bde8c7370d1f52ae71d3e36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
