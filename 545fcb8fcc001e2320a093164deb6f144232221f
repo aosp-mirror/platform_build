@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "834ac8a5_c5425204",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-11-02T10:41:42Z",
+      "side": 1,
+      "message": "Nicolas: can you please propagate the previous +2?",
+      "revId": "545fcb8fcc001e2320a093164deb6f144232221f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
