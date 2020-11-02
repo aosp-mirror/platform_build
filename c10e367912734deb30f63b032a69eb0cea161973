@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "58be0dd5_06134ed3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-02T19:29:40Z",
+      "side": 1,
+      "message": "This needs to be merged after CL:1478507 is merged downstream, but the CL itself is ready for review.",
+      "revId": "c10e367912734deb30f63b032a69eb0cea161973",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
