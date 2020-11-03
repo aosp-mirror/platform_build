@@ -751,6 +751,9 @@ def GetTargetFilesZipWithoutPostinstallConfig(input_file):
   common.ZipDelete(target_file, POSTINSTALL_CONFIG)
   return target_file
 
+def ParseInfoDict(target_file_path):
+  with zipfile.ZipFile(target_file_path, 'r', allowZip64=True) as zfp:
+    return common.LoadInfoDict(zfp)
 
 def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
   """Returns a target-files.zip for partial ota update package generation.
@@ -781,7 +784,8 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
     raise ValueError("Cannot find {} in input zipfile".format(partition_name))
 
   with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
-    original_ab_partitions = input_zip.read(AB_PARTITIONS).decode().splitlines()
+    original_ab_partitions = input_zip.read(
+        AB_PARTITIONS).decode().splitlines()
     namelist = input_zip.namelist()
 
   unrecognized_partitions = [partition for partition in ab_partitions if
@@ -871,7 +875,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   with open(new_ab_partitions, 'w') as f:
     for partition in ab_partitions:
       if (partition in dynamic_partition_list and
-              partition not in super_block_devices):
+          partition not in super_block_devices):
         logger.info("Dropping %s from ab_partitions.txt", partition)
         continue
       f.write(partition + "\n")
@@ -905,6 +909,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   common.ZipClose(target_zip)
 
   return target_file
+
 
 def GetTargetFilesZipForCustomImagesUpdates(input_file, custom_images):
   """Returns a target-files.zip for custom partitions update.
@@ -943,6 +948,12 @@ def GetTargetFilesZipForCustomImagesUpdates(input_file, custom_images):
   common.RunAndCheckOutput(cmd)
 
   return target_file
+
+def GeneratePartitionTimestampFlags(partition_state):
+  partition_timestamps = [
+      part.partition_name + ":" + part.version
+      for part in partition_state]
+  return ["--partition_timestamps", ",".join(partition_timestamps)]
 
 def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
@@ -987,30 +998,29 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # Target_file may have been modified, reparse ab_partitions
   with zipfile.ZipFile(target_file, allowZip64=True) as zfp:
     target_info.info_dict['ab_partitions'] = zfp.read(
-        AB_PARTITIONS).strip().split("\n")
+        AB_PARTITIONS).encode().strip().split("\n")
 
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
   payload = Payload()
 
-  partition_timestamps = []
+  partition_timestamps_flags = []
   # Enforce a max timestamp this payload can be applied on top of.
   if OPTIONS.downgrade:
     max_timestamp = source_info.GetBuildProp("ro.build.date.utc")
   else:
     max_timestamp = str(metadata.postcondition.timestamp)
-    partition_timestamps = [
-        part.partition_name + ":" + part.version
-        for part in metadata.postcondition.partition_state]
-  additional_args += ["--max_timestamp", max_timestamp]
-  if partition_timestamps:
-    additional_args.extend(
-        ["--partition_timestamps", ",".join(
-            partition_timestamps)]
-    )
+    partition_timestamps_flags = GeneratePartitionTimestampFlags(
+        metadata.postcondition.partition_state)
 
-  payload.Generate(target_file, source_file, additional_args)
+  additional_args += ["--max_timestamp", max_timestamp]
+
+  payload.Generate(
+      target_file,
+      source_file,
+      additional_args + partition_timestamps_flags
+   )
 
   # Sign the payload.
   payload_signer = PayloadSigner()
@@ -1027,8 +1037,15 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     secondary_target_file = GetTargetFilesZipForSecondaryImages(
         target_file, OPTIONS.skip_postinstall)
     secondary_payload = Payload(secondary=True)
+    assert not OPTIONS.downgrade
+    partition_timestamps_flags = GeneratePartitionTimestampFlags(
+      [part
+       for part in metadata.postcondition.partition_state
+       if part.partition_name not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
+    )
     secondary_payload.Generate(secondary_target_file,
-                               additional_args=additional_args)
+                               additional_args=["--max_timestamp",
+                               max_timestamp]+partition_timestamps_flags)
     secondary_payload.Sign(payload_signer)
     secondary_payload.WriteToZip(output_zip)
 
@@ -1222,8 +1239,7 @@ def main(argv):
   if OPTIONS.extracted_input is not None:
     OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input)
   else:
-    with zipfile.ZipFile(args[0], 'r', allowZip64=True) as input_zip:
-      OPTIONS.info_dict = common.LoadInfoDict(input_zip)
+    OPTIONS.info_dict = ParseInfoDict(args[0])
 
   # TODO(xunchang) for retrofit and partial updates, maybe we should rebuild the
   # target-file and reload the info_dict. So the info will be consistent with
@@ -1235,8 +1251,7 @@ def main(argv):
   # Load the source build dict if applicable.
   if OPTIONS.incremental_source is not None:
     OPTIONS.target_info_dict = OPTIONS.info_dict
-    with zipfile.ZipFile(OPTIONS.incremental_source, 'r', allowZip64=True) as source_zip:
-      OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
+    OPTIONS.source_info_dict = ParseInfoDict(OPTIONS.incremental_source)
 
     logger.info("--- source info ---")
     common.DumpInfoDict(OPTIONS.source_info_dict)
