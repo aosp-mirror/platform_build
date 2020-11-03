@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "05badcea_6ae2a3c0",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1180,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-03T18:11:26Z",
+      "side": 1,
+      "message": "Instead of a new option, can we automatically detect this by checking the existence of `PRODUCT/apex/com.android.gki.*.apex`? See \n\nhttps://b.corp.google.com/issues/171906589#comment5",
+      "range": {
+        "startLine": 1179,
+        "startChar": 0,
+        "endLine": 1180,
+        "endChar": 30
+      },
+      "revId": "7edbdce55260eefd5b8a1209fd423e19383ea65a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
