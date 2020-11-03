@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c130b8f0_1fb033a4",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1021,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-03T18:12:40Z",
+      "side": 1,
+      "message": "An alternative would be to drop boot.img from source target files, but I am not sure if that works or not; also, this is probably more efficient than repacking a new target files. Then you won\u0027t have to change system/update_engine.\n\nTianjie, any preference here?",
+      "range": {
+        "startLine": 1019,
+        "startChar": 0,
+        "endLine": 1021,
+        "endChar": 51
+      },
+      "revId": "7edbdce55260eefd5b8a1209fd423e19383ea65a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "05badcea_6ae2a3c0",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 2
