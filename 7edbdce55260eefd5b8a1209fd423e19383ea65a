@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4acf701_534d109b",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1021,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-03T20:41:01Z",
+      "side": 1,
+      "message": "Updated the CL to filter partitions on update_brillo_script",
+      "parentUuid": "9b88faa3_749ab623",
+      "range": {
+        "startLine": 1019,
+        "startChar": 0,
+        "endLine": 1021,
+        "endChar": 51
+      },
+      "revId": "7edbdce55260eefd5b8a1209fd423e19383ea65a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "05badcea_6ae2a3c0",
