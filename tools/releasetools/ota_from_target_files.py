@@ -972,6 +972,12 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         "META/ab_partitions.txt is required for ab_update."
     target_info = common.BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
     source_info = common.BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
+    vendor_prop = source_info.info_dict.get("vendor.build.prop")
+    if vendor_prop and \
+        vendor_prop.GetProp("ro.virtual_ab.compression.enabled") == "true":
+      # TODO(zhangkelvin) Remove this once FEC on VABC is supported
+      logger.info("Virtual AB Compression enabled, disabling FEC")
+      OPTIONS.disable_fec_computation = True
   else:
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
@@ -998,7 +1004,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # Target_file may have been modified, reparse ab_partitions
   with zipfile.ZipFile(target_file, allowZip64=True) as zfp:
     target_info.info_dict['ab_partitions'] = zfp.read(
-        AB_PARTITIONS).encode().strip().split("\n")
+        AB_PARTITIONS).decode().strip().split("\n")
 
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
