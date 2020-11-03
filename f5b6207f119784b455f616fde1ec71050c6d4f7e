@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5848471c_dfa916d8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121894
+      },
+      "writtenOn": "2020-11-03T22:38:36Z",
+      "side": 1,
+      "message": "In case you need context: go/shut-android for the current plan with that zip.",
+      "revId": "f5b6207f119784b455f616fde1ec71050c6d4f7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
