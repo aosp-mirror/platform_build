@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f161ae2_f46d91fc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-11-03T06:33:52Z",
+      "side": 1,
+      "message": "This is for solving Auto-merger conflict.",
+      "revId": "3c21a0cb6c4fbe66fe7b8beeb87125f1cee19625",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
