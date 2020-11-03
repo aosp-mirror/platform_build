@@ -4243,6 +4243,9 @@ endif
 ifeq ($(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE),true)
 	$(hide) echo "exclude_kernel_from_recovery_image=true" >> $@
 endif
+ifneq ($(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST),)
+	$(hide) echo "partial_ota_update_partitions_list=$(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST)" >> $@
+endif
 
 .PHONY: misc_info
 misc_info: $(INSTALLED_MISC_INFO_TARGET)
