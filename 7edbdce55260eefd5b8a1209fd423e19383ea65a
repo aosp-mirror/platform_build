@@ -117,6 +117,30 @@
       },
       "revId": "7edbdce55260eefd5b8a1209fd423e19383ea65a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba29e488_e22dc0c0",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1180,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-03T21:18:09Z",
+      "side": 1,
+      "message": "The best way I can think of is to check the map files under IMAGES/ directory. Please TAL at the code",
+      "parentUuid": "08d5afbd_d836c5e5",
+      "range": {
+        "startLine": 1179,
+        "startChar": 0,
+        "endLine": 1180,
+        "endChar": 30
+      },
+      "revId": "7edbdce55260eefd5b8a1209fd423e19383ea65a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
