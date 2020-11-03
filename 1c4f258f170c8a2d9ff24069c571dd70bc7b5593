@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a0ec340_76c00837",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 984,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-03T19:04:46Z",
+      "side": 1,
+      "message": "nit. should we explicitly check if \"ro.virtual_ab.compression.enabled\" \u003d\u003d \"true\"? could it be false in the future",
+      "range": {
+        "startLine": 984,
+        "startChar": 0,
+        "endLine": 984,
+        "endChar": 78
+      },
+      "revId": "1c4f258f170c8a2d9ff24069c571dd70bc7b5593",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
