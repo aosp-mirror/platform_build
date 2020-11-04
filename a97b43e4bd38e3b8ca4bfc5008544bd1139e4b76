@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9bde45b7_b50a5f4d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-04T23:46:57Z",
+      "side": 1,
+      "message": "I have a small concern about the name of the flag, but this is a cherry-pick.. so I don\u0027t feel strong.",
+      "revId": "a97b43e4bd38e3b8ca4bfc5008544bd1139e4b76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "49f65e8d_3d52d794",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1903,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-04T23:46:57Z",
+      "side": 1,
+      "message": "Isn\u0027t BUILD_BROKEN_* the usual name for such a flag?",
+      "range": {
+        "startLine": 1903,
+        "startChar": 9,
+        "endLine": 1903,
+        "endChar": 47
+      },
+      "revId": "a97b43e4bd38e3b8ca4bfc5008544bd1139e4b76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
