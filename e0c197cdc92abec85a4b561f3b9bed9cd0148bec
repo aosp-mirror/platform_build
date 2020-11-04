@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9a39b9f_1c10f22c",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1088,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-11-04T19:15:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ee2ddf11_7400d6f0",
+      "revId": "e0c197cdc92abec85a4b561f3b9bed9cd0148bec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e86b7925_2fc6d463",
@@ -41,6 +59,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "236cf627_ca7983cb",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1102,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-11-04T19:15:44Z",
+      "side": 1,
+      "message": "Good point on the \u0027update group\u0027 part, that this function isn\u0027t inherently related to dynamic partitions at all.\n\nSince this function could be used for non-merged (i.e. not coming from partial builds) as well, I\u0027ve opted to just remove that description in this line and rely in the comments above the `Args` section. LMK if there\u0027s anything else here that seems confusing!",
+      "parentUuid": "e86b7925_2fc6d463",
+      "range": {
+        "startLine": 1102,
+        "startChar": 30,
+        "endLine": 1102,
+        "endChar": 42
+      },
+      "revId": "e0c197cdc92abec85a4b561f3b9bed9cd0148bec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2d31b1ee_ddf4e67e",
@@ -54,6 +96,24 @@
       "writtenOn": "2020-10-29T23:02:46Z",
       "side": 1,
       "message": "nit: for partitions, _ in partitions.items()?",
+      "revId": "e0c197cdc92abec85a4b561f3b9bed9cd0148bec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "797a6d71_e5660723",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1110,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-11-04T19:15:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d31b1ee_ddf4e67e",
       "revId": "e0c197cdc92abec85a4b561f3b9bed9cd0148bec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
