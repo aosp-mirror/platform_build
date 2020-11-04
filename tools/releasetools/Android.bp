@@ -369,6 +369,32 @@ python_binary_host {
     ],
 }
 
+python_defaults {
+    name: "releasetools_find_shareduid_violation_defaults",
+    srcs: [
+        "find_shareduid_violation.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "find_shareduid_violation",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_find_shareduid_violation_defaults",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_find_shareduid_violation",
+    defaults: [
+        "releasetools_find_shareduid_violation_defaults",
+        "releasetools_library_defaults",
+    ],
+}
+
 python_binary_host {
     name: "make_recovery_patch",
     defaults: ["releasetools_binary_defaults"],
@@ -403,6 +429,7 @@ python_binary_host {
         "releasetools_build_super_image",
         "releasetools_check_target_files_vintf",
         "releasetools_common",
+        "releasetools_find_shareduid_violation",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
     ],
@@ -505,6 +532,7 @@ python_defaults {
         "releasetools_build_super_image",
         "releasetools_check_target_files_vintf",
         "releasetools_common",
+        "releasetools_find_shareduid_violation",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
         "releasetools_verity_utils",
