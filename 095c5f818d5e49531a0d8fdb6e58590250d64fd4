@@ -144,6 +144,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "281ce439_dd17e5ec",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 975,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-04T15:01:05Z",
+      "side": 1,
+      "message": "Do we want to search all images? Or just product.img",
+      "parentUuid": "7fde8203_d3bef480",
+      "range": {
+        "startLine": 975,
+        "startChar": 0,
+        "endLine": 975,
+        "endChar": 33
+      },
+      "revId": "095c5f818d5e49531a0d8fdb6e58590250d64fd4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "0bee81e2_42aac63c",
