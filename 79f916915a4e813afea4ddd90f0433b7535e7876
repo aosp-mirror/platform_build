@@ -22,6 +22,30 @@
       },
       "revId": "79f916915a4e813afea4ddd90f0433b7535e7876",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8192ee1a_5a9a769a",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4222,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-04T14:47:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b02d4463_620c00b7",
+      "range": {
+        "startLine": 4222,
+        "startChar": 0,
+        "endLine": 4222,
+        "endChar": 2
+      },
+      "revId": "79f916915a4e813afea4ddd90f0433b7535e7876",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
