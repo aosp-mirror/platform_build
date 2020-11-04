@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc11e03a_6f446379",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2020-11-04T10:05:19Z",
+      "side": 1,
+      "message": "This is *delightful*. I can\u0027t compare this to the semantics of the existing product configuration system, but it looks so nice and clean.\n\n(I wanted to also add Alan to the Cc list but it looks like Gerrit doesn\u0027t allow me to?)",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c0fec6e_79120f49",
+        "filename": "target/product/base_vendor.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2020-11-04T10:05:19Z",
+      "side": 1,
+      "message": "How about sticking to the Bazel syntax of //pac/kage:name.bzl so that it\u0027s one less refactoring later? (there are two differences: a mandatory colon before the file name and the extension that should be .bzl instead of .star)",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a9c5666e_d1677ea5",
+        "filename": "target/product/product_config.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2020-11-04T10:05:19Z",
+      "side": 1,
+      "message": "nit: it looks like you can extract the update/merging logic (lines 22-29 and lines 33-40) into a separate function for less repetitiveness",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
