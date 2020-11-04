@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "08626f39_c284dbbc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-11-04T17:36:22Z",
+      "side": 1,
+      "message": "I think Alan (Donovan, right?) needs to log in to Gerrit by visiting https://android-review.googlesource.com/ in order to participate.",
+      "parentUuid": "cc11e03a_6f446379",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5c0fec6e_79120f49",
