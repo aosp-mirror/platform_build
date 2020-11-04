@@ -168,6 +168,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "897de355_814dc579",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 975,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-04T18:56:54Z",
+      "side": 1,
+      "message": "up to you; I would prefer all images under IMAGES/, or PARTITIONS_WITH_CARE_MAP, but if you want to do just product.img for now, I am okay with that too.",
+      "parentUuid": "281ce439_dd17e5ec",
+      "range": {
+        "startLine": 975,
+        "startChar": 0,
+        "endLine": 975,
+        "endChar": 33
+      },
+      "revId": "095c5f818d5e49531a0d8fdb6e58590250d64fd4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "0bee81e2_42aac63c",
