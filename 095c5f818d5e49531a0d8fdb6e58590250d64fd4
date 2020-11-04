@@ -96,6 +96,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "d72c531d_da669bd3",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 975,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-04T00:34:21Z",
+      "side": 1,
+      "message": "Here\u0027s an alternative:\n\n  debugfs -R \"ls -p /apex\" IMAGES/product.img\n\npreferably check each image, but just product would work for now.\n\nThen search for \"com.android.gki\" in the output. You need to add \"debugfs\" to \"required\" and otatools list, though",
+      "parentUuid": "fe765286_366e76fe",
+      "range": {
+        "startLine": 975,
+        "startChar": 0,
+        "endLine": 975,
+        "endChar": 33
+      },
+      "revId": "095c5f818d5e49531a0d8fdb6e58590250d64fd4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "0bee81e2_42aac63c",
