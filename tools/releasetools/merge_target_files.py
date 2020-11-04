@@ -98,6 +98,7 @@ import build_super_image
 import check_target_files_vintf
 import common
 import img_from_target_files
+import find_shareduid_violation
 import ota_from_target_files
 
 logger = logging.getLogger(__name__)
@@ -942,6 +943,21 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
 
   if not check_target_files_vintf.CheckVintf(output_target_files_temp_dir):
     raise RuntimeError('Incompatible VINTF metadata')
+
+  shareduid_violation_modules = os.path.join(
+      output_target_files_temp_dir, 'META', 'shareduid_violation_modules.json')
+  with open(shareduid_violation_modules, 'w') as f:
+    partition_map = {
+        'system': 'SYSTEM',
+        'vendor': 'VENDOR',
+        'product': 'PRODUCT',
+        'system_ext': 'SYSTEM_EXT',
+    }
+    violation = find_shareduid_violation.FindShareduidViolation(
+        output_target_files_temp_dir, partition_map)
+    f.write(violation)
+    # TODO(b/171431774): Add a check to common.py to check if the
+    # shared UIDs cross the input build partition boundary.
 
   generate_images(output_target_files_temp_dir, rebuild_recovery)
 
