@@ -22,6 +22,53 @@
       },
       "revId": "095c5f818d5e49531a0d8fdb6e58590250d64fd4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49cbf588_98a5cdf6",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 975,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-04T00:22:55Z",
+      "side": 1,
+      "message": "\u003e generate OTA from image files.\n\nWhen do we do that? When will target files not include entries under PRODUCT/ ?\n\nAlso, the map file could be missing because it is not required.",
+      "parentUuid": "9950cc5a_b12cb8ec",
+      "range": {
+        "startLine": 975,
+        "startChar": 0,
+        "endLine": 975,
+        "endChar": 33
+      },
+      "revId": "095c5f818d5e49531a0d8fdb6e58590250d64fd4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0bee81e2_42aac63c",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1062,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-04T00:22:55Z",
+      "side": 1,
+      "message": "nit: Gki (I think)",
+      "range": {
+        "startLine": 1062,
+        "startChar": 21,
+        "endLine": 1062,
+        "endChar": 24
+      },
+      "revId": "095c5f818d5e49531a0d8fdb6e58590250d64fd4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
