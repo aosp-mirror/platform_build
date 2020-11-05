@@ -65,4 +65,5 @@ cc_test_host {
          "tests/data/unaligned.zip",
     ],
     defaults: ["zipalign_defaults"],
+    test_suites: ["general-tests"],
 }
