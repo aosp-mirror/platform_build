@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a868240a_fc8c72b6",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1113,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-05T22:54:07Z",
+      "side": 1,
+      "message": "nit: is it equivalent to\ngroups \u003d [group for group in partition_groups if partitions.keys() \u0026 set(group)]\n// found_in_groups \u003d set([\",\".join(sorted(group) for group in groups]). Though I believe group in partition_groups are non empty and mutually exclusive? So this isn\u0027t needed.",
+      "range": {
+        "startLine": 1109,
+        "startChar": 0,
+        "endLine": 1113,
+        "endChar": 54
+      },
+      "revId": "943c0db942328b85ca3532f3b9ab94dcfa07b537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
