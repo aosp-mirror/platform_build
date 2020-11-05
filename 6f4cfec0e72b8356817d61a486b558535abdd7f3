@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "304b075b_c58d0c79",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 971,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-05T19:28:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7e80b0ca_ddaa4278",
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "902bf384_afbfe563",
@@ -48,6 +66,30 @@
       "writtenOn": "2020-11-05T19:07:51Z",
       "side": 1,
       "message": "Is this just extracting the file?\n\nIf so, maybe use common.UnzipTemp?",
+      "range": {
+        "startLine": 980,
+        "startChar": 0,
+        "endLine": 987,
+        "endChar": 28
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d11c86ed_dfeb5e03",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-05T19:28:52Z",
+      "side": 1,
+      "message": "UnzipTemp extracts to a directory, I need a path to extracted file. I can make this into a util function and put it to common.py if so desired.",
+      "parentUuid": "902bf384_afbfe563",
       "range": {
         "startLine": 980,
         "startChar": 0,
@@ -131,6 +173,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c8945185_3ed92165",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 992,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-05T19:28:52Z",
+      "side": 1,
+      "message": "I don\u0027t know, but debugfs_static is included in otatools.zip, which means the ota_from_target_files.py script will always have access to it, even if the host os doesn\u0027t have debugfs installed.",
+      "parentUuid": "dc2fcb93_151fac37",
+      "range": {
+        "startLine": 992,
+        "startChar": 10,
+        "endLine": 992,
+        "endChar": 24
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "cab965b4_58ec91b5",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 9
@@ -142,6 +208,30 @@
       "writtenOn": "2020-11-05T19:07:51Z",
       "side": 1,
       "message": "common.Run()\n\ncheck_output() throws an exception if the command exits with non-zero status. I think we should be lenient here, so I prefer Run over RunAndCheckOutput. Tianjie?",
+      "range": {
+        "startLine": 993,
+        "startChar": 11,
+        "endLine": 993,
+        "endChar": 48
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d71caa3_15875ed3",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 993,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-05T19:28:52Z",
+      "side": 1,
+      "message": "If product.img doesn\u0027t have a /apex directory, exit code of debugfs will be non-zero. We probably need to handle this gracefully?",
+      "parentUuid": "cab965b4_58ec91b5",
       "range": {
         "startLine": 993,
         "startChar": 11,
