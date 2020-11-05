@@ -39,6 +39,30 @@
       },
       "revId": "a97b43e4bd38e3b8ca4bfc5008544bd1139e4b76",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf03cefc_cf15b90d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1903,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-05T08:34:49Z",
+      "side": 1,
+      "message": "That\u0027s usually for \"device is broken\" variables you put in a BoardConfig. There are a few examples of developer UNSAFE_XXX flags for the cmdline though",
+      "parentUuid": "49f65e8d_3d52d794",
+      "range": {
+        "startLine": 1903,
+        "startChar": 9,
+        "endLine": 1903,
+        "endChar": 47
+      },
+      "revId": "a97b43e4bd38e3b8ca4bfc5008544bd1139e4b76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
