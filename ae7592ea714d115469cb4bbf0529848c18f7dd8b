@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0443eda1_0629d505",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-05T19:12:38Z",
+      "side": 1,
+      "message": "yifan, we need a partial \u0026\u0026 downgrade package to do continuous test on cuttlefish. But I imagine there is no need for such package on real devices?",
+      "revId": "ae7592ea714d115469cb4bbf0529848c18f7dd8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a859e2d5_5c52567a",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-05T19:12:38Z",
+      "side": 1,
+      "message": "wait.. does this work? Since full ota downgrade should be allowed.",
+      "range": {
+        "startLine": 960,
+        "startChar": 43,
+        "endLine": 960,
+        "endChar": 63
+      },
+      "revId": "ae7592ea714d115469cb4bbf0529848c18f7dd8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "efec2ce2_f20064d8",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1033,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-05T19:12:38Z",
+      "side": 1,
+      "message": "I guess we can \ncheck precondition not none\n\u0026\u0026\nGeneratePartitionTimestampFlags(metadata.precondition.partition_state) ?",
+      "range": {
+        "startLine": 1033,
+        "startChar": 0,
+        "endLine": 1033,
+        "endChar": 44
+      },
+      "revId": "ae7592ea714d115469cb4bbf0529848c18f7dd8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
