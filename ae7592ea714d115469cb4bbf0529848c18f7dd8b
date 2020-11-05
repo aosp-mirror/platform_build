@@ -67,6 +67,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e601d697_d60c231d",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-05T19:38:24Z",
+      "side": 1,
+      "message": "So pre_partition_state cannot be None here",
+      "parentUuid": "d078e4ff_a02163a3",
+      "range": {
+        "startLine": 960,
+        "startChar": 43,
+        "endLine": 960,
+        "endChar": 63
+      },
+      "revId": "ae7592ea714d115469cb4bbf0529848c18f7dd8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "efec2ce2_f20064d8",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 2
@@ -102,6 +126,30 @@
       "side": 1,
       "message": "Different partitions might have different timestamps? e.g. system.img of target image has newer timestamp, but product.img of source image has newer timestamp. That\u0027s why I took max.",
       "parentUuid": "efec2ce2_f20064d8",
+      "range": {
+        "startLine": 1033,
+        "startChar": 0,
+        "endLine": 1033,
+        "endChar": 44
+      },
+      "revId": "ae7592ea714d115469cb4bbf0529848c18f7dd8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07af68ca_0df6c016",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1033,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-05T19:38:24Z",
+      "side": 1,
+      "message": "That rings a bell... I believe we should only pass in the partition timestamp for the partial update case?  And for partial update, all partitions are expected to build together (so no mixed build case).",
+      "parentUuid": "ff4eed7e_65429eee",
       "range": {
         "startLine": 1033,
         "startChar": 0,
