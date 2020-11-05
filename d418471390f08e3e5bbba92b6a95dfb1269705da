@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c83d6d2_428aa329",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-11-05T05:32:01Z",
+      "side": 1,
+      "message": "Hi Colin,\n\nCould help for Owner+1?\n\nThanks!",
+      "revId": "d418471390f08e3e5bbba92b6a95dfb1269705da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
