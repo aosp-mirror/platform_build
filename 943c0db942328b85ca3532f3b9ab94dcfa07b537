@@ -22,6 +22,30 @@
       },
       "revId": "943c0db942328b85ca3532f3b9ab94dcfa07b537",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a12c5cd_ddae3e35",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1113,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-11-05T23:18:26Z",
+      "side": 1,
+      "message": "That looks nicer, thanks!",
+      "parentUuid": "a868240a_fc8c72b6",
+      "range": {
+        "startLine": 1109,
+        "startChar": 0,
+        "endLine": 1113,
+        "endChar": 54
+      },
+      "revId": "943c0db942328b85ca3532f3b9ab94dcfa07b537",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
