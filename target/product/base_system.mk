@@ -388,6 +388,8 @@ PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     logtagd.rc \
     procrank \
+    profcollectd \
+    profcollectctl \
     remount \
     showmap \
     sqlite3 \
