@@ -105,6 +105,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad8dd51e_909eb42f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 992,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-05T19:28:26Z",
+      "side": 1,
+      "message": "I see, that\u0027s great! My rule is a soong rule and it is not packaged in otatools, so I\u0027ll use debugfs there.",
+      "parentUuid": "a9d9c2ab_7c1cce9d",
+      "range": {
+        "startLine": 992,
+        "startChar": 10,
+        "endLine": 992,
+        "endChar": 24
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cab965b4_58ec91b5",
