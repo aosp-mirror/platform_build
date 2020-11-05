@@ -150,6 +150,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "07f5ad82_65df9077",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-05T19:51:26Z",
+      "side": 1,
+      "message": "It is just 2 lines. I think it is much more succinct.\n\n  dir \u003d common.UnzipTemp(target_file, [\"IMAGES/product.img\"])\n  image_file \u003d os.path.join(dir, \"IMAGES/product.img\")",
+      "parentUuid": "a913aea9_f5ccdc15",
+      "range": {
+        "startLine": 980,
+        "startChar": 0,
+        "endLine": 987,
+        "endChar": 28
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "dc2fcb93_151fac37",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 9
@@ -243,6 +267,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dde54fe9_e42b34db",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 992,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-05T19:51:26Z",
+      "side": 1,
+      "message": "Yeah I think using debugfs_static is okay.",
+      "parentUuid": "c8945185_3ed92165",
+      "range": {
+        "startLine": 992,
+        "startChar": 10,
+        "endLine": 992,
+        "endChar": 24
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cab965b4_58ec91b5",
@@ -280,6 +328,30 @@
       "side": 1,
       "message": "If product.img doesn\u0027t have a /apex directory, exit code of debugfs will be non-zero. We probably need to handle this gracefully?",
       "parentUuid": "cab965b4_58ec91b5",
+      "range": {
+        "startLine": 993,
+        "startChar": 11,
+        "endLine": 993,
+        "endChar": 48
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b35bbd14_0b36e5a9",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 993,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-05T19:51:26Z",
+      "side": 1,
+      "message": "Right, that\u0027s why you don\u0027t want to use check_output or RunAndCheckOutput, but instead use Run().",
+      "parentUuid": "9d71caa3_15875ed3",
       "range": {
         "startLine": 993,
         "startChar": 11,
