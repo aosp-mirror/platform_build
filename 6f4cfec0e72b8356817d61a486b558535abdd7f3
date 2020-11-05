@@ -126,6 +126,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a913aea9_f5ccdc15",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-05T19:47:43Z",
+      "side": 1,
+      "message": "Feels unnecessary... I believe UnzipTemp also preserves directory structure of extracted files, which I can completely ignore.",
+      "parentUuid": "8ca456d8_3f6937a0",
+      "range": {
+        "startLine": 980,
+        "startChar": 0,
+        "endLine": 987,
+        "endChar": 28
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "dc2fcb93_151fac37",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 9
