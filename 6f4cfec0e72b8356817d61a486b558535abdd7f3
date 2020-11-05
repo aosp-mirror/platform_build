@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8664cd9d_a692dca9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-05T19:07:51Z",
+      "side": 1,
+      "message": "Logic looks good, thanks!",
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7e80b0ca_ddaa4278",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 971,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-05T19:07:51Z",
+      "side": 1,
+      "message": "Can be a dir too",
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "902bf384_afbfe563",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-05T19:07:51Z",
+      "side": 1,
+      "message": "Is this just extracting the file?\n\nIf so, maybe use common.UnzipTemp?",
+      "range": {
+        "startLine": 980,
+        "startChar": 0,
+        "endLine": 987,
+        "endChar": 28
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dc2fcb93_151fac37",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 992,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-05T19:07:51Z",
+      "side": 1,
+      "message": "Is there a reason why debugfs_static is preferred over debugfs?\n\nI used debugfs in my build rules, so if there is a problem with it, I\u0027d like to know...",
+      "range": {
+        "startLine": 992,
+        "startChar": 10,
+        "endLine": 992,
+        "endChar": 24
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cab965b4_58ec91b5",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 993,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-05T19:07:51Z",
+      "side": 1,
+      "message": "common.Run()\n\ncheck_output() throws an exception if the command exits with non-zero status. I think we should be lenient here, so I prefer Run over RunAndCheckOutput. Tianjie?",
+      "range": {
+        "startLine": 993,
+        "startChar": 11,
+        "endLine": 993,
+        "endChar": 48
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
