@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d413d7f5_a504ce29",
+        "filename": "tools/zipalign/tests/src/align_test.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2020-11-05T23:51:43Z",
+      "side": 1,
+      "message": "should we check in \"golden\" output files so we can check we\u0027re actually getting the right results, rather than just reporting success but doing the wrong thing?",
+      "revId": "0115a975c3e9a77e934e90500f5e953e786464e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
