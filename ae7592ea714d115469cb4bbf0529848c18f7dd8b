@@ -43,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d078e4ff_a02163a3",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-05T19:26:37Z",
+      "side": 1,
+      "message": "we don\u0027t allow full downgrade packages now.",
+      "parentUuid": "a859e2d5_5c52567a",
+      "range": {
+        "startLine": 960,
+        "startChar": 43,
+        "endLine": 960,
+        "endChar": 63
+      },
+      "revId": "ae7592ea714d115469cb4bbf0529848c18f7dd8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "efec2ce2_f20064d8",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 2
@@ -54,6 +78,30 @@
       "writtenOn": "2020-11-05T19:12:38Z",
       "side": 1,
       "message": "I guess we can \ncheck precondition not none\n\u0026\u0026\nGeneratePartitionTimestampFlags(metadata.precondition.partition_state) ?",
+      "range": {
+        "startLine": 1033,
+        "startChar": 0,
+        "endLine": 1033,
+        "endChar": 44
+      },
+      "revId": "ae7592ea714d115469cb4bbf0529848c18f7dd8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ff4eed7e_65429eee",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1033,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-05T19:26:37Z",
+      "side": 1,
+      "message": "Different partitions might have different timestamps? e.g. system.img of target image has newer timestamp, but product.img of source image has newer timestamp. That\u0027s why I took max.",
+      "parentUuid": "efec2ce2_f20064d8",
       "range": {
         "startLine": 1033,
         "startChar": 0,
