@@ -46,6 +46,30 @@
       },
       "revId": "89c5e570fe7f13bdd1111ba46b6a4014183b714e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c72e44fc_b4c003de",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1122,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-06T23:45:54Z",
+      "side": 1,
+      "message": "It would work, but I thought you want to generate it automatically so that it can be used in automated testing?\n\nHow are you going to generate this package for testing? By manually running the script, or building some `m downgrade_partial_ota_package`? Or `m dist`?",
+      "parentUuid": "5d666e68_45d0594a",
+      "range": {
+        "startLine": 1115,
+        "startChar": 0,
+        "endLine": 1122,
+        "endChar": 0
+      },
+      "revId": "89c5e570fe7f13bdd1111ba46b6a4014183b714e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
