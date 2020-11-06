@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "336c5869_7c9fd849",
+        "filename": "core/dumpvar.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-06T23:19:55Z",
+      "side": 1,
+      "message": "This is pretty sneaky, maybe put it in a separate function so you can comment on what it is doing?",
+      "range": {
+        "startLine": 33,
+        "startChar": 19,
+        "endLine": 33,
+        "endChar": 71
+      },
+      "revId": "042dd4d13a78d6235bd59ccbc788405f3258aa07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
