@@ -16,6 +16,24 @@
       "message": "should we check in \"golden\" output files so we can check we\u0027re actually getting the right results, rather than just reporting success but doing the wrong thing?",
       "revId": "0115a975c3e9a77e934e90500f5e953e786464e1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9f2f54a_6571da3f",
+        "filename": "tools/zipalign/tests/src/align_test.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-11-06T00:56:53Z",
+      "side": 1,
+      "message": "Good catch. I thought process included a call to verify() but it did not. \n\nI would rather use verify since it matches the user experience.",
+      "parentUuid": "d413d7f5_a504ce29",
+      "revId": "0115a975c3e9a77e934e90500f5e953e786464e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
