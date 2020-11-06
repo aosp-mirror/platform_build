@@ -16,6 +16,24 @@
       "message": "If Make is going to differ from Soong like this, we\u0027ll need support in androidmk/bpfix to convert test_suites: [\"host-unit-tests\"] to test_options: { unit_test: true }.  Maybe it should also be an error in Soong to specify host-unit-tests directly.\n\nAlternatively, Make could also have a LOCAL_IS_UNIT_TEST that acts like Soong.",
       "revId": "46d806361c59af0464afefe17bbde076d8d69036",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "121d280e_24217621",
+        "filename": "core/tasks/host-unit-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-11-06T23:00:21Z",
+      "side": 1,
+      "message": "LOCAL_IS_UNIT_TEST is certainly cleaner.\nWe can inject host-unit-tests in LOCAL_COMPATIBILITY_SUITE around this line:\ncs/android/build/make/core/base_rules.mk;l\u003d255",
+      "parentUuid": "33753a4b_1c67c8fc",
+      "revId": "46d806361c59af0464afefe17bbde076d8d69036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
