@@ -22,6 +22,30 @@
       },
       "revId": "89c5e570fe7f13bdd1111ba46b6a4014183b714e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5d666e68_45d0594a",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1122,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-06T21:50:59Z",
+      "side": 1,
+      "message": "How about allowing downgradable partial updates on all products? Then the caller can pass in list of partitions for partial update. No device specific code will be here.",
+      "parentUuid": "9fac0511_87a6d5d5",
+      "range": {
+        "startLine": 1115,
+        "startChar": 0,
+        "endLine": 1122,
+        "endChar": 0
+      },
+      "revId": "89c5e570fe7f13bdd1111ba46b6a4014183b714e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
