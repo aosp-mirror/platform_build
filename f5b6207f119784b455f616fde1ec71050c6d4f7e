@@ -16,6 +16,23 @@
       "message": "In case you need context: go/shut-android for the current plan with that zip.",
       "revId": "f5b6207f119784b455f616fde1ec71050c6d4f7e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0e31fa88_6cbee705",
+        "filename": "core/tasks/host-unit-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-06T22:26:01Z",
+      "side": 1,
+      "message": "Can you add a comment here explaining what host-unit-tests is, and how it differs from host-tests, device-tests, and general-tests?",
+      "revId": "f5b6207f119784b455f616fde1ec71050c6d4f7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
