@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f994283_f7adea5e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2020-11-06T17:00:53Z",
+      "side": 1,
+      "message": "verify() is a much lower bar to pass though: you could accidentally replace all the data with zeroes and still pass verify(), as long as the alignments are okay.\n\nusing verify() is strictly less weak than not using verify() though, so +2 anyway...",
+      "revId": "802ab97ec856e69f9e37b7008874646a88ac3188",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
