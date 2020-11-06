@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9fac0511_87a6d5d5",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1122,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-06T21:46:04Z",
+      "side": 1,
+      "message": "This is not a good predicate. Not only because cf may run on arm64 (so the name could be cf_arm64), but also that the feature is limited to cuttlefish. Plus, this is device specific code in platform.\n\nRather, you should define a new PRODUCT variable that describes this specific behavior (e.g. PRODUCT_OTA_GEN_DOWNGRADE_PARTIAL), put it in misc_info.txt, and read it here; and define the variable for cuttlefish under device/google/cuttlefish/shared/device.mk.\n\nWhen you have this flag enabled, you can automatically generate it by adding new rules to core/Makefile, similar to the retrofit DAP OTA (look for otardppackage)",
+      "range": {
+        "startLine": 1115,
+        "startChar": 0,
+        "endLine": 1122,
+        "endChar": 0
+      },
+      "revId": "89c5e570fe7f13bdd1111ba46b6a4014183b714e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
