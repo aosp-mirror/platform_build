@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3dd3903_9b2f6b18",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2020-11-06T16:55:09Z",
+      "side": 1,
+      "message": "the tests are failing in presubmit too:\n```\nUnable to open \u0027tests/data/unaligned.zip\u0027 as zip archive\nbuild/make/tools/zipalign/tests/src/align_test.cpp:14: Failure\nExpected equality of these values:\n0\nresult\nWhich is: 1\n```\n\ni think you need code like this:\n```\nstatic std::string test_data_dir \u003d android::base::GetExecutableDirectory() + \"/tests/data\";\n```\n(see https://source.corp.google.com/android/system/libziparchive/zip_archive_test.cc;l\u003d43?q\u003dfile:zip_archive_test.cc\u0026sq\u003dpackage:%5Eandroid$)",
+      "revId": "c746c21b00b41b4bb1f112f152b61b69eb2c1c9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
