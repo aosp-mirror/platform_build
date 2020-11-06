@@ -181,6 +181,22 @@ $(call math-expect,(call numbers_less_than,3,0 2 1 3),0 2 1)
 $(call math-expect,(call numbers_less_than,4,0 2 1 3),0 2 1 3)
 $(call math-expect,(call numbers_less_than,3,0 2 1 3 2),0 2 1 2)
 
+# Returns the words in $2 that are numbers and are greater or equal to $1
+define numbers_greater_or_equal_to
+$(strip \
+  $(foreach n,$2, \
+    $(if $(call math_is_number,$(n)), \
+      $(if $(call math_gt_or_eq,$(n),$(1)), \
+        $(n)))))
+endef
+
+$(call math-expect,(call numbers_greater_or_equal_to,4,0 1 2 3),)
+$(call math-expect,(call numbers_greater_or_equal_to,3,0 2 1 3),3)
+$(call math-expect,(call numbers_greater_or_equal_to,2,0 2 1 3),2 3)
+$(call math-expect,(call numbers_greater_or_equal_to,1,0 2 1 3),2 1 3)
+$(call math-expect,(call numbers_greater_or_equal_to,0,0 2 1 3),0 2 1 3)
+$(call math-expect,(call numbers_greater_or_equal_to,1,0 2 1 3 2),2 1 3 2)
+
 _INT_LIMIT_WORDS := $(foreach a,x x,$(foreach b,x x x x x x x x x x x x x x x x,\
   $(foreach c,x x x x x x x x x x x x x x x x,x x x x x x x x x x x x x x x x)))
 
