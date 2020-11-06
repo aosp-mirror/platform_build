@@ -711,10 +711,6 @@ else
   BUILT_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 endif
 
-# kernel cmdline for GKI
-GENERIC_KERNEL_CMDLINE := rw
-.KATI_READONLY := GENERIC_KERNEL_CMDLINE
-
 INTERNAL_PREBUILT_BOOTIMAGE :=
 
 my_installed_prebuilt_gki_apex := $(strip $(foreach package,$(PRODUCT_PACKAGES),$(if $(ALL_MODULES.$(package).EXTRACTED_BOOT_IMAGE),$(package))))
