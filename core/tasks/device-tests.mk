@@ -52,7 +52,6 @@ $(device-tests-zip) : $(COMPATIBILITY.device-tests.FILES) $(my_host_shared_lib_f
 	rm -f $@.list $@-host.list $@-target.list $@-host-test-configs.list $@-target-test-configs.list \
 	  $@-shared-libs.list $@-host-shared-libs.list $(PRIVATE_device_tests_list)
 
-device-tests: $(device-tests-zip)
-$(call dist-for-goals, device-tests, $(device-tests-zip) $(device-tests-list-zip) $(device-tests-configs-zip) $(device_tests_host_shared_libs_zip))
+device-tests:
 
 tests: device-tests
