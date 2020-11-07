@@ -33,6 +33,24 @@
       "message": "(https://android-review.googlesource.com/c/platform/build/+/1489085 is the CL that tries to add these to presubmit for this project. https://android-review.googlesource.com/c/platform/system/libziparchive/+/1489103 is similar for libziparchive so libziparchive changes don\u0027t break zipalign.)",
       "revId": "c746c21b00b41b4bb1f112f152b61b69eb2c1c9b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b27e7654_b3c207c0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2020-11-07T00:30:27Z",
+      "side": 1,
+      "message": "This looks like it is reading /proc/self/exe. In a test environment I would expect an environment variable to give this path.\n\nAdditionally it seems libbase expect an SDK version which does not make sense to me here:\n\nerror: packages/modules/NetworkStack/Android.bp:127:1: module \"NetworkStackApiStableLib\" variant \"android_common\": sdk_version: incompatible sdk version \"system_30\". System SDK version should be one of [\"28\" \"29\" \"S\"]\n\n@ccross: What is the best way to get the test cwd? get_cwd?",
+      "parentUuid": "b3dd3903_9b2f6b18",
+      "revId": "c746c21b00b41b4bb1f112f152b61b69eb2c1c9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
