@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d5db0ba6_778f23df",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 959,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-07T01:10:25Z",
+      "side": 1,
+      "message": "assert it\u0027s not none.",
+      "range": {
+        "startLine": 959,
+        "startChar": 5,
+        "endLine": 959,
+        "endChar": 24
+      },
+      "revId": "5ade69386f7cae0ed1b50f124bad702c8d13b2bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b617334_e755a07b",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-07T01:10:25Z",
+      "side": 1,
+      "message": "this is used to prevent dumping the timestamp of unused partitions? you can update the ab_partitions to intersect with OPTIONS.partial btw.",
+      "range": {
+        "startLine": 183,
+        "startChar": 9,
+        "endLine": 183,
+        "endChar": 16
+      },
+      "revId": "5ade69386f7cae0ed1b50f124bad702c8d13b2bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

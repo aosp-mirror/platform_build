@@ -182,6 +182,30 @@
       },
       "revId": "ae7592ea714d115469cb4bbf0529848c18f7dd8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a095ec1e_17489694",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1033,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-07T01:10:25Z",
+      "side": 1,
+      "message": "sry, I mean in the downgrade case, only passing the partition_timestamps for partial update. (Better to keep the partition timestamp check in the upgrade case).",
+      "parentUuid": "dd970225_9533d71b",
+      "range": {
+        "startLine": 1033,
+        "startChar": 0,
+        "endLine": 1033,
+        "endChar": 44
+      },
+      "revId": "ae7592ea714d115469cb4bbf0529848c18f7dd8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
