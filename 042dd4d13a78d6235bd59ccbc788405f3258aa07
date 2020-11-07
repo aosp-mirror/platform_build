@@ -46,6 +46,30 @@
       },
       "revId": "042dd4d13a78d6235bd59ccbc788405f3258aa07",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8fca5501_ac3c6502",
+        "filename": "core/dumpvar.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-07T01:27:58Z",
+      "side": 1,
+      "message": "SGTM.",
+      "parentUuid": "ded201df_375af734",
+      "range": {
+        "startLine": 33,
+        "startChar": 19,
+        "endLine": 33,
+        "endChar": 71
+      },
+      "revId": "042dd4d13a78d6235bd59ccbc788405f3258aa07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
