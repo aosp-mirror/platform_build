@@ -408,6 +408,30 @@
       },
       "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "72c5ed98_6a096a82",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 993,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-07T00:53:48Z",
+      "side": 1,
+      "message": "what\u0027s the return value if the image don\u0027t have a /apex directory? Is it safe to abort if the debugfs_static call itself fails",
+      "parentUuid": "b35bbd14_0b36e5a9",
+      "range": {
+        "startLine": 993,
+        "startChar": 11,
+        "endLine": 993,
+        "endChar": 48
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
