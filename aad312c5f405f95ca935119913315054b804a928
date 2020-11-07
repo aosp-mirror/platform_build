@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "143234b5_007ff1d2",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-07T01:17:28Z",
+      "side": 1,
+      "message": "The math functions in Make are bizarre and should be avoided if possible (they work by converting the number N to a list of N values).  I\u0027d suggest putting this whole section inside an `ifdef my_installed_prebuilt_gki_apex`, and then use ifneq ($(words $(my_installed_prebuilt_gki_apex))) to assert it is a single value.",
+      "range": {
+        "startLine": 719,
+        "startChar": 18,
+        "endLine": 719,
+        "endChar": 25
+      },
+      "revId": "aad312c5f405f95ca935119913315054b804a928",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4603ec5_4cf2e76e",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-07T01:17:28Z",
+      "side": 1,
+      "message": "Indent here please",
+      "revId": "aad312c5f405f95ca935119913315054b804a928",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fed7ac2c_08058739",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-07T01:17:28Z",
+      "side": 1,
+      "message": "Indent this block please",
+      "range": {
+        "startLine": 726,
+        "startChar": 0,
+        "endLine": 731,
+        "endChar": 0
+      },
+      "revId": "aad312c5f405f95ca935119913315054b804a928",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
