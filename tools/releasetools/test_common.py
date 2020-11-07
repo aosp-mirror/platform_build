@@ -15,6 +15,7 @@
 #
 
 import copy
+import json
 import os
 import subprocess
 import tempfile
@@ -994,6 +995,34 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
             '__NONZERO-0': RangeSet("1-5 9-12"),
         },
         sparse_image.file_map)
+
+  def test_SharedUidPartitionViolations(self):
+    uid_dict = {
+        'android.uid.phone': {
+            'system': ['system_phone.apk'],
+            'system_ext': ['system_ext_phone.apk'],
+        },
+        'android.uid.wifi': {
+            'vendor': ['vendor_wifi.apk'],
+            'odm': ['odm_wifi.apk'],
+        },
+    }
+    errors = common.SharedUidPartitionViolations(
+        uid_dict, [('system', 'system_ext'), ('vendor', 'odm')])
+    self.assertEqual(errors, [])
+
+  def test_SharedUidPartitionViolations_Violation(self):
+    uid_dict = {
+        'android.uid.phone': {
+            'system': ['system_phone.apk'],
+            'vendor': ['vendor_phone.apk'],
+        },
+    }
+    errors = common.SharedUidPartitionViolations(
+        uid_dict, [('system', 'system_ext'), ('vendor', 'odm')])
+    self.assertIn(
+        ('APK sharedUserId "android.uid.phone" found across partition groups '
+         'in partitions "system,vendor"'), errors)
 
   def test_GetSparseImage_missingImageFile(self):
     self.assertRaises(
