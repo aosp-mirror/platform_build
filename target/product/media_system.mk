@@ -60,6 +60,7 @@ PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
     com.android.permission:service-permission \
     com.android.ipsec:android.net.ipsec.ike \
+    com.android.geotz:geotz \
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
