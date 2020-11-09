@@ -16,6 +16,23 @@
       "message": "looks like we need owner vote here",
       "revId": "7e279d83df60a2b2a78d56f1182b6587c209401b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "042377d9_b69d1306",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2020-11-09T21:39:18Z",
+      "side": 1,
+      "message": "blocked on pending response in b/171628188",
+      "revId": "7e279d83df60a2b2a78d56f1182b6587c209401b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
