@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b4419c40_eb36b4ff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-09T21:17:15Z",
+      "side": 1,
+      "message": "This suggests we are always copying the built boot image, but the change only does it if BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES is set.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 26
+      },
+      "revId": "72cd43e333635034a39d0bf99a0b49892c15f910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c64a1d3_6386a7f2",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4541,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-09T21:17:15Z",
+      "side": 1,
+      "message": "Doesn\u0027t this mean that target-files.zip will not contain the actual files, only the image?  It\u0027s useful for target-files.zip to contain the files, as that is one of the few windows into the build results that we get.  They are also necessary if the files are going to be resigned for a signed user build, although maybe that doesn\u0027t matter for files in the boot image.",
+      "revId": "72cd43e333635034a39d0bf99a0b49892c15f910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e995d3c5_ede8009a",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-09T21:17:15Z",
+      "side": 1,
+      "message": "Can you comment why this is necessary here?  And why only for arm64 and not any of the other generic targets?",
+      "revId": "72cd43e333635034a39d0bf99a0b49892c15f910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
