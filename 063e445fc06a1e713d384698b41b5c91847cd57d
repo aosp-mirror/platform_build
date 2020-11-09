@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "81a008e1_f2667ef9",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4539,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-11-09T20:32:42Z",
+      "side": 1,
+      "message": "do you need the dependency for INSTALLED_BOOTIMAGE_TARGET in 4458+",
+      "revId": "063e445fc06a1e713d384698b41b5c91847cd57d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
