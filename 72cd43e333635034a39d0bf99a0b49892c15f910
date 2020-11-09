@@ -43,6 +43,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "59ee1a66_d93e3e88",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4541,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-09T21:42:22Z",
+      "side": 1,
+      "message": "I can certainly both copy the files and the boot image.\n\n\u003e files are going to be resigned for a signed user build\n\nFiles inside the boot image shouldn\u0027t be resigned, though; only the whole boot image is signed.",
+      "parentUuid": "4c64a1d3_6386a7f2",
+      "revId": "72cd43e333635034a39d0bf99a0b49892c15f910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e995d3c5_ede8009a",
         "filename": "target/board/generic_arm64/BoardConfig.mk",
         "patchSetId": 2
@@ -54,6 +72,24 @@
       "writtenOn": "2020-11-09T21:17:15Z",
       "side": 1,
       "message": "Can you comment why this is necessary here?  And why only for arm64 and not any of the other generic targets?",
+      "revId": "72cd43e333635034a39d0bf99a0b49892c15f910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5efe31a_5e389a07",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-09T21:42:22Z",
+      "side": 1,
+      "message": "Will do",
+      "parentUuid": "e995d3c5_ede8009a",
       "revId": "72cd43e333635034a39d0bf99a0b49892c15f910",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
