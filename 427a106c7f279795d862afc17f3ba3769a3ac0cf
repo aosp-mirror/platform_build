@@ -16,6 +16,23 @@
       "message": "Ping. Colin, PTAL again",
       "revId": "427a106c7f279795d862afc17f3ba3769a3ac0cf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac9a629e_e51b395d",
+        "filename": "core/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 723,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-09T22:12:19Z",
+      "side": 1,
+      "message": "This is fine, but seems a little convoluted to me, the $(foreach) is being used to hide the fact that my_installed_prebuilt_gki_apex might be empty.  What about:\n\n my_installed_prebuilt_gki_apex :\u003d $(strip $(foreach package,$(PRODUCT_PACKAGES),$(if $(ALL_MODULES.$(package).EXTRACTED_BOOT_IMAGE),$(package))))\n ifdef my_installed_prebuilt_gki_apex # len(my_installed_prebuilt_gki_apex) \u003e 0\n   ifneq (1,$(words $(my_installed_prebuilt_gki_apex))) # len(my_installed_prebuilt_gki_apex) \u003e 1\n     $(error More than one prebuilt GKI APEXes are installed: $(my_installed_prebuilt_gki_apex))\n   endif # len(my_installed_prebuilt_gki_apex) \u003e 1\n \n   my_apex_extracted_boot_image :\u003d $(ALL_MODULES.$(package).EXTRACTED_BOOT_IMAGE)\n\n   ifdef BOARD_PREBUILT_BOOTIMAGE\n     $(error Must not define BOARD_PREBUILT_BOOTIMAGE because a prebuilt GKI APEX is installed: $(my_installed_prebuilt_gki_apex))\n   endif # BOARD_PREBUILT_BOOTIMAGE defined\n   INSTALLED_BOOTIMAGE_TARGET :\u003d $(PRODUCT_OUT)/boot.img\n   $(eval $(call copy-one-file,$(my_apex_extracted_boot_image),$(INSTALLED_BOOTIMAGE_TARGET)))\n \n else # my_installed_prebuilt_gki_apex not defined",
+      "revId": "427a106c7f279795d862afc17f3ba3769a3ac0cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
