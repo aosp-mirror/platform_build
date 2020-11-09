@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "258b0eeb_efb12a5a",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-09T18:55:09Z",
+      "side": 1,
+      "message": "I think this is what you mean, PTAL",
+      "parentUuid": "143234b5_007ff1d2",
+      "range": {
+        "startLine": 719,
+        "startChar": 18,
+        "endLine": 719,
+        "endChar": 25
+      },
+      "revId": "aad312c5f405f95ca935119913315054b804a928",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d4603ec5_4cf2e76e",
@@ -41,6 +65,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b23f43c0_6ed4c0b7",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-09T18:55:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d4603ec5_4cf2e76e",
+      "revId": "aad312c5f405f95ca935119913315054b804a928",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fed7ac2c_08058739",
@@ -54,6 +96,30 @@
       "writtenOn": "2020-11-07T01:17:28Z",
       "side": 1,
       "message": "Indent this block please",
+      "range": {
+        "startLine": 726,
+        "startChar": 0,
+        "endLine": 731,
+        "endChar": 0
+      },
+      "revId": "aad312c5f405f95ca935119913315054b804a928",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "be0937a9_081bd4a5",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-09T18:55:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fed7ac2c_08058739",
       "range": {
         "startLine": 726,
         "startChar": 0,
