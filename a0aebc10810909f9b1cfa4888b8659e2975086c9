@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49e04875_f34a66f5",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-10T06:40:44Z",
+      "side": 0,
+      "message": "nit: it\u0027s used for build debugging.",
+      "range": {
+        "startLine": 1255,
+        "startChar": 0,
+        "endLine": 1255,
+        "endChar": 40
+      },
+      "revId": "a0aebc10810909f9b1cfa4888b8659e2975086c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

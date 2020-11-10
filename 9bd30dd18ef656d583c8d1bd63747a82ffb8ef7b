@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "19735fe6_145ab588",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-10T06:40:44Z",
+      "side": 1,
+      "message": "update the comment?",
+      "range": {
+        "startLine": 7,
+        "startChar": 34,
+        "endLine": 7,
+        "endChar": 44
+      },
+      "revId": "9bd30dd18ef656d583c8d1bd63747a82ffb8ef7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0b6086d_b326f8c6",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1037,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-10T06:40:44Z",
+      "side": 1,
+      "message": "let\u0027s keep it for the non-downgrade case. (might be useful for mixed build case, to catch issues at build time)",
+      "range": {
+        "startLine": 1037,
+        "startChar": 0,
+        "endLine": 1037,
+        "endChar": 23
+      },
+      "revId": "9bd30dd18ef656d583c8d1bd63747a82ffb8ef7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b5a65a2_4a81bb58",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1259,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-10T06:40:44Z",
+      "side": 1,
+      "message": "nit: not needed.  You can do [\n   set(OPTIONS.info_dict[\u0027ab_partitions\u0027]) \u0026 set(OPTIONS.partial)\n]",
+      "range": {
+        "startLine": 1259,
+        "startChar": 41,
+        "endLine": 1259,
+        "endChar": 42
+      },
+      "revId": "9bd30dd18ef656d583c8d1bd63747a82ffb8ef7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
