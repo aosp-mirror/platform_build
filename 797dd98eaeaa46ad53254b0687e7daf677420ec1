@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f40668e_7f93768d",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1063,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-10T22:10:46Z",
+      "side": 1,
+      "message": "my bad, let\u0027s remove the entire thing for secondary_payload. The reason is, we rename system_other.img to system.img in GetTargetFilesZipForSecondaryImages. So the system timestamp in the metadata.postcondition is no longer accurate. system_other.img on the other hand, don\u0027t have a timestamp. It\u0027s just pre-optimized apps.",
+      "range": {
+        "startLine": 1063,
+        "startChar": 0,
+        "endLine": 1063,
+        "endChar": 65
+      },
+      "revId": "797dd98eaeaa46ad53254b0687e7daf677420ec1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
