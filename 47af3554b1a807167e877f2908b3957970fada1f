@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25f41419_60a25bdd",
+        "filename": "core/Makefile",
+        "patchSetId": 12
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-10T01:14:34Z",
+      "side": 1,
+      "message": "This ends the section where my_installed_prebuilt_gki_apex is not defined.",
+      "range": {
+        "startLine": 908,
+        "startChar": 39,
+        "endLine": 908,
+        "endChar": 46
+      },
+      "revId": "47af3554b1a807167e877f2908b3957970fada1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
