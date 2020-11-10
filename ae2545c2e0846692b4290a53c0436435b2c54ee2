@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "21cacd81_a4d2236b",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 986,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-10T21:07:12Z",
+      "side": 1,
+      "message": "remove this please",
+      "range": {
+        "startLine": 986,
+        "startChar": 0,
+        "endLine": 986,
+        "endChar": 27
+      },
+      "revId": "ae2545c2e0846692b4290a53c0436435b2c54ee2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
