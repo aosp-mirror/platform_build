@@ -479,6 +479,30 @@
       },
       "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "359fbfed_b9132163",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 993,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-10T14:30:05Z",
+      "side": 1,
+      "message": "I believe so",
+      "parentUuid": "8139d082_6d97e7e4",
+      "range": {
+        "startLine": 993,
+        "startChar": 39,
+        "endLine": 993,
+        "endChar": 48
+      },
+      "revId": "6f4cfec0e72b8356817d61a486b558535abdd7f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
