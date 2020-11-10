@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "fface118_88afcec7",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 966,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-10T20:07:44Z",
+      "side": 1,
+      "message": "Sparse image module doesn\u0027t have a convenient way to check if a file is sparse image. We can move this there is needed.",
+      "parentUuid": "3eb492ec_92b18410",
+      "range": {
+        "startLine": 966,
+        "startChar": 4,
+        "endLine": 966,
+        "endChar": 43
+      },
+      "revId": "4626418d279e29f5a9493a9dba799ac5d8105df4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "4ca201ef_398f9703",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 12
@@ -37,6 +61,30 @@
       "writtenOn": "2020-11-10T19:32:27Z",
       "side": 1,
       "message": "nit: move to L1000",
+      "range": {
+        "startLine": 983,
+        "startChar": 0,
+        "endLine": 983,
+        "endChar": 54
+      },
+      "revId": "4626418d279e29f5a9493a9dba799ac5d8105df4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e8f74dd_92becc14",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 983,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-10T20:07:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4ca201ef_398f9703",
       "range": {
         "startLine": 983,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e91a5958_1914be73",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 990,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-10T20:07:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b21f2077_c0569996",
+      "range": {
+        "startLine": 985,
+        "startChar": 0,
+        "endLine": 990,
+        "endChar": 67
+      },
+      "revId": "4626418d279e29f5a9493a9dba799ac5d8105df4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "22d794de_e70bd47c",
@@ -89,6 +161,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "54d3f51d_5d1ce7de",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 991,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-10T20:07:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22d794de_e70bd47c",
+      "revId": "4626418d279e29f5a9493a9dba799ac5d8105df4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "fcc59688_73d7016b",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 12
@@ -100,6 +190,30 @@
       "writtenOn": "2020-11-10T19:32:27Z",
       "side": 1,
       "message": "nit: build_image.UnsparseImage",
+      "range": {
+        "startLine": 992,
+        "startChar": 0,
+        "endLine": 996,
+        "endChar": 24
+      },
+      "revId": "4626418d279e29f5a9493a9dba799ac5d8105df4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9cd8c39e_bb6674e7",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 996,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-10T20:07:44Z",
+      "side": 1,
+      "message": "UnsparseImage doesn\u0027t create files via TempFile, which means we need to remember deleting the unsparsed image once current process exits. UnsparseImage(replace\u003dTrue) doesn\u0027t work either, as we don\u0027t want to mutate the image if user passed in directory of extracted target files.",
+      "parentUuid": "fcc59688_73d7016b",
       "range": {
         "startLine": 992,
         "startChar": 0,
