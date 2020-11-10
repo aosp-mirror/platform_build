@@ -1,0 +1,8 @@
+{
+  "presubmit": [
+    {
+      "name": "zipalign_tests",
+      "host": true
+    }
+  ]
+}
