@@ -22,6 +22,30 @@
       },
       "revId": "46eea703448d695b68b56d77ec11b86300991470",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4120828b_d890575a",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-10T21:37:07Z",
+      "side": 1,
+      "message": "Removed",
+      "parentUuid": "942da3f1_5c04509c",
+      "range": {
+        "startLine": 274,
+        "startChar": 0,
+        "endLine": 274,
+        "endChar": 25
+      },
+      "revId": "46eea703448d695b68b56d77ec11b86300991470",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
