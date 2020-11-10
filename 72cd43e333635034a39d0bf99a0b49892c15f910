@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "55691118_32761942",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-10T02:45:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b4419c40_eb36b4ff",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 26
+      },
+      "revId": "72cd43e333635034a39d0bf99a0b49892c15f910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4c64a1d3_6386a7f2",
@@ -59,6 +83,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b412695_ba3bb065",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4541,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-10T02:45:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59ee1a66_d93e3e88",
+      "revId": "72cd43e333635034a39d0bf99a0b49892c15f910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e995d3c5_ede8009a",
@@ -90,6 +132,24 @@
       "side": 1,
       "message": "Will do",
       "parentUuid": "e995d3c5_ede8009a",
+      "revId": "72cd43e333635034a39d0bf99a0b49892c15f910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "441dbdc7_f4cf3e52",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-10T02:45:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b5efe31a_5e389a07",
       "revId": "72cd43e333635034a39d0bf99a0b49892c15f910",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
