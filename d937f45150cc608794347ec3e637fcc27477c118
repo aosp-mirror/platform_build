@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f217f80_4bd01e3e",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 903,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-10T01:00:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0df802ee_77fafa24",
+      "range": {
+        "startLine": 903,
+        "startChar": 8,
+        "endLine": 903,
+        "endChar": 44
+      },
+      "revId": "d937f45150cc608794347ec3e637fcc27477c118",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a2ce40db_85c05393",
@@ -37,6 +61,24 @@
       "writtenOn": "2020-11-10T00:37:46Z",
       "side": 1,
       "message": "I think this would be cleaner inside the two cases.  INTERNAL_PREBUILT_BOOTIMAGE :\u003d $(my_apex_extracted_boot_image) inside the ifdef my_installed_prebuilt_gki_apex, and INTERNAL_PREBUILT_BOOTIMAGE :\u003d $(BOARD_PREBUILT_BOOTIMAGE) inside the ifdef BOARD_PREBUILT_BOOTIMAGE.  Also either clear INTERNAL_PREBUILT_BOOTIMAGE before the ifdef, or inside if there is a case that covers all the times it should be unset.",
+      "revId": "d937f45150cc608794347ec3e637fcc27477c118",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cde92e4d_b758f1c3",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 905,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-10T01:00:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2ce40db_85c05393",
       "revId": "d937f45150cc608794347ec3e637fcc27477c118",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
