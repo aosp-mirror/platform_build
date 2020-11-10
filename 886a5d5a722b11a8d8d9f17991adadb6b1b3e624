@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "365efb19_5afa576a",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2020-11-10T01:32:35Z",
+      "side": 1,
+      "message": "I think \"extract\" is a better option here. It prevents us falling from a cliff and potentially extracting the apk in memory if the timing does not align.",
+      "range": {
+        "startLine": 77,
+        "startChar": 52,
+        "endLine": 77,
+        "endChar": 56
+      },
+      "revId": "886a5d5a722b11a8d8d9f17991adadb6b1b3e624",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
