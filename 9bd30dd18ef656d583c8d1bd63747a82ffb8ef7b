@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "16f8d47b_630f2b13",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-10T14:13:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "19735fe6_145ab588",
+      "range": {
+        "startLine": 7,
+        "startChar": 34,
+        "endLine": 7,
+        "endChar": 44
+      },
+      "revId": "9bd30dd18ef656d583c8d1bd63747a82ffb8ef7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a0b6086d_b326f8c6",
@@ -47,6 +71,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9fb463a9_b5fbb6d8",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1037,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-10T14:13:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0b6086d_b326f8c6",
+      "range": {
+        "startLine": 1037,
+        "startChar": 0,
+        "endLine": 1037,
+        "endChar": 23
+      },
+      "revId": "9bd30dd18ef656d583c8d1bd63747a82ffb8ef7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9b5a65a2_4a81bb58",
@@ -60,6 +108,30 @@
       "writtenOn": "2020-11-10T06:40:44Z",
       "side": 1,
       "message": "nit: not needed.  You can do [\n   set(OPTIONS.info_dict[\u0027ab_partitions\u0027]) \u0026 set(OPTIONS.partial)\n]",
+      "range": {
+        "startLine": 1259,
+        "startChar": 41,
+        "endLine": 1259,
+        "endChar": 42
+      },
+      "revId": "9bd30dd18ef656d583c8d1bd63747a82ffb8ef7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c40a5615_cbdaf726",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1259,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-10T14:13:16Z",
+      "side": 1,
+      "message": "I believe that will create a list with 1 element: the set",
+      "parentUuid": "9b5a65a2_4a81bb58",
       "range": {
         "startLine": 1259,
         "startChar": 41,
