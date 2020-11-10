@@ -70,6 +70,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "22d794de_e70bd47c",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 991,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-10T19:34:39Z",
+      "side": 1,
+      "message": "if not os.path.isfile(image_file):\n    return False\n\nSome devices may not have product.img",
+      "revId": "4626418d279e29f5a9493a9dba799ac5d8105df4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "fcc59688_73d7016b",
