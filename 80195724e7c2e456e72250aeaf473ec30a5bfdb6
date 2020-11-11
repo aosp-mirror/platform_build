@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "04f1906e_859cb45e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-11T00:20:59Z",
+      "side": 1,
+      "message": "looks like a time to fix the pylint errors. you can do that in the next cl",
+      "revId": "80195724e7c2e456e72250aeaf473ec30a5bfdb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
