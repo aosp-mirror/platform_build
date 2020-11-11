@@ -140,6 +140,30 @@
       },
       "revId": "9bd30dd18ef656d583c8d1bd63747a82ffb8ef7b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ddc35058_bcb3ef97",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1259,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-11T00:18:42Z",
+      "side": 1,
+      "message": "meant to say list(\n        set(OPTIONS.info_dict[\u0027ab_partitions\u0027]) \u0026 set(OPTIONS.partial)), so you don\u0027t need \u0027\\\u0027",
+      "parentUuid": "c40a5615_cbdaf726",
+      "range": {
+        "startLine": 1259,
+        "startChar": 41,
+        "endLine": 1259,
+        "endChar": 42
+      },
+      "revId": "9bd30dd18ef656d583c8d1bd63747a82ffb8ef7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
