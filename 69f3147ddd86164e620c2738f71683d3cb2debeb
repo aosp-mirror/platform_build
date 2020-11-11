@@ -36,6 +36,75 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f109697_8a339b68",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1799100
+      },
+      "writtenOn": "2020-11-11T22:08:19Z",
+      "side": 1,
+      "message": "Oh, that was easy. Thanks.",
+      "parentUuid": "08626f39_c284dbbc",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6081b0b8_590c5a8c",
+        "filename": "target/product/aosp_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1799100
+      },
+      "writtenOn": "2020-11-11T22:08:19Z",
+      "side": 1,
+      "message": "As I commented on the doc: how does label-\u003efile resolution work?\nIn Bazel it is quite complex. Are you mimicking it exactly?\nIs it necessary? Are @repo prefixes allowed?",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3eb68656_d8a041e6",
+        "filename": "target/product/aosp_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1799100
+      },
+      "writtenOn": "2020-11-11T22:08:19Z",
+      "side": 1,
+      "message": "Don\u0027t use .star for the file extension. That means \"generic core Starlark\". Pick an extension specific to your dialect.",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0472e1a9_ac8f758f",
+        "filename": "target/product/aosp_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1799100
+      },
+      "writtenOn": "2020-11-11T22:08:19Z",
+      "side": 1,
+      "message": "Why are the parameter names UPPERCASE?",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5c0fec6e_79120f49",
@@ -49,6 +118,23 @@
       "writtenOn": "2020-11-04T10:05:19Z",
       "side": 1,
       "message": "How about sticking to the Bazel syntax of //pac/kage:name.bzl so that it\u0027s one less refactoring later? (there are two differences: a mandatory colon before the file name and the extension that should be .bzl instead of .star)",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "770f4481_f348b9ef",
+        "filename": "target/product/product_config.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1799100
+      },
+      "writtenOn": "2020-11-11T22:08:19Z",
+      "side": 1,
+      "message": "This undocumented function dives right into reflection over types. I can\u0027t tell what it does or what it is supposed to do, nor how closely they match.",
       "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
