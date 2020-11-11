@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77dd459f_bfe49590",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-11T14:45:43Z",
+      "side": 1,
+      "message": "Could you also add another $(empty) to other places where build-properties are called so that the existence of the new argument is shown explicitly?",
+      "range": {
+        "startLine": 404,
+        "startChar": 4,
+        "endLine": 404,
+        "endChar": 12
+      },
+      "revId": "0bbd167a3160266342efc2d9631b1b73fa984f8e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
