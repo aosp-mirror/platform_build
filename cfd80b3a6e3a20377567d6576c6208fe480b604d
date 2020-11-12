@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "01f31b08_7b1b24d3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2020-11-12T00:35:25Z",
+      "side": 1,
+      "message": "Hi Jiyong,\n\nAs we discussed on aosp/1488083, here is the change that is adding libdmabufheap to the vndk sp list. Thanks in advance!\n\nRegards,\nHridya",
+      "revId": "cfd80b3a6e3a20377567d6576c6208fe480b604d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
