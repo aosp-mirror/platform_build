@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e7383d2_b21c454b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-12T18:51:06Z",
+      "side": 1,
+      "message": "Thanks! I don\u0027t remember how I seeded the list, I probably just moved the ones I was sure about.",
+      "revId": "0301d64545256e15d800cd3b3fdfc90df6765cd8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
