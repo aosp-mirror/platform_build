@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4255e61_905ccd44",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-12T11:24:50Z",
+      "side": 1,
+      "message": "(sorry for drive-by 😊, I subscribe to make changes)",
+      "revId": "ae3047a7e97b04d87ced87de6d29e74733326d98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2da0425e_49b65125",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-12T11:24:50Z",
+      "side": 1,
+      "message": "_vars",
+      "range": {
+        "startLine": 236,
+        "startChar": 21,
+        "endLine": 236,
+        "endChar": 22
+      },
+      "revId": "ae3047a7e97b04d87ced87de6d29e74733326d98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
