@@ -73,6 +73,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b65dc209_c7f61e9c",
+        "filename": "target/product/aosp_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-11-12T09:04:50Z",
+      "side": 1,
+      "message": "I have replied in the document. It\u0027s somewhat in flux at the moment.",
+      "parentUuid": "6081b0b8_590c5a8c",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3eb68656_d8a041e6",
         "filename": "target/product/aosp_product.star",
         "patchSetId": 1
@@ -84,6 +102,24 @@
       "writtenOn": "2020-11-11T22:08:19Z",
       "side": 1,
       "message": "Don\u0027t use .star for the file extension. That means \"generic core Starlark\". Pick an extension specific to your dialect.",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a498e75_3bed4834",
+        "filename": "target/product/aosp_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-11-12T09:04:50Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "3eb68656_d8a041e6",
       "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -101,6 +137,24 @@
       "writtenOn": "2020-11-11T22:08:19Z",
       "side": 1,
       "message": "Why are the parameter names UPPERCASE?",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0e43c58_29948c16",
+        "filename": "target/product/aosp_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-11-12T09:04:50Z",
+      "side": 1,
+      "message": "Because that\u0027s what they are currently in the makefiles. Is it against all Starlark conventions?",
+      "parentUuid": "0472e1a9_ac8f758f",
       "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -135,6 +189,24 @@
       "writtenOn": "2020-11-11T22:08:19Z",
       "side": 1,
       "message": "This undocumented function dives right into reflection over types. I can\u0027t tell what it does or what it is supposed to do, nor how closely they match.",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "14f20982_8adf7d18",
+        "filename": "target/product/product_config.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-11-12T09:04:50Z",
+      "side": 1,
+      "message": "I am not sure what you mean here. The documentation is above the function. I suspect this is against convention. I\u0027ll fix this at the next iteration.\nI am not sure how the reflection can be avoided while trying to achieve this specific goal.",
+      "parentUuid": "770f4481_f348b9ef",
       "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
