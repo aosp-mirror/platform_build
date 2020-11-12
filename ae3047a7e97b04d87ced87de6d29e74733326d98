@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d2ced5e_802d80e1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-11-12T18:21:33Z",
+      "side": 1,
+      "message": "That\u0027s fine, I was going to ask you to review this change.",
+      "parentUuid": "b4255e61_905ccd44",
+      "revId": "ae3047a7e97b04d87ced87de6d29e74733326d98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2da0425e_49b65125",
@@ -31,6 +49,30 @@
       "writtenOn": "2020-11-12T11:24:50Z",
       "side": 1,
       "message": "_vars",
+      "range": {
+        "startLine": 236,
+        "startChar": 21,
+        "endLine": 236,
+        "endChar": 22
+      },
+      "revId": "ae3047a7e97b04d87ced87de6d29e74733326d98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a61428b0_02ce0d52",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2020-11-12T18:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2da0425e_49b65125",
       "range": {
         "startLine": 236,
         "startChar": 21,
