@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a31c422c_9a6ed332",
+        "filename": "core/soong_rust_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-13T20:57:12Z",
+      "side": 1,
+      "message": "prefer empty instead of false, that way ifdef or $(if) give the right result.",
+      "revId": "114e270eab685e3ad44dee938ddc988fcd8ee024",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
