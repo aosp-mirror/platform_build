@@ -63,6 +63,8 @@ cc_test_host {
         "libgmock",
     ],
     data: [
+         "tests/data/diffOrders.zip",
+         "tests/data/holes.zip",
          "tests/data/unaligned.zip",
     ],
     defaults: ["zipalign_defaults"],
