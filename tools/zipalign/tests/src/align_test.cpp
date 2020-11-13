@@ -19,8 +19,11 @@ TEST(Align, Unaligned) {
   const std::string src = GetTestPath("unaligned.zip");
   const std::string dst = GetTestPath("unaligned_out.zip");
 
-  int result = process(src.c_str(), dst.c_str(), 4, true, false, 4096);
-  ASSERT_EQ(0, result);
+  int processed = process(src.c_str(), dst.c_str(), 4, true, false, 4096);
+  ASSERT_EQ(0, processed);
+
+  int verified = verify(dst.c_str(), 4, true, false);
+  ASSERT_EQ(0, verified);
 }
 
 // Align a zip featuring a hole at the beginning. The
