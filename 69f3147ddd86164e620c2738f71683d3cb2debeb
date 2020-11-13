@@ -161,6 +161,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e567ed3b_be603db0",
+        "filename": "target/product/aosp_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1799100
+      },
+      "writtenOn": "2020-11-13T15:22:34Z",
+      "side": 1,
+      "message": "I would say it\u0027s against all programming language conventions: the names of variables follow the style of the language, which for Starlark, like Python, means lower_case. You wouldn\u0027t name a variable in C++ or Java in ALL_CAPS just because its value happened to be passed into the environment or a Makefile.",
+      "parentUuid": "a0e43c58_29948c16",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5c0fec6e_79120f49",
         "filename": "target/product/base_vendor.star",
         "patchSetId": 1
@@ -172,6 +190,29 @@
       "writtenOn": "2020-11-04T10:05:19Z",
       "side": 1,
       "message": "How about sticking to the Bazel syntax of //pac/kage:name.bzl so that it\u0027s one less refactoring later? (there are two differences: a mandatory colon before the file name and the extension that should be .bzl instead of .star)",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "583480fd_9e276b19",
+        "filename": "target/product/handheld_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1799100
+      },
+      "writtenOn": "2020-11-13T15:22:34Z",
+      "side": 1,
+      "message": "Consider requiring names for the first two parameters. It makes the role of the argument value much clearer to the reader.",
+      "range": {
+        "startLine": 11,
+        "startChar": 4,
+        "endLine": 11,
+        "endChar": 5
+      },
       "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -207,6 +248,24 @@
       "side": 1,
       "message": "I am not sure what you mean here. The documentation is above the function. I suspect this is against convention. I\u0027ll fix this at the next iteration.\nI am not sure how the reflection can be avoided while trying to achieve this specific goal.",
       "parentUuid": "770f4481_f348b9ef",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1065096b_4b996016",
+        "filename": "target/product/product_config.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1799100
+      },
+      "writtenOn": "2020-11-13T15:22:34Z",
+      "side": 1,
+      "message": "Function documentation should explain the parameters, the preconditions on their values, the effects of the call, and the results, if any. I can\u0027t extract any of that information from the comment above.\n\n\u003e I am not sure how the reflection can be avoided while trying to achieve this specific goal.\n\nYou may be right, but let\u0027s start by defining the goal.",
+      "parentUuid": "14f20982_8adf7d18",
       "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
