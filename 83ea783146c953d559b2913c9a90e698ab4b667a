@@ -51,6 +51,23 @@
       "message": "Seems reasonable to me",
       "revId": "83ea783146c953d559b2913c9a90e698ab4b667a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f6ae182_6393b294",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-11-13T16:42:30Z",
+      "side": 1,
+      "message": "By passing presubmit because build test 3 is broken on ToT. All other presubmit tests are passing.",
+      "revId": "83ea783146c953d559b2913c9a90e698ab4b667a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
