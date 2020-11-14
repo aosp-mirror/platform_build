@@ -100,10 +100,7 @@ def GetArgsForKernel(input_tmp):
                 'PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS is not set')
     return []
 
-  with open(version_path) as f:
-    version = f.read().strip()
-
-  return ['--kernel', '{}:{}'.format(version, config_path)]
+  return ['--kernel', '{}:{}'.format(version_path, config_path)]
 
 
 def CheckVintfFromExtractedTargetFiles(input_tmp, info_dict=None):
