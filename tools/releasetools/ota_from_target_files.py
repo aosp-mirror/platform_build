@@ -1060,15 +1060,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     secondary_target_file = GetTargetFilesZipForSecondaryImages(
         target_file, OPTIONS.skip_postinstall)
     secondary_payload = Payload(secondary=True)
-    assert not OPTIONS.downgrade
-    partition_timestamps_flags = GeneratePartitionTimestampFlags(
-      [part
-       for part in metadata.postcondition.partition_state
-       if part.partition_name not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
-    )
     secondary_payload.Generate(secondary_target_file,
                                additional_args=["--max_timestamp",
-                               max_timestamp]+partition_timestamps_flags)
+                               max_timestamp])
     secondary_payload.Sign(payload_signer)
     secondary_payload.WriteToZip(output_zip)
 
