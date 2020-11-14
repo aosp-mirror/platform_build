@@ -1254,11 +1254,6 @@ def main(argv):
     OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input)
   else:
     OPTIONS.info_dict = ParseInfoDict(args[0])
-  if OPTIONS.partial:
-    OPTIONS.info_dict['ab_partitions'] = \
-      list(
-        set(OPTIONS.info_dict['ab_partitions']) & set(OPTIONS.partial)
-        )
 
   if OPTIONS.downgrade:
     # We should only allow downgrading incrementals (as opposed to full).
@@ -1283,6 +1278,17 @@ def main(argv):
 
     logger.info("--- source info ---")
     common.DumpInfoDict(OPTIONS.source_info_dict)
+
+  if OPTIONS.partial:
+    OPTIONS.info_dict['ab_partitions'] = \
+      list(
+        set(OPTIONS.info_dict['ab_partitions']) & set(OPTIONS.partial)
+        )
+    if OPTIONS.source_info_dict:
+      OPTIONS.source_info_dict['ab_partitions'] = \
+        list(
+          set(OPTIONS.source_info_dict['ab_partitions']) & set(OPTIONS.partial)
+          )
 
   # Load OEM dicts if provided.
   OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)

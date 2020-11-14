@@ -108,11 +108,14 @@ _board_strip_readonly_list += \
 #   recovery resources are built to vendor_boot.
 # - BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT controls whether GSI AVB keys are
 #   built to vendor_boot.
+# - BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES controls whether boot images in $OUT are added
+#   to target files package directly.
 _board_strip_readonly_list += \
   BOARD_USES_GENERIC_KERNEL_IMAGE \
   BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE \
   BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT \
   BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT \
+  BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES \
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
