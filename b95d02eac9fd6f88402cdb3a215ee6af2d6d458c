@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a69cb969_23fb8845",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-16T18:45:09Z",
+      "side": 1,
+      "message": "Note: CL:1499110. check_vintf still accepts the old 5.4.2 string.",
+      "revId": "b95d02eac9fd6f88402cdb3a215ee6af2d6d458c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
