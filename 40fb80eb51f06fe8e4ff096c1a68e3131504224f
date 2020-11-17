@@ -3,6 +3,29 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "caad06bf_5a9b5286",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-17T21:37:28Z",
+      "side": 1,
+      "message": "Just copying this into the makefiles is sufficient",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 41
+      },
+      "revId": "40fb80eb51f06fe8e4ff096c1a68e3131504224f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "b285a917_cf8c0717",
         "filename": "target/product/virtual_ab_ota_compression_retrofit.mk",
         "patchSetId": 1
