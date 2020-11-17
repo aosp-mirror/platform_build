@@ -117,6 +117,7 @@ PRODUCT_PACKAGES += \
     ip-up-vpn \
     javax.obex \
     keystore \
+    keystore2 \
     credstore \
     ld.mc \
     libaaudio \
@@ -248,6 +249,7 @@ PRODUCT_PACKAGES += \
     shell_and_utilities_system \
     sm \
     snapshotctl \
+    snapuserd \
     SoundPicker \
     storaged \
     surfaceflinger \
@@ -372,6 +374,7 @@ PRODUCT_PROPERTY_OVERRIDES += ro.gfx.angle.supported=true
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
+    dmuserd \
     gdbserver \
     idlcli \
     init-debug.rc \
@@ -381,6 +384,8 @@ PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     logtagd.rc \
     procrank \
+    profcollectd \
+    profcollectctl \
     remount \
     showmap \
     sqlite3 \

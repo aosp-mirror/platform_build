@@ -296,6 +296,18 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.extend(["--inode_size", "256"])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
+  elif fs_type.startswith("erofs"):
+    build_command = ["mkerofsimage.sh"]
+    build_command.extend([in_dir, out_file])
+    if "erofs_sparse_flag" in prop_dict:
+      build_command.extend([prop_dict["erofs_sparse_flag"]])
+    build_command.extend(["-m", prop_dict["mount_point"]])
+    if target_out:
+      build_command.extend(["-d", target_out])
+    if fs_config:
+      build_command.extend(["-C", fs_config])
+    if "selinux_fc" in prop_dict:
+      build_command.extend(["-c", prop_dict["selinux_fc"]])
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
@@ -532,6 +544,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
 
   common_props = (
       "extfs_sparse_flag",
+      "erofs_sparse_flag",
       "squashfs_sparse_flag",
       "f2fs_sparse_flag",
       "skip_fsck",

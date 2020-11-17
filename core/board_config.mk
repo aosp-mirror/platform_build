@@ -107,11 +107,14 @@ _board_strip_readonly_list += \
 #   recovery resources are built to vendor_boot.
 # - BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT controls whether GSI AVB keys are
 #   built to vendor_boot.
+# - BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES controls whether boot images in $OUT are added
+#   to target files package directly.
 _board_strip_readonly_list += \
   BOARD_USES_GENERIC_KERNEL_IMAGE \
   BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE \
   BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT \
   BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT \
+  BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES \
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
@@ -785,5 +788,12 @@ ifeq (true,$(BOARD_USES_GENERIC_KERNEL_IMAGE))
   ifeq (true,$(BOARD_USES_RECOVERY_AS_BOOT))
     $(error BOARD_USES_RECOVERY_AS_BOOT cannot be true if BOARD_USES_GENERIC_KERNEL_IMAGE is true. \
       Use BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT instead)
+  endif
+endif
+
+ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+  ifeq (true,$(BOARD_USES_RECOVERY_AS_BOOT))
+    $(error BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT and BOARD_USES_RECOVERY_AS_BOOT cannot be \
+      both true. Recovery resources should be installed to either boot or vendor_boot, but not both)
   endif
 endif

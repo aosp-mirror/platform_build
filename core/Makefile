@@ -711,6 +711,26 @@ else
   BUILT_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 endif
 
+INTERNAL_PREBUILT_BOOTIMAGE :=
+
+my_installed_prebuilt_gki_apex := $(strip $(foreach package,$(PRODUCT_PACKAGES),$(if $(ALL_MODULES.$(package).EXTRACTED_BOOT_IMAGE),$(package))))
+ifdef my_installed_prebuilt_gki_apex
+  ifneq (1,$(words $(my_installed_prebuilt_gki_apex))) # len(my_installed_prebuilt_gki_apex) > 1
+    $(error More than one prebuilt GKI APEXes are installed: $(my_installed_prebuilt_gki_apex))
+  endif # len(my_installed_prebuilt_gki_apex) > 1
+
+  ifdef BOARD_PREBUILT_BOOTIMAGE
+    $(error Must not define BOARD_PREBUILT_BOOTIMAGE because a prebuilt GKI APEX is installed: $(my_installed_prebuilt_gki_apex))
+  endif # BOARD_PREBUILT_BOOTIMAGE defined
+
+  my_apex_extracted_boot_image := $(ALL_MODULES.$(my_installed_prebuilt_gki_apex).EXTRACTED_BOOT_IMAGE)
+  INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
+  $(eval $(call copy-one-file,$(my_apex_extracted_boot_image),$(INSTALLED_BOOTIMAGE_TARGET)))
+
+  INTERNAL_PREBUILT_BOOTIMAGE := $(my_apex_extracted_boot_image)
+
+else # my_installed_prebuilt_gki_apex not defined
+
 # $1: boot image target
 # returns the kernel used to make the bootimage
 define bootimage-to-kernel
@@ -754,30 +774,27 @@ endif
 
 INTERNAL_KERNEL_CMDLINE := $(strip $(INTERNAL_KERNEL_CMDLINE) buildvariant=$(TARGET_BUILD_VARIANT) $(VERITY_KEYID))
 
-boot_uses_generic_kernel_image :=
-ifdef BUILDING_VENDOR_BOOT_IMAGE
-  # building vendor boot image, dtb/base/pagesize go there
-  boot_uses_generic_kernel_image := true
-else ifeq (true,$(BOARD_USES_GENERIC_KERNEL_IMAGE))
-  boot_uses_generic_kernel_image := true
-endif
-
-ifeq (true,$(boot_uses_generic_kernel_image))
+# kernel cmdline/base/pagesize in boot.
+# - If using GKI, use GENERIC_KERNEL_CMDLINE. Remove kernel base and pagesize because they are
+#   device-specific.
+# - If not using GKI:
+#   - If building vendor_boot, INTERNAL_KERNEL_CMDLINE, base and pagesize goes in vendor_boot.
+#   - Otherwise, put them in boot.
+ifeq (true,$(BOARD_USES_GENERIC_KERNEL_IMAGE))
   ifdef GENERIC_KERNEL_CMDLINE
     INTERNAL_BOOTIMAGE_ARGS += --cmdline "$(GENERIC_KERNEL_CMDLINE)"
   endif
-else # boot_uses_generic_kernel_image != true
-ifdef BOARD_KERNEL_BASE
-  INTERNAL_BOOTIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
-endif
-ifdef BOARD_KERNEL_PAGESIZE
-  INTERNAL_BOOTIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
-endif
-ifdef INTERNAL_KERNEL_CMDLINE
-  INTERNAL_BOOTIMAGE_ARGS += --cmdline "$(INTERNAL_KERNEL_CMDLINE)"
-endif
-endif # boot_uses_generic_kernel_image == true
-boot_uses_generic_kernel_image :=
+else ifndef BUILDING_VENDOR_BOOT_IMAGE # && BOARD_USES_GENERIC_KERNEL_IMAGE != true
+  ifdef INTERNAL_KERNEL_CMDLINE
+    INTERNAL_BOOTIMAGE_ARGS += --cmdline "$(INTERNAL_KERNEL_CMDLINE)"
+  endif
+  ifdef BOARD_KERNEL_BASE
+    INTERNAL_BOOTIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
+  endif
+  ifdef BOARD_KERNEL_PAGESIZE
+    INTERNAL_BOOTIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+  endif
+endif # BUILDING_VENDOR_BOOT_IMAGE == "" && BOARD_USES_GENERIC_KERNEL_IMAGE != true
 
 INTERNAL_MKBOOTIMG_VERSION_ARGS := \
     --os_version $(PLATFORM_VERSION_LAST_STABLE) \
@@ -877,12 +894,17 @@ ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 # Remove when b/63676296 is resolved.
 $(error Prebuilt bootimage is only supported for AB targets)
 endif
+INTERNAL_PREBUILT_BOOTIMAGE := $(BOARD_PREBUILT_BOOTIMAGE)
 INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
-$(eval $(call copy-one-file,$(BOARD_PREBUILT_BOOTIMAGE),$(INSTALLED_BOOTIMAGE_TARGET)))
+$(eval $(call copy-one-file,$(INTERNAL_PREBUILT_BOOTIMAGE),$(INSTALLED_BOOTIMAGE_TARGET)))
 else # BOARD_PREBUILT_BOOTIMAGE not defined
 INSTALLED_BOOTIMAGE_TARGET :=
 endif # BOARD_PREBUILT_BOOTIMAGE
 endif # TARGET_NO_KERNEL
+endif # my_installed_prebuilt_gki_apex not defined
+
+my_apex_extracted_boot_image :=
+my_installed_prebuilt_gki_apex :=
 
 # -----------------------------------------------------------------
 # declare recovery ramdisk files
@@ -1275,6 +1297,9 @@ DEFAULT_TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS := ext4=max_batch_time=0,commit=1,d
 ifneq (true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED))
   INTERNAL_USERIMAGES_SPARSE_EXT_FLAG := -s
 endif
+ifneq (true,$(TARGET_USERIMAGES_SPARSE_EROFS_DISABLED))
+  INTERNAL_USERIMAGES_SPARSE_EROFS_FLAG := -s
+endif
 ifneq (true,$(TARGET_USERIMAGES_SPARSE_SQUASHFS_DISABLED))
   INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG := -s
 endif
@@ -1289,6 +1314,18 @@ INTERNAL_USERIMAGES_DEPS := \
 
 ifeq ($(TARGET_USERIMAGES_USE_F2FS),true)
 INTERNAL_USERIMAGES_DEPS += $(MKF2FSUSERIMG)
+endif
+
+ifneq ($(filter \
+    $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE) \
+    $(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE) \
+    $(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE) \
+    $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE) \
+    $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE) \
+    $(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE) \
+    $(BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE) \
+  ,erofs),)
+INTERNAL_USERIMAGES_DEPS += $(MKEROFSUSERIMG)
 endif
 
 ifneq ($(filter \
@@ -1471,6 +1508,7 @@ $(hide) echo "ext_mkuserimg=$(notdir $(MKEXTUSERIMG))" >> $(1)
 
 $(if $(INTERNAL_USERIMAGES_EXT_VARIANT),$(hide) echo "fs_type=$(INTERNAL_USERIMAGES_EXT_VARIANT)" >> $(1))
 $(if $(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG),$(hide) echo "extfs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG)" >> $(1))
+$(if $(INTERNAL_USERIMAGES_SPARSE_EROFS_FLAG),$(hide) echo "erofs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_EROFS_FLAG)" >> $(1))
 $(if $(INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG),$(hide) echo "squashfs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG)" >> $(1))
 $(if $(INTERNAL_USERIMAGES_SPARSE_F2FS_FLAG),$(hide) echo "f2fs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_F2FS_FLAG)" >> $(1))
 $(if $(BOARD_EXT4_SHARE_DUP_BLOCKS),$(hide) echo "ext4_share_dup_blocks=$(BOARD_EXT4_SHARE_DUP_BLOCKS)" >> $(1))
@@ -1893,19 +1931,10 @@ $(INSTALLED_RECOVERY_RAMDISK_BUILD_PROP_TARGET): $(INSTALLED_RAMDISK_BUILD_PROP_
 	$(copy-file-to-target)
 endif
 
-ifeq (truetrue,$(strip $(BUILDING_VENDOR_BOOT_IMAGE))$(strip $(AB_OTA_UPDATER)))
-  INTERNAL_RECOVERYIMAGE_ARGS := --ramdisk $(recovery_ramdisk)
+INTERNAL_RECOVERYIMAGE_ARGS := --ramdisk $(recovery_ramdisk)
 
-ifneq (true,$(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE))
-ifdef GENERIC_KERNEL_CMDLINE
-  INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(GENERIC_KERNEL_CMDLINE)"
-endif # GENERIC_KERNEL_CMDLINE != ""
-endif # BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE != true
-
-else # not (BUILDING_VENDOR_BOOT_IMAGE and AB_OTA_UPDATER)
-  INTERNAL_RECOVERYIMAGE_ARGS := \
-      $(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
-      --ramdisk $(recovery_ramdisk)
+ifneq (truetrue,$(strip $(BUILDING_VENDOR_BOOT_IMAGE))$(strip $(BOARD_USES_RECOVERY_AS_BOOT)))
+INTERNAL_RECOVERYIMAGE_ARGS += $(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET))
 # Assumes this has already been stripped
 ifneq (true,$(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE))
 ifdef INTERNAL_KERNEL_CMDLINE
@@ -1931,7 +1960,7 @@ endif
 ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
   INTERNAL_RECOVERYIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
 endif
-endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET not defined
+endif # (BUILDING_VENDOR_BOOT_IMAGE and BOARD_USES_RECOVERY_AS_BOOT)
 ifndef BOARD_RECOVERY_MKBOOTIMG_ARGS
   BOARD_RECOVERY_MKBOOTIMG_ARGS := $(BOARD_MKBOOTIMG_ARGS)
 endif
@@ -3717,7 +3746,7 @@ $(BUILT_KERNEL_CONFIGS_FILE): $(foreach pair,$(my_decompress_tools),$(call word-
 $(BUILT_KERNEL_CONFIGS_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_TARGET))
 	$< --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(firstword $(INSTALLED_KERNEL_TARGET)) \
 	  --output-configs $@ \
-	  --output-version $(BUILT_KERNEL_VERSION_FILE)
+	  --output-release $(BUILT_KERNEL_VERSION_FILE)
 
 my_decompress_tools :=
 
@@ -3726,7 +3755,7 @@ my_board_extracted_kernel :=
 
 endif # INSTALLED_KERNEL_TARGET
 
-check_vintf_compatible_args += --kernel $$(cat $(BUILT_KERNEL_VERSION_FILE)):$(BUILT_KERNEL_CONFIGS_FILE)
+check_vintf_compatible_args += --kernel $(BUILT_KERNEL_VERSION_FILE):$(BUILT_KERNEL_CONFIGS_FILE)
 check_vintf_compatible_deps += $(BUILT_KERNEL_CONFIGS_FILE) $(BUILT_KERNEL_VERSION_FILE)
 
 endif # PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
@@ -3927,6 +3956,8 @@ INTERNAL_OTATOOLS_MODULES := \
   mkbootimg \
   mke2fs \
   mke2fs.conf \
+  mkfs.erofs \
+  mkerofsimage.sh \
   mkf2fsuserimg.sh \
   mksquashfs \
   mksquashfsimage.sh \
@@ -4109,6 +4140,9 @@ ifdef BOARD_USES_VENDORIMAGE
 	$(hide) echo "board_uses_vendorimage=true" >> $@
 endif
 ifeq ($(BOARD_AVB_ENABLE),true)
+ifeq ($(BUILDING_VBMETA_IMAGE),true)
+	$(hide) echo "avb_building_vbmeta_image=true" >> $@
+endif # BUILDING_VBMETA_IMAGE
 	$(hide) echo "avb_enable=true" >> $@
 	$(hide) echo "avb_vbmeta_key_path=$(BOARD_AVB_KEY_PATH)" >> $@
 	$(hide) echo "avb_vbmeta_algorithm=$(BOARD_AVB_ALGORITHM)" >> $@
@@ -4207,6 +4241,9 @@ ifeq ($(BOARD_BOOTLOADER_IN_UPDATE_PACKAGE),true)
 endif
 ifeq ($(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE),true)
 	$(hide) echo "exclude_kernel_from_recovery_image=true" >> $@
+endif
+ifneq ($(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST),)
+	$(hide) echo "partial_ota_update_partitions_list=$(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST)" >> $@
 endif
 
 .PHONY: misc_info
@@ -4411,7 +4448,8 @@ endif
 
 ifdef BUILDING_BOOT_IMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_RAMDISK_FILES)
-else ifdef BOARD_PREBUILT_BOOTIMAGE
+endif
+ifneq (,$(INTERNAL_PREBUILT_BOOTIMAGE) $(filter true,$(BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES)))
   $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_BOOTIMAGE_TARGET)
 endif
 
@@ -4493,11 +4531,7 @@ else ifneq (true,$(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE))
 	cp $(firstword $(INSTALLED_KERNEL_TARGET)) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/kernel
 endif
 endif
-ifeq (truetrue,$(strip $(BUILDING_VENDOR_BOOT_IMAGE))$(strip $(AB_OTA_UPDATER)))
-ifneq (true,$(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE))
-	echo "$(GENERIC_KERNEL_CMDLINE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/cmdline
-endif # BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE != true
-else # not (BUILDING_VENDOR_BOOT_IMAGE and AB_OTA_UPDATER)
+ifneq (truetrue,$(strip $(BUILDING_VENDOR_BOOT_IMAGE))$(strip $(BOARD_USES_RECOVERY_AS_BOOT)))
 ifdef INSTALLED_2NDBOOTLOADER_TARGET
 	cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/second
 endif
@@ -4525,7 +4559,7 @@ endif
 ifdef BOARD_KERNEL_PAGESIZE
 	echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/pagesize
 endif
-endif # not (BUILDING_VENDOR_BOOT_IMAGE and AB_OTA_UPDATER)
+endif # not (BUILDING_VENDOR_BOOT_IMAGE and BOARD_USES_RECOVERY_AS_BOOT)
 endif # INSTALLED_RECOVERYIMAGE_TARGET defined or BOARD_USES_RECOVERY_AS_BOOT is true
 	@# Components of the boot image
 	$(hide) mkdir -p $(zip_root)/BOOT
@@ -4541,11 +4575,9 @@ endif
 ifdef INSTALLED_KERNEL_TARGET
 	$(hide) cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/BOOT/
 endif
-ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
+ifeq (true,$(BOARD_USES_GENERIC_KERNEL_IMAGE))
 	echo "$(GENERIC_KERNEL_CMDLINE)" > $(zip_root)/BOOT/cmdline
-else ifeq (true,$(BOARD_USES_GENERIC_KERNEL_IMAGE))
-	echo "$(GENERIC_KERNEL_CMDLINE)" > $(zip_root)/BOOT/cmdline
-else # INSTALLED_VENDOR_BOOTIMAGE_TARGET == "" && BOARD_USES_GENERIC_KERNEL_IMAGE != true
+else ifndef INSTALLED_VENDOR_BOOTIMAGE_TARGET # && BOARD_USES_GENERIC_KERNEL_IMAGE != true
 	echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/BOOT/cmdline
 ifdef INSTALLED_2NDBOOTLOADER_TARGET
 	cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/BOOT/second
@@ -4716,10 +4748,12 @@ ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
-ifdef BOARD_PREBUILT_BOOTIMAGE
+ifneq (,$(INTERNAL_PREBUILT_BOOTIMAGE) $(filter true,$(BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES)))
+ifdef INSTALLED_BOOTIMAGE_TARGET
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_BOOTIMAGE_TARGET) $(zip_root)/IMAGES/
-endif
+endif # INSTALLED_BOOTIMAGE_TARGET
+endif # INTERNAL_PREBUILT_BOOTIMAGE != "" || BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES == true
 ifdef BOARD_PREBUILT_ODMIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_ODMIMAGE_TARGET) $(zip_root)/IMAGES/
