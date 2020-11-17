@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "42b68389_4fc22258",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-17T05:19:43Z",
+      "side": 1,
+      "message": "Revisiting old pending reviews. Is this still relevant? Otherwise, abandon?",
+      "revId": "b766f5fd665857c04133f04e926e292d3442efb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
