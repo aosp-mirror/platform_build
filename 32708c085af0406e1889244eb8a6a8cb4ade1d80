@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e66dd5a4_7594cbc2",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-17T00:42:58Z",
+      "side": 1,
+      "message": "Do you need to limit this to LOCAL_IS_HOST_MODULE to prevent device modules from ending up in host-unit-tests.zip?",
+      "revId": "32708c085af0406e1889244eb8a6a8cb4ade1d80",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
