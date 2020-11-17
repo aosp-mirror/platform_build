@@ -33,6 +33,24 @@
       "message": "Please watch out downstream branches like Go devices, etc. In addition, I think this should be announced to keystone-downstream-issues@.",
       "revId": "9994e96c7d5833c6619a5b089dcf288fcbe7ee97",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a41ef531_eede86be",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-11-17T10:58:31Z",
+      "side": 1,
+      "message": "Well... on any downstream branches, if there are any targets launching with O or eariler, I think I should abandon this for now.",
+      "parentUuid": "8d7b7e92_b6769da0",
+      "revId": "9994e96c7d5833c6619a5b089dcf288fcbe7ee97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
