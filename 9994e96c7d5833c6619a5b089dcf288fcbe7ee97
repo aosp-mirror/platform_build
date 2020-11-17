@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "85552f6a_9fe0dedf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2020-11-17T10:05:24Z",
+      "side": 1,
+      "message": "I verified that all targets in internal branch succeeded \"m nothing\".",
+      "revId": "9994e96c7d5833c6619a5b089dcf288fcbe7ee97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
