@@ -4144,6 +4144,9 @@ ifdef BOARD_USES_VENDORIMAGE
 	$(hide) echo "board_uses_vendorimage=true" >> $@
 endif
 ifeq ($(BOARD_AVB_ENABLE),true)
+ifeq ($(BUILDING_VBMETA_IMAGE),true)
+	$(hide) echo "avb_building_vbmeta_image=true" >> $@
+endif # BUILDING_VBMETA_IMAGE
 	$(hide) echo "avb_enable=true" >> $@
 	$(hide) echo "avb_vbmeta_key_path=$(BOARD_AVB_KEY_PATH)" >> $@
 	$(hide) echo "avb_vbmeta_algorithm=$(BOARD_AVB_ALGORITHM)" >> $@
@@ -4242,6 +4245,9 @@ ifeq ($(BOARD_BOOTLOADER_IN_UPDATE_PACKAGE),true)
 endif
 ifeq ($(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE),true)
 	$(hide) echo "exclude_kernel_from_recovery_image=true" >> $@
+endif
+ifneq ($(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST),)
+	$(hide) echo "partial_ota_update_partitions_list=$(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST)" >> $@
 endif
 
 .PHONY: misc_info
