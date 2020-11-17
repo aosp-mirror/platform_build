@@ -374,6 +374,7 @@ PRODUCT_PROPERTY_OVERRIDES += ro.gfx.angle.supported=true
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
+    dmuserd \
     gdbserver \
     idlcli \
     init-debug.rc \
