@@ -34,6 +34,24 @@
       "parentUuid": "e66dd5a4_7594cbc2",
       "revId": "32708c085af0406e1889244eb8a6a8cb4ade1d80",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aee627bf_d56f586d",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-17T00:47:20Z",
+      "side": 1,
+      "message": "Tests supporting both would produce two variants, LOCAL_IS_HOST_MODULE would be true for one and false for the other.",
+      "parentUuid": "e1c8fd85_572145f5",
+      "revId": "32708c085af0406e1889244eb8a6a8cb4ade1d80",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
