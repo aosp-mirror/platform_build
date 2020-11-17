@@ -791,3 +791,10 @@ ifeq (true,$(BOARD_USES_GENERIC_KERNEL_IMAGE))
       Use BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT instead)
   endif
 endif
+
+ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+  ifeq (true,$(BOARD_USES_RECOVERY_AS_BOOT))
+    $(error BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT and BOARD_USES_RECOVERY_AS_BOOT cannot be \
+      both true. Recovery resources should be installed to either boot or vendor_boot, but not both)
+  endif
+endif
