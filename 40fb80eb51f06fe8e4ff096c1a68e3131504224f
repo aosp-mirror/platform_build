@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b285a917_cf8c0717",
+        "filename": "target/product/virtual_ab_ota_compression_retrofit.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-17T21:36:52Z",
+      "side": 1,
+      "message": "Can you please put a comment here to explain snapuserd_ramdisk, not vendor_ramdisk, is installed because device may not have a vendor_boot partition?",
+      "revId": "40fb80eb51f06fe8e4ff096c1a68e3131504224f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
