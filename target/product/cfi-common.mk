@@ -28,7 +28,8 @@ PRODUCT_CFI_INCLUDE_PATHS :=  \
     hardware/broadcom/wlan/bcmdhd/wpa_supplicant_8_lib \
     hardware/interfaces/nfc \
     hardware/qcom/wlan/qcwcn/wpa_supplicant_8_lib \
-    harware/interfaces/keymaster \
+    hardware/interfaces/keymaster \
+    hardware/interfaces/keymint \
     system/bt \
     system/chre \
     system/core/libnetutils \

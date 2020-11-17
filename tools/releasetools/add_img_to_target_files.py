@@ -959,8 +959,9 @@ def AddImagesToTargetFiles(filename):
           if item not in vbmeta_vendor.split()]
       vbmeta_partitions.append("vbmeta_vendor")
 
-    banner("vbmeta")
-    AddVBMeta(output_zip, partitions, "vbmeta", vbmeta_partitions)
+    if OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true":
+      banner("vbmeta")
+      AddVBMeta(output_zip, partitions, "vbmeta", vbmeta_partitions)
 
   if OPTIONS.info_dict.get("use_dynamic_partitions") == "true":
     banner("super_empty")
