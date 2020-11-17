@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a818e140_4c89ca08",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-11-17T00:40:56Z",
+      "side": 1,
+      "message": "Should mts-tzdata imply mts so modules don\u0027t have to specify both?",
+      "revId": "02b6cdf5e35b2713e7c9df23fd483d66db37198c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
