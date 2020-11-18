@@ -193,7 +193,11 @@ $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
 
 # Sets ro.actionable_compatible_property.enabled to know on runtime whether the
 # allowed list of actionable compatible properties is enabled or not.
-ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=true
+ifeq ($(PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE),true)
+ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=false
+else
+ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
+endif
 
 # Add the system server compiler filter if they are specified for the product.
 ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
