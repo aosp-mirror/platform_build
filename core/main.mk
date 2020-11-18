@@ -1639,6 +1639,7 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
 
 ifeq ($(SOONG_COLLECT_JAVA_DEPS), true)
   $(call dist-for-goals, dist_files, $(SOONG_OUT_DIR)/module_bp_java_deps.json)
+  $(call dist-for-goals, dist_files, $(PRODUCT_OUT)/module-info.json)
 endif
 
 .PHONY: apps_only
