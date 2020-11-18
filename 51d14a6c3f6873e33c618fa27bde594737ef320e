@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3d2197e_f6d83d7d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-11-18T02:05:02Z",
+      "side": 1,
+      "message": "We would need the signer in google3 if GKI needs it. I upload the change here in case there is a problem with the algorithm, or it\u0027s simply a bad idea to have a copy of the logic in Java :-)",
+      "revId": "51d14a6c3f6873e33c618fa27bde594737ef320e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
