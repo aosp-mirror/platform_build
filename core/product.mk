@@ -315,18 +315,12 @@ _product_list_vars += PRODUCT_CFI_EXCLUDE_PATHS
 # Whether the Scudo hardened allocator is disabled platform-wide
 _product_single_value_vars += PRODUCT_DISABLE_SCUDO
 
-# A flag to override PRODUCT_COMPATIBLE_PROPERTY
-_product_single_value_vars += PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE
-
 # List of extra VNDK versions to be included
 _product_list_vars += PRODUCT_EXTRA_VNDK_VERSIONS
 
 # VNDK version of product partition. It can be 'current' if the product
 # partitions uses PLATFORM_VNDK_VERSION.
 _product_single_value_vars += PRODUCT_PRODUCT_VNDK_VERSION
-
-# Whether the list of allowed of actionable compatible properties should be disabled or not
-_product_single_value_vars += PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE
 
 _product_single_value_vars += PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS
 _product_single_value_vars += PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT
