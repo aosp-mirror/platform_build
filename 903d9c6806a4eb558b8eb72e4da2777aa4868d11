@@ -34,6 +34,24 @@
       "parentUuid": "b6e5d9fe_5a70ea03",
       "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a38c391_8aaefa1f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-18T15:06:07Z",
+      "side": 1,
+      "message": "That should work, but I don\u0027t want to do that because\n\n1) the path has to passed twice: once in build_image, and then once again in mkuserimg_mke2fs\n2) 1) is not only cumbersome but also leaking the impl detail of mkuserimg_mke2fs to build_image\n3) mke2fs is not the only program that mkuserimg_mke2fs uses. e2fsdroid is the another one.",
+      "parentUuid": "324055b1_17b2fec6",
+      "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
