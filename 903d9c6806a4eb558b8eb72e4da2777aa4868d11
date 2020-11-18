@@ -52,6 +52,24 @@
       "parentUuid": "324055b1_17b2fec6",
       "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df27e35c_d86f53b0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-11-18T15:19:32Z",
+      "side": 1,
+      "message": "What I\u0027m worried about is the obscureness of this approach. It can lead to unpredictable results, and if that happens, it won\u0027t be easy to troubleshoot without you around.\n\n2) and 3) can be partly mitigated by supplying the host bin path instead.",
+      "parentUuid": "5a38c391_8aaefa1f",
+      "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
