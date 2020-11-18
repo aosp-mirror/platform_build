@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "77a52550_769f66cb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2020-11-18T22:38:05Z",
+      "side": 1,
+      "message": "Is this ready for review? the latest PS seems to be only a rebase.",
+      "revId": "19fcfb76533aec979cdb3728e58e9394128aeb45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
