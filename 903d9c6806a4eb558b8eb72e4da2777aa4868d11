@@ -16,6 +16,24 @@
       "message": "I am not sure if this is okay. If not, let me know what is the preferred way of doing this.",
       "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "324055b1_17b2fec6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-11-18T14:43:19Z",
+      "side": 1,
+      "message": "Is adding a flag for the mke2fs path to mkuserimg_mke2fs an option?",
+      "parentUuid": "b6e5d9fe_5a70ea03",
+      "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
