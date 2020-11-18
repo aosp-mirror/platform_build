@@ -107,7 +107,7 @@ ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 # All tests that should be skipped in presubmit check.
 ALL_DISABLED_PRESUBMIT_TESTS :=
 
-# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
+# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITE
 ALL_COMPATIBILITY_SUITES :=
 
 # All compatibility suite files to dist.
