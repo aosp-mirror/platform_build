@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea58510f_aafbc22e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-19T19:54:40Z",
+      "side": 1,
+      "message": "+gbiv to review, he has code that depend on .csv output.\n\nSaeid, could you give an example of output format you want in new .csv file?\nCurrent .csv output has 5 columns. Isn\u0027t the last one some description?\n\nDate,Build,Count,Project,Warning\n20200817,6771290,9,art,\"High: clang-analyzer-core, null pointer\"\n\nIf you want the exact warning messages at every source location,\nI think you can find and dump them in the WarningMessages tables included in .html file.\n\n",
+      "revId": "6c91a07bdee035d060fb8d5bb91a65ebf623b9b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "420d33ef_75b6d039",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-19T19:54:40Z",
+      "side": 1,
+      "message": "warning_messages and project_names not used?",
+      "range": {
+        "startLine": 336,
+        "startChar": 56,
+        "endLine": 337,
+        "endChar": 56
+      },
+      "revId": "6c91a07bdee035d060fb8d5bb91a65ebf623b9b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a1a9ef6_e25d54bd",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-19T19:54:40Z",
+      "side": 1,
+      "message": "Does this just write to the same flags.csvpath file twice, with and without description?",
+      "range": {
+        "startLine": 673,
+        "startChar": 14,
+        "endLine": 673,
+        "endChar": 27
+      },
+      "revId": "6c91a07bdee035d060fb8d5bb91a65ebf623b9b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c5dd1eba_6c6dfc1f",
+        "filename": "tools/warn/warn_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-19T19:54:40Z",
+      "side": 1,
+      "message": "With current write_out_csv, I think this extra call will dump the .html file twice,\nwhen flags.gencsv is false. Maybe you want to move this dual csv dump feature into write_out_csv?",
+      "range": {
+        "startLine": 578,
+        "startChar": 2,
+        "endLine": 584,
+        "endChar": 48
+      },
+      "revId": "6c91a07bdee035d060fb8d5bb91a65ebf623b9b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
