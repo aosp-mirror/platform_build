@@ -274,6 +274,12 @@ ifeq ($(my_module_path),)
   endif
 endif
 
+ifeq ($(LOCAL_IS_UNIT_TEST),true)
+  ifeq ($(LOCAL_IS_HOST_MODULE),true)
+    LOCAL_COMPATIBILITY_SUITE += host-unit-tests
+  endif
+endif
+
 ifeq ($(my_module_path),)
   install_path_var := $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS)
   ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
