@@ -16,6 +16,75 @@
       "message": "I\u0027d like to check each library in the variable and update linker.config.pb under /system/etc/ if target library exists under /system/lib(64). Can you please take a look as I\u0027m not quite familiar with Makefile? Thanks.",
       "revId": "b0ce8204990f90a755d8114eb0baf01c985b0544",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "93d3a77d_2a8caea9",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4393,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-19T03:47:44Z",
+      "side": 1,
+      "message": "This is bad. Input and output of a rule should be different.",
+      "range": {
+        "startLine": 4393,
+        "startChar": 80,
+        "endLine": 4393,
+        "endChar": 103
+      },
+      "revId": "b0ce8204990f90a755d8114eb0baf01c985b0544",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51429eb6_92ab3766",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4623,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-19T03:47:44Z",
+      "side": 1,
+      "message": "Why not merge the if blocks?",
+      "range": {
+        "startLine": 4623,
+        "startChar": 0,
+        "endLine": 4623,
+        "endChar": 27
+      },
+      "revId": "b0ce8204990f90a755d8114eb0baf01c985b0544",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5613f234_872504ac",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-19T03:47:44Z",
+      "side": 1,
+      "message": "This should be added to the prerequisite of the rule that uses this tool. core/Makefile:4495",
+      "range": {
+        "startLine": 298,
+        "startChar": 0,
+        "endLine": 298,
+        "endChar": 24
+      },
+      "revId": "b0ce8204990f90a755d8114eb0baf01c985b0544",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
