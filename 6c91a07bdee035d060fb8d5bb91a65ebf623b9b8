@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca7ad60f_a70b9f7a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-19T20:35:05Z",
+      "side": 1,
+      "message": "I think current csv has only 3 columns?\nCount,Project,Warning\n\nI\u0027d like to get the list of all the warning messages at every source location. something like:\nProject, Warning, Description (source path, error, etc)",
+      "parentUuid": "ea58510f_aafbc22e",
+      "revId": "6c91a07bdee035d060fb8d5bb91a65ebf623b9b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "420d33ef_75b6d039",
@@ -31,6 +49,30 @@
       "writtenOn": "2020-11-19T19:54:40Z",
       "side": 1,
       "message": "warning_messages and project_names not used?",
+      "range": {
+        "startLine": 336,
+        "startChar": 56,
+        "endLine": 337,
+        "endChar": 56
+      },
+      "revId": "6c91a07bdee035d060fb8d5bb91a65ebf623b9b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "049356a4_44a64b50",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-19T20:35:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "420d33ef_75b6d039",
       "range": {
         "startLine": 336,
         "startChar": 56,
@@ -64,6 +106,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3425d89_e6c4a115",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-19T20:35:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a1a9ef6_e25d54bd",
+      "range": {
+        "startLine": 673,
+        "startChar": 14,
+        "endLine": 673,
+        "endChar": 27
+      },
+      "revId": "6c91a07bdee035d060fb8d5bb91a65ebf623b9b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c5dd1eba_6c6dfc1f",
@@ -77,6 +143,30 @@
       "writtenOn": "2020-11-19T19:54:40Z",
       "side": 1,
       "message": "With current write_out_csv, I think this extra call will dump the .html file twice,\nwhen flags.gencsv is false. Maybe you want to move this dual csv dump feature into write_out_csv?",
+      "range": {
+        "startLine": 578,
+        "startChar": 2,
+        "endLine": 584,
+        "endChar": 48
+      },
+      "revId": "6c91a07bdee035d060fb8d5bb91a65ebf623b9b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba231d79_2fa00e90",
+        "filename": "tools/warn/warn_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-19T20:35:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c5dd1eba_6c6dfc1f",
       "range": {
         "startLine": 578,
         "startChar": 2,
