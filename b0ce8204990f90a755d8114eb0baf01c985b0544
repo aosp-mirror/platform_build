@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd092b4d_81233674",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-11-19T02:23:57Z",
+      "side": 1,
+      "message": "I\u0027d like to check each library in the variable and update linker.config.pb under /system/etc/ if target library exists under /system/lib(64). Can you please take a look as I\u0027m not quite familiar with Makefile? Thanks.",
+      "revId": "b0ce8204990f90a755d8114eb0baf01c985b0544",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
