@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa1fc9a2_8ea7ef0c",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-19T23:43:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "50938e40_c83ad4da",
+      "range": {
+        "startLine": 344,
+        "startChar": 0,
+        "endLine": 349,
+        "endChar": 57
+      },
+      "revId": "192c7a7beae38e47814973ea0935300e4dca7442",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e53a7ef7_fb15f736",
@@ -47,6 +71,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b0f9dd4_6a7d43d1",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-19T23:43:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e53a7ef7_fb15f736",
+      "range": {
+        "startLine": 354,
+        "startChar": 0,
+        "endLine": 354,
+        "endChar": 84
+      },
+      "revId": "192c7a7beae38e47814973ea0935300e4dca7442",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d346874a_5ab04731",
@@ -60,6 +108,30 @@
       "writtenOn": "2020-11-19T22:52:48Z",
       "side": 1,
       "message": "Not sure how important it is to you to sort the output, and the efficiency.\nYou can sort the list after reading in the csv, or\nyou can sort everything by (pattern-description, project, message):\n(1) collect all these tuples into a new list X, (2) sorted(X) (3) loop and dump X.",
+      "range": {
+        "startLine": 363,
+        "startChar": 38,
+        "endLine": 363,
+        "endChar": 56
+      },
+      "revId": "192c7a7beae38e47814973ea0935300e4dca7442",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb3ee9ad_3f502ec2",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-19T23:43:06Z",
+      "side": 1,
+      "message": "I don\u0027t have to sort at all. I am just gonna read this file in a separate script for analysis.",
+      "parentUuid": "d346874a_5ab04731",
       "range": {
         "startLine": 363,
         "startChar": 38,
