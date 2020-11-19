@@ -160,6 +160,24 @@
       "parentUuid": "59cf2c3c_806ba924",
       "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "76536acf_937fc427",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-19T18:26:45Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/q/topic:%22packaging%22+(status:open%20OR%20status:merged) implements the latter idea. PTAL.",
+      "parentUuid": "5d452fe7_cb93ecab",
+      "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
