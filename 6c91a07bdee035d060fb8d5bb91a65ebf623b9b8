@@ -36,6 +36,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f729c4b_5cdb7f05",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-19T22:52:48Z",
+      "side": 1,
+      "message": "Sorry, I was looking at aggregated warnings.csv, which has additional date and build id.",
+      "parentUuid": "ca7ad60f_a70b9f7a",
+      "revId": "6c91a07bdee035d060fb8d5bb91a65ebf623b9b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "420d33ef_75b6d039",

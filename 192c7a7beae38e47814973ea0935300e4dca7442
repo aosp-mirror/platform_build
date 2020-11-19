@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "50938e40_c83ad4da",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-19T22:52:48Z",
+      "side": 1,
+      "message": "The current csv output is changed to have one more column of empty strings.\nWhy do you need the new column?\nThe extra column might cause trouble to some current readers.",
+      "range": {
+        "startLine": 344,
+        "startChar": 0,
+        "endLine": 349,
+        "endChar": 57
+      },
+      "revId": "192c7a7beae38e47814973ea0935300e4dca7442",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e53a7ef7_fb15f736",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-19T22:52:48Z",
+      "side": 1,
+      "message": "This change is obsolete, right?",
+      "range": {
+        "startLine": 354,
+        "startChar": 0,
+        "endLine": 354,
+        "endChar": 84
+      },
+      "revId": "192c7a7beae38e47814973ea0935300e4dca7442",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d346874a_5ab04731",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-19T22:52:48Z",
+      "side": 1,
+      "message": "Not sure how important it is to you to sort the output, and the efficiency.\nYou can sort the list after reading in the csv, or\nyou can sort everything by (pattern-description, project, message):\n(1) collect all these tuples into a new list X, (2) sorted(X) (3) loop and dump X.",
+      "range": {
+        "startLine": 363,
+        "startChar": 38,
+        "endLine": 363,
+        "endChar": 56
+      },
+      "revId": "192c7a7beae38e47814973ea0935300e4dca7442",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
