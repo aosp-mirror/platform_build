@@ -88,6 +88,24 @@
       "parentUuid": "df27e35c_d86f53b0",
       "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54ccf4d9_b1020062",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-11-19T05:41:43Z",
+      "side": 1,
+      "message": "Let\u0027s say something breaks it later, and none of us are around. It\u0027s either mkuserimg_mke2fs failing to find mke2fs and/or e2fsdroid or executing wrong ones. It\u0027ll be very tricky for someone who doesn\u0027t know about this trick to figure out that they should start from checking the PATH env var. Most wouldn\u0027t even think of looking into the build_image code.\n\nIn contrast, if there was an explicit path flag, troubleshooting is as simple as checking if the executables are at the expected place, and if so, if they\u0027re the correct ones. Plus, it\u0027s less error-prone.",
+      "parentUuid": "fb0aeb22_01c4acd4",
+      "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
