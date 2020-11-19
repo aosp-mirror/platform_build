@@ -217,6 +217,25 @@ def InitLogging():
 def SetHostToolLocation(tool_name, location):
   OPTIONS.host_tools[tool_name] = location
 
+def FindHostToolPath(tool_name):
+  """Finds the path to the host tool.
+
+  Args:
+    tool_name: name of the tool to find
+  Returns:
+    path to the tool if found under either one of the host_tools map or under
+    the same directory as this binary is located at. If not found, tool_name
+    is returned.
+  """
+  if tool_name in OPTIONS.host_tools:
+    return OPTIONS.host_tools[tool_name]
+
+  my_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+  tool_path = os.path.join(my_dir, tool_name)
+  if os.path.exists(tool_path):
+    return tool_path
+
+  return tool_name
 
 def Run(args, verbose=None, **kwargs):
   """Creates and returns a subprocess.Popen object.
@@ -240,12 +259,10 @@ def Run(args, verbose=None, **kwargs):
   if 'universal_newlines' not in kwargs:
     kwargs['universal_newlines'] = True
 
-  # If explicitly set host tool location before, use that location to avoid
-  # PATH violation. Make a copy of args in case client relies on the content
-  # of args later.
-  if args and args[0] in OPTIONS.host_tools:
+  if args:
+    # Make a copy of args in case client relies on the content of args later.
     args = args[:]
-    args[0] = OPTIONS.host_tools[args[0]]
+    args[0] = FindHostToolPath(args[0])
 
   # Don't log any if caller explicitly says so.
   if verbose:
