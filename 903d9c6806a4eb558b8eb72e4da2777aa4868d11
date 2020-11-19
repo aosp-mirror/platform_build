@@ -142,6 +142,24 @@
       "parentUuid": "7e8a4608_ee8f955e",
       "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5d452fe7_cb93ecab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-19T17:17:50Z",
+      "side": 1,
+      "message": "For example, in case of apexer.py (which internally uses a lot of other host tools), the host tool dir path is given to the script as an argument. https://source.corp.google.com/android/build/soong/apex/builder.go;l\u003d113?q\u003dapexer_tool_path\u0026sq\u003dpackage:%5Eandroid$ \n\nThen it tries to find a tool in the directory. https://source.corp.google.com/android/system/apex/apexer/apexer.py;rcl\u003def641ba5fc5df1f17c68cb030487868409e26658;l\u003d184\n\nWhat I really want to avoid is putting the knowledge (name, path, etc.) about mke2fs and e2fsdroid in build_image. The reason is because they are internal details of mkuserimg_mke2fs that build_image should care about.\n\nIf you suggest adding an option like --tool_path in both build_image and mkuserimg_mke2fs and setting it to out/host/soong/linux-x86/bin in the Soong side. Then I think --tool_path is essentially PATH, which makes me to wonder what do we get by doing this.\n\n--------------------------\nAnother alternative is for letting mkuserimg_mke2fs to examine its own directory (which would be the host tool dir) when invoking its internal tools. If that sounds ok, I will do that.",
+      "parentUuid": "59cf2c3c_806ba924",
+      "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
