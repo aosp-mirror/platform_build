@@ -196,6 +196,24 @@
       "parentUuid": "76536acf_937fc427",
       "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75b7a511_71c2d07c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-19T23:50:07Z",
+      "side": 1,
+      "message": "The commit message in aosp/1505833 explains potential problems with the toolpath approach.\n\nAnyway, it\u0027s good to know that the alternative is also fine. Let me abandon this.",
+      "parentUuid": "87535e23_6d00e73c",
+      "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
