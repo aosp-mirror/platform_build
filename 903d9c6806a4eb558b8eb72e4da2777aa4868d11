@@ -124,6 +124,24 @@
       "parentUuid": "54ccf4d9_b1020062",
       "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59cf2c3c_806ba924",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-11-19T16:44:44Z",
+      "side": 1,
+      "message": "Two points about other tools depending on another tool.\n- How do they address this PATH issue? Can you do the same to mkuserimg_mke2fs?\n- Even if they all are doing something really hacky to achieve what they want, it can\u0027t be an excuse to repeat the same mistake over and over.\n\nWhat\u0027s the problem with fixing this starting from the mkuserimg_mke2fs? If it\u0027s the right way, shouldn\u0027t we do it even if it involves some more work?",
+      "parentUuid": "7e8a4608_ee8f955e",
+      "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
