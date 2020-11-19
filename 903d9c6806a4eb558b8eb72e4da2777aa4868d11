@@ -70,6 +70,24 @@
       "parentUuid": "5a38c391_8aaefa1f",
       "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb0aeb22_01c4acd4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-19T04:00:28Z",
+      "side": 1,
+      "message": "This in effect is supplying host bin path, isn\u0027t it? PATH is already set to point there, and isn\u0027t pointing anywhere around /usr/bin, etc.",
+      "parentUuid": "df27e35c_d86f53b0",
+      "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
