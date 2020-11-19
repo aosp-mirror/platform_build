@@ -178,6 +178,24 @@
       "parentUuid": "5d452fe7_cb93ecab",
       "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87535e23_6d00e73c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-11-19T23:14:08Z",
+      "side": 1,
+      "message": "\u003e If you suggest adding an option like --tool_path in both build_image and mkuserimg_mke2fs and setting it to out/host/soong/linux-x86/bin in the Soong side. Then I think --tool_path is essentially PATH, which makes me to wonder what do we get by doing this.\n\nYes, this is the correct way, IMO. It provides clear visibility to the path where mkuserimg_mke2fs finds the tools, so it makes it much easier to troubleshoot issues if anything happens to this setup.\n\nYour alternative looks fine to me though. I still think the --tool_path approach is the way to go. But the alternative at least makes it clear which path can be used for tool searching, so I\u0027m not worried about potential debugging difficulties.",
+      "parentUuid": "76536acf_937fc427",
+      "revId": "903d9c6806a4eb558b8eb72e4da2777aa4868d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
