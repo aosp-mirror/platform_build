@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b7f8874_486cf6cf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1096946
+      },
+      "writtenOn": "2020-11-20T14:44:39Z",
+      "side": 1,
+      "message": "i\u0027m ooo for a bit, so feel free to land without my stamp\n\n",
+      "revId": "97650f0cc229baf5859c3fd15cef3eea890851f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e9cf1133_a245076c",
@@ -20,6 +37,47 @@
         "endLine": 370,
         "endChar": 74
       },
+      "revId": "97650f0cc229baf5859c3fd15cef3eea890851f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a898e84e_6e718f35",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1096946
+      },
+      "writtenOn": "2020-11-20T14:44:39Z",
+      "side": 1,
+      "message": "(if it\u0027s not much extra effort, i\u0027d recommend sorting the output anyway. dict ordering is only guaranteed to be stable in newish versions of python, and nondeterministic output makes some forms of debugging way harder.)",
+      "parentUuid": "e9cf1133_a245076c",
+      "range": {
+        "startLine": 365,
+        "startChar": 0,
+        "endLine": 370,
+        "endChar": 74
+      },
+      "revId": "97650f0cc229baf5859c3fd15cef3eea890851f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4dd4df6e_3a5d8a50",
+        "filename": "tools/warn/warn_common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1096946
+      },
+      "writtenOn": "2020-11-20T14:44:39Z",
+      "side": 1,
+      "message": "nit: please provide some indication of how this differs from `--csvpath` in the help description",
       "revId": "97650f0cc229baf5859c3fd15cef3eea890851f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
