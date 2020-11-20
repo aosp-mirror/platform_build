@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch.mk)
 
-PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
+PRODUCT_OTA_FORCE_NON_AB_PACKAGE := true
 
-PRODUCT_PACKAGES += snapuserd.vendor_ramdisk snapuserd
+PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.allow_non_ab=true
