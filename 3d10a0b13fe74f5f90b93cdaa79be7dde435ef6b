@@ -112,6 +112,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "4bc1372e_044a6724",
+        "filename": "target/product/generic_ramdisk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-20T19:45:25Z",
+      "side": 1,
+      "message": "hmm I don\u0027t think that\u0027s the case. What is the error you get?",
+      "parentUuid": "ce199e59_03ae72cc",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 0
+      },
+      "revId": "3d10a0b13fe74f5f90b93cdaa79be7dde435ef6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "e0aefca4_a6bfa881",
