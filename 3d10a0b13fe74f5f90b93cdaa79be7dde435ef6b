@@ -221,6 +221,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "d319ed9f_8c2c0580",
+        "filename": "target/product/generic_ramdisk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-20T19:53:59Z",
+      "side": 1,
+      "message": "ah, it\u0027s because of require-artifacts-in-path, and it\u0027s a bug. Pretty insignificant though, setting these doesn\u0027t really matter.",
+      "parentUuid": "c4ebfe24_3b37c46c",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 0
+      },
+      "revId": "3d10a0b13fe74f5f90b93cdaa79be7dde435ef6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "e0aefca4_a6bfa881",
         "filename": "target/product/generic_ramdisk.mk",
         "patchSetId": 1
