@@ -67,6 +67,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "53df6488_9500fc17",
+        "filename": "target/product/generic_ramdisk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-20T19:50:27Z",
+      "side": 1,
+      "message": "Anton/Colin, does it make sense to wrap the whole file with\n\n  #ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))\n\n? This product makefile only makes sense for devices using GKI, but aosp_car_arm64.mk inherits from generic_arm64/device.mk which inherits from this.",
+      "revId": "3d10a0b13fe74f5f90b93cdaa79be7dde435ef6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "62b6e690_92b0cca9",
         "filename": "target/product/generic_ramdisk.mk",
         "patchSetId": 1
