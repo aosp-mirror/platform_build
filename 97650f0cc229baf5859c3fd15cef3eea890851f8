@@ -65,6 +65,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4b74b28_3c03a885",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-20T23:20:47Z",
+      "side": 1,
+      "message": "Updated the code to add sorting.",
+      "parentUuid": "a898e84e_6e718f35",
+      "range": {
+        "startLine": 365,
+        "startChar": 0,
+        "endLine": 370,
+        "endChar": 74
+      },
+      "revId": "97650f0cc229baf5859c3fd15cef3eea890851f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4dd4df6e_3a5d8a50",
@@ -78,6 +102,24 @@
       "writtenOn": "2020-11-20T14:44:39Z",
       "side": 1,
       "message": "nit: please provide some indication of how this differs from `--csvpath` in the help description",
+      "revId": "97650f0cc229baf5859c3fd15cef3eea890851f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "936a2b65_33a2085a",
+        "filename": "tools/warn/warn_common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-20T23:20:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4dd4df6e_3a5d8a50",
       "revId": "97650f0cc229baf5859c3fd15cef3eea890851f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
