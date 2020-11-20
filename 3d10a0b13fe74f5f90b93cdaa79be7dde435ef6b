@@ -84,6 +84,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ad661be9_b859227c",
+        "filename": "target/product/generic_ramdisk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-20T19:51:57Z",
+      "side": 1,
+      "message": "BoardConfig is evaluated after the product config, so that will not have the intended effect I think",
+      "parentUuid": "53df6488_9500fc17",
+      "revId": "3d10a0b13fe74f5f90b93cdaa79be7dde435ef6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "62b6e690_92b0cca9",
         "filename": "target/product/generic_ramdisk.mk",
         "patchSetId": 1
@@ -167,6 +185,30 @@
       "side": 1,
       "message": "elsk:/mnt/sdb/android/master$ lunch aosp_arm64\nIn file included from build/make/core/config.mk:312:\nIn file included from build/make/core/envsetup.mk:308:\nbuild/make/core/product_config.mk:170: error: build/make/target/product/generic_ramdisk.mk: PRODUCT_NAME must be defined..\n11:46:33 dumpvars failed with: exit status 1",
       "parentUuid": "4bc1372e_044a6724",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 0
+      },
+      "revId": "3d10a0b13fe74f5f90b93cdaa79be7dde435ef6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4ebfe24_3b37c46c",
+        "filename": "target/product/generic_ramdisk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-20T19:51:57Z",
+      "side": 1,
+      "message": "weird! I will investigate that ..",
+      "parentUuid": "5c59f290_43fe0aab",
       "range": {
         "startLine": 21,
         "startChar": 0,
