@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a09d1303_7440c8ec",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2020-11-20T18:56:02Z",
+      "side": 1,
+      "message": "(Removed from topic https://android-review.googlesource.com/q/topic:%22host_init_partitions%22+(status:open%20OR%20status:merged) for now because there are still devices on Android 11 that fail this check when merging and need to be updated.)",
+      "revId": "246df17ef06da5e9ccc7979ec98df02271a52416",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
