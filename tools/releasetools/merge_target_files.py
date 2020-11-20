@@ -456,6 +456,12 @@ def process_misc_info_txt(framework_target_files_temp_dir,
     # false in the partial builds to prevent duplicate building of super.img.
     merged_dict['build_super_partition'] = 'true'
 
+  # If AVB is enabled then ensure that we build vbmeta.img.
+  # Partial builds with AVB enabled may set PRODUCT_BUILD_VBMETA_IMAGE=false to
+  # skip building an incomplete vbmeta.img.
+  if merged_dict.get('avb_enable') == 'true':
+    merged_dict['avb_building_vbmeta_image'] = 'true'
+
   # Replace <image>_selinux_fc values with framework or vendor file_contexts.bin
   # depending on which dictionary the key came from.
   # Only the file basename is required because all selinux_fc properties are
