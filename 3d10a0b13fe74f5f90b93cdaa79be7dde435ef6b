@@ -48,6 +48,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "68c7b07f_ca0be866",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-20T19:33:34Z",
+      "side": 1,
+      "message": "Need to fix aosp_car_arm64:\n\n\u003e Offending entries:\n\u003e recovery/root/first_stage_ramdisk/system/bin/e2fsck",
+      "revId": "3d10a0b13fe74f5f90b93cdaa79be7dde435ef6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "62b6e690_92b0cca9",
