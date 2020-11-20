@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9cf1133_a245076c",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-20T07:37:44Z",
+      "side": 1,
+      "message": "Isn\u0027t the \u0027project\u0027 an index number?\nDon\u0027t you want the name in project_list[project][0]?\nIf you don\u0027t need the output sorted, maybe you can just use two loops like this:\n  for pattern in warn_patterns:\n    for member in pattern[\u0027members\u0027]:\n       # output [project_list[warning_records[member][1]][0], pattern[\u0027description\u0027], ...]",
+      "range": {
+        "startLine": 365,
+        "startChar": 0,
+        "endLine": 370,
+        "endChar": 74
+      },
+      "revId": "97650f0cc229baf5859c3fd15cef3eea890851f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
