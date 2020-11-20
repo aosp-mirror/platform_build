@@ -17,6 +17,7 @@
 # This is a set of common components to enable CFI for (across
 # compatible product configs)
 PRODUCT_CFI_INCLUDE_PATHS :=  \
+    device/generic/goldfish/wifi/wpa_supplicant_8_lib \
     device/google/cuttlefish/guest/libs/wpa_supplicant_8_lib \
     device/google/wahoo/wifi_offload \
     external/tinyxml2 \
