@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f6a6525_69ad33fa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-11-20T03:37:29Z",
+      "side": 1,
+      "message": "Oh, sorry about this. \n\n(Didn\u0027t anticipate the problem here). ",
+      "revId": "38888d390f299ac576b3145b520cda2dcb897095",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
