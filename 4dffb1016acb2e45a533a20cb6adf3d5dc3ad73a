@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f70a3e1_8f5260fb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-21T00:44:50Z",
+      "side": 1,
+      "message": "Please also run gpylint through new changed code. Thanks.\n",
+      "revId": "4dffb1016acb2e45a533a20cb6adf3d5dc3ad73a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00f2bb01_62aae6fe",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-21T00:44:50Z",
+      "side": 1,
+      "message": "I got some index errors running the code.\nPlease take a look of the comments about warn_patterns\nand warning_records lists in the header of warn_common.py.\nYou can test with Android continuous build output build.log.  \nTry with some partial log file first and then a full one.\n\nI think the following code output is what you want,\nwith additional parameter project_names:\n\n  csv_output \u003d sorted(map(lambda x:\n                          [project_names[x[1]],\n                           warn_patterns[x[0]][\u0027description\u0027],\n                           warning_messages[x[3]]],\n                          warning_records))",
+      "range": {
+        "startLine": 364,
+        "startChar": 0,
+        "endLine": 369,
+        "endChar": 77
+      },
+      "revId": "4dffb1016acb2e45a533a20cb6adf3d5dc3ad73a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
