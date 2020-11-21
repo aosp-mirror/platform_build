@@ -120,7 +120,7 @@ _product_single_value_vars += PRODUCT_MODEL
 # The resoure configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
 _product_list_vars += PRODUCT_AAPT_CONFIG
-_product_list_vars += PRODUCT_AAPT_PREF_CONFIG
+_product_single_value_vars += PRODUCT_AAPT_PREF_CONFIG
 _product_list_vars += PRODUCT_AAPT_PREBUILT_DPI
 _product_list_vars += PRODUCT_HOST_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES
@@ -209,7 +209,7 @@ _product_list_vars += PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP
 _product_list_vars += PRODUCT_SOONG_NAMESPACES
 
 _product_list_vars += PRODUCT_DEFAULT_WIFI_CHANNELS
-_product_list_vars += PRODUCT_DEFAULT_DEV_CERTIFICATE
+_product_single_value_vars += PRODUCT_DEFAULT_DEV_CERTIFICATE
 _product_list_vars += PRODUCT_MAINLINE_SEPOLICY_DEV_CERTIFICATES
 _product_list_vars += PRODUCT_RESTRICT_VENDOR_FILES
 
@@ -233,7 +233,7 @@ _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
 # List of system_server jars delivered via apex. Format = <apex name>:<jar name>.
 _product_list_vars += PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS
 # If true, then suboptimal order of system server jars does not cause an error.
-_product_list_vars += PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS
+_product_single_value_vars += PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS
 
 # Additional system server jars to be appended at the end of the common list.
 # This is necessary to avoid jars reordering due to makefile inheritance order.
@@ -258,13 +258,13 @@ _product_single_value_vars += PRODUCT_OTHER_JAVA_DEBUG_INFO
 
 # Per-module dex-preopt configs.
 _product_list_vars += PRODUCT_DEX_PREOPT_MODULE_CONFIGS
-_product_list_vars += PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER
+_product_single_value_vars += PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER
 _product_list_vars += PRODUCT_DEX_PREOPT_DEFAULT_FLAGS
-_product_list_vars += PRODUCT_DEX_PREOPT_BOOT_FLAGS
-_product_list_vars += PRODUCT_DEX_PREOPT_PROFILE_DIR
-_product_list_vars += PRODUCT_DEX_PREOPT_GENERATE_DM_FILES
-_product_list_vars += PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING
-_product_list_vars += PRODUCT_DEX_PREOPT_RESOLVE_STARTUP_STRINGS
+_product_single_value_vars += PRODUCT_DEX_PREOPT_BOOT_FLAGS
+_product_single_value_vars += PRODUCT_DEX_PREOPT_PROFILE_DIR
+_product_single_value_vars += PRODUCT_DEX_PREOPT_GENERATE_DM_FILES
+_product_single_value_vars += PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING
+_product_single_value_vars += PRODUCT_DEX_PREOPT_RESOLVE_STARTUP_STRINGS
 
 # Boot image options.
 _product_single_value_vars += \
@@ -272,7 +272,7 @@ _product_single_value_vars += \
     PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
     PRODUCT_USES_DEFAULT_ART_CONFIG \
 
-_product_list_vars += PRODUCT_SYSTEM_SERVER_COMPILER_FILTER
+_product_single_value_vars += PRODUCT_SYSTEM_SERVER_COMPILER_FILTER
 # Per-module sanitizer configs
 _product_list_vars += PRODUCT_SANITIZER_MODULE_CONFIGS
 _product_single_value_vars += PRODUCT_SYSTEM_BASE_FS_PATH
