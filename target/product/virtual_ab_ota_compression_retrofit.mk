@@ -14,9 +14,11 @@
 # limitations under the License.
 #
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota_retrofit.mk)
-
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
 
-PRODUCT_PACKAGES += snapuserd_ramdisk
-
+# For devices that are not GKI-capable (eg do not have vendor_boot),
+# snapuserd.ramdisk is included rather than snapuserd.vendor_ramdisk.
+# When using virtual_ab_ota_compression_retrofit.mk, either
+# virtual_ab_ota.mk or virtual_ab_ota_retrofit.mk must be inherited
+# as well.
+PRODUCT_PACKAGES += snapuserd.ramdisk snapuserd
