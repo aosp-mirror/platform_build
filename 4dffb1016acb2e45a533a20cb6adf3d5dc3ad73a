@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5862b809_3d22f273",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-23T22:29:56Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "7f70a3e1_8f5260fb",
+      "revId": "4dffb1016acb2e45a533a20cb6adf3d5dc3ad73a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "00f2bb01_62aae6fe",
@@ -31,6 +49,30 @@
       "writtenOn": "2020-11-21T00:44:50Z",
       "side": 1,
       "message": "I got some index errors running the code.\nPlease take a look of the comments about warn_patterns\nand warning_records lists in the header of warn_common.py.\nYou can test with Android continuous build output build.log.  \nTry with some partial log file first and then a full one.\n\nI think the following code output is what you want,\nwith additional parameter project_names:\n\n  csv_output \u003d sorted(map(lambda x:\n                          [project_names[x[1]],\n                           warn_patterns[x[0]][\u0027description\u0027],\n                           warning_messages[x[3]]],\n                          warning_records))",
+      "range": {
+        "startLine": 364,
+        "startChar": 0,
+        "endLine": 369,
+        "endChar": 77
+      },
+      "revId": "4dffb1016acb2e45a533a20cb6adf3d5dc3ad73a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c1679f9e_21ab5809",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-23T22:29:56Z",
+      "side": 1,
+      "message": "I updated the code and it generates the output I need. please run the code again and let me know if you see the error again.",
+      "parentUuid": "00f2bb01_62aae6fe",
       "range": {
         "startLine": 364,
         "startChar": 0,
