@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aba92abd_e69b5c42",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-23T23:27:51Z",
+      "side": 1,
+      "message": "Now it complains about:\n\n```\nbuild/make/core/main.mk:1334: warning: build/make/target/product/generic_ramdisk.mk includes redundant allowed entries in its artifact path requirement.\nOffending entries:\nrecovery/root/first_stage_ramdisk/system/bin/e2fsck\n```\n\nI guess I\u0027ll have to move e2fsck before merging this. Anton, do you know any quick workarounds? Some devices may install this but some may install to COPY_OUT_RAMDISK.",
+      "revId": "24f1983a8bdc1e0a02e2cedb3abc366b954ca4b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
