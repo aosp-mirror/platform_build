@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab1af8ab_f0e1e967",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1094,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-11-23T19:41:41Z",
+      "side": 1,
+      "message": "nit: unrelated change",
+      "range": {
+        "startLine": 1094,
+        "startChar": 11,
+        "endLine": 1094,
+        "endChar": 15
+      },
+      "revId": "caf7bbc39ea083115f49ef5a7d1f52ce5c448126",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
