@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2fcb33ba_7a76d4c7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2020-11-23T07:10:05Z",
+      "side": 1,
+      "message": "Yay! Cleanups for the win :)",
+      "revId": "341928ecc5da205401bcfd86f098662b0cee7857",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
