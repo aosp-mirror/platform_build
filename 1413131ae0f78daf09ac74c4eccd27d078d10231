@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "187f8721_b93924c4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1805296
+      },
+      "writtenOn": "2020-11-23T05:08:23Z",
+      "side": 1,
+      "message": "ngoquocthangkg1987@gmail.com",
+      "revId": "1413131ae0f78daf09ac74c4eccd27d078d10231",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
