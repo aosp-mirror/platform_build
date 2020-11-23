@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "50489b07_ec90cbdc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1697666
+      },
+      "writtenOn": "2020-11-23T11:04:12Z",
+      "side": 1,
+      "message": "Daniel, would this be equivalent to setting PAC/BTI for all build artefacts? ",
+      "revId": "55876f9e398d63d63ac7485544e1168faec2ff69",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
