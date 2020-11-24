@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3c825da5_4039425a",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2462,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2020-11-24T02:26:38Z",
+      "side": 1,
+      "message": "Isn\u0027t this too much? I\u0027m still worried about /system/etc/linker.config.pb depending on everything on /system partition.",
+      "range": {
+        "startLine": 2462,
+        "startChar": 25,
+        "endLine": 2462,
+        "endChar": 50
+      },
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6f5e73a6_e4d55d55",
         "filename": "core/Makefile",
         "patchSetId": 5
