@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01854618_3978b39b",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-24T01:38:41Z",
+      "side": 1,
+      "message": "This incorrectly repeated every pattern member for all projects.\nI don\u0027t see an easy way to get the project name of a member in pattern[\u0027member\u0027].\nIt\u0027s easier to get everything through the aggregated \"warning_records\", which has index to project_names, warn_patterns, and warning_messages.",
+      "range": {
+        "startLine": 366,
+        "startChar": 0,
+        "endLine": 366,
+        "endChar": 46
+      },
+      "revId": "957b613d5f447df801fcefa640d82dcf03856575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "982ef902_55fdae79",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-24T01:38:41Z",
+      "side": 1,
+      "message": "The key function is not needed here.\n  csv_output \u003d sorted(csv_output)\nshould compare lists in order by default.",
+      "range": {
+        "startLine": 371,
+        "startChar": 0,
+        "endLine": 372,
+        "endChar": 43
+      },
+      "revId": "957b613d5f447df801fcefa640d82dcf03856575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
