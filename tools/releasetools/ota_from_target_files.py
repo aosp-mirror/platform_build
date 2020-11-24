@@ -269,6 +269,7 @@ OPTIONS.extracted_input = None
 OPTIONS.skip_postinstall = False
 OPTIONS.skip_compatibility_check = False
 OPTIONS.disable_fec_computation = False
+OPTIONS.disable_verity_computation = False
 OPTIONS.partial = None
 OPTIONS.custom_images = {}
 
@@ -402,6 +403,8 @@ class Payload(object):
       cmd.extend(["--source_image", source_file])
       if OPTIONS.disable_fec_computation:
         cmd.extend(["--disable_fec_computation", "true"])
+      if OPTIONS.disable_verity_computation:
+        cmd.extend(["--disable_verity_computation", "true"])
     cmd.extend(additional_args)
     self._Run(cmd)
 
@@ -1038,6 +1041,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
       # TODO(zhangkelvin) Remove this once FEC on VABC is supported
       logger.info("Virtual AB Compression enabled, disabling FEC")
       OPTIONS.disable_fec_computation = True
+      OPTIONS.disable_verity_computation = True
   else:
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
@@ -1087,7 +1091,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   additional_args += ["--max_timestamp", max_timestamp]
 
   if SupportsMainlineGkiUpdates(source_file):
-    logger.info("Detected build with mainline GKI, include full boot image.")
+    logger.warn("Detected build with mainline GKI, include full boot image.")
     additional_args.extend(["--full_boot", "true"])
 
   payload.Generate(
@@ -1228,6 +1232,8 @@ def main(argv):
       OPTIONS.output_metadata_path = a
     elif o == "--disable_fec_computation":
       OPTIONS.disable_fec_computation = True
+    elif o == "--disable_verity_computation":
+      OPTIONS.disable_verity_computation = True
     elif o == "--force_non_ab":
       OPTIONS.force_non_ab = True
     elif o == "--boot_variable_file":
@@ -1276,6 +1282,7 @@ def main(argv):
                                  "skip_compatibility_check",
                                  "output_metadata_path=",
                                  "disable_fec_computation",
+                                 "disable_verity_computation",
                                  "force_non_ab",
                                  "boot_variable_file=",
                                  "partial=",
