@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3801e217_567be194",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-24T05:47:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01854618_3978b39b",
+      "range": {
+        "startLine": 366,
+        "startChar": 0,
+        "endLine": 366,
+        "endChar": 46
+      },
+      "revId": "957b613d5f447df801fcefa640d82dcf03856575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "982ef902_55fdae79",
@@ -37,6 +61,30 @@
       "writtenOn": "2020-11-24T01:38:41Z",
       "side": 1,
       "message": "The key function is not needed here.\n  csv_output \u003d sorted(csv_output)\nshould compare lists in order by default.",
+      "range": {
+        "startLine": 371,
+        "startChar": 0,
+        "endLine": 372,
+        "endChar": 43
+      },
+      "revId": "957b613d5f447df801fcefa640d82dcf03856575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "13faa0e2_2b2f38df",
+        "filename": "tools/warn/html_writer.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 1600736
+      },
+      "writtenOn": "2020-11-24T05:47:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "982ef902_55fdae79",
       "range": {
         "startLine": 371,
         "startChar": 0,
