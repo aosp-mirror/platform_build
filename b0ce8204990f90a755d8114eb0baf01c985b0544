@@ -41,6 +41,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4de4bf05_dcc9a10c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4393,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-11-24T01:51:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93d3a77d_2a8caea9",
+      "range": {
+        "startLine": 4393,
+        "startChar": 80,
+        "endLine": 4393,
+        "endChar": 103
+      },
+      "revId": "b0ce8204990f90a755d8114eb0baf01c985b0544",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "51429eb6_92ab3766",
@@ -66,6 +90,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ee64ae58_57349b76",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4623,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-11-24T01:51:04Z",
+      "side": 1,
+      "message": "Moved block to other location.",
+      "parentUuid": "51429eb6_92ab3766",
+      "range": {
+        "startLine": 4623,
+        "startChar": 0,
+        "endLine": 4623,
+        "endChar": 27
+      },
+      "revId": "b0ce8204990f90a755d8114eb0baf01c985b0544",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5613f234_872504ac",
         "filename": "target/product/base_system.mk",
         "patchSetId": 4
@@ -77,6 +125,30 @@
       "writtenOn": "2020-11-19T03:47:44Z",
       "side": 1,
       "message": "This should be added to the prerequisite of the rule that uses this tool. core/Makefile:4495",
+      "range": {
+        "startLine": 298,
+        "startChar": 0,
+        "endLine": 298,
+        "endChar": 24
+      },
+      "revId": "b0ce8204990f90a755d8114eb0baf01c985b0544",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "209b2a88_6dab720f",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-11-24T01:51:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5613f234_872504ac",
       "range": {
         "startLine": 298,
         "startChar": 0,
