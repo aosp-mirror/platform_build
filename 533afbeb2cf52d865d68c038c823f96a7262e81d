@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6f5e73a6_e4d55d55",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2463,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-24T02:07:18Z",
+      "side": 1,
+      "message": "consider breaking lines for better readability",
+      "range": {
+        "startLine": 2463,
+        "startChar": 57,
+        "endLine": 2463,
+        "endChar": 174
+      },
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2ae6641_121f9417",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2473,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-24T02:07:18Z",
+      "side": 1,
+      "message": "This seems wrong to me because `m out/target/product/.../system.img` wouldn\u0027t create or update the config file.",
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
