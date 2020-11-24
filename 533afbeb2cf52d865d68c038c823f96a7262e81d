@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d25ced1e_233387bf",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2462,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2020-11-24T06:06:54Z",
+      "side": 1,
+      "message": "I\u0027m not sure but in aosp/1435451 shows how you can iterate over modules to be installed.",
+      "parentUuid": "d0594c23_70102743",
+      "range": {
+        "startLine": 2462,
+        "startChar": 25,
+        "endLine": 2462,
+        "endChar": 50
+      },
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6f5e73a6_e4d55d55",
         "filename": "core/Makefile",
         "patchSetId": 5
