@@ -152,6 +152,24 @@
       "parentUuid": "d2ae6641_121f9417",
       "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91a0f40e_d2a60fe2",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2473,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-24T08:13:40Z",
+      "side": 1,
+      "message": "Then why don\u0027t you make SYSTEM_LINKER_CONFIG as a dependency of BUILT_SYSTEM_IMAGE ?",
+      "parentUuid": "09fa8cc9_2471772b",
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
