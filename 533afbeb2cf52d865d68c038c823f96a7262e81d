@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d0594c23_70102743",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2462,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-11-24T05:32:17Z",
+      "side": 1,
+      "message": "I\u0027m open to any suggestion to find out system-installed libraries with narrowed scope.",
+      "parentUuid": "3c825da5_4039425a",
+      "range": {
+        "startLine": 2462,
+        "startChar": 25,
+        "endLine": 2462,
+        "endChar": 50
+      },
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6f5e73a6_e4d55d55",
         "filename": "core/Makefile",
         "patchSetId": 5
@@ -37,6 +61,30 @@
       "writtenOn": "2020-11-24T02:07:18Z",
       "side": 1,
       "message": "consider breaking lines for better readability",
+      "range": {
+        "startLine": 2463,
+        "startChar": 57,
+        "endLine": 2463,
+        "endChar": 174
+      },
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ba588fc_71555721",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2463,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-11-24T05:32:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6f5e73a6_e4d55d55",
       "range": {
         "startLine": 2463,
         "startChar": 57,
@@ -60,6 +108,24 @@
       "writtenOn": "2020-11-24T02:07:18Z",
       "side": 1,
       "message": "This seems wrong to me because `m out/target/product/.../system.img` wouldn\u0027t create or update the config file.",
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09fa8cc9_2471772b",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2473,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-11-24T05:32:17Z",
+      "side": 1,
+      "message": "It works from targetting system.img because BUILT_SYSTEMIMAGE is dependent on INSTALLED_FILES_FILE",
+      "parentUuid": "d2ae6641_121f9417",
       "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
