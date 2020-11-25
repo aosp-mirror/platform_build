@@ -435,6 +435,7 @@ python_binary_host {
     ],
     required: [
         "checkvintf",
+        "host_init_verifier",
     ],
     target: {
         darwin: {
