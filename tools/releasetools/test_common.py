@@ -996,6 +996,27 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         },
         sparse_image.file_map)
 
+  def test_PartitionMapFromTargetFiles(self):
+    target_files_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(target_files_dir, 'SYSTEM'))
+    os.makedirs(os.path.join(target_files_dir, 'SYSTEM', 'vendor'))
+    os.makedirs(os.path.join(target_files_dir, 'PRODUCT'))
+    os.makedirs(os.path.join(target_files_dir, 'SYSTEM', 'product'))
+    os.makedirs(os.path.join(target_files_dir, 'SYSTEM', 'vendor', 'odm'))
+    os.makedirs(os.path.join(target_files_dir, 'VENDOR_DLKM'))
+    partition_map = common.PartitionMapFromTargetFiles(target_files_dir)
+    self.assertDictEqual(
+        partition_map,
+        {
+            'system': 'SYSTEM',
+            'vendor': 'SYSTEM/vendor',
+            # Prefer PRODUCT over SYSTEM/product
+            'product': 'PRODUCT',
+            'odm': 'SYSTEM/vendor/odm',
+            'vendor_dlkm': 'VENDOR_DLKM',
+            # No system_ext or odm_dlkm
+        })
+
   def test_SharedUidPartitionViolations(self):
     uid_dict = {
         'android.uid.phone': {
