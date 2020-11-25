@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "247172a2_fa54a301",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2020-11-25T17:37:48Z",
+      "side": 1,
+      "message": "failed TH tests are unrelated\n",
+      "revId": "75dc8d2dab175fdae054272bfcf25e13f7781d0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
