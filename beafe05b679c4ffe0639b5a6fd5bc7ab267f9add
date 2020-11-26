@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "952d763f_37ed4356",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-11-26T10:40:40Z",
+      "side": 1,
+      "message": "I think this needs to be cherry-picked from internal master, but the change per se is ok.",
+      "revId": "beafe05b679c4ffe0639b5a6fd5bc7ab267f9add",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
