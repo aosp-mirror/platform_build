@@ -323,44 +323,11 @@ PRODUCT_HOST_PACKAGES += \
     tz_version_host \
     tz_version_host_tzdata_apex \
 
-ifeq ($(ART_APEX_JARS),)
-$(error ART_APEX_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
-endif
-
-# The order matters for runtime class lookup performance.
-PRODUCT_BOOT_JARS := \
-    $(ART_APEX_JARS) \
-    framework-minus-apex \
-    ext \
-    com.android.i18n:core-icu4j \
-    telephony-common \
-    voip-common \
-    ims-common
-
-PRODUCT_UPDATABLE_BOOT_JARS := \
-    com.android.conscrypt:conscrypt \
-    com.android.media:updatable-media \
-    com.android.mediaprovider:framework-mediaprovider \
-    com.android.os.statsd:framework-statsd \
-    com.android.permission:framework-permission \
-    com.android.sdkext:framework-sdkextensions \
-    com.android.wifi:framework-wifi \
-    com.android.tethering:framework-tethering
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
     system/core/rootdir/init.usb.configfs.rc:system/etc/init/hw/init.usb.configfs.rc \
     system/core/rootdir/etc/hosts:system/etc/hosts
-
-# Add the compatibility library that is needed when android.test.base
-# is removed from the bootclasspath.
-# Default to excluding android.test.base from the bootclasspath.
-ifneq ($(REMOVE_ATB_FROM_BCP),false)
-PRODUCT_PACKAGES += framework-atb-backward-compatibility
-PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
-else
-PRODUCT_BOOT_JARS += android.test.base
-endif
 
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc
 PRODUCT_SYSTEM_PROPERTIES += ro.zygote?=zygote32
@@ -422,4 +389,5 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/bootclasspath.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
