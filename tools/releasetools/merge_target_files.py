@@ -951,18 +951,15 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   if not check_target_files_vintf.CheckVintf(output_target_files_temp_dir):
     raise RuntimeError('Incompatible VINTF metadata')
 
+  partition_map = common.PartitionMapFromTargetFiles(
+      output_target_files_temp_dir)
+
   # Generate and check for cross-partition violations of sharedUserId
   # values in APKs. This requires the input target-files packages to contain
   # *.apk files.
   shareduid_violation_modules = os.path.join(
       output_target_files_temp_dir, 'META', 'shareduid_violation_modules.json')
   with open(shareduid_violation_modules, 'w') as f:
-    framework_partitions = item_list_to_partition_set(framework_item_list)
-    vendor_partitions = item_list_to_partition_set(vendor_item_list)
-
-    partition_map = {}
-    for partition in (framework_partitions.union(vendor_partitions)):
-      partition_map[partition.lower()] = partition.upper()
     violation = find_shareduid_violation.FindShareduidViolation(
         output_target_files_temp_dir, partition_map)
 
@@ -970,6 +967,8 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
     f.write(violation)
 
     # Check for violations across the input builds' partition groups.
+    framework_partitions = item_list_to_partition_set(framework_item_list)
+    vendor_partitions = item_list_to_partition_set(vendor_item_list)
     shareduid_errors = common.SharedUidPartitionViolations(
         json.loads(violation), [framework_partitions, vendor_partitions])
     if shareduid_errors:
@@ -977,6 +976,17 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
         logger.error(error)
       raise ValueError('sharedUserId APK error. See %s' %
                        shareduid_violation_modules)
+
+  # Run host_init_verifier on the combined init rc files.
+  filtered_partitions = {
+      partition: path
+      for partition, path in partition_map.items()
+      # host_init_verifier checks only the following partitions:
+      if partition in ['system', 'system_ext', 'product', 'vendor', 'odm']
+  }
+  common.RunHostInitVerifier(
+      product_out=output_target_files_temp_dir,
+      partition_map=filtered_partitions)
 
   generate_images(output_target_files_temp_dir, rebuild_recovery)
 
