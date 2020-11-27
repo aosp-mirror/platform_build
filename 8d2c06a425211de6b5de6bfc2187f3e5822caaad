@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01959683_52c48d46",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 746,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-27T13:28:03Z",
+      "side": 1,
+      "message": "so you\u0027re sure you want this to be a BoardConfig variable rather than a product variable?",
+      "revId": "8d2c06a425211de6b5de6bfc2187f3e5822caaad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
