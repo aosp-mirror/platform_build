@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d5d979c_e6a4932e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-27T11:31:32Z",
+      "side": 1,
+      "message": "just double checking: it is intentional this binary isn\u0027t inside the module itself right?",
+      "revId": "05d7fefb7de7635060067277fd64623c1005b598",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
