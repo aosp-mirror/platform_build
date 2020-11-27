@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "549ddeba_bc36ae58",
+        "filename": "target/board/unbundled_all/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-27T13:39:40Z",
+      "side": 1,
+      "message": "I will try to make it possible to specify this in a BoardConfig in a future CL instead.",
+      "range": {
+        "startLine": 16,
+        "startChar": 30,
+        "endLine": 17,
+        "endChar": 30
+      },
+      "revId": "b786d34679231ed1f9e18690cbb4ac83eaeda843",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
