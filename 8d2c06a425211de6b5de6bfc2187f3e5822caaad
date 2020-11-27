@@ -16,6 +16,24 @@
       "message": "so you\u0027re sure you want this to be a BoardConfig variable rather than a product variable?",
       "revId": "8d2c06a425211de6b5de6bfc2187f3e5822caaad",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5cb03516_3a7bfe33",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 746,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2020-11-27T15:37:47Z",
+      "side": 1,
+      "message": "\u003e so you\u0027re sure you want this to be a BoardConfig variable rather than a product variable?\n\nI am not sure actually. What\u0027s the difference between it being BoardConfig vs Product variable? If it\u0027s a boardconfig, products will not be able to configure it?\n\nContext about how I came up with this CL:\n\nI was just imitating TARGET_FLATTEN_APEX flag. APEX are by default flattened and device needs to configure their product configuration to unflatten them.\n\nSo I crated TARGET_COMPRESSED_APEX which by default will be false and device will configure their product if they want to enable it. I thought since products can configure TARGET_FLATTEN_APEX, they should be able to configure TARGET_COMPRESSED_APEX.",
+      "parentUuid": "01959683_52c48d46",
+      "revId": "8d2c06a425211de6b5de6bfc2187f3e5822caaad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

@@ -16,6 +16,24 @@
       "message": "please add the variable to this list too",
       "revId": "e5b0fbd21ac31327d2c9b988610c5fa1303cec83",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5bead73_0dea2d58",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2020-11-27T15:37:47Z",
+      "side": 0,
+      "message": "What does this do? TARGET_FLATTEN_APEX is missing in this list. Is that expected?",
+      "parentUuid": "e0957308_e877829c",
+      "revId": "e5b0fbd21ac31327d2c9b988610c5fa1303cec83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
