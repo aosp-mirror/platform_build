@@ -46,6 +46,30 @@
       },
       "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0446c3a3_6409ed03",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-11-27T17:40:28Z",
+      "side": 1,
+      "message": "\"Unbundled\" is a method here - it doesn\u0027t characterise a set of artifacts that clearly need to have the same set of architectures. One can e.g. imagine similar \"unbundled\" building for Wear and Auto where the requirements would be different.\n\n\"Aml\" is specific in that regard. Maybe it\u0027s too narrow; it was intended to cover only APEXes, not apps. I\u0027m not sure it\u0027s wise to extend the scope because it ties together different domains that we may want to handle differently. So it was intentional to err on the side of being too narrow rather than too wide, and imo that still applies.\n\nIf what you\u0027re trying to do isn\u0027t limited to APEXes then it may be better to introduce a separate flag both here and in Soong for it, although with such a proliferation we should probably consider replacing the boolean flags with an enum-like variable, i.e. having something like TARGET_MULTI_ARCH in Soong too.",
+      "parentUuid": "8343d5fb_007209fd",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 59
+      },
+      "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
