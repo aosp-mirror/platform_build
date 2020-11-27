@@ -94,6 +94,30 @@
       },
       "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d7e9f8c_371f3065",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-11-27T19:33:05Z",
+      "side": 1,
+      "message": "Well, my concern applies to \"unbundled build\" as well. What specific products being built unbundled are you addressing?\n\nAml_abis is defined as \"ABIs supported by mainline modules\" (https://cs.android.com/android/platform/superproject/+/master:build/soong/android/arch.go;l\u003d1497;drc\u003de9fe2949b887deba2b46b2a8c043f228a95e99e3) - I\u0027d be happiest if it stayed that way and wasn\u0027t used for neither more nor less. If that\u0027s your use case then why not stay with it? Or perhaps rename it to \"mainline\" to make it a bit more clear (trying to introduce \"AML\" as an acronym admittedly looks like a dud now).\n\nIf you\u0027re addressing apps in general then you may be better off with something like an Apps_native_abis() function in Soong to keep it separate from Aml_abis. They may not be identical: notice e.g. the \"neon\" difference between Aml_abis and Ndk_abis. It\u0027s the way it is for good reason and neither can change to the other. In case of apps it\u0027s not obvious (to me at least) whether they should enable neon or not - the answer may even be different for different apps. And that\u0027s just an example.\n\n(Ideally we should lift the whole list of arches from Soong to product variables and solve it all there, but that requires more engineering work.)",
+      "parentUuid": "84b551f3_909b4b9c",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 59
+      },
+      "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
