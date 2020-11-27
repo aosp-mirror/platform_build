@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84c31a9b_742ca6f8",
+        "filename": "core/board_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-11-27T14:13:36Z",
+      "side": 1,
+      "message": "As far as I can tell this is the first patch that introduces TARGET_MULTI_ARCH variable, so it may be worth documenting it a bit more and adding to soong/ui/build/dumpvars.go. It is not clear to me what it\u0027s for (ie what this config+soong-only build is).",
+      "range": {
+        "startLine": 181,
+        "startChar": 0,
+        "endLine": 181,
+        "endChar": 19
+      },
+      "revId": "8025520696173178ded5d7e56cdc0941bb94b2a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b5a054f_76435b01",
+        "filename": "core/board_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2020-11-27T14:13:36Z",
+      "side": 1,
+      "message": "Replace with \"either TARGET_ARCH or TARGET_MULTI_ARCH should be set\"?",
+      "range": {
+        "startLine": 187,
+        "startChar": 10,
+        "endLine": 187,
+        "endChar": 33
+      },
+      "revId": "8025520696173178ded5d7e56cdc0941bb94b2a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
