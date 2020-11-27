@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "acde36bc_774d6538",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-27T00:28:21Z",
+      "side": 1,
+      "message": "+2, modulo what Nikita pointed out.",
+      "revId": "013e8e4b73ea7d539a65c3ebdc7c52a1ad43cd5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ba62fd84_f0b403af",
