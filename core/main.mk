@@ -115,6 +115,11 @@ SKIP_BOOT_JARS_CHECK := true
 endif
 endif
 
+ifdef TARGET_ARCH_SUITE
+  # TODO(b/175577370): Enable this error.
+  # $(error TARGET_ARCH_SUITE is not supported in kati/make builds)
+endif
+
 # ADDITIONAL_<partition>_PROPERTIES are properties that are determined by the
 # build system itself. Don't let it be defined from outside of the core build
 # system like Android.mk or <product>.mk files.
