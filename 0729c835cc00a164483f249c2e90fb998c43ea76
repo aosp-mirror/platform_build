@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc570d51_2d8b71b4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-11-27T15:59:09Z",
+      "side": 1,
+      "message": "The thought is that the choice of architectures (for APEX modules) lies with the mainline program. \"Unbundled\" seems vague - how is that motivated?",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 59
+      },
+      "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
