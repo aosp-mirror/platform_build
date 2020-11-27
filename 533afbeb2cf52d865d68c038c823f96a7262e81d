@@ -170,6 +170,24 @@
       "parentUuid": "09fa8cc9_2471772b",
       "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6ca4578_aec8cf55",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2473,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-11-27T04:26:44Z",
+      "side": 1,
+      "message": "I\u0027m not sure if /system/etc/linker.config.pb would be included in installed files file when I put SYSTEM_LINKER_CONFIG directly under BUILT_SYSTEM_IMAGE.",
+      "parentUuid": "91a0f40e_d2a60fe2",
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
