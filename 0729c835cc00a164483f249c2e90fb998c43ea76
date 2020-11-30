@@ -118,6 +118,30 @@
       },
       "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e861c991_b73b6623",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-11-30T10:31:52Z",
+      "side": 1,
+      "message": "I think aml_abis \u003d\u003d apps_native_abis (and I thought we agreed in the chat that the list for \"aml_abis\" is actually incorrect/dangerous as-is?)\n\nLet\u0027s discuss this on Thursday",
+      "parentUuid": "7d7e9f8c_371f3065",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 59
+      },
+      "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
