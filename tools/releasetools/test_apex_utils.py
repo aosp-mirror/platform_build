@@ -174,8 +174,8 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_ApexApkSigner_noAssetDir(self):
     no_asset = common.MakeTempFile(suffix='.apex')
-    with zipfile.ZipFile(no_asset, 'w') as output_zip:
-      with zipfile.ZipFile(self.apex_with_apk, 'r') as input_zip:
+    with zipfile.ZipFile(no_asset, 'w', allowZip64=True) as output_zip:
+      with zipfile.ZipFile(self.apex_with_apk, 'r', allowZip64=True) as input_zip:
         name_list = input_zip.namelist()
         for name in name_list:
           if not name.startswith('assets'):

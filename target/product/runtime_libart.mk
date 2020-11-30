@@ -30,8 +30,8 @@ PRODUCT_PACKAGES += com.android.runtime
 # ART APEX module.
 # Note that this package includes the minimal boot classpath JARs (listed in
 # ART_APEX_JARS), which should no longer be added directly to PRODUCT_PACKAGES.
-PRODUCT_PACKAGES += com.android.art
-PRODUCT_HOST_PACKAGES += com.android.art
+PRODUCT_PACKAGES += com.android.art-autoselect
+PRODUCT_HOST_PACKAGES += com.android.art-autoselect
 
 # Certificates.
 PRODUCT_PACKAGES += \
@@ -91,9 +91,5 @@ PRODUCT_SYSTEM_PROPERTIES += \
 PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.minidebuginfo=true \
     dalvik.vm.dex2oat-minidebuginfo=true
-
-# Enable iorapd by default
-PRODUCT_SYSTEM_PROPERTIES += \
-    ro.iorapd.enable=true
 
 PRODUCT_USES_DEFAULT_ART_CONFIG := true

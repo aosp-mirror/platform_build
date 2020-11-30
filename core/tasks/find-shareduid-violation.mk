@@ -16,8 +16,6 @@
 
 shareduid_violation_modules_filename := $(PRODUCT_OUT)/shareduid_violation_modules.json
 
-find_shareduid_script := $(BUILD_SYSTEM)/tasks/find-shareduid-violation.py
-
 $(shareduid_violation_modules_filename): $(INSTALLED_SYSTEMIMAGE_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_BOOTIMAGE_TARGET) \
@@ -26,7 +24,15 @@ $(shareduid_violation_modules_filename): $(INSTALLED_SYSTEMIMAGE_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
     $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
 
-$(shareduid_violation_modules_filename): $(find_shareduid_script)
+$(shareduid_violation_modules_filename): $(HOST_OUT_EXECUTABLES)/find_shareduid_violation
 $(shareduid_violation_modules_filename): $(AAPT2)
-	$(find_shareduid_script) $(PRODUCT_OUT) $(AAPT2) > $@
+	$(HOST_OUT_EXECUTABLES)/find_shareduid_violation \
+		--product_out $(PRODUCT_OUT) \
+		--aapt $(AAPT2) \
+		--copy_out_system $(TARGET_COPY_OUT_SYSTEM) \
+		--copy_out_vendor $(TARGET_COPY_OUT_VENDOR) \
+		--copy_out_product $(TARGET_COPY_OUT_PRODUCT) \
+		--copy_out_system_ext $(TARGET_COPY_OUT_SYSTEM_EXT) \
+		> $@
+
 $(call dist-for-goals,droidcore,$(shareduid_violation_modules_filename))

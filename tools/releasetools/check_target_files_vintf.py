@@ -100,10 +100,7 @@ def GetArgsForKernel(input_tmp):
                 'PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS is not set')
     return []
 
-  with open(version_path) as f:
-    version = f.read().strip()
-
-  return ['--kernel', '{}:{}'.format(version, config_path)]
+  return ['--kernel', '{}:{}'.format(version_path, config_path)]
 
 
 def CheckVintfFromExtractedTargetFiles(input_tmp, info_dict=None):
@@ -252,7 +249,7 @@ def HasTrebleEnabled(target_files, target_info):
     if os.path.isdir(target_files):
       return os.path.isdir(os.path.join(target_files, "VENDOR"))
     if zipfile.is_zipfile(target_files):
-      return HasPartition(zipfile.ZipFile(target_files), "vendor")
+      return HasPartition(zipfile.ZipFile(target_files, allowZip64=True), "vendor")
     raise ValueError("Unknown target_files argument")
 
   return (HasVendorPartition(target_files) and

@@ -217,6 +217,25 @@ def InitLogging():
 def SetHostToolLocation(tool_name, location):
   OPTIONS.host_tools[tool_name] = location
 
+def FindHostToolPath(tool_name):
+  """Finds the path to the host tool.
+
+  Args:
+    tool_name: name of the tool to find
+  Returns:
+    path to the tool if found under either one of the host_tools map or under
+    the same directory as this binary is located at. If not found, tool_name
+    is returned.
+  """
+  if tool_name in OPTIONS.host_tools:
+    return OPTIONS.host_tools[tool_name]
+
+  my_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+  tool_path = os.path.join(my_dir, tool_name)
+  if os.path.exists(tool_path):
+    return tool_path
+
+  return tool_name
 
 def Run(args, verbose=None, **kwargs):
   """Creates and returns a subprocess.Popen object.
@@ -240,12 +259,10 @@ def Run(args, verbose=None, **kwargs):
   if 'universal_newlines' not in kwargs:
     kwargs['universal_newlines'] = True
 
-  # If explicitly set host tool location before, use that location to avoid
-  # PATH violation. Make a copy of args in case client relies on the content
-  # of args later.
-  if args and args[0] in OPTIONS.host_tools:
+  if args:
+    # Make a copy of args in case client relies on the content of args later.
     args = args[:]
-    args[0] = OPTIONS.host_tools[args[0]]
+    args[0] = FindHostToolPath(args[0])
 
   # Don't log any if caller explicitly says so.
   if verbose:
@@ -527,6 +544,27 @@ class BuildInfo(object):
         return BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_LEGACY
     return BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_CURRENT
 
+  def _GetPlatformVersion(self):
+    version_sdk = self.GetBuildProp("ro.build.version.sdk")
+    # init code switches to version_release_or_codename (see b/158483506). After
+    # API finalization, release_or_codename will be the same as release. This
+    # is the best effort to support pre-S dev stage builds.
+    if int(version_sdk) >= 30:
+      try:
+        return self.GetBuildProp("ro.build.version.release_or_codename")
+      except ExternalError:
+        logger.warning('Failed to find ro.build.version.release_or_codename')
+
+    return self.GetBuildProp("ro.build.version.release")
+
+  def _GetPartitionPlatformVersion(self, partition):
+    try:
+      return self.GetPartitionBuildProp("ro.build.version.release_or_codename",
+                                        partition)
+    except ExternalError:
+      return self.GetPartitionBuildProp("ro.build.version.release",
+                                        partition)
+
   def GetOemProperty(self, key):
     if self.oem_props is not None and key in self.oem_props:
       return self.oem_dicts[0][key]
@@ -543,7 +581,7 @@ class BuildInfo(object):
           self.GetPartitionBuildProp("ro.product.brand", partition),
           self.GetPartitionBuildProp("ro.product.name", partition),
           self.GetPartitionBuildProp("ro.product.device", partition),
-          self.GetPartitionBuildProp("ro.build.version.release", partition),
+          self._GetPartitionPlatformVersion(partition),
           self.GetPartitionBuildProp("ro.build.id", partition),
           self.GetPartitionBuildProp(
               "ro.build.version.incremental", partition),
@@ -559,7 +597,7 @@ class BuildInfo(object):
             self.GetBuildProp("ro.product.brand"),
             self.GetBuildProp("ro.product.name"),
             self.GetBuildProp("ro.product.device"),
-            self.GetBuildProp("ro.build.version.release"),
+            self._GetPlatformVersion(),
             self.GetBuildProp("ro.build.id"),
             self.GetBuildProp("ro.build.version.incremental"),
             self.GetBuildProp("ro.build.type"),
@@ -814,6 +852,15 @@ class PartitionBuildProps(object):
     props._LoadBuildProp(data)
     return props
 
+  @staticmethod
+  def FromBuildPropFile(name, build_prop_file):
+    """Constructs an instance from a build prop file."""
+
+    props = PartitionBuildProps("unknown", name)
+    with open(build_prop_file) as f:
+      props._LoadBuildProp(f.read())
+    return props
+
   def _LoadBuildProp(self, data):
     for line in data.split('\n'):
       line = line.strip()
@@ -1003,15 +1050,35 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   Returns:
     The merged dynamic partition info dictionary.
   """
-  merged_dict = {}
+
+  def uniq_concat(a, b):
+    combined = set(a.split(" "))
+    combined.update(set(b.split(" ")))
+    combined = [item.strip() for item in combined if item.strip()]
+    return " ".join(sorted(combined))
+
+  if (framework_dict.get("use_dynamic_partitions") !=
+      "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
+    raise ValueError("Both dictionaries must have use_dynamic_partitions=true")
+
+  merged_dict = {"use_dynamic_partitions": "true"}
+
+  merged_dict["dynamic_partition_list"] = uniq_concat(
+      framework_dict.get("dynamic_partition_list", ""),
+      vendor_dict.get("dynamic_partition_list", ""))
+
+  # Super block devices are defined by the vendor dict.
+  if "super_block_devices" in vendor_dict:
+    merged_dict["super_block_devices"] = vendor_dict["super_block_devices"]
+    for block_device in merged_dict["super_block_devices"].split(" "):
+      key = "super_%s_device_size" % block_device
+      if key not in vendor_dict:
+        raise ValueError("Vendor dict does not contain required key %s." % key)
+      merged_dict[key] = vendor_dict[key]
+
   # Partition groups and group sizes are defined by the vendor dict because
   # these values may vary for each board that uses a shared system image.
   merged_dict["super_partition_groups"] = vendor_dict["super_partition_groups"]
-  framework_dynamic_partition_list = framework_dict.get(
-      "dynamic_partition_list", "")
-  vendor_dynamic_partition_list = vendor_dict.get("dynamic_partition_list", "")
-  merged_dict["dynamic_partition_list"] = ("%s %s" % (
-      framework_dynamic_partition_list, vendor_dynamic_partition_list)).strip()
   for partition_group in merged_dict["super_partition_groups"].split(" "):
     # Set the partition group's size using the value from the vendor dict.
     key = "super_%s_group_size" % partition_group
@@ -1022,16 +1089,102 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
     # Set the partition group's partition list using a concatenation of the
     # framework and vendor partition lists.
     key = "super_%s_partition_list" % partition_group
-    merged_dict[key] = (
-        "%s %s" %
-        (framework_dict.get(key, ""), vendor_dict.get(key, ""))).strip()
+    merged_dict[key] = uniq_concat(
+        framework_dict.get(key, ""), vendor_dict.get(key, ""))
 
-  # Pick virtual ab related flags from vendor dict, if defined.
-  if "virtual_ab" in vendor_dict.keys():
-    merged_dict["virtual_ab"] = vendor_dict["virtual_ab"]
-  if "virtual_ab_retrofit" in vendor_dict.keys():
-    merged_dict["virtual_ab_retrofit"] = vendor_dict["virtual_ab_retrofit"]
+  # Various other flags should be copied from the vendor dict, if defined.
+  for key in ("virtual_ab", "virtual_ab_retrofit", "lpmake",
+              "super_metadata_device", "super_partition_error_limit",
+              "super_partition_size"):
+    if key in vendor_dict.keys():
+      merged_dict[key] = vendor_dict[key]
+
   return merged_dict
+
+
+def PartitionMapFromTargetFiles(target_files_dir):
+  """Builds a map from partition -> path within an extracted target files directory."""
+  # Keep possible_subdirs in sync with build/make/core/board_config.mk.
+  possible_subdirs = {
+      "system": ["SYSTEM"],
+      "vendor": ["VENDOR", "SYSTEM/vendor"],
+      "product": ["PRODUCT", "SYSTEM/product"],
+      "system_ext": ["SYSTEM_EXT", "SYSTEM/system_ext"],
+      "odm": ["ODM", "VENDOR/odm", "SYSTEM/vendor/odm"],
+      "vendor_dlkm": [
+          "VENDOR_DLKM", "VENDOR/vendor_dlkm", "SYSTEM/vendor/vendor_dlkm"
+      ],
+      "odm_dlkm": ["ODM_DLKM", "VENDOR/odm_dlkm", "SYSTEM/vendor/odm_dlkm"],
+  }
+  partition_map = {}
+  for partition, subdirs in possible_subdirs.items():
+    for subdir in subdirs:
+      if os.path.exists(os.path.join(target_files_dir, subdir)):
+        partition_map[partition] = subdir
+        break
+  return partition_map
+
+
+def SharedUidPartitionViolations(uid_dict, partition_groups):
+  """Checks for APK sharedUserIds that cross partition group boundaries.
+
+  This uses a single or merged build's shareduid_violation_modules.json
+  output file, as generated by find_shareduid_violation.py or
+  core/tasks/find-shareduid-violation.mk.
+
+  An error is defined as a sharedUserId that is found in a set of partitions
+  that span more than one partition group.
+
+  Args:
+    uid_dict: A dictionary created by using the standard json module to read a
+      complete shareduid_violation_modules.json file.
+    partition_groups: A list of groups, where each group is a list of
+      partitions.
+
+  Returns:
+    A list of error messages.
+  """
+  errors = []
+  for uid, partitions in uid_dict.items():
+    found_in_groups = [
+        group for group in partition_groups
+        if set(partitions.keys()) & set(group)
+    ]
+    if len(found_in_groups) > 1:
+      errors.append(
+          "APK sharedUserId \"%s\" found across partition groups in partitions \"%s\""
+          % (uid, ",".join(sorted(partitions.keys()))))
+  return errors
+
+
+def RunHostInitVerifier(product_out, partition_map):
+  """Runs host_init_verifier on the init rc files within partitions.
+
+  host_init_verifier searches the etc/init path within each partition.
+
+  Args:
+    product_out: PRODUCT_OUT directory, containing partition directories.
+    partition_map: A map of partition name -> relative path within product_out.
+  """
+  allowed_partitions = ("system", "system_ext", "product", "vendor", "odm")
+  cmd = ["host_init_verifier"]
+  for partition, path in partition_map.items():
+    if partition not in allowed_partitions:
+      raise ExternalError("Unable to call host_init_verifier for partition %s" %
+                          partition)
+    cmd.extend(["--out_%s" % partition, os.path.join(product_out, path)])
+    # Add --property-contexts if the file exists on the partition.
+    property_contexts = "%s_property_contexts" % (
+        "plat" if partition == "system" else partition)
+    property_contexts_path = os.path.join(product_out, path, "etc", "selinux",
+                                          property_contexts)
+    if os.path.exists(property_contexts_path):
+      cmd.append("--property-contexts=%s" % property_contexts_path)
+    # Add the passwd file if the file exists on the partition.
+    passwd_path = os.path.join(product_out, path, "etc", "passwd")
+    if os.path.exists(passwd_path):
+      cmd.extend(["-p", passwd_path])
+  return RunAndCheckOutput(cmd)
 
 
 def AppendAVBSigningArgs(cmd, partition):
@@ -1257,22 +1410,26 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   for building the requested image.
   """
 
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
   # "boot" or "recovery", without extension.
   partition_name = os.path.basename(sourcedir).lower()
 
+  kernel = None
   if partition_name == "recovery":
-    kernel = "kernel"
+    if info_dict.get("exclude_kernel_from_recovery_image") == "true":
+      logger.info("Excluded kernel binary from recovery image.")
+    else:
+      kernel = "kernel"
   else:
     kernel = image_name.replace("boot", "kernel")
     kernel = kernel.replace(".img", "")
-  if not os.access(os.path.join(sourcedir, kernel), os.F_OK):
+  if kernel and not os.access(os.path.join(sourcedir, kernel), os.F_OK):
     return None
 
   if has_ramdisk and not os.access(os.path.join(sourcedir, "RAMDISK"), os.F_OK):
     return None
-
-  if info_dict is None:
-    info_dict = OPTIONS.info_dict
 
   img = tempfile.NamedTemporaryFile()
 
@@ -1283,7 +1440,9 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
 
-  cmd = [mkbootimg, "--kernel", os.path.join(sourcedir, kernel)]
+  cmd = [mkbootimg]
+  if kernel:
+    cmd += ["--kernel", os.path.join(sourcedir, kernel)]
 
   fn = os.path.join(sourcedir, "second")
   if os.access(fn, os.F_OK):
@@ -1568,7 +1727,7 @@ def UnzipToDir(filename, dirname, patterns=None):
   cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
   if patterns is not None:
     # Filter out non-matching patterns. unzip will complain otherwise.
-    with zipfile.ZipFile(filename) as input_zip:
+    with zipfile.ZipFile(filename, allowZip64=True) as input_zip:
       names = input_zip.namelist()
     filtered = [
         pattern for pattern in patterns if fnmatch.filter(names, pattern)]

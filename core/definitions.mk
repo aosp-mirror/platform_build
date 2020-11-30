@@ -107,7 +107,7 @@ ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 # All tests that should be skipped in presubmit check.
 ALL_DISABLED_PRESUBMIT_TESTS :=
 
-# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
+# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITE
 ALL_COMPATIBILITY_SUITES :=
 
 # All compatibility suite files to dist.
@@ -2404,6 +2404,7 @@ $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
 	$(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	$(call intermediates-dir-for,ETC,passwd_system_ext)/passwd_system_ext \
 	$(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
 	$(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
 	$(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
@@ -2414,6 +2415,7 @@ $(2): \
 	$(call intermediates-dir-for,ETC,odm_property_contexts)/odm_property_contexts
 	$(hide) $(HOST_INIT_VERIFIER) \
 	  -p $(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	  -p $(call intermediates-dir-for,ETC,passwd_system_ext)/passwd_system_ext \
 	  -p $(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
 	  -p $(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
 	  -p $(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
@@ -2610,6 +2612,7 @@ $(3): $(1)
 	@mkdir -p $(dir $$@)
 	@rm -rf $$@
 	$(hide) ln -sf $(2) $$@
+$(3): .KATI_SYMLINK_OUTPUTS := $(3)
 endef
 
 # Copy an apk to a target location while removing classes*.dex

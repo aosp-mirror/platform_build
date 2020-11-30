@@ -14,10 +14,8 @@
 # limitations under the License.
 #
 
-include $(SRC_TARGET_DIR)/product/gsi_release.mk
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch.mk)
 
-# Legacy GSI support additional O-MR1 interface
-PRODUCT_EXTRA_VNDK_VERSIONS += 27
+PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
 
-# Legacy GSI relax the compatible property checking
-PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := false
+PRODUCT_PACKAGES += snapuserd.vendor_ramdisk snapuserd
