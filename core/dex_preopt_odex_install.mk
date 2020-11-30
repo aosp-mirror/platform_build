@@ -189,19 +189,41 @@ ifdef LOCAL_DEX_PREOPT
   my_filtered_optional_uses_libraries := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
     $(LOCAL_OPTIONAL_USES_LIBRARIES))
 
-  # dexpreopt needs the paths to the dex jars of these libraries in order to
-  # construct class loader context for dex2oat.
-  my_extra_dexpreopt_libs := \
-    org.apache.http.legacy \
+  # compatibility libraries are added to class loader context of an app only if
+  # targetSdkVersion in the app's manifest is lower than the given SDK version
+
+  my_dexpreopt_libs_compat_28 := \
+    org.apache.http.legacy
+
+  my_dexpreopt_libs_compat_29 := \
     android.hidl.base-V1.0-java \
-    android.hidl.manager-V1.0-java \
+    android.hidl.manager-V1.0-java
+
+  my_dexpreopt_libs_compat_30 := \
     android.test.base \
+    android.test.mock
+
+  my_dexpreopt_libs_compat := \
+    $(my_dexpreopt_libs_compat_28) \
+    $(my_dexpreopt_libs_compat_29) \
+    $(my_dexpreopt_libs_compat_30)
 
   my_dexpreopt_libs := $(sort \
     $(LOCAL_USES_LIBRARIES) \
     $(my_filtered_optional_uses_libraries) \
-    $(my_extra_dexpreopt_libs) \
   )
+
+  # 1: SDK version
+  # 2: list of libraries
+  add_json_class_loader_context = \
+    $(call add_json_map, $(1)) \
+    $(foreach lib, $(2),\
+      $(call add_json_map, $(lib)) \
+      $(eval file := $(filter %/$(lib).jar, $(call module-installed-files,$(lib)))) \
+      $(call add_json_str, Host,       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
+      $(call add_json_str, Device,     $(call install-path-to-on-device-path,$(file))) \
+      $(call end_json_map)) \
+    $(call end_json_map)
 
   # Record dex-preopt config.
   DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -230,15 +252,11 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_str,  ProfileClassListing,            $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE)))
   $(call add_json_bool, ProfileIsTextListing,           $(my_profile_is_text_listing))
   $(call add_json_bool, EnforceUsesLibraries,           $(LOCAL_ENFORCE_USES_LIBRARIES))
-  $(call add_json_list, OptionalUsesLibraries,          $(my_filtered_optional_uses_libraries))
-  $(call add_json_list, UsesLibraries,                  $(LOCAL_USES_LIBRARIES))
-  $(call add_json_map,  LibraryPaths)
-  $(foreach lib,$(my_dexpreopt_libs),\
-    $(call add_json_map, $(lib)) \
-    $(eval file := $(filter %/$(lib).jar, $(call module-installed-files,$(lib)))) \
-    $(call add_json_str, Host,   $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
-    $(call add_json_str, Device, $(call install-path-to-on-device-path,$(file))) \
-    $(call end_json_map))
+  $(call add_json_map,  ClassLoaderContexts)
+  $(call add_json_class_loader_context, any, $(my_dexpreopt_libs))
+  $(call add_json_class_loader_context,  28, $(my_dexpreopt_libs_compat_28))
+  $(call add_json_class_loader_context,  29, $(my_dexpreopt_libs_compat_29))
+  $(call add_json_class_loader_context,  30, $(my_dexpreopt_libs_compat_30))
   $(call end_json_map)
   $(call add_json_list, Archs,                          $(my_dexpreopt_archs))
   $(call add_json_list, DexPreoptImages,                $(my_dexpreopt_images))
@@ -280,7 +298,7 @@ ifdef LOCAL_DEX_PREOPT
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
   my_dexpreopt_deps += \
-    $(foreach lib, $(my_dexpreopt_libs), \
+    $(foreach lib, $(my_dexpreopt_libs) $(my_dexpreopt_libs_compat), \
       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar)
   my_dexpreopt_deps += $(my_dexpreopt_images_deps)
   my_dexpreopt_deps += $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)

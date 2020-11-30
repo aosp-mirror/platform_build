@@ -49,7 +49,10 @@ class ApexApkSigner(object):
 
   def __init__(self, apex_path, key_passwords, codename_to_api_level_map):
     self.apex_path = apex_path
-    self.key_passwords = key_passwords
+    if not key_passwords:
+      self.key_passwords = dict()
+    else:
+      self.key_passwords = key_passwords
     self.codename_to_api_level_map = codename_to_api_level_map
     self.debugfs_path = os.path.join(
         OPTIONS.search_path, "bin", "debugfs_static")
@@ -124,7 +127,7 @@ class ApexApkSigner(object):
       # signed apk file.
       unsigned_apk = common.MakeTempFile()
       os.rename(apk_path, unsigned_apk)
-      common.SignFile(unsigned_apk, apk_path, key_name, self.key_passwords,
+      common.SignFile(unsigned_apk, apk_path, key_name, self.key_passwords.get(key_name),
                       codename_to_api_level_map=self.codename_to_api_level_map)
       has_signed_apk = True
     return payload_dir, has_signed_apk
@@ -177,7 +180,7 @@ class ApexApkSigner(object):
 
     # Add the payload image back to the apex file.
     common.ZipDelete(self.apex_path, APEX_PAYLOAD_IMAGE)
-    with zipfile.ZipFile(self.apex_path, 'a') as output_apex:
+    with zipfile.ZipFile(self.apex_path, 'a', allowZip64=True) as output_apex:
       common.ZipWrite(output_apex, payload_img, APEX_PAYLOAD_IMAGE,
                       compress_type=zipfile.ZIP_STORED)
     return self.apex_path
@@ -351,7 +354,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
   common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
   if APEX_PUBKEY in zip_items:
     common.ZipDelete(apex_file, APEX_PUBKEY)
-  apex_zip = zipfile.ZipFile(apex_file, 'a')
+  apex_zip = zipfile.ZipFile(apex_file, 'a', allowZip64=True)
   common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
   common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
   common.ZipClose(apex_zip)
@@ -371,7 +374,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
       aligned_apex,
       signed_apex,
       container_key,
-      container_pw,
+      container_pw.get(container_key),
       codename_to_api_level_map=codename_to_api_level_map,
       extra_signapk_args=extra_signapk_args)
 

@@ -307,6 +307,9 @@ function setpaths()
     unset ANDROID_HOST_OUT
     export ANDROID_HOST_OUT=$(get_abs_build_var HOST_OUT)
 
+    unset ANDROID_SOONG_HOST_OUT
+    export ANDROID_SOONG_HOST_OUT=$(get_abs_build_var SOONG_HOST_OUT)
+
     unset ANDROID_HOST_OUT_TESTCASES
     export ANDROID_HOST_OUT_TESTCASES=$(get_abs_build_var HOST_OUT_TESTCASES)
 
@@ -316,6 +319,22 @@ function setpaths()
     # needed for building linux on MacOS
     # TODO: fix the path
     #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
+}
+
+function bazel()
+{
+    local T="$(gettop)"
+    if [ ! "$T" ]; then
+        echo "Couldn't locate the top of the tree.  Try setting TOP."
+        return
+    fi
+
+    if which bazel &>/dev/null; then
+        echo "NOTE: bazel() function sourced from envsetup.sh is being used instead of $(which bazel)"
+        echo
+    fi
+
+    "$T/tools/bazel" "$@"
 }
 
 function printconfig()
@@ -356,7 +375,7 @@ function should_add_completion() {
 
 function addcompletions()
 {
-    local T dir f
+    local f=
 
     # Keep us from trying to run in something that's neither bash nor zsh.
     if [ -z "$BASH_VERSION" -a -z "$ZSH_VERSION" ]; then
@@ -769,7 +788,7 @@ function gettop
     local TOPFILE=build/make/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
         # The following circumlocution ensures we remove symlinks from TOP.
-        (cd $TOP; PWD= /bin/pwd)
+        (cd "$TOP"; PWD= /bin/pwd)
     else
         if [ -f $TOPFILE ] ; then
             # The following circumlocution (repeated below as well) ensures
@@ -779,13 +798,13 @@ function gettop
         else
             local HERE=$PWD
             local T=
-            while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
+            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
                 \cd ..
                 T=`PWD= /bin/pwd -P`
             done
-            \cd $HERE
+            \cd "$HERE"
             if [ -f "$T/$TOPFILE" ]; then
-                echo $T
+                echo "$T"
             fi
         fi
     fi
@@ -1355,7 +1374,7 @@ function refreshmod() {
     mkdir -p $ANDROID_PRODUCT_OUT || return 1
 
     # Note, can't use absolute path because of the way make works.
-    m out/target/product/$(get_build_var TARGET_DEVICE)/module-info.json \
+    m $(get_build_var PRODUCT_OUT)/module-info.json \
         > $ANDROID_PRODUCT_OUT/module-info.json.build.log 2>&1
 }
 
@@ -1600,25 +1619,26 @@ function validate_current_shell() {
 # This allows loading only approved vendorsetup.sh files
 function source_vendorsetup() {
     unset VENDOR_PYTHONPATH
+    local T="$(gettop)"
     allowed=
-    for f in $(find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
+    for f in $(cd "$T" && find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
         if [ -n "$allowed" ]; then
             echo "More than one 'allowed_vendorsetup_sh-files' file found, not including any vendorsetup.sh files:"
             echo "  $allowed"
             echo "  $f"
             return
         fi
-        allowed="$f"
+        allowed="$T/$f"
     done
 
     allowed_files=
     [ -n "$allowed" ] && allowed_files=$(cat "$allowed")
     for dir in device vendor product; do
-        for f in $(test -d $dir && \
+        for f in $(cd "$T" && test -d $dir && \
             find -L $dir -maxdepth 4 -name 'vendorsetup.sh' 2>/dev/null | sort); do
 
             if [[ -z "$allowed" || "$allowed_files" =~ $f ]]; then
-                echo "including $f"; . "$f"
+                echo "including $f"; . "$T/$f"
             else
                 echo "ignoring $f, not in $allowed"
             fi

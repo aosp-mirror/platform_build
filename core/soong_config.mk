@@ -1,7 +1,3 @@
-SOONG := $(SOONG_OUT_DIR)/soong
-SOONG_BOOTSTRAP := $(SOONG_OUT_DIR)/.soong.bootstrap
-SOONG_BUILD_NINJA := $(SOONG_OUT_DIR)/build.ninja
-SOONG_IN_MAKE := $(SOONG_OUT_DIR)/.soong.in_make
 SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT).mk
 SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT).mk
@@ -42,6 +38,7 @@ $(call add_json_bool, Allow_missing_dependencies,        $(ALLOW_MISSING_DEPENDE
 $(call add_json_bool, Unbundled_build,                   $(TARGET_BUILD_UNBUNDLED))
 $(call add_json_bool, Unbundled_build_apps,              $(TARGET_BUILD_APPS))
 $(call add_json_bool, Always_use_prebuilt_sdks,          $(TARGET_BUILD_USE_PREBUILT_SDKS))
+$(call add_json_bool, Skip_boot_jars_check,              $(SKIP_BOOT_JARS_CHECK))
 
 $(call add_json_bool, Debuggable,                        $(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 $(call add_json_bool, Eng,                               $(filter eng,$(TARGET_BUILD_VARIANT)))
@@ -131,7 +128,7 @@ $(call add_json_list, ExtraVndkVersions,                 $(PRODUCT_EXTRA_VNDK_VE
 $(call add_json_list, DeviceSystemSdkVersions,           $(BOARD_SYSTEMSDK_VERSIONS))
 $(call add_json_list, Platform_systemsdk_versions,       $(PLATFORM_SYSTEMSDK_VERSIONS))
 $(call add_json_bool, Malloc_not_svelte,                 $(call invert_bool,$(filter true,$(MALLOC_SVELTE))))
-$(call add_json_bool, Malloc_zero_contents,              $(MALLOC_ZERO_CONTENTS))
+$(call add_json_bool, Malloc_zero_contents,              $(call invert_bool,$(filter false,$(MALLOC_ZERO_CONTENTS))))
 $(call add_json_bool, Malloc_pattern_fill_contents,      $(MALLOC_PATTERN_FILL_CONTENTS))
 $(call add_json_str,  Override_rs_driver,                $(OVERRIDE_RS_DRIVER))
 
@@ -174,8 +171,9 @@ $(call add_json_list, BoardVendorSepolicyDirs,           $(BOARD_VENDOR_SEPOLICY
 $(call add_json_list, BoardOdmSepolicyDirs,              $(BOARD_ODM_SEPOLICY_DIRS))
 $(call add_json_list, BoardVendorDlkmSepolicyDirs,       $(BOARD_VENDOR_DLKM_SEPOLICY_DIRS))
 $(call add_json_list, BoardOdmDlkmSepolicyDirs,          $(BOARD_ODM_DLKM_SEPOLICY_DIRS))
-$(call add_json_list, BoardPlatPublicSepolicyDirs,       $(BOARD_PLAT_PUBLIC_SEPOLICY_DIR))
-$(call add_json_list, BoardPlatPrivateSepolicyDirs,      $(BOARD_PLAT_PRIVATE_SEPOLICY_DIR))
+# TODO: BOARD_PLAT_* dirs only kept for compatibility reasons. Will be a hard error on API level 31
+$(call add_json_list, SystemExtPublicSepolicyDirs,       $(SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS) $(BOARD_PLAT_PUBLIC_SEPOLICY_DIR))
+$(call add_json_list, SystemExtPrivateSepolicyDirs,      $(SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS) $(BOARD_PLAT_PRIVATE_SEPOLICY_DIR))
 $(call add_json_list, BoardSepolicyM4Defs,               $(BOARD_SEPOLICY_M4DEFS))
 
 $(call add_json_bool, Flatten_apex,                      $(filter true,$(TARGET_FLATTEN_APEX)))
@@ -218,6 +216,8 @@ $(call add_json_bool, BoardUsesRecoveryAsBoot, $(BOARD_USES_RECOVERY_AS_BOOT))
 
 $(call add_json_list, BoardKernelBinaries, $(BOARD_KERNEL_BINARIES))
 $(call add_json_list, BoardKernelModuleInterfaceVersions, $(BOARD_KERNEL_MODULE_INTERFACE_VERSIONS))
+
+$(call add_json_bool, BoardMoveRecoveryResourcesToVendorBoot, $(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
 
 $(call json_end)
 

@@ -23,7 +23,7 @@ TARGET_2ND_ARCH := arm
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 
-ifneq ($(TARGET_BUILD_APPS)$(filter cts sdk vts10,$(MAKECMDGOALS)),)
+ifneq ($(TARGET_BUILD_APPS)$(filter cts sdk,$(MAKECMDGOALS)),)
 # DO NOT USE
 # DO NOT USE
 #
@@ -56,7 +56,6 @@ include build/make/target/board/BoardConfigGsiCommon.mk
 include build/make/target/board/BoardConfigEmuCommon.mk
 
 TARGET_NO_KERNEL := false
-TARGET_NO_VENDOR_BOOT := false
 BOARD_USES_RECOVERY_AS_BOOT := true
 
 BOARD_BOOTIMAGE_PARTITION_SIZE := 0x02000000

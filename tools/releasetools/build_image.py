@@ -250,6 +250,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   run_e2fsck = False
   needs_projid = prop_dict.get("needs_projid", 0)
   needs_casefold = prop_dict.get("needs_casefold", 0)
+  needs_compress = prop_dict.get("needs_compress", 0)
 
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
@@ -295,6 +296,18 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.extend(["--inode_size", "256"])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
+  elif fs_type.startswith("erofs"):
+    build_command = ["mkerofsimage.sh"]
+    build_command.extend([in_dir, out_file])
+    if "erofs_sparse_flag" in prop_dict:
+      build_command.extend([prop_dict["erofs_sparse_flag"]])
+    build_command.extend(["-m", prop_dict["mount_point"]])
+    if target_out:
+      build_command.extend(["-d", target_out])
+    if fs_config:
+      build_command.extend(["-C", fs_config])
+    if "selinux_fc" in prop_dict:
+      build_command.extend(["-c", prop_dict["selinux_fc"]])
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
@@ -337,6 +350,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.append("--prjquota")
     if (needs_casefold):
       build_command.append("--casefold")
+    if (needs_compress):
+      build_command.append("--compression")
   else:
     raise BuildImageError(
         "Error: unknown filesystem type: {}".format(fs_type))
@@ -529,6 +544,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
 
   common_props = (
       "extfs_sparse_flag",
+      "erofs_sparse_flag",
       "squashfs_sparse_flag",
       "f2fs_sparse_flag",
       "skip_fsck",
@@ -610,6 +626,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("userdata_selinux_fc", "selinux_fc")
     copy_prop("needs_casefold", "needs_casefold")
     copy_prop("needs_projid", "needs_projid")
+    copy_prop("needs_compress", "needs_compress")
   elif mount_point == "cache":
     copy_prop("cache_fs_type", "fs_type")
     copy_prop("cache_size", "partition_size")

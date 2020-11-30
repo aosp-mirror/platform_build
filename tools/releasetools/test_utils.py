@@ -199,7 +199,7 @@ class PropertyFilesTestCase(ReleaseToolsTestCase):
   @staticmethod
   def construct_zip_package(entries):
     zip_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(zip_file, 'w') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'w', allowZip64=True) as zip_fp:
       for entry in entries:
         zip_fp.writestr(
             entry,
