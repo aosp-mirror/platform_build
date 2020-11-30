@@ -188,6 +188,24 @@
       "parentUuid": "91a0f40e_d2a60fe2",
       "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "de6b06ab_220b4a9e",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2473,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-11-30T00:54:01Z",
+      "side": 1,
+      "message": "No, it won\u0027t be included in installed_files_file. So, you want this to have an entry for linkerconfig file in the installed_files_file. Then I think, \n\n1) SYSTEM_LINKER_CONFIG is appended to FULL_SYSTEMIMAGE_DEPS\n2) SYSTEM_LINKER_CONFIG depends on INTERNAL_SYSTEMIMAGE_FILES instead of FULL_SYSTEMIMAGE_DEPS\n3) Don\u0027t touch INSTALLED_FILES_FILE",
+      "parentUuid": "b6ca4578_aec8cf55",
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
