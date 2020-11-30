@@ -206,6 +206,24 @@
       "parentUuid": "b6ca4578_aec8cf55",
       "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6c010c0_fe0f6b25",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2473,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2020-11-30T06:48:02Z",
+      "side": 1,
+      "message": "Updated as suggested. Thanks.",
+      "parentUuid": "de6b06ab_220b4a9e",
+      "revId": "533afbeb2cf52d865d68c038c823f96a7262e81d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
