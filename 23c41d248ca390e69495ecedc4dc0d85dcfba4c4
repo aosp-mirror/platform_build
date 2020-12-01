@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f7e5b255_9b8d7083",
+        "filename": "target/product/generic_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-01T12:03:38Z",
+      "side": 1,
+      "message": "This is the Go variant of NetworkStack. The Non-Go variant is already inherited by generic_system (it is in base_system.mk).",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 27
+      },
+      "revId": "23c41d248ca390e69495ecedc4dc0d85dcfba4c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
