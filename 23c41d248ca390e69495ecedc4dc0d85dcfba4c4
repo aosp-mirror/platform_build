@@ -46,6 +46,30 @@
       },
       "revId": "23c41d248ca390e69495ecedc4dc0d85dcfba4c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "48c7dfaf_b3ffa72b",
+        "filename": "target/product/generic_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1278660
+      },
+      "writtenOn": "2020-12-01T19:04:17Z",
+      "side": 1,
+      "message": "I have cls to move the offending packages to system_ext but Lorenzo asked to add them to generic_system, see the hashtag.",
+      "parentUuid": "a5bf0ea0_7ec2a751",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 27
+      },
+      "revId": "23c41d248ca390e69495ecedc4dc0d85dcfba4c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
