@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6e0f485_d1949089",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1278660
+      },
+      "writtenOn": "2020-12-01T02:55:30Z",
+      "side": 1,
+      "message": "Hi Anton. Could you please here with pointing the right direction? We don\u0027t want to move these packages to system_ext (go/aog/1507856), but moving them to generic_system.km also breaks things.",
+      "revId": "386009390dfc1ca817e52c635fc7acbade2bdf38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
