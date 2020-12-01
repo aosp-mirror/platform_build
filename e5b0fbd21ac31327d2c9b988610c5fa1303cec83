@@ -34,6 +34,24 @@
       "parentUuid": "e0957308_e877829c",
       "revId": "e5b0fbd21ac31327d2c9b988610c5fa1303cec83",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "216a0bc3_4fca8876",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-01T14:10:51Z",
+      "side": 0,
+      "message": "This enforces the variable is set in BoardConfig rather than product config. TARGET_FLATTEN_APEX is actually kind of wrong in this respect, because it is set in product configs even though it is not a product variable",
+      "parentUuid": "b5bead73_0dea2d58",
+      "revId": "e5b0fbd21ac31327d2c9b988610c5fa1303cec83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

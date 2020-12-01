@@ -34,6 +34,24 @@
       "parentUuid": "01959683_52c48d46",
       "revId": "8d2c06a425211de6b5de6bfc2187f3e5822caaad",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56c952ea_f3bd74d5",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 746,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-01T14:10:51Z",
+      "side": 1,
+      "message": "There is a split in the config system between device configs (BoardConfig) and product configs that use these devices. It used to be \"how to compile\" vs \"what to compile\", so with that in mind it kind of fits like a BoardConfig, but if you want to enable having different settings for different products it should be a product variable instead\n\n+joe, sasha, does this distinction make sense in your new system?",
+      "parentUuid": "5cb03516_3a7bfe33",
+      "revId": "8d2c06a425211de6b5de6bfc2187f3e5822caaad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
