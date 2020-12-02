@@ -2467,6 +2467,15 @@ FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 # -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
 
+# Install system linker configuration
+# Collect all available stub libraries installed in system and install with predefined linker configuration
+SYSTEM_LINKER_CONFIG := $(TARGET_OUT)/etc/linker.config.pb
+$(SYSTEM_LINKER_CONFIG) : $(INTERNAL_SYSTEMIMAGE_FILES) $(LINKER_CONFIG_PATH_system_linker_config) | conv_linker_config
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $(LINKER_CONFIG_PATH_system_linker_config)\
+	  --output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
+
+FULL_SYSTEMIMAGE_DEPS += $(SYSTEM_LINKER_CONFIG)
+
 # installed file list
 # Depending on anything that $(BUILT_SYSTEMIMAGE) depends on.
 # We put installed-files.txt ahead of image itself in the dependency graph
