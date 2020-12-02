@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "58578865_29f0e042",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-12-02T20:12:46Z",
+      "side": 1,
+      "message": "From the kernel logs:\n\n\u003e [    8.929296] init: /first_stage_ramdisk/system/bin/e2fsck already exists and it can be executed\n\nSo this change works as expected. The test fails due to b/174595535. ",
+      "revId": "6b7cc73ec5477e1c4812c95b3a1ae9bcc4722077",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
