@@ -16,6 +16,29 @@
       "message": "Hello, Colin. Can you please review this change?",
       "revId": "afdd39fd10ff4d6a275fcb45a8992496a5482c3d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "73c886d7_01d27b35",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-02T00:51:03Z",
+      "side": 1,
+      "message": "Do you also need to define this in product.mk?",
+      "range": {
+        "startLine": 217,
+        "startChar": 61,
+        "endLine": 217,
+        "endChar": 109
+      },
+      "revId": "afdd39fd10ff4d6a275fcb45a8992496a5482c3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
