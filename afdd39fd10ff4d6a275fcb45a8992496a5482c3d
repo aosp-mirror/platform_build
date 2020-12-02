@@ -63,6 +63,30 @@
       },
       "revId": "afdd39fd10ff4d6a275fcb45a8992496a5482c3d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "99196c5c_3cda3681",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1689978
+      },
+      "writtenOn": "2020-12-02T06:32:10Z",
+      "side": 1,
+      "message": "Discussed with Justin, I noticed that I misunderstood the question. It is need to be defined in product.mk. Thank you for recognizing me. I\u0027ll create another CL for this.",
+      "parentUuid": "5784c2a7_c645d265",
+      "range": {
+        "startLine": 217,
+        "startChar": 61,
+        "endLine": 217,
+        "endChar": 109
+      },
+      "revId": "afdd39fd10ff4d6a275fcb45a8992496a5482c3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
