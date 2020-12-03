@@ -3940,6 +3940,7 @@ INTERNAL_OTATOOLS_MODULES := \
   fec \
   fs_config \
   generate_verity_key \
+  host_init_verifier \
   img2simg \
   img_from_target_files \
   imgdiff \
