@@ -52,6 +52,24 @@
       "parentUuid": "b5bead73_0dea2d58",
       "revId": "e5b0fbd21ac31327d2c9b988610c5fa1303cec83",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3995030d_11f52632",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2020-12-03T12:03:08Z",
+      "side": 0,
+      "message": "Not adding to the list since I switched to using product flag.",
+      "parentUuid": "216a0bc3_4fca8876",
+      "revId": "e5b0fbd21ac31327d2c9b988610c5fa1303cec83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

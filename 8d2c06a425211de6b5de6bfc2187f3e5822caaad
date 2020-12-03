@@ -52,6 +52,24 @@
       "parentUuid": "5cb03516_3a7bfe33",
       "revId": "8d2c06a425211de6b5de6bfc2187f3e5822caaad",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a7b235e_e294e7f3",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 746,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2020-12-03T12:03:08Z",
+      "side": 1,
+      "message": "From our offline discussion, it seems product flag is more flexible than device flag. Switched to using product flag.",
+      "parentUuid": "56c952ea_f3bd74d5",
+      "revId": "8d2c06a425211de6b5de6bfc2187f3e5822caaad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
