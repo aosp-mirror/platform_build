@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6423ed47_f9f52e90",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2020-12-03T14:51:31Z",
+      "side": 1,
+      "message": "Seems to be presubmit failures, address that?",
+      "revId": "5ef11aaca8649835602a03f9ba413cd3fb932088",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
