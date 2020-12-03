@@ -65,7 +65,10 @@ function _export_metrics_uploader() {
 function _set_rbe_vars() {
   unset USE_GOMA
   export USE_RBE="true"
-  export RBE_CXX_EXEC_STRATEGY="remote_local_fallback"
+  export RBE_CXX_EXEC_STRATEGY="racing"
+  export RBE_JAVAC_EXEC_STRATEGY="racing"
+  export RBE_R8_EXEC_STRATEGY="racing"
+  export RBE_D8_EXEC_STRATEGY="racing"
   export RBE_use_unified_cas_ops="true"
   export RBE_JAVAC=1
   export RBE_R8=1
