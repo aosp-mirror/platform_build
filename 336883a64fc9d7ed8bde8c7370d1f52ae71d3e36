@@ -3,6 +3,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "c61c2149_82808d8a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2020-12-03T09:32:28Z",
+      "side": 1,
+      "message": "Ping",
+      "revId": "336883a64fc9d7ed8bde8c7370d1f52ae71d3e36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "6473c3fe_3b1362dd",
         "filename": "core/definitions.mk",
         "patchSetId": 7
