@@ -22,6 +22,30 @@
       },
       "revId": "585f0c35eb2f9fc2e0452deac200b9d8ebdea41a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "81242dd6_33a497aa",
+        "filename": "core/product.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2020-12-03T15:04:52Z",
+      "side": 1,
+      "message": "Right. It\u0027s just a boolean value. Updated to single value vars.",
+      "parentUuid": "c02ff3e2_59bd14f8",
+      "range": {
+        "startLine": 325,
+        "startChar": 0,
+        "endLine": 325,
+        "endChar": 18
+      },
+      "revId": "585f0c35eb2f9fc2e0452deac200b9d8ebdea41a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
