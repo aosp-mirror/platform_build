@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c02ff3e2_59bd14f8",
+        "filename": "core/product.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-03T14:35:01Z",
+      "side": 1,
+      "message": "This should be in _product_single_value_vars as it isn\u0027t a list I think? (just true/false)?",
+      "range": {
+        "startLine": 325,
+        "startChar": 0,
+        "endLine": 325,
+        "endChar": 18
+      },
+      "revId": "585f0c35eb2f9fc2e0452deac200b9d8ebdea41a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
