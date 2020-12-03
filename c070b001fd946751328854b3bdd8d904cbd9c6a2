@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d77beaa7_f31027d8",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-12-03T13:50:38Z",
+      "side": 1,
+      "message": "I think it\u0027s better to trigger an error when this is turned on while BOARD_VNDK_VERSION is not set.",
+      "range": {
+        "startLine": 410,
+        "startChar": 24,
+        "endLine": 411,
+        "endChar": 20
+      },
+      "revId": "c070b001fd946751328854b3bdd8d904cbd9c6a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "14105af4_a28c2c5e",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-12-03T13:50:38Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 412,
+        "startChar": 8,
+        "endLine": 413,
+        "endChar": 72
+      },
+      "revId": "c070b001fd946751328854b3bdd8d904cbd9c6a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91f97d9c_de55c674",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-12-03T13:50:38Z",
+      "side": 1,
+      "message": "add period to separate sentences",
+      "range": {
+        "startLine": 416,
+        "startChar": 70,
+        "endLine": 416,
+        "endChar": 71
+      },
+      "revId": "c070b001fd946751328854b3bdd8d904cbd9c6a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
