@@ -2493,15 +2493,25 @@ endef
 # $(2): destination file
 # $(3): message to print on error
 define copy-non-elf-file-checked
-$(2): $(1) $(LLVM_READOBJ)
-	@echo "Copy non-ELF: $$@"
+$(eval check_non_elf_file_timestamp := \
+    $(call intermediates-dir-for,FAKE,check-non-elf-file-timestamps)/$(2).timestamp)
+$(check_non_elf_file_timestamp): $(1) $(LLVM_READOBJ)
+	@echo "Check non-ELF: $$<"
+	$(hide) mkdir -p "$$(dir $$@)"
+	$(hide) rm -f "$$@"
 	$(hide) \
-	    if $(LLVM_READOBJ) -h $$< >/dev/null 2>&1; then \
-	        $(call echo-error,$$@,$(3)); \
-	        $(call echo-error,$$@,found ELF file: $$<); \
+	    if $(LLVM_READOBJ) -h "$$<" >/dev/null 2>&1; then \
+	        $(call echo-error,$(2),$(3)); \
+	        $(call echo-error,$(2),found ELF file: $$<); \
 	        false; \
 	    fi
+	$(hide) touch "$$@"
+
+$(2): $(1) $(check_non_elf_file_timestamp)
+	@echo "Copy non-ELF: $$@"
 	$$(copy-file-to-target)
+
+check-elf-prebuilt-product-copy-files: $(check_non_elf_file_timestamp)
 endef
 
 # The -t option to acp and the -p option to cp is
