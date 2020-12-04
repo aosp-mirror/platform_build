@@ -417,7 +417,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   fs_type = prop_dict.get("fs_type", "")
 
   fs_spans_partition = True
-  if fs_type.startswith("squash"):
+  if fs_type.startswith("squash") or fs_type.startswith("erofs"):
     fs_spans_partition = False
 
   # Get a builder for creating an image that's to be verified by Verified Boot,
