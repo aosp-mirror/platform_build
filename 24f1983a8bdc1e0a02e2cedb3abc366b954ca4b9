@@ -52,6 +52,24 @@
       "parentUuid": "76cce14d_dc497594",
       "revId": "24f1983a8bdc1e0a02e2cedb3abc366b954ca4b9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e09b701c_0f42a34b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-12-04T01:35:55Z",
+      "side": 1,
+      "message": "How do I support this \"relaxed\" mode? I am again getting similar errors for tzdata. If I don\u0027t add them, some mysterious target fails; I don\u0027t even know where the dependency is pulled into. If I don\u0027t add it, some other target complains about redundant entries.",
+      "parentUuid": "06b74951_d4d59e28",
+      "revId": "24f1983a8bdc1e0a02e2cedb3abc366b954ca4b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
