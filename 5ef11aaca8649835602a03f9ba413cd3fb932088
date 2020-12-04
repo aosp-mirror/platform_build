@@ -16,6 +16,24 @@
       "message": "Seems to be presubmit failures, address that?",
       "revId": "5ef11aaca8649835602a03f9ba413cd3fb932088",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0541b98_7f40ffe4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-12-04T02:06:09Z",
+      "side": 1,
+      "message": "Yup, only one failure (in cf_x86_64_phone) is relevant.\n\nhttps://android-build.googleplex.com/builds/pending/P18179415/cf_x86_64_phone-userdebug/latest/view/logs/build_error.log\n\nFAILED: out/target/product/vsoc_x86_64/installed-files-recovery.txt out/target/product/vsoc_x86_64/installed-files-recovery.json\n/bin/bash -c \"(rm -f out/target/product/vsoc_x86_64/installed-files-recovery.txt ) \u0026\u0026 (out/soong/host/linux-x86/bin/fileslist out/target/product/vsoc_x86_64/recovery/root \u003e out/target/product/vsoc_x86_64/installed-files-recovery.json ) \u0026\u0026 (build/make/tools/fileslist_util.py -c out/target/product/vsoc_x86_64/installed-files-recovery.json \u003e out/target/product/vsoc_x86_64/installed-files-recovery.txt )\"\npanic: lstat out/target/product/vsoc_x86_64/recovery/root/init.environ.rc: no such file or directory\n\n\nNeed more investigation.",
+      "parentUuid": "6423ed47_f9f52e90",
+      "revId": "5ef11aaca8649835602a03f9ba413cd3fb932088",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
