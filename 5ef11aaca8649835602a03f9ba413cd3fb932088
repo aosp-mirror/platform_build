@@ -34,6 +34,29 @@
       "parentUuid": "6423ed47_f9f52e90",
       "revId": "5ef11aaca8649835602a03f9ba413cd3fb932088",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e930f6b_8762f07c",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-12-04T10:32:23Z",
+      "side": 1,
+      "message": "After more discussions, we decided not to use BOARD_ROOT_EXTRA_FOLDERS.",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 24
+      },
+      "revId": "5ef11aaca8649835602a03f9ba413cd3fb932088",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
