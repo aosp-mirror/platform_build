@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4aa39b3_5af737ff",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-12-04T23:08:31Z",
+      "side": 1,
+      "message": "Can you update the comment here please?",
+      "range": {
+        "startLine": 429,
+        "startChar": 0,
+        "endLine": 429,
+        "endChar": 75
+      },
+      "revId": "c6f0bd0752c40bdeb9948f12102d0a9e8028c6df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
