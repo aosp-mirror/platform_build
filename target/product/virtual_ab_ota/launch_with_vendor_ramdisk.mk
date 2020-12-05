@@ -14,8 +14,13 @@
 # limitations under the License.
 #
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_vendor_ramdisk.mk)
+# Devices launching with Virtual A/B and has a vendor_boot partition is
+# preferred to inherit from this makefile instead of launch.mk.
 
-PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
+PRODUCT_VIRTUAL_AB_OTA := true
 
-PRODUCT_PACKAGES += snapuserd.vendor_ramdisk snapuserd
+PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.enabled=true
+
+PRODUCT_PACKAGES += \
+    linker.vendor_ramdisk \
+    e2fsck.vendor_ramdisk \

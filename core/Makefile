@@ -40,6 +40,10 @@ $(if $(filter true,$(BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES)),, \
 )
 endef
 
+# Phony target to check PRODUCT_COPY_FILES copy pairs don't contain ELF files
+.PHONY: check-elf-prebuilt-product-copy-files
+check-elf-prebuilt-product-copy-files:
+
 check_elf_prebuilt_product_copy_files := true
 ifneq (,$(filter true,$(BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES)))
 check_elf_prebuilt_product_copy_files :=
@@ -1666,16 +1670,15 @@ INTERNAL_RECOVERYIMAGE_FILES := $(filter $(TARGET_RECOVERY_OUT)/%, \
 INSTALLED_FILES_FILE_RECOVERY := $(PRODUCT_OUT)/installed-files-recovery.txt
 INSTALLED_FILES_JSON_RECOVERY := $(INSTALLED_FILES_FILE_RECOVERY:.txt=.json)
 
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+INSTALLED_BOOTIMAGE_TARGET := $(BUILT_BOOTIMAGE_TARGET)
+endif
+
 # TODO(b/30414428): Can't depend on INTERNAL_RECOVERYIMAGE_FILES alone like other
 # INSTALLED_FILES_FILE_* rules. Because currently there're cp/rsync/rm commands in
 # build-recoveryimage-target, which would touch the files under TARGET_RECOVERY_OUT and race with
 # the call to FILELIST.
-ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-INSTALLED_BOOTIMAGE_TARGET := $(BUILT_BOOTIMAGE_TARGET)
-$(INSTALLED_FILES_FILE_RECOVERY): $(INSTALLED_BOOTIMAGE_TARGET)
-else
-$(INSTALLED_FILES_FILE_RECOVERY): $(INSTALLED_RECOVERYIMAGE_TARGET)
-endif
+$(INSTALLED_FILES_FILE_RECOVERY): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
 
 $(INSTALLED_FILES_FILE_RECOVERY): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_RECOVERY)
 $(INSTALLED_FILES_FILE_RECOVERY): $(INTERNAL_RECOVERYIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
@@ -2466,6 +2469,15 @@ FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 
 # -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
+
+# Install system linker configuration
+# Collect all available stub libraries installed in system and install with predefined linker configuration
+SYSTEM_LINKER_CONFIG := $(TARGET_OUT)/etc/linker.config.pb
+$(SYSTEM_LINKER_CONFIG) : $(INTERNAL_SYSTEMIMAGE_FILES) $(LINKER_CONFIG_PATH_system_linker_config) | conv_linker_config
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $(LINKER_CONFIG_PATH_system_linker_config)\
+	  --output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
+
+FULL_SYSTEMIMAGE_DEPS += $(SYSTEM_LINKER_CONFIG)
 
 # installed file list
 # Depending on anything that $(BUILT_SYSTEMIMAGE) depends on.
@@ -3951,6 +3963,7 @@ INTERNAL_OTATOOLS_MODULES := \
   fec \
   fs_config \
   generate_verity_key \
+  host_init_verifier \
   img2simg \
   img_from_target_files \
   imgdiff \
