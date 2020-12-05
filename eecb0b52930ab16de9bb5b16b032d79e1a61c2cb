@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d579b4d3_ef0e7d5c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-12-05T02:46:42Z",
+      "side": 1,
+      "message": "+1 from AVB perspective, adding Anton to see if any concern from Mainline config.",
+      "revId": "eecb0b52930ab16de9bb5b16b032d79e1a61c2cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
