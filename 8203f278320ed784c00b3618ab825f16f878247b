@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d847bfeb_b7dee73b",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-12-07T05:50:45Z",
+      "side": 1,
+      "message": "I guess it\u0027s possible to make a copy of prop_dict and remove the erofs_sparse_flag. This avoids  the unsparse.",
+      "range": {
+        "startLine": 432,
+        "startChar": 29,
+        "endLine": 432,
+        "endChar": 38
+      },
+      "revId": "8203f278320ed784c00b3618ab825f16f878247b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
