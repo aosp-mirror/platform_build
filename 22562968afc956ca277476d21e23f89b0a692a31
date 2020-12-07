@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "51331f46_4899cef0",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 5
+      },
+      "lineNbr": 466,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e6008915_7fbef351",
+      "range": {
+        "startLine": 466,
+        "startChar": 0,
+        "endLine": 466,
+        "endChar": 1
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9fc36b36_61b7d3d7",
@@ -37,6 +61,30 @@
       "writtenOn": "2020-11-26T00:55:39Z",
       "side": 1,
       "message": "MergeABPartitionsTxt",
+      "range": {
+        "startLine": 635,
+        "startChar": 4,
+        "endLine": 635,
+        "endChar": 26
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "859430f7_600f09bc",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 635,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9fc36b36_61b7d3d7",
       "range": {
         "startLine": 635,
         "startChar": 4,
@@ -70,6 +118,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9487205_79ca2d37",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "\u003e Removing \u0027temp\u0027 from these arg names, since the function only cares that it is provided directories, not whether they\u0027re temp or not\n\nDone.\n\n\u003e Removing the comments on lines 636-643, and replacing with something similar to your ProcessDynamicPartitionsInfoTxt down below? e.g. \"Merges META/ab_partitions.txt from multiple extracted target files packages. (next line) Writes the results in an output directory at the same relative location.\"\n\nI just left the one line summary here. I think the function is small enough that it may not need more explanation.",
+      "parentUuid": "80889279_c81d8adc",
+      "range": {
+        "startLine": 638,
+        "startChar": 2,
+        "endLine": 650,
+        "endChar": 16
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fe5de2ef_56b4321e",
@@ -93,6 +165,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4bcc636_801c7625",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fe5de2ef_56b4321e",
+      "range": {
+        "startLine": 669,
+        "startChar": 4,
+        "endLine": 669,
+        "endChar": 35
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3d672728_7e15a40c",
@@ -106,6 +202,30 @@
       "writtenOn": "2020-11-26T00:55:39Z",
       "side": 1,
       "message": "Here \u0026 above, \"special processing\" is pretty vague/unique to merge_target_files. I think it\u0027d be better replaced with a 1-line version of the sentences in 672-673.",
+      "range": {
+        "startLine": 670,
+        "startChar": 14,
+        "endLine": 670,
+        "endChar": 32
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db77dcf0_f48a26d1",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 670,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Like above I just left the one line summary.",
+      "parentUuid": "3d672728_7e15a40c",
       "range": {
         "startLine": 670,
         "startChar": 14,
@@ -162,6 +282,54 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "475acf82_d6c9349f",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fd6d1a2e_5b52987a",
+      "range": {
+        "startLine": 715,
+        "startChar": 35,
+        "endLine": 715,
+        "endChar": 56
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "33dd604c_96bd3c3a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1795a5e3_9ed9e365",
+      "range": {
+        "startLine": 715,
+        "startChar": 4,
+        "endLine": 715,
+        "endChar": 22
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "68fb1cc6_de209f2d",
@@ -175,6 +343,30 @@
       "writtenOn": "2020-11-26T00:55:39Z",
       "side": 1,
       "message": "I don\u0027t recall why I rewrote the logic when I put it in merge_builds.py, but this logic is also found in https://cs.android.com/android/platform/superproject/+/master:build/make/tools/releasetools/add_img_to_target_files.py;drc\u003d8218225794c50a44de1fa5fe3257b8973a510bf7;l\u003d935. \n\nI think if possible we should try to reconcile the implementations here \u0026 in add_img_to_target_files.py so that there is one source of truth of \"how do I know what belongs in vbmeta.img\".",
+      "range": {
+        "startLine": 743,
+        "startChar": 4,
+        "endLine": 743,
+        "endChar": 23
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f2e3fa8_8f2b3533",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 743,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "I carved out the part where we determine which of the non-chained partition should be in the top-level vbmeta.",
+      "parentUuid": "68fb1cc6_de209f2d",
       "range": {
         "startLine": 743,
         "startChar": 4,
@@ -210,6 +402,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a69d7820_2e9838b8",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 777,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "One reason I took this as-is from merge_target_files was that it allowed us to store the list in the same temp dir as the other artifacts that get generated in case it was useful for debugging and keep the same temp artifacts as before.\n\nThat said, I\u0027m fine removing it as I agree that it makes this method more self-contained.",
+      "parentUuid": "7a1273d8_0cae076d",
+      "range": {
+        "startLine": 777,
+        "startChar": 4,
+        "endLine": 777,
+        "endChar": 12
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0349cf7e_757a2501",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 5
@@ -221,6 +437,30 @@
       "writtenOn": "2020-11-26T00:55:39Z",
       "side": 1,
       "message": "I believe this was done on purpose to match https://cs.android.com/android/platform/superproject/+/master:build/make/core/Makefile;drc\u003d6ff5201ce97cc3d8cc336d9a96261eb273b2257c;l\u003d4857\n\nwhere META comes first. Can you add a quick comment calling that out? That this preserves the META/ -first behavior that build/make/core/Makefile uses.",
+      "range": {
+        "startLine": 792,
+        "startChar": 2,
+        "endLine": 799,
+        "endChar": 26
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "65d52bfa_c6bb9f19",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 799,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0349cf7e_757a2501",
       "range": {
         "startLine": 792,
         "startChar": 2,
@@ -244,6 +484,30 @@
       "writtenOn": "2020-11-26T00:55:39Z",
       "side": 1,
       "message": "across",
+      "range": {
+        "startLine": 1258,
+        "startChar": 58,
+        "endLine": 1258,
+        "endChar": 63
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "057e9b00_b82ee8fc",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1258,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f7bd1a27_574a5559",
       "range": {
         "startLine": 1258,
         "startChar": 58,
@@ -279,6 +543,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d5fdcf5a_9dc51e29",
+        "filename": "tools/releasetools/merge_partial_builds.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "This was done since it appears some users of merge_target_files.py also generate super.img using the merged target files archive that the script produces. Since we aren\u0027t planning on having a merge target files archive using this merge process, I included that option here now to ensure that we have roughly the same capabilities as the previous merge process.",
+      "parentUuid": "4ede3ae5_10e11f99",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 41
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "64951ac0_fa29d0fc",
         "filename": "tools/releasetools/merge_partial_builds.py",
         "patchSetId": 5
@@ -290,6 +578,30 @@
       "writtenOn": "2020-11-26T00:55:39Z",
       "side": 1,
       "message": "one",
+      "range": {
+        "startLine": 150,
+        "startChar": 62,
+        "endLine": 150,
+        "endChar": 64
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf69da53_d11b5b6b",
+        "filename": "tools/releasetools/merge_partial_builds.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64951ac0_fa29d0fc",
       "range": {
         "startLine": 150,
         "startChar": 62,
@@ -323,6 +635,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "06da7e10_2442aaa7",
+        "filename": "tools/releasetools/merge_partial_builds.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0e0afcb8_135db173",
+      "range": {
+        "startLine": 156,
+        "startChar": 4,
+        "endLine": 156,
+        "endChar": 33
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e812aa65_dbe1788e",
@@ -346,6 +682,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bec4bcad_e7803fae",
+        "filename": "tools/releasetools/merge_partial_builds.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e812aa65_dbe1788e",
+      "range": {
+        "startLine": 273,
+        "startChar": 49,
+        "endLine": 273,
+        "endChar": 62
+      },
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bddf641b_0169f17a",
@@ -359,6 +719,24 @@
       "writtenOn": "2020-11-26T00:55:39Z",
       "side": 1,
       "message": "I know this is a big request, but LMK what you think:\n\nDo you think we can kill off merge_target_files.py in this change?\nAs in replace it with a call to merge_partial_builds.py and a warning that merge_target_files.py is deprecated? This would mean thinking about all callers of merge_target_files.py and what features they expect from this script, and whether or not the feature can be (a) deprecated as unnecessary or (b) replaced within merge_partial_builds.py",
+      "revId": "22562968afc956ca277476d21e23f89b0a692a31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc55e00e_d8f731e4",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2020-12-07T23:11:19Z",
+      "side": 1,
+      "message": "That sounds like the best path forward, but I am concerned about being able to do this in a timely fashion. My gut says it might be safer to put a warning in merge_target_files and then follow-up with the users to move off the script. \n\nEsp, since this won\u0027t produce a target files archive like in the past. I think we need to get buy-in from other teams to move to it.",
+      "parentUuid": "bddf641b_0169f17a",
       "revId": "22562968afc956ca277476d21e23f89b0a692a31",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
