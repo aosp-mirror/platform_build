@@ -36,6 +36,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5555ba27_de996f21",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-12-07T07:03:10Z",
+      "side": 1,
+      "message": "This is addressed by https://android-review.googlesource.com/c/platform/build/+/1515806",
+      "parentUuid": "c0541b98_7f40ffe4",
+      "revId": "5ef11aaca8649835602a03f9ba413cd3fb932088",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2e930f6b_8762f07c",
