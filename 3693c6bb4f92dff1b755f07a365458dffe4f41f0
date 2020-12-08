@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "da0e4566_d6a450bf",
+        "filename": "core/product_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2020-12-08T04:55:59Z",
+      "side": 1,
+      "message": "I don\u0027t think this is correct.\nJAVA SDK library enforcement can be enabled only for the treble interfaces without product interface enforced.\nBOARD_VNDK_VERSION is required for PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY, but PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE is optional.",
+      "range": {
+        "startLine": 383,
+        "startChar": 2,
+        "endLine": 383,
+        "endChar": 59
+      },
+      "revId": "3693c6bb4f92dff1b755f07a365458dffe4f41f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
