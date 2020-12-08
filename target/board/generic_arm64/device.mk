@@ -30,7 +30,5 @@ PRODUCT_COPY_FILES += \
     kernel/prebuilts/5.4/arm64/kernel-5.4-lz4:kernel-5.4-lz4-allsyms
 endif
 
-PRODUCT_PACKAGES += e2fsck_ramdisk
-
 PRODUCT_BUILD_VENDOR_BOOT_IMAGE := false
 PRODUCT_BUILD_RECOVERY_IMAGE := false
