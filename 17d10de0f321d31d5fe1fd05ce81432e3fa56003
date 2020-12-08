@@ -69,6 +69,24 @@
       "parentUuid": "a9c3ad27_cdc532c6",
       "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "650fb31a_72a505ca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-12-08T06:25:08Z",
+      "side": 1,
+      "message": "\u003e Hi Jaegeuk,\n\u003e \n\u003e Thanks for your reply, since uncompressed f2fs can catch extent_cache, but compressed files not. And the f2fs node amplification is noticable (compared with ext4 extent or f2fs extent cache) as well. By constant, erofs uses compacted index, it doesn\u0027t have indirect block and each block only uses 2byte meta index.\n\u003e \n\u003e And if you look at rand9m in\n\u003e https://github.com/erofs/erofs-openbenchmark/wiki/linux_5.10_rc4-compression-FSes-benchmark\n\u003e \n\u003e It will become largely with the larger cluster size (and make UFS just as a eMMC), and I don\u0027t think it can be eliminated by just cache compressed blocks (see squashfs data.)\n\u003e \n\u003e By design, fixed-sized output 4k can have the minimum random I/O amplification.\n\u003e \n\u003e Thanks,\n\u003e Gao Xiang\n\nAlso, on-disk erofs format is quite optimized for Android read-only scenarios (this is just on-disk changes, plus inplace decompression runtime optimization (to avoid double memory footprint), I don\u0027t see there\u0027s any chance with the current f2fs on-disk compression design.)\n\nThanks for your time.\n\nThanks,\nGao Xiang",
+      "parentUuid": "6434f76a_7566b241",
+      "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
