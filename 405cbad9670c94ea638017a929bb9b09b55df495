@@ -22,6 +22,30 @@
       },
       "revId": "405cbad9670c94ea638017a929bb9b09b55df495",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d24d311_ef8d5c12",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-12-08T10:48:48Z",
+      "side": 1,
+      "message": "Thanks. I guess BUILD_DATETIME_FILE? I will do another test build...",
+      "parentUuid": "82bd3f0d_d7493bc8",
+      "range": {
+        "startLine": 241,
+        "startChar": 77,
+        "endLine": 241,
+        "endChar": 136
+      },
+      "revId": "405cbad9670c94ea638017a929bb9b09b55df495",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
