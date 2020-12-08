@@ -105,6 +105,24 @@
       "parentUuid": "650fb31a_72a505ca",
       "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ddd4f96d_b2c0e7d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-12-08T06:29:40Z",
+      "side": 1,
+      "message": "Hi Jaegeuk, Yeah, I think f2fs compression is good, but EROFS is designed and heavily optimized for read-only scenarios (from on-disk index and runtime), but I\u0027m not sure if f2fs compression does like that, the modification and the complexity are worthwhile...",
+      "parentUuid": "e3bf50fb_2ae1f6ce",
+      "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
