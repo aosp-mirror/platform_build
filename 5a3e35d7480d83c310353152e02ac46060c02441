@@ -70,6 +70,30 @@
       },
       "revId": "5a3e35d7480d83c310353152e02ac46060c02441",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e42a8ca7_02f6343f",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-12-08T08:09:45Z",
+      "side": 1,
+      "message": "No, I meant that unlike creat/open(... O_CREAT), which use the passed in permission set, then bitwise-and it with the current umask, chmod() sets the value directly.\n\nSo when umask \u003d\u003d 0022:\n\n  creat(\"foo\", 0777) \u003d\u003e foo 0755\n  open(\"foo\", O_CREAT, 0777) \u003d\u003e foo 0755\n  chmod(\"foo\", 0777) \u003d\u003e foo 0777\n\nSo to prevent accidentally creating a world-writable file when the system isn\u0027t configured to do that by default, you need to be more conservative with chmod. On the commandline, `chmod +w` just sets the single bit, but in code, it looks like you need to do a stat/bitwise-or/chmod sequence.\n\n---\n\nBut yeah, I\u0027ve been worried about this bazel-ninja incompatibility for a while -- best case is we catch it in obvious cases like this, but error-checking isn\u0027t great in the android world, and it has the possibility of transferring into some outputs (getting encoded into a zip, etc) and causing issues on other machines.\n\nWe silently dropped a whole bunch of test support at one point because we accidentally dropped the execute bit in a zip file, so this isn\u0027t entirely a made-up problem 😊. Though I\u0027d expect the writable bit to matter even less, and many of our packaging setups should hardcode it to something reasonable for the output anyways (our zip writer only preserves the owner\u0027s executable bit IIRC, everything else is hardcoded)",
+      "parentUuid": "8b99d205_e8080611",
+      "range": {
+        "startLine": 333,
+        "startChar": 23,
+        "endLine": 333,
+        "endChar": 27
+      },
+      "revId": "5a3e35d7480d83c310353152e02ac46060c02441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
