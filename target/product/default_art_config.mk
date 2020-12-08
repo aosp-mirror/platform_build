@@ -37,6 +37,7 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
     com.android.permission:framework-permission-s \
+    com.android.scheduling:framework-scheduling \
     com.android.sdkext:framework-sdkextensions \
     com.android.wifi:framework-wifi \
     com.android.tethering:framework-tethering \
