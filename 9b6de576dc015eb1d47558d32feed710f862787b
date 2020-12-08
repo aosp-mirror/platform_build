@@ -16,6 +16,23 @@
       "message": "to answer Colin\u0027s concern regarding media\u0027s 32bit issue,\nAlistair has fixed quite a few already;.\n\nin addition, emulator_arm64 is impacting\nemulator arm64 image only, and we would like to get\nthis switched to 64bit only and begin to find out what else\nneed to be fixed.\n\nas apple M1 does not support 32bit, so this CL serves\nas a starting point.\n",
       "revId": "9b6de576dc015eb1d47558d32feed710f862787b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5839979_aa303e1f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1293738
+      },
+      "writtenOn": "2020-12-08T16:11:46Z",
+      "side": 1,
+      "message": "Cuttlefish will continue to provide 64+32 build+test coverage on arm64 and x86_64 on Linux only.",
+      "revId": "9b6de576dc015eb1d47558d32feed710f862787b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
