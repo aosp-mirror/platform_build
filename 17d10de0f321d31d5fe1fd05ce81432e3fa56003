@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a50fcf95_3daeadbf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-12-08T02:58:00Z",
+      "side": 1,
+      "message": "Site note: I don\u0027t know what\u0027s the exact benefit of this.\n\nI have to say the default 16k f2fs compression (not matter what algorithm, even with Zstd) is _much_ bigger than erofs 4k compression, plus unnecessary metadata overhead (especially NAT+SSA).\n\nNot to mention its random read I/O amplification and memory footprint for now.",
+      "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
