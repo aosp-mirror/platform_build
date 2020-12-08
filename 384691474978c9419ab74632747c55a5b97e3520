@@ -52,6 +52,24 @@
       "parentUuid": "ac4bb957_f36d209d",
       "revId": "384691474978c9419ab74632747c55a5b97e3520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "02447eaf_a1eabf86",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1514900
+      },
+      "writtenOn": "2020-12-08T10:02:50Z",
+      "side": 1,
+      "message": "Looks like the syntax is\n\n  TARGET: INPUTS | ORDER_ONLY_INPUTS\n\nhttps://www.gnu.org/software/make/manual/html_node/Prerequisite-Types.html\n\nbut doesn\u0027t look like Kati supports them.",
+      "parentUuid": "1bd5e1ad_f307a861",
+      "revId": "384691474978c9419ab74632747c55a5b97e3520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
