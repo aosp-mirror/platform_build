@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac4bb957_f36d209d",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-12-08T09:54:02Z",
+      "side": 1,
+      "message": "These are intentionally not added as dependencies, as we don\u0027t want to force rebuilds when these values change, they should only be picked up when this regenerates.",
+      "revId": "384691474978c9419ab74632747c55a5b97e3520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
