@@ -70,6 +70,24 @@
       "parentUuid": "1bd5e1ad_f307a861",
       "revId": "384691474978c9419ab74632747c55a5b97e3520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8d5e2d7_0426f73e",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2020-12-08T10:12:04Z",
+      "side": 1,
+      "message": "Most of our build rules have non-explicit dependencies (depfiles...), but those tend to be source files. Files that are created from other rules usually have dependencies listed explicitly, but not always (C++ linking: the dependency is on .toc file, but the linker uses the .so file).\n\nout/build_date.txt and out/soong/build_number.txt are considered source files in the android build, it\u0027s bazel that thinks they aren\u0027t. There are a bunch of uses of them throughout the tree:\n\n  https://cs.android.com/search?q\u003dlang:go%20buildNumberFile\u0026ss\u003dandroid%2Fplatform%2Fsuperproject\n  https://cs.android.com/search?q\u003dlang:makefile%20BUILD_NUMBER_FROM_FILE\u0026sq\u003d\u0026ss\u003dandroid%2Fplatform%2Fsuperproject\n\nI think order-only should work (make uses `rule: dep dep | orderonlydep orderonlydep`, and kati definitely supports them), it looks like we\u0027re doing that for droiddoc in Soong already, but there\u0027s quite a few places that\u0027ll need changes, in addition to posting it as a change for downstream users to look at their trees for.",
+      "parentUuid": "59b58480_2da0cc2b",
+      "revId": "384691474978c9419ab74632747c55a5b97e3520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
