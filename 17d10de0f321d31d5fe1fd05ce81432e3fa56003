@@ -125,6 +125,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "15f03397_50ebdaf2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-08T18:54:04Z",
+      "side": 1,
+      "message": "Makefile LGTM",
+      "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c38d5b3a_74773016",
