@@ -16,6 +16,24 @@
       "message": "These are intentionally not added as dependencies, as we don\u0027t want to force rebuilds when these values change, they should only be picked up when this regenerates.",
       "revId": "384691474978c9419ab74632747c55a5b97e3520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1bd5e1ad_f307a861",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1514900
+      },
+      "writtenOn": "2020-12-08T09:59:02Z",
+      "side": 1,
+      "message": "Maybe mark these as order-only inputs? Can it be done through Kati?",
+      "parentUuid": "ac4bb957_f36d209d",
+      "revId": "384691474978c9419ab74632747c55a5b97e3520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
