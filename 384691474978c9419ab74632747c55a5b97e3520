@@ -88,6 +88,24 @@
       "parentUuid": "59b58480_2da0cc2b",
       "revId": "384691474978c9419ab74632747c55a5b97e3520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "510194b9_6b3a90e6",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-12-08T10:30:38Z",
+      "side": 1,
+      "message": "Thanks. So just add a pipe like this? (I am running a test build now...)\n\nAlso, fixing this one is enough for USE_BAZEL\u003d1 m dist builds to work, so I think we can worry about the other spots with missing prerequisites later.",
+      "parentUuid": "c8d5e2d7_0426f73e",
+      "revId": "384691474978c9419ab74632747c55a5b97e3520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
