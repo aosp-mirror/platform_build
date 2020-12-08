@@ -87,6 +87,24 @@
       "parentUuid": "6434f76a_7566b241",
       "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3bf50fb_2ae1f6ce",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1176763
+      },
+      "writtenOn": "2020-12-08T06:27:02Z",
+      "side": 1,
+      "message": "Hi Xiang, thank you for sharing your insights. We\u0027ll evaluate performance as well as space reduction as you concerned. :)",
+      "parentUuid": "650fb31a_72a505ca",
+      "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
