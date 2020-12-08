@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "67d41a95_522501bd",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 1689978
+      },
+      "writtenOn": "2020-12-08T04:37:08Z",
+      "side": 1,
+      "message": "Created another CL (aosp/1519538) for raising build error when BOARD_VNDK_VERSION isn\u0027t set while  PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is true.",
+      "parentUuid": "d77beaa7_f31027d8",
+      "range": {
+        "startLine": 410,
+        "startChar": 24,
+        "endLine": 411,
+        "endChar": 20
+      },
+      "revId": "c070b001fd946751328854b3bdd8d904cbd9c6a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "14105af4_a28c2c5e",
@@ -47,6 +71,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe0607f3_1f1dd153",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1689978
+      },
+      "writtenOn": "2020-12-08T04:37:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "14105af4_a28c2c5e",
+      "range": {
+        "startLine": 412,
+        "startChar": 8,
+        "endLine": 413,
+        "endChar": 72
+      },
+      "revId": "c070b001fd946751328854b3bdd8d904cbd9c6a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "91f97d9c_de55c674",
@@ -60,6 +108,30 @@
       "writtenOn": "2020-12-03T13:50:38Z",
       "side": 1,
       "message": "add period to separate sentences",
+      "range": {
+        "startLine": 416,
+        "startChar": 70,
+        "endLine": 416,
+        "endChar": 71
+      },
+      "revId": "c070b001fd946751328854b3bdd8d904cbd9c6a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ab9b4c3_9e3b3063",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 1689978
+      },
+      "writtenOn": "2020-12-08T04:37:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "91f97d9c_de55c674",
       "range": {
         "startLine": 416,
         "startChar": 70,
