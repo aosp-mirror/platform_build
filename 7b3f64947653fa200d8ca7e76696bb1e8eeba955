@@ -16,6 +16,24 @@
       "message": "Please never add 13 reviewers to your change",
       "revId": "7b3f64947653fa200d8ca7e76696bb1e8eeba955",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9713794_e0b569c2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1681735
+      },
+      "writtenOn": "2020-12-08T01:02:53Z",
+      "side": 1,
+      "message": "Thanks for the reminder，there won\u0027t be another operation like this",
+      "parentUuid": "b48e94ff_e7a90fc4",
+      "revId": "7b3f64947653fa200d8ca7e76696bb1e8eeba955",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
