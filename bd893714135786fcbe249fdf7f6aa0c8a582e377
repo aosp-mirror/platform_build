@@ -16,6 +16,24 @@
       "message": "(This may fail for now because CL:1518222 has not flow downstream yet. It might complain about e2fsck.)",
       "revId": "bd893714135786fcbe249fdf7f6aa0c8a582e377",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b6f34900_84aea335",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-08T18:49:22Z",
+      "side": 1,
+      "message": "ah, good point :/. Is there a workaround for that?",
+      "parentUuid": "b95fc4f3_e85bdf39",
+      "revId": "bd893714135786fcbe249fdf7f6aa0c8a582e377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
