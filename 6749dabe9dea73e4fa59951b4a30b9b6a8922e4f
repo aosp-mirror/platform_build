@@ -16,6 +16,24 @@
       "message": "Anton, could you PTAL?",
       "revId": "6749dabe9dea73e4fa59951b4a30b9b6a8922e4f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b2c633d_5c47d816",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-08T14:29:31Z",
+      "side": 1,
+      "message": "Really sorry for the delay. I did look at it and started investigating the root cause. Never got to the bottom and ended up not having time to reply either :(\n\nI had an alternative idea that\u0027s slightly simpler in the implementation at least:  r.android.com/1520780 -- wdyt about that? Having a separate relaxed list, I think, is not really that important. An allow-list is meant to be burned down either way.",
+      "parentUuid": "ac468e68_265375f6",
+      "revId": "6749dabe9dea73e4fa59951b4a30b9b6a8922e4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
