@@ -51,6 +51,24 @@
       "message": "These require f2fs-tools update tho, device.mk/fstab",
       "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6434f76a_7566b241",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-12-08T06:17:29Z",
+      "side": 1,
+      "message": "Hi Jaegeuk,\n\nThanks for your reply, since uncompressed f2fs can catch extent_cache, but compressed files not. And the f2fs node amplification is noticable (compared with ext4 extent or f2fs extent cache) as well. By constant, erofs uses compacted index, it doesn\u0027t have indirect block and each block only uses 2byte meta index.\n\nAnd if you look at rand9m in\nhttps://github.com/erofs/erofs-openbenchmark/wiki/linux_5.10_rc4-compression-FSes-benchmark\n\nIt will become largely with the larger cluster size (and make UFS just as a eMMC), and I don\u0027t think it can be eliminated by just cache compressed blocks (see squashfs data.)\n\nBy design, fixed-sized output 4k can have the minimum random I/O amplification.\n\nThanks,\nGao Xiang",
+      "parentUuid": "a9c3ad27_cdc532c6",
+      "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
