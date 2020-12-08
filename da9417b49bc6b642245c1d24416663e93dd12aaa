@@ -16,6 +16,24 @@
       "message": "Should we add another target + lunch target or edit this one?",
       "revId": "da9417b49bc6b642245c1d24416663e93dd12aaa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "63de77e0_48825b3c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2020-12-08T00:25:10Z",
+      "side": 1,
+      "message": "since arm32 is deprecated anyway, lets just start with 64bit only",
+      "parentUuid": "590b7dfe_face2379",
+      "revId": "da9417b49bc6b642245c1d24416663e93dd12aaa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
