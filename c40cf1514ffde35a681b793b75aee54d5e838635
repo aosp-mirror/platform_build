@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f9b8216_e7e28064",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-12-08T13:24:19Z",
+      "side": 1,
+      "message": "I think the presubmit failures are unrelated/flakes, except for\n\nhttps://android-build.googleplex.com/builds/pending/P18275796/aosp_crosshatch-userdebug/latest/view/logs/build_error.log\n\nbuild/soong/soong_ui.bash --make-mode TARGET_PRODUCT\u003daosp_crosshatch TARGET_BUILD_VARIANT\u003duserdebug droid dist DIST_DIR\u003d/buildbot/dist_dirs/git_master-linux-aosp_crosshatch-userdebug/P18275796 checkbuild continuous_instrumentation_tests continuous_instrumentation_tests_api_coverage continuous_native_tests device-tests platform_tests\nFAILED: \nDependencies in out found with no rule to create them:\n  out/build_date.txt:\n    outputs:\n      out/target/product/crosshatch/obj/PACKAGING/system_build_prop_intermediates/buildinfo.prop\n11:32:18 stopping\nReturn Code: 1\n\nI guess this needs another special case in https://cs.android.com/android/platform/superproject/+/master:build/soong/ui/build/test_build.go ?",
+      "revId": "c40cf1514ffde35a681b793b75aee54d5e838635",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
