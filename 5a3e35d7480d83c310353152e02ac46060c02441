@@ -22,6 +22,30 @@
       },
       "revId": "5a3e35d7480d83c310353152e02ac46060c02441",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "adc4e24e_90b0bec9",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-12-08T07:24:56Z",
+      "side": 1,
+      "message": "avbtool is already changing the input here. But it can\u0027t change the input during Bazel builds (because Bazel sets a\u003drx), so this is a workaround for that.\n\nDo you mean chmod drops the umask? Maybe we could back it up before the chmod and then restore it?",
+      "parentUuid": "4b73baba_7a3de563",
+      "range": {
+        "startLine": 333,
+        "startChar": 23,
+        "endLine": 333,
+        "endChar": 27
+      },
+      "revId": "5a3e35d7480d83c310353152e02ac46060c02441",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
