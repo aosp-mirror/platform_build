@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "49f78263_ec15fe2d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-08T21:32:47Z",
+      "side": 1,
+      "message": "This doesn\u0027t build at the moment. See these errors:\nbuild/make/core/artifact_path_requirements.mk:25: warning:  build/make/target/product/aosp_arm64.mk produces files inside build/make/target/product/generic_system.mks artifact path requirement.\nOffending entries:\n  system/apex/com.android.vndk.current.apex\n  system/lib/libandroid_net.so\n  system/lib/libclang_rt.asan-arm-android.so\n  system/lib64/libclang_rt.asan-aarch64-android.so\n\nIs this a problem you\u0027re aware of?",
+      "revId": "adaf7232543b82dc34528d1f7366017e1ee19976",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
