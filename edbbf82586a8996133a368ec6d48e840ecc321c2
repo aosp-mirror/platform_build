@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df5c98e7_aad6bae9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2020-12-08T22:08:09Z",
+      "side": 1,
+      "message": "add (cherry-pick from commit-id) to the commit message. You can pass `-x` to the cp command and it will do that for you",
+      "revId": "edbbf82586a8996133a368ec6d48e840ecc321c2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
