@@ -46,6 +46,30 @@
       },
       "revId": "405cbad9670c94ea638017a929bb9b09b55df495",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df48fc7d_d2846bbd",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-12-08T12:36:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d24d311_ef8d5c12",
+      "range": {
+        "startLine": 241,
+        "startChar": 77,
+        "endLine": 241,
+        "endChar": 136
+      },
+      "revId": "405cbad9670c94ea638017a929bb9b09b55df495",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
