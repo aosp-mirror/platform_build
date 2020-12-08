@@ -34,6 +34,24 @@
       "parentUuid": "ac4bb957_f36d209d",
       "revId": "384691474978c9419ab74632747c55a5b97e3520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59b58480_2da0cc2b",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-12-08T09:59:55Z",
+      "side": 1,
+      "message": "Dependencies need to be explicit for Bazel builds to work. Open to other suggestions but builds will fail without these being listed as explicit dependencies somewhere e.g.\n\ncat: out/soong/build_number.txt: No such file or directory\ncat: out/soong/build_number.txt: No such file or directory\ncat: out/build_date.txt: No such file or directory\ncat: out/soong/build_number.txt: No such file or directory\ndate: bad date @\ndate: bad date @",
+      "parentUuid": "ac4bb957_f36d209d",
+      "revId": "384691474978c9419ab74632747c55a5b97e3520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
