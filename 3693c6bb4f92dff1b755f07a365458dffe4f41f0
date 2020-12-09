@@ -22,6 +22,30 @@
       },
       "revId": "3693c6bb4f92dff1b755f07a365458dffe4f41f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e6fb0b1_8b627983",
+        "filename": "core/product_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 1689978
+      },
+      "writtenOn": "2020-12-09T05:28:56Z",
+      "side": 1,
+      "message": "Removed code for raise build error when PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE is not true while PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is true.\n\nAlso updated comment of product.mk at aosp/1512951",
+      "parentUuid": "da0e4566_d6a450bf",
+      "range": {
+        "startLine": 383,
+        "startChar": 2,
+        "endLine": 383,
+        "endChar": 59
+      },
+      "revId": "3693c6bb4f92dff1b755f07a365458dffe4f41f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
