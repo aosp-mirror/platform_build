@@ -34,6 +34,69 @@
       "parentUuid": "b48e94ff_e7a90fc4",
       "revId": "7b3f64947653fa200d8ca7e76696bb1e8eeba955",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49b30dbb_d8826274",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-09T13:19:14Z",
+      "side": 1,
+      "message": "hi, I had a look at this and spotted a couple of differences in some of the devices we care about. I\u0027m not certain the effects of this change are things we\u0027re ok with, but perhaps you can add more information about why this is safe.",
+      "revId": "7b3f64947653fa200d8ca7e76696bb1e8eeba955",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1c4be93f_a9949c59",
+        "filename": "target/product/telephony_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-09T13:19:14Z",
+      "side": 1,
+      "message": "Many devices that didn\u0027t have this file previously would now have it with this change. I don\u0027t think that\u0027s desirable in all situations, can you clarify?",
+      "range": {
+        "startLine": 27,
+        "startChar": 23,
+        "endLine": 28,
+        "endChar": 65
+      },
+      "revId": "7b3f64947653fa200d8ca7e76696bb1e8eeba955",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "445392ff_fd91d8d4",
+        "filename": "target/product/telephony_vendor.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-09T13:19:14Z",
+      "side": 1,
+      "message": "This prop seems to be dropped from some devices after this change, I\u0027m not sure why.",
+      "range": {
+        "startLine": 28,
+        "startChar": 35,
+        "endLine": 29,
+        "endChar": 36
+      },
+      "revId": "7b3f64947653fa200d8ca7e76696bb1e8eeba955",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
