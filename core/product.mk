@@ -321,6 +321,9 @@ _product_single_value_vars += PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE
 # List of extra VNDK versions to be included
 _product_list_vars += PRODUCT_EXTRA_VNDK_VERSIONS
 
+# Whether APEX should be compressed or not
+_product_single_value_vars += PRODUCT_COMPRESSED_APEX
+
 # VNDK version of product partition. It can be 'current' if the product
 # partitions uses PLATFORM_VNDK_VERSION.
 _product_single_value_vars += PRODUCT_PRODUCT_VNDK_VERSION
