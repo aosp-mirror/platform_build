@@ -22,6 +22,47 @@
       },
       "revId": "cd8fa36cbb681df753d5dabd67b6a147ed3d5ae2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffab0a56_a4117a12",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-09T12:07:08Z",
+      "side": 1,
+      "message": "yes, true. In this case  it was more of a \"does the target  still build\" as I\u0027m just moving some code around so I only tried a single  somewhat random product.",
+      "parentUuid": "f8ae8e67_b6632d15",
+      "range": {
+        "startLine": 14,
+        "startChar": 6,
+        "endLine": 14,
+        "endChar": 10
+      },
+      "revId": "cd8fa36cbb681df753d5dabd67b6a147ed3d5ae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4402269b_6e44eb75",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-09T12:07:08Z",
+      "side": 1,
+      "message": "Thanks!",
+      "revId": "cd8fa36cbb681df753d5dabd67b6a147ed3d5ae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
