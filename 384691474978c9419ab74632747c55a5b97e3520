@@ -142,6 +142,24 @@
       "parentUuid": "c2c3f511_5196be73",
       "revId": "384691474978c9419ab74632747c55a5b97e3520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2177b31_df366ea6",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-12-09T01:36:40Z",
+      "side": 1,
+      "message": "Thanks, merging the other thread..\n\n\u003e I sent https://android-review.googlesource.com/c/platform/build/soong/+/1519821 but wondering if BUILD_NUMBER_FILE will also cause problems later...",
+      "parentUuid": "cb2e5e20_4a44f02f",
+      "revId": "384691474978c9419ab74632747c55a5b97e3520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

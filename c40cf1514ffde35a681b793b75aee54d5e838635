@@ -34,6 +34,24 @@
       "parentUuid": "9f9b8216_e7e28064",
       "revId": "c40cf1514ffde35a681b793b75aee54d5e838635",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df1a8341_4eaf5285",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-12-09T01:36:40Z",
+      "side": 1,
+      "message": "Done (merging threads)",
+      "parentUuid": "798e0b5c_40943ecd",
+      "revId": "c40cf1514ffde35a681b793b75aee54d5e838635",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
