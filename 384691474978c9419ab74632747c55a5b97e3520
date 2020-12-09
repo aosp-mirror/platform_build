@@ -124,6 +124,24 @@
       "parentUuid": "510194b9_6b3a90e6",
       "revId": "384691474978c9419ab74632747c55a5b97e3520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb2e5e20_4a44f02f",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-09T01:30:56Z",
+      "side": 1,
+      "message": "This trips the dangling dependency check because there is no rule to write the file.  I think adding it to the exceptions at https://cs.android.com/android/platform/superproject/+/master:build/soong/ui/build/test_build.go;l\u003d87-91;drc\u003debb0b574c8ddde8c4064d1a0461556a00bccd87e is the right solution, since these files are created by soong_ui.",
+      "parentUuid": "c2c3f511_5196be73",
+      "revId": "384691474978c9419ab74632747c55a5b97e3520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
