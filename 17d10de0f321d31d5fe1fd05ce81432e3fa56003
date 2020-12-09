@@ -159,6 +159,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c0e827b_ca0a07fa",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 1176763
+      },
+      "writtenOn": "2020-12-09T00:19:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c38d5b3a_74773016",
+      "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "65da7cb9_98cf45f1",
@@ -172,6 +190,24 @@
       "writtenOn": "2020-12-08T17:58:14Z",
       "side": 1,
       "message": "You can replace this for loop with:\n\n    build_command.extend(sldc_flags)",
+      "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d9d7d5a_e510bfad",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 1176763
+      },
+      "writtenOn": "2020-12-09T00:19:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "65da7cb9_98cf45f1",
       "revId": "17d10de0f321d31d5fe1fd05ce81432e3fa56003",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
