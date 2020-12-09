@@ -16,6 +16,23 @@
       "message": "Tianjie, PTAL",
       "revId": "35f015ea5ebdbb06b69d13b04df8b192442b6db0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae3f9bbd_63bd89b5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1703091
+      },
+      "writtenOn": "2020-12-09T01:30:29Z",
+      "side": 1,
+      "message": "Hi, ping... is there some chance to fix it upstream for better evaluation?",
+      "revId": "35f015ea5ebdbb06b69d13b04df8b192442b6db0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
