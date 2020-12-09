@@ -16,6 +16,23 @@
       "message": "looks good to me.",
       "revId": "62d926e2fea21a5857db4c7e7067c52fbdeccc79",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "59634ca1_d9a8e8e2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1746283
+      },
+      "writtenOn": "2020-12-09T02:11:37Z",
+      "side": 1,
+      "message": "Hi, thanks for review, any more suggestions ?",
+      "revId": "62d926e2fea21a5857db4c7e7067c52fbdeccc79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
