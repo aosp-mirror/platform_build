@@ -16,6 +16,23 @@
       "message": "The failures all look unrelated. I will re-run the presubmit...",
       "revId": "729427460bf8e9095cdd3fccfe3e7af6bd212a79",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c5073cf3_7f07acb3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-12-09T01:42:25Z",
+      "side": 1,
+      "message": "Removing Autosubmit for now in case Tianjie has any objections or suggestions",
+      "revId": "729427460bf8e9095cdd3fccfe3e7af6bd212a79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
