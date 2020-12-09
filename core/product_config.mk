@@ -355,6 +355,16 @@ ifdef OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS
   PRODUCT_EXTRA_VNDK_VERSIONS := $(OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS)
 endif
 
+###########################################
+# APEXes are by default not compressed
+#
+# APEX compression can be forcibly enabled (resp. disabled) by
+# setting OVERRIDE_PRODUCT_COMPRESSED_APEX to true (resp. false), e.g. by
+# setting the OVERRIDE_PRODUCT_COMPRESSED_APEX environment variable.
+ifdef OVERRIDE_PRODUCT_COMPRESSED_APEX
+  PRODUCT_COMPRESSED_APEX := $(OVERRIDE_PRODUCT_COMPRESSED_APEX)
+endif
+
 $(KATI_obsolete_var OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS \
     ,Use PRODUCT_EXTRA_VNDK_VERSIONS instead)
 
