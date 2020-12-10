@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "e3fb2dba_6c66a79e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-10T10:13:32Z",
+      "side": 1,
+      "message": "Not that BoardConfigMainlineCommon is actively being worked on, but changing the meaning of it will likely just lead to pain for the next person who needs to move these to the pixel-specific BoardConfigs\n\nI wonder if the right thing to do for pixel is perhaps to create a device/google/shared or common repo where a makefile with deduped boardconfig settings could live? There is  _a lot_ of duplication in them currently.",
+      "parentUuid": "9db2eaa8_c0a35676",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 42
+      },
+      "revId": "eecb0b52930ab16de9bb5b16b032d79e1a61c2cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d579b4d3_ef0e7d5c",
