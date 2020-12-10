@@ -78,6 +78,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "44cec9df_dbd212ec",
+        "filename": "target/product/telephony_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1681735
+      },
+      "writtenOn": "2020-12-10T12:22:50Z",
+      "side": 1,
+      "message": "You\u0027re right. For specific products, they will have their own apn, so now move it to aosp_base_telephony.mk",
+      "parentUuid": "1c4be93f_a9949c59",
+      "range": {
+        "startLine": 27,
+        "startChar": 23,
+        "endLine": 28,
+        "endChar": 65
+      },
+      "revId": "7b3f64947653fa200d8ca7e76696bb1e8eeba955",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "445392ff_fd91d8d4",
         "filename": "target/product/telephony_vendor.mk",
         "patchSetId": 1
@@ -89,6 +113,30 @@
       "writtenOn": "2020-12-09T13:19:14Z",
       "side": 1,
       "message": "This prop seems to be dropped from some devices after this change, I\u0027m not sure why.",
+      "range": {
+        "startLine": 28,
+        "startChar": 35,
+        "endLine": 29,
+        "endChar": 36
+      },
+      "revId": "7b3f64947653fa200d8ca7e76696bb1e8eeba955",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20b0c318_5735f5b7",
+        "filename": "target/product/telephony_vendor.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1681735
+      },
+      "writtenOn": "2020-12-10T12:22:50Z",
+      "side": 1,
+      "message": "Does this prop exist in the product partition of those devices? But in fact, move this and last prop to product partition is a better way because it not releated to vendor.",
+      "parentUuid": "445392ff_fd91d8d4",
       "range": {
         "startLine": 28,
         "startChar": 35,
