@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "5debf185_3265246e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-10T09:59:46Z",
+      "side": 1,
+      "message": "Sorry, but this is not the point of the BoardConfigMainlineCommon. This is a shared config for settings that would basically be shared by anyone who wanted to use the AOSP system image.\n\nAs such, configuration for the product, vendor and odm partitions don\u0027t really belong in this config. I\u0027d recommend creating a BoardConfigPixelCommon or something like that for this purpose to avoid the pain of updating all the device/google/*/BoardConfigs for every new setting",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 42
+      },
+      "revId": "eecb0b52930ab16de9bb5b16b032d79e1a61c2cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d579b4d3_ef0e7d5c",
