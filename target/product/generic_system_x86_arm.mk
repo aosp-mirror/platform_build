@@ -37,9 +37,6 @@ PRODUCT_BUILD_VENDOR_IMAGE := false
 
 PRODUCT_SHIPPING_API_LEVEL := 29
 
-# TODO(b/137033385): change this back to "all"
-PRODUCT_RESTRICT_VENDOR_FILES := owner
-
 PRODUCT_NAME := generic_system_x86_arm
 PRODUCT_DEVICE := mainline_x86_arm
 PRODUCT_BRAND := generic
