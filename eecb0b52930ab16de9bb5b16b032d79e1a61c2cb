@@ -72,6 +72,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "ccd14d7a_93c205ea",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2020-12-10T10:29:19Z",
+      "side": 1,
+      "message": "I knew that Pixel team has moved common sepolicy to a single dir.\n\nhttps://docs.google.com/document/d/15qCpeiK9XBHi6cgX8BhSHIk63WGeEOiiTv_tIDpfjf4/edit#heading\u003dh.kw6kjjb9vly5\n\nNot sure if there is similar plan for BoardConfig tho.\n\n+adamshih to see if they happens to know.",
+      "parentUuid": "e3fb2dba_6c66a79e",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 42
+      },
+      "revId": "eecb0b52930ab16de9bb5b16b032d79e1a61c2cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d579b4d3_ef0e7d5c",
