@@ -463,6 +463,13 @@ define require-artifacts-in-path
     $(sort $(ARTIFACT_PATH_REQUIREMENT_PRODUCTS) $(current_mk)))
 endef
 
+# Like require-artifacts-in-path, but does not require all allow-list entries to
+# have an effect.
+define require-artifacts-in-path-relaxed
+  $(require-artifacts-in-path) \
+  $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_REQUIREMENT_IS_RELAXED := true)
+endef
+
 # Makes including non-existent modules in PRODUCT_PACKAGES an error.
 # $(1): list of non-existent modules to allow.
 define enforce-product-packages-exist
