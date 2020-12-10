@@ -19,7 +19,6 @@
 PRODUCT_CFI_INCLUDE_PATHS :=  \
     device/generic/goldfish/wifi/wpa_supplicant_8_lib \
     device/google/cuttlefish/guest/libs/wpa_supplicant_8_lib \
-    device/google/wahoo/wifi_offload \
     external/tinyxml2 \
     external/wpa_supplicant_8 \
     frameworks/av/camera \
