@@ -189,6 +189,30 @@
       },
       "revId": "08f9c4ea005c41c3445d3784cdbb2627243249cf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c41c5ee7_9f160495",
+        "filename": "core/board_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-12-11T19:32:06Z",
+      "side": 1,
+      "message": "\u003e Are you saying you want it on top of the other ARCH settings?\n\nNo.\n\n\u003e What\u0027s the problem with breaking up this list?\n\nLater on people may start to wonder if there\u0027s some kind of difference between the separated bits of the list and get needlessly uncertain about where to add new variables. So given the order doesn\u0027t matter I think it\u0027s clearly better to keep the list unbroken and just add it afterwards (or before).",
+      "parentUuid": "ca725f5c_a8e4010a",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 47
+      },
+      "revId": "08f9c4ea005c41c3445d3784cdbb2627243249cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
