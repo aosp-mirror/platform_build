@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a3f9910_dbdf7a5e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-11T15:49:37Z",
+      "side": 1,
+      "message": "Done (in parent)",
+      "parentUuid": "b2299075_98453518",
+      "range": {
+        "startLine": 9,
+        "startChar": 33,
+        "endLine": 9,
+        "endChar": 50
+      },
+      "revId": "8025520696173178ded5d7e56cdc0941bb94b2a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "84c31a9b_742ca6f8",
@@ -47,6 +71,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0182518_ef52a086",
+        "filename": "core/board_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-11T15:49:37Z",
+      "side": 1,
+      "message": "It\u0027s introduced in the parent. I have renamed it to TARGET_ARCH_SUITE instead and added some docs (further up this file).",
+      "parentUuid": "84c31a9b_742ca6f8",
+      "range": {
+        "startLine": 181,
+        "startChar": 0,
+        "endLine": 181,
+        "endChar": 19
+      },
+      "revId": "8025520696173178ded5d7e56cdc0941bb94b2a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2b5a054f_76435b01",
@@ -60,6 +108,30 @@
       "writtenOn": "2020-11-27T14:13:36Z",
       "side": 1,
       "message": "Replace with \"either TARGET_ARCH or TARGET_MULTI_ARCH should be set\"?",
+      "range": {
+        "startLine": 187,
+        "startChar": 10,
+        "endLine": 187,
+        "endChar": 33
+      },
+      "revId": "8025520696173178ded5d7e56cdc0941bb94b2a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "00eba577_8663c5a1",
+        "filename": "core/board_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-11T15:49:37Z",
+      "side": 1,
+      "message": "Tweaked this a little bit.",
+      "parentUuid": "2b5a054f_76435b01",
       "range": {
         "startLine": 187,
         "startChar": 10,
