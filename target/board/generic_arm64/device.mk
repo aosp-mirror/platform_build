@@ -15,7 +15,7 @@
 #
 
 PRODUCT_COPY_FILES += \
-    kernel/prebuilts/4.19/arm64/Image.gz:kernel-4.19-gz \
+    kernel/prebuilts/4.19/arm64/kernel-4.19-gz:kernel-4.19-gz \
     kernel/prebuilts/5.4/arm64/kernel-5.4:kernel-5.4 \
     kernel/prebuilts/5.4/arm64/kernel-5.4-gz:kernel-5.4-gz \
     kernel/prebuilts/5.4/arm64/kernel-5.4-lz4:kernel-5.4-lz4 \
