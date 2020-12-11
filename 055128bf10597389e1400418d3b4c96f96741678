@@ -34,6 +34,24 @@
       "parentUuid": "00168166_bc24e303",
       "revId": "055128bf10597389e1400418d3b4c96f96741678",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "180c0a7d_93ad488f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-11T10:26:17Z",
+      "side": 1,
+      "message": "What about adding a variable that would act as a default for all  the partitions  unless there was a more specific (per partition) setting overriding it?",
+      "parentUuid": "0dd530ba_41447989",
+      "revId": "055128bf10597389e1400418d3b4c96f96741678",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
