@@ -160,14 +160,15 @@ endif
 $(call import-products, $(current_product_makefile))
 endif  # Import all or just the current product makefile
 
+# Quick check
+$(check-all-products)
+
 # Import all the products that have made artifact path requirements, so that we can verify
 # the artifacts they produce.
+# These are imported after check-all-products because some of them might not be real products.
 $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(if $(filter-out $(makefile),$(PRODUCTS)),$(eval $(call import-products,$(makefile))))\
 )
-
-# Quick check
-$(check-all-products)
 
 ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
 $(dump-products)

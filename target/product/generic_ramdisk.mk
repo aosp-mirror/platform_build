@@ -19,9 +19,6 @@
 # This makefile checks that other makefiles must not install things to the
 # ramdisk.
 
-PRODUCT_NAME := generic_ramdisk
-PRODUCT_BRAND := generic
-
 # Ramdisk
 PRODUCT_PACKAGES += \
     init_first_stage \
