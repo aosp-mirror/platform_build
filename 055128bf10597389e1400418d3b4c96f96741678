@@ -16,6 +16,24 @@
       "message": "Is it necessary to specify this separately for every partition?  It seems like if the device supports sha256 you would just want to enable it once and use it for all partitions.",
       "revId": "055128bf10597389e1400418d3b4c96f96741678",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0dd530ba_41447989",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-12-11T06:42:58Z",
+      "side": 1,
+      "message": "You mean, use the same algorithm for all partitions; so we would need only one variable like BOARD_AVB_ADD_HASHTREE_FOOTER_ARGS?\n\nWe can surely change the make file to do that: https://source.corp.google.com/aosp-master/build/make/core/Makefile;l\u003d1559?q\u003dADD_HASHTREE_FOOTER_ARGS\u0026sq\u003dp:aosp-master\n\nThough the logic would be more complicated; and there are already a few config files setting the per partition algorithm: e.g. vendor/mediatek/vendor/common/BoardConfig.mk",
+      "parentUuid": "00168166_bc24e303",
+      "revId": "055128bf10597389e1400418d3b4c96f96741678",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
