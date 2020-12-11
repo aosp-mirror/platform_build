@@ -35,7 +35,9 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
     $(makefile) produces files outside its artifact path requirement. \
     Allowed paths are $(subst $(space),$(comma)$(space),$(addsuffix *,$(requirements)))) \
   $(eval unused_allowed := $(filter-out $(files),$(allowed_patterns))) \
-  $(call maybe-print-list-and-error,$(unused_allowed),$(makefile) includes redundant allowed entries in its artifact path requirement.) \
+  $(if $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENT_IS_RELAXED),, \
+    $(call maybe-print-list-and-error,$(unused_allowed),$(makefile) includes redundant allowed entries in its artifact path requirement.) \
+  ) \
   $(eval ### Optionally verify that nothing else produces files inside this artifact path requirement.) \
   $(eval extra_files := $(filter-out $(files) $(HOST_OUT)/%,$(product_target_FILES))) \
   $(eval files_in_requirement := $(filter $(path_patterns),$(extra_files))) \
