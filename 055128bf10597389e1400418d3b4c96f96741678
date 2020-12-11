@@ -70,6 +70,24 @@
       "parentUuid": "180c0a7d_93ad488f",
       "revId": "055128bf10597389e1400418d3b4c96f96741678",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac476653_e68bc513",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-12-11T18:41:30Z",
+      "side": 1,
+      "message": "sounds good. I plan to submit the cl as is to confirm sha256 itself doesn\u0027t have a issue. Then look into setting the default algorithm in a follow up.\n\nThough I imagine the complexity would be in the MakeFile. Like \n$(ifeq $(filter hash_algorithm, $BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS),\n  $(if $(filter true, BOARD_AVB_HASHTREE_ALGORITHM_SHA256),\n     BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS +\u003d --hash_algorithm 256)",
+      "parentUuid": "463ac5d8_9e9c663a",
+      "revId": "055128bf10597389e1400418d3b4c96f96741678",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
