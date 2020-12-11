@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4852ca24_f85c21e9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-12-11T17:17:04Z",
+      "side": 1,
+      "message": "It agrees with build-aml-prebuilts.sh for the settings the script writes (ignoring UseGoma)?",
+      "range": {
+        "startLine": 14,
+        "startChar": 7,
+        "endLine": 14,
+        "endChar": 30
+      },
+      "revId": "a2d49fae5c4aeb61f78676c58cb27f213974c634",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55fd4ca6_42937ae9",
+        "filename": "target/board/mainline_sdk/README.md",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-12-11T17:17:04Z",
+      "side": 1,
+      "message": "Nit: drop.",
+      "range": {
+        "startLine": 2,
+        "startChar": 11,
+        "endLine": 2,
+        "endChar": 12
+      },
+      "revId": "a2d49fae5c4aeb61f78676c58cb27f213974c634",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
