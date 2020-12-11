@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00168166_bc24e303",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-11T06:09:33Z",
+      "side": 1,
+      "message": "Is it necessary to specify this separately for every partition?  It seems like if the device supports sha256 you would just want to enable it once and use it for all partitions.",
+      "revId": "055128bf10597389e1400418d3b4c96f96741678",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
