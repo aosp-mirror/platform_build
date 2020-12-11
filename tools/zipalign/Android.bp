@@ -57,6 +57,9 @@ cc_test_host {
     srcs: [
         "tests/src/*_test.cpp",
     ],
+    test_options: {
+        unit_test: true,
+    },
     static_libs: [
         "libbase",
         "libzipalign",
