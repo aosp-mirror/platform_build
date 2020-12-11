@@ -142,6 +142,30 @@
       },
       "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73e3adc9_68eb63cd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-11T15:43:04Z",
+      "side": 1,
+      "message": "went with \"ndk\" and \"mainline-sdk\" as dicussed, PTAL",
+      "parentUuid": "e861c991_b73b6623",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 59
+      },
+      "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
