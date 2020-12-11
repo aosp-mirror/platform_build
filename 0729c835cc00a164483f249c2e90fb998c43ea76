@@ -166,6 +166,30 @@
       },
       "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a8a5a992_2822299e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-11T16:09:22Z",
+      "side": 1,
+      "message": "changed to mainline_sdk FYI",
+      "parentUuid": "73e3adc9_68eb63cd",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 59
+      },
+      "revId": "0729c835cc00a164483f249c2e90fb998c43ea76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
