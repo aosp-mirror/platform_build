@@ -96,6 +96,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "512bf2cd_3d2043f5",
+        "filename": "core/board_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-14T15:37:06Z",
+      "side": 1,
+      "message": "I removed the error again and filed b/175577370 to improve.",
+      "parentUuid": "627aa8a9_c4b0542e",
+      "range": {
+        "startLine": 48,
+        "startChar": 23,
+        "endLine": 48,
+        "endChar": 40
+      },
+      "revId": "08f9c4ea005c41c3445d3784cdbb2627243249cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2e8367c4_2c382cb6",
