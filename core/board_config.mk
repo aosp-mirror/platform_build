@@ -19,83 +19,80 @@
 # and checks the variable defined therein.
 # ###############################################################
 
-_board_strip_readonly_list := \
-  BOARD_BOOTLOADER_IN_UPDATE_PACKAGE \
-  BOARD_EGL_CFG \
-  BOARD_HAVE_BLUETOOTH \
-  BOARD_INSTALLER_CMDLINE \
-  BOARD_KERNEL_CMDLINE \
-  BOARD_KERNEL_BASE \
-  BOARD_USES_GENERIC_AUDIO \
-  BOARD_USES_RECOVERY_AS_BOOT \
-  BOARD_VENDOR_USE_AKMD \
-  BOARD_WPA_SUPPLICANT_DRIVER \
-  BOARD_WLAN_DEVICE \
-  TARGET_ARCH \
-  TARGET_ARCH_VARIANT \
-  TARGET_CPU_ABI \
-  TARGET_CPU_ABI2 \
-  TARGET_CPU_VARIANT \
-  TARGET_CPU_VARIANT_RUNTIME \
-  TARGET_2ND_ARCH \
-  TARGET_2ND_ARCH_VARIANT \
-  TARGET_2ND_CPU_ABI \
-  TARGET_2ND_CPU_ABI2 \
-  TARGET_2ND_CPU_VARIANT \
-  TARGET_2ND_CPU_VARIANT_RUNTIME \
-  TARGET_BOARD_PLATFORM \
-  TARGET_BOARD_PLATFORM_GPU \
-  TARGET_BOOTLOADER_BOARD_NAME \
-  TARGET_FS_CONFIG_GEN \
-  TARGET_NO_BOOTLOADER \
-  TARGET_NO_KERNEL \
-  TARGET_NO_RECOVERY \
-  TARGET_NO_RADIOIMAGE \
-  TARGET_HARDWARE_3D \
-  WITH_DEXPREOPT \
+_board_strip_readonly_list :=
+_board_strip_readonly_list += BOARD_BOOTLOADER_IN_UPDATE_PACKAGE
+_board_strip_readonly_list += BOARD_EGL_CFG
+_board_strip_readonly_list += BOARD_HAVE_BLUETOOTH
+_board_strip_readonly_list += BOARD_INSTALLER_CMDLINE
+_board_strip_readonly_list += BOARD_KERNEL_CMDLINE
+_board_strip_readonly_list += BOARD_KERNEL_BASE
+_board_strip_readonly_list += BOARD_USES_GENERIC_AUDIO
+_board_strip_readonly_list += BOARD_USES_RECOVERY_AS_BOOT
+_board_strip_readonly_list += BOARD_VENDOR_USE_AKMD
+_board_strip_readonly_list += BOARD_WPA_SUPPLICANT_DRIVER
+_board_strip_readonly_list += BOARD_WLAN_DEVICE
+_board_strip_readonly_list += TARGET_BOARD_PLATFORM
+_board_strip_readonly_list += TARGET_BOARD_PLATFORM_GPU
+_board_strip_readonly_list += TARGET_BOOTLOADER_BOARD_NAME
+_board_strip_readonly_list += TARGET_FS_CONFIG_GEN
+_board_strip_readonly_list += TARGET_NO_BOOTLOADER
+_board_strip_readonly_list += TARGET_NO_KERNEL
+_board_strip_readonly_list += TARGET_NO_RECOVERY
+_board_strip_readonly_list += TARGET_NO_RADIOIMAGE
+_board_strip_readonly_list += TARGET_HARDWARE_3D
+_board_strip_readonly_list += WITH_DEXPREOPT
+
+# Arch variables
+_board_strip_readonly_list += TARGET_ARCH
+_board_strip_readonly_list += TARGET_ARCH_VARIANT
+_board_strip_readonly_list += TARGET_CPU_ABI
+_board_strip_readonly_list += TARGET_CPU_ABI2
+_board_strip_readonly_list += TARGET_CPU_VARIANT
+_board_strip_readonly_list += TARGET_CPU_VARIANT_RUNTIME
+_board_strip_readonly_list += TARGET_2ND_ARCH
+_board_strip_readonly_list += TARGET_2ND_ARCH_VARIANT
+_board_strip_readonly_list += TARGET_2ND_CPU_ABI
+_board_strip_readonly_list += TARGET_2ND_CPU_ABI2
+_board_strip_readonly_list += TARGET_2ND_CPU_VARIANT
+_board_strip_readonly_list += TARGET_2ND_CPU_VARIANT_RUNTIME
 
 # File system variables
-_board_strip_readonly_list += \
-  BOARD_FLASH_BLOCK_SIZE \
-  BOARD_BOOTIMAGE_PARTITION_SIZE \
-  BOARD_RECOVERYIMAGE_PARTITION_SIZE \
-  BOARD_SYSTEMIMAGE_PARTITION_SIZE \
-  BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE \
-  BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE \
-  BOARD_USERDATAIMAGE_PARTITION_SIZE \
-  BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE \
-  BOARD_CACHEIMAGE_PARTITION_SIZE \
-  BOARD_VENDORIMAGE_PARTITION_SIZE \
-  BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE \
-  BOARD_PRODUCTIMAGE_PARTITION_SIZE \
-  BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE \
-  BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE \
-  BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE \
-  BOARD_ODMIMAGE_PARTITION_SIZE \
-  BOARD_ODMIMAGE_FILE_SYSTEM_TYPE \
-  BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE \
-  BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE \
-  BOARD_ODM_DLKMIMAGE_PARTITION_SIZE \
-  BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE \
+_board_strip_readonly_list += BOARD_FLASH_BLOCK_SIZE
+_board_strip_readonly_list += BOARD_BOOTIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_RECOVERYIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_SYSTEMIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_USERDATAIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_CACHEIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_VENDORIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_PRODUCTIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_ODMIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
 
 # Logical partitions related variables.
-_dynamic_partitions_var_list += \
-  BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE \
-  BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
-  BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE \
-  BOARD_VENDOR_DLKMIMAGE_PARTITION_RESERVED_SIZE \
-  BOARD_ODM_DLKMIMAGE_PARTITION_RESERVED_SIZE \
-  BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE \
-  BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE \
-  BOARD_SUPER_PARTITION_SIZE \
-  BOARD_SUPER_PARTITION_GROUPS \
-
-_board_strip_readonly_list += $(_dynamic_partitions_var_list)
+_board_strip_readonly_list += BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE
+_board_strip_readonly_list += BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE
+_board_strip_readonly_list += BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE
+_board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_PARTITION_RESERVED_SIZE
+_board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_PARTITION_RESERVED_SIZE
+_board_strip_readonly_list += BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE
+_board_strip_readonly_list += BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE
+_board_strip_readonly_list += BOARD_SUPER_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_SUPER_PARTITION_GROUPS
 
 # Kernel related variables
-_board_strip_readonly_list += \
-  BOARD_KERNEL_BINARIES \
-  BOARD_KERNEL_MODULE_INTERFACE_VERSIONS \
+_board_strip_readonly_list += BOARD_KERNEL_BINARIES
+_board_strip_readonly_list += BOARD_KERNEL_MODULE_INTERFACE_VERSIONS
 
 # Variables related to generic kernel image (GKI) and generic boot image
 # - BOARD_USES_GENERIC_KERNEL_IMAGE is the global variable that defines if the
@@ -109,12 +106,11 @@ _board_strip_readonly_list += \
 #   built to vendor_boot.
 # - BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES controls whether boot images in $OUT are added
 #   to target files package directly.
-_board_strip_readonly_list += \
-  BOARD_USES_GENERIC_KERNEL_IMAGE \
-  BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE \
-  BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT \
-  BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT \
-  BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES \
+_board_strip_readonly_list += BOARD_USES_GENERIC_KERNEL_IMAGE
+_board_strip_readonly_list += BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE
+_board_strip_readonly_list += BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT
+_board_strip_readonly_list += BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT
+_board_strip_readonly_list += BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
