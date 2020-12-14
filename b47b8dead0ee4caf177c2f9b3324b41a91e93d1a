@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5d7c845_8bc277a4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-14T21:16:07Z",
+      "side": 1,
+      "message": "+2 to fix the immediate issue, but it would be good if we can avoid the $(warning) here somehow, they tend to just clutter the build output and get ignored.  Can we identify somehow that this is not building vendor boot to skip the error?",
+      "revId": "b47b8dead0ee4caf177c2f9b3324b41a91e93d1a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
