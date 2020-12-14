@@ -213,6 +213,30 @@
       },
       "revId": "08f9c4ea005c41c3445d3784cdbb2627243249cf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d8cfce5_22963730",
+        "filename": "core/board_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-14T15:22:44Z",
+      "side": 1,
+      "message": "I\u0027ve worked around your concern by breaking the list on every row ;) (feel free to comment on the parent change if you hate it even more).",
+      "parentUuid": "c41c5ee7_9f160495",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 47
+      },
+      "revId": "08f9c4ea005c41c3445d3784cdbb2627243249cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
