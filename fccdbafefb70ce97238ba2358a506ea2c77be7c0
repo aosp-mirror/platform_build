@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9f2a9708_04061483",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2020-12-15T05:49:53Z",
+      "side": 1,
+      "message": "revert already merged in https://android-review.googlesource.com/c/platform/build/+/1528745",
+      "revId": "fccdbafefb70ce97238ba2358a506ea2c77be7c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
