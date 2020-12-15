@@ -120,6 +120,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "908793b5_7647badb",
+        "filename": "core/board_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-12-15T01:05:12Z",
+      "side": 1,
+      "message": "Thanks.",
+      "parentUuid": "512bf2cd_3d2043f5",
+      "range": {
+        "startLine": 48,
+        "startChar": 23,
+        "endLine": 48,
+        "endChar": 40
+      },
+      "revId": "08f9c4ea005c41c3445d3784cdbb2627243249cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2e8367c4_2c382cb6",
@@ -253,6 +277,30 @@
       "side": 1,
       "message": "I\u0027ve worked around your concern by breaking the list on every row ;) (feel free to comment on the parent change if you hate it even more).",
       "parentUuid": "c41c5ee7_9f160495",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 47
+      },
+      "revId": "08f9c4ea005c41c3445d3784cdbb2627243249cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "02945a9c_3bc2518c",
+        "filename": "core/board_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-12-15T01:05:12Z",
+      "side": 1,
+      "message": "That in itself I don\u0027t have much of an opinion on, but unfortunately it doesn\u0027t address the point I mentioned - it still splits the list in two apparently arbitrary pieces. I\u0027ve made a suggestion elsewhere that I hope can resolve it.",
+      "parentUuid": "3d8cfce5_22963730",
       "range": {
         "startLine": 46,
         "startChar": 0,

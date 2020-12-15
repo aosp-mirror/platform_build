@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b802f2a_457f8d58",
+        "filename": "core/board_config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-12-15T01:05:12Z",
+      "side": 1,
+      "message": "WDYT about splitting the list here and add a comment \"Arch variables\" for the ones below? Then the bit of the list after the arch variables can move up with the \"uncategorised\" ones above.",
+      "revId": "a107732fcc294c760430f22dbe6ff4b6cd41cc56",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
