@@ -70,6 +70,30 @@
       },
       "revId": "fe8031b79ae4fca46e87b3c37c9fbe93d70d432c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "acdf3c30_183a7a87",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2020-12-15T04:21:36Z",
+      "side": 1,
+      "message": "Marking as resolved because this is fine too. We put it at the start of the line in other places...",
+      "parentUuid": "7ec31221_ace3ee8f",
+      "range": {
+        "startLine": 333,
+        "startChar": 0,
+        "endLine": 334,
+        "endChar": 15
+      },
+      "revId": "fe8031b79ae4fca46e87b3c37c9fbe93d70d432c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
