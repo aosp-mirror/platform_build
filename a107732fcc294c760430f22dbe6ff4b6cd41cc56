@@ -16,6 +16,24 @@
       "message": "WDYT about splitting the list here and add a comment \"Arch variables\" for the ones below? Then the bit of the list after the arch variables can move up with the \"uncategorised\" ones above.",
       "revId": "a107732fcc294c760430f22dbe6ff4b6cd41cc56",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3fb5d7c_db6fcc71",
+        "filename": "core/board_config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-15T12:48:47Z",
+      "side": 1,
+      "message": "Done in parent. Added you as reviewer there.",
+      "parentUuid": "2b802f2a_457f8d58",
+      "revId": "a107732fcc294c760430f22dbe6ff4b6cd41cc56",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
