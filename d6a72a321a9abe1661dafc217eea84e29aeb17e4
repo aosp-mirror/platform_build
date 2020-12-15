@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b3c096c6_3c244a55",
+        "filename": "target/product/generic_ramdisk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-15T19:39:29Z",
+      "side": 1,
+      "message": "sort?",
+      "revId": "d6a72a321a9abe1661dafc217eea84e29aeb17e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
