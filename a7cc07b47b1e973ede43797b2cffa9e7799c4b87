@@ -16,6 +16,24 @@
       "message": "Was this supposed to be README.md?",
       "revId": "a7cc07b47b1e973ede43797b2cffa9e7799c4b87",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b99e6b8_2604f4cb",
+        "filename": "target/board/module_arm/README.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-15T11:41:44Z",
+      "side": 1,
+      "message": "YES! Guess I\u0027ve been affected by the make bug.",
+      "parentUuid": "3a85284f_9c8c5c6e",
+      "revId": "a7cc07b47b1e973ede43797b2cffa9e7799c4b87",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
