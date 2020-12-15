@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ca3ad94_f9f06207",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-15T18:10:06Z",
+      "side": 1,
+      "message": "I\u0027m getting truly fed up with this change, can someone +2 it so I can bypass presubmit and get on with my life? 😂",
+      "revId": "5e05b8ef315dddca2e40ee8b53f1b8392aee174b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
