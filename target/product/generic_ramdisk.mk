@@ -31,8 +31,8 @@ PRODUCT_PACKAGES += \
     userdebug_plat_sepolicy.cil \
 
 _my_paths := \
-    $(TARGET_COPY_OUT_RAMDISK) \
-    $(TARGET_COPY_OUT_DEBUG_RAMDISK) \
+    $(TARGET_COPY_OUT_RAMDISK)/ \
+    $(TARGET_COPY_OUT_DEBUG_RAMDISK)/ \
     system/usr/share/zoneinfo/tz_version \
     system/usr/share/zoneinfo/tzdata \
 
