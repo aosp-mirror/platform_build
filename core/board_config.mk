@@ -53,7 +53,6 @@ _board_strip_readonly_list := \
   TARGET_NO_RADIOIMAGE \
   TARGET_HARDWARE_3D \
   WITH_DEXPREOPT \
-  AB_OTA_PARTITIONS \
 
 # File system variables
 _board_strip_readonly_list += \
