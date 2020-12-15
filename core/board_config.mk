@@ -721,6 +721,16 @@ else
   TARGET_VENDOR_TEST_SUFFIX :=
 endif
 
+# If PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is set,
+# BOARD_VNDK_VERSION must be set because PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY
+# is a enforcement of inter-partition dependency, and it doesn't have any meaning
+# when BOARD_VNDK_VERSION isn't set.
+ifeq ($(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY),true)
+  ifeq ($(BOARD_VNDK_VERSION),)
+    $(error BOARD_VNDK_VERSION must be set when PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is true)
+  endif
+endif
+
 ###########################################
 # APEXes are by default flattened, i.e. non-updatable.
 # It can be unflattened (and updatable) by inheriting from
