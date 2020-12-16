@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed1af594_dfeb5eca",
+        "filename": "target/product/virtual_ab_ota/compression_retrofit.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-12-16T18:01:32Z",
+      "side": 1,
+      "message": "nit: split them into multiple lines please?",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 66
+      },
+      "revId": "263029c52c9e107f2fd4f32bab82bb2812dfa73e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
