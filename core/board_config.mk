@@ -174,10 +174,19 @@ else
   TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
+
 include $(board_config_mk)
-ifeq ($(TARGET_ARCH),)
-  $(error TARGET_ARCH not defined by board config: $(board_config_mk))
+
+ifneq (,$(and $(TARGET_ARCH),$(TARGET_ARCH_SUITE)))
+  $(error $(board_config_mk) erroneously sets both TARGET_ARCH and TARGET_ARCH_SUITE)
 endif
+ifeq ($(TARGET_ARCH)$(TARGET_ARCH_SUITE),)
+  $(error Target architectures not defined by board config: $(board_config_mk))
+endif
+ifeq ($(TARGET_CPU_ABI)$(TARGET_ARCH_SUITE),)
+  $(error TARGET_CPU_ABI not defined by board config: $(board_config_mk))
+endif
+
 ifneq ($(MALLOC_IMPL),)
   $(warning *** Unsupported option MALLOC_IMPL defined by board config: $(board_config_mk).)
   $(error Use `MALLOC_SVELTE := true` to configure jemalloc for low-memory)
@@ -194,10 +203,12 @@ $(foreach var,$(_board_true_false_vars), \
 TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
 TARGET_2ND_CPU_VARIANT_RUNTIME := $(or $(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_CPU_VARIANT))
 
-# The combo makefiles check and set defaults for various CPU configuration
-combo_target := TARGET_
-combo_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/combo/select.mk
+ifdef TARGET_ARCH
+  # The combo makefiles check and set defaults for various CPU configuration
+  combo_target := TARGET_
+  combo_2nd_arch_prefix :=
+  include $(BUILD_SYSTEM)/combo/select.mk
+endif
 
 ifdef TARGET_2ND_ARCH
   combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
@@ -207,9 +218,7 @@ endif
 .KATI_READONLY := $(_board_strip_readonly_list)
 
 INTERNAL_KERNEL_CMDLINE := $(BOARD_KERNEL_CMDLINE)
-ifeq ($(TARGET_CPU_ABI),)
-  $(error No TARGET_CPU_ABI defined by board config: $(board_config_mk))
-endif
+
 ifneq ($(filter %64,$(TARGET_ARCH)),)
   TARGET_IS_64_BIT := true
 endif
