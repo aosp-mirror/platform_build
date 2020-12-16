@@ -55,6 +55,10 @@ _board_strip_readonly_list += TARGET_2ND_CPU_ABI
 _board_strip_readonly_list += TARGET_2ND_CPU_ABI2
 _board_strip_readonly_list += TARGET_2ND_CPU_VARIANT
 _board_strip_readonly_list += TARGET_2ND_CPU_VARIANT_RUNTIME
+# TARGET_ARCH_SUITE is an alternative arch configuration to TARGET_ARCH (and related variables),
+# that can be used for soong-only builds to build for several architectures at once.
+# Allowed values currently are "ndk" and "mainline_sdk".
+_board_strip_readonly_list += TARGET_ARCH_SUITE
 
 # File system variables
 _board_strip_readonly_list += BOARD_FLASH_BLOCK_SIZE
