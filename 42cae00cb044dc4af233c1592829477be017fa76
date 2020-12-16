@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "255ce032_07e663c0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-16T18:21:52Z",
+      "side": 1,
+      "message": "could theoretically have problems for products that don\u0027t use base_system, but unlikely and we can revert if so",
+      "revId": "42cae00cb044dc4af233c1592829477be017fa76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
