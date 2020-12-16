@@ -16,6 +16,24 @@
       "message": "I\u0027m open for suggestions on a better place to put this. I first had it in product/runtime_libart.mk, but that\u0027s not included in all builds on internal.",
       "revId": "2830c96c433467e013f6588421730c6547c033d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3702ddc_659a2c3b",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-16T13:04:27Z",
+      "side": 1,
+      "message": "Why don\u0027t you flip the default in the .bp file instead?",
+      "parentUuid": "b5ddd2c6_ca2ceb56",
+      "revId": "2830c96c433467e013f6588421730c6547c033d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
