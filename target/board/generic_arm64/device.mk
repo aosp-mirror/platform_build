@@ -15,7 +15,7 @@
 #
 
 PRODUCT_COPY_FILES += \
-    kernel/prebuilts/4.19/arm64/Image.gz:kernel-4.19-gz \
+    kernel/prebuilts/4.19/arm64/kernel-4.19-gz:kernel-4.19-gz \
     kernel/prebuilts/5.4/arm64/kernel-5.4:kernel-5.4 \
     kernel/prebuilts/5.4/arm64/kernel-5.4-gz:kernel-5.4-gz \
     kernel/prebuilts/5.4/arm64/kernel-5.4-lz4:kernel-5.4-lz4 \
@@ -30,7 +30,7 @@ PRODUCT_COPY_FILES += \
     kernel/prebuilts/5.4/arm64/kernel-5.4-lz4:kernel-5.4-lz4-allsyms
 endif
 
-PRODUCT_PACKAGES += e2fsck_ramdisk
-
 PRODUCT_BUILD_VENDOR_BOOT_IMAGE := false
 PRODUCT_BUILD_RECOVERY_IMAGE := false
+
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_ramdisk.mk)

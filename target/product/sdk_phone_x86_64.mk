@@ -51,8 +51,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/emulator_x86_64/device.mk)
 
 # Define the host tools and libs that are parts of the SDK.
--include sdk/build/product_sdk.mk
--include development/build/product_sdk.mk
+$(call inherit-product-if-exists, sdk/build/product_sdk.mk)
+$(call inherit-product-if-exists, development/build/product_sdk.mk)
 
 # Overrides
 PRODUCT_BRAND := Android

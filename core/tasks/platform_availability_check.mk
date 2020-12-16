@@ -17,6 +17,9 @@
 # Check whether there is any module that isn't available for platform
 # is installed to the platform.
 
+# Skip for unbundled builds that don't produce a platform image.
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
+
 # Filter FAKE and NON_INSTALLABLE modules out and then collect those are not
 # available for platform
 _modules_not_available_for_platform := \
@@ -41,7 +44,7 @@ else
 # Don't error out immediately when ALLOW_MISSING_DEPENDENCIES is set.
 # Instead, add a dependency on a rule that prints the error message.
   define not_available_for_platform_rule
-    not_installable_file := $(patsubst $(OUT_DIR)/%,$(OUT_DIR)/NOT_AVAILABLE_FOR_PLATFORM/%,$(1)))
+    not_installable_file := $(patsubst $(OUT_DIR)/%,$(OUT_DIR)/NOT_AVAILABLE_FOR_PLATFORM/%,$(1))
     $(1): $$(not_installable_file)
     $$(not_installable_file):
 	$(call echo-error,$(2),Module is requested to be installed but is not \
@@ -53,4 +56,6 @@ it depends on other modules that are not available for platform.)
   $(foreach m,$(_modules_not_available_for_platform),\
     $(foreach i,$(filter-out $(HOST_OUT)/%,$(ALL_MODULES.$(m).INSTALLED)),\
       $(eval $(call not_available_for_platform_rule,$(i),$(m)))))
+endif
+
 endif

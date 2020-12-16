@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """Generates config files for Android file system properties.
 
 This script is used for generating configuration files for configuring
