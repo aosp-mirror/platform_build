@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4d6b30c8_8c19b02c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-16T13:03:35Z",
+      "side": 1,
+      "message": "The only thing they disagree on is this (not present in the new product):\n\n    \"VendorVars\": {\n        \"art_module\": {\n            \"source_build\": \"false\"\n        }\n    },\n\nFTR soong still does not run, because of the errors I mention to you in chat the other day. Presumably something in the config that is missing from build-aml-prebuilts is causing that, but I don\u0027t know what. Here is the full \"long tail\":\nhttps://paste.googleplex.com/6095415020617728",
+      "parentUuid": "aec39c34_419be7ae",
+      "range": {
+        "startLine": 14,
+        "startChar": 7,
+        "endLine": 14,
+        "endChar": 30
+      },
+      "revId": "a2d49fae5c4aeb61f78676c58cb27f213974c634",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "55fd4ca6_42937ae9",
         "filename": "target/board/mainline_sdk/README.md",
         "patchSetId": 6
