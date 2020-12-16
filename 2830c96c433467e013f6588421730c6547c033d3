@@ -70,6 +70,24 @@
       "parentUuid": "bf1f9ed5_432fb8a4",
       "revId": "2830c96c433467e013f6588421730c6547c033d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6bbde6c2_661ba67b",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-12-16T21:58:28Z",
+      "side": 1,
+      "message": "There was a discussion about the namespace name on https://r.android.com/1513781 but nothing came out of it.\n\nI\u0027ve moved it to that file anyway. This isn\u0027t very pretty there either, but it won\u0027t stay in for long.",
+      "parentUuid": "17fe9fc2_ed04c686",
+      "revId": "2830c96c433467e013f6588421730c6547c033d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
