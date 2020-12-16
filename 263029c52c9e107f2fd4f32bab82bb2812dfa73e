@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "400e4867_922194f2",
+        "filename": "target/product/virtual_ab_ota/compression.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2020-12-16T18:05:18Z",
+      "side": 1,
+      "message": "Note: on devices without dedicated recover partition, this will install to /system/bin under vendor ramdisk, and snapuserd.vendor_ramdisk will install to /first_stage_ramdisk/system/bin under vendor ramdisk.\n\nIs snapuserd needed **after** switching root in Android mode, and needed in recovery mode? If so, this is correct.",
+      "range": {
+        "startLine": 21,
+        "startChar": 55,
+        "endLine": 21,
+        "endChar": 73
+      },
+      "revId": "263029c52c9e107f2fd4f32bab82bb2812dfa73e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "ed1af594_dfeb5eca",
