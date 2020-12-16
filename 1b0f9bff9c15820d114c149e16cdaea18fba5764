@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5efb9a27_032675ef",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-12-16T06:50:56Z",
+      "side": 1,
+      "message": "Waiting the vendor blob get updated. Then, we could pass the presubmit.",
+      "revId": "1b0f9bff9c15820d114c149e16cdaea18fba5764",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
