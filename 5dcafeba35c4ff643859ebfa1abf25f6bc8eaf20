@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5caac30_39d44b77",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-12-16T21:56:25Z",
+      "side": 1,
+      "message": "lgtm mostly, 1 question",
+      "revId": "5dcafeba35c4ff643859ebfa1abf25f6bc8eaf20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6bec9d8_ca9777c4",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1013,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2020-12-16T21:56:25Z",
+      "side": 1,
+      "message": "should this be 1",
+      "range": {
+        "startLine": 1013,
+        "startChar": 101,
+        "endLine": 1013,
+        "endChar": 124
+      },
+      "revId": "5dcafeba35c4ff643859ebfa1abf25f6bc8eaf20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
