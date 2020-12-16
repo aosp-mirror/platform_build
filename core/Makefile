@@ -40,6 +40,10 @@ $(if $(filter true,$(BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES)),, \
 )
 endef
 
+# Phony target to check PRODUCT_COPY_FILES copy pairs don't contain ELF files
+.PHONY: check-elf-prebuilt-product-copy-files
+check-elf-prebuilt-product-copy-files:
+
 check_elf_prebuilt_product_copy_files := true
 ifneq (,$(filter true,$(BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES)))
 check_elf_prebuilt_product_copy_files :=
@@ -543,6 +547,12 @@ $(PGO_PROFILE_MISSING):
 
 $(call dist-for-goals,droidcore,$(PGO_PROFILE_MISSING))
 
+CERTIFICATE_VIOLATION_MODULES_FILENAME := $(PRODUCT_OUT)/certificate_violation_modules.txt
+$(CERTIFICATE_VIOLATION_MODULES_FILENAME):
+	rm -f $@
+	$(foreach m,$(sort $(CERTIFICATE_VIOLATION_MODULES)), echo $(m) >> $@;)
+$(call dist-for-goals,droidcore,$(CERTIFICATE_VIOLATION_MODULES_FILENAME))
+
 # -----------------------------------------------------------------
 # The dev key is used to sign this package, and as the key required
 # for future OTA packages installed by this system.  Actual product
@@ -933,6 +943,17 @@ endif
 
 $(INTERNAL_VENDOR_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_VENDOR_RAMDISK_FILES) | $(COMPRESSION_COMMAND_DEPS)
 	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_VENDOR_RAMDISK_OUT) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $@
+
+INSTALLED_FILES_FILE_VENDOR_RAMDISK := $(PRODUCT_OUT)/installed-files-vendor-ramdisk.txt
+INSTALLED_FILES_JSON_VENDOR_RAMDISK := $(INSTALLED_FILES_FILE_VENDOR_RAMDISK:.txt=.json)
+$(INSTALLED_FILES_FILE_VENDOR_RAMDISK): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR_RAMDISK)
+$(INSTALLED_FILES_FILE_VENDOR_RAMDISK): $(INTERNAL_VENDOR_RAMDISK_TARGET)
+$(INSTALLED_FILES_FILE_VENDOR_RAMDISK): $(INTERNAL_VENDOR_RAMDISK_FILES) $(FILESLIST) $(FILESLIST_UTIL)
+	echo Installed file list: $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(hide) $(FILESLIST) $(TARGET_VENDOR_RAMDISK_OUT) > $(@:.txt=.json)
+	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
   INTERNAL_VENDOR_BOOTIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
@@ -1379,6 +1400,8 @@ $(if $(filter $(2),system),\
     $(if $(BOARD_SYSTEMIMAGE_PARTITION_SIZE),$(hide) echo "system_size=$(BOARD_SYSTEMIMAGE_PARTITION_SIZE)" >> $(1))
     $(if $(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE),$(hide) echo "system_other_size=$(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE)" >> $(1))
     $(if $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "system_fs_type=$(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
+    $(if $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "system_fs_compress=$(BOARD_SYSTEMIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
+    $(if $(BOARD_SYSTEMIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "system_f2fs_sldc_flags=$(BOARD_SYSTEMIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
     $(if $(BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "system_extfs_inode_count=$(BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
     $(if $(BOARD_SYSTEMIMAGE_EXTFS_RSV_PCT),$(hide) echo "system_extfs_rsv_pct=$(BOARD_SYSTEMIMAGE_EXTFS_RSV_PCT)" >> $(1))
     $(if $(BOARD_SYSTEMIMAGE_JOURNAL_SIZE),$(hide) echo "system_journal_size=$(BOARD_SYSTEMIMAGE_JOURNAL_SIZE)" >> $(1))
@@ -1655,16 +1678,15 @@ INTERNAL_RECOVERYIMAGE_FILES := $(filter $(TARGET_RECOVERY_OUT)/%, \
 INSTALLED_FILES_FILE_RECOVERY := $(PRODUCT_OUT)/installed-files-recovery.txt
 INSTALLED_FILES_JSON_RECOVERY := $(INSTALLED_FILES_FILE_RECOVERY:.txt=.json)
 
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+INSTALLED_BOOTIMAGE_TARGET := $(BUILT_BOOTIMAGE_TARGET)
+endif
+
 # TODO(b/30414428): Can't depend on INTERNAL_RECOVERYIMAGE_FILES alone like other
 # INSTALLED_FILES_FILE_* rules. Because currently there're cp/rsync/rm commands in
 # build-recoveryimage-target, which would touch the files under TARGET_RECOVERY_OUT and race with
 # the call to FILELIST.
-ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-INSTALLED_BOOTIMAGE_TARGET := $(BUILT_BOOTIMAGE_TARGET)
-$(INSTALLED_FILES_FILE_RECOVERY): $(INSTALLED_BOOTIMAGE_TARGET)
-else
-$(INSTALLED_FILES_FILE_RECOVERY): $(INSTALLED_RECOVERYIMAGE_TARGET)
-endif
+$(INSTALLED_FILES_FILE_RECOVERY): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
 
 $(INSTALLED_FILES_FILE_RECOVERY): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_RECOVERY)
 $(INSTALLED_FILES_FILE_RECOVERY): $(INTERNAL_RECOVERYIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
@@ -2456,6 +2478,15 @@ FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 # -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
 
+# Install system linker configuration
+# Collect all available stub libraries installed in system and install with predefined linker configuration
+SYSTEM_LINKER_CONFIG := $(TARGET_OUT)/etc/linker.config.pb
+$(SYSTEM_LINKER_CONFIG) : $(INTERNAL_SYSTEMIMAGE_FILES) $(LINKER_CONFIG_PATH_system_linker_config) | conv_linker_config
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $(LINKER_CONFIG_PATH_system_linker_config)\
+	  --output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
+
+FULL_SYSTEMIMAGE_DEPS += $(SYSTEM_LINKER_CONFIG)
+
 # installed file list
 # Depending on anything that $(BUILT_SYSTEMIMAGE) depends on.
 # We put installed-files.txt ahead of image itself in the dependency graph
@@ -3130,6 +3161,26 @@ endif
 
 endif # BOARD_PREBUILT_DTBOIMAGE
 
+# -----------------------------------------------------------------
+# Protected VM firmware image
+ifdef BOARD_PREBUILT_PVMFWIMAGE
+INSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img
+
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(INSTALLED_PVMFWIMAGE_TARGET): $(BOARD_PREBUILT_PVMFWIMAGE) $(AVBTOOL) $(BOARD_AVB_PVMFW_KEY_PATH)
+	cp $(BOARD_PREBUILT_PVMFWIMAGE) $@
+	$(AVBTOOL) add_hash_footer \
+	    --image $@ \
+	    --partition_size $(BOARD_PVMFWIMG_PARTITION_SIZE) \
+	    --partition_name pvmfw $(INTERNAL_AVB_PVMFW_SIGNING_ARGS) \
+	    $(BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS)
+else
+$(INSTALLED_PVMFWIMAGE_TARGET): $(BOARD_PREBUILT_PVMFWIMAGE)
+	cp $(BOARD_PREBUILT_PVMFWIMAGE) $@
+endif
+
+endif # BOARD_PREBUILT_PVMFWIMAGE
+
 # Returns a list of image targets corresponding to the given list of partitions. For example, it
 # returns "$(INSTALLED_PRODUCTIMAGE_TARGET)" for "product", or "$(INSTALLED_SYSTEMIMAGE_TARGET)
 # $(INSTALLED_VENDORIMAGE_TARGET)" for "system vendor".
@@ -3277,6 +3328,9 @@ BOARD_AVB_ODM_DLKM_ADD_HASHTREE_FOOTER_ARGS += \
 BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.dtbo.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
+BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.pvmfw.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
+
 # The following vendor- and odm-specific images needs explicit SPL set per board.
 ifdef BOOT_SECURITY_PATCH
 BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
@@ -3303,9 +3357,15 @@ BOARD_AVB_ODM_DLKM_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.odm_dlkm.security_patch:$(ODM_DLKM_SECURITY_PATCH)
 endif
 
+ifdef PVMFW_SECURITY_PATCH
+BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.pvmfw.security_patch:$(PVMFW_SECURITY_PATCH)
+endif
+
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
 VENDOR_BOOT_FOOTER_ARGS := BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS
 DTBO_FOOTER_ARGS := BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS
+PVMFW_FOOTER_ARGS := BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS
 SYSTEM_FOOTER_ARGS := BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS
 VENDOR_FOOTER_ARGS := BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS
 RECOVERY_FOOTER_ARGS := BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS
@@ -3420,6 +3480,10 @@ ifdef INSTALLED_DTBOIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,dtbo))
 endif
 
+ifdef INSTALLED_PVMFWIMAGE_TARGET
+$(eval $(call check-and-set-avb-args,pvmfw))
+endif
+
 ifdef INSTALLED_RECOVERYIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,recovery))
 endif
@@ -3505,6 +3569,9 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_DTBO_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_DTBO_KEY_PATH) \
       --output $(1)/dtbo.avbpubkey)
+  $(if $(BOARD_AVB_PVMFW_KEY_PATH),\
+    $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_PVMFW_KEY_PATH) \
+      --output $(1)/pvmfw.avbpubkey)
   $(if $(BOARD_AVB_RECOVERY_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_RECOVERY_KEY_PATH) \
       --output $(1)/recovery.avbpubkey)
@@ -3587,6 +3654,7 @@ $(INSTALLED_VBMETAIMAGE_TARGET): \
 	    $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) \
 	    $(INSTALLED_ODM_DLKMIMAGE_TARGET) \
 	    $(INSTALLED_DTBOIMAGE_TARGET) \
+	    $(INSTALLED_PVMFWIMAGE_TARGET) \
 	    $(INSTALLED_CUSTOMIMAGES_TARGET) \
 	    $(INSTALLED_RECOVERYIMAGE_TARGET) \
 	    $(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET) \
@@ -3940,6 +4008,7 @@ INTERNAL_OTATOOLS_MODULES := \
   fec \
   fs_config \
   generate_verity_key \
+  host_init_verifier \
   img2simg \
   img_from_target_files \
   imgdiff \
@@ -4219,6 +4288,18 @@ ifdef BOARD_AVB_DTBO_KEY_PATH
 endif # BOARD_AVB_DTBO_KEY_PATH
 endif # BOARD_AVB_ENABLE
 endif # BOARD_PREBUILT_DTBOIMAGE
+ifdef BOARD_PREBUILT_PVMFWIMAGE
+	$(hide) echo "has_pvmfw=true" >> $@
+ifeq ($(BOARD_AVB_ENABLE),true)
+	$(hide) echo "pvmfw_size=$(BOARD_PVMFWIMG_PARTITION_SIZE)" >> $@
+	$(hide) echo "avb_pvmfw_add_hash_footer_args=$(BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS)" >> $@
+ifdef BOARD_AVB_PVMFW_KEY_PATH
+	$(hide) echo "avb_pvmfw_key_path=$(BOARD_AVB_PVMFW_KEY_PATH)" >> $@
+	$(hide) echo "avb_pvmfw_algorithm=$(BOARD_AVB_PVMFW_ALGORITHM)" >> $@
+	$(hide) echo "avb_pvmfw_rollback_index_location=$(BOARD_AVB_PVMFW_ROLLBACK_INDEX_LOCATION)" >> $@
+endif # BOARD_AVB_PVMFW_KEY_PATH
+endif # BOARD_AVB_ENABLE
+endif # BOARD_PREBUILT_PVMFWIMAGE
 	$(call dump-dynamic-partitions-info,$@)
 	@# VINTF checks
 ifeq ($(PRODUCT_ENFORCE_VINTF_MANIFEST),true)
@@ -4488,6 +4569,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INSTALLED_RECOVERYIMAGE_TARGET) \
 	    $(INSTALLED_CACHEIMAGE_TARGET) \
 	    $(INSTALLED_DTBOIMAGE_TARGET) \
+	    $(INSTALLED_PVMFWIMAGE_TARGET) \
 	    $(INSTALLED_CUSTOMIMAGES_TARGET) \
 	    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 	    $(INSTALLED_KERNEL_TARGET) \
@@ -4770,6 +4852,10 @@ ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_DTBOIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 endif # BOARD_PREBUILT_DTBOIMAGE
+ifdef BOARD_PREBUILT_PVMFWIMAGE
+	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
+	$(hide) cp $(INSTALLED_PVMFWIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
+endif # BOARD_PREBUILT_PVMFWIMAGE
 ifdef BOARD_PREBUILT_BOOTLOADER
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_BOOTLOADER_MODULE) $(zip_root)/IMAGES/
@@ -5020,7 +5106,7 @@ ifeq (true,$(CLANG_COVERAGE))
   $(PROFDATA_ZIP): $(SOONG_ZIP)
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION) -f $(LLVM_PROFDATA) -f $(LIBCXX)
 
-  $(call dist-for-goals,droidcore apps_only,$(PROFDATA_ZIP))
+  $(call dist-for-goals,droidcore,$(PROFDATA_ZIP))
 endif
 
 # -----------------------------------------------------------------

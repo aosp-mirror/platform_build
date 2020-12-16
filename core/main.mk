@@ -115,6 +115,11 @@ SKIP_BOOT_JARS_CHECK := true
 endif
 endif
 
+ifdef TARGET_ARCH_SUITE
+  # TODO(b/175577370): Enable this error.
+  # $(error TARGET_ARCH_SUITE is not supported in kati/make builds)
+endif
+
 # ADDITIONAL_<partition>_PROPERTIES are properties that are determined by the
 # build system itself. Don't let it be defined from outside of the core build
 # system like Android.mk or <product>.mk files.
@@ -193,11 +198,7 @@ $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
 
 # Sets ro.actionable_compatible_property.enabled to know on runtime whether the
 # allowed list of actionable compatible properties is enabled or not.
-ifeq ($(PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE),true)
-ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=false
-else
-ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
-endif
+ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=true
 
 # Add the system server compiler filter if they are specified for the product.
 ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
@@ -1303,67 +1304,7 @@ ifdef FULL_BUILD
   # Verify the artifact path requirements made by included products.
   is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
   ifneq (true,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS)))
-  # Fakes don't get installed, and NDK stubs aren't installed to device.
-  static_allowed_patterns := $(TARGET_OUT_FAKE)/% $(SOONG_OUT_DIR)/ndk/%
-  # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
-  static_allowed_patterns += %__auto_generated_rro_product.apk
-  static_allowed_patterns += %__auto_generated_rro_vendor.apk
-  # Auto-included targets are not considered
-  static_allowed_patterns += $(call product-installed-files,)
-  # $(PRODUCT_OUT)/apex is where shared libraries in APEXes get installed.
-  # The path can be considered as a fake path, as the shared libraries
-  # are installed there just to have symbols files for them under
-  # $(PRODUCT_OUT)/symbols/apex for debugging purpose. The /apex directory
-  # is never compiled into a filesystem image.
-  static_allowed_patterns += $(PRODUCT_OUT)/apex/%
-  ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
-    # Allow system_other odex space optimization.
-    static_allowed_patterns += \
-      $(TARGET_OUT_SYSTEM_OTHER)/%.odex \
-      $(TARGET_OUT_SYSTEM_OTHER)/%.vdex \
-      $(TARGET_OUT_SYSTEM_OTHER)/%.art
-  endif
-
-CERTIFICATE_VIOLATION_MODULES_FILENAME := $(PRODUCT_OUT)/certificate_violation_modules.txt
-$(CERTIFICATE_VIOLATION_MODULES_FILENAME):
-	rm -f $@
-	$(foreach m,$(sort $(CERTIFICATE_VIOLATION_MODULES)), echo $(m) >> $@;)
-$(call dist-for-goals,droidcore,$(CERTIFICATE_VIOLATION_MODULES_FILENAME))
-
-  all_offending_files :=
-  $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
-    $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \
-    $(eval ### Verify that the product only produces files inside its path requirements.) \
-    $(eval allowed := $(PRODUCTS.$(makefile).ARTIFACT_PATH_ALLOWED_LIST)) \
-    $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
-    $(eval allowed_patterns := $(call resolve-product-relative-paths,$(allowed))) \
-    $(eval files := $(call product-installed-files, $(makefile))) \
-    $(eval offending_files := $(filter-out $(path_patterns) $(allowed_patterns) $(static_allowed_patterns),$(files))) \
-    $(call maybe-print-list-and-error,$(offending_files),\
-      $(makefile) produces files outside its artifact path requirement. \
-      Allowed paths are $(subst $(space),$(comma)$(space),$(addsuffix *,$(requirements)))) \
-    $(eval unused_allowed := $(filter-out $(files),$(allowed_patterns))) \
-    $(call maybe-print-list-and-error,$(unused_allowed),$(makefile) includes redundant allowed entries in its artifact path requirement.) \
-    $(eval ### Optionally verify that nothing else produces files inside this artifact path requirement.) \
-    $(eval extra_files := $(filter-out $(files) $(HOST_OUT)/%,$(product_target_FILES))) \
-    $(eval files_in_requirement := $(filter $(path_patterns),$(extra_files))) \
-    $(eval all_offending_files += $(files_in_requirement)) \
-    $(eval allowed := $(PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST)) \
-    $(eval allowed_patterns := $(call resolve-product-relative-paths,$(allowed))) \
-    $(eval offending_files := $(filter-out $(allowed_patterns),$(files_in_requirement))) \
-    $(eval enforcement := $(PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS)) \
-    $(if $(enforcement),\
-      $(call maybe-print-list-and-error,$(offending_files),\
-        $(INTERNAL_PRODUCT) produces files inside $(makefile)s artifact path requirement. \
-        $(PRODUCT_ARTIFACT_PATH_REQUIREMENT_HINT)) \
-      $(eval unused_allowed := $(if $(filter true strict,$(enforcement)),\
-        $(foreach p,$(allowed_patterns),$(if $(filter $(p),$(extra_files)),,$(p))))) \
-      $(call maybe-print-list-and-error,$(unused_allowed),$(INTERNAL_PRODUCT) includes redundant artifact path requirement allowed list entries.) \
-    ) \
-  )
-$(PRODUCT_OUT)/offending_artifacts.txt:
-	rm -f $@
-	$(foreach f,$(sort $(all_offending_files)),echo $(f) >> $@;)
+    include $(BUILD_SYSTEM)/artifact_path_requirements.mk
   endif
 else
   # We're not doing a full build, and are probably only including
@@ -1625,6 +1566,8 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_RAMDISK) \
     $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) \
     $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
+    $(INSTALLED_FILES_FILE_VENDOR_RAMDISK) \
+    $(INSTALLED_FILES_JSON_VENDOR_RAMDISK) \
     $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK) \
     $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK) \
     $(INSTALLED_FILES_FILE_ROOT) \
@@ -1639,6 +1582,7 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
 
 ifeq ($(SOONG_COLLECT_JAVA_DEPS), true)
   $(call dist-for-goals, dist_files, $(SOONG_OUT_DIR)/module_bp_java_deps.json)
+  $(call dist-for-goals, dist_files, $(PRODUCT_OUT)/module-info.json)
 endif
 
 .PHONY: apps_only
@@ -1773,6 +1717,8 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
       $(INSTALLED_FILES_JSON_RAMDISK) \
       $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) \
       $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
+      $(INSTALLED_FILES_FILE_VENDOR_RAMDISK) \
+      $(INSTALLED_FILES_JSON_VENDOR_RAMDISK) \
       $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK) \
       $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK) \
       $(INSTALLED_DEBUG_RAMDISK_TARGET) \

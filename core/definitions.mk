@@ -107,7 +107,7 @@ ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 # All tests that should be skipped in presubmit check.
 ALL_DISABLED_PRESUBMIT_TESTS :=
 
-# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
+# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITE
 ALL_COMPATIBILITY_SUITES :=
 
 # All compatibility suite files to dist.
@@ -2404,6 +2404,7 @@ $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
 	$(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	$(call intermediates-dir-for,ETC,passwd_system_ext)/passwd_system_ext \
 	$(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
 	$(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
 	$(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
@@ -2414,6 +2415,7 @@ $(2): \
 	$(call intermediates-dir-for,ETC,odm_property_contexts)/odm_property_contexts
 	$(hide) $(HOST_INIT_VERIFIER) \
 	  -p $(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	  -p $(call intermediates-dir-for,ETC,passwd_system_ext)/passwd_system_ext \
 	  -p $(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
 	  -p $(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
 	  -p $(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
@@ -2491,15 +2493,25 @@ endef
 # $(2): destination file
 # $(3): message to print on error
 define copy-non-elf-file-checked
-$(2): $(1) $(LLVM_READOBJ)
-	@echo "Copy non-ELF: $$@"
+$(eval check_non_elf_file_timestamp := \
+    $(call intermediates-dir-for,FAKE,check-non-elf-file-timestamps)/$(2).timestamp)
+$(check_non_elf_file_timestamp): $(1) $(LLVM_READOBJ)
+	@echo "Check non-ELF: $$<"
+	$(hide) mkdir -p "$$(dir $$@)"
+	$(hide) rm -f "$$@"
 	$(hide) \
-	    if $(LLVM_READOBJ) -h $$< >/dev/null 2>&1; then \
-	        $(call echo-error,$$@,$(3)); \
-	        $(call echo-error,$$@,found ELF file: $$<); \
+	    if $(LLVM_READOBJ) -h "$$<" >/dev/null 2>&1; then \
+	        $(call echo-error,$(2),$(3)); \
+	        $(call echo-error,$(2),found ELF file: $$<); \
 	        false; \
 	    fi
+	$(hide) touch "$$@"
+
+$(2): $(1) $(check_non_elf_file_timestamp)
+	@echo "Copy non-ELF: $$@"
 	$$(copy-file-to-target)
+
+check-elf-prebuilt-product-copy-files: $(check_non_elf_file_timestamp)
 endef
 
 # The -t option to acp and the -p option to cp is

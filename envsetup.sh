@@ -330,8 +330,8 @@ function bazel()
     fi
 
     if which bazel &>/dev/null; then
-        echo "NOTE: bazel() function sourced from envsetup.sh is being used instead of $(which bazel)"
-        echo
+        >&2 echo "NOTE: bazel() function sourced from envsetup.sh is being used instead of $(which bazel)"
+        >&2 echo
     fi
 
     "$T/tools/bazel" "$@"
