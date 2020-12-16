@@ -52,6 +52,24 @@
       "parentUuid": "c3702ddc_659a2c3b",
       "revId": "2830c96c433467e013f6588421730c6547c033d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17fe9fc2_ed04c686",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2020-12-16T16:02:35Z",
+      "side": 1,
+      "message": "I feel like you should\u0027ve just put a variable called art_module_source_build in the ANDROID namespace maintained here:  https://cs.android.com/android/platform/superproject/+/master:build/make/core/android_soong_config_vars.mk\n\ninstead of a separate art_module namespace.\n\nThat file might still be a better place for this bit of config ?",
+      "parentUuid": "bf1f9ed5_432fb8a4",
+      "revId": "2830c96c433467e013f6588421730c6547c033d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
