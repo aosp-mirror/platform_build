@@ -72,6 +72,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b51d8521_026fc769",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-12-16T15:45:52Z",
+      "side": 1,
+      "message": "Missing and false are semantically the same, so the source_build difference isn\u0027t a problem.\n\nLooks good, it shows that the config here is equivalent to the script. We can iterate on the other issues.",
+      "parentUuid": "4d6b30c8_8c19b02c",
+      "range": {
+        "startLine": 14,
+        "startChar": 7,
+        "endLine": 14,
+        "endChar": 30
+      },
+      "revId": "a2d49fae5c4aeb61f78676c58cb27f213974c634",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "55fd4ca6_42937ae9",
