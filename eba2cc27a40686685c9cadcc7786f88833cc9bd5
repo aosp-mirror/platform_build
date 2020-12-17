@@ -49,6 +49,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b3f4aa43_1f6abdf6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1226510
+      },
+      "writtenOn": "2020-12-17T15:50:56Z",
+      "side": 1,
+      "message": "The CDD states under 3.2.2 [C-0-1] that there are several build parameters that must not change. The build class is currently reading ro.product.* properties for several of the constants.\n\nDepending on which of the properties are actually used and when they are used and how they are combined in the build step from the .prop-files we can wind up in a situation where the properties in the device are not the same and thus violate this CDD requirement.\n\nWe also want consistency so that parameters are not added or updated during the build for already approved products as it may trigger unwanted behaviour in code that suddenly will get values (or updated values) in situations they should not.",
+      "parentUuid": "af229b2b_44c5ae8f",
+      "range": {
+        "startLine": 13,
+        "startChar": 14,
+        "endLine": 13,
+        "endChar": 30
+      },
+      "revId": "eba2cc27a40686685c9cadcc7786f88833cc9bd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f59e7b74_bb67eb76",
         "filename": "core/sysprop.mk",
         "patchSetId": 1
