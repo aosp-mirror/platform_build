@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d783d9d7_9197d83e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-12-17T05:19:19Z",
+      "side": 1,
+      "message": "Might worth mentioning the change ID too.\n\nIa88c8efecb18db9c27baa466e492bfd898b581d3",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 41
+      },
+      "revId": "eba2cc27a40686685c9cadcc7786f88833cc9bd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "af229b2b_44c5ae8f",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
