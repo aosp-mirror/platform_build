@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f59e7b74_bb67eb76",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-12-17T05:06:33Z",
+      "side": 1,
+      "message": "Hi Jiyong,\n\nPartner would like to skip output the build props if there is no product partition. (It will output to /system/product/build.prop). It is only applied for the device launching before R.\n\nIt makes sense to me. Do you think this patch is okay, or any suggestion to avoid a special criteria here?",
+      "range": {
+        "startLine": 99,
+        "startChar": 22,
+        "endLine": 99,
+        "endChar": 62
+      },
+      "revId": "eba2cc27a40686685c9cadcc7786f88833cc9bd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
