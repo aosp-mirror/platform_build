@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "080cc85e_0d313f3a",
+        "filename": "core/android_soong_config_vars.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2020-12-17T16:02:18Z",
+      "side": 1,
+      "message": "PTAL. This function defined the variable, so the ?\u003d below didn\u0027t work.",
+      "range": {
+        "startLine": 34,
+        "startChar": 2,
+        "endLine": 34,
+        "endChar": 54
+      },
+      "revId": "c9b4d9c3eff7678ae071b1c49168274ff47fa0c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
