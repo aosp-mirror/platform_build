@@ -97,6 +97,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4db89970_45c0becd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2020-12-18T00:12:43Z",
+      "side": 1,
+      "message": "Thanks. But it sounds like you are not actually experiencing changed values of the `Build.*` constants, but there is a possibility. Is my understanding correct?",
+      "parentUuid": "b3f4aa43_1f6abdf6",
+      "range": {
+        "startLine": 13,
+        "startChar": 14,
+        "endLine": 13,
+        "endChar": 30
+      },
+      "revId": "eba2cc27a40686685c9cadcc7786f88833cc9bd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f59e7b74_bb67eb76",
         "filename": "core/sysprop.mk",
         "patchSetId": 1
