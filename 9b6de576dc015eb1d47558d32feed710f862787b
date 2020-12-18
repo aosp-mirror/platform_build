@@ -33,6 +33,23 @@
       "message": "Cuttlefish will continue to provide 64+32 build+test coverage on arm64 and x86_64 on Linux only.",
       "revId": "9b6de576dc015eb1d47558d32feed710f862787b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "898dbff8_8de4ba08",
+        "filename": "target/board/emulator_arm64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1067098
+      },
+      "writtenOn": "2020-12-18T02:12:36Z",
+      "side": 1,
+      "message": "Should lines 22-49 also be removed? (That\u0027s what I had locally.)",
+      "revId": "9b6de576dc015eb1d47558d32feed710f862787b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
