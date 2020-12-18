@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3395d4d0_380652de",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1639441
+      },
+      "writtenOn": "2020-12-18T00:03:46Z",
+      "side": 1,
+      "message": "Done\n\nAlso changed wording a bit to sync with recent changes",
+      "parentUuid": "d783d9d7_9197d83e",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 41
+      },
+      "revId": "eba2cc27a40686685c9cadcc7786f88833cc9bd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "af229b2b_44c5ae8f",
@@ -107,6 +131,30 @@
       "writtenOn": "2020-12-17T05:18:04Z",
       "side": 1,
       "message": "I think this is difficult to parse. You might want to add a new argument to this macro to control this.\nAnd at the call site, the argument would be set to true like as follows:\n\n\n// under the section for product sysprops\n\ngen_common_build_props :\u003d false\n\n// some comment\nifneq ($(BOARD_USES_PRODUCT_IMAGE),)\n  gen_common_build_props :\u003d true\nendif\n\n// some comment\nifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),30),)\n  gen_common_build_props :\u003d true\nendif\n\n$(call build-properties ..... $(gen_common_build_props) ...)\n\ngen_common_build_props :\u003d",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 151
+      },
+      "revId": "eba2cc27a40686685c9cadcc7786f88833cc9bd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7cf34949_f52c08e3",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1639441
+      },
+      "writtenOn": "2020-12-18T00:03:46Z",
+      "side": 1,
+      "message": "Done\n\nThanks for the suggestions, hope it\u0027s more readable now.\n\nAdded an optional 7th parameter to the build-properties which allows to skip the generate-common-build-props. This seem to work ok on all shipping level and product image combos.\n\nThe extra $(if ) in math_lt is required since the math% functions break on empty parameters and PRODUCT_SHIPPING_API_LEVEL may not be set.",
+      "parentUuid": "51ac6b05_9ee0eb6c",
       "range": {
         "startLine": 99,
         "startChar": 0,
