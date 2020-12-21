@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af6497c8_772e0764",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-21T23:15:12Z",
+      "side": 1,
+      "message": "Thanks Jaewoong! PTAL",
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
