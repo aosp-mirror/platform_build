@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "e006b603_f33c158b",
+        "filename": "target/product/virtual_ab_ota/compression.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1290458
+      },
+      "writtenOn": "2020-12-21T23:38:12Z",
+      "side": 1,
+      "message": "Yes indeed, it\u0027s potentially needed in both (anywhere we mount dynamic partitions).",
+      "parentUuid": "400e4867_922194f2",
+      "range": {
+        "startLine": 21,
+        "startChar": 55,
+        "endLine": 21,
+        "endChar": 73
+      },
+      "revId": "263029c52c9e107f2fd4f32bab82bb2812dfa73e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "ed1af594_dfeb5eca",
         "filename": "target/product/virtual_ab_ota/compression_retrofit.mk",
         "patchSetId": 1
@@ -37,6 +61,30 @@
       "writtenOn": "2020-12-16T18:01:32Z",
       "side": 1,
       "message": "nit: split them into multiple lines please?",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 66
+      },
+      "revId": "263029c52c9e107f2fd4f32bab82bb2812dfa73e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "46d70725_3496d7ca",
+        "filename": "target/product/virtual_ab_ota/compression_retrofit.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1290458
+      },
+      "writtenOn": "2020-12-21T23:38:12Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "ed1af594_dfeb5eca",
       "range": {
         "startLine": 24,
         "startChar": 0,
