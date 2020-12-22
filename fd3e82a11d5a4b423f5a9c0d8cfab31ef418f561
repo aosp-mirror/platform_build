@@ -33,6 +33,24 @@
       "message": "What do double colons do here? (My Make-fu is not strong enough. :))",
       "revId": "fd3e82a11d5a4b423f5a9c0d8cfab31ef418f561",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a506a8a_d222d3b9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 30
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-22T19:16:26Z",
+      "side": 1,
+      "message": "https://www.gnu.org/software/make/manual/html_node/Double_002dColon.html\n\n\nIt is used here to allow duplicate .meta_module targets, which empirically do happen in the build system. Not sure exactly how the duplicates arise. The same module appears twice with identical rules maybe?\n\nAfter the sort, I don\u0027t believe we ever end up with 2 .meta_lic references, but the way the files are handled, I don\u0027t believe that would be an error in any case.\n\nAs described above, it is important that the order of execution not matter, which is why the rule appends to the file with \u003e\u003e and then sorts the result removing duplicates.",
+      "parentUuid": "a0f54f30_6eb089ae",
+      "revId": "fd3e82a11d5a4b423f5a9c0d8cfab31ef418f561",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
