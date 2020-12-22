@@ -16,6 +16,24 @@
       "message": "What happens if there is a host unit test that we don\u0027t want to run in presubmit?  For example if it is flaky or if it is too slow?",
       "revId": "6d9e78fd5d6e154b6369a3d8088d510dfc675558",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5e3d779_a8812048",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121894
+      },
+      "writtenOn": "2020-12-22T20:43:29Z",
+      "side": 1,
+      "message": "That\u0027s a great question: for too slow, we are enforcing some timeout on them so it will fail them before they can on-board because too slow.\n\nFor non-presubmit/flaky, we are doing several things in parallel:\n- have better test selection (instead of global right now), to ensure poor tests don\u0027t affect others, and give a chance to owners to take actions.\n- we want to fold this into some of the presubmit SLO work which can help promote/demote tests into presubmit if needed.",
+      "parentUuid": "176c261d_45fd7d85",
+      "revId": "6d9e78fd5d6e154b6369a3d8088d510dfc675558",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
