@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cefb8bd6_e8424a8d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 31
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-22T20:54:44Z",
+      "side": 1,
+      "message": "Partial review, I haven\u0027t looked in depth at the shell script, but I\u0027d suggest considering rewriting it in python or Go given the complexity.",
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55b6f32e_9006ecca",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-22T20:54:44Z",
+      "side": 1,
+      "message": "Is this double colon intentional?  I don\u0027t think ninja has any equivalent functionality, so I don\u0027t expect it is doing anything.",
+      "range": {
+        "startLine": 582,
+        "startChar": 25,
+        "endLine": 582,
+        "endChar": 27
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a41aae8_866f1120",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-22T20:54:44Z",
+      "side": 1,
+      "message": "This doesn\u0027t do anything any more, might as well remove them from new rules.",
+      "range": {
+        "startLine": 583,
+        "startChar": 1,
+        "endLine": 583,
+        "endChar": 8
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e442360_7ce6d805",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-22T20:54:44Z",
+      "side": 1,
+      "message": "Adding this dependency directly to the module name will miss various other ways to build the module, for example mma which builds MODULES-IN-path-to-dir.  The correct way to add a file to be built when the module is requested on the command line is through $(my_register_name).  If you want it to build whenever the module is built, including via `m system.img` or `m checkbuild`, then it should be a dependency of $(LOCAL_BUILT_MODULE).",
+      "range": {
+        "startLine": 601,
+        "startChar": 0,
+        "endLine": 601,
+        "endChar": 4
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6cd8622d_90ed3d60",
+        "filename": "core/main.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 1408,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-22T20:54:44Z",
+      "side": 1,
+      "message": "Can you add a comment here that this could be done per-module except that it needs to happen after fix-notice-deps?  Maybe with a TODO to remove fix-notice-deps and move build-license-metadata into base_rules.mk if you expect that to be feasible in the future?",
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "467ffd97_bdcf617d",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-22T20:54:44Z",
+      "side": 1,
+      "message": "Can this stay as an error?  Warnings just get ignored.",
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
