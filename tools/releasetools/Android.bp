@@ -566,7 +566,9 @@ python_test_host {
             embedded_launcher: false,
         },
     },
-    test_suites: ["general-tests"],
+    test_options: {
+        unit_test: true,
+    },
 }
 
 python_test_host {
@@ -583,5 +585,7 @@ python_test_host {
             embedded_launcher: false,
         },
     },
-    test_suites: ["general-tests"],
+    test_options: {
+        unit_test: true,
+    },
 }
