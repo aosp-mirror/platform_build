@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed4a5291_17547976",
+        "filename": "core/definitions.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-22T19:01:31Z",
+      "side": 1,
+      "message": "Ack\n\nThat happens prior to\n\nhttps://cs.android.com/android/platform/superproject/+/master:build/make/core/main.mk;l\u003d1402;drc\u003de47d6e4a8c89cae336c60db35b27d08380d77179\n\nwhich adds to ALL_MODULES",
+      "parentUuid": "f373469c_077d1cd3",
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9d2d1b61_e309ec54",
@@ -52,6 +70,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf353804_dde277d1",
+        "filename": "core/definitions.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-22T19:01:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d2d1b61_e309ec54",
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4d7f3a73_fc0a2975",
@@ -65,6 +101,30 @@
       "writtenOn": "2020-12-22T16:24:55Z",
       "side": 1,
       "message": "This could be simplified to:\n\nis_container :\u003d $(strip $(LOCAL_MODULE_IS_CONTAINER))\nifeq (,$(is_container))",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 4
+      },
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c25e374c_976b4d20",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-22T19:01:31Z",
+      "side": 1,
+      "message": "Ack\n\nThat would change the behavior in the case that LOCAL_MODULE_IS_CONTAINER is neither true nor false nor empty.",
+      "parentUuid": "4d7f3a73_fc0a2975",
       "range": {
         "startLine": 69,
         "startChar": 0,
