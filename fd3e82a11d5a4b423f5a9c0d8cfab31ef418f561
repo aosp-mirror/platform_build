@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28290c50_25768f7d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 30
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-12-22T18:36:02Z",
+      "side": 1,
+      "message": "As I said in chat, I\u0027m not very familiar with shell scripts. Can you add someone else who can review it?",
+      "revId": "fd3e82a11d5a4b423f5a9c0d8cfab31ef418f561",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0f54f30_6eb089ae",
+        "filename": "core/definitions.mk",
+        "patchSetId": 30
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-12-22T18:36:02Z",
+      "side": 1,
+      "message": "What do double colons do here? (My Make-fu is not strong enough. :))",
+      "revId": "fd3e82a11d5a4b423f5a9c0d8cfab31ef418f561",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
