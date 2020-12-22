@@ -73,6 +73,8 @@ PRODUCT_MAKEFILES := \
 
 endif
 
+PRODUCT_MAKEFILES += $(LOCAL_DIR)/mainline_sdk.mk
+
 COMMON_LUNCH_CHOICES := \
     aosp_arm64-eng \
     aosp_arm-eng \
