@@ -16,6 +16,63 @@
       "message": "Thanks Jaewoong! PTAL",
       "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f373469c_077d1cd3",
+        "filename": "core/definitions.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-12-22T16:24:55Z",
+      "side": 1,
+      "message": "$(ALL_MODULES) is sorted here:\nhttps://cs.android.com/android/platform/superproject/+/master:build/make/core/main.mk;l\u003d553;drc\u003de47d6e4a8c89cae336c60db35b27d08380d77179",
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d2d1b61_e309ec54",
+        "filename": "core/definitions.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-12-22T16:24:55Z",
+      "side": 1,
+      "message": "If you only need to fix ALL_MODULES.$(m).NOTICE_DEPS references, why do you add ALL_MODULES to the lookup table keys, _all_module_refs?",
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d7f3a73_fc0a2975",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-12-22T16:24:55Z",
+      "side": 1,
+      "message": "This could be simplified to:\n\nis_container :\u003d $(strip $(LOCAL_MODULE_IS_CONTAINER))\nifeq (,$(is_container))",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 4
+      },
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
