@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "53b337e5_01538bef",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-12-22T06:27:29Z",
+      "side": 1,
+      "message": "We only need this patch on Q and before. So the patch does not cherry-pick from master.\n",
+      "revId": "01bc366dc49cc121ca648a0117cad7afb4d89baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
