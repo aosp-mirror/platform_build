@@ -33,8 +33,8 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
   # emulator needs super.img
   BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT := true
 
-  # 3G + header
-  BOARD_SUPER_PARTITION_SIZE := 3229614080
+  # 4G
+  BOARD_SUPER_PARTITION_SIZE := 4294967296
   BOARD_SUPER_PARTITION_GROUPS := emulator_dynamic_partitions
 
   ifeq ($(QEMU_USE_SYSTEM_EXT_PARTITIONS),true)
