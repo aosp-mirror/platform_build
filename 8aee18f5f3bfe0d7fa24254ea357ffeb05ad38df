@@ -181,6 +181,30 @@
       },
       "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e99ec873_6185f16c",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-12-23T19:55:58Z",
+      "side": 1,
+      "message": "If you think this can be repurposed and/or extended, then an error check will definitely help. Please add one.",
+      "parentUuid": "40b0c927_9143a8c8",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 4
+      },
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
