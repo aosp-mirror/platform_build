@@ -157,6 +157,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7819bd3b_4d5047f3",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T20:49:49Z",
+      "side": 1,
+      "message": "Right now, I am dealing with the Wembley self-reference to see if I can get a green presubmit. After that is done, I will try again with single-colon to see if it turns up anything. If it is still green, I will be willing to go with that.",
+      "parentUuid": "038b820b_81cbd6f1",
+      "range": {
+        "startLine": 582,
+        "startChar": 25,
+        "endLine": 582,
+        "endChar": 27
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5a41aae8_866f1120",
         "filename": "core/definitions.mk",
         "patchSetId": 31
