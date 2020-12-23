@@ -133,6 +133,30 @@
       },
       "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "142c94f7_a09d494b",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2020-12-23T15:16:43Z",
+      "side": 1,
+      "message": "Wouldn\u0027t you want to know if it ever happens, though? You can add a simple filter check on is_container to verify it.\n\nThe current code will silently ignore it too, and so isn\u0027t any better, but if you want the same behavior you can replace the 2nd line in my example to this:\nifeq (,$(filter true false,$(is_container)))",
+      "parentUuid": "c25e374c_976b4d20",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 4
+      },
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
