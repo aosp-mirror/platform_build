@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "056ecab0_58393c97",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T04:21:40Z",
+      "side": 1,
+      "message": "Ack\n\n\"case\" is more portable, and the extra newline is only required to separate the usage message from the die error message. I use the same die function for /bin/sh (I only used /bin/bash this time so I could make depfiles and depmodules arrays.)\n\nBut that reminds me, I left out the -h option to print the usage. Fixed.",
+      "parentUuid": "e44f0f53_bfc1c79d",
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7127dc1a_f616ec22",
@@ -48,6 +66,24 @@
       "writtenOn": "2020-12-23T01:04:52Z",
       "side": 1,
       "message": "Should this clear curr_flag too?",
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b1073a9_83043010",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T04:21:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7127dc1a_f616ec22",
       "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -69,6 +105,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc707a0a_e23bde0f",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T04:21:40Z",
+      "side": 1,
+      "message": "We could. But then we would have to do extra work to repeat the flag for each argument, and we would increase the risk of exceeding whatever limit make has for command-line size. I know the usual max is 2 or 3 Mb, and it wouldn\u0027t surprise me if make increases that somehow. But I expect some limit remains.\n\nAs written, the shell program works either way. If someone were to change the invocation to repeat the flag for each argument, it would work exactly the same -- unless the command-line size limit gets exceeded, of course.",
+      "parentUuid": "7bbffebd_591351e7",
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9a7b582b_8eb13160",
@@ -82,6 +136,24 @@
       "writtenOn": "2020-12-23T01:04:52Z",
       "side": 1,
       "message": "Not an immediate issue, but these indirect references will cause a problem in the future for Bazel, which will need to know all of the input files that this rule will use up front.  How hard would it be to make this script take the transitive closure of license metadata files?",
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f503cd73_7ac2eac0",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T04:21:40Z",
+      "side": 1,
+      "message": "I do not expect Bazel to need this script or these metadata files. The license and license_kind modules are modeled almost exactly on bazel\u0027s license checking v2 license and license_kind rules, and bazel can already query its build graph.\n\nIf bazel needs to consume things built by make, it can just depend on the final .meta_lic file for whatever it needs to consume.",
+      "parentUuid": "9a7b582b_8eb13160",
       "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -109,6 +181,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "942ec656_600bb5bb",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T04:21:40Z",
+      "side": 1,
+      "message": "Ack\n\n\u0027for\u0027 is more forgiving of other whitespace, extra whitespace, and leading/trailing whitespace. The tokens matter, the whitespace doesn\u0027t.",
+      "parentUuid": "98dc95e0_d6fcb727",
+      "range": {
+        "startLine": 185,
+        "startChar": 14,
+        "endLine": 185,
+        "endChar": 55
+      },
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b95b6f9f_138143d3",
@@ -122,6 +218,24 @@
       "writtenOn": "2020-12-23T00:57:34Z",
       "side": 1,
       "message": "[optional] maybe `truncate -s 0 \"${ofile}\", or `: \u003e \"${ofile}\"` instead?",
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "13c8e300_315995f8",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T04:21:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b95b6f9f_138143d3",
       "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }

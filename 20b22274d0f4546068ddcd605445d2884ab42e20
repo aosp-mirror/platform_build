@@ -109,6 +109,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0f14c064_a63bf940",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T04:21:40Z",
+      "side": 1,
+      "message": "I am running another `m all` having replaced double-colon with colon.\n\nI am a little uneasy though. When I ran into the errors, I was building for taimen, and now I am building for sunfish.\n\nEven if it builds without error for sunfish, I worry about breakage for older or less-common configurations. I wouldn\u0027t want a situation where it gets past pre-submit and maybe even automerges to a host or two before blowing up on us.\n\n\nEven if make throws away one of the rules, I would prefer that to breakage.",
+      "parentUuid": "6e04b2e0_ff450d41",
+      "range": {
+        "startLine": 582,
+        "startChar": 25,
+        "endLine": 582,
+        "endChar": 27
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5a41aae8_866f1120",
         "filename": "core/definitions.mk",
         "patchSetId": 31
@@ -225,6 +249,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d7b56f99_b3d4fd1f",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T04:21:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2abe671_7aab0f49",
+      "range": {
+        "startLine": 601,
+        "startChar": 0,
+        "endLine": 601,
+        "endChar": 4
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6cd8622d_90ed3d60",
@@ -309,6 +357,24 @@
       "side": 1,
       "message": "Can you leave a TODO here to remove the warning after the LSC?",
       "parentUuid": "0b34e127_dd8dc460",
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7993aae3_a6151e9d",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T04:21:40Z",
+      "side": 1,
+      "message": "I have confirmed that after running the LSC, this branch of code gets hit:\n[ 46% 108/232] including external/robolectric-shadows/Android.mk ...\nbuild/make/core/notice_files.mk:170: warning: Cannot determine where to install NOTICE file for Run_robolectric_shadows_androidx_fragment_tests\n[ 58% 136/232] including hardware/interfaces/configstore/1.1/default/Android.mk ...\nbuild/make/core/notice_files.mk:170: warning: Cannot determine where to install NOTICE file for disable_configstore\n[ 73% 170/232] including packages/apps/Launcher3/Android.mk ...\nbuild/make/core/notice_files.mk:170: warning: Cannot determine where to install NOTICE file for RunLauncherRoboTests\n\n\nI would expect most or all of this code will get deleted as clean-up after replacing the NOTICE.xml.gz target rules with ones based on the .meta_lic files without needing a TODO per se.\n\nAssuming you have no objections, I will delete the warning now. The plan is to change the notice files before release S goes out in any case.",
+      "parentUuid": "a48e1b3d_7570658a",
       "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
