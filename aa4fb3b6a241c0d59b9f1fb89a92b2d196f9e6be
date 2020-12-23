@@ -16,6 +16,63 @@
       "message": "PTAL",
       "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e44f0f53_bfc1c79d",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1086523
+      },
+      "writtenOn": "2020-12-23T00:57:34Z",
+      "side": 1,
+      "message": "I think it\u0027s easier to read if written as `[[ \"${status}\" \u003d\u003d 2 ]] \u0026\u0026 echo \"${USAGE}\" \u003e\u00262` and add a blank line at the end of USAGE above.",
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98dc95e0_d6fcb727",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1086523
+      },
+      "writtenOn": "2020-12-23T00:57:34Z",
+      "side": 1,
+      "message": "I think this can be done with `echo ${alldeps} | tr \\  \\\\n` but fine as-is.",
+      "range": {
+        "startLine": 185,
+        "startChar": 14,
+        "endLine": 185,
+        "endChar": 55
+      },
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b95b6f9f_138143d3",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1086523
+      },
+      "writtenOn": "2020-12-23T00:57:34Z",
+      "side": 1,
+      "message": "[optional] maybe `truncate -s 0 \"${ofile}\", or `: \u003e \"${ofile}\"` instead?",
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
