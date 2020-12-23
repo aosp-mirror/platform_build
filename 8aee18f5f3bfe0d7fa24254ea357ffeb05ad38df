@@ -157,6 +157,30 @@
       },
       "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40b0c927_9143a8c8",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T19:08:11Z",
+      "side": 1,
+      "message": "They way I look at it is: The normal and expected behavior is the build system determines whether the output is a container type based on the file extension. If someone wants to do something really extraordinary and override that, I am okay with them having to do it exactly right.\n\nIf I were to change the code as you propose, we would have to add an else clause with a $(error...). If you have a strong preference for adding the error, I can make the change.",
+      "parentUuid": "142c94f7_a09d494b",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 4
+      },
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
