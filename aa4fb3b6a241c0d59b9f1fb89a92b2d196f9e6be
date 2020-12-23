@@ -37,6 +37,57 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7127dc1a_f616ec22",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-23T01:04:52Z",
+      "side": 1,
+      "message": "Should this clear curr_flag too?",
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7bbffebd_591351e7",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-23T01:04:52Z",
+      "side": 1,
+      "message": "This is an odd style of argument parsing.  Could the arguments be repeated instead?  -k foo -k bar.",
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a7b582b_8eb13160",
+        "filename": "tools/build-license-metadata.sh",
+        "patchSetId": 32
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-23T01:04:52Z",
+      "side": 1,
+      "message": "Not an immediate issue, but these indirect references will cause a problem in the future for Bazel, which will need to know all of the input files that this rule will use up front.  How hard would it be to make this script take the transitive closure of license metadata files?",
+      "revId": "aa4fb3b6a241c0d59b9f1fb89a92b2d196f9e6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "98dc95e0_d6fcb727",
         "filename": "tools/build-license-metadata.sh",
         "patchSetId": 32

@@ -85,6 +85,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6e04b2e0_ff450d41",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-23T01:04:52Z",
+      "side": 1,
+      "message": "What are the errors?  Ninja definitely doesn\u0027t support Make\u0027s behavior (running a different rule to generate the output based on which input files were changed), so the behavior is going to depend on what Kati does to translate it.",
+      "parentUuid": "5f35d528_b89109b5",
+      "range": {
+        "startLine": 582,
+        "startChar": 25,
+        "endLine": 582,
+        "endChar": 27
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5a41aae8_866f1120",
         "filename": "core/definitions.mk",
         "patchSetId": 31
@@ -179,6 +203,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d2abe671_7aab0f49",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-23T01:04:52Z",
+      "side": 1,
+      "message": "Yes, that would help.",
+      "parentUuid": "e8b0a52e_c690b34e",
+      "range": {
+        "startLine": 601,
+        "startChar": 0,
+        "endLine": 601,
+        "endChar": 4
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6cd8622d_90ed3d60",
         "filename": "core/main.mk",
         "patchSetId": 31
@@ -243,6 +291,24 @@
       "side": 1,
       "message": "Ack\n\nNo, I don\u0027t believe it can. There are modules that currently have no license text because there is no LICENSE or NOTICE file in the directory with the makefile or Android.bp file.\n\nAfter the large-scale-change runs, every makefile and Android.bp file will set an explicit reference to one or more license text files. All the makefiles will assign to LOCAL_NOTICE_FILE, and all the Android.bp files will reference a license module with a license_text property.\n\n\nIn the cases in question with no LICENSE or NOTICE file in the directory, the script for the large-scale-change will find the license text files in a parent directory instead. Or in the case of 1p code with an Android.bp, it will reference a global Apache 2.0 license module.\n\n\nIn the new way of doing things, having a license text with no place to put it won\u0027t be an error because the notice files for the UI won\u0027t depend on copying license texts to directories reflecting system or vendor etc. We can just leave the license text files where they are.\n\nEither the license text file will be in the dependency graph of some notice file, in which case we know exactly where to put it, or it will not, in which case we don\u0027t have to put it anywhere.\n\nIn the interim, having a license text file with no place to copy it won\u0027t change anything from what we have now where we don\u0027t have a license text file (and have no place to copy it.)\n\nI am doing a run of the large-scale-change to confirm. I won\u0027t have a result for 3 or 4 hours, but I am confident the warnings will appear after the lsc runs and I rebuilt all.",
       "parentUuid": "467ffd97_bdcf617d",
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a48e1b3d_7570658a",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-23T01:04:52Z",
+      "side": 1,
+      "message": "Can you leave a TODO here to remove the warning after the LSC?",
+      "parentUuid": "0b34e127_dd8dc460",
       "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
