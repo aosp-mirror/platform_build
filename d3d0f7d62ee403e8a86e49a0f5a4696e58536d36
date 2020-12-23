@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "46c091fe_44e83577",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2020-12-23T09:51:29Z",
+      "side": 1,
+      "message": "Hi Dan and Colin,\n\nCould you help for Owner+1?\n\nThanks!",
+      "revId": "d3d0f7d62ee403e8a86e49a0f5a4696e58536d36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
