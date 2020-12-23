@@ -179,6 +179,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "735b985f_f12eb3d2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T22:38:55Z",
+      "side": 1,
+      "message": "Changing the double-colon to single-colon causes builds to break on presubmit.\n\ne.g. build/make/core/main.mk:1415: error: overriding commands for target `out/target/product/generic_arm64/gen/META/lic_intermediates/out/target/product/generic_arm64/vendor/etc/vintf/manifest/android.hardware.audio@6.0-impl.ranchu.xml.meta_module\u0027, previously defined at build/make/core/main.mk:1415\n\nSee: https://android-build.googleplex.com/builds/treetop/android-review/1377718?revision\u003d36\u0026revisionAttempt\u003d1\u0026ref\u003dPLUGIN\n\nI am going to have to stick with the double-colon for now.",
+      "parentUuid": "7819bd3b_4d5047f3",
+      "range": {
+        "startLine": 582,
+        "startChar": 25,
+        "endLine": 582,
+        "endChar": 27
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5a41aae8_866f1120",
