@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bcc544c3_4ed6cc46",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 31
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T00:06:52Z",
+      "side": 1,
+      "message": "I have removed all the conditional branches from the script that I can so it\u0027s really not all the complex any more.\n\nI prefer to keep it as a shell script because I do not want to encourage anyone to think it is a suitable place to inject any special logic or options.",
+      "parentUuid": "cefb8bd6_e8424a8d",
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "55b6f32e_9006ecca",
@@ -41,6 +59,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f35d528_b89109b5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T00:06:52Z",
+      "side": 1,
+      "message": "Ack\n\nYes, it is intentional. I forget the exact targets, but make can fail with errors about redefining targets or something.\n\nNot sure what make sends to ninja for them, but ninja doesn\u0027t complain.",
+      "parentUuid": "55b6f32e_9006ecca",
+      "range": {
+        "startLine": 582,
+        "startChar": 25,
+        "endLine": 582,
+        "endChar": 27
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5a41aae8_866f1120",
@@ -54,6 +96,30 @@
       "writtenOn": "2020-12-22T20:54:44Z",
       "side": 1,
       "message": "This doesn\u0027t do anything any more, might as well remove them from new rules.",
+      "range": {
+        "startLine": 583,
+        "startChar": 1,
+        "endLine": 583,
+        "endChar": 8
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0df6fcbb_718524b8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T00:06:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a41aae8_866f1120",
       "range": {
         "startLine": 583,
         "startChar": 1,
@@ -89,6 +155,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e8b0a52e_c690b34e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T00:06:52Z",
+      "side": 1,
+      "message": "This is run for every $(1) in $(ALL_MODULES), which is every value of $(my_register_name). Would it help if I changed the comment at line 576 from \"module\" to \"my_register_name\" ?",
+      "parentUuid": "9e442360_7ce6d805",
+      "range": {
+        "startLine": 601,
+        "startChar": 0,
+        "endLine": 601,
+        "endChar": 4
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6cd8622d_90ed3d60",
         "filename": "core/main.mk",
         "patchSetId": 31
@@ -100,6 +190,24 @@
       "writtenOn": "2020-12-22T20:54:44Z",
       "side": 1,
       "message": "Can you add a comment here that this could be done per-module except that it needs to happen after fix-notice-deps?  Maybe with a TODO to remove fix-notice-deps and move build-license-metadata into base_rules.mk if you expect that to be feasible in the future?",
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "59341ce3_5f2947e8",
+        "filename": "core/main.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 1408,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T00:06:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6cd8622d_90ed3d60",
       "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -117,6 +225,24 @@
       "writtenOn": "2020-12-22T20:54:44Z",
       "side": 1,
       "message": "Can this stay as an error?  Warnings just get ignored.",
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b34e127_dd8dc460",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T00:06:52Z",
+      "side": 1,
+      "message": "Ack\n\nNo, I don\u0027t believe it can. There are modules that currently have no license text because there is no LICENSE or NOTICE file in the directory with the makefile or Android.bp file.\n\nAfter the large-scale-change runs, every makefile and Android.bp file will set an explicit reference to one or more license text files. All the makefiles will assign to LOCAL_NOTICE_FILE, and all the Android.bp files will reference a license module with a license_text property.\n\n\nIn the cases in question with no LICENSE or NOTICE file in the directory, the script for the large-scale-change will find the license text files in a parent directory instead. Or in the case of 1p code with an Android.bp, it will reference a global Apache 2.0 license module.\n\n\nIn the new way of doing things, having a license text with no place to put it won\u0027t be an error because the notice files for the UI won\u0027t depend on copying license texts to directories reflecting system or vendor etc. We can just leave the license text files where they are.\n\nEither the license text file will be in the dependency graph of some notice file, in which case we know exactly where to put it, or it will not, in which case we don\u0027t have to put it anywhere.\n\nIn the interim, having a license text file with no place to copy it won\u0027t change anything from what we have now where we don\u0027t have a license text file (and have no place to copy it.)\n\nI am doing a run of the large-scale-change to confirm. I won\u0027t have a result for 3 or 4 hours, but I am confident the warnings will appear after the lsc runs and I rebuilt all.",
+      "parentUuid": "467ffd97_bdcf617d",
       "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
