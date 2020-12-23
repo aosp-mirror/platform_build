@@ -205,6 +205,30 @@
       },
       "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d692c8ac_cf186bce",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 20
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2020-12-23T22:38:26Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e99ec873_6185f16c",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 4
+      },
+      "revId": "8aee18f5f3bfe0d7fa24254ea357ffeb05ad38df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
