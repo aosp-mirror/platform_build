@@ -133,6 +133,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "038b820b_81cbd6f1",
+        "filename": "core/definitions.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-23T19:08:49Z",
+      "side": 1,
+      "message": "You can test pretty extensively with forrest to cover at least all of the pixel devices.  You could also check for duplicates manually with something like:\n\n$(if ALL_MODULES.$(1).LICENSE_METADATA_DEFINED,$(error Duplicate license metadata rules for $(1)))\n$(eval ALL_MODULES.$(1).LICENSE_METADATA_DEFINED :\u003d true)\n\nIf you did it in build-license-metadata it wouldn\u0027t be hard to change it to skip the second rule, so you could have an easy fix-forward if it caused problems.\n\nAlternatively, how about leaving a TODO here to remove it, then if the CL to remove it causes problems it will be easy to revert.",
+      "parentUuid": "0f14c064_a63bf940",
+      "range": {
+        "startLine": 582,
+        "startChar": 25,
+        "endLine": 582,
+        "endChar": 27
+      },
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5a41aae8_866f1120",
         "filename": "core/definitions.mk",
         "patchSetId": 31
@@ -375,6 +399,24 @@
       "side": 1,
       "message": "I have confirmed that after running the LSC, this branch of code gets hit:\n[ 46% 108/232] including external/robolectric-shadows/Android.mk ...\nbuild/make/core/notice_files.mk:170: warning: Cannot determine where to install NOTICE file for Run_robolectric_shadows_androidx_fragment_tests\n[ 58% 136/232] including hardware/interfaces/configstore/1.1/default/Android.mk ...\nbuild/make/core/notice_files.mk:170: warning: Cannot determine where to install NOTICE file for disable_configstore\n[ 73% 170/232] including packages/apps/Launcher3/Android.mk ...\nbuild/make/core/notice_files.mk:170: warning: Cannot determine where to install NOTICE file for RunLauncherRoboTests\n\n\nI would expect most or all of this code will get deleted as clean-up after replacing the NOTICE.xml.gz target rules with ones based on the .meta_lic files without needing a TODO per se.\n\nAssuming you have no objections, I will delete the warning now. The plan is to change the notice files before release S goes out in any case.",
       "parentUuid": "a48e1b3d_7570658a",
+      "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9cbf05c_17a0b97f",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 31
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2020-12-23T19:08:49Z",
+      "side": 1,
+      "message": "SGTM.  It looks like at least the disable_configstore warning is from an executable that is marked not installable, which doesn\u0027t need any handling here.  You could probably produce an allowlist of module types that are not relevant here to skip the error, but removing it is also fine with me.",
+      "parentUuid": "7993aae3_a6151e9d",
       "revId": "20b22274d0f4546068ddcd605445d2884ab42e20",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
