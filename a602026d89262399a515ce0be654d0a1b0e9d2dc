@@ -22,6 +22,30 @@
       },
       "revId": "a602026d89262399a515ce0be654d0a1b0e9d2dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e84f1b75_487a2d10",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2020-12-25T06:17:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "31538368_cbb635c2",
+      "range": {
+        "startLine": 60,
+        "startChar": 44,
+        "endLine": 60,
+        "endChar": 54
+      },
+      "revId": "a602026d89262399a515ce0be654d0a1b0e9d2dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
