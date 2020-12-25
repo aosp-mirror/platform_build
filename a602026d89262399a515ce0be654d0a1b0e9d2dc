@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31538368_cbb635c2",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2020-12-25T04:35:20Z",
+      "side": 1,
+      "message": "https://source.android.com/devices/tech/ota/dynamic_partitions/implement#board-configuration-changes\nThis value must be less than BOARD_SUPER_PARTITION_SIZE. Before aosp/1534301, BOARD_SUPER_PARTITION_SIZE was 3229614080 (3G + 8M).",
+      "range": {
+        "startLine": 60,
+        "startChar": 44,
+        "endLine": 60,
+        "endChar": 54
+      },
+      "revId": "a602026d89262399a515ce0be654d0a1b0e9d2dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
