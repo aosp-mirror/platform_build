@@ -67,6 +67,23 @@
       "message": "\u003e Change has been successfully merged into the git repository.\n\n",
       "revId": "256b14b2f868223e9adcdd355acffb950b230fb1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c3daa54_04dcd406",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1780161
+      },
+      "writtenOn": "2020-12-27T17:42:03Z",
+      "side": 1,
+      "message": "android 8.1",
+      "revId": "256b14b2f868223e9adcdd355acffb950b230fb1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
