@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f6d929ee_4c4ba261",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2021-01-05T17:17:39Z",
+      "side": 1,
+      "message": "Where does this BOARD_REQD_MASK_DIRS come from? I can\u0027t seem to find it in any of your other CLs.",
+      "range": {
+        "startLine": 170,
+        "startChar": 59,
+        "endLine": 170,
+        "endChar": 79
+      },
+      "revId": "6d74b7a1e4528f18a5b9382c8467e9187e4c0bba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
