@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5731abe4_6e87903d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 38
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-01-05T17:10:42Z",
+      "side": 1,
+      "message": "PTAL\n\nCould I get a 2nd +2 on the Open-Source-Licensing label?",
+      "revId": "20fc1b3719a1bbd2e5f112c2250eccd11698f47d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
