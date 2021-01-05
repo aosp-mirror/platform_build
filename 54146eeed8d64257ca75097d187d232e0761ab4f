@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8b76b53a_6a221fd6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2021-01-05T04:31:02Z",
+      "side": 1,
+      "message": "Removed libsqlite.so since the CL is still on reviewing: (aosp/1495983)",
+      "revId": "54146eeed8d64257ca75097d187d232e0761ab4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
