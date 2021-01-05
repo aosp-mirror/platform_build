@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6b1a27b4_d7feb684",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-05T19:47:43Z",
+      "side": 1,
+      "message": "Steve, how do I get these to be built?",
+      "range": {
+        "startLine": 83,
+        "startChar": 4,
+        "endLine": 83,
+        "endChar": 46
+      },
+      "revId": "bf806a8652b3f676e93966f37cbb7f3ccd430224",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
