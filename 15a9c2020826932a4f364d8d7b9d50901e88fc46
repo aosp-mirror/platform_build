@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "068a6057_37043445",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2021-01-06T01:31:26Z",
+      "side": 1,
+      "message": "Just OOC, why hasn\u0027t this been an issue before? This sounds like a common case, and must\u0027ve occurred in the past.",
+      "revId": "15a9c2020826932a4f364d8d7b9d50901e88fc46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "adc7f2d2_72fdb4ef",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2021-01-06T01:31:26Z",
+      "side": 1,
+      "message": "Update the Soong variable name too?",
+      "range": {
+        "startLine": 173,
+        "startChar": 22,
+        "endLine": 173,
+        "endChar": 39
+      },
+      "revId": "15a9c2020826932a4f364d8d7b9d50901e88fc46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
