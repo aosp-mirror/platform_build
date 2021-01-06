@@ -36,6 +36,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9577b612_9054615e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2021-01-06T02:10:50Z",
+      "side": 1,
+      "message": "Sorry, my question was unclear. I was asking why platform\u0027s sepolicy version diverging from vender\u0027s hasn\u0027t caused an issue before.",
+      "parentUuid": "f6b237b9_2df7b2d9",
+      "revId": "15a9c2020826932a4f364d8d7b9d50901e88fc46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "adc7f2d2_72fdb4ef",
