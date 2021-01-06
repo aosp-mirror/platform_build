@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a750519_1fa8bf22",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2021-01-06T17:32:10Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be an error instead? Silently building a different target feels like an error-prone behavior.",
+      "revId": "856ec0310f8511271525c56c9b4fb30eb7abef61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
