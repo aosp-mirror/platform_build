@@ -22,6 +22,30 @@
       },
       "revId": "6d74b7a1e4528f18a5b9382c8467e9187e4c0bba",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ccfb6a27_a5114646",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-01-06T01:24:11Z",
+      "side": 1,
+      "message": "Changed to BOARD_REQD_MASK_POLICY",
+      "parentUuid": "f6d929ee_4c4ba261",
+      "range": {
+        "startLine": 170,
+        "startChar": 59,
+        "endLine": 170,
+        "endChar": 79
+      },
+      "revId": "6d74b7a1e4528f18a5b9382c8467e9187e4c0bba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
