@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6b237b9_2df7b2d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-01-06T01:49:56Z",
+      "side": 1,
+      "message": "reqd mask policy has empty stub files. In Soong they are only used by selinux context files, and the test target doesn\u0027t need such empty stub files as the target already has its own context files.",
+      "parentUuid": "068a6057_37043445",
+      "revId": "15a9c2020826932a4f364d8d7b9d50901e88fc46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "adc7f2d2_72fdb4ef",
@@ -31,6 +49,30 @@
       "writtenOn": "2021-01-06T01:31:26Z",
       "side": 1,
       "message": "Update the Soong variable name too?",
+      "range": {
+        "startLine": 173,
+        "startChar": 22,
+        "endLine": 173,
+        "endChar": 39
+      },
+      "revId": "15a9c2020826932a4f364d8d7b9d50901e88fc46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2301fd6_f5094bca",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-01-06T01:49:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "adc7f2d2_72fdb4ef",
       "range": {
         "startLine": 173,
         "startChar": 22,
