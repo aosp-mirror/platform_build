@@ -65,6 +65,13 @@ message DeviceState {
   repeated PartitionState partition_state = 7;
 }
 
+message ApexInfo {
+  string package_name = 1;
+  int64 version = 2;
+  bool is_compressed = 3;
+  int64 decompressed_size = 4;
+}
+
 // The metadata of an OTA package. It contains the information of the package
 // and prerequisite to install the update correctly.
 message OtaMetadata {
