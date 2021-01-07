@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1fbd421c_77e92c1e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-01-07T01:28:18Z",
+      "side": 1,
+      "message": "This needs to be in a topic with the Soong change to add the fields.",
+      "revId": "cfe8e72d41f53806eb2c7c5c2292c9fe977e5fcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
