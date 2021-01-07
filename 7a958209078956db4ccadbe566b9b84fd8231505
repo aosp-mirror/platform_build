@@ -16,6 +16,23 @@
       "message": "PTAL\n\nThe shell script caused breakage under mac_os, which uses an earlier version of bash that does not support associative arrays.\n\nThis commit is identical to the original; except, the shell script has been changed to /bin/sh syntax to maximize portability.\n\nI tested the script by pointing /bin/sh to bash4, bash3 and to dash. It was necessary to work around another bug in bash3 by moving a case statement outside a $() substitution.\n\nIs there a way to run the specific mac_os build that failed presubmit instead of waiting to see if it works post-submit?\n",
       "revId": "7a958209078956db4ccadbe566b9b84fd8231505",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4d7beec_ceae26b2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-01-07T21:34:55Z",
+      "side": 1,
+      "message": "Hi Jaewoong,\n\nCould you +2 this one too? Colin took care of it last time. It also needs another +2 on Open-Source-Licensig",
+      "revId": "7a958209078956db4ccadbe566b9b84fd8231505",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
