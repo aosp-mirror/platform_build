@@ -166,8 +166,6 @@ else
       # Soong produces uninstallable *.sdk shared libraries for embedding in APKs.
       module_installed_filename := \
           $(patsubst $(PRODUCT_OUT)/%,%,$($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_SHARED_LIBRARIES))/$(notdir $(LOCAL_BUILT_MODULE))
-    else
-      $(error Cannot determine where to install NOTICE file for $(LOCAL_MODULE))
     endif # JAVA_LIBRARIES
   endif # STATIC_LIBRARIES
 endif
@@ -185,11 +183,12 @@ ALL_MODULES.$(my_register_name).INSTALLED_NOTICE_FILE := $(installed_notice_file
 endif
 
 $(installed_notice_file): PRIVATE_INSTALLED_MODULE := $(module_installed_filename)
+$(installed_notice_file) : PRIVATE_NOTICES := $(notice_file)
 
 $(installed_notice_file): $(notice_file)
 	@echo Notice file: $< -- $@
 	$(hide) mkdir -p $(dir $@)
-	$(hide) cat $< > $@
+	$(hide) awk 'FNR==1 && NR > 1 {print "\n"} {print}' $(PRIVATE_NOTICES) > $@
 
 ifdef LOCAL_INSTALLED_MODULE
 # Make LOCAL_INSTALLED_MODULE depend on NOTICE files if they exist
