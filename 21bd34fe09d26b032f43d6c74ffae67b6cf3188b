@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "302dfc71_845eea62",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-01-07T05:30:46Z",
+      "side": 1,
+      "message": "PTAL\n\nThis commit is identical to the original. The breakage was in the shell script in the following commit.",
+      "revId": "21bd34fe09d26b032f43d6c74ffae67b6cf3188b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
