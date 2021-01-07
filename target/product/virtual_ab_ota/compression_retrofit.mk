@@ -21,4 +21,7 @@ PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
 # When using virtual_ab_ota_compression_retrofit.mk, either
 # virtual_ab_ota.mk or virtual_ab_ota_retrofit.mk must be inherited
 # as well.
-PRODUCT_PACKAGES += snapuserd.ramdisk snapuserd
+PRODUCT_PACKAGES += \
+    snapuserd.ramdisk \
+    snapuserd \
+    snapuserd.recovery
