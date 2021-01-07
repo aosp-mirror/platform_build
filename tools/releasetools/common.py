@@ -128,6 +128,9 @@ PARTITIONS_WITH_CARE_MAP = [
     'odm_dlkm',
 ]
 
+# Partitions with a build.prop file
+PARTITIONS_WITH_BUILD_PROP = PARTITIONS_WITH_CARE_MAP
+
 # See sysprop.mk. If file is moved, add new search paths here; don't remove
 # existing search paths.
 RAMDISK_BUILD_PROP_REL_PATHS = ['system/etc/ramdisk/build.prop']
@@ -420,7 +423,7 @@ class BuildInfo(object):
             "3.2.2. Build Parameters.".format(fingerprint))
 
     self._partition_fingerprints = {}
-    for partition in PARTITIONS_WITH_CARE_MAP:
+    for partition in PARTITIONS_WITH_BUILD_PROP:
       try:
         fingerprint = self.CalculatePartitionFingerprint(partition)
         check_fingerprint(fingerprint)
@@ -428,7 +431,7 @@ class BuildInfo(object):
       except ExternalError:
         continue
     if "system" in self._partition_fingerprints:
-      # system_other is not included in PARTITIONS_WITH_CARE_MAP, but does
+      # system_other is not included in PARTITIONS_WITH_BUILD_PROP, but does
       # need a fingerprint when creating the image.
       self._partition_fingerprints[
           "system_other"] = self._partition_fingerprints["system"]
@@ -756,7 +759,7 @@ def LoadInfoDict(input_file, repacking=False):
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
-  for partition in PARTITIONS_WITH_CARE_MAP:
+  for partition in PARTITIONS_WITH_BUILD_PROP:
     partition_prop = "{}.build.prop".format(partition)
     d[partition_prop] = PartitionBuildProps.FromInputFile(
         input_file, partition)
@@ -766,7 +769,7 @@ def LoadInfoDict(input_file, repacking=False):
   # hash / hashtree footers.
   if d.get("avb_enable") == "true":
     build_info = BuildInfo(d)
-    for partition in PARTITIONS_WITH_CARE_MAP:
+    for partition in PARTITIONS_WITH_BUILD_PROP:
       fingerprint = build_info.GetPartitionFingerprint(partition)
       if fingerprint:
         d["avb_{}_salt".format(partition)] = sha256(fingerprint.encode()).hexdigest()
