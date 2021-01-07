@@ -1333,6 +1333,9 @@ modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
 
+$(call fix-notice-deps)
+
+
 # These are additional goals that we build, in order to make sure that there
 # is as little code as possible in the tree that doesn't build.
 modules_to_check := $(foreach m,$(ALL_MODULES),$(ALL_MODULES.$(m).CHECKED))

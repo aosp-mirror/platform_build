@@ -531,6 +531,47 @@ $(_idf_val_)
 endef
 
 ###########################################################
+## Sometimes a notice dependency will reference an unadorned
+## module name that only appears in ALL_MODULES adorned with
+## an ARCH suffix or a `host_cross_` prefix.
+##
+## After all of the modules are processed in base_rules.mk,
+## replace all such dependencies with every matching adorned
+## module name.
+###########################################################
+
+define fix-notice-deps
+$(strip \
+  $(eval _all_module_refs := \
+    $(sort \
+      $(foreach m,$(sort $(ALL_MODULES)), \
+        $(ALL_MODULES.$(m).NOTICE_DEPS) \
+      ) \
+    ) \
+  ) \
+  $(foreach m, $(_all_module_refs), \
+    $(eval _lookup.$(m) := \
+      $(sort \
+        $(if $(strip $(ALL_MODULES.$(m).PATH)), \
+          $(m), \
+          $(filter $(m)_32 $(m)_64 host_cross_$(m) host_cross_$(m)_32 host_cross_$(m)_64, $(ALL_MODULES)) \
+        ) \
+      ) \
+    ) \
+  ) \
+  $(foreach m, $(ALL_MODULES), \
+    $(eval ALL_MODULES.$(m).NOTICE_DEPS := \
+      $(sort \
+         $(foreach d,$(ALL_MODULES.$(m).NOTICE_DEPS), \
+           $(_lookup.$(d)) \
+        ) \
+      ) \
+    ) \
+  ) \
+)
+endef
+
+###########################################################
 ## Returns correct _idfPrefix from the list:
 ##   { HOST, HOST_CROSS, AUX, TARGET }
 ###########################################################
