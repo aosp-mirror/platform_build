@@ -16,6 +16,24 @@
       "message": "Shouldn\u0027t this be an error instead? Silently building a different target feels like an error-prone behavior.",
       "revId": "856ec0310f8511271525c56c9b4fb30eb7abef61",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e416f2ac_5a53bf70",
+        "filename": "core/tasks/vendor_snapshot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-01-07T05:11:41Z",
+      "side": 1,
+      "message": "This will be an error, because vendor-snapshot will be an error too. I did like that because I wanted not to duplicate the error messages.\n\nRevised so it directly emits the error.",
+      "parentUuid": "1a750519_1fa8bf22",
+      "revId": "856ec0310f8511271525c56c9b4fb30eb7abef61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
