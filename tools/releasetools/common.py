@@ -3577,19 +3577,16 @@ class DynamicPartitionsDifference(object):
         append('move %s %s' % (p, u.tgt_group))
 
 
-def GetBootImageTimestamp(boot_img):
+def GetBootImageBuildProp(boot_img):
   """
-  Get timestamp from ramdisk within the boot image
+  Get build.prop from ramdisk within the boot image
 
   Args:
     boot_img: the boot image file. Ramdisk must be compressed with lz4 format.
 
   Return:
-    An integer that corresponds to the timestamp of the boot image, or None
-    if file has unknown format. Raise exception if an unexpected error has
-    occurred.
+    An extracted file that stores properties in the boot image.
   """
-
   tmp_dir = MakeTempDir('boot_', suffix='.img')
   try:
     RunAndCheckOutput(['unpack_bootimg', '--boot_img', boot_img, '--out', tmp_dir])
@@ -3614,10 +3611,34 @@ def GetBootImageTimestamp(boot_img):
         break
       logger.warning('Unable to get boot image timestamp: no %s in ramdisk', search_path)
 
-    if not prop_file:
-      return None
+    return prop_file
 
-    props = PartitionBuildProps.FromBuildPropFile('boot', prop_file)
+  except ExternalError as e:
+    logger.warning('Unable to get boot image build props: %s', e)
+    return None
+
+
+def GetBootImageTimestamp(boot_img):
+  """
+  Get timestamp from ramdisk within the boot image
+
+  Args:
+    boot_img: the boot image file. Ramdisk must be compressed with lz4 format.
+
+  Return:
+    An integer that corresponds to the timestamp of the boot image, or None
+    if file has unknown format. Raise exception if an unexpected error has
+    occurred.
+  """
+  prop_file = GetBootImageBuildProp(boot_img)
+  if not prop_file:
+    return None
+
+  props = PartitionBuildProps.FromBuildPropFile('boot', prop_file)
+  if props is None:
+    return None
+
+  try:
     timestamp = props.GetProp('ro.bootimage.build.date.utc')
     if timestamp:
       return int(timestamp)
