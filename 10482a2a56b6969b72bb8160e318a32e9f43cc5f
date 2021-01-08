@@ -22,6 +22,30 @@
       },
       "revId": "10482a2a56b6969b72bb8160e318a32e9f43cc5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "83896a83_343f6062",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-08T20:44:36Z",
+      "side": 1,
+      "message": "See L883. ReadFromInputFile returns contents of a file as a string, while this function stores the contents to a temp file (or just points to the extracted file).\n\nThis is used to extract IMAGES/boot.img. I need this function because GetBootImageBuildProp must take a file, not contents of a file.",
+      "parentUuid": "d2cd43f2_d23e70b9",
+      "range": {
+        "startLine": 662,
+        "startChar": 4,
+        "endLine": 662,
+        "endChar": 24
+      },
+      "revId": "10482a2a56b6969b72bb8160e318a32e9f43cc5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
