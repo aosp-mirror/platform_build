@@ -21,7 +21,7 @@ import zipfile
 import ota_metadata_pb2
 from common import (ZipDelete, ZipClose, OPTIONS, MakeTempFile,
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
-                    SignFile, PARTITIONS_WITH_CARE_MAP, PartitionBuildProps)
+                    SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps)
 
 logger = logging.getLogger(__name__)
 
@@ -174,7 +174,7 @@ def UpdateDeviceState(device_state, build_info, boot_variable_values,
     # delta_generator will error out on unused timestamps,
     # so only generate timestamps for dynamic partitions
     # used in OTA update.
-    for partition in sorted(set(PARTITIONS_WITH_CARE_MAP) & ab_partitions):
+    for partition in sorted(set(PARTITIONS_WITH_BUILD_PROP) & ab_partitions):
       partition_prop = build_info.info_dict.get(
           '{}.build.prop'.format(partition))
       # Skip if the partition is missing, or it doesn't have a build.prop
@@ -360,7 +360,7 @@ def ComputeRuntimeBuildInfos(default_build_info, boot_variable_values):
     # Reload the info_dict as some build properties may change their values
     # based on the value of ro.boot* properties.
     info_dict = copy.deepcopy(default_build_info.info_dict)
-    for partition in PARTITIONS_WITH_CARE_MAP:
+    for partition in PARTITIONS_WITH_BUILD_PROP:
       partition_prop_key = "{}.build.prop".format(partition)
       input_file = info_dict[partition_prop_key].input_file
       if isinstance(input_file, zipfile.ZipFile):
