@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2cd43f2_d23e70b9",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-08T07:24:57Z",
+      "side": 1,
+      "message": "What\u0027s the use case here. if you take target-files as input, is there an extracted copy of BOOT/ already?",
+      "range": {
+        "startLine": 662,
+        "startChar": 4,
+        "endLine": 662,
+        "endChar": 24
+      },
+      "revId": "10482a2a56b6969b72bb8160e318a32e9f43cc5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
