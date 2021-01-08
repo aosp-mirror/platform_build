@@ -70,6 +70,30 @@
       },
       "revId": "10482a2a56b6969b72bb8160e318a32e9f43cc5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9f805d9a_2a23de3d",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-08T21:45:02Z",
+      "side": 1,
+      "message": "Correct, this is for prebuilt boot images.\n\nI can also read BOOT/RAMDISK/default.prop if it is present, but I still have to handle prebuilt boot images anyways. I want to have less branches.",
+      "parentUuid": "80c96265_1e9218b2",
+      "range": {
+        "startLine": 662,
+        "startChar": 4,
+        "endLine": 662,
+        "endChar": 24
+      },
+      "revId": "10482a2a56b6969b72bb8160e318a32e9f43cc5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
