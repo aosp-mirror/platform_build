@@ -46,6 +46,30 @@
       },
       "revId": "10482a2a56b6969b72bb8160e318a32e9f43cc5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "80c96265_1e9218b2",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-08T21:09:05Z",
+      "side": 1,
+      "message": "Is it for prebuilt boot images? Otherwise there\u0027s a copy in BOOT/RAMDISK/default.prop",
+      "parentUuid": "83896a83_343f6062",
+      "range": {
+        "startLine": 662,
+        "startChar": 4,
+        "endLine": 662,
+        "endChar": 24
+      },
+      "revId": "10482a2a56b6969b72bb8160e318a32e9f43cc5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
