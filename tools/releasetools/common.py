@@ -129,7 +129,7 @@ PARTITIONS_WITH_CARE_MAP = [
 ]
 
 # Partitions with a build.prop file
-PARTITIONS_WITH_BUILD_PROP = PARTITIONS_WITH_CARE_MAP
+PARTITIONS_WITH_BUILD_PROP = PARTITIONS_WITH_CARE_MAP + ['boot']
 
 # See sysprop.mk. If file is moved, add new search paths here; don't remove
 # existing search paths.
@@ -479,12 +479,16 @@ class BuildInfo(object):
 
   def GetPartitionBuildProp(self, prop, partition):
     """Returns the inquired build property for the provided partition."""
+
+    # Boot image uses ro.[product.]bootimage instead of boot.
+    prop_partition =  "bootimage" if partition == "boot" else partition
+
     # If provided a partition for this property, only look within that
     # partition's build.prop.
     if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
-      prop = prop.replace("ro.product", "ro.product.{}".format(partition))
+      prop = prop.replace("ro.product", "ro.product.{}".format(prop_partition))
     else:
-      prop = prop.replace("ro.", "ro.{}.".format(partition))
+      prop = prop.replace("ro.", "ro.{}.".format(prop_partition))
 
     prop_val = self._GetRawBuildProp(prop, partition)
     if prop_val is not None:
@@ -653,6 +657,20 @@ def ReadFromInputFile(input_file, fn):
     except IOError as e:
       if e.errno == errno.ENOENT:
         raise KeyError(fn)
+
+
+def ExtractFromInputFile(input_file, fn):
+  """Extracts the contents of fn from input zipfile or directory into a file."""
+  if isinstance(input_file, zipfile.ZipFile):
+    tmp_file = MakeTempFile(os.path.basename(fn))
+    with open(tmp_file, 'w') as f:
+      f.write(input_file.read(fn))
+    return tmp_file
+  else:
+    file = os.path.join(input_file, *fn.split("/"))
+    if not os.path.exists(file):
+      raise KeyError(fn)
+    return file
 
 
 def LoadInfoDict(input_file, repacking=False):
@@ -845,6 +863,39 @@ class PartitionBuildProps(object):
   @staticmethod
   def FromInputFile(input_file, name, placeholder_values=None):
     """Loads the build.prop file and builds the attributes."""
+
+    if name == "boot":
+      data = PartitionBuildProps._ReadBootPropFile(input_file)
+    else:
+      data = PartitionBuildProps._ReadPartitionPropFile(input_file, name)
+
+    props = PartitionBuildProps(input_file, name, placeholder_values)
+    props._LoadBuildProp(data)
+    return props
+
+  @staticmethod
+  def _ReadBootPropFile(input_file):
+    """
+    Read build.prop for boot image from input_file.
+    Return empty string if not found.
+    """
+    try:
+      boot_img = ExtractFromInputFile(input_file, 'IMAGES/boot.img')
+    except KeyError:
+      logger.warning('Failed to read IMAGES/boot.img')
+      return ''
+    prop_file = GetBootImageBuildProp(boot_img)
+    if prop_file is None:
+      return ''
+    with open(prop_file) as f:
+      return f.read().decode()
+
+  @staticmethod
+  def _ReadPartitionPropFile(input_file, name):
+    """
+    Read build.prop for name from input_file.
+    Return empty string if not found.
+    """
     data = ''
     for prop_file in ['{}/etc/build.prop'.format(name.upper()),
                       '{}/build.prop'.format(name.upper())]:
@@ -853,10 +904,7 @@ class PartitionBuildProps(object):
         break
       except KeyError:
         logger.warning('Failed to read %s', prop_file)
-
-    props = PartitionBuildProps(input_file, name, placeholder_values)
-    props._LoadBuildProp(data)
-    return props
+    return data
 
   @staticmethod
   def FromBuildPropFile(name, build_prop_file):
