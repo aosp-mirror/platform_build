@@ -65,6 +65,7 @@ function _export_metrics_uploader() {
 function _set_rbe_vars() {
   export USE_RBE="true"
   export RBE_CXX_EXEC_STRATEGY="remote_local_fallback"
+  export RBE_use_unified_cas_ops="true"
   export RBE_JAVAC=1
   export RBE_R8=1
   export RBE_D8=1
