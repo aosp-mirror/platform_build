@@ -14,21 +14,21 @@
 
 current_makefile := $(lastword $(MAKEFILE_LIST))
 
-# BOARD_VNDK_VERSION must be set to 'current' in order to generate a recovery snapshot.
-ifeq ($(BOARD_VNDK_VERSION),current)
+# RECOVERY_SNAPSHOT_VERSION must be set to 'current' in order to generate a recovery snapshot.
+ifeq ($(RECOVERY_SNAPSHOT_VERSION),current)
 
 .PHONY: recovery-snapshot
 recovery-snapshot: $(SOONG_RECOVERY_SNAPSHOT_ZIP)
 
 $(call dist-for-goals, recovery-snapshot, $(SOONG_RECOVERY_SNAPSHOT_ZIP))
 
-else # BOARD_VNDK_VERSION is NOT set to 'current'
+else # RECOVERY_SNAPSHOT_VERSION is NOT set to 'current'
 
 .PHONY: recovery-snapshot
 recovery-snapshot: PRIVATE_MAKEFILE := $(current_makefile)
 recovery-snapshot:
 	$(call echo-error,$(PRIVATE_MAKEFILE),\
-		"CANNOT generate Recovery snapshot. BOARD_VNDK_VERSION must be set to 'current'.")
+		"CANNOT generate Recovery snapshot. RECOVERY_SNAPSHOT_VERSION must be set to 'current'.")
 	exit 1
 
-endif # BOARD_VNDK_VERSION
+endif # RECOVERY_SNAPSHOT_VERSION
