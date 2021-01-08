@@ -19,6 +19,9 @@ PRODUCT_COPY_FILES += \
     kernel/prebuilts/5.4/arm64/kernel-5.4:kernel-5.4 \
     kernel/prebuilts/5.4/arm64/kernel-5.4-gz:kernel-5.4-gz \
     kernel/prebuilts/5.4/arm64/kernel-5.4-lz4:kernel-5.4-lz4 \
+    kernel/prebuilts/5.10/arm64/kernel-5.10:kernel-5.10 \
+    kernel/prebuilts/5.10/arm64/kernel-5.10-gz:kernel-5.10-gz \
+    kernel/prebuilts/5.10/arm64/kernel-5.10-lz4:kernel-5.10-lz4 \
     kernel/prebuilts/mainline/arm64/kernel-mainline-allsyms:kernel-mainline \
     kernel/prebuilts/mainline/arm64/kernel-mainline-gz-allsyms:kernel-mainline-gz \
     kernel/prebuilts/mainline/arm64/kernel-mainline-lz4-allsyms:kernel-mainline-lz4
@@ -27,7 +30,11 @@ ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 PRODUCT_COPY_FILES += \
     kernel/prebuilts/5.4/arm64/kernel-5.4:kernel-5.4-allsyms \
     kernel/prebuilts/5.4/arm64/kernel-5.4-gz:kernel-5.4-gz-allsyms \
-    kernel/prebuilts/5.4/arm64/kernel-5.4-lz4:kernel-5.4-lz4-allsyms
+    kernel/prebuilts/5.4/arm64/kernel-5.4-lz4:kernel-5.4-lz4-allsyms \
+    kernel/prebuilts/5.10/arm64/kernel-5.10:kernel-5.10-allsyms \
+    kernel/prebuilts/5.10/arm64/kernel-5.10-gz:kernel-5.10-gz-allsyms \
+    kernel/prebuilts/5.10/arm64/kernel-5.10-lz4:kernel-5.10-lz4-allsyms \
+
 endif
 
 PRODUCT_BUILD_VENDOR_BOOT_IMAGE := false
