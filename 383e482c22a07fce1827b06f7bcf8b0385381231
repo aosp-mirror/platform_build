@@ -16,6 +16,24 @@
       "message": "seems like a good change anyway, but in the bug it looks like the error is \"failed rewriting\", which is after a failure of copyAndAlign() which seems to mainly be about iterating the input ZipFile and adding stuff to the output ZipFile, so it seems like copyAndAlign() is probably the code that needs more diagnostics?",
       "revId": "383e482c22a07fce1827b06f7bcf8b0385381231",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a04be06_ede7831c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2021-01-08T20:34:10Z",
+      "side": 1,
+      "message": "ah, at which point i realize that \"ZipFile\" isn\u0027t libziparchive, it\u0027s this code here :-)",
+      "parentUuid": "d9be3f95_c7cb39d4",
+      "revId": "383e482c22a07fce1827b06f7bcf8b0385381231",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
