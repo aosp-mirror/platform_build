@@ -245,7 +245,11 @@ status_t ZipFile::readCentralDir(void)
 
     /* read the last part of the file into the buffer */
     if (fread(buf, 1, readAmount, mZipFp) != (size_t) readAmount) {
-        ALOGD("short file? wanted %ld\n", readAmount);
+        if (feof(mZipFp)) {
+            ALOGW("fread %ld bytes failed, unexpected EOF", readAmount);
+        } else {
+            ALOGW("fread %ld bytes failed, %s", readAmount, strerror(errno));
+        }
         result = UNKNOWN_ERROR;
         goto bail;
     }
@@ -327,7 +331,11 @@ status_t ZipFile::readCentralDir(void)
     {
         uint8_t checkBuf[4];
         if (fread(checkBuf, 1, 4, mZipFp) != 4) {
-            ALOGD("EOCD check read failed\n");
+            if (feof(mZipFp)) {
+                ALOGW("fread EOCD failed, unexpected EOF");
+            } else {
+                ALOGW("fread EOCD failed, %s", strerror(errno));
+            }
             result = INVALID_OPERATION;
             goto bail;
         }
@@ -785,15 +793,18 @@ status_t ZipFile::copyFpToFp(FILE* dstFp, FILE* srcFp, uint32_t* pCRC32)
 
     while (1) {
         count = fread(tmpBuf, 1, sizeof(tmpBuf), srcFp);
-        if (ferror(srcFp) || ferror(dstFp))
-            return errnoToStatus(errno);
+        if (ferror(srcFp) || ferror(dstFp)) {
+            status_t status = errnoToStatus(errno);
+            ALOGW("fread %zu bytes failed, %s", count, strerror(errno));
+            return status;
+        }
         if (count == 0)
             break;
 
         *pCRC32 = crc32(*pCRC32, tmpBuf, count);
 
         if (fwrite(tmpBuf, 1, count, dstFp) != count) {
-            ALOGD("fwrite %d bytes failed\n", (int) count);
+            ALOGW("fwrite %zu bytes failed, %s", count, strerror(errno));
             return UNKNOWN_ERROR;
         }
     }
@@ -813,7 +824,7 @@ status_t ZipFile::copyDataToFp(FILE* dstFp,
     if (size > 0) {
         *pCRC32 = crc32(*pCRC32, (const unsigned char*)data, size);
         if (fwrite(data, 1, size, dstFp) != size) {
-            ALOGD("fwrite %d bytes failed\n", (int) size);
+            ALOGW("fwrite %zu bytes failed, %s", size, strerror(errno));
             return UNKNOWN_ERROR;
         }
     }
@@ -847,7 +858,11 @@ status_t ZipFile::copyPartialFpToFp(FILE* dstFp, FILE* srcFp, size_t length,
 
         count = fread(tmpBuf, 1, readSize, srcFp);
         if (count != readSize) {     // error or unexpected EOF
-            ALOGD("fread %d bytes failed\n", (int) readSize);
+            if (feof(srcFp)) {
+                ALOGW("fread %zu bytes failed, unexpected EOF", readSize);
+            } else {
+                ALOGW("fread %zu bytes failed, %s", readSize, strerror(errno));
+            }
             return UNKNOWN_ERROR;
         }
 
@@ -855,7 +870,7 @@ status_t ZipFile::copyPartialFpToFp(FILE* dstFp, FILE* srcFp, size_t length,
             *pCRC32 = crc32(*pCRC32, tmpBuf, count);
 
         if (fwrite(tmpBuf, 1, count, dstFp) != count) {
-            ALOGD("fwrite %d bytes failed\n", (int) count);
+            ALOGW("fwrite %zu bytes failed, %s", count, strerror(errno));
             return UNKNOWN_ERROR;
         }
 
@@ -915,8 +930,7 @@ status_t ZipFile::compressFpToFp(FILE* dstFp, FILE* srcFp,
                 goto bail;
             }
             if (getSize < kBufSize) {
-                ALOGV("+++  got %d bytes, EOF reached\n",
-                    (int)getSize);
+                ALOGV("+++  got %zu bytes, EOF reached\n", getSize);
                 atEof = true;
             }
 
@@ -926,9 +940,9 @@ status_t ZipFile::compressFpToFp(FILE* dstFp, FILE* srcFp,
         delete[] inBuf;
     }
 
-    ALOGV("+++ writing %d bytes\n", (int)outSize);
+    ALOGV("+++ writing %zu bytes\n", outSize);
     if (fwrite(outBuf, 1, outSize, dstFp) != outSize) {
-        ALOGD("write %d failed in deflate\n", (int)outSize);
+        ALOGW("fwrite %zu bytes failed, %s", outSize, strerror(errno));
         result = UNKNOWN_ERROR;
         goto bail;
     }
@@ -1134,24 +1148,31 @@ status_t ZipFile::filemove(FILE* fp, off_t dst, off_t src, size_t n)
                 getSize = n;
 
             if (fseek(fp, (long) src, SEEK_SET) != 0) {
-                ALOGD("filemove src seek %ld failed\n", (long) src);
+                ALOGW("filemove src seek %ld failed, %s",
+                    (long) src, strerror(errno));
                 return UNKNOWN_ERROR;
             }
 
             if (fread(readBuf, 1, getSize, fp) != getSize) {
-                ALOGD("filemove read %ld off=%ld failed\n",
-                    (long) getSize, (long) src);
+                if (feof(fp)) {
+                    ALOGW("fread %zu bytes off=%ld failed, unexpected EOF",
+                        getSize, (long) src);
+                } else {
+                    ALOGW("fread %zu bytes off=%ld failed, %s",
+                        getSize, (long) src, strerror(errno));
+                }
                 return UNKNOWN_ERROR;
             }
 
             if (fseek(fp, (long) dst, SEEK_SET) != 0) {
-                ALOGD("filemove dst seek %ld failed\n", (long) dst);
+                ALOGW("filemove dst seek %ld failed, %s",
+                    (long) dst, strerror(errno));
                 return UNKNOWN_ERROR;
             }
 
             if (fwrite(readBuf, 1, getSize, fp) != getSize) {
-                ALOGD("filemove write %ld off=%ld failed\n",
-                    (long) getSize, (long) dst);
+                ALOGW("filemove write %zu off=%ld failed, %s",
+                    getSize, (long) dst, strerror(errno));
                 return UNKNOWN_ERROR;
             }
 
@@ -1399,12 +1420,17 @@ status_t ZipFile::EndOfCentralDir::write(FILE* fp)
     ZipEntry::putLongLE(&buf[0x10], mCentralDirOffset);
     ZipEntry::putShortLE(&buf[0x14], mCommentLen);
 
-    if (fwrite(buf, 1, kEOCDLen, fp) != kEOCDLen)
+    if (fwrite(buf, 1, kEOCDLen, fp) != kEOCDLen) {
+        ALOGW("fwrite EOCD failed, %s", strerror(errno));
         return UNKNOWN_ERROR;
+    }
     if (mCommentLen > 0) {
         assert(mComment != NULL);
-        if (fwrite(mComment, mCommentLen, 1, fp) != mCommentLen)
+        if (fwrite(mComment, mCommentLen, 1, fp) != mCommentLen) {
+            ALOGW("fwrite %d bytes failed, %s",
+                (int) mCommentLen, strerror(errno));
             return UNKNOWN_ERROR;
+        }
     }
 
     return OK;
