@@ -29,7 +29,7 @@ PRODUCT_CFI_INCLUDE_PATHS :=  \
     hardware/interfaces/nfc \
     hardware/qcom/wlan/qcwcn/wpa_supplicant_8_lib \
     hardware/interfaces/keymaster \
-    hardware/interfaces/keymint \
+    hardware/interfaces/security \
     system/bt \
     system/chre \
     system/core/libnetutils \
