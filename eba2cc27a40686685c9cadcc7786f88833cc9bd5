@@ -121,6 +121,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9519024f_dbd55874",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1226510
+      },
+      "writtenOn": "2021-01-11T15:38:10Z",
+      "side": 1,
+      "message": "We got a warning from the software backends when we uploaded software for approval without this modification.",
+      "parentUuid": "4db89970_45c0becd",
+      "range": {
+        "startLine": 13,
+        "startChar": 14,
+        "endLine": 13,
+        "endChar": 30
+      },
+      "revId": "eba2cc27a40686685c9cadcc7786f88833cc9bd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f59e7b74_bb67eb76",
         "filename": "core/sysprop.mk",
         "patchSetId": 1
