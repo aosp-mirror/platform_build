@@ -211,6 +211,30 @@
       },
       "revId": "eba2cc27a40686685c9cadcc7786f88833cc9bd5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e6cc2690_663e5932",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1226510
+      },
+      "writtenOn": "2021-01-11T17:45:01Z",
+      "side": 1,
+      "message": "I am guessing this is resolved?",
+      "parentUuid": "7cf34949_f52c08e3",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 151
+      },
+      "revId": "eba2cc27a40686685c9cadcc7786f88833cc9bd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
