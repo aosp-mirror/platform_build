@@ -370,11 +370,12 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
   extra_signapk_args = OPTIONS.extra_signapk_args[:]
   extra_signapk_args.extend(['-a', '4096'])
 
+  password = container_pw.get(container_key) if container_pw else None
   common.SignFile(
       aligned_apex,
       signed_apex,
       container_key,
-      container_pw.get(container_key),
+      password,
       codename_to_api_level_map=codename_to_api_level_map,
       extra_signapk_args=extra_signapk_args)
 
