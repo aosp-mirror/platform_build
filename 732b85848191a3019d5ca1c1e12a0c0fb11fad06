@@ -22,6 +22,30 @@
       },
       "revId": "732b85848191a3019d5ca1c1e12a0c0fb11fad06",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2afd91a0_4b85917f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 999,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2021-01-12T02:37:34Z",
+      "side": 1,
+      "message": "This is not for Android.mk or bp, this is another location for saving LOCAL_IS_UNIT_TEST",
+      "parentUuid": "b699c9f7_117d430a",
+      "range": {
+        "startLine": 999,
+        "startChar": 32,
+        "endLine": 999,
+        "endChar": 44
+      },
+      "revId": "732b85848191a3019d5ca1c1e12a0c0fb11fad06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
