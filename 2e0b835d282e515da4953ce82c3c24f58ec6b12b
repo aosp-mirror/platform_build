@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1237545_a8939465",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-12T22:10:54Z",
+      "side": 1,
+      "message": "I see \"ro.hardware.egl\u003dadreno\" defined twice in vendor\u0027s build.prop. Will fork a separate issue to bring it up, bug I guess duplicate definition with the same value shouldn\u0027t block signing",
+      "revId": "2e0b835d282e515da4953ce82c3c24f58ec6b12b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
