@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4b47a05_4d1a45b0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-12T07:05:37Z",
+      "side": 1,
+      "message": "The function is also used for signing in sign_target_files_apks.py\n\nhttps://source.corp.google.com/aosp-master/build/make/tools/releasetools/sign_target_files_apks.py;l\u003d513\n\nI guess a dumb workaround is writing the data to a temp file, so you can run deapexer",
+      "revId": "30b85cea4f23e9a691896d83398ab29a07ab3402",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
