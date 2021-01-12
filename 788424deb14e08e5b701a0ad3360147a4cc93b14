@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c08a15c_a58fd11e",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2021-01-12T19:46:05Z",
+      "side": 1,
+      "message": "Both normal APEX and compressed APEX are zip files. aosp/1547194 just got merged today and helps out here perfectly. Fixed.",
+      "parentUuid": "373c4a9b_07afda70",
+      "range": {
+        "startLine": 651,
+        "startChar": 26,
+        "endLine": 651,
+        "endChar": 30
+      },
+      "revId": "788424deb14e08e5b701a0ad3360147a4cc93b14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eecfd793_14323909",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-01-12T15:16:50Z",
       "side": 1,
       "message": "Do we want to record size of apex if it\u0027s not compressed?",
+      "range": {
+        "startLine": 657,
+        "startChar": 0,
+        "endLine": 657,
+        "endChar": 31
+      },
+      "revId": "788424deb14e08e5b701a0ad3360147a4cc93b14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f7ce978_3ee8ec79",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2021-01-12T19:46:05Z",
+      "side": 1,
+      "message": "No. We don\u0027t have any use for that. We are only interested in the decompressed size of a compressed APEX.",
+      "parentUuid": "eecfd793_14323909",
       "range": {
         "startLine": 657,
         "startChar": 0,
