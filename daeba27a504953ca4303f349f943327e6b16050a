@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "afcd8295_8d4d5771",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-12T19:22:56Z",
+      "side": 1,
+      "message": "I believe today the UpdateDeviceState() function just aborts when handling S+R merged builds. And we should force the existence of bootimage properties if GKI is used (via some property check)",
+      "parentUuid": "3d57c27a_88478ef9",
+      "revId": "daeba27a504953ca4303f349f943327e6b16050a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "20e037f0_550c0af8",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 1
