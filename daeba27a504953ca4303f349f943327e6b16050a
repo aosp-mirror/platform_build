@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "73fa9efb_bfee5ebf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-12T19:24:13Z",
+      "side": 1,
+      "message": "I think if GetBootImageBuildProp returns None if the file is not found, then it should be fine. default.prop should not be read.",
+      "parentUuid": "afcd8295_8d4d5771",
+      "revId": "daeba27a504953ca4303f349f943327e6b16050a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "20e037f0_550c0af8",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 1
