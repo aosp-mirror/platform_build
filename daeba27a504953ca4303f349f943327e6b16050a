@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d8569d2_32f913e9",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-12T06:22:48Z",
+      "side": 1,
+      "message": "hmm, I guess it\u0027s aborted intentionally; as the per-partition information might be needed in ota metadata (for ota targeting)",
+      "range": {
+        "startLine": 190,
+        "startChar": 0,
+        "endLine": 190,
+        "endChar": 10
+      },
+      "revId": "daeba27a504953ca4303f349f943327e6b16050a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
