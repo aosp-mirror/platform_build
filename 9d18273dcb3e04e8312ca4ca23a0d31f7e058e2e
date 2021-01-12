@@ -22,6 +22,76 @@
       },
       "revId": "9d18273dcb3e04e8312ca4ca23a0d31f7e058e2e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e5948bf_bbfa97c2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-12T15:24:13Z",
+      "side": 1,
+      "message": "See comment on L1079",
+      "parentUuid": "0dcc12d1_05c0eebe",
+      "range": {
+        "startLine": 10,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 14
+      },
+      "revId": "9d18273dcb3e04e8312ca4ca23a0d31f7e058e2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55777a00_d13f00c4",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1079,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-12T15:24:13Z",
+      "side": 1,
+      "message": "Move this line into GetPackageMetadata(), and then add some test to verify that GetPackageMetadata() return relevant apex info?",
+      "range": {
+        "startLine": 1079,
+        "startChar": 0,
+        "endLine": 1079,
+        "endChar": 38
+      },
+      "revId": "9d18273dcb3e04e8312ca4ca23a0d31f7e058e2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab58d026_2671efb5",
+        "filename": "tools/releasetools/test_utils.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-12T15:24:13Z",
+      "side": 1,
+      "message": "Please don\u0027t change this... Things like test_common.py will be filtered out",
+      "range": {
+        "startLine": 249,
+        "startChar": 44,
+        "endLine": 249,
+        "endChar": 52
+      },
+      "revId": "9d18273dcb3e04e8312ca4ca23a0d31f7e058e2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
