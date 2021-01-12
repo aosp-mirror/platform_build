@@ -46,6 +46,30 @@
       },
       "revId": "daeba27a504953ca4303f349f943327e6b16050a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0661e813_1b48be11",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-12T19:03:30Z",
+      "side": 1,
+      "message": "hmm, I guess it\u0027s only needed for devices with GKI, so maybe it\u0027s acceptable. elsk@ can you comment on that?\n\nI am surprised that the R boot image does not include ro.product.bootimage.device. Oh, it does have a `ro.bootimage.build.fingerprint\u003dgoogle/redfin/redfin:11/RVF1.201221.001/7045327:userdebug/dev-keys`, so technically we can extract the device name as \u0027redfin\u0027. \n\nMaybe we can enforce the setting of partition props if GKI is used, and loose the other conditions?",
+      "parentUuid": "d0f388a3_a20f6ff3",
+      "range": {
+        "startLine": 190,
+        "startChar": 0,
+        "endLine": 190,
+        "endChar": 10
+      },
+      "revId": "daeba27a504953ca4303f349f943327e6b16050a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
