@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d57c27a_88478ef9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-12T19:18:52Z",
+      "side": 1,
+      "message": "Why should we care about getting partition props for boot image before Android 11? Setting the build fingerprint is needed for GKI updates, which does not exist for Android 11.",
+      "revId": "daeba27a504953ca4303f349f943327e6b16050a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6d8569d2_32f913e9",
