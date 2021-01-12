@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "373c4a9b_07afda70",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-12T15:16:50Z",
+      "side": 1,
+      "message": "there\u0027s zipfile.IsZipFile which checks if the file is a zip archive.",
+      "range": {
+        "startLine": 651,
+        "startChar": 26,
+        "endLine": 651,
+        "endChar": 30
+      },
+      "revId": "788424deb14e08e5b701a0ad3360147a4cc93b14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eecfd793_14323909",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-12T15:16:50Z",
+      "side": 1,
+      "message": "Do we want to record size of apex if it\u0027s not compressed?",
+      "range": {
+        "startLine": 657,
+        "startChar": 0,
+        "endLine": 657,
+        "endChar": 31
+      },
+      "revId": "788424deb14e08e5b701a0ad3360147a4cc93b14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
