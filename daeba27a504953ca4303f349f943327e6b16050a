@@ -56,6 +56,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9b20e054_95b47917",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-12T19:27:10Z",
+      "side": 1,
+      "message": "But we need to additionally check the bootimage props are set for GKI updates.\n\nAnd props for other partitions are set for future mixed build OTA targeting. So we get a early warning if these properties are missing...",
+      "parentUuid": "73fa9efb_bfee5ebf",
+      "revId": "daeba27a504953ca4303f349f943327e6b16050a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "20e037f0_550c0af8",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 1
