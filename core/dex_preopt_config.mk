@@ -10,7 +10,7 @@ else ifeq (true,$(DISABLE_PREOPT))
 endif
 
 # The default value for LOCAL_DEX_PREOPT
-DEX_PREOPT_DEFAULT ?= true
+DEX_PREOPT_DEFAULT ?= $(ENABLE_PREOPT)
 
 # The default filter for which files go into the system_other image (if it is
 # being used). Note that each pattern p here matches both '/<p>' and /system/<p>'.
