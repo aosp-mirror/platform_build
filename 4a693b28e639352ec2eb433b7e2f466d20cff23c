@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e4da88e_4e0a6b06",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5246,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-01-13T22:20:08Z",
+      "side": 1,
+      "message": "This file is very similar to JACOCO_REPORT_CLASSES_ALL, but uses a different set of dependencies than JACOCO_REPORT_CLASSES_ALL.  Does using this set on line 5222 instead of $(modules_to_install) work?  This list is repeated in a couple of places, might be better to create a new variable for it.",
+      "range": {
+        "startLine": 5236,
+        "startChar": 0,
+        "endLine": 5246,
+        "endChar": 18
+      },
+      "revId": "4a693b28e639352ec2eb433b7e2f466d20cff23c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
