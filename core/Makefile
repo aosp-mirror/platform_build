@@ -5087,7 +5087,7 @@ ifeq (true,$(EMMA_INSTRUMENT))
 JACOCO_REPORT_CLASSES_ALL := $(PRODUCT_OUT)/jacoco-report-classes-all.jar
 $(JACOCO_REPORT_CLASSES_ALL) :
 	@echo "Collecting uninstrumented classes"
-	find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" 2>/dev/null | sort > $@.list
+	find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" -o -name "proguard_usage.zip" 2>/dev/null | sort > $@.list
 	$(SOONG_ZIP) -o $@ -L 0 -C $(OUT_DIR) -P out -l $@.list
 
 endif # EMMA_INSTRUMENT=true

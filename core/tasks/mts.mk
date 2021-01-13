@@ -13,13 +13,20 @@
 # limitations under the License.
 
 ifneq ($(wildcard test/mts/README.md),)
-test_suite_name := mts
-test_suite_tradefed := mts-tradefed
-test_suite_readme := test/mts/README.md
 
-include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
+mts_test_suites :=
+mts_test_suites += mts
 
-.PHONY: mts
-mts: $(compatibility_zip)
-$(call dist-for-goals, mts, $(compatibility_zip))
+$(foreach module, $(mts_modules), $(eval mts_test_suites += mts-$(module)))
+
+$(foreach suite, $(mts_test_suites), \
+	$(eval test_suite_name := $(suite)) \
+	$(eval test_suite_tradefed := mts-tradefed) \
+	$(eval test_suite_readme := test/mts/README.md) \
+	$(eval include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk) \
+	$(eval .PHONY: $(suite)) \
+	$(eval $(suite): $(compatibility_zip)) \
+	$(eval $(call dist-for-goals, $(suite), $(compatibility_zip))) \
+)
+
 endif
