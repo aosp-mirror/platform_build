@@ -1,7 +1,7 @@
 DEX_PREOPT_CONFIG := $(SOONG_OUT_DIR)/dexpreopt.config
 
 # The default value for LOCAL_DEX_PREOPT
-DEX_PREOPT_DEFAULT ?= true
+DEX_PREOPT_DEFAULT ?= $(ENABLE_PREOPT)
 
 # The default filter for which files go into the system_other image (if it is
 # being used). Note that each pattern p here matches both '/<p>' and /system/<p>'.
