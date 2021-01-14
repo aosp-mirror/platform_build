@@ -1750,7 +1750,7 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(JACOCO_REPORT_CLASSES_ALL) : $(modules_to_install)
+    $(JACOCO_REPORT_CLASSES_ALL) : $(filter-out $(TARGET_OUT_FAKE)/%,$(modules_to_install))
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
   endif
 
