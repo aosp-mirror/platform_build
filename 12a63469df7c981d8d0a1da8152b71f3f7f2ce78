@@ -69,6 +69,30 @@
       },
       "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "90b06a4f_950a8fca",
+        "filename": "tools/releasetools/ota_metadata.proto",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-14T19:08:54Z",
+      "side": 1,
+      "message": "Is it a few KiBs in practice? In general, we don\u0027t care too much about this number of space... \n\nBtw, we also need to keep the google3 copy in sync: google3/wireless/android/ota/proto/ota_metadata.proto",
+      "parentUuid": "2c4a83b2_27567124",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 34
+      },
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
