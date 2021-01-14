@@ -236,6 +236,7 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
 
   logging.info('Done checking %s', script_path)
 
+
 # Symlink files in `src` to `dst`, if the files do not
 # already exists in `dst` directory.
 def symlinkIfNotExists(src, dst):
@@ -245,6 +246,7 @@ def symlinkIfNotExists(src, dst):
     if os.path.exists(os.path.join(dst, filename)):
       continue
     os.symlink(os.path.join(src, filename), os.path.join(dst, filename))
+
 
 def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   """Validates the Verified Boot related images.
@@ -423,15 +425,24 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
           'Verified %s with avbtool (key: %s):\n%s', image, key,
           stdoutdata.rstrip())
 
-def CheckDataDuplicity(lines):
+
+def CheckDataInconsistency(lines):
     build_prop = {}
     for line in lines:
       if line.startswith("import") or line.startswith("#"):
         continue
-      key, value = line.split("=", 1)
+      if "=" not in line:
+        continue
+
+      key, value = line.rstrip().split("=", 1)
       if key in build_prop:
-        return key
+        logging.info("Duplicated key found for {}".format(key))
+        if value != build_prop[key]:
+          logging.error("Key {} is defined twice with different values {} vs {}"
+                        .format(key, value, build_prop[key]))
+          return key
       build_prop[key] = value
+
 
 def CheckBuildPropDuplicity(input_tmp):
   """Check all buld.prop files inside directory input_tmp, raise error
@@ -448,9 +459,11 @@ def CheckBuildPropDuplicity(input_tmp):
         continue
       logging.info("Checking {}".format(path))
       with open(path, 'r') as fp:
-        dupKey = CheckDataDuplicity(fp.readlines())
+        dupKey = CheckDataInconsistency(fp.readlines())
         if dupKey:
-          raise ValueError("{} contains duplicate keys for {}", path, dupKey)
+          raise ValueError("{} contains duplicate keys for {}".format(
+              path, dupKey))
+
 
 def main():
   parser = argparse.ArgumentParser(
