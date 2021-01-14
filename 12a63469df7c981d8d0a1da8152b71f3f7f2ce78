@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "621aee2e_7cafe336",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 3
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-14T08:07:21Z",
+      "side": 1,
+      "message": "are these files added in a separate cl?",
+      "range": {
+        "startLine": 545,
+        "startChar": 0,
+        "endLine": 545,
+        "endChar": 42
+      },
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "11a717b8_f4e16000",
+        "filename": "tools/releasetools/ota_metadata.proto",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-14T08:07:21Z",
+      "side": 1,
+      "message": "hmm, I believe this is needed for non-A/B, but the list seems pretty long.\n\nFor A/B updates, be sure to add a copy to the payload itself https://source.corp.google.com/aosp-master/system/update_engine/update_metadata.proto;l\u003d353; otherwise, it error-prone for gmscore to pass this list to update_engine in string format key:value pairs. @zhangkelvin, wdyt?",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 34
+      },
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
