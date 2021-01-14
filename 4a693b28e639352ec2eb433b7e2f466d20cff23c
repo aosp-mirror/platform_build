@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f977b97_3b601ba1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-01-14T00:28:00Z",
+      "side": 1,
+      "message": "ack",
+      "parentUuid": "0fa12e22_6e4b6ea9",
+      "revId": "4a693b28e639352ec2eb433b7e2f466d20cff23c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3e4da88e_4e0a6b06",
@@ -31,6 +49,30 @@
       "writtenOn": "2021-01-13T22:20:08Z",
       "side": 1,
       "message": "This file is very similar to JACOCO_REPORT_CLASSES_ALL, but uses a different set of dependencies than JACOCO_REPORT_CLASSES_ALL.  Does using this set on line 5222 instead of $(modules_to_install) work?  This list is repeated in a couple of places, might be better to create a new variable for it.",
+      "range": {
+        "startLine": 5236,
+        "startChar": 0,
+        "endLine": 5246,
+        "endChar": 18
+      },
+      "revId": "4a693b28e639352ec2eb433b7e2f466d20cff23c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9a4ef61_83789dff",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5246,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-01-14T00:28:00Z",
+      "side": 1,
+      "message": "yes, that would work too. let me try that in a follow-up CL.",
+      "parentUuid": "3e4da88e_4e0a6b06",
       "range": {
         "startLine": 5236,
         "startChar": 0,
