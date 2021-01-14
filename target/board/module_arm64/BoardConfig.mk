@@ -13,6 +13,8 @@
 # limitations under the License.
 #
 
+include build/make/target/board/BoardConfigModuleCommon.mk
+
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_VARIANT := generic
