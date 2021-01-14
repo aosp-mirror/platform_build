@@ -45,6 +45,30 @@
       },
       "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c4a83b2_27567124",
+        "filename": "tools/releasetools/ota_metadata.proto",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-14T15:08:12Z",
+      "side": 1,
+      "message": "It\u0027s certainly less error-prone \u0026 simpler to add it to update_metadata.proto. But do we want to keep 2 copies of apex info around? This could be a potentially large list. Can we add apex into to ota_metadata only in non-AB?",
+      "parentUuid": "11a717b8_f4e16000",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 34
+      },
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
