@@ -93,6 +93,30 @@
       },
       "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2f042db2_3bcb9a73",
+        "filename": "tools/releasetools/ota_metadata.proto",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-15T15:48:24Z",
+      "side": 1,
+      "message": "\u003e Is it a few KiBs in practice? In general, we don\u0027t care too much about this number of space... \n\nSure, let\u0027s add it to update_metadata as well. How do we propagate that information to delta_generator?",
+      "parentUuid": "90b06a4f_950a8fca",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 34
+      },
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
