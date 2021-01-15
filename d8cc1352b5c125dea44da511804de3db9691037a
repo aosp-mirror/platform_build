@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82b89a70_fd50ccaf",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2021-01-15T01:20:12Z",
+      "side": 1,
+      "message": "Does this value generated automatically with a script, and imported to a BoardConfig.mk?",
+      "range": {
+        "startLine": 149,
+        "startChar": 19,
+        "endLine": 149,
+        "endChar": 42
+      },
+      "revId": "d8cc1352b5c125dea44da511804de3db9691037a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
