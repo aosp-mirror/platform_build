@@ -1,11 +1,19 @@
 DEX_PREOPT_CONFIG := $(SOONG_OUT_DIR)/dexpreopt.config
 
 ENABLE_PREOPT := true
+ENABLE_PREOPT_BOOT_IMAGES := true
 ifneq (true,$(filter true,$(WITH_DEXPREOPT)))
+  # Disable dexpreopt for libraries/apps and for boot images.
   ENABLE_PREOPT :=
+  ENABLE_PREOPT_BOOT_IMAGES :=
 else ifneq (true,$(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)))
+  # Disable dexpreopt for libraries/apps and for boot images: not having default
+  # ART config means that some important system properties are not set, which
+  # would result in passing bad arguments to dex2oat and failing the build.
   ENABLE_PREOPT :=
+  ENABLE_PREOPT_BOOT_IMAGES :=
 else ifeq (true,$(DISABLE_PREOPT))
+  # Disable dexpreopt for libraries/apps, but do compile boot images.
   ENABLE_PREOPT :=
 endif
 
@@ -73,6 +81,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call json_start)
 
   $(call add_json_bool, DisablePreopt,                           $(call invert_bool,$(ENABLE_PREOPT)))
+  $(call add_json_bool, DisablePreoptBootImages,                 $(call invert_bool,$(ENABLE_PREOPT_BOOT_IMAGES)))
   $(call add_json_list, DisablePreoptModules,                    $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer,      $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
   $(call add_json_bool, UseArtImage,                             $(filter true,$(DEXPREOPT_USE_ART_IMAGE)))
