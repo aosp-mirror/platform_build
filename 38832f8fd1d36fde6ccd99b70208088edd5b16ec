@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f33a8ae1_35b230f5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-15T06:48:13Z",
+      "side": 1,
+      "message": "Should this go to DynamicPartitionMetadata?  https://source.corp.google.com/aosp-master/system/update_engine/update_metadata.proto;l\u003d400\n\nHere snapshot_enabled means virtual_ab, and you can add an entry there. Also, you can dump the vabc support in the  META/dynamic_partitions_info.txt of the target-file. e.g. existing one of aosp_cf_x86_phone-target_files-6912238.zip has:\n\nuse_dynamic_partitions\u003dtrue\nlpmake\u003dlpmake\nbuild_super_partition\u003dtrue\nsuper_metadata_device\u003dsuper\n.....\nvirtual_ab\u003dtrue",
+      "revId": "38832f8fd1d36fde6ccd99b70208088edd5b16ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
