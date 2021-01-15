@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86980baa_d06a2f58",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-01-15T02:40:25Z",
+      "side": 1,
+      "message": "This is a follow-up for https://android-review.googlesource.com/c/platform/build/+/1549483/1/core/Makefile#5246",
+      "revId": "f66f0ececc5b76f362a645f2d0a9bf07b3adc752",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
