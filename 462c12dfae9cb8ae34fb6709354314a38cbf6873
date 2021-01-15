@@ -16,6 +16,24 @@
       "message": "This will need an equivalent Soong change",
       "revId": "462c12dfae9cb8ae34fb6709354314a38cbf6873",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b28ed86d_3406e436",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2021-01-15T00:17:30Z",
+      "side": 1,
+      "message": "The soong change has been done before.",
+      "parentUuid": "38c2bfa6_66374384",
+      "revId": "462c12dfae9cb8ae34fb6709354314a38cbf6873",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
