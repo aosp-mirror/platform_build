@@ -22,6 +22,30 @@
       },
       "revId": "d8cc1352b5c125dea44da511804de3db9691037a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "92920c61_7449a17c",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-01-15T07:14:53Z",
+      "side": 1,
+      "message": "Yes, that\u0027s my thought. Also users can manually add more modules to it.",
+      "parentUuid": "82b89a70_fd50ccaf",
+      "range": {
+        "startLine": 149,
+        "startChar": 19,
+        "endLine": 149,
+        "endChar": 42
+      },
+      "revId": "d8cc1352b5c125dea44da511804de3db9691037a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
