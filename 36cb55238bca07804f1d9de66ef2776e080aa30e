@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89f8c29f_8db7f452",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-15T21:59:47Z",
+      "side": 1,
+      "message": "Sorry I forgot to mention this...",
+      "revId": "36cb55238bca07804f1d9de66ef2776e080aa30e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d68c86ce_821e6940",
+        "filename": "target/product/virtual_ab_ota/compression.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-15T21:59:47Z",
+      "side": 1,
+      "message": "Oh and also, for variables defined in product makefiles, you need to add them to one of product.mk or product_config.mk or config.mk (I can\u0027t remember which). Otherwise, its value isn\u0027t inherited properly. It works for your case but in a hacky way.",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 30
+      },
+      "revId": "36cb55238bca07804f1d9de66ef2776e080aa30e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
