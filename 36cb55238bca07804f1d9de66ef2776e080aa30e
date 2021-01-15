@@ -39,6 +39,30 @@
       },
       "revId": "36cb55238bca07804f1d9de66ef2776e080aa30e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c98bc01_c3a0fefc",
+        "filename": "target/product/virtual_ab_ota/compression.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-15T22:21:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d68c86ce_821e6940",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 30
+      },
+      "revId": "36cb55238bca07804f1d9de66ef2776e080aa30e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
