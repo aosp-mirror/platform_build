@@ -14,5 +14,5 @@
 # limitations under the License.
 #
 
-$(call inherit-product, build/make/target/product/bootclasspath.mk)
+$(call inherit-product, build/make/target/product/default_art_config.mk)
 $(call inherit-product, build/make/target/product/languages_default.mk)
