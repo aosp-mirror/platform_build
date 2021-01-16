@@ -441,3 +441,13 @@ ifneq ($(findstring fsanitize,$(my_cflags)),)
     endif
   endif
 endif
+
+# http://b/177566116, libc++ may crash with this sanitizer.
+# Disable this check unless it has been explicitly specified.
+ifneq ($(findstring fsanitize,$(my_cflags)),)
+  ifneq ($(findstring integer,$(my_cflags)),)
+    ifeq ($(findstring sanitize=unsigned-shift-base,$(my_cflags)),)
+      my_cflags += -fno-sanitize=unsigned-shift-base
+    endif
+  endif
+endif
