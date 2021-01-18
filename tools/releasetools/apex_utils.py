@@ -300,13 +300,13 @@ def ParseApexPayloadInfo(avbtool, payload_path):
   return payload_info
 
 
-def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
-             apk_keys, codename_to_api_level_map,
-             no_hashtree, signing_args=None):
-  """Signs the current APEX with the given payload/container keys.
+def SignUncompressedApex(avbtool, apex_data, payload_key, container_key,
+                         container_pw, apk_keys, codename_to_api_level_map,
+                         no_hashtree, signing_args=None):
+  """Signs the current uncompressed APEX with the given payload/container keys.
 
   Args:
-    apex_data: Raw APEX data.
+    apex_data: Raw uncompressed APEX data.
     payload_key: The path to payload signing key (w/ extension).
     container_key: The path to container signing key (w/o extension).
     container_pw: The matching password of the container_key, or None.
@@ -370,12 +370,61 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
   extra_signapk_args = OPTIONS.extra_signapk_args[:]
   extra_signapk_args.extend(['-a', '4096'])
 
+  password = container_pw.get(container_key) if container_pw else None
   common.SignFile(
       aligned_apex,
       signed_apex,
       container_key,
-      container_pw.get(container_key),
+      password,
       codename_to_api_level_map=codename_to_api_level_map,
       extra_signapk_args=extra_signapk_args)
 
   return signed_apex
+
+
+def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
+             apk_keys, codename_to_api_level_map,
+             no_hashtree, signing_args=None):
+  """Signs the current APEX with the given payload/container keys.
+
+  Args:
+    apex_file: Path to apex file path.
+    payload_key: The path to payload signing key (w/ extension).
+    container_key: The path to container signing key (w/o extension).
+    container_pw: The matching password of the container_key, or None.
+    apk_keys: A dict that holds the signing keys for apk files.
+    codename_to_api_level_map: A dict that maps from codename to API level.
+    no_hashtree: Don't include hashtree in the signed APEX.
+    signing_args: Additional args to be passed to the payload signer.
+
+  Returns:
+    The path to the signed APEX file.
+  """
+  apex_file = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
+  with open(apex_file, 'wb') as output_fp:
+    output_fp.write(apex_data)
+
+  debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
+  cmd = ['deapexer', '--debugfs_path', debugfs_path,
+         'info', '--print-type', apex_file]
+
+  try:
+    apex_type = common.RunAndCheckOutput(cmd).strip()
+    if apex_type == 'UNCOMPRESSED':
+      return SignUncompressedApex(
+          avbtool,
+          apex_data,
+          payload_key=payload_key,
+          container_key=container_key,
+          container_pw=None,
+          codename_to_api_level_map=codename_to_api_level_map,
+          no_hashtree=no_hashtree,
+          apk_keys=apk_keys,
+          signing_args=signing_args)
+    else:
+      # TODO(b/172912232): support signing compressed apex
+      raise ApexInfoError('Unsupported apex type {}'.format(apex_type))
+
+  except common.ExternalError as e:
+    raise ApexInfoError(
+        'Failed to get type for {}:\n{}'.format(apex_file))

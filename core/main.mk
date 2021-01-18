@@ -285,9 +285,6 @@ endif
 
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.vendor.build.security_patch=$(VENDOR_SECURITY_PATCH) \
-    ro.vendor.product.cpu.abilist=$(TARGET_CPU_ABI_LIST) \
-    ro.vendor.product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT) \
-    ro.vendor.product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT) \
     ro.product.board=$(TARGET_BOOTLOADER_BOARD_NAME) \
     ro.board.platform=$(TARGET_BOARD_PLATFORM) \
     ro.hwui.use_vulkan=$(TARGET_USES_VULKAN)
@@ -301,11 +298,6 @@ ifdef AB_OTA_UPDATER
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.build.ab_update=$(AB_OTA_UPDATER)
 endif
-
-ADDITIONAL_ODM_PROPERTIES += \
-    ro.odm.product.cpu.abilist=$(TARGET_CPU_ABI_LIST) \
-    ro.odm.product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT) \
-    ro.odm.product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)
 
 # Set ro.product.vndk.version to know the VNDK version required by product
 # modules. It uses the version in PRODUCT_PRODUCT_VNDK_VERSION. If the value
@@ -1120,7 +1112,11 @@ $(foreach export,$(EXPORTS_LIST),$(eval $(call add-dependency,$$(EXPORTS.$$(expo
 # Expand a list of modules to the modules that they override (if any)
 # $(1): The list of modules.
 define module-overrides
-$(foreach m,$(1),$(PACKAGES.$(m).OVERRIDES) $(EXECUTABLES.$(m).OVERRIDES) $(SHARED_LIBRARIES.$(m).OVERRIDES) $(ETC.$(m).OVERRIDES))
+$(foreach m,$(1),\
+  $(eval _mo_overrides := $(PACKAGES.$(m).OVERRIDES) $(EXECUTABLES.$(m).OVERRIDES) $(SHARED_LIBRARIES.$(m).OVERRIDES) $(ETC.$(m).OVERRIDES))\
+  $(if $(filter $(m),$(_mo_overrides)),\
+    $(error Module $(m) cannot override itself),\
+    $(_mo_overrides)))
 endef
 
 ###########################################################
@@ -1750,7 +1746,7 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(JACOCO_REPORT_CLASSES_ALL) : $(modules_to_install)
+    $(JACOCO_REPORT_CLASSES_ALL) : $(filter-out $(TARGET_OUT_FAKE)/%,$(modules_to_install))
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
   endif
 

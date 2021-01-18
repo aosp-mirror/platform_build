@@ -57,6 +57,7 @@ VNDK-SP: libutils.so
 VNDK-SP: libutilscallstack.so
 VNDK-SP: libz.so
 VNDK-core: android.hardware.audio.common@2.0.so
+VNDK-core: android.hardware.authsecret-V1-ndk_platform.so
 VNDK-core: android.hardware.automotive.occupant_awareness-V1-ndk_platform.so
 VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
@@ -81,6 +82,8 @@ VNDK-core: android.hardware.power-V1-ndk_platform.so
 VNDK-core: android.hardware.power.stats-V1-ndk_platform.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk_platform.so
 VNDK-core: android.hardware.security.keymint-V1-ndk_platform.so
+VNDK-core: android.hardware.security.secureclock-V1-ndk_platform.so
+VNDK-core: android.hardware.security.sharedsecret-V1-ndk_platform.so
 VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
 VNDK-core: android.hardware.vibrator-V1-ndk_platform.so
