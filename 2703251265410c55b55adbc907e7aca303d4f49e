@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ff121456_9de32e7f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2021-01-18T14:37:21Z",
+      "side": 1,
+      "message": "Is there a CL adding these tools to the host prebuilts already?",
+      "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
