@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "06c3d4fb_4e935355",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-01-18T09:00:19Z",
+      "side": 1,
+      "message": "Hi Colin, Could you help owner-review this change? This change moves the file path of gsi_arm64.mk. It used to be a experimental product config, and we\u0027re re-purposing it to be the product config for releasing GSI.",
+      "revId": "789641c28c7c39bd00113329295174e4c4207724",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
