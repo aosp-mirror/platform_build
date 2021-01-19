@@ -117,6 +117,30 @@
       },
       "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "358d905b_6bd06a45",
+        "filename": "tools/releasetools/ota_metadata.proto",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-19T18:51:54Z",
+      "side": 1,
+      "message": "The logic lgtm, but I suggest putting the apex info into the target_file under META/*. we can build a python binary in this directory, (e.g. build_apex_info), and call that in makefile. Because the apex info really ties to a particular build number. \n\nThe benefit is the ability to inspect the apex info without ota; ease of copy during payload generation , etc. zhangkelvin@ can you look into it?",
+      "parentUuid": "2f042db2_3bcb9a73",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 34
+      },
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
