@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "de03fa66_f3f3a9b0",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2328,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-01-19T09:10:47Z",
+      "side": 1,
+      "message": "If we move this to intermediates-dir, then this variable should be renamed to INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET.\n\nAlso, we should then remove it from build/make/core/main.mk\n\nhttps://cs.android.com/android/platform/superproject/+/master:build/make/core/main.mk?q\u003dINSTALLED_VENDOR_DEBUG_RAMDISK_TARGET\n\nLet me do this in another CL separately, and only fix one issue here.",
+      "range": {
+        "startLine": 2328,
+        "startChar": 0,
+        "endLine": 2328,
+        "endChar": 37
+      },
+      "revId": "e13bfb82c8a82cb847f06bb0096f9f57192a0b87",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
