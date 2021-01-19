@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5f9101d_ad8cbef3",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2351,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-01-19T09:34:41Z",
+      "side": 1,
+      "message": "nit (Could do this in follow-up): replace \u003d\u003e $(VENDOR_DEBUG_RAMDISK_DIR)",
+      "range": {
+        "startLine": 2351,
+        "startChar": 60,
+        "endLine": 2351,
+        "endChar": 95
+      },
+      "revId": "ceaa411fcb6cd77bd51b365aa3decc8f1559348c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
