@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c832bf24_1aa19686",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-01-19T01:56:13Z",
+      "side": 1,
+      "message": "Agree, GSI doesn\u0027t need to support O/O-MR1 now.",
+      "revId": "2099e6eda29004ab0d81a87cefe8abad4da8d107",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
