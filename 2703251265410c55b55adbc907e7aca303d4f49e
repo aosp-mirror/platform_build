@@ -16,6 +16,24 @@
       "message": "Is there a CL adding these tools to the host prebuilts already?",
       "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ed902d2_117952ee",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-01-19T23:05:58Z",
+      "side": 1,
+      "message": "No. I have on my todo to add oatdump, that\u0027s it.\n\nart-tools was added here in https://r.android.com/932363. The discussion in its ticket b/128990084 only mentions oatdump, so I assume that\u0027s what\u0027s necessary. +oth\n\nI\u0027ll postpone this until I\u0027ve fixed the oatdump prebuilt. Filed b/177940676 to track.",
+      "parentUuid": "ff121456_9de32e7f",
+      "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
