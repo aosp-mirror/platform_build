@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eced3f16_5093de5b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-19T23:58:04Z",
+      "side": 1,
+      "message": "Also, with this change, we can just copy apex_info.pb into the ota package? No need to add it in ota_metadata.pb",
+      "revId": "ac1f021df720f0130d7ee7ef36f5ac0f3b7fe5f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aac03a3b_c70976a9",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 995,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-19T23:58:04Z",
+      "side": 1,
+      "message": "I suggest moving the logic of apex_info here. And add a comment saying we only process SYSTEM today. Also remove the old META/apex_info.pb if it exists.",
+      "range": {
+        "startLine": 995,
+        "startChar": 0,
+        "endLine": 995,
+        "endChar": 0
+      },
+      "revId": "ac1f021df720f0130d7ee7ef36f5ac0f3b7fe5f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6bd42b96_d8c8c8e3",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 996,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-19T23:58:04Z",
+      "side": 1,
+      "message": "this should move to L1010",
+      "range": {
+        "startLine": 996,
+        "startChar": 0,
+        "endLine": 996,
+        "endChar": 17
+      },
+      "revId": "ac1f021df720f0130d7ee7ef36f5ac0f3b7fe5f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
