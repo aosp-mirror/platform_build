@@ -141,6 +141,30 @@
       },
       "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "492ad781_be900950",
+        "filename": "tools/releasetools/ota_metadata.proto",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-19T18:57:06Z",
+      "side": 1,
+      "message": "Sure let me try...",
+      "parentUuid": "358d905b_6bd06a45",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 34
+      },
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
