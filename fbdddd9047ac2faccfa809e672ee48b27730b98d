@@ -22,6 +22,30 @@
       },
       "revId": "fbdddd9047ac2faccfa809e672ee48b27730b98d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eb0b8f81_537e79cf",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-01-19T10:37:26Z",
+      "side": 1,
+      "message": "goldfish and cuttlefish products are already using 31 for this var for quite some time... so I suppose it\u0027s safe to set it here? I want this to be the latest value, plus this need to be 31 for the upcoming S time frame anyway.",
+      "parentUuid": "879f3d6d_73394535",
+      "range": {
+        "startLine": 37,
+        "startChar": 30,
+        "endLine": 37,
+        "endChar": 32
+      },
+      "revId": "fbdddd9047ac2faccfa809e672ee48b27730b98d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
