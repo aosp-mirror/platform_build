@@ -165,6 +165,23 @@
       },
       "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b0928c75_5680f42b",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-19T19:46:12Z",
+      "side": 1,
+      "message": "Can you refactor this so that it also accepts unziped target file? something like:\n\nif isinstance(input_file, str) and IsDirectory(input_file):\n    target_dir \u003d input_file\nelse:\n    tmp_dir \u003d Unzip()\n    target_dir \u003d tmp_dir",
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
