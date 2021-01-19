@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "deb6f8bf_bad16d32",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 3
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2021-01-19T23:08:18Z",
+      "side": 1,
+      "message": "Yes. Added in aosp/1550774.",
+      "parentUuid": "621aee2e_7cafe336",
+      "range": {
+        "startLine": 545,
+        "startChar": 0,
+        "endLine": 545,
+        "endChar": 42
+      },
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "11a717b8_f4e16000",
@@ -169,6 +193,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ccc69124_72985c91",
+        "filename": "tools/releasetools/ota_metadata.proto",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2021-01-19T23:08:18Z",
+      "side": 1,
+      "message": "Ack. So I need to pass the same info to update_metadata.proto + sync the proto on gms core side. On it. Will do them on separate CL.",
+      "parentUuid": "492ad781_be900950",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 34
+      },
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b0928c75_5680f42b",
         "filename": "tools/releasetools/ota_utils.py",
         "patchSetId": 3
@@ -180,6 +228,24 @@
       "writtenOn": "2021-01-19T19:46:12Z",
       "side": 1,
       "message": "Can you refactor this so that it also accepts unziped target file? something like:\n\nif isinstance(input_file, str) and IsDirectory(input_file):\n    target_dir \u003d input_file\nelse:\n    tmp_dir \u003d Unzip()\n    target_dir \u003d tmp_dir",
+      "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2320ae7f_bff35a26",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2021-01-19T23:08:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0928c75_5680f42b",
       "revId": "12a63469df7c981d8d0a1da8152b71f3f7f2ce78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
