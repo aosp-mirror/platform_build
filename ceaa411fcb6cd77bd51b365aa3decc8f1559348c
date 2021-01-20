@@ -46,6 +46,30 @@
       },
       "revId": "ceaa411fcb6cd77bd51b365aa3decc8f1559348c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab994f69_70d4a53e",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2351,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-01-20T09:51:08Z",
+      "side": 1,
+      "message": "Trying to fix this here:\n\nhttps://android-review.googlesource.com/c/platform/build/+/1554189/2/core/Makefile#2355\n\n\nI added a \u0027$(DEBUG_RAMDISK_DIR)\u0027 for $(PRODUCT_OUT)/debug_ramdisk, to make it look symmetric with $(VENDOR_DEBUG_RAMDISK_DIR). Let\u0027s discuss this there.",
+      "parentUuid": "51cc82d7_37f66871",
+      "range": {
+        "startLine": 2351,
+        "startChar": 60,
+        "endLine": 2351,
+        "endChar": 95
+      },
+      "revId": "ceaa411fcb6cd77bd51b365aa3decc8f1559348c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
