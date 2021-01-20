@@ -30,7 +30,7 @@ import java.util.Map;
  * <b>Naming Convention:</b>
  * <ul>
  *  <li>ERROR_ for Categories with isLevelSettable false and Level.ERROR
- *  <li>WARNING_ for Categories with isLevelSettable false and default WARNING or HIDDEN
+ *  <li>WARNING_ for Categories with isLevelSettable true and default WARNING or HIDDEN
  *  <li>Don't have isLevelSettable true and not ERROR. (The constructor asserts this).
  * </ul>
  */
@@ -42,4 +42,7 @@ public class Errors extends ErrorReporter {
     public final Category WARNING_UNKNOWN_COMMAND_LINE_ERROR = new Category(2, true, Level.HIDDEN,
             "Passing unknown errors on the command line.  Hidden by default for\n"
             + "forward compatibility.");
+
+    public final Category ERROR_KATI = new Category(3, false, Level.ERROR,
+            "Error executing or reading from Kati.");
 }

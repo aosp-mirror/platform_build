@@ -47,7 +47,7 @@ public class Main {
         int exitCode = 0;
 
         try {
-            Options options = Options.parse(errors, args);
+            Options options = Options.parse(errors, args, System.getenv());
             if (errors.hadError()) {
                 Options.printHelp(System.err);
                 System.err.println();
@@ -62,7 +62,7 @@ public class Main {
                     Options.printHelp(System.out);
                     return;
             }
-        } catch (CommandException ex) {
+        } catch (CommandException | Errors.FatalException ex) {
             // These are user errors, so don't show a stack trace
             exitCode = 1;
         } catch (Throwable ex) {
