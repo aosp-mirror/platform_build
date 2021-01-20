@@ -88,6 +88,24 @@
       "parentUuid": "d1e2525a_06ae790f",
       "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "924760b0_7e9db4fd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2021-01-20T09:54:24Z",
+      "side": 1,
+      "message": "That was in case there were complaints on the size of our prebuilts. It works for me if we think we should put them all.",
+      "parentUuid": "d604da70_b815156a",
+      "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
