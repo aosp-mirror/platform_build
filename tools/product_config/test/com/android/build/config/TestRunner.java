@@ -39,7 +39,8 @@ public class TestRunner {
                         System.out.println(failure.getTrace());
                     }
                 });
-        Result result = junit.run(ErrorReporterTest.class,
+        Result result = junit.run(CsvParserTest.class,
+                                  ErrorReporterTest.class,
                                   OptionsTest.class);
         if (!result.wasSuccessful()) {
             System.out.println("\n*** FAILED ***");
