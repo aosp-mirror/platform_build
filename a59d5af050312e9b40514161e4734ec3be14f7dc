@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "969f3819_2bd4d329",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2355,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-01-20T10:40:53Z",
+      "side": 1,
+      "message": "$(patsubst $(DEBUG_RAMDISK_DIR)/%,$(VENDOR_DEBUG_RAMDISK_DIR)/%,$(debug_file))",
+      "range": {
+        "startLine": 2355,
+        "startChar": 23,
+        "endLine": 2355,
+        "endChar": 93
+      },
+      "revId": "a59d5af050312e9b40514161e4734ec3be14f7dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
