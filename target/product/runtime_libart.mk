@@ -16,6 +16,8 @@
 
 # Provides a functioning ART environment without Android frameworks
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
+
 # Additional mixins to the boot classpath.
 PRODUCT_PACKAGES += \
     android.test.base \
@@ -41,10 +43,6 @@ PRODUCT_PACKAGES += \
     hiddenapi-package-whitelist.xml \
 
 PRODUCT_SYSTEM_PROPERTIES += \
-    dalvik.vm.image-dex2oat-Xms=64m \
-    dalvik.vm.image-dex2oat-Xmx=64m \
-    dalvik.vm.dex2oat-Xms=64m \
-    dalvik.vm.dex2oat-Xmx=512m \
     dalvik.vm.usejit=true \
     dalvik.vm.usejitprofiles=true \
     dalvik.vm.dexopt.secondary=true \
@@ -96,5 +94,3 @@ PRODUCT_SYSTEM_PROPERTIES += \
 PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.minidebuginfo=true \
     dalvik.vm.dex2oat-minidebuginfo=true
-
-PRODUCT_USES_DEFAULT_ART_CONFIG := true
