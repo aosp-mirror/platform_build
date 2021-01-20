@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d1c8c72_8c7db613",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-01-20T14:22:26Z",
+      "side": 1,
+      "message": "This makes DISABLE_PREOPT behaviour a bit counterintuitive. I suggest renaming DISABLE_PREOPT to DISABLE_APP_PREOPT, but that can be done in a follow-up.",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 18
+      },
+      "revId": "7f8b7a1123fd164ef31475c491ee72d210c0833c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
