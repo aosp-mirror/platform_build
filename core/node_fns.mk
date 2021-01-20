@@ -195,7 +195,11 @@ define _import-node
   $(call clear-var-list, $(3))
   $(eval LOCAL_PATH := $(patsubst %/,%,$(dir $(2))))
   $(eval MAKEFILE_LIST :=)
+  $(call dump-import-start,$(_include_stack))
+  $(call dump-config-vals,$(2),before)
   $(eval include $(2))
+  $(call dump-import-done,$(_include_stack))
+  $(call dump-config-vals,$(2),after)
   $(eval _included := $(filter-out $(2),$(MAKEFILE_LIST)))
   $(eval MAKEFILE_LIST :=)
   $(eval LOCAL_PATH :=)
@@ -256,6 +260,7 @@ $(if \
     $(if $(_include_stack),$(eval $(error ASSERTION FAILED: _include_stack \
                 should be empty here: $(_include_stack))),) \
     $(eval _include_stack := ) \
+    $(call dump-product-var-names,$(1),$(2),$(3),$(4)) \
     $(call _import-nodes-inner,$(_node_import_context),$(_in),$(3),$(4)) \
     $(call move-var-list,$(_node_import_context).$(_in),$(1).$(_in),$(3)) \
     $(eval _node_import_context :=) \

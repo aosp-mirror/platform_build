@@ -41,7 +41,8 @@ public class TestRunner {
                 });
         Result result = junit.run(CsvParserTest.class,
                                   ErrorReporterTest.class,
-                                  OptionsTest.class);
+                                  OptionsTest.class,
+                                  PositionTest.class);
         if (!result.wasSuccessful()) {
             System.out.println("\n*** FAILED ***");
         }

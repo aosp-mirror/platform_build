@@ -45,4 +45,11 @@ public class Errors extends ErrorReporter {
 
     public final Category ERROR_KATI = new Category(3, false, Level.ERROR,
             "Error executing or reading from Kati.");
+
+    public final Category WARNING_DUMPCONFIG = new Category(4, true, Level.WARNING,
+            "Anomaly parsing the output of kati and dumpconfig.mk.");
+
+    public final Category ERROR_DUMPCONFIG = new Category(5, false, Level.ERROR,
+            "Error parsing the output of kati and dumpconfig.mk.");
+
 }

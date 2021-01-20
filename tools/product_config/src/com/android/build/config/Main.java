@@ -16,6 +16,9 @@
 
 package com.android.build.config;
 
+import java.util.List;
+import java.util.Map;
+
 public class Main {
     private final Errors mErrors;
     private final Options mOptions;
@@ -31,6 +34,17 @@ public class Main {
         // TODO: Check the build environment to make sure we're running in a real
         // build environment, e.g. actually inside a source tree, with TARGET_PRODUCT
         // and TARGET_BUILD_VARIANT defined, etc.
+        Kati kati = new KatiImpl(mErrors, mOptions);
+        MakeConfig makeConfig = kati.loadProductConfig();
+        if (makeConfig == null || mErrors.hadError()) {
+            return;
+        }
+
+        System.out.println();
+        System.out.println("====================");
+        System.out.println("PRODUCT CONFIG FILES");
+        System.out.println("====================");
+        makeConfig.printToStream(System.out);
 
         // TODO: Run kati and extract the variables and convert all that into starlark files.
 
@@ -38,8 +52,6 @@ public class Main {
 
         // TODO: Get the variables that were defined in starlark and use that to write
         // out the make, soong and bazel input files.
-        mErrors.ERROR_COMMAND_LINE.add("asdf");
-        throw new RuntimeException("poop");
     }
 
     public static void main(String[] args) {
