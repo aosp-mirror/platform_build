@@ -46,14 +46,6 @@ ifeq ($(HOST_OS),linux)
   endif
 endif
 
-# Use the first preloaded-classes file in PRODUCT_COPY_FILES.
-PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
-    $(filter %system/etc/preloaded-classes,$(PRODUCT_COPY_FILES))))
-
-# Use the first dirty-image-objects file in PRODUCT_COPY_FILES.
-DIRTY_IMAGE_OBJECTS := $(call word-colon,1,$(firstword \
-    $(filter %system/etc/dirty-image-objects,$(PRODUCT_COPY_FILES))))
-
 # Get value of a property. It is first searched from PRODUCT_VENDOR_PROPERTIES
 # and then falls back to PRODUCT_SYSTEM_PROPERTIES
 # $1: name of the property
@@ -124,7 +116,6 @@ ifdef TARGET_ARCH
   $(call end_json_map)
 endif
 
-  $(call add_json_str,  DirtyImageObjects,                  $(DIRTY_IMAGE_OBJECTS))
   $(call add_json_list, BootImageProfiles,                  $(PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION))
   $(call add_json_str,  BootFlags,                          $(PRODUCT_DEX_PREOPT_BOOT_FLAGS))
   $(call add_json_str,  Dex2oatImageXmx,                    $(DEX2OAT_IMAGE_XMX))
