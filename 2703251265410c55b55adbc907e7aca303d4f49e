@@ -52,6 +52,24 @@
       "parentUuid": "5ed902d2_117952ee",
       "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1e2525a_06ae790f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1071150
+      },
+      "writtenOn": "2021-01-20T09:24:42Z",
+      "side": 1,
+      "message": "Not sure advising people to sync to the right module sources to build the tools by hand is convenient for them (particularly if outside of ART team). It might not cost us much building the complete set of art-tools (oatdump is a monster).",
+      "parentUuid": "1fcc76a1_30ba1c22",
+      "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
