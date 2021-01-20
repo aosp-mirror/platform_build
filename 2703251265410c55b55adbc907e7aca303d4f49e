@@ -34,6 +34,24 @@
       "parentUuid": "ff121456_9de32e7f",
       "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1fcc76a1_30ba1c22",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2021-01-20T09:07:33Z",
+      "side": 1,
+      "message": "Thanks for the information Martin; SGTM. I think `oatdump` is the only case for which we truly need a host prebuilt, because of the dependency on the Oat version. Other tools can be built from (ART Module) sources if needed (especially if we ever have local support for chained builds).",
+      "parentUuid": "5ed902d2_117952ee",
+      "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
