@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a7e87ab6_78c4f4cb",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2021-01-20T18:51:40Z",
+      "side": 1,
+      "message": "should we add this over there instead then?",
+      "revId": "bea4a8fb48ab6ab4e5a460310e5286181c078683",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
