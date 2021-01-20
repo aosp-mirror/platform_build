@@ -96,14 +96,14 @@ public class Options {
                     mIndex++;
                 }
             } catch (ParseException ex) {
-                mErrors.add(mErrors.ERROR_COMMAND_LINE, ex.getMessage());
+                mErrors.ERROR_COMMAND_LINE.add(ex.getMessage());
             }
 
             return mResult;
         }
 
         private void addWarning(Errors.Category category, String message) {
-            mErrors.add(category, message);
+            category.add(message);
         }
 
         private String getNextNonFlagArg() {
@@ -133,12 +133,11 @@ public class Options {
             final int code = requireNextNumberArg(arg);
             final Errors.Category category = mErrors.getCategories().get(code);
             if (category == null) {
-                mErrors.add(mErrors.WARNING_UNKNOWN_COMMAND_LINE_ERROR,
-                        "Unknown error code: " + code);
+                mErrors.WARNING_UNKNOWN_COMMAND_LINE_ERROR.add("Unknown error code: " + code);
                 return;
             }
             if (!category.isLevelSettable()) {
-                mErrors.add(mErrors.ERROR_COMMAND_LINE, "Can't set level for error " + code);
+                mErrors.ERROR_COMMAND_LINE.add("Can't set level for error " + code);
                 return;
             }
             category.setLevel(level);

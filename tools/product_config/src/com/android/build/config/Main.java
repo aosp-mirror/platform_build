@@ -38,7 +38,7 @@ public class Main {
 
         // TODO: Get the variables that were defined in starlark and use that to write
         // out the make, soong and bazel input files.
-        mErrors.add(mErrors.ERROR_COMMAND_LINE, "asdf");
+        mErrors.ERROR_COMMAND_LINE.add("asdf");
         throw new RuntimeException("poop");
     }
 
