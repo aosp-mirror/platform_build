@@ -106,6 +106,24 @@
       "parentUuid": "d604da70_b815156a",
       "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "185f124e_d5a9f4cc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-01-20T10:49:20Z",
+      "side": 1,
+      "message": "Let\u0027s discuss on b/177940676 which ones we need to provide.",
+      "parentUuid": "924760b0_7e9db4fd",
+      "revId": "2703251265410c55b55adbc907e7aca303d4f49e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
