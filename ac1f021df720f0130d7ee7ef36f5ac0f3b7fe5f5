@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1820de91_325910a9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-20T14:50:04Z",
+      "side": 1,
+      "message": "It\u0027s easier to keep all metadata in one place.",
+      "parentUuid": "eced3f16_5093de5b",
+      "revId": "ac1f021df720f0130d7ee7ef36f5ac0f3b7fe5f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aac03a3b_c70976a9",
