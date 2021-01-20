@@ -990,6 +990,13 @@ $(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)), \
 
 endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 
+# By default, we build the hidden API csv files from source. You can use
+# prebuilt hiddenapi files by setting BOARD_PREBUILT_HIDDENAPI_DIR to the name
+# of a directory containing both prebuilt hiddenapi-flags.csv and
+# hiddenapi-index.csv.
+BOARD_PREBUILT_HIDDENAPI_DIR ?=
+.KATI_READONLY := BOARD_PREBUILT_HIDDENAPI_DIR
+
 # ###############################################################
 # Set up final options.
 # ###############################################################
