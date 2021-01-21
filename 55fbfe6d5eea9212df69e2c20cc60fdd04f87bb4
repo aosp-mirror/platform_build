@@ -235,6 +235,30 @@
       },
       "revId": "55fbfe6d5eea9212df69e2c20cc60fdd04f87bb4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bb1f9e86_1b2518c1",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-21T23:47:41Z",
+      "side": 1,
+      "message": "But if we just skip all the tests requiring external tools, we would get poor coverage. Also, if I don\u0027t do this, presubmit fails.",
+      "parentUuid": "02cd2816_66bd25a1",
+      "range": {
+        "startLine": 473,
+        "startChar": 1,
+        "endLine": 474,
+        "endChar": 27
+      },
+      "revId": "55fbfe6d5eea9212df69e2c20cc60fdd04f87bb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
