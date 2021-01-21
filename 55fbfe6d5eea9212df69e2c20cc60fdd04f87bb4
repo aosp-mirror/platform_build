@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f9dadfbe_a509ee7f",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T21:11:54Z",
+      "side": 1,
+      "message": "since you already import common, just call common.UnzipTemp?",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 61
+      },
+      "revId": "55fbfe6d5eea9212df69e2c20cc60fdd04f87bb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "292404d4_03b3b564",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 463,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T21:11:54Z",
+      "side": 1,
+      "message": "nit: if (not os.path.isfile(apex_filepath) or not zipfile.is_zipfile(apex_filepath)). So you don\u0027t need line break. Btw, is zipfile.is_zipfile sufficient?",
+      "range": {
+        "startLine": 463,
+        "startChar": 7,
+        "endLine": 463,
+        "endChar": 10
+      },
+      "revId": "55fbfe6d5eea9212df69e2c20cc60fdd04f87bb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a071dd7_835a5309",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T21:11:54Z",
+      "side": 1,
+      "message": "use logger.info(Skipping ...)",
+      "range": {
+        "startLine": 465,
+        "startChar": 6,
+        "endLine": 465,
+        "endChar": 21
+      },
+      "revId": "55fbfe6d5eea9212df69e2c20cc60fdd04f87bb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "efd5e202_72dec6ed",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T21:11:54Z",
+      "side": 1,
+      "message": "are they needed?",
+      "range": {
+        "startLine": 473,
+        "startChar": 1,
+        "endLine": 474,
+        "endChar": 27
+      },
+      "revId": "55fbfe6d5eea9212df69e2c20cc60fdd04f87bb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
