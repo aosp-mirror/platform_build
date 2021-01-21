@@ -1027,6 +1027,9 @@ $(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
     $(eval vendor_ramdisk_fragment_target := $(call build-vendor-ramdisk-fragment,$(vendor_ramdisk_fragment))) \
     $(if $(filter --ramdisk_type,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS)),, \
       $(eval BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS += --ramdisk_type DLKM))) \
+  $(if $(filter --ramdisk_name,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS)), \
+    $(error Must not specify --ramdisk_name for vendor ramdisk fragment: $(vendor_ramdisk_fragment))) \
+  $(eval BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS += --ramdisk_name $(vendor_ramdisk_fragment)) \
   $(eval INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS += $(vendor_ramdisk_fragment_target)) \
   $(eval INTERNAL_VENDOR_RAMDISK_FRAGMENT_ARGS += $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS) --vendor_ramdisk_fragment $(vendor_ramdisk_fragment_target)) \
 )
@@ -2329,6 +2332,10 @@ INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET := $(PRODUCT_OUT)/vendor-ramdisk-debug.cpi
 $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_FILES := $(INTERNAL_DEBUG_RAMDISK_FILES)
 $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): VENDOR_RAMDISK_DIR := $(TARGET_VENDOR_RAMDISK_OUT)
 
+ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+$(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+endif
+
 INTERNAL_VENDOR_DEBUG_RAMDISK_FILES := $(filter $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/%, \
     $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
@@ -2345,8 +2352,7 @@ $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_VENDOR_DEBUG_RA
 	touch $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/force_debuggable
 	$(foreach debug_file,$(DEBUG_RAMDISK_FILES), \
 	  cp -f $(debug_file) $(subst $(PRODUCT_OUT)/debug_ramdisk,$(PRODUCT_OUT)/vendor_debug_ramdisk,$(debug_file)) &&) true
-	rsync -a $(VENDOR_RAMDISK_DIR)/ $(VENDOR_DEBUG_RAMDISK_DIR)
-	$(MKBOOTFS) -d $(TARGET_OUT) $(VENDOR_DEBUG_RAMDISK_DIR) | $(COMPRESSION_COMMAND) > $@
+	$(MKBOOTFS) -d $(TARGET_OUT) $(VENDOR_RAMDISK_DIR) $(VENDOR_DEBUG_RAMDISK_DIR) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $@
 
 INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK := $(PRODUCT_OUT)/installed-files-vendor-ramdisk-debug.txt
 INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK := $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK:.txt=.json)
@@ -3738,6 +3744,18 @@ endif # BUILDING_VBMETA_IMAGE
 
 endif # BOARD_AVB_ENABLE
 
+# List of files from all images
+INTERNAL_ALLIMAGES_FILES := \
+    $(FULL_SYSTEMIMAGE_DEPS) \
+    $(INTERNAL_RAMDISK_FILES) \
+    $(INTERNAL_USERDATAIMAGE_FILES) \
+    $(INTERNAL_VENDORIMAGE_FILES) \
+    $(INTERNAL_PRODUCTIMAGE_FILES) \
+    $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
+    $(INTERNAL_ODMIMAGE_FILES) \
+    $(INTERNAL_VENDOR_DLKMIMAGE_FILES) \
+    $(INTERNAL_ODM_DLKMIMAGE_FILES) \
+
 # -----------------------------------------------------------------
 # Check VINTF of build
 
@@ -3756,13 +3774,7 @@ check_vintf_common_srcs_patterns := \
   $(TARGET_OUT_PRODUCT)/etc/vintf/% \
   $(TARGET_OUT_SYSTEM_EXT)/etc/vintf/% \
 
-check_vintf_common_srcs := $(sort $(filter $(check_vintf_common_srcs_patterns), \
-  $(INTERNAL_SYSTEMIMAGE_FILES) \
-  $(INTERNAL_VENDORIMAGE_FILES) \
-  $(INTERNAL_ODMIMAGE_FILES) \
-  $(INTERNAL_PRODUCTIMAGE_FILES) \
-  $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
-))
+check_vintf_common_srcs := $(sort $(filter $(check_vintf_common_srcs_patterns),$(INTERNAL_ALLIMAGES_FILES)))
 check_vintf_common_srcs_patterns :=
 
 check_vintf_has_system :=
@@ -4534,6 +4546,8 @@ define dump-dynamic-partitions-info
     echo "super_partition_error_limit=$(BOARD_SUPER_PARTITION_ERROR_LIMIT)" >> $(1))
   $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA)), \
     echo "virtual_ab=true" >> $(1))
+  $(if $(filter true,$(PRODUCT_VIRTUAL_AB_COMPRESSION)), \
+    echo "virtual_ab_compression=true" >> $(1))
   $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA_RETROFIT)), \
     echo "virtual_ab_retrofit=true" >> $(1))
 endef
@@ -5130,16 +5144,7 @@ name := $(name)-symbols-$(FILE_NAME_TAG)
 SYMBOLS_ZIP := $(PRODUCT_OUT)/$(name).zip
 # For apps_only build we'll establish the dependency later in build/make/core/main.mk.
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
-$(SYMBOLS_ZIP): $(FULL_SYSTEMIMAGE_DEPS) \
-	    $(INTERNAL_RAMDISK_FILES) \
-	    $(INTERNAL_USERDATAIMAGE_FILES) \
-	    $(INTERNAL_VENDORIMAGE_FILES) \
-	    $(INTERNAL_PRODUCTIMAGE_FILES) \
-	    $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
-	    $(INTERNAL_ODMIMAGE_FILES) \
-	    $(INTERNAL_VENDOR_DLKMIMAGE_FILES) \
-	    $(INTERNAL_ODM_DLKMIMAGE_FILES) \
-	    $(updater_dep)
+$(SYMBOLS_ZIP): $(INTERNAL_ALLIMAGES_FILES) $(updater_dep)
 endif
 $(SYMBOLS_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,symbols)/filelist
 $(SYMBOLS_ZIP): $(SOONG_ZIP)
@@ -5157,15 +5162,7 @@ name := $(name)_debug
 endif
 COVERAGE_ZIP := $(PRODUCT_OUT)/$(name).zip
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
-$(COVERAGE_ZIP): $(FULL_SYSTEMIMAGE_DEPS) \
-	    $(INTERNAL_RAMDISK_FILES) \
-	    $(INTERNAL_USERDATAIMAGE_FILES) \
-	    $(INTERNAL_VENDORIMAGE_FILES) \
-	    $(INTERNAL_PRODUCTIMAGE_FILES) \
-	    $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
-	    $(INTERNAL_ODMIMAGE_FILES) \
-	    $(INTERNAL_VENDOR_DLKMIMAGE_FILES) \
-	    $(INTERNAL_ODM_DLKMIMAGE_FILES)
+$(COVERAGE_ZIP): $(INTERNAL_ALLIMAGES_FILES)
 endif
 $(COVERAGE_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,coverage)/filelist
 $(COVERAGE_ZIP): $(SOONG_ZIP)
@@ -5224,6 +5221,9 @@ $(JACOCO_REPORT_CLASSES_ALL) :
 	find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" -o -name "proguard_usage.zip" 2>/dev/null | sort > $@.list
 	$(SOONG_ZIP) -o $@ -L 0 -C $(OUT_DIR) -P out -l $@.list
 
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
+  $(JACOCO_REPORT_CLASSES_ALL): $(INTERNAL_ALLIMAGES_FILES)
+endif
 endif # EMMA_INSTRUMENT=true
 
 
@@ -5233,17 +5233,7 @@ endif # EMMA_INSTRUMENT=true
 PROGUARD_DICT_ZIP := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict-$(FILE_NAME_TAG).zip
 # For apps_only build we'll establish the dependency later in build/make/core/main.mk.
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
-$(PROGUARD_DICT_ZIP): \
-    $(FULL_SYSTEMIMAGE_DEPS) \
-    $(INTERNAL_RAMDISK_FILES) \
-    $(INTERNAL_USERDATAIMAGE_FILES) \
-    $(INTERNAL_VENDORIMAGE_FILES) \
-    $(INTERNAL_PRODUCTIMAGE_FILES) \
-    $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
-    $(INTERNAL_ODMIMAGE_FILES) \
-    $(INTERNAL_VENDOR_DLKMIMAGE_FILES) \
-    $(INTERNAL_ODM_DLKMIMAGE_FILES) \
-    $(updater_dep)
+$(PROGUARD_DICT_ZIP): $(INTERNAL_ALLIMAGES_FILES) $(updater_dep)
 endif
 $(PROGUARD_DICT_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,proguard)/filelist
 $(PROGUARD_DICT_ZIP): $(SOONG_ZIP)
