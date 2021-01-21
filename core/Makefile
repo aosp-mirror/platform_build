@@ -5221,7 +5221,9 @@ $(JACOCO_REPORT_CLASSES_ALL) :
 	find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" -o -name "proguard_usage.zip" 2>/dev/null | sort > $@.list
 	$(SOONG_ZIP) -o $@ -L 0 -C $(OUT_DIR) -P out -l $@.list
 
-$(JACOCO_REPORT_CLASSES_ALL): $(INTERNAL_ALLIMAGES_FILES)
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
+  $(JACOCO_REPORT_CLASSES_ALL): $(INTERNAL_ALLIMAGES_FILES)
+endif
 endif # EMMA_INSTRUMENT=true
 
 
