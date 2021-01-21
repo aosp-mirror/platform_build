@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7e3982a3_a2b66dfe",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T07:20:51Z",
+      "side": 1,
+      "message": "We need to avoid copying this file during signing: https://source.corp.google.com/aosp-master/build/make/tools/releasetools/sign_target_files_apks.py;l\u003d626\n\nAlso, do we have a build prop indicating if the compressed apex is used? So we can skip the parsing of apexes.",
+      "range": {
+        "startLine": 194,
+        "startChar": 16,
+        "endLine": 194,
+        "endChar": 20
+      },
+      "revId": "bbc6c36fdb99cf8b9f2746844d89c3d0858fcdb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
