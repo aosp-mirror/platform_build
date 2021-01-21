@@ -1027,6 +1027,9 @@ $(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
     $(eval vendor_ramdisk_fragment_target := $(call build-vendor-ramdisk-fragment,$(vendor_ramdisk_fragment))) \
     $(if $(filter --ramdisk_type,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS)),, \
       $(eval BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS += --ramdisk_type DLKM))) \
+  $(if $(filter --ramdisk_name,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS)), \
+    $(error Must not specify --ramdisk_name for vendor ramdisk fragment: $(vendor_ramdisk_fragment))) \
+  $(eval BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS += --ramdisk_name $(vendor_ramdisk_fragment)) \
   $(eval INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS += $(vendor_ramdisk_fragment_target)) \
   $(eval INTERNAL_VENDOR_RAMDISK_FRAGMENT_ARGS += $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS) --vendor_ramdisk_fragment $(vendor_ramdisk_fragment_target)) \
 )
@@ -2329,6 +2332,10 @@ INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET := $(PRODUCT_OUT)/vendor-ramdisk-debug.cpi
 $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_FILES := $(INTERNAL_DEBUG_RAMDISK_FILES)
 $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): VENDOR_RAMDISK_DIR := $(TARGET_VENDOR_RAMDISK_OUT)
 
+ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+$(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+endif
+
 INTERNAL_VENDOR_DEBUG_RAMDISK_FILES := $(filter $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/%, \
     $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
@@ -2345,8 +2352,7 @@ $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_VENDOR_DEBUG_RA
 	touch $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/force_debuggable
 	$(foreach debug_file,$(DEBUG_RAMDISK_FILES), \
 	  cp -f $(debug_file) $(subst $(PRODUCT_OUT)/debug_ramdisk,$(PRODUCT_OUT)/vendor_debug_ramdisk,$(debug_file)) &&) true
-	rsync -a $(VENDOR_RAMDISK_DIR)/ $(VENDOR_DEBUG_RAMDISK_DIR)
-	$(MKBOOTFS) -d $(TARGET_OUT) $(VENDOR_DEBUG_RAMDISK_DIR) | $(COMPRESSION_COMMAND) > $@
+	$(MKBOOTFS) -d $(TARGET_OUT) $(VENDOR_RAMDISK_DIR) $(VENDOR_DEBUG_RAMDISK_DIR) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $@
 
 INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK := $(PRODUCT_OUT)/installed-files-vendor-ramdisk-debug.txt
 INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK := $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK:.txt=.json)
@@ -4534,6 +4540,8 @@ define dump-dynamic-partitions-info
     echo "super_partition_error_limit=$(BOARD_SUPER_PARTITION_ERROR_LIMIT)" >> $(1))
   $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA)), \
     echo "virtual_ab=true" >> $(1))
+  $(if $(filter true,$(PRODUCT_VIRTUAL_AB_COMPRESSION)), \
+    echo "virtual_ab_compression=true" >> $(1))
   $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA_RETROFIT)), \
     echo "virtual_ab_retrofit=true" >> $(1))
 endef
