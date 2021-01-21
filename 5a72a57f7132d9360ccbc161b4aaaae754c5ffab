@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4287edf_34544172",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T00:36:16Z",
+      "side": 1,
+      "message": "move the function to apex_util.py? Also run a pylint",
+      "range": {
+        "startLine": 569,
+        "startChar": 4,
+        "endLine": 569,
+        "endChar": 30
+      },
+      "revId": "5a72a57f7132d9360ccbc161b4aaaae754c5ffab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
