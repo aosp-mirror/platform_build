@@ -78,18 +78,12 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         my_static_libraries += libc++demangle
 
         ifeq ($(my_link_type),static)
-            my_static_libraries += libm libc
-            ifeq (arm,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
-                my_static_libraries += libunwind_llvm
-                my_ldflags += -Wl,--exclude-libs,libunwind_llvm.a
-            else
-                my_static_libraries += libgcc_stripped
-                my_ldflags += -Wl,--exclude-libs,libgcc_stripped.a
-            endif
+            my_static_libraries += libm libc libunwind
         endif
     endif
 else ifeq ($(my_cxx_stl),ndk)
     # Using an NDK STL. Handled in binary.mk, except for the unwinder.
+    # TODO: Switch the NDK over to the LLVM unwinder for non-arm32 architectures.
     ifeq (arm,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
         my_static_libraries += libunwind_llvm
         my_ldflags += -Wl,--exclude-libs,libunwind_llvm.a
