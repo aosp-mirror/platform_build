@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c230ebb5_b68c7d99",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T07:17:27Z",
+      "side": 0,
+      "message": "I guess you can create a wrapper function that accepts apex_data (for target-file signing)",
+      "range": {
+        "startLine": 309,
+        "startChar": 0,
+        "endLine": 309,
+        "endChar": 42
+      },
+      "revId": "fc596c996f35e123a0c2430894500aae97b5fde7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

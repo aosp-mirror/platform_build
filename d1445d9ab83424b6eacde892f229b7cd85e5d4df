@@ -20,6 +20,52 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4dcfd365_28273482",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T07:17:27Z",
+      "side": 1,
+      "message": "should be avbtool?",
+      "range": {
+        "startLine": 410,
+        "startChar": 6,
+        "endLine": 410,
+        "endChar": 24
+      },
+      "revId": "d1445d9ab83424b6eacde892f229b7cd85e5d4df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3e5c8a2_495c8613",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T07:17:27Z",
+      "side": 1,
+      "message": "this is required in otatools.zip\nhttps://source.corp.google.com/aosp-master/build/make/core/Makefile?l\u003d4130\n\ndo we care about the libz version to get similar bytes for re-compression? Maybe no in this case.",
+      "range": {
+        "startLine": 423,
+        "startChar": 29,
+        "endLine": 423,
+        "endChar": 50
+      },
+      "revId": "d1445d9ab83424b6eacde892f229b7cd85e5d4df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "87cef08c_fadaa4e6",
         "filename": "tools/releasetools/test_sign_apex.py",
         "patchSetId": 2
