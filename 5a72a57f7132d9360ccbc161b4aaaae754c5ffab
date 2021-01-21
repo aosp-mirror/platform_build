@@ -22,6 +22,30 @@
       },
       "revId": "5a72a57f7132d9360ccbc161b4aaaae754c5ffab",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c59c082_a4a3e047",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-21T20:25:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4287edf_34544172",
+      "range": {
+        "startLine": 569,
+        "startChar": 4,
+        "endLine": 569,
+        "endChar": 30
+      },
+      "revId": "5a72a57f7132d9360ccbc161b4aaaae754c5ffab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
