@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a28c0380_1b24567f",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T23:34:28Z",
+      "side": 1,
+      "message": "We would prefer code consistency.. but sure if you manage the file",
+      "parentUuid": "9eb2de41_cd95be46",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 61
+      },
+      "revId": "55fbfe6d5eea9212df69e2c20cc60fdd04f87bb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "292404d4_03b3b564",
@@ -179,6 +203,30 @@
       "side": 1,
       "message": "Yea, sometimes this is invoked without AOSP source tree.",
       "parentUuid": "efd5e202_72dec6ed",
+      "range": {
+        "startLine": 473,
+        "startChar": 1,
+        "endLine": 474,
+        "endChar": 27
+      },
+      "revId": "55fbfe6d5eea9212df69e2c20cc60fdd04f87bb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "02cd2816_66bd25a1",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-21T23:34:28Z",
+      "side": 1,
+      "message": "The caller should specify the search path in this case? The unit test should skip if external tools are missing",
+      "parentUuid": "451de86c_27bf3ae8",
       "range": {
         "startLine": 473,
         "startChar": 1,
