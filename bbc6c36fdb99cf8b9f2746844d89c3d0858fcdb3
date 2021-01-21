@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "045bc211_73876d9c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2021-01-21T15:59:39Z",
+      "side": 1,
+      "message": "nit: Bug: 172911822\n\nMakes it easier to track all the CLs later on.",
+      "revId": "bbc6c36fdb99cf8b9f2746844d89c3d0858fcdb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7e3982a3_a2b66dfe",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 8
@@ -38,6 +55,30 @@
       "side": 1,
       "message": "Build prop? Probably need to ask mainline folks.",
       "parentUuid": "7e3982a3_a2b66dfe",
+      "range": {
+        "startLine": 194,
+        "startChar": 16,
+        "endLine": 194,
+        "endChar": 20
+      },
+      "revId": "bbc6c36fdb99cf8b9f2746844d89c3d0858fcdb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d6e3757_725c65e6",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2021-01-21T15:59:39Z",
+      "side": 1,
+      "message": "\u003e Also, do we have a build prop indicating if the compressed apex is used?\n\nWe have a product flag: PRODUCT_COMPRESSED_APEX. Devices that use compressed APEX will have this set to true. Added in aosp/1512289.\n\nCan we access product flags directly? If not, we will have to create a build prop. Something like ro.apex.compressed.",
+      "parentUuid": "b9f51151_38012199",
       "range": {
         "startLine": 194,
         "startChar": 16,
