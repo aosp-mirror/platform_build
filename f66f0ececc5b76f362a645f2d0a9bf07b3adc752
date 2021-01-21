@@ -33,6 +33,24 @@
       "message": "This needs to be inside ifeq (,$(TARGET_BUILD_UNBUNDLED))",
       "revId": "f66f0ececc5b76f362a645f2d0a9bf07b3adc752",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f701d8d4_1e48d430",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5216,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-01-21T03:49:05Z",
+      "side": 1,
+      "message": "Ah, I missed that. Thanks for catching it. Fix is at aosp/1555272",
+      "parentUuid": "88b097be_965888c9",
+      "revId": "f66f0ececc5b76f362a645f2d0a9bf07b3adc752",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
