@@ -22,6 +22,30 @@
       },
       "revId": "bbc6c36fdb99cf8b9f2746844d89c3d0858fcdb3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9f51151_38012199",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-21T15:36:30Z",
+      "side": 1,
+      "message": "Build prop? Probably need to ask mainline folks.",
+      "parentUuid": "7e3982a3_a2b66dfe",
+      "range": {
+        "startLine": 194,
+        "startChar": 16,
+        "endLine": 194,
+        "endChar": 20
+      },
+      "revId": "bbc6c36fdb99cf8b9f2746844d89c3d0858fcdb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
