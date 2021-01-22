@@ -22,6 +22,30 @@
       },
       "revId": "c7b9faec4de67b12eb065e4929e6893d0eaea79d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6afe7803_7608be97",
+        "filename": "tools/product_config/src/com/android/build/config/ErrorReporter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-01-22T18:48:00Z",
+      "side": 1,
+      "message": "It\u0027s the java convention for turning on and off debug printing, but fair catch because I didn\u0027t mean to leave it on.",
+      "parentUuid": "ef314ba5_8e081019",
+      "range": {
+        "startLine": 257,
+        "startChar": 20,
+        "endLine": 257,
+        "endChar": 21
+      },
+      "revId": "c7b9faec4de67b12eb065e4929e6893d0eaea79d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
