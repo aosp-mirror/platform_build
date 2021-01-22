@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f23d183c_b68fc0ef",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 14
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-22T00:52:32Z",
+      "side": 1,
+      "message": "no need anymore?",
+      "range": {
+        "startLine": 27,
+        "startChar": 11,
+        "endLine": 27,
+        "endChar": 20
+      },
+      "revId": "fd744d74b2513ffc22793950976e40db640599f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "604ede8b_7db33969",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-22T00:52:32Z",
+      "side": 1,
+      "message": "Add a new function and call it after writing all partitions?",
+      "range": {
+        "startLine": 185,
+        "startChar": 0,
+        "endLine": 185,
+        "endChar": 60
+      },
+      "revId": "fd744d74b2513ffc22793950976e40db640599f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e763700_18a803f0",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-22T00:52:32Z",
+      "side": 1,
+      "message": "logic in CareMap also copy the output to OPTIONS.input_tmp",
+      "range": {
+        "startLine": 197,
+        "startChar": 4,
+        "endLine": 197,
+        "endChar": 8
+      },
+      "revId": "fd744d74b2513ffc22793950976e40db640599f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
