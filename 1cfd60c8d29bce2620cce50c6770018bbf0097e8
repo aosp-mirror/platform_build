@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f802735_1f057f0d",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1147,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-22T00:54:17Z",
+      "side": 1,
+      "message": "that\u0027s why I think a prop in META/misc_info is useful. We can abort if the META/apex_info.pb isn\u0027t there.",
+      "range": {
+        "startLine": 1147,
+        "startChar": 0,
+        "endLine": 1147,
+        "endChar": 8
+      },
+      "revId": "1cfd60c8d29bce2620cce50c6770018bbf0097e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
