@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2af0e11_205731dd",
+        "filename": "tools/product_config/test/com/android/build/config/TestRunner.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-01-22T18:19:33Z",
+      "side": 1,
+      "message": "The amount of indent for this lambda looks excessive.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 20
+      },
+      "revId": "783226760272d1ce38ca3c4f01b8317c201b0d79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c7012e72_88e41cf5",
+        "filename": "tools/product_config/test/com/android/build/config/TestRunner.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-01-22T18:19:33Z",
+      "side": 1,
+      "message": "What\u0027s the meaning of the commented out arguments?",
+      "revId": "783226760272d1ce38ca3c4f01b8317c201b0d79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "189249f6_89dcc405",
+        "filename": "tools/product_config/test/com/android/build/config/TestRunner.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-01-22T18:19:33Z",
+      "side": 1,
+      "message": "IMHO the absence of the output is good enough indication of successful completion.",
+      "revId": "783226760272d1ce38ca3c4f01b8317c201b0d79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
