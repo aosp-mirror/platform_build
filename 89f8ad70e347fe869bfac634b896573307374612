@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed744e2c_f347e87f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1229339
+      },
+      "writtenOn": "2021-01-22T05:02:48Z",
+      "side": 1,
+      "message": "I\u0027m not sure why the NDK unwinding is handled in cxx_stl_setup.mk, so I\u0027ll add pcc just in case. That code was added in https://android-review.googlesource.com/c/platform/build/+/1186095. At that time, both the platform and NDK modules needed to link an unwinder statically. Since then, the platform modules get the unwinder from libc.so instead.\n\ncxx_stl_setup.mk is also included in cc_prebuilt_internal.mk, but that makefile doesn\u0027t appear to use cxx_stl_setup.mk solely for my_shared_libraries, not my_static_libraries or my_ldflags.\n",
+      "revId": "89f8ad70e347fe869bfac634b896573307374612",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
