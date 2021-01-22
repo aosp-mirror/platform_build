@@ -34,6 +34,24 @@
       "parentUuid": "c3257ae3_16f6394a",
       "revId": "00c7fcc7665477f2df866d5232084e2e22727761",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ff378bb_48c51abb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2021-01-22T23:39:38Z",
+      "side": 1,
+      "message": "thanks! (but please enjoy your weekend rather than reviewing CLs :-) )",
+      "parentUuid": "2cb03366_da38214d",
+      "revId": "00c7fcc7665477f2df866d5232084e2e22727761",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
