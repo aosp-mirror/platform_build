@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef314ba5_8e081019",
+        "filename": "tools/product_config/src/com/android/build/config/ErrorReporter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-01-22T18:25:01Z",
+      "side": 1,
+      "message": "This isn\u0027t a useful check :-)",
+      "range": {
+        "startLine": 257,
+        "startChar": 20,
+        "endLine": 257,
+        "endChar": 21
+      },
+      "revId": "c7b9faec4de67b12eb065e4929e6893d0eaea79d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
