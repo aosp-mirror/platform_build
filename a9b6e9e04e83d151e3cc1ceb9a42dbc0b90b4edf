@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f19b47ae_10ad3761",
+        "filename": "tools/product_config/src/com/android/build/config/KatiCommandImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-01-22T21:22:33Z",
+      "side": 1,
+      "message": "What are the advantages of using the threads over simply calling Process.getInputStream/Process.getErrorStream?",
+      "range": {
+        "startLine": 33,
+        "startChar": 10,
+        "endLine": 33,
+        "endChar": 22
+      },
+      "revId": "a9b6e9e04e83d151e3cc1ceb9a42dbc0b90b4edf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
