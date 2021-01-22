@@ -16,6 +16,24 @@
       "message": "sorry jiyong --- i need another +2 because i\u0027m an idiot who didn\u0027t actually manually review the diff he uploaded the first time round and notice my bad merge :-(",
       "revId": "00c7fcc7665477f2df866d5232084e2e22727761",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2cb03366_da38214d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-01-22T23:13:26Z",
+      "side": 1,
+      "message": "no worries. done.",
+      "parentUuid": "c3257ae3_16f6394a",
+      "revId": "00c7fcc7665477f2df866d5232084e2e22727761",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
