@@ -34,6 +34,24 @@
       "parentUuid": "a561c643_13745efa",
       "revId": "eb039dcbead6cc03886434d68b1579db037d6da1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "13af13fd_12ca5b1e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-22T23:09:10Z",
+      "side": 1,
+      "message": "\u003e Problem is that the GKI configs in generic_arm64/BoardConfig.mk couples with the GKI configs in generic_arm64/device.mk 😞\n\nCan you explain which lines depends on which product variable?",
+      "parentUuid": "37fb2c0e_619ac135",
+      "revId": "eb039dcbead6cc03886434d68b1579db037d6da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
