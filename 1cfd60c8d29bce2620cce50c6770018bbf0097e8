@@ -22,6 +22,30 @@
       },
       "revId": "1cfd60c8d29bce2620cce50c6770018bbf0097e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "274c10ce_df945d94",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1147,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-22T15:42:16Z",
+      "side": 1,
+      "message": "Even if we add such a prop, there might be a build with apex compression enabled but doesn\u0027t have this prop(builds between when apex compression is first enabled and the time we add such build prop)",
+      "parentUuid": "9f802735_1f057f0d",
+      "range": {
+        "startLine": 1147,
+        "startChar": 0,
+        "endLine": 1147,
+        "endChar": 8
+      },
+      "revId": "1cfd60c8d29bce2620cce50c6770018bbf0097e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
