@@ -16,6 +16,24 @@
       "message": "+1, but see what ccross@ thinks",
       "revId": "eb039dcbead6cc03886434d68b1579db037d6da1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "37fb2c0e_619ac135",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-01-22T11:33:54Z",
+      "side": 1,
+      "message": "I\u0027ll work on this later... Turns out this change is not as trivial as I originally imagined. Problem is that the GKI configs in generic_arm64/BoardConfig.mk couples with the GKI configs in generic_arm64/device.mk 😞\n\nIt seems strange to me that board configs would depend on product configs. I think the proper way to do this CL is to refactor BOARD_KERNEL_BINARIES to PRODUCT_KERNEL_BINARIES (sigh)",
+      "parentUuid": "a561c643_13745efa",
+      "revId": "eb039dcbead6cc03886434d68b1579db037d6da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
