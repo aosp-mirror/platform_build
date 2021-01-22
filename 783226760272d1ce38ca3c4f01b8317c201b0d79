@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "36f15caf_7c27e4ef",
+        "filename": "tools/product_config/test/com/android/build/config/TestRunner.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-01-22T18:47:38Z",
+      "side": 1,
+      "message": "I think it\u0027s right. It\u0027s two 4 space units for the RunListener block (terminated by the \u0027}\u0027 on line 41. Plus one more 4 space unit because that\u0027s indented.  If the block had started on its own line it would be right.\n\njunit.addListener(...long something that makes it wrap...\n        new RunListener() {\n            @Override....\n        });",
+      "parentUuid": "f2af0e11_205731dd",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 20
+      },
+      "revId": "783226760272d1ce38ca3c4f01b8317c201b0d79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c7012e72_88e41cf5",
         "filename": "tools/product_config/test/com/android/build/config/TestRunner.java",
         "patchSetId": 3
@@ -37,6 +61,24 @@
       "writtenOn": "2021-01-22T18:19:33Z",
       "side": 1,
       "message": "What\u0027s the meaning of the commented out arguments?",
+      "revId": "783226760272d1ce38ca3c4f01b8317c201b0d79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3b6ae3c_3522c512",
+        "filename": "tools/product_config/test/com/android/build/config/TestRunner.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-01-22T18:47:38Z",
+      "side": 1,
+      "message": "These are tests that will come back in later in this chain of CLs.  I could have deleted them but that would be a lot more git rebasing that I didn\u0027t bother with.  Anyway, fixed now.",
+      "parentUuid": "c7012e72_88e41cf5",
       "revId": "783226760272d1ce38ca3c4f01b8317c201b0d79",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -54,6 +96,24 @@
       "writtenOn": "2021-01-22T18:19:33Z",
       "side": 1,
       "message": "IMHO the absence of the output is good enough indication of successful completion.",
+      "revId": "783226760272d1ce38ca3c4f01b8317c201b0d79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c81f0774_91e6db55",
+        "filename": "tools/product_config/test/com/android/build/config/TestRunner.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-01-22T18:47:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "189249f6_89dcc405",
       "revId": "783226760272d1ce38ca3c4f01b8317c201b0d79",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
