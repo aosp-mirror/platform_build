@@ -16,6 +16,29 @@
       "message": "Leave +2 to samiul@",
       "revId": "601013db53f86f02439406e3cf687d4aca6a1710",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1555560c_482e6ae5",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2021-01-23T00:54:36Z",
+      "side": 1,
+      "message": "What are we doing here? Fetching the correct path to deapexer? In that case, do we need to do the same when getting the apex_type above at line 476?",
+      "range": {
+        "startLine": 492,
+        "startChar": 6,
+        "endLine": 496,
+        "endChar": 34
+      },
+      "revId": "601013db53f86f02439406e3cf687d4aca6a1710",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
