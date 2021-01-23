@@ -52,6 +52,24 @@
       "parentUuid": "37fb2c0e_619ac135",
       "revId": "eb039dcbead6cc03886434d68b1579db037d6da1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb2e4517_5c128ca1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-01-23T09:14:25Z",
+      "side": 1,
+      "message": "`BOARD_KERNEL_BINARIES :\u003d kernel-4.19-gz kernel-5.4 ...` specified in generic_arm64/BoardConfig.mk\nwould cause the build rule for GKI boot images to be generated automatically (boot-4.19-gz.img boot-5.4.img ...), however the boot images depend on the kernel artifacts, and the kernel artifacts build rules are defined in generic_arm64/device.mk, the PRODUCT_COPY_FILES lines this CL are trying to move.\n\nIMO it makes more sense for all the GKI related configs to be product config but board config. For example setting PRODUCT_KERNEL_BINARIES in product makefile would generate GKI boot images. But I feel like it\u0027s too big of a change to make at this point since so many things are depending on BOARD_KERNEL_BINARIES already.",
+      "parentUuid": "13af13fd_12ca5b1e",
+      "revId": "eb039dcbead6cc03886434d68b1579db037d6da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
