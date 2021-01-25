@@ -33,10 +33,11 @@ from ota_from_target_files import (
     GetTargetFilesZipWithoutPostinstallConfig,
     Payload, PayloadSigner, POSTINSTALL_CONFIG,
     StreamingPropertyFiles, AB_PARTITIONS)
+from apex_utils import GetApexInfoFromTargetFiles
 from test_utils import PropertyFilesTestCase
 
 
-def construct_target_files(secondary=False):
+def construct_target_files(secondary=False, compressedApex=False):
   """Returns a target-files.zip file for generating OTA packages."""
   target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
   with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
@@ -77,6 +78,11 @@ def construct_target_files(secondary=False):
     if secondary:
       target_files_zip.writestr('IMAGES/system_other.img',
                                 os.urandom(len("system_other")))
+
+    if compressedApex:
+      apex_file_name = 'com.android.apex.compressed.v1.capex'
+      apex_file = os.path.join(test_utils.get_current_dir(), apex_file_name)
+      target_files_zip.write(apex_file, 'SYSTEM/apex/' + apex_file_name)
 
   return target_files
 
@@ -273,6 +279,21 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
             'pre-device': 'product-device',
         },
         metadata)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetApexInfoFromTargetFiles(self):
+    target_files = construct_target_files(compressedApex=True)
+    apex_infos = GetApexInfoFromTargetFiles(target_files)
+    self.assertEqual(len(apex_infos), 1)
+    self.assertEqual(apex_infos[0].package_name, "com.android.apex.compressed")
+    self.assertEqual(apex_infos[0].version, 1)
+    self.assertEqual(apex_infos[0].is_compressed, True)
+    # Compare the decompressed APEX size with the original uncompressed APEX
+    original_apex_name = 'com.android.apex.compressed.v1_original.apex'
+    original_apex_filepath = os.path.join(test_utils.get_current_dir(), original_apex_name)
+    uncompressed_apex_size = os.path.getsize(original_apex_filepath)
+    self.assertEqual(apex_infos[0].decompressed_size, uncompressed_apex_size)
+
 
   def test_GetPackageMetadata_retrofitDynamicPartitions(self):
     target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
