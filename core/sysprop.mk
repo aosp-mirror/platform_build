@@ -47,6 +47,11 @@ define generate-common-build-props
         echo "ro.product.$(1).model=$(PRODUCT_MODEL)" >> $(2);\
         echo "ro.product.$(1).name=$(TARGET_PRODUCT)" >> $(2);\
     )\
+    $(if $(filter system vendor odm,$(1)),\
+        echo "ro.$(1).product.cpu.abilist=$(TARGET_CPU_ABI_LIST) " >> $(2);\
+        echo "ro.$(1).product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT)" >> $(2);\
+        echo "ro.$(1).product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
+    )\
     echo "ro.$(1).build.date=`$(DATE_FROM_FILE)`" >> $(2);\
     echo "ro.$(1).build.date.utc=`$(DATE_FROM_FILE) +%s`" >> $(2);\
     echo "ro.$(1).build.fingerprint=$(BUILD_FINGERPRINT_FROM_FILE)" >> $(2);\
@@ -71,6 +76,7 @@ endef
 #       $(3) and (4) are affected
 # $(6): optional list of files to append at the end. The content of each file is emitted
 #       to the output
+# $(7): optional flag to skip common properties generation
 define build-properties
 ALL_DEFAULT_INSTALLED_MODULES += $(2)
 
@@ -96,7 +102,9 @@ $(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3
 	$(hide) echo Building $$@
 	$(hide) mkdir -p $$(dir $$@)
 	$(hide) rm -f $$@ && touch $$@
+ifneq ($(strip $(7)), true)
 	$(hide) $$(call generate-common-build-props,$(call to-lower,$(strip $(1))),$$@)
+endif
 	$(hide) $(foreach file,$(strip $(3)),\
 	    if [ -f "$(file)" ]; then\
 	        echo "" >> $$@;\
@@ -309,6 +317,7 @@ $(eval $(call build-properties,\
     $(_prop_files_),\
     $(_prop_vars_),\
     $(_blacklist_names_),\
+    $(empty),\
     $(empty)))
 
 # -----------------------------------------------------------------
@@ -346,6 +355,7 @@ $(eval $(call build-properties,\
     $(_prop_files_),\
     $(_prop_vars_),\
     $(PRODUCT_VENDOR_PROPERTY_BLACKLIST),\
+    $(empty),\
     $(empty)))
 
 # -----------------------------------------------------------------
@@ -379,13 +389,28 @@ else
 _footers_ :=
 endif
 
+# Skip common /product properties generation if device released before R and
+# has no product partition. This is the first part of the check.
+ifeq ($(call math_lt,$(if $(PRODUCT_SHIPPING_API_LEVEL),$(PRODUCT_SHIPPING_API_LEVEL),30),30), true)
+  _skip_common_properties := true
+endif
+
+# The second part of the check - always generate common properties for the
+# devices with product partition regardless of shipping level.
+ifneq ($(BOARD_USES_PRODUCTIMAGE),)
+  _skip_common_properties :=
+endif
+
 $(eval $(call build-properties,\
     product,\
     $(INSTALLED_PRODUCT_BUILD_PROP_TARGET),\
     $(_prop_files_),\
     $(_prop_vars_),\
     $(empty),\
-    $(_footers_)))
+    $(_footers_),\
+    $(_skip_common_properties)))
+
+_skip_common_properties :=
 
 # ----------------------------------------------------------------
 # odm/etc/build.prop
@@ -407,6 +432,7 @@ $(eval $(call build-properties,\
     $(_prop_files),\
     $(_prop_vars_),\
     $(empty),\
+    $(empty),\
     $(empty)))
 
 # ----------------------------------------------------------------
@@ -420,6 +446,7 @@ $(eval $(call build-properties,\
     $(empty),\
     $(empty),\
     $(empty),\
+    $(empty),\
     $(empty)))
 
 # ----------------------------------------------------------------
@@ -430,6 +457,7 @@ INSTALLED_ODM_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM_DLKM)/etc/build.prop
 $(eval $(call build-properties,\
     odm_dlkm,\
     $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET),\
+    $(empty),\
     $(empty),\
     $(empty),\
     $(empty),\
@@ -453,6 +481,7 @@ $(eval $(call build-properties,\
     $(_prop_files_),\
     $(_prop_vars_),\
     $(empty),\
+    $(empty),\
     $(empty)))
 
 # ----------------------------------------------------------------
@@ -464,6 +493,7 @@ INSTALLED_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RAMDISK_OUT)/$(RAMDISK_BUILD_PRO
 $(eval $(call build-properties,\
     bootimage,\
     $(INSTALLED_RAMDISK_BUILD_PROP_TARGET),\
+    $(empty),\
     $(empty),\
     $(empty),\
     $(empty),\

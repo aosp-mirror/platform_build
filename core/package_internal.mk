@@ -552,6 +552,10 @@ endif
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 $(LOCAL_BUILT_MODULE) : $(ZIP2ZIP)
 endif
+ifeq ($(full_classes_jar),)
+  # We don't build jar, need to add the Java resources here.
+  $(LOCAL_BUILT_MODULE): $(java_resource_sources)
+endif
 $(LOCAL_BUILT_MODULE): PRIVATE_USE_EMBEDDED_NATIVE_LIBS := $(LOCAL_USE_EMBEDDED_NATIVE_LIBS)
 $(LOCAL_BUILT_MODULE):
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
@@ -603,6 +607,8 @@ ifneq ($(full_classes_jar),)
 else
   $(my_bundle_module): PRIVATE_DEX_FILE :=
   $(my_bundle_module): PRIVATE_SOURCE_ARCHIVE :=
+  # We don't build jar, need to add the Java resources here.
+  $(my_bundle_module): $(java_resource_sources)
 endif # full_classes_jar
 
 $(my_bundle_module): $(MERGE_ZIPS) $(SOONG_ZIP) $(ZIP2ZIP)

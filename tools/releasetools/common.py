@@ -3672,14 +3672,13 @@ def GetBootImageBuildProp(boot_img):
     RunAndCheckOutput(['toybox', 'cpio', '-F', abs_uncompressed_ramdisk, '-i'],
                cwd=extracted_ramdisk)
 
-    prop_file = None
     for search_path in RAMDISK_BUILD_PROP_REL_PATHS:
       prop_file = os.path.join(extracted_ramdisk, search_path)
       if os.path.isfile(prop_file):
-        break
+        return prop_file
       logger.warning('Unable to get boot image timestamp: no %s in ramdisk', search_path)
 
-    return prop_file
+    return None
 
   except ExternalError as e:
     logger.warning('Unable to get boot image build props: %s', e)

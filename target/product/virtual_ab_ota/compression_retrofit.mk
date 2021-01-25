@@ -15,6 +15,7 @@
 #
 
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
+PRODUCT_VIRTUAL_AB_COMPRESSION := true
 
 # For devices that are not GKI-capable (eg do not have vendor_boot),
 # snapuserd.ramdisk is included rather than snapuserd.vendor_ramdisk.
