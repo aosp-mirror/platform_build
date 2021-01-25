@@ -21,7 +21,12 @@ import shlex
 import shutil
 import zipfile
 
+import apex_manifest
 import common
+from common import UnzipTemp, RunAndCheckOutput, MakeTempFile, OPTIONS
+
+import ota_metadata_pb2
+
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +74,7 @@ class ApexApkSigner(object):
     if not os.path.exists(self.debugfs_path):
       raise ApexSigningError(
           "Couldn't find location of debugfs_static: " +
-          "Path {} does not exist. ".format(debugfs_path) +
+          "Path {} does not exist. ".format(self.debugfs_path) +
           "Make sure bin/debugfs_static can be found in -p <path>")
     list_cmd = ['deapexer', '--debugfs_path',
                 self.debugfs_path, 'list', self.apex_path]
@@ -105,7 +110,7 @@ class ApexApkSigner(object):
     if not os.path.exists(self.debugfs_path):
       raise ApexSigningError(
           "Couldn't find location of debugfs_static: " +
-          "Path {} does not exist. ".format(debugfs_path) +
+          "Path {} does not exist. ".format(self.debugfs_path) +
           "Make sure bin/debugfs_static can be found in -p <path>")
     payload_dir = common.MakeTempDir()
     extract_cmd = ['deapexer', '--debugfs_path',
@@ -127,8 +132,9 @@ class ApexApkSigner(object):
       # signed apk file.
       unsigned_apk = common.MakeTempFile()
       os.rename(apk_path, unsigned_apk)
-      common.SignFile(unsigned_apk, apk_path, key_name, self.key_passwords.get(key_name),
-                      codename_to_api_level_map=self.codename_to_api_level_map)
+      common.SignFile(
+          unsigned_apk, apk_path, key_name, self.key_passwords.get(key_name),
+          codename_to_api_level_map=self.codename_to_api_level_map)
       has_signed_apk = True
     return payload_dir, has_signed_apk
 
@@ -427,4 +433,71 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
 
   except common.ExternalError as e:
     raise ApexInfoError(
-        'Failed to get type for {}:\n{}'.format(apex_file))
+        'Failed to get type for {}:\n{}'.format(apex_file, e))
+
+def GetApexInfoFromTargetFiles(input_file):
+  """
+  Get information about system APEX stored in the input_file zip
+
+  Args:
+    input_file: The filename of the target build target-files zip or directory.
+
+  Return:
+    A list of ota_metadata_pb2.ApexInfo() populated using the APEX stored in
+    /system partition of the input_file
+  """
+
+  # Extract the apex files so that we can run checks on them
+  if not isinstance(input_file, str):
+    raise RuntimeError("must pass filepath to target-files zip or directory")
+
+  if os.path.isdir(input_file):
+    tmp_dir = input_file
+  else:
+    tmp_dir = UnzipTemp(input_file, ["SYSTEM/apex/*"])
+  target_dir = os.path.join(tmp_dir, "SYSTEM/apex/")
+
+  apex_infos = []
+  for apex_filename in os.listdir(target_dir):
+    apex_filepath = os.path.join(target_dir, apex_filename)
+    if not os.path.isfile(apex_filepath) or \
+        not zipfile.is_zipfile(apex_filepath):
+      logger.info("Skipping %s because it's not a zipfile", apex_filepath)
+      continue
+    apex_info = ota_metadata_pb2.ApexInfo()
+    # Open the apex file to retrieve information
+    manifest = apex_manifest.fromApex(apex_filepath)
+    apex_info.package_name = manifest.name
+    apex_info.version = manifest.version
+    # Check if the file is compressed or not
+    debugfs_path = "debugfs"
+    if OPTIONS.search_path:
+      debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
+    deapexer = 'deapexer'
+    if OPTIONS.search_path:
+      deapexer_path = os.path.join(OPTIONS.search_path, "deapexer")
+      if os.path.isfile(deapexer_path):
+        deapexer = deapexer_path
+    apex_type = RunAndCheckOutput([
+        deapexer, "--debugfs_path", debugfs_path,
+        'info', '--print-type', apex_filepath]).rstrip()
+    if apex_type == 'COMPRESSED':
+      apex_info.is_compressed = True
+    elif apex_type == 'UNCOMPRESSED':
+      apex_info.is_compressed = False
+    else:
+      raise RuntimeError('Not an APEX file: ' + apex_type)
+
+    # Decompress compressed APEX to determine its size
+    if apex_info.is_compressed:
+      decompressed_file_path = MakeTempFile(prefix="decompressed-",
+                                            suffix=".apex")
+      # Decompression target path should not exist
+      os.remove(decompressed_file_path)
+      RunAndCheckOutput([deapexer, 'decompress', '--input', apex_filepath,
+                         '--output', decompressed_file_path])
+      apex_info.decompressed_size = os.path.getsize(decompressed_file_path)
+
+    apex_infos.append(apex_info)
+
+  return apex_infos
