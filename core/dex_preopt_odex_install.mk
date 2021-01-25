@@ -253,6 +253,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_str,  ProfileClassListing,            $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE)))
   $(call add_json_bool, ProfileIsTextListing,           $(my_profile_is_text_listing))
   $(call add_json_bool, EnforceUsesLibraries,           $(LOCAL_ENFORCE_USES_LIBRARIES))
+  $(call add_json_str,  ProvidesUsesLibrary,            $(firstword $(LOCAL_PROVIDES_USES_LIBRARY) $(LOCAL_MODULE)))
   $(call add_json_map,  ClassLoaderContexts)
   $(call add_json_class_loader_context, any, $(my_dexpreopt_libs))
   $(call add_json_class_loader_context,  28, $(my_dexpreopt_libs_compat_28))
