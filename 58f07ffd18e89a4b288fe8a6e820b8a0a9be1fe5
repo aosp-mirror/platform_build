@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ea3e9d7_9178f0ee",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2021-01-25T21:36:40Z",
+      "side": 1,
+      "message": "Dan always had me test these with zsh as well. Can you do the same?",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 14
+      },
+      "revId": "58f07ffd18e89a4b288fe8a6e820b8a0a9be1fe5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "432317bf_e5551eff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2021-01-25T21:36:40Z",
+      "side": 1,
+      "message": "cool!",
+      "revId": "58f07ffd18e89a4b288fe8a6e820b8a0a9be1fe5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "42108165_def65f3d",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2021-01-25T21:36:40Z",
+      "side": 1,
+      "message": "is there any reason this is apk-specific? This could be useful for other modules (binaries/.so, etc..)\n\nWhat if we had `outmod` where we take two things (extension or empty + module name)?",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 63
+      },
+      "revId": "58f07ffd18e89a4b288fe8a6e820b8a0a9be1fe5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f449fd9e_996bd649",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 1471,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2021-01-25T21:36:40Z",
+      "side": 1,
+      "message": "printf/echo -n, maybe?",
+      "range": {
+        "startLine": 1471,
+        "startChar": 8,
+        "endLine": 1471,
+        "endChar": 12
+      },
+      "revId": "58f07ffd18e89a4b288fe8a6e820b8a0a9be1fe5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f10ab038_371dae4b",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 1476,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2021-01-25T21:36:40Z",
+      "side": 1,
+      "message": "can you give an example here which includes arguments to adb, like:\n\n    apkmod [apk options] Foo # where \u0027Foo\u0027 is the module name of an app",
+      "range": {
+        "startLine": 1476,
+        "startChar": 0,
+        "endLine": 1476,
+        "endChar": 87
+      },
+      "revId": "58f07ffd18e89a4b288fe8a6e820b8a0a9be1fe5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
