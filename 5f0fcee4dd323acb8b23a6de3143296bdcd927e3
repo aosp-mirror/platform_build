@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "363073fc_22cbea93",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-25T23:51:55Z",
+      "side": 1,
+      "message": "double check if you updated tools/releasetools/ota_metadata_pb2.py",
+      "revId": "5f0fcee4dd323acb8b23a6de3143296bdcd927e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
