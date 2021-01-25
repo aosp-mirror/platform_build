@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "24473a85_c1a1e376",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 17
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-25T14:16:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "219aa036_8bbb9100",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 29
+      },
+      "revId": "dae963fb10859ebc29445e17d6808651fb96e703",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "06173b90_bd342198",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-01-25T07:36:34Z",
       "side": 1,
       "message": "nit: sort",
+      "range": {
+        "startLine": 120,
+        "startChar": 0,
+        "endLine": 120,
+        "endChar": 23
+      },
+      "revId": "dae963fb10859ebc29445e17d6808651fb96e703",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28249e8f_c35bd4cc",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 17
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-25T14:16:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06173b90_bd342198",
       "range": {
         "startLine": 120,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "455ba424_5cc49b79",
+        "filename": "tools/releasetools/ota_metadata_pb2.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-25T14:16:40Z",
+      "side": 1,
+      "message": "Yes",
+      "parentUuid": "c6d0b38a_ec4e739b",
+      "range": {
+        "startLine": 17,
+        "startChar": 8,
+        "endLine": 17,
+        "endChar": 20
+      },
+      "revId": "dae963fb10859ebc29445e17d6808651fb96e703",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c38fde66_a1f984d1",
@@ -83,6 +155,30 @@
       "writtenOn": "2021-01-25T07:36:34Z",
       "side": 1,
       "message": "There\u0027s a call to add_img_to_target_files in L1361, check if ReplaceApexMeta is necessary",
+      "range": {
+        "startLine": 693,
+        "startChar": 2,
+        "endLine": 693,
+        "endChar": 17
+      },
+      "revId": "dae963fb10859ebc29445e17d6808651fb96e703",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "52d89afb_06846aa7",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 693,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-01-25T14:16:40Z",
+      "side": 1,
+      "message": "Seems it\u0027s not necessary.... removed",
+      "parentUuid": "c38fde66_a1f984d1",
       "range": {
         "startLine": 693,
         "startChar": 2,
