@@ -220,8 +220,9 @@ ifdef LOCAL_DEX_PREOPT
     $(foreach lib, $(2),\
       $(call add_json_map, $(lib)) \
       $(eval file := $(filter %/$(lib).jar, $(call module-installed-files,$(lib)))) \
-      $(call add_json_str, Host,       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
-      $(call add_json_str, Device,     $(call install-path-to-on-device-path,$(file))) \
+      $(call add_json_str, Host,        $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
+      $(call add_json_str, Device,      $(call install-path-to-on-device-path,$(file))) \
+      $(call add_json_map, Subcontexts, ${$}) $(call end_json_map) \
       $(call end_json_map)) \
     $(call end_json_map)
 
