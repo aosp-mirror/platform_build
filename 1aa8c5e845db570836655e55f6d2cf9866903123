@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "524d0a66_3df53ef0",
+        "filename": "envsetup.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 1447,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-01-25T22:53:51Z",
+      "side": 1,
+      "message": "In many cases there is only a single output file, could this return it if no extension is provided, or print the list if there are multiple options?",
+      "range": {
+        "startLine": 1447,
+        "startChar": 20,
+        "endLine": 1447,
+        "endChar": 75
+      },
+      "revId": "1aa8c5e845db570836655e55f6d2cf9866903123",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
