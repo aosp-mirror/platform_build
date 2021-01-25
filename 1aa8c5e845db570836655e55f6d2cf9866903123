@@ -22,6 +22,30 @@
       },
       "revId": "1aa8c5e845db570836655e55f6d2cf9866903123",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c03e6ac_88645d2b",
+        "filename": "envsetup.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 1447,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2021-01-25T23:01:22Z",
+      "side": 1,
+      "message": "I was imagining `outmod foo \"\"` for this case. I\u0027m not a big fan of default arguments - though bash is, it would make things more complicated",
+      "parentUuid": "524d0a66_3df53ef0",
+      "range": {
+        "startLine": 1447,
+        "startChar": 20,
+        "endLine": 1447,
+        "endChar": 75
+      },
+      "revId": "1aa8c5e845db570836655e55f6d2cf9866903123",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
