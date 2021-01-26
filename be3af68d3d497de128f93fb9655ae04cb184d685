@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6fc750ca_3e69d307",
+        "filename": "target/product/security/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1463964
+      },
+      "writtenOn": "2021-01-26T01:32:40Z",
+      "side": 1,
+      "message": "should we include some versioning here and/or in the name field? istm it may be helpful to match that of the new CTS UICC card (2021 CTS)",
+      "range": {
+        "startLine": 11,
+        "startChar": 18,
+        "endLine": 11,
+        "endChar": 26
+      },
+      "revId": "be3af68d3d497de128f93fb9655ae04cb184d685",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
