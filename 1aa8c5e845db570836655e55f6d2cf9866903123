@@ -70,6 +70,30 @@
       },
       "revId": "1aa8c5e845db570836655e55f6d2cf9866903123",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c3c130b_b307a075",
+        "filename": "envsetup.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 1447,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2021-01-26T01:01:24Z",
+      "side": 1,
+      "message": "way better!",
+      "parentUuid": "c1d2c3bb_70f1386b",
+      "range": {
+        "startLine": 1447,
+        "startChar": 20,
+        "endLine": 1447,
+        "endChar": 75
+      },
+      "revId": "1aa8c5e845db570836655e55f6d2cf9866903123",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
