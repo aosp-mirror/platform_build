@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "33ec2832_bc12571e",
+        "filename": "envsetup.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 1450,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2021-01-26T01:02:06Z",
+      "side": 1,
+      "message": "I suppose this should be -ne 1 now as well",
+      "range": {
+        "startLine": 1450,
+        "startChar": 12,
+        "endLine": 1450,
+        "endChar": 18
+      },
+      "revId": "792243f26a9e541d35d563bfab40406d679fa2c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
