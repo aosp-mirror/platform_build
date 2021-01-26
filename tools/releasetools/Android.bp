@@ -28,6 +28,8 @@ python_defaults {
         "add_img_to_target_files.py",
     ],
     libs: [
+        "ota_metadata_proto",
+        "releasetools_apex_utils",
         "releasetools_build_image",
         "releasetools_build_super_image",
         "releasetools_common",
