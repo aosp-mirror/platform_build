@@ -357,9 +357,6 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
         'ro.product.odm.device=coral',
     ]
-    input_tmp = ValidateTargetFilesTest.make_build_prop({
-        'ODM/etc/build.prop': '\n'.join(build_prop),
-    })
+    input_tmp = ValidateTargetFilesTest.make_build_prop(build_prop)
 
-    self.assertRaises(ValueError, CheckBuildPropDuplicity,
-                        input_tmp)
+    self.assertRaises(ValueError, CheckBuildPropDuplicity, input_tmp)

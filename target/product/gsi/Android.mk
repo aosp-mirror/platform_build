@@ -161,7 +161,10 @@ endif
 include $(BUILD_PHONY_PACKAGE)
 
 include $(CLEAR_VARS)
-_vndk_versions := $(PRODUCT_EXTRA_VNDK_VERSIONS)
+_vndk_versions :=
+ifeq ($(filter com.android.vndk.current.on_vendor, $(PRODUCT_PACKAGES)),)
+	_vndk_versions += $(PRODUCT_EXTRA_VNDK_VERSIONS)
+endif
 ifneq ($(BOARD_VNDK_VERSION),current)
 	_vndk_versions += $(BOARD_VNDK_VERSION)
 endif
