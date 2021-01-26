@@ -50,6 +50,24 @@
       "message": "Since this is so hard to test in the platform, maybe it should land in the NDK first? OTOH, maybe part of the reason that it\u0027s hard to test is that the behavior is barely used so nbd.\n\nI think we build the gtest tests against the NDK, and iirc those make some use of exception handling. Run those to smoke test it?\n\nIs there any reason to worry about this interacting badly with the prebuilt r21 libc++/libc++abi in prebuilts/ndk? If no changes were needed on the libc++abi or libc++ side then probably not? The prebuilt libc++_shared.so will have linked libgcc for most architectures though, so if that wasn\u0027t done with hidden visibility maybe that\u0027s a concern.",
       "revId": "89f8ad70e347fe869bfac634b896573307374612",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0287533_1845f0a2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1229339
+      },
+      "writtenOn": "2021-01-26T04:51:08Z",
+      "side": 1,
+      "message": "FWIW, it looks like the STL libc++_shared.so prebuilts keep the _Unwind_* symbols hidden (I checked r18b, r19c, r20, r21d, and r22.)\n\nI already switched over the platform proper to libunwind[-exported].a, FWIW.\n\n\u003e Is there any reason to worry about this interacting badly with the prebuilt r21 libc++/libc++abi in prebuilts/ndk? If no changes were needed on the libc++abi or libc++ side then probably not? The prebuilt libc++_shared.so will have linked libgcc for most architectures though, so if that wasn\u0027t done with hidden visibility maybe that\u0027s a concern.\n\nOh, maybe that\u0027s a problem? Both _Unwind_Exception and _Unwind_Context have state that\u0027s specific to the unwinder implementation. That concern *might* be theoretical for _Unwind_Exception -- at a glance, it looks like libgcc and libunwind do similar things with its private_1 and private_2 fields. _Unwind_Context OTOH is completely different between libgcc and libunwind.\n\nIt looks like _Unwind_Context (aka unw_cursor_t aka UnwindCursor) can arbitrarily change between versions of libunwind, e.g.: https://reviews.llvm.org/D21991, https://reviews.llvm.org/D41906, https://reviews.llvm.org/D39365.\n\nIf we\u0027re worried about _Unwind_Context being shared between unwinders, then we presumably need to check in a copy of libunwind.a into the platform\u0027s prebuilts/ndk and use that instead of the toolchain prebuilt.\n\nFor HWASan, there was a problem a while ago where the executable had a personality routine that then used a different copy of libgcc\u0027s unwinder (http://b/144430859). I noticed that the same thing can happen with the NDK when combining a C file using __attribute__((cleanup)) and -fexceptions (https://github.com/android/ndk/issues/1441). That use case seems obscure, but after this CL, it\u0027s a situation where a _Unwind_Context from libgcc could be passed to libunwind expecting a different _Unwind_Context struct.\n\nAt the moment, I don\u0027t know if this CL regresses something or not. I\u0027m inclined to wait until the NDK has switched to LLVM libunwind.",
+      "parentUuid": "89587445_4652c7f3",
+      "revId": "89f8ad70e347fe869bfac634b896573307374612",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
