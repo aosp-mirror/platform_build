@@ -46,6 +46,30 @@
       },
       "revId": "1cfd60c8d29bce2620cce50c6770018bbf0097e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "247b4c2e_0f766c56",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1147,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-26T01:03:40Z",
+      "side": 1,
+      "message": "I believe we don\u0027t care about such case? Since these builds won\u0027t be included in droidfood. Plus, there is no regression. Because we simply skip the check anyway if the prop doesn\u0027t exist.",
+      "parentUuid": "274c10ce_df945d94",
+      "range": {
+        "startLine": 1147,
+        "startChar": 0,
+        "endLine": 1147,
+        "endChar": 8
+      },
+      "revId": "1cfd60c8d29bce2620cce50c6770018bbf0097e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
