@@ -626,6 +626,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif filename in ["META/care_map.pb", "META/care_map.txt"]:
       pass
 
+    # Skip apex_info.pb because we sign/modify apexes
+    elif filename == "META/apex_info.pb":
+      pass
+
     # Updates system_other.avbpubkey in /product/etc/.
     elif filename in (
         "PRODUCT/etc/security/avb/system_other.avbpubkey",
