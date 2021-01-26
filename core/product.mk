@@ -389,6 +389,9 @@ _product_single_value_vars += PRODUCT_CHECK_ELF_FILES
 # If set, device uses virtual A/B.
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA
 
+# If set, device uses virtual A/B Compression.
+_product_single_value_vars += PRODUCT_VIRTUAL_AB_COMPRESSION
+
 # If set, device retrofits virtual A/B.
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA_RETROFIT
 

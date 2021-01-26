@@ -1,16 +1,24 @@
 DEX_PREOPT_CONFIG := $(SOONG_OUT_DIR)/dexpreopt.config
 
 ENABLE_PREOPT := true
+ENABLE_PREOPT_BOOT_IMAGES := true
 ifneq (true,$(filter true,$(WITH_DEXPREOPT)))
+  # Disable dexpreopt for libraries/apps and for boot images.
   ENABLE_PREOPT :=
+  ENABLE_PREOPT_BOOT_IMAGES :=
 else ifneq (true,$(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)))
+  # Disable dexpreopt for libraries/apps and for boot images: not having default
+  # ART config means that some important system properties are not set, which
+  # would result in passing bad arguments to dex2oat and failing the build.
   ENABLE_PREOPT :=
+  ENABLE_PREOPT_BOOT_IMAGES :=
 else ifeq (true,$(DISABLE_PREOPT))
+  # Disable dexpreopt for libraries/apps, but do compile boot images.
   ENABLE_PREOPT :=
 endif
 
 # The default value for LOCAL_DEX_PREOPT
-DEX_PREOPT_DEFAULT ?= true
+DEX_PREOPT_DEFAULT ?= $(ENABLE_PREOPT)
 
 # The default filter for which files go into the system_other image (if it is
 # being used). Note that each pattern p here matches both '/<p>' and /system/<p>'.
@@ -46,14 +54,6 @@ ifeq ($(HOST_OS),linux)
   endif
 endif
 
-# Use the first preloaded-classes file in PRODUCT_COPY_FILES.
-PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
-    $(filter %system/etc/preloaded-classes,$(PRODUCT_COPY_FILES))))
-
-# Use the first dirty-image-objects file in PRODUCT_COPY_FILES.
-DIRTY_IMAGE_OBJECTS := $(call word-colon,1,$(firstword \
-    $(filter %system/etc/dirty-image-objects,$(PRODUCT_COPY_FILES))))
-
 # Get value of a property. It is first searched from PRODUCT_VENDOR_PROPERTIES
 # and then falls back to PRODUCT_SYSTEM_PROPERTIES
 # $1: name of the property
@@ -73,6 +73,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call json_start)
 
   $(call add_json_bool, DisablePreopt,                           $(call invert_bool,$(ENABLE_PREOPT)))
+  $(call add_json_bool, DisablePreoptBootImages,                 $(call invert_bool,$(ENABLE_PREOPT_BOOT_IMAGES)))
   $(call add_json_list, DisablePreoptModules,                    $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer,      $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
   $(call add_json_bool, UseArtImage,                             $(filter true,$(DEXPREOPT_USE_ART_IMAGE)))
@@ -124,7 +125,6 @@ ifdef TARGET_ARCH
   $(call end_json_map)
 endif
 
-  $(call add_json_str,  DirtyImageObjects,                  $(DIRTY_IMAGE_OBJECTS))
   $(call add_json_list, BootImageProfiles,                  $(PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION))
   $(call add_json_str,  BootFlags,                          $(PRODUCT_DEX_PREOPT_BOOT_FLAGS))
   $(call add_json_str,  Dex2oatImageXmx,                    $(DEX2OAT_IMAGE_XMX))
