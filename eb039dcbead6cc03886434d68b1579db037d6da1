@@ -70,6 +70,24 @@
       "parentUuid": "13af13fd_12ca5b1e",
       "revId": "eb039dcbead6cc03886434d68b1579db037d6da1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e436d3e2_ba849d1d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-26T20:54:13Z",
+      "side": 1,
+      "message": "I understand now. I agree, such dependency is messy 😞\n\nAlso, I think gki.mk is a bit misnomer; other devices that enables GKI should NOT inherit from gki.mk, since it installs to $OUT/kernel-*. They should install to $OUT/kernel instead. This is the same argument for b/177859525.\n\nWithout the benefit of reusing gki.mk on other devices, the only good thing about this change is improved readability. Also, you should be able to make generic_arm64/device.mk inherit from gki.mk directly, right?",
+      "parentUuid": "fb2e4517_5c128ca1",
+      "revId": "eb039dcbead6cc03886434d68b1579db037d6da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
