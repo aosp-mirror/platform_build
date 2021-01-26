@@ -177,6 +177,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1755c896_f66a3751",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 1471,
+      "author": {
+        "id": 1535516
+      },
+      "writtenOn": "2021-01-26T00:19:27Z",
+      "side": 1,
+      "message": "Actually switched back to plain echo, as now that outmod lists all outputs, it\u0027s probably better to have the trailing newline so the last output isn\u0027t different from all the others.",
+      "parentUuid": "9efb6aa1_e0ea20ab",
+      "range": {
+        "startLine": 1471,
+        "startChar": 8,
+        "endLine": 1471,
+        "endChar": 12
+      },
+      "revId": "58f07ffd18e89a4b288fe8a6e820b8a0a9be1fe5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f10ab038_371dae4b",

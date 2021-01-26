@@ -46,6 +46,30 @@
       },
       "revId": "1aa8c5e845db570836655e55f6d2cf9866903123",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c1d2c3bb_70f1386b",
+        "filename": "envsetup.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 1447,
+      "author": {
+        "id": 1535516
+      },
+      "writtenOn": "2021-01-26T00:19:27Z",
+      "side": 1,
+      "message": "I went with removing the extension argument and just making outmod list all outputs. Let me know what you think.",
+      "parentUuid": "9c03e6ac_88645d2b",
+      "range": {
+        "startLine": 1447,
+        "startChar": 20,
+        "endLine": 1447,
+        "endChar": 75
+      },
+      "revId": "1aa8c5e845db570836655e55f6d2cf9866903123",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
