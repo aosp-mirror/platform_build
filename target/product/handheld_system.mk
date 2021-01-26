@@ -40,6 +40,7 @@ PRODUCT_PACKAGES += \
     BuiltInPrintService \
     CalendarProvider \
     cameraserver \
+    CameraExtensionsProxy \
     CaptivePortalLogin \
     CertInstaller \
     clatd \
