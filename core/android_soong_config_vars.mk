@@ -34,3 +34,8 @@ ifeq (,$(filter art_module,$(SOONG_CONFIG_NAMESPACES)))
   SOONG_CONFIG_art_module += source_build
 endif
 SOONG_CONFIG_art_module_source_build ?= true
+
+# Apex build mode variables
+ifdef APEX_BUILD_FOR_PRE_S_DEVICES
+$(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
+endif
