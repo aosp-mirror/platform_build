@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bbaf4b2b_2e1b7baf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-27T19:24:10Z",
+      "side": 1,
+      "message": "That\u0027s the part I am not clear... Can a device have both compressed/uncompressed apex? Do we need to put uncompressed apex to data in this case",
+      "revId": "c72718c7c54e33a8a0f21688d028257486b9226f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
