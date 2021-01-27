@@ -4130,6 +4130,7 @@ INTERNAL_OTATOOLS_MODULES := \
 # Additional tools to unpack and repack the apex file.
 INTERNAL_OTATOOLS_MODULES += \
   apexer \
+  apex_compression_tool \
   deapexer \
   debugfs_static \
   merge_zips \
