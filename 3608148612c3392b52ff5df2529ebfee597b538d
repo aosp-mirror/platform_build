@@ -3,6 +3,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "f5260029_3134a2e3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1432579
+      },
+      "writtenOn": "2021-01-27T12:27:53Z",
+      "side": 1,
+      "message": "+Anton for core/Makefile",
+      "revId": "3608148612c3392b52ff5df2529ebfee597b538d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "c0f54b30_ad6eaef6",
         "filename": "tools/releasetools/apex_utils.py",
         "patchSetId": 4
