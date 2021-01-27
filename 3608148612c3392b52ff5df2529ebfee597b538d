@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0f54b30_ad6eaef6",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-27T05:49:18Z",
+      "side": 1,
+      "message": "seems it\u0027s possible to factor out a common function from here. But we can worry about that later.",
+      "range": {
+        "startLine": 437,
+        "startChar": 0,
+        "endLine": 437,
+        "endChar": 17
+      },
+      "revId": "3608148612c3392b52ff5df2529ebfee597b538d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
