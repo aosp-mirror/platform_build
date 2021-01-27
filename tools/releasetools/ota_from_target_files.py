@@ -229,11 +229,11 @@ import zipfile
 
 import common
 import ota_utils
+from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
+                       PropertyFiles)
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
-from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
-                       PropertyFiles)
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -961,7 +961,8 @@ def GeneratePartitionTimestampFlags(partition_state):
       for part in partition_state]
   return ["--partition_timestamps", ",".join(partition_timestamps)]
 
-def GeneratePartitionTimestampFlagsDowngrade(pre_partition_state, post_partition_state):
+def GeneratePartitionTimestampFlagsDowngrade(
+    pre_partition_state, post_partition_state):
   assert pre_partition_state is not None
   partition_timestamps = {}
   for part in pre_partition_state:
@@ -970,9 +971,9 @@ def GeneratePartitionTimestampFlagsDowngrade(pre_partition_state, post_partition
     partition_timestamps[part.partition_name] = \
       max(part.version, partition_timestamps[part.partition_name])
   return [
-    "--partition_timestamps",
-    ",".join([key + ":" + val for (key, val) in partition_timestamps.items()])
-    ]
+      "--partition_timestamps",
+      ",".join([key + ":" + val for (key, val) in partition_timestamps.items()])
+  ]
 
 def IsSparseImage(filepath):
   with open(filepath, 'rb') as fp:
@@ -1026,7 +1027,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   else:
     staging_file = output_file
   output_zip = zipfile.ZipFile(staging_file, "w",
-                               compression=zipfile.ZIP_DEFLATED, allowZip64=True)
+                               compression=zipfile.ZIP_DEFLATED,
+                               allowZip64=True)
 
   if source_file is not None:
     assert "ab_partitions" in OPTIONS.source_info_dict, \
@@ -1080,9 +1082,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   if OPTIONS.downgrade:
     max_timestamp = source_info.GetBuildProp("ro.build.date.utc")
     partition_timestamps_flags = GeneratePartitionTimestampFlagsDowngrade(
-      metadata.precondition.partition_state,
-      metadata.postcondition.partition_state
-      )
+        metadata.precondition.partition_state,
+        metadata.postcondition.partition_state
+    )
   else:
     max_timestamp = str(metadata.postcondition.timestamp)
     partition_timestamps_flags = GeneratePartitionTimestampFlags(
@@ -1091,14 +1093,14 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   additional_args += ["--max_timestamp", max_timestamp]
 
   if SupportsMainlineGkiUpdates(source_file):
-    logger.warn("Detected build with mainline GKI, include full boot image.")
+    logger.warning("Detected build with mainline GKI, include full boot image.")
     additional_args.extend(["--full_boot", "true"])
 
   payload.Generate(
       target_file,
       source_file,
       additional_args + partition_timestamps_flags
-   )
+  )
 
   # Sign the payload.
   payload_signer = PayloadSigner()
@@ -1117,7 +1119,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     secondary_payload = Payload(secondary=True)
     secondary_payload.Generate(secondary_target_file,
                                additional_args=["--max_timestamp",
-                               max_timestamp])
+                                                max_timestamp])
     secondary_payload.Sign(payload_signer)
     secondary_payload.WriteToZip(output_zip)
 
@@ -1125,7 +1127,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # into A/B OTA package.
   target_zip = zipfile.ZipFile(target_file, "r", allowZip64=True)
   if (target_info.get("verity") == "true" or
-          target_info.get("avb_enable") == "true"):
+      target_info.get("avb_enable") == "true"):
     care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
                      "META/" + x in target_zip.namelist()]
 
@@ -1334,13 +1336,14 @@ def main(argv):
   if OPTIONS.partial:
     OPTIONS.info_dict['ab_partitions'] = \
       list(
-        set(OPTIONS.info_dict['ab_partitions']) & set(OPTIONS.partial)
-        )
+          set(OPTIONS.info_dict['ab_partitions']) & set(OPTIONS.partial)
+      )
     if OPTIONS.source_info_dict:
       OPTIONS.source_info_dict['ab_partitions'] = \
         list(
-          set(OPTIONS.source_info_dict['ab_partitions']) & set(OPTIONS.partial)
-          )
+            set(OPTIONS.source_info_dict['ab_partitions']) &
+            set(OPTIONS.partial)
+        )
 
   # Load OEM dicts if provided.
   OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)
@@ -1349,7 +1352,7 @@ def main(argv):
   # use_dynamic_partitions but target build does.
   if (OPTIONS.source_info_dict and
       OPTIONS.source_info_dict.get("use_dynamic_partitions") != "true" and
-          OPTIONS.target_info_dict.get("use_dynamic_partitions") == "true"):
+      OPTIONS.target_info_dict.get("use_dynamic_partitions") == "true"):
     if OPTIONS.target_info_dict.get("dynamic_partition_retrofit") != "true":
       raise common.ExternalError(
           "Expect to generate incremental OTA for retrofitting dynamic "
@@ -1365,7 +1368,8 @@ def main(argv):
   ab_update = OPTIONS.info_dict.get("ab_update") == "true"
   allow_non_ab = OPTIONS.info_dict.get("allow_non_ab") == "true"
   if OPTIONS.force_non_ab:
-    assert allow_non_ab, "--force_non_ab only allowed on devices that supports non-A/B"
+    assert allow_non_ab,\
+      "--force_non_ab only allowed on devices that supports non-A/B"
     assert ab_update, "--force_non_ab only allowed on A/B devices"
 
   generate_ab = not OPTIONS.force_non_ab and ab_update
