@@ -46,6 +46,30 @@
       },
       "revId": "fc596c996f35e123a0c2430894500aae97b5fde7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8852c157_4ed67ff0",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 1432579
+      },
+      "writtenOn": "2021-01-27T19:45:27Z",
+      "side": 0,
+      "message": "(Resolved)",
+      "parentUuid": "4c268ef9_d493e9e5",
+      "range": {
+        "startLine": 309,
+        "startChar": 0,
+        "endLine": 309,
+        "endChar": 42
+      },
+      "revId": "fc596c996f35e123a0c2430894500aae97b5fde7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
