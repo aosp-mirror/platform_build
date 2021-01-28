@@ -22,6 +22,30 @@
       },
       "revId": "447f6424f2f285104b8f3521833f4058db1c2e8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e9cd668_43e7e7a4",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-01-28T16:34:24Z",
+      "side": 1,
+      "message": "The \"raise StopIteration()\" in py3(\u003e\u003d3.7) will cause RuntimeError, but in py2 it will not.\nSo I changed it to \"return\" as stated in https://www.python.org/dev/peps/pep-0479/#writing-backwards-and-forwards-compatible-code.\n\nChange history of \"StopIteration\" is described here:\nhttps://docs.python.org/3/library/exceptions.html#StopIteration",
+      "parentUuid": "4c6401ea_c974db24",
+      "range": {
+        "startLine": 143,
+        "startChar": 0,
+        "endLine": 143,
+        "endChar": 12
+      },
+      "revId": "447f6424f2f285104b8f3521833f4058db1c2e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
