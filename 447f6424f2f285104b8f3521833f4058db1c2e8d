@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "77f56575_606d77e9",
+        "filename": "tools/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-28T23:06:44Z",
+      "side": 1,
+      "message": "yuyezhong@gmail.com please modify the build rules accordingly.",
+      "parentUuid": "a0161ea3_dc61dc6b",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 6
+      },
+      "revId": "447f6424f2f285104b8f3521833f4058db1c2e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4c6401ea_c974db24",
         "filename": "tools/extract_kernel.py",
         "patchSetId": 1
