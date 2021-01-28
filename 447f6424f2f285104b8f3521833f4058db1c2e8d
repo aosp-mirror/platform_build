@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5b3667d9_df9324e6",
+        "filename": "tools/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-28T20:32:50Z",
+      "side": 1,
+      "message": "xunchang@ this causes the following build error:\n\n  build/make/core/base_rules.mk:335: error: build/make/tools: MODULE.linux.EXECUTABLES.extract_kernel already defined by build/make/tools.\n\nSo to test python 2 and 3 compatibility, maybe a python_library_host named \"libextract_kernel\" should be created?",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 6
+      },
+      "revId": "447f6424f2f285104b8f3521833f4058db1c2e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4c6401ea_c974db24",
         "filename": "tools/extract_kernel.py",
         "patchSetId": 1
