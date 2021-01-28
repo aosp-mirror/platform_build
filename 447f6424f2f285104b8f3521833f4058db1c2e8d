@@ -69,6 +69,30 @@
       },
       "revId": "447f6424f2f285104b8f3521833f4058db1c2e8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c39ee276_f459d99f",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-28T20:33:04Z",
+      "side": 1,
+      "message": "Ack, thanks for the explanation!",
+      "parentUuid": "5e9cd668_43e7e7a4",
+      "range": {
+        "startLine": 143,
+        "startChar": 0,
+        "endLine": 143,
+        "endChar": 12
+      },
+      "revId": "447f6424f2f285104b8f3521833f4058db1c2e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
