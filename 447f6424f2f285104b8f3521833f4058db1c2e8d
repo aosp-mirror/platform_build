@@ -74,6 +74,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1cd543e8_f903abbe",
+        "filename": "tools/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-01-28T23:08:21Z",
+      "side": 1,
+      "message": "You may either create a libextract_kernel python_library_host that enables both py2 and py3, or create a new python_binary_host named extract_kernel_py3. However, the rules for extract_kernel should not change.",
+      "parentUuid": "77f56575_606d77e9",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 6
+      },
+      "revId": "447f6424f2f285104b8f3521833f4058db1c2e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4c6401ea_c974db24",
         "filename": "tools/extract_kernel.py",
         "patchSetId": 1
