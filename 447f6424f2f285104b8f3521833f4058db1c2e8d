@@ -98,6 +98,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "592b29d7_6c4e87a5",
+        "filename": "tools/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-01-28T23:34:57Z",
+      "side": 1,
+      "message": "Is there any reason not to switch extract_kernel to only build for py3?",
+      "parentUuid": "1cd543e8_f903abbe",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 6
+      },
+      "revId": "447f6424f2f285104b8f3521833f4058db1c2e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4c6401ea_c974db24",
         "filename": "tools/extract_kernel.py",
         "patchSetId": 1
