@@ -34,6 +34,24 @@
       "parentUuid": "bbaf4b2b_2e1b7baf",
       "revId": "c72718c7c54e33a8a0f21688d028257486b9226f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "37a60a45_d059aecf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2021-01-28T13:19:59Z",
+      "side": 1,
+      "message": "\u003e Can a device have both compressed/uncompressed apex?\n\nDevice can have both compressed and uncompressed APEX. For example, there are certain apex which needs to be activated on every boot during very early phase of boot. Later, at late-phase of boot, they are demounted and replaced with updated APEX (if any). We call these APEX bootstrap APEX.\n\nWe won\u0027t be compressing bootstrap APEX, since we will need them on every boot.\n\n\u003e Do we need to put uncompressed apex to data in this case\nWe don\u0027t. I originally made the ApexInfo definition in the proto a bit generic, so that we could reuse it in future (not that I had any use in mind). But for our current use case, we just care about compressed APEX.",
+      "parentUuid": "1ed7e214_80545876",
+      "revId": "c72718c7c54e33a8a0f21688d028257486b9226f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
