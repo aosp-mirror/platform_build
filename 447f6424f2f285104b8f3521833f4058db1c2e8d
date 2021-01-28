@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a0161ea3_dc61dc6b",
+        "filename": "tools/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-01-28T23:05:31Z",
+      "side": 1,
+      "message": "hmm, I remembered you cannot enable python 2 and 3 at the same time for python_binary_host. But you can do that for python_library_host, and create two separate binary files; e.g. extract_kernel \u0026 extract_kernel_py3",
+      "parentUuid": "5b3667d9_df9324e6",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 6
+      },
+      "revId": "447f6424f2f285104b8f3521833f4058db1c2e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4c6401ea_c974db24",
         "filename": "tools/extract_kernel.py",
         "patchSetId": 1
