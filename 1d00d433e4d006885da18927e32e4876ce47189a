@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d3903b76_5243fef2",
+        "filename": "core/dex_preopt_config_merger.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-01-28T15:00:28Z",
+      "side": 1,
+      "message": "Clarified.",
+      "parentUuid": "6cbf9546_4123fd27",
+      "range": {
+        "startLine": 25,
+        "startChar": 46,
+        "endLine": 27,
+        "endChar": 43
+      },
+      "revId": "1d00d433e4d006885da18927e32e4876ce47189a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c3307af9_2424d7c2",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-01-28T14:01:20Z",
       "side": 1,
       "message": "Presumably this does not have access to the information needed in order to select the correct path straight off.",
+      "range": {
+        "startLine": 224,
+        "startChar": 47,
+        "endLine": 225,
+        "endChar": 49
+      },
+      "revId": "1d00d433e4d006885da18927e32e4876ce47189a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c3fe94c_3ee4fc36",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-01-28T15:00:28Z",
+      "side": 1,
+      "message": "That\u0027s right, I clarified the comment.",
+      "parentUuid": "c3307af9_2424d7c2",
       "range": {
         "startLine": 224,
         "startChar": 47,
