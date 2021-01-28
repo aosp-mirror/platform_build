@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6cbf9546_4123fd27",
+        "filename": "core/dex_preopt_config_merger.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-01-28T14:01:20Z",
+      "side": 1,
+      "message": "It is not clear from this comment that this is done outside this script by the make rules.",
+      "range": {
+        "startLine": 25,
+        "startChar": 46,
+        "endLine": 27,
+        "endChar": 43
+      },
+      "revId": "1d00d433e4d006885da18927e32e4876ce47189a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3307af9_2424d7c2",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-01-28T14:01:20Z",
+      "side": 1,
+      "message": "Presumably this does not have access to the information needed in order to select the correct path straight off.",
+      "range": {
+        "startLine": 224,
+        "startChar": 47,
+        "endLine": 225,
+        "endChar": 49
+      },
+      "revId": "1d00d433e4d006885da18927e32e4876ce47189a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
