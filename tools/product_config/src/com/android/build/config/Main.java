@@ -18,6 +18,7 @@ package com.android.build.config;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 public class Main {
     private final Errors mErrors;
@@ -45,6 +46,14 @@ public class Main {
         System.out.println("PRODUCT CONFIG FILES");
         System.out.println("====================");
         makeConfig.printToStream(System.out);
+
+        ConvertMakeToGenericConfig m2g = new ConvertMakeToGenericConfig(mErrors);
+        GenericConfig generic = m2g.convert(makeConfig);
+
+        System.out.println("======================");
+        System.out.println("REGENERATED MAKE FILES");
+        System.out.println("======================");
+        MakeWriter.write(System.out, generic, 0);
 
         // TODO: Run kati and extract the variables and convert all that into starlark files.
 

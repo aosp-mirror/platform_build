@@ -70,7 +70,7 @@ public class MakeConfig extends ConfigBase {
     public static class Block {
         private final BlockType mBlockType;
         private final TreeMap<String, Str> mValues = new TreeMap();
-        private String mInheritedFile;
+        private Str mInheritedFile;
 
         public Block(BlockType blockType) {
             mBlockType = blockType;
@@ -80,19 +80,23 @@ public class MakeConfig extends ConfigBase {
             return mBlockType;
         }
 
-        public void addValue(String varName, Str varValue) {
+        public void addVar(String varName, Str varValue) {
             mValues.put(varName, varValue);
         }
 
-        public TreeMap<String, Str> getValues() {
+        public Str getVar(String varName) {
+            return mValues.get(varName);
+        }
+
+        public TreeMap<String, Str> getVars() {
             return mValues;
         }
 
-        public void setInheritedFile(String filename) {
+        public void setInheritedFile(Str filename) {
             mInheritedFile = filename;
         }
 
-        public String getInheritedFile() {
+        public Str getInheritedFile() {
             return mInheritedFile;
         }
     }
@@ -148,7 +152,7 @@ public class MakeConfig extends ConfigBase {
                     out.println("          inherited: " + block.getInheritedFile());
                 }
                 out.println("          values: {");
-                for (Map.Entry<String,Str> var: block.getValues().entrySet()) {
+                for (Map.Entry<String,Str> var: block.getVars().entrySet()) {
                     if (!var.getKey().equals("PRODUCT_PACKAGES")) {
                         continue;
                     }

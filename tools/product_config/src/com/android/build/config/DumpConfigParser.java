@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2020 The Android Open Source Project
  *
@@ -183,7 +182,8 @@ public class DumpConfigParser {
 
                 // There is already a file in progress, so add another var block to that.
                 block = new MakeConfig.Block(MakeConfig.BlockType.INHERIT);
-                block.setInheritedFile(inheritedFile);
+                // TODO: Make dumpconfig.mk also output a Position for inherit-product
+                block.setInheritedFile(new Str(inheritedFile));
                 configFile.addBlock(block);
 
                 if (DEBUG) {
@@ -240,8 +240,8 @@ public class DumpConfigParser {
                                 + " Saw: " + blockType);
                 }
                 
-                // Add the value to the block in progress
-                block.addValue(varName, new Str(pos, varValue));
+                // Add the variable to the block in progress
+                block.addVar(varName, new Str(pos, varValue));
             } else {
                 if (DEBUG) {
                     System.out.print("# ");

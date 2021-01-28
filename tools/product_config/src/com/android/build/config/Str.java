@@ -16,6 +16,9 @@
 
 package com.android.build.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A String and a Position, where it came from in source code.
  */
@@ -63,5 +66,13 @@ public class Str {
     @Override
     public int hashCode() {
         return mValue.hashCode();
+    }
+
+    public static ArrayList<Str> toList(Position pos, List<String> list) {
+        final ArrayList<Str> result = new ArrayList(list.size());
+        for (String s: list) {
+            result.add(new Str(pos, s));
+        }
+        return result;
     }
 }

@@ -52,4 +52,11 @@ public class Errors extends ErrorReporter {
     public final Category ERROR_DUMPCONFIG = new Category(5, false, Level.ERROR,
             "Error parsing the output of kati and dumpconfig.mk.");
 
+    public final Category WARNING_VARIABLE_RECURSION = new Category(6, true, Level.WARNING,
+            "Possible unsupported variable recursion.");
+
+    // This could be a warning, but it's very likely that the data is corrupted somehow
+    // if we're seeing this.
+    public final Category ERROR_IMPROPER_PRODUCT_VAR_MARKER = new Category(7, true, Level.ERROR,
+            "Bad input from dumpvars causing corrupted product variables.");
 }

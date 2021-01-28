@@ -63,6 +63,10 @@ public class ConfigBase {
         mProductVars.put(name, type);
     }
 
+    public TreeMap<String, VarType> getProductVars() {
+        return mProductVars;
+    }
+
     public VarType getVarType(String name) {
         final VarType t = mProductVars.get(name);
         if (t != null) {
@@ -74,5 +78,16 @@ public class ConfigBase {
 
     public boolean isProductVar(String name) {
         return mProductVars.get(name) != null;
+    }
+
+    /**
+     * Copy common base class fields from that to this.
+     */
+    public void copyFrom(ConfigBase that) {
+        setPhase(that.getPhase());
+        setRootNodes(that.getRootNodes());
+        for (Map.Entry<String, ConfigBase.VarType> entry: that.getProductVars().entrySet()) {
+            addProductVar(entry.getKey(), entry.getValue());
+        }
     }
 }
