@@ -144,6 +144,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f16e5e0_4b997cdc",
+        "filename": "tools/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-01-29T02:13:26Z",
+      "side": 1,
+      "message": "Then I\u0027d prefer to use py3 for AOSP build.\nAlthough py2 has reached its EOL, I believe there is still someone whose working environment still has py2 as default. So I tried not to break py2.\n\nPatch Set 2 has been uploaded.",
+      "parentUuid": "7f1ec418_473445a9",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 6
+      },
+      "revId": "447f6424f2f285104b8f3521833f4058db1c2e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4c6401ea_c974db24",
