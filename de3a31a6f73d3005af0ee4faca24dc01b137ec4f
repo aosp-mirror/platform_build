@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e56dd279_3a7c7cf3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-01-29T18:12:47Z",
+      "side": 1,
+      "message": "Presubmit failure is:\n\nTraceback (most recent call last):\n  File \"/mnt/disks/build-disk/src/android/master/out/soong/.temp/Soong.python_ESln1U/extract_kernel.py\", line 263, in \u003cmodule\u003e\n    sys.exit(main())\n  File \"/mnt/disks/build-disk/src/android/master/out/soong/.temp/Soong.python_ESln1U/extract_kernel.py\", line 251, in main\n    if not dump_to_file(args.output_release, dump_release, input_bytes,\n  File \"/mnt/disks/build-disk/src/android/master/out/soong/.temp/Soong.python_ESln1U/extract_kernel.py\", line 180, in dump_to_file\n    f.write(o.encode())\nTypeError: write() argument must be str, not bytes\n",
+      "revId": "de3a31a6f73d3005af0ee4faca24dc01b137ec4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
