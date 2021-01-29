@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcac1bab_d3ead34d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-01-29T11:45:41Z",
+      "side": 1,
+      "message": "Anton, is this ok? As I said on the other CL, it doesn\u0027t look right to add the PRODUCT_* settings directly to the target/board/*/device.mk files.",
+      "revId": "29c5d1a4f1aa96d0f8bb989b0994c8fd8f179b5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
