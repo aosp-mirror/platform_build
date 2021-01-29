@@ -16,6 +16,24 @@
       "message": "Anton, is this ok? As I said on the other CL, it doesn\u0027t look right to add the PRODUCT_* settings directly to the target/board/*/device.mk files.",
       "revId": "29c5d1a4f1aa96d0f8bb989b0994c8fd8f179b5c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2ee08137_ff95ea74",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-01-29T16:43:05Z",
+      "side": 1,
+      "message": "ideally we\u0027d rename those device.mk files to what you have here and just add those variables, but you\u0027d have to update the internal products inheriting those device files too. Extra work for not much benefit (but would be slightly cleaner).",
+      "parentUuid": "dcac1bab_d3ead34d",
+      "revId": "29c5d1a4f1aa96d0f8bb989b0994c8fd8f179b5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
