@@ -16,11 +16,15 @@
 #
 """This script merges two partial target files packages.
 
-One package contains framework files, and the other contains vendor files.
-It produces a complete target files package that can be used to generate an
-OTA package.
+One input package contains framework files, and the other contains vendor files.
 
-Usage: merge_target_files.py [args]
+This script produces a complete, merged target files package:
+  - This package can be used to generate a flashable IMG package.
+    See --output-img.
+  - This package can be used to generate an OTA package. See --output-ota.
+  - The merged package is checked for compatibility between the two inputs.
+
+Usage: merge_target_files [args]
 
   --framework-target-files framework-target-files-zip-archive
       The input target files package containing framework bits. This is a zip
@@ -70,6 +74,10 @@ Usage: merge_target_files.py [args]
   --rebuild_recovery
       Deprecated; does nothing.
 
+  --allow-duplicate-apkapex-keys
+      If provided, duplicate APK/APEX keys are ignored and the value from the
+      framework is used.
+
   --keep-tmp
       Keep tempoary files for debugging purposes.
 """
@@ -77,6 +85,7 @@ Usage: merge_target_files.py [args]
 from __future__ import print_function
 
 import fnmatch
+import json
 import logging
 import os
 import re
@@ -90,6 +99,7 @@ import build_super_image
 import check_target_files_vintf
 import common
 import img_from_target_files
+import find_shareduid_violation
 import ota_from_target_files
 
 logger = logging.getLogger(__name__)
@@ -110,6 +120,8 @@ OPTIONS.output_img = None
 OPTIONS.output_super_empty = None
 # TODO(b/132730255): Remove this option.
 OPTIONS.rebuild_recovery = False
+# TODO(b/150582573): Remove this option.
+OPTIONS.allow_duplicate_apkapex_keys = False
 OPTIONS.keep_tmp = False
 
 # In an item list (framework or vendor), we may see entries that select whole
@@ -149,16 +161,9 @@ DEFAULT_FRAMEWORK_ITEM_LIST = (
     'SYSTEM/*',
 )
 
-# FRAMEWORK_EXTRACT_SPECIAL_ITEM_LIST is a list of items to extract from the
-# partial framework target files package that need some special processing, such
-# as some sort of combination with items from the partial vendor target files
-# package.
-
-FRAMEWORK_EXTRACT_SPECIAL_ITEM_LIST = ('META/*',)
-
 # DEFAULT_FRAMEWORK_MISC_INFO_KEYS is a list of keys to obtain from the
-# framework instance of META/misc_info.txt. The remaining keys from the
-# vendor instance.
+# framework instance of META/misc_info.txt. The remaining keys should come
+# from the vendor instance.
 
 DEFAULT_FRAMEWORK_MISC_INFO_KEYS = (
     'avb_system_hashtree_enable',
@@ -198,13 +203,6 @@ DEFAULT_VENDOR_ITEM_LIST = (
     'RADIO/*',
     'VENDOR/*',
 )
-
-# VENDOR_EXTRACT_SPECIAL_ITEM_LIST is a list of items to extract from the
-# partial vendor target files package that need some special processing, such as
-# some sort of combination with items from the partial framework target files
-# package.
-
-VENDOR_EXTRACT_SPECIAL_ITEM_LIST = ('META/*',)
 
 # The merge config lists should not attempt to extract items from both
 # builds for any of the following partitions. The partitions in
@@ -314,8 +312,8 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
     framework_item_list: The list of items to extract from the partial framework
       target files package as is.
     framework_misc_info_keys: A list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys from the vendor
-      instance.
+      instance of META/misc_info.txt. The remaining keys should come from the
+      vendor instance.
     vendor_item_list: The list of items to extract from the partial vendor
       target files package as is.
 
@@ -340,10 +338,15 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
                  'this script.')
     has_error = True
 
+  # Check that partitions only come from one input.
   for partition in SINGLE_BUILD_PARTITIONS:
-    in_framework = any(
-        item.startswith(partition) for item in framework_item_list)
-    in_vendor = any(item.startswith(partition) for item in vendor_item_list)
+    image_path = 'IMAGES/{}.img'.format(partition.lower().replace('/', ''))
+    in_framework = (
+        any(item.startswith(partition) for item in framework_item_list) or
+        image_path in framework_item_list)
+    in_vendor = (
+        any(item.startswith(partition) for item in vendor_item_list) or
+        image_path in vendor_item_list)
     if in_framework and in_vendor:
       logger.error(
           'Cannot extract items from %s for both the framework and vendor'
@@ -369,8 +372,8 @@ def process_ab_partitions_txt(framework_target_files_temp_dir,
   framework directory and the vendor directory, placing the merged result in the
   output directory. The precondition in that the files are already extracted.
   The post condition is that the output META/ab_partitions.txt contains the
-  merged content. The format for each ab_partitions.txt a one partition name per
-  line. The output file contains the union of the parition names.
+  merged content. The format for each ab_partitions.txt is one partition name
+  per line. The output file contains the union of the partition names.
 
   Args:
     framework_target_files_temp_dir: The name of a directory containing the
@@ -423,8 +426,8 @@ def process_misc_info_txt(framework_target_files_temp_dir,
       create the output target files package after all the special cases are
       processed.
     framework_misc_info_keys: A list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys from the vendor
-      instance.
+      instance of META/misc_info.txt. The remaining keys should come from the
+      vendor instance.
   """
 
   misc_info_path = ['META', 'misc_info.txt']
@@ -452,6 +455,12 @@ def process_misc_info_txt(framework_target_files_temp_dir,
     # devices that retrofit dynamic partitions. This flag may have been set to
     # false in the partial builds to prevent duplicate building of super.img.
     merged_dict['build_super_partition'] = 'true'
+
+  # If AVB is enabled then ensure that we build vbmeta.img.
+  # Partial builds with AVB enabled may set PRODUCT_BUILD_VBMETA_IMAGE=false to
+  # skip building an incomplete vbmeta.img.
+  if merged_dict.get('avb_enable') == 'true':
+    merged_dict['avb_building_vbmeta_image'] = 'true'
 
   # Replace <image>_selinux_fc values with framework or vendor file_contexts.bin
   # depending on which dictionary the key came from.
@@ -526,6 +535,7 @@ def item_list_to_partition_set(item_list):
 
   Args:
     item_list: A list of items in a target files package.
+
   Returns:
     A set of partitions extracted from the list of items.
   """
@@ -547,7 +557,6 @@ def process_apex_keys_apk_certs_common(framework_target_files_dir,
                                        output_target_files_dir,
                                        framework_partition_set,
                                        vendor_partition_set, file_name):
-
   """Performs special processing for META/apexkeys.txt or META/apkcerts.txt.
 
   This function merges the contents of the META/apexkeys.txt or
@@ -597,7 +606,12 @@ def process_apex_keys_apk_certs_common(framework_target_files_dir,
 
       if partition_tag in partition_set:
         if key in merged_dict:
-          raise ValueError('Duplicate key %s' % key)
+          if OPTIONS.allow_duplicate_apkapex_keys:
+            # TODO(b/150582573) Always raise on duplicates.
+            logger.warning('Duplicate key %s' % key)
+            continue
+          else:
+            raise ValueError('Duplicate key %s' % key)
 
         merged_dict[key] = value
 
@@ -647,8 +661,7 @@ def copy_file_contexts(framework_target_files_dir, vendor_target_files_dir,
 def process_special_cases(framework_target_files_temp_dir,
                           vendor_target_files_temp_dir,
                           output_target_files_temp_dir,
-                          framework_misc_info_keys,
-                          framework_partition_set,
+                          framework_misc_info_keys, framework_partition_set,
                           vendor_partition_set):
   """Performs special-case processing for certain target files items.
 
@@ -664,8 +677,8 @@ def process_special_cases(framework_target_files_temp_dir,
       create the output target files package after all the special cases are
       processed.
     framework_misc_info_keys: A list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys from the vendor
-      instance.
+      instance of META/misc_info.txt. The remaining keys should come from the
+      vendor instance.
     framework_partition_set: Partitions that are considered framework
       partitions. Used to filter apexkeys.txt and apkcerts.txt.
     vendor_partition_set: Partitions that are considered vendor partitions. Used
@@ -711,26 +724,6 @@ def process_special_cases(framework_target_files_temp_dir,
       file_name='apexkeys.txt')
 
 
-def files_from_path(target_path, extra_args=None):
-  """Gets files under given path.
-
-  Get (sub)files from given target path and return sorted list.
-
-  Args:
-    target_path: Target path to get subfiles.
-    extra_args: List of extra argument for find command. Optional.
-
-  Returns:
-    Sorted files and directories list.
-  """
-
-  find_command = ['find', target_path] + (extra_args or [])
-  find_process = common.Run(find_command, stdout=subprocess.PIPE, verbose=False)
-  return common.RunAndCheckOutput(['sort'],
-                                  stdin=find_process.stdout,
-                                  verbose=False)
-
-
 def create_merged_package(temp_dir, framework_target_files, framework_item_list,
                           vendor_target_files, vendor_item_list,
                           framework_misc_info_keys, rebuild_recovery):
@@ -752,64 +745,42 @@ def create_merged_package(temp_dir, framework_target_files, framework_item_list,
       target files package as is, meaning these items will land in the output
       target files package exactly as they appear in the input partial vendor
       target files package.
-    framework_misc_info_keys: The list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys from the vendor
-      instance.
+    framework_misc_info_keys: A list of keys to obtain from the framework
+      instance of META/misc_info.txt. The remaining keys should come from the
+      vendor instance.
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
       devices and write it to the system image.
 
   Returns:
     Path to merged package under temp directory.
   """
+  # Extract "as is" items from the input framework and vendor partial target
+  # files packages directly into the output temporary directory, since these items
+  # do not need special case processing.
 
-  # Create directory names that we'll use when we extract files from framework,
-  # and vendor, and for zipping the final output.
-
-  framework_target_files_temp_dir = os.path.join(temp_dir, 'framework')
-  vendor_target_files_temp_dir = os.path.join(temp_dir, 'vendor')
   output_target_files_temp_dir = os.path.join(temp_dir, 'output')
-
-  # Extract "as is" items from the input framework partial target files package.
-  # We extract them directly into the output temporary directory since the
-  # items do not need special case processing.
-
   extract_items(
       target_files=framework_target_files,
       target_files_temp_dir=output_target_files_temp_dir,
       extract_item_list=framework_item_list)
-
-  # Extract "as is" items from the input vendor partial target files package. We
-  # extract them directly into the output temporary directory since the items
-  # do not need special case processing.
-
   extract_items(
       target_files=vendor_target_files,
       target_files_temp_dir=output_target_files_temp_dir,
       extract_item_list=vendor_item_list)
 
-  # Extract "special" items from the input framework partial target files
-  # package. We extract these items to different directory since they require
-  # special processing before they will end up in the output directory.
-
+  # Perform special case processing on META/* items.
+  # After this function completes successfully, all the files we need to create
+  # the output target files package are in place.
+  framework_target_files_temp_dir = os.path.join(temp_dir, 'framework')
+  vendor_target_files_temp_dir = os.path.join(temp_dir, 'vendor')
   extract_items(
       target_files=framework_target_files,
       target_files_temp_dir=framework_target_files_temp_dir,
-      extract_item_list=FRAMEWORK_EXTRACT_SPECIAL_ITEM_LIST)
-
-  # Extract "special" items from the input vendor partial target files package.
-  # We extract these items to different directory since they require special
-  # processing before they will end up in the output directory.
-
+      extract_item_list=('META/*',))
   extract_items(
       target_files=vendor_target_files,
       target_files_temp_dir=vendor_target_files_temp_dir,
-      extract_item_list=VENDOR_EXTRACT_SPECIAL_ITEM_LIST)
-
-  # Now that the temporary directories contain all the extracted files, perform
-  # special case processing on any items that need it. After this function
-  # completes successfully, all the files we need to create the output target
-  # files package are in place.
-
+      extract_item_list=('META/*',))
   process_special_cases(
       framework_target_files_temp_dir=framework_target_files_temp_dir,
       vendor_target_files_temp_dir=vendor_target_files_temp_dir,
@@ -835,8 +806,10 @@ def generate_images(target_files_dir, rebuild_recovery):
 
   # Regenerate IMAGES in the target directory.
 
-  add_img_args = ['--verbose']
-  add_img_args.append('--add_missing')
+  add_img_args = [
+      '--verbose',
+      '--add_missing',
+  ]
   # TODO(b/132730255): Remove this if statement.
   if rebuild_recovery:
     add_img_args.append('--rebuild_recovery')
@@ -889,6 +862,15 @@ def create_target_files_archive(output_file, source_dir, temp_dir):
   output_zip = os.path.abspath(output_file)
   output_target_files_meta_dir = os.path.join(source_dir, 'META')
 
+  def files_from_path(target_path, extra_args=None):
+    """Gets files under the given path and return a sorted list."""
+    find_command = ['find', target_path] + (extra_args or [])
+    find_process = common.Run(
+        find_command, stdout=subprocess.PIPE, verbose=False)
+    return common.RunAndCheckOutput(['sort'],
+                                    stdin=find_process.stdout,
+                                    verbose=False)
+
   meta_content = files_from_path(output_target_files_meta_dir)
   other_content = files_from_path(
       source_dir,
@@ -937,9 +919,9 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
       target files package as is, meaning these items will land in the output
       target files package exactly as they appear in the input partial framework
       target files package.
-    framework_misc_info_keys: The list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys from the vendor
-      instance.
+    framework_misc_info_keys: A list of keys to obtain from the framework
+      instance of META/misc_info.txt. The remaining keys should come from the
+      vendor instance.
     vendor_target_files: The name of the zip archive containing the vendor
       partial target files package.
     vendor_item_list: The list of items to extract from the partial vendor
@@ -967,7 +949,44 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
       rebuild_recovery)
 
   if not check_target_files_vintf.CheckVintf(output_target_files_temp_dir):
-    raise RuntimeError("Incompatible VINTF metadata")
+    raise RuntimeError('Incompatible VINTF metadata')
+
+  partition_map = common.PartitionMapFromTargetFiles(
+      output_target_files_temp_dir)
+
+  # Generate and check for cross-partition violations of sharedUserId
+  # values in APKs. This requires the input target-files packages to contain
+  # *.apk files.
+  shareduid_violation_modules = os.path.join(
+      output_target_files_temp_dir, 'META', 'shareduid_violation_modules.json')
+  with open(shareduid_violation_modules, 'w') as f:
+    violation = find_shareduid_violation.FindShareduidViolation(
+        output_target_files_temp_dir, partition_map)
+
+    # Write the output to a file to enable debugging.
+    f.write(violation)
+
+    # Check for violations across the input builds' partition groups.
+    framework_partitions = item_list_to_partition_set(framework_item_list)
+    vendor_partitions = item_list_to_partition_set(vendor_item_list)
+    shareduid_errors = common.SharedUidPartitionViolations(
+        json.loads(violation), [framework_partitions, vendor_partitions])
+    if shareduid_errors:
+      for error in shareduid_errors:
+        logger.error(error)
+      raise ValueError('sharedUserId APK error. See %s' %
+                       shareduid_violation_modules)
+
+  # Run host_init_verifier on the combined init rc files.
+  filtered_partitions = {
+      partition: path
+      for partition, path in partition_map.items()
+      # host_init_verifier checks only the following partitions:
+      if partition in ['system', 'system_ext', 'product', 'vendor', 'odm']
+  }
+  common.RunHostInitVerifier(
+      product_out=output_target_files_temp_dir,
+      partition_map=filtered_partitions)
 
   generate_images(output_target_files_temp_dir, rebuild_recovery)
 
@@ -1075,8 +1094,10 @@ def main():
       OPTIONS.output_img = a
     elif o == '--output-super-empty':
       OPTIONS.output_super_empty = a
-    elif o == '--rebuild_recovery': # TODO(b/132730255): Warn
+    elif o == '--rebuild_recovery':  # TODO(b/132730255): Warn
       OPTIONS.rebuild_recovery = True
+    elif o == '--allow-duplicate-apkapex-keys':
+      OPTIONS.allow_duplicate_apkapex_keys = True
     elif o == '--keep-tmp':
       OPTIONS.keep_tmp = True
     else:
@@ -1104,6 +1125,7 @@ def main():
           'output-img=',
           'output-super-empty=',
           'rebuild_recovery',
+          'allow-duplicate-apkapex-keys',
           'keep-tmp',
       ],
       extra_option_handler=option_handler)

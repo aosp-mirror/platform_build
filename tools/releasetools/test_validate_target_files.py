@@ -272,7 +272,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     input_file = common.MakeTempFile()
     all_entries = ['SYSTEM/', 'SYSTEM/b', 'SYSTEM/a', 'IMAGES/',
                    'IMAGES/system.map', 'IMAGES/system.img']
-    with zipfile.ZipFile(input_file, 'w') as input_zip:
+    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
       for name in all_entries:
         input_zip.write(os.path.join(input_tmp, name), arcname=name)
 
@@ -321,7 +321,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     input_file = common.MakeTempFile()
     all_entries = ['SYSTEM/', 'SYSTEM/abc', 'IMAGES/',
                    'IMAGES/system.map', 'IMAGES/system.img']
-    with zipfile.ZipFile(input_file, 'w') as input_zip:
+    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
       for name in all_entries:
         input_zip.write(os.path.join(input_tmp, name), arcname=name)
 
@@ -357,9 +357,6 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
         'ro.product.odm.device=coral',
     ]
-    input_tmp = ValidateTargetFilesTest.make_build_prop({
-        'ODM/etc/build.prop': '\n'.join(build_prop),
-    })
+    input_tmp = ValidateTargetFilesTest.make_build_prop(build_prop)
 
-    self.assertRaises(ValueError, CheckBuildPropDuplicity,
-                        input_tmp)
+    self.assertRaises(ValueError, CheckBuildPropDuplicity, input_tmp)

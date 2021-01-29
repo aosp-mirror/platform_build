@@ -16,8 +16,8 @@
 
 // If you change this file,
 // Please update ota_metadata_pb2.py by executing
-// protoc ota_metadata.proto --python_out $ANDROID_BUILD_TOP/build/tools/releasetools
-
+// protoc ota_metadata.proto --python_out
+// $ANDROID_BUILD_TOP/build/tools/releasetools
 
 syntax = "proto3";
 
@@ -63,6 +63,19 @@ message DeviceState {
   // client will rely on the information of specific partitions to target the
   // update.
   repeated PartitionState partition_state = 7;
+}
+
+message ApexInfo {
+  string package_name = 1;
+  int64 version = 2;
+  bool is_compressed = 3;
+  int64 decompressed_size = 4;
+}
+
+// Just a container to hold repeated apex_info, so that we can easily serialize
+// a list of apex_info to string.
+message ApexMetadata {
+  repeated ApexInfo apex_info = 1;
 }
 
 // The metadata of an OTA package. It contains the information of the package

@@ -115,6 +115,11 @@ SKIP_BOOT_JARS_CHECK := true
 endif
 endif
 
+ifdef TARGET_ARCH_SUITE
+  # TODO(b/175577370): Enable this error.
+  # $(error TARGET_ARCH_SUITE is not supported in kati/make builds)
+endif
+
 # ADDITIONAL_<partition>_PROPERTIES are properties that are determined by the
 # build system itself. Don't let it be defined from outside of the core build
 # system like Android.mk or <product>.mk files.
@@ -193,11 +198,7 @@ $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
 
 # Sets ro.actionable_compatible_property.enabled to know on runtime whether the
 # allowed list of actionable compatible properties is enabled or not.
-ifeq ($(PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE),true)
-ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=false
-else
-ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
-endif
+ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=true
 
 # Add the system server compiler filter if they are specified for the product.
 ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
@@ -284,9 +285,6 @@ endif
 
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.vendor.build.security_patch=$(VENDOR_SECURITY_PATCH) \
-    ro.vendor.product.cpu.abilist=$(TARGET_CPU_ABI_LIST) \
-    ro.vendor.product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT) \
-    ro.vendor.product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT) \
     ro.product.board=$(TARGET_BOOTLOADER_BOARD_NAME) \
     ro.board.platform=$(TARGET_BOARD_PLATFORM) \
     ro.hwui.use_vulkan=$(TARGET_USES_VULKAN)
@@ -300,11 +298,6 @@ ifdef AB_OTA_UPDATER
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.build.ab_update=$(AB_OTA_UPDATER)
 endif
-
-ADDITIONAL_ODM_PROPERTIES += \
-    ro.odm.product.cpu.abilist=$(TARGET_CPU_ABI_LIST) \
-    ro.odm.product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT) \
-    ro.odm.product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)
 
 # Set ro.product.vndk.version to know the VNDK version required by product
 # modules. It uses the version in PRODUCT_PRODUCT_VNDK_VERSION. If the value
@@ -748,7 +741,7 @@ $(foreach m,$(ALL_MODULES), \
     $(eval r := $(call module-installed-files,$(r))) \
     $(eval h_m := $(filter $(HOST_OUT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
     $(eval h_r := $(filter $(HOST_OUT)/%, $(r))) \
-    $(eval h_m := $(filter-out $(h_r), $(h_m))) \
+    $(eval h_r := $(filter-out $(h_m), $(h_r))) \
     $(if $(h_m), $(eval $(call add-required-deps, $(h_m),$(h_r)))) \
   ) \
 )
@@ -764,7 +757,7 @@ $(foreach m,$(ALL_MODULES), \
     $(eval r := $(call module-installed-files,$(r))) \
     $(eval hc_m := $(filter $(HOST_CROSS_OUT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
     $(eval hc_r := $(filter $(HOST_CROSS_OUT)/%, $(r))) \
-    $(eval hc_m := $(filter-out $(hc_r), $(hc_m))) \
+    $(eval hc_r := $(filter-out $(hc_m), $(hc_r))) \
     $(if $(hc_m), $(eval $(call add-required-deps, $(hc_m),$(hc_r)))) \
   ) \
 )
@@ -780,7 +773,7 @@ $(foreach m,$(ALL_MODULES), \
     $(eval r := $(call module-installed-files,$(r))) \
     $(eval t_m := $(filter $(TARGET_OUT_ROOT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
     $(eval t_r := $(filter $(TARGET_OUT_ROOT)/%, $(r))) \
-    $(eval t_m := $(filter-out $(t_r), $(t_m))) \
+    $(eval t_r := $(filter-out $(t_m), $(t_r))) \
     $(if $(t_m), $(eval $(call add-required-deps, $(t_m),$(t_r)))) \
   ) \
 )
@@ -807,7 +800,6 @@ $(foreach m,$(ALL_MODULES), \
     )\
     $(eval req_files := $(strip $(req_files)))\
     $(eval mod_files := $(filter $(HOST_OUT)/%, $(call module-installed-files,$(m)))) \
-    $(eval mod_files := $(filter-out $(req_files),$(mod_files)))\
     $(if $(mod_files),\
       $(eval $(call add-required-deps, $(mod_files),$(req_files))) \
     )\
@@ -836,7 +828,6 @@ $(foreach m,$(ALL_MODULES), \
     )\
     $(eval req_files := $(strip $(req_files)))\
     $(eval mod_files := $(filter $(TARGET_OUT_ROOT)/%, $(call module-installed-files,$(m))))\
-    $(eval mod_files := $(filter-out $(req_files),$(mod_files)))\
     $(if $(mod_files),\
       $(eval $(call add-required-deps, $(mod_files),$(req_files))) \
     )\
@@ -895,7 +886,7 @@ endef
 # Scan all modules in general-tests, device-tests and other selected suites and
 # flatten the shared library dependencies.
 define update-host-shared-libs-deps-for-suites
-$(foreach suite,general-tests device-tests vts,\
+$(foreach suite,general-tests device-tests vts art-host-tests host-unit-tests,\
   $(foreach m,$(COMPATIBILITY.$(suite).MODULES),\
     $(eval my_deps := $(call get-all-shared-libs-deps,$(m)))\
     $(foreach dep,$(my_deps),\
@@ -1121,7 +1112,11 @@ $(foreach export,$(EXPORTS_LIST),$(eval $(call add-dependency,$$(EXPORTS.$$(expo
 # Expand a list of modules to the modules that they override (if any)
 # $(1): The list of modules.
 define module-overrides
-$(foreach m,$(1),$(PACKAGES.$(m).OVERRIDES) $(EXECUTABLES.$(m).OVERRIDES) $(SHARED_LIBRARIES.$(m).OVERRIDES) $(ETC.$(m).OVERRIDES))
+$(foreach m,$(1),\
+  $(eval _mo_overrides := $(PACKAGES.$(m).OVERRIDES) $(EXECUTABLES.$(m).OVERRIDES) $(SHARED_LIBRARIES.$(m).OVERRIDES) $(ETC.$(m).OVERRIDES))\
+  $(if $(filter $(m),$(_mo_overrides)),\
+    $(error Module $(m) cannot override itself),\
+    $(_mo_overrides)))
 endef
 
 ###########################################################
@@ -1305,67 +1300,7 @@ ifdef FULL_BUILD
   # Verify the artifact path requirements made by included products.
   is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
   ifneq (true,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS)))
-  # Fakes don't get installed, and NDK stubs aren't installed to device.
-  static_allowed_patterns := $(TARGET_OUT_FAKE)/% $(SOONG_OUT_DIR)/ndk/%
-  # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
-  static_allowed_patterns += %__auto_generated_rro_product.apk
-  static_allowed_patterns += %__auto_generated_rro_vendor.apk
-  # Auto-included targets are not considered
-  static_allowed_patterns += $(call product-installed-files,)
-  # $(PRODUCT_OUT)/apex is where shared libraries in APEXes get installed.
-  # The path can be considered as a fake path, as the shared libraries
-  # are installed there just to have symbols files for them under
-  # $(PRODUCT_OUT)/symbols/apex for debugging purpose. The /apex directory
-  # is never compiled into a filesystem image.
-  static_allowed_patterns += $(PRODUCT_OUT)/apex/%
-  ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
-    # Allow system_other odex space optimization.
-    static_allowed_patterns += \
-      $(TARGET_OUT_SYSTEM_OTHER)/%.odex \
-      $(TARGET_OUT_SYSTEM_OTHER)/%.vdex \
-      $(TARGET_OUT_SYSTEM_OTHER)/%.art
-  endif
-
-CERTIFICATE_VIOLATION_MODULES_FILENAME := $(PRODUCT_OUT)/certificate_violation_modules.txt
-$(CERTIFICATE_VIOLATION_MODULES_FILENAME):
-	rm -f $@
-	$(foreach m,$(sort $(CERTIFICATE_VIOLATION_MODULES)), echo $(m) >> $@;)
-$(call dist-for-goals,droidcore,$(CERTIFICATE_VIOLATION_MODULES_FILENAME))
-
-  all_offending_files :=
-  $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
-    $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \
-    $(eval ### Verify that the product only produces files inside its path requirements.) \
-    $(eval allowed := $(PRODUCTS.$(makefile).ARTIFACT_PATH_ALLOWED_LIST)) \
-    $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
-    $(eval allowed_patterns := $(call resolve-product-relative-paths,$(allowed))) \
-    $(eval files := $(call product-installed-files, $(makefile))) \
-    $(eval offending_files := $(filter-out $(path_patterns) $(allowed_patterns) $(static_allowed_patterns),$(files))) \
-    $(call maybe-print-list-and-error,$(offending_files),\
-      $(makefile) produces files outside its artifact path requirement. \
-      Allowed paths are $(subst $(space),$(comma)$(space),$(addsuffix *,$(requirements)))) \
-    $(eval unused_allowed := $(filter-out $(files),$(allowed_patterns))) \
-    $(call maybe-print-list-and-error,$(unused_allowed),$(makefile) includes redundant allowed entries in its artifact path requirement.) \
-    $(eval ### Optionally verify that nothing else produces files inside this artifact path requirement.) \
-    $(eval extra_files := $(filter-out $(files) $(HOST_OUT)/%,$(product_target_FILES))) \
-    $(eval files_in_requirement := $(filter $(path_patterns),$(extra_files))) \
-    $(eval all_offending_files += $(files_in_requirement)) \
-    $(eval allowed := $(PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST)) \
-    $(eval allowed_patterns := $(call resolve-product-relative-paths,$(allowed))) \
-    $(eval offending_files := $(filter-out $(allowed_patterns),$(files_in_requirement))) \
-    $(eval enforcement := $(PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS)) \
-    $(if $(enforcement),\
-      $(call maybe-print-list-and-error,$(offending_files),\
-        $(INTERNAL_PRODUCT) produces files inside $(makefile)s artifact path requirement. \
-        $(PRODUCT_ARTIFACT_PATH_REQUIREMENT_HINT)) \
-      $(eval unused_allowed := $(if $(filter true strict,$(enforcement)),\
-        $(foreach p,$(allowed_patterns),$(if $(filter $(p),$(extra_files)),,$(p))))) \
-      $(call maybe-print-list-and-error,$(unused_allowed),$(INTERNAL_PRODUCT) includes redundant artifact path requirement allowed list entries.) \
-    ) \
-  )
-$(PRODUCT_OUT)/offending_artifacts.txt:
-	rm -f $@
-	$(foreach f,$(sort $(all_offending_files)),echo $(f) >> $@;)
+    include $(BUILD_SYSTEM)/artifact_path_requirements.mk
   endif
 else
   # We're not doing a full build, and are probably only including
@@ -1465,6 +1400,17 @@ modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
 
+# Some notice deps refer to module names without prefix or arch suffix where
+# only the variants with them get built.
+# fix-notice-deps replaces those unadorned module names with every built variant.
+$(call fix-notice-deps)
+
+# Create a license metadata rule per module. Could happen in base_rules.mk or
+# notice_files.mk; except, it has to happen after fix-notice-deps to avoid
+# missing dependency errors.
+$(call build-license-metadata)
+
+
 # These are additional goals that we build, in order to make sure that there
 # is as little code as possible in the tree that doesn't build.
 modules_to_check := $(foreach m,$(ALL_MODULES),$(ALL_MODULES.$(m).CHECKED))
@@ -1516,9 +1462,6 @@ ramdisk_debug: $(INSTALLED_DEBUG_RAMDISK_TARGET)
 
 .PHONY: ramdisk_test_harness
 ramdisk_test_harness: $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
-
-.PHONY: vendor_ramdisk_debug
-vendor_ramdisk_debug: $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET)
 
 .PHONY: userdataimage
 userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET)
@@ -1599,7 +1542,6 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_BPTIMAGE_TARGET) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
-    $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
     $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) \
@@ -1627,6 +1569,8 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_RAMDISK) \
     $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) \
     $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
+    $(INSTALLED_FILES_FILE_VENDOR_RAMDISK) \
+    $(INSTALLED_FILES_JSON_VENDOR_RAMDISK) \
     $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK) \
     $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK) \
     $(INSTALLED_FILES_FILE_ROOT) \
@@ -1641,6 +1585,7 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
 
 ifeq ($(SOONG_COLLECT_JAVA_DEPS), true)
   $(call dist-for-goals, dist_files, $(SOONG_OUT_DIR)/module_bp_java_deps.json)
+  $(call dist-for-goals, dist_files, $(PRODUCT_OUT)/module-info.json)
 endif
 
 .PHONY: apps_only
@@ -1715,6 +1660,7 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
     $(INTERNAL_OTA_PACKAGE_TARGET) \
     $(INTERNAL_OTA_METADATA) \
+    $(INTERNAL_OTA_PARTIAL_PACKAGE_TARGET) \
     $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET) \
     $(BUILT_OTATOOLS_PACKAGE) \
     $(SYMBOLS_ZIP) \
@@ -1745,6 +1691,7 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
     $(INSTALLED_PRODUCT_BUILD_PROP_TARGET):build.prop-product \
     $(INSTALLED_ODM_BUILD_PROP_TARGET):build.prop-odm \
     $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET):build.prop-system_ext \
+    $(INSTALLED_RAMDISK_BUILD_PROP_TARGET):build.prop-ramdisk \
     $(BUILT_TARGET_FILES_PACKAGE) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_MISC_INFO_TARGET) \
@@ -1773,11 +1720,12 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
       $(INSTALLED_FILES_JSON_RAMDISK) \
       $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) \
       $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
+      $(INSTALLED_FILES_FILE_VENDOR_RAMDISK) \
+      $(INSTALLED_FILES_JSON_VENDOR_RAMDISK) \
       $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK) \
       $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK) \
       $(INSTALLED_DEBUG_RAMDISK_TARGET) \
       $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
-      $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
     )
     $(call dist-for-goals, bootimage_test_harness, \
@@ -1793,7 +1741,6 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(JACOCO_REPORT_CLASSES_ALL) : $(modules_to_install)
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
   endif
 
@@ -1896,6 +1843,11 @@ tidy_only:
 
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
+
+# Checks that build/soong/apex/allowed_deps.txt remains up to date
+ifneq ($(UNSAFE_DISABLE_APEX_ALLOWED_DEPS_CHECK),true)
+  droidcore: ${APEX_ALLOWED_DEPS_CHECK}
+endif
 
 $(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)
 

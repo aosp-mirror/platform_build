@@ -47,6 +47,11 @@ define generate-common-build-props
         echo "ro.product.$(1).model=$(PRODUCT_MODEL)" >> $(2);\
         echo "ro.product.$(1).name=$(TARGET_PRODUCT)" >> $(2);\
     )\
+    $(if $(filter system vendor odm,$(1)),\
+        echo "ro.$(1).product.cpu.abilist=$(TARGET_CPU_ABI_LIST) " >> $(2);\
+        echo "ro.$(1).product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT)" >> $(2);\
+        echo "ro.$(1).product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
+    )\
     echo "ro.$(1).build.date=`$(DATE_FROM_FILE)`" >> $(2);\
     echo "ro.$(1).build.date.utc=`$(DATE_FROM_FILE) +%s`" >> $(2);\
     echo "ro.$(1).build.fingerprint=$(BUILD_FINGERPRINT_FROM_FILE)" >> $(2);\
@@ -54,7 +59,8 @@ define generate-common-build-props
     echo "ro.$(1).build.tags=$(BUILD_VERSION_TAGS)" >> $(2);\
     echo "ro.$(1).build.type=$(TARGET_BUILD_VARIANT)" >> $(2);\
     echo "ro.$(1).build.version.incremental=$(BUILD_NUMBER_FROM_FILE)" >> $(2);\
-    echo "ro.$(1).build.version.release=$(PLATFORM_VERSION)" >> $(2);\
+    echo "ro.$(1).build.version.release=$(PLATFORM_VERSION_LAST_STABLE)" >> $(2);\
+    echo "ro.$(1).build.version.release_or_codename=$(PLATFORM_VERSION)" >> $(2);\
     echo "ro.$(1).build.version.sdk=$(PLATFORM_SDK_VERSION)" >> $(2);\
 
 endef
@@ -67,7 +73,10 @@ endef
 #       emitted to the output
 # $(4): list of variable names each of which contains name=value pairs
 # $(5): optional list of prop names to force remove from the output. Properties from both
-#       $(3) and (4) are affected.
+#       $(3) and (4) are affected
+# $(6): optional list of files to append at the end. The content of each file is emitted
+#       to the output
+# $(7): optional flag to skip common properties generation
 define build-properties
 ALL_DEFAULT_INSTALLED_MODULES += $(2)
 
@@ -89,11 +98,13 @@ $(if $(filter true,$(BUILD_BROKEN_DUP_SYSPROP)),\
     $(eval _option := --allow-dup)\
 )
 
-$(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3)
+$(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3) $(6)
 	$(hide) echo Building $$@
 	$(hide) mkdir -p $$(dir $$@)
 	$(hide) rm -f $$@ && touch $$@
+ifneq ($(strip $(7)), true)
 	$(hide) $$(call generate-common-build-props,$(call to-lower,$(strip $(1))),$$@)
+endif
 	$(hide) $(foreach file,$(strip $(3)),\
 	    if [ -f "$(file)" ]; then\
 	        echo "" >> $$@;\
@@ -112,6 +123,10 @@ $(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) $(3
 	    )\
 	)
 	$(hide) $(POST_PROCESS_PROPS) $$(_option) $$@ $(5)
+	$(hide) $(foreach file,$(strip $(6)),\
+	    if [ -f "$(file)" ]; then\
+	        cat $(file) >> $$@;\
+	    fi;)
 	$(hide) echo "# end of file" >> $$@
 endef
 
@@ -231,7 +246,7 @@ $(strip $(subst _,-, $(firstword $(1))))
 endef
 
 gen_from_buildinfo_sh := $(call intermediates-dir-for,PACKAGING,system_build_prop)/buildinfo.prop
-$(gen_from_buildinfo_sh): $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT)
+$(gen_from_buildinfo_sh): $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) | $(BUILD_DATETIME_FILE) $(BUILD_NUMBER_FILE)
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 	        TARGET_BUILD_FLAVOR="$(TARGET_BUILD_FLAVOR)" \
 	        TARGET_DEVICE="$(TARGET_DEVICE)" \
@@ -264,19 +279,6 @@ $(gen_from_buildinfo_sh): $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT)
 	        TARGET_CPU_ABI2="$(TARGET_CPU_ABI2)" \
 	        bash $(BUILDINFO_SH) > $@
 
-ifneq ($(PRODUCT_OEM_PROPERTIES),)
-import_oem_prop := $(call intermediates-dir-for,ETC,system_build_prop)/oem.prop
-
-$(import_oem_prop):
-	$(hide) echo "#" >> $@; \
-	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach prop,$(PRODUCT_OEM_PROPERTIES), \
-	    echo "import /oem/oem.prop $(prop)" >> $@;)
-else
-import_oem_prop :=
-endif
-
 ifdef TARGET_SYSTEM_PROP
 system_prop_file := $(TARGET_SYSTEM_PROP)
 else
@@ -284,7 +286,6 @@ system_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
 endif
 
 _prop_files_ := \
-  $(import_oem_prop) \
   $(gen_from_buildinfo_sh) \
   $(system_prop_file)
 
@@ -310,9 +311,14 @@ _blacklist_names_ := \
 
 INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
 
-$(eval $(call build-properties,system,$(INSTALLED_BUILD_PROP_TARGET),\
-$(_prop_files_),$(_prop_vars_),\
-$(_blacklist_names_)))
+$(eval $(call build-properties,\
+    system,\
+    $(INSTALLED_BUILD_PROP_TARGET),\
+    $(_prop_files_),\
+    $(_prop_vars_),\
+    $(_blacklist_names_),\
+    $(empty),\
+    $(empty)))
 
 # -----------------------------------------------------------------
 # vendor/build.prop
@@ -348,7 +354,9 @@ $(eval $(call build-properties,\
     $(INSTALLED_VENDOR_BUILD_PROP_TARGET),\
     $(_prop_files_),\
     $(_prop_vars_),\
-    $(PRODUCT_VENDOR_PROPERTY_BLACKLIST)))
+    $(PRODUCT_VENDOR_PROPERTY_BLACKLIST),\
+    $(empty),\
+    $(empty)))
 
 # -----------------------------------------------------------------
 # product/etc/build.prop
@@ -365,12 +373,44 @@ _prop_vars_ := \
     PRODUCT_PRODUCT_PROPERTIES
 
 INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/etc/build.prop
+
+ifdef PRODUCT_OEM_PROPERTIES
+import_oem_prop := $(call intermediates-dir-for,ETC,import_oem_prop)/oem.prop
+
+$(import_oem_prop):
+	$(hide) echo "####################################" >> $@; \
+	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
+	        echo "####################################" >> $@;
+	$(hide) $(foreach prop,$(PRODUCT_OEM_PROPERTIES), \
+	    echo "import /oem/oem.prop $(prop)" >> $@;)
+
+_footers_ := $(import_oem_prop)
+else
+_footers_ :=
+endif
+
+# Skip common /product properties generation if device released before R and
+# has no product partition. This is the first part of the check.
+ifeq ($(call math_lt,$(if $(PRODUCT_SHIPPING_API_LEVEL),$(PRODUCT_SHIPPING_API_LEVEL),30),30), true)
+  _skip_common_properties := true
+endif
+
+# The second part of the check - always generate common properties for the
+# devices with product partition regardless of shipping level.
+ifneq ($(BOARD_USES_PRODUCTIMAGE),)
+  _skip_common_properties :=
+endif
+
 $(eval $(call build-properties,\
     product,\
     $(INSTALLED_PRODUCT_BUILD_PROP_TARGET),\
     $(_prop_files_),\
     $(_prop_vars_),\
-    $(empty)))
+    $(empty),\
+    $(_footers_),\
+    $(_skip_common_properties)))
+
+_skip_common_properties :=
 
 # ----------------------------------------------------------------
 # odm/etc/build.prop
@@ -391,6 +431,8 @@ $(eval $(call build-properties,\
     $(INSTALLED_ODM_BUILD_PROP_TARGET),\
     $(_prop_files),\
     $(_prop_vars_),\
+    $(empty),\
+    $(empty),\
     $(empty)))
 
 # ----------------------------------------------------------------
@@ -400,7 +442,12 @@ $(eval $(call build-properties,\
 INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR_DLKM)/etc/build.prop
 $(eval $(call build-properties,\
     vendor_dlkm,\
-    $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET)))
+    $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET),\
+    $(empty),\
+    $(empty),\
+    $(empty),\
+    $(empty),\
+    $(empty)))
 
 # ----------------------------------------------------------------
 # odm_dlkm/etc/build.prop
@@ -409,7 +456,12 @@ $(eval $(call build-properties,\
 INSTALLED_ODM_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM_DLKM)/etc/build.prop
 $(eval $(call build-properties,\
     odm_dlkm,\
-    $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET)))
+    $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET),\
+    $(empty),\
+    $(empty),\
+    $(empty),\
+    $(empty),\
+    $(empty)))
 
 # -----------------------------------------------------------------
 # system_ext/etc/build.prop
@@ -428,4 +480,21 @@ $(eval $(call build-properties,\
     $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET),\
     $(_prop_files_),\
     $(_prop_vars_),\
+    $(empty),\
+    $(empty),\
+    $(empty)))
+
+# ----------------------------------------------------------------
+# ramdisk/boot/etc/build.prop
+#
+
+RAMDISK_BUILD_PROP_REL_PATH := system/etc/ramdisk/build.prop
+INSTALLED_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RAMDISK_OUT)/$(RAMDISK_BUILD_PROP_REL_PATH)
+$(eval $(call build-properties,\
+    bootimage,\
+    $(INSTALLED_RAMDISK_BUILD_PROP_TARGET),\
+    $(empty),\
+    $(empty),\
+    $(empty),\
+    $(empty),\
     $(empty)))

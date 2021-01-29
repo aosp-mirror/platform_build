@@ -60,7 +60,7 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
 ifeq ($(LOCAL_IS_HOST_MODULE) $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),true,),true true)
 	$(copy-or-link-prebuilt-to-target)
   ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-	[ -x $@ ] || $(call echo-error,$@,Target of symlink is not executable)
+	[ -x $@ ] || ( $(call echo-error,$@,Target of symlink is not executable); false )
   endif
 else
 	$(transform-prebuilt-to-target)
@@ -82,8 +82,19 @@ ifndef LOCAL_IS_HOST_MODULE
   endif
 endif
 
+create_coverage_zip :=
 
 ifeq ($(NATIVE_COVERAGE),true)
+   create_coverage_zip := true
+endif
+
+# Until Rust supports LLVM coverage, Soong assumes GCOV coverage in both cases.
+# Therefore we should create the coverage zip with the gcno files in this case as well.
+ifeq ($(CLANG_COVERAGE),true)
+   create_coverage_zip := true
+endif
+
+ifdef create_coverage_zip
   ifneq (,$(strip $(LOCAL_PREBUILT_COVERAGE_ARCHIVE)))
     $(eval $(call copy-one-file,$(LOCAL_PREBUILT_COVERAGE_ARCHIVE),$(intermediates)/$(LOCAL_MODULE).zip))
     ifneq ($(LOCAL_UNINSTALLABLE_MODULE),true)

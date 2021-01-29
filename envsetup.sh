@@ -33,7 +33,9 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - allmod:     List all modules.
 - gomod:      Go to the directory containing a module.
 - pathmod:    Get the directory containing a module.
-- refreshmod: Refresh list of modules for allmod/gomod/pathmod.
+- outmod:     Gets the location of a module's installed outputs with a certain extension.
+- installmod: Adb installs a module's built APK.
+- refreshmod: Refresh list of modules for allmod/gomod/pathmod/outmod/installmod.
 - syswrite:   Remount partitions (e.g. system.img) as writable, rebooting if necessary.
 
 Environment options:
@@ -307,6 +309,9 @@ function setpaths()
     unset ANDROID_HOST_OUT
     export ANDROID_HOST_OUT=$(get_abs_build_var HOST_OUT)
 
+    unset ANDROID_SOONG_HOST_OUT
+    export ANDROID_SOONG_HOST_OUT=$(get_abs_build_var SOONG_HOST_OUT)
+
     unset ANDROID_HOST_OUT_TESTCASES
     export ANDROID_HOST_OUT_TESTCASES=$(get_abs_build_var HOST_OUT_TESTCASES)
 
@@ -316,6 +321,22 @@ function setpaths()
     # needed for building linux on MacOS
     # TODO: fix the path
     #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
+}
+
+function bazel()
+{
+    local T="$(gettop)"
+    if [ ! "$T" ]; then
+        echo "Couldn't locate the top of the tree.  Try setting TOP."
+        return
+    fi
+
+    if which bazel &>/dev/null; then
+        >&2 echo "NOTE: bazel() function sourced from envsetup.sh is being used instead of $(which bazel)"
+        >&2 echo
+    fi
+
+    "$T/tools/bazel" "$@"
 }
 
 function printconfig()
@@ -392,7 +413,10 @@ function addcompletions()
     fi
     complete -F _lunch lunch
 
+    complete -F _complete_android_module_names pathmod
     complete -F _complete_android_module_names gomod
+    complete -F _complete_android_module_names outmod
+    complete -F _complete_android_module_names installmod
     complete -F _complete_android_module_names m
 }
 
@@ -769,7 +793,7 @@ function gettop
     local TOPFILE=build/make/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
         # The following circumlocution ensures we remove symlinks from TOP.
-        (cd $TOP; PWD= /bin/pwd)
+        (cd "$TOP"; PWD= /bin/pwd)
     else
         if [ -f $TOPFILE ] ; then
             # The following circumlocution (repeated below as well) ensures
@@ -779,13 +803,13 @@ function gettop
         else
             local HERE=$PWD
             local T=
-            while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
+            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
                 \cd ..
                 T=`PWD= /bin/pwd -P`
             done
-            \cd $HERE
+            \cd "$HERE"
             if [ -f "$T/$TOPFILE" ]; then
-                echo $T
+                echo "$T"
             fi
         fi
     fi
@@ -1355,13 +1379,12 @@ function refreshmod() {
     mkdir -p $ANDROID_PRODUCT_OUT || return 1
 
     # Note, can't use absolute path because of the way make works.
-    m out/target/product/$(get_build_var TARGET_DEVICE)/module-info.json \
+    m $(get_build_var PRODUCT_OUT)/module-info.json \
         > $ANDROID_PRODUCT_OUT/module-info.json.build.log 2>&1
 }
 
-# List all modules for the current device, as cached in module-info.json. If any build change is
-# made and it should be reflected in the output, you should run 'refreshmod' first.
-function allmod() {
+# Verifies that module-info.txt exists, creating it if it doesn't.
+function verifymodinfo() {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
         echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
         return 1
@@ -1371,6 +1394,12 @@ function allmod() {
         echo "Could not find module-info.json. It will only be built once, and it can be updated with 'refreshmod'" >&2
         refreshmod || return 1
     fi
+}
+
+# List all modules for the current device, as cached in module-info.json. If any build change is
+# made and it should be reflected in the output, you should run 'refreshmod' first.
+function allmod() {
+    verifymodinfo || return 1
 
     python -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
 }
@@ -1378,20 +1407,12 @@ function allmod() {
 # Get the path of a specific module in the android tree, as cached in module-info.json. If any build change
 # is made, and it should be reflected in the output, you should run 'refreshmod' first.
 function pathmod() {
-    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
-        return 1
-    fi
-
     if [[ $# -ne 1 ]]; then
         echo "usage: pathmod <module>" >&2
         return 1
     fi
 
-    if [ ! -f "$ANDROID_PRODUCT_OUT/module-info.json" ]; then
-        echo "Could not find module-info.json. It will only be built once, and it can be updated with 'refreshmod'" >&2
-        refreshmod || return 1
-    fi
+    verifymodinfo || return 1
 
     local relpath=$(python -c "import json, os
 module = '$1'
@@ -1421,6 +1442,59 @@ function gomod() {
         return 1
     fi
     cd $path
+}
+
+# Gets the list of a module's installed outputs, as cached in module-info.json.
+# If any build change is made, and it should be reflected in the output, you should run 'refreshmod' first.
+function outmod() {
+    if [[ $# -ne 1 ]]; then
+        echo "usage: outmod <module>" >&2
+        return 1
+    fi
+
+    verifymodinfo || return 1
+
+    local relpath
+    relpath=$(python -c "import json, os
+module = '$1'
+module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
+if module not in module_info:
+    exit(1)
+for output in module_info[module]['installed']:
+    print(os.path.join('$ANDROID_BUILD_TOP', output))" 2>/dev/null)
+
+    if [ $? -ne 0 ]; then
+        echo "Could not find module '$1' (try 'refreshmod' if there have been build changes?)" >&2
+        return 1
+    elif [ ! -z "$relpath" ]; then
+        echo "$relpath"
+    fi
+}
+
+# adb install a module's apk, as cached in module-info.json. If any build change
+# is made, and it should be reflected in the output, you should run 'refreshmod' first.
+# Usage: installmod [adb install arguments] <module>
+# For example: installmod -r Dialer -> adb install -r /path/to/Dialer.apk
+function installmod() {
+    if [[ $# -eq 0 ]]; then
+        echo "usage: installmod [adb install arguments] <module>" >&2
+        return 1
+    fi
+
+    local _path
+    _path=$(outmod ${@:$#:1})
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+
+    _path=$(echo "$_path" | grep -E \\.apk$ | head -n 1)
+    if [ -z "$_path" ]; then
+        echo "Module '$1' does not produce a file ending with .apk (try 'refreshmod' if there have been build changes?)" >&2
+        return 1
+    fi
+    local length=$(( $# - 1 ))
+    echo adb install ${@:1:$length} $_path
+    adb install ${@:1:$length} $_path
 }
 
 function _complete_android_module_names() {
@@ -1600,25 +1674,26 @@ function validate_current_shell() {
 # This allows loading only approved vendorsetup.sh files
 function source_vendorsetup() {
     unset VENDOR_PYTHONPATH
+    local T="$(gettop)"
     allowed=
-    for f in $(find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
+    for f in $(cd "$T" && find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
         if [ -n "$allowed" ]; then
             echo "More than one 'allowed_vendorsetup_sh-files' file found, not including any vendorsetup.sh files:"
             echo "  $allowed"
             echo "  $f"
             return
         fi
-        allowed="$f"
+        allowed="$T/$f"
     done
 
     allowed_files=
     [ -n "$allowed" ] && allowed_files=$(cat "$allowed")
     for dir in device vendor product; do
-        for f in $(test -d $dir && \
+        for f in $(cd "$T" && test -d $dir && \
             find -L $dir -maxdepth 4 -name 'vendorsetup.sh' 2>/dev/null | sort); do
 
             if [[ -z "$allowed" || "$allowed_files" =~ $f ]]; then
-                echo "including $f"; . "$f"
+                echo "including $f"; . "$T/$f"
             else
                 echo "ignoring $f, not in $allowed"
             fi

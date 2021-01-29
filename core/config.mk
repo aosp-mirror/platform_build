@@ -155,6 +155,9 @@ $(KATI_obsolete_var COVERAGE_PATHS,Use NATIVE_COVERAGE_PATHS instead)
 $(KATI_obsolete_var COVERAGE_EXCLUDE_PATHS,Use NATIVE_COVERAGE_EXCLUDE_PATHS instead)
 $(KATI_obsolete_var BOARD_VNDK_RUNTIME_DISABLE,VNDK-Lite is no longer supported.)
 $(KATI_obsolete_var LOCAL_SANITIZE_BLACKLIST,Use LOCAL_SANITIZE_BLOCKLIST instead.)
+$(KATI_deprecated_var BOARD_PLAT_PUBLIC_SEPOLICY_DIR,Use SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS instead.)
+$(KATI_deprecated_var BOARD_PLAT_PRIVATE_SEPOLICY_DIR,Use SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS instead.)
+$(KATI_obsolete_var TARGET_NO_VENDOR_BOOT,Use PRODUCT_BUILD_VENDOR_BOOT_IMAGE instead)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -552,6 +555,7 @@ APICHECK := $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX)
 FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs
 MKE2FS_CONF := system/extras/ext4_utils/mke2fs.conf
+MKEROFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkerofsimage.sh
 MKSQUASHFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh
 MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
 SIMG2IMG := $(HOST_OUT_EXECUTABLES)/simg2img$(HOST_EXECUTABLE_SUFFIX)
@@ -601,13 +605,9 @@ HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner --compatible-output=no
 
 # Boolean variable determining if the allow list for compatible properties is enabled
-PRODUCT_COMPATIBLE_PROPERTY := false
-ifneq ($(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE),)
-  PRODUCT_COMPATIBLE_PROPERTY := $(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE)
-else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  #$(warning no product shipping level defined)
-else ifneq ($(call math_lt,27,$(PRODUCT_SHIPPING_API_LEVEL)),)
-  PRODUCT_COMPATIBLE_PROPERTY := true
+PRODUCT_COMPATIBLE_PROPERTY := true
+ifeq ($(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE),false)
+  $(error PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE is obsolete)
 endif
 
 .KATI_READONLY := \
@@ -989,6 +989,13 @@ $(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)), \
     $(eval .KATI_READONLY := BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE))
 
 endif # PRODUCT_USE_DYNAMIC_PARTITIONS
+
+# By default, we build the hidden API csv files from source. You can use
+# prebuilt hiddenapi files by setting BOARD_PREBUILT_HIDDENAPI_DIR to the name
+# of a directory containing both prebuilt hiddenapi-flags.csv and
+# hiddenapi-index.csv.
+BOARD_PREBUILT_HIDDENAPI_DIR ?=
+.KATI_READONLY := BOARD_PREBUILT_HIDDENAPI_DIR
 
 # ###############################################################
 # Set up final options.

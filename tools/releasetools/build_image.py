@@ -250,6 +250,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   run_e2fsck = False
   needs_projid = prop_dict.get("needs_projid", 0)
   needs_casefold = prop_dict.get("needs_casefold", 0)
+  needs_compress = prop_dict.get("needs_compress", 0)
 
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
@@ -295,6 +296,18 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.extend(["--inode_size", "256"])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
+  elif fs_type.startswith("erofs"):
+    build_command = ["mkerofsimage.sh"]
+    build_command.extend([in_dir, out_file])
+    if "erofs_sparse_flag" in prop_dict:
+      build_command.extend([prop_dict["erofs_sparse_flag"]])
+    build_command.extend(["-m", prop_dict["mount_point"]])
+    if target_out:
+      build_command.extend(["-d", target_out])
+    if fs_config:
+      build_command.extend(["-C", fs_config])
+    if "selinux_fc" in prop_dict:
+      build_command.extend(["-c", prop_dict["selinux_fc"]])
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
@@ -337,6 +350,17 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.append("--prjquota")
     if (needs_casefold):
       build_command.append("--casefold")
+    if (needs_compress or prop_dict.get("system_fs_compress") == "true"):
+      build_command.append("--compression")
+    if (prop_dict.get("system_fs_compress") == "true"):
+      build_command.append("--sldc")
+      if (prop_dict.get("system_f2fs_sldc_flags") == None):
+        build_command.append(str(0))
+      else:
+        sldc_flags_str = prop_dict.get("system_f2fs_sldc_flags")
+        sldc_flags = sldc_flags_str.split()
+        build_command.append(str(len(sldc_flags)))
+        build_command.extend(sldc_flags)
   else:
     raise BuildImageError(
         "Error: unknown filesystem type: {}".format(fs_type))
@@ -402,7 +426,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   fs_type = prop_dict.get("fs_type", "")
 
   fs_spans_partition = True
-  if fs_type.startswith("squash"):
+  if fs_type.startswith("squash") or fs_type.startswith("erofs"):
     fs_spans_partition = False
 
   # Get a builder for creating an image that's to be verified by Verified Boot,
@@ -412,7 +436,16 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   if (prop_dict.get("use_dynamic_partition_size") == "true" and
       "partition_size" not in prop_dict):
     # If partition_size is not defined, use output of `du' + reserved_size.
-    size = GetDiskUsage(in_dir)
+    # For compressed file system, it's better to use the compressed size to avoid wasting space.
+    if fs_type.startswith("erofs"):
+      tmp_dict = prop_dict.copy()
+      if "erofs_sparse_flag" in tmp_dict:
+        tmp_dict.pop("erofs_sparse_flag")
+      BuildImageMkfs(in_dir, tmp_dict, out_file, target_out, fs_config)
+      size = GetDiskUsage(out_file)
+      os.remove(out_file)
+    else:
+      size = GetDiskUsage(in_dir)
     logger.info(
         "The tree size of %s is %d MB.", in_dir, size // BYTES_IN_MB)
     # If not specified, give us 16MB margin for GetDiskUsage error ...
@@ -529,7 +562,10 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
 
   common_props = (
       "extfs_sparse_flag",
+      "erofs_sparse_flag",
       "squashfs_sparse_flag",
+      "system_fs_compress",
+      "system_f2fs_sldc_flags",
       "f2fs_sparse_flag",
       "skip_fsck",
       "ext_mkuserimg",
@@ -610,6 +646,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("userdata_selinux_fc", "selinux_fc")
     copy_prop("needs_casefold", "needs_casefold")
     copy_prop("needs_projid", "needs_projid")
+    copy_prop("needs_compress", "needs_compress")
   elif mount_point == "cache":
     copy_prop("cache_fs_type", "fs_type")
     copy_prop("cache_size", "partition_size")

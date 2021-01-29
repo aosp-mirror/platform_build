@@ -44,13 +44,9 @@ PRODUCT_MAKEFILES := \
 else
 PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/aosp_64bitonly_x86_64.mk \
-    $(LOCAL_DIR)/aosp_arm64_ab.mk \
     $(LOCAL_DIR)/aosp_arm64.mk \
-    $(LOCAL_DIR)/aosp_arm_ab.mk \
     $(LOCAL_DIR)/aosp_arm.mk \
-    $(LOCAL_DIR)/aosp_x86_64_ab.mk \
     $(LOCAL_DIR)/aosp_x86_64.mk \
-    $(LOCAL_DIR)/aosp_x86_ab.mk \
     $(LOCAL_DIR)/aosp_x86_arm.mk \
     $(LOCAL_DIR)/aosp_x86.mk \
     $(LOCAL_DIR)/full.mk \
@@ -61,7 +57,6 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/generic_system_x86_64.mk \
     $(LOCAL_DIR)/generic_system_x86_arm.mk \
     $(LOCAL_DIR)/generic_x86.mk \
-    $(LOCAL_DIR)/gsi_arm64.mk \
     $(LOCAL_DIR)/mainline_system_arm64.mk \
     $(LOCAL_DIR)/mainline_system_x86.mk \
     $(LOCAL_DIR)/mainline_system_x86_64.mk \
@@ -76,6 +71,8 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/sdk_x86.mk \
 
 endif
+
+PRODUCT_MAKEFILES += $(LOCAL_DIR)/mainline_sdk.mk
 
 COMMON_LUNCH_CHOICES := \
     aosp_arm64-eng \

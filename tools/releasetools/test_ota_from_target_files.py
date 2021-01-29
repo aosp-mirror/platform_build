@@ -27,17 +27,20 @@ from ota_utils import (
     FinalizeMetadata, GetPackageMetadata, PropertyFiles)
 from ota_from_target_files import (
     _LoadOemDicts, AbOtaPropertyFiles,
+    GetTargetFilesZipForCustomImagesUpdates,
+    GetTargetFilesZipForPartialUpdates,
     GetTargetFilesZipForSecondaryImages,
     GetTargetFilesZipWithoutPostinstallConfig,
     Payload, PayloadSigner, POSTINSTALL_CONFIG,
     StreamingPropertyFiles, AB_PARTITIONS)
+from apex_utils import GetApexInfoFromTargetFiles
 from test_utils import PropertyFilesTestCase
 
 
-def construct_target_files(secondary=False):
+def construct_target_files(secondary=False, compressedApex=False):
   """Returns a target-files.zip file for generating OTA packages."""
   target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
-  with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+  with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
     # META/update_engine_config.txt
     target_files_zip.writestr(
         'META/update_engine_config.txt',
@@ -75,6 +78,11 @@ def construct_target_files(secondary=False):
     if secondary:
       target_files_zip.writestr('IMAGES/system_other.img',
                                 os.urandom(len("system_other")))
+
+    if compressedApex:
+      apex_file_name = 'com.android.apex.compressed.v1.capex'
+      apex_file = os.path.join(test_utils.get_current_dir(), apex_file_name)
+      target_files_zip.write(apex_file, 'SYSTEM/apex/' + apex_file_name)
 
   return target_files
 
@@ -272,6 +280,21 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetApexInfoFromTargetFiles(self):
+    target_files = construct_target_files(compressedApex=True)
+    apex_infos = GetApexInfoFromTargetFiles(target_files)
+    self.assertEqual(len(apex_infos), 1)
+    self.assertEqual(apex_infos[0].package_name, "com.android.apex.compressed")
+    self.assertEqual(apex_infos[0].version, 1)
+    self.assertEqual(apex_infos[0].is_compressed, True)
+    # Compare the decompressed APEX size with the original uncompressed APEX
+    original_apex_name = 'com.android.apex.compressed.v1_original.apex'
+    original_apex_filepath = os.path.join(test_utils.get_current_dir(), original_apex_name)
+    uncompressed_apex_size = os.path.getsize(original_apex_filepath)
+    self.assertEqual(apex_infos[0].decompressed_size, uncompressed_apex_size)
+
+
   def test_GetPackageMetadata_retrofitDynamicPartitions(self):
     target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     common.OPTIONS.retrofit_dynamic_partitions = True
@@ -417,7 +440,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'super_google_dynamic_partitions_partition_list=system vendor product',
     ])
 
-    with zipfile.ZipFile(input_file, 'a') as append_zip:
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as append_zip:
       common.ZipWriteStr(append_zip, 'META/misc_info.txt', misc_info)
       common.ZipWriteStr(append_zip, 'META/dynamic_partitions_info.txt',
                          dynamic_partitions_info)
@@ -450,6 +473,86 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
                      updated_dynamic_partitions_info)
 
   @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetTargetFilesZipForPartialUpdates_singlePartition(self):
+    input_file = construct_target_files()
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as append_zip:
+      common.ZipWriteStr(append_zip, 'IMAGES/system.map', 'fake map')
+
+    target_file = GetTargetFilesZipForPartialUpdates(input_file, ['system'])
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+      ab_partitions = verify_zip.read('META/ab_partitions.txt').decode()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertIn('META/update_engine_config.txt', namelist)
+    self.assertIn('IMAGES/system.img', namelist)
+    self.assertIn('IMAGES/system.map', namelist)
+
+    self.assertNotIn('IMAGES/boot.img', namelist)
+    self.assertNotIn('IMAGES/system_other.img', namelist)
+    self.assertNotIn('RADIO/bootloader.img', namelist)
+    self.assertNotIn('RADIO/modem.img', namelist)
+
+    self.assertEqual('system', ab_partitions)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetTargetFilesZipForPartialUpdates_unrecognizedPartition(self):
+    input_file = construct_target_files()
+    self.assertRaises(ValueError, GetTargetFilesZipForPartialUpdates,
+                      input_file, ['product'])
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetTargetFilesZipForPartialUpdates_dynamicPartitions(self):
+    input_file = construct_target_files(secondary=True)
+    misc_info = '\n'.join([
+        'use_dynamic_partition_size=true',
+        'use_dynamic_partitions=true',
+        'dynamic_partition_list=system vendor product',
+        'super_partition_groups=google_dynamic_partitions',
+        'super_google_dynamic_partitions_group_size=4873781248',
+        'super_google_dynamic_partitions_partition_list=system vendor product',
+    ])
+    dynamic_partitions_info = '\n'.join([
+        'super_partition_groups=google_dynamic_partitions',
+        'super_google_dynamic_partitions_group_size=4873781248',
+        'super_google_dynamic_partitions_partition_list=system vendor product',
+    ])
+
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as append_zip:
+      common.ZipWriteStr(append_zip, 'META/misc_info.txt', misc_info)
+      common.ZipWriteStr(append_zip, 'META/dynamic_partitions_info.txt',
+                         dynamic_partitions_info)
+
+    target_file = GetTargetFilesZipForPartialUpdates(input_file,
+                                                     ['boot', 'system'])
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+      ab_partitions = verify_zip.read('META/ab_partitions.txt').decode()
+      updated_misc_info = verify_zip.read('META/misc_info.txt').decode()
+      updated_dynamic_partitions_info = verify_zip.read(
+          'META/dynamic_partitions_info.txt').decode()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertIn('IMAGES/boot.img', namelist)
+    self.assertIn('IMAGES/system.img', namelist)
+    self.assertIn('META/misc_info.txt', namelist)
+    self.assertIn('META/dynamic_partitions_info.txt', namelist)
+
+    self.assertNotIn('IMAGES/system_other.img', namelist)
+    self.assertNotIn('RADIO/bootloader.img', namelist)
+    self.assertNotIn('RADIO/modem.img', namelist)
+
+    # Check the vendor & product are removed from the partitions list.
+    expected_misc_info = misc_info.replace('system vendor product',
+                                           'system')
+    expected_dynamic_partitions_info = dynamic_partitions_info.replace(
+        'system vendor product', 'system')
+    self.assertEqual(expected_misc_info, updated_misc_info)
+    self.assertEqual(expected_dynamic_partitions_info,
+                     updated_dynamic_partitions_info)
+    self.assertEqual('boot\nsystem', ab_partitions)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetTargetFilesZipWithoutPostinstallConfig(self):
     input_file = construct_target_files()
     target_file = GetTargetFilesZipWithoutPostinstallConfig(input_file)
@@ -464,6 +567,46 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(target_file) as verify_zip:
       self.assertNotIn(POSTINSTALL_CONFIG, verify_zip.namelist())
 
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetTargetFilesZipForCustomImagesUpdates_oemDefaultImage(self):
+    input_file = construct_target_files()
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as append_zip:
+      common.ZipWriteStr(append_zip, 'IMAGES/oem.img', 'oem')
+      common.ZipWriteStr(append_zip, 'IMAGES/oem_test.img', 'oem_test')
+
+    target_file = GetTargetFilesZipForCustomImagesUpdates(
+        input_file, {'oem': 'oem.img'})
+
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+      ab_partitions = verify_zip.read('META/ab_partitions.txt').decode()
+      oem_image = verify_zip.read('IMAGES/oem.img').decode()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertEqual('boot\nsystem\nvendor\nbootloader\nmodem', ab_partitions)
+    self.assertIn('IMAGES/oem.img', namelist)
+    self.assertEqual('oem', oem_image)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_GetTargetFilesZipForCustomImagesUpdates_oemTestImage(self):
+    input_file = construct_target_files()
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as append_zip:
+      common.ZipWriteStr(append_zip, 'IMAGES/oem.img', 'oem')
+      common.ZipWriteStr(append_zip, 'IMAGES/oem_test.img', 'oem_test')
+
+    target_file = GetTargetFilesZipForCustomImagesUpdates(
+        input_file, {'oem': 'oem_test.img'})
+
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+      ab_partitions = verify_zip.read('META/ab_partitions.txt').decode()
+      oem_image = verify_zip.read('IMAGES/oem.img').decode()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertEqual('boot\nsystem\nvendor\nbootloader\nmodem', ab_partitions)
+    self.assertIn('IMAGES/oem.img', namelist)
+    self.assertEqual('oem_test', oem_image)
+
   def _test_FinalizeMetadata(self, large_entry=False):
     entries = [
         'required-entry1',
@@ -472,7 +615,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     zip_file = PropertyFilesTest.construct_zip_package(entries)
     # Add a large entry of 1 GiB if requested.
     if large_entry:
-      with zipfile.ZipFile(zip_file, 'a') as zip_fp:
+      with zipfile.ZipFile(zip_file, 'a', allowZip64=True) as zip_fp:
         zip_fp.writestr(
             # Using 'zoo' so that the entry stays behind others after signing.
             'zoo',
@@ -514,7 +657,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'optional-entry2',
     ]
     zip_file = PropertyFilesTest.construct_zip_package(entries)
-    with zipfile.ZipFile(zip_file, 'a') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'a', allowZip64=True) as zip_fp:
       zip_fp.writestr(
           # 'foo-entry1' will appear ahead of all other entries (in alphabetical
           # order) after the signing, which will in turn trigger the
@@ -558,7 +701,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
@@ -574,7 +717,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
@@ -587,7 +730,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       self.assertRaises(KeyError, property_files.Compute, zip_fp)
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -600,7 +743,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     ]
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
       streaming_metadata = property_files.Finalize(zip_fp, len(raw_metadata))
@@ -625,7 +768,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
@@ -660,7 +803,7 @@ class PropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
@@ -702,7 +845,7 @@ class StreamingPropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
@@ -720,7 +863,7 @@ class StreamingPropertyFilesTest(PropertyFilesTestCase):
     ]
     zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
       streaming_metadata = property_files.Finalize(zip_fp, len(raw_metadata))
@@ -744,7 +887,7 @@ class StreamingPropertyFilesTest(PropertyFilesTestCase):
     )
     zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
@@ -802,7 +945,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
     payload.Sign(payload_signer)
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       payload.WriteToZip(output_zip)
 
     # Find out the payload metadata offset and size.
@@ -867,7 +1010,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
     payload.Sign(payload_signer)
 
     zip_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(zip_file, 'w') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'w', allowZip64=True) as zip_fp:
       # 'payload.bin',
       payload.WriteToZip(zip_fp)
 
@@ -889,7 +1032,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
   def test_Compute(self):
     zip_file = self.construct_zip_package_withValidPayload()
     property_files = AbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
 
     tokens = self._parse_property_files_string(property_files_string)
@@ -903,7 +1046,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
   def test_Finalize(self):
     zip_file = self.construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
       property_files_string = property_files.Finalize(
@@ -920,7 +1063,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
   def test_Verify(self):
     zip_file = self.construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
-    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+    with zipfile.ZipFile(zip_file, 'r', allowZip64=True) as zip_fp:
       raw_metadata = property_files.GetPropertyFilesString(
           zip_fp, reserve_space=False)
 
@@ -1087,7 +1230,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload.Sign(PayloadSigner())
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       payload.WriteToZip(output_zip)
 
     import check_ota_package_signature
@@ -1101,7 +1244,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload.Sign(PayloadSigner())
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       payload.WriteToZip(output_zip)
 
     import check_ota_package_signature
@@ -1140,7 +1283,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload.Sign(PayloadSigner())
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       payload.WriteToZip(output_zip)
 
     with zipfile.ZipFile(output_file) as verify_zip:
@@ -1162,14 +1305,14 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload = self._create_payload_full()
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       self.assertRaises(AssertionError, payload.WriteToZip, output_zip)
 
     # Also test with incremental payload.
     payload = self._create_payload_incremental()
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       self.assertRaises(AssertionError, payload.WriteToZip, output_zip)
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -1178,7 +1321,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload.Sign(PayloadSigner())
 
     output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
+    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
       payload.WriteToZip(output_zip)
 
     with zipfile.ZipFile(output_file) as verify_zip:
@@ -1205,11 +1348,12 @@ class RuntimeFingerprintTest(test_utils.ReleaseToolsTestCase):
   ]
 
   BUILD_PROP = [
-      'ro.build.version.release=version-release',
       'ro.build.id=build-id',
       'ro.build.version.incremental=version-incremental',
       'ro.build.type=build-type',
       'ro.build.tags=build-tags',
+      'ro.build.version.release=version-release',
+      'ro.build.version.release_or_codename=version-release',
       'ro.build.version.sdk=30',
       'ro.build.version.security_patch=2020',
       'ro.build.date.utc=12345678',

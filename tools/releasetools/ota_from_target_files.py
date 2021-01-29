@@ -85,6 +85,13 @@ Common options that apply to both of non-A/B and A/B OTAs
       If not set, generates A/B package for A/B device and non-A/B package for
       non-A/B device.
 
+  -o  (--oem_settings) <main_file[,additional_files...]>
+      Comma separated list of files used to specify the expected OEM-specific
+      properties on the OEM partition of the intended device. Multiple expected
+      values can be used by providing multiple files. Only the first dict will
+      be used to compute fingerprint, while the rest will be used to assert
+      OEM-specific properties.
+
 Non-A/B OTA specific options
 
   -b  (--binary) <file>
@@ -113,13 +120,6 @@ Non-A/B OTA specific options
       Generate a log file that shows the differences in the source and target
       builds for an incremental package. This option is only meaningful when -i
       is specified.
-
-  -o  (--oem_settings) <main_file[,additional_files...]>
-      Comma seperated list of files used to specify the expected OEM-specific
-      properties on the OEM partition of the intended device. Multiple expected
-      values can be used by providing multiple files. Only the first dict will
-      be used to compute fingerprint, while the rest will be used to assert
-      OEM-specific properties.
 
   --oem_no_mount
       For devices with OEM-specific properties but without an OEM partition, do
@@ -202,26 +202,38 @@ A/B OTA specific options
       ones. Should only be used if caller knows it's safe to do so (e.g. all the
       postinstall work is to dexopt apps and a data wipe will happen immediately
       after). Only meaningful when generating A/B OTAs.
+
+  --partial "<PARTITION> [<PARTITION>[...]]"
+      Generate partial updates, overriding ab_partitions list with the given
+      list.
+
+  --custom_image <custom_partition=custom_image>
+      Use the specified custom_image to update custom_partition when generating
+      an A/B OTA package. e.g. "--custom_image oem=oem.img --custom_image
+      cus=cus_test.img"
 """
 
 from __future__ import print_function
 
 import logging
 import multiprocessing
+import os
 import os.path
+import re
 import shlex
 import shutil
 import struct
+import subprocess
 import sys
 import zipfile
 
 import common
 import ota_utils
+from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
+                       PropertyFiles)
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
-from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
-                       PropertyFiles)
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -257,7 +269,9 @@ OPTIONS.extracted_input = None
 OPTIONS.skip_postinstall = False
 OPTIONS.skip_compatibility_check = False
 OPTIONS.disable_fec_computation = False
-
+OPTIONS.disable_verity_computation = False
+OPTIONS.partial = None
+OPTIONS.custom_images = {}
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -389,6 +403,8 @@ class Payload(object):
       cmd.extend(["--source_image", source_file])
       if OPTIONS.disable_fec_computation:
         cmd.extend(["--disable_fec_computation", "true"])
+      if OPTIONS.disable_verity_computation:
+        cmd.extend(["--disable_verity_computation", "true"])
     cmd.extend(additional_args)
     self._Run(cmd)
 
@@ -593,6 +609,48 @@ class AbOtaPropertyFiles(StreamingPropertyFiles):
     return (payload_offset, metadata_total)
 
 
+def UpdatesInfoForSpecialUpdates(content, partitions_filter,
+                                 delete_keys=None):
+  """ Updates info file for secondary payload generation, partial update, etc.
+
+    Scan each line in the info file, and remove the unwanted partitions from
+    the dynamic partition list in the related properties. e.g.
+    "super_google_dynamic_partitions_partition_list=system vendor product"
+    will become "super_google_dynamic_partitions_partition_list=system".
+
+  Args:
+    content: The content of the input info file. e.g. misc_info.txt.
+    partitions_filter: A function to filter the desired partitions from a given
+      list
+    delete_keys: A list of keys to delete in the info file
+
+  Returns:
+    A string of the updated info content.
+  """
+
+  output_list = []
+  # The suffix in partition_list variables that follows the name of the
+  # partition group.
+  list_suffix = 'partition_list'
+  for line in content.splitlines():
+    if line.startswith('#') or '=' not in line:
+      output_list.append(line)
+      continue
+    key, value = line.strip().split('=', 1)
+
+    if delete_keys and key in delete_keys:
+      pass
+    elif key.endswith(list_suffix):
+      partitions = value.split()
+      # TODO for partial update, partitions in the same group must be all
+      # updated or all omitted
+      partitions = filter(partitions_filter, partitions)
+      output_list.append('{}={}'.format(key, ' '.join(partitions)))
+    else:
+      output_list.append(line)
+  return '\n'.join(output_list)
+
+
 def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   """Returns a target-files.zip file for generating secondary payload.
 
@@ -614,49 +672,20 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   """
 
   def GetInfoForSecondaryImages(info_file):
-    """Updates info file for secondary payload generation.
-
-    Scan each line in the info file, and remove the unwanted partitions from
-    the dynamic partition list in the related properties. e.g.
-    "super_google_dynamic_partitions_partition_list=system vendor product"
-    will become "super_google_dynamic_partitions_partition_list=system".
-
-    Args:
-      info_file: The input info file. e.g. misc_info.txt.
-
-    Returns:
-      A string of the updated info content.
-    """
-
-    output_list = []
+    """Updates info file for secondary payload generation."""
     with open(info_file) as f:
-      lines = f.read().splitlines()
-
-    # The suffix in partition_list variables that follows the name of the
-    # partition group.
-    LIST_SUFFIX = 'partition_list'
-    for line in lines:
-      if line.startswith('#') or '=' not in line:
-        output_list.append(line)
-        continue
-      key, value = line.strip().split('=', 1)
-      if key == 'dynamic_partition_list' or key.endswith(LIST_SUFFIX):
-        partitions = value.split()
-        partitions = [partition for partition in partitions if partition
-                      not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
-        output_list.append('{}={}'.format(key, ' '.join(partitions)))
-      elif key in ['virtual_ab', "virtual_ab_retrofit"]:
-        # Remove virtual_ab flag from secondary payload so that OTA client
-        # don't use snapshots for secondary update
-        pass
-      else:
-        output_list.append(line)
-    return '\n'.join(output_list)
+      content = f.read()
+    # Remove virtual_ab flag from secondary payload so that OTA client
+    # don't use snapshots for secondary update
+    delete_keys = ['virtual_ab', "virtual_ab_retrofit"]
+    return UpdatesInfoForSpecialUpdates(
+        content, lambda p: p not in SECONDARY_PAYLOAD_SKIPPED_IMAGES,
+        delete_keys)
 
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   target_zip = zipfile.ZipFile(target_file, 'w', allowZip64=True)
 
-  with zipfile.ZipFile(input_file, 'r') as input_zip:
+  with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip:
     infolist = input_zip.infolist()
 
   input_tmp = common.UnzipTemp(input_file, UNZIP_PATTERN)
@@ -719,7 +748,7 @@ def GetTargetFilesZipWithoutPostinstallConfig(input_file):
     The filename of target-files.zip that doesn't contain postinstall config.
   """
   # We should only make a copy if postinstall_config entry exists.
-  with zipfile.ZipFile(input_file, 'r') as input_zip:
+  with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip:
     if POSTINSTALL_CONFIG not in input_zip.namelist():
       return input_file
 
@@ -727,6 +756,80 @@ def GetTargetFilesZipWithoutPostinstallConfig(input_file):
   shutil.copyfile(input_file, target_file)
   common.ZipDelete(target_file, POSTINSTALL_CONFIG)
   return target_file
+
+def ParseInfoDict(target_file_path):
+  with zipfile.ZipFile(target_file_path, 'r', allowZip64=True) as zfp:
+    return common.LoadInfoDict(zfp)
+
+def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
+  """Returns a target-files.zip for partial ota update package generation.
+
+  This function modifies ab_partitions list with the desired partitions before
+  calling the brillo_update_payload script. It also cleans up the reference to
+  the excluded partitions in the info file, e.g misc_info.txt.
+
+  Args:
+    input_file: The input target-files.zip filename.
+    ab_partitions: A list of partitions to include in the partial update
+
+  Returns:
+    The filename of target-files.zip used for partial ota update.
+  """
+
+  def AddImageForPartition(partition_name):
+    """Add the archive name for a given partition to the copy list."""
+    for prefix in ['IMAGES', 'RADIO']:
+      image_path = '{}/{}.img'.format(prefix, partition_name)
+      if image_path in namelist:
+        copy_entries.append(image_path)
+        map_path = '{}/{}.map'.format(prefix, partition_name)
+        if map_path in namelist:
+          copy_entries.append(map_path)
+        return
+
+    raise ValueError("Cannot find {} in input zipfile".format(partition_name))
+
+  with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
+    original_ab_partitions = input_zip.read(
+        AB_PARTITIONS).decode().splitlines()
+    namelist = input_zip.namelist()
+
+  unrecognized_partitions = [partition for partition in ab_partitions if
+                             partition not in original_ab_partitions]
+  if unrecognized_partitions:
+    raise ValueError("Unrecognized partitions when generating partial updates",
+                     unrecognized_partitions)
+
+  logger.info("Generating partial updates for %s", ab_partitions)
+
+  copy_entries = ['META/update_engine_config.txt']
+  for partition_name in ab_partitions:
+    AddImageForPartition(partition_name)
+
+  # Use zip2zip to avoid extracting the zipfile.
+  partial_target_file = common.MakeTempFile(suffix='.zip')
+  cmd = ['zip2zip', '-i', input_file, '-o', partial_target_file]
+  cmd.extend(['{}:{}'.format(name, name) for name in copy_entries])
+  common.RunAndCheckOutput(cmd)
+
+  partial_target_zip = zipfile.ZipFile(partial_target_file, 'a',
+                                       allowZip64=True)
+  with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
+    common.ZipWriteStr(partial_target_zip, 'META/ab_partitions.txt',
+                       '\n'.join(ab_partitions))
+    for info_file in ['META/misc_info.txt', DYNAMIC_PARTITION_INFO]:
+      if info_file not in input_zip.namelist():
+        logger.warning('Cannot find %s in input zipfile', info_file)
+        continue
+      content = input_zip.read(info_file).decode()
+      modified_info = UpdatesInfoForSpecialUpdates(
+          content, lambda p: p in ab_partitions)
+      common.ZipWriteStr(partial_target_zip, info_file, modified_info)
+
+    # TODO(xunchang) handle 'META/care_map.pb', 'META/postinstall_config.txt'
+  common.ZipClose(partial_target_zip)
+
+  return partial_target_file
 
 
 def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
@@ -754,7 +857,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   shutil.copyfile(input_file, target_file)
 
-  with zipfile.ZipFile(input_file) as input_zip:
+  with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
     namelist = input_zip.namelist()
 
   input_tmp = common.UnzipTemp(input_file, RETROFIT_DAP_UNZIP_PATTERN)
@@ -778,7 +881,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   with open(new_ab_partitions, 'w') as f:
     for partition in ab_partitions:
       if (partition in dynamic_partition_list and
-              partition not in super_block_devices):
+          partition not in super_block_devices):
         logger.info("Dropping %s from ab_partitions.txt", partition)
         continue
       f.write(partition + "\n")
@@ -814,6 +917,108 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   return target_file
 
 
+def GetTargetFilesZipForCustomImagesUpdates(input_file, custom_images):
+  """Returns a target-files.zip for custom partitions update.
+
+  This function modifies ab_partitions list with the desired custom partitions
+  and puts the custom images into the target target-files.zip.
+
+  Args:
+    input_file: The input target-files.zip filename.
+    custom_images: A map of custom partitions and custom images.
+
+  Returns:
+    The filename of a target-files.zip which has renamed the custom images in
+    the IMAGS/ to their partition names.
+  """
+  # Use zip2zip to avoid extracting the zipfile.
+  target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
+  cmd = ['zip2zip', '-i', input_file, '-o', target_file]
+
+  with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
+    namelist = input_zip.namelist()
+
+  # Write {custom_image}.img as {custom_partition}.img.
+  for custom_partition, custom_image in custom_images.items():
+    default_custom_image = '{}.img'.format(custom_partition)
+    if default_custom_image != custom_image:
+      logger.info("Update custom partition '%s' with '%s'",
+                  custom_partition, custom_image)
+      # Default custom image need to be deleted first.
+      namelist.remove('IMAGES/{}'.format(default_custom_image))
+      # IMAGES/{custom_image}.img:IMAGES/{custom_partition}.img.
+      cmd.extend(['IMAGES/{}:IMAGES/{}'.format(custom_image,
+                                               default_custom_image)])
+
+  cmd.extend(['{}:{}'.format(name, name) for name in namelist])
+  common.RunAndCheckOutput(cmd)
+
+  return target_file
+
+def GeneratePartitionTimestampFlags(partition_state):
+  partition_timestamps = [
+      part.partition_name + ":" + part.version
+      for part in partition_state]
+  return ["--partition_timestamps", ",".join(partition_timestamps)]
+
+def GeneratePartitionTimestampFlagsDowngrade(
+    pre_partition_state, post_partition_state):
+  assert pre_partition_state is not None
+  partition_timestamps = {}
+  for part in pre_partition_state:
+    partition_timestamps[part.partition_name] = part.version
+  for part in post_partition_state:
+    partition_timestamps[part.partition_name] = \
+      max(part.version, partition_timestamps[part.partition_name])
+  return [
+      "--partition_timestamps",
+      ",".join([key + ":" + val for (key, val) in partition_timestamps.items()])
+  ]
+
+def IsSparseImage(filepath):
+  with open(filepath, 'rb') as fp:
+    # Magic for android sparse image format
+    # https://source.android.com/devices/bootloader/images
+    return fp.read(4) == b'\x3A\xFF\x26\xED'
+
+def SupportsMainlineGkiUpdates(target_file):
+  """Return True if the build supports MainlineGKIUpdates.
+
+  This function scans the product.img file in IMAGES/ directory for
+  pattern |*/apex/com.android.gki.*.apex|. If there are files
+  matching this pattern, conclude that build supports mainline
+  GKI and return True
+
+  Args:
+    target_file: Path to a target_file.zip, or an extracted directory
+  Return:
+    True if thisb uild supports Mainline GKI Updates.
+  """
+  if target_file is None:
+    return False
+  if os.path.isfile(target_file):
+    target_file = common.UnzipTemp(target_file, ["IMAGES/product.img"])
+  if not os.path.isdir(target_file):
+    assert os.path.isdir(target_file), \
+        "{} must be a path to zip archive or dir containing extracted"\
+        " target_files".format(target_file)
+  image_file = os.path.join(target_file, "IMAGES", "product.img")
+
+  if not os.path.isfile(image_file):
+    return False
+
+  if IsSparseImage(image_file):
+    # Unsparse the image
+    tmp_img = common.MakeTempFile(suffix=".img")
+    subprocess.check_output(["simg2img", image_file, tmp_img])
+    image_file = tmp_img
+
+  cmd = ["debugfs_static", "-R", "ls -p /apex", image_file]
+  output = subprocess.check_output(cmd).decode()
+
+  pattern = re.compile(r"com\.android\.gki\..*\.apex")
+  return pattern.search(output) is not None
+
 def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
   # Stage the output zip package for package signing.
@@ -822,7 +1027,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   else:
     staging_file = output_file
   output_zip = zipfile.ZipFile(staging_file, "w",
-                               compression=zipfile.ZIP_DEFLATED)
+                               compression=zipfile.ZIP_DEFLATED,
+                               allowZip64=True)
 
   if source_file is not None:
     assert "ab_partitions" in OPTIONS.source_info_dict, \
@@ -831,45 +1037,70 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         "META/ab_partitions.txt is required for ab_update."
     target_info = common.BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
     source_info = common.BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
+    vendor_prop = source_info.info_dict.get("vendor.build.prop")
+    if vendor_prop and \
+        vendor_prop.GetProp("ro.virtual_ab.compression.enabled") == "true":
+      # TODO(zhangkelvin) Remove this once FEC on VABC is supported
+      logger.info("Virtual AB Compression enabled, disabling FEC")
+      OPTIONS.disable_fec_computation = True
+      OPTIONS.disable_verity_computation = True
   else:
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
     target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
     source_info = None
 
+  additional_args = []
+
+  # Prepare custom images.
+  if OPTIONS.custom_images:
+    target_file = GetTargetFilesZipForCustomImagesUpdates(
+        target_file, OPTIONS.custom_images)
+
   if OPTIONS.retrofit_dynamic_partitions:
     target_file = GetTargetFilesZipForRetrofitDynamicPartitions(
         target_file, target_info.get("super_block_devices").strip().split(),
         target_info.get("dynamic_partition_list").strip().split())
+  elif OPTIONS.partial:
+    target_file = GetTargetFilesZipForPartialUpdates(target_file,
+                                                     OPTIONS.partial)
+    additional_args += ["--is_partial_update", "true"]
   elif OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
   # Target_file may have been modified, reparse ab_partitions
   with zipfile.ZipFile(target_file, allowZip64=True) as zfp:
     target_info.info_dict['ab_partitions'] = zfp.read(
-        AB_PARTITIONS).strip().split("\n")
+        AB_PARTITIONS).decode().strip().split("\n")
 
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
   payload = Payload()
 
-  partition_timestamps = []
+  partition_timestamps_flags = []
   # Enforce a max timestamp this payload can be applied on top of.
   if OPTIONS.downgrade:
     max_timestamp = source_info.GetBuildProp("ro.build.date.utc")
+    partition_timestamps_flags = GeneratePartitionTimestampFlagsDowngrade(
+        metadata.precondition.partition_state,
+        metadata.postcondition.partition_state
+    )
   else:
     max_timestamp = str(metadata.postcondition.timestamp)
-    partition_timestamps = [
-        part.partition_name + ":" + part.version
-        for part in metadata.postcondition.partition_state]
-  additional_args = ["--max_timestamp", max_timestamp]
-  if partition_timestamps:
-    additional_args.extend(
-        ["--partition_timestamps", ",".join(
-            partition_timestamps)]
-    )
+    partition_timestamps_flags = GeneratePartitionTimestampFlags(
+        metadata.postcondition.partition_state)
 
-  payload.Generate(target_file, source_file, additional_args)
+  additional_args += ["--max_timestamp", max_timestamp]
+
+  if SupportsMainlineGkiUpdates(source_file):
+    logger.warning("Detected build with mainline GKI, include full boot image.")
+    additional_args.extend(["--full_boot", "true"])
+
+  payload.Generate(
+      target_file,
+      source_file,
+      additional_args + partition_timestamps_flags
+  )
 
   # Sign the payload.
   payload_signer = PayloadSigner()
@@ -887,15 +1118,16 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         target_file, OPTIONS.skip_postinstall)
     secondary_payload = Payload(secondary=True)
     secondary_payload.Generate(secondary_target_file,
-                               additional_args=additional_args)
+                               additional_args=["--max_timestamp",
+                                                max_timestamp])
     secondary_payload.Sign(payload_signer)
     secondary_payload.WriteToZip(output_zip)
 
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
-  target_zip = zipfile.ZipFile(target_file, "r")
+  target_zip = zipfile.ZipFile(target_file, "r", allowZip64=True)
   if (target_info.get("verity") == "true" or
-          target_info.get("avb_enable") == "true"):
+      target_info.get("avb_enable") == "true"):
     care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
                      "META/" + x in target_zip.namelist()]
 
@@ -909,6 +1141,15 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
                          compress_type=zipfile.ZIP_STORED)
     else:
       logger.warning("Cannot find care map file in target_file package")
+
+  # Copy apex_info.pb over to generated OTA package.
+  try:
+    apex_info_entry = target_zip.getinfo("META/apex_info.pb")
+    with target_zip.open(apex_info_entry, "r") as zfp:
+      common.ZipWriteStr(output_zip, "apex_info.pb", zfp.read(),
+                        compress_type=zipfile.ZIP_STORED)
+  except KeyError:
+    logger.warning("target_file doesn't contain apex_info.pb %s", target_file)
 
   common.ZipClose(target_zip)
 
@@ -1002,10 +1243,20 @@ def main(argv):
       OPTIONS.output_metadata_path = a
     elif o == "--disable_fec_computation":
       OPTIONS.disable_fec_computation = True
+    elif o == "--disable_verity_computation":
+      OPTIONS.disable_verity_computation = True
     elif o == "--force_non_ab":
       OPTIONS.force_non_ab = True
     elif o == "--boot_variable_file":
       OPTIONS.boot_variable_file = a
+    elif o == "--partial":
+      partitions = a.split()
+      if not partitions:
+        raise ValueError("Cannot parse partitions in {}".format(a))
+      OPTIONS.partial = partitions
+    elif o == "--custom_image":
+      custom_partition, custom_image = a.split("=")
+      OPTIONS.custom_images[custom_partition] = custom_image
     else:
       return False
     return True
@@ -1042,8 +1293,11 @@ def main(argv):
                                  "skip_compatibility_check",
                                  "output_metadata_path=",
                                  "disable_fec_computation",
+                                 "disable_verity_computation",
                                  "force_non_ab",
                                  "boot_variable_file=",
+                                 "partial=",
+                                 "custom_image=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -1051,13 +1305,6 @@ def main(argv):
     sys.exit(1)
 
   common.InitLogging()
-
-  if OPTIONS.downgrade:
-    # We should only allow downgrading incrementals (as opposed to full).
-    # Otherwise the device may go back from arbitrary build with this full
-    # OTA package.
-    if OPTIONS.incremental_source is None:
-      raise ValueError("Cannot generate downgradable full OTAs")
 
   # Load the build info dicts from the zip directly or the extracted input
   # directory. We don't need to unzip the entire target-files zips, because they
@@ -1069,20 +1316,43 @@ def main(argv):
   if OPTIONS.extracted_input is not None:
     OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input)
   else:
-    with zipfile.ZipFile(args[0], 'r') as input_zip:
-      OPTIONS.info_dict = common.LoadInfoDict(input_zip)
+    OPTIONS.info_dict = ParseInfoDict(args[0])
+
+  if OPTIONS.downgrade:
+    # We should only allow downgrading incrementals (as opposed to full).
+    # Otherwise the device may go back from arbitrary build with this full
+    # OTA package.
+    if OPTIONS.incremental_source is None:
+      raise ValueError("Cannot generate downgradable full OTAs")
+
+
+  # TODO(xunchang) for retrofit and partial updates, maybe we should rebuild the
+  # target-file and reload the info_dict. So the info will be consistent with
+  # the modified target-file.
 
   logger.info("--- target info ---")
   common.DumpInfoDict(OPTIONS.info_dict)
 
+
   # Load the source build dict if applicable.
   if OPTIONS.incremental_source is not None:
     OPTIONS.target_info_dict = OPTIONS.info_dict
-    with zipfile.ZipFile(OPTIONS.incremental_source, 'r') as source_zip:
-      OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
+    OPTIONS.source_info_dict = ParseInfoDict(OPTIONS.incremental_source)
 
     logger.info("--- source info ---")
     common.DumpInfoDict(OPTIONS.source_info_dict)
+
+  if OPTIONS.partial:
+    OPTIONS.info_dict['ab_partitions'] = \
+      list(
+          set(OPTIONS.info_dict['ab_partitions']) & set(OPTIONS.partial)
+      )
+    if OPTIONS.source_info_dict:
+      OPTIONS.source_info_dict['ab_partitions'] = \
+        list(
+            set(OPTIONS.source_info_dict['ab_partitions']) &
+            set(OPTIONS.partial)
+        )
 
   # Load OEM dicts if provided.
   OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)
@@ -1091,7 +1361,7 @@ def main(argv):
   # use_dynamic_partitions but target build does.
   if (OPTIONS.source_info_dict and
       OPTIONS.source_info_dict.get("use_dynamic_partitions") != "true" and
-          OPTIONS.target_info_dict.get("use_dynamic_partitions") == "true"):
+      OPTIONS.target_info_dict.get("use_dynamic_partitions") == "true"):
     if OPTIONS.target_info_dict.get("dynamic_partition_retrofit") != "true":
       raise common.ExternalError(
           "Expect to generate incremental OTA for retrofitting dynamic "
@@ -1107,7 +1377,8 @@ def main(argv):
   ab_update = OPTIONS.info_dict.get("ab_update") == "true"
   allow_non_ab = OPTIONS.info_dict.get("allow_non_ab") == "true"
   if OPTIONS.force_non_ab:
-    assert allow_non_ab, "--force_non_ab only allowed on devices that supports non-A/B"
+    assert allow_non_ab,\
+      "--force_non_ab only allowed on devices that supports non-A/B"
     assert ab_update, "--force_non_ab only allowed on A/B devices"
 
   generate_ab = not OPTIONS.force_non_ab and ab_update

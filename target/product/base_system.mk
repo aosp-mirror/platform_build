@@ -38,7 +38,6 @@ PRODUCT_PACKAGES += \
     bcc \
     blank_screen \
     blkid \
-    service-blobstore \
     bmgr \
     bootanimation \
     bootstat \
@@ -117,8 +116,8 @@ PRODUCT_PACKAGES += \
     iptables \
     ip-up-vpn \
     javax.obex \
-    service-jobscheduler \
     keystore \
+    keystore2 \
     credstore \
     ld.mc \
     libaaudio \
@@ -250,6 +249,7 @@ PRODUCT_PACKAGES += \
     shell_and_utilities_system \
     sm \
     snapshotctl \
+    snapuserd \
     SoundPicker \
     storaged \
     surfaceflinger \
@@ -280,6 +280,23 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     system_manifest.xml \
     system_compatibility_matrix.xml \
+
+# HWASAN runtime for SANITIZE_TARGET=hwaddress builds
+ifneq (,$(filter hwaddress,$(SANITIZE_TARGET)))
+  PRODUCT_PACKAGES += \
+   libclang_rt.hwasan-aarch64-android.bootstrap
+endif
+
+# Jacoco agent JARS to be built and installed, if any.
+ifeq ($(EMMA_INSTRUMENT),true)
+  ifneq ($(EMMA_INSTRUMENT_STATIC),true)
+    # For instrumented build, if Jacoco is not being included statically
+    # in instrumented packages then include Jacoco classes into the
+    # bootclasspath.
+    PRODUCT_PACKAGES += jacocoagent
+    PRODUCT_BOOT_JARS += jacocoagent
+  endif # EMMA_INSTRUMENT_STATIC
+endif # EMMA_INSTRUMENT
 
 # Host tools to install
 PRODUCT_HOST_PACKAGES += \
@@ -317,47 +334,14 @@ PRODUCT_HOST_PACKAGES += \
     tz_version_host \
     tz_version_host_tzdata_apex \
 
-ifeq ($(ART_APEX_JARS),)
-$(error ART_APEX_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
-endif
-
-# The order matters for runtime class lookup performance.
-PRODUCT_BOOT_JARS := \
-    $(ART_APEX_JARS) \
-    framework-minus-apex \
-    ext \
-    com.android.i18n:core-icu4j \
-    telephony-common \
-    voip-common \
-    ims-common
-
-PRODUCT_UPDATABLE_BOOT_JARS := \
-    com.android.conscrypt:conscrypt \
-    com.android.media:updatable-media \
-    com.android.mediaprovider:framework-mediaprovider \
-    com.android.os.statsd:framework-statsd \
-    com.android.permission:framework-permission \
-    com.android.sdkext:framework-sdkextensions \
-    com.android.wifi:framework-wifi \
-    com.android.tethering:framework-tethering
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
     system/core/rootdir/init.usb.configfs.rc:system/etc/init/hw/init.usb.configfs.rc \
     system/core/rootdir/etc/hosts:system/etc/hosts
 
-# Add the compatibility library that is needed when android.test.base
-# is removed from the bootclasspath.
-# Default to excluding android.test.base from the bootclasspath.
-ifneq ($(REMOVE_ATB_FROM_BCP),false)
-PRODUCT_PACKAGES += framework-atb-backward-compatibility
-PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
-else
-PRODUCT_BOOT_JARS += android.test.base
-endif
-
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc
-PRODUCT_SYSTEM_PROPERTIES += ro.zygote?=zygote32
+PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
@@ -368,6 +352,7 @@ PRODUCT_PROPERTY_OVERRIDES += ro.gfx.angle.supported=true
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
+    dmuserd \
     gdbserver \
     idlcli \
     init-debug.rc \
@@ -377,6 +362,8 @@ PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     logtagd.rc \
     procrank \
+    profcollectd \
+    profcollectctl \
     remount \
     showmap \
     sqlite3 \

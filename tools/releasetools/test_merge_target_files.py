@@ -117,6 +117,15 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
                               DEFAULT_FRAMEWORK_MISC_INFO_KEYS,
                               vendor_item_list))
 
+  def test_validate_config_lists_ReturnsFalseIfSharedExtractedPartitionImage(
+      self):
+    vendor_item_list = list(DEFAULT_VENDOR_ITEM_LIST)
+    vendor_item_list.append('IMAGES/system.img')
+    self.assertFalse(
+        validate_config_lists(DEFAULT_FRAMEWORK_ITEM_LIST,
+                              DEFAULT_FRAMEWORK_MISC_INFO_KEYS,
+                              vendor_item_list))
+
   def test_validate_config_lists_ReturnsFalseIfBadSystemMiscInfoKeys(self):
     for bad_key in ['dynamic_partition_list', 'super_partition_groups']:
       framework_misc_info_keys = list(DEFAULT_FRAMEWORK_MISC_INFO_KEYS)
@@ -144,8 +153,7 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     process_apex_keys_apk_certs_common(framework_dir, vendor_dir, output_dir,
                                        set(['product', 'system', 'system_ext']),
-                                       set(['odm', 'vendor']),
-                                       'apexkeys.txt')
+                                       set(['odm', 'vendor']), 'apexkeys.txt')
 
     merged_entries = []
     merged_path = os.path.join(self.testdata_dir, 'apexkeys_merge.txt')
@@ -180,8 +188,7 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(ValueError, process_apex_keys_apk_certs_common,
                       framework_dir, conflict_dir, output_dir,
                       set(['product', 'system', 'system_ext']),
-                      set(['odm', 'vendor']),
-                      'apexkeys.txt')
+                      set(['odm', 'vendor']), 'apexkeys.txt')
 
   def test_process_apex_keys_apk_certs_HandlesApkCertsSyntax(self):
     output_dir = common.MakeTempDir()
@@ -201,8 +208,7 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     process_apex_keys_apk_certs_common(framework_dir, vendor_dir, output_dir,
                                        set(['product', 'system', 'system_ext']),
-                                       set(['odm', 'vendor']),
-                                       'apkcerts.txt')
+                                       set(['odm', 'vendor']), 'apkcerts.txt')
 
     merged_entries = []
     merged_path = os.path.join(self.testdata_dir, 'apkcerts_merge.txt')
