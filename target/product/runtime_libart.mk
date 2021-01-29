@@ -16,6 +16,8 @@
 
 # Provides a functioning ART environment without Android frameworks
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
+
 # Additional mixins to the boot classpath.
 PRODUCT_PACKAGES += \
     android.test.base \
@@ -30,8 +32,8 @@ PRODUCT_PACKAGES += com.android.runtime
 # ART APEX module.
 # Note that this package includes the minimal boot classpath JARs (listed in
 # ART_APEX_JARS), which should no longer be added directly to PRODUCT_PACKAGES.
-PRODUCT_PACKAGES += com.android.art
-PRODUCT_HOST_PACKAGES += com.android.art
+PRODUCT_PACKAGES += com.android.art-autoselect
+PRODUCT_HOST_PACKAGES += com.android.art-autoselect
 
 # Certificates.
 PRODUCT_PACKAGES += \
@@ -41,10 +43,6 @@ PRODUCT_PACKAGES += \
     hiddenapi-package-whitelist.xml \
 
 PRODUCT_SYSTEM_PROPERTIES += \
-    dalvik.vm.image-dex2oat-Xms=64m \
-    dalvik.vm.image-dex2oat-Xmx=64m \
-    dalvik.vm.dex2oat-Xms=64m \
-    dalvik.vm.dex2oat-Xmx=512m \
     dalvik.vm.usejit=true \
     dalvik.vm.usejitprofiles=true \
     dalvik.vm.dexopt.secondary=true \
@@ -70,6 +68,11 @@ endif
 # or if it is empty speed-profile is equivalent to (quicken + empty app image).
 PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.install?=speed-profile \
+    pm.dexopt.install-fast?=skip \
+    pm.dexopt.install-bulk?=speed-profile \
+    pm.dexopt.install-bulk-secondary?=verify \
+    pm.dexopt.install-bulk-downgraded?=verify \
+    pm.dexopt.install-bulk-secondary-downgraded?=extract \
     pm.dexopt.bg-dexopt?=speed-profile \
     pm.dexopt.ab-ota?=speed-profile \
     pm.dexopt.inactive?=verify \
@@ -92,4 +95,14 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.minidebuginfo=true \
     dalvik.vm.dex2oat-minidebuginfo=true
 
-PRODUCT_USES_DEFAULT_ART_CONFIG := true
+# Two other device configs are added to IORap besides "ro.iorapd.enable".
+# IORap by default is off and starts when
+# (https://source.corp.google.com/android/system/iorap/iorapd.rc?q=iorapd.rc)
+#
+# * "ro.iorapd.enable" is true excluding unset
+# * One of the device configs is true.
+#
+# "ro.iorapd.enable" has to be set to true, so that iorap can be started.
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.iorapd.enable?=true
+

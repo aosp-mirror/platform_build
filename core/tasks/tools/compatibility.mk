@@ -29,15 +29,12 @@
 test_suite_subdir := android-$(test_suite_name)
 out_dir := $(HOST_OUT)/$(test_suite_name)/$(test_suite_subdir)
 test_artifacts := $(COMPATIBILITY.$(test_suite_name).FILES)
-test_tools := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
+test_tools := $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/tradefed-no-fwk.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/tradefed-test-framework.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/loganalysis.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util-tests.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-common-util-tests.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-tradefed-tests.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-tradefed.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed).jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed)-tests.jar \
   $(HOST_OUT_EXECUTABLES)/$(test_suite_tradefed) \
@@ -80,10 +77,8 @@ $(eval $(call combine-notice-files, html, \
          $(HOST_OUT_NOTICE_FILES) $(TARGET_OUT_NOTICE_FILES), \
          $(compatibility_zip_deps)))
 
-ifeq ($(include_test_suite_notice),true)
-  compatibility_zip_deps += $(test_suite_notice_txt)
-  compatibility_zip_resources += $(test_suite_notice_txt)
-endif
+compatibility_zip_deps += $(test_suite_notice_txt)
+compatibility_zip_resources += $(test_suite_notice_txt)
 
 compatibility_zip := $(out_dir).zip
 $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
@@ -112,7 +107,6 @@ test_suite_dynamic_config :=
 test_suite_readme :=
 test_suite_prebuilt_tools :=
 test_suite_tools :=
-include_test_suite_notice :=
 test_suite_jdk :=
 test_suite_jdk_dir :=
 host_shared_libs :=

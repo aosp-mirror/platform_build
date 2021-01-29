@@ -107,7 +107,7 @@ ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 # All tests that should be skipped in presubmit check.
 ALL_DISABLED_PRESUBMIT_TESTS :=
 
-# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
+# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITE
 ALL_COMPATIBILITY_SUITES :=
 
 # All compatibility suite files to dist.
@@ -522,6 +522,96 @@ endef
 
 define reverse-list
 $(if $(1),$(call reverse-list,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
+endef
+
+###########################################################
+## Sometimes a notice dependency will reference an unadorned
+## module name that only appears in ALL_MODULES adorned with
+## an ARCH suffix or a `host_cross_` prefix.
+##
+## After all of the modules are processed in base_rules.mk,
+## replace all such dependencies with every matching adorned
+## module name.
+###########################################################
+
+define fix-notice-deps
+$(strip \
+  $(eval _all_module_refs := \
+    $(sort \
+      $(foreach m,$(sort $(ALL_MODULES)), \
+        $(ALL_MODULES.$(m).NOTICE_DEPS) \
+      ) \
+    ) \
+  ) \
+  $(foreach m, $(_all_module_refs), \
+    $(eval _lookup.$(m) := \
+      $(sort \
+        $(if $(strip $(ALL_MODULES.$(m).PATH)), \
+          $(m), \
+          $(filter $(m)_32 $(m)_64 host_cross_$(m) host_cross_$(m)_32 host_cross_$(m)_64, $(ALL_MODULES)) \
+        ) \
+      ) \
+    ) \
+  ) \
+  $(foreach m, $(ALL_MODULES), \
+    $(eval ALL_MODULES.$(m).NOTICE_DEPS := \
+      $(sort \
+         $(foreach d,$(ALL_MODULES.$(m).NOTICE_DEPS), \
+           $(_lookup.$(d)) \
+        ) \
+      ) \
+    ) \
+  ) \
+)
+endef
+
+###########################################################
+## Target directory for license metadata files.
+###########################################################
+define license-metadata-dir
+$(call generated-sources-dir-for,META,lic,)
+endef
+
+###########################################################
+## License metadata build rule for my_register_name $1
+###########################################################
+define license-metadata-rule
+$(strip $(eval _dir := $(call license-metadata-dir)))
+$(strip $(eval _deps := $(sort $(filter-out $(_dir)/$(1).meta_lic,$(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS), $(_dir)/$(d).meta_lic)))))
+$(foreach b,$(sort $(ALL_MODULES.$(1).BUILT) $(ALL_MODULES.$(1).INSTALLED)),
+$(_dir)/$(b).meta_module ::
+	mkdir -p $$(dir $$@)
+	echo $(_dir)/$(1).meta_lic >> $$@
+	sort -u $$@ -o $$@
+
+)
+$(_dir)/$(1).meta_lic: PRIVATE_KINDS := $(sort $(ALL_MODULES.$(1).LICENSE_KINDS))
+$(_dir)/$(1).meta_lic: PRIVATE_CONDITIONS := $(sort $(ALL_MODULES.$(1).LICENSE_CONDITIONS))
+$(_dir)/$(1).meta_lic: PRIVATE_NOTICES := $(sort $(ALL_MODULES.$(1).NOTICES))
+$(_dir)/$(1).meta_lic: PRIVATE_NOTICE_DEPS := $(_deps)
+$(_dir)/$(1).meta_lic: PRIVATE_TARGETS := $(sort $(ALL_MODULES.$(1).BUILT) $(ALL_MODULES.$(1).INSTALLED))
+$(_dir)/$(1).meta_lic: PRIVATE_IS_CONTAINER := $(sort $(ALL_MODULES.$(1).IS_CONTAINER))
+$(_dir)/$(1).meta_lic: PRIVATE_PACKAGE_NAME := $(ALL_MODULES.$(1).LICENSE_PACKAGE_NAME)
+$(_dir)/$(1).meta_lic: PRIVATE_INSTALL_MAP := $(sort $(ALL_MODULES.$(1).LICENSE_INSTALL_MAP))
+$(_dir)/$(1).meta_lic : $(_deps) $(ALL_MODULES.$(1).NOTICES) $(foreach b,$(sort $(ALL_MODULES.$(1).BUILT) $(ALL_MODULES.$(1).INSTALLED)), $(_dir)/$(b).meta_module) build/make/tools/build-license-metadata.sh
+	rm -f $$@
+	mkdir -p $$(dir $$@)
+	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(filter-out false,$$(PRIVATE_IS_CONTAINER)),-is_container) -p $$(PRIVATE_PACKAGE_NAME) -o $$@
+
+$(1) : $(_dir)/$(1).meta_lic
+
+$(if $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE),$(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE) : $(_dir)/$(1).meta_lic)
+
+.PHONY: $(1).meta_lic
+$(1).meta_lic : $(_dir)/$(1).meta_lic
+
+endef
+
+###########################################################
+## Declares a license metadata build rule for ALL_MODULES
+###########################################################
+define build-license-metadata
+$(foreach m,$(ALL_MODULES),$(eval $(call license-metadata-rule,$(m))))
 endef
 
 ###########################################################
@@ -2404,6 +2494,7 @@ $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
 	$(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	$(call intermediates-dir-for,ETC,passwd_system_ext)/passwd_system_ext \
 	$(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
 	$(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
 	$(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
@@ -2414,6 +2505,7 @@ $(2): \
 	$(call intermediates-dir-for,ETC,odm_property_contexts)/odm_property_contexts
 	$(hide) $(HOST_INIT_VERIFIER) \
 	  -p $(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	  -p $(call intermediates-dir-for,ETC,passwd_system_ext)/passwd_system_ext \
 	  -p $(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
 	  -p $(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
 	  -p $(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
@@ -2491,15 +2583,25 @@ endef
 # $(2): destination file
 # $(3): message to print on error
 define copy-non-elf-file-checked
-$(2): $(1) $(LLVM_READOBJ)
-	@echo "Copy non-ELF: $$@"
+$(eval check_non_elf_file_timestamp := \
+    $(call intermediates-dir-for,FAKE,check-non-elf-file-timestamps)/$(2).timestamp)
+$(check_non_elf_file_timestamp): $(1) $(LLVM_READOBJ)
+	@echo "Check non-ELF: $$<"
+	$(hide) mkdir -p "$$(dir $$@)"
+	$(hide) rm -f "$$@"
 	$(hide) \
-	    if $(LLVM_READOBJ) -h $$< >/dev/null 2>&1; then \
-	        $(call echo-error,$$@,$(3)); \
-	        $(call echo-error,$$@,found ELF file: $$<); \
+	    if $(LLVM_READOBJ) -h "$$<" >/dev/null 2>&1; then \
+	        $(call echo-error,$(2),$(3)); \
+	        $(call echo-error,$(2),found ELF file: $$<); \
 	        false; \
 	    fi
+	$(hide) touch "$$@"
+
+$(2): $(1) $(check_non_elf_file_timestamp)
+	@echo "Copy non-ELF: $$@"
 	$$(copy-file-to-target)
+
+check-elf-prebuilt-product-copy-files: $(check_non_elf_file_timestamp)
 endef
 
 # The -t option to acp and the -p option to cp is
@@ -2610,6 +2712,7 @@ $(3): $(1)
 	@mkdir -p $(dir $$@)
 	@rm -rf $$@
 	$(hide) ln -sf $(2) $$@
+$(3): .KATI_SYMLINK_OUTPUTS := $(3)
 endef
 
 # Copy an apk to a target location while removing classes*.dex

@@ -515,7 +515,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             data,
             payload_key,
             container_key,
-            key_passwords[container_key],
+            key_passwords,
             apk_keys,
             codename_to_api_level_map,
             no_hashtree=True,
@@ -624,6 +624,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
     # Skip the care_map as we will regenerate the system/vendor images.
     elif filename in ["META/care_map.pb", "META/care_map.txt"]:
+      pass
+
+    # Skip apex_info.pb because we sign/modify apexes
+    elif filename == "META/apex_info.pb":
       pass
 
     # Updates system_other.avbpubkey in /product/etc/.
@@ -813,7 +817,7 @@ def WriteOtacerts(output_zip, filename, keys):
     keys: A list of public keys to use during OTA package verification.
   """
   temp_file = io.BytesIO()
-  certs_zip = zipfile.ZipFile(temp_file, "w")
+  certs_zip = zipfile.ZipFile(temp_file, "w", allowZip64=True)
   for k in keys:
     common.ZipWrite(certs_zip, k)
   common.ZipClose(certs_zip)
@@ -1294,7 +1298,7 @@ def main(argv):
 
   common.InitLogging()
 
-  input_zip = zipfile.ZipFile(args[0], "r")
+  input_zip = zipfile.ZipFile(args[0], "r", allowZip64=True)
   output_zip = zipfile.ZipFile(args[1], "w",
                                compression=zipfile.ZIP_DEFLATED,
                                allowZip64=True)

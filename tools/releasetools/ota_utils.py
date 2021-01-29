@@ -14,14 +14,16 @@
 
 import copy
 import itertools
+import logging
 import os
 import zipfile
 
 import ota_metadata_pb2
 from common import (ZipDelete, ZipClose, OPTIONS, MakeTempFile,
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
-                    SignFile, PARTITIONS_WITH_CARE_MAP, PartitionBuildProps)
+                    SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps)
 
+logger = logging.getLogger(__name__)
 
 OPTIONS.no_signing = False
 OPTIONS.force_non_ab = False
@@ -37,7 +39,6 @@ OPTIONS.boot_variable_file = None
 METADATA_NAME = 'META-INF/com/android/metadata'
 METADATA_PROTO_NAME = 'META-INF/com/android/metadata.pb'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
-
 
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   """Finalizes the metadata and signs an A/B OTA package.
@@ -62,7 +63,7 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
 
   def ComputeAllPropertyFiles(input_file, needed_property_files):
     # Write the current metadata entry with placeholders.
-    with zipfile.ZipFile(input_file) as input_zip:
+    with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
       for property_files in needed_property_files:
         metadata.property_files[property_files.name] = property_files.Compute(
             input_zip)
@@ -70,7 +71,7 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
 
     if METADATA_NAME in namelist or METADATA_PROTO_NAME in namelist:
       ZipDelete(input_file, [METADATA_NAME, METADATA_PROTO_NAME])
-    output_zip = zipfile.ZipFile(input_file, 'a')
+    output_zip = zipfile.ZipFile(input_file, 'a', allowZip64=True)
     WriteMetadata(metadata, output_zip)
     ZipClose(output_zip)
 
@@ -82,7 +83,7 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
     return prelim_signing
 
   def FinalizeAllPropertyFiles(prelim_signing, needed_property_files):
-    with zipfile.ZipFile(prelim_signing) as prelim_signing_zip:
+    with zipfile.ZipFile(prelim_signing, allowZip64=True) as prelim_signing_zip:
       for property_files in needed_property_files:
         metadata.property_files[property_files.name] = property_files.Finalize(
             prelim_signing_zip,
@@ -108,7 +109,7 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
 
   # Replace the METADATA entry.
   ZipDelete(prelim_signing, [METADATA_NAME, METADATA_PROTO_NAME])
-  output_zip = zipfile.ZipFile(prelim_signing, 'a')
+  output_zip = zipfile.ZipFile(prelim_signing, 'a', allowZip64=True)
   WriteMetadata(metadata, output_zip)
   ZipClose(output_zip)
 
@@ -119,7 +120,7 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
     SignOutput(prelim_signing, output_file)
 
   # Reopen the final signed zip to double check the streaming metadata.
-  with zipfile.ZipFile(output_file) as output_zip:
+  with zipfile.ZipFile(output_file, allowZip64=True) as output_zip:
     for property_files in needed_property_files:
       property_files.Verify(
           output_zip, metadata.property_files[property_files.name].strip())
@@ -173,7 +174,7 @@ def UpdateDeviceState(device_state, build_info, boot_variable_values,
     # delta_generator will error out on unused timestamps,
     # so only generate timestamps for dynamic partitions
     # used in OTA update.
-    for partition in sorted(set(PARTITIONS_WITH_CARE_MAP) & ab_partitions):
+    for partition in sorted(set(PARTITIONS_WITH_BUILD_PROP) & ab_partitions):
       partition_prop = build_info.info_dict.get(
           '{}.build.prop'.format(partition))
       # Skip if the partition is missing, or it doesn't have a build.prop
@@ -359,11 +360,11 @@ def ComputeRuntimeBuildInfos(default_build_info, boot_variable_values):
     # Reload the info_dict as some build properties may change their values
     # based on the value of ro.boot* properties.
     info_dict = copy.deepcopy(default_build_info.info_dict)
-    for partition in PARTITIONS_WITH_CARE_MAP:
+    for partition in PARTITIONS_WITH_BUILD_PROP:
       partition_prop_key = "{}.build.prop".format(partition)
       input_file = info_dict[partition_prop_key].input_file
       if isinstance(input_file, zipfile.ZipFile):
-        with zipfile.ZipFile(input_file.filename) as input_zip:
+        with zipfile.ZipFile(input_file.filename, allowZip64=True) as input_zip:
           info_dict[partition_prop_key] = \
               PartitionBuildProps.FromInputFile(input_zip, partition,
                                                 placeholder_values)

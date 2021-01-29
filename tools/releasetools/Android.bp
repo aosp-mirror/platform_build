@@ -28,6 +28,8 @@ python_defaults {
         "add_img_to_target_files.py",
     ],
     libs: [
+        "ota_metadata_proto",
+        "releasetools_apex_utils",
         "releasetools_build_image",
         "releasetools_build_super_image",
         "releasetools_common",
@@ -49,6 +51,7 @@ python_defaults {
     required: [
         "blk_alloc_to_base_fs",
         "e2fsck",
+        "mkerofsimage.sh",
         "mkuserimg_mke2fs",
         "simg2img",
         "tune2fs",
@@ -121,10 +124,15 @@ python_defaults {
         "releasetools_check_target_files_vintf",
         "releasetools_common",
         "releasetools_verity_utils",
+        "apex_manifest",
     ],
     required: [
         "brillo_update_payload",
         "checkvintf",
+        "lz4",
+        "toybox",
+        "unpack_bootimg",
+        "deapexer",
     ],
     target: {
         darwin: {
@@ -165,6 +173,8 @@ python_library_host {
         "apex_utils.py",
     ],
     libs: [
+        "apex_manifest",
+        "ota_metadata_proto",
         "releasetools_common",
     ],
 }
@@ -215,6 +225,8 @@ python_library_host {
         "lz4",
         "mkbootfs",
         "signapk",
+        "toybox",
+        "unpack_bootimg",
     ],
 }
 
@@ -275,6 +287,8 @@ python_defaults {
         "lz4",
         "mkbootfs",
         "signapk",
+        "toybox",
+        "unpack_bootimg",
     ],
 }
 
@@ -365,6 +379,32 @@ python_binary_host {
     ],
 }
 
+python_defaults {
+    name: "releasetools_find_shareduid_violation_defaults",
+    srcs: [
+        "find_shareduid_violation.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "find_shareduid_violation",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_find_shareduid_violation_defaults",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_find_shareduid_violation",
+    defaults: [
+        "releasetools_find_shareduid_violation_defaults",
+        "releasetools_library_defaults",
+    ],
+}
+
 python_binary_host {
     name: "make_recovery_patch",
     defaults: ["releasetools_binary_defaults"],
@@ -399,11 +439,13 @@ python_binary_host {
         "releasetools_build_super_image",
         "releasetools_check_target_files_vintf",
         "releasetools_common",
+        "releasetools_find_shareduid_violation",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
     ],
     required: [
         "checkvintf",
+        "host_init_verifier",
     ],
     target: {
         darwin: {
@@ -501,12 +543,15 @@ python_defaults {
         "releasetools_build_super_image",
         "releasetools_check_target_files_vintf",
         "releasetools_common",
+        "releasetools_find_shareduid_violation",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
         "releasetools_verity_utils",
     ],
     data: [
         "testdata/**/*",
+        ":com.android.apex.compressed.v1",
+        ":com.android.apex.compressed.v1_original",
     ],
     target: {
         darwin: {
@@ -514,6 +559,9 @@ python_defaults {
             enabled: false,
         },
     },
+    required: [
+        "deapexer",
+    ],
 }
 
 python_test_host {
@@ -533,7 +581,9 @@ python_test_host {
             embedded_launcher: false,
         },
     },
-    test_suites: ["general-tests"],
+    test_options: {
+        unit_test: true,
+    },
 }
 
 python_test_host {
@@ -550,5 +600,7 @@ python_test_host {
             embedded_launcher: false,
         },
     },
-    test_suites: ["general-tests"],
+    test_options: {
+        unit_test: true,
+    },
 }

@@ -274,6 +274,12 @@ ifeq ($(my_module_path),)
   endif
 endif
 
+ifeq ($(LOCAL_IS_UNIT_TEST),true)
+  ifeq ($(LOCAL_IS_HOST_MODULE),true)
+    LOCAL_COMPATIBILITY_SUITE += host-unit-tests
+  endif
+endif
+
 ifeq ($(my_module_path),)
   install_path_var := $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS)
   ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
@@ -987,6 +993,10 @@ ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES := $(LOCAL_COMPATIBILITY_SU
 ALL_MODULES.$(my_register_name).TEST_CONFIG := $(test_config)
 ALL_MODULES.$(my_register_name).EXTRA_TEST_CONFIGS := $(LOCAL_EXTRA_FULL_TEST_CONFIGS)
 ALL_MODULES.$(my_register_name).TEST_MAINLINE_MODULES := $(LOCAL_TEST_MAINLINE_MODULES)
+ifndef LOCAL_IS_HOST_MODULE
+ALL_MODULES.$(my_register_name).FILE_CONTEXTS := $(LOCAL_FILE_CONTEXTS)
+endif
+ALL_MODULES.$(my_register_name).IS_UNIT_TEST := $(LOCAL_IS_UNIT_TEST)
 test_config :=
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)

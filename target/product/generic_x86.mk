@@ -17,7 +17,7 @@
 # This is a generic phone product that isn't specialized for a specific device.
 # It includes the base Android platform.
 
-include $(SRC_TARGET_DIR)/product/generic.mk
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic.mk)
 
 # Overrides
 PRODUCT_BRAND := generic_x86
