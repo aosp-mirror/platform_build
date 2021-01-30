@@ -34,6 +34,24 @@
       "parentUuid": "e56dd279_3a7c7cf3",
       "revId": "de3a31a6f73d3005af0ee4faca24dc01b137ec4f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "01acbd74_aac651b4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-01-30T08:21:25Z",
+      "side": 1,
+      "message": "I can not reproduce the issue found by Treehugger, which is a little weird.\nI just modified the checking condition of encoding data for write().\n\nMore local Tests:\nextract info from Pixel 4 and Pixel 5 kernels,\nwith python versions: [2.7.18, 3.6.1, 3.8.1, 3.9.1].",
+      "parentUuid": "f26bce9a_a7612646",
+      "revId": "de3a31a6f73d3005af0ee4faca24dc01b137ec4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
