@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03925676_4fb1c942",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T19:18:12Z",
+      "side": 1,
+      "message": "This is 80-line loop. Perhaps some sections of it can be made separate methods without adding too much additional state to carry to them?",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "715e7e0b_667e2196",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T19:18:12Z",
+      "side": 1,
+      "message": "IMHO the code will be shorter and more readable if ConfigFile had addAssign()/addInherit methods",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ea5fcf9_50637004",
+        "filename": "tools/product_config/src/com/android/build/config/GenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T19:18:12Z",
+      "side": 1,
+      "message": "If you have write(PrintStream, bool doPrintAnnotations) an abstract method of Statement and implement it in concrete classes (by moving writeAssign and writeInherit from MakeWriter), the main loop in MakeWriter.writeFile will not need to check statement type.",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
