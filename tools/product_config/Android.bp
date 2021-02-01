@@ -1,0 +1,23 @@
+java_defaults {
+    name: "product-config-defaults",
+    srcs: ["src/**/*.java"],
+}
+
+java_binary_host {
+    name: "product-config",
+    defaults: ["product-config-defaults"],
+    manifest: "MANIFEST.MF"
+}
+
+java_test_host {
+    name: "product-config-test",
+    defaults: ["product-config-defaults"],
+    srcs: [
+        "test/**/*.java",
+    ],
+    static_libs: [
+        "junit"
+    ],
+    test_suites: ["general-tests"]
+}
+

@@ -17,5 +17,8 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_vendor_ramdisk.mk)
 
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
-
-PRODUCT_PACKAGES += snapuserd.vendor_ramdisk snapuserd
+PRODUCT_VIRTUAL_AB_COMPRESSION := true
+PRODUCT_PACKAGES += \
+    snapuserd.vendor_ramdisk \
+    snapuserd \
+    snapuserd.recovery

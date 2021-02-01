@@ -37,9 +37,6 @@ PRODUCT_FULL_TREBLE_OVERRIDE := true
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
-# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
-PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
-
 # GSI targets should install "unflattened" APEXes in /system
 TARGET_FLATTEN_APEX := false
 

@@ -128,6 +128,12 @@ PARTITIONS_WITH_CARE_MAP = [
     'odm_dlkm',
 ]
 
+# Partitions with a build.prop file
+PARTITIONS_WITH_BUILD_PROP = PARTITIONS_WITH_CARE_MAP + ['boot']
+
+# See sysprop.mk. If file is moved, add new search paths here; don't remove
+# existing search paths.
+RAMDISK_BUILD_PROP_REL_PATHS = ['system/etc/ramdisk/build.prop']
 
 class ErrorCode(object):
   """Define error_codes for failures that happen during the actual
@@ -417,7 +423,7 @@ class BuildInfo(object):
             "3.2.2. Build Parameters.".format(fingerprint))
 
     self._partition_fingerprints = {}
-    for partition in PARTITIONS_WITH_CARE_MAP:
+    for partition in PARTITIONS_WITH_BUILD_PROP:
       try:
         fingerprint = self.CalculatePartitionFingerprint(partition)
         check_fingerprint(fingerprint)
@@ -425,7 +431,7 @@ class BuildInfo(object):
       except ExternalError:
         continue
     if "system" in self._partition_fingerprints:
-      # system_other is not included in PARTITIONS_WITH_CARE_MAP, but does
+      # system_other is not included in PARTITIONS_WITH_BUILD_PROP, but does
       # need a fingerprint when creating the image.
       self._partition_fingerprints[
           "system_other"] = self._partition_fingerprints["system"]
@@ -473,12 +479,16 @@ class BuildInfo(object):
 
   def GetPartitionBuildProp(self, prop, partition):
     """Returns the inquired build property for the provided partition."""
+
+    # Boot image uses ro.[product.]bootimage instead of boot.
+    prop_partition =  "bootimage" if partition == "boot" else partition
+
     # If provided a partition for this property, only look within that
     # partition's build.prop.
     if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
-      prop = prop.replace("ro.product", "ro.product.{}".format(partition))
+      prop = prop.replace("ro.product", "ro.product.{}".format(prop_partition))
     else:
-      prop = prop.replace("ro.", "ro.{}.".format(partition))
+      prop = prop.replace("ro.", "ro.{}.".format(prop_partition))
 
     prop_val = self._GetRawBuildProp(prop, partition)
     if prop_val is not None:
@@ -649,6 +659,20 @@ def ReadFromInputFile(input_file, fn):
         raise KeyError(fn)
 
 
+def ExtractFromInputFile(input_file, fn):
+  """Extracts the contents of fn from input zipfile or directory into a file."""
+  if isinstance(input_file, zipfile.ZipFile):
+    tmp_file = MakeTempFile(os.path.basename(fn))
+    with open(tmp_file, 'w') as f:
+      f.write(input_file.read(fn))
+    return tmp_file
+  else:
+    file = os.path.join(input_file, *fn.split("/"))
+    if not os.path.exists(file):
+      raise KeyError(fn)
+    return file
+
+
 def LoadInfoDict(input_file, repacking=False):
   """Loads the key/value pairs from the given input target_files.
 
@@ -753,7 +777,7 @@ def LoadInfoDict(input_file, repacking=False):
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
-  for partition in PARTITIONS_WITH_CARE_MAP:
+  for partition in PARTITIONS_WITH_BUILD_PROP:
     partition_prop = "{}.build.prop".format(partition)
     d[partition_prop] = PartitionBuildProps.FromInputFile(
         input_file, partition)
@@ -763,7 +787,7 @@ def LoadInfoDict(input_file, repacking=False):
   # hash / hashtree footers.
   if d.get("avb_enable") == "true":
     build_info = BuildInfo(d)
-    for partition in PARTITIONS_WITH_CARE_MAP:
+    for partition in PARTITIONS_WITH_BUILD_PROP:
       fingerprint = build_info.GetPartitionFingerprint(partition)
       if fingerprint:
         d["avb_{}_salt".format(partition)] = sha256(fingerprint.encode()).hexdigest()
@@ -839,6 +863,39 @@ class PartitionBuildProps(object):
   @staticmethod
   def FromInputFile(input_file, name, placeholder_values=None):
     """Loads the build.prop file and builds the attributes."""
+
+    if name == "boot":
+      data = PartitionBuildProps._ReadBootPropFile(input_file)
+    else:
+      data = PartitionBuildProps._ReadPartitionPropFile(input_file, name)
+
+    props = PartitionBuildProps(input_file, name, placeholder_values)
+    props._LoadBuildProp(data)
+    return props
+
+  @staticmethod
+  def _ReadBootPropFile(input_file):
+    """
+    Read build.prop for boot image from input_file.
+    Return empty string if not found.
+    """
+    try:
+      boot_img = ExtractFromInputFile(input_file, 'IMAGES/boot.img')
+    except KeyError:
+      logger.warning('Failed to read IMAGES/boot.img')
+      return ''
+    prop_file = GetBootImageBuildProp(boot_img)
+    if prop_file is None:
+      return ''
+    with open(prop_file) as f:
+      return f.read().decode()
+
+  @staticmethod
+  def _ReadPartitionPropFile(input_file, name):
+    """
+    Read build.prop for name from input_file.
+    Return empty string if not found.
+    """
     data = ''
     for prop_file in ['{}/etc/build.prop'.format(name.upper()),
                       '{}/build.prop'.format(name.upper())]:
@@ -847,10 +904,7 @@ class PartitionBuildProps(object):
         break
       except KeyError:
         logger.warning('Failed to read %s', prop_file)
-
-    props = PartitionBuildProps(input_file, name, placeholder_values)
-    props._LoadBuildProp(data)
-    return props
+    return data
 
   @staticmethod
   def FromBuildPropFile(name, build_prop_file):
@@ -1660,6 +1714,24 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
   cmd.extend(["--vendor_ramdisk", ramdisk_img.name])
   cmd.extend(["--vendor_boot", img.name])
 
+  ramdisk_fragment_imgs = []
+  fn = os.path.join(sourcedir, "vendor_ramdisk_fragments")
+  if os.access(fn, os.F_OK):
+    ramdisk_fragments = shlex.split(open(fn).read().rstrip("\n"))
+    for ramdisk_fragment in ramdisk_fragments:
+      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment, "mkbootimg_args")
+      cmd.extend(shlex.split(open(fn).read().rstrip("\n")))
+      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment, "prebuilt_ramdisk")
+      # Use prebuilt image if found, else create ramdisk from supplied files.
+      if os.access(fn, os.F_OK):
+        ramdisk_fragment_pathname = fn
+      else:
+        ramdisk_fragment_root = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment)
+        ramdisk_fragment_img = _MakeRamdisk(ramdisk_fragment_root, lz4_ramdisks=use_lz4)
+        ramdisk_fragment_imgs.append(ramdisk_fragment_img)
+        ramdisk_fragment_pathname = ramdisk_fragment_img.name
+      cmd.extend(["--vendor_ramdisk_fragment", ramdisk_fragment_pathname])
+
   RunAndCheckOutput(cmd)
 
   # AVB: if enabled, calculate and add hash.
@@ -1677,6 +1749,8 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
   img.seek(os.SEEK_SET, 0)
   data = img.read()
 
+  for f in ramdisk_fragment_imgs:
+    f.close()
   ramdisk_img.close()
   img.close()
 
@@ -3569,3 +3643,75 @@ class DynamicPartitionsDifference(object):
         comment('Move partition %s from default to %s' %
                 (p, u.tgt_group))
         append('move %s %s' % (p, u.tgt_group))
+
+
+def GetBootImageBuildProp(boot_img):
+  """
+  Get build.prop from ramdisk within the boot image
+
+  Args:
+    boot_img: the boot image file. Ramdisk must be compressed with lz4 format.
+
+  Return:
+    An extracted file that stores properties in the boot image.
+  """
+  tmp_dir = MakeTempDir('boot_', suffix='.img')
+  try:
+    RunAndCheckOutput(['unpack_bootimg', '--boot_img', boot_img, '--out', tmp_dir])
+    ramdisk = os.path.join(tmp_dir, 'ramdisk')
+    if not os.path.isfile(ramdisk):
+      logger.warning('Unable to get boot image timestamp: no ramdisk in boot')
+      return None
+    uncompressed_ramdisk = os.path.join(tmp_dir, 'uncompressed_ramdisk')
+    RunAndCheckOutput(['lz4', '-d', ramdisk, uncompressed_ramdisk])
+
+    abs_uncompressed_ramdisk = os.path.abspath(uncompressed_ramdisk)
+    extracted_ramdisk = MakeTempDir('extracted_ramdisk')
+    # Use "toybox cpio" instead of "cpio" because the latter invokes cpio from
+    # the host environment.
+    RunAndCheckOutput(['toybox', 'cpio', '-F', abs_uncompressed_ramdisk, '-i'],
+               cwd=extracted_ramdisk)
+
+    for search_path in RAMDISK_BUILD_PROP_REL_PATHS:
+      prop_file = os.path.join(extracted_ramdisk, search_path)
+      if os.path.isfile(prop_file):
+        return prop_file
+      logger.warning('Unable to get boot image timestamp: no %s in ramdisk', search_path)
+
+    return None
+
+  except ExternalError as e:
+    logger.warning('Unable to get boot image build props: %s', e)
+    return None
+
+
+def GetBootImageTimestamp(boot_img):
+  """
+  Get timestamp from ramdisk within the boot image
+
+  Args:
+    boot_img: the boot image file. Ramdisk must be compressed with lz4 format.
+
+  Return:
+    An integer that corresponds to the timestamp of the boot image, or None
+    if file has unknown format. Raise exception if an unexpected error has
+    occurred.
+  """
+  prop_file = GetBootImageBuildProp(boot_img)
+  if not prop_file:
+    return None
+
+  props = PartitionBuildProps.FromBuildPropFile('boot', prop_file)
+  if props is None:
+    return None
+
+  try:
+    timestamp = props.GetProp('ro.bootimage.build.date.utc')
+    if timestamp:
+      return int(timestamp)
+    logger.warning('Unable to get boot image timestamp: ro.bootimage.build.date.utc is undefined')
+    return None
+
+  except ExternalError as e:
+    logger.warning('Unable to get boot image timestamp: %s', e)
+    return None

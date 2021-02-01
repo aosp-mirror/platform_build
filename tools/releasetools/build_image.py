@@ -350,8 +350,17 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.append("--prjquota")
     if (needs_casefold):
       build_command.append("--casefold")
-    if (needs_compress):
+    if (needs_compress or prop_dict.get("system_fs_compress") == "true"):
       build_command.append("--compression")
+    if (prop_dict.get("system_fs_compress") == "true"):
+      build_command.append("--sldc")
+      if (prop_dict.get("system_f2fs_sldc_flags") == None):
+        build_command.append(str(0))
+      else:
+        sldc_flags_str = prop_dict.get("system_f2fs_sldc_flags")
+        sldc_flags = sldc_flags_str.split()
+        build_command.append(str(len(sldc_flags)))
+        build_command.extend(sldc_flags)
   else:
     raise BuildImageError(
         "Error: unknown filesystem type: {}".format(fs_type))
@@ -417,7 +426,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   fs_type = prop_dict.get("fs_type", "")
 
   fs_spans_partition = True
-  if fs_type.startswith("squash"):
+  if fs_type.startswith("squash") or fs_type.startswith("erofs"):
     fs_spans_partition = False
 
   # Get a builder for creating an image that's to be verified by Verified Boot,
@@ -427,7 +436,16 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   if (prop_dict.get("use_dynamic_partition_size") == "true" and
       "partition_size" not in prop_dict):
     # If partition_size is not defined, use output of `du' + reserved_size.
-    size = GetDiskUsage(in_dir)
+    # For compressed file system, it's better to use the compressed size to avoid wasting space.
+    if fs_type.startswith("erofs"):
+      tmp_dict = prop_dict.copy()
+      if "erofs_sparse_flag" in tmp_dict:
+        tmp_dict.pop("erofs_sparse_flag")
+      BuildImageMkfs(in_dir, tmp_dict, out_file, target_out, fs_config)
+      size = GetDiskUsage(out_file)
+      os.remove(out_file)
+    else:
+      size = GetDiskUsage(in_dir)
     logger.info(
         "The tree size of %s is %d MB.", in_dir, size // BYTES_IN_MB)
     # If not specified, give us 16MB margin for GetDiskUsage error ...
@@ -546,6 +564,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "extfs_sparse_flag",
       "erofs_sparse_flag",
       "squashfs_sparse_flag",
+      "system_fs_compress",
+      "system_f2fs_sldc_flags",
       "f2fs_sparse_flag",
       "skip_fsck",
       "ext_mkuserimg",

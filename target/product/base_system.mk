@@ -287,6 +287,17 @@ ifneq (,$(filter hwaddress,$(SANITIZE_TARGET)))
    libclang_rt.hwasan-aarch64-android.bootstrap
 endif
 
+# Jacoco agent JARS to be built and installed, if any.
+ifeq ($(EMMA_INSTRUMENT),true)
+  ifneq ($(EMMA_INSTRUMENT_STATIC),true)
+    # For instrumented build, if Jacoco is not being included statically
+    # in instrumented packages then include Jacoco classes into the
+    # bootclasspath.
+    PRODUCT_PACKAGES += jacocoagent
+    PRODUCT_BOOT_JARS += jacocoagent
+  endif # EMMA_INSTRUMENT_STATIC
+endif # EMMA_INSTRUMENT
+
 # Host tools to install
 PRODUCT_HOST_PACKAGES += \
     BugReport \
@@ -330,7 +341,7 @@ PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/hosts:system/etc/hosts
 
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc
-PRODUCT_SYSTEM_PROPERTIES += ro.zygote?=zygote32
+PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
@@ -389,5 +400,4 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/bootclasspath.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
