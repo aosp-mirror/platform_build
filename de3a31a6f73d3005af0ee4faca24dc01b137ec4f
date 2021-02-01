@@ -52,6 +52,24 @@
       "parentUuid": "f26bce9a_a7612646",
       "revId": "de3a31a6f73d3005af0ee4faca24dc01b137ec4f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6b62a09_e82fac40",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-01T20:23:38Z",
+      "side": 1,
+      "message": "Did you try --output-X with and without a file argument, both in Python 2 and 3?",
+      "parentUuid": "01acbd74_aac651b4",
+      "revId": "de3a31a6f73d3005af0ee4faca24dc01b137ec4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
