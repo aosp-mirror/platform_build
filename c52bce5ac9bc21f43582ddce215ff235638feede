@@ -1,0 +1,152 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8ed9b87_48f1bc41",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T18:52:08Z",
+      "side": 1,
+      "message": "That\u0027s a key class, is it tested?",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55a27d79_06ad856e",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T18:52:08Z",
+      "side": 1,
+      "message": "dumpConfigVersion is set but never used. If it was intended for future-proofing, perhaps it\u0027s easier to have it always on the first line and drop the loop?",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "291c2345_310907a6",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T18:52:08Z",
+      "side": 1,
+      "message": "Is this TODO still valid?",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2d3f09b_a8cc4e4a",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T18:52:08Z",
+      "side": 1,
+      "message": "Arrays.asList() creates an ArrayList from an array.",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "94b5cd01_326d7ae8",
+        "filename": "tools/product_config/src/com/android/build/config/KatiImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T18:52:08Z",
+      "side": 1,
+      "message": "You can use java.io.File (or more modern java.nio.file.Path) objects to manipulate paths.",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b6fa5e7_f87f3e29",
+        "filename": "tools/product_config/src/com/android/build/config/KatiImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T18:52:08Z",
+      "side": 1,
+      "message": "Is this output informative?",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c55b45c_a91b95d7",
+        "filename": "tools/product_config/src/com/android/build/config/KatiImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T18:52:08Z",
+      "side": 1,
+      "message": "Is there a reason why try-with-resources is not used here?",
+      "range": {
+        "startLine": 113,
+        "startChar": 10,
+        "endLine": 113,
+        "endChar": 17
+      },
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b4020cd4_8ba237b6",
+        "filename": "tools/product_config/src/com/android/build/config/Path.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-01T18:52:08Z",
+      "side": 1,
+      "message": "If you use java.io.File, this class can be eliminated.",
+      "range": {
+        "startLine": 19,
+        "startChar": 13,
+        "endLine": 19,
+        "endChar": 17
+      },
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
