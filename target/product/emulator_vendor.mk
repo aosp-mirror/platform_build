@@ -26,7 +26,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
 PRODUCT_PACKAGES += \
     vndk-sp
 
-PRODUCT_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
+DEVICE_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
 
 PRODUCT_CHARACTERISTICS := emulator
 

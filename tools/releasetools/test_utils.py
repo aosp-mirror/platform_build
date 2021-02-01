@@ -55,6 +55,11 @@ def get_testdata_dir():
   current_dir = os.path.dirname(os.path.realpath(__file__))
   return os.path.join(current_dir, 'testdata')
 
+def get_current_dir():
+  """Returns the current dir, relative to the script dir."""
+  # The script dir is the one we want, which could be different from pwd.
+  current_dir = os.path.dirname(os.path.realpath(__file__))
+  return current_dir
 
 def get_search_path():
   """Returns the search path that has 'framework/signapk.jar' under."""
