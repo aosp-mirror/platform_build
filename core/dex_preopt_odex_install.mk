@@ -209,7 +209,7 @@ ifdef LOCAL_DEX_PREOPT
       $(my_dexpreopt_libs_compat_29) \
       $(my_dexpreopt_libs_compat_30)
   else
-    my_extra_dexpreopt_libs :=
+    my_dexpreopt_libs_compat :=
   endif
 
   my_dexpreopt_libs := $(sort \
