@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8e9e7a1_41e9d89b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-02T18:32:22Z",
+      "side": 1,
+      "message": "This will need an equivalent change for Soong, but I don\u0027t think we want to pass all of PRODUCT_PACKAGES to Soong.",
+      "revId": "cba089a371bf4320a0a7b3d0a99b6a3e401d02bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
