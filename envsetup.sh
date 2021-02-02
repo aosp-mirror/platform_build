@@ -27,6 +27,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - mangrep:    Greps on all local AndroidManifest.xml files.
 - mgrep:      Greps on all local Makefiles and *.bp files.
 - owngrep:    Greps on all local OWNERS files.
+- rgrep:      Greps on all local Rust files.
 - sepgrep:    Greps on all local sepolicy files.
 - sgrep:      Greps on all local source files.
 - godir:      Go to the directory containing a file.
@@ -1034,6 +1035,12 @@ function gogrep()
 function jgrep()
 {
     find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.java" \
+        -exec grep --color -n "$@" {} +
+}
+
+function rgrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.rs" \
         -exec grep --color -n "$@" {} +
 }
 
