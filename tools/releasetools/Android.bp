@@ -282,6 +282,7 @@ python_defaults {
         "boot_signer",
         "brotli",
         "bsdiff",
+        "deapexer",
         "imgdiff",
         "minigzip",
         "lz4",
