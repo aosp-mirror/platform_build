@@ -33,6 +33,24 @@
       "message": "just fyi, more conventional is\n\nifneq (,$(filter true,..)",
       "revId": "fa13c5585cd67cbfd830be3de6a99bd9061ace08",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6c255b8_6cf5bb5e",
+        "filename": "core/android_soong_config_vars.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-02-03T23:17:40Z",
+      "side": 1,
+      "message": "Yes, that\u0027s better, thanks.",
+      "parentUuid": "8d7d768b_3ab6e9dd",
+      "revId": "fa13c5585cd67cbfd830be3de6a99bd9061ace08",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
