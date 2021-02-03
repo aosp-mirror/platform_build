@@ -45,6 +45,30 @@
       },
       "revId": "0672d27fe9083643889af7e659447b419c66f96f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3618aa2d_b0d0631d",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-03T03:02:39Z",
+      "side": 1,
+      "message": "Thanks a lot for the kind comments. Sorry I was working on some other tasks yesterday. I will have a try according to your suggestions.",
+      "parentUuid": "96cda81e_f5ccb3e1",
+      "range": {
+        "startLine": 198,
+        "startChar": 30,
+        "endLine": 198,
+        "endChar": 39
+      },
+      "revId": "0672d27fe9083643889af7e659447b419c66f96f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
