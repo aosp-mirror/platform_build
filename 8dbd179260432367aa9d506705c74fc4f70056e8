@@ -70,6 +70,30 @@
       },
       "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1252a99_f5ec5107",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-02-03T21:12:59Z",
+      "side": 1,
+      "message": "Ok, so it\u0027s tapas we should use instead. That\u0027s fine, but we\u0027ll need to extend it to specify module products at https://cs.android.com/android/platform/superproject/+/master:build/make/envsetup.sh;l\u003d763-768;drc\u003d24c36dbeecf4398c4da8901a047f9708676f3d9b and https://cs.android.com/android/platform/superproject/+/master:build/soong/ui/build/config.go;l\u003d681;drc\u003d6e49493dac7647c1d078f6a780db0993933fc94d\n\n\u003e module_* products don\u0027t do that. lunching a product that isn\u0027t meant to be lunched does that\n\nNot really, but it is true that TARGET_BUILD_APPS overrides TARGET_FLATTEN_APEX here: https://cs.android.com/android/platform/superproject/+/master:build/soong/apex/apex.go;l\u003d1916;drc\u003da1d6025a49bb7293885e5a9fcbd63a02d67e95d8 so using TBA, as tapas does, seemingly avoids the issue. I\u0027m a bit suspicious about that happening at that low level, rather than letting TBA control the default value of TFA in make.\n\nMaybe that can be done, but until then I think there\u0027s good reason to make sure TFA isn\u0027t true anywhere for these products.",
+      "parentUuid": "b6882074_efa258bc",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 48
+      },
+      "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
