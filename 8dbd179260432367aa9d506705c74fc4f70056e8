@@ -46,6 +46,30 @@
       },
       "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6882074_efa258bc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-03T17:24:45Z",
+      "side": 1,
+      "message": "\u003e 1. I regard lunch as a way to set up the build environment for local use. In this case it\u0027s for building a module to be adb install\u0027ed. Why shouldn\u0027t that work?\n\nIt just isn\u0027t how the build system works. lunch configures it to build a device, tapas configures it to build something unbundled\n\n\u003e \n\u003e 2. Irrespective of lunch\u0027ing, it makes no sense that module_* products build flattened APEXes.\n\nmodule_* products don\u0027t do that. lunching a product that isn\u0027t meant to be lunched does that\n\nYes, we could set the flag, but that would only fix the first of the problems Alex will see. Next, there\u0027ll be other weird things going on such as symlinks being added etc. I think we should fix lunch to not allow this instead",
+      "parentUuid": "c3f39205_bc136196",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 48
+      },
+      "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
