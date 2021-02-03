@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd174888_94033d88",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-03T16:15:18Z",
+      "side": 1,
+      "message": "- This mk updatable_apex.mk is meant for device builds\n- `lunch` also configures the build system for device builds\n- module_* products are not meant to be lunched. We could add an error for that\n\nLooking at the bug, I\u0027d argue this is user error",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 48
+      },
+      "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
