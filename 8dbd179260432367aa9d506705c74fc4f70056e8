@@ -22,6 +22,30 @@
       },
       "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3f39205_bc136196",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-02-03T16:31:24Z",
+      "side": 1,
+      "message": "1. I regard lunch as a way to set up the build environment for local use. In this case it\u0027s for building a module to be adb install\u0027ed. Why shouldn\u0027t that work?\n\n2. Irrespective of lunch\u0027ing, it makes no sense that module_* products build flattened APEXes. We could also set TARGET_FLATTEN_APEX:\u003dfalse here rather than including updatable_apex.mk, but I figured it\u0027d be good to have one place for it, and that the other stuff in there doesn\u0027t matter for the APEXes.",
+      "parentUuid": "cd174888_94033d88",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 48
+      },
+      "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
