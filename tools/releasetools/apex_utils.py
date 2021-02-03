@@ -545,7 +545,7 @@ def GetApexInfoFromTargetFiles(input_file):
     debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
   deapexer = 'deapexer'
   if OPTIONS.search_path:
-    deapexer_path = os.path.join(OPTIONS.search_path, "deapexer")
+    deapexer_path = os.path.join(OPTIONS.search_path, "bin", "deapexer")
     if os.path.isfile(deapexer_path):
       deapexer = deapexer_path
   for apex_filename in os.listdir(target_dir):
