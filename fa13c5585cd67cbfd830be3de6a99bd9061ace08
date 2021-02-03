@@ -16,6 +16,23 @@
       "message": "Roland, PTAL. Anton for ORV.",
       "revId": "fa13c5585cd67cbfd830be3de6a99bd9061ace08",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d7d768b_3ab6e9dd",
+        "filename": "core/android_soong_config_vars.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-03T19:26:26Z",
+      "side": 1,
+      "message": "just fyi, more conventional is\n\nifneq (,$(filter true,..)",
+      "revId": "fa13c5585cd67cbfd830be3de6a99bd9061ace08",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
