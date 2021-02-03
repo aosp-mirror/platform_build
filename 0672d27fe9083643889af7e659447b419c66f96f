@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d568709b_56c6245e",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-03T02:45:51Z",
+      "side": 1,
+      "message": "I\u0027ve run some experiments, and I think you can keep this to be:\n\n   f.write(o)\n\n... with the changes below.",
+      "range": {
+        "startLine": 180,
+        "startChar": 6,
+        "endLine": 180,
+        "endChar": 85
+      },
+      "revId": "0672d27fe9083643889af7e659447b419c66f96f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96cda81e_f5ccb3e1",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-03T02:45:51Z",
+      "side": 1,
+      "message": "this should be\n\n  sys.stdin.buffer\n\nFrom https://docs.python.org/3/library/sys.html#sys.stdin\n\n\u003e Note: To write or read binary data from/to the standard streams, use the underlying binary buffer object. For example, to write bytes to stdout, use sys.stdout.buffer.write(b\u0027abc\u0027).\n\nSame for sys.stdout below; they should be\n\n  sys.stdout.buffer\n\nNote that the `buffer` field is only available on Python 3, so you might want some version checks. e.g.\n\n  sys.stdin.buffer if sys.version_info.major \u003d\u003d 3 else sys.stdin",
+      "range": {
+        "startLine": 198,
+        "startChar": 30,
+        "endLine": 198,
+        "endChar": 39
+      },
+      "revId": "0672d27fe9083643889af7e659447b419c66f96f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
