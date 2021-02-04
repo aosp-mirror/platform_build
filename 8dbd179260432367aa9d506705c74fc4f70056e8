@@ -168,6 +168,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc56e12f_4a33e37e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-02-04T16:04:45Z",
+      "side": 1,
+      "message": "I hope we can drop art_module_* later when there are better tools for deciding what to build from source, but for now, yes.\n\nI don\u0027t mind adding smartness to tapas, but I prefer to address that separately - first we need to extend it to be able to specify a product, then we can make it smarter so we don\u0027t have to.\n\nFor the first part it seems straightforward enough to extend the current arch argument to allow it to be a product (which has PRODUCT_UNBUNDLED\u003dtrue, then), and if it\u0027s just an arch it prepends \"aosp_\" just like today.",
+      "parentUuid": "f21c1172_4581304f",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 48
+      },
+      "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "f744692a_98fd4db1",
