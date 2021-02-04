@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fac3bf97_96872a42",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2021-02-04T17:57:29Z",
+      "side": 1,
+      "message": "I\u0027d prefer if we did take the cherry-pick game - taking the risk of a build with transient state which could misbehave isn\u0027t great: the build will be fine, but we might get testing failures which could be hard to diagnose.",
+      "range": {
+        "startLine": 11,
+        "startChar": 45,
+        "endLine": 12,
+        "endChar": 47
+      },
+      "revId": "20aac01f5c45679c9d5924f3a9a072914c175a0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b81f6ee8_74464d4a",
         "filename": "target/product/default_art_config.mk",
         "patchSetId": 5
