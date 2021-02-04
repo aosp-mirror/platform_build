@@ -83,6 +83,8 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 -include test/vts/tools/vts-core-tradefed/build/config.mk
 # CSUITE-specific config.
 -include test/app_compat/csuite/tools/build/config.mk
+# CATBox-specific config.
+-include test/catbox/tools/build/config.mk
 
 # Clean rules
 .PHONY: clean-dex-files
