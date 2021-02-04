@@ -58,6 +58,7 @@ PRODUCT_SYSTEM_SERVER_JARS := \
 # The values should be of the format <apex name>:<jar name>
 PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
+    com.android.media:service-media-s \
     com.android.permission:service-permission \
     com.android.ipsec:android.net.ipsec.ike \
     com.android.geotz:geotz \
