@@ -118,6 +118,30 @@
       },
       "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e887fea_90f251c3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-02-04T13:19:17Z",
+      "side": 1,
+      "message": "\u003e I\u0027d be okay with putting TARGET_FLATTEN_APEX:\u003dfalse in the BoardConfig of these devices, though doesn\u0027t seem important\n\nI agree, it\u0027s less important since with TBA we get a .apex file anyway. But I\u0027d feel more comfortable having TFA false globally rather than relying on that single condition deep down in Soong - seems like a recipe for confusion and bugs that TFA is true when in fact it\u0027s not being flattened.\n\nSo I should change this CL to put TARGET_FLATTEN_APEX:\u003dfalse in the BoardConfigs instead then, without including updatable_apex.mk?\n\n\u003e More important IMO: make `lunch module_*` fail\n\u003e Yes, tapas needs to be revamped to work properly for modules. \n\nWe need to be able to specify products to tapas, not just architectures. So maybe a flag, say PRODUCT_UNBUNDLED\u003d{true,false}, that allows the product to be used with tapas but not lunch?",
+      "parentUuid": "26dd22c3_111f4a9b",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 48
+      },
+      "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
