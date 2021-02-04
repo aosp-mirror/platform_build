@@ -142,6 +142,47 @@
       },
       "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f21c1172_4581304f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-04T15:35:00Z",
+      "side": 1,
+      "message": "\u003e We need to be able to specify products to tapas, not just architectures\n\nFor art_module_* I guess? maybe -- it\u0027d be nice to build out tapas sufficiently that it is smart and does the right thing by default when you try to build an apex. Or perhaps a new alias (pintxos? ;D) to build apexes\n\n\u003e maybe a flag, say PRODUCT_UNBUNDLED\u003d{true,false}, that allows the product to be used with tapas but not lunch?\n\nI like it",
+      "parentUuid": "9e887fea_90f251c3",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 48
+      },
+      "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f744692a_98fd4db1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-04T15:35:00Z",
+      "side": 1,
+      "message": "+colin/liz, tapas for thought",
+      "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
