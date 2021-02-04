@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "40708a12_b9a9d782",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1297255
+      },
+      "writtenOn": "2021-02-04T18:56:34Z",
+      "side": 1,
+      "message": "I see.\nI will upload new patch with the right order and also with the change in system server path and check them in git_master first",
+      "parentUuid": "fac3bf97_96872a42",
+      "range": {
+        "startLine": 11,
+        "startChar": 45,
+        "endLine": 12,
+        "endChar": 47
+      },
+      "revId": "20aac01f5c45679c9d5924f3a9a072914c175a0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b81f6ee8_74464d4a",
@@ -61,6 +85,30 @@
       "side": 1,
       "message": "(well, in the same topic I guess)",
       "parentUuid": "b81f6ee8_74464d4a",
+      "range": {
+        "startLine": 39,
+        "startChar": 47,
+        "endLine": 40,
+        "endChar": 43
+      },
+      "revId": "20aac01f5c45679c9d5924f3a9a072914c175a0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0eeed402_b00fe749",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1297255
+      },
+      "writtenOn": "2021-02-04T18:56:34Z",
+      "side": 1,
+      "message": "\u003e is the ordering also to avoid a conflict?\nYes. But considering Nicolas comment I will give up the cherry pick game. I will upload new patch with the right order and also with the change in system server path and check them in git_master first.\n\n\u003e don\u0027t you want to add rules to ignore the shared library before submitting this one?\nI\u0027m going to submit the CL that ignore uses-library tag together with this CL and the CL to add IKE stub. Sorry I forgot to add it into the same topic.\nI\u0027m afraid if I check in the CL to ignore uses-library before adding IKE to bcp I will break the IWLAN system app.",
+      "parentUuid": "30b11635_7ceee139",
       "range": {
         "startLine": 39,
         "startChar": 47,
