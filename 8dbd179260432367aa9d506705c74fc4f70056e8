@@ -94,6 +94,30 @@
       },
       "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "26dd22c3_111f4a9b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-04T10:26:17Z",
+      "side": 1,
+      "message": "- I\u0027d be okay with putting TARGET_FLATTEN_APEX:\u003dfalse in the BoardConfig of these devices, though doesn\u0027t seem important\n- More important IMO: make `lunch module_*` fail\n- Yes, tapas needs to be revamped to work properly for modules. I would like someone in the soong team to own that work rather than us",
+      "parentUuid": "c1252a99_f5ec5107",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 48
+      },
+      "revId": "8dbd179260432367aa9d506705c74fc4f70056e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
