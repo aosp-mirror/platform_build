@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f8c6f88_37c179a9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-04T16:00:31Z",
+      "side": 1,
+      "message": "merge this into the parent? Seems like that should be an atomic change",
+      "revId": "aa62a0eff99e0350f3c611775910e7f4a68f263b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
