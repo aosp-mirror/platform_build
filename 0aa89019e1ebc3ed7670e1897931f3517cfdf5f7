@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2d4bef4_23a204fa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-04T16:02:45Z",
+      "side": 1,
+      "message": "Sidenote: format of blocklist is defined here: https://cs.android.com/android/platform/superproject/+/master:system/core/libmodprobe/libmodprobe.cpp;l\u003d198;drc\u003dfb18f6ef059dc2d20fa58cdcc9609bf768a11753\n\nthe `ParseBlocklistCallback()` and `ParseCfg()` methods.",
+      "revId": "0aa89019e1ebc3ed7670e1897931f3517cfdf5f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
