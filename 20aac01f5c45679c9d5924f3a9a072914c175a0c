@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b81f6ee8_74464d4a",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-04T16:00:46Z",
+      "side": 1,
+      "message": "is the ordering also to avoid a conflict?\n\ndon\u0027t you want to add rules to ignore the shared library before submitting this one?",
+      "range": {
+        "startLine": 39,
+        "startChar": 47,
+        "endLine": 40,
+        "endChar": 43
+      },
+      "revId": "20aac01f5c45679c9d5924f3a9a072914c175a0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
