@@ -79,11 +79,19 @@ endef
 #   $(2): Root nodes to import
 #   $(3): All variable names
 #   $(4): Single-value variables
-define dump-product-var-names
+#   $(5): Makefile being processed
+define dump-phase-start
 $(eval $(file >> $(DUMPCONFIG_FILE),phase,$(strip $(1)),$(strip $(2)))) \
 $(foreach var,$(3), \
     $(eval $(file >> $(DUMPCONFIG_FILE),var,$(if $(filter $(4),$(var)),single,list),$(var))) \
-)
+) \
+$(call dump-config-vals,$(strip $(5)),initial)
+endef
+
+# Args:
+#   $(1): Makefile being processed
+define dump-phase-end
+$(call dump-config-vals,$(strip $(1)),final)
 endef
 
 define dump-debug
@@ -110,7 +118,7 @@ DUMPCONFIG_SKIP_VARS := \
 
 # Args:
 #   $(1): Makefile that was included
-#   $(2): block (before,import,after)
+#   $(2): block (before,import,after,initial,final)
 define dump-config-vals
 $(foreach var,$(filter-out $(DUMPCONFIG_SKIP_VARS),$(.KATI_SYMBOLS)),\
     $(eval $(file >> $(DUMPCONFIG_FILE),val,$(call escape-for-csv,$(1)),$(2),$(call escape-for-csv,$(var)),$(call escape-for-csv,$($(var))),$(call escape-for-csv,$(KATI_variable_location $(var))))) \

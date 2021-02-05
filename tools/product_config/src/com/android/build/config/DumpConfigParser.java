@@ -54,10 +54,6 @@ public class DumpConfigParser {
 
     private static final Pattern LIST_SEPARATOR = Pattern.compile("\\s+");
 
-    public class BuildPhase {
-
-    }
-
     /**
      * Constructor.
      */
@@ -120,6 +116,8 @@ public class DumpConfigParser {
         MakeConfig makeConfig = new MakeConfig();
         MakeConfig.ConfigFile configFile = new MakeConfig.ConfigFile("<ignored>");
         MakeConfig.Block block = new MakeConfig.Block(MakeConfig.BlockType.UNSET);
+        Map<String, Str> initialVariables = new HashMap();
+        Map<String, Str> finalVariables = new HashMap();
 
         // Number of "phases" we've seen so far.
         for (; index < lineCount; index++) {
@@ -128,10 +126,13 @@ public class DumpConfigParser {
             final String lineType = fields.get(0);
 
             if (matchLineType(line, "phase", 2)) {
+                // Start the new one
                 makeConfig = new MakeConfig();
                 makeConfig.setPhase(fields.get(1));
                 makeConfig.setRootNodes(splitList(fields.get(2)));
                 mResults.add(makeConfig);
+                initialVariables = makeConfig.getInitialVariables();
+                finalVariables = makeConfig.getFinalVariables();
 
                 if (DEBUG) {
                     System.out.println("PHASE:");
@@ -216,32 +217,41 @@ public class DumpConfigParser {
                 }
             } else if (matchLineType(line, "val", 5)) {
                 final String productMakefile = fields.get(1);
-                final MakeConfig.BlockType blockType = parseBlockType(line, fields.get(2));
+                final String blockTypeString = fields.get(2);
                 final String varName = fields.get(3);
                 final String varValue = fields.get(4);
                 final Position pos = Position.parse(fields.get(5));
+                final Str str = new Str(pos, varValue);
 
-                if (!productMakefile.equals(configFile.getFilename())) {
-                    mErrors.WARNING_DUMPCONFIG.add(
-                            new Position(mFilename, line.getLine()),
-                            "Mismatched 'val' product makefile."
-                                + " Expected: " + configFile.getFilename()
-                                + " Saw: " + productMakefile);
-                    continue;
+                if (blockTypeString.equals("initial")) {
+                    initialVariables.put(varName, str);
+                } else if (blockTypeString.equals("final")) {
+                    finalVariables.put(varName, str);
+                } else {
+                    if (!productMakefile.equals(configFile.getFilename())) {
+                        mErrors.WARNING_DUMPCONFIG.add(
+                                new Position(mFilename, line.getLine()),
+                                "Mismatched 'val' product makefile."
+                                    + " Expected: " + configFile.getFilename()
+                                    + " Saw: " + productMakefile);
+                        continue;
+                    }
+
+                    final MakeConfig.BlockType blockType = parseBlockType(line, blockTypeString);
+                    if (blockType == null) {
+                        continue;
+                    }
+                    if (blockType != block.getBlockType()) {
+                        mErrors.WARNING_DUMPCONFIG.add(
+                                new Position(mFilename, line.getLine()),
+                                "Mismatched 'val' block type."
+                                    + " Expected: " + block.getBlockType()
+                                    + " Saw: " + blockType);
+                    }
+
+                    // Add the variable to the block in progress
+                    block.addVar(varName, str);
                 }
-                if (blockType == null) {
-                    continue;
-                }
-                if (blockType != block.getBlockType()) {
-                    mErrors.WARNING_DUMPCONFIG.add(
-                            new Position(mFilename, line.getLine()),
-                            "Mismatched 'val' block type."
-                                + " Expected: " + block.getBlockType()
-                                + " Saw: " + blockType);
-                }
-                
-                // Add the variable to the block in progress
-                block.addVar(varName, new Str(pos, varValue));
             } else {
                 if (DEBUG) {
                     System.out.print("# ");

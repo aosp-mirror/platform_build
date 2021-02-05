@@ -18,6 +18,7 @@ package com.android.build.config;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -28,6 +29,17 @@ import java.util.TreeMap;
 public class ConfigBase {
     protected String mPhase;
     protected List<String> mRootNodes;
+
+    /**
+     * State of the make varaible environment from before the first config file.
+     */
+    protected Map<String, Str> mInitialVariables = new HashMap();
+
+    /**
+     * State of the make varaible environment from after the first config file.
+     */
+    protected Map<String, Str> mFinalVariables = new HashMap();
+
 
     /**
      * The variables that are handled specially.
@@ -81,6 +93,20 @@ public class ConfigBase {
     }
 
     /**
+     * Return the state the make variable environment from before the first config file.
+     */
+    public Map<String, Str> getInitialVariables() {
+        return mInitialVariables;
+    }
+
+    /**
+     * Return the state the make variable environment from before the first config file.
+     */
+    public Map<String, Str> getFinalVariables() {
+        return mFinalVariables;
+    }
+
+    /**
      * Copy common base class fields from that to this.
      */
     public void copyFrom(ConfigBase that) {
@@ -89,5 +115,7 @@ public class ConfigBase {
         for (Map.Entry<String, ConfigBase.VarType> entry: that.getProductVars().entrySet()) {
             addProductVar(entry.getKey(), entry.getValue());
         }
+        mInitialVariables = new HashMap(that.getInitialVariables());
+        mFinalVariables = new HashMap(that.getFinalVariables());
     }
 }

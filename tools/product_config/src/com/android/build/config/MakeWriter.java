@@ -17,7 +17,10 @@
 package com.android.build.config;
 
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MakeWriter {
     public static final int FLAG_WRITE_HEADER = 1;
@@ -43,6 +46,11 @@ public class MakeWriter {
             writeFile(out, config, file);
             out.println();
         }
+        out.println("---------------------------------------------------------");
+        out.println("VARIABLES TOUCHED BY MAKE BASED CONFIG:");
+        out.println("---------------------------------------------------------");
+        writeStrVars(out, getModifiedVars(config.getInitialVariables(),
+                                          config.getFinalVariables()), config);
     }
 
     private void writeFile(PrintStream out, GenericConfig config, GenericConfig.ConfigFile file) {
@@ -99,5 +107,49 @@ public class MakeWriter {
             out.print("  # " + filename.getPosition());
         }
         out.println();
+    }
+
+    private static Map<String, Str> getModifiedVars(Map<String, Str> before,
+            Map<String, Str> after) {
+        final HashMap<String, Str> result = new HashMap();
+        // Entries that were added or changed.
+        for (Map.Entry<String, Str> afterEntry: after.entrySet()) {
+            final String varName = afterEntry.getKey();
+            final Str afterValue = afterEntry.getValue();
+            final Str beforeValue = before.get(varName);
+            if (beforeValue == null || !beforeValue.equals(afterValue)) {
+                result.put(varName, afterValue);
+            }
+        }
+        // removed Entries that were removed, we just treat them as  
+        for (Map.Entry<String, Str> beforeEntry: before.entrySet()) {
+            final String varName = beforeEntry.getKey();
+            if (!after.containsKey(varName)) {
+                result.put(varName, new Str(""));
+            }
+        }
+        return result;
+    }
+
+    private static class Var {
+        Var(String name, Str val) {
+            this.name = name;
+            this.val = val;
+        }
+        final String name;
+        final Str val;
+    }
+
+    private static void writeStrVars(PrintStream out, Map<String, Str> vars, ConfigBase config) {
+        // Sort by file name and var name
+        TreeMap<String, Var> sorted = new TreeMap();
+        for (Map.Entry<String, Str> entry: vars.entrySet()) {
+            sorted.put(entry.getValue().getPosition().toString() + " " + entry.getKey(),
+                    new Var(entry.getKey(), entry.getValue()));
+        }
+        // Print it
+        for (Var var: sorted.values()) {
+            out.println(var.val.getPosition() + var.name + " := " + var.val);
+        }
     }
 }

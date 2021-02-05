@@ -254,13 +254,13 @@ endef
 #       of the default list semantics
 #
 define import-nodes
+$(call dump-phase-start,$(1),$(2),$(3),$(4),build/make/core/node_fns.mk) \
 $(if \
   $(foreach _in,$(2), \
     $(eval _node_import_context := _nic.$(1).[[$(_in)]]) \
     $(if $(_include_stack),$(eval $(error ASSERTION FAILED: _include_stack \
                 should be empty here: $(_include_stack))),) \
     $(eval _include_stack := ) \
-    $(call dump-product-var-names,$(1),$(2),$(3),$(4)) \
     $(call _import-nodes-inner,$(_node_import_context),$(_in),$(3),$(4)) \
     $(call move-var-list,$(_node_import_context).$(_in),$(1).$(_in),$(3)) \
     $(eval _node_import_context :=) \
@@ -268,5 +268,6 @@ $(if \
     $(if $(_include_stack),$(eval $(error ASSERTION FAILED: _include_stack \
                 should be empty here: $(_include_stack))),) \
    ) \
-,)
+,) \
+$(call dump-phase-end,build/make/core/node_fns.mk)
 endef
