@@ -63,6 +63,30 @@
       },
       "revId": "fbdddd9047ac2faccfa809e672ee48b27730b98d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "216d6bbf_a9c6d1ab",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-05T12:27:26Z",
+      "side": 1,
+      "message": "why don\u0027t you support `current` instead so that you don\u0027t have to go update this all the time?",
+      "parentUuid": "eb0b8f81_537e79cf",
+      "range": {
+        "startLine": 37,
+        "startChar": 30,
+        "endLine": 37,
+        "endChar": 32
+      },
+      "revId": "fbdddd9047ac2faccfa809e672ee48b27730b98d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
