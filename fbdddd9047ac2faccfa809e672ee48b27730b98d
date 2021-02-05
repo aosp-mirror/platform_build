@@ -87,6 +87,30 @@
       },
       "revId": "fbdddd9047ac2faccfa809e672ee48b27730b98d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "413ffa19_1fac309d",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-05T12:55:56Z",
+      "side": 1,
+      "message": "well PRODUCT_SHIPPING_API_LEVEL doesn\u0027t support \"current\", and I recall we had a conversation about similar topic ~1.2 years ago... can\u0027t recall where it happen (probably on chat so I can\u0027t find any record), IIRC we were worried that setting this to \"current\" may accidentally hinder other parts of the team.\n\nWhat if someone decided to bump up the \"current\" API level and GSI breaks? Should the engineer stop and fix GSI first?\n\nThere\u0027s also this thread ag/9554048.\n\nAnd yes I told SzuWei that we should just update this manually time to time, as we are breaking / fixing GSI constantly anyway 😜",
+      "parentUuid": "216d6bbf_a9c6d1ab",
+      "range": {
+        "startLine": 37,
+        "startChar": 30,
+        "endLine": 37,
+        "endChar": 32
+      },
+      "revId": "fbdddd9047ac2faccfa809e672ee48b27730b98d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
