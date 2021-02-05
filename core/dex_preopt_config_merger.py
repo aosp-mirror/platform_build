@@ -72,8 +72,6 @@ def main():
       clc = clcs[lib]
       if lib in uses_libs:
         ulib = uses_libs[lib]
-        # On-host (build) path to the dependency DEX jar file.
-        clc['Host'] = ulib['BuildPath']
         # On-device (install) path to the dependency DEX jar file.
         clc['Device'] = ulib['DexLocation']
         # CLC of the dependency becomes a subcontext. We only need sub-CLC for
