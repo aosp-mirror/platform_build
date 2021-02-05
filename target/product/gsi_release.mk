@@ -34,6 +34,9 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
+# Enable dynamic partitions to facilitate mixing onto Cuttlefish
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
