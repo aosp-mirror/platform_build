@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0ea5562_ba73e3ff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-05T05:45:21Z",
+      "side": 1,
+      "message": "Verified.\n\n* Unit Tests:\n\t./extract_kernel.py --input $(KERNEL) --output-configs   config.file\n\t./extract_kernel.py --input $(KERNEL) --output-version   version.file\n\t./extract_kernel.py --input $(KERNEL) --output-configs \u003e config.file\n\t./extract_kernel.py --input $(KERNEL) --output-version \u003e version.file\n\tcat $(KERNEL) | ./extract_kernel.py   --output-configs   config.file\n\tcat $(KERNEL) | ./extract_kernel.py   --output-version   version.file\n\tcat $(KERNEL) | ./extract_kernel.py   --output-configs \u003e config.file\n\tcat $(KERNEL) | ./extract_kernel.py   --output-version \u003e version.file\n\t./extract_kernel.py --input $(KERNEL) --output-configs   config.file --output-version version.file --output-release release.file --output-compiler compiler.file\n\tcat $(KERNEL) | ./extract_kernel.py   --output-configs   config.file --output-version version.file --output-release release.file --output-compiler compiler.file\n\n\n* Integration Tests:\n    lunch aosp_cf_x86_64_phone-userdebug\n    mmma packages/modules/Gki",
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
