@@ -16,6 +16,29 @@
       "message": "double check if you updated tools/releasetools/ota_metadata_pb2.py",
       "revId": "5f0fcee4dd323acb8b23a6de3143296bdcd927e3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc7cc1b9_503ef297",
+        "filename": "tools/releasetools/ota_metadata_pb2.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-05T01:11:52Z",
+      "side": 1,
+      "message": "Is this generated with aprotoc or protoc?",
+      "range": {
+        "startLine": 21,
+        "startChar": 14,
+        "endLine": 21,
+        "endChar": 45
+      },
+      "revId": "5f0fcee4dd323acb8b23a6de3143296bdcd927e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
