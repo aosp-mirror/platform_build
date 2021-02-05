@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "089031e7_40b43ca1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-05T08:52:54Z",
+      "side": 1,
+      "message": "There was a race condition happening between depmod \u0026 the new blocklist rule. Rewrite the rule so that it don\u0027t share intermediates directory with depmod.\n\nNow the blocklist is generated directly to the install path. No intermediates dir.",
+      "revId": "c12dd84d01e7e31e79aeb9083718142134060a64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
