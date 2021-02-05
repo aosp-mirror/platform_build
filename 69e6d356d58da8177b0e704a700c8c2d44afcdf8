@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b1c2b0ec_d4144248",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1853,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-05T01:49:14Z",
+      "side": 1,
+      "message": "You can create this phony in the singleton using SingletonContext.Phony",
+      "range": {
+        "startLine": 1852,
+        "startChar": 0,
+        "endLine": 1853,
+        "endChar": 20
+      },
+      "revId": "69e6d356d58da8177b0e704a700c8c2d44afcdf8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
