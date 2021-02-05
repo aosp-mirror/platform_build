@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e39cdeba_22066257",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1409782
+      },
+      "writtenOn": "2021-02-05T17:41:14Z",
+      "side": 1,
+      "message": "Looks like I may need to CP some changes to rvc-qpr-dev first.",
+      "revId": "1dca2a8e068d751314cd28de9ad26ad2fa539bd4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
