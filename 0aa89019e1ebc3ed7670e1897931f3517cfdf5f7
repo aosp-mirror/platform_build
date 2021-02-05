@@ -33,6 +33,24 @@
       "message": "just out of curiosity: Is modules.blocklist needed only in vendor partition, but not ramdisk?",
       "revId": "0aa89019e1ebc3ed7670e1897931f3517cfdf5f7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb2b5c78_76b60c0f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-05T04:05:23Z",
+      "side": 1,
+      "message": "Do you mean the use case or the ability to do so?\n\nI\u0027m not sure whether there be an valid use case to place a blocklist in ramdisk. It sounds more reasonable to just remove the blocklisted ko from ramdisk.\n\nBut the mechanism I\u0027m adding do allow blocklist be installed to arbitrary partition, including ramdisk.",
+      "parentUuid": "c08545c9_f1998c16",
+      "revId": "0aa89019e1ebc3ed7670e1897931f3517cfdf5f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
