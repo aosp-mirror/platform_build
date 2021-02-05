@@ -135,6 +135,30 @@
       },
       "revId": "fbdddd9047ac2faccfa809e672ee48b27730b98d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac6843c8_79aa7186",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-05T17:43:49Z",
+      "side": 1,
+      "message": "okay, I would change this to 30 in the next revision.\n30 or 31 isn\u0027t my main concern here, as I just want this to be some up-to-date enough value. I\u0027m happy as long as this is not empty.\n\notoh, I\u0027m still not convinced to add \"current\". For example if \"current\" means \"the same value as PLATFORM_SDK_VERSION\", then this may add additional burden to the person updating PLATFORM_SDK_VERSION, which is a situation we don\u0027t want to happen. We could maybe set this to a large value like 100, then it would function sorta like \"latest\" without adding additional dependencies / changes around the SHIPPING_API_LEVEL logic. wdyt?",
+      "parentUuid": "1b2157de_82e86fb6",
+      "range": {
+        "startLine": 37,
+        "startChar": 30,
+        "endLine": 37,
+        "endChar": 32
+      },
+      "revId": "fbdddd9047ac2faccfa809e672ee48b27730b98d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
