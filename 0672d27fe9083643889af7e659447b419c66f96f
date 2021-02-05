@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "45f632b3_66e3b273",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-05T05:43:01Z",
+      "side": 1,
+      "message": "Done.\nFor py2, f.write(o) is enough.\nFor py3, the type combination of f and o gets a little complicated:\n#py3: --output-configs \u003e config.txt     TextIOWrapper, byts\n#py3: --output-version   release.txt    BufferedWriter, str\n#py3: others, f.write(o) is fine.",
+      "parentUuid": "d568709b_56c6245e",
+      "range": {
+        "startLine": 180,
+        "startChar": 6,
+        "endLine": 180,
+        "endChar": 85
+      },
+      "revId": "0672d27fe9083643889af7e659447b419c66f96f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "96cda81e_f5ccb3e1",
@@ -61,6 +85,30 @@
       "side": 1,
       "message": "Thanks a lot for the kind comments. Sorry I was working on some other tasks yesterday. I will have a try according to your suggestions.",
       "parentUuid": "96cda81e_f5ccb3e1",
+      "range": {
+        "startLine": 198,
+        "startChar": 30,
+        "endLine": 198,
+        "endChar": 39
+      },
+      "revId": "0672d27fe9083643889af7e659447b419c66f96f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eda654a0_f9950bf8",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-05T05:43:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3618aa2d_b0d0631d",
       "range": {
         "startLine": 198,
         "startChar": 30,

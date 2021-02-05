@@ -88,6 +88,24 @@
       "parentUuid": "a6b62a09_e82fac40",
       "revId": "de3a31a6f73d3005af0ee4faca24dc01b137ec4f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed78b827_5e9c2828",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-05T05:43:01Z",
+      "side": 1,
+      "message": "Thanks, I can reproduce the issue with \"mmma packages/modules/Gki\".\nPatch Set 4 fixed the problem.",
+      "parentUuid": "c22706db_86632901",
+      "revId": "de3a31a6f73d3005af0ee4faca24dc01b137ec4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
