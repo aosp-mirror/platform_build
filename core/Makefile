@@ -4135,6 +4135,7 @@ INTERNAL_OTATOOLS_MODULES := \
   mksquashfsimage.sh \
   mkuserimg_mke2fs \
   ota_from_target_files \
+  repack_bootimg \
   sefcontext_compile \
   sgdisk \
   shflags \
@@ -4143,6 +4144,7 @@ INTERNAL_OTATOOLS_MODULES := \
   signapk \
   simg2img \
   sload_f2fs \
+  toybox \
   tune2fs \
   unpack_bootimg \
   update_host_simulator \
