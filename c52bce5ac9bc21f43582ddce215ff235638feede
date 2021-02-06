@@ -3,6 +3,40 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "64e05126_04bcd617",
+        "filename": "core/dumpconfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-06T19:30:25Z",
+      "side": 1,
+      "message": "you can use wildcard function instead of running shell script:\nifeq (,$(wildcard build/make/core/config.mk))",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a1ee0b47_721ace7d",
+        "filename": "core/product.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-06T19:30:25Z",
+      "side": 1,
+      "message": "This added code as well as the added code in the node_fns.mk will be executed during the non-roboleaf builds, too. The functions dump-inherit et al. reference $(DUMPCONFIG_FILE). Should soong_ui set DUMPCONFIG_FILE to /dev/null?",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a8ed9b87_48f1bc41",
         "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
         "patchSetId": 4
