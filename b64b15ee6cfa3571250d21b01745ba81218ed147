@@ -16,6 +16,138 @@
       "message": "Verified.\n\n* Unit Tests:\n\t./extract_kernel.py --input $(KERNEL) --output-configs   config.file\n\t./extract_kernel.py --input $(KERNEL) --output-version   version.file\n\t./extract_kernel.py --input $(KERNEL) --output-configs \u003e config.file\n\t./extract_kernel.py --input $(KERNEL) --output-version \u003e version.file\n\tcat $(KERNEL) | ./extract_kernel.py   --output-configs   config.file\n\tcat $(KERNEL) | ./extract_kernel.py   --output-version   version.file\n\tcat $(KERNEL) | ./extract_kernel.py   --output-configs \u003e config.file\n\tcat $(KERNEL) | ./extract_kernel.py   --output-version \u003e version.file\n\t./extract_kernel.py --input $(KERNEL) --output-configs   config.file --output-version version.file --output-release release.file --output-compiler compiler.file\n\tcat $(KERNEL) | ./extract_kernel.py   --output-configs   config.file --output-version version.file --output-release release.file --output-compiler compiler.file\n\n\n* Integration Tests:\n    lunch aosp_cf_x86_64_phone-userdebug\n    mmma packages/modules/Gki",
       "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5fba447a_29b6c896",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-06T02:39:53Z",
+      "side": 1,
+      "message": "Add:\n\n\n  def to_bytes_io(b):\n    \"\"\"\n    Make b, which is either sys.stdout or sys.stdin, receive bytes as arguments.\n    \"\"\"\n    return b.buffer if sys.version_info.major \u003d\u003d 3 else b\n\nOr just add a lambda before Line 199.",
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d279cfd_f0c4888e",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-06T02:39:53Z",
+      "side": 1,
+      "message": "to_bytes_io(sys.stdin)",
+      "range": {
+        "startLine": 203,
+        "startChar": 30,
+        "endLine": 203,
+        "endChar": 92
+      },
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f847d981_fb7a3632",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-06T02:39:53Z",
+      "side": 1,
+      "message": "to_bytes_io(sys.stdout)",
+      "range": {
+        "startLine": 210,
+        "startChar": 28,
+        "endLine": 210,
+        "endChar": 38
+      },
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9dba081a_33941ae0",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-06T02:39:53Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 217,
+        "startChar": 28,
+        "endLine": 217,
+        "endChar": 38
+      },
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2624009_e7819de7",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-06T02:39:53Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 224,
+        "startChar": 28,
+        "endLine": 224,
+        "endChar": 38
+      },
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f7a58edd_97c90311",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-06T02:39:53Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 231,
+        "startChar": 28,
+        "endLine": 231,
+        "endChar": 38
+      },
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

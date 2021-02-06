@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3707f92f_50582a6b",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-06T02:39:53Z",
+      "side": 1,
+      "message": "You can avoid this complicated conditional by always making f.write() receive bytes.\n\nAlso, the conditional won\u0027t work if f is some unrecognized writer, e.g. when the implementation of the libraries changes. Poking into the implementation details is discouraged.",
+      "parentUuid": "45f632b3_66e3b273",
+      "range": {
+        "startLine": 180,
+        "startChar": 6,
+        "endLine": 180,
+        "endChar": 85
+      },
+      "revId": "0672d27fe9083643889af7e659447b419c66f96f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "96cda81e_f5ccb3e1",
         "filename": "tools/extract_kernel.py",
         "patchSetId": 3
