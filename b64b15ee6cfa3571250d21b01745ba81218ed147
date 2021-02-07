@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a08c4cc_42616fe2",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-07T11:02:03Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5fba447a_29b6c896",
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1d279cfd_f0c4888e",
@@ -48,6 +66,30 @@
       "writtenOn": "2021-02-06T02:39:53Z",
       "side": 1,
       "message": "to_bytes_io(sys.stdin)",
+      "range": {
+        "startLine": 203,
+        "startChar": 30,
+        "endLine": 203,
+        "endChar": 92
+      },
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "64b28dcb_3c96e7e3",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-07T11:02:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d279cfd_f0c4888e",
       "range": {
         "startLine": 203,
         "startChar": 30,
@@ -81,6 +123,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "df6c1551_d50824c2",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-07T11:02:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f847d981_fb7a3632",
+      "range": {
+        "startLine": 210,
+        "startChar": 28,
+        "endLine": 210,
+        "endChar": 38
+      },
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9dba081a_33941ae0",
@@ -94,6 +160,30 @@
       "writtenOn": "2021-02-06T02:39:53Z",
       "side": 1,
       "message": "ditto",
+      "range": {
+        "startLine": 217,
+        "startChar": 28,
+        "endLine": 217,
+        "endChar": 38
+      },
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa0aefaf_988b4f60",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-07T11:02:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9dba081a_33941ae0",
       "range": {
         "startLine": 217,
         "startChar": 28,
@@ -127,6 +217,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a4e36d6_7dea8688",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-07T11:02:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f2624009_e7819de7",
+      "range": {
+        "startLine": 224,
+        "startChar": 28,
+        "endLine": 224,
+        "endChar": 38
+      },
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f7a58edd_97c90311",
@@ -140,6 +254,30 @@
       "writtenOn": "2021-02-06T02:39:53Z",
       "side": 1,
       "message": "ditto",
+      "range": {
+        "startLine": 231,
+        "startChar": 28,
+        "endLine": 231,
+        "endChar": 38
+      },
+      "revId": "b64b15ee6cfa3571250d21b01745ba81218ed147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d49ab4e_8fb1bddf",
+        "filename": "tools/extract_kernel.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2021-02-07T11:02:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f7a58edd_97c90311",
       "range": {
         "startLine": 231,
         "startChar": 28,
