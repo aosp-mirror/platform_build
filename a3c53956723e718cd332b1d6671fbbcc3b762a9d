@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9453f370_4c2dffcf",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-08T18:50:56Z",
+      "side": 1,
+      "message": "persist properties are generally written to /data, although I see one other instance of a persist property being set in PRODUCT_SYSTEM _PROPERTIES.  If you want to be able to re-enable this locally, have you verified that setting the property with setprop overrides this value?",
+      "range": {
+        "startLine": 405,
+        "startChar": 29,
+        "endLine": 405,
+        "endChar": 36
+      },
+      "revId": "a3c53956723e718cd332b1d6671fbbcc3b762a9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
