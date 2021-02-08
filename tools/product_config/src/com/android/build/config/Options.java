@@ -87,7 +87,7 @@ public class Options {
     }
 
     static class Parser {
-        private class ParseException extends Exception {
+        private static class ParseException extends Exception {
             public ParseException(String message) {
                 super(message);
             }
