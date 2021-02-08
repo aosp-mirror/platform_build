@@ -46,6 +46,30 @@
       },
       "revId": "a3c53956723e718cd332b1d6671fbbcc3b762a9d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88dfb8f8_5c0b423a",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 1092085
+      },
+      "writtenOn": "2021-02-08T20:04:28Z",
+      "side": 1,
+      "message": "I\u0027ll land it as is because it works as intended, does not break anything, and is slated for removal anyway. I am happy to fix it in a followup if you have more thoughts on this.",
+      "parentUuid": "1bb57a4e_d9f6f103",
+      "range": {
+        "startLine": 405,
+        "startChar": 29,
+        "endLine": 405,
+        "endChar": 36
+      },
+      "revId": "a3c53956723e718cd332b1d6671fbbcc3b762a9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
