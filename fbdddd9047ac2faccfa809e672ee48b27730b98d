@@ -183,6 +183,30 @@
       },
       "revId": "fbdddd9047ac2faccfa809e672ee48b27730b98d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2e1cdbfc_7e37f611",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-08T16:21:13Z",
+      "side": 1,
+      "message": "Makefile arithmetic only support \"numbers\" from 0 to 100 https://cs.android.com/android/platform/superproject/+/master:build/make/common/math.mk;l\u003d26?q\u003df:math%20f:mk$%20f:%5Ebuild\u0026ss\u003dandroid%2Fplatform%2Fsuperproject\n\nso 100 would be the closest thing to 10000 as long as we\u0027re writing Make.\n100 should be large enough for at least a decade or two, assuming we only bump the API level a few times a year.\n\nI think I\u0027ll still submit this first, observe for a few days or weeks, if nothing went wrong then I try setting this to 100.",
+      "parentUuid": "d31dbad8_d4849cd4",
+      "range": {
+        "startLine": 37,
+        "startChar": 30,
+        "endLine": 37,
+        "endChar": 32
+      },
+      "revId": "fbdddd9047ac2faccfa809e672ee48b27730b98d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
