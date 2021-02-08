@@ -400,4 +400,8 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
 
+# This property allows enabling Keystore 2.0 selectively for testing.
+# TODO Remove when Keystore 2.0 migration is complete. b/171563717
+PRODUCT_SYSTEM_PROPERTIES += persist.android.security.keystore2.enable=false
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
