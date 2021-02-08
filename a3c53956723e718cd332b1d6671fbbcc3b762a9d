@@ -22,6 +22,30 @@
       },
       "revId": "a3c53956723e718cd332b1d6671fbbcc3b762a9d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1bb57a4e_d9f6f103",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 1092085
+      },
+      "writtenOn": "2021-02-08T19:46:13Z",
+      "side": 1,
+      "message": "I have tried it and it looks like it is working as intended. What is the recommended way to set the default? I mean if the property is not present at boot it should have the same effect as \"false\" so I could just not set it at all I guess?",
+      "parentUuid": "9453f370_4c2dffcf",
+      "range": {
+        "startLine": 405,
+        "startChar": 29,
+        "endLine": 405,
+        "endChar": 36
+      },
+      "revId": "a3c53956723e718cd332b1d6671fbbcc3b762a9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
