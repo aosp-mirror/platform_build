@@ -1,0 +1,28 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f81b9190_cbd0185c",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-09T18:17:40Z",
+      "side": 1,
+      "message": "\u003e Please remove the trailing whitespace.\n\nPlease fix.",
+      "parentUuid": "ad5c1a1e_22e90a25",
+      "range": {
+        "startLine": 238,
+        "startChar": 0,
+        "endLine": 238,
+        "endChar": 16
+      },
+      "revId": "fe6733d1b14278df6feb5aea475d742b85f33971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

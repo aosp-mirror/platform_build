@@ -105,6 +105,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c124cb18_1ee3daa4",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-09T18:17:40Z",
+      "side": 1,
+      "message": "Perhaps it\u0027s worth adding a comment about this, for historical purposes.",
+      "parentUuid": "a8a1c342_e584e638",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "291c2345_310907a6",
@@ -210,6 +228,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d146b262_9c482e7c",
+        "filename": "tools/product_config/src/com/android/build/config/KatiImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-09T18:17:40Z",
+      "side": 1,
+      "message": "If everything is maintained as files, if does not look so ugly. Actually, java.nio.file.Paths.get() does the same as your Path.join().",
+      "parentUuid": "faec904c_1d0d3aa0",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0b6fa5e7_f87f3e29",
@@ -305,6 +341,30 @@
       "writtenOn": "2021-02-01T18:52:08Z",
       "side": 1,
       "message": "If you use java.io.File, this class can be eliminated.",
+      "range": {
+        "startLine": 19,
+        "startChar": 13,
+        "endLine": 19,
+        "endChar": 17
+      },
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d6d20f9_71358cfe",
+        "filename": "tools/product_config/src/com/android/build/config/Path.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-09T18:17:40Z",
+      "side": 1,
+      "message": "Even better java.nio.file.Paths.get()",
+      "parentUuid": "b4020cd4_8ba237b6",
       "range": {
         "startLine": 19,
         "startChar": 13,
