@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4cfba1e0_a8ba1c41",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-02-09T22:55:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa2ada31_ee3c590f",
+      "range": {
+        "startLine": 890,
+        "startChar": 26,
+        "endLine": 890,
+        "endChar": 27
+      },
+      "revId": "c1d59bf047d85817e2347fcb3b0f6d0392d83b26",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "11f6ca96_6c32e884",
@@ -47,6 +71,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8cd36187_1eb45193",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1312,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-02-09T22:55:01Z",
+      "side": 1,
+      "message": "This is just for convenience if we fat-fingered...",
+      "parentUuid": "11f6ca96_6c32e884",
+      "range": {
+        "startLine": 1312,
+        "startChar": 38,
+        "endLine": 1312,
+        "endChar": 47
+      },
+      "revId": "c1d59bf047d85817e2347fcb3b0f6d0392d83b26",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a4137e8e_eb79cea4",
@@ -60,6 +108,30 @@
       "writtenOn": "2021-02-09T22:47:47Z",
       "side": 1,
       "message": "Let\u0027s also dump the flag to OtaMetadata, and ask Gota to honor it.\nNote we already have the post security patch in ota metadata.\nhttps://source.corp.google.com/aosp-master/build/make/tools/releasetools/ota_utils.py;l\u003d217",
+      "range": {
+        "startLine": 1313,
+        "startChar": 34,
+        "endLine": 1313,
+        "endChar": 47
+      },
+      "revId": "c1d59bf047d85817e2347fcb3b0f6d0392d83b26",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "606a4394_75c4fc2d",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1313,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-02-09T22:55:01Z",
+      "side": 1,
+      "message": "Let\u0027s do that in a separate CL",
+      "parentUuid": "a4137e8e_eb79cea4",
       "range": {
         "startLine": 1313,
         "startChar": 34,
