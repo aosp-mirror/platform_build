@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "01274c24_c196a9d4",
+        "filename": "tools/product_config/src/com/android/build/config/CsvParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-09T02:53:29Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "247b66fc_88c02242",
+      "revId": "be60dc07ff173c777dcfb5895b62582af8f6c822",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "52b2514a_0652db92",
         "filename": "tools/product_config/src/com/android/build/config/CsvParser.java",
         "patchSetId": 4
@@ -31,6 +49,24 @@
       "writtenOn": "2021-01-22T21:40:49Z",
       "side": 1,
       "message": "Out of curiosity -- did you look at Google\u0027s CSVParser?",
+      "revId": "be60dc07ff173c777dcfb5895b62582af8f6c822",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6badf2b_042c49ad",
+        "filename": "tools/product_config/src/com/android/build/config/CsvParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-09T02:53:29Z",
+      "side": 1,
+      "message": "I didn\u0027t for two reasons. First, I\u0027ve written a csv parser probably five times so it really took less than an hour. Second, I didn\u0027t want to start introducing dependencies, because bootstrapping this is already going to be annoying, because it runs so early in the build.\n\nIs that parser open source?",
+      "parentUuid": "52b2514a_0652db92",
       "revId": "be60dc07ff173c777dcfb5895b62582af8f6c822",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
