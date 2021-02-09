@@ -54,6 +54,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5cec5823_bf86d55b",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-09T02:53:34Z",
+      "side": 1,
+      "message": "Not yet. b/178033108 is filed.",
+      "parentUuid": "a8ed9b87_48f1bc41",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "55a27d79_06ad856e",
         "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
         "patchSetId": 4
@@ -65,6 +83,24 @@
       "writtenOn": "2021-02-01T18:52:08Z",
       "side": 1,
       "message": "dumpConfigVersion is set but never used. If it was intended for future-proofing, perhaps it\u0027s easier to have it always on the first line and drop the loop?",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8a1c342_e584e638",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-09T02:53:34Z",
+      "side": 1,
+      "message": "It was for future proofing.  The loop was originally because I was parsing from all of kati\u0027s stdout, not just the file that dumpconfig.mk writes, but I think it\u0027s harmless to leave it in.  It gives us a little bit of flexibility which we probably won\u0027t need anyway, since I don\u0027t think this tool will diverge from the build system anyway.",
+      "parentUuid": "55a27d79_06ad856e",
       "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -86,6 +122,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f36c9c7_e547e9da",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-09T02:53:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "291c2345_310907a6",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a2d3f09b_a8cc4e4a",
@@ -99,6 +153,24 @@
       "writtenOn": "2021-02-01T18:52:08Z",
       "side": 1,
       "message": "Arrays.asList() creates an ArrayList from an array.",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8903ef1_d216c7a1",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-09T02:53:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2d3f09b_a8cc4e4a",
       "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
