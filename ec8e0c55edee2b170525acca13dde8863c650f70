@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "05968b8c_1fc320ad",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-09T02:53:38Z",
+      "side": 1,
+      "message": "refactored.",
+      "parentUuid": "03925676_4fb1c942",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "715e7e0b_667e2196",
         "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
         "patchSetId": 2
@@ -37,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5950ff81_c5aae103",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-09T02:53:38Z",
+      "side": 1,
+      "message": "With the above refactoring, I don\u0027t think this is necessary anymore.",
+      "parentUuid": "715e7e0b_667e2196",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5ea5fcf9_50637004",
         "filename": "tools/product_config/src/com/android/build/config/GenericConfig.java",
         "patchSetId": 2
@@ -48,6 +84,24 @@
       "writtenOn": "2021-02-01T19:18:12Z",
       "side": 1,
       "message": "If you have write(PrintStream, bool doPrintAnnotations) an abstract method of Statement and implement it in concrete classes (by moving writeAssign and writeInherit from MakeWriter), the main loop in MakeWriter.writeFile will not need to check statement type.",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "38301ccc_f2fa2d8c",
+        "filename": "tools/product_config/src/com/android/build/config/GenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-09T02:53:38Z",
+      "side": 1,
+      "message": "I wanted to keep all of the printing in one place, and have this just be a data object.  I could have done some kind of more complicated visitor thing, but I think the instanceof is probably the simplest.",
+      "parentUuid": "5ea5fcf9_50637004",
       "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
