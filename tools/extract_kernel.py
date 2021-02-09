@@ -39,12 +39,12 @@ COMPRESSION_ALGO = (
 # "Linux version " UTS_RELEASE " (" LINUX_COMPILE_BY "@"
 # LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION "\n";
 LINUX_BANNER_PREFIX = b'Linux version '
-LINUX_BANNER_REGEX = LINUX_BANNER_PREFIX + \
+LINUX_BANNER_REGEX = LINUX_BANNER_PREFIX.decode() + \
     r'(?P<release>(?P<version>[0-9]+[.][0-9]+[.][0-9]+).*) \(.*@.*\) \((?P<compiler>.*)\) .*\n'
 
 
 def get_from_release(input_bytes, start_idx, key):
-  null_idx = input_bytes.find('\x00', start_idx)
+  null_idx = input_bytes.find(b'\x00', start_idx)
   if null_idx < 0:
     return None
   try:
@@ -69,7 +69,7 @@ def dump_from_release(input_bytes, key):
 
     value = get_from_release(input_bytes, idx, key)
     if value:
-      return value
+      return value.encode()
 
     idx += len(LINUX_BANNER_PREFIX)
 
@@ -140,7 +140,7 @@ def try_decompress(cmd, search_bytes, input_bytes):
   while True:
     idx = input_bytes.find(search_bytes, idx)
     if idx < 0:
-      raise StopIteration()
+      return
 
     yield try_decompress_bytes(cmd, input_bytes[idx:])
     idx += 1
@@ -183,6 +183,11 @@ def dump_to_file(f, dump_fn, input_bytes, desc):
       return False
   return True
 
+def to_bytes_io(b):
+  """
+  Make b, which is either sys.stdout or sys.stdin, receive bytes as arguments.
+  """
+  return b.buffer if sys.version_info.major == 3 else b
 
 def main():
   parser = argparse.ArgumentParser(
@@ -194,35 +199,35 @@ def main():
                       help='Input kernel image. If not specified, use stdin',
                       metavar='FILE',
                       type=argparse.FileType('rb'),
-                      default=sys.stdin)
+                      default=to_bytes_io(sys.stdin))
   parser.add_argument('--output-configs',
                       help='If specified, write configs. Use stdout if no file '
                            'is specified.',
                       metavar='FILE',
                       nargs='?',
                       type=argparse.FileType('wb'),
-                      const=sys.stdout)
+                      const=to_bytes_io(sys.stdout))
   parser.add_argument('--output-version',
                       help='If specified, write version. Use stdout if no file '
                            'is specified.',
                       metavar='FILE',
                       nargs='?',
                       type=argparse.FileType('wb'),
-                      const=sys.stdout)
+                      const=to_bytes_io(sys.stdout))
   parser.add_argument('--output-release',
                       help='If specified, write kernel release. Use stdout if '
                            'no file is specified.',
                       metavar='FILE',
                       nargs='?',
                       type=argparse.FileType('wb'),
-                      const=sys.stdout)
+                      const=to_bytes_io(sys.stdout))
   parser.add_argument('--output-compiler',
                       help='If specified, write the compiler information. Use stdout if no file '
                            'is specified.',
                       metavar='FILE',
                       nargs='?',
                       type=argparse.FileType('wb'),
-                      const=sys.stdout)
+                      const=to_bytes_io(sys.stdout))
   parser.add_argument('--tools',
                       help='Decompression tools to use. If not specified, PATH '
                            'is searched.',
