@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e4efd9c_250363fd",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-09T19:09:42Z",
+      "side": 1,
+      "message": "\u003e Common typo found: \"Convets\" -- should it be \"Converts\"?\n\u003e Note: a line containing \"common_typos_disable\" or \"common_typos_enable\" will turn off or on (respectively) the linter for subsequent lines in the file. Alternatively include the token \"NOTYPO\" within a line to skip typo linting that line or include \u0027No-Typo-Check: \u003creason\u003e\u0027in the commit message.\n\nPlease fix.",
+      "parentUuid": "ff4629c5_9152eab6",
+      "range": {
+        "startLine": 107,
+        "startChar": 7,
+        "endLine": 107,
+        "endChar": 14
+      },
+      "revId": "4bc8189de933e61b939557e697c6570f9ea73b65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c72488cf_a798abf8",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-09T19:09:42Z",
+      "side": 1,
+      "message": "When if block ends with return statement, else is not needed, and there is less nesting.",
+      "revId": "4bc8189de933e61b939557e697c6570f9ea73b65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

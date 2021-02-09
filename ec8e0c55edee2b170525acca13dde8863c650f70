@@ -104,6 +104,24 @@
       "parentUuid": "5ea5fcf9_50637004",
       "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "157f8d7e_78fa5ca4",
+        "filename": "tools/product_config/src/com/android/build/config/GenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-09T19:09:42Z",
+      "side": 1,
+      "message": "Why is it important to have all the printing in one place? If printing depends on a lot of context (although so far it\u0027s only doPrintAnnotations), that context can be maintained in an object and passed around. Still looks more readable to me than casing by object type.",
+      "parentUuid": "38301ccc_f2fa2d8c",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
