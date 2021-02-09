@@ -272,6 +272,7 @@ OPTIONS.disable_fec_computation = False
 OPTIONS.disable_verity_computation = False
 OPTIONS.partial = None
 OPTIONS.custom_images = {}
+OPTIONS.disable_vabc = False
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -1090,6 +1091,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     partition_timestamps_flags = GeneratePartitionTimestampFlags(
         metadata.postcondition.partition_state)
 
+  if OPTIONS.disable_vabc:
+    additional_args += ["--disable_vabc", "true"]
   additional_args += ["--max_timestamp", max_timestamp]
 
   if SupportsMainlineGkiUpdates(source_file):
@@ -1257,6 +1260,8 @@ def main(argv):
     elif o == "--custom_image":
       custom_partition, custom_image = a.split("=")
       OPTIONS.custom_images[custom_partition] = custom_image
+    elif o == "--disable_vabc":
+      OPTIONS.disable_vabc = True
     else:
       return False
     return True
@@ -1298,6 +1303,7 @@ def main(argv):
                                  "boot_variable_file=",
                                  "partial=",
                                  "custom_image=",
+                                 "disable_vabc",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
