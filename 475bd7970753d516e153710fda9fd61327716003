@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "faab4bd6_acd65175",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-10T18:32:55Z",
+      "side": 1,
+      "message": "Same here. Bug number + explain why we want this change.",
+      "revId": "475bd7970753d516e153710fda9fd61327716003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
