@@ -16,6 +16,24 @@
       "message": "Bug number? \n\nCan you explain why we want this change?",
       "revId": "c5f2137fd08c37dd1871608998a718b47bfae241",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "592bdf23_1dfeaff0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-02-10T18:37:20Z",
+      "side": 1,
+      "message": "There\u0027s no bug for this... previously we allow all spl downgrade OTA to generate. But applying such OTA often causes device to hang and rollback, because keymaster refuses to attach if it detects spl downgrade. When such error happens, it\u0027s really hard to debug. So instead of debugging a mysterious boot failure, let\u0027\u0027s prevent such OTA from generating in the first place.",
+      "parentUuid": "2d03461e_1ece17c9",
+      "revId": "c5f2137fd08c37dd1871608998a718b47bfae241",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
