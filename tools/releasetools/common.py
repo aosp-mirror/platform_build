@@ -276,29 +276,6 @@ def Run(args, verbose=None, **kwargs):
   return subprocess.Popen(args, **kwargs)
 
 
-def RunAndWait(args, verbose=None, **kwargs):
-  """Runs the given command waiting for it to complete.
-
-  Args:
-    args: The command represented as a list of strings.
-    verbose: Whether the commands should be shown. Default to the global
-        verbosity if unspecified.
-    kwargs: Any additional args to be passed to subprocess.Popen(), such as env,
-        stdin, etc. stdout and stderr will default to subprocess.PIPE and
-        subprocess.STDOUT respectively unless caller specifies any of them.
-
-  Raises:
-    ExternalError: On non-zero exit from the command.
-  """
-  proc = Run(args, verbose=verbose, **kwargs)
-  proc.wait()
-
-  if proc.returncode != 0:
-    raise ExternalError(
-        "Failed to run command '{}' (exit code {})".format(
-            args, proc.returncode))
-
-
 def RunAndCheckOutput(args, verbose=None, **kwargs):
   """Runs the given command and returns the output.
 
