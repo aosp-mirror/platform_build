@@ -887,12 +887,12 @@ def create_target_files_archive(output_file, source_dir, temp_dir):
       output_zip,
       '-C',
       source_dir,
-      '-l',
+      '-r',
       output_target_files_list,
   ]
 
   logger.info('creating %s', output_file)
-  common.RunAndWait(command, verbose=True)
+  common.RunAndCheckOutput(command, verbose=True)
   logger.info('finished creating %s', output_file)
 
   return output_zip
