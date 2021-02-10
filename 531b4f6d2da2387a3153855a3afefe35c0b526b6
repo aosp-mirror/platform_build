@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "02393740_f1d2d923",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-10T21:56:40Z",
+      "side": 1,
+      "message": "maybe add a new function like IsBuildPropFile",
+      "range": {
+        "startLine": 549,
+        "startChar": 44,
+        "endLine": 549,
+        "endChar": 52
+      },
+      "revId": "531b4f6d2da2387a3153855a3afefe35c0b526b6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
