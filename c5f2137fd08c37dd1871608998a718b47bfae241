@@ -34,6 +34,47 @@
       "parentUuid": "2d03461e_1ece17c9",
       "revId": "c5f2137fd08c37dd1871608998a718b47bfae241",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "151351f5_2520fdab",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-10T18:40:37Z",
+      "side": 1,
+      "message": "b/178584781, better change the title of that bug",
+      "parentUuid": "592bdf23_1dfeaff0",
+      "revId": "c5f2137fd08c37dd1871608998a718b47bfae241",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "542cafa2_f5eaa004",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1312,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-10T18:40:37Z",
+      "side": 1,
+      "message": "let\u0027s remove it, since all other options use underscore",
+      "range": {
+        "startLine": 1312,
+        "startChar": 34,
+        "endLine": 1312,
+        "endChar": 47
+      },
+      "revId": "c5f2137fd08c37dd1871608998a718b47bfae241",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
