@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "02bc2d07_a7957482",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-02-10T19:50:42Z",
+      "side": 1,
+      "message": "(Moving Bowgo to CC because of multi-day vacation in TPE. Adding Tianjie for tools/releasetools OWNERS review.)\n\nHi Tianjie, can you please check this new merge-time compatibility check in merge_target_files.py?",
+      "revId": "c982b6183290f170b4a900654ee395b9453b1289",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
