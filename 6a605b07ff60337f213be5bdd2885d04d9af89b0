@@ -118,6 +118,30 @@
       },
       "revId": "6a605b07ff60337f213be5bdd2885d04d9af89b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "46824ae4_b960d043",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 501,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-02-10T20:20:29Z",
+      "side": 1,
+      "message": "Nikita is OOO today, let\u0027s remove this tiny change about apex and submit this CL.",
+      "parentUuid": "51c7039e_11f25e74",
+      "range": {
+        "startLine": 501,
+        "startChar": 29,
+        "endLine": 501,
+        "endChar": 33
+      },
+      "revId": "6a605b07ff60337f213be5bdd2885d04d9af89b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
