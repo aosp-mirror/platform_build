@@ -94,6 +94,30 @@
       },
       "revId": "6a605b07ff60337f213be5bdd2885d04d9af89b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51c7039e_11f25e74",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 501,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-10T18:51:35Z",
+      "side": 1,
+      "message": "We were signing all partitions including product. Worth checking with Nikita before you make the apex change, I forget the reason why only \u0027system/apex\u0027 is signed",
+      "parentUuid": "ffbf75eb_b019ad24",
+      "range": {
+        "startLine": 501,
+        "startChar": 29,
+        "endLine": 501,
+        "endChar": 33
+      },
+      "revId": "6a605b07ff60337f213be5bdd2885d04d9af89b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
