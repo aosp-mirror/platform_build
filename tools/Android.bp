@@ -62,10 +62,10 @@ python_binary_host {
   srcs: ["extract_kernel.py"],
   version: {
     py2: {
-      enabled: true,
+      enabled: false,
     },
     py3: {
-      enabled: false,
+      enabled: true,
     },
   },
 }
