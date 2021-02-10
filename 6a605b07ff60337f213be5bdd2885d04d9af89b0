@@ -70,6 +70,30 @@
       },
       "revId": "6a605b07ff60337f213be5bdd2885d04d9af89b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ffbf75eb_b019ad24",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 501,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-10T18:49:14Z",
+      "side": 1,
+      "message": "The script should have the same logic.. We should keep all places consistent\nhttps://cs.android.com/android/platform/superproject/+/master:build/make/tools/releasetools/common.py;l\u003d757",
+      "parentUuid": "86945f27_61821825",
+      "range": {
+        "startLine": 501,
+        "startChar": 29,
+        "endLine": 501,
+        "endChar": 33
+      },
+      "revId": "6a605b07ff60337f213be5bdd2885d04d9af89b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
