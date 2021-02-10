@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e86b19b_39ae86ac",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-10T19:09:45Z",
+      "side": 1,
+      "message": "does the pkg generation fail correctly?",
+      "range": {
+        "startLine": 15,
+        "startChar": 6,
+        "endLine": 15,
+        "endChar": 8
+      },
+      "revId": "d0f4188f78f033fb3bae0b52e54e6dc7dfdc3e1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
