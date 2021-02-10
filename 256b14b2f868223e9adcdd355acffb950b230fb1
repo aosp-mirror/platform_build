@@ -84,6 +84,23 @@
       "message": "android 8.1",
       "revId": "256b14b2f868223e9adcdd355acffb950b230fb1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f040e3b_908b4a25",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1849221
+      },
+      "writtenOn": "2021-02-10T05:26:16Z",
+      "side": 1,
+      "message": "23823: Switch back to mksh as the default | https://android-review.googlesource.com/c/platform/build/+/23823",
+      "revId": "256b14b2f868223e9adcdd355acffb950b230fb1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
