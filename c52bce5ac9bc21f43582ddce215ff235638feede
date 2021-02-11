@@ -18,6 +18,42 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8437290_f186d513",
+        "filename": "core/dumpconfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64e05126_04bcd617",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27346b62_91a6582f",
+        "filename": "core/dumpconfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64e05126_04bcd617",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a1ee0b47_721ace7d",
@@ -31,6 +67,24 @@
       "writtenOn": "2021-02-06T19:30:25Z",
       "side": 1,
       "message": "This added code as well as the added code in the node_fns.mk will be executed during the non-roboleaf builds, too. The functions dump-inherit et al. reference $(DUMPCONFIG_FILE). Should soong_ui set DUMPCONFIG_FILE to /dev/null?",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2fc8a65_6ef43e42",
+        "filename": "core/product.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:41:10Z",
+      "side": 1,
+      "message": "Ahh. This is on purpose. dumpconfig.mk is not included in real builds, so these macros evaluate to nothing. Those checks at the top of dumpconfig.mk enforce that it is not included in the real build. I could have been slight more robust and explicitly defined them to nothing, but I don\u0027t think that\u0027s necessary.",
+      "parentUuid": "a1ee0b47_721ace7d",
       "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -66,6 +120,24 @@
       "side": 1,
       "message": "Not yet. b/178033108 is filed.",
       "parentUuid": "a8ed9b87_48f1bc41",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d4b9437_9ff274eb",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:41:10Z",
+      "side": 1,
+      "message": "resolving",
+      "parentUuid": "5cec5823_bf86d55b",
       "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -264,6 +336,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c54a22f3_edd26164",
+        "filename": "tools/product_config/src/com/android/build/config/KatiImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:41:10Z",
+      "side": 1,
+      "message": "ok. thank you. fixed.",
+      "parentUuid": "d146b262_9c482e7c",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0b6fa5e7_f87f3e29",
@@ -383,6 +473,30 @@
       "side": 1,
       "message": "Even better java.nio.file.Paths.get()",
       "parentUuid": "b4020cd4_8ba237b6",
+      "range": {
+        "startLine": 19,
+        "startChar": 13,
+        "endLine": 19,
+        "endChar": 17
+      },
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "03d90043_5ea11043",
+        "filename": "tools/product_config/src/com/android/build/config/Path.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4d6d20f9_71358cfe",
       "range": {
         "startLine": 19,
         "startChar": 13,
