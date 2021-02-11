@@ -55,7 +55,7 @@ PRODUCT_SYSTEM_PROPERTIES += \
 # On eng builds, make "boot" reasons only extract for faster turnaround.
 ifeq (eng,$(TARGET_BUILD_VARIANT))
     PRODUCT_SYSTEM_PROPERTIES += \
-        pm.dexopt.first-boot-ota?=extract \
+        pm.dexopt.first-boot?=extract \
         pm.dexopt.boot-after-ota?=extract
 else
     PRODUCT_SYSTEM_PROPERTIES += \
