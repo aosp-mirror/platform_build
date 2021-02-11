@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "97f7e491_3016e40f",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-02-11T21:27:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fe5a0df1_8521202c",
+      "range": {
+        "startLine": 19,
+        "startChar": 7,
+        "endLine": 19,
+        "endChar": 10
+      },
+      "revId": "ff9c55b1a256e4cef9e62011d4d8502eee9f7c88",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9873aeeb_0ea1234b",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-02-11T18:56:37Z",
       "side": 1,
       "message": "should we have it in a common function, like checkSplDowngrade; so you have the downgrade check in a centralized place. (instead of two copies of logic)",
+      "range": {
+        "startLine": 336,
+        "startChar": 0,
+        "endLine": 336,
+        "endChar": 71
+      },
+      "revId": "ff9c55b1a256e4cef9e62011d4d8502eee9f7c88",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c91d0996_5558174a",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-02-11T21:27:29Z",
+      "side": 1,
+      "message": "Removed this copy of the downgrade check logic",
+      "parentUuid": "9873aeeb_0ea1234b",
       "range": {
         "startLine": 336,
         "startChar": 0,
