@@ -36,6 +36,42 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a8f43d4_ec44183d",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:26:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05968b8c_1fc320ad",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "01343c9c_525bbb74",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:26:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05968b8c_1fc320ad",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "715e7e0b_667e2196",
@@ -67,6 +103,42 @@
       "side": 1,
       "message": "With the above refactoring, I don\u0027t think this is necessary anymore.",
       "parentUuid": "715e7e0b_667e2196",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd9e8488_5c8ef9fd",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:26:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5950ff81_c5aae103",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "972833b2_c0f397e0",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:26:51Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5950ff81_c5aae103",
       "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -120,6 +192,24 @@
       "side": 1,
       "message": "Why is it important to have all the printing in one place? If printing depends on a lot of context (although so far it\u0027s only doPrintAnnotations), that context can be maintained in an object and passed around. Still looks more readable to me than casing by object type.",
       "parentUuid": "38301ccc_f2fa2d8c",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d31a547c_2918d0a6",
+        "filename": "tools/product_config/src/com/android/build/config/GenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:26:51Z",
+      "side": 1,
+      "message": "It\u0027s just a tradeoff in the object oriented design. I chose to make the data object as dumb as possible.",
+      "parentUuid": "157f8d7e_78fa5ca4",
       "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }

@@ -25,6 +25,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6c85d75_fd1c30e5",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:26:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e4efd9c_250363fd",
+      "range": {
+        "startLine": 107,
+        "startChar": 7,
+        "endLine": 107,
+        "endChar": 14
+      },
+      "revId": "4bc8189de933e61b939557e697c6570f9ea73b65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c72488cf_a798abf8",
@@ -38,6 +62,24 @@
       "writtenOn": "2021-02-09T19:09:42Z",
       "side": 1,
       "message": "When if block ends with return statement, else is not needed, and there is less nesting.",
+      "revId": "4bc8189de933e61b939557e697c6570f9ea73b65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bcdd1a38_a54d6229",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-11T08:26:51Z",
+      "side": 1,
+      "message": "The one nice thing about doing it this way is that the compiler requires a return statement from all of the code paths.  If I skipped this else if and the final else, then it would be possible to accidentally add an inner code path that didn\u0027t return as intended and instead fell through to the final one.",
+      "parentUuid": "c72488cf_a798abf8",
       "revId": "4bc8189de933e61b939557e697c6570f9ea73b65",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
