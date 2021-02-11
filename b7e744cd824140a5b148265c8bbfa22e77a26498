@@ -35,6 +35,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c73beb8_6dc9e36f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1078064
+      },
+      "writtenOn": "2021-02-11T14:03:21Z",
+      "side": 1,
+      "message": "This CL may be the culprit for making sc-dev ToT not bootable:\nb/179990152",
+      "revId": "b7e744cd824140a5b148265c8bbfa22e77a26498",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "93f47fee_c1fc81c0",
