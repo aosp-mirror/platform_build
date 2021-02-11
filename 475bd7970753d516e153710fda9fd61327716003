@@ -16,6 +16,24 @@
       "message": "Same here. Bug number + explain why we want this change.",
       "revId": "475bd7970753d516e153710fda9fd61327716003",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d49e28e4_33ba7e93",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-02-11T21:37:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "faab4bd6_acd65175",
+      "revId": "475bd7970753d516e153710fda9fd61327716003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
