@@ -22,6 +22,30 @@
       },
       "revId": "2e4fdbdda1a5ffba53ed025e6d04a16d40003325",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d7fbf517_69528ee1",
+        "filename": "core/clang/tidy.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-12T17:30:04Z",
+      "side": 1,
+      "message": "I see the difference is the parentheses around it, but it wouldn\u0027t hurt to always include the parentheses, would it?",
+      "parentUuid": "033ca890_5f2c3f41",
+      "range": {
+        "startLine": 41,
+        "startChar": 52,
+        "endLine": 41,
+        "endChar": 55
+      },
+      "revId": "2e4fdbdda1a5ffba53ed025e6d04a16d40003325",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
