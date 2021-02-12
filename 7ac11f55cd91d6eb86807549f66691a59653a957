@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17488b12_6d84a2c7",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-12T00:36:53Z",
+      "side": 1,
+      "message": "Let\u0027s include the location in VENDOR_BOOT as well. e.g. the bramble target has them under vendor_boot\n\n?rw-------  2.0 fat      885 bl defN 09-Jan-01 00:00 BOOT/RAMDISK/system/etc/ramdisk/build.prop\nlrwxrwxrwx  2.0 unx       12 bx stor 09-Jan-01 00:00 VENDOR_BOOT/RAMDISK/default.prop\n?rw-------  2.0 fat        0 bx stor 09-Jan-01 00:00 VENDOR_BOOT/RAMDISK/odm_property_contexts\n?rw-------  2.0 fat    68448 bX defN 09-Jan-01 00:00 VENDOR_BOOT/RAMDISK/plat_property_contexts\n?rw-------  2.0 fat        0 bx stor 09-Jan-01 00:00 VENDOR_BOOT/RAMDISK/product_property_contexts\n?rw-------  2.0 fat    21237 bX defN 09-Jan-01 00:00 VENDOR_BOOT/RAMDISK/prop.default",
+      "range": {
+        "startLine": 448,
+        "startChar": 9,
+        "endLine": 448,
+        "endChar": 17
+      },
+      "revId": "7ac11f55cd91d6eb86807549f66691a59653a957",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
