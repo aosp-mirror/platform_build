@@ -1405,6 +1405,13 @@ def main(argv):
           "build/make/target/product/security/testkey")
     # Get signing keys
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
+    private_key_path = OPTIONS.package_key + OPTIONS.private_key_suffix
+    if not os.path.exists(private_key_path):
+      raise common.ExternalError(
+                        "Private key {} doesn't exist. Make sure you passed the"
+                        " correct key path through -k option".format(
+                          private_key_path)
+                          )
 
   if OPTIONS.source_info_dict:
     source_build_prop = OPTIONS.source_info_dict["build.prop"]
