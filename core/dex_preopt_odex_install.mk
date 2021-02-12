@@ -196,8 +196,8 @@ ifdef LOCAL_DEX_PREOPT
   # to load dexpreopt code on device. We should fix this, either by deferring
   # dependency computation until the full list of product packages is known, or
   # by adding product-specific lists of missing libraries.
-  my_filtered_optional_uses_libraries := $(filter $(my_filtered_optional_uses_libraries), \
-    $(PRODUCT_PACKAGES))
+  my_filtered_optional_uses_libraries := $(filter $(PRODUCT_PACKAGES), \
+    $(my_filtered_optional_uses_libraries))
 
   ifeq ($(LOCAL_MODULE_CLASS),APPS)
     # compatibility libraries are added to class loader context of an app only if
@@ -222,10 +222,9 @@ ifdef LOCAL_DEX_PREOPT
     my_dexpreopt_libs_compat :=
   endif
 
-  my_dexpreopt_libs := $(sort \
+  my_dexpreopt_libs := \
     $(LOCAL_USES_LIBRARIES) \
-    $(my_filtered_optional_uses_libraries) \
-  )
+    $(my_filtered_optional_uses_libraries)
 
   # 1: SDK version
   # 2: list of libraries
@@ -243,14 +242,15 @@ ifdef LOCAL_DEX_PREOPT
   # which are special and not handled by dex_preopt_config_merger.py.
   #
   add_json_class_loader_context = \
-    $(call add_json_map, $(1)) \
+    $(call add_json_array, $(1)) \
     $(foreach lib, $(2),\
-      $(call add_json_map, $(lib)) \
+      $(call add_json_map_anon) \
+      $(call add_json_str, Name, $(lib)) \
       $(call add_json_str, Host, $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
       $(call add_json_str, Device, /system/framework/$(lib).jar) \
-      $(call add_json_map, Subcontexts, ${$}) $(call end_json_map) \
+      $(call add_json_val, Subcontexts, null) \
       $(call end_json_map)) \
-    $(call end_json_map)
+    $(call end_json_array)
 
   # Record dex-preopt config.
   DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
