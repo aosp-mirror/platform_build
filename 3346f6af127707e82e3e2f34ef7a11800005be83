@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4acdeba_6d4c7f9c",
+        "filename": "core/clang/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-12T01:17:48Z",
+      "side": 1,
+      "message": "You could reduce some of the duplication with:\n\n -header-filter\u003d\"($1$(if $(DEFAULT_TIDY_HEADER_DIRS),|$(DEFAULT_TIDY_HEADER_DIRS)))\"",
+      "revId": "3346f6af127707e82e3e2f34ef7a11800005be83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bea8e852_b8a05a01",
+        "filename": "core/clang/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-12T01:17:48Z",
+      "side": 1,
+      "message": "What is this for?  Do you want $(strip $1)?",
+      "range": {
+        "startLine": 43,
+        "startChar": 20,
+        "endLine": 43,
+        "endChar": 38
+      },
+      "revId": "3346f6af127707e82e3e2f34ef7a11800005be83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
