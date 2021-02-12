@@ -18,6 +18,7 @@ java_test_host {
     static_libs: [
         "junit"
     ],
+    manifest: "TEST_MANIFEST.MF",
     test_suites: ["general-tests"]
 }
 
