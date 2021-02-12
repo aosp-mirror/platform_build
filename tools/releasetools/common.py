@@ -640,7 +640,7 @@ def ExtractFromInputFile(input_file, fn):
   """Extracts the contents of fn from input zipfile or directory into a file."""
   if isinstance(input_file, zipfile.ZipFile):
     tmp_file = MakeTempFile(os.path.basename(fn))
-    with open(tmp_file, 'w') as f:
+    with open(tmp_file, 'wb') as f:
       f.write(input_file.read(fn))
     return tmp_file
   else:
@@ -864,8 +864,8 @@ class PartitionBuildProps(object):
     prop_file = GetBootImageBuildProp(boot_img)
     if prop_file is None:
       return ''
-    with open(prop_file) as f:
-      return f.read().decode()
+    with open(prop_file, "r") as f:
+      return f.read()
 
   @staticmethod
   def _ReadPartitionPropFile(input_file, name):
