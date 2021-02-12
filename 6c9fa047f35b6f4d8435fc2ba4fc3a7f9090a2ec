@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ce66f83a_53e06a6b",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 854,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-12T00:57:55Z",
+      "side": 1,
+      "message": "just print the location inside the for loop?",
+      "range": {
+        "startLine": 854,
+        "startChar": 0,
+        "endLine": 854,
+        "endChar": 67
+      },
+      "revId": "6c9fa047f35b6f4d8435fc2ba4fc3a7f9090a2ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1fb0d001_c37e7454",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 856,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-12T00:57:55Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 856,
+        "startChar": 0,
+        "endLine": 856,
+        "endChar": 46
+      },
+      "revId": "6c9fa047f35b6f4d8435fc2ba4fc3a7f9090a2ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
