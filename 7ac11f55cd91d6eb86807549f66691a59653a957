@@ -22,6 +22,30 @@
       },
       "revId": "7ac11f55cd91d6eb86807549f66691a59653a957",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "337a9a26_12181914",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-02-12T00:48:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17488b12_6d84a2c7",
+      "range": {
+        "startLine": 448,
+        "startChar": 9,
+        "endLine": 448,
+        "endChar": 17
+      },
+      "revId": "7ac11f55cd91d6eb86807549f66691a59653a957",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
