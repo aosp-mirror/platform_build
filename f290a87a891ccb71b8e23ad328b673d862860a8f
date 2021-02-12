@@ -46,6 +46,30 @@
       },
       "revId": "f290a87a891ccb71b8e23ad328b673d862860a8f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a733f635_36fd9fca",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-12T00:53:32Z",
+      "side": 1,
+      "message": "oops, there is also `BOOT/RAMDISK/system/etc/ramdisk/build.prop`; \n\nmaybe cartesian product of [\u0027BOOT\u0027, \u0027RECOVERY\u0027, \u0027VENDOR_BOOT\u0027], [RAMDISK/prop.default, RAMDISK/default.prop, RAMDISK/system/etc/ramdisk/build.prop]",
+      "parentUuid": "d5996404_ccd6f33f",
+      "range": {
+        "startLine": 454,
+        "startChar": 0,
+        "endLine": 456,
+        "endChar": 56
+      },
+      "revId": "f290a87a891ccb71b8e23ad328b673d862860a8f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
