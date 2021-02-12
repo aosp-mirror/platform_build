@@ -46,6 +46,30 @@
       },
       "revId": "2e4fdbdda1a5ffba53ed025e6d04a16d40003325",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2dda1559_e15d8c3c",
+        "filename": "core/clang/tidy.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2021-02-12T21:48:11Z",
+      "side": 1,
+      "message": "The more important difference is the quotation marks. It\u0027s easier to read without quotes when the \u0027|$(DEFAULT_TIDY_HEADER_DIRS)\u0027 is not included.",
+      "parentUuid": "d7fbf517_69528ee1",
+      "range": {
+        "startLine": 41,
+        "startChar": 52,
+        "endLine": 41,
+        "endChar": 55
+      },
+      "revId": "2e4fdbdda1a5ffba53ed025e6d04a16d40003325",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
