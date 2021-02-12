@@ -38,6 +38,9 @@ ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
   # aren't built with instrumentation.
   # TODO(b/172480617): Find another solution for this.
   SOONG_CONFIG_art_module_source_build := true
+else ifneq (,$(SANITIZE_TARGET)$(SANITIZE_HOST))
+  # Prebuilts aren't built with sanitizers either.
+  SOONG_CONFIG_art_module_source_build := true
 else
   # This sets the default for building ART APEXes from source rather than
   # prebuilts (in packages/modules/ArtPrebuilt and prebuilt/module_sdk/art) in
