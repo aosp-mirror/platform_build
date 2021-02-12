@@ -49,6 +49,16 @@ public class ErrorReporter {
      */
     private boolean mHadError;
 
+    public static class FatalException extends RuntimeException {
+        FatalException(String message) {
+            super(message);
+        }
+
+        FatalException(String message, Throwable chain) {
+            super(message, chain);
+        }
+    }
+
     /**
      * Whether errors are errors, warnings or hidden.
      */
@@ -127,6 +137,35 @@ public class ErrorReporter {
         public String getHelp() {
             return mHelp;
         }
+
+        /**
+         * Add an error with no source position.
+         */
+        public void add(String message) {
+            ErrorReporter.this.add(this, false, new Position(), message);
+        }
+
+        /**
+         * Add an error.
+         */
+        public void add(Position pos, String message) {
+            ErrorReporter.this.add(this, false, pos, message);
+        }
+
+        /**
+         * Add an error with no source position, and throw a FatalException, stopping processing
+         * immediately.
+         */
+        public void fatal(String message) {
+            ErrorReporter.this.add(this, true, new Position(), message);
+        }
+
+        /**
+         * Add an error, and throw a FatalException, stopping processing immediately.
+         */
+        public void fatal(Position pos, String message) {
+            ErrorReporter.this.add(this, true, pos, message);
+        }
     }
 
     /**
@@ -153,6 +192,13 @@ public class ErrorReporter {
 
         public String getMessage() {
             return mMessage;
+        }
+
+        @Override
+        public String toString() {
+            return mPosition
+                    + "[" + mCategory.getLevel().getLabel() + " " + mCategory.getCode() + "] "
+                    + mMessage;
         }
     }
 
@@ -191,28 +237,25 @@ public class ErrorReporter {
     }
 
     /**
-     * Add an error with no source position.
-     */
-    public void add(Category category, String message) {
-        add(category, new Position(), message);
-    }
-
-    /**
      * Add an error.
      */
-    public void add(Category category, Position pos, String message) {
+    private void add(Category category, boolean fatal, Position pos, String message) {
         synchronized (mEntries) {
             initLocked();
             if (mCategories.get(category.getCode()) != category) {
                 throw new RuntimeException("Errors.Category used from the wrong Errors object.");
             }
-            mEntries.add(new Entry(category, pos, message));
+            final Entry entry = new Entry(category, pos, message);
+            mEntries.add(entry);
             final Level level = category.getLevel();
             if (level == Level.WARNING || level == Level.ERROR) {
                 mHadWarningOrError = true;
             }
             if (level == Level.ERROR) {
                 mHadError = true;
+            }
+            if (fatal) {
+                throw new FatalException(entry.toString());
             }
         }
     }
@@ -250,13 +293,10 @@ public class ErrorReporter {
     public void printErrors(PrintStream out) {
         synchronized (mEntries) {
             for (Entry entry: mEntries) {
-                final Category category = entry.getCategory();
-                final Level level = category.getLevel();
-                if (level == Level.HIDDEN) {
+                if (entry.getCategory().getLevel() == Level.HIDDEN) {
                     continue;
                 }
-                out.println(entry.getPosition() + "[" + level.getLabel() + " "
-                        + category.getCode() + "] " + entry.getMessage());
+                out.println(entry.toString());
             }
         }
     }
