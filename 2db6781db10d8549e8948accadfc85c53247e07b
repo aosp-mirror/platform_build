@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "442bfe55_66dfea2d",
+        "filename": "tools/product_config/src/com/android/build/config/DumpConfigParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-13T02:12:06Z",
+      "side": 1,
+      "message": "I think the preferred way is to have it backwards:\nif (\"initial\".equals(blockTypeString))\n(will not crash even if blockTypeString is null)",
+      "revId": "2db6781db10d8549e8948accadfc85c53247e07b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "83987df5_58b66333",
+        "filename": "tools/product_config/src/com/android/build/config/MakeWriter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-13T02:12:06Z",
+      "side": 1,
+      "message": "\u003e Please remove the trailing whitespace.\n\nPlease fix.",
+      "parentUuid": "73933016_681941e2",
+      "range": {
+        "startLine": 124,
+        "startChar": 67,
+        "endLine": 124,
+        "endChar": 69
+      },
+      "revId": "2db6781db10d8549e8948accadfc85c53247e07b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
