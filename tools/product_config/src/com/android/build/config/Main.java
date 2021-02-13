@@ -38,27 +38,45 @@ public class Main {
 
         // TODO: Get the variables that were defined in starlark and use that to write
         // out the make, soong and bazel input files.
+        mErrors.ERROR_COMMAND_LINE.add("asdf");
+        throw new RuntimeException("poop");
     }
 
     public static void main(String[] args) {
         Errors errors = new Errors();
+        int exitCode = 0;
 
-        Options options = Options.parse(errors, args);
-        if (errors.hadError()) {
-            Options.printHelp(System.err);
+        try {
+            Options options = Options.parse(errors, args);
+            if (errors.hadError()) {
+                Options.printHelp(System.err);
+                System.err.println();
+                throw new CommandException();
+            }
+
+            switch (options.getAction()) {
+                case DEFAULT:
+                    (new Main(errors, options)).run();
+                    return;
+                case HELP:
+                    Options.printHelp(System.out);
+                    return;
+            }
+        } catch (CommandException ex) {
+            // These are user errors, so don't show a stack trace
+            exitCode = 1;
+        } catch (Throwable ex) {
+            // These are programming errors in the code of this tool, so print the exception.
+            // We'll try to print this.  If it's something unrecoverable, then we'll hope
+            // for the best. We will still print the errors below, because they can be useful
+            // for debugging.
+            ex.printStackTrace(System.err);
             System.err.println();
+            exitCode = 1;
+        } finally {
+            // Print errors and warnings
             errors.printErrors(System.err);
-            System.exit(1);
         }
-
-        switch (options.getAction()) {
-            case DEFAULT:
-                (new Main(errors, options)).run();
-                errors.printErrors(System.err);
-                return;
-            case HELP:
-                Options.printHelp(System.out);
-                return;
-        }
+        System.exit(exitCode);
     }
 }
