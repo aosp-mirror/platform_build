@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2084f30_623aceec",
+        "filename": "tools/product_config/src/com/android/build/config/FlattenConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-13T02:38:03Z",
+      "side": 1,
+      "message": "\u003e Please remove the trailing whitespace.\n\nPlease fix.",
+      "parentUuid": "de7db350_5ad877e6",
+      "range": {
+        "startLine": 188,
+        "startChar": 64,
+        "endLine": 188,
+        "endChar": 65
+      },
+      "revId": "74466d14a3a3095d38950fed7743f7c6ff50b598",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c124724_f23a75e7",
+        "filename": "tools/product_config/src/com/android/build/config/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-13T02:38:03Z",
+      "side": 1,
+      "message": "Fixed name?",
+      "revId": "74466d14a3a3095d38950fed7743f7c6ff50b598",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
