@@ -24,6 +24,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b0800cd1_eacf7e86",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-13T06:11:10Z",
+      "side": 1,
+      "message": "As this doesn\u0027t seem to be submitted immediately, I reverted aosp/1553835 first to keep the tree healthy 😊",
+      "revId": "894f4a055106e4dee727707c93838dbfd40e8160",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d4be7854_c938b7c8",
