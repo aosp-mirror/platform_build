@@ -444,6 +444,23 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
 
   return data
 
+def IsBuildPropFile(filename):
+  return filename in (
+        "SYSTEM/etc/prop.default",
+        "BOOT/RAMDISK/prop.default",
+        "RECOVERY/RAMDISK/prop.default",
+
+        "VENDOR_BOOT/RAMDISK/default.prop",
+        "VENDOR_BOOT/RAMDISK/prop.default",
+
+        # ROOT/default.prop is a legacy path, but may still exist for upgrading
+        # devices that don't support `property_overrides_split_enabled`.
+        "ROOT/default.prop",
+
+        # RECOVERY/RAMDISK/default.prop is a legacy path, but will always exist
+        # as a symlink in the current code. So it's a no-op here. Keeping the
+        # path here for clarity.
+        "RECOVERY/RAMDISK/default.prop") or filename.endswith("build.prop")
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                        apk_keys, apex_keys, key_passwords,
@@ -534,33 +551,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       continue
 
     # System properties.
-    elif filename in (
-        "SYSTEM/build.prop",
-
-        "VENDOR/build.prop",
-        "SYSTEM/vendor/build.prop",
-
-        "ODM/etc/build.prop",
-        "VENDOR/odm/etc/build.prop",
-
-        "PRODUCT/build.prop",
-        "SYSTEM/product/build.prop",
-
-        "SYSTEM_EXT/build.prop",
-        "SYSTEM/system_ext/build.prop",
-
-        "SYSTEM/etc/prop.default",
-        "BOOT/RAMDISK/prop.default",
-        "RECOVERY/RAMDISK/prop.default",
-
-        # ROOT/default.prop is a legacy path, but may still exist for upgrading
-        # devices that don't support `property_overrides_split_enabled`.
-        "ROOT/default.prop",
-
-        # RECOVERY/RAMDISK/default.prop is a legacy path, but will always exist
-        # as a symlink in the current code. So it's a no-op here. Keeping the
-        # path here for clarity.
-        "RECOVERY/RAMDISK/default.prop"):
+    elif IsBuildPropFile(filename):
       print("Rewriting %s:" % (filename,))
       if stat.S_ISLNK(info.external_attr >> 16):
         new_data = data
@@ -588,12 +579,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
     # Don't copy OTA certs if we're replacing them.
     # Replacement of update-payload-key.pub.pem was removed in b/116660991.
-    elif (
-        OPTIONS.replace_ota_keys and
-        filename in (
-            "BOOT/RAMDISK/system/etc/security/otacerts.zip",
-            "RECOVERY/RAMDISK/system/etc/security/otacerts.zip",
-            "SYSTEM/etc/security/otacerts.zip")):
+    elif OPTIONS.replace_ota_keys and filename.endswith("/otacerts.zip"):
       pass
 
     # Skip META/misc_info.txt since we will write back the new values later.
@@ -861,21 +847,12 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
     print("META/otakeys.txt has no keys; using %s for OTA package"
           " verification." % (mapped_keys[0],))
 
-  # recovery now uses the same x509.pem version of the keys.
-  # extra_recovery_keys are used only in recovery.
-  if misc_info.get("recovery_as_boot") == "true":
-    recovery_keys_location = "BOOT/RAMDISK/system/etc/security/otacerts.zip"
-  else:
-    recovery_keys_location = "RECOVERY/RAMDISK/system/etc/security/otacerts.zip"
-
-  WriteOtacerts(output_tf_zip, recovery_keys_location,
-                mapped_keys + extra_recovery_keys)
-
-  # SystemUpdateActivity uses the x509.pem version of the keys, but
-  # put into a zipfile system/etc/security/otacerts.zip.
-  # We DO NOT include the extra_recovery_keys (if any) here.
-  WriteOtacerts(output_tf_zip, "SYSTEM/etc/security/otacerts.zip", mapped_keys)
-
+  otacerts = [info
+              for info in input_tf_zip.infolist()
+              if info.filename.endswith("/otacerts.zip")]
+  for info in otacerts:
+    print("Rewriting OTA key:", info.filename, mapped_keys)
+    WriteOtacerts(output_tf_zip, info.filename, mapped_keys)
 
 
 def ReplaceVerityPublicKey(output_zip, filename, key_path):
