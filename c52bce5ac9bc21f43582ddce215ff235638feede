@@ -89,6 +89,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a260cad0_433f216a",
+        "filename": "core/product.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-13T01:16:40Z",
+      "side": 1,
+      "message": "I didn\u0027t know that make/kati ignores undefined macros silently. Good to know.",
+      "parentUuid": "b2fc8a65_6ef43e42",
+      "revId": "c52bce5ac9bc21f43582ddce215ff235638feede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a8ed9b87_48f1bc41",
