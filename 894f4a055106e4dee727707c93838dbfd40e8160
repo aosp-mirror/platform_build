@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4be7854_c938b7c8",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-13T06:03:15Z",
+      "side": 1,
+      "message": "aosp_arm64 / gsi_arm64 do have a kernel. How about \"Don\u0027t check kernel vintf for GSI\"?",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 11
+      },
+      "revId": "894f4a055106e4dee727707c93838dbfd40e8160",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6fbc46dd_1aba43f5",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-13T06:03:15Z",
+      "side": 1,
+      "message": "I think this should be in gsi_release.mk, as this seems to be common for all GSIs.",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 54
+      },
+      "revId": "894f4a055106e4dee727707c93838dbfd40e8160",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
