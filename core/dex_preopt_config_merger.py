@@ -67,24 +67,25 @@ def main():
   # the loop in case this changes in the future.
   for sdk_ver in clc_map:
     clcs = clc_map[sdk_ver]
-    clcs2 = OrderedDict()
-    for lib in clcs:
-      clc = clcs[lib]
+    clcs2 = []
+    for clc in clcs:
+      lib = clc['Name']
       if lib in uses_libs:
         ulib = uses_libs[lib]
+        # The real <uses-library> name (may be different from the module name).
+        clc['Name'] = ulib['ProvidesUsesLibrary']
         # On-device (install) path to the dependency DEX jar file.
         clc['Device'] = ulib['DexLocation']
         # CLC of the dependency becomes a subcontext. We only need sub-CLC for
         # 'any' version because all other versions are for compatibility
         # libraries, which exist only for apps and not for libraries.
         clc['Subcontexts'] = ulib['ClassLoaderContexts'].get('any')
-        # Patch the library name in the CLC as well.
-        clcs2[ulib['ProvidesUsesLibrary']] = clc
       else:
         # dexpreopt.config for this <uses-library> is not among the script
         # arguments, which may be the case with compatibility libraries that
         # don't need patching anyway. Just use the original CLC.
-        clcs2[lib] = clc
+        pass
+      clcs2.append(clc)
     clc_map2[sdk_ver] = clcs2
 
   # Overwrite the original class loader context with the patched one.

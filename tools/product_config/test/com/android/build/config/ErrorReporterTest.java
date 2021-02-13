@@ -30,7 +30,7 @@ public class ErrorReporterTest {
     public void testAdding() {
         TestErrors errors = new TestErrors();
 
-        errors.add(errors.ERROR, new Position("a", 12), "Errrororrrr");
+        errors.ERROR.add(new Position("a", 12), "Errrororrrr");
 
         Assert.assertTrue(errors.hadWarningOrError());
         Assert.assertTrue(errors.hadError());
@@ -66,7 +66,7 @@ public class ErrorReporterTest {
     public void testWarning() {
         TestErrors errors = new TestErrors();
 
-        errors.add(errors.WARNING, "Waaaaarninggggg");
+        errors.WARNING.add("Waaaaarninggggg");
 
         Assert.assertTrue(errors.hadWarningOrError());
         Assert.assertFalse(errors.hadError());
@@ -80,7 +80,7 @@ public class ErrorReporterTest {
     public void testHidden() {
         TestErrors errors = new TestErrors();
 
-        errors.add(errors.HIDDEN, "Hidddeennn");
+        errors.HIDDEN.add("Hidddeennn");
 
         Assert.assertFalse(errors.hadWarningOrError());
         Assert.assertFalse(errors.hadError());
