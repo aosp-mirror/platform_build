@@ -82,6 +82,24 @@
       "parentUuid": "c72488cf_a798abf8",
       "revId": "4bc8189de933e61b939557e697c6570f9ea73b65",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3478c0f4_901be181",
+        "filename": "tools/product_config/src/com/android/build/config/ConvertMakeToGenericConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-13T01:52:18Z",
+      "side": 1,
+      "message": "IMHO early returns are now in favor, but it\u0027s your code.",
+      "parentUuid": "bcdd1a38_a54d6229",
+      "revId": "4bc8189de933e61b939557e697c6570f9ea73b65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

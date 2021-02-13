@@ -212,6 +212,24 @@
       "parentUuid": "157f8d7e_78fa5ca4",
       "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7ed22f08_b662d308",
+        "filename": "tools/product_config/src/com/android/build/config/GenericConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-13T01:52:18Z",
+      "side": 1,
+      "message": "OK, it\u0027s your code.",
+      "parentUuid": "d31a547c_2918d0a6",
+      "revId": "ec8e0c55edee2b170525acca13dde8863c650f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
