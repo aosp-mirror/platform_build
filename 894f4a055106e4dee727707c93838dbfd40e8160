@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4bc7f846_f68848a7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-13T06:04:12Z",
+      "side": 1,
+      "message": "+elsk Should we just do \"PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE :\u003d false\" on GSI?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 51
+      },
+      "revId": "894f4a055106e4dee727707c93838dbfd40e8160",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d4be7854_c938b7c8",
         "filename": "target/product/aosp_arm.mk",
         "patchSetId": 1
