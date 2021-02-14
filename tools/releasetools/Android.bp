@@ -28,6 +28,8 @@ python_defaults {
         "add_img_to_target_files.py",
     ],
     libs: [
+        "ota_metadata_proto",
+        "releasetools_apex_utils",
         "releasetools_build_image",
         "releasetools_build_super_image",
         "releasetools_common",
@@ -280,6 +282,7 @@ python_defaults {
         "boot_signer",
         "brotli",
         "bsdiff",
+        "deapexer",
         "imgdiff",
         "minigzip",
         "lz4",
@@ -588,6 +591,7 @@ python_test_host {
     name: "releasetools_py3_test",
     defaults: ["releasetools_test_defaults"],
     main: "test_utils.py",
+    test_suites: ["general-tests"],
     version: {
         py2: {
             enabled: false,

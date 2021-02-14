@@ -189,42 +189,68 @@ ifdef LOCAL_DEX_PREOPT
   my_filtered_optional_uses_libraries := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
     $(LOCAL_OPTIONAL_USES_LIBRARIES))
 
-  # compatibility libraries are added to class loader context of an app only if
-  # targetSdkVersion in the app's manifest is lower than the given SDK version
+  # TODO(b/132357300): This may filter out too much, as PRODUCT_PACKAGES doesn't
+  # include all packages (the full list is unknown until reading all Android.mk
+  # makefiles). As a consequence, a library may be present but not included in
+  # dexpreopt, which will result in class loader context mismatch and a failure
+  # to load dexpreopt code on device. We should fix this, either by deferring
+  # dependency computation until the full list of product packages is known, or
+  # by adding product-specific lists of missing libraries.
+  my_filtered_optional_uses_libraries := $(filter $(PRODUCT_PACKAGES), \
+    $(my_filtered_optional_uses_libraries))
 
-  my_dexpreopt_libs_compat_28 := \
-    org.apache.http.legacy
+  ifeq ($(LOCAL_MODULE_CLASS),APPS)
+    # compatibility libraries are added to class loader context of an app only if
+    # targetSdkVersion in the app's manifest is lower than the given SDK version
 
-  my_dexpreopt_libs_compat_29 := \
-    android.hidl.base-V1.0-java \
-    android.hidl.manager-V1.0-java
+    my_dexpreopt_libs_compat_28 := \
+      org.apache.http.legacy
 
-  my_dexpreopt_libs_compat_30 := \
-    android.test.base \
-    android.test.mock
+    my_dexpreopt_libs_compat_29 := \
+      android.hidl.base-V1.0-java \
+      android.hidl.manager-V1.0-java
 
-  my_dexpreopt_libs_compat := \
-    $(my_dexpreopt_libs_compat_28) \
-    $(my_dexpreopt_libs_compat_29) \
-    $(my_dexpreopt_libs_compat_30)
+    my_dexpreopt_libs_compat_30 := \
+      android.test.base \
+      android.test.mock
 
-  my_dexpreopt_libs := $(sort \
+    my_dexpreopt_libs_compat := \
+      $(my_dexpreopt_libs_compat_28) \
+      $(my_dexpreopt_libs_compat_29) \
+      $(my_dexpreopt_libs_compat_30)
+  else
+    my_dexpreopt_libs_compat :=
+  endif
+
+  my_dexpreopt_libs := \
     $(LOCAL_USES_LIBRARIES) \
-    $(my_filtered_optional_uses_libraries) \
-  )
+    $(my_filtered_optional_uses_libraries)
 
   # 1: SDK version
   # 2: list of libraries
+  #
+  # Make does not process modules in topological order wrt. <uses-library>
+  # dependencies, therefore we cannot rely on variables to get the information
+  # about dependencies (in particular, their on-device path and class loader
+  # context). This information is communicated via dexpreopt.config files: each
+  # config depends on configs for <uses-library> dependencies of this module,
+  # and the dex_preopt_config_merger.py script reads all configs and inserts the
+  # missing bits from dependency configs into the module config.
+  #
+  # By default on-device path is /system/framework/*.jar, and class loader
+  # subcontext is empty. These values are correct for compatibility libraries,
+  # which are special and not handled by dex_preopt_config_merger.py.
+  #
   add_json_class_loader_context = \
-    $(call add_json_map, $(1)) \
+    $(call add_json_array, $(1)) \
     $(foreach lib, $(2),\
-      $(call add_json_map, $(lib)) \
-      $(eval file := $(filter %/$(lib).jar, $(call module-installed-files,$(lib)))) \
-      $(call add_json_str, Host,        $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
-      $(call add_json_str, Device,      $(call install-path-to-on-device-path,$(file))) \
-      $(call add_json_map, Subcontexts, ${$}) $(call end_json_map) \
+      $(call add_json_map_anon) \
+      $(call add_json_str, Name, $(lib)) \
+      $(call add_json_str, Host, $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
+      $(call add_json_str, Device, /system/framework/$(lib).jar) \
+      $(call add_json_val, Subcontexts, null) \
       $(call end_json_map)) \
-    $(call end_json_map)
+    $(call end_json_array)
 
   # Record dex-preopt config.
   DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -275,12 +301,27 @@ ifdef LOCAL_DEX_PREOPT
   my_dexpreopt_config := $(intermediates)/dexpreopt.config
   my_dexpreopt_script := $(intermediates)/dexpreopt.sh
   my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
+  my_dexpreopt_config_merger := $(BUILD_SYSTEM)/dex_preopt_config_merger.py
 
+  # Module dexpreopt.config depends on dexpreopt.config files of each
+  # <uses-library> dependency, because these libraries may be processed after
+  # the current module by Make (there's no topological order), so the dependency
+  # information (paths, class loader context) may not be ready yet by the time
+  # this dexpreopt.config is generated. So it's necessary to add file-level
+  # dependencies between dexpreopt.config files.
+  my_dexpreopt_dep_configs := $(foreach lib, \
+    $(filter-out $(my_dexpreopt_libs_compat),$(LOCAL_USES_LIBRARIES) $(my_filtered_optional_uses_libraries)), \
+    $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,)/dexpreopt.config)
+
+  $(my_dexpreopt_config): $(my_dexpreopt_dep_configs) $(my_dexpreopt_config_merger)
   $(my_dexpreopt_config): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_config): PRIVATE_CONTENTS := $(json_contents)
+  $(my_dexpreopt_config): PRIVATE_DEP_CONFIGS := $(my_dexpreopt_dep_configs)
+  $(my_dexpreopt_config): PRIVATE_CONFIG_MERGER := $(my_dexpreopt_config_merger)
   $(my_dexpreopt_config):
 	@echo "$(PRIVATE_MODULE) dexpreopt.config"
 	echo -e -n '$(subst $(newline),\n,$(subst ','\'',$(subst \,\\,$(PRIVATE_CONTENTS))))' > $@
+	$(PRIVATE_CONFIG_MERGER) $@ $(PRIVATE_DEP_CONFIGS)
 
   .KATI_RESTAT: $(my_dexpreopt_script)
   $(my_dexpreopt_script): PRIVATE_MODULE := $(LOCAL_MODULE)

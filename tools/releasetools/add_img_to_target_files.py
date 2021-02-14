@@ -62,6 +62,9 @@ import common
 import rangelib
 import sparse_img
 import verity_utils
+import ota_metadata_pb2
+
+from apex_utils import GetApexInfoFromTargetFiles
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -94,13 +97,13 @@ class OutputFile(object):
     name: The name of the output file, regardless of the final destination.
   """
 
-  def __init__(self, output_zip, input_dir, prefix, name):
+  def __init__(self, output_zip, input_dir, *args):
     # We write the intermediate output file under the given input_dir, even if
     # the final destination is a zip archive.
-    self.name = os.path.join(input_dir, prefix, name)
+    self.name = os.path.join(input_dir, *args)
     self._output_zip = output_zip
     if self._output_zip:
-      self._zip_name = os.path.join(prefix, name)
+      self._zip_name = os.path.join(*args)
 
   def Write(self):
     if self._output_zip:
@@ -179,7 +182,6 @@ def AddSystem(output_zip, recovery_img=None, boot_img=None):
   block_list = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system.map")
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "system", img,
               block_list=block_list)
-
   return img.name
 
 
@@ -754,6 +756,22 @@ def HasPartition(partition_name):
               os.path.join(OPTIONS.input_tmp, "IMAGES",
                            "{}.img".format(partition_name))))
 
+def AddApexInfo(output_zip):
+  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp)
+  apex_metadata_proto = ota_metadata_pb2.ApexMetadata()
+  apex_metadata_proto.apex_info.extend(apex_infos)
+  apex_info_bytes = apex_metadata_proto.SerializeToString()
+
+  output_file = os.path.join(OPTIONS.input_tmp, "META", "apex_info.pb")
+  with open(output_file, "wb") as ofile:
+    ofile.write(apex_info_bytes)
+  if output_zip:
+    arc_name = "META/apex_info.pb"
+    if arc_name in output_zip.namelist():
+      OPTIONS.replace_updated_files_list.append(arc_name)
+    else:
+      common.ZipWrite(output_zip, output_file, arc_name)
+
 
 def AddImagesToTargetFiles(filename):
   """Creates and adds images (boot/recovery/system/...) to a target_files.zip.
@@ -913,6 +931,8 @@ def AddImagesToTargetFiles(filename):
   if has_system_other:
     banner("system_other")
     AddSystemOther(output_zip)
+
+  AddApexInfo(output_zip)
 
   if not OPTIONS.is_signing:
     banner("userdata")

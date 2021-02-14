@@ -632,14 +632,6 @@ $(strip \
 endef
 
 ###########################################################
-## Convert install path to on-device path.
-###########################################################
-# $(1): install path
-define install-path-to-on-device-path
-$(patsubst $(PRODUCT_OUT)%,%,$(1))
-endef
-
-###########################################################
 ## The intermediates directory.  Where object files go for
 ## a given target.  We could technically get away without
 ## the "_intermediates" suffix on the directory, but it's
@@ -2144,6 +2136,17 @@ else \
 fi
 $(hide) $(ZIPTIME) $@.tmp
 $(hide) $(call commit-change-for-toc,$@)
+endef
+
+# Runs jarjar on an input file.  Jarjar doesn't exit with a nonzero return code
+# when there is a syntax error in a rules file and doesn't write the output
+# file, so removes the output file before running jarjar and check if it exists
+# after running jarjar.
+define transform-jarjar
+echo $($(PRIVATE_PREFIX)DISPLAY) JarJar: $@
+rm -f $@
+$(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+[ -e $@ ] || (echo "Missing output file"; exit 1)
 endef
 
 # Moves $1.tmp to $1 if necessary. This is designed to be used with

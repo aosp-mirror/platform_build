@@ -36,7 +36,8 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.permission:framework-permission \
     com.android.sdkext:framework-sdkextensions \
     com.android.wifi:framework-wifi \
-    com.android.tethering:framework-tethering
+    com.android.tethering:framework-tethering \
+    com.android.ipsec:android.net.ipsec.ike
 
 # Add the compatibility library that is needed when android.test.base
 # is removed from the bootclasspath.
