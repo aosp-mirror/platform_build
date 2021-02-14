@@ -31,10 +31,8 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/product/% \
     system/system_ext/%
 
-# GSI should always support up-to-date platform features.
-# Keep this value at the latest API level to ensure latest build system
-# default configs are applied.
-PRODUCT_SHIPPING_API_LEVEL := 30
+# Split selinux policy
+PRODUCT_FULL_TREBLE_OVERRIDE := true
 
 # Enable dynamic partitions to facilitate mixing onto Cuttlefish
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
