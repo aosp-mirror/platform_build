@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c89f1f70_b2459744",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-02-14T11:36:11Z",
+      "side": 1,
+      "message": "This is to ensure sources are kept being used in mainline_modules builds, almost forgot that. I think with this logic we can probably dispense with art_module_* products in favour of module_*, but that\u0027s a cleanup that can be done later.",
+      "revId": "f4bf5d5e62e2e2b45bea8fd9a0dfb5dbe6d04007",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
