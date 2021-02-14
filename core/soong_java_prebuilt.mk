@@ -5,6 +5,7 @@
 # LOCAL_SOONG_HEADER_JAR
 # LOCAL_SOONG_DEX_JAR
 # LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
+# LOCAL_SOONG_DEXPREOPT_CONFIG
 
 ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   $(call pretty-error,soong_java_prebuilt.mk may only be used from Soong)
@@ -144,6 +145,12 @@ $(my_register_name): $(my_installed)
 
 ifdef LOCAL_SOONG_AAR
   ALL_MODULES.$(my_register_name).AAR := $(LOCAL_SOONG_AAR)
+endif
+
+# Copy dexpreopt.config files from Soong libraries to the location where Make
+# modules can find them.
+ifdef LOCAL_SOONG_DEXPREOPT_CONFIG
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEXPREOPT_CONFIG), $(call local-intermediates-dir,)/dexpreopt.config))
 endif
 
 javac-check : $(full_classes_jar)

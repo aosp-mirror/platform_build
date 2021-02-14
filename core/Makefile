@@ -4110,6 +4110,7 @@ INTERNAL_OTATOOLS_MODULES := \
   mksquashfsimage.sh \
   mkuserimg_mke2fs \
   ota_from_target_files \
+  repack_bootimg \
   sefcontext_compile \
   sgdisk \
   shflags \
@@ -4130,6 +4131,7 @@ INTERNAL_OTATOOLS_MODULES := \
 # Additional tools to unpack and repack the apex file.
 INTERNAL_OTATOOLS_MODULES += \
   apexer \
+  apex_compression_tool \
   deapexer \
   debugfs_static \
   merge_zips \
@@ -5027,7 +5029,7 @@ endif
 	@# help early validation of the .zip file while uploading it.
 	$(hide) find $(zip_root)/META | sort >$@.list
 	$(hide) find $(zip_root) -path $(zip_root)/META -prune -o -print | sort >>$@.list
-	$(hide) $(SOONG_ZIP) -d -o $@ -C $(zip_root) -l $@.list
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(zip_root) -r $@.list
 
 .PHONY: target-files-package
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)

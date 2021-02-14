@@ -34,6 +34,8 @@ OPTIONS = common.OPTIONS
 
 APEX_PAYLOAD_IMAGE = 'apex_payload.img'
 
+APEX_PUBKEY = 'apex_pubkey'
+
 
 class ApexInfoError(Exception):
   """An Exception raised during Apex Information command."""
@@ -306,13 +308,13 @@ def ParseApexPayloadInfo(avbtool, payload_path):
   return payload_info
 
 
-def SignUncompressedApex(avbtool, apex_data, payload_key, container_key,
+def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
                          container_pw, apk_keys, codename_to_api_level_map,
                          no_hashtree, signing_args=None):
   """Signs the current uncompressed APEX with the given payload/container keys.
 
   Args:
-    apex_data: Raw uncompressed APEX data.
+    apex_file: Uncompressed APEX file.
     payload_key: The path to payload signing key (w/ extension).
     container_key: The path to container signing key (w/o extension).
     container_pw: The matching password of the container_key, or None.
@@ -324,12 +326,6 @@ def SignUncompressedApex(avbtool, apex_data, payload_key, container_key,
   Returns:
     The path to the signed APEX file.
   """
-  apex_file = common.MakeTempFile(prefix='apex-', suffix='.apex')
-  with open(apex_file, 'wb') as apex_fp:
-    apex_fp.write(apex_data)
-
-  APEX_PUBKEY = 'apex_pubkey'
-
   # 1. Extract the apex payload image and sign the containing apk files. Repack
   # the apex file after signing.
   apk_signer = ApexApkSigner(apex_file, container_pw,
@@ -388,6 +384,80 @@ def SignUncompressedApex(avbtool, apex_data, payload_key, container_key,
   return signed_apex
 
 
+def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
+                         container_pw, apk_keys, codename_to_api_level_map,
+                         no_hashtree, signing_args=None):
+  """Signs the current compressed APEX with the given payload/container keys.
+
+  Args:
+    apex_file: Raw uncompressed APEX data.
+    payload_key: The path to payload signing key (w/ extension).
+    container_key: The path to container signing key (w/o extension).
+    container_pw: The matching password of the container_key, or None.
+    apk_keys: A dict that holds the signing keys for apk files.
+    codename_to_api_level_map: A dict that maps from codename to API level.
+    no_hashtree: Don't include hashtree in the signed APEX.
+    signing_args: Additional args to be passed to the payload signer.
+
+  Returns:
+    The path to the signed APEX file.
+  """
+  debugfs_path = os.path.join(OPTIONS.search_path, 'bin', 'debugfs_static')
+
+  # 1. Decompress original_apex inside compressed apex.
+  original_apex_file = common.MakeTempFile(prefix='original-apex-',
+                                           suffix='.apex')
+  # Decompression target path should not exist
+  os.remove(original_apex_file)
+  common.RunAndCheckOutput(['deapexer', '--debugfs_path', debugfs_path,
+                            'decompress', '--input', apex_file,
+                            '--output', original_apex_file])
+
+  # 2. Sign original_apex
+  signed_original_apex_file = SignUncompressedApex(
+      avbtool,
+      original_apex_file,
+      payload_key,
+      container_key,
+      container_pw,
+      apk_keys,
+      codename_to_api_level_map,
+      no_hashtree,
+      signing_args)
+
+  # 3. Compress signed original apex.
+  compressed_apex_file = common.MakeTempFile(prefix='apex-container-',
+                                             suffix='.capex')
+  common.RunAndCheckOutput(['apex_compression_tool',
+                            'compress',
+                            '--apex_compression_tool_path', os.getenv('PATH'),
+                            '--input', signed_original_apex_file,
+                            '--output', compressed_apex_file])
+
+  # 4. Align apex
+  aligned_apex = common.MakeTempFile(prefix='apex-container-', suffix='.capex')
+  common.RunAndCheckOutput(['zipalign', '-f', '4096', compressed_apex_file,
+                            aligned_apex])
+
+  # 5. Sign the APEX container with container_key.
+  signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.capex')
+
+  # Specify the 4K alignment when calling SignApk.
+  extra_signapk_args = OPTIONS.extra_signapk_args[:]
+  extra_signapk_args.extend(['-a', '4096'])
+
+  password = container_pw.get(container_key) if container_pw else None
+  common.SignFile(
+      aligned_apex,
+      signed_apex,
+      container_key,
+      password,
+      codename_to_api_level_map=codename_to_api_level_map,
+      extra_signapk_args=extra_signapk_args)
+
+  return signed_apex
+
+
 def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
              apk_keys, codename_to_api_level_map,
              no_hashtree, signing_args=None):
@@ -410,7 +480,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
   with open(apex_file, 'wb') as output_fp:
     output_fp.write(apex_data)
 
-  debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
+  debugfs_path = os.path.join(OPTIONS.search_path, 'bin', 'debugfs_static')
   cmd = ['deapexer', '--debugfs_path', debugfs_path,
          'info', '--print-type', apex_file]
 
@@ -419,7 +489,18 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
     if apex_type == 'UNCOMPRESSED':
       return SignUncompressedApex(
           avbtool,
-          apex_data,
+          apex_file,
+          payload_key=payload_key,
+          container_key=container_key,
+          container_pw=None,
+          codename_to_api_level_map=codename_to_api_level_map,
+          no_hashtree=no_hashtree,
+          apk_keys=apk_keys,
+          signing_args=signing_args)
+    elif apex_type == 'COMPRESSED':
+      return SignCompressedApex(
+          avbtool,
+          apex_file,
           payload_key=payload_key,
           container_key=container_key,
           container_pw=None,
@@ -458,6 +539,15 @@ def GetApexInfoFromTargetFiles(input_file):
   target_dir = os.path.join(tmp_dir, "SYSTEM/apex/")
 
   apex_infos = []
+
+  debugfs_path = "debugfs"
+  if OPTIONS.search_path:
+    debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
+  deapexer = 'deapexer'
+  if OPTIONS.search_path:
+    deapexer_path = os.path.join(OPTIONS.search_path, "bin", "deapexer")
+    if os.path.isfile(deapexer_path):
+      deapexer = deapexer_path
   for apex_filename in os.listdir(target_dir):
     apex_filepath = os.path.join(target_dir, apex_filename)
     if not os.path.isfile(apex_filepath) or \
@@ -470,14 +560,6 @@ def GetApexInfoFromTargetFiles(input_file):
     apex_info.package_name = manifest.name
     apex_info.version = manifest.version
     # Check if the file is compressed or not
-    debugfs_path = "debugfs"
-    if OPTIONS.search_path:
-      debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
-    deapexer = 'deapexer'
-    if OPTIONS.search_path:
-      deapexer_path = os.path.join(OPTIONS.search_path, "deapexer")
-      if os.path.isfile(deapexer_path):
-        deapexer = deapexer_path
     apex_type = RunAndCheckOutput([
         deapexer, "--debugfs_path", debugfs_path,
         'info', '--print-type', apex_filepath]).rstrip()
@@ -498,6 +580,6 @@ def GetApexInfoFromTargetFiles(input_file):
                          '--output', decompressed_file_path])
       apex_info.decompressed_size = os.path.getsize(decompressed_file_path)
 
-    apex_infos.append(apex_info)
+      apex_infos.append(apex_info)
 
   return apex_infos
