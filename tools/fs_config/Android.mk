@@ -42,6 +42,8 @@ fs_config_generate_extra_partition_list := $(strip \
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := \
   fs_config_dirs_system \
   fs_config_dirs_system_ext \
@@ -55,6 +57,8 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := \
   fs_config_files_system \
   fs_config_files_system_ext \
@@ -69,6 +73,8 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs_system_ext
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),_fs_config_dirs_system_ext)
 include $(BUILD_PHONY_PACKAGE)
 
@@ -79,6 +85,8 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files_system_ext
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),_fs_config_files_system_ext)
 include $(BUILD_PHONY_PACKAGE)
 
@@ -89,6 +97,8 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs_product
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),_fs_config_dirs_product)
 include $(BUILD_PHONY_PACKAGE)
 
@@ -99,6 +109,8 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files_product
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),_fs_config_files_product)
 include $(BUILD_PHONY_PACKAGE)
 
@@ -109,6 +121,8 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs_nonsystem
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),_fs_config_dirs_$(t))
 include $(BUILD_PHONY_PACKAGE)
 
@@ -119,6 +133,8 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files_nonsystem
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),_fs_config_files_$(t))
 include $(BUILD_PHONY_PACKAGE)
 
@@ -129,6 +145,8 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs_system
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -154,6 +172,8 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files_system
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -180,6 +200,8 @@ ifneq ($(filter vendor,$(fs_config_generate_extra_partition_list)),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_vendor
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
@@ -204,6 +226,8 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_vendor
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
@@ -231,6 +255,8 @@ ifneq ($(filter oem,$(fs_config_generate_extra_partition_list)),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_oem
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_OEM)/etc
@@ -255,6 +281,8 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_oem
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_OEM)/etc
@@ -282,6 +310,8 @@ ifneq ($(filter odm,$(fs_config_generate_extra_partition_list)),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_odm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
@@ -306,6 +336,8 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_odm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
@@ -333,6 +365,8 @@ ifneq ($(filter vendor_dlkm,$(fs_config_generate_extra_partition_list)),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_vendor_dlkm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_DLKM)/etc
@@ -357,6 +391,8 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_vendor_dlkm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_DLKM)/etc
@@ -384,6 +420,8 @@ ifneq ($(filter odm_dlkm,$(fs_config_generate_extra_partition_list)),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_odm_dlkm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM_DLKM)/etc
@@ -408,6 +446,8 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_odm_dlkm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM_DLKM)/etc
@@ -435,6 +475,8 @@ ifneq ($(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_product
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT)/etc
@@ -459,6 +501,8 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_product
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT)/etc
@@ -485,6 +529,8 @@ ifneq ($(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_system_ext
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_EXT)/etc
@@ -509,6 +555,8 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_system_ext
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_EXT)/etc
