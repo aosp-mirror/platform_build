@@ -39,6 +39,8 @@ ifneq ($(strip $(LOCAL_MODULE)),)
 $(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE)
 endif
 LOCAL_MODULE := $(LOCAL_PACKAGE_NAME)
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0 SPDX-license-identifier-BSD SPDX-license-identifier-GPL SPDX-license-identifier-GPL-2.0 SPDX-license-identifier-LGPL SPDX-license-identifier-MIT
+LOCAL_LICENSE_CONDITIONS := notice restricted
 
 ifneq ($(strip $(LOCAL_MODULE_CLASS)),)
 $(error $(LOCAL_PATH): Package modules may not set LOCAL_MODULE_CLASS)
