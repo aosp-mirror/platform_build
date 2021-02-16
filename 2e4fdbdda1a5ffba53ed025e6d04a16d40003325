@@ -70,6 +70,30 @@
       },
       "revId": "2e4fdbdda1a5ffba53ed025e6d04a16d40003325",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b31b6a0_f2f202aa",
+        "filename": "core/clang/tidy.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-16T19:32:51Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "2dda1559_e15d8c3c",
+      "range": {
+        "startLine": 41,
+        "startChar": 52,
+        "endLine": 41,
+        "endChar": 55
+      },
+      "revId": "2e4fdbdda1a5ffba53ed025e6d04a16d40003325",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
