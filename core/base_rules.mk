@@ -28,8 +28,6 @@ endif
 ###########################################################
 
 LOCAL_MODULE := $(strip $(LOCAL_MODULE))
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0 SPDX-license-identifier-BSD SPDX-license-identifier-GPL SPDX-license-identifier-GPL-2.0 SPDX-license-identifier-LGPL SPDX-license-identifier-MIT
-LOCAL_LICENSE_CONDITIONS := notice restricted
 ifeq ($(LOCAL_MODULE),)
   $(error $(LOCAL_PATH): LOCAL_MODULE is not defined)
 endif
