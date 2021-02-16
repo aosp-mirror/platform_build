@@ -2,6 +2,15 @@
 //
 // Custom version of cp.
 
+package {
+    // See: http://go/android-license-faq
+    // A large-scale-change added 'default_applicable_licenses' to import
+    // all of the 'license_kinds' from "build_make_license"
+    // to get the below license kinds:
+    //   legacy_restricted
+    default_applicable_licenses: ["build_make_license"],
+}
+
 cc_binary_host {
 
     srcs: ["acp.c"],
