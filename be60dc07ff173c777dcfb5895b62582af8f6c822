@@ -123,6 +123,24 @@
       "parentUuid": "04558b26_1675eec8",
       "revId": "be60dc07ff173c777dcfb5895b62582af8f6c822",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f23a1556_8c5a2348",
+        "filename": "tools/product_config/src/com/android/build/config/CsvParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-02-16T22:12:39Z",
+      "side": 1,
+      "message": "Your other one (in frameworks/base/tools/powermodel) is slightly smaller, has been reviewed and has tests. Copying it might be ugly, but IMHO still saves some time -- I hate reviewing FSM code.",
+      "parentUuid": "5aef6cdf_5438f06c",
+      "revId": "be60dc07ff173c777dcfb5895b62582af8f6c822",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
