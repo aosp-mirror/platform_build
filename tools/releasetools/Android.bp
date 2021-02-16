@@ -22,6 +22,10 @@
 //    `releasetools_X_defaults` in their defaults.
 //
 
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
 python_defaults {
     name: "releasetools_add_img_to_target_files_defaults",
     srcs: [
