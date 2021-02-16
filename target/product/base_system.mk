@@ -65,6 +65,7 @@ PRODUCT_PACKAGES += \
     com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
+    com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
     com.android.tzdata \
