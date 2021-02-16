@@ -5,6 +5,8 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := verity_key
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
@@ -24,6 +26,8 @@ include $(BUILD_PREBUILT)
 ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
   include $(CLEAR_VARS)
   LOCAL_MODULE := verity_key_ramdisk
+  LOCAL_LICENSE_KINDS := legacy_restricted
+  LOCAL_LICENSE_CONDITIONS := restricted
   LOCAL_MODULE_CLASS := ETC
   LOCAL_SRC_FILES := verity_key
   LOCAL_MODULE_STEM := verity_key
@@ -37,6 +41,8 @@ ifdef PRODUCT_ADB_KEYS
   ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
     include $(CLEAR_VARS)
     LOCAL_MODULE := adb_keys
+    LOCAL_LICENSE_KINDS := legacy_restricted
+    LOCAL_LICENSE_CONDITIONS := restricted
     LOCAL_MODULE_CLASS := ETC
     LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
     LOCAL_PREBUILT_MODULE_FILE := $(PRODUCT_ADB_KEYS)
@@ -51,6 +57,8 @@ endif
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := otacerts
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_STEM := otacerts.zip
 LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)/security
@@ -65,6 +73,8 @@ $(LOCAL_BUILT_MODULE): $(SOONG_ZIP) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).x509.pem
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := otacerts.recovery
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_STEM := otacerts.zip
 LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/system/etc/security
