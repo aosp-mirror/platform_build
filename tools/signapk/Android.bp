@@ -16,6 +16,10 @@
 
 // the signapk tool (a .jar application used to sign packages)
 // ============================================================
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
 java_binary_host {
     name: "signapk",
     srcs: ["src/**/*.java"],
