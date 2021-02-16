@@ -60,8 +60,6 @@ ifneq (,$(my_copy_pairs))
 
   include $(CLEAR_VARS)
   LOCAL_MODULE := dexpreopt_bootjar.$(my_suffix)
-  LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0 SPDX-license-identifier-BSD SPDX-license-identifier-GPL SPDX-license-identifier-GPL-2.0 SPDX-license-identifier-LGPL SPDX-license-identifier-MIT
-  LOCAL_LICENSE_CONDITIONS := notice restricted
   LOCAL_PREBUILT_MODULE_FILE := $(my_first_src)
   LOCAL_MODULE_PATH := $(dir $(my_first_dest))
   LOCAL_MODULE_STEM := $(notdir $(my_first_dest))
