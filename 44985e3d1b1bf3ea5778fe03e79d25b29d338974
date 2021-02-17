@@ -52,6 +52,24 @@
       "parentUuid": "566ecc84_c4a19eab",
       "revId": "44985e3d1b1bf3ea5778fe03e79d25b29d338974",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2e5aa43b_abc67f26",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-02-17T12:10:11Z",
+      "side": 1,
+      "message": "\u003e I don\u0027t think building them in different branches and dropping them at different times is an important milestone though?\n\nNo, it\u0027s the ground truth. AOSP prebuilts are built from AOSP and go into packages/modules/ArtPrebuilt, the internal ones are built from internal branches and go into a different place, as you know. Simplifying that would mean building from AOSP and not at all internally, wouldn\u0027t it? Anything else would mean we need to ensure two different builds that are happening on two different branches are equivalent in all relevant aspects, which is not simple at all.",
+      "parentUuid": "86dc2e75_d104a06f",
+      "revId": "44985e3d1b1bf3ea5778fe03e79d25b29d338974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
