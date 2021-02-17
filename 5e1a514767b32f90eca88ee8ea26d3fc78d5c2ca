@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56958bbd_a2cad77e",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 760,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-17T21:14:05Z",
+      "side": 1,
+      "message": "Kelvin, is this for system partition only? Why don\u0027t we consider apexes from other partitions?",
+      "revId": "5e1a514767b32f90eca88ee8ea26d3fc78d5c2ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
