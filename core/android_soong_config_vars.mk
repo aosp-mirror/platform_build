@@ -33,7 +33,10 @@ ifeq (,$(filter art_module,$(SOONG_CONFIG_NAMESPACES)))
   $(call add_soong_config_namespace,art_module)
   SOONG_CONFIG_art_module += source_build
 endif
-ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
+ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
+  # Build ART modules from source if they are listed in TARGET_BUILD_APPS.
+  SOONG_CONFIG_art_module_source_build := true
+else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
   # Always build ART APEXes from source in coverage builds since the prebuilts
   # aren't built with instrumentation.
   # TODO(b/172480617): Find another solution for this.
