@@ -16,6 +16,24 @@
       "message": "It seems like we\u0027ve painted ourselves into a corner. There\u0027s no reason to be using \"google variants\" of these as they aren\u0027t even signed. We should fix this prebuilt module issue in a better way",
       "revId": "44985e3d1b1bf3ea5778fe03e79d25b29d338974",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "566ecc84_c4a19eab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-02-17T11:31:34Z",
+      "side": 1,
+      "message": "It\u0027s not about the signing, it\u0027s that there may be differences between AOSP and internal prebuilts, because they\u0027re built in different branches and dropped at different times. We have to pick the implementation dex jars from the same APEX as is installed in the image.\n\nCompletely agree this needs a better fix, but this workaround would allow us to try prebuilt ART in platform builds, which is an important milestone.",
+      "parentUuid": "b50d0383_e0db3515",
+      "revId": "44985e3d1b1bf3ea5778fe03e79d25b29d338974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
