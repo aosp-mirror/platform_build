@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6028cc7d_9e3277b2",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-17T12:02:39Z",
+      "side": 1,
+      "message": "can you make init.environ.rc require this file is installed instead, via LOCAL_REQUIRED_MODULES?",
+      "range": {
+        "startLine": 82,
+        "startChar": 38,
+        "endLine": 83,
+        "endChar": 19
+      },
+      "revId": "23d713988a7c5022a1e10723ed29848aee25b008",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
