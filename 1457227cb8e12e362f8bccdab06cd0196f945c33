@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "797a83a2_d8654829",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-17T22:04:01Z",
+      "side": 1,
+      "message": "nit: add a comment to explain why it may not exist",
+      "revId": "1457227cb8e12e362f8bccdab06cd0196f945c33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

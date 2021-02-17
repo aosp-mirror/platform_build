@@ -51,6 +51,24 @@
       "parentUuid": "56958bbd_a2cad77e",
       "revId": "5e1a514767b32f90eca88ee8ea26d3fc78d5c2ca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3380862e_183f21eb",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 760,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-17T22:04:01Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6be660ed_455bf470",
+      "revId": "5e1a514767b32f90eca88ee8ea26d3fc78d5c2ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
