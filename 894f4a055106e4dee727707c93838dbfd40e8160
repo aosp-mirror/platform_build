@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "fad30d3d_a6987773",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-17T09:56:21Z",
+      "side": 1,
+      "message": "ping +elsk",
+      "parentUuid": "4bc7f846_f68848a7",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 51
+      },
+      "revId": "894f4a055106e4dee727707c93838dbfd40e8160",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "b0800cd1_eacf7e86",
@@ -125,6 +149,30 @@
       "side": 1,
       "message": "Hi Yo,\nPlease let me know if you want me to change the gsi_release.mk. I suppose you will submit it together when you added back your first api level change.",
       "parentUuid": "bbac6e38_b9d0129f",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 54
+      },
+      "revId": "894f4a055106e4dee727707c93838dbfd40e8160",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "59db2943_4112071e",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-17T09:56:21Z",
+      "side": 1,
+      "message": "np you can abandon this. I\u0027ll make this change when I prepare the re-land, thanks!",
+      "parentUuid": "47f8c4d4_d609a226",
       "range": {
         "startLine": 20,
         "startChar": 0,
