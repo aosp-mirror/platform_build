@@ -516,7 +516,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
     raise ApexInfoError(
         'Failed to get type for {}:\n{}'.format(apex_file, e))
 
-def GetApexInfoFromTargetFiles(input_file):
+def GetSystemApexInfoFromTargetFiles(input_file):
   """
   Get information about system APEX stored in the input_file zip
 
@@ -537,6 +537,11 @@ def GetApexInfoFromTargetFiles(input_file):
   else:
     tmp_dir = UnzipTemp(input_file, ["SYSTEM/apex/*"])
   target_dir = os.path.join(tmp_dir, "SYSTEM/apex/")
+
+  # Partial target-files packages for vendor-only builds may not contain
+  # a system apex directory.
+  if not os.path.exists(target_dir):
+    return []
 
   apex_infos = []
 
