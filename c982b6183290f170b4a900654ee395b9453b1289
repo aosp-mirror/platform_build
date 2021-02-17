@@ -16,6 +16,75 @@
       "message": "(Moving Bowgo to CC because of multi-day vacation in TPE. Adding Tianjie for tools/releasetools OWNERS review.)\n\nHi Tianjie, can you please check this new merge-time compatibility check in merge_target_files.py?",
       "revId": "c982b6183290f170b4a900654ee395b9453b1289",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4f55d71c_a90ea45a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1260,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-17T07:53:58Z",
+      "side": 1,
+      "message": "this will cause an exception when you do \u0027if not os.path.exists()\u0027 in the caller. Do you want better logs.",
+      "range": {
+        "startLine": 1260,
+        "startChar": 0,
+        "endLine": 1260,
+        "endChar": 38
+      },
+      "revId": "c982b6183290f170b4a900654ee395b9453b1289",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "67a9134a_5b3cb7db",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1283,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-17T07:53:58Z",
+      "side": 1,
+      "message": "it\u0027s a bit weird when we only add \u0027secilc\u0027 as dependency of merge_target_files in the makefile. If no other caller is using CompileSplitSEPolicy, just move the function to  merge_target_files?",
+      "range": {
+        "startLine": 1283,
+        "startChar": 10,
+        "endLine": 1283,
+        "endChar": 16
+      },
+      "revId": "c982b6183290f170b4a900654ee395b9453b1289",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18dc7511_cbdca800",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1085,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-17T07:53:58Z",
+      "side": 1,
+      "message": "you can do {OTP}.format(product_out_dir)",
+      "range": {
+        "startLine": 1085,
+        "startChar": 66,
+        "endLine": 1085,
+        "endChar": 73
+      },
+      "revId": "c982b6183290f170b4a900654ee395b9453b1289",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
