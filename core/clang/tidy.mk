@@ -36,7 +36,7 @@ $(lastword \
 )
 endef
 
-# Default filter contains current directory $1 and DEFAULT_TIDY_HEADER_DIRS.
+# Default filter contains current directory $1 and optional DEFAULT_TIDY_HEADER_DIRS.
 define default_tidy_header_filter
-  -header-filter="($(subst $(space),,$1|$(DEFAULT_TIDY_HEADER_DIRS)))"
+  -header-filter=$(if $(DEFAULT_TIDY_HEADER_DIRS),"($1/|$(DEFAULT_TIDY_HEADER_DIRS))",$1/)
 endef
