@@ -22,6 +22,30 @@
       },
       "revId": "23d713988a7c5022a1e10723ed29848aee25b008",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "62ed033f_4240ab43",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-02-17T16:44:41Z",
+      "side": 1,
+      "message": "Oh, that\u0027s neat! Didn\u0027t know it was possible.",
+      "parentUuid": "6028cc7d_9e3277b2",
+      "range": {
+        "startLine": 82,
+        "startChar": 38,
+        "endLine": 83,
+        "endChar": 19
+      },
+      "revId": "23d713988a7c5022a1e10723ed29848aee25b008",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
