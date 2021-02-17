@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa78f433_fb964292",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-17T22:26:14Z",
+      "side": 1,
+      "message": "The cl lgtm. If we want to handle apex in other partitions, we can make the change in follow ups.",
+      "revId": "b4b07aba7dbcef7177f19482067efc6fab3aefc4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
