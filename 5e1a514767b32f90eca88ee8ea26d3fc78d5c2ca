@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "872a7c10_7b779c36",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-17T21:24:17Z",
+      "side": 1,
+      "message": "I actually have the same question... Plus, we only sign apex under /system https://cs.android.com/android/platform/superproject/+/master:build/make/tools/releasetools/sign_target_files_apks.py;l\u003d333\n\nNikita might know more about the usage of apex ",
+      "revId": "5e1a514767b32f90eca88ee8ea26d3fc78d5c2ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "56958bbd_a2cad77e",
