@@ -16,6 +16,24 @@
       "message": "should be addressed in https://android-review.googlesource.com/c/platform/build/+/1590973 ",
       "revId": "3790f38a30b0b313adcb9dc516c316b0af2c94e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "25d34699_e4fb51a4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2021-02-18T06:42:49Z",
+      "side": 1,
+      "message": "Thanks. I didn\u0027t know that there was a duplicated job from Daniel.",
+      "parentUuid": "6ba4bc88_68990674",
+      "revId": "3790f38a30b0b313adcb9dc516c316b0af2c94e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
