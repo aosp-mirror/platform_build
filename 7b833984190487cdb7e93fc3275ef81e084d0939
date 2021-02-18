@@ -16,6 +16,24 @@
       "message": "what was wrong with 30?",
       "revId": "7b833984190487cdb7e93fc3275ef81e084d0939",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d30e83c2_cc26fffd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-02-18T12:26:11Z",
+      "side": 1,
+      "message": "The kernel vintf check failed, because some GSIs dont have a kernel. (only arm64 GSI has kernel, which is the GKI)\n\n+elsk, as I\u0027m not familiar with vintf checks. Do we need to re-enable this check in arm64 GSI, or is it fine to disable this on arm64 GSI/GKI?",
+      "parentUuid": "4761ae7f_e5e11996",
+      "revId": "7b833984190487cdb7e93fc3275ef81e084d0939",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
