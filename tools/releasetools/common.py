@@ -110,9 +110,9 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # The partitions allowed to be signed by AVB (Android Verified Boot 2.0). Note
 # that system_other is not in the list because we don't want to include its
 # descriptor into vbmeta.img.
-AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'recovery', 'system',
-                  'system_ext', 'vendor', 'vendor_boot', 'vendor_dlkm',
-                  'odm_dlkm')
+AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'pvmfw', 'recovery',
+                  'system', 'system_ext', 'vendor', 'vendor_boot',
+                  'vendor_dlkm', 'odm_dlkm')
 
 # Chained VBMeta partitions.
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
