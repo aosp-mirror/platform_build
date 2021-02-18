@@ -16,6 +16,24 @@
       "message": "I think you need my_dexpreopt_deps +\u003d $(intermediates.COMMON)/enforce_uses_libraries.status",
       "revId": "d15286c7150cf08d9a30e1b8273ba3d6fcefe2e1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d7cf506a_50a2c819",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-02-18T11:33:30Z",
+      "side": 1,
+      "message": "Thanks for catching! Added dependency guarded with LOCAL_ENFORCE_USES_LIBRARIES, as modules that do not enforce also do not create and do not need the status file.",
+      "parentUuid": "64ce9f36_d5a160f7",
+      "revId": "d15286c7150cf08d9a30e1b8273ba3d6fcefe2e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
