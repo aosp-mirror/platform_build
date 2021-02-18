@@ -90,3 +90,6 @@ BOARD_FLASH_BLOCK_SIZE := 512
 DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
 BOARD_SEPOLICY_DIRS += device/generic/goldfish/sepolicy/common
+
+# b/176210699: remove this
+BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE := true
