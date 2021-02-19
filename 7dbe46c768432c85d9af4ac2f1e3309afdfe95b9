@@ -98,6 +98,24 @@
       "parentUuid": "9e4c5ece_636023bb",
       "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f998b693_9f352146",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-19T23:46:10Z",
+      "side": 1,
+      "message": "This causes a 5x increase in `m nothing` time (1:22 to 7:03) when it reruns Kati.  That adds up to a lot of wasted developer time.  I think we need a more efficient solution before checking this in.\n\nSome options to consider:\n* Invert the map, something like NOTICES.$(inf).INSTALLED, to determine if the notice file has been handled.\n* Use colon separated pairs of $(inf):$(m) in ALL_INSTALLED_NOTICE_FILES.\n* Prevent duplicates in ALL_INSTALLED_NOTICE_FILES by putting more uniqueness into the filename, for example including $(LOCAL_MODULE_CLASS) and $(LOCAL_2ND_ARCH_VAR_PREFIX).  See $(module_id) in base_rules.mk, which is enforced to be unique for .a and .so files, multiple architectures, or host and device modules with the same module name, or $(intermediates-dir-for).",
+      "parentUuid": "1d49ff4b_178b5c5c",
+      "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
