@@ -2396,12 +2396,17 @@ endef
 #
 define uncompress-prebuilt-embedded-jni-libs
   if (zipinfo $@ 'lib/*.so' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
-    $(ZIP2ZIP) -i $@ -o $@.tmp -0 'lib/**/*.so' \
-      $(if $(PRIVATE_EMBEDDED_JNI_LIBS), \
-        -x 'lib/**/*.so' \
-        $(addprefix -X ,$(PRIVATE_EMBEDDED_JNI_LIBS))) && \
-    mv -f $@.tmp $@ ; \
+    $(ZIP2ZIP) -i $@ -o $@.tmp -0 'lib/**/*.so' && mv -f $@.tmp $@ ; \
   fi
+endef
+
+# Remove unwanted shared JNI libraries embedded in an apk.
+#
+define remove-unwanted-prebuilt-embedded-jni-libs
+  $(if $(PRIVATE_EMBEDDED_JNI_LIBS), \
+    $(ZIP2ZIP) -i $@ -o $@.tmp \
+      -x 'lib/**/*.so' $(addprefix -X ,$(PRIVATE_EMBEDDED_JNI_LIBS)) && \
+    mv -f $@.tmp $@)
 endef
 
 # TODO(joeo): If we can ever upgrade to post 3.81 make and get the
