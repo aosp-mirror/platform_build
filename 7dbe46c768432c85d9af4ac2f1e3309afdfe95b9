@@ -41,6 +41,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0fa46ad5_61c325fd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-19T22:52:49Z",
+      "side": 1,
+      "message": "The \u0027eval\u0027 function leaves behind some spaces and junk which causes make to complain about a recipe not starting with a tab.",
+      "parentUuid": "b953e83b_3b9804d5",
+      "range": {
+        "startLine": 615,
+        "startChar": 0,
+        "endLine": 615,
+        "endChar": 8
+      },
+      "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9e4c5ece_636023bb",
@@ -54,6 +78,24 @@
       "writtenOn": "2021-02-19T18:46:55Z",
       "side": 1,
       "message": "This seems pretty expensive, could you instead clear ALL_MODULES.$(1).INSTALLED_NOTICE_FILE after handling it, or add an extra ALL_MODULES.$(1).CREATED_NOTICE_FILE_RULES?",
+      "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d49ff4b_178b5c5c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-19T22:52:49Z",
+      "side": 1,
+      "message": "It is expensive, but sadly unavoidable. The ALL_INSTALLED_NOTICE_FILES is used to skip later appearances of the exact same filename for other my_register_name values. i.e. when $(1) is different--principally for other architecture variants.\n\nMaking a change to anything referring to $(1) will have no effect on those later iterations.",
+      "parentUuid": "9e4c5ece_636023bb",
       "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
