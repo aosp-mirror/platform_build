@@ -142,6 +142,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "defd1680_3f724a43",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-19T06:33:12Z",
+      "side": 1,
+      "message": "Indeed. The presubmits caught that too. I changed it to have multiple MODULE_INSTALLED_FILES\n\nAdding the loop now makes finishing build files take forever the first time. On the bright side, as soon as we change the code for building notice files to use the license metadata, all of this installed notice file stuff goes away.",
+      "parentUuid": "a63900ec_97b0c751",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0f025ee8_c089a540",
