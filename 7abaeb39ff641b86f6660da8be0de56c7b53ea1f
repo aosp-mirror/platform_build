@@ -16,6 +16,57 @@
       "message": "PTAL -- this will solve the issue with errorprone and some other builds blocking LSC changes like http://aosp/1588808",
       "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "76ac6a91_6b2e7e23",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-19T01:32:40Z",
+      "side": 1,
+      "message": "Can you add a comment on what this conditional is doing?",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7892044c_6420f3de",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-19T01:32:40Z",
+      "side": 1,
+      "message": "If you\u0027re hitting my_register_name collisions this is going to overwrite the INSTALLED_NOTICE_FILE, is that going to cause incorrect results?",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0f025ee8_c089a540",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-19T01:32:40Z",
+      "side": 1,
+      "message": "I\u0027m not sure exactly what this is supposed to be doing, should it be $(sort $(ALL_INSTALLED_NOTICE_FILES) $(installed_notice_file)), and should it be :\u003d instead of \u003d?  If so, that\u0027s a pattern that has been super expensive in the past as it does an expensive sort operation repeatedly for every module in the build.  Are duplicates problematic as the list is built up?  If not, a single ALL_INSTALLED_NOTICE_FILES :\u003d $(sort $(ALL_INSTALLED_NOTICE_FILES)) at the end.",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
