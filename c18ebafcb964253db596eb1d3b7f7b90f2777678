@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91f4550c_143bb80a",
+        "filename": "core/app_prebuilt_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-19T18:49:36Z",
+      "side": 1,
+      "message": "Does this need any special handling for PRESIGNED apks?",
+      "revId": "c18ebafcb964253db596eb1d3b7f7b90f2777678",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
