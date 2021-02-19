@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b43d41ea_e94b73af",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-19T02:06:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "76ac6a91_6b2e7e23",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7892044c_6420f3de",
@@ -52,6 +70,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "abb3f14c_9c5138dc",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-19T02:06:56Z",
+      "side": 1,
+      "message": "If we ever add the ability to specify different license text files by architecture, it could. But we presently do not have that.",
+      "parentUuid": "7892044c_6420f3de",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0f025ee8_c089a540",
@@ -65,6 +101,24 @@
       "writtenOn": "2021-02-19T01:32:40Z",
       "side": 1,
       "message": "I\u0027m not sure exactly what this is supposed to be doing, should it be $(sort $(ALL_INSTALLED_NOTICE_FILES) $(installed_notice_file)), and should it be :\u003d instead of \u003d?  If so, that\u0027s a pattern that has been super expensive in the past as it does an expensive sort operation repeatedly for every module in the build.  Are duplicates problematic as the list is built up?  If not, a single ALL_INSTALLED_NOTICE_FILES :\u003d $(sort $(ALL_INSTALLED_NOTICE_FILES)) at the end.",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a2ea0f5_0cb35e78",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-19T02:06:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0f025ee8_c089a540",
       "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
