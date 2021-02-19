@@ -17,6 +17,7 @@
 package com.android.build.config;
 
 import java.io.PrintStream;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class Options {
@@ -27,18 +28,49 @@ public class Options {
 
     private Action mAction = Action.DEFAULT;
 
+    private String mProduct;
+    private String mVariant;
+    private String mOutDir;
+    private String mCKatiBin;
+
     public Action getAction() {
         return mAction;
+    }
+
+    public String getProduct() {
+        return mProduct;
+    }
+
+    public String getVariant() {
+        return mVariant;
+    }
+
+    public String getOutDir() {
+        return mOutDir != null ? mOutDir : "out";
+    }
+
+    public String getCKatiBin() {
+        return mCKatiBin;
     }
 
     public static void printHelp(PrintStream out) {
         out.println("usage: product_config");
         out.println();
-        out.println("OPTIONS");
+        out.println("REQUIRED FLAGS");
+        out.println("  --ckati_bin CKATI        Kati binary to use.");
+        out.println();
+        out.println("OPTIONAL FLAGS");
         out.println("  --hide ERROR_ID          Suppress this error.");
         out.println("  --error ERROR_ID         Make this ERROR_ID a fatal error.");
         out.println("  --help -h                This message.");
         out.println("  --warning ERROR_ID       Make this ERROR_ID a warning.");
+        out.println();
+        out.println("REQUIRED ENVIRONMENT");
+        out.println("  TARGET_PRODUCT           Product to build from lunch command.");
+        out.println("  TARGET_BUILD_VARIANT     Build variant from lunch command.");
+        out.println();
+        out.println("OPTIONAL ENVIRONMENT");
+        out.println("  OUT_DIR                  Build output directory. Defaults to \"out\".");
         out.println();
         out.println("ERRORS");
         out.println("  The following are the errors that can be controlled on the");
@@ -63,20 +95,26 @@ public class Options {
 
         private Errors mErrors;
         private String[] mArgs;
+        private Map<String,String> mEnv;
         private Options mResult = new Options();
         private int mIndex;
+        private boolean mSkipRequiredArgValidation;
 
-        public Parser(Errors errors, String[] args) {
+        public Parser(Errors errors, String[] args, Map<String,String> env) {
             mErrors = errors;
             mArgs = args;
+            mEnv = env;
         }
 
         public Options parse() {
+            // Args
             try {
                 while (mIndex < mArgs.length) {
                     final String arg = mArgs[mIndex];
 
-                    if ("--hide".equals(arg)) {
+                    if ("--ckati_bin".equals(arg)) {
+                        mResult.mCKatiBin = requireNextStringArg(arg);
+                    } else if ("--hide".equals(arg)) {
                         handleErrorCode(arg, Errors.Level.HIDDEN);
                     } else if ("--error".equals(arg)) {
                         handleErrorCode(arg, Errors.Level.ERROR);
@@ -99,11 +137,45 @@ public class Options {
                 mErrors.ERROR_COMMAND_LINE.add(ex.getMessage());
             }
 
+            // Environment
+            mResult.mProduct = mEnv.get("TARGET_PRODUCT");
+            mResult.mVariant = mEnv.get("TARGET_BUILD_VARIANT");
+            mResult.mOutDir = mEnv.get("OUT_DIR");
+
+            validateArgs();
+
             return mResult;
         }
 
-        private void addWarning(Errors.Category category, String message) {
-            category.add(message);
+        /**
+         * For testing; don't generate errors about missing arguments
+         */
+        public void setSkipRequiredArgValidation() {
+            mSkipRequiredArgValidation = true;
+        }
+
+        private void validateArgs() {
+            if (!mSkipRequiredArgValidation) {
+                if (mResult.mCKatiBin == null || "".equals(mResult.mCKatiBin)) {
+                    addMissingArgError("--ckati_bin");
+                }
+                if (mResult.mProduct == null) {
+                    addMissingEnvError("TARGET_PRODUCT");
+                }
+                if (mResult.mVariant == null) {
+                    addMissingEnvError("TARGET_BUILD_VARIANT");
+                }
+            }
+        }
+
+        private void addMissingArgError(String argName) {
+            mErrors.ERROR_COMMAND_LINE.add("Required command line argument missing: "
+                    + argName);
+        }
+
+        private void addMissingEnvError(String envName) {
+            mErrors.ERROR_COMMAND_LINE.add("Required environment variable missing: "
+                    + envName);
         }
 
         private String getNextNonFlagArg() {
@@ -115,6 +187,14 @@ public class Options {
             }
             mIndex++;
             return mArgs[mIndex];
+        }
+
+        private String requireNextStringArg(String arg) throws ParseException {
+            final String val = getNextNonFlagArg();
+            if (val == null) {
+                throw new ParseException(arg + " requires a string argument.");
+            }
+            return val;
         }
 
         private int requireNextNumberArg(String arg) throws ParseException {
@@ -151,7 +231,7 @@ public class Options {
      * <p>
      * Adds errors encountered to Errors object.
      */
-    public static Options parse(Errors errors, String[] args) {
-        return (new Parser(errors, args)).parse();
+    public static Options parse(Errors errors, String[] args, Map<String, String> env) {
+        return (new Parser(errors, args, env)).parse();
     }
 }
