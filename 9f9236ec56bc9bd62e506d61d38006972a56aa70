@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56ea4d1f_3409bde9",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-19T09:55:04Z",
+      "side": 0,
+      "message": "you you $(error) with an explanatory comment if someone sets this in their product makefile, as it silently won\u0027t have an effect as-is?",
+      "range": {
+        "startLine": 199,
+        "startChar": 22,
+        "endLine": 199,
+        "endChar": 58
+      },
+      "revId": "9f9236ec56bc9bd62e506d61d38006972a56aa70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
