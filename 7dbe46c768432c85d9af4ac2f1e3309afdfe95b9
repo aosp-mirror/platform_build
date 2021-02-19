@@ -16,6 +16,46 @@
       "message": "PTAL",
       "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b953e83b_3b9804d5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-19T18:46:55Z",
+      "side": 1,
+      "message": "This isn\u0027t necessary, you aren\u0027t doing anything with the result, and I don\u0027t think the results of $(sort) need stripping if you meant to put it inside the assignment.",
+      "range": {
+        "startLine": 615,
+        "startChar": 0,
+        "endLine": 615,
+        "endChar": 8
+      },
+      "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e4c5ece_636023bb",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-19T18:46:55Z",
+      "side": 1,
+      "message": "This seems pretty expensive, could you instead clear ALL_MODULES.$(1).INSTALLED_NOTICE_FILE after handling it, or add an extra ALL_MODULES.$(1).CREATED_NOTICE_FILE_RULES?",
+      "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
