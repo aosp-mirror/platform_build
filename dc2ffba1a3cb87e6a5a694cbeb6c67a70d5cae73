@@ -70,6 +70,30 @@
       },
       "revId": "dc2ffba1a3cb87e6a5a694cbeb6c67a70d5cae73",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6214be03_fda94a57",
+        "filename": "core/product.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-19T13:13:54Z",
+      "side": 1,
+      "message": "I think obsolete errors and deprecated warnings, but this is fine too.",
+      "parentUuid": "182d8e6a_c64b343f",
+      "range": {
+        "startLine": 197,
+        "startChar": 0,
+        "endLine": 202,
+        "endChar": 0
+      },
+      "revId": "dc2ffba1a3cb87e6a5a694cbeb6c67a70d5cae73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
