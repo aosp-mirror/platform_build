@@ -106,6 +106,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea458dd2_c043dcf0",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-19T03:49:02Z",
+      "side": 1,
+      "message": "You mean like a .so and a .a ?\n\nThose appear in the notice filename. something.so has notice file something.so.txt and something.a has notice file something.a.txt\n\nAre you thinking of different sorts of shared versus static libraries?",
+      "parentUuid": "df495e06_021d4214",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0f025ee8_c089a540",
