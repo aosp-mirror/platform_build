@@ -90,6 +90,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "df495e06_021d4214",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-19T02:14:00Z",
+      "side": 1,
+      "message": "I think this may collide between static and shared libraries with the same name, will that cause a problem?",
+      "parentUuid": "abb3f14c_9c5138dc",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0f025ee8_c089a540",
         "filename": "core/notice_files.mk",
         "patchSetId": 1

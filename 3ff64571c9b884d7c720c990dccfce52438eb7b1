@@ -16,6 +16,23 @@
       "message": "PTAL",
       "revId": "3ff64571c9b884d7c720c990dccfce52438eb7b1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d965dfe9_f6e56639",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-19T02:14:00Z",
+      "side": 1,
+      "message": "This can also be surprisingly expensive, Make maintains the immediate or lazy evaluation of the variable when using +\u003d, and defaults to lazy evaluation for variables that have never been assigned.  That means this pattern becomes a chain of lazily evaluated references.  You can either make sure there is an ALL_INSTALLED_NOTICE_FILES :\u003d before the first +\u003d to make the variable immediately evaluated, or replace the +\u003d with\n\n ALL_INSTALLED_NOTICE_FILES :\u003d $(ALL_INSTALLED_NOTICE_FILES) $(installed_notice_file)",
+      "revId": "3ff64571c9b884d7c720c990dccfce52438eb7b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
