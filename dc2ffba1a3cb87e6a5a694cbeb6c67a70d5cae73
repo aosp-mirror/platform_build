@@ -22,6 +22,30 @@
       },
       "revId": "dc2ffba1a3cb87e6a5a694cbeb6c67a70d5cae73",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d630dc24_9bc4ab50",
+        "filename": "core/product.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-19T11:33:49Z",
+      "side": 1,
+      "message": "see e.g. https://cs.android.com/android/platform/superproject/+/master:build/make/core/product_config.mk;l\u003d401?q\u003dKATI_obsolete\u0026ss\u003dandroid",
+      "parentUuid": "2e964836_2964a7ba",
+      "range": {
+        "startLine": 197,
+        "startChar": 0,
+        "endLine": 202,
+        "endChar": 0
+      },
+      "revId": "dc2ffba1a3cb87e6a5a694cbeb6c67a70d5cae73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
