@@ -33,7 +33,7 @@ from ota_from_target_files import (
     GetTargetFilesZipWithoutPostinstallConfig,
     Payload, PayloadSigner, POSTINSTALL_CONFIG,
     StreamingPropertyFiles, AB_PARTITIONS)
-from apex_utils import GetApexInfoFromTargetFiles
+from apex_utils import GetSystemApexInfoFromTargetFiles
 from test_utils import PropertyFilesTestCase
 
 
@@ -281,9 +281,9 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         metadata)
 
   @test_utils.SkipIfExternalToolsUnavailable()
-  def test_GetApexInfoFromTargetFiles(self):
+  def test_GetSystemApexInfoFromTargetFiles(self):
     target_files = construct_target_files(compressedApex=True)
-    apex_infos = GetApexInfoFromTargetFiles(target_files)
+    apex_infos = GetSystemApexInfoFromTargetFiles(target_files)
     self.assertEqual(len(apex_infos), 1)
     self.assertEqual(apex_infos[0].package_name, "com.android.apex.compressed")
     self.assertEqual(apex_infos[0].version, 1)
