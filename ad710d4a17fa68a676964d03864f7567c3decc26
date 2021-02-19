@@ -22,6 +22,30 @@
       },
       "revId": "ad710d4a17fa68a676964d03864f7567c3decc26",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6a2eb26_8eb66072",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-02-19T09:26:41Z",
+      "side": 1,
+      "message": "Then it begs the question why it\u0027s not in or included from android_soong_config_vars.mk. What do you think about generalising it a bit to envsetup_art.mk and move ART_APEX_JARS there too?",
+      "parentUuid": "68bd2d19_52934d5a",
+      "range": {
+        "startLine": 292,
+        "startChar": 0,
+        "endLine": 314,
+        "endChar": 5
+      },
+      "revId": "ad710d4a17fa68a676964d03864f7567c3decc26",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
