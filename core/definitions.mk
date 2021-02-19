@@ -598,8 +598,6 @@ $(_dir)/$(1).meta_lic : $(_deps) $(ALL_MODULES.$(1).NOTICES) $(foreach b,$(sort 
 	mkdir -p $$(dir $$@)
 	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(filter-out false,$$(PRIVATE_IS_CONTAINER)),-is_container) -p $$(PRIVATE_PACKAGE_NAME) -o $$@
 
-$(1) : $(_dir)/$(1).meta_lic
-
 $(if $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE),$(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE) : $(_dir)/$(1).meta_lic)
 
 .PHONY: $(1).meta_lic
