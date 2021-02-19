@@ -46,6 +46,30 @@
       },
       "revId": "dc2ffba1a3cb87e6a5a694cbeb6c67a70d5cae73",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "182d8e6a_c64b343f",
+        "filename": "core/product.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-02-19T13:04:59Z",
+      "side": 1,
+      "message": "I moved it to product-config.mk, and I prefer error over KATI_obsolete_var or KATI_deprecated_var in this case, because KATI_*_var emits warning instead of error.",
+      "parentUuid": "d630dc24_9bc4ab50",
+      "range": {
+        "startLine": 197,
+        "startChar": 0,
+        "endLine": 202,
+        "endChar": 0
+      },
+      "revId": "dc2ffba1a3cb87e6a5a694cbeb6c67a70d5cae73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
