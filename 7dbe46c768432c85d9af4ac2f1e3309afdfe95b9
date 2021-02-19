@@ -116,6 +116,24 @@
       "parentUuid": "1d49ff4b_178b5c5c",
       "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2f09b6f7_199107bc",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-19T23:56:54Z",
+      "side": 1,
+      "message": "\u003e This causes a 5x increase in `m nothing` time (1:22 to 7:03) when it reruns Kati.  That adds up to a lot of wasted developer time.  I think we need a more efficient solution before checking this in.\n\nYes, I am aware. It takes forever.\n\n\n\u003e Some options to consider:\n\u003e * Invert the map, something like NOTICES.$(inf).INSTALLED, to determine if the notice file has been handled.\n\n$(inf) contains characters that are not valid for variable names.\n\n\n\u003e * Use colon separated pairs of $(inf):$(m) in ALL_INSTALLED_NOTICE_FILES.\n\nI might be able to do something with that. After putting them in and sorting them, duplicates will be adjacent.\n\n\n\u003e * Prevent duplicates in ALL_INSTALLED_NOTICE_FILES by putting more uniqueness into the filename, for example including $(LOCAL_MODULE_CLASS) and $(LOCAL_2ND_ARCH_VAR_PREFIX).  See $(module_id) in base_rules.mk, which is enforced to be unique for .a and .so files, multiple architectures, or host and device modules with the same module name, or $(intermediates-dir-for).\n\nThat has ramifications in the UI.\n\nI will look into using pairs.",
+      "parentUuid": "f998b693_9f352146",
+      "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
