@@ -126,6 +126,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a63900ec_97b0c751",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-19T03:51:44Z",
+      "side": 1,
+      "message": "libfoo.so and libfoo.a both have $(my_register_name) \"libfoo\".  The final ALL_MODULES.libfoo.INSTALLED_NOTICE_FILE value will be from whichever one was parsed second.",
+      "parentUuid": "ea458dd2_c043dcf0",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0f025ee8_c089a540",
         "filename": "core/notice_files.mk",
         "patchSetId": 1
