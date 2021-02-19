@@ -301,6 +301,10 @@ ART_APEX_JARS := \
     com.android.art:okhttp \
     com.android.art:bouncycastle \
     com.android.art:apache-xml
+# With EMMA_INSTRUMENT_FRAMEWORK=true the Core libraries depend on jacoco.
+ifeq (true,$(EMMA_INSTRUMENT_FRAMEWORK))
+  ART_APEX_JARS += com.android.art:jacocoagent
+endif
 #################################################################
 
 # Read the product specs so we can get TARGET_DEVICE and other
