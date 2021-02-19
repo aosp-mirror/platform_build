@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e964836_2964a7ba",
+        "filename": "core/product.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-19T11:33:13Z",
+      "side": 1,
+      "message": "I don\u0027t think this will work here. Probably need it in product-config.mk instead, and maybe you can use .KATI_obsolete_var ?",
+      "range": {
+        "startLine": 197,
+        "startChar": 0,
+        "endLine": 202,
+        "endChar": 0
+      },
+      "revId": "dc2ffba1a3cb87e6a5a694cbeb6c67a70d5cae73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
