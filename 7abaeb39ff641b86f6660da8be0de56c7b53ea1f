@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73caa1ee_fc434205",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-19T01:24:56Z",
+      "side": 1,
+      "message": "PTAL -- this will solve the issue with errorprone and some other builds blocking LSC changes like http://aosp/1588808",
+      "revId": "7abaeb39ff641b86f6660da8be0de56c7b53ea1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
