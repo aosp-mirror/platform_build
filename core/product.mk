@@ -195,9 +195,6 @@ _product_list_vars += PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS
 # Package list to apply enforcing RRO.
 _product_list_vars += PRODUCT_ENFORCE_RRO_TARGETS
 
-# Packages to skip auto-generating RROs for when PRODUCT_ENFORCE_RRO_TARGETS is set to *.
-_product_list_vars += PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
-
 _product_list_vars += PRODUCT_SDK_ATREE_FILES
 _product_list_vars += PRODUCT_SDK_ADDON_NAME
 _product_list_vars += PRODUCT_SDK_ADDON_COPY_FILES

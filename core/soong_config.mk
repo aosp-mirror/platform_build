@@ -80,7 +80,6 @@ $(call add_json_str,  CrossHostSecondaryArch,            $(HOST_CROSS_2ND_ARCH))
 $(call add_json_list, DeviceResourceOverlays,            $(DEVICE_PACKAGE_OVERLAYS))
 $(call add_json_list, ProductResourceOverlays,           $(PRODUCT_PACKAGE_OVERLAYS))
 $(call add_json_list, EnforceRROTargets,                 $(PRODUCT_ENFORCE_RRO_TARGETS))
-$(call add_json_list, EnforceRROExemptedTargets,         $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS))
 $(call add_json_list, EnforceRROExcludedOverlays,        $(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS))
 
 $(call add_json_str,  AAPTCharacteristics,               $(TARGET_AAPT_CHARACTERISTICS))
