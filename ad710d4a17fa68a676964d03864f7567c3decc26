@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68bd2d19_52934d5a",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-19T09:20:18Z",
+      "side": 1,
+      "message": "can you put this into a art_soong_config_vars.mk and include that?",
+      "range": {
+        "startLine": 292,
+        "startChar": 0,
+        "endLine": 314,
+        "endChar": 5
+      },
+      "revId": "ad710d4a17fa68a676964d03864f7567c3decc26",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
