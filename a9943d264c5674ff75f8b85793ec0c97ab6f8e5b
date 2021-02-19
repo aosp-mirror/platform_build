@@ -16,6 +16,24 @@
       "message": "We try to avoid this for the most part, if we can make the jar adhere to an interface SS already knows about we don\u0027t need the art service jar on the system server classpath. Worth considering",
       "revId": "a9943d264c5674ff75f8b85793ec0c97ab6f8e5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d20e2a93_22823c83",
+        "filename": "target/product/media_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2021-02-19T21:56:50Z",
+      "side": 1,
+      "message": "Is the alternative you are proposing here having\n\n1) a non-updatable interface in system server like\n\ninterface ArtServiceInterface {\n  foo();\n  bar();\n}\n\n2) an updatable implementation of that interface in the art module that will be instantiated via reflection, similar to what startServiceFromJar eventually do.\n\nclass ArtServiceImplementation {\n}\n\n\nversus having the implementation called directly?\n\n\n(note that there\u0027s no existing single interface that will encompass all the functionality, so either way we do need to create some)",
+      "parentUuid": "2461f2bd_73a86f90",
+      "revId": "a9943d264c5674ff75f8b85793ec0c97ab6f8e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
