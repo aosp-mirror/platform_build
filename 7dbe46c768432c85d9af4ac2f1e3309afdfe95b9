@@ -134,6 +134,24 @@
       "parentUuid": "f998b693_9f352146",
       "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7da3b9ba_7e76d3eb",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-20T00:07:15Z",
+      "side": 1,
+      "message": "Pairs is probably best, but if you do need to use $(inf) in a variable name, the Make variable name requirements are pretty loose: any sequence of characters not containing ‘:’, ‘#’, ‘\u003d’, or whitespace.  You could probably $(subst) those characters to convert the filename to a variable name.",
+      "parentUuid": "2f09b6f7_199107bc",
+      "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
