@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6005711_9e6f3c30",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-20T01:24:13Z",
+      "side": 1,
+      "message": "When I deleted the pair stuff I had started, I deleted a little too much.\n\nPTAL",
+      "revId": "3de28e7218daf8da9a37e6b878b04648a693db11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
