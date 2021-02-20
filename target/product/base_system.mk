@@ -218,6 +218,7 @@ PRODUCT_PACKAGES += \
     ndc \
     netd \
     NetworkStackNext \
+    odsign \
     org.apache.http.legacy \
     otacerts \
     PackageInstaller \
