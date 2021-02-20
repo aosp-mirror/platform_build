@@ -50,6 +50,24 @@
       "message": "I\u0027m having trouble understanding when this would ever be false.  If I remove this conditional and cherry-pick aosp/1588401 I don\u0027t see any errors.  As far as I can tell, this would only happen for two modules with different $(my_register_name) but same install path, but if that happened wouldn\u0027t it already be an error for duplicate installation rules?",
       "revId": "3de28e7218daf8da9a37e6b878b04648a693db11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8dcfaeb_0b2da9de",
+        "filename": "core/definitions.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 611,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-20T02:07:13Z",
+      "side": 1,
+      "message": "Multiple variants can define the same notice install path as long as they don\u0027t have notice files or as long as you pick a lunch target that allows duplicate recipes as warnings instead of errors. My LSC exposes those cases by making every module basically have an associated notice file.\n\nThey do exist. They are blocking several of the LSC changes. And they are blocking me from fixing the merged-in issues I inadvertently created.",
+      "parentUuid": "e4decb22_ad9ff862",
+      "revId": "3de28e7218daf8da9a37e6b878b04648a693db11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
