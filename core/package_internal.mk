@@ -101,7 +101,6 @@ include $(BUILD_SYSTEM)/support_libraries.mk
 enforce_rro_enabled :=
 ifneq (,$(filter *, $(PRODUCT_ENFORCE_RRO_TARGETS)))
   # * means all system and system_ext APKs, so enable conditionally based on module path.
-  # Note that modules in PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS are excluded even if it is '*'
 
   # Note that base_rules.mk has not yet been included, so it's likely that only
   # one of LOCAL_MODULE_PATH and the LOCAL_X_MODULE flags has been set.
@@ -119,12 +118,6 @@ ifneq (,$(filter *, $(PRODUCT_ENFORCE_RRO_TARGETS)))
 else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
   enforce_rro_enabled := true
 endif
-
-# TODO(b/150820813) Some modules depend on static overlay, remove this after eliminating the dependency.
-ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS)))
-  enforce_rro_enabled :=
-endif
-
 
 product_package_overlays := $(strip \
     $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \

@@ -401,6 +401,11 @@ endif
 $(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
 $(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK_OVERRIDE,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
 
+ifdef PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
+    $(error PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS is deprecated, consider using RRO for \
+      $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS))
+endif
+
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
     $$(if $$(filter 2,$$(words $$(subst :,$$(space),$$(rule)))),,\
