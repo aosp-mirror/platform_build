@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c5b9daf_4888e2ae",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-20T00:30:45Z",
+      "side": 1,
+      "message": "I could not figure out how to split the pair. Given what you said about variable names, I will just use the relative path to the notice file in the variable name...",
+      "revId": "aea9d1eefffb3a7be05932225b51477da4165092",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
