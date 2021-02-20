@@ -16,6 +16,24 @@
       "message": "Why is the vendor_boot.img being created again here? Is this doing anything different from the Makefile?\n\nThis cost me a lot of time figuring out why my local builds were different from presubmit builds.",
       "revId": "17c37626f95a4d615418d7ae1f374db5558ff72d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d116ae07_6acc7402",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1694,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-02-20T03:06:00Z",
+      "side": 1,
+      "message": "+Tianjie can respond. \n\nIt is created twice. One in $PRODUCT_OUT for local development. The other probably for target files.",
+      "parentUuid": "449dfc19_18256526",
+      "revId": "17c37626f95a4d615418d7ae1f374db5558ff72d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
