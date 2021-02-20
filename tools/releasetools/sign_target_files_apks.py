@@ -329,9 +329,8 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
   """
   unknown_files = []
   for info in input_tf_zip.infolist():
-    # Handle APEXes first, e.g. SYSTEM/apex/com.android.tzdata.apex.
-    if (info.filename.startswith('SYSTEM/apex') and
-        info.filename.endswith('.apex')):
+    # Handle APEXes on all partitions
+    if info.filename.endswith('.apex'):
       name = os.path.basename(info.filename)
       if name not in known_keys:
         unknown_files.append(name)
@@ -363,8 +362,7 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
 
   invalid_apexes = []
   for info in input_tf_zip.infolist():
-    if (not info.filename.startswith('SYSTEM/apex') or
-        not info.filename.endswith('.apex')):
+    if not info.filename.endswith('.apex'):
       continue
 
     name = os.path.basename(info.filename)
@@ -444,6 +442,7 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
 
   return data
 
+
 def IsBuildPropFile(filename):
   return filename in (
         "SYSTEM/etc/prop.default",
@@ -461,6 +460,7 @@ def IsBuildPropFile(filename):
         # as a symlink in the current code. So it's a no-op here. Keeping the
         # path here for clarity.
         "RECOVERY/RAMDISK/default.prop") or filename.endswith("build.prop")
+
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                        apk_keys, apex_keys, key_passwords,
@@ -514,8 +514,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             "        (skipped due to special cert string)" % (name,))
         common.ZipWriteStr(output_tf_zip, out_info, data)
 
-    # Sign bundled APEX files.
-    elif filename.startswith("SYSTEM/apex") and filename.endswith(".apex"):
+    # Sign bundled APEX files on all partitions
+    elif filename.endswith(".apex"):
       name = os.path.basename(filename)
       payload_key, container_key = apex_keys[name]
 
@@ -544,11 +544,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             "NOT signing: %s\n"
             "        (skipped due to special cert string)" % (name,))
         common.ZipWriteStr(output_tf_zip, out_info, data)
-
-    # AVB public keys for the installed APEXes, which will be updated later.
-    elif (os.path.dirname(filename) == 'SYSTEM/etc/security/apex' and
-          filename != 'SYSTEM/etc/security/apex/'):
-      continue
 
     # System properties.
     elif IsBuildPropFile(filename):
