@@ -152,6 +152,24 @@
       "parentUuid": "2f09b6f7_199107bc",
       "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6178f6cc_517b74ee",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1359095
+      },
+      "writtenOn": "2021-02-20T00:31:33Z",
+      "side": 1,
+      "message": "Went with the variable name option.",
+      "parentUuid": "7da3b9ba_7e76d3eb",
+      "revId": "7dbe46c768432c85d9af4ac2f1e3309afdfe95b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
