@@ -16,6 +16,40 @@
       "message": "When I deleted the pair stuff I had started, I deleted a little too much.\n\nPTAL",
       "revId": "3de28e7218daf8da9a37e6b878b04648a693db11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "61c74c0c_00ce0b7b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-20T01:55:00Z",
+      "side": 1,
+      "message": "One question, but it doesn\u0027t hurt anything so +2 to unblock.",
+      "revId": "3de28e7218daf8da9a37e6b878b04648a693db11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e4decb22_ad9ff862",
+        "filename": "core/definitions.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 611,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-02-20T01:55:00Z",
+      "side": 1,
+      "message": "I\u0027m having trouble understanding when this would ever be false.  If I remove this conditional and cherry-pick aosp/1588401 I don\u0027t see any errors.  As far as I can tell, this would only happen for two modules with different $(my_register_name) but same install path, but if that happened wouldn\u0027t it already be an error for duplicate installation rules?",
+      "revId": "3de28e7218daf8da9a37e6b878b04648a693db11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
