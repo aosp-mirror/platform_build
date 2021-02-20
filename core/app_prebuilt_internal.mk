@@ -237,6 +237,7 @@ endif
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 	$(uncompress-prebuilt-embedded-jni-libs)
+	$(remove-unwanted-prebuilt-embedded-jni-libs)
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	$(uncompress-dexs)
 endif  # LOCAL_UNCOMPRESS_DEX

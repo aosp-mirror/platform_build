@@ -598,8 +598,6 @@ $(_dir)/$(1).meta_lic : $(_deps) $(ALL_MODULES.$(1).NOTICES) $(foreach b,$(sort 
 	mkdir -p $$(dir $$@)
 	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(filter-out false,$$(PRIVATE_IS_CONTAINER)),-is_container) -p $$(PRIVATE_PACKAGE_NAME) -o $$@
 
-$(1) : $(_dir)/$(1).meta_lic
-
 $(if $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE),$(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE) : $(_dir)/$(1).meta_lic)
 
 .PHONY: $(1).meta_lic
@@ -2396,12 +2394,17 @@ endef
 #
 define uncompress-prebuilt-embedded-jni-libs
   if (zipinfo $@ 'lib/*.so' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
-    $(ZIP2ZIP) -i $@ -o $@.tmp -0 'lib/**/*.so' \
-      $(if $(PRIVATE_EMBEDDED_JNI_LIBS), \
-        -x 'lib/**/*.so' \
-        $(addprefix -X ,$(PRIVATE_EMBEDDED_JNI_LIBS))) && \
-    mv -f $@.tmp $@ ; \
+    $(ZIP2ZIP) -i $@ -o $@.tmp -0 'lib/**/*.so' && mv -f $@.tmp $@ ; \
   fi
+endef
+
+# Remove unwanted shared JNI libraries embedded in an apk.
+#
+define remove-unwanted-prebuilt-embedded-jni-libs
+  $(if $(PRIVATE_EMBEDDED_JNI_LIBS), \
+    $(ZIP2ZIP) -i $@ -o $@.tmp \
+      -x 'lib/**/*.so' $(addprefix -X ,$(PRIVATE_EMBEDDED_JNI_LIBS)) && \
+    mv -f $@.tmp $@)
 endef
 
 # TODO(joeo): If we can ever upgrade to post 3.81 make and get the
