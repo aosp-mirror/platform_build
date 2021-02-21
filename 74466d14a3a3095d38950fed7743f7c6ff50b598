@@ -25,6 +25,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "62a5c336_41b56916",
+        "filename": "tools/product_config/src/com/android/build/config/FlattenConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-21T22:35:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b2084f30_623aceec",
+      "range": {
+        "startLine": 188,
+        "startChar": 64,
+        "endLine": 188,
+        "endChar": 65
+      },
+      "revId": "74466d14a3a3095d38950fed7743f7c6ff50b598",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0c124724_f23a75e7",
@@ -38,6 +62,24 @@
       "writtenOn": "2021-02-13T02:38:03Z",
       "side": 1,
       "message": "Fixed name?",
+      "revId": "74466d14a3a3095d38950fed7743f7c6ff50b598",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e968e43b_107b77d1",
+        "filename": "tools/product_config/src/com/android/build/config/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-21T22:35:40Z",
+      "side": 1,
+      "message": "Fixed in later change, and then squashed that into this CL.",
+      "parentUuid": "0c124724_f23a75e7",
       "revId": "74466d14a3a3095d38950fed7743f7c6ff50b598",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
