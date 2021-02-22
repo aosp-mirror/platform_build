@@ -34,6 +34,24 @@
       "parentUuid": "2461f2bd_73a86f90",
       "revId": "a9943d264c5674ff75f8b85793ec0c97ab6f8e5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1e74952_0a283df1",
+        "filename": "target/product/media_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-02-22T17:00:56Z",
+      "side": 1,
+      "message": "yes, that\u0027s what I meant, however if there is no existing interface that works I retract the comment. Generally speaking we should be using existing interfaces that work, and if they don\u0027t we should create generic interfaces that do work. ArtServiceInterface isn\u0027t really generic in that way (but there is noone working on generic interfaces either, so I suspect we\u0027ll end up with a specific one either way).\n\nWhether the interface is defined in the core or in art depends on which way the dep makes sense. Generally speaking we want the modules to depend on the core (and the interfaces to be defined there), but it seems like art team wants the dependency the other way around for the art module.",
+      "parentUuid": "d20e2a93_22823c83",
+      "revId": "a9943d264c5674ff75f8b85793ec0c97ab6f8e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
