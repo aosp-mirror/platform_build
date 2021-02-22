@@ -52,6 +52,24 @@
       "parentUuid": "d20e2a93_22823c83",
       "revId": "a9943d264c5674ff75f8b85793ec0c97ab6f8e5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a7e9c5ac_b0d1bed3",
+        "filename": "target/product/media_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2021-02-22T20:56:24Z",
+      "side": 1,
+      "message": "re interface: yep, we don\u0027t have an existing generic interface right now. The existing API is spaghetti right now with various PM/installd components calling ART-functionality in different places. Part of this effort is to detangle the existing spaghetti. \n\nI think we should have the interface none the less in the code, which makes the loading part of the implementation an \"implementation\" detail (i.e. be in on server classpath or reflected from the module). I have a slight preference towards reflecting from the module as it seems to align better with the existing work of the other modules.\n\n\nre dependency: yea, from a stack perspective, ART sits below framework and having a pure framework depends on ART would have been ideal. However, I gave up in maintaining that clear separation (especially since we do need binder...).",
+      "parentUuid": "f1e74952_0a283df1",
+      "revId": "a9943d264c5674ff75f8b85793ec0c97ab6f8e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
