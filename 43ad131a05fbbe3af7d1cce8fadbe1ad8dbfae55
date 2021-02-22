@@ -34,6 +34,24 @@
       "parentUuid": "8303b77b_419aa342",
       "revId": "43ad131a05fbbe3af7d1cce8fadbe1ad8dbfae55",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3baf7014_58ca71b1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2021-02-22T20:24:26Z",
+      "side": 1,
+      "message": "Sure, I was seriously considering rsgrep anyway. As Stephen said, should that be done as a new change instead of reverting this one?",
+      "parentUuid": "3a329f95_59cd7319",
+      "revId": "43ad131a05fbbe3af7d1cce8fadbe1ad8dbfae55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
