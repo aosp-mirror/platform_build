@@ -70,6 +70,24 @@
       "parentUuid": "f1e74952_0a283df1",
       "revId": "a9943d264c5674ff75f8b85793ec0c97ab6f8e5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2da37c0c_e46d37c2",
+        "filename": "target/product/media_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1047255
+      },
+      "writtenOn": "2021-02-22T23:16:48Z",
+      "side": 1,
+      "message": "Thanks for your input Anton.  I think for the moment we will proceed with the current design, and can switch to dynamic loading of the artservice.jar file if it becomes necessary in the future.",
+      "parentUuid": "a7e9c5ac_b0d1bed3",
+      "revId": "a9943d264c5674ff75f8b85793ec0c97ab6f8e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
