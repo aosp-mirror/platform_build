@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef6fea1c_eeb86bb4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-22T05:34:07Z",
+      "side": 1,
+      "message": "Not in build. Just submitting. One more of many build scanners.",
+      "revId": "dc5ee8ff02cfbe25db9e73e125b9bcc5931367a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
