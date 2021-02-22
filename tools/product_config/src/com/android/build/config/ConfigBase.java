@@ -46,15 +46,6 @@ public class ConfigBase {
      */
     protected final TreeMap<String, VarType> mProductVars = new TreeMap();
 
-    /**
-     * Whether a product config variable is a list or single-value variable.
-     */
-    public enum VarType {
-        LIST,
-        SINGLE,
-        UNKNOWN // For non-product vars
-    }
-
     public void setPhase(String phase) {
         mPhase = phase;
     }
@@ -112,7 +103,7 @@ public class ConfigBase {
     public void copyFrom(ConfigBase that) {
         setPhase(that.getPhase());
         setRootNodes(that.getRootNodes());
-        for (Map.Entry<String, ConfigBase.VarType> entry: that.getProductVars().entrySet()) {
+        for (Map.Entry<String, VarType> entry: that.getProductVars().entrySet()) {
             addProductVar(entry.getKey(), entry.getValue());
         }
         mInitialVariables = new HashMap(that.getInitialVariables());
