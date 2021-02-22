@@ -41,6 +41,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "baa9e846_a4b10232",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1260,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-02-22T23:40:35Z",
+      "side": 1,
+      "message": "Done.\n\nAdded a logging warning, as well as checking for None for the required files.",
+      "parentUuid": "4f55d71c_a90ea45a",
+      "range": {
+        "startLine": 1260,
+        "startChar": 0,
+        "endLine": 1260,
+        "endChar": 38
+      },
+      "revId": "c982b6183290f170b4a900654ee395b9453b1289",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "67a9134a_5b3cb7db",
@@ -64,6 +88,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d0c8dc4_163420ea",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1283,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-02-22T23:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67a9134a_5b3cb7db",
+      "range": {
+        "startLine": 1283,
+        "startChar": 10,
+        "endLine": 1283,
+        "endChar": 16
+      },
+      "revId": "c982b6183290f170b4a900654ee395b9453b1289",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "18dc7511_cbdca800",
@@ -77,6 +125,30 @@
       "writtenOn": "2021-02-17T07:53:58Z",
       "side": 1,
       "message": "you can do {OTP}.format(product_out_dir)",
+      "range": {
+        "startLine": 1085,
+        "startChar": 66,
+        "endLine": 1085,
+        "endChar": 73
+      },
+      "revId": "c982b6183290f170b4a900654ee395b9453b1289",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3f1cfca_e3499c71",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1085,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-02-22T23:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18dc7511_cbdca800",
       "range": {
         "startLine": 1085,
         "startChar": 66,
