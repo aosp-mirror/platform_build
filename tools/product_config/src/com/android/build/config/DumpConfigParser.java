@@ -140,8 +140,7 @@ public class DumpConfigParser {
                     System.out.println("  " + makeConfig.getRootNodes());
                 }
             } else if (matchLineType(line, "var", 2)) {
-                final MakeConfig.VarType type = "list".equals(fields.get(1))
-                        ? MakeConfig.VarType.LIST : MakeConfig.VarType.SINGLE;
+                final VarType type = "list".equals(fields.get(1)) ? VarType.LIST : VarType.SINGLE;
                 makeConfig.addProductVar(fields.get(2), type);
 
                 if (DEBUG) {
