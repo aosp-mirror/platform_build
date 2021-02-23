@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a786f1cc_07b0f844",
+        "filename": "tools/product_config/src/com/android/build/config/Main.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "See next comment.",
+      "parentUuid": "0e1b4bd2_6bb7327a",
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fa7e2ba7_5535fa8b",
@@ -35,6 +53,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5f783ad_21745be3",
+        "filename": "tools/product_config/src/com/android/build/config/OutputChecker.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "This is the way I learned to do it in java.  It\u0027s marginally faster (not that it matters here), because there\u0027s one StringBuilder instance that gets created, with a bunch of append(), and nicer imho than String.format because it is all inline rather than separating the parameters.  If I needed formatting options I would have used String.format.",
+      "parentUuid": "fa7e2ba7_5535fa8b",
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7bd11e5a_705e8fd8",
@@ -48,6 +84,24 @@
       "writtenOn": "2021-02-22T19:25:53Z",
       "side": 1,
       "message": "str is a string, what\u0027s the point of toString()?",
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eea2fb7d_cd4e0ef7",
+        "filename": "tools/product_config/src/com/android/build/config/Value.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "Copy and paste error. Fixed.",
+      "parentUuid": "7bd11e5a_705e8fd8",
       "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -75,6 +129,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "911c876c_e3c579cc",
+        "filename": "tools/product_config/src/com/android/build/config/Value.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b897b97_37b4a3a9",
+      "range": {
+        "startLine": 128,
+        "startChar": 66,
+        "endLine": 128,
+        "endChar": 69
+      },
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0588ecc8_e143bba3",
@@ -88,6 +166,24 @@
       "writtenOn": "2021-02-22T19:25:53Z",
       "side": 1,
       "message": "a single invocation sed \u0027s/ /\\n/g\u0027 achieves the same as 126 invocations of xargs -n 1 echo",
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ca7b178_5f913ba6",
+        "filename": "tools/product_config/test.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0588ecc8_e143bba3",
       "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -109,6 +205,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "df4be74b_55406792",
+        "filename": "tools/product_config/test.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "682c48b4_256c3fd1",
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ac255865_c9ad9a1b",
@@ -122,6 +236,24 @@
       "writtenOn": "2021-02-22T19:25:53Z",
       "side": 1,
       "message": "It helps to a have a function:\nfunction die() { format\u003d$1; shift; printf \"$format\\n\" $@ \u003e\u00262; exit 1; }\n\nand use it in all the places where the script quits. Lines 41-45 then become\n[[ -f build/make/envsetup.sh ]] || die \"Run this script from the top of the source tree\"",
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8d8f705_5436c05c",
+        "filename": "tools/product_config/test.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac255865_c9ad9a1b",
       "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -143,6 +275,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "989df60e_f5b96441",
+        "filename": "tools/product_config/test.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b24d7a8d_91041725",
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ed650ab3_86fb109f",
@@ -156,6 +306,24 @@
       "writtenOn": "2021-02-22T19:25:53Z",
       "side": 1,
       "message": "This can be\nbuild/soong/soong_ui.bash --build-mode --all-modules --dir\u003d\"$(pwd)\" product-config-test product-config || die \"Build failed.\\nstopping\"",
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8704b3d0_cc65aeaa",
+        "filename": "tools/product_config/test.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ed650ab3_86fb109f",
       "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -177,6 +345,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4dbb4fe_ceb9ae08",
+        "filename": "tools/product_config/test.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "97554182_6f49e275",
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "27c242eb_49bb693f",
@@ -190,6 +376,24 @@
       "writtenOn": "2021-02-22T19:25:53Z",
       "side": 1,
       "message": "Personally, I favor no output on success, and absolutely minimum decoration on failure (less vertical whitespace, less divider lines).",
+      "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d2ad7ab_201f9e92",
+        "filename": "tools/product_config/test.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T01:28:18Z",
+      "side": 1,
+      "message": "This script runs for a long time (17 minutes for all of the products and variants in aosp). I think the preference for silence \u003d\u003d success makes sense for short commands, but when it\u0027s this slow I really like to see some positive confirmation that it didn\u0027t just silently die in the middle.",
+      "parentUuid": "27c242eb_49bb693f",
       "revId": "c5ac212fbe90b5f43e18b22e35244dd08c350202",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
