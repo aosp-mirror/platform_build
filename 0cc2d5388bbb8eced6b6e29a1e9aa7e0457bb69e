@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7703ae58_3f2b11ef",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-23T23:10:02Z",
+      "side": 1,
+      "message": "Will be a no-op until the prebuilt from https://github.com/google/kati/pull/217 percolates into aosp/master.",
+      "revId": "0cc2d5388bbb8eced6b6e29a1e9aa7e0457bb69e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
