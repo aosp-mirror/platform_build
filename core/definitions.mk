@@ -556,7 +556,7 @@ $(strip \
   $(foreach m, $(ALL_MODULES), \
     $(eval ALL_MODULES.$(m).NOTICE_DEPS := \
       $(sort \
-         $(foreach d,$(ALL_MODULES.$(m).NOTICE_DEPS), \
+         $(foreach d,$(sort $(ALL_MODULES.$(m).NOTICE_DEPS)), \
            $(_lookup.$(d)) \
         ) \
       ) \
@@ -578,7 +578,9 @@ endef
 define license-metadata-rule
 $(strip $(eval _dir := $(call license-metadata-dir)))
 $(strip $(eval _deps := $(sort $(filter-out $(_dir)/$(1).meta_lic,$(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS), $(_dir)/$(d).meta_lic)))))
-$(foreach b,$(sort $(ALL_MODULES.$(1).BUILT) $(ALL_MODULES.$(1).INSTALLED)),
+$(strip $(eval _notices := $(sort $(ALL_MODULES.$(1).NOTICES))))
+$(strip $(eval _tgts := $(sort $(ALL_MODULES.$(1).BUILT) $(ALL_MODULES.$(1).INSTALLED))))
+$(foreach b,$(_tgts),
 $(_dir)/$(b).meta_module ::
 	mkdir -p $$(dir $$@)
 	echo $(_dir)/$(1).meta_lic >> $$@
@@ -587,21 +589,38 @@ $(_dir)/$(b).meta_module ::
 )
 $(_dir)/$(1).meta_lic: PRIVATE_KINDS := $(sort $(ALL_MODULES.$(1).LICENSE_KINDS))
 $(_dir)/$(1).meta_lic: PRIVATE_CONDITIONS := $(sort $(ALL_MODULES.$(1).LICENSE_CONDITIONS))
-$(_dir)/$(1).meta_lic: PRIVATE_NOTICES := $(sort $(ALL_MODULES.$(1).NOTICES))
+$(_dir)/$(1).meta_lic: PRIVATE_NOTICES := $(_notices)
 $(_dir)/$(1).meta_lic: PRIVATE_NOTICE_DEPS := $(_deps)
-$(_dir)/$(1).meta_lic: PRIVATE_TARGETS := $(sort $(ALL_MODULES.$(1).BUILT) $(ALL_MODULES.$(1).INSTALLED))
-$(_dir)/$(1).meta_lic: PRIVATE_IS_CONTAINER := $(sort $(ALL_MODULES.$(1).IS_CONTAINER))
-$(_dir)/$(1).meta_lic: PRIVATE_PACKAGE_NAME := $(ALL_MODULES.$(1).LICENSE_PACKAGE_NAME)
+$(_dir)/$(1).meta_lic: PRIVATE_TARGETS := $(_tgts)
+$(_dir)/$(1).meta_lic: PRIVATE_IS_CONTAINER := $(ALL_MODULES.$(1).IS_CONTAINER)
+$(_dir)/$(1).meta_lic: PRIVATE_PACKAGE_NAME := $(strip $(ALL_MODULES.$(1).LICENSE_PACKAGE_NAME))
 $(_dir)/$(1).meta_lic: PRIVATE_INSTALL_MAP := $(sort $(ALL_MODULES.$(1).LICENSE_INSTALL_MAP))
-$(_dir)/$(1).meta_lic : $(_deps) $(ALL_MODULES.$(1).NOTICES) $(foreach b,$(sort $(ALL_MODULES.$(1).BUILT) $(ALL_MODULES.$(1).INSTALLED)), $(_dir)/$(b).meta_module) build/make/tools/build-license-metadata.sh
+$(_dir)/$(1).meta_lic : $(_deps) $(_notices) $(foreach b,$(_tgts), $(_dir)/$(b).meta_module) build/make/tools/build-license-metadata.sh
 	rm -f $$@
 	mkdir -p $$(dir $$@)
-	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(filter-out false,$$(PRIVATE_IS_CONTAINER)),-is_container) -p $$(PRIVATE_PACKAGE_NAME) -o $$@
-
-$(if $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE),$(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE) : $(_dir)/$(1).meta_lic)
+	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(PRIVATE_IS_CONTAINER),-is_container) -p $$(PRIVATE_PACKAGE_NAME) -o $$@
 
 .PHONY: $(1).meta_lic
 $(1).meta_lic : $(_dir)/$(1).meta_lic
+
+$(strip $(eval _mifs := $(sort $(ALL_MODULES.$(1).MODULE_INSTALLED_FILENAMES))))
+$(strip $(eval _infs := $(sort $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE))))
+
+# Emit each installed notice file rule if it references the current module
+$(if $(_infs),$(foreach inf,$(_infs),
+$(if $(strip $(filter $(1),$(INSTALLED_NOTICE_FILES.$(inf).MODULE))),
+$(strip $(eval _mif := $(firstword $(foreach m,$(_mifs),$(if $(filter %/src/$(m).txt,$(inf)),$(m))))))
+
+$(inf) : $(_dir)/$(1).meta_lic
+$(inf): PRIVATE_INSTALLED_MODULE := $(_mif)
+$(inf) : PRIVATE_NOTICES := $(_notices)
+
+$(inf): $(_notices)
+	@echo Notice file: $$< -- $$@
+	mkdir -p $$(dir $$@)
+	awk 'FNR==1 && NR > 1 {print "\n"} {print}' $$(PRIVATE_NOTICES) > $$@
+
+)))
 
 endef
 
@@ -609,7 +628,7 @@ endef
 ## Declares a license metadata build rule for ALL_MODULES
 ###########################################################
 define build-license-metadata
-$(foreach m,$(ALL_MODULES),$(eval $(call license-metadata-rule,$(m))))
+$(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m))))
 endef
 
 ###########################################################
