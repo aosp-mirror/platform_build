@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9f3b069_44d0614f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-02-23T19:48:18Z",
+      "side": 1,
+      "message": "Hi Colin, adding you for owners review of placing `secilc` in otatools.zip so it can be used by merge_target_files.py when merging partial builds to check the combined sepolicy of a combined (merged) build. Can you please take a look?",
+      "revId": "48603ff158d21bfea293680b9c8f38bcda73a2bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
