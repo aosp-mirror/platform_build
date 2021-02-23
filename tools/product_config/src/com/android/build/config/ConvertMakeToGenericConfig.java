@@ -107,7 +107,7 @@ public class ConvertMakeToGenericConfig {
      * Converts one variable from a MakeConfig Block into a GenericConfig Assignment.
      */
     GenericConfig.Assign convertAssignment(MakeConfig.BlockType blockType, Str inheritedFile,
-            ConfigBase.VarType varType, String varName, Str varVal, Str prevVal) {
+            VarType varType, String varName, Str varVal, Str prevVal) {
         if (prevVal == null) {
             // New variable.
             return new GenericConfig.Assign(varName, varVal);
@@ -120,7 +120,7 @@ public class ConvertMakeToGenericConfig {
                 // Product vars have the @inherit processing. Other vars we
                 // will just ignore and put in one section at the end, based
                 // on the difference between the BEFORE and AFTER blocks.
-                if (varType == ConfigBase.VarType.UNKNOWN) {
+                if (varType == VarType.UNKNOWN) {
                     if (blockType == MakeConfig.BlockType.AFTER) {
                         // For UNKNOWN variables, we don't worry about the
                         // intermediate steps, just take the final value.
