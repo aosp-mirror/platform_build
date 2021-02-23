@@ -70,6 +70,30 @@
       },
       "revId": "98be505fb238b35ecaed578bca032747fea8821a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e303b08f_b5d1416d",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-02-23T10:07:34Z",
+      "side": 1,
+      "message": "Yes, thanks for checking. Uploaded PS4 now.",
+      "parentUuid": "7b099725_04ca5083",
+      "range": {
+        "startLine": 487,
+        "startChar": 53,
+        "endLine": 488,
+        "endChar": 56
+      },
+      "revId": "98be505fb238b35ecaed578bca032747fea8821a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
