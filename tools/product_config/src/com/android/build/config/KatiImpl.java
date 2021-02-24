@@ -56,17 +56,16 @@ public class KatiImpl implements Kati {
     }
 
     @Override
-    public MakeConfig loadProductConfig() {
+    public Map<String, MakeConfig> loadProductConfig() {
         final String csvPath = getDumpConfigCsvPath();
         try {
             File workDir = new File(getWorkDirPath());
 
-            if (!workDir.mkdirs()) {
+            if ((workDir.exists() && !workDir.isDirectory()) || !workDir.mkdirs()) {
                 mErrors.ERROR_KATI.add("Unable to create directory: " + workDir);
                 return null; // TODO: throw exception?
             }
 
-            System.out.println("running kati");
             String out = mCommand.run(new String[] {
                     "-f", "build/make/core/dumpconfig.mk",
                     "DUMPCONFIG_FILE=" + csvPath
@@ -89,17 +88,14 @@ public class KatiImpl implements Kati {
         }
 
         try (FileReader reader = new FileReader(csvPath)) {
-            System.out.println("csvPath=" + csvPath);
-            List<MakeConfig> makeConfigs = DumpConfigParser.parse(mErrors, csvPath, reader);
+            Map<String, MakeConfig> makeConfigs = DumpConfigParser.parse(mErrors, csvPath, reader);
 
             if (makeConfigs.size() == 0) {
                 // TODO: Issue error?
                 return null;
             }
 
-            // TODO: There are multiple passes. That should be cleaned up in the make
-            // build system, but for now, the first one is the one we want.
-            return makeConfigs.get(0);
+            return makeConfigs;
         } catch (CsvParser.ParseException ex) {
             mErrors.ERROR_KATI.add(new Position(csvPath, ex.getLine()),
                     "Unable to parse output of dumpconfig.mk: " + ex.getMessage());

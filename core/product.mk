@@ -606,6 +606,8 @@ get-product-var = $(PRODUCTS.$(strip $(1)).$(2))
 # to a shorthand that is more convenient to read from elsewhere.
 #
 define strip-product-vars
+$(call dump-phase-start,PRODUCT-EXPAND,,$(_product_var_list),$(_product_single_value_vars), \
+		build/make/core/product.mk) \
 $(foreach v,\
   $(_product_var_list) \
     PRODUCT_ENFORCE_PACKAGES_EXIST \
@@ -613,7 +615,8 @@ $(foreach v,\
   $(eval $(v) := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).$(v)))) \
   $(eval get-product-var = $$(if $$(filter $$(1),$$(INTERNAL_PRODUCT)),$$($$(2)),$$(PRODUCTS.$$(strip $$(1)).$$(2)))) \
   $(KATI_obsolete_var PRODUCTS.$(INTERNAL_PRODUCT).$(v),Use $(v) instead) \
-)
+) \
+$(call dump-phase-end,build/make/core/product.mk)
 endef
 
 define add-to-product-copy-files-if-exists
