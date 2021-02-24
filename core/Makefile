@@ -4598,11 +4598,15 @@ endif
 ifdef BUILDING_VENDOR_BOOT_IMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDOR_RAMDISK_FILES)
   $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS)
+  # The vendor ramdisk may be built from the recovery ramdisk.
+  ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+    $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
+  endif
 endif
 
 ifdef BUILDING_RECOVERY_IMAGE
   # TODO(b/30414428): Can't depend on INTERNAL_RECOVERYIMAGE_FILES alone like other
-  # BUILD_TARGET_FILES_PACKAGE dependencies because currently there're cp/rsync/rm
+  # BUILT_TARGET_FILES_PACKAGE dependencies because currently there're cp/rsync/rm
   # commands in build-recoveryimage-target, which would touch the files under
   # TARGET_RECOVERY_OUT and race with packaging target-files.zip.
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
