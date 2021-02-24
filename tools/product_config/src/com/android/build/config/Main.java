@@ -18,6 +18,7 @@ package com.android.build.config;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Main {
@@ -30,30 +31,44 @@ public class Main {
     }
 
     void run() {
-        System.out.println("Hello World");
-
         // TODO: Check the build environment to make sure we're running in a real
         // build environment, e.g. actually inside a source tree, with TARGET_PRODUCT
         // and TARGET_BUILD_VARIANT defined, etc.
         Kati kati = new KatiImpl(mErrors, mOptions);
-        MakeConfig makeConfig = kati.loadProductConfig();
-        if (makeConfig == null || mErrors.hadError()) {
+        Map<String, MakeConfig> makeConfigs = kati.loadProductConfig();
+        if (makeConfigs == null || mErrors.hadError()) {
             return;
         }
-
-        System.out.println();
-        System.out.println("====================");
-        System.out.println("PRODUCT CONFIG FILES");
-        System.out.println("====================");
-        makeConfig.printToStream(System.out);
+        if (false) {
+            for (MakeConfig makeConfig: (new TreeMap<String, MakeConfig>(makeConfigs)).values()) {
+                System.out.println();
+                System.out.println("=======================================");
+                System.out.println("PRODUCT CONFIG FILES : " + makeConfig.getPhase());
+                System.out.println("=======================================");
+                makeConfig.printToStream(System.out);
+            }
+        }
 
         ConvertMakeToGenericConfig m2g = new ConvertMakeToGenericConfig(mErrors);
-        GenericConfig generic = m2g.convert(makeConfig);
+        GenericConfig generic = m2g.convert(makeConfigs);
+        if (false) {
+            System.out.println("======================");
+            System.out.println("REGENERATED MAKE FILES");
+            System.out.println("======================");
+            MakeWriter.write(System.out, generic, 0);
+        }
 
-        System.out.println("======================");
-        System.out.println("REGENERATED MAKE FILES");
-        System.out.println("======================");
-        MakeWriter.write(System.out, generic, 0);
+        // TODO: Lookup shortened name as used in PRODUCT_NAME / TARGET_PRODUCT
+        FlatConfig flat = FlattenConfig.flatten(mErrors, generic);
+        if (false) {
+            System.out.println("=======================");
+            System.out.println("FLATTENED VARIABLE LIST");
+            System.out.println("=======================");
+            MakeWriter.write(System.out, flat, 0);
+        }
+
+        OutputChecker checker = new OutputChecker(flat);
+        checker.reportErrors(mErrors);
 
         // TODO: Run kati and extract the variables and convert all that into starlark files.
 
@@ -97,7 +112,10 @@ public class Main {
         } finally {
             // Print errors and warnings
             errors.printErrors(System.err);
+            if (errors.hadError()) {
+                exitCode = 1;
+            }
+            System.exit(exitCode);
         }
-        System.exit(exitCode);
     }
 }
