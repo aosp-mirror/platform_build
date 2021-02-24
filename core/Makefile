@@ -4136,6 +4136,7 @@ INTERNAL_OTATOOLS_MODULES := \
   mkuserimg_mke2fs \
   ota_from_target_files \
   repack_bootimg \
+  secilc \
   sefcontext_compile \
   sgdisk \
   shflags \
