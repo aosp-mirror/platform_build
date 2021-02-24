@@ -36,6 +36,10 @@ ifeq (,$(DUMPCONFIG_FILE))
     $(error stopping)
 endif
 
+# Skip the second inclusion of all of the product config files, because
+# we will do these checks in the product_config tool.
+SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK := true
+
 # Before we do anything else output the format version.
 $(file > $(DUMPCONFIG_FILE),dumpconfig_version,1)
 $(file >> $(DUMPCONFIG_FILE),dumpconfig_file,$(DUMPCONFIG_FILE))
@@ -75,7 +79,7 @@ $(eval $(file >> $(DUMPCONFIG_FILE),inherit,$(strip $(1)),$(strip $(2))))
 endef
 
 # Args:
-#   $(1): Config phase (PRODUCT or DEVICE)
+#   $(1): Config phase (PRODUCT, EXPAND, or DEVICE)
 #   $(2): Root nodes to import
 #   $(3): All variable names
 #   $(4): Single-value variables
@@ -104,10 +108,21 @@ DUMPCONFIG_SKIP_VARS := \
 	.KATI_SYMBOLS \
 	1 \
 	2 \
+	3 \
+	4 \
+	5 \
+	6 \
+	7 \
+	8 \
+	9 \
 	LOCAL_PATH \
 	MAKEFILE_LIST \
 	PARENT_PRODUCT_FILES \
 	current_mk \
+	_eiv_ev \
+	_eiv_i \
+	_eiv_sv \
+	_eiv_tv \
 	inherit_var \
 	np \
 	_node_import_context \

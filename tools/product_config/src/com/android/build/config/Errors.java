@@ -59,4 +59,16 @@ public class Errors extends ErrorReporter {
     // if we're seeing this.
     public final Category ERROR_IMPROPER_PRODUCT_VAR_MARKER = new Category(7, true, Level.ERROR,
             "Bad input from dumpvars causing corrupted product variables.");
+
+    public final Category ERROR_MISSING_CONFIG_FILE = new Category(8, true, Level.ERROR,
+            "Unable to find config file.");
+
+    public final Category ERROR_INFINITE_RECURSION = new Category(9, true, Level.ERROR,
+            "A file tries to inherit-product from itself or its own inherited products.");
+
+    // TODO: This will become obsolete when it is possible to have starlark-based product
+    // config files.
+    public final Category WARNING_DIFFERENT_FROM_KATI = new Category(1000, true, Level.WARNING,
+            "The cross-check with the original kati implementation failed.");
+
 }
