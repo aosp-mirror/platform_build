@@ -30,15 +30,20 @@ public class MakeWriter {
     private final boolean mWriteAnnotations;
 
     public static void write(PrintStream out, GenericConfig config, int flags) {
-        (new MakeWriter(flags)).write(out, config);
+        (new MakeWriter(flags)).writeGeneric(out, config);
     }
+
+    public static void write(PrintStream out, FlatConfig config, int flags) {
+        (new MakeWriter(flags)).writeFlat(out, config);
+    }
+
 
     private MakeWriter(int flags) {
         mWriteHeader = (flags & FLAG_WRITE_HEADER) != 0;
         mWriteAnnotations = (flags & FLAG_WRITE_ANNOTATIONS) != 0;
     }
 
-    private void write(PrintStream out, GenericConfig config) {
+    private void writeGeneric(PrintStream out, GenericConfig config) {
         for (GenericConfig.ConfigFile file: config.getFiles().values()) {
             out.println("---------------------------------------------------------");
             out.println("FILE: " + file.getFilename());
@@ -49,7 +54,7 @@ public class MakeWriter {
         out.println("---------------------------------------------------------");
         out.println("VARIABLES TOUCHED BY MAKE BASED CONFIG:");
         out.println("---------------------------------------------------------");
-        writeStrVars(out, getModifiedVars(config.getInitialVariables(),
+        writeStrVars(out, OutputChecker.getModifiedVars(config.getInitialVariables(),
                                           config.getFinalVariables()), config);
     }
 
@@ -109,28 +114,6 @@ public class MakeWriter {
         out.println();
     }
 
-    private static Map<String, Str> getModifiedVars(Map<String, Str> before,
-            Map<String, Str> after) {
-        final HashMap<String, Str> result = new HashMap();
-        // Entries that were added or changed.
-        for (Map.Entry<String, Str> afterEntry: after.entrySet()) {
-            final String varName = afterEntry.getKey();
-            final Str afterValue = afterEntry.getValue();
-            final Str beforeValue = before.get(varName);
-            if (beforeValue == null || !beforeValue.equals(afterValue)) {
-                result.put(varName, afterValue);
-            }
-        }
-        // removed Entries that were removed, we just treat them as  
-        for (Map.Entry<String, Str> beforeEntry: before.entrySet()) {
-            final String varName = beforeEntry.getKey();
-            if (!after.containsKey(varName)) {
-                result.put(varName, new Str(""));
-            }
-        }
-        return result;
-    }
-
     private static class Var {
         Var(String name, Str val) {
             this.name = name;
@@ -150,6 +133,29 @@ public class MakeWriter {
         // Print it
         for (Var var: sorted.values()) {
             out.println(var.val.getPosition() + var.name + " := " + var.val);
+        }
+    }
+
+    private void writeFlat(PrintStream out, FlatConfig config) {
+        // TODO: Print positions.
+        for (Map.Entry<String, Value> entry: config.getValues().entrySet()) {
+            out.print(entry.getKey());
+            out.print(" := ");
+
+            final Value value = entry.getValue();
+            if (value.getVarType() == VarType.LIST) {
+                final List<Str> list = value.getList();
+                final int size = list.size();
+                for (int i = 0; i < size; i++) {
+                    out.print(list.get(i).toString());
+                    if (i != size - 1) {
+                        out.print(" \\\n        ");
+                    }
+                }
+            } else {
+                out.print(value.getStr().toString());
+            }
+            out.println();
         }
     }
 }
