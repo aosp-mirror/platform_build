@@ -272,6 +272,8 @@ OPTIONS.disable_fec_computation = False
 OPTIONS.disable_verity_computation = False
 OPTIONS.partial = None
 OPTIONS.custom_images = {}
+OPTIONS.disable_vabc = False
+OPTIONS.spl_downgrade = False
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -289,6 +291,8 @@ SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
     'boot', 'dtbo', 'modem', 'odm', 'odm_dlkm', 'product', 'radio', 'recovery',
     'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor',
     'vendor_boot']
+
+SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
 
 
 class PayloadSigner(object):
@@ -1090,6 +1094,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     partition_timestamps_flags = GeneratePartitionTimestampFlags(
         metadata.postcondition.partition_state)
 
+  if OPTIONS.disable_vabc:
+    additional_args += ["--disable_vabc", "true"]
   additional_args += ["--max_timestamp", max_timestamp]
 
   if SupportsMainlineGkiUpdates(source_file):
@@ -1257,6 +1263,10 @@ def main(argv):
     elif o == "--custom_image":
       custom_partition, custom_image = a.split("=")
       OPTIONS.custom_images[custom_partition] = custom_image
+    elif o == "--disable_vabc":
+      OPTIONS.disable_vabc = True
+    elif o == "--spl_downgrade":
+      OPTIONS.spl_downgrade = True
     else:
       return False
     return True
@@ -1298,6 +1308,8 @@ def main(argv):
                                  "boot_variable_file=",
                                  "partial=",
                                  "custom_image=",
+                                 "disable_vabc",
+                                 "spl_downgrade"
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -1393,7 +1405,27 @@ def main(argv):
           "build/make/target/product/security/testkey")
     # Get signing keys
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
+    private_key_path = OPTIONS.package_key + OPTIONS.private_key_suffix
+    if not os.path.exists(private_key_path):
+      raise common.ExternalError(
+                        "Private key {} doesn't exist. Make sure you passed the"
+                        " correct key path through -k option".format(
+                          private_key_path)
+                          )
 
+  if OPTIONS.source_info_dict:
+    source_build_prop = OPTIONS.source_info_dict["build.prop"]
+    target_build_prop = OPTIONS.target_info_dict["build.prop"]
+    source_spl = source_build_prop.GetProp(SECURITY_PATCH_LEVEL_PROP_NAME)
+    target_spl = target_build_prop.GetProp(SECURITY_PATCH_LEVEL_PROP_NAME)
+    if target_spl < source_spl and not OPTIONS.spl_downgrade:
+      raise common.ExternalError(
+        "Target security patch level {} is older than source SPL {} applying "
+        "such OTA will likely cause device fail to boot. Pass --spl-downgrade "
+        "to override this check. This script expects security patch level to "
+        "be in format yyyy-mm-dd (e.x. 2021-02-05). It's possible to use "
+        "separators other than -, so as long as it's used consistenly across "
+        "all SPL dates".format(target_spl, source_spl))
   if generate_ab:
     GenerateAbOtaPackage(
         target_file=args[0],

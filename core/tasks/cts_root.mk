@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2020 The Android Open Source Project
+# Copyright (C) 2021 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,8 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-$(call inherit-product, build/make/target/product/default_art_config.mk)
-$(call inherit-product, build/make/target/product/core_64_bit.mk)
-$(call inherit-product, build/make/target/product/languages_default.mk)
+ifneq ($(wildcard test/cts-root/README.md),)
+test_suite_name := cts_root
+test_suite_tradefed := cts-root-tradefed
+test_suite_readme := test/cts-root/README.md
+
+include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
+
+.PHONY: cts_root
+cts_root: $(compatibility_zip)
+$(call dist-for-goals, cts_root, $(compatibility_zip))
+endif

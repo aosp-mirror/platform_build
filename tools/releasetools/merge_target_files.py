@@ -93,6 +93,7 @@ import shutil
 import subprocess
 import sys
 import zipfile
+from xml.etree import ElementTree
 
 import add_img_to_target_files
 import build_super_image
@@ -658,6 +659,80 @@ def copy_file_contexts(framework_target_files_dir, vendor_target_files_dir,
       os.path.join(output_target_files_dir, 'META', 'vendor_file_contexts.bin'))
 
 
+def compile_split_sepolicy(product_out, partition_map, output_policy):
+  """Uses secilc to compile a split sepolicy file.
+
+  Depends on various */etc/selinux/* and */etc/vintf/* files within partitions.
+
+  Args:
+    product_out: PRODUCT_OUT directory, containing partition directories.
+    partition_map: A map of partition name -> relative path within product_out.
+    output_policy: The name of the output policy created by secilc.
+
+  Returns:
+    A command list that can be executed to create the compiled sepolicy.
+  """
+
+  def get_file(partition, path):
+    if partition not in partition_map:
+      logger.warning('Cannot load SEPolicy files for missing partition %s',
+                     partition)
+      return None
+    return os.path.join(product_out, partition_map[partition], path)
+
+  # Load the kernel sepolicy version from the FCM. This is normally provided
+  # directly to selinux.cpp as a build flag, but is also available in this file.
+  fcm_file = get_file('system', 'etc/vintf/compatibility_matrix.device.xml')
+  if not fcm_file or not os.path.exists(fcm_file):
+    raise ExternalError('Missing required file for loading sepolicy: %s', fcm)
+  kernel_sepolicy_version = ElementTree.parse(fcm_file).getroot().find(
+      'sepolicy/kernel-sepolicy-version').text
+
+  # Load the vendor's plat sepolicy version. This is the version used for
+  # locating sepolicy mapping files.
+  vendor_plat_version_file = get_file('vendor',
+                                      'etc/selinux/plat_sepolicy_vers.txt')
+  if not vendor_plat_version_file or not os.path.exists(
+      vendor_plat_version_file):
+    raise ExternalError('Missing required sepolicy file %s',
+                        vendor_plat_version_file)
+  with open(vendor_plat_version_file) as f:
+    vendor_plat_version = f.read().strip()
+
+  # Use the same flags and arguments as selinux.cpp OpenSplitPolicy().
+  cmd = ['secilc', '-m', '-M', 'true', '-G', '-N']
+  cmd.extend(['-c', kernel_sepolicy_version])
+  cmd.extend(['-o', output_policy])
+  cmd.extend(['-f', '/dev/null'])
+
+  required_policy_files = (
+      ('system', 'etc/selinux/plat_sepolicy.cil'),
+      ('system', 'etc/selinux/mapping/%s.cil' % vendor_plat_version),
+      ('vendor', 'etc/selinux/vendor_sepolicy.cil'),
+      ('vendor', 'etc/selinux/plat_pub_versioned.cil'),
+  )
+  for policy in (map(lambda partition_and_path: get_file(*partition_and_path),
+                     required_policy_files)):
+    if not policy or not os.path.exists(policy):
+      raise ExternalError('Missing required sepolicy file %s', policy)
+    cmd.append(policy)
+
+  optional_policy_files = (
+      ('system', 'etc/selinux/mapping/%s.compat.cil' % vendor_plat_version),
+      ('system_ext', 'etc/selinux/system_ext_sepolicy.cil'),
+      ('system_ext', 'etc/selinux/mapping/%s.cil' % vendor_plat_version),
+      ('product', 'etc/selinux/product_sepolicy.cil'),
+      ('product', 'etc/selinux/mapping/%s.cil' % vendor_plat_version),
+      ('odm', 'etc/selinux/odm_sepolicy.cil'),
+  )
+  for policy in (map(lambda partition_and_path: get_file(*partition_and_path),
+                     optional_policy_files)):
+    if policy and os.path.exists(policy):
+      cmd.append(policy)
+
+  return cmd
+
+
 def process_special_cases(framework_target_files_temp_dir,
                           vendor_target_files_temp_dir,
                           output_target_files_temp_dir,
@@ -887,12 +962,12 @@ def create_target_files_archive(output_file, source_dir, temp_dir):
       output_zip,
       '-C',
       source_dir,
-      '-l',
+      '-r',
       output_target_files_list,
   ]
 
   logger.info('creating %s', output_file)
-  common.RunAndWait(command, verbose=True)
+  common.RunAndCheckOutput(command, verbose=True)
   logger.info('finished creating %s', output_file)
 
   return output_zip
@@ -977,16 +1052,27 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
       raise ValueError('sharedUserId APK error. See %s' %
                        shareduid_violation_modules)
 
-  # Run host_init_verifier on the combined init rc files.
+  # host_init_verifier and secilc check only the following partitions:
   filtered_partitions = {
       partition: path
       for partition, path in partition_map.items()
-      # host_init_verifier checks only the following partitions:
       if partition in ['system', 'system_ext', 'product', 'vendor', 'odm']
   }
+
+  # Run host_init_verifier on the combined init rc files.
   common.RunHostInitVerifier(
       product_out=output_target_files_temp_dir,
       partition_map=filtered_partitions)
+
+  # Check that the split sepolicy from the multiple builds can compile.
+  split_sepolicy_cmd = compile_split_sepolicy(
+      product_out=output_target_files_temp_dir,
+      partition_map=filtered_partitions,
+      output_policy=os.path.join(output_target_files_temp_dir,
+                                 'META/combined.policy'))
+  logger.info('Compiling split sepolicy: %s', ' '.join(split_sepolicy_cmd))
+  common.RunAndCheckOutput(split_sepolicy_cmd)
+  # TODO(b/178864050): Run tests on the combined.policy file.
 
   generate_images(output_target_files_temp_dir, rebuild_recovery)
 

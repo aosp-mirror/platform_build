@@ -230,7 +230,7 @@ endef
 # $(7): module archive
 # $(8): staging dir for stripped modules
 # $(9): module directory name
-# Returns the a list of src:dest pairs to install the modules using copy-many-files.
+# Returns a list of src:dest pairs to install the modules using copy-many-files.
 define build-image-kernel-modules
   $(if $(9), \
     $(eval _dir := $(9)/), \
@@ -315,6 +315,26 @@ $(1)/$(DEPMOD_STAGING_SUBDIR)/$(4): $(2)
 	@echo '$$(strip $$(notdir $$(PRIVATE_LOAD_MODULES)))' | tr ' ' '\n' > $$(@)
 endef
 
+# $(1): source blocklist file
+# $(2): destination pathname
+# Returns a build rule that checks the syntax of and installs a kernel modules
+# blocklist file. Strip and squeeze any extra space in the blocklist.
+# For use via $(eval).
+define build-image-kernel-modules-blocklist-file
+$(2): $(1)
+	@echo "modprobe blocklist $$(@)"
+	$(hide) mkdir -p "$$(dir $$@)"
+	$(hide) rm -f "$$@"
+	$(hide) awk <"$$<" >"$$@" \
+	  '/^#/ { print; next } \
+	   NF == 0 { next } \
+	   NF != 2 || $$$$1 != "blocklist" \
+	     { print "Invalid blocklist line " FNR ": " $$$$0 >"/dev/stderr"; \
+	       exit_status = 1; next } \
+	   { $$$$1 = $$$$1; print } \
+	   END { exit exit_status }'
+endef
+
 # $(1): image name
 # $(2): build output directory (TARGET_OUT_VENDOR, TARGET_RECOVERY_ROOT_OUT, etc)
 # $(3): mount point
@@ -331,7 +351,12 @@ $(if $(5),\
 $(if $(strip $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver))$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver))),\
   $(if $(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),,\
     $(eval BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver) := $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)))) \
-  $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver))))
+  $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver)))) \
+$(if $(BOARD_$(1)_KERNEL_MODULES_BLOCKLIST_FILE$(_sep)$(_kver)), \
+  $(eval $(call build-image-kernel-modules-blocklist-file, \
+    $(BOARD_$(1)_KERNEL_MODULES_BLOCKLIST_FILE$(_sep)$(_kver)), \
+    $(2)/lib/modules/modules.blocklist)) \
+  $(2)/lib/modules/modules.blocklist)
 endef
 
 # $(1): kernel module directory name (top is an out of band value for no directory)
@@ -989,6 +1014,15 @@ ifdef INTERNAL_KERNEL_CMDLINE
   INTERNAL_VENDOR_BOOTIMAGE_ARGS += --vendor_cmdline "$(INTERNAL_KERNEL_CMDLINE)"
 endif
 
+ifdef INTERNAL_BOOTCONFIG
+INTERNAL_VENDOR_BOOTCONFIG_TARGET := $(PRODUCT_OUT)/vendor-bootconfig.img
+$(INTERNAL_VENDOR_BOOTCONFIG_TARGET):
+	rm -f $@
+	$(foreach param,$(INTERNAL_BOOTCONFIG), \
+	 printf "%s\n" $(param) >> $@;)
+  INTERNAL_VENDOR_BOOTIMAGE_ARGS += --vendor_bootconfig $(INTERNAL_VENDOR_BOOTCONFIG_TARGET)
+endif
+
 # $(1): Build target name
 # $(2): Staging dir to be compressed
 # $(3): Build dependencies
@@ -1036,7 +1070,7 @@ $(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
 
 INSTALLED_VENDOR_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/vendor_boot.img
 $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_DTBIMAGE_TARGET)
-$(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS)
+$(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS) $(INTERNAL_VENDOR_BOOTCONFIG_TARGET)
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOTIMAGE_KEY_PATH)
 	$(call pretty,"Target vendor_boot image: $@")
@@ -4110,6 +4144,8 @@ INTERNAL_OTATOOLS_MODULES := \
   mksquashfsimage.sh \
   mkuserimg_mke2fs \
   ota_from_target_files \
+  repack_bootimg \
+  secilc \
   sefcontext_compile \
   sgdisk \
   shflags \
@@ -4767,6 +4803,9 @@ ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
 ifdef INSTALLED_DTBIMAGE_TARGET
 	cp $(INSTALLED_DTBIMAGE_TARGET) $(zip_root)/VENDOR_BOOT/dtb
 endif
+ifdef INTERNAL_VENDOR_BOOTCONFIG_TARGET
+	cp $(INTERNAL_VENDOR_BOOTCONFIG_TARGET) $(zip_root)/VENDOR_BOOT/vendor_bootconfig
+endif
 ifdef BOARD_KERNEL_BASE
 	echo "$(BOARD_KERNEL_BASE)" > $(zip_root)/VENDOR_BOOT/base
 endif
@@ -5028,7 +5067,7 @@ endif
 	@# help early validation of the .zip file while uploading it.
 	$(hide) find $(zip_root)/META | sort >$@.list
 	$(hide) find $(zip_root) -path $(zip_root)/META -prune -o -print | sort >>$@.list
-	$(hide) $(SOONG_ZIP) -d -o $@ -C $(zip_root) -l $@.list
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(zip_root) -r $@.list
 
 .PHONY: target-files-package
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
