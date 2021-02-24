@@ -1934,12 +1934,13 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
     # filename listed in system.map may contain an additional leading slash
     # (i.e. "//system/framework/am.jar"). Using lstrip to get consistent
     # results.
-    arcname = entry.replace(which, which.upper(), 1).lstrip('/')
-
-    # Special handling another case, where files not under /system
+    # And handle another special case, where files not under /system
     # (e.g. "/sbin/charger") are packed under ROOT/ in a target_files.zip.
-    if which == 'system' and not arcname.startswith('SYSTEM'):
+    arcname = entry.lstrip('/')
+    if which == 'system' and not arcname.startswith('system'):
       arcname = 'ROOT/' + arcname
+    else:
+      arcname = arcname.replace(which, which.upper(), 1)
 
     assert arcname in input_zip.namelist(), \
         "Failed to find the ZIP entry for {}".format(entry)
