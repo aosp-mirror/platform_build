@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "33922690_4fb22c6e",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-02-24T23:35:39Z",
+      "side": 1,
+      "message": "Won\u0027t add_json_bool make more sense?",
+      "range": {
+        "startLine": 160,
+        "startChar": 0,
+        "endLine": 167,
+        "endChar": 0
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
