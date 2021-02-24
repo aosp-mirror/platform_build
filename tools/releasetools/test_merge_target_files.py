@@ -18,12 +18,11 @@ import os.path
 
 import common
 import test_utils
-from merge_target_files import (validate_config_lists,
-                                DEFAULT_FRAMEWORK_ITEM_LIST,
-                                DEFAULT_VENDOR_ITEM_LIST,
-                                DEFAULT_FRAMEWORK_MISC_INFO_KEYS, copy_items,
-                                item_list_to_partition_set,
-                                process_apex_keys_apk_certs_common)
+from merge_target_files import (
+    validate_config_lists, DEFAULT_FRAMEWORK_ITEM_LIST,
+    DEFAULT_VENDOR_ITEM_LIST, DEFAULT_FRAMEWORK_MISC_INFO_KEYS, copy_items,
+    item_list_to_partition_set, process_apex_keys_apk_certs_common,
+    compile_split_sepolicy)
 
 
 class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
@@ -235,3 +234,43 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
     ]
     partition_set = item_list_to_partition_set(item_list)
     self.assertEqual(set(['product', 'system', 'system_ext']), partition_set)
+
+  def test_compile_split_sepolicy(self):
+    product_out_dir = common.MakeTempDir()
+
+    def write_temp_file(path, data=''):
+      full_path = os.path.join(product_out_dir, path)
+      if not os.path.exists(os.path.dirname(full_path)):
+        os.makedirs(os.path.dirname(full_path))
+      with open(full_path, 'w') as f:
+        f.write(data)
+
+    write_temp_file(
+        'system/etc/vintf/compatibility_matrix.device.xml', """
+      <compatibility-matrix>
+        <sepolicy>
+          <kernel-sepolicy-version>30</kernel-sepolicy-version>
+        </sepolicy>
+      </compatibility-matrix>""")
+    write_temp_file('vendor/etc/selinux/plat_sepolicy_vers.txt', '30.0')
+
+    write_temp_file('system/etc/selinux/plat_sepolicy.cil')
+    write_temp_file('system/etc/selinux/mapping/30.0.cil')
+    write_temp_file('product/etc/selinux/mapping/30.0.cil')
+    write_temp_file('vendor/etc/selinux/vendor_sepolicy.cil')
+    write_temp_file('vendor/etc/selinux/plat_pub_versioned.cil')
+
+    cmd = compile_split_sepolicy(product_out_dir, {
+        'system': 'system',
+        'product': 'product',
+        'vendor': 'vendor',
+    }, os.path.join(product_out_dir, 'policy'))
+    self.assertEqual(' '.join(cmd),
+                     ('secilc -m -M true -G -N -c 30 '
+                      '-o {OTP}/policy -f /dev/null '
+                      '{OTP}/system/etc/selinux/plat_sepolicy.cil '
+                      '{OTP}/system/etc/selinux/mapping/30.0.cil '
+                      '{OTP}/vendor/etc/selinux/vendor_sepolicy.cil '
+                      '{OTP}/vendor/etc/selinux/plat_pub_versioned.cil '
+                      '{OTP}/product/etc/selinux/mapping/30.0.cil').format(
+                          OTP=product_out_dir))
