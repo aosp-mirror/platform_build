@@ -16,6 +16,9 @@
 
 package com.android.build.config;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Position in a source file.
  */
@@ -24,6 +27,9 @@ public class Position implements Comparable<Position> {
      * Sentinel line number for when there is no known line number.
      */
     public static final int NO_LINE = -1;
+
+    private static final Pattern REGEX = Pattern.compile("([^:]*)(?::(\\d)*)?:?\\s*");
+    public static final String UNKNOWN = "<unknown>";
 
     private final String mFile;
     private final int mLine;
@@ -63,12 +69,39 @@ public class Position implements Comparable<Position> {
         return mLine;
     }
 
+    /**
+     * Return a Position object from a string containing <filename>:<line>, or the default
+     * Position(null, NO_LINE) if the string can't be parsed.
+     */
+    public static Position parse(String str) {
+        final Matcher m = REGEX.matcher(str);
+        if (!m.matches()) {
+            return new Position();
+        }
+        String filename = m.group(1);
+        if (filename.length() == 0 || UNKNOWN.equals(filename)) {
+            filename = null;
+        }
+        String lineString = m.group(2);
+        int line;
+        if (lineString == null || lineString.length() == 0) {
+            line = NO_LINE;
+        } else {
+            try {
+                line = Integer.parseInt(lineString);
+            } catch (NumberFormatException ex) {
+                line = NO_LINE;
+            }
+        }
+        return new Position(filename, line);
+    }
+
     @Override
     public String toString() {
       if (mFile == null && mLine == NO_LINE) {
         return "";
       } else if (mFile == null && mLine != NO_LINE) {
-        return "<unknown>:" + mLine + ": ";
+        return UNKNOWN + ":" + mLine + ": ";
       } else if (mFile != null && mLine == NO_LINE) {
         return mFile + ": ";
       } else { // if (mFile != null && mLine != NO_LINE)

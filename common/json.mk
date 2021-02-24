@@ -24,7 +24,10 @@ add_json_list =$= $(call add_json_val,$(1),$(call json_list,$(patsubst %,%,$(2))
 add_json_csv =$= $(call add_json_val,$(1),$(call csv_to_json_list,$(strip $(2))))
 add_json_bool =$= $(call add_json_val,$(1),$(if $(strip $(2)),true,false))
 add_json_map =$= $(eval _json_contents := $$(_json_contents)$$(_json_indent)"$$(strip $$(1))": {$$(newline))$(json_increase_indent)
+add_json_map_anon =$= $(eval _json_contents := $$(_json_contents)$$(_json_indent){$$(newline))$(json_increase_indent)
 end_json_map =$= $(json_decrease_indent)$(eval _json_contents := $$(_json_contents)$$(if $$(filter %$$(comma),$$(lastword $$(_json_contents))),__SV_END)$$(_json_indent)},$$(newline))
+add_json_array =$= $(eval _json_contents := $$(_json_contents)$$(_json_indent)"$$(strip $$(1))": [$$(newline))$(json_increase_indent)
+end_json_array =$= $(json_decrease_indent)$(eval _json_contents := $$(_json_contents)$$(if $$(filter %$$(comma),$$(lastword $$(_json_contents))),__SV_END)$$(_json_indent)],$$(newline))
 
 # Clears _json_contents to start a new json file
 json_start =$= $(eval _json_contents := {$$(newline))$(eval _json_indent := $$(4space))

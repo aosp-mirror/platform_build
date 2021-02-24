@@ -189,6 +189,16 @@ ifdef LOCAL_DEX_PREOPT
   my_filtered_optional_uses_libraries := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
     $(LOCAL_OPTIONAL_USES_LIBRARIES))
 
+  # TODO(b/132357300): This may filter out too much, as PRODUCT_PACKAGES doesn't
+  # include all packages (the full list is unknown until reading all Android.mk
+  # makefiles). As a consequence, a library may be present but not included in
+  # dexpreopt, which will result in class loader context mismatch and a failure
+  # to load dexpreopt code on device. We should fix this, either by deferring
+  # dependency computation until the full list of product packages is known, or
+  # by adding product-specific lists of missing libraries.
+  my_filtered_optional_uses_libraries := $(filter $(PRODUCT_PACKAGES), \
+    $(my_filtered_optional_uses_libraries))
+
   ifeq ($(LOCAL_MODULE_CLASS),APPS)
     # compatibility libraries are added to class loader context of an app only if
     # targetSdkVersion in the app's manifest is lower than the given SDK version
@@ -212,10 +222,9 @@ ifdef LOCAL_DEX_PREOPT
     my_dexpreopt_libs_compat :=
   endif
 
-  my_dexpreopt_libs := $(sort \
+  my_dexpreopt_libs := \
     $(LOCAL_USES_LIBRARIES) \
-    $(my_filtered_optional_uses_libraries) \
-  )
+    $(my_filtered_optional_uses_libraries)
 
   # 1: SDK version
   # 2: list of libraries
@@ -233,14 +242,15 @@ ifdef LOCAL_DEX_PREOPT
   # which are special and not handled by dex_preopt_config_merger.py.
   #
   add_json_class_loader_context = \
-    $(call add_json_map, $(1)) \
+    $(call add_json_array, $(1)) \
     $(foreach lib, $(2),\
-      $(call add_json_map, $(lib)) \
+      $(call add_json_map_anon) \
+      $(call add_json_str, Name, $(lib)) \
       $(call add_json_str, Host, $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
       $(call add_json_str, Device, /system/framework/$(lib).jar) \
-      $(call add_json_map, Subcontexts, ${$}) $(call end_json_map) \
+      $(call add_json_val, Subcontexts, null) \
       $(call end_json_map)) \
-    $(call end_json_map)
+    $(call end_json_array)
 
   # Record dex-preopt config.
   DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -268,6 +278,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_list, PreoptFlags,                    $(LOCAL_DEX_PREOPT_FLAGS))
   $(call add_json_str,  ProfileClassListing,            $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE)))
   $(call add_json_bool, ProfileIsTextListing,           $(my_profile_is_text_listing))
+  $(call add_json_str,  EnforceUsesLibrariesStatusFile, $(intermediates.COMMON)/enforce_uses_libraries.status)
   $(call add_json_bool, EnforceUsesLibraries,           $(LOCAL_ENFORCE_USES_LIBRARIES))
   $(call add_json_str,  ProvidesUsesLibrary,            $(firstword $(LOCAL_PROVIDES_USES_LIBRARY) $(LOCAL_MODULE)))
   $(call add_json_map,  ClassLoaderContexts)
@@ -335,6 +346,9 @@ ifdef LOCAL_DEX_PREOPT
       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar)
   my_dexpreopt_deps += $(my_dexpreopt_images_deps)
   my_dexpreopt_deps += $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
+  ifeq ($(LOCAL_ENFORCE_USES_LIBRARIES),true)
+    my_dexpreopt_deps += $(intermediates.COMMON)/enforce_uses_libraries.status
+  endif
 
   $(my_dexpreopt_zip): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_zip): $(my_dexpreopt_deps)

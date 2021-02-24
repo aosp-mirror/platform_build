@@ -80,7 +80,7 @@ endif
 ifeq (true,$(is_container))
 # Include shared libraries' notices for "container" types, but not for binaries etc.
 notice_deps := \
-    $(sort \
+    $(strip \
         $(LOCAL_REQUIRED_MODULES) \
         $(LOCAL_STATIC_LIBRARIES) \
         $(LOCAL_WHOLE_STATIC_LIBRARIES) \
@@ -95,7 +95,7 @@ notice_deps := \
     )
 else
 notice_deps := \
-    $(sort \
+    $(strip \
         $(LOCAL_REQUIRED_MODULES) \
         $(LOCAL_STATIC_LIBRARIES) \
         $(LOCAL_WHOLE_STATIC_LIBRARIES) \
@@ -106,24 +106,24 @@ notice_deps := \
     )
 endif
 ifeq ($(LOCAL_IS_HOST_MODULE),true)
-notice_deps := $(sort $(notice_deps) $(LOCAL_HOST_REQUIRED_MODULES))
+notice_deps := $(strip $(notice_deps) $(LOCAL_HOST_REQUIRED_MODULES))
 else
-notice_deps := $(sort $(notice_deps) $(LOCAL_TARGET_REQUIRED_MODULES))
+notice_deps := $(strip $(notice_deps) $(LOCAL_TARGET_REQUIRED_MODULES))
 endif
 
 ifdef my_register_name
 ALL_MODULES.$(my_register_name).LICENSE_PACKAGE_NAME := $(strip $(license_package_name))
-ALL_MODULES.$(my_register_name).LICENSE_KINDS := $(sort $(ALL_MODULES.$(my_register_name).LICENSE_KINDS) $(license_kinds))
-ALL_MODULES.$(my_register_name).LICENSE_CONDITIONS := $(sort $(ALL_MODULES.$(my_register_name).LICENSE_CONDITIONS) $(license_conditions))
-ALL_MODULES.$(my_register_name).LICENSE_INSTALL_MAP := $(sort $(ALL_MODULES.$(my_register_name).LICENSE_INSTALL_MAP) $(install_map))
-ALL_MODULES.$(my_register_name).NOTICE_DEPS := $(sort $(ALL_MODULES.$(my_register_name).NOTICE_DEPS) $(notice_deps))
-ALL_MODULES.$(my_register_name).IS_CONTAINER := $(sort $(ALL_MODULES.$(my_register_name).IS_CONTAINER) $(is_container))
+ALL_MODULES.$(my_register_name).LICENSE_KINDS := $(ALL_MODULES.$(my_register_name).LICENSE_KINDS) $(license_kinds)
+ALL_MODULES.$(my_register_name).LICENSE_CONDITIONS := $(ALL_MODULES.$(my_register_name).LICENSE_CONDITIONS) $(license_conditions)
+ALL_MODULES.$(my_register_name).LICENSE_INSTALL_MAP := $(ALL_MODULES.$(my_register_name).LICENSE_INSTALL_MAP) $(install_map)
+ALL_MODULES.$(my_register_name).NOTICE_DEPS := $(ALL_MODULES.$(my_register_name).NOTICE_DEPS) $(notice_deps)
+ALL_MODULES.$(my_register_name).IS_CONTAINER := $(strip $(filter-out false,$(ALL_MODULES.$(my_register_name).IS_CONTAINER) $(is_container)))
 endif
 
 ifdef notice_file
 
 ifdef my_register_name
-ALL_MODULES.$(my_register_name).NOTICES := $(sort $(ALL_MODULES.$(my_register_name).NOTICES) $(notice_file))
+ALL_MODULES.$(my_register_name).NOTICES := $(ALL_MODULES.$(my_register_name).NOTICES) $(notice_file)
 endif
 
 # This relies on the name of the directory in PRODUCT_OUT matching where
@@ -180,9 +180,10 @@ module_installed_filename := $(patsubst $(HOST_CROSS_OUT)/%,%,$(module_installed
 installed_notice_file := $($(my_prefix)OUT_NOTICE_FILES)/src/$(module_installed_filename).txt
 
 ifdef my_register_name
-ALL_MODULES.$(my_register_name).INSTALLED_NOTICE_FILE := $(installed_notice_file)
-endif
-
+ALL_MODULES.$(my_register_name).INSTALLED_NOTICE_FILE := $(ALL_MODULES.$(my_register_name).INSTALLED_NOTICE_FILE) $(installed_notice_file)
+ALL_MODULES.$(my_register_name).MODULE_INSTALLED_FILENAMES := $(ALL_MODULES.$(my_register_name).MODULE_INSTALLED_FILENAMES) $(module_installed_filename)
+INSTALLED_NOTICE_FILES.$(installed_notice_file).MODULE := $(my_register_name)
+else
 $(installed_notice_file): PRIVATE_INSTALLED_MODULE := $(module_installed_filename)
 $(installed_notice_file) : PRIVATE_NOTICES := $(notice_file)
 
@@ -190,6 +191,7 @@ $(installed_notice_file): $(notice_file)
 	@echo Notice file: $< -- $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) awk 'FNR==1 && NR > 1 {print "\n"} {print}' $(PRIVATE_NOTICES) > $@
+endif
 
 ifdef LOCAL_INSTALLED_MODULE
 # Make LOCAL_INSTALLED_MODULE depend on NOTICE files if they exist
