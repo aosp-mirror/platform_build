@@ -52,14 +52,16 @@ failed_baseline_checks=
 for product in $products ; do
     for variant in $variants ; do
         echo
-        echo Checking to see if $product-$variant works with make
-        TARGET_PRODUCT=$product TARGET_BUILD_VARIANT=$variant build/soong/soong_ui.bash --dumpvar-mode TARGET_PRODUCT &> /dev/null
+        echo "Checking: lunch $product-$variant"
+
+        TARGET_PRODUCT=$product \
+            TARGET_BUILD_VARIANT=$variant \
+            build/soong/soong_ui.bash --dumpvar-mode TARGET_PRODUCT &> /dev/null
         exit_status=$?
         if_signal_exit $exit_status
         if [ $exit_status -ne 0 ] ; then
-            echo Combo fails with make, skipping product-config test run for $product-$variant
+            echo "*** Combo fails with make, skipping product-config test run for $product-$variant"
         else
-            echo Running product-config for $product-$variant
             rm -rf out/config/$product-$variant
             TARGET_PRODUCT=$product TARGET_BUILD_VARIANT=$variant product-config \
                             --ckati_bin $CKATI_BIN \
@@ -68,6 +70,28 @@ for product in $products ; do
             if_signal_exit $exit_status
             if [ $exit_status -ne 0 ] ; then
                 failed_baseline_checks="$failed_baseline_checks $product-$variant"
+            fi
+            if [ "$CHECK_FOR_RULES" != "" ] ; then
+                # This is a little bit of sleight of hand for good output formatting at the
+                # expense of speed. We've already run the command once without
+                # ALLOW_RULES_IN_PRODUCT_CONFIG, so we know it passes there. We run it again
+                # with ALLOW_RULES_IN_PRODUCT_CONFIG=error to see if it fails, but that will
+                # cause it to only print the first error. But we want to see all of them,
+                # so if it fails we run it a third time with ALLOW_RULES_IN_PRODUCT_CONFIG=warning,
+                # so we can see all the warnings.
+                TARGET_PRODUCT=$product \
+                    TARGET_BUILD_VARIANT=$variant \
+                    ALLOW_RULES_IN_PRODUCT_CONFIG=error \
+                    build/soong/soong_ui.bash --dumpvar-mode TARGET_PRODUCT &> /dev/null
+                exit_status=$?
+                if_signal_exit $exit_status
+                if [ $exit_status -ne 0 ] ; then
+                    TARGET_PRODUCT=$product \
+                        TARGET_BUILD_VARIANT=$variant \
+                        ALLOW_RULES_IN_PRODUCT_CONFIG=warning \
+                        build/soong/soong_ui.bash --dumpvar-mode TARGET_PRODUCT > /dev/null
+                    failed_rule_checks="$failed_rule_checks $product-$variant"
+                fi
             fi
         fi
     done
@@ -85,6 +109,12 @@ if [ $unit_tests -eq 0 ] ; then echo PASSED ; else echo FAILED ; fi
 echo -n "Baseline checks   "
 if [ "$failed_baseline_checks" = "" ] ; then echo PASSED ; else echo FAILED ; fi
 for combo in $failed_baseline_checks ; do
+    echo "                   ... $combo"
+done
+
+echo -n "Rules checks      "
+if [ "$failed_rule_checks" = "" ] ; then echo PASSED ; else echo FAILED ; fi
+for combo in $failed_rule_checks ; do
     echo "                   ... $combo"
 done
 
