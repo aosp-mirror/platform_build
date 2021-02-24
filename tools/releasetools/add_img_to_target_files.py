@@ -64,7 +64,7 @@ import sparse_img
 import verity_utils
 import ota_metadata_pb2
 
-from apex_utils import GetApexInfoFromTargetFiles
+from apex_utils import GetSystemApexInfoFromTargetFiles
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -757,7 +757,7 @@ def HasPartition(partition_name):
                            "{}.img".format(partition_name))))
 
 def AddApexInfo(output_zip):
-  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp)
+  apex_infos = GetSystemApexInfoFromTargetFiles(OPTIONS.input_tmp)
   apex_metadata_proto = ota_metadata_pb2.ApexMetadata()
   apex_metadata_proto.apex_info.extend(apex_infos)
   apex_info_bytes = apex_metadata_proto.SerializeToString()
