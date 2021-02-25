@@ -146,6 +146,11 @@ load_all_product_makefiles := true
 endif
 endif
 
+ifneq ($(ALLOW_RULES_IN_PRODUCT_CONFIG),)
+_product_config_saved_KATI_ALLOW_RULES := $(.KATI_ALLOW_RULES)
+.KATI_ALLOW_RULES := $(ALLOW_RULES_IN_PRODUCT_CONFIG)
+endif
+
 ifeq ($(load_all_product_makefiles),true)
 # Import all product makefiles.
 $(call import-products, $(all_product_makefiles))
@@ -163,12 +168,19 @@ endif  # Import all or just the current product makefile
 # Quick check
 $(check-all-products)
 
+ifeq ($(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
 # Import all the products that have made artifact path requirements, so that we can verify
 # the artifacts they produce.
 # These are imported after check-all-products because some of them might not be real products.
 $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(if $(filter-out $(makefile),$(PRODUCTS)),$(eval $(call import-products,$(makefile))))\
 )
+endif
+
+ifneq ($(ALLOW_RULES_IN_PRODUCT_CONFIG),)
+.KATI_ALLOW_RULES := $(_saved_KATI_ALLOW_RULES)
+_product_config_saved_KATI_ALLOW_RULES :=
+endif
 
 ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
 $(dump-products)
@@ -181,13 +193,15 @@ INTERNAL_PRODUCT := $(call resolve-short-product-name, $(TARGET_PRODUCT))
 ifneq ($(current_product_makefile),$(INTERNAL_PRODUCT))
 $(error PRODUCT_NAME inconsistent in $(current_product_makefile) and $(INTERNAL_PRODUCT))
 endif
-current_product_makefile :=
-all_product_makefiles :=
-all_product_configs :=
+
 
 ############################################################################
 # Strip and assign the PRODUCT_ variables.
 $(call strip-product-vars)
+
+current_product_makefile :=
+all_product_makefiles :=
+all_product_configs :=
 
 #############################################################################
 # Quick check and assign default values
