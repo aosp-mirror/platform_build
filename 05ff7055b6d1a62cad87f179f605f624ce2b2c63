@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b8f6402_177734d0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-02-25T22:51:17Z",
+      "side": 1,
+      "message": "Please copy the metadata change to google3. And find a gota owner to parse this flag on server-side verification",
+      "revId": "05ff7055b6d1a62cad87f179f605f624ce2b2c63",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
