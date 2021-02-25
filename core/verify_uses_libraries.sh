@@ -21,6 +21,7 @@
 
 set -e
 local_apk=$1
+status_file=$2
 badging=$(${aapt_binary} dump badging "${local_apk}")
 export sdk_version=$(echo "${badging}" | grep "sdkVersion" | sed -n "s/sdkVersion:'\(.*\)'/\1/p")
 # Export target_sdk_version to the caller.
@@ -28,20 +29,28 @@ export target_sdk_version=$(echo "${badging}" | grep "targetSdkVersion" | sed -n
 uses_libraries=$(echo "${badging}" | grep "uses-library" | sed -n "s/uses-library:'\(.*\)'/\1/p")
 optional_uses_libraries=$(echo "${badging}" | grep "uses-library-not-required" | sed -n "s/uses-library-not-required:'\(.*\)'/\1/p")
 
+errmsg=
+
 # Verify that the uses libraries match exactly.
 # Currently we validate the ordering of the libraries since it matters for resolution.
 single_line_libs=$(echo "${uses_libraries}" | tr '\n' ' ' | awk '{$1=$1}1')
 if [[ "${single_line_libs}" != "${uses_library_names}" ]]; then
-  echo "LOCAL_USES_LIBRARIES (${uses_library_names})" \
-       "do not match (${single_line_libs}) in manifest for ${local_apk}"
-  exit 1
+  errmsg="LOCAL_USES_LIBRARIES (${uses_library_names}) do not match (${single_line_libs}) in manifest for ${local_apk}"
 fi
 
 # Verify that the optional uses libraries match exactly.
 single_line_optional_libs=$(echo "${optional_uses_libraries}" | tr '\n' ' ' | awk '{$1=$1}1')
 if [[ "${single_line_optional_libs}" != "${optional_uses_library_names}" ]]; then
-  echo "LOCAL_OPTIONAL_USES_LIBRARIES (${optional_uses_library_names}) " \
-       "do not match (${single_line_optional_libs}) in manifest for ${local_apk}"
-  exit 1
+  errmsg="LOCAL_OPTIONAL_USES_LIBRARIES (${optional_uses_library_names}) do not match (${single_line_optional_libs}) in manifest for ${local_apk}"
 fi
 
+if [[ ! -z "${errmsg}" ]]; then
+  echo "${errmsg}" > "${status_file}"
+  if [[ "${relax_check}" != true ]]; then
+    # fail immediately
+    echo "${errmsg}"
+    exit 1
+  fi
+else
+  touch "${status_file}"
+fi

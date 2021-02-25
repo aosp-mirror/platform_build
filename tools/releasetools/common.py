@@ -1691,6 +1691,11 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
   cmd.extend(["--vendor_ramdisk", ramdisk_img.name])
   cmd.extend(["--vendor_boot", img.name])
 
+  fn = os.path.join(sourcedir, "vendor_bootconfig")
+  if os.access(fn, os.F_OK):
+    cmd.append("--vendor_bootconfig")
+    cmd.append(fn)
+
   ramdisk_fragment_imgs = []
   fn = os.path.join(sourcedir, "vendor_ramdisk_fragments")
   if os.access(fn, os.F_OK):
