@@ -33,6 +33,24 @@
       "message": "nit extra line",
       "revId": "7cf4f0dbcb4dea17b40735269f293b8f6306bf4b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "827503ad_045574ed",
+        "filename": "tools/releasetools/ota_utils.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-02-25T14:51:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7873de69_123b6a03",
+      "revId": "7cf4f0dbcb4dea17b40735269f293b8f6306bf4b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
