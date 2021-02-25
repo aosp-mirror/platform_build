@@ -216,6 +216,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d09fb62f_6d30be49",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1462756
+      },
+      "writtenOn": "2021-02-25T15:07:56Z",
+      "side": 1,
+      "message": "```\n$ ./prebuilts/build-tools/path/linux-x86/realpath --relative-to . build/core/../soong\nrealpath: Unknown option \u0027relative-to\u0027 (see \"realpath --help\")\n$ ./prebuilts/build-tools/path/linux-x86/realpath --help\nToybox 0.8.4-android multicall binary: https://landley.net/toybox (see toybox --help)\n\nusage: realpath FILE...\n\nDisplay the canonical absolute pathname\n\n```",
+      "parentUuid": "9b50a149_7aa08fb1",
+      "range": {
+        "startLine": 162,
+        "startChar": 21,
+        "endLine": 162,
+        "endChar": 49
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "33922690_4fb22c6e",
         "filename": "core/soong_config.mk",
         "patchSetId": 2
