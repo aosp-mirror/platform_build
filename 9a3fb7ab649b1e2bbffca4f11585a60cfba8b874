@@ -166,6 +166,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dfde39ed_f974a589",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2021-02-25T05:48:02Z",
+      "side": 1,
+      "message": "Ah, got it. The VendorSnapshotDirsExcludedMap overrides the default map, and the snapshot includes the dir if it is true in the map.",
+      "parentUuid": "a443a6ad_e7d886f2",
+      "range": {
+        "startLine": 162,
+        "startChar": 21,
+        "endLine": 162,
+        "endChar": 49
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "33922690_4fb22c6e",
