@@ -26,6 +26,52 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8362e0ce_88cf7d65",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2021-02-25T04:22:29Z",
+      "side": 1,
+      "message": "Do we actually use \u0027VENDOR_SNAPSHOT_DIRS_INCLUDE\u0027?\nI think, the soong code sees \u0027VENDOR_SNAPSHOT_DIRS_EXCLUDE\u0027 only.",
+      "range": {
+        "startLine": 162,
+        "startChar": 21,
+        "endLine": 162,
+        "endChar": 49
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6f28ac6_5948e1a7",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2021-02-25T04:22:29Z",
+      "side": 1,
+      "message": "Rename it to \"dir\"?",
+      "range": {
+        "startLine": 162,
+        "startChar": 12,
+        "endLine": 162,
+        "endChar": 18
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "33922690_4fb22c6e",
         "filename": "core/soong_config.mk",
         "patchSetId": 2
@@ -37,6 +83,30 @@
       "writtenOn": "2021-02-24T23:35:39Z",
       "side": 1,
       "message": "Won\u0027t add_json_bool make more sense?",
+      "range": {
+        "startLine": 160,
+        "startChar": 0,
+        "endLine": 167,
+        "endChar": 0
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef2f76af_89035b73",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2021-02-25T04:22:29Z",
+      "side": 1,
+      "message": "+1",
+      "parentUuid": "33922690_4fb22c6e",
       "range": {
         "startLine": 160,
         "startChar": 0,
