@@ -72,6 +72,78 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a443a6ad_e7d886f2",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1462756
+      },
+      "writtenOn": "2021-02-25T04:45:15Z",
+      "side": 1,
+      "message": "Both variables are used to build the map, VendorSnapshotDirsExcludedMap, that soong code sees. Directories in VENDOR_SNAPSHOT_DIRS_INCLUDE are set to false and directories in VENDOR_SNAPSHOT_DIRS_EXCLUDE are set to true. This will allow them to include extra directories and maybe exclude some subdirectories.",
+      "parentUuid": "8362e0ce_88cf7d65",
+      "range": {
+        "startLine": 162,
+        "startChar": 21,
+        "endLine": 162,
+        "endChar": 49
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "471abbce_d198aae0",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1462756
+      },
+      "writtenOn": "2021-02-25T04:45:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b6f28ac6_5948e1a7",
+      "range": {
+        "startLine": 162,
+        "startChar": 12,
+        "endLine": 162,
+        "endChar": 18
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd5e23f8_7088de35",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1462756
+      },
+      "writtenOn": "2021-02-25T04:45:15Z",
+      "side": 1,
+      "message": "I agree but there doesn\u0027t seem to be a convenient way of doing that in make, $(realpath PATH) returns the absolute path and only if that path exists. If we want to do something like this we would need to do it in Soong/Go.",
+      "parentUuid": "9af46fd7_d104a608",
+      "range": {
+        "startLine": 162,
+        "startChar": 21,
+        "endLine": 162,
+        "endChar": 49
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "33922690_4fb22c6e",
         "filename": "core/soong_config.mk",
         "patchSetId": 2
@@ -107,6 +179,30 @@
       "side": 1,
       "message": "+1",
       "parentUuid": "33922690_4fb22c6e",
+      "range": {
+        "startLine": 160,
+        "startChar": 0,
+        "endLine": 167,
+        "endChar": 0
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15149063_135827ac",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1462756
+      },
+      "writtenOn": "2021-02-25T04:45:15Z",
+      "side": 1,
+      "message": "I changed the map to [string]bool. But, I used add_json_val, so that I could use true and false directly. add_json_bool expects a boolean and \"false\" string evaluates to true.",
+      "parentUuid": "ef2f76af_89035b73",
       "range": {
         "startLine": 160,
         "startChar": 0,
