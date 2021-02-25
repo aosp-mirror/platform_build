@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fbd128f4_44a39f9c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1463043
+      },
+      "writtenOn": "2021-02-25T01:38:14Z",
+      "side": 1,
+      "message": "Thanks for review this fix,  new patch set has been uploaded.",
+      "revId": "71af07abe8da2b100c239dc2e1c34672f35eadab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
