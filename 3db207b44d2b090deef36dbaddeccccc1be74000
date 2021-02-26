@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74c1854f_9ecdf2d1",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1535516
+      },
+      "writtenOn": "2021-02-26T01:10:50Z",
+      "side": 1,
+      "message": "nit: add dirmods here",
+      "revId": "3db207b44d2b090deef36dbaddeccccc1be74000",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b39b6435_09301fb9",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1441,
+      "author": {
+        "id": 1535516
+      },
+      "writtenOn": "2021-02-26T01:10:50Z",
+      "side": 1,
+      "message": "Nit: mention that this is the inverse of pathmod, and maybe in pathmod\u0027s comment also mention it\u0027s the inverse of dirmods.",
+      "revId": "3db207b44d2b090deef36dbaddeccccc1be74000",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "633ea2cd_8d24244d",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1457,
+      "author": {
+        "id": 1535516
+      },
+      "writtenOn": "2021-02-26T01:10:50Z",
+      "side": 1,
+      "message": "Wouldn\u0027t the more efficient way to do this be to use getTargetsFromDirs() in build/soong/ui/build/config.go? Maybe we should add a new command to soong_ui that allows querying info like this instead of using module-info.json, and rewrite most of these mods commands to use it. Just a thought though.",
+      "revId": "3db207b44d2b090deef36dbaddeccccc1be74000",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
