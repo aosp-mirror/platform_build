@@ -104,6 +104,24 @@
       "parentUuid": "633ea2cd_8d24244d",
       "revId": "3db207b44d2b090deef36dbaddeccccc1be74000",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "18b4440a_64c6c21e",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1457,
+      "author": {
+        "id": 1535516
+      },
+      "writtenOn": "2021-02-26T07:17:50Z",
+      "side": 1,
+      "message": "True, probably deserves some benchmarking.",
+      "parentUuid": "b4637c32_eab3a109",
+      "revId": "3db207b44d2b090deef36dbaddeccccc1be74000",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

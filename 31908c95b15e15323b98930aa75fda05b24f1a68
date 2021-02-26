@@ -16,6 +16,29 @@
       "message": "Thanks for the review Cole. PTAL again.",
       "revId": "31908c95b15e15323b98930aa75fda05b24f1a68",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4cbd942b_2b8a3a6f",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 1417,
+      "author": {
+        "id": 1535516
+      },
+      "writtenOn": "2021-02-26T07:17:50Z",
+      "side": 1,
+      "message": "nit: typo",
+      "range": {
+        "startLine": 1417,
+        "startChar": 49,
+        "endLine": 1417,
+        "endChar": 51
+      },
+      "revId": "31908c95b15e15323b98930aa75fda05b24f1a68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
