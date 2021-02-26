@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf6c5b80_24f06eb6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1860328
+      },
+      "writtenOn": "2021-02-26T21:44:47Z",
+      "side": 1,
+      "message": "23823: Switch back to mksh as the default | https://android-review.googlesource.com/c/platform/build/+/23823",
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
