@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89067552_dbcc3b84",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2021-02-26T01:08:17Z",
+      "side": 1,
+      "message": "This file must be BoardConfigGenericCommon.mk to avoid confusion with mainline.",
+      "revId": "6e7693f1597a0934833a72faf35e918dfbdb6ecd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
