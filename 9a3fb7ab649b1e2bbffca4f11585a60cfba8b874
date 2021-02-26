@@ -240,6 +240,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "173e6345_36dca5d2",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1462756
+      },
+      "writtenOn": "2021-02-26T04:33:52Z",
+      "side": 1,
+      "message": "I\u0027m leaning towards leaving it as is. Do you prefer as is or adding logic to snapshot_prebuilt.go to handle this use case?",
+      "parentUuid": "d09fb62f_6d30be49",
+      "range": {
+        "startLine": 162,
+        "startChar": 21,
+        "endLine": 162,
+        "endChar": 49
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "33922690_4fb22c6e",
         "filename": "core/soong_config.mk",
         "patchSetId": 2
