@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8988f291_0b08c932",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-02-26T05:12:59Z",
+      "side": 1,
+      "message": "Thanks for the review Cole. PTAL again.",
+      "revId": "31908c95b15e15323b98930aa75fda05b24f1a68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
