@@ -230,7 +230,7 @@ import zipfile
 import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
-                       PropertyFiles)
+                       PropertyFiles, SECURITY_PATCH_LEVEL_PROP_NAME)
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
@@ -292,7 +292,7 @@ SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
     'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor',
     'vendor_boot']
 
-SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
+
 
 
 class PayloadSigner(object):
@@ -1418,14 +1418,20 @@ def main(argv):
     target_build_prop = OPTIONS.target_info_dict["build.prop"]
     source_spl = source_build_prop.GetProp(SECURITY_PATCH_LEVEL_PROP_NAME)
     target_spl = target_build_prop.GetProp(SECURITY_PATCH_LEVEL_PROP_NAME)
-    if target_spl < source_spl and not OPTIONS.spl_downgrade:
+    is_spl_downgrade = target_spl < source_spl
+    if is_spl_downgrade and not OPTIONS.spl_downgrade:
       raise common.ExternalError(
         "Target security patch level {} is older than source SPL {} applying "
-        "such OTA will likely cause device fail to boot. Pass --spl-downgrade "
+        "such OTA will likely cause device fail to boot. Pass --spl_downgrade "
         "to override this check. This script expects security patch level to "
         "be in format yyyy-mm-dd (e.x. 2021-02-05). It's possible to use "
         "separators other than -, so as long as it's used consistenly across "
         "all SPL dates".format(target_spl, source_spl))
+    elif not is_spl_downgrade and OPTIONS.spl_downgrade:
+      raise ValueError("--spl_downgrade specified but no actual SPL downgrade"
+                       " detected. Please only pass in this flag if you want a"
+                       " SPL downgrade. Target SPL: {} Source SPL: {}"
+                       .format(target_spl, source_spl))
   if generate_ab:
     GenerateAbOtaPackage(
         target_file=args[0],
