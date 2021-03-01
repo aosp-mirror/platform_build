@@ -286,6 +286,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "df14a0fe_819a3a77",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1462756
+      },
+      "writtenOn": "2021-03-01T22:02:04Z",
+      "side": 1,
+      "message": "Done, added in the other change in snapshot_prebuilt.go",
+      "parentUuid": "e726d6c4_c524bca2",
+      "range": {
+        "startLine": 162,
+        "startChar": 21,
+        "endLine": 162,
+        "endChar": 49
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "33922690_4fb22c6e",
@@ -347,6 +371,30 @@
       "side": 1,
       "message": "I changed the map to [string]bool. But, I used add_json_val, so that I could use true and false directly. add_json_bool expects a boolean and \"false\" string evaluates to true.",
       "parentUuid": "ef2f76af_89035b73",
+      "range": {
+        "startLine": 160,
+        "startChar": 0,
+        "endLine": 167,
+        "endChar": 0
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "35c669d8_aae4d26c",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1462756
+      },
+      "writtenOn": "2021-03-01T22:02:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "15149063_135827ac",
       "range": {
         "startLine": 160,
         "startChar": 0,
