@@ -264,6 +264,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e726d6c4_c524bca2",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-03-01T08:14:03Z",
+      "side": 1,
+      "message": "Ack. then I\u0027d prefer to handle the logic in snapshot_prebuilt.go.\n\nI think we can do that in a follow-up CL, and a small TODO may be enough this time.",
+      "parentUuid": "173e6345_36dca5d2",
+      "range": {
+        "startLine": 162,
+        "startChar": 21,
+        "endLine": 162,
+        "endChar": 49
+      },
+      "revId": "9a3fb7ab649b1e2bbffca4f11585a60cfba8b874",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "33922690_4fb22c6e",
         "filename": "core/soong_config.mk",
         "patchSetId": 2
