@@ -16,6 +16,24 @@
       "message": "Can you add a comment on why this can\u0027t go in android_soong_config_vars.mk so the pattern doesn\u0027t get copied for other uses?",
       "revId": "61d8e1cc6b3f1d761fce9e13679dde3a6ef65d9d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d3d5414_2a4f1aca",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1166,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-01T22:31:46Z",
+      "side": 1,
+      "message": "Done. It\u0027s possible something similar will be required even when the logic doesn\u0027t need to cover all platform builds, but then driving it from a product variable may be a better option.",
+      "parentUuid": "7fadf34b_4bd42a46",
+      "revId": "61d8e1cc6b3f1d761fce9e13679dde3a6ef65d9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
