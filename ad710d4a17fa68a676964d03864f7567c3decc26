@@ -70,6 +70,30 @@
       },
       "revId": "ad710d4a17fa68a676964d03864f7567c3decc26",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "be1a3596_f7362d0c",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-01T21:59:47Z",
+      "side": 1,
+      "message": "Turned out it only needed to be moved out of the `ifeq ($(CALLED_FROM_SETUP),true)` clause in config.mk, which I\u0027ve done now.\n\nIt is temporary, but I\u0027m open to suggestions for better places. +ccross, is it ok this way?",
+      "parentUuid": "44eee354_13b180a6",
+      "range": {
+        "startLine": 292,
+        "startChar": 0,
+        "endLine": 314,
+        "endChar": 5
+      },
+      "revId": "ad710d4a17fa68a676964d03864f7567c3decc26",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
