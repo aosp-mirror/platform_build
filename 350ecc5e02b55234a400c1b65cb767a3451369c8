@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2361168b_05b66abd",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1170,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-01T22:55:36Z",
+      "side": 1,
+      "message": "A Makefile depending on these variables is strange, but a \"normal\" soong config variable set in a BoardConfig.mk file would always be visible to Make.  I think the right fix here is to just move all of android_soong_config_vars.mk outside of CALLED_FROM_SETUP.",
+      "range": {
+        "startLine": 1167,
+        "startChar": 0,
+        "endLine": 1170,
+        "endChar": 21
+      },
+      "revId": "350ecc5e02b55234a400c1b65cb767a3451369c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
