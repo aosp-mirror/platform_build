@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7fadf34b_4bd42a46",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1166,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-01T22:10:48Z",
+      "side": 1,
+      "message": "Can you add a comment on why this can\u0027t go in android_soong_config_vars.mk so the pattern doesn\u0027t get copied for other uses?",
+      "revId": "61d8e1cc6b3f1d761fce9e13679dde3a6ef65d9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
