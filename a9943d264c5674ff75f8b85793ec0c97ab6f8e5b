@@ -88,6 +88,29 @@
       "parentUuid": "a7e9c5ac_b0d1bed3",
       "revId": "a9943d264c5674ff75f8b85793ec0c97ab6f8e5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0968128c_f770bfaf",
+        "filename": "target/product/media_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2021-03-01T20:03:59Z",
+      "side": 1,
+      "message": "I just realized that this is media_system.mk and the header say:\n\n# This makefile contains the system partition contents for\n# media-capable devices (non-wearables). Only add something\n# here if it definitely doesn\u0027t belong on wearables. Otherwise,\n# choose base_system.mk\n\nIt looks likes we should be adding this in base_system.mk",
+      "range": {
+        "startLine": 61,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 33
+      },
+      "revId": "a9943d264c5674ff75f8b85793ec0c97ab6f8e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
