@@ -16,6 +16,23 @@
       "message": "Tianjie, PTAL",
       "revId": "e077cf764fad5fdff8604c99d25278c621581279",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "14042e48_1144afdd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-03-01T21:02:17Z",
+      "side": 1,
+      "message": "We should add a common function like AddPrebuiltImage if there are more of these images.",
+      "revId": "e077cf764fad5fdff8604c99d25278c621581279",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
