@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "532fd59c_649f9046",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-02T16:37:57Z",
+      "side": 1,
+      "message": "A test that PRODUCT_BOOT_JAR_MODULE_OVERRIDES is in sync with overridden modules will come later when the necessary overrides are in place (https://r.android.com/1610908).",
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
