@@ -181,6 +181,52 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "71e2239f_a166de09",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T16:26:29Z",
+      "side": 1,
+      "message": "Why is the quoting necessary? You seem not to be unquoting for example in Attr(), is that intended?",
+      "range": {
+        "startLine": 53,
+        "startChar": 11,
+        "endLine": 53,
+        "endChar": 42
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e6028fec_9d44503e",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T16:26:29Z",
+      "side": 1,
+      "message": "nit: mind finding a name for this and changing the godoc that they don\u0027t require Python knowledge to understand? (e.g. \"setIfNotPresent\")\n\nWhat Make operation is this an equivalent for?",
+      "range": {
+        "startLine": 131,
+        "startChar": 5,
+        "endLine": 131,
+        "endChar": 22
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2ded8d25_c164ae35",
         "filename": "tools/rbcrun/stack.go",
         "patchSetId": 22
@@ -197,6 +243,52 @@
         "startChar": 24,
         "endLine": 11,
         "endChar": 59
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ccc690a0_9fcb5c65",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T16:26:29Z",
+      "side": 1,
+      "message": "Check for frozenness here",
+      "range": {
+        "startLine": 115,
+        "startChar": 1,
+        "endLine": 115,
+        "endChar": 29
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ae723c6_cf17d7ef",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T16:26:29Z",
+      "side": 1,
+      "message": "Is the destructive iteration intended? It\u0027s weird because you seem to be preparing for the existence of multiple parallel iterators but it appears that if you have more than one iterator, they will return the elements in the stack distributed between them.",
+      "range": {
+        "startLine": 137,
+        "startChar": 10,
+        "endLine": 137,
+        "endChar": 25
       },
       "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
