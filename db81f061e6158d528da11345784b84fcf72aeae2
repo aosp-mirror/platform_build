@@ -98,6 +98,53 @@
       },
       "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8fd94566_0e2ff410",
+        "filename": "core/product_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-02T17:54:07Z",
+      "side": 1,
+      "message": "I was confused, but now remembered that PRODUCT_UPDATABLE_BOOT_JARS all have colons in them\n\nhowever, it still seems a little bit freaky to me. Is it going to do the right thing with multiple entries from one apex? I suspect not, but am not sure how lazily % matches. Can you use subst instead? And perhaps loop through the words in $(1) instead would be easier to understand.",
+      "parentUuid": "27aa9af2_9974be55",
+      "range": {
+        "startLine": 286,
+        "startChar": 30,
+        "endLine": 286,
+        "endChar": 44
+      },
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "27fd5a10_af11ce2b",
+        "filename": "core/product_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-02T17:54:07Z",
+      "side": 1,
+      "message": "This does not have colons in it",
+      "range": {
+        "startLine": 289,
+        "startChar": 41,
+        "endLine": 289,
+        "endChar": 58
+      },
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
