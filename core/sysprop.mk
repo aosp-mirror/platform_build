@@ -331,7 +331,7 @@ android_info_prop := $(call intermediates-dir-for,ETC,android_info_prop)/android
 $(android_info_prop): $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 	cat $< | grep 'require version-' | sed -e 's/require version-/ro.build.expect./g' > $@
 
-_prop_files_ += $(android_info_pro)
+_prop_files_ += $(android_info_prop)
 
 ifdef property_overrides_split_enabled
 # Order matters here. When there are duplicates, the last one wins.
