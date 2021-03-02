@@ -148,6 +148,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "04e69ebd_818143e2",
+        "filename": "core/product_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-02T19:58:21Z",
+      "side": 1,
+      "message": "\u003e Is it going to do the right thing with multiple entries from one apex?\n\nYes.\n\nIt\u0027s well documented at https://www.gnu.org/software/make/manual/make.html#Text-Functions and I see plenty of patsubst use with \"%\" patterns on word lists in build/make, so is this really that out of place? I think replacing it with an explicit loop over each word would only make it needlessly verbose.",
+      "parentUuid": "fc481c79_b84ec74f",
+      "range": {
+        "startLine": 286,
+        "startChar": 30,
+        "endLine": 286,
+        "endChar": 44
+      },
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "27fd5a10_af11ce2b",
@@ -161,6 +185,30 @@
       "writtenOn": "2021-03-02T17:54:07Z",
       "side": 1,
       "message": "This does not have colons in it",
+      "range": {
+        "startLine": 289,
+        "startChar": 41,
+        "endLine": 289,
+        "endChar": 58
+      },
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ae48896_0aa72043",
+        "filename": "core/product_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-02T19:58:21Z",
+      "side": 1,
+      "message": "It does here - see line 237.",
+      "parentUuid": "27fd5a10_af11ce2b",
       "range": {
         "startLine": 289,
         "startChar": 41,
