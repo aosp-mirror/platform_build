@@ -1163,8 +1163,11 @@ endif
 dont_bother_goals := out \
     product-graph dump-products
 
-ifeq ($(CALLED_FROM_SETUP),true)
+# Make ANDROID Soong config variables visible to Android.mk files, for
+# consistency with those defined in BoardConfig.mk files.
 include $(BUILD_SYSTEM)/android_soong_config_vars.mk
+
+ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
