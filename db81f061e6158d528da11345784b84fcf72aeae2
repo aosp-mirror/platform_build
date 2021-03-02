@@ -16,6 +16,46 @@
       "message": "A test that PRODUCT_BOOT_JAR_MODULE_OVERRIDES is in sync with overridden modules will come later when the necessary overrides are in place (https://r.android.com/1610908).",
       "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "edde111a_311d9ed6",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-02T17:04:10Z",
+      "side": 1,
+      "message": "Can you document the format this should take?",
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54a890eb_73cc56f6",
+        "filename": "core/product_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-02T17:04:10Z",
+      "side": 1,
+      "message": "Will this deal correctly with the last entry in the list?",
+      "range": {
+        "startLine": 286,
+        "startChar": 30,
+        "endLine": 286,
+        "endChar": 44
+      },
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
