@@ -16,6 +16,122 @@
       "message": "23823: Switch back to mksh as the default | https://android-review.googlesource.com/c/platform/build/+/23823",
       "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e4c1e1e_f4cbe6ed",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-02T00:03:17Z",
+      "side": 1,
+      "message": "There\u0027s a lot here, so I have some preliminary questions:\n\nHow are you testing this? Both as in, how are you testing the execution of this Starlark, and how are you verifying the Starlark you\u0027ve written is equivalent in semantics to the makefiles it is based on?",
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25809047_36c27074",
+        "filename": "core/build_id.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-02T00:03:17Z",
+      "side": 1,
+      "message": "What is g? A struct? Structs are immutable in starlark.\nWhat the expected fields of g?",
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "94de46e8_b270c42c",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-02T00:03:17Z",
+      "side": 1,
+      "message": "Doc comment?",
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ca5cd28_f8dd3270",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-02T00:03:17Z",
+      "side": 1,
+      "message": "nit: \"don\u0027t cry\" is cute (and a copy from the origin, I see), but is inexact",
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef1e0d8d_c860fab0",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-02T00:03:17Z",
+      "side": 1,
+      "message": "\u003e Please remove the trailing whitespace.\n\nPlease fix.",
+      "parentUuid": "5060c63d_56555da2",
+      "range": {
+        "startLine": 80,
+        "startChar": 34,
+        "endLine": 80,
+        "endChar": 35
+      },
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0f8d4eac_4a4bf49a",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-02T00:03:17Z",
+      "side": 1,
+      "message": "\u003e Please remove the trailing whitespace.\n\nPlease fix.",
+      "parentUuid": "5e670964_f6065ca5",
+      "range": {
+        "startLine": 87,
+        "startChar": 69,
+        "endLine": 87,
+        "endChar": 70
+      },
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
