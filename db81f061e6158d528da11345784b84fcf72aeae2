@@ -172,6 +172,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "29db4a88_6b6a9e7f",
+        "filename": "core/product_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-02T20:07:32Z",
+      "side": 1,
+      "message": "ohh % only matches characters within a single word. That\u0027s not what I thought it did. Okay, then it definitely makes sense as-is.",
+      "parentUuid": "04e69ebd_818143e2",
+      "range": {
+        "startLine": 286,
+        "startChar": 30,
+        "endLine": 286,
+        "endChar": 44
+      },
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "27fd5a10_af11ce2b",
@@ -209,6 +233,30 @@
       "side": 1,
       "message": "It does here - see line 237.",
       "parentUuid": "27fd5a10_af11ce2b",
+      "range": {
+        "startLine": 289,
+        "startChar": 41,
+        "endLine": 289,
+        "endChar": 58
+      },
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "108c4f42_815a0822",
+        "filename": "core/product_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-02T20:07:32Z",
+      "side": 1,
+      "message": "can you please move this up so it\u0027s right below that logic?",
+      "parentUuid": "9ae48896_0aa72043",
       "range": {
         "startLine": 289,
         "startChar": 41,
