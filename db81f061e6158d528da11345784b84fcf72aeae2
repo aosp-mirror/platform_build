@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4aa6d9e_e88d2f88",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-02T17:44:41Z",
+      "side": 1,
+      "message": "Wasn\u0027t sure how the other similar variables are documented, but done here for this one.",
+      "parentUuid": "edde111a_311d9ed6",
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "54a890eb_73cc56f6",
@@ -48,6 +66,30 @@
       "writtenOn": "2021-03-02T17:04:10Z",
       "side": 1,
       "message": "Will this deal correctly with the last entry in the list?",
+      "range": {
+        "startLine": 286,
+        "startChar": 30,
+        "endLine": 286,
+        "endChar": 44
+      },
+      "revId": "db81f061e6158d528da11345784b84fcf72aeae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27aa9af2_9974be55",
+        "filename": "core/product_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-02T17:44:41Z",
+      "side": 1,
+      "message": "I don\u0027t see why it wouldn\u0027t. Anyway I verified that it indeed does by printing ART_APEX_JARS (where every entry is replaced).",
+      "parentUuid": "54a890eb_73cc56f6",
       "range": {
         "startLine": 286,
         "startChar": 30,
