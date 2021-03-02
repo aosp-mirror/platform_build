@@ -1,0 +1,205 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ae81e89_2cf5e331",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T15:54:11Z",
+      "side": 1,
+      "message": "A preliminary review round! I seem to remember that we had a previous discussion about propsets and that I also grumbled about it then. What I do not remember is stacks.",
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75bed35e_de200ecc",
+        "filename": "tools/rbcrun/cmd/rbcrun.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T15:54:11Z",
+      "side": 1,
+      "message": "This is an inlined command similar to \"bash -c\"?",
+      "range": {
+        "startLine": 13,
+        "startChar": 50,
+        "endLine": 13,
+        "endChar": 56
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "73f7bc8e_97d29145",
+        "filename": "tools/rbcrun/cmd/rbcrun.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T15:54:11Z",
+      "side": 1,
+      "message": "This makes it impossible to execute files with an equals sign in their names. Suggestion: add a flag for setting environment variables, add a flag for the name of the file to be executed or both.",
+      "range": {
+        "startLine": 26,
+        "startChar": 2,
+        "endLine": 26,
+        "endChar": 30
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b8af502_4141acc3",
+        "filename": "tools/rbcrun/cmd/rbcrun.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T15:54:11Z",
+      "side": 1,
+      "message": "opt: maybe \"\u003ccmdline\u003e\" is better?",
+      "range": {
+        "startLine": 38,
+        "startChar": 14,
+        "endLine": 38,
+        "endChar": 21
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "feeeb7a3_fee24d41",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T15:54:11Z",
+      "side": 1,
+      "message": "Do we care about Windows?",
+      "range": {
+        "startLine": 257,
+        "startChar": 23,
+        "endLine": 257,
+        "endChar": 30
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f8e77d83_20623a38",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T15:54:11Z",
+      "side": 1,
+      "message": "AFAIU os.LookupEnv() does this without having to implement a for loop yourself",
+      "range": {
+        "startLine": 259,
+        "startChar": 1,
+        "endLine": 259,
+        "endChar": 26
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4baf5e7b_893074ce",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T15:54:11Z",
+      "side": 1,
+      "message": "Why not just a string or nil? It appears that rbcrun only uses these two.",
+      "range": {
+        "startLine": 271,
+        "startChar": 3,
+        "endLine": 272,
+        "endChar": 68
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54b27cf7_1253af12",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T15:54:11Z",
+      "side": 1,
+      "message": "What\u0027s the plan for when this whole thing will be implemented within Bazel? Is there one? \n\nIt\u0027s somewhat problematic because once the load() of a file is done in Bazel, all data it contains must be immutable and this explicitly violates that condition. The design doc says that this is to emulate the behavior of Make variables, which is I think a good avenue for the time being.\n\nIs there a plan for the future when all this will run from within Bazel? The one I can come up with off the top of my head is to kit out this code with tracing so that we know where the immutability condition is violated then refactor the product config files to not to violate that condition.",
+      "range": {
+        "startLine": 33,
+        "startChar": 3,
+        "endLine": 33,
+        "endChar": 10
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ded8d25_c164ae35",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-02T15:54:11Z",
+      "side": 1,
+      "message": "What is this used for? Is this some feature in Make the product configuration makes extensive use of?",
+      "range": {
+        "startLine": 11,
+        "startChar": 24,
+        "endLine": 11,
+        "endChar": 59
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
