@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "76908eb1_8635e9f5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 24
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T23:47:41Z",
+      "side": 1,
+      "message": "Restating my previous comment but marking unresolved for visibility:\n\nCould you please go into more detail on your commit message? \"Test: self test\" can be elaborated on; how does one test this?\nMaybe also link to your design doc, and explain *briefly* how this fits into the bigger picture.",
+      "revId": "61cf169a2dcf48fb446ea58eafbb900536734b96",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cbaa04af_d8948588",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 24
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T23:47:41Z",
+      "side": 1,
+      "message": "nit: remove extra whitespace",
+      "revId": "61cf169a2dcf48fb446ea58eafbb900536734b96",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

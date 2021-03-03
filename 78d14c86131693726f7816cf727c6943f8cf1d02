@@ -72,6 +72,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ed2afb67_6518ee71",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T23:47:41Z",
+      "side": 1,
+      "message": "Do you just mean that\n\nfoo.BAR \u003d baz\nbecomes\nfoo[\"BAR\"] \u003d baz\n\n?\n\nI\u0027m not convinced this is much uglier, and I\u0027m far more fond of keeping to pure Starlark when we can.",
+      "parentUuid": "241da3c2_5eb6388f",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0e68ba1b_0970ecb9",
         "filename": "tools/rbcrun/README.md",
         "patchSetId": 23
@@ -101,6 +119,24 @@
       "side": 1,
       "message": "Please see the comments for the stack.go",
       "parentUuid": "0e68ba1b_0970ecb9",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e0b92703_772cf513",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T23:47:41Z",
+      "side": 1,
+      "message": "Got it, thanks. As a small nit, it might be good to restate this in the README.",
+      "parentUuid": "06f84524_c3681479",
       "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -142,6 +178,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e927bd99_6c3c5573",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T23:47:41Z",
+      "side": 1,
+      "message": "Copying from Lukacs\u0027 comment in your doc:\n\n\u003e Why is the \"init\" symbol twice on the command line? From what I can glean, what you intend to do is a simple \"should rbcrun be okay with this file missing?\" bit, but then why not make it just a simple bit?",
+      "parentUuid": "4a079fab_7fd622ee",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b1d4344e_91e1a622",
         "filename": "tools/rbcrun/README.md",
         "patchSetId": 23
@@ -171,6 +225,24 @@
       "side": 1,
       "message": "It runs cmd,  which should write a Starlark script to stdout. Then this script is read and executed (line 128 in host.go)",
       "parentUuid": "b1d4344e_91e1a622",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "279cac9a_9c988bf4",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T23:47:41Z",
+      "side": 1,
+      "message": "There\u0027s no guarantee that \"cmd\" writes a Starlark script to stdout though, right? Or, even worse, there\u0027s no guarantee that \"cmd\" doesn\u0027t do arbitrary host code execution *before* it writes a Starlark script to stdout.\n\nMy concern here is that we are opening the API to abuse: We technically allow any arbitrary command to be executed, under the guise of a reduced scope.\n\nCan we reduce the scope of this function?",
+      "parentUuid": "c41d4a44_519dc958",
       "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
