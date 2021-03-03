@@ -18,6 +18,91 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "618150d0_d8ad3039",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 23
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T15:32:25Z",
+      "side": 1,
+      "message": "Could you please go into more detail on your commit message? \"Test: self test\" can be elaborated on; how does one test this?\nMaybe also link to your design doc, and explain *briefly* how this fits into the bigger picture.",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fbd76101_dd05db0c",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T15:32:25Z",
+      "side": 1,
+      "message": "Can we not implement this using a map instead, and avoid the divergence with the Starlark specification? It makes the syntax slightly more verbose, but I think that\u0027s a small price to pay.",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0e68ba1b_0970ecb9",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T15:32:25Z",
+      "side": 1,
+      "message": "Is the issue here that if we use a builtin Starlark data type such as a list, to mimic the same behavior, that the list must be frozen in the inner loop context?",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "50c5d01e_ff41d31b",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T15:32:25Z",
+      "side": 1,
+      "message": "Isn\u0027t this somewhat redundant with just omitting the |init portion, since you\u0027re later declaring that you want to export symbol \"init\" via `mymodule_init\u003d\"init\"` ?\nWhy not just omit the |init portion?\n\nI see lberki@ has commented to this same effect in your design doc.",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b1d4344e_91e1a622",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T15:32:25Z",
+      "side": 1,
+      "message": "What does it mean to generate a Starlark script on stdout? If I am understanding the implementation correctly, it\u0027s just running exec on `cmd args...`, and has nothing to do with stdout. Can you elaborate?",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0ebb6cb0_79bff0f5",
