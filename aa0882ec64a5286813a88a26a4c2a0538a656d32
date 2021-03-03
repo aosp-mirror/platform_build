@@ -88,6 +88,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f88f94e4_2da0c6b1",
+        "filename": "core/build_id.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-03T15:33:14Z",
+      "side": 1,
+      "message": "I\u0027ve made some comments on this other CL.",
+      "parentUuid": "6fe758c1_303a8f9d",
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "94de46e8_b270c42c",
