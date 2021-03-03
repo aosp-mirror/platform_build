@@ -17,9 +17,9 @@ To temporarily relax missing required modules check, use:
 System properties for each of the partition is supposed to be set via following
 product config variables.
 
-For system partititon,
+For system partition,
 
-* `PRODUCT_SYSTEM_PROPERITES`
+* `PRODUCT_SYSTEM_PROPERTIES`
 * `PRODUCT_SYSTEM_DEFAULT_PROPERTIES` is highly discouraged. Will be deprecated.
 
 For vendor partition,
