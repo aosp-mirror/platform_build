@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "35bb5287_edeceede",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 23
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "More comments! I still don\u0027t entirely understand what\u0027s going on, so some are probably somewhat embarrassing.",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ebb6cb0_79bff0f5",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 23
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "Are these symbols intended to be usable by every .rbc file?",
+      "range": {
+        "startLine": 252,
+        "startChar": 3,
+        "endLine": 252,
+        "endChar": 19
+      },
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "279a8e09_14000605",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 23
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "Why the \"rblf\" prefix? \"Roboleaf\" is a temporary thing and will go stop eventually, but this identifier will stay forever, so I think it\u0027s better to find a prefix that will have meaning in the indefinite future.",
+      "range": {
+        "startLine": 255,
+        "startChar": 3,
+        "endLine": 255,
+        "endChar": 16
+      },
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e3d7d50b_0a82dec1",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 23
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "Is the intended use to call rbcrun with an actual product configuration rbcrun file? That seems to be what the Starlark2 document says. How does that transfer control to the init() function of the module in question?",
+      "range": {
+        "startLine": 271,
+        "startChar": 5,
+        "endLine": 271,
+        "endChar": 8
+      },
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

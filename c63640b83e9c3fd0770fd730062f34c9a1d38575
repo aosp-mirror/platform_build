@@ -132,6 +132,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7331473d_8104026a",
+        "filename": "tools/rbcrun/cmd/rbcrun.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "Why document it if it can be fixed with a tiny amount of work? Changing this later would involve a change on the interface of rbcrun, which doesn\u0027t sound fun.",
+      "parentUuid": "16ecab75_b1880c9e",
+      "range": {
+        "startLine": 26,
+        "startChar": 2,
+        "endLine": 26,
+        "endChar": 30
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3b8af502_4141acc3",
         "filename": "tools/rbcrun/cmd/rbcrun.go",
         "patchSetId": 22
@@ -214,6 +238,30 @@
       "side": 1,
       "message": "I don\u0027t know. Just in case.",
       "parentUuid": "feeeb7a3_fee24d41",
+      "range": {
+        "startLine": 257,
+        "startChar": 23,
+        "endLine": 257,
+        "endChar": 30
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f421b1c0_99a4d48c",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "Meh, if Android will ever need to build on Windows, this would be the smallest of our problems.",
+      "parentUuid": "87459f80_236fd3c1",
       "range": {
         "startLine": 257,
         "startChar": 23,
@@ -318,6 +366,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "07480de5_ed3a08ce",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "Today I Learned that starlark.ExecFile does that",
+      "parentUuid": "346f4de8_1456e073",
+      "range": {
+        "startLine": 271,
+        "startChar": 3,
+        "endLine": 272,
+        "endChar": 68
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "54b27cf7_1253af12",
@@ -355,6 +427,30 @@
       "side": 1,
       "message": "The loaded product configuration module exposes only an init function. The execution of this function populates a propset that\u0027s passed to it. The generated configuration is a propset, which then becomes frozen.",
       "parentUuid": "54b27cf7_1253af12",
+      "range": {
+        "startLine": 33,
+        "startChar": 3,
+        "endLine": 33,
+        "endChar": 10
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75c601c3_bb321db7",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "I still have a hard time understanding when a propset becomes frozen. I\u0027ll probably understand it better once I know where init() functions are called from.",
+      "parentUuid": "79893c1e_5968afe1",
       "range": {
         "startLine": 33,
         "startChar": 3,
@@ -414,6 +510,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a50c745b_c74e5b37",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "Is this the best way to extract the actual string from the Value?\n\nhttps://github.com/google/starlark-go/blob/ebe61bd709bf23d7baddbb34e79084d7d156be04/starlark/value.go#L521\n\nindicates that the String type is public, so you should be able to simply downcast (either to String or Go string, my Golang is not good enough to know) and then you avoid parsing.",
+      "parentUuid": "1e33ce2f_e50c5465",
+      "range": {
+        "startLine": 53,
+        "startChar": 11,
+        "endLine": 53,
+        "endChar": 42
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e6028fec_9d44503e",
         "filename": "tools/rbcrun/propset.go",
         "patchSetId": 22
@@ -461,6 +581,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "731d6311_32fab451",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "Mind adding all this to a comment at some convenient location (e.g. where you reference psetdefault in setup()) so that people who read this code in the future also know?\n\nActually, even better: could you document on each method on rblf what Make thing it corresponds to?",
+      "parentUuid": "27899f2e_c0596e18",
+      "range": {
+        "startLine": 131,
+        "startChar": 5,
+        "endLine": 131,
+        "endChar": 22
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2ded8d25_c164ae35",
         "filename": "tools/rbcrun/stack.go",
         "patchSetId": 22
@@ -496,6 +640,30 @@
       "side": 1,
       "message": "Product configuration is a hierarchy which has to be traversed in the postfix order (please see _product_configuration function in product_config.rbc in aosp/1486492). As Starlark language provides only foreach loop, the alternative is to emulate a stack in a loop that runs over range(1234567) and inside it emulate the stack with an array and exit when the stack is empty. I\u0027d rather provide stack as a data type, but this is negotiable.",
       "parentUuid": "2ded8d25_c164ae35",
+      "range": {
+        "startLine": 11,
+        "startChar": 24,
+        "endLine": 11,
+        "endChar": 59
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b048e469_ee7a3fa6",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "Let me rephrase this to see if I understand it correctly: you build up a directed acyclic graph representing the module hierarchy which you need to traverse in a postfix order to evaluate it. However, since Starlark is carefully constrained so that it can be proven not to be able to do infinite loops (no recursion, no loops whose iteration count cannot be determined in advance, etc.), you can\u0027t implement graph traversal.\n\nTherefore, you need to implement the traversal outside of Starlark and your stack is about the smallest data structure one can implement outside of Starlark that allows one to do this.\n\nIs this correct?",
+      "parentUuid": "6147aca1_ae586534",
       "range": {
         "startLine": 11,
         "startChar": 24,
@@ -590,6 +758,30 @@
       "side": 1,
       "message": "Destructive read is intended, and multi-threaded usage is not.",
       "parentUuid": "3ae723c6_cf17d7ef",
+      "range": {
+        "startLine": 137,
+        "startChar": 10,
+        "endLine": 137,
+        "endChar": 25
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c022c727_6ab15465",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-03T10:31:03Z",
+      "side": 1,
+      "message": "I misspoke; I meant to ask whether you expect there to be more than one iterator active for any given stack instance at a time (whether on one or multiple threads). It looks like doing that would have very confusing semantics due to the destructive semantics of the iterator.",
+      "parentUuid": "a4435e85_91374759",
       "range": {
         "startLine": 137,
         "startChar": 10,
