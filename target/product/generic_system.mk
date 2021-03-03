@@ -32,8 +32,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     LiveWallpapersPicker \
     PartnerBookmarksProvider \
-    PresencePolling \
-    RcsService \
     Stk \
     Tag \
     TimeZoneUpdater \
