@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "87e4dc6d_6cb4c147",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-03T19:20:16Z",
+      "side": 1,
+      "message": "Can you also add an entry to CleanSpec.mk that removes the old vendor-ramdisk to avoid confusion?",
+      "revId": "650a74b1288fbb0ec04e4783599c81573f39be99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "095f55e9_8e183853",
