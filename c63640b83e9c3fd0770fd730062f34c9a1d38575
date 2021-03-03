@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3da287c_d8af5c78",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "Please see the response tot he comments in stack.go",
+      "parentUuid": "4ae81e89_2cf5e331",
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "75bed35e_de200ecc",
@@ -31,6 +49,30 @@
       "writtenOn": "2021-03-02T15:54:11Z",
       "side": 1,
       "message": "This is an inlined command similar to \"bash -c\"?",
+      "range": {
+        "startLine": 13,
+        "startChar": 50,
+        "endLine": 13,
+        "endChar": 56
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2004bc28_e34b521c",
+        "filename": "tools/rbcrun/cmd/rbcrun.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "Yes.",
+      "parentUuid": "75bed35e_de200ecc",
       "range": {
         "startLine": 13,
         "startChar": 50,
@@ -66,6 +108,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "16ecab75_b1880c9e",
+        "filename": "tools/rbcrun/cmd/rbcrun.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "Would it be sufficient to document this restriction (that script to be executed cannot have \u0027\u003d\u0027 in path)?",
+      "parentUuid": "73f7bc8e_97d29145",
+      "range": {
+        "startLine": 26,
+        "startChar": 2,
+        "endLine": 26,
+        "endChar": 30
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3b8af502_4141acc3",
         "filename": "tools/rbcrun/cmd/rbcrun.go",
         "patchSetId": 22
@@ -77,6 +143,30 @@
       "writtenOn": "2021-03-02T15:54:11Z",
       "side": 1,
       "message": "opt: maybe \"\u003ccmdline\u003e\" is better?",
+      "range": {
+        "startLine": 38,
+        "startChar": 14,
+        "endLine": 38,
+        "endChar": 21
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8fbd2358_bdf06f82",
+        "filename": "tools/rbcrun/cmd/rbcrun.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3b8af502_4141acc3",
       "range": {
         "startLine": 38,
         "startChar": 14,
@@ -110,6 +200,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "87459f80_236fd3c1",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "I don\u0027t know. Just in case.",
+      "parentUuid": "feeeb7a3_fee24d41",
+      "range": {
+        "startLine": 257,
+        "startChar": 23,
+        "endLine": 257,
+        "endChar": 30
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f8e77d83_20623a38",
@@ -133,6 +247,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ede49bd6_d84c914d",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f8e77d83_20623a38",
+      "range": {
+        "startLine": 259,
+        "startChar": 1,
+        "endLine": 259,
+        "endChar": 26
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4baf5e7b_893074ce",
@@ -146,6 +284,30 @@
       "writtenOn": "2021-03-02T15:54:11Z",
       "side": 1,
       "message": "Why not just a string or nil? It appears that rbcrun only uses these two.",
+      "range": {
+        "startLine": 271,
+        "startChar": 3,
+        "endLine": 272,
+        "endChar": 68
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "346f4de8_1456e073",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "This is just exposing the arguments offered by starlark.ExecFIle",
+      "parentUuid": "4baf5e7b_893074ce",
       "range": {
         "startLine": 271,
         "startChar": 3,
@@ -181,6 +343,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "79893c1e_5968afe1",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "The loaded product configuration module exposes only an init function. The execution of this function populates a propset that\u0027s passed to it. The generated configuration is a propset, which then becomes frozen.",
+      "parentUuid": "54b27cf7_1253af12",
+      "range": {
+        "startLine": 33,
+        "startChar": 3,
+        "endLine": 33,
+        "endChar": 10
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "71e2239f_a166de09",
         "filename": "tools/rbcrun/propset.go",
         "patchSetId": 22
@@ -192,6 +378,30 @@
       "writtenOn": "2021-03-02T16:26:29Z",
       "side": 1,
       "message": "Why is the quoting necessary? You seem not to be unquoting for example in Attr(), is that intended?",
+      "range": {
+        "startLine": 53,
+        "startChar": 11,
+        "endLine": 53,
+        "endChar": 42
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1e33ce2f_e50c5465",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "The actual type of the `value` argument is startlark.String (the representation of a string literal), so startlark.String.String() returns a quoted string. The type of the Attr\u0027s argument is just a string.",
+      "parentUuid": "71e2239f_a166de09",
       "range": {
         "startLine": 53,
         "startChar": 11,
@@ -215,6 +425,30 @@
       "writtenOn": "2021-03-02T16:26:29Z",
       "side": 1,
       "message": "nit: mind finding a name for this and changing the godoc that they don\u0027t require Python knowledge to understand? (e.g. \"setIfNotPresent\")\n\nWhat Make operation is this an equivalent for?",
+      "range": {
+        "startLine": 131,
+        "startChar": 5,
+        "endLine": 131,
+        "endChar": 22
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27899f2e_c0596e18",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "FOO +\u003d item\nin a makefile is converted to \n  cfg.FOO.append(\"item\")\nbut for that we need to be certain that cfg.FOO was initialized to an empty list, which sometimes cannot be statically inferred due to conditionals.\nBTW, the reference to dictionary\u0027s setdefault is not from Python, Starlark\u0027s dict has it: https://github.com/google/starlark-go/blob/master/doc/spec.md#dict%C2%B7setdefault",
+      "parentUuid": "e6028fec_9d44503e",
       "range": {
         "startLine": 131,
         "startChar": 5,
@@ -250,6 +484,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6147aca1_ae586534",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "Product configuration is a hierarchy which has to be traversed in the postfix order (please see _product_configuration function in product_config.rbc in aosp/1486492). As Starlark language provides only foreach loop, the alternative is to emulate a stack in a loop that runs over range(1234567) and inside it emulate the stack with an array and exit when the stack is empty. I\u0027d rather provide stack as a data type, but this is negotiable.",
+      "parentUuid": "2ded8d25_c164ae35",
+      "range": {
+        "startLine": 11,
+        "startChar": 24,
+        "endLine": 11,
+        "endChar": 59
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ccc690a0_9fcb5c65",
         "filename": "tools/rbcrun/stack.go",
         "patchSetId": 22
@@ -261,6 +519,30 @@
       "writtenOn": "2021-03-02T16:26:29Z",
       "side": 1,
       "message": "Check for frozenness here",
+      "range": {
+        "startLine": 115,
+        "startChar": 1,
+        "endLine": 115,
+        "endChar": 29
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d07a6423_d8b96106",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ccc690a0_9fcb5c65",
       "range": {
         "startLine": 115,
         "startChar": 1,
@@ -284,6 +566,30 @@
       "writtenOn": "2021-03-02T16:26:29Z",
       "side": 1,
       "message": "Is the destructive iteration intended? It\u0027s weird because you seem to be preparing for the existence of multiple parallel iterators but it appears that if you have more than one iterator, they will return the elements in the stack distributed between them.",
+      "range": {
+        "startLine": 137,
+        "startChar": 10,
+        "endLine": 137,
+        "endChar": 25
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4435e85_91374759",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:32:08Z",
+      "side": 1,
+      "message": "Destructive read is intended, and multi-threaded usage is not.",
+      "parentUuid": "3ae723c6_cf17d7ef",
       "range": {
         "startLine": 137,
         "startChar": 10,
