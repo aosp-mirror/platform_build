@@ -39,6 +39,30 @@
       },
       "revId": "697c6eecf65b62141e7e723492ec446e295b769b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52be42d6_0de30509",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1018026
+      },
+      "writtenOn": "2021-03-03T23:59:12Z",
+      "side": 1,
+      "message": "Do we need to supply additional VB args to make sure these partitions are signed.",
+      "parentUuid": "f1809c41_47a97b36",
+      "range": {
+        "startLine": 183,
+        "startChar": 5,
+        "endLine": 183,
+        "endChar": 12
+      },
+      "revId": "697c6eecf65b62141e7e723492ec446e295b769b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
