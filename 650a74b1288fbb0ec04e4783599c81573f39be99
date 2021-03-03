@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "095f55e9_8e183853",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1260,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-03T19:09:00Z",
+      "side": 1,
+      "message": "Why doesn\u0027t this use TARGET_COPY_OUT_VENDOR_RAMDISK ?",
+      "range": {
+        "startLine": 1260,
+        "startChar": 51,
+        "endLine": 1260,
+        "endChar": 65
+      },
+      "revId": "650a74b1288fbb0ec04e4783599c81573f39be99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
