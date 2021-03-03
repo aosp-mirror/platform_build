@@ -22,6 +22,30 @@
       },
       "revId": "650a74b1288fbb0ec04e4783599c81573f39be99",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e3a4aca1_5a0e6f3a",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1260,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-03-03T19:17:09Z",
+      "side": 1,
+      "message": "This entire block (lines 1255-1266) needs work to remove hardcoded paths.\nShould be done in a separate CL.",
+      "parentUuid": "095f55e9_8e183853",
+      "range": {
+        "startLine": 1260,
+        "startChar": 51,
+        "endLine": 1260,
+        "endChar": 65
+      },
+      "revId": "650a74b1288fbb0ec04e4783599c81573f39be99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
