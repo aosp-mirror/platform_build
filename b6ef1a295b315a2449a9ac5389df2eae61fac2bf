@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3bb170d5_abd468e3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-03T12:25:30Z",
+      "side": 1,
+      "message": "a wild review appears",
+      "revId": "b6ef1a295b315a2449a9ac5389df2eae61fac2bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab46d9db_30d21cc3",
+        "filename": "core/tasks/boot_jars_installed_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-03T12:25:30Z",
+      "side": 1,
+      "message": "In the platform case, can we check word-colon,2 is installed?",
+      "range": {
+        "startLine": 28,
+        "startChar": 47,
+        "endLine": 28,
+        "endChar": 55
+      },
+      "revId": "b6ef1a295b315a2449a9ac5389df2eae61fac2bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
