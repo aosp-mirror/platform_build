@@ -81,6 +81,30 @@
       },
       "revId": "650a74b1288fbb0ec04e4783599c81573f39be99",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a85c0c15_b8dbd125",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1260,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-03-03T21:09:03Z",
+      "side": 1,
+      "message": "Separate CL should be used to clean up hardcoded paths.",
+      "parentUuid": "e3a4aca1_5a0e6f3a",
+      "range": {
+        "startLine": 1260,
+        "startChar": 51,
+        "endLine": 1260,
+        "endChar": 65
+      },
+      "revId": "650a74b1288fbb0ec04e4783599c81573f39be99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
