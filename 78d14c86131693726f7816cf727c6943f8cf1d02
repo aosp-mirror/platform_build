@@ -52,6 +52,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "241da3c2_5eb6388f",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "Yes, we can, but the code will look very ugly.",
+      "parentUuid": "fbd76101_dd05db0c",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0e68ba1b_0970ecb9",
@@ -65,6 +83,24 @@
       "writtenOn": "2021-03-03T15:32:25Z",
       "side": 1,
       "message": "Is the issue here that if we use a builtin Starlark data type such as a list, to mimic the same behavior, that the list must be frozen in the inner loop context?",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "06f84524_c3681479",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "Please see the comments for the stack.go",
+      "parentUuid": "0e68ba1b_0970ecb9",
       "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -88,6 +124,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4a079fab_7fd622ee",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "I am not sure I understand this comment. Without \u0027|init\u0027, load() will fail if a module to be loaded is missing. At the time we are about to initialize a conditionally loaded module, we need to know if it existed.",
+      "parentUuid": "50c5d01e_ff41d31b",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b1d4344e_91e1a622",
         "filename": "tools/rbcrun/README.md",
         "patchSetId": 23
@@ -99,6 +153,24 @@
       "writtenOn": "2021-03-03T15:32:25Z",
       "side": 1,
       "message": "What does it mean to generate a Starlark script on stdout? If I am understanding the implementation correctly, it\u0027s just running exec on `cmd args...`, and has nothing to do with stdout. Can you elaborate?",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c41d4a44_519dc958",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "It runs cmd,  which should write a Starlark script to stdout. Then this script is read and executed (line 128 in host.go)",
+      "parentUuid": "b1d4344e_91e1a622",
       "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -116,6 +188,30 @@
       "writtenOn": "2021-03-03T10:31:03Z",
       "side": 1,
       "message": "Are these symbols intended to be usable by every .rbc file?",
+      "range": {
+        "startLine": 252,
+        "startChar": 3,
+        "endLine": 252,
+        "endChar": 19
+      },
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "63bb671f_96159e71",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 23
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "rblf_cli/rblf_env at the moment are used only to initialize execution environment.\nThe remaining ones are the counterparts of the corresponding makefile constructs.\n`rblf_file_exists` is the counterpart of \nifeq (,$(wildcard foo.mk))\nadmittedly this particualr one can be avoided by checking that the using rblf_wildcard.",
+      "parentUuid": "0ebb6cb0_79bff0f5",
       "range": {
         "startLine": 252,
         "startChar": 3,
@@ -149,6 +245,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5d4d472_7f5c7f2a",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 23
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "I just needed a prefix. Better prefix suggestions are welcome.",
+      "parentUuid": "279a8e09_14000605",
+      "range": {
+        "startLine": 255,
+        "startChar": 3,
+        "endLine": 255,
+        "endChar": 16
+      },
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e3d7d50b_0a82dec1",
@@ -162,6 +282,30 @@
       "writtenOn": "2021-03-03T10:31:03Z",
       "side": 1,
       "message": "Is the intended use to call rbcrun with an actual product configuration rbcrun file? That seems to be what the Starlark2 document says. How does that transfer control to the init() function of the module in question?",
+      "range": {
+        "startLine": 271,
+        "startChar": 5,
+        "endLine": 271,
+        "endChar": 8
+      },
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dacc1ed9_885fc74b",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 23
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "The file that rbcrun executes is like this:\n```\nload(\"//build/make/core:product_config.rbc\", \"rblf\")\nload(\"\u003cPRODUCT rbc\u003e\", \"init\")\ng, config \u003d rblf.product_configuration(\"\u003cPRODUCT rbc\u003e\", init)\nrblf.printvars(g, config)\n```\nproduct_config.rbc is part of aosp/1486492. `product_configuration` sets up the runtime environment, creates global (`g`) and configuration(`config`) propsets and calls `init`. Running it adds modules to the inheritance hierarchy, which are executed in turn, etc. \nThe converter (mk2rbc) generates the file above (see Launcher() at mk2rbc/mk2rbc.go:1280 in aosp/1501163).",
+      "parentUuid": "e3d7d50b_0a82dec1",
       "range": {
         "startLine": 271,
         "startChar": 5,

@@ -461,6 +461,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1418411_65082c3a",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "The global propset is created at product_config.rbc:91 in product_configuration (aosp/1486492), the per-module config in __h_new() which is called at product_config.rbc:125. At product_config.go:126, module\u0027s init() is called and these are passed. to it. After traversing and inheriting, the global propset and the config propset of the top-level module are returned to the caller.",
+      "parentUuid": "75c601c3_bb321db7",
+      "range": {
+        "startLine": 33,
+        "startChar": 3,
+        "endLine": 33,
+        "endChar": 10
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "71e2239f_a166de09",
@@ -522,6 +546,30 @@
       "side": 1,
       "message": "Is this the best way to extract the actual string from the Value?\n\nhttps://github.com/google/starlark-go/blob/ebe61bd709bf23d7baddbb34e79084d7d156be04/starlark/value.go#L521\n\nindicates that the String type is public, so you should be able to simply downcast (either to String or Go string, my Golang is not good enough to know) and then you avoid parsing.",
       "parentUuid": "1e33ce2f_e50c5465",
+      "range": {
+        "startLine": 53,
+        "startChar": 11,
+        "endLine": 53,
+        "endChar": 42
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2fb96a60_82ef222d",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a50c745b_c74e5b37",
       "range": {
         "startLine": 53,
         "startChar": 11,
@@ -603,6 +651,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dee5406f_0ff0cf3e",
+        "filename": "tools/rbcrun/propset.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "I\u0027ll document the functions, and will mention psetdefault in the converter.",
+      "parentUuid": "731d6311_32fab451",
+      "range": {
+        "startLine": 131,
+        "startChar": 5,
+        "endLine": 131,
+        "endChar": 22
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2ded8d25_c164ae35",
@@ -664,6 +736,30 @@
       "side": 1,
       "message": "Let me rephrase this to see if I understand it correctly: you build up a directed acyclic graph representing the module hierarchy which you need to traverse in a postfix order to evaluate it. However, since Starlark is carefully constrained so that it can be proven not to be able to do infinite loops (no recursion, no loops whose iteration count cannot be determined in advance, etc.), you can\u0027t implement graph traversal.\n\nTherefore, you need to implement the traversal outside of Starlark and your stack is about the smallest data structure one can implement outside of Starlark that allows one to do this.\n\nIs this correct?",
       "parentUuid": "6147aca1_ae586534",
+      "range": {
+        "startLine": 11,
+        "startChar": 24,
+        "endLine": 11,
+        "endChar": 59
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cdbfe1a3_543a9224",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "Yes, this is correct.",
+      "parentUuid": "b048e469_ee7a3fa6",
       "range": {
         "startLine": 11,
         "startChar": 24,
@@ -782,6 +878,30 @@
       "side": 1,
       "message": "I misspoke; I meant to ask whether you expect there to be more than one iterator active for any given stack instance at a time (whether on one or multiple threads). It looks like doing that would have very confusing semantics due to the destructive semantics of the iterator.",
       "parentUuid": "a4435e85_91374759",
+      "range": {
+        "startLine": 137,
+        "startChar": 10,
+        "endLine": 137,
+        "endChar": 25
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fcc7c2fe_264fb42d",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T21:22:43Z",
+      "side": 1,
+      "message": "No, I don\u0027t expect multiple simultaneously active iterators, \u0027itercount\u0027 can be replaced with the boolean.",
+      "parentUuid": "c022c727_6ab15465",
       "range": {
         "startLine": 137,
         "startChar": 10,
