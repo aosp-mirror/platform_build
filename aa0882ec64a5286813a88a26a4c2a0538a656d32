@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "74ddbb67_f5921268",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:31:27Z",
+      "side": 1,
+      "message": "At the moment I have a script that captures product configuration settings generated a makefiles for each AOSP product (the value of the TARGET_PRODUCT/BUILD_TYPE) and compare it with the result of converting the makefiles for the same product and then running them. I have also a small test to verify that the functions in product_config.rbc execute as expected. I\u0027ll add these small tests to this CL once the runner (rbcrun, see aosp/1475299) has been checked in.",
+      "parentUuid": "3e4c1e1e_f4cbe6ed",
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "25809047_36c27074",
@@ -48,6 +66,24 @@
       "writtenOn": "2021-03-02T00:03:17Z",
       "side": 1,
       "message": "What is g? A struct? Structs are immutable in starlark.\nWhat the expected fields of g?",
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fe758c1_303a8f9d",
+        "filename": "core/build_id.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:31:27Z",
+      "side": 1,
+      "message": "`g` is a propset (property set), which is like a struct whose fields can be added dynamically. Alternatively, it can be viewed as a dictionary, but with a slightly better-looking means of accessing: g[\"FOO\"] is the same as g.FOO\nPlease see README.md in https://android-review.googlesource.com/c/platform/build/+/1475299",
+      "parentUuid": "25809047_36c27074",
       "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -69,6 +105,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd1ec610_cc8268d1",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:31:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "94de46e8_b270c42c",
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3ca5cd28_f8dd3270",
@@ -82,6 +136,24 @@
       "writtenOn": "2021-03-02T00:03:17Z",
       "side": 1,
       "message": "nit: \"don\u0027t cry\" is cute (and a copy from the origin, I see), but is inexact",
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d65418c6_434f98f5",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:31:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ca5cd28_f8dd3270",
       "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -110,6 +182,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7a13199_52f8bd8e",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:31:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef1e0d8d_c860fab0",
+      "range": {
+        "startLine": 80,
+        "startChar": 34,
+        "endLine": 80,
+        "endChar": 35
+      },
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0f8d4eac_4a4bf49a",
@@ -124,6 +220,30 @@
       "side": 1,
       "message": "\u003e Please remove the trailing whitespace.\n\nPlease fix.",
       "parentUuid": "5e670964_f6065ca5",
+      "range": {
+        "startLine": 87,
+        "startChar": 69,
+        "endLine": 87,
+        "endChar": 70
+      },
+      "revId": "aa0882ec64a5286813a88a26a4c2a0538a656d32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aaef07ee_950bcb40",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 14
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-03T05:31:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0f8d4eac_4a4bf49a",
       "range": {
         "startLine": 87,
         "startChar": 69,
