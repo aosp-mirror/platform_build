@@ -516,7 +516,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
     raise ApexInfoError(
         'Failed to get type for {}:\n{}'.format(apex_file, e))
 
-def GetApexInfoFromTargetFiles(input_file):
+def GetSystemApexInfoFromTargetFiles(input_file):
   """
   Get information about system APEX stored in the input_file zip
 
@@ -538,7 +538,21 @@ def GetApexInfoFromTargetFiles(input_file):
     tmp_dir = UnzipTemp(input_file, ["SYSTEM/apex/*"])
   target_dir = os.path.join(tmp_dir, "SYSTEM/apex/")
 
+  # Partial target-files packages for vendor-only builds may not contain
+  # a system apex directory.
+  if not os.path.exists(target_dir):
+    return []
+
   apex_infos = []
+
+  debugfs_path = "debugfs"
+  if OPTIONS.search_path:
+    debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
+  deapexer = 'deapexer'
+  if OPTIONS.search_path:
+    deapexer_path = os.path.join(OPTIONS.search_path, "bin", "deapexer")
+    if os.path.isfile(deapexer_path):
+      deapexer = deapexer_path
   for apex_filename in os.listdir(target_dir):
     apex_filepath = os.path.join(target_dir, apex_filename)
     if not os.path.isfile(apex_filepath) or \
@@ -551,14 +565,6 @@ def GetApexInfoFromTargetFiles(input_file):
     apex_info.package_name = manifest.name
     apex_info.version = manifest.version
     # Check if the file is compressed or not
-    debugfs_path = "debugfs"
-    if OPTIONS.search_path:
-      debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
-    deapexer = 'deapexer'
-    if OPTIONS.search_path:
-      deapexer_path = os.path.join(OPTIONS.search_path, "deapexer")
-      if os.path.isfile(deapexer_path):
-        deapexer = deapexer_path
     apex_type = RunAndCheckOutput([
         deapexer, "--debugfs_path", debugfs_path,
         'info', '--print-type', apex_filepath]).rstrip()
@@ -579,6 +585,6 @@ def GetApexInfoFromTargetFiles(input_file):
                          '--output', decompressed_file_path])
       apex_info.decompressed_size = os.path.getsize(decompressed_file_path)
 
-    apex_infos.append(apex_info)
+      apex_infos.append(apex_info)
 
   return apex_infos

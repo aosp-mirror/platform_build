@@ -19,12 +19,24 @@ package com.android.build.config;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashMap;
+
 public class OptionsTest {
+
+    private Options parse(Errors errors, String[] args) {
+        final HashMap<String, String> env = new HashMap();
+        env.put("TARGET_PRODUCT", "test_product");
+        env.put("TARGET_BUILD_VARIANT", "user");
+        final Options.Parser parser = new Options.Parser(errors, args, env);
+        parser.setSkipRequiredArgValidation();
+        return parser.parse();
+    }
+
     @Test
     public void testErrorMissingLast() {
         final Errors errors = new Errors();
 
-        final Options options = Options.parse(errors, new String[] {
+        final Options options = parse(errors, new String[] {
                     "--error"
                 });
 
@@ -37,7 +49,7 @@ public class OptionsTest {
     public void testErrorMissingNotLast() {
         final Errors errors = new Errors();
 
-        final Options options = Options.parse(errors, new String[] {
+        final Options options = parse(errors, new String[] {
                     "--error", "--warning", "2"
                 });
 
@@ -50,7 +62,7 @@ public class OptionsTest {
     public void testErrorNotNumeric() {
         final Errors errors = new Errors();
 
-        final Options options = Options.parse(errors, new String[] {
+        final Options options = parse(errors, new String[] {
                     "--error", "notgood"
                 });
 
@@ -63,7 +75,7 @@ public class OptionsTest {
     public void testErrorInvalidError() {
         final Errors errors = new Errors();
 
-        final Options options = Options.parse(errors, new String[] {
+        final Options options = parse(errors, new String[] {
                     "--error", "50000"
                 });
 
@@ -76,7 +88,7 @@ public class OptionsTest {
     public void testErrorOne() {
         final Errors errors = new Errors();
 
-        final Options options = Options.parse(errors, new String[] {
+        final Options options = parse(errors, new String[] {
                     "--error", "2"
                 });
 
@@ -89,7 +101,7 @@ public class OptionsTest {
     public void testWarningOne() {
         final Errors errors = new Errors();
 
-        final Options options = Options.parse(errors, new String[] {
+        final Options options = parse(errors, new String[] {
                     "--warning", "2"
                 });
 
@@ -102,12 +114,23 @@ public class OptionsTest {
     public void testHideOne() {
         final Errors errors = new Errors();
 
-        final Options options = Options.parse(errors, new String[] {
+        final Options options = parse(errors, new String[] {
                     "--hide", "2"
                 });
 
         Assert.assertEquals("", TestErrors.getErrorMessages(errors));
         Assert.assertEquals(Options.Action.DEFAULT, options.getAction());
+        Assert.assertFalse(errors.hadWarningOrError());
+    }
+
+    @Test
+    public void testEnv() {
+        final Errors errors = new Errors();
+
+        final Options options = parse(errors, new String[0]);
+
+        Assert.assertEquals("test_product", options.getProduct());
+        Assert.assertEquals("user", options.getVariant());
         Assert.assertFalse(errors.hadWarningOrError());
     }
 }

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020 The Android Open Source Project
+# Copyright (C) 2021 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,5 +14,8 @@
 # limitations under the License.
 #
 
-$(call inherit-product, build/make/target/product/default_art_config.mk)
-$(call inherit-product, build/make/target/product/languages_default.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/module_common.mk)
+
+PRODUCT_NAME := module_arm
+PRODUCT_BRAND := Android
+PRODUCT_DEVICE := module_arm

@@ -110,9 +110,9 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # The partitions allowed to be signed by AVB (Android Verified Boot 2.0). Note
 # that system_other is not in the list because we don't want to include its
 # descriptor into vbmeta.img.
-AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'recovery', 'system',
-                  'system_ext', 'vendor', 'vendor_boot', 'vendor_dlkm',
-                  'odm_dlkm')
+AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'pvmfw', 'recovery',
+                  'system', 'system_ext', 'vendor', 'vendor_boot',
+                  'vendor_dlkm', 'odm_dlkm')
 
 # Chained VBMeta partitions.
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
@@ -274,29 +274,6 @@ def Run(args, verbose=None, **kwargs):
   if verbose:
     logger.info("  Running: \"%s\"", " ".join(args))
   return subprocess.Popen(args, **kwargs)
-
-
-def RunAndWait(args, verbose=None, **kwargs):
-  """Runs the given command waiting for it to complete.
-
-  Args:
-    args: The command represented as a list of strings.
-    verbose: Whether the commands should be shown. Default to the global
-        verbosity if unspecified.
-    kwargs: Any additional args to be passed to subprocess.Popen(), such as env,
-        stdin, etc. stdout and stderr will default to subprocess.PIPE and
-        subprocess.STDOUT respectively unless caller specifies any of them.
-
-  Raises:
-    ExternalError: On non-zero exit from the command.
-  """
-  proc = Run(args, verbose=verbose, **kwargs)
-  proc.wait()
-
-  if proc.returncode != 0:
-    raise ExternalError(
-        "Failed to run command '{}' (exit code {})".format(
-            args, proc.returncode))
 
 
 def RunAndCheckOutput(args, verbose=None, **kwargs):
@@ -663,7 +640,7 @@ def ExtractFromInputFile(input_file, fn):
   """Extracts the contents of fn from input zipfile or directory into a file."""
   if isinstance(input_file, zipfile.ZipFile):
     tmp_file = MakeTempFile(os.path.basename(fn))
-    with open(tmp_file, 'w') as f:
+    with open(tmp_file, 'wb') as f:
       f.write(input_file.read(fn))
     return tmp_file
   else:
@@ -887,8 +864,8 @@ class PartitionBuildProps(object):
     prop_file = GetBootImageBuildProp(boot_img)
     if prop_file is None:
       return ''
-    with open(prop_file) as f:
-      return f.read().decode()
+    with open(prop_file, "r") as f:
+      return f.read()
 
   @staticmethod
   def _ReadPartitionPropFile(input_file, name):
@@ -1714,6 +1691,11 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
   cmd.extend(["--vendor_ramdisk", ramdisk_img.name])
   cmd.extend(["--vendor_boot", img.name])
 
+  fn = os.path.join(sourcedir, "vendor_bootconfig")
+  if os.access(fn, os.F_OK):
+    cmd.append("--vendor_bootconfig")
+    cmd.append(fn)
+
   ramdisk_fragment_imgs = []
   fn = os.path.join(sourcedir, "vendor_ramdisk_fragments")
   if os.access(fn, os.F_OK):
@@ -1957,12 +1939,13 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
     # filename listed in system.map may contain an additional leading slash
     # (i.e. "//system/framework/am.jar"). Using lstrip to get consistent
     # results.
-    arcname = entry.replace(which, which.upper(), 1).lstrip('/')
-
-    # Special handling another case, where files not under /system
+    # And handle another special case, where files not under /system
     # (e.g. "/sbin/charger") are packed under ROOT/ in a target_files.zip.
-    if which == 'system' and not arcname.startswith('SYSTEM'):
+    arcname = entry.lstrip('/')
+    if which == 'system' and not arcname.startswith('system'):
       arcname = 'ROOT/' + arcname
+    else:
+      arcname = arcname.replace(which, which.upper(), 1)
 
     assert arcname in input_zip.namelist(), \
         "Failed to find the ZIP entry for {}".format(entry)

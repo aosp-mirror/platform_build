@@ -39,6 +39,8 @@ OPTIONS.boot_variable_file = None
 METADATA_NAME = 'META-INF/com/android/metadata'
 METADATA_PROTO_NAME = 'META-INF/com/android/metadata.pb'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
+SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
+
 
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   """Finalizes the metadata and signs an A/B OTA package.
@@ -168,7 +170,7 @@ def UpdateDeviceState(device_state, build_info, boot_variable_values,
     build_info_set = ComputeRuntimeBuildInfos(build_info,
                                               boot_variable_values)
     assert "ab_partitions" in build_info.info_dict,\
-      "ab_partitions property required for ab update."
+        "ab_partitions property required for ab update."
     ab_partitions = set(build_info.info_dict.get("ab_partitions"))
 
     # delta_generator will error out on unused timestamps,
@@ -317,6 +319,8 @@ def BuildLegacyOtaMetadata(metadata_proto):
     metadata_dict['pre-build'] = separator.join(pre_build.build)
     metadata_dict['pre-build-incremental'] = pre_build.build_incremental
 
+  if metadata_proto.spl_downgrade:
+    metadata_dict['spl-downgrade'] = 'yes'
   metadata_dict.update(metadata_proto.property_files)
 
   return metadata_dict
@@ -329,6 +333,9 @@ def HandleDowngradeMetadata(metadata_proto, target_info, source_info):
   post_timestamp = target_info.GetBuildProp("ro.build.date.utc")
   pre_timestamp = source_info.GetBuildProp("ro.build.date.utc")
   is_downgrade = int(post_timestamp) < int(pre_timestamp)
+
+  if OPTIONS.spl_downgrade:
+    metadata_proto.spl_downgrade = True
 
   if OPTIONS.downgrade:
     if not is_downgrade:

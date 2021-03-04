@@ -16,6 +16,11 @@
 
 package com.android.build.config;
 
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 public class Main {
     private final Errors mErrors;
     private final Options mOptions;
@@ -26,11 +31,44 @@ public class Main {
     }
 
     void run() {
-        System.out.println("Hello World");
-
         // TODO: Check the build environment to make sure we're running in a real
         // build environment, e.g. actually inside a source tree, with TARGET_PRODUCT
         // and TARGET_BUILD_VARIANT defined, etc.
+        Kati kati = new KatiImpl(mErrors, mOptions);
+        Map<String, MakeConfig> makeConfigs = kati.loadProductConfig();
+        if (makeConfigs == null || mErrors.hadError()) {
+            return;
+        }
+        if (false) {
+            for (MakeConfig makeConfig: (new TreeMap<String, MakeConfig>(makeConfigs)).values()) {
+                System.out.println();
+                System.out.println("=======================================");
+                System.out.println("PRODUCT CONFIG FILES : " + makeConfig.getPhase());
+                System.out.println("=======================================");
+                makeConfig.printToStream(System.out);
+            }
+        }
+
+        ConvertMakeToGenericConfig m2g = new ConvertMakeToGenericConfig(mErrors);
+        GenericConfig generic = m2g.convert(makeConfigs);
+        if (false) {
+            System.out.println("======================");
+            System.out.println("REGENERATED MAKE FILES");
+            System.out.println("======================");
+            MakeWriter.write(System.out, generic, 0);
+        }
+
+        // TODO: Lookup shortened name as used in PRODUCT_NAME / TARGET_PRODUCT
+        FlatConfig flat = FlattenConfig.flatten(mErrors, generic);
+        if (false) {
+            System.out.println("=======================");
+            System.out.println("FLATTENED VARIABLE LIST");
+            System.out.println("=======================");
+            MakeWriter.write(System.out, flat, 0);
+        }
+
+        OutputChecker checker = new OutputChecker(flat);
+        checker.reportErrors(mErrors);
 
         // TODO: Run kati and extract the variables and convert all that into starlark files.
 
@@ -42,23 +80,42 @@ public class Main {
 
     public static void main(String[] args) {
         Errors errors = new Errors();
+        int exitCode = 0;
 
-        Options options = Options.parse(errors, args);
-        if (errors.hadError()) {
-            Options.printHelp(System.err);
+        try {
+            Options options = Options.parse(errors, args, System.getenv());
+            if (errors.hadError()) {
+                Options.printHelp(System.err);
+                System.err.println();
+                throw new CommandException();
+            }
+
+            switch (options.getAction()) {
+                case DEFAULT:
+                    (new Main(errors, options)).run();
+                    return;
+                case HELP:
+                    Options.printHelp(System.out);
+                    return;
+            }
+        } catch (CommandException | Errors.FatalException ex) {
+            // These are user errors, so don't show a stack trace
+            exitCode = 1;
+        } catch (Throwable ex) {
+            // These are programming errors in the code of this tool, so print the exception.
+            // We'll try to print this.  If it's something unrecoverable, then we'll hope
+            // for the best. We will still print the errors below, because they can be useful
+            // for debugging.
+            ex.printStackTrace(System.err);
             System.err.println();
+            exitCode = 1;
+        } finally {
+            // Print errors and warnings
             errors.printErrors(System.err);
-            System.exit(1);
-        }
-
-        switch (options.getAction()) {
-            case DEFAULT:
-                (new Main(errors, options)).run();
-                errors.printErrors(System.err);
-                return;
-            case HELP:
-                Options.printHelp(System.out);
-                return;
+            if (errors.hadError()) {
+                exitCode = 1;
+            }
+            System.exit(exitCode);
         }
     }
 }
