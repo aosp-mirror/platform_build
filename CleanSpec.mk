@@ -754,6 +754,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/prop.default)
 # Workaround for Soong not being able to rebuild the host binary if its
 # JNI dependencies change: b/170389375
 $(call add-clean-step, rm -rf $(OUT_DIR)/soong/host/*/lib*/libconscrypt_openjdk_jni.so)
+# vendor-ramdisk renamed to vendor_ramdisk
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor-ramdisk)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
