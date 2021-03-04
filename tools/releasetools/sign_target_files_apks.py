@@ -178,17 +178,29 @@ OPTIONS.android_jar_path = None
 
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
-    'boot' : 'avb_boot_add_hash_footer_args',
-    'dtbo' : 'avb_dtbo_add_hash_footer_args',
-    'recovery' : 'avb_recovery_add_hash_footer_args',
-    'system' : 'avb_system_add_hashtree_footer_args',
-    'system_other' : 'avb_system_other_add_hashtree_footer_args',
-    'vendor' : 'avb_vendor_add_hashtree_footer_args',
-    'vendor_boot' : 'avb_vendor_boot_add_hash_footer_args',
-    'vbmeta' : 'avb_vbmeta_args',
-    'vbmeta_system' : 'avb_vbmeta_system_args',
-    'vbmeta_vendor' : 'avb_vbmeta_vendor_args',
+    'boot': 'avb_boot_add_hash_footer_args',
+    'dtbo': 'avb_dtbo_add_hash_footer_args',
+    'product': 'avb_product_add_hashtree_footer_args',
+    'recovery': 'avb_recovery_add_hash_footer_args',
+    'system': 'avb_system_add_hashtree_footer_args',
+    'system_ext': 'avb_system_ext_add_hashtree_footer_args',
+    'system_other': 'avb_system_other_add_hashtree_footer_args',
+    'odm': 'avb_odm_add_hashtree_footer_args',
+    'odm_dlkm': 'avb_odm_dlkm_add_hashtree_footer_args',
+    'pvmfw': 'avb_pvmfw_add_hash_footer_args',
+    'vendor': 'avb_vendor_add_hashtree_footer_args',
+    'vendor_boot': 'avb_vendor_boot_add_hash_footer_args',
+    'vendor_dlkm': "avb_vendor_dlkm_add_hashtree_footer_args",
+    'vbmeta': 'avb_vbmeta_args',
+    'vbmeta_system': 'avb_vbmeta_system_args',
+    'vbmeta_vendor': 'avb_vbmeta_vendor_args',
 }
+
+
+# Check that AVB_FOOTER_ARGS_BY_PARTITION is in sync with AVB_PARTITIONS.
+for partition in common.AVB_PARTITIONS:
+  if partition not in AVB_FOOTER_ARGS_BY_PARTITION:
+    raise RuntimeError("Missing {} in AVB_FOOTER_ARGS".format(partition))
 
 
 def GetApkCerts(certmap):
