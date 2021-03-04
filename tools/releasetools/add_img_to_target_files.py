@@ -64,7 +64,7 @@ import sparse_img
 import verity_utils
 import ota_metadata_pb2
 
-from apex_utils import GetApexInfoFromTargetFiles
+from apex_utils import GetSystemApexInfoFromTargetFiles
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -343,6 +343,41 @@ def AddDtbo(output_zip):
            "--partition_size", str(part_size), "--partition_name", "dtbo"]
     common.AppendAVBSigningArgs(cmd, "dtbo")
     args = OPTIONS.info_dict.get("avb_dtbo_add_hash_footer_args")
+    if args and args.strip():
+      cmd.extend(shlex.split(args))
+    common.RunAndCheckOutput(cmd)
+
+  img.Write()
+  return img.name
+
+def AddPvmfw(output_zip):
+  """Adds the pvmfw image.
+
+  Uses the image under IMAGES/ if it already exists. Otherwise looks for the
+  image under PREBUILT_IMAGES/, signs it as needed, and returns the image name.
+  """
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "pvmfw.img")
+  if os.path.exists(img.name):
+    logger.info("pvmfw.img already exists; no need to rebuild...")
+    return img.name
+
+  pvmfw_prebuilt_path = os.path.join(
+      OPTIONS.input_tmp, "PREBUILT_IMAGES", "pvmfw.img")
+  assert os.path.exists(pvmfw_prebuilt_path)
+  shutil.copy(pvmfw_prebuilt_path, img.name)
+
+  # AVB-sign the image as needed.
+  if OPTIONS.info_dict.get("avb_enable") == "true":
+    # Signing requires +w
+    os.chmod(img.name, os.stat(img.name).st_mode | stat.S_IWUSR)
+
+    avbtool = OPTIONS.info_dict["avb_avbtool"]
+    part_size = OPTIONS.info_dict["pvmfw_size"]
+    # The AVB hash footer will be replaced if already present.
+    cmd = [avbtool, "add_hash_footer", "--image", img.name,
+           "--partition_size", str(part_size), "--partition_name", "pvmfw"]
+    common.AppendAVBSigningArgs(cmd, "pvmfw")
+    args = OPTIONS.info_dict.get("avb_pvmfw_add_hash_footer_args")
     if args and args.strip():
       cmd.extend(shlex.split(args))
     common.RunAndCheckOutput(cmd)
@@ -757,7 +792,7 @@ def HasPartition(partition_name):
                            "{}.img".format(partition_name))))
 
 def AddApexInfo(output_zip):
-  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp)
+  apex_infos = GetSystemApexInfoFromTargetFiles(OPTIONS.input_tmp)
   apex_metadata_proto = ota_metadata_pb2.ApexMetadata()
   apex_metadata_proto.apex_info.extend(apex_infos)
   apex_info_bytes = apex_metadata_proto.SerializeToString()
@@ -947,6 +982,10 @@ def AddImagesToTargetFiles(filename):
   if OPTIONS.info_dict.get("has_dtbo") == "true":
     banner("dtbo")
     partitions['dtbo'] = AddDtbo(output_zip)
+
+  if OPTIONS.info_dict.get("has_pvmfw") == "true":
+    banner("pvmfw")
+    partitions['pvmfw'] = AddPvmfw(output_zip)
 
   # Custom images.
   custom_partitions = OPTIONS.info_dict.get(

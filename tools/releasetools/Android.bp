@@ -22,6 +22,10 @@
 //    `releasetools_X_defaults` in their defaults.
 //
 
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
 python_defaults {
     name: "releasetools_add_img_to_target_files_defaults",
     srcs: [
@@ -282,6 +286,7 @@ python_defaults {
         "boot_signer",
         "brotli",
         "bsdiff",
+        "deapexer",
         "imgdiff",
         "minigzip",
         "lz4",
@@ -446,6 +451,7 @@ python_binary_host {
     required: [
         "checkvintf",
         "host_init_verifier",
+        "secilc",
     ],
     target: {
         darwin: {
@@ -590,6 +596,7 @@ python_test_host {
     name: "releasetools_py3_test",
     defaults: ["releasetools_test_defaults"],
     main: "test_utils.py",
+    test_suites: ["general-tests"],
     version: {
         py2: {
             enabled: false,

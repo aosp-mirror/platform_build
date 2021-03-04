@@ -34,6 +34,12 @@ ifneq ($(filter-out false,$(USE_RBE)),)
     cxx_compare := false
   endif
 
+  ifdef RBE_CXX_COMPARE
+    cxx_compare := $(RBE_CXX_COMPARE)
+  else
+    cxx_compare := "false"
+  endif
+
   ifdef RBE_JAVAC_EXEC_STRATEGY
     javac_exec_strategy := $(RBE_JAVAC_EXEC_STRATEGY)
   else

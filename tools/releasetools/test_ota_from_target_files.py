@@ -33,7 +33,7 @@ from ota_from_target_files import (
     GetTargetFilesZipWithoutPostinstallConfig,
     Payload, PayloadSigner, POSTINSTALL_CONFIG,
     StreamingPropertyFiles, AB_PARTITIONS)
-from apex_utils import GetApexInfoFromTargetFiles
+from apex_utils import GetSystemApexInfoFromTargetFiles
 from test_utils import PropertyFilesTestCase
 
 
@@ -281,19 +281,19 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         metadata)
 
   @test_utils.SkipIfExternalToolsUnavailable()
-  def test_GetApexInfoFromTargetFiles(self):
+  def test_GetSystemApexInfoFromTargetFiles(self):
     target_files = construct_target_files(compressedApex=True)
-    apex_infos = GetApexInfoFromTargetFiles(target_files)
+    apex_infos = GetSystemApexInfoFromTargetFiles(target_files)
     self.assertEqual(len(apex_infos), 1)
     self.assertEqual(apex_infos[0].package_name, "com.android.apex.compressed")
     self.assertEqual(apex_infos[0].version, 1)
     self.assertEqual(apex_infos[0].is_compressed, True)
     # Compare the decompressed APEX size with the original uncompressed APEX
     original_apex_name = 'com.android.apex.compressed.v1_original.apex'
-    original_apex_filepath = os.path.join(test_utils.get_current_dir(), original_apex_name)
+    original_apex_filepath = os.path.join(
+        test_utils.get_current_dir(), original_apex_name)
     uncompressed_apex_size = os.path.getsize(original_apex_filepath)
     self.assertEqual(apex_infos[0].decompressed_size, uncompressed_apex_size)
-
 
   def test_GetPackageMetadata_retrofitDynamicPartitions(self):
     target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
@@ -343,7 +343,10 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     common.OPTIONS.incremental_source = ''
     common.OPTIONS.downgrade = True
     common.OPTIONS.wipe_user_data = True
+    common.OPTIONS.spl_downgrade = True
     metadata = self.GetLegacyOtaMetadata(target_info, source_info)
+    # Reset spl_downgrade so other tests are unaffected
+    common.OPTIONS.spl_downgrade = False
 
     self.assertDictEqual(
         {
@@ -359,6 +362,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
             'pre-device': 'product-device',
             'pre-build': 'build-fingerprint-source',
             'pre-build-incremental': 'build-version-incremental-source',
+            'spl-downgrade': 'yes',
         },
         metadata)
 

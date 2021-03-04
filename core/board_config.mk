@@ -25,6 +25,7 @@ _board_strip_readonly_list += BOARD_EGL_CFG
 _board_strip_readonly_list += BOARD_HAVE_BLUETOOTH
 _board_strip_readonly_list += BOARD_INSTALLER_CMDLINE
 _board_strip_readonly_list += BOARD_KERNEL_CMDLINE
+_board_strip_readonly_list += BOARD_BOOTCONFIG
 _board_strip_readonly_list += BOARD_KERNEL_BASE
 _board_strip_readonly_list += BOARD_USES_GENERIC_AUDIO
 _board_strip_readonly_list += BOARD_USES_RECOVERY_AS_BOOT
@@ -129,6 +130,7 @@ _build_broken_var_list := \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
   BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
   BUILD_BROKEN_USES_NETWORK \
+  BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE \
   BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES \
 
 _build_broken_var_list += \
@@ -221,6 +223,7 @@ endif
 .KATI_READONLY := $(_board_strip_readonly_list)
 
 INTERNAL_KERNEL_CMDLINE := $(BOARD_KERNEL_CMDLINE)
+INTERNAL_BOOTCONFIG := $(BOARD_BOOTCONFIG)
 
 ifneq ($(filter %64,$(TARGET_ARCH)),)
   TARGET_IS_64_BIT := true
