@@ -238,6 +238,19 @@ PRODUCT_BOOT_JARS += $(PRODUCT_BOOT_JARS_EXTRA)
 PRODUCT_BOOT_JARS := $(foreach pair,$(PRODUCT_BOOT_JARS), \
   $(if $(findstring :,$(pair)),,platform:)$(pair))
 
+# Replaces references to overridden boot jar modules in a boot jars variable.
+# $(1): Name of a boot jars variable with <apex>:<jar> pairs.
+define replace-boot-jar-module-overrides
+  $(foreach pair,$(PRODUCT_BOOT_JAR_MODULE_OVERRIDES),\
+    $(eval _rbjmo_from := $(call word-colon,1,$(pair)))\
+    $(eval _rbjmo_to := $(call word-colon,2,$(pair)))\
+    $(eval $(1) := $(patsubst $(_rbjmo_from):%,$(_rbjmo_to):%,$($(1)))))
+endef
+
+$(call replace-boot-jar-module-overrides,PRODUCT_BOOT_JARS)
+$(call replace-boot-jar-module-overrides,PRODUCT_UPDATABLE_BOOT_JARS)
+$(call replace-boot-jar-module-overrides,ART_APEX_JARS)
+
 # The extra system server jars must be appended at the end after common system server jars.
 PRODUCT_SYSTEM_SERVER_JARS += $(PRODUCT_SYSTEM_SERVER_JARS_EXTRA)
 
