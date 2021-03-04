@@ -87,6 +87,30 @@
       },
       "revId": "697c6eecf65b62141e7e723492ec446e295b769b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac4401ff_7aa0b998",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-03-04T06:08:10Z",
+      "side": 1,
+      "message": "Right, those hashtree partitions are dynamic (reside in the physical /super partition).\n\nSo they don\u0027t need to be signed because the bootloader does not know how to locate them in /super. Instead, the hashtree desc of those dynamic partitions should be either in vbmeta.img, vbmeta_system.img or vbmeta_vendor.img.",
+      "parentUuid": "cb49f051_36fab10a",
+      "range": {
+        "startLine": 183,
+        "startChar": 5,
+        "endLine": 183,
+        "endChar": 12
+      },
+      "revId": "697c6eecf65b62141e7e723492ec446e295b769b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
