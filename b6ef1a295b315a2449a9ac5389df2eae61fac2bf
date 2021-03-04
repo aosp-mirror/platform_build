@@ -39,6 +39,30 @@
       },
       "revId": "b6ef1a295b315a2449a9ac5389df2eae61fac2bf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af6fe338_6583947f",
+        "filename": "core/tasks/boot_jars_installed_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-04T08:08:40Z",
+      "side": 1,
+      "message": "We\u0027d match it against product_target_FILES then?",
+      "parentUuid": "ab46d9db_30d21cc3",
+      "range": {
+        "startLine": 28,
+        "startChar": 47,
+        "endLine": 28,
+        "endChar": 55
+      },
+      "revId": "b6ef1a295b315a2449a9ac5389df2eae61fac2bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
