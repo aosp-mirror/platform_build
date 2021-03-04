@@ -57,7 +57,7 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   java_r8_d8_platform := $(platform)",Pool=java16"
 
   RBE_WRAPPER := $(rbe_dir)/rewrapper
-  RBE_CXX := --labels=type=compile,lang=cpp,compiler=clang --env_var_whitelist=PWD --exec_strategy=$(cxx_rbe_exec_strategy) --platform="$(cxx_platform)" --compare="$(cxx_compare)"
+  RBE_CXX := --labels=type=compile,lang=cpp,compiler=clang --env_var_allowlist=PWD --exec_strategy=$(cxx_rbe_exec_strategy) --platform=$(cxx_platform) --compare=$(cxx_compare)
 
   # Append rewrapper to existing *_WRAPPER variables so it's possible to
   # use both ccache and rewrapper.
