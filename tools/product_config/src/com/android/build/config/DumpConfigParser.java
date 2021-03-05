@@ -44,13 +44,13 @@ import java.util.regex.Pattern;
  *          4       The location of the variable, as best tracked by kati
  */
 public class DumpConfigParser {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private final Errors mErrors;
     private final String mFilename;
     private final Reader mReader;
 
-    private final ArrayList<MakeConfig> mResults = new ArrayList();
+    private final Map<String,MakeConfig> mResults = new HashMap();
 
     private static final Pattern LIST_SEPARATOR = Pattern.compile("\\s+");
 
@@ -64,9 +64,9 @@ public class DumpConfigParser {
     }
 
     /**
-     * Parse the text into a list of MakeConfig objects.
+     * Parse the text into a map of the phase names to MakeConfig objects.
      */
-    public static ArrayList<MakeConfig> parse(Errors errors, String filename, Reader reader)
+    public static Map<String,MakeConfig> parse(Errors errors, String filename, Reader reader)
             throws CsvParser.ParseException, IOException {
         DumpConfigParser parser = new DumpConfigParser(errors, filename, reader);
         parser.parseImpl();
@@ -130,7 +130,16 @@ public class DumpConfigParser {
                 makeConfig = new MakeConfig();
                 makeConfig.setPhase(fields.get(1));
                 makeConfig.setRootNodes(splitList(fields.get(2)));
-                mResults.add(makeConfig);
+                // If there is a duplicate phase of the same name, continue parsing, but
+                // don't add it.  Emit a warning.
+                if (!mResults.containsKey(makeConfig.getPhase())) {
+                    mResults.put(makeConfig.getPhase(), makeConfig);
+                } else {
+                    mErrors.WARNING_DUMPCONFIG.add(
+                            new Position(mFilename, line.getLine()),
+                            "Duplicate phase: " + makeConfig.getPhase()
+                                + ". This one will be dropped.");
+                }
                 initialVariables = makeConfig.getInitialVariables();
                 finalVariables = makeConfig.getFinalVariables();
 

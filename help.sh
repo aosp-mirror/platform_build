@@ -12,10 +12,14 @@ cd '"${TOP}"'
 source build/envsetup.sh    # Add "lunch" (and other utilities and variables)
                             # to the shell environment.
 lunch [<product>-<variant>] # Choose the device to target.
-m -j [<goals>]              # Execute the configured build.
+m [<goals>]                 # Execute the configured build.
 
 Usage of "m" imitates usage of the program "make".
 See '"${SCRIPT_DIR}"'/Usage.txt for more info about build usage and concepts.
+
+The parallelism of the build can be set with a -jN argument to "m".  If you
+don't provide a -j argument, the build system automatically selects a parallel
+task count that it thinks is optimal for your system.
 
 Common goals are:
 

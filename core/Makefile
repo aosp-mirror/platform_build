@@ -800,7 +800,7 @@ ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
 endif
 
 # $1: boot image file name
-# $2: boot image variant (boot, boot-debug)
+# $2: boot image variant (boot, boot-debug, boot-test-harness)
 define get-bootimage-partition-size
   $(BOARD_$(call to-upper,$(subst .img,,$(subst $(2),kernel,$(notdir $(1)))))_BOOTIMAGE_PARTITION_SIZE)
 endef
@@ -1014,6 +1014,15 @@ ifdef INTERNAL_KERNEL_CMDLINE
   INTERNAL_VENDOR_BOOTIMAGE_ARGS += --vendor_cmdline "$(INTERNAL_KERNEL_CMDLINE)"
 endif
 
+ifdef INTERNAL_BOOTCONFIG
+INTERNAL_VENDOR_BOOTCONFIG_TARGET := $(PRODUCT_OUT)/vendor-bootconfig.img
+$(INTERNAL_VENDOR_BOOTCONFIG_TARGET):
+	rm -f $@
+	$(foreach param,$(INTERNAL_BOOTCONFIG), \
+	 printf "%s\n" $(param) >> $@;)
+  INTERNAL_VENDOR_BOOTIMAGE_ARGS += --vendor_bootconfig $(INTERNAL_VENDOR_BOOTCONFIG_TARGET)
+endif
+
 # $(1): Build target name
 # $(2): Staging dir to be compressed
 # $(3): Build dependencies
@@ -1061,7 +1070,7 @@ $(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
 
 INSTALLED_VENDOR_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/vendor_boot.img
 $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_DTBIMAGE_TARGET)
-$(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS)
+$(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS) $(INTERNAL_VENDOR_BOOTCONFIG_TARGET)
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOTIMAGE_KEY_PATH)
 	$(call pretty,"Target vendor_boot image: $@")
@@ -1248,7 +1257,7 @@ license_modules_rehomed += $(filter $(PRODUCT_OUT)/root/%,$(license_modules_rest
 license_modules_rehomed += $(filter $(PRODUCT_OUT)/data/%,$(license_modules_rest))
 license_modules_rehomed += $(filter $(PRODUCT_OUT)/ramdisk/%,$(license_modules_rest))
 license_modules_rehomed += $(filter $(PRODUCT_OUT)/debug_ramdisk/%,$(license_modules_rest))
-license_modules_rehomed += $(filter $(PRODUCT_OUT)/vendor-ramdisk/%,$(license_modules_rest))
+license_modules_rehomed += $(filter $(PRODUCT_OUT)/vendor_ramdisk/%,$(license_modules_rest))
 license_modules_rehomed += $(filter $(PRODUCT_OUT)/persist/%,$(license_modules_rest))
 license_modules_rehomed += $(filter $(PRODUCT_OUT)/persist.img,$(license_modules_rest))
 license_modules_rehomed += $(filter $(PRODUCT_OUT)/system_other/%,$(license_modules_rest))
@@ -2318,21 +2327,22 @@ endif
 BOARD_AVB_BOOT_TEST_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 INTERNAL_AVB_BOOT_TEST_SIGNING_ARGS := --algorithm SHA256_RSA2048 --key $(BOARD_AVB_BOOT_TEST_KEY_PATH)
 # $(1): the bootimage to sign
+# $(2): boot image variant (boot, boot-debug, boot-test-harness)
 define test-key-sign-bootimage
-$(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot-debug)))
+$(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),$(2))))
 $(AVBTOOL) add_hash_footer \
   --image $(1) \
-  --partition_size $(call get-bootimage-partition-size,$(1),boot-debug)\
+  --partition_size $(call get-bootimage-partition-size,$(1),$(2))\
   --partition_name boot $(INTERNAL_AVB_BOOT_TEST_SIGNING_ARGS) \
   $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
-$(call assert-max-image-size,$(1),$(call get-bootimage-partition-size,$(1),boot-debug))
+$(call assert-max-image-size,$(1),$(call get-bootimage-partition-size,$(1),$(2)))
 endef
 
 # $(1): output file
 define build-debug-bootimage-target
   $(MKBOOTIMG) --kernel $(PRODUCT_OUT)/$(subst .img,,$(subst boot-debug,kernel,$(notdir $(1)))) \
     $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $1
-  $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$1))
+  $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$1,boot-debug))
 endef
 
 # Depends on original boot.img and ramdisk-debug.img, to build the new boot-debug.img
@@ -2501,7 +2511,7 @@ endif
 define build-boot-test-harness-target
   $(MKBOOTIMG) --kernel $(PRODUCT_OUT)/$(subst .img,,$(subst boot-test-harness,kernel,$(notdir $(1)))) \
     $(INTERNAL_TEST_HARNESS_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
-  $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$@))
+  $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$@,boot-test-harness))
 endef
 
 # Build the new boot-test-harness.img, based on boot-debug.img and ramdisk-test-harness.img.
@@ -4599,11 +4609,15 @@ endif
 ifdef BUILDING_VENDOR_BOOT_IMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDOR_RAMDISK_FILES)
   $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS)
+  # The vendor ramdisk may be built from the recovery ramdisk.
+  ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+    $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
+  endif
 endif
 
 ifdef BUILDING_RECOVERY_IMAGE
   # TODO(b/30414428): Can't depend on INTERNAL_RECOVERYIMAGE_FILES alone like other
-  # BUILD_TARGET_FILES_PACKAGE dependencies because currently there're cp/rsync/rm
+  # BUILT_TARGET_FILES_PACKAGE dependencies because currently there're cp/rsync/rm
   # commands in build-recoveryimage-target, which would touch the files under
   # TARGET_RECOVERY_OUT and race with packaging target-files.zip.
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
@@ -4793,6 +4807,9 @@ ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
 	    $(TARGET_VENDOR_RAMDISK_OUT),$(zip_root)/VENDOR_BOOT/RAMDISK)
 ifdef INSTALLED_DTBIMAGE_TARGET
 	cp $(INSTALLED_DTBIMAGE_TARGET) $(zip_root)/VENDOR_BOOT/dtb
+endif
+ifdef INTERNAL_VENDOR_BOOTCONFIG_TARGET
+	cp $(INTERNAL_VENDOR_BOOTCONFIG_TARGET) $(zip_root)/VENDOR_BOOT/vendor_bootconfig
 endif
 ifdef BOARD_KERNEL_BASE
 	echo "$(BOARD_KERNEL_BASE)" > $(zip_root)/VENDOR_BOOT/base
