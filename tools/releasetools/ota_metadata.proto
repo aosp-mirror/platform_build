@@ -105,4 +105,7 @@ message OtaMetadata {
   bool retrofit_dynamic_partitions = 7;
   // The required size of the cache partition, only valid for non-A/B update.
   int64 required_cache = 8;
+
+  // True iff security patch level downgrade is permitted on this OTA.
+  bool spl_downgrade = 9;
 }

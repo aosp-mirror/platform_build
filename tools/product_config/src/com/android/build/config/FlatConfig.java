@@ -16,11 +16,21 @@
 
 package com.android.build.config;
 
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
- * Wrapper for invoking kati.
+ * Flattened configuration -- set of variables after all assignments and inherits have
+ * been executed.
  */
-public interface Kati {
-    public Map<String, MakeConfig> loadProductConfig();
+public class FlatConfig extends ConfigBase {
+
+    private final TreeMap<String, Value> mValues = new TreeMap();
+
+    public TreeMap<String, Value> getValues() {
+        return mValues;
+    }
 }
