@@ -275,7 +275,7 @@ _odm_path_placeholder := ||ODM-PATH-PH||
 _vendor_dlkm_path_placeholder := ||VENDOR_DLKM-PATH-PH||
 _odm_dlkm_path_placeholder := ||ODM_DLKM-PATH-PH||
 TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
-TARGET_COPY_OUT_VENDOR_RAMDISK := vendor-ramdisk
+TARGET_COPY_OUT_VENDOR_RAMDISK := vendor_ramdisk
 TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
 # TODO(b/135957588) TARGET_COPY_OUT_PRODUCT_SERVICES will copy the target to
 # product
