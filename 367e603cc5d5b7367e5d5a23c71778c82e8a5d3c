@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5e310185_657b5515",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-05T23:47:16Z",
+      "side": 1,
+      "message": "I think this makes more sense as an included list and an excluded list",
+      "revId": "367e603cc5d5b7367e5d5a23c71778c82e8a5d3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
