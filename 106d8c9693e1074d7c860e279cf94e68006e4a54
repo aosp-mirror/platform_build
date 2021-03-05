@@ -16,6 +16,23 @@
       "message": "Test failures (test history all red) are not related to this CL.",
       "revId": "106d8c9693e1074d7c860e279cf94e68006e4a54",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "74289a1d_c5de6cf6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-03-05T21:40:56Z",
+      "side": 1,
+      "message": "PTAL.\n\nThe idea here is to create $(PRODUCT_OUT)/vendor-ramdisk.img to go with already existing $(PRODUCT_OUT)/ramdisk.img.",
+      "revId": "106d8c9693e1074d7c860e279cf94e68006e4a54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
