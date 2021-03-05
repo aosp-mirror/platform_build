@@ -16,6 +16,24 @@
       "message": "OOI what are those packages, what does it do with them and why?",
       "revId": "399fc37446443bec0f03e12a80c07d6b87abb628",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b202175_2d3d885a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-05T17:30:51Z",
+      "side": 1,
+      "message": "I don\u0027t really know. It started off in https://r.android.com/c/device/google/fuchsia/+/859930/2/fuchsia.mk with a few hand-picked packages. The README talks about an \"ART for Fuchsia\" product that becomes a Fuchsia .far package. Guess we need to have a discussion at some point whether it can be made to digest an APEX, or build that .far file from master-art instead, or something else.",
+      "parentUuid": "87bd16f4_c1ca65ea",
+      "revId": "399fc37446443bec0f03e12a80c07d6b87abb628",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
