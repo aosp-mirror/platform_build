@@ -293,8 +293,6 @@ SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
     'vendor_boot']
 
 
-
-
 class PayloadSigner(object):
   """A class that wraps the payload signing works.
 
@@ -761,9 +759,11 @@ def GetTargetFilesZipWithoutPostinstallConfig(input_file):
   common.ZipDelete(target_file, POSTINSTALL_CONFIG)
   return target_file
 
+
 def ParseInfoDict(target_file_path):
   with zipfile.ZipFile(target_file_path, 'r', allowZip64=True) as zfp:
     return common.LoadInfoDict(zfp)
+
 
 def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
   """Returns a target-files.zip for partial ota update package generation.
@@ -885,7 +885,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   with open(new_ab_partitions, 'w') as f:
     for partition in ab_partitions:
       if (partition in dynamic_partition_list and
-          partition not in super_block_devices):
+              partition not in super_block_devices):
         logger.info("Dropping %s from ab_partitions.txt", partition)
         continue
       f.write(partition + "\n")
@@ -959,31 +959,36 @@ def GetTargetFilesZipForCustomImagesUpdates(input_file, custom_images):
 
   return target_file
 
+
 def GeneratePartitionTimestampFlags(partition_state):
   partition_timestamps = [
       part.partition_name + ":" + part.version
       for part in partition_state]
   return ["--partition_timestamps", ",".join(partition_timestamps)]
 
+
 def GeneratePartitionTimestampFlagsDowngrade(
-    pre_partition_state, post_partition_state):
+        pre_partition_state, post_partition_state):
   assert pre_partition_state is not None
   partition_timestamps = {}
   for part in pre_partition_state:
     partition_timestamps[part.partition_name] = part.version
   for part in post_partition_state:
     partition_timestamps[part.partition_name] = \
-      max(part.version, partition_timestamps[part.partition_name])
+        max(part.version, partition_timestamps[part.partition_name])
   return [
       "--partition_timestamps",
-      ",".join([key + ":" + val for (key, val) in partition_timestamps.items()])
+      ",".join([key + ":" + val for (key, val)
+                in partition_timestamps.items()])
   ]
+
 
 def IsSparseImage(filepath):
   with open(filepath, 'rb') as fp:
     # Magic for android sparse image format
     # https://source.android.com/devices/bootloader/images
     return fp.read(4) == b'\x3A\xFF\x26\xED'
+
 
 def SupportsMainlineGkiUpdates(target_file):
   """Return True if the build supports MainlineGKIUpdates.
@@ -1023,6 +1028,7 @@ def SupportsMainlineGkiUpdates(target_file):
   pattern = re.compile(r"com\.android\.gki\..*\.apex")
   return pattern.search(output) is not None
 
+
 def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
   # Stage the output zip package for package signing.
@@ -1043,7 +1049,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     source_info = common.BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
     vendor_prop = source_info.info_dict.get("vendor.build.prop")
     if vendor_prop and \
-        vendor_prop.GetProp("ro.virtual_ab.compression.enabled") == "true":
+            vendor_prop.GetProp("ro.virtual_ab.compression.enabled") == "true":
       # TODO(zhangkelvin) Remove this once FEC on VABC is supported
       logger.info("Virtual AB Compression enabled, disabling FEC")
       OPTIONS.disable_fec_computation = True
@@ -1099,7 +1105,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   additional_args += ["--max_timestamp", max_timestamp]
 
   if SupportsMainlineGkiUpdates(source_file):
-    logger.warning("Detected build with mainline GKI, include full boot image.")
+    logger.warning(
+        "Detected build with mainline GKI, include full boot image.")
     additional_args.extend(["--full_boot", "true"])
 
   payload.Generate(
@@ -1133,7 +1140,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # into A/B OTA package.
   target_zip = zipfile.ZipFile(target_file, "r", allowZip64=True)
   if (target_info.get("verity") == "true" or
-      target_info.get("avb_enable") == "true"):
+          target_info.get("avb_enable") == "true"):
     care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
                      "META/" + x in target_zip.namelist()]
 
@@ -1153,7 +1160,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     apex_info_entry = target_zip.getinfo("META/apex_info.pb")
     with target_zip.open(apex_info_entry, "r") as zfp:
       common.ZipWriteStr(output_zip, "apex_info.pb", zfp.read(),
-                        compress_type=zipfile.ZIP_STORED)
+                         compress_type=zipfile.ZIP_STORED)
   except KeyError:
     logger.warning("target_file doesn't contain apex_info.pb %s", target_file)
 
@@ -1267,6 +1274,7 @@ def main(argv):
       OPTIONS.disable_vabc = True
     elif o == "--spl_downgrade":
       OPTIONS.spl_downgrade = True
+      OPTIONS.wipe_user_data = True
     else:
       return False
     return True
@@ -1337,14 +1345,12 @@ def main(argv):
     if OPTIONS.incremental_source is None:
       raise ValueError("Cannot generate downgradable full OTAs")
 
-
   # TODO(xunchang) for retrofit and partial updates, maybe we should rebuild the
   # target-file and reload the info_dict. So the info will be consistent with
   # the modified target-file.
 
   logger.info("--- target info ---")
   common.DumpInfoDict(OPTIONS.info_dict)
-
 
   # Load the source build dict if applicable.
   if OPTIONS.incremental_source is not None:
@@ -1356,15 +1362,15 @@ def main(argv):
 
   if OPTIONS.partial:
     OPTIONS.info_dict['ab_partitions'] = \
-      list(
-          set(OPTIONS.info_dict['ab_partitions']) & set(OPTIONS.partial)
-      )
+        list(
+        set(OPTIONS.info_dict['ab_partitions']) & set(OPTIONS.partial)
+    )
     if OPTIONS.source_info_dict:
       OPTIONS.source_info_dict['ab_partitions'] = \
-        list(
-            set(OPTIONS.source_info_dict['ab_partitions']) &
-            set(OPTIONS.partial)
-        )
+          list(
+          set(OPTIONS.source_info_dict['ab_partitions']) &
+          set(OPTIONS.partial)
+      )
 
   # Load OEM dicts if provided.
   OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)
@@ -1373,7 +1379,7 @@ def main(argv):
   # use_dynamic_partitions but target build does.
   if (OPTIONS.source_info_dict and
       OPTIONS.source_info_dict.get("use_dynamic_partitions") != "true" and
-      OPTIONS.target_info_dict.get("use_dynamic_partitions") == "true"):
+          OPTIONS.target_info_dict.get("use_dynamic_partitions") == "true"):
     if OPTIONS.target_info_dict.get("dynamic_partition_retrofit") != "true":
       raise common.ExternalError(
           "Expect to generate incremental OTA for retrofitting dynamic "
@@ -1390,7 +1396,7 @@ def main(argv):
   allow_non_ab = OPTIONS.info_dict.get("allow_non_ab") == "true"
   if OPTIONS.force_non_ab:
     assert allow_non_ab,\
-      "--force_non_ab only allowed on devices that supports non-A/B"
+        "--force_non_ab only allowed on devices that supports non-A/B"
     assert ab_update, "--force_non_ab only allowed on A/B devices"
 
   generate_ab = not OPTIONS.force_non_ab and ab_update
@@ -1408,10 +1414,10 @@ def main(argv):
     private_key_path = OPTIONS.package_key + OPTIONS.private_key_suffix
     if not os.path.exists(private_key_path):
       raise common.ExternalError(
-                        "Private key {} doesn't exist. Make sure you passed the"
-                        " correct key path through -k option".format(
-                          private_key_path)
-                          )
+          "Private key {} doesn't exist. Make sure you passed the"
+          " correct key path through -k option".format(
+              private_key_path)
+      )
 
   if OPTIONS.source_info_dict:
     source_build_prop = OPTIONS.source_info_dict["build.prop"]
@@ -1419,14 +1425,14 @@ def main(argv):
     source_spl = source_build_prop.GetProp(SECURITY_PATCH_LEVEL_PROP_NAME)
     target_spl = target_build_prop.GetProp(SECURITY_PATCH_LEVEL_PROP_NAME)
     is_spl_downgrade = target_spl < source_spl
-    if is_spl_downgrade and not OPTIONS.spl_downgrade:
+    if is_spl_downgrade and not OPTIONS.spl_downgrade and not OPTIONS.downgrade:
       raise common.ExternalError(
-        "Target security patch level {} is older than source SPL {} applying "
-        "such OTA will likely cause device fail to boot. Pass --spl_downgrade "
-        "to override this check. This script expects security patch level to "
-        "be in format yyyy-mm-dd (e.x. 2021-02-05). It's possible to use "
-        "separators other than -, so as long as it's used consistenly across "
-        "all SPL dates".format(target_spl, source_spl))
+          "Target security patch level {} is older than source SPL {} applying "
+          "such OTA will likely cause device fail to boot. Pass --spl_downgrade "
+          "to override this check. This script expects security patch level to "
+          "be in format yyyy-mm-dd (e.x. 2021-02-05). It's possible to use "
+          "separators other than -, so as long as it's used consistenly across "
+          "all SPL dates".format(target_spl, source_spl))
     elif not is_spl_downgrade and OPTIONS.spl_downgrade:
       raise ValueError("--spl_downgrade specified but no actual SPL downgrade"
                        " detected. Please only pass in this flag if you want a"
