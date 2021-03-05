@@ -33,6 +33,52 @@
       "message": "PTAL.\n\nThe idea here is to create $(PRODUCT_OUT)/vendor-ramdisk.img to go with already existing $(PRODUCT_OUT)/ramdisk.img.",
       "revId": "106d8c9693e1074d7c860e279cf94e68006e4a54",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f85836d6_244d5ffc",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 994,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-05T23:33:37Z",
+      "side": 1,
+      "message": "Should this be vendor_ramdisk instead of vendor-ramdisk?",
+      "range": {
+        "startLine": 994,
+        "startChar": 50,
+        "endLine": 994,
+        "endChar": 64
+      },
+      "revId": "106d8c9693e1074d7c860e279cf94e68006e4a54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0598b66f_08df4bf7",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 997,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-05T23:33:37Z",
+      "side": 1,
+      "message": "$(copy-file-to-target)",
+      "range": {
+        "startLine": 997,
+        "startChar": 1,
+        "endLine": 997,
+        "endChar": 51
+      },
+      "revId": "106d8c9693e1074d7c860e279cf94e68006e4a54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
