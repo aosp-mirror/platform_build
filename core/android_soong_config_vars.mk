@@ -44,6 +44,10 @@ else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
 else ifneq (,$(SANITIZE_TARGET)$(SANITIZE_HOST))
   # Prebuilts aren't built with sanitizers either.
   SOONG_CONFIG_art_module_source_build := true
+else ifneq (,$(PRODUCT_FUCHSIA))
+  # Fuchsia picks out ART internal packages that aren't available in the
+  # prebuilt.
+  SOONG_CONFIG_art_module_source_build := true
 else
   # This sets the default for building ART APEXes from source rather than
   # prebuilts (in packages/modules/ArtPrebuilt and prebuilt/module_sdk/art) in
