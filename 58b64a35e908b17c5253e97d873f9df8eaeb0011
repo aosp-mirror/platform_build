@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a1140d5f_09a2dbc7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-03-05T21:14:59Z",
+      "side": 1,
+      "message": "hmm... but we still what callers who supply \"--downgrade\" to work. Otherwise, you need google3 change to add \"--spl-downgrade\" everywhere.\n\nSo, we can make \"downgrade\" implies \"spl-downgrade\"; or remove the \"spl-downgrade\" flag, and make the existing \"downgrade\" flag to handle both timestamp and spl. WDYT?",
+      "revId": "58b64a35e908b17c5253e97d873f9df8eaeb0011",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
