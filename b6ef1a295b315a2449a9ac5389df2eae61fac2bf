@@ -63,6 +63,30 @@
       },
       "revId": "b6ef1a295b315a2449a9ac5389df2eae61fac2bf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4006218c_f4a71881",
+        "filename": "core/tasks/boot_jars_installed_check.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-05T16:44:01Z",
+      "side": 1,
+      "message": "hm, not sure. Maybe it\u0027s not that important. An alternative would be to just install them automatically instead (if that doesn\u0027t already happen -- I don\u0027t remember).",
+      "parentUuid": "af6fe338_6583947f",
+      "range": {
+        "startLine": 28,
+        "startChar": 47,
+        "endLine": 28,
+        "endChar": 55
+      },
+      "revId": "b6ef1a295b315a2449a9ac5389df2eae61fac2bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
