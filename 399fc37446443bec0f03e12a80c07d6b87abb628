@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87bd16f4_c1ca65ea",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-03-05T17:15:41Z",
+      "side": 1,
+      "message": "OOI what are those packages, what does it do with them and why?",
+      "revId": "399fc37446443bec0f03e12a80c07d6b87abb628",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
