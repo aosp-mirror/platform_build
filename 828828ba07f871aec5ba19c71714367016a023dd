@@ -16,6 +16,29 @@
       "message": "These are also consistent now:\n$(call pretty,\"Target ram disk: $@\")\n$(call pretty,\"Target vendor ram disk: $@\")\n$(call pretty,\"Target debug ram disk: $@\")\n$(call pretty,\"Target vendor debug ram disk: $@\")\n$(call pretty,\"Target test harness ram disk: $@\")",
       "revId": "828828ba07f871aec5ba19c71714367016a023dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d444dfbb_77ffff59",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 996,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-06T02:04:48Z",
+      "side": 1,
+      "message": "nit: nospace",
+      "range": {
+        "startLine": 996,
+        "startChar": 33,
+        "endLine": 996,
+        "endChar": 34
+      },
+      "revId": "828828ba07f871aec5ba19c71714367016a023dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
