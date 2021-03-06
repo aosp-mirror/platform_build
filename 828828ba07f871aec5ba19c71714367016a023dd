@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "b5d394e7_86e4fb47",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-06T02:05:43Z",
+      "side": 1,
+      "message": "oh, nevermind, ignore my other comment",
+      "parentUuid": "d62eca18_54f3ff8f",
+      "revId": "828828ba07f871aec5ba19c71714367016a023dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "d444dfbb_77ffff59",
         "filename": "core/Makefile",
         "patchSetId": 2
