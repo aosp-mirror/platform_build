@@ -58,6 +58,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "019af2a1_caa7443f",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 994,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-03-06T01:33:26Z",
+      "side": 1,
+      "message": "Yes, I\u0027ll make the change.\n\ndash seems to be used only with \"-debug\" postfix:\nboot-debug.img\nramdisk-debug.img\nvendor_boot-debug.img",
+      "parentUuid": "f85836d6_244d5ffc",
+      "range": {
+        "startLine": 994,
+        "startChar": 50,
+        "endLine": 994,
+        "endChar": 64
+      },
+      "revId": "106d8c9693e1074d7c860e279cf94e68006e4a54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0598b66f_08df4bf7",
@@ -71,6 +95,30 @@
       "writtenOn": "2021-03-05T23:33:37Z",
       "side": 1,
       "message": "$(copy-file-to-target)",
+      "range": {
+        "startLine": 997,
+        "startChar": 1,
+        "endLine": 997,
+        "endChar": 51
+      },
+      "revId": "106d8c9693e1074d7c860e279cf94e68006e4a54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c42704c_18b7b670",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 997,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-03-06T01:33:26Z",
+      "side": 1,
+      "message": "Will do.",
+      "parentUuid": "0598b66f_08df4bf7",
       "range": {
         "startLine": 997,
         "startChar": 1,
