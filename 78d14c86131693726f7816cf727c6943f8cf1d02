@@ -88,6 +88,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "14e0e293_21d3d6b1",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-06T20:30:24Z",
+      "side": 1,
+      "message": "When it\u0027s a single line, there isn\u0027t much difference. When it\u0027s dozens of lines, it is. I don\u0027t think it\u0027s a small price to pay.",
+      "parentUuid": "ed2afb67_6518ee71",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0e68ba1b_0970ecb9",
@@ -137,6 +155,24 @@
       "side": 1,
       "message": "Got it, thanks. As a small nit, it might be good to restate this in the README.",
       "parentUuid": "06f84524_c3681479",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28e45b4a_bb1e682f",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-06T20:30:24Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e0b92703_772cf513",
       "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -194,6 +230,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "521d5421_478486e5",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-06T20:30:24Z",
+      "side": 1,
+      "message": "I have responded in the design document.",
+      "parentUuid": "e927bd99_6c3c5573",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b1d4344e_91e1a622",
@@ -243,6 +297,24 @@
       "side": 1,
       "message": "There\u0027s no guarantee that \"cmd\" writes a Starlark script to stdout though, right? Or, even worse, there\u0027s no guarantee that \"cmd\" doesn\u0027t do arbitrary host code execution *before* it writes a Starlark script to stdout.\n\nMy concern here is that we are opening the API to abuse: We technically allow any arbitrary command to be executed, under the guise of a reduced scope.\n\nCan we reduce the scope of this function?",
       "parentUuid": "c41d4a44_519dc958",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1e23859_4f2d28d2",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-06T20:30:24Z",
+      "side": 1,
+      "message": "I don\u0027t understand what guarantees are needed about stdout -- the interpreter just reads and executes whatever \u0027cmd\u0027 has written there. If it hasn\u0027t written anything, nothing will be executed. As to arbitrary command execution, I am not sure what\u0027s the concern here, this isn\u0027t something running remotely with elevated privileges. Besides, no matter that\u0027s the fate of this function we still need command() to convert Make\u0027s $(shell).\nAs this function is not needed at the moment, I have retained the implementation but removed this function registration.",
+      "parentUuid": "279cac9a_9c988bf4",
       "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
