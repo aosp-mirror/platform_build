@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d62eca18_54f3ff8f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-03-06T01:49:50Z",
+      "side": 1,
+      "message": "These are also consistent now:\n$(call pretty,\"Target ram disk: $@\")\n$(call pretty,\"Target vendor ram disk: $@\")\n$(call pretty,\"Target debug ram disk: $@\")\n$(call pretty,\"Target vendor debug ram disk: $@\")\n$(call pretty,\"Target test harness ram disk: $@\")",
+      "revId": "828828ba07f871aec5ba19c71714367016a023dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
