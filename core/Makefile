@@ -694,10 +694,10 @@ INSTALLED_FILES_JSON_ROOT := $(INSTALLED_FILES_FILE_ROOT:.txt=.json)
 $(INSTALLED_FILES_FILE_ROOT): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_ROOT)
 $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_ROOT_OUT) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_ROOT_OUT) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
 
@@ -723,11 +723,11 @@ INSTALLED_FILES_JSON_RAMDISK := $(INSTALLED_FILES_FILE_RAMDISK:.txt=.json)
 $(INSTALLED_FILES_FILE_RAMDISK): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_RAMDISK)
 $(INSTALLED_FILES_FILE_RAMDISK) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(TARGET_RAMDISK_OUT)
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_RAMDISK_OUT) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(TARGET_RAMDISK_OUT)
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_RAMDISK_OUT) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_RAMDISK))
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
@@ -1002,11 +1002,11 @@ INSTALLED_FILES_JSON_VENDOR_RAMDISK := $(INSTALLED_FILES_FILE_VENDOR_RAMDISK:.tx
 $(INSTALLED_FILES_FILE_VENDOR_RAMDISK): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR_RAMDISK)
 $(INSTALLED_FILES_FILE_VENDOR_RAMDISK): $(INTERNAL_VENDOR_RAMDISK_TARGET)
 $(INSTALLED_FILES_FILE_VENDOR_RAMDISK): $(INTERNAL_VENDOR_RAMDISK_FILES) $(FILESLIST) $(FILESLIST_UTIL)
-	echo Installed file list: $@
+	@echo Installed file list: $@
 	mkdir -p $(dir $@)
 	rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_VENDOR_RAMDISK_OUT) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	$(FILESLIST) $(TARGET_VENDOR_RAMDISK_OUT) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
   INTERNAL_VENDOR_BOOTIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
@@ -1799,10 +1799,10 @@ $(INSTALLED_FILES_FILE_RECOVERY): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
 $(INSTALLED_FILES_FILE_RECOVERY): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_RECOVERY)
 $(INSTALLED_FILES_FILE_RECOVERY): $(INTERNAL_RECOVERYIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_RECOVERY_ROOT_OUT) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_RECOVERY_ROOT_OUT) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 recovery_sepolicy := \
     $(TARGET_RECOVERY_ROOT_OUT)/sepolicy \
@@ -2256,7 +2256,7 @@ $(INSTALLED_FILES_FILE_DEBUG_RAMDISK): DEBUG_RAMDISK_ROOT_DIR := $(my_debug_ramd
 # Need to depend on the built ramdisk-debug.img, to get a complete list of the installed files.
 $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) : $(INSTALLED_DEBUG_RAMDISK_TARGET)
 $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) : $(INTERNAL_DEBUG_RAMDISK_FILES) $(FILESLIST) $(FILESLIST_UTIL)
-	echo Installed file list: $@
+	@echo Installed file list: $@
 	mkdir -p $(dir $@)
 	rm -f $@
 	$(FILESLIST) $(DEBUG_RAMDISK_ROOT_DIR) > $(@:.txt=.json)
@@ -2406,7 +2406,7 @@ $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): VENDOR_DEBUG_RAMDISK_DIR := $(PROD
 # so we have to wait for the vendor debug ramdisk to be built before generating the installed file list.
 $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET)
 $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): $(INTERNAL_VENDOR_DEBUG_RAMDISK_FILES) $(FILESLIST) $(FILESLIST_UTIL)
-	echo Installed file list: $@
+	@echo Installed file list: $@
 	mkdir -p $(dir $@)
 	rm -f $@
 	$(FILESLIST) $(VENDOR_DEBUG_RAMDISK_DIR) > $(@:.txt=.json)
@@ -2611,10 +2611,10 @@ INSTALLED_FILES_JSON := $(INSTALLED_FILES_FILE:.txt=.json)
 $(INSTALLED_FILES_FILE): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON)
 $(INSTALLED_FILES_FILE): $(FULL_SYSTEMIMAGE_DEPS) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_OUT) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_OUT) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
@@ -2855,10 +2855,10 @@ INSTALLED_FILES_JSON_SYSTEMOTHER := $(INSTALLED_FILES_FILE_SYSTEMOTHER:.txt=.jso
 $(INSTALLED_FILES_FILE_SYSTEMOTHER): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_SYSTEMOTHER)
 $(INSTALLED_FILES_FILE_SYSTEMOTHER) : $(INTERNAL_SYSTEMOTHERIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_OUT_SYSTEM_OTHER) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_OUT_SYSTEM_OTHER) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 # Determines partition size for system_other.img.
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
@@ -2939,10 +2939,10 @@ INSTALLED_FILES_JSON_VENDOR := $(INSTALLED_FILES_FILE_VENDOR:.txt=.json)
 $(INSTALLED_FILES_FILE_VENDOR): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR)
 $(INSTALLED_FILES_FILE_VENDOR) : $(INTERNAL_VENDORIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_OUT_VENDOR) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_OUT_VENDOR) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 vendorimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,vendor)
@@ -2991,10 +2991,10 @@ INSTALLED_FILES_JSON_PRODUCT := $(INSTALLED_FILES_FILE_PRODUCT:.txt=.json)
 $(INSTALLED_FILES_FILE_PRODUCT): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_PRODUCT)
 $(INSTALLED_FILES_FILE_PRODUCT) : $(INTERNAL_PRODUCTIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_OUT_PRODUCT) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_OUT_PRODUCT) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 productimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,product)
@@ -3042,10 +3042,10 @@ INSTALLED_FILES_JSON_SYSTEM_EXT := $(INSTALLED_FILES_FILE_SYSTEM_EXT:.txt=.json)
 $(INSTALLED_FILES_FILE_SYSTEM_EXT): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_SYSTEM_EXT)
 $(INSTALLED_FILES_FILE_SYSTEM_EXT) : $(INTERNAL_SYSTEM_EXTIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_OUT_SYSTEM_EXT) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_OUT_SYSTEM_EXT) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 system_extimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,system_ext)
@@ -3113,10 +3113,10 @@ INSTALLED_FILES_JSON_ODM := $(INSTALLED_FILES_FILE_ODM:.txt=.json)
 $(INSTALLED_FILES_FILE_ODM): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_ODM)
 $(INSTALLED_FILES_FILE_ODM) : $(INTERNAL_ODMIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_OUT_ODM) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_OUT_ODM) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 odmimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,odm)
@@ -3164,10 +3164,10 @@ INSTALLED_FILES_JSON_VENDOR_DLKM := $(INSTALLED_FILES_FILE_VENDOR_DLKM:.txt=.jso
 $(INSTALLED_FILES_FILE_VENDOR_DLKM): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR_DLKM)
 $(INSTALLED_FILES_FILE_VENDOR_DLKM) : $(INTERNAL_VENDOR_DLKMIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_OUT_VENDOR_DLKM) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_OUT_VENDOR_DLKM) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 vendor_dlkmimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,vendor_dlkm)
@@ -3215,10 +3215,10 @@ INSTALLED_FILES_JSON_ODM_DLKM := $(INSTALLED_FILES_FILE_ODM_DLKM:.txt=.json)
 $(INSTALLED_FILES_FILE_ODM_DLKM): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_ODM_DLKM)
 $(INSTALLED_FILES_FILE_ODM_DLKM) : $(INTERNAL_ODM_DLKMIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) $(FILESLIST) $(TARGET_OUT_ODM_DLKM) > $(@:.txt=.json)
-	$(hide) $(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_OUT_ODM_DLKM) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 odm_dlkmimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,odm_dlkm)
