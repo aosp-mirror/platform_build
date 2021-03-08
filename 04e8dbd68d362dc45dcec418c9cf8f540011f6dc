@@ -33,6 +33,24 @@
       "message": "@ and $(hide) don\u0027t do anything any more since we switched from Make to Kati, I\u0027d suggest removing the others instead of adding them here.",
       "revId": "04e8dbd68d362dc45dcec418c9cf8f540011f6dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75aac8b4_159f469b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-03-08T21:03:44Z",
+      "side": 1,
+      "message": "I do see a small difference in the build output.\n\nWithout @ on echo, those lines show up without the progress indicator [ x% x/y ].\n\nInstalled file list: out/target/product/.../installed-files-ramdisk-debug.txt\nInstalled file list: out/target/product/.../installed-files-vendor-ramdisk-debug.txt\nInstalled file list: out/target/product/.../installed-files-vendor-ramdisk.txt\n\nvs\n\n[ 99% 62147/62164] Installed file list: out/target/product/.../installed-files-system_ext.txt\n[ 99% 62148/62164] Installed file list: out/target/product/.../installed-files-vendor.txt\n[ 99% 62149/62164] Installed file list: out/target/product/.../installed-files-product.txt\n[ 99% 62153/62164] Installed file list: out/target/product/.../installed-files-system-other.txt\n[ 99% 62155/62164] Installed file list: out/target/product/.../installed-files.txt\n\nThis CL makes the output consistent.",
+      "parentUuid": "9a0fa013_dbdb02bf",
+      "revId": "04e8dbd68d362dc45dcec418c9cf8f540011f6dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
