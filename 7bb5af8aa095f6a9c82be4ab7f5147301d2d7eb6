@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cef0f776_e81fe9d7",
+        "filename": "core/android_soong_config_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-08T11:49:14Z",
+      "side": 1,
+      "message": "the enforcement supports a whitelist, can you add the art module there (in generic.mk) instead ? changing settings of some named product inside the build system is very unexpected/error prone, it\u0027s not how products are meant to work.",
+      "revId": "7bb5af8aa095f6a9c82be4ab7f5147301d2d7eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
