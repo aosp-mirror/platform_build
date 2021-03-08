@@ -108,6 +108,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1df5e242_cc3470a5",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-08T16:13:45Z",
+      "side": 1,
+      "message": "Are we really just talking about 4 extra characters per assignment/access, or are there other prices that we are paying by not using this custom type?\n\nMaybe I\u0027ll take a step back and ask a more fundamental question with this work: Why are we using Starlark at all? Why not python or go?\n\nThe way I see it, these enhancements to Starlark\u0027s API are not minor changes. You\u0027ve effectively invented a new dialect of Starlark (a new language, if you will) just so we can solve the rbcrun problem. Why?\n\nIf one of the goals is to keep the implementation as compatible with Bazel\u0027s Starlark dialect as possible, then we need to be wary of any step in the wrong direction.",
+      "parentUuid": "14e0e293_21d3d6b1",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0e68ba1b_0970ecb9",
         "filename": "tools/rbcrun/README.md",
         "patchSetId": 23
