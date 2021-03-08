@@ -52,6 +52,24 @@
       "parentUuid": "81eb1db6_d0bbad2c",
       "revId": "7bb5af8aa095f6a9c82be4ab7f5147301d2d7eb6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "676977a7_a37d8ed8",
+        "filename": "core/android_soong_config_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-08T20:53:36Z",
+      "side": 1,
+      "message": "Fine with me. Note that the check could (should?) be reinstated when the bug is fixed properly.",
+      "parentUuid": "7f49fe0e_29320e6d",
+      "revId": "7bb5af8aa095f6a9c82be4ab7f5147301d2d7eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

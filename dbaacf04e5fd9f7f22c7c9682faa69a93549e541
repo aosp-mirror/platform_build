@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a31059d8_a26a3cae",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-08T20:53:36Z",
+      "side": 1,
+      "message": "I had a quick look in Soong why it skips the mk entries in this case. Nothing jumped out at me, didn\u0027t dig very deeply.",
+      "revId": "dbaacf04e5fd9f7f22c7c9682faa69a93549e541",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
