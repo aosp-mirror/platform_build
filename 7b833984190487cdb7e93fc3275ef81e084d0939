@@ -34,6 +34,24 @@
       "parentUuid": "4761ae7f_e5e11996",
       "revId": "7b833984190487cdb7e93fc3275ef81e084d0939",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a3b14d3_8174ff16",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-08T22:53:19Z",
+      "side": 1,
+      "message": "From code search, it appears that many devices inherits from gsi_release.mk directly, so I don\u0027t think it is suitable to disable VINTF checks here until all children are considered okay to do so:\n\nhttps://source.corp.google.com/search?q\u003dpackage:%5Eandroid$%20%2Fgsi_release.mk",
+      "parentUuid": "d30e83c2_cc26fffd",
+      "revId": "7b833984190487cdb7e93fc3275ef81e084d0939",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
