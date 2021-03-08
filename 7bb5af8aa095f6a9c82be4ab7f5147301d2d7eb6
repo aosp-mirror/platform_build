@@ -16,6 +16,24 @@
       "message": "the enforcement supports a whitelist, can you add the art module there (in generic.mk) instead ? changing settings of some named product inside the build system is very unexpected/error prone, it\u0027s not how products are meant to work.",
       "revId": "7bb5af8aa095f6a9c82be4ab7f5147301d2d7eb6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "81eb1db6_d0bbad2c",
+        "filename": "core/android_soong_config_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-03-08T12:29:08Z",
+      "side": 1,
+      "message": "[I haven\u0027t sent this out for review yet. Rest assured I\u0027d add you as reviewer if I actually intend to submit workarounds like this.]\n\n\u003e can you add the art module there (in generic.mk) instead ? \n\nTried that. The problem is that the check doesn\u0027t allow superfluous entries in the allow list, so I\u0027d have to duplicate the logic to know which ART module is added, and maybe also whether it\u0027s an ART source build or not. Since this is only a workaround in case the issue described in the ticket can\u0027t be fixed quickly, I don\u0027t want to go there.",
+      "parentUuid": "cef0f776_e81fe9d7",
+      "revId": "7bb5af8aa095f6a9c82be4ab7f5147301d2d7eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
