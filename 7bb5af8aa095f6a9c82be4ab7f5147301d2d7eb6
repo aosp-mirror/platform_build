@@ -34,6 +34,24 @@
       "parentUuid": "cef0f776_e81fe9d7",
       "revId": "7bb5af8aa095f6a9c82be4ab7f5147301d2d7eb6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7f49fe0e_29320e6d",
+        "filename": "core/android_soong_config_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-08T14:34:00Z",
+      "side": 1,
+      "message": "\u003e The problem is that the check doesn\u0027t allow superfluous entries in the allow list\n\nI\u0027d be fine with removing that check I think",
+      "parentUuid": "81eb1db6_d0bbad2c",
+      "revId": "7bb5af8aa095f6a9c82be4ab7f5147301d2d7eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
