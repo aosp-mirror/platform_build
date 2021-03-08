@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c239708_352a9b7a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-03-08T01:59:06Z",
+      "side": 1,
+      "message": "Hi Bruno,\n\nGSI R is stable for a long time.\nIs it possible that the patch only be CPed to the car branch, just like: ag/12362011?\n",
+      "revId": "1689846e358d1d3f4b0baa72e4355fd5c83d48a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
