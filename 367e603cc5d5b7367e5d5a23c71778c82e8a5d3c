@@ -16,6 +16,24 @@
       "message": "I think this makes more sense as an included list and an excluded list",
       "revId": "367e603cc5d5b7367e5d5a23c71778c82e8a5d3c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d698d5e_c44eeeb6",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1462756
+      },
+      "writtenOn": "2021-03-08T21:56:21Z",
+      "side": 1,
+      "message": "I started as both a list and inside soong I converted to a single map. Originally I thought about uses sets but Go lacks them and suggests using maps with a boolean or empty struct type. So it seemed simpler to make it a combined map. By doing it this way I can avoid having another step of processing this in Go.",
+      "parentUuid": "5e310185_657b5515",
+      "revId": "367e603cc5d5b7367e5d5a23c71778c82e8a5d3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
