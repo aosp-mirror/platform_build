@@ -52,6 +52,24 @@
       "parentUuid": "d30e83c2_cc26fffd",
       "revId": "7b833984190487cdb7e93fc3275ef81e084d0939",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "928c30ab_8b05822f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-08T22:54:42Z",
+      "side": 1,
+      "message": "I think it makes sense to disable it for GSI / GKI (maybe except aosp_arm64), but I don\u0027t know for other children that inherits from gsi_release.mk",
+      "parentUuid": "2a3b14d3_8174ff16",
+      "revId": "7b833984190487cdb7e93fc3275ef81e084d0939",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
