@@ -51,6 +51,24 @@
       "parentUuid": "9a0fa013_dbdb02bf",
       "revId": "04e8dbd68d362dc45dcec418c9cf8f540011f6dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6a43ece0_232ad905",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-08T21:27:43Z",
+      "side": 1,
+      "message": "They @ may still be necessary on the first echo, Kati has a pattern that it matches to try to pull out the first echo and treat it as the description field in Ninja, and may only match @echo.  Anywhere else it is unnecessary.",
+      "parentUuid": "75aac8b4_159f469b",
+      "revId": "04e8dbd68d362dc45dcec418c9cf8f540011f6dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
