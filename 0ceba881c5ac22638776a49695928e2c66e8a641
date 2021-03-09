@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4ee69d7e_5675fbb4",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1262,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-09T10:10:54Z",
+      "side": 0,
+      "message": "IMO worth commenting it out with a TODO",
+      "range": {
+        "startLine": 1260,
+        "startChar": 78,
+        "endLine": 1262,
+        "endChar": 100
+      },
+      "revId": "0ceba881c5ac22638776a49695928e2c66e8a641",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
