@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f95c33da_50409be9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-09T03:52:40Z",
+      "side": 1,
+      "message": "This isn\u0027t supposed to matter because nothing is supposed to depend on the build number file, it is supposed to get read as a side effect.  What are you seeing rebuild without this patch?",
+      "revId": "4db76c8f14dd3f998aa4cfd654177e93189e8298",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
