@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "347c5583_2860b68a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-03-09T12:13:02Z",
+      "side": 1,
+      "message": "Please be aware that LLNDK have a much stronger backwards compatibility requirements than the ordinary VNDK libraries.",
+      "revId": "c9902df3ab1a8bc7670bb82e1911fa68842a28a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
