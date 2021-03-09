@@ -52,6 +52,41 @@
       "parentUuid": "5b63ccaa_fa3cc541",
       "revId": "4db76c8f14dd3f998aa4cfd654177e93189e8298",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a50ae52_aac4c0f3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-09T06:03:14Z",
+      "side": 1,
+      "message": "I thought we never read BUILD_NUMBER_FROM_FILE directly, but we have to in order to change the FILE_NAME_TAG when it is explicitly set.  We\u0027ve optimized the case where BUILD_NUMBER is not set, but not the case when BUILD_NUMBER is set because it would never be the same in any of our infrastructure builds.  This patch seems fine to optimize that case.",
+      "parentUuid": "9f871984_9b08b84e",
+      "revId": "4db76c8f14dd3f998aa4cfd654177e93189e8298",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "95d2b962_a220b11f",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-09T06:03:14Z",
+      "side": 1,
+      "message": "Can you wrap this line with \\ escaping, and indent the commands inside the if and else?",
+      "revId": "4db76c8f14dd3f998aa4cfd654177e93189e8298",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
