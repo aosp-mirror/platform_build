@@ -16,6 +16,24 @@
       "message": "Hi Bruno,\n\nGSI R is stable for a long time.\nIs it possible that the patch only be CPed to the car branch, just like: ag/12362011?\n",
       "revId": "1689846e358d1d3f4b0baa72e4355fd5c83d48a7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2ef7654_98828ce9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1583555
+      },
+      "writtenOn": "2021-03-09T10:04:46Z",
+      "side": 1,
+      "message": "Hi SzuWei,\n\nI\u0027ll defer the question to Karthik, I don\u0027t have the background for this cherrypick.",
+      "parentUuid": "1c239708_352a9b7a",
+      "revId": "1689846e358d1d3f4b0baa72e4355fd5c83d48a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
