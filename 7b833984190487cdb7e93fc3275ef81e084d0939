@@ -70,6 +70,24 @@
       "parentUuid": "2a3b14d3_8174ff16",
       "revId": "7b833984190487cdb7e93fc3275ef81e084d0939",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17bd43a6_ae6e1c5f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-03-09T15:22:00Z",
+      "side": 1,
+      "message": "Users of gsi_release.mk are by definition all GSIs, so if this configuration is general to GSI, then we should probably put this here. If any child is broken, then we should fix the child, or the child shouldn\u0027t be inheriting gsi_release.mk\n\nWhat does this check do actually? Since GSI only contain system images, does it make sense to check this on GSI? \nFor the case of aosp_arm64, even though GSI and GKI are built together, they are really not the same product. IIUC, they share the same product makefile is only for convenience. Does it make sense to check the interface between GSI/GKI?\n\nI\u0027m turning this off because that\u0027s what (https://cs.android.com/android/platform/superproject/+/master:build/make/core/Makefile;l\u003d3916;drc\u003d728e0bd4684937a6d0fc11a6539ffaec32b0bed0) suggests. arm, x86, x86_64 GSIs don\u0027t have a \"kernel\", so the only option left is to unset PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS.\nAlternatively, can we change the mechanism of PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS so that the test is skipped if TARGET_NO_KERNEL is true?",
+      "parentUuid": "928c30ab_8b05822f",
+      "revId": "7b833984190487cdb7e93fc3275ef81e084d0939",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
