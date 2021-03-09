@@ -178,6 +178,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2fedbd2_6415197b",
+        "filename": "tools/rbcrun/cmd/rbcrun.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-09T08:16:09Z",
+      "side": 1,
+      "message": "Thanks :)",
+      "parentUuid": "9bbeb3da_8846d989",
+      "range": {
+        "startLine": 26,
+        "startChar": 2,
+        "endLine": 26,
+        "endChar": 30
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3b8af502_4141acc3",
@@ -784,6 +808,30 @@
       "side": 1,
       "message": "Yes, this is correct.",
       "parentUuid": "b048e469_ee7a3fa6",
+      "range": {
+        "startLine": 11,
+        "startChar": 24,
+        "endLine": 11,
+        "endChar": 59
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd19d9ff_3129cdd4",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-09T08:16:09Z",
+      "side": 1,
+      "message": "Let me try my hand (finally) at an intelligent answer then!\n\nMy understanding is that the way the product configuration runner currently works is the init() function of a module calls .inherit(), which does not do any actual computation except recording the dependency edge somewhere (where is this function implemented? I couldn\u0027t find it)\n\nThen the actual evaluation is done by traversing the whole tree in the _product_configuration() function, which is why you need the stack.\n\nA possible alternative would be instead to do the actual work of the inheritance either at the side of the .inherit() call or at the end of the module that calls it. For example (pseudocode, it\u0027s probably wrong in a number of ways):\n\nload(\"inherited.bzl\", inherited\u003d\"module\")\n\ndef init(handle):\n  handle.inherit(inherited)\n  handle.vars.add(\"PRODUCT_VENDOR_PROPERTIES\", [\"ro.logs.size.stats\u003d64K\"])\n\nmodule \u003d rblf.create_module(init)\n\nAnd then either handle.inherit() would merge inherited.vars into handle.vars or rblf.create_module would do so.\n\nThis would let us do away with the stack() symbol which is currently not implementable in pure Starlark. \n\nIt looks like you intend stack() to be used in that exact one place? In that case, if it needs to keep existing, make it accessible only to product_config.rbc so that the creativity module of authors is constrained.\n\nFor now, my concern is not necessary stack() itself, but to make sure that we don\u0027t commit to any decision that unnecessarily makes it difficult to migrate to evaluating the product configuration by Bazel instead. It\u0027s just that not having stack() in the first place is the best way to ensure that.",
+      "parentUuid": "cdbfe1a3_543a9224",
       "range": {
         "startLine": 11,
         "startChar": 24,
