@@ -16,6 +16,24 @@
       "message": "This isn\u0027t supposed to matter because nothing is supposed to depend on the build number file, it is supposed to get read as a side effect.  What are you seeing rebuild without this patch?",
       "revId": "4db76c8f14dd3f998aa4cfd654177e93189e8298",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b63ccaa_fa3cc541",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1140383
+      },
+      "writtenOn": "2021-03-09T05:11:16Z",
+      "side": 1,
+      "message": "Let me use a code snippet to show an example:\n\n$ cat Makefile\nX :\u003d $(file \u003cbuild_number.txt)\nall:\n        @echo X\u003d$(X)\n\n$ cat build_number.txt\n123\n\n$ ckati --ninja --regen -f Makefile\n./build.ninja is missing, regenerating...\n\n$ ckati --ninja --regen -f Makefile\nNo need to regenerate ninja file\n\n$ touch build_number.txt\n\n$ ckati --ninja --regen -f Makefile\n$(file \u003cbuild_number.txt) was changed, regenerating...\n\nIn the last command, regeneration of build.ninja is not expected, because its content is not changed. It seems ckati will also check timestamp for \"$(file \u003c)\" function.",
+      "parentUuid": "f95c33da_50409be9",
+      "revId": "4db76c8f14dd3f998aa4cfd654177e93189e8298",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
