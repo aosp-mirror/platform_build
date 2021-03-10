@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4ede436_52471c24",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1293738
+      },
+      "writtenOn": "2021-03-10T03:20:30Z",
+      "side": 1,
+      "message": "Thanks Devin. This is a very important sanity check, to make it clear there is not backwards compatibility with kernel cmdline for this specific property.",
+      "revId": "2e43e34d535ad9030885be9f5942d0c29f569c2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
