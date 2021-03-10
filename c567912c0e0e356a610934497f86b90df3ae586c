@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c1ee9e7a_e048beb1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 17
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-10T06:32:15Z",
+      "side": 1,
+      "message": "1. Added the test that exercises significant part of the product_config.rbc code.\n2. Stack data type has been replaced by a list and iteration over range (obviously, with early break).\n",
+      "revId": "c567912c0e0e356a610934497f86b90df3ae586c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
