@@ -842,6 +842,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e875be5a_e262df10",
+        "filename": "tools/rbcrun/stack.go",
+        "patchSetId": 22
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-10T06:32:09Z",
+      "side": 1,
+      "message": "I have removed stack. The code looks slightly uglier, but still readable.",
+      "parentUuid": "dd19d9ff_3129cdd4",
+      "range": {
+        "startLine": 11,
+        "startChar": 24,
+        "endLine": 11,
+        "endChar": 59
+      },
+      "revId": "c63640b83e9c3fd0770fd730062f34c9a1d38575",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ccc690a0_9fcb5c65",

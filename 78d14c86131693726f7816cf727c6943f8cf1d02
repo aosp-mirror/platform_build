@@ -142,6 +142,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e841749e_90631d04",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-10T06:32:09Z",
+      "side": 1,
+      "message": "I have doubts we will be able to use Bazel unchanged for building Android.\nEven if I remove propset, there is still \u0027module\u0027 type, without which the things are going to look even uglier.",
+      "parentUuid": "5f8d2661_174a85dc",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0e68ba1b_0970ecb9",
@@ -373,6 +391,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e28e4d7_19fc7d66",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-10T06:32:09Z",
+      "side": 1,
+      "message": "$(shell) is used to figure out the build\u0027s platform (runs \u0027uname -sm\u0027), to perform arithmentic (this one fortunately is called via macro, so the macro can be converted), and to find kernel\u0027s version and patch level (\nhttps://cs.android.com/android/platform/superproject/+/master:device/ti/beagle_x15/device.mk;drc\u003d48afeabe737ac145ea445745e0b1a5a66651c930;l\u003d39). That\u0027s for AOSP, vendor code has more. They can be eventually replaced with something more controlled.",
+      "parentUuid": "9a5f9f44_d5bfea05",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0ebb6cb0_79bff0f5",
@@ -444,6 +480,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a1a8f18_aadca7fd",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 23
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-10T06:32:09Z",
+      "side": 1,
+      "message": "module is called from the main product_config.rbc, see aosp/1486492. \npropsets are used all over the generated code.",
+      "parentUuid": "7a8a7bb5_adedb58e",
+      "range": {
+        "startLine": 252,
+        "startChar": 3,
+        "endLine": 252,
+        "endChar": 19
+      },
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "279a8e09_14000605",
@@ -505,6 +565,30 @@
       "side": 1,
       "message": "One idea would be to require something like this:\n\nload(\"android_product_config.rbc\", \"apc\")  # \"apc\" is just my zeroth thought\n\nat the beginning of each file, then special-case it so that instead of opening the file android_product_config.rbc, the configuration runner would wire up the implementation of these symbols. E.g. instead of\n\nf \u003d propset()\n\nyou\u0027d say\n\nf \u003d apc.propset()\n\nWDYT?",
       "parentUuid": "e5d4d472_7f5c7f2a",
+      "range": {
+        "startLine": 255,
+        "startChar": 3,
+        "endLine": 255,
+        "endChar": 16
+      },
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27dc2a8f_17fdbd9a",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 23
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-10T06:32:09Z",
+      "side": 1,
+      "message": "As shown in the design document, the first line of a product configuration file is:\nload(\"//build/make/target/product:product_config.rbc\", \"rblf\")\nand product_config.rbc exports whatever is necessary as the attributes of the `rblf`, which is a module (see product_config.rbc:456 in aosp/1486492). The functions with `rblf_` prefix are used only in the product_config.rbc file.\nPlease take a look also at the test configurations (in build/make/tests/) in the same aosp/1486492)\nAs to prefixes, IMHO the etymology of `rblf_` and `rblf.` is irrelevant; ff people feel strongly about it, I\u0027ll change them to something else.",
+      "parentUuid": "3ba2bba4_8fe0c5ff",
       "range": {
         "startLine": 255,
         "startChar": 3,
