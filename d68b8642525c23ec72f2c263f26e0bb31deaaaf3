@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0869af9_d8133008",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1262904
+      },
+      "writtenOn": "2021-03-10T13:32:36Z",
+      "side": 1,
+      "message": "In the process of project making, we found that when the signature key file is symbolic link, the link information will be packed in otacerts.zip. As a result, the OTA upgrade package cannot be used.",
+      "revId": "d68b8642525c23ec72f2c263f26e0bb31deaaaf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
