@@ -162,6 +162,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5a898826_3adfa1b7",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-10T11:38:29Z",
+      "side": 1,
+      "message": "Interesting. I thought the pure-Starlark version of \"module\" would be simply a .bzl file that exports every symbol you currently pass into the single module() invocation. It\u0027s actually a well-known pattern in Starlark:\n\na.bzl:\nload(\"b.bzl\", \"b\")\n\nb.bzl:\ndef _addprefix(...):\n  ...\n\ndef _addsuffix(...):\n  ...\n\nb \u003d struct(addprefix\u003d_addprefix, addsuffix\u003d_addsuffix)\n\nAm I grossly misunderstanding this?",
+      "parentUuid": "e841749e_90631d04",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0e68ba1b_0970ecb9",
         "filename": "tools/rbcrun/README.md",
         "patchSetId": 23
@@ -411,6 +429,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "24b9f375_f20b3a9d",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-10T11:38:29Z",
+      "side": 1,
+      "message": "Is looking for the string \"$(shell\" in files whose name ends with .mk under device/ in the source tree a good way to get a view on how bad the situation is?",
+      "parentUuid": "9e28e4d7_19fc7d66",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0ebb6cb0_79bff0f5",
         "filename": "tools/rbcrun/host.go",
         "patchSetId": 23
@@ -589,6 +625,30 @@
       "side": 1,
       "message": "As shown in the design document, the first line of a product configuration file is:\nload(\"//build/make/target/product:product_config.rbc\", \"rblf\")\nand product_config.rbc exports whatever is necessary as the attributes of the `rblf`, which is a module (see product_config.rbc:456 in aosp/1486492). The functions with `rblf_` prefix are used only in the product_config.rbc file.\nPlease take a look also at the test configurations (in build/make/tests/) in the same aosp/1486492)\nAs to prefixes, IMHO the etymology of `rblf_` and `rblf.` is irrelevant; ff people feel strongly about it, I\u0027ll change them to something else.",
       "parentUuid": "3ba2bba4_8fe0c5ff",
+      "range": {
+        "startLine": 255,
+        "startChar": 3,
+        "endLine": 255,
+        "endChar": 16
+      },
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5363e412_d723689c",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 23
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-10T11:38:29Z",
+      "side": 1,
+      "message": "...Well the fact that I missed that rblf is load()ed is quite embarrassing...\n\nI don\u0027t feel that strongly about the prefix, so consider this as nitpicking. Renaming it doesn\u0027t take much energy (I hope), so if there is a slightly better alternative, why not? But if you prefer rblf, that works, too.",
+      "parentUuid": "27dc2a8f_17fdbd9a",
       "range": {
         "startLine": 255,
         "startChar": 3,
