@@ -1022,6 +1022,11 @@ ifdef INTERNAL_KERNEL_CMDLINE
 endif
 
 ifdef INTERNAL_BOOTCONFIG
+ifneq (,$(findstring androidboot.hardware=, $(INTERNAL_BOOTCONFIG)))
+$(error "androidboot.hardware" BOOTCONFIG parameter is not supported due to \
+  bootconfig limitations. Use "hardware" instead. INTERNAL_BOOTCONFIG: \
+  $(INTERNAL_BOOTCONFIG))
+endif
 INTERNAL_VENDOR_BOOTCONFIG_TARGET := $(PRODUCT_OUT)/vendor-bootconfig.img
 $(INTERNAL_VENDOR_BOOTCONFIG_TARGET):
 	rm -f $@
