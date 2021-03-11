@@ -198,6 +198,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a64b5bf9_719c49ed",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-11T08:17:34Z",
+      "side": 1,
+      "message": "No, it\u0027s me who\u0027s wrong! I thought \"struct\" was a Starlark thing, but it\u0027s actually something that\u0027s specific to Bazel:\n\nhttps://docs.bazel.build/versions/master/skylark/lib/struct.html\n\nwith that in mind, how about defining a function called \"struct\" that\u0027s exactly like \"module\" but without the first argument (the name)? That would be the exact same thing as Bazel\u0027s struct().",
+      "parentUuid": "8cdfb578_149b7f11",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0e68ba1b_0970ecb9",
         "filename": "tools/rbcrun/README.md",
         "patchSetId": 23
@@ -477,6 +495,24 @@
       "side": 1,
       "message": "Not sure how accurate this will be, I just convert all product configuration makefiles and grep for \u0027shell\u0027 in the result.For AOSP it\u0027s \ndevice/google/bonito/utils.mk\ndevice/google/coral/utils.mk\ndevice/google/crosshatch/utils.mk\ndevice/google/redbull/utils.mk\ndevice/google/sunfish/utils.mk\ndevice/ti/beagle_x15/device.mk\n(plus build/make/core/envsetup.mk with `$(shell uname)`\nI\u0027ll run the conversion for the internal and let you know.",
       "parentUuid": "24b9f375_f20b3a9d",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd1b8c96_ccd6a70d",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-11T08:17:34Z",
+      "side": 1,
+      "message": "Chris, Jon, WDYT? We have three options:\n\n1. Allow loadGenerated() anywhere\n2. Add an allowlist so that we at least know who is naughty\n3. Prohibit it and require people to migrate\n\nIn addition to (2) and (3), we could eventually add bespoke logic to convert well-known $(shell) idioms (e.g. arithmetic or uname)\n\nI think (3) is not feasible because it imposes too much work on partners, (1) makes the problem worse over time, so I guess (2) + eventual conversion of idioms is the best? I could be convinced about (1), too, because product configuration in any kind of Starlark is better than Make and we can clean up loadGenerated() after.",
+      "parentUuid": "fce31730_18c0febf",
       "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
