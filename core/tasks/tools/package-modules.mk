@@ -19,6 +19,8 @@ my_makefile := $(lastword $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_L
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := $(my_package_name)
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_MODULE_CLASS := PACKAGING
 LOCAL_MODULE_STEM := $(my_package_name).zip
 LOCAL_UNINSTALLABLE_MODULE := true
