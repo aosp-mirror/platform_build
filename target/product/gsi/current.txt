@@ -86,6 +86,7 @@ VNDK-core: android.hardware.rebootescrow-V1-ndk_platform.so
 VNDK-core: android.hardware.security.keymint-V1-ndk_platform.so
 VNDK-core: android.hardware.security.secureclock-V1-ndk_platform.so
 VNDK-core: android.hardware.security.sharedsecret-V1-ndk_platform.so
+VNDK-core: android.hardware.soundtrigger3-V1-ndk_platform.so
 VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
 VNDK-core: android.hardware.vibrator-V1-ndk_platform.so
