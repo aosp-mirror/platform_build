@@ -34,6 +34,24 @@
       "parentUuid": "5e310185_657b5515",
       "revId": "367e603cc5d5b7367e5d5a23c71778c82e8a5d3c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "97f5bde3_07cae1db",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1462756
+      },
+      "writtenOn": "2021-03-11T18:41:04Z",
+      "side": 1,
+      "message": "Done. Could you check the other change in topic to see if my use of config.Once is ok?",
+      "parentUuid": "8d698d5e_c44eeeb6",
+      "revId": "367e603cc5d5b7367e5d5a23c71778c82e8a5d3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
