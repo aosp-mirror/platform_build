@@ -180,6 +180,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8cdfb578_149b7f11",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-11T02:15:00Z",
+      "side": 1,
+      "message": "I guess the misunderstanding is mine. Neither https://github.com/bazelbuild/starlark/blob/master/spec.md nor https://github.com/google/starlark-go/blob/master/doc/spec.md defines module or struct.",
+      "parentUuid": "5a898826_3adfa1b7",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0e68ba1b_0970ecb9",
         "filename": "tools/rbcrun/README.md",
         "patchSetId": 23
@@ -441,6 +459,24 @@
       "side": 1,
       "message": "Is looking for the string \"$(shell\" in files whose name ends with .mk under device/ in the source tree a good way to get a view on how bad the situation is?",
       "parentUuid": "9e28e4d7_19fc7d66",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fce31730_18c0febf",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-11T02:15:00Z",
+      "side": 1,
+      "message": "Not sure how accurate this will be, I just convert all product configuration makefiles and grep for \u0027shell\u0027 in the result.For AOSP it\u0027s \ndevice/google/bonito/utils.mk\ndevice/google/coral/utils.mk\ndevice/google/crosshatch/utils.mk\ndevice/google/redbull/utils.mk\ndevice/google/sunfish/utils.mk\ndevice/ti/beagle_x15/device.mk\n(plus build/make/core/envsetup.mk with `$(shell uname)`\nI\u0027ll run the conversion for the internal and let you know.",
+      "parentUuid": "24b9f375_f20b3a9d",
       "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
