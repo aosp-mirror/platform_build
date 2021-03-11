@@ -4554,10 +4554,25 @@ define fs_config
 (cd $(1); find . -type d | sed 's,$$,/,'; find . \! -type d) | cut -c 3- | sort | sed 's,^,$(2),' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -S $(SELINUX_FC) -R "$(2)"
 endef
 
-# Filter out vendor from the list for AOSP targets.
-# $(1): list
 define filter-out-missing-vendor
 $(if $(INSTALLED_VENDORIMAGE_TARGET),$(1),$(filter-out vendor,$(1)))
+endef
+define filter-out-missing-vendor_dlkm
+$(if $(INSTALLED_VENDOR_DLKMIMAGE_TARGET),$(1),$(filter-out vendor_dlkm,$(1)))
+endef
+define filter-out-missing-odm
+$(if $(INSTALLED_ODMIMAGE_TARGET),$(1),$(filter-out odm,$(1)))
+endef
+define filter-out-missing-odm_dlkm
+$(if $(INSTALLED_ODM_DLKMIMAGE_TARGET),$(1),$(filter-out odm_dlkm,$(1)))
+endef
+# Filter out vendor,vendor_dlkm,odm,odm_dlkm from the list for AOSP targets.
+# $(1): list
+define filter-out-missing-partitions
+$(call filter-out-missing-vendor,\
+  $(call filter-out-missing-vendor_dlkm,\
+    $(call filter-out-missing-odm,\
+      $(call filter-out-missing-odm_dlkm,$(1)))))
 endef
 
 # Information related to dynamic partitions and virtual A/B. This information
@@ -4580,13 +4595,13 @@ define dump-dynamic-partitions-info
   $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
     echo "super_$(device)_device_size=$(BOARD_SUPER_PARTITION_$(call to-upper,$(device))_DEVICE_SIZE)" >> $(1);)
   $(if $(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-    echo "dynamic_partition_list=$(call filter-out-missing-vendor,$(BOARD_SUPER_PARTITION_PARTITION_LIST))" >> $(1))
+    echo "dynamic_partition_list=$(call filter-out-missing-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))" >> $(1))
   $(if $(BOARD_SUPER_PARTITION_GROUPS),
     echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" >> $(1))
   $(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
     echo "super_$(group)_group_size=$(BOARD_$(call to-upper,$(group))_SIZE)" >> $(1); \
     $(if $(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
-      echo "super_$(group)_partition_list=$(call filter-out-missing-vendor,$(BOARD_$(call to-upper,$(group))_PARTITION_LIST))" >> $(1);))
+      echo "super_$(group)_partition_list=$(call filter-out-missing-partitions,$(BOARD_$(call to-upper,$(group))_PARTITION_LIST))" >> $(1);))
   $(if $(filter true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED)), \
     echo "build_non_sparse_super_partition=true" >> $(1))
   $(if $(filter true,$(TARGET_USERIMAGES_SPARSE_F2FS_DISABLED)), \
@@ -4683,13 +4698,13 @@ endif
 
 ifdef BUILDING_VENDOR_DLKM_IMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
-else ifdef BOARD_PREBUILT_VENDOR_DLKIMMAGE
+else ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_ODM_DLKM_IMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_ODM_DLKMIMAGE_FILES)
-else ifdef BOARD_ODM_VENDOR_DLKIMMAGE
+else ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_ODM_DLKMIMAGE_TARGET)
 endif
 
