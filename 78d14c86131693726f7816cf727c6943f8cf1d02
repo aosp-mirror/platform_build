@@ -214,6 +214,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f0367af_5d101e69",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-11T19:53:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a64b5bf9_719c49ed",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0e68ba1b_0970ecb9",
@@ -513,6 +531,24 @@
       "side": 1,
       "message": "Chris, Jon, WDYT? We have three options:\n\n1. Allow loadGenerated() anywhere\n2. Add an allowlist so that we at least know who is naughty\n3. Prohibit it and require people to migrate\n\nIn addition to (2) and (3), we could eventually add bespoke logic to convert well-known $(shell) idioms (e.g. arithmetic or uname)\n\nI think (3) is not feasible because it imposes too much work on partners, (1) makes the problem worse over time, so I guess (2) + eventual conversion of idioms is the best? I could be convinced about (1), too, because product configuration in any kind of Starlark is better than Make and we can clean up loadGenerated() after.",
       "parentUuid": "fce31730_18c0febf",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6a0c908e_20ac852a",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-11T19:53:25Z",
+      "side": 1,
+      "message": "I believe you mean \u0027shell\u0027, not \u0027loadGenerated\u0027?",
+      "parentUuid": "dd1b8c96_ccd6a70d",
       "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
