@@ -41,7 +41,12 @@ include $(BUILD_SYSTEM)/clang/config.mk
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
 $(shell mkdir -p $(SOONG_OUT_DIR) && \
-    echo -n $(BUILD_NUMBER) > $(SOONG_OUT_DIR)/build_number.txt)
+    echo -n $(BUILD_NUMBER) > $(SOONG_OUT_DIR)/build_number.tmp; \
+    if ! cmp -s $(SOONG_OUT_DIR)/build_number.tmp $(SOONG_OUT_DIR)/build_number.txt; then \
+        mv $(SOONG_OUT_DIR)/build_number.tmp $(SOONG_OUT_DIR)/build_number.txt; \
+    else \
+        rm $(SOONG_OUT_DIR)/build_number.tmp; \
+    fi)
 BUILD_NUMBER_FILE := $(SOONG_OUT_DIR)/build_number.txt
 .KATI_READONLY := BUILD_NUMBER_FILE
 $(KATI_obsolete_var BUILD_NUMBER,See https://android.googlesource.com/platform/build/+/master/Changes.md#BUILD_NUMBER)
@@ -1260,8 +1265,10 @@ ifdef FULL_BUILD
         $(if $(or $(ALL_MODULES.$(m).PATH),$(call get-modules-for-2nd-arch,TARGET,$(m))),,$(m)))
       $(call maybe-print-list-and-error,$(filter-out $(_allow_list),$(_nonexistent_modules)),\
         $(INTERNAL_PRODUCT) includes non-existent modules in PRODUCT_PACKAGES)
-      $(call maybe-print-list-and-error,$(filter-out $(_nonexistent_modules),$(_allow_list)),\
-        $(INTERNAL_PRODUCT) includes redundant allow list entries for non-existent PRODUCT_PACKAGES)
+      # TODO(b/182105280): Consider re-enabling this check when the ART modules
+      # have been cleaned up from the allowed_list in target/product/generic.mk.
+      #$(call maybe-print-list-and-error,$(filter-out $(_nonexistent_modules),$(_allow_list)),\
+      #  $(INTERNAL_PRODUCT) includes redundant allow list entries for non-existent PRODUCT_PACKAGES)
     endif
 
     # Check to ensure that all modules in PRODUCT_HOST_PACKAGES exist
