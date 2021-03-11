@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "630c1467_90d2a14a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-03-11T02:08:46Z",
+      "side": 1,
+      "message": "PTAL. Wraps up exporting vendor_ramdisk[-debug].img from the platform build.",
+      "revId": "1426cab4684bbd93881877667081c53745006b68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
