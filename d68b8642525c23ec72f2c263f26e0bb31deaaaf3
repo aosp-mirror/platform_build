@@ -16,6 +16,23 @@
       "message": "In the process of project making, we found that when the signature key file is symbolic link, the link information will be packed in otacerts.zip. As a result, the OTA upgrade package cannot be used.",
       "revId": "d68b8642525c23ec72f2c263f26e0bb31deaaaf3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c1c2119_5f306eb3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1262904
+      },
+      "writtenOn": "2021-03-12T02:37:05Z",
+      "side": 1,
+      "message": "testing:\n\nORIG_SECURITY_DIR\u003dsecurity_`date +%y%m%d_%H%M%S`\necho mkdir -p ../$ORIG_SECURITY_DIR\nmkdir -p ../$ORIG_SECURITY_DIR\nls -l ./build/target/product/security/testkey.*\n\ncp -fpv ./build/target/product/security/testkey.x509.pem ../$ORIG_SECURITY_DIR\n\nrm -rfv ./build/target/product/security/testkey.x509.pem\nln -sv  $PWD/../$ORIG_SECURITY_DIR/testkey.x509.pem ./build/target/product/security\nls -l ./build/target/product/security/testkey.*\nsleep 3\n# To sure the 2 testkey.* files are the symbolic links.\n\nsource ./build/envsetup.sh\nlunch aosp_coral-userdebug\nmake -j 32\n\n# After make project. check otacerts.zip\nCERT_SECURITY_DIR\u003dotacert_`date +%y%m%d_%H%M%S`\nmkdir ../${CERT_SECURITY_DIR}\nunzip ./out/target/product/coral/system/etc/security/otacerts.zip -d ../${CERT_SECURITY_DIR}\ndiff ../${CERT_SECURITY_DIR} ../$ORIG_SECURITY_DIR\necho diff result \u003d $?",
+      "revId": "d68b8642525c23ec72f2c263f26e0bb31deaaaf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
