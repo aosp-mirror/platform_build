@@ -555,6 +555,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "17b42c27_140a8669",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-12T08:24:14Z",
+      "side": 1,
+      "message": "Yes, indeed. I think I am confused, though: I seem to remember that I thought loadGenerated() was the equivalent of $(shell), which seemed strange, but your converter seems to have rblf.shell() instead which is more straightforward.\n\nBut then I don\u0027t understand what loadGenerated() is for and I can\u0027t find an example either under go/roboleaf-product-config or in aosp/1501163.",
+      "parentUuid": "6a0c908e_20ac852a",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0ebb6cb0_79bff0f5",
         "filename": "tools/rbcrun/host.go",
         "patchSetId": 23
