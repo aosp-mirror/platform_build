@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d99e5f3_d9ffea0e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-03-12T15:47:03Z",
+      "side": 1,
+      "message": "Changes in PS2:\n- Disabled ENFORCE_USES_LIBRARIES for tests and modules that have no Java code (previously, before this CL, it was only enabled for modules that go through app_prebuilt_internal.mk, and PS1 was adding it in too many cases)\n- pass correct manifest path in a variable from including makefiles (noticed that sometimes the path was incorrect while working on follow-up CLs)\n\nPTAL",
+      "revId": "638e34740862ec4e353cc77de2727b9968d83883",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
