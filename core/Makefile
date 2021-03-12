@@ -1022,6 +1022,11 @@ ifdef INTERNAL_KERNEL_CMDLINE
 endif
 
 ifdef INTERNAL_BOOTCONFIG
+ifneq (,$(findstring androidboot.hardware=, $(INTERNAL_BOOTCONFIG)))
+$(error "androidboot.hardware" BOOTCONFIG parameter is not supported due to \
+  bootconfig limitations. Use "hardware" instead. INTERNAL_BOOTCONFIG: \
+  $(INTERNAL_BOOTCONFIG))
+endif
 INTERNAL_VENDOR_BOOTCONFIG_TARGET := $(PRODUCT_OUT)/vendor-bootconfig.img
 $(INTERNAL_VENDOR_BOOTCONFIG_TARGET):
 	rm -f $@
@@ -2390,12 +2395,18 @@ $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_DIR := $(PRODUCT_OUT)/deb
 $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): VENDOR_DEBUG_RAMDISK_DIR := $(PRODUCT_OUT)/vendor_debug_ramdisk
 $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_DEBUG_RAMDISK_TARGET)
 $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_VENDOR_DEBUG_RAMDISK_FILES) | $(COMPRESSION_COMMAND_DEPS)
-	$(call pretty,"Target vendor debug ramdisk: $@")
 	mkdir -p $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)
 	touch $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/force_debuggable
 	$(foreach debug_file,$(DEBUG_RAMDISK_FILES), \
 	  cp -f $(debug_file) $(patsubst $(DEBUG_RAMDISK_DIR)/%,$(VENDOR_DEBUG_RAMDISK_DIR)/%,$(debug_file)) &&) true
 	$(MKBOOTFS) -d $(TARGET_OUT) $(VENDOR_RAMDISK_DIR) $(VENDOR_DEBUG_RAMDISK_DIR) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $@
+
+ifeq (true,$(BOARD_BUILD_VENDOR_RAMDISK_IMAGE))
+INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET := $(PRODUCT_OUT)/vendor_ramdisk-debug.img
+$(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET)
+	$(call pretty,"Target vendor debug ramdisk: $@")
+	$(copy-file-to-target)
+endif
 
 INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK := $(PRODUCT_OUT)/installed-files-vendor-ramdisk-debug.txt
 INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK := $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK:.txt=.json)
@@ -3835,13 +3846,13 @@ check_vintf_system_deps := $(filter $(TARGET_OUT)/etc/vintf/%, $(check_vintf_com
 ifneq ($(check_vintf_system_deps),)
 check_vintf_has_system := true
 
-check_vintf_system_log := $(intermediates)/check_vintf_system_log
+check_vintf_system_log := $(intermediates)/check_vintf_system.log
 check_vintf_all_deps += $(check_vintf_system_log)
 $(check_vintf_system_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_system_deps)
 	@( $< --check-one --dirmap /system:$(TARGET_OUT) > $@ 2>&1 ) || ( cat $@ && exit 1 )
 check_vintf_system_log :=
 
-vintffm_log := $(intermediates)/vintffm_log
+vintffm_log := $(intermediates)/vintffm.log
 check_vintf_all_deps += $(vintffm_log)
 $(vintffm_log): $(HOST_OUT_EXECUTABLES)/vintffm $(check_vintf_system_deps)
 	@( $< --check --dirmap /system:$(TARGET_OUT) \
@@ -3854,7 +3865,7 @@ check_vintf_system_deps :=
 check_vintf_vendor_deps := $(filter $(TARGET_OUT_VENDOR)/etc/vintf/%, $(check_vintf_common_srcs))
 ifneq ($(check_vintf_vendor_deps),)
 check_vintf_has_vendor := true
-check_vintf_vendor_log := $(intermediates)/check_vintf_vendor_log
+check_vintf_vendor_log := $(intermediates)/check_vintf_vendor.log
 check_vintf_all_deps += $(check_vintf_vendor_log)
 # Check vendor SKU=(empty) case when:
 # - DEVICE_MANIFEST_FILE is not empty; OR
@@ -3884,7 +3895,7 @@ ifeq ($(filter true,$(BUILDING_ODM_IMAGE)),$(filter true,$(BOARD_USES_ODMIMAGE))
 ifeq ($(filter true,$(BUILDING_PRODUCT_IMAGE)),$(filter true,$(BOARD_USES_PRODUCTIMAGE)))
 ifeq ($(filter true,$(BUILDING_SYSTEM_EXT_IMAGE)),$(filter true,$(BOARD_USES_SYSTEM_EXTIMAGE)))
 
-check_vintf_compatible_log := $(intermediates)/check_vintf_compatible_log
+check_vintf_compatible_log := $(intermediates)/check_vintf_compatible.log
 check_vintf_all_deps += $(check_vintf_compatible_log)
 
 check_vintf_compatible_args :=
@@ -4543,10 +4554,25 @@ define fs_config
 (cd $(1); find . -type d | sed 's,$$,/,'; find . \! -type d) | cut -c 3- | sort | sed 's,^,$(2),' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -S $(SELINUX_FC) -R "$(2)"
 endef
 
-# Filter out vendor from the list for AOSP targets.
-# $(1): list
 define filter-out-missing-vendor
 $(if $(INSTALLED_VENDORIMAGE_TARGET),$(1),$(filter-out vendor,$(1)))
+endef
+define filter-out-missing-vendor_dlkm
+$(if $(INSTALLED_VENDOR_DLKMIMAGE_TARGET),$(1),$(filter-out vendor_dlkm,$(1)))
+endef
+define filter-out-missing-odm
+$(if $(INSTALLED_ODMIMAGE_TARGET),$(1),$(filter-out odm,$(1)))
+endef
+define filter-out-missing-odm_dlkm
+$(if $(INSTALLED_ODM_DLKMIMAGE_TARGET),$(1),$(filter-out odm_dlkm,$(1)))
+endef
+# Filter out vendor,vendor_dlkm,odm,odm_dlkm from the list for AOSP targets.
+# $(1): list
+define filter-out-missing-partitions
+$(call filter-out-missing-vendor,\
+  $(call filter-out-missing-vendor_dlkm,\
+    $(call filter-out-missing-odm,\
+      $(call filter-out-missing-odm_dlkm,$(1)))))
 endef
 
 # Information related to dynamic partitions and virtual A/B. This information
@@ -4569,13 +4595,13 @@ define dump-dynamic-partitions-info
   $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
     echo "super_$(device)_device_size=$(BOARD_SUPER_PARTITION_$(call to-upper,$(device))_DEVICE_SIZE)" >> $(1);)
   $(if $(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-    echo "dynamic_partition_list=$(call filter-out-missing-vendor,$(BOARD_SUPER_PARTITION_PARTITION_LIST))" >> $(1))
+    echo "dynamic_partition_list=$(call filter-out-missing-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))" >> $(1))
   $(if $(BOARD_SUPER_PARTITION_GROUPS),
     echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" >> $(1))
   $(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
     echo "super_$(group)_group_size=$(BOARD_$(call to-upper,$(group))_SIZE)" >> $(1); \
     $(if $(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
-      echo "super_$(group)_partition_list=$(call filter-out-missing-vendor,$(BOARD_$(call to-upper,$(group))_PARTITION_LIST))" >> $(1);))
+      echo "super_$(group)_partition_list=$(call filter-out-missing-partitions,$(BOARD_$(call to-upper,$(group))_PARTITION_LIST))" >> $(1);))
   $(if $(filter true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED)), \
     echo "build_non_sparse_super_partition=true" >> $(1))
   $(if $(filter true,$(TARGET_USERIMAGES_SPARSE_F2FS_DISABLED)), \
@@ -4672,13 +4698,13 @@ endif
 
 ifdef BUILDING_VENDOR_DLKM_IMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
-else ifdef BOARD_PREBUILT_VENDOR_DLKIMMAGE
+else ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_ODM_DLKM_IMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_ODM_DLKMIMAGE_FILES)
-else ifdef BOARD_ODM_VENDOR_DLKIMMAGE
+else ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_ODM_DLKMIMAGE_TARGET)
 endif
 
