@@ -211,6 +211,10 @@ A/B OTA specific options
       Use the specified custom_image to update custom_partition when generating
       an A/B OTA package. e.g. "--custom_image oem=oem.img --custom_image
       cus=cus_test.img"
+
+  --disable_vabc
+      Disable Virtual A/B Compression, for builds that have compression enabled
+      by default.
 """
 
 from __future__ import print_function
