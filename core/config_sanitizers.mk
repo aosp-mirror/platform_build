@@ -153,12 +153,6 @@ ifeq ($(strip $(ENABLE_CFI)),false)
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
 
-# Disable CFI for arm32 (b/35157333).
-ifneq ($(filter arm,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
-  my_sanitize := $(filter-out cfi,$(my_sanitize))
-  my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
-endif
-
 # Also disable CFI if ASAN is enabled.
 ifneq ($(filter address,$(my_sanitize)),)
   my_sanitize := $(filter-out cfi,$(my_sanitize))
