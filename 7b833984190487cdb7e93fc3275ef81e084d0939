@@ -108,6 +108,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "924cf82e_00c8cb69",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-03-15T10:57:58Z",
+      "side": 1,
+      "message": "\u003e \u003e For the case of aosp_arm64, even though GSI and GKI are built together, they are really not the same product. IIUC, they share the same product makefile is only for convenience.\n\u003e \n\u003e That is correct, but see below.\n\u003e \n\u003e \u003e Does it make sense to check the interface between GSI/GKI?\n\u003e \n\u003e Yes. They are different components of a given device, and are updateable by themselves alone, in the ideal world of Treble.\n\u003e \n\u003e It also makes sense to check because GSI / GKI are the release artifacts of Treble. When GSI and GKI are productized, a device may ship with GSI and GKI. We want them to be compatible with each other and **catch any errors early** in the development phase.\n\u003e \n\nThen how about we disable this check in gsi_release.mk, because GSI by definition don\u0027t have vendor partitions, but re-enable this check in aosp_arm64 (product of arm64 GKI) only.\n\n\u003e \u003e PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS so that the test is skipped if TARGET_NO_KERNEL is true?\n\u003e \n\u003e It is already that way as of now, though the build team once suggested me to change the warning to an error. (See my comment in core/Makefile). When that changes to an error, it will emit an build error when PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS is true (empty \u003d\u003d true) and there\u0027s no kernel.\n\u003e \n\u003e That being said, you can rely on this (in my reluctant voice). It just adds more technical debt to the future. 😞\n\u003e \n\nI think this is where we disagree. Even though the warning itself is non fatal, the build still fails due to missing kernel build rule, and that\u0027s why I\u0027m disabling the check here. I\u0027m making both the warning and build error go away.\n\nBTW, The kernel vintf check is already disabled on GSI right now. The PRODUCT_SHIPPING_API_LEVEL change I\u0027m adding enables the vintf check as a side affect, and I\u0027m disabling it again to restore the as-is configuration.\n\n\n\u003e It is correct that **system-only** targets to disable this check. However, it is incorrect for a lunch target that **uses GSI** to disable this check. If gsi_release.mk means the former, I am fine with this. But code search indicates that it means the latter. Please CMIIW.\n\nIt\u0027s the former case. By definition only GSI should use gsi_release.mk, so the code search results are different variants of GSI. (I just confirmed this with SzuWei via chat)",
+      "parentUuid": "8d949b58_537cce54",
+      "revId": "7b833984190487cdb7e93fc3275ef81e084d0939",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "97562aed_78752b88",
