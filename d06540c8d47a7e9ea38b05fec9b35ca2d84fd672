@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68557ac8_5a2d7c88",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 30
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-15T03:02:58Z",
+      "side": 1,
+      "message": "Removed propset. PTAL.",
+      "revId": "d06540c8d47a7e9ea38b05fec9b35ca2d84fd672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
