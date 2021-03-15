@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "82b06039_b5a3bd12",
+        "filename": "core/native_test.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2021-03-15T17:45:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dbf07fea_5246079e",
+      "revId": "cf08ebd52e0c900220eedee4925ec1fd57921628",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c7f6c205_e9bdd219",
@@ -41,6 +59,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8960e638_42943d1d",
+        "filename": "core/native_test.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2021-03-15T17:45:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7f6c205_e9bdd219",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 1
+      },
+      "revId": "cf08ebd52e0c900220eedee4925ec1fd57921628",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "63cff1d0_054cb136",
@@ -54,6 +96,24 @@
       "writtenOn": "2021-03-05T02:10:43Z",
       "side": 1,
       "message": "Adding this library seems pretty similar to the stuff done in target_test_internal.mk, maybe move this there?",
+      "revId": "cf08ebd52e0c900220eedee4925ec1fd57921628",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "262c8cfb_c736cfa9",
+        "filename": "core/native_test.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2021-03-15T17:45:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "63cff1d0_054cb136",
       "revId": "cf08ebd52e0c900220eedee4925ec1fd57921628",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
