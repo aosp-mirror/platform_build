@@ -35,6 +35,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - gomod:      Go to the directory containing a module.
 - pathmod:    Get the directory containing a module.
 - outmod:     Gets the location of a module's installed outputs with a certain extension.
+- dirmods:    Gets the modules defined in a given directory.
 - installmod: Adb installs a module's built APK.
 - refreshmod: Refresh list of modules for allmod/gomod/pathmod/outmod/installmod.
 - syswrite:   Remount partitions (e.g. system.img) as writable, rebooting if necessary.
@@ -1411,8 +1412,9 @@ function allmod() {
     python -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
 }
 
-# Get the path of a specific module in the android tree, as cached in module-info.json. If any build change
-# is made, and it should be reflected in the output, you should run 'refreshmod' first.
+# Get the path of a specific module in the android tree, as cached in module-info.json.
+# If any build change is made, and it should be reflected in the output, you should run
+# 'refreshmod' first.  Note: This is the inverse of dirmods.
 function pathmod() {
     if [[ $# -ne 1 ]]; then
         echo "usage: pathmod <module>" >&2
@@ -1435,6 +1437,36 @@ print(module_info[module]['path'][0])" 2>/dev/null)
         echo "$ANDROID_BUILD_TOP/$relpath"
     fi
 }
+
+# Get the path of a specific module in the android tree, as cached in module-info.json.
+# If any build change is made, and it should be reflected in the output, you should run
+# 'refreshmod' first.  Note: This is the inverse of pathmod.
+function dirmods() {
+    if [[ $# -ne 1 ]]; then
+        echo "usage: dirmods <path>" >&2
+        return 1
+    fi
+
+    verifymodinfo || return 1
+
+    python -c "import json, os
+dir = '$1'
+while dir.endswith('/'):
+    dir = dir[:-1]
+prefix = dir + '/'
+module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
+results = set()
+for m in module_info.values():
+    for path in m.get(u'path', []):
+        if path == dir or path.startswith(prefix):
+            name = m.get(u'module_name')
+            if name:
+                results.add(name)
+for name in sorted(results):
+    print(name)
+"
+}
+
 
 # Go to a specific module in the android tree, as cached in module-info.json. If any build change
 # is made, and it should be reflected in the output, you should run 'refreshmod' first.

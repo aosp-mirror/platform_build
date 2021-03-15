@@ -308,6 +308,10 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.extend(["-C", fs_config])
     if "selinux_fc" in prop_dict:
       build_command.extend(["-c", prop_dict["selinux_fc"]])
+    if "timestamp" in prop_dict:
+      build_command.extend(["-T", str(prop_dict["timestamp"])])
+    if "uuid" in prop_dict:
+      build_command.extend(["-U", prop_dict["uuid"]])
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
