@@ -50,6 +50,24 @@
       "message": "Can you do this without copying by adding -symlinks\u003dfalse to the soong_zip command line?",
       "revId": "d68b8642525c23ec72f2c263f26e0bb31deaaaf3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dcb068d8_4fb3c75c",
+        "filename": "target/product/security/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1262904
+      },
+      "writtenOn": "2021-03-15T09:25:17Z",
+      "side": 1,
+      "message": "Thank you for reply.It works very well.",
+      "parentUuid": "e9212ba9_ceb4451b",
+      "revId": "d68b8642525c23ec72f2c263f26e0bb31deaaaf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
