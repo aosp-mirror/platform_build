@@ -176,7 +176,9 @@ endif
 
 #######################################
 # defines built_odex along with rule to install odex
+my_manifest_or_apk := $(full_android_manifest)
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+my_manifest_or_apk :=
 #######################################
 
 # Make sure there's something to build.
