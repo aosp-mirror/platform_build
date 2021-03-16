@@ -68,6 +68,24 @@
       "parentUuid": "e9212ba9_ceb4451b",
       "revId": "d68b8642525c23ec72f2c263f26e0bb31deaaaf3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0e6cc9c_44aab053",
+        "filename": "target/product/security/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1262904
+      },
+      "writtenOn": "2021-03-16T01:17:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dcb068d8_4fb3c75c",
+      "revId": "d68b8642525c23ec72f2c263f26e0bb31deaaaf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
