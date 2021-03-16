@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0803a482_8179e945",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-03-16T14:06:52Z",
+      "side": 1,
+      "message": "Colin: I split this out of aosp/1620976 (which you +2\u0027ed some time ago) to keep orthogonal changes in separate CLs.",
+      "revId": "c90e2c7324313b2bfd27f12b4f4eac4456a177a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
