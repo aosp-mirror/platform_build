@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fe3220ce_85f20c8b",
+        "filename": "tools/releasetools/check_partition_sizes.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-17T22:49:41Z",
+      "side": 1,
+      "message": "David, can you please take a look at this logic? I forgot what we did for retrofit DAP.",
+      "range": {
+        "startLine": 254,
+        "startChar": 6,
+        "endLine": 254,
+        "endChar": 64
+      },
+      "revId": "8ba4270e24c14fb6fe1fdeb14c45e207d235517e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
