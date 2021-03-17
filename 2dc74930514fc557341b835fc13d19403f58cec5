@@ -33,6 +33,29 @@
       "message": "Inseob and Yifan, can you +2 this?",
       "revId": "2dc74930514fc557341b835fc13d19403f58cec5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62f07a5c_0c667013",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-03-17T07:22:02Z",
+      "side": 1,
+      "message": "with open(dict_file, \u0027r\u0027) as f:?",
+      "range": {
+        "startLine": 753,
+        "startChar": 0,
+        "endLine": 761,
+        "endChar": 0
+      },
+      "revId": "2dc74930514fc557341b835fc13d19403f58cec5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
