@@ -73,6 +73,30 @@
       },
       "revId": "2dc74930514fc557341b835fc13d19403f58cec5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2438b32_0726b79c",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-03-17T07:47:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "62f07a5c_0c667013",
+      "range": {
+        "startLine": 753,
+        "startChar": 0,
+        "endLine": 761,
+        "endChar": 0
+      },
+      "revId": "2dc74930514fc557341b835fc13d19403f58cec5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
