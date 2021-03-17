@@ -16,6 +16,23 @@
       "message": "Colin, I lost your ORV with PS3. Can I get it again?",
       "revId": "b92b8f48fc5facfad99177c878abed9abf379799",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f011ab46_be67fe48",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-03-17T23:28:43Z",
+      "side": 1,
+      "message": "Ping for owner review vote.",
+      "revId": "b92b8f48fc5facfad99177c878abed9abf379799",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
