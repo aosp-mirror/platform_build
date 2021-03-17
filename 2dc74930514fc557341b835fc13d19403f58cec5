@@ -16,6 +16,23 @@
       "message": "Ping to Yifan. Adding Inseob as well.\n",
       "revId": "2dc74930514fc557341b835fc13d19403f58cec5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fd71085_12d3204b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-03-17T07:14:33Z",
+      "side": 1,
+      "message": "Inseob and Yifan, can you +2 this?",
+      "revId": "2dc74930514fc557341b835fc13d19403f58cec5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
