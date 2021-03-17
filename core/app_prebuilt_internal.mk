@@ -113,19 +113,28 @@ endif
 
 my_enforced_uses_libraries :=
 ifdef LOCAL_ENFORCE_USES_LIBRARIES
+  my_verify_script := build/soong/scripts/manifest_check.py
+  my_uses_libs := $(patsubst %,--uses-library %,$(LOCAL_USES_LIBRARIES))
+  my_optional_uses_libs := $(patsubst %,--optional-uses-library %, \
+    $(LOCAL_OPTIONAL_USES_LIBRARIES))
+  my_relax_check := $(if $(filter true,$(RELAX_USES_LIBRARY_CHECK)), \
+    --enforce-uses-libraries-relax,)
   my_enforced_uses_libraries := $(intermediates.COMMON)/enforce_uses_libraries.status
-  $(my_enforced_uses_libraries): PRIVATE_USES_LIBRARIES := $(LOCAL_USES_LIBRARIES)
-  $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(LOCAL_OPTIONAL_USES_LIBRARIES)
-  $(my_enforced_uses_libraries): PRIVATE_RELAX_CHECK := $(RELAX_USES_LIBRARY_CHECK)
-  $(my_enforced_uses_libraries): $(BUILD_SYSTEM)/verify_uses_libraries.sh $(AAPT)
+  $(my_enforced_uses_libraries): PRIVATE_USES_LIBRARIES := $(my_uses_libs)
+  $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(my_optional_uses_libs)
+  $(my_enforced_uses_libraries): PRIVATE_RELAX_CHECK := $(my_relax_check)
+  $(my_enforced_uses_libraries): $(my_verify_script)
   $(my_enforced_uses_libraries): $(my_prebuilt_src_file)
 	@echo Verifying uses-libraries: $<
 	rm -f $@
-	aapt_binary=$(AAPT) \
-	  uses_library_names="$(strip $(PRIVATE_USES_LIBRARIES))" \
-	  optional_uses_library_names="$(strip $(PRIVATE_OPTIONAL_USES_LIBRARIES))" \
-	  relax_check="$(strip $(PRIVATE_RELAX_CHECK))" \
-	  $(BUILD_SYSTEM)/verify_uses_libraries.sh $< $@
+	$(my_verify_script) \
+	  --enforce-uses-libraries \
+	  --enforce-uses-libraries-status $@ \
+	  --aapt $(AAPT) \
+	  $(PRIVATE_USES_LIBRARIES) \
+	  $(PRIVATE_OPTIONAL_USES_LIBRARIES) \
+	  $(PRIVATE_RELAX_CHECK) \
+	  $<
   $(built_module) : $(my_enforced_uses_libraries)
 endif
 
