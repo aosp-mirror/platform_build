@@ -22,6 +22,30 @@
       },
       "revId": "8ba4270e24c14fb6fe1fdeb14c45e207d235517e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ac90a66_42e6f4de",
+        "filename": "tools/releasetools/check_partition_sizes.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1290458
+      },
+      "writtenOn": "2021-03-18T00:15:21Z",
+      "side": 1,
+      "message": "For retrofit DAP there are two physical super partitions, so the group size should be compared to super_size rather than super_size / 2.",
+      "parentUuid": "fe3220ce_85f20c8b",
+      "range": {
+        "startLine": 254,
+        "startChar": 6,
+        "endLine": 254,
+        "endChar": 64
+      },
+      "revId": "8ba4270e24c14fb6fe1fdeb14c45e207d235517e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
