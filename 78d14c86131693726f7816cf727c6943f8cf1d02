@@ -591,6 +591,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0e8f22d3_c223feb3",
+        "filename": "tools/rbcrun/README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T08:12:43Z",
+      "side": 1,
+      "message": "For now, definitely, but I\u0027d like to understand where you want to go. The reason why I\u0027m concerned is that until quite recently, I thought loadGenerated() is a replacement for $(shell). I was apparently mistaken, but I\u0027d like to learn what it\u0027s for. (if it doesn\u0027t have a use, let\u0027s delete it on the general principle that the code is liability)",
+      "parentUuid": "627d20be_6f8858d0",
+      "revId": "78d14c86131693726f7816cf727c6943f8cf1d02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0ebb6cb0_79bff0f5",
         "filename": "tools/rbcrun/host.go",
         "patchSetId": 23

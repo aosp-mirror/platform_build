@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "08b79486_90832931",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 32
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T08:12:43Z",
+      "side": 1,
+      "message": "Argh, sorry. I had this draft comment that I forgot to send out for *days*.\n\n(next time, do ping me if I don\u0027t reply by the day following your comments! The code review SLO is 24 hours and waiting more than that is an antipattern)",
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
