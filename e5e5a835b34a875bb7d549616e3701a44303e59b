@@ -84,6 +84,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "cb020a5d_de079a33",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T17:16:14Z",
+      "side": 1,
+      "message": "It\u0027s much easier to limit it now than clean up any uses of the symbols that creep in while we are not looking. IOW, it\u0027s an insurance policy: by doing a bit of work now you avoid the need to do more work when we\u0027ll eventually make Bazel parse these files.\n\nI\u0027d hate being ready to flip the flag, then realizing that some use of these symbols creeped in somehow and having to spend an unknowable amount of labor to undo that...\n\nIn addition, it limits the \"creativity\" of product configuration files, which is a good thing.\n\nDoes this make sense?",
+      "parentUuid": "9517264b_251acd86",
+      "range": {
+        "startLine": 260,
+        "startChar": 21,
+        "endLine": 260,
+        "endChar": 31
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "97647031_65e8da69",
         "filename": "tools/rbcrun/host.go",
         "patchSetId": 32
@@ -166,6 +190,30 @@
       "side": 1,
       "message": "Correct.",
       "parentUuid": "35a58681_d93edb90",
+      "range": {
+        "startLine": 265,
+        "startChar": 3,
+        "endLine": 265,
+        "endChar": 19
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "322e7ec0_3d595963",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T17:16:14Z",
+      "side": 1,
+      "message": "For my education, what\u0027s this Make pattern?",
+      "parentUuid": "462e1ec7_e5dc255d",
       "range": {
         "startLine": 265,
         "startChar": 3,
