@@ -58,6 +58,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9517264b_251acd86",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-18T17:07:32Z",
+      "side": 1,
+      "message": "Generated .rbc files use only what product_config.rbc exposes.\nLimiting builtin symbols accessibility is achievable (at least in the sense of section 2.(3) of the https://tools.ietf.org/html/rfc1925), but I am not sure why it is necessary.",
+      "parentUuid": "2c200310_7d707093",
+      "range": {
+        "startLine": 260,
+        "startChar": 21,
+        "endLine": 260,
+        "endChar": 31
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "97647031_65e8da69",
@@ -71,6 +95,30 @@
       "writtenOn": "2021-03-18T08:23:01Z",
       "side": 1,
       "message": "AFAIU this is for product_config.rbc only and not for individual Makefiles, right?",
+      "range": {
+        "startLine": 262,
+        "startChar": 3,
+        "endLine": 262,
+        "endChar": 11
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b3dadbd_503b0957",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-18T17:07:32Z",
+      "side": 1,
+      "message": "Same as above -- it is nor used in the generated .rbc files, but undefining a symbol is not supported.",
+      "parentUuid": "97647031_65e8da69",
       "range": {
         "startLine": 262,
         "startChar": 3,
@@ -104,6 +152,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "462e1ec7_e5dc255d",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-18T17:07:32Z",
+      "side": 1,
+      "message": "Correct.",
+      "parentUuid": "35a58681_d93edb90",
+      "range": {
+        "startLine": 265,
+        "startChar": 3,
+        "endLine": 265,
+        "endChar": 19
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ed4a89b5_f7f05a60",
@@ -127,6 +199,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dbc29c5b_f525b109",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-18T17:07:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ed4a89b5_f7f05a60",
+      "range": {
+        "startLine": 267,
+        "startChar": 37,
+        "endLine": 267,
+        "endChar": 47
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d5e4bda3_1f5c252f",
@@ -140,6 +236,30 @@
       "writtenOn": "2021-03-18T08:23:01Z",
       "side": 1,
       "message": "Do individual Makefiles need access to this?",
+      "range": {
+        "startLine": 271,
+        "startChar": 3,
+        "endLine": 271,
+        "endChar": 16
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f9344420_df7d7821",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-18T17:07:32Z",
+      "side": 1,
+      "message": "Yes, I have added a comment about this right above according to your previous suggestion.",
+      "parentUuid": "d5e4bda3_1f5c252f",
       "range": {
         "startLine": 271,
         "startChar": 3,
