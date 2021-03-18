@@ -16,6 +16,29 @@
       "message": "Ping",
       "revId": "68f2f19fc47e858725549a5cde5096e6b5f39739",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c5761ed3_1275582f",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 22
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T08:17:37Z",
+      "side": 1,
+      "message": "nit: it\u0027s not a propset anymore",
+      "range": {
+        "startLine": 20,
+        "startChar": 15,
+        "endLine": 20,
+        "endChar": 22
+      },
+      "revId": "68f2f19fc47e858725549a5cde5096e6b5f39739",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
