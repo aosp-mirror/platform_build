@@ -123,6 +123,7 @@ ifdef LOCAL_ENFORCE_USES_LIBRARIES
   $(my_enforced_uses_libraries): PRIVATE_USES_LIBRARIES := $(my_uses_libs)
   $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(my_optional_uses_libs)
   $(my_enforced_uses_libraries): PRIVATE_RELAX_CHECK := $(my_relax_check)
+  $(my_enforced_uses_libraries): $(AAPT)
   $(my_enforced_uses_libraries): $(my_verify_script)
   $(my_enforced_uses_libraries): $(my_prebuilt_src_file)
 	@echo Verifying uses-libraries: $<
