@@ -70,6 +70,30 @@
       },
       "revId": "8ba4270e24c14fb6fe1fdeb14c45e207d235517e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ab79898_6a9d9ffe",
+        "filename": "tools/releasetools/check_partition_sizes.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1290458
+      },
+      "writtenOn": "2021-03-18T17:32:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "3e15ca78_13794099",
+      "range": {
+        "startLine": 254,
+        "startChar": 6,
+        "endLine": 254,
+        "endChar": 64
+      },
+      "revId": "8ba4270e24c14fb6fe1fdeb14c45e207d235517e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
