@@ -9,6 +9,32 @@ else
 notice_file:=$(strip $(wildcard $(LOCAL_PATH)/NOTICE))
 endif
 
+ifneq (,$(strip $(LOCAL_LICENSE_PACKAGE_NAME)))
+license_package_name:=$(strip $(LOCAL_LICENSE_PACKAGE_NAME))
+else ifdef my_register_name
+license_package_name:=$(my_register_name)
+else
+license_package_name:=$(strip $(LOCAL_MODULE))
+endif
+
+ifneq (,$(strip $(LOCAL_LICENSE_INSTALL_MAP)))
+install_map:=$(strip $(LOCAL_LICENSE_INSTALL_MAP))
+else
+install_map:=
+endif
+
+ifneq (,$(strip $(LOCAL_LICENSE_KINDS)))
+license_kinds:=$(strip $(LOCAL_LICENSE_KINDS))
+else
+license_kinds:=legacy_by_exception_only
+endif
+
+ifneq (,$(strip $(LOCAL_LICENSE_CONDITIONS)))
+license_conditions:=$(strip $(LOCAL_LICENSE_CONDITIONS))
+else
+license_conditions:=by_exception_only
+endif
+
 ifeq ($(LOCAL_MODULE_CLASS),GYP)
   # We ignore NOTICE files for modules of type GYP.
   notice_file :=
@@ -39,6 +65,60 @@ endif
 endif
 
 installed_notice_file :=
+
+is_container:=$(strip $(LOCAL_MODULE_IS_CONTAINER))
+ifeq (,$(is_container))
+ifneq (,$(strip $(filter %.zip %.tar %.tgz %.tar.gz %.apk %.img %.srcszip %.apex, $(LOCAL_BUILT_MODULE))))
+is_container:=true
+else
+is_container:=false
+endif
+else ifneq (,$(strip $(filter-out true false,$(is_container))))
+$(error Unrecognized value '$(is_container)' for LOCAL_MODULE_IS_CONTAINER)
+endif
+
+ifeq (true,$(is_container))
+# Include shared libraries' notices for "container" types, but not for binaries etc.
+notice_deps := \
+    $(strip \
+        $(LOCAL_REQUIRED_MODULES) \
+        $(LOCAL_STATIC_LIBRARIES) \
+        $(LOCAL_WHOLE_STATIC_LIBRARIES) \
+        $(LOCAL_SHARED_LIBRARIES) \
+        $(LOCAL_DYLIB_LIBRARIES) \
+        $(LOCAL_RLIB_LIBRARIES) \
+        $(LOCAL_PROC_MACRO_LIBRARIES) \
+        $(LOCAL_HEADER_LIBRARIES) \
+        $(LOCAL_STATIC_JAVA_LIBRARIES) \
+        $(LOCAL_JAVA_LIBRARIES) \
+        $(LOCAL_JNI_SHARED_LIBRARIES) \
+    )
+else
+notice_deps := \
+    $(strip \
+        $(LOCAL_REQUIRED_MODULES) \
+        $(LOCAL_STATIC_LIBRARIES) \
+        $(LOCAL_WHOLE_STATIC_LIBRARIES) \
+        $(LOCAL_RLIB_LIBRARIES) \
+        $(LOCAL_PROC_MACRO_LIBRARIES) \
+        $(LOCAL_HEADER_LIBRARIES) \
+        $(LOCAL_STATIC_JAVA_LIBRARIES) \
+    )
+endif
+ifeq ($(LOCAL_IS_HOST_MODULE),true)
+notice_deps := $(strip $(notice_deps) $(LOCAL_HOST_REQUIRED_MODULES))
+else
+notice_deps := $(strip $(notice_deps) $(LOCAL_TARGET_REQUIRED_MODULES))
+endif
+
+ifdef my_register_name
+ALL_MODULES.$(my_register_name).LICENSE_PACKAGE_NAME := $(strip $(license_package_name))
+ALL_MODULES.$(my_register_name).LICENSE_KINDS := $(ALL_MODULES.$(my_register_name).LICENSE_KINDS) $(license_kinds)
+ALL_MODULES.$(my_register_name).LICENSE_CONDITIONS := $(ALL_MODULES.$(my_register_name).LICENSE_CONDITIONS) $(license_conditions)
+ALL_MODULES.$(my_register_name).LICENSE_INSTALL_MAP := $(ALL_MODULES.$(my_register_name).LICENSE_INSTALL_MAP) $(install_map)
+ALL_MODULES.$(my_register_name).NOTICE_DEPS := $(ALL_MODULES.$(my_register_name).NOTICE_DEPS) $(notice_deps)
+ALL_MODULES.$(my_register_name).IS_CONTAINER := $(strip $(filter-out false,$(ALL_MODULES.$(my_register_name).IS_CONTAINER) $(is_container)))
+endif
 
 ifdef notice_file
 
@@ -86,8 +166,6 @@ else
       # Soong produces uninstallable *.sdk shared libraries for embedding in APKs.
       module_installed_filename := \
           $(patsubst $(PRODUCT_OUT)/%,%,$($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_SHARED_LIBRARIES))/$(notdir $(LOCAL_BUILT_MODULE))
-    else
-      $(error Cannot determine where to install NOTICE file for $(LOCAL_MODULE))
     endif # JAVA_LIBRARIES
   endif # STATIC_LIBRARIES
 endif
@@ -100,12 +178,19 @@ module_installed_filename := $(patsubst $(HOST_CROSS_OUT)/%,%,$(module_installed
 
 installed_notice_file := $($(my_prefix)OUT_NOTICE_FILES)/src/$(module_installed_filename).txt
 
+ifdef my_register_name
+ALL_MODULES.$(my_register_name).INSTALLED_NOTICE_FILE := $(ALL_MODULES.$(my_register_name).INSTALLED_NOTICE_FILE) $(installed_notice_file)
+ALL_MODULES.$(my_register_name).MODULE_INSTALLED_FILENAMES := $(ALL_MODULES.$(my_register_name).MODULE_INSTALLED_FILENAMES) $(module_installed_filename)
+INSTALLED_NOTICE_FILES.$(installed_notice_file).MODULE := $(my_register_name)
+else
 $(installed_notice_file): PRIVATE_INSTALLED_MODULE := $(module_installed_filename)
+$(installed_notice_file) : PRIVATE_NOTICES := $(notice_file)
 
 $(installed_notice_file): $(notice_file)
 	@echo Notice file: $< -- $@
 	$(hide) mkdir -p $(dir $@)
-	$(hide) cat $< > $@
+	$(hide) awk 'FNR==1 && NR > 1 {print "\n"} {print}' $(PRIVATE_NOTICES) > $@
+endif
 
 ifdef LOCAL_INSTALLED_MODULE
 # Make LOCAL_INSTALLED_MODULE depend on NOTICE files if they exist
