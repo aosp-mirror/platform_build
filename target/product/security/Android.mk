@@ -65,7 +65,7 @@ LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)/security
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): PRIVATE_CERT := $(DEFAULT_SYSTEM_DEV_CERTIFICATE).x509.pem
 $(LOCAL_BUILT_MODULE): $(SOONG_ZIP) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).x509.pem
-	$(SOONG_ZIP) -o $@ -j -symlinks=false -f $(PRIVATE_CERT)
+	$(SOONG_ZIP) -o $@ -j -f $(PRIVATE_CERT)
 
 
 #######################################
@@ -88,5 +88,5 @@ $(LOCAL_BUILT_MODULE): \
 	    $(SOONG_ZIP) \
 	    $(DEFAULT_SYSTEM_DEV_CERTIFICATE).x509.pem \
 	    $(extra_recovery_keys)
-	$(SOONG_ZIP) -o $@ -j -symlinks=false \
+	$(SOONG_ZIP) -o $@ -j \
 	    $(foreach key_file, $(PRIVATE_CERT) $(PRIVATE_EXTRA_RECOVERY_KEYS), -f $(key_file))

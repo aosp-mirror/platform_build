@@ -39,9 +39,3 @@ ifndef LOCAL_MODULE_RELATIVE_PATH
 LOCAL_MODULE_RELATIVE_PATH := $(LOCAL_MODULE)
 endif
 endif
-
-# Implicitly run this test under MTE SYNC for aarch64 binaries. This is a no-op
-# on non-MTE hardware.
-ifneq (,$(filter arm64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
-  LOCAL_WHOLE_STATIC_LIBRARIES += note_memtag_heap_sync
-endif
