@@ -18,6 +18,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2d7150f_7faada52",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 32
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T08:23:38Z",
+      "side": 1,
+      "message": "I think the best is to submit this change as it is, then file individual bugs about the rest of the issues. WDYT?",
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2c200310_7d707093",
