@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7946089c_4d9890f2",
+        "filename": "core/rust_device_benchmark_config_template.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1812258
+      },
+      "writtenOn": "2021-03-18T09:07:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b4434815_96dc9280",
+      "range": {
+        "startLine": 17,
+        "startChar": 50,
+        "endLine": 17,
+        "endChar": 58
+      },
+      "revId": "7595df9d58ff93cd4ee97615b2d44d949d862cd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3187370d_190accc7",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-03-17T15:56:22Z",
       "side": 1,
       "message": "rust benchmark host tests",
+      "range": {
+        "startLine": 16,
+        "startChar": 51,
+        "endLine": 16,
+        "endChar": 55
+      },
+      "revId": "7595df9d58ff93cd4ee97615b2d44d949d862cd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86010b4b_cc949f8e",
+        "filename": "core/rust_host_benchmark_config_template.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1812258
+      },
+      "writtenOn": "2021-03-18T09:07:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3187370d_190accc7",
       "range": {
         "startLine": 16,
         "startChar": 51,
