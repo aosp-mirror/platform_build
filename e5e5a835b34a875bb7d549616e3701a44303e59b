@@ -106,6 +106,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bb0d94c9_a939c9dd",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-18T18:13:26Z",
+      "side": 1,
+      "message": "The Starlark interpreter (at least the one implemented in Go) has no provision to un-define a symbol. I am not sure how this can be achieved other than by wiring the knowledge of the runtime support structure into the runner. \nGiven that at the moment the files are generated on the fly and never checked in, there is no need to resolve this problem now.",
+      "parentUuid": "cb020a5d_de079a33",
+      "range": {
+        "startLine": 260,
+        "startChar": 21,
+        "endLine": 260,
+        "endChar": 31
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "97647031_65e8da69",
@@ -214,6 +238,30 @@
       "side": 1,
       "message": "For my education, what\u0027s this Make pattern?",
       "parentUuid": "462e1ec7_e5dc255d",
+      "range": {
+        "startLine": 265,
+        "startChar": 3,
+        "endLine": 265,
+        "endChar": 19
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dba1aad8_504c263a",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-18T18:13:26Z",
+      "side": 1,
+      "message": "There are cases where $(wildcard ...) is used to check that the given file exists, e.g., https://cs.android.com/android/platform/superproject/+/master:device/google/redbull/device-common.mk;drc\u003d7452f30365c5f438e3f878a95f40a3833a197a41;l\u003d984\nwhich is converted to\n  if rblf.file_exists(...):\n\nAdmittedly this function can be folded into rblf_wildcard and the conversion may become \n  if len(rblf.wildcard(...)) \u003d\u003d 0:",
+      "parentUuid": "322e7ec0_3d595963",
       "range": {
         "startLine": 265,
         "startChar": 3,
