@@ -46,6 +46,30 @@
       },
       "revId": "8ba4270e24c14fb6fe1fdeb14c45e207d235517e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e15ca78_13794099",
+        "filename": "tools/releasetools/check_partition_sizes.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-03-18T00:18:13Z",
+      "side": 1,
+      "message": "Yeah, I think L253 divides super_size by 2. The comment means to say, we don\u0027t need to reserve space for DAP metadata in the retrofit case.",
+      "parentUuid": "3ac90a66_42e6f4de",
+      "range": {
+        "startLine": 254,
+        "startChar": 6,
+        "endLine": 254,
+        "endChar": 64
+      },
+      "revId": "8ba4270e24c14fb6fe1fdeb14c45e207d235517e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
