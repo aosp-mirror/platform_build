@@ -16,6 +16,121 @@
       "message": "Argh, sorry. I had this draft comment that I forgot to send out for *days*.\n\n(next time, do ping me if I don\u0027t reply by the day following your comments! The code review SLO is 24 hours and waiting more than that is an antipattern)",
       "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c200310_7d707093",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T08:23:01Z",
+      "side": 1,
+      "message": "Are these identifiers available to the individual Starlark files? Is there a way to constrain them to product_config.rbc so that the \"regular\" product config files only have access to rblf. ?",
+      "range": {
+        "startLine": 260,
+        "startChar": 21,
+        "endLine": 260,
+        "endChar": 31
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "97647031_65e8da69",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T08:23:01Z",
+      "side": 1,
+      "message": "AFAIU this is for product_config.rbc only and not for individual Makefiles, right?",
+      "range": {
+        "startLine": 262,
+        "startChar": 3,
+        "endLine": 262,
+        "endChar": 11
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "35a58681_d93edb90",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T08:23:01Z",
+      "side": 1,
+      "message": "What Make pattern does this support? It\u0027s exported from rblf. so I suppose it\u0027s needed in individual Makefiles, too?",
+      "range": {
+        "startLine": 265,
+        "startChar": 3,
+        "endLine": 265,
+        "endChar": 19
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ed4a89b5_f7f05a60",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T08:23:01Z",
+      "side": 1,
+      "message": "nit: shouldn\u0027t this be \"rblf_regex?\"",
+      "range": {
+        "startLine": 267,
+        "startChar": 37,
+        "endLine": 267,
+        "endChar": 47
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d5e4bda3_1f5c252f",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 32
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-18T08:23:01Z",
+      "side": 1,
+      "message": "Do individual Makefiles need access to this?",
+      "range": {
+        "startLine": 271,
+        "startChar": 3,
+        "endLine": 271,
+        "endChar": 16
+      },
+      "revId": "e5e5a835b34a875bb7d549616e3701a44303e59b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
