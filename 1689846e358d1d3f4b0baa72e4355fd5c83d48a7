@@ -34,6 +34,24 @@
       "parentUuid": "1c239708_352a9b7a",
       "revId": "1689846e358d1d3f4b0baa72e4355fd5c83d48a7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d28f257_6bea0921",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1043738
+      },
+      "writtenOn": "2021-03-18T00:55:50Z",
+      "side": 1,
+      "message": "Is it not for automotive but mobile. so please help to merge into general gsi branch.",
+      "parentUuid": "a2ef7654_98828ce9",
+      "revId": "1689846e358d1d3f4b0baa72e4355fd5c83d48a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
