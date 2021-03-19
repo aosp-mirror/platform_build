@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ad970eb_ee4beb56",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4355,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-03-19T08:36:10Z",
+      "side": 1,
+      "message": "Renamed to `gki_signing_signature_args` to avoid confusion with gki_signing_extra_args from sign_target_files_apks.",
+      "range": {
+        "startLine": 4355,
+        "startChar": 15,
+        "endLine": 4355,
+        "endChar": 41
+      },
+      "revId": "9d8ba198ff900a8c7e4bd22a4aa932e9ee9d3021",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
