@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96695ddd_ab1b5a03",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-03-19T00:06:58Z",
+      "side": 1,
+      "message": "Let me submit aosp/1641839 and aosp/1641780 first, as these will never harm the build system.",
+      "revId": "a3ae471485291cd51b61c75721e9ffbaf7044643",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
