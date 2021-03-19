@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1f251848_aa4e7c1d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-03-19T00:15:45Z",
+      "side": 1,
+      "message": "Also add elsk@ who worked closely with gki",
+      "revId": "a4080ba87b7b52d5f770d51604aa18b71fc7c6f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ed16020f_726294c8",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-03-19T00:15:45Z",
+      "side": 1,
+      "message": "we can abort if new_key_path doesn\u0027t exist.",
+      "range": {
+        "startLine": 1349,
+        "startChar": 15,
+        "endLine": 1349,
+        "endChar": 21
+      },
+      "revId": "a4080ba87b7b52d5f770d51604aa18b71fc7c6f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "73343b63_c4b6dccc",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1033,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-03-19T00:15:45Z",
+      "side": 1,
+      "message": "what\u0027s the rational to replace key/algorithm, while append extra_args",
+      "range": {
+        "startLine": 1033,
+        "startChar": 15,
+        "endLine": 1033,
+        "endChar": 37
+      },
+      "revId": "a4080ba87b7b52d5f770d51604aa18b71fc7c6f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
