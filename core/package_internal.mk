@@ -472,31 +472,6 @@ $(LOCAL_BUILT_MODULE): PRIVATE_CERTIFICATE_LINEAGE := $(LOCAL_CERTIFICATE_LINEAG
 # Set a actual_partition_tag (calculated in base_rules.mk) for the package.
 PACKAGES.$(LOCAL_PACKAGE_NAME).PARTITION := $(actual_partition_tag)
 
-# Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES
-# If LOCAL_ENFORCE_USES_LIBRARIES is not set, default to true if either of LOCAL_USES_LIBRARIES or
-# LOCAL_OPTIONAL_USES_LIBRARIES are specified.
-# Will change the default to true unconditionally in the future.
-ifndef LOCAL_ENFORCE_USES_LIBRARIES
-  ifneq (,$(strip $(LOCAL_USES_LIBRARIES)$(LOCAL_OPTIONAL_USES_LIBRARIES)))
-    LOCAL_ENFORCE_USES_LIBRARIES := true
-  endif
-endif
-
-my_enforced_uses_libraries :=
-ifdef LOCAL_ENFORCE_USES_LIBRARIES
-  my_manifest_check := $(intermediates.COMMON)/manifest/AndroidManifest.xml.check
-  $(my_manifest_check): $(MANIFEST_CHECK)
-  $(my_manifest_check): PRIVATE_USES_LIBRARIES := $(LOCAL_USES_LIBRARIES)
-  $(my_manifest_check): PRIVATE_OPTIONAL_USES_LIBRARIES := $(LOCAL_OPTIONAL_USES_LIBRARIES)
-  $(my_manifest_check): $(full_android_manifest)
-	@echo Checking manifest: $<
-	$(MANIFEST_CHECK) --enforce-uses-libraries \
-	  $(addprefix --uses-library ,$(PRIVATE_USES_LIBRARIES)) \
-	  $(addprefix --optional-uses-library ,$(PRIVATE_OPTIONAL_USES_LIBRARIES)) \
-	  $< -o $@
-  $(LOCAL_BUILT_MODULE): $(my_manifest_check)
-endif
-
 # Define the rule to build the actual package.
 # PRIVATE_JNI_SHARED_LIBRARIES is a list of <abi>:<path_of_built_lib>.
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries_with_abis)
