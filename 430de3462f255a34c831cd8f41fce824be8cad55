@@ -16,6 +16,24 @@
       "message": "Because both aosp_$arch and gsi_$arch include gsi_release.mk\nI am a little worry about any target inherit from `aosp_$arch`. \nLet\u0027s check the TH. If it broken some targets, let\u0027s move these configures to gsi_$arch.mk.\n",
       "revId": "430de3462f255a34c831cd8f41fce824be8cad55",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bdc7ac16_db03ff48",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-19T21:54:20Z",
+      "side": 1,
+      "message": "Does this prevent building vendor modules?  If so, I don\u0027t think this should be in the aosp_$arch targets, we use them for things like the host ASAN builds that should be getting full coverage.",
+      "parentUuid": "35af20e9_559a57d3",
+      "revId": "430de3462f255a34c831cd8f41fce824be8cad55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
