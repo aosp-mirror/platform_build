@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "35af20e9_559a57d3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-03-19T06:25:34Z",
+      "side": 1,
+      "message": "Because both aosp_$arch and gsi_$arch include gsi_release.mk\nI am a little worry about any target inherit from `aosp_$arch`. \nLet\u0027s check the TH. If it broken some targets, let\u0027s move these configures to gsi_$arch.mk.\n",
+      "revId": "430de3462f255a34c831cd8f41fce824be8cad55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
