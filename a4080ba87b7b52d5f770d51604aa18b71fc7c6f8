@@ -43,6 +43,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "bf02b7e6_e823c126",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-03-19T07:09:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ed16020f_726294c8",
+      "range": {
+        "startLine": 1349,
+        "startChar": 15,
+        "endLine": 1349,
+        "endChar": 21
+      },
+      "revId": "a4080ba87b7b52d5f770d51604aa18b71fc7c6f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "71a93420_375fe114",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 2
@@ -148,6 +172,30 @@
       "side": 1,
       "message": "that sounds good to me",
       "parentUuid": "b86fe96c_5cc6c91e",
+      "range": {
+        "startLine": 1033,
+        "startChar": 15,
+        "endLine": 1033,
+        "endChar": 37
+      },
+      "revId": "a4080ba87b7b52d5f770d51604aa18b71fc7c6f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e00c3a2c_6cc8326a",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1033,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-03-19T07:09:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bcc6b0_8a327982",
       "range": {
         "startLine": 1033,
         "startChar": 15,
