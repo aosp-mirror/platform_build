@@ -523,6 +523,23 @@ python_binary_host {
     ],
 }
 
+python_binary_host {
+    name: "verity_utils",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "verity_utils.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+    required: [
+        "append2simg",
+        "build_verity_metadata",
+        "build_verity_tree",
+        "fec",
+    ],
+}
+
 //
 // Tests.
 //
