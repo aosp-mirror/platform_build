@@ -41,6 +41,52 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "71a93420_375fe114",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-03-19T04:08:57Z",
+      "side": 1,
+      "message": "re: gki_signing_extra_args follows the same convention here.",
+      "range": {
+        "startLine": 111,
+        "startChar": 6,
+        "endLine": 111,
+        "endChar": 71
+      },
+      "revId": "a4080ba87b7b52d5f770d51604aa18b71fc7c6f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0bd6c1c6_8ef0e34f",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 979,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-03-19T04:08:57Z",
+      "side": 1,
+      "message": "gki_signing_extra_args follows the same convention here.",
+      "range": {
+        "startLine": 979,
+        "startChar": 6,
+        "endLine": 979,
+        "endChar": 76
+      },
+      "revId": "a4080ba87b7b52d5f770d51604aa18b71fc7c6f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "73343b63_c4b6dccc",
@@ -54,6 +100,30 @@
       "writtenOn": "2021-03-19T00:15:45Z",
       "side": 1,
       "message": "what\u0027s the rational to replace key/algorithm, while append extra_args",
+      "range": {
+        "startLine": 1033,
+        "startChar": 15,
+        "endLine": 1033,
+        "endChar": 37
+      },
+      "revId": "a4080ba87b7b52d5f770d51604aa18b71fc7c6f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b86fe96c_5cc6c91e",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1033,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-03-19T04:08:57Z",
+      "side": 1,
+      "message": "Oh, we should have used misc_info[\"gki_signing_args\"] instead (no \u0027extra\u0027 in misc_info.txt), and append --gki_signing_extra_args from this script to it.\n\nBasically I followed the same convention as avb_{partition}_extra_args.\n\nMy hypothesis was that offline release signing process (e.g., go/ab-sign) should only change signing key/algorithm without changing too much for other options (e.g., --partition_size, --hash_algorithm, --prop).\n\nThis helps limit the diff between a unsigned build and a signed build, which can avoid unexpected issues that only happens in signed builds (as most of the testing was done on unsigned builds before shipping).\n\nFor some special case (e.g., fingerprint in avbprop), we still have RewriteAvbProps() to replace the sub-string in misc_info[\u0027avb_\u003cpartition\u003e_add_hash_footer_args\u0027].\n\nDoes that sound good?",
+      "parentUuid": "73343b63_c4b6dccc",
       "range": {
         "startLine": 1033,
         "startChar": 15,
