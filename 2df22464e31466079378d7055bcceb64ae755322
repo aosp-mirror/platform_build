@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bdb3a204_b9f93f63",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-19T19:39:00Z",
+      "side": 1,
+      "message": "This is not a very good argument. We only support lz4 \u0026 gz for now, but we shouldn\u0027t rule out other formats.\n\nSuggestion: add an enum with two values instead. Same below.",
+      "range": {
+        "startLine": 843,
+        "startChar": 63,
+        "endLine": 843,
+        "endChar": 75
+      },
+      "revId": "2df22464e31466079378d7055bcceb64ae755322",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "040d42b6_26f04cb7",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 3656,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-19T19:39:00Z",
+      "side": 1,
+      "message": "This needs to be added to the dependency list in Android.bp.",
+      "range": {
+        "startLine": 3656,
+        "startChar": 27,
+        "endLine": 3656,
+        "endChar": 35
+      },
+      "revId": "2df22464e31466079378d7055bcceb64ae755322",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
