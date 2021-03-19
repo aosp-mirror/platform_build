@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b9a085d_39383537",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-03-19T12:18:14Z",
+      "side": 1,
+      "message": "Note: AAPT dep from aosp/1643882 was not lost after rebase.",
+      "range": {
+        "startLine": 227,
+        "startChar": 0,
+        "endLine": 227,
+        "endChar": 40
+      },
+      "revId": "2bf587713ba1a8e157c6d3b37f92ae58a64e8cac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
