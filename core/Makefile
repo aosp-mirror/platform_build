@@ -3883,24 +3883,6 @@ check_vintf_vendor_log :=
 endif # check_vintf_vendor_deps
 check_vintf_vendor_deps :=
 
-# -- Check VINTF compatibility of build.
-# Skip partial builds; only check full builds. Only check if:
-# - PRODUCT_ENFORCE_VINTF_MANIFEST is true
-# - system / vendor VINTF metadata exists
-# - Building product / system_ext / odm images if board has product / system_ext / odm images
-ifeq ($(PRODUCT_ENFORCE_VINTF_MANIFEST),true)
-ifeq ($(check_vintf_has_system),true)
-ifeq ($(check_vintf_has_vendor),true)
-ifeq ($(filter true,$(BUILDING_ODM_IMAGE)),$(filter true,$(BOARD_USES_ODMIMAGE)))
-ifeq ($(filter true,$(BUILDING_PRODUCT_IMAGE)),$(filter true,$(BOARD_USES_PRODUCTIMAGE)))
-ifeq ($(filter true,$(BUILDING_SYSTEM_EXT_IMAGE)),$(filter true,$(BOARD_USES_SYSTEM_EXTIMAGE)))
-
-check_vintf_compatible_log := $(intermediates)/check_vintf_compatible.log
-check_vintf_all_deps += $(check_vintf_compatible_log)
-
-check_vintf_compatible_args :=
-check_vintf_compatible_deps := $(check_vintf_common_srcs)
-
 # -- Kernel version and configurations.
 ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),true)
 
@@ -3954,9 +3936,29 @@ my_board_extracted_kernel :=
 
 endif # INSTALLED_KERNEL_TARGET
 
+endif # PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
+
+# -- Check VINTF compatibility of build.
+# Skip partial builds; only check full builds. Only check if:
+# - PRODUCT_ENFORCE_VINTF_MANIFEST is true
+# - system / vendor VINTF metadata exists
+# - Building product / system_ext / odm images if board has product / system_ext / odm images
+ifeq ($(PRODUCT_ENFORCE_VINTF_MANIFEST),true)
+ifeq ($(check_vintf_has_system),true)
+ifeq ($(check_vintf_has_vendor),true)
+ifeq ($(filter true,$(BUILDING_ODM_IMAGE)),$(filter true,$(BOARD_USES_ODMIMAGE)))
+ifeq ($(filter true,$(BUILDING_PRODUCT_IMAGE)),$(filter true,$(BOARD_USES_PRODUCTIMAGE)))
+ifeq ($(filter true,$(BUILDING_SYSTEM_EXT_IMAGE)),$(filter true,$(BOARD_USES_SYSTEM_EXTIMAGE)))
+
+check_vintf_compatible_log := $(intermediates)/check_vintf_compatible.log
+check_vintf_all_deps += $(check_vintf_compatible_log)
+
+check_vintf_compatible_args :=
+check_vintf_compatible_deps := $(check_vintf_common_srcs)
+
+ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),true)
 check_vintf_compatible_args += --kernel $(BUILT_KERNEL_VERSION_FILE):$(BUILT_KERNEL_CONFIGS_FILE)
 check_vintf_compatible_deps += $(BUILT_KERNEL_CONFIGS_FILE) $(BUILT_KERNEL_VERSION_FILE)
-
 endif # PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
 check_vintf_compatible_args += \
