@@ -34,6 +34,24 @@
       "parentUuid": "35af20e9_559a57d3",
       "revId": "430de3462f255a34c831cd8f41fce824be8cad55",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "379f8933_a84cab9e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-03-20T05:56:02Z",
+      "side": 1,
+      "message": "(QQ Is the ASAN build still active? I searched for \"aosp_x86_64-eng\" on (aosp|internal)-throttled but didn\u0027t find anything, or am I looking for the wrong product/branch?)\n\nDoesn\u0027t the sanitizer builds uses \"checkbuild\"? I believe the \"checkbuild\" target should force any vendor modules to be built.\n\nPlus this change doesn\u0027t prevent vendor modules from building, it only prevent vendor.img to be built with `m droid` and `m dist`. Vendor modules can still be built or \"installed\" into the staging directory, it\u0027s just that the final FS image wouldn\u0027t be generated.\n\nThe vendor.img of aosp_$arch is already nearly empty, so I think cutting this dependency (vendor.img -\u003e vendor modules) won\u0027t affect ASAN builds, because the ASAN builds aren\u0027t (or shouldn\u0027t be?) relying on building vendor.img to build the vendor modules, but relying on checkbuild to trigger all vendor modules.",
+      "parentUuid": "bdc7ac16_db03ff48",
+      "revId": "430de3462f255a34c831cd8f41fce824be8cad55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
