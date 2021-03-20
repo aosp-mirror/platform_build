@@ -292,6 +292,13 @@ ADDITIONAL_VENDOR_PROPERTIES += \
     ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
 endif
 
+# Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
+# This must not be defined for the non-GRF devices.
+ifdef BOARD_SHIPPING_API_LEVEL
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.board.first_api_level=$(BOARD_SHIPPING_API_LEVEL)
+endif
+
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.vendor.build.security_patch=$(VENDOR_SECURITY_PATCH) \
     ro.product.board=$(TARGET_BOOTLOADER_BOARD_NAME) \
