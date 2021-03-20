@@ -250,7 +250,15 @@ $(call add_json_str,  PrebuiltHiddenApiDir, $(BOARD_PREBUILT_HIDDENAPI_DIR))
 
 $(call add_json_str,  ShippingApiLevel, $(PRODUCT_SHIPPING_API_LEVEL))
 
+$(call add_json_bool, BuildBrokenEnforceSyspropOwner,     $(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER))
+$(call add_json_bool, BuildBrokenTrebleSyspropNeverallow, $(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW))
 $(call add_json_bool, BuildBrokenVendorPropertyNamespace, $(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE))
+
+$(call add_json_bool, RequiresInsecureExecmemForSwiftshader, $(PRODUCT_REQUIRES_INSECURE_EXECMEM_FOR_SWIFTSHADER))
+
+$(call add_json_bool, SelinuxIgnoreNeverallows, $(SELINUX_IGNORE_NEVERALLOWS))
+
+$(call add_json_bool, SepolicySplit, $(PRODUCT_SEPOLICY_SPLIT))
 
 $(call json_end)
 
