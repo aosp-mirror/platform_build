@@ -311,6 +311,15 @@ ifneq ($(LOCAL_USE_VNDK),)
     my_api_level := $(call codename-or-sdk-to-sdk,$(BOARD_VNDK_VERSION))
   endif
   my_cflags += -D__ANDROID_VNDK__
+  ifneq ($(LOCAL_USE_VNDK_VENDOR),)
+    # Vendor modules have LOCAL_USE_VNDK_VENDOR when
+    # BOARD_VNDK_VERSION is defined.
+    my_cflags += -D__ANDROID_VENDOR__
+  else ifneq ($(LOCAL_USE_VNDK_PRODUCT),)
+    # Product modules have LOCAL_USE_VNDK_PRODUCT when
+    # PRODUCT_PRODUCT_VNDK_VERSION is defined.
+    my_cflags += -D__ANDROID_PRODUCT__
+  endif
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
