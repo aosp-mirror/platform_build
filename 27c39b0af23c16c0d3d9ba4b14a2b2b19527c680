@@ -16,6 +16,23 @@
       "message": "Ready for review.",
       "revId": "27c39b0af23c16c0d3d9ba4b14a2b2b19527c680",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "25132c0f_ca2a118b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-03-21T07:30:03Z",
+      "side": 1,
+      "message": "the script change looks good to me",
+      "revId": "27c39b0af23c16c0d3d9ba4b14a2b2b19527c680",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
