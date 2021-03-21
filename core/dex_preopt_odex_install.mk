@@ -143,8 +143,8 @@ ifeq ($(LOCAL_MODULE_CLASS),APPS)
     org.apache.http.legacy
 
   my_dexpreopt_libs_compat_29 := \
-    android.hidl.base-V1.0-java \
-    android.hidl.manager-V1.0-java
+    android.hidl.manager-V1.0-java \
+    android.hidl.base-V1.0-java
 
   my_dexpreopt_libs_compat_30 := \
     android.test.base \
