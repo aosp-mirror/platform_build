@@ -52,6 +52,24 @@
       "parentUuid": "bdc7ac16_db03ff48",
       "revId": "430de3462f255a34c831cd8f41fce824be8cad55",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa2189de_72aff83c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-21T18:23:38Z",
+      "side": 1,
+      "message": "Looks like we lost our SANITIZE_HOST\u003daddress builds, but you\u0027re right that checkbuild is sufficient.",
+      "parentUuid": "379f8933_a84cab9e",
+      "revId": "430de3462f255a34c831cd8f41fce824be8cad55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
