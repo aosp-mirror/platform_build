@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "997e1412_91e66b72",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-03-22T15:42:22Z",
+      "side": 1,
+      "message": "Hi Colin, PTAL! This change add a PRODUCT_ toggle for product makefiles to explicitly state if they want or don\u0027t want to build super_empty.img",
+      "revId": "a5818ca4e0db8d228f0c2b6cd78f095df41c8e27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
