@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "443c7176_f48fdfa7",
+        "filename": "target/product/security/Android.bp",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1060151
+      },
+      "writtenOn": "2021-03-22T18:32:04Z",
+      "side": 1,
+      "message": "nit, weird line breaks",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 3
+      },
+      "revId": "8608d7eb469a3dff2998fcd07e4b47ede3fed1e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
