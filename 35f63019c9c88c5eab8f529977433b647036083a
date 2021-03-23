@@ -16,6 +16,24 @@
       "message": "I wonder we need to do this for other variables too as a safety measure.",
       "revId": "35f63019c9c88c5eab8f529977433b647036083a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "333cde0e_06311b07",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-23T23:32:40Z",
+      "side": 1,
+      "message": "This is an unfortunate inconsistency in booleans in Make.  Some places use empty as false and anything else as true, others use \"true\" as true and \"false\" as false.  Blanket updating the variables to use $(filter true) is likely to break one that is using something set but not \"true\" as true.",
+      "parentUuid": "ad9b7792_27b9d163",
+      "revId": "35f63019c9c88c5eab8f529977433b647036083a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
