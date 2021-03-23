@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a796c042_3ea0ba31",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-03-23T13:40:24Z",
+      "side": 1,
+      "message": "nit: align",
+      "range": {
+        "startLine": 209,
+        "startChar": 36,
+        "endLine": 209,
+        "endChar": 38
+      },
+      "revId": "3120204026de14bab41cc698c1343995c6d6d9d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
