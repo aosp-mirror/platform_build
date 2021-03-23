@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6629f41b_abc33443",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-03-23T10:12:13Z",
+      "side": 1,
+      "message": "Hi Yifan Hong,\n\nThanks very much!\n\nI am not sure how to follow your suggestion. \n\nI have to set lz4_ramdisk as True, because there are somewhere also call GetBootImageBuildProp().\n\nBack to my case, minigzip is the lagency format. And we meet this error when try to merge Android S(system) and Qcom R Vendor(--boot.img is here).\n\nBTW, there are similar codes in _MakeRamdisk() function in this py.",
+      "parentUuid": "3065d5a1_60110dc9",
+      "range": {
+        "startLine": 843,
+        "startChar": 63,
+        "endLine": 843,
+        "endChar": 75
+      },
+      "revId": "2df22464e31466079378d7055bcceb64ae755322",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "040d42b6_26f04cb7",
