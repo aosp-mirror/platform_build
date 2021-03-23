@@ -93,6 +93,30 @@
       },
       "revId": "2df22464e31466079378d7055bcceb64ae755322",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "672b11b5_5fb448a5",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 3656,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-03-23T10:23:46Z",
+      "side": 1,
+      "message": "Only one target in Android.bp miss minigzip, others already have.",
+      "parentUuid": "040d42b6_26f04cb7",
+      "range": {
+        "startLine": 3656,
+        "startChar": 27,
+        "endLine": 3656,
+        "endChar": 35
+      },
+      "revId": "2df22464e31466079378d7055bcceb64ae755322",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
