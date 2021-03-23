@@ -34,6 +34,24 @@
       "parentUuid": "ad9b7792_27b9d163",
       "revId": "35f63019c9c88c5eab8f529977433b647036083a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ee5b181_2c26f4d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-03-23T23:54:05Z",
+      "side": 1,
+      "message": "I filed b/183483152 to tackle this. The basic idea is to add $(filter true) to variables such that there is at least one condition comparing it with \"true\", e.g.\n\nifeq (true,$(var))",
+      "parentUuid": "333cde0e_06311b07",
+      "revId": "35f63019c9c88c5eab8f529977433b647036083a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
