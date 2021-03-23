@@ -1339,6 +1339,35 @@ def AddAftlInclusionProof(output_image):
   RunAndCheckOutput(verify_cmd)
 
 
+def AppendGkiSigningArgs(cmd):
+  """Append GKI signing arguments for mkbootimg."""
+  # e.g., --gki_signing_key path/to/signing_key
+  #       --gki_signing_algorithm SHA256_RSA4096"
+
+  key_path = OPTIONS.info_dict.get("gki_signing_key_path")
+  # It's fine that a non-GKI boot.img has no gki_signing_key_path.
+  if not key_path:
+    return
+
+  if not os.path.exists(key_path) and OPTIONS.search_path:
+    new_key_path = os.path.join(OPTIONS.search_path, key_path)
+    if os.path.exists(new_key_path):
+      key_path = new_key_path
+
+  # Checks key_path exists, before appending --gki_signing_* args.
+  if not os.path.exists(key_path):
+    raise ExternalError('gki_signing_key_path: "{}" not found'.format(key_path))
+
+  algorithm = OPTIONS.info_dict.get("gki_signing_algorithm")
+  if key_path and algorithm:
+    cmd.extend(["--gki_signing_key", key_path,
+                "--gki_signing_algorithm", algorithm])
+
+    signature_args = OPTIONS.info_dict.get("gki_signing_signature_args")
+    if signature_args:
+      cmd.extend(["--gki_signing_signature_args", signature_args])
+
+
 def BuildVBMeta(image_path, partitions, name, needed_partitions):
   """Creates a VBMeta image.
 
@@ -1519,6 +1548,8 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
 
   if has_ramdisk:
     cmd.extend(["--ramdisk", ramdisk_img.name])
+
+  AppendGkiSigningArgs(cmd)
 
   img_unsigned = None
   if info_dict.get("vboot"):
