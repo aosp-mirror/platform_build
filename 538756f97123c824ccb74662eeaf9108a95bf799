@@ -16,6 +16,24 @@
       "message": "It\u0027s OK not to do this (I\u0027m not a big fan of adding knobs) - only having the ability to do it and a test that makes sure it works would be good enough for now.",
       "revId": "538756f97123c824ccb74662eeaf9108a95bf799",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "37ae5841_a1f44288",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-03-23T17:21:39Z",
+      "side": 1,
+      "message": "It is the easiest way to add integration test in Soong to make sure the unused code path does not bitrot: such tests need to affect Soong behavior by setting various \"real-world\" configurations, as the normal build would do. A unit test does not require a global configuration, but it would not test much either (not the real dexpreopt command, just the trivial java.bcpForDexpreopt() function).\n\nThis is easy to remove, so I wouldn\u0027t worry about it.",
+      "parentUuid": "644f80f3_f4cf736c",
+      "revId": "538756f97123c824ccb74662eeaf9108a95bf799",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
