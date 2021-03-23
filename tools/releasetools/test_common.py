@@ -1670,6 +1670,127 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
                   common.OPTIONS.aftl_key_path]
     common.RunAndCheckOutput(verify_cmd)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AppendGkiSigningArgs_NoSigningKeyPath(self):
+    # A non-GKI boot.img has no gki_signing_key_path.
+    common.OPTIONS.info_dict = {
+        # 'gki_signing_key_path': pubkey,
+        'gki_signing_algorithm': 'SHA256_RSA4096',
+        'gki_signing_signature_args': '--prop foo:bar',
+    }
+
+    # Tests no --gki_signing_* args are appended if there is no
+    # gki_signing_key_path.
+    cmd = ['mkbootimg', '--header_version', '4']
+    expected_cmd = ['mkbootimg', '--header_version', '4']
+    common.AppendGkiSigningArgs(cmd)
+    self.assertEqual(cmd, expected_cmd)
+
+  def test_AppendGkiSigningArgs_NoSigningAlgorithm(self):
+    pubkey = os.path.join(self.testdata_dir, 'testkey_gki.pem')
+    with open(pubkey, 'wb') as f:
+      f.write(b'\x00' * 100)
+    self.assertTrue(os.path.exists(pubkey))
+
+    # Tests no --gki_signing_* args are appended if there is no
+    # gki_signing_algorithm.
+    common.OPTIONS.info_dict = {
+        'gki_signing_key_path': pubkey,
+        # 'gki_signing_algorithm': 'SHA256_RSA4096',
+        'gki_signing_signature_args': '--prop foo:bar',
+    }
+
+    cmd = ['mkbootimg', '--header_version', '4']
+    expected_cmd = ['mkbootimg', '--header_version', '4']
+    common.AppendGkiSigningArgs(cmd)
+    self.assertEqual(cmd, expected_cmd)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AppendGkiSigningArgs(self):
+    pubkey = os.path.join(self.testdata_dir, 'testkey_gki.pem')
+    with open(pubkey, 'wb') as f:
+      f.write(b'\x00' * 100)
+    self.assertTrue(os.path.exists(pubkey))
+
+    common.OPTIONS.info_dict = {
+        'gki_signing_key_path': pubkey,
+        'gki_signing_algorithm': 'SHA256_RSA4096',
+        'gki_signing_signature_args': '--prop foo:bar',
+    }
+    cmd = ['mkbootimg', '--header_version', '4']
+    common.AppendGkiSigningArgs(cmd)
+
+    expected_cmd = [
+      'mkbootimg', '--header_version', '4',
+      '--gki_signing_key', pubkey,
+      '--gki_signing_algorithm', 'SHA256_RSA4096',
+      '--gki_signing_signature_args', '--prop foo:bar'
+    ]
+    self.assertEqual(cmd, expected_cmd)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AppendGkiSigningArgs_KeyPathNotFound(self):
+    pubkey = os.path.join(self.testdata_dir, 'no_testkey_gki.pem')
+    self.assertFalse(os.path.exists(pubkey))
+
+    common.OPTIONS.info_dict = {
+        'gki_signing_key_path': pubkey,
+        'gki_signing_algorithm': 'SHA256_RSA4096',
+        'gki_signing_signature_args': '--prop foo:bar',
+    }
+    cmd = ['mkbootimg', '--header_version', '4']
+    self.assertRaises(common.ExternalError, common.AppendGkiSigningArgs, cmd)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AppendGkiSigningArgs_SearchKeyPath(self):
+    pubkey = 'testkey_gki.pem'
+    self.assertFalse(os.path.exists(pubkey))
+
+    # Tests it should replace the pubkey with an existed key under
+    # OPTIONS.search_path, i.e., os.path.join(OPTIONS.search_path, pubkey).
+    search_path_dir = common.MakeTempDir()
+    search_pubkey = os.path.join(search_path_dir, pubkey)
+    with open(search_pubkey, 'wb') as f:
+      f.write(b'\x00' * 100)
+    self.assertTrue(os.path.exists(search_pubkey))
+
+    common.OPTIONS.search_path = search_path_dir
+    common.OPTIONS.info_dict = {
+        'gki_signing_key_path': pubkey,
+        'gki_signing_algorithm': 'SHA256_RSA4096',
+        'gki_signing_signature_args': '--prop foo:bar',
+    }
+    cmd = ['mkbootimg', '--header_version', '4']
+    common.AppendGkiSigningArgs(cmd)
+
+    expected_cmd = [
+      'mkbootimg', '--header_version', '4',
+      '--gki_signing_key', search_pubkey,
+      '--gki_signing_algorithm', 'SHA256_RSA4096',
+      '--gki_signing_signature_args', '--prop foo:bar'
+    ]
+    self.assertEqual(cmd, expected_cmd)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AppendGkiSigningArgs_SearchKeyPathNotFound(self):
+    pubkey = 'no_testkey_gki.pem'
+    self.assertFalse(os.path.exists(pubkey))
+
+    # Tests it should raise ExternalError if no key found under
+    # OPTIONS.search_path.
+    search_path_dir = common.MakeTempDir()
+    search_pubkey = os.path.join(search_path_dir, pubkey)
+    self.assertFalse(os.path.exists(search_pubkey))
+
+    common.OPTIONS.search_path = search_path_dir
+    common.OPTIONS.info_dict = {
+        'gki_signing_key_path': pubkey,
+        'gki_signing_algorithm': 'SHA256_RSA4096',
+        'gki_signing_signature_args': '--prop foo:bar',
+    }
+    cmd = ['mkbootimg', '--header_version', '4']
+    self.assertRaises(common.ExternalError, common.AppendGkiSigningArgs, cmd)
+
 
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   """Checks the format of install-recovery.sh.
