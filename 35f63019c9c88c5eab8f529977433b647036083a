@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad9b7792_27b9d163",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2021-03-23T23:20:42Z",
+      "side": 1,
+      "message": "I wonder we need to do this for other variables too as a safety measure.",
+      "revId": "35f63019c9c88c5eab8f529977433b647036083a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
