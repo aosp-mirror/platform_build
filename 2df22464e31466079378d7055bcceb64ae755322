@@ -72,6 +72,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e8fd4636_fc0529a4",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-23T23:19:23Z",
+      "side": 1,
+      "message": "Your new patchset looks fine.",
+      "parentUuid": "6629f41b_abc33443",
+      "range": {
+        "startLine": 843,
+        "startChar": 63,
+        "endLine": 843,
+        "endChar": 75
+      },
+      "revId": "2df22464e31466079378d7055bcceb64ae755322",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "040d42b6_26f04cb7",

@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c67c422e_5650f055",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-23T23:19:23Z",
+      "side": 1,
+      "message": "Just some minor edits / suggestions, please take a look.\n\nCan you please also test the following?\n\n  lunch aosp_arm64-userdebug\n  mmma packages/modules/Gki",
+      "revId": "891ebb519565c0b294d5cdc9c41da224c8fa7464",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e943b537_a34e50d3",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 851,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-23T23:19:23Z",
+      "side": 1,
+      "message": "nitty nit: suggest to change the default value to a new value, RamdiskFormat.NONE. This argument only makes sense when \"name\" \u003d\u003d \"boot\", so callers might be confused what this is.\n\nFeel free to ignore this comment if you don\u0027t think it makes sense.",
+      "range": {
+        "startLine": 851,
+        "startChar": 92,
+        "endLine": 851,
+        "endChar": 95
+      },
+      "revId": "891ebb519565c0b294d5cdc9c41da224c8fa7464",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34fcde10_fc71bb29",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 852,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-23T23:19:23Z",
+      "side": 1,
+      "message": "nit: can you explain what \"ramdisk_format\" is in the docstring? The other arguments are already explained in L819.\n\ne.g. \n\n  :param ramdisk_format: If name is \"boot\", the format of the ramdisk inside the boot image. Otherwise, its value is ignored.",
+      "revId": "891ebb519565c0b294d5cdc9c41da224c8fa7464",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18053d08_af83b173",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 864,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-23T23:19:23Z",
+      "side": 1,
+      "message": "This is a private function, you should drop the default value.",
+      "range": {
+        "startLine": 864,
+        "startChar": 50,
+        "endLine": 864,
+        "endChar": 68
+      },
+      "revId": "891ebb519565c0b294d5cdc9c41da224c8fa7464",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "621fbfcc_1f36c560",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 3698,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-23T23:19:23Z",
+      "side": 1,
+      "message": "here you should\n\n  return None",
+      "revId": "891ebb519565c0b294d5cdc9c41da224c8fa7464",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
