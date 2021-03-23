@@ -206,6 +206,8 @@ $(call add_json_bool, ForceApexSymlinkOptimization,      $(filter true,$(TARGET_
 
 $(call add_json_str,  DexpreoptGlobalConfig,             $(DEX_PREOPT_CONFIG))
 
+$(call add_json_bool, WithDexpreopt,                     $(filter true,$(WITH_DEXPREOPT)))
+
 $(call add_json_list, ManifestPackageNameOverrides,      $(PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES))
 $(call add_json_list, PackageNameOverrides,              $(PRODUCT_PACKAGE_NAME_OVERRIDES))
 $(call add_json_list, CertificateOverrides,              $(PRODUCT_CERTIFICATE_OVERRIDES))
