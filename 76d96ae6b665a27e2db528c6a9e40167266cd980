@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac1d7f60_5f571c27",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-03-23T03:52:21Z",
+      "side": 1,
+      "message": "The patch does not relative to builds. Bypass the presubmit. ",
+      "revId": "76d96ae6b665a27e2db528c6a9e40167266cd980",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
