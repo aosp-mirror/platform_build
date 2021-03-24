@@ -1027,8 +1027,9 @@ def AddImagesToTargetFiles(filename):
       AddVBMeta(output_zip, partitions, "vbmeta", vbmeta_partitions)
 
   if OPTIONS.info_dict.get("use_dynamic_partitions") == "true":
-    banner("super_empty")
-    AddSuperEmpty(output_zip)
+    if OPTIONS.info_dict.get("build_super_empty_partition") == "true":
+      banner("super_empty")
+      AddSuperEmpty(output_zip)
 
   if OPTIONS.info_dict.get("build_super_partition") == "true":
     if OPTIONS.info_dict.get(
