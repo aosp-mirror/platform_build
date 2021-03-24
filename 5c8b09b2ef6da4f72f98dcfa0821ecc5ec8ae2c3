@@ -16,6 +16,23 @@
       "message": "Ping",
       "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ccd0cf3_e5d9d1a1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 24
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-03-24T16:28:05Z",
+      "side": 1,
+      "message": "I already +2\u0027d this. If Chris or Joe don\u0027t have any objections, then submit?",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
