@@ -33,6 +33,74 @@
       "message": "I already +2\u0027d this. If Chris or Joe don\u0027t have any objections, then submit?",
       "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "954b3df3_d388bdbf",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:00:51Z",
+      "side": 1,
+      "message": "How about:\n\n  if g[\"PLATFORM_VERSION_CODENAME\"] \u003d\u003d \"REL\":\n    g.setdefault(\"PLATFORM_VERSION\", g[\"PLATFORM_VERSION_LAST_STABLE\"])\n    g.setdefault(\"DEFAULT_APP_TARGET_SDK\", g[\"PLATFORM_SDK_VERSION\"])\n    g.setdefault(\"PLATFORM_VNDK_VERSION\", g[\"PLATFORM_SDK_VERSION\"])\n    g[\"PLATFORM_PREVIEW_SDK_VERSION\"] \u003d 0\n  else:\n    g.setdefault(\"PLATFORM_VERSION\", g[\"PLATFORM_VERSION_CODENAME\"])\n    g.setdefault(\"DEFAULT_APP_TARGET_SDK\", g[\"PLATFORM_VERSION_CODENAME\"])\n    g.setdefault(\"PLATFORM_VNDK_VERSION\", g[\"PLATFORM_VERSION_CODENAME\"])\n    g.setdefault(\"PLATFORM_PREVIEW_SDK_VERSION\", 1)",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "33fdb7fd_2c46d835",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:00:51Z",
+      "side": 1,
+      "message": "Since init is the only public function in this file, can you document it? What is g?",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ea52b24_2577fb1e",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:00:51Z",
+      "side": 1,
+      "message": "Can you elaborate a tiny bit?",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3e28c7c_1857a273",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:00:51Z",
+      "side": 1,
+      "message": "a lot more what?",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
