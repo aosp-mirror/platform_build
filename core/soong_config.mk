@@ -260,7 +260,7 @@ $(call add_json_bool, RequiresInsecureExecmemForSwiftshader, $(PRODUCT_REQUIRES_
 
 $(call add_json_bool, SelinuxIgnoreNeverallows, $(SELINUX_IGNORE_NEVERALLOWS))
 
-$(call add_json_bool, SepolicySplit, $(PRODUCT_SEPOLICY_SPLIT))
+$(call add_json_bool, SepolicySplit, $(filter true,$(PRODUCT_SEPOLICY_SPLIT)))
 
 $(call json_end)
 
