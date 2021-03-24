@@ -22,6 +22,30 @@
       },
       "revId": "d798386fad6520808f1b3fa4a306b08f19c74f9c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d217ac1e_6b3ea579",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1632361
+      },
+      "writtenOn": "2021-03-24T17:25:40Z",
+      "side": 1,
+      "message": "This is the feature bug id for https://b.corp.google.com/issues/180639372",
+      "parentUuid": "20c92125_572a407c",
+      "range": {
+        "startLine": 9,
+        "startChar": 7,
+        "endLine": 9,
+        "endChar": 16
+      },
+      "revId": "d798386fad6520808f1b3fa4a306b08f19c74f9c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
