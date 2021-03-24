@@ -81,6 +81,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1414fa19_5a9f1713",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 864,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-03-24T06:28:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18053d08_af83b173",
+      "range": {
+        "startLine": 864,
+        "startChar": 50,
+        "endLine": 864,
+        "endChar": 68
+      },
+      "revId": "891ebb519565c0b294d5cdc9c41da224c8fa7464",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "621fbfcc_1f36c560",
