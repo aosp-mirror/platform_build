@@ -101,6 +101,142 @@
       "message": "a lot more what?",
       "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6868a11_d7b6b2fd",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:11:22Z",
+      "side": 1,
+      "message": "whitespace inconsistency",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6a1738bd_71d3dcd1",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:11:22Z",
+      "side": 1,
+      "message": "Are these accidental inclusions for debugging?",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bf65e0b8_0d0381b6",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:11:22Z",
+      "side": 1,
+      "message": "please use a var name other than l (l looks too much like 1, it\u0027s a poor single-char name)",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9570bb3_f183aeec",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:11:22Z",
+      "side": 1,
+      "message": "why is this level of indirection needed? Is this just to mimic inheritance?",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5139a94f_7866a704",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:11:22Z",
+      "side": 1,
+      "message": "whitespacing inconsistent",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ba0f009_94b53255",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:11:22Z",
+      "side": 1,
+      "message": "whitespacing inconsistent",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ca9b168_374a453f",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:11:22Z",
+      "side": 1,
+      "message": "change l please",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5d5db58d_a51c7d17",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-03-24T23:11:22Z",
+      "side": 1,
+      "message": "Remove accidental debug inclusion",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
