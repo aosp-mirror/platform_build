@@ -20,6 +20,22 @@ endif
 # The default value for LOCAL_DEX_PREOPT
 DEX_PREOPT_DEFAULT ?= $(ENABLE_PREOPT)
 
+# Whether to fail immediately if verify_uses_libraries check fails, or to keep
+# going and restrict dexpreopt to not compile any code for the failed module.
+#
+# The intended use case for this flag is to have a smoother migration path for
+# the Java modules that need to add <uses-library> information in their build
+# files. The flag allows to quickly silence build errors. This flag should be
+# used with caution and only as a temporary measure, as it masks real errors
+# and affects performance.
+ifndef RELAX_USES_LIBRARY_CHECK
+  RELAX_USES_LIBRARY_CHECK := $(if \
+    $(filter true,$(PRODUCT_BROKEN_VERIFY_USES_LIBRARIES)),true,false)
+else
+  # Let the environment variable override PRODUCT_BROKEN_VERIFY_USES_LIBRARIES.
+endif
+.KATI_READONLY := RELAX_USES_LIBRARY_CHECK
+
 # The default filter for which files go into the system_other image (if it is
 # being used). Note that each pattern p here matches both '/<p>' and /system/<p>'.
 # To bundle everything one should set this to '%'.
