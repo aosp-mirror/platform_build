@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "ebb5e6bd_bc885943",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-03-24T09:13:39Z",
+      "side": 1,
+      "message": "lunch aosp_arm64-userdebug\nmmma packages/modules/Gki is OK.\n\nBut try to \"make dist\" will occur these errors:\n\"\"\"\n  File \"/home/mi/workspace/mi-codes/aosp-master/out/host/linux-x86/bin/build_super_image/common.py\", line 41, in \u003cmodule\u003e\nImportError: No module named enum\n\"\"\"\n\nEven pip installed enum locally, these errors are also exist(during build, py env shall be \"prebuilts/python\", not local python. But if run these python scripts directly----local python env is active, and no errors). \nBecause, it seems all current \"python_binary_host\" modules are both py2.\n\nSo, modified Android.bp to enable py3 for \"python_binary_host\" modules. Then \"make dist\" goes well ---- but this seems to be a big change...\n\nThanks!",
+      "parentUuid": "c67c422e_5650f055",
+      "revId": "891ebb519565c0b294d5cdc9c41da224c8fa7464",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "e943b537_a34e50d3",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 6
