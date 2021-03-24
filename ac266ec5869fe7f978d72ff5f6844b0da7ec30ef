@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb3e37a6_4987ad44",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-03-24T09:52:57Z",
+      "side": 1,
+      "message": "Can you add `required: [\"RemoteProvisioner\"]` to the HAL instead? That will install this whenever the HAL is installed.",
+      "range": {
+        "startLine": 9,
+        "startChar": 60,
+        "endLine": 10,
+        "endChar": 66
+      },
+      "revId": "ac266ec5869fe7f978d72ff5f6844b0da7ec30ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
