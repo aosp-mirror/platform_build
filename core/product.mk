@@ -384,7 +384,6 @@ _product_single_value_vars += PRODUCT_BUILD_RECOVERY_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
-_product_single_value_vars += PRODUCT_BUILD_SUPER_EMPTY_IMAGE
 
 # List of boot jars delivered via apex
 _product_list_vars += PRODUCT_UPDATABLE_BOOT_JARS
