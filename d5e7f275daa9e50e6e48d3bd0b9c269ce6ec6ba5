@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c850ee74_e31ea3fb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-25T21:23:06Z",
+      "side": 1,
+      "message": "This affects everything, not just pixel devices.",
+      "revId": "d5e7f275daa9e50e6e48d3bd0b9c269ce6ec6ba5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
