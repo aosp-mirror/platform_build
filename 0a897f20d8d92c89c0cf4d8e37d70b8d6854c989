@@ -22,6 +22,30 @@
       },
       "revId": "0a897f20d8d92c89c0cf4d8e37d70b8d6854c989",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d3e1679_e3b654d5",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 9
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-03-25T01:21:48Z",
+      "side": 1,
+      "message": "Hi,\n\nSwitch to py3 do NOT have relationship with minigzip. Here(common.py) we use python enum, but py2 do not have enum, so switch to py3 to ensure \"import enum\" available.\n\nFor this line, switch to py3 only impact all \"python_binary_host\" \n modules which using \"releasetools_binary_defaults\".\n\nThanks!",
+      "parentUuid": "03bb2d94_fde6ce40",
+      "range": {
+        "startLine": 275,
+        "startChar": 0,
+        "endLine": 282,
+        "endChar": 10
+      },
+      "revId": "0a897f20d8d92c89c0cf4d8e37d70b8d6854c989",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
