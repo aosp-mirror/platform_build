@@ -70,6 +70,30 @@
       },
       "revId": "d798386fad6520808f1b3fa4a306b08f19c74f9c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "86f36a4a_ca3e72be",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2021-03-25T00:05:42Z",
+      "side": 1,
+      "message": "I don\u0027t think it is resolved. Please update the commit message with the correct bug id.",
+      "parentUuid": "a08141a0_4904f4ba",
+      "range": {
+        "startLine": 9,
+        "startChar": 7,
+        "endLine": 9,
+        "endChar": 16
+      },
+      "revId": "d798386fad6520808f1b3fa4a306b08f19c74f9c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
