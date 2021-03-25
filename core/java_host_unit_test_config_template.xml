@@ -17,6 +17,7 @@
 <configuration description="Runs {MODULE}">
     <option name="test-suite-tag" value="apct" />
     <option name="test-suite-tag" value="apct-unit-tests" />
+    <option name="config-descriptor:metadata" key="component" value="{MODULE}" />
 
     {EXTRA_CONFIGS}
 
