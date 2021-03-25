@@ -16,6 +16,24 @@
       "message": "This affects everything, not just pixel devices.",
       "revId": "d5e7f275daa9e50e6e48d3bd0b9c269ce6ec6ba5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b3c5f910_6fadd671",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1432579
+      },
+      "writtenOn": "2021-03-25T21:46:51Z",
+      "side": 1,
+      "message": "Hm, the mainline_system.mk confused me :(\n\nHowever, I think it makes sense to enable it on all devices that support updatable apexes. I\u0027ve rephrased the commit message.",
+      "parentUuid": "c850ee74_e31ea3fb",
+      "revId": "d5e7f275daa9e50e6e48d3bd0b9c269ce6ec6ba5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
