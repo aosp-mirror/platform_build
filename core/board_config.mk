@@ -460,25 +460,6 @@ ifeq ($(PRODUCT_BUILD_VBMETA_IMAGE),false)
 endif
 .KATI_READONLY := BUILDING_VBMETA_IMAGE
 
-# Are we building a super_empty image
-BUILDING_SUPER_EMPTY_IMAGE :=
-ifeq ($(PRODUCT_BUILD_SUPER_EMPTY_IMAGE),)
-  ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
-    ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
-      BUILDING_SUPER_EMPTY_IMAGE := true
-    endif
-  endif
-else ifeq ($(PRODUCT_BUILD_SUPER_EMPTY_IMAGE),true)
-  ifneq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
-    $(error PRODUCT_BUILD_SUPER_EMPTY_IMAGE set to true, but PRODUCT_USE_DYNAMIC_PARTITIONS is not true)
-  endif
-  ifeq ($(BOARD_SUPER_PARTITION_SIZE),)
-    $(error PRODUCT_BUILD_SUPER_EMPTY_IMAGE set to true, but BOARD_SUPER_PARTITION_SIZE is not defined)
-  endif
-  BUILDING_SUPER_EMPTY_IMAGE := true
-endif
-.KATI_READONLY := BUILDING_SUPER_EMPTY_IMAGE
-
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR
 ifeq ($(TARGET_COPY_OUT_VENDOR),$(_vendor_path_placeholder))
