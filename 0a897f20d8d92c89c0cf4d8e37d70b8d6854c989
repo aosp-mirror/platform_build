@@ -46,6 +46,30 @@
       },
       "revId": "0a897f20d8d92c89c0cf4d8e37d70b8d6854c989",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df6de600_dedb4651",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 9
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-03-27T02:26:22Z",
+      "side": 1,
+      "message": "Hi Yifan Hong,\n\nUploaded patch set 10.\n\nInstead of \"enum.Enum\" by using class attribute. Then no need to change Android.bp and keep py2 as before. Does it also make sense?\n\nAlso pass \"make dist\" and \"mmma packages/modules/Gki\"",
+      "parentUuid": "7d3e1679_e3b654d5",
+      "range": {
+        "startLine": 275,
+        "startChar": 0,
+        "endLine": 282,
+        "endChar": 10
+      },
+      "revId": "0a897f20d8d92c89c0cf4d8e37d70b8d6854c989",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
