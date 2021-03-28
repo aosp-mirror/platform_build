@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "67114d50_fa9921f1",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1057,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-03-28T06:56:20Z",
+      "side": 1,
+      "message": "create a variable to improve readability...",
+      "range": {
+        "startLine": 1055,
+        "startChar": 7,
+        "endLine": 1057,
+        "endChar": 32
+      },
+      "revId": "70863aa3a4304f4086dfda269705a7754e35ec2f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "64c37325_43ca364c",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1060,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-03-28T06:56:20Z",
+      "side": 1,
+      "message": "is it redundant",
+      "range": {
+        "startLine": 1060,
+        "startChar": 14,
+        "endLine": 1060,
+        "endChar": 37
+      },
+      "revId": "70863aa3a4304f4086dfda269705a7754e35ec2f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
