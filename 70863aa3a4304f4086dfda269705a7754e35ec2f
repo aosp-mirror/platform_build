@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "53a15897_06a114a8",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1057,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-03-29T13:37:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67114d50_fa9921f1",
+      "range": {
+        "startLine": 1055,
+        "startChar": 7,
+        "endLine": 1057,
+        "endChar": 32
+      },
+      "revId": "70863aa3a4304f4086dfda269705a7754e35ec2f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "64c37325_43ca364c",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-03-28T06:56:20Z",
       "side": 1,
       "message": "is it redundant",
+      "range": {
+        "startLine": 1060,
+        "startChar": 14,
+        "endLine": 1060,
+        "endChar": 37
+      },
+      "revId": "70863aa3a4304f4086dfda269705a7754e35ec2f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "940d0d4e_d1d6bf92",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1060,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-03-29T13:37:40Z",
+      "side": 1,
+      "message": "Yes. Though the semantic of disable_fec_computation \u003d\u003d False and disable_verity_computation \u003d\u003d True isn\u0027t defined.",
+      "parentUuid": "64c37325_43ca364c",
       "range": {
         "startLine": 1060,
         "startChar": 14,
