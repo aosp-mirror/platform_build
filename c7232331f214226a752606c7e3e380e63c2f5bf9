@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "16fbb7e5_9342499f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2021-03-29T13:04:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4160ecf1_02abd7bc",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 7
+      },
+      "revId": "c7232331f214226a752606c7e3e380e63c2f5bf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "490013a6_d0342c5f",
@@ -47,6 +71,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "40bc5dcc_91831fda",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2021-03-29T13:04:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "490013a6_d0342c5f",
+      "range": {
+        "startLine": 50,
+        "startChar": 16,
+        "endLine": 50,
+        "endChar": 23
+      },
+      "revId": "c7232331f214226a752606c7e3e380e63c2f5bf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ba525174_66fdb9ba",
@@ -60,6 +108,30 @@
       "writtenOn": "2021-03-29T11:18:13Z",
       "side": 1,
       "message": "Ugh, I managed to get it wrong when adding this variable. Can you remove line 51, since it is not very informative and likely to get out of date?",
+      "range": {
+        "startLine": 51,
+        "startChar": 35,
+        "endLine": 51,
+        "endChar": 39
+      },
+      "revId": "c7232331f214226a752606c7e3e380e63c2f5bf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1fbcb603_fd881fc6",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2021-03-29T13:04:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba525174_66fdb9ba",
       "range": {
         "startLine": 51,
         "startChar": 35,
