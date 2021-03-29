@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cdfa6495_08254d81",
+        "filename": "target/board/generic_arm64/device.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2021-03-29T18:14:44Z",
+      "side": 1,
+      "message": "nit: I don\u0027t think dist-for-goals needs to be associated with PRODUCT_COPY_FILES.",
+      "revId": "6ef237b9d063590ca360b0acacae54cf25864d27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
