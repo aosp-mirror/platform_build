@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d2b6cbc_b7d41c8a",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-03-29T21:07:20Z",
+      "side": 0,
+      "message": "Is it worth adding $(KATI_obsolete_var PRODUCT_CHECK_ELF_FILES) or $(KATI_deprecated_var PRODUCT_CHECK_ELF_FILES) so that vendors who have set this get some notification that it doesn\u0027t do anything any more?",
+      "revId": "3140fc9e15136d29a5eadcb110d95075b2ab5871",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
