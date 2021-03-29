@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4160ecf1_02abd7bc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-03-29T11:18:13Z",
+      "side": 1,
+      "message": "Can you run the following tests to make sure we have the desired effect (or better, check the odex files with oatdump):\n\n  egrep \u0027ethernet-service[^ ]*odex\u0027 out/soong/build.ninja \\\n    | grep updatable\n  # should be empty\n\n  egrep \u0027oat-file\u003d[^ ]*Gallery2[^ ]*odex\u0027 out/soong/build.ninja \\\n    | egrep -o \u0027Xbootclasspath:[^ ]*\u0027 \\\n    | sed \u0027s/:/\\n/g\u0027 \\\n    | grep updatable_bootjars\n  # should list updatable boot jars\n\n  egrep -o \u0027Xbootclasspath:[^ ]*\u0027 \\\n      -o `find out -name dexpreopt.sh | grep Dialer` \\\n    | sed \u0027s/:/\\n/g\u0027 \\\n    | grep updatable_bootjars\n  # should list updatable boot jars",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 7
+      },
+      "revId": "c7232331f214226a752606c7e3e380e63c2f5bf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "490013a6_d0342c5f",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-03-29T11:18:13Z",
+      "side": 1,
+      "message": "Here I forgot \"to\". Can you add it please?",
+      "range": {
+        "startLine": 50,
+        "startChar": 16,
+        "endLine": 50,
+        "endChar": 23
+      },
+      "revId": "c7232331f214226a752606c7e3e380e63c2f5bf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba525174_66fdb9ba",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-03-29T11:18:13Z",
+      "side": 1,
+      "message": "Ugh, I managed to get it wrong when adding this variable. Can you remove line 51, since it is not very informative and likely to get out of date?",
+      "range": {
+        "startLine": 51,
+        "startChar": 35,
+        "endLine": 51,
+        "endChar": 39
+      },
+      "revId": "c7232331f214226a752606c7e3e380e63c2f5bf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
