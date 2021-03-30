@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1551dd27_14bb9bbc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-03-30T11:31:20Z",
+      "side": 1,
+      "message": "Presubmit error is likely normal due to the automerger not settled down yet. Would retry presubmit tomorrow",
+      "revId": "f098a5b7a7e20f9fea89fde60bf5aacf18520e35",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
