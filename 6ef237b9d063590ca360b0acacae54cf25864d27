@@ -71,6 +71,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "af9eab4e_c0ba396f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-03-30T19:11:48Z",
+      "side": 1,
+      "message": "+JoeO\n\ndist-for-goals doesn\u0027t directly creates rules, but is probably still something that\u0027ll cause problems with the upcoming product configuration changes.",
+      "parentUuid": "7753aeec_4715153b",
+      "revId": "6ef237b9d063590ca360b0acacae54cf25864d27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "cdfa6495_08254d81",
         "filename": "target/board/generic_arm64/device.mk",
         "patchSetId": 1
