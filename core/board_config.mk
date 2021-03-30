@@ -329,7 +329,8 @@ endif
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_DEBUG_RAMDISK
 ifneq (,$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT) \
-  $(BOARD_GKI_NONAB_COMPAT) $(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT)))
+  $(BOARD_GKI_NONAB_COMPAT) $(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT) \
+  $(BOARD_USES_GENERIC_KERNEL_IMAGE)))
 TARGET_COPY_OUT_DEBUG_RAMDISK := debug_ramdisk/first_stage_ramdisk
 TARGET_COPY_OUT_VENDOR_DEBUG_RAMDISK := vendor_debug_ramdisk/first_stage_ramdisk
 TARGET_COPY_OUT_TEST_HARNESS_RAMDISK := test_harness_ramdisk/first_stage_ramdisk
