@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "55f1e5db_c045a848",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-03-30T03:00:21Z",
+      "side": 1,
+      "message": "Hi Anton, \n\nplease help for Owner+1 if no concern.\n\nThanks!",
+      "revId": "6ef237b9d063590ca360b0acacae54cf25864d27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cdfa6495_08254d81",
@@ -14,6 +31,24 @@
       "writtenOn": "2021-03-29T18:14:44Z",
       "side": 1,
       "message": "nit: I don\u0027t think dist-for-goals needs to be associated with PRODUCT_COPY_FILES.",
+      "revId": "6ef237b9d063590ca360b0acacae54cf25864d27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5c01c7e_64d4190e",
+        "filename": "target/board/generic_arm64/device.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-03-30T03:00:21Z",
+      "side": 1,
+      "message": "Thanks for reminder.\n\nThere is a blank line (line 28), so here does not concat to dist-for-goals.\n\nForget saying that I add the `\\` is for avoid conflict to sc-gsi-dev. There has a `\\`.",
+      "parentUuid": "cdfa6495_08254d81",
       "revId": "6ef237b9d063590ca360b0acacae54cf25864d27",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
