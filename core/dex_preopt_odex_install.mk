@@ -47,15 +47,21 @@ ifeq (true,$(DISABLE_PREOPT))
   LOCAL_DEX_PREOPT :=
 endif
 
-# Disable <uses-library> checks and preopt if not WITH_DEXPREOPT
-#
+# Disable preopt if not WITH_DEXPREOPT
+ifneq (true,$(WITH_DEXPREOPT))
+  LOCAL_DEX_PREOPT :=
+endif
+
+# Disable <uses-library> checks if dexpreopt is globally disabled.
 # Without dexpreopt the check is not necessary, and although it is good to have,
 # it is difficult to maintain on non-linux build platforms where dexpreopt is
 # generally disabled (the check may fail due to various unrelated reasons, such
 # as a failure to get manifest from an APK).
 ifneq (true,$(WITH_DEXPREOPT))
   LOCAL_ENFORCE_USES_LIBRARIES := false
-  LOCAL_DEX_PREOPT :=
+endif
+ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
 endif
 
 ifdef LOCAL_UNINSTALLABLE_MODULE
@@ -143,8 +149,8 @@ ifeq ($(LOCAL_MODULE_CLASS),APPS)
     org.apache.http.legacy
 
   my_dexpreopt_libs_compat_29 := \
-    android.hidl.base-V1.0-java \
-    android.hidl.manager-V1.0-java
+    android.hidl.manager-V1.0-java \
+    android.hidl.base-V1.0-java
 
   my_dexpreopt_libs_compat_30 := \
     android.test.base \
