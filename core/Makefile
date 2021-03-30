@@ -4621,6 +4621,8 @@ define dump-dynamic-partitions-info
   echo "lpmake=$(notdir $(LPMAKE))" >> $(1)
   $(if $(filter true,$(PRODUCT_BUILD_SUPER_PARTITION)), $(if $(BOARD_SUPER_PARTITION_SIZE), \
     echo "build_super_partition=true" >> $(1)))
+  $(if $(BUILDING_SUPER_EMPTY_IMAGE), \
+    echo "build_super_empty_partition=true" >> $(1))
   $(if $(filter true,$(BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE)), \
     echo "build_retrofit_dynamic_partitions_ota_package=true" >> $(1))
   echo "super_metadata_device=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)" >> $(1)
@@ -5490,9 +5492,7 @@ endif # PRODUCT_BUILD_SUPER_PARTITION == "true"
 
 # -----------------------------------------------------------------
 # super empty image
-
-ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
-ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
+ifdef BUILDING_SUPER_EMPTY_IMAGE
 
 INSTALLED_SUPERIMAGE_EMPTY_TARGET := $(PRODUCT_OUT)/super_empty.img
 $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): intermediates := $(call intermediates-dir-for,PACKAGING,super_empty)
@@ -5506,8 +5506,7 @@ $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(LPMAKE) $(BUILD_SUPER_IMAGE)
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_EMPTY_TARGET))
 
-endif # BOARD_SUPER_PARTITION_SIZE != ""
-endif # PRODUCT_USE_DYNAMIC_PARTITIONS == "true"
+endif # BUILDING_SUPER_EMPTY_IMAGE
 
 
 # -----------------------------------------------------------------
