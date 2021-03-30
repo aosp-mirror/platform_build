@@ -34,6 +34,24 @@
       "parentUuid": "a7e87ab6_78c4f4cb",
       "revId": "bea4a8fb48ab6ab4e5a460310e5286181c078683",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9fb24adf_5a9d31d9",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1229339
+      },
+      "writtenOn": "2021-03-30T21:41:43Z",
+      "side": 1,
+      "message": "This code path is only used for device builds, where we pass -nostdlib to the driver, which turns off the implicit libunwind/libdl linking.\n\nI\u0027m not quite sure this `my_ldlibs +\u003d -ldl` here is really needed, but I wasn\u0027t sure enough to remove it. I *do* see libdl.so passed twice to the driver; maybe the later copy is coming from `my_system_shared_libraries` at the top of core/binary.mk?",
+      "parentUuid": "baeb5bb3_d2a4536d",
+      "revId": "bea4a8fb48ab6ab4e5a460310e5286181c078683",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
