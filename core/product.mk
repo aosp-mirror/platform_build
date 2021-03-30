@@ -389,9 +389,6 @@ _product_single_value_vars += PRODUCT_BUILD_SUPER_EMPTY_IMAGE
 # List of boot jars delivered via apex
 _product_list_vars += PRODUCT_UPDATABLE_BOOT_JARS
 
-# Whether the product would like to check prebuilt ELF files.
-_product_single_value_vars += PRODUCT_CHECK_ELF_FILES
-
 # If set, device uses virtual A/B.
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA
 
