@@ -69,6 +69,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "108db31b_500b7779",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "954b3df3_d388bdbf",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "33fdb7fd_2c46d835",
@@ -82,6 +100,24 @@
       "writtenOn": "2021-03-24T23:00:51Z",
       "side": 1,
       "message": "Since init is the only public function in this file, can you document it? What is g?",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e6f8c70_3c4ef412",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "33fdb7fd_2c46d835",
       "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -103,6 +139,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4ce0827_a19c9fe2",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8ea52b24_2577fb1e",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c3e28c7c_1857a273",
@@ -116,6 +170,24 @@
       "writtenOn": "2021-03-24T23:00:51Z",
       "side": 1,
       "message": "a lot more what?",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a3d230c_68a6369e",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c3e28c7c_1857a273",
       "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -137,6 +209,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa9fa426_144f917f",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b6868a11_d7b6b2fd",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6a1738bd_71d3dcd1",
@@ -150,6 +240,24 @@
       "writtenOn": "2021-03-24T23:11:22Z",
       "side": 1,
       "message": "Are these accidental inclusions for debugging?",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffa6a5d4_c53a2a69",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6a1738bd_71d3dcd1",
       "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -171,6 +279,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "af53ef57_7b8496db",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "bf65e0b8_0d0381b6",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e9570bb3_f183aeec",
@@ -184,6 +310,24 @@
       "writtenOn": "2021-03-24T23:11:22Z",
       "side": 1,
       "message": "why is this level of indirection needed? Is this just to mimic inheritance?",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af3dbc96_aced7d06",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e9570bb3_f183aeec",
       "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -205,6 +349,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "81e45819_a770a9e8",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5139a94f_7866a704",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2ba0f009_94b53255",
@@ -218,6 +380,24 @@
       "writtenOn": "2021-03-24T23:11:22Z",
       "side": 1,
       "message": "whitespacing inconsistent",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab3401df_8a2a6049",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "2ba0f009_94b53255",
       "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -239,6 +419,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "382d7bae_a0271198",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "3ca9b168_374a453f",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5d5db58d_a51c7d17",
@@ -252,6 +450,24 @@
       "writtenOn": "2021-03-24T23:11:22Z",
       "side": 1,
       "message": "Remove accidental debug inclusion",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6256d81a_8e0c7540",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5d5db58d_a51c7d17",
       "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }

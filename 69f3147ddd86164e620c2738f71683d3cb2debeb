@@ -89,6 +89,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "78b8bc62_4b1f770a",
+        "filename": "target/product/aosp_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b65dc209_c7f61e9c",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3eb68656_d8a041e6",
@@ -177,6 +195,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7641c452_955eadb9",
+        "filename": "target/product/aosp_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e567ed3b_be603db0",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5c0fec6e_79120f49",
@@ -194,6 +230,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "78fae931_6fb8e068",
+        "filename": "target/product/base_vendor.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5c0fec6e_79120f49",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "583480fd_9e276b19",
@@ -207,6 +261,30 @@
       "writtenOn": "2020-11-13T15:22:34Z",
       "side": 1,
       "message": "Consider requiring names for the first two parameters. It makes the role of the argument value much clearer to the reader.",
+      "range": {
+        "startLine": 11,
+        "startChar": 4,
+        "endLine": 11,
+        "endChar": 5
+      },
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "12160383_3089fa18",
+        "filename": "target/product/handheld_product.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "583480fd_9e276b19",
       "range": {
         "startLine": 11,
         "startChar": 4,
@@ -270,6 +348,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3b3969f_935fa13f",
+        "filename": "target/product/product_config.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1065096b_4b996016",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a9c5666e_d1677ea5",
@@ -283,6 +379,24 @@
       "writtenOn": "2020-11-04T10:05:19Z",
       "side": 1,
       "message": "nit: it looks like you can extract the update/merging logic (lines 22-29 and lines 33-40) into a separate function for less repetitiveness",
+      "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4cd5ca9c_8dbb5796",
+        "filename": "target/product/product_config.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T17:54:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a9c5666e_d1677ea5",
       "revId": "69f3147ddd86164e620c2738f71683d3cb2debeb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
