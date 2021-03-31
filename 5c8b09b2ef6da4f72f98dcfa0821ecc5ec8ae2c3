@@ -332,6 +332,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "83af16bd_f85d850f",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 24
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T19:51:38Z",
+      "side": 1,
+      "message": "We need to distinguish an inherited item from the regular one, please see _substitute_inherited function.",
+      "parentUuid": "af3dbc96_aced7d06",
+      "revId": "5c8b09b2ef6da4f72f98dcfa0821ecc5ec8ae2c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5139a94f_7866a704",
