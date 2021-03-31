@@ -16,6 +16,24 @@
       "message": "Which builds are broken by this?",
       "revId": "780721e9193497d9610e983b4ca4b0f91e59f1df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d98d6fc_10a25aca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2021-03-31T21:55:36Z",
+      "side": 1,
+      "message": "Hi Alexander, aosp_kernel-build-tools is broken. Please find the details in b/184177800.",
+      "parentUuid": "03f3a36d_4ee880cc",
+      "revId": "780721e9193497d9610e983b4ca4b0f91e59f1df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
