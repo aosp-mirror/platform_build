@@ -89,6 +89,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7a977321_43d20799",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-03-31T00:05:22Z",
+      "side": 1,
+      "message": "Thanks all!\n\nOur goal is copying some file to dist folder. \n\nI used dist-for-goals by referencing some existing Android.mk. i.g.\n\nhttps://source.corp.google.com/android/system/extras/simpleperf/Android.mk;l\u003d35?q\u003dpackage:%5Eandroid$%20dist-for-goals\n\nIf dist-for-goals is not a proper solution, is there any suggestion to do that?",
+      "parentUuid": "af9eab4e_c0ba396f",
+      "revId": "6ef237b9d063590ca360b0acacae54cf25864d27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "cdfa6495_08254d81",
         "filename": "target/board/generic_arm64/device.mk",
         "patchSetId": 1
