@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3de62b1_86d4864e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-03-31T15:02:42Z",
+      "side": 1,
+      "message": "Wait. I just realized that adding /system might introduce strange behaviors... Let me change this...",
+      "revId": "a549e3047438d0180250275907892f9976ecd78e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
