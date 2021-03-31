@@ -34,6 +34,24 @@
       "parentUuid": "03f3a36d_4ee880cc",
       "revId": "780721e9193497d9610e983b4ca4b0f91e59f1df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "24c315d7_aab4d74c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-03-31T22:00:15Z",
+      "side": 1,
+      "message": "The problem is that the manifest file for the build-tools has to change. I am about to post a change that fixes the problem instead of reverting.",
+      "parentUuid": "1d98d6fc_10a25aca",
+      "revId": "780721e9193497d9610e983b4ca4b0f91e59f1df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
