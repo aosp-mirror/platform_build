@@ -82,7 +82,15 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         endif
     endif
 else ifeq ($(my_cxx_stl),ndk)
-    # Using an NDK STL. Handled in binary.mk.
+    # Using an NDK STL. Handled in binary.mk, except for the unwinder.
+    # TODO: Switch the NDK over to the LLVM unwinder for non-arm32 architectures.
+    ifeq (arm,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+        my_static_libraries += libunwind_llvm
+        my_ldflags += -Wl,--exclude-libs,libunwind_llvm.a
+    else
+        my_static_libraries += libgcc_stripped
+        my_ldflags += -Wl,--exclude-libs,libgcc_stripped.a
+    endif
 else ifeq ($(my_cxx_stl),libstdc++)
     $(error $(LOCAL_PATH): $(LOCAL_MODULE): libstdc++ is not supported)
 else ifeq ($(my_cxx_stl),none)
