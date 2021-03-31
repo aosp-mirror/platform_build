@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1a7bc58_8b9069fa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1229339
+      },
+      "writtenOn": "2021-03-31T23:02:17Z",
+      "side": 1,
+      "message": "This change reapplies https://android-review.googlesource.com/c/platform/build/+/1554922 (Ie7182bd565014348b16448976dc6587d2885ba99).\n",
+      "revId": "6d74870a67258ba49afbd4054f9f4cee18420817",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
