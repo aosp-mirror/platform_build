@@ -70,6 +70,30 @@
       },
       "revId": "0a897f20d8d92c89c0cf4d8e37d70b8d6854c989",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "74e10844_269f31e6",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 9
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-03-31T23:03:01Z",
+      "side": 1,
+      "message": "lgtm",
+      "parentUuid": "df6de600_dedb4651",
+      "range": {
+        "startLine": 275,
+        "startChar": 0,
+        "endLine": 282,
+        "endChar": 10
+      },
+      "revId": "0a897f20d8d92c89c0cf4d8e37d70b8d6854c989",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
