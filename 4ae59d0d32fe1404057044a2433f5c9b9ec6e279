@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d76636c_10f3f011",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-04-01T22:02:05Z",
+      "side": 1,
+      "message": "Why isn\u0027t this a `sh_binary` being `required` by traced? (the same binary that installs the associated perfetto.rc file) Then you wouldn\u0027t need to change this configuration file.",
+      "revId": "4ae59d0d32fe1404057044a2433f5c9b9ec6e279",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
