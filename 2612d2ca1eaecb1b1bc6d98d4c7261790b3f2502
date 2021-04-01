@@ -63,6 +63,30 @@
       },
       "revId": "2612d2ca1eaecb1b1bc6d98d4c7261790b3f2502",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2e48b21_082e74ac",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 830,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-04-01T02:20:30Z",
+      "side": 1,
+      "message": "patch set 13",
+      "parentUuid": "bf2ce661_103ed30f",
+      "range": {
+        "startLine": 830,
+        "startChar": 64,
+        "endLine": 830,
+        "endChar": 71
+      },
+      "revId": "2612d2ca1eaecb1b1bc6d98d4c7261790b3f2502",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
