@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d8cc4aac_9fa57993",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2021-04-01T23:12:08Z",
+      "side": 1,
+      "message": "What about other types of errors? This will just ignore them. I don\u0027t know what kinds of errors can be thrown by os.Stat, but wouldn\u0027t it be better to handle them properly just in case?",
+      "revId": "5bef40e935b5403c735d08fe53073fb7d76cb5eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
