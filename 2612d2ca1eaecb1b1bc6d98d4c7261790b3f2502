@@ -87,6 +87,30 @@
       },
       "revId": "2612d2ca1eaecb1b1bc6d98d4c7261790b3f2502",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3c1010e_5a60ae4b",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 830,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-01T02:21:17Z",
+      "side": 1,
+      "message": "I think you mean legacy\n\nI suggest to rephrase the whole sentence as:\n\n\u003e Use lz4 to decompress by default. If its value is gzip, use minigzip.",
+      "parentUuid": "bf2ce661_103ed30f",
+      "range": {
+        "startLine": 830,
+        "startChar": 64,
+        "endLine": 830,
+        "endChar": 71
+      },
+      "revId": "2612d2ca1eaecb1b1bc6d98d4c7261790b3f2502",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
