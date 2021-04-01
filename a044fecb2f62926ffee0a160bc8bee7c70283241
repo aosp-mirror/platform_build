@@ -16,6 +16,23 @@
       "message": "Why do we want to revert this change?",
       "revId": "a044fecb2f62926ffee0a160bc8bee7c70283241",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e601198_9d46841d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2021-04-01T23:42:32Z",
+      "side": 1,
+      "message": "I believe Sasha won\u0027t need this revert CL anymore now that he has a fix CL.",
+      "revId": "a044fecb2f62926ffee0a160bc8bee7c70283241",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
