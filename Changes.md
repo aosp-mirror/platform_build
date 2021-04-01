@@ -1,5 +1,49 @@
 # Build System Changes for Android.mk Writers
 
+## Dexpreopt starts enforcing `<uses-library>` checks (for Java modules)
+
+In order to construct correct class loader context for dexpreopt, build system
+needs to know about the shared library dependencies of Java modules listed in
+the `<uses-library>` tags in the manifest. Since the build system does not have
+access to the manifest contents, that information must be present in the build
+files. In simple cases Soong is able to infer it from its knowledge of Java SDK
+libraries and the `libs` property in Android.bp, but in more complex cases it is
+necessary to add the missing information in Android.bp/Android.mk manually.
+
+To specify a list of libraries for a given modules, use:
+
+* Android.bp properties: `uses_libs`, `optional_uses_libs`
+* Android.mk variables: `LOCAL_USES_LIBRARIES`, `LOCAL_OPTIONAL_USES_LIBRARIES`
+
+If a library is in `libs`, it usually should *not* be added to the above
+properties, and Soong should be able to infer the `<uses-library>` tag. But
+sometimes a library also needs additional information in its
+Android.bp/Android.mk file (e.g. when it is a `java_library` rather than a
+`java_sdk_library`, or when the library name is different from its module name,
+or when the module is defined in Android.mk rather than Android.bp). In such
+cases it is possible to tell the build system that the library provides a
+`<uses-library>` with a given name (however, this is discouraged and will be
+deprecated in the future, and it is recommended to fix the underlying problem):
+
+* Android.bp property: `provides_uses_lib`
+* Android.mk variable: `LOCAL_PROVIDES_USES_LIBRARY`
+
+It is possible to disable the check on a per-module basis. When doing that it is
+also recommended to disable dexpreopt, as disabling a failed check will result
+in incorrect class loader context recorded in the .odex file, which will cause
+class loader context mismatch and dexopt at first boot.
+
+* Android.bp property: `enforce_uses_lib`
+* Android.mk variable: `LOCAL_ENFORCE_USES_LIBRARIES`
+
+Finally, it is possible to globally disable the check:
+
+* For a given product: `PRODUCT_BROKEN_VERIFY_USES_LIBRARIES := true`
+* On the command line: `RELAX_USES_LIBRARY_CHECK=true`
+
+The environment variable overrides the product variable, so it is possible to
+disable the check for a product, but quickly re-enable it for a local build.
+
 ## `LOCAL_REQUIRED_MODULES` requires listed modules to exist {#BUILD_BROKEN_MISSING_REQUIRED_MODULES}
 
 Modules listed in `LOCAL_REQUIRED_MODULES`, `LOCAL_HOST_REQUIRED_MODULES` and
