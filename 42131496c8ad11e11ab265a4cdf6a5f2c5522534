@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "161b68b9_517499f9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-01T07:43:07Z",
+      "side": 1,
+      "message": "Looks like the presubmit failure of gki_4_19_pixel5 is flaky:\n\nhttps://android-build.googleplex.com/builds/tests/view?invocationId\u003dI33000008185531972\u0026testResultId\u003dTR01019810031070707",
+      "revId": "42131496c8ad11e11ab265a4cdf6a5f2c5522534",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
