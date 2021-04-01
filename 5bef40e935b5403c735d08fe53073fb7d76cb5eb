@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "479ce6a3_8855ba5b",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-01T23:46:15Z",
+      "side": 1,
+      "message": "The actual failing command looks like this:(cd /usr/local/google/home/asmundak/aosp/out/bazel/output_user_root/34a3ea67a407a70e9a3469d65a39cbde/execroot/__main__ \u0026\u0026 exec env - BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN\u003d1 PATH\u003d\u003c...\u003e /bin/bash -c \u0027out/soong/.bootstrap/bin/gotestrunner -p ./build/make/tools/rbcrun -f out/soong/.primary/rbcrun-module/test/test.passed -- out/soong/.primary/rbcrun-module/test/test -test.short\u0027)\n`env` clears all but BAZEL_... and PATH",
+      "parentUuid": "10a69471_064ff63a",
+      "range": {
+        "startLine": 239,
+        "startChar": 14,
+        "endLine": 239,
+        "endChar": 21
+      },
+      "revId": "5bef40e935b5403c735d08fe53073fb7d76cb5eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d8cc4aac_9fa57993",
@@ -37,6 +61,24 @@
       "writtenOn": "2021-04-01T23:12:08Z",
       "side": 1,
       "message": "What about other types of errors? This will just ignore them. I don\u0027t know what kinds of errors can be thrown by os.Stat, but wouldn\u0027t it be better to handle them properly just in case?",
+      "revId": "5bef40e935b5403c735d08fe53073fb7d76cb5eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27ab6b3a_de94f455",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-01T23:46:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d8cc4aac_9fa57993",
       "revId": "5bef40e935b5403c735d08fe53073fb7d76cb5eb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
