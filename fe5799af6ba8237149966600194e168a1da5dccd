@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "560dec67_debaae31",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-04-01T17:51:05Z",
+      "side": 0,
+      "message": "please use a different variable name (lst ? )",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09e227da_8df23cfa",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-04-01T17:51:05Z",
+      "side": 0,
+      "message": "Combine these two lines into pcm_stack \u003d [(top_pcm_name, 0)]",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "95a100ea_244762af",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-04-01T17:51:05Z",
+      "side": 0,
+      "message": "might we have a mechanism to fail() if this N is exceeded? (check len(pcm_stack) after this loop?)",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "331affda_eb411ab1",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-04-01T17:51:05Z",
+      "side": 0,
+      "message": "What would cause cfg to be set or be none?",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4645052e_1e32c4f5",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-04-01T17:51:05Z",
+      "side": 0,
+      "message": "isn\u0027t n an integer?",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c4c759c_160a438e",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-04-01T17:51:05Z",
+      "side": 0,
+      "message": "Can you provide an example here in the docs?",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f936f009_874ccecb",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-04-01T17:51:05Z",
+      "side": 0,
+      "message": "This stanza can be changed to be more succinct / simplified:\n\n        # TODO(asmundak): should we handle single vars?\n        if type(val) !\u003d \"list\":\n            continue\n\n        old_val \u003d val\n        new_val \u003d _value_expand(configs, attr, val)\n        if trace_it and new_val !\u003d old_val:\n            print(\"%s(i): %s\u003d%s (was %s)\" % (pcm_name, attr, new_val, old_val))\n        cfg[attr] \u003d new_val",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "330792d0_cd7f750c",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-04-01T17:51:05Z",
+      "side": 0,
+      "message": "Can you elaborate a bit here with an example?",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ffc57663_48b064af",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-04-01T17:51:05Z",
+      "side": 0,
+      "message": "Can you elaborate on what a handle is? Perhaps also rename \"h\" here (and other functions) to \"handle\" ?\n\nIn general, this code is a bit confusing in several places due to some of the data structures used; unfortunately Starlark doesn\u0027t have the best mechanism for declaring typed data structures (i.e. classes), and so we should try to be very explicit when we are defining a data structure. More comments here would be great.\n\nAlternatively, you could consider using structs instead of tuples. This has the effect that struct fields are named, which might help with readability.",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
