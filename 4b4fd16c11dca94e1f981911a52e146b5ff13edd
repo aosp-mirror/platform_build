@@ -39,6 +39,30 @@
       },
       "revId": "4b4fd16c11dca94e1f981911a52e146b5ff13edd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3b62a1a_b8783733",
+        "filename": "Changes.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-04-01T09:54:19Z",
+      "side": 1,
+      "message": "Leaving as-is as per local discussion.",
+      "parentUuid": "d24c9d70_3eda51a2",
+      "range": {
+        "startLine": 5,
+        "startChar": 65,
+        "endLine": 5,
+        "endChar": 66
+      },
+      "revId": "4b4fd16c11dca94e1f981911a52e146b5ff13edd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
