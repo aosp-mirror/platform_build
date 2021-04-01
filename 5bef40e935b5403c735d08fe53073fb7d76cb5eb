@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "10a69471_064ff63a",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-04-01T23:12:17Z",
+      "side": 1,
+      "message": "Android has generally hardcoded /bin/bash, as ubuntu, goobuntu, and glinux have had different behaviors over the years (bash vs dash), and that doesn\u0027t count other distributions.\n\nRegardless, `SHELL` should have already been defined to this inside an Android build, so it looks `USE_BAZEL\u003d1` is broken.",
+      "range": {
+        "startLine": 239,
+        "startChar": 14,
+        "endLine": 239,
+        "endChar": 21
+      },
+      "revId": "5bef40e935b5403c735d08fe53073fb7d76cb5eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d8cc4aac_9fa57993",
         "filename": "tools/rbcrun/host.go",
         "patchSetId": 1
