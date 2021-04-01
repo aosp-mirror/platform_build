@@ -651,6 +651,9 @@ def ExtractFromInputFile(input_file, fn):
       raise KeyError(fn)
     return file
 
+class RamdiskFormat(object):
+  LZ4 = 1
+  GZ = 2
 
 def LoadInfoDict(input_file, repacking=False):
   """Loads the key/value pairs from the given input target_files.
@@ -753,13 +756,17 @@ def LoadInfoDict(input_file, repacking=False):
 
   # Load recovery fstab if applicable.
   d["fstab"] = _FindAndLoadRecoveryFstab(d, input_file, read_helper)
+  if d.get('lz4_ramdisks') == 'true':
+    ramdisk_format = RamdiskFormat.LZ4
+  else:
+    ramdisk_format = RamdiskFormat.GZ
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
   for partition in PARTITIONS_WITH_BUILD_PROP:
     partition_prop = "{}.build.prop".format(partition)
     d[partition_prop] = PartitionBuildProps.FromInputFile(
-        input_file, partition)
+        input_file, partition, ramdisk_format=ramdisk_format)
   d["build.prop"] = d["system.build.prop"]
 
   # Set up the salt (based on fingerprint) that will be used when adding AVB
@@ -818,6 +825,9 @@ class PartitionBuildProps(object):
     placeholder_values: A dict of runtime variables' values to replace the
         placeholders in the build.prop file. We expect exactly one value for
         each of the variables.
+    ramdisk_format: If name is "boot", the format of ramdisk inside the
+        boot image. Otherwise, its value is ignored.
+        Use lz4 to decompress by default. If its value is gzip, use minigzip.
   """
 
   def __init__(self, input_file, name, placeholder_values=None):
@@ -840,11 +850,11 @@ class PartitionBuildProps(object):
     return props
 
   @staticmethod
-  def FromInputFile(input_file, name, placeholder_values=None):
+  def FromInputFile(input_file, name, placeholder_values=None, ramdisk_format=RamdiskFormat.LZ4):
     """Loads the build.prop file and builds the attributes."""
 
     if name == "boot":
-      data = PartitionBuildProps._ReadBootPropFile(input_file)
+      data = PartitionBuildProps._ReadBootPropFile(input_file, ramdisk_format=ramdisk_format)
     else:
       data = PartitionBuildProps._ReadPartitionPropFile(input_file, name)
 
@@ -853,7 +863,7 @@ class PartitionBuildProps(object):
     return props
 
   @staticmethod
-  def _ReadBootPropFile(input_file):
+  def _ReadBootPropFile(input_file, ramdisk_format):
     """
     Read build.prop for boot image from input_file.
     Return empty string if not found.
@@ -863,7 +873,7 @@ class PartitionBuildProps(object):
     except KeyError:
       logger.warning('Failed to read IMAGES/boot.img')
       return ''
-    prop_file = GetBootImageBuildProp(boot_img)
+    prop_file = GetBootImageBuildProp(boot_img, ramdisk_format=ramdisk_format)
     if prop_file is None:
       return ''
     with open(prop_file, "r") as f:
@@ -3661,12 +3671,12 @@ class DynamicPartitionsDifference(object):
         append('move %s %s' % (p, u.tgt_group))
 
 
-def GetBootImageBuildProp(boot_img):
+def GetBootImageBuildProp(boot_img, ramdisk_format=RamdiskFormat.LZ4):
   """
   Get build.prop from ramdisk within the boot image
 
   Args:
-    boot_img: the boot image file. Ramdisk must be compressed with lz4 format.
+    boot_img: the boot image file. Ramdisk must be compressed with lz4 or minigzip format.
 
   Return:
     An extracted file that stores properties in the boot image.
@@ -3679,7 +3689,16 @@ def GetBootImageBuildProp(boot_img):
       logger.warning('Unable to get boot image timestamp: no ramdisk in boot')
       return None
     uncompressed_ramdisk = os.path.join(tmp_dir, 'uncompressed_ramdisk')
-    RunAndCheckOutput(['lz4', '-d', ramdisk, uncompressed_ramdisk])
+    if ramdisk_format == RamdiskFormat.LZ4:
+      RunAndCheckOutput(['lz4', '-d', ramdisk, uncompressed_ramdisk])
+    elif ramdisk_format == RamdiskFormat.GZ:
+      with open(ramdisk, 'rb') as input_stream:
+        with open(uncompressed_ramdisk, 'wb') as output_stream:
+          p2 = Run(['minigzip', '-d'], stdin=input_stream.fileno(), stdout=output_stream.fileno())
+          p2.wait()
+    else:
+      logger.error('Only support lz4 or minigzip ramdisk format.')
+      return None
 
     abs_uncompressed_ramdisk = os.path.abspath(uncompressed_ramdisk)
     extracted_ramdisk = MakeTempDir('extracted_ramdisk')
