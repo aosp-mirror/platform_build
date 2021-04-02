@@ -182,7 +182,7 @@ func shell(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
 	}
 	if shellPath == "" {
 		return starlark.None,
-			fmt.Errorf("cannot run shell, SHELL environment variable is not set (running on Windows?)")
+			fmt.Errorf("cannot run shell, /bin/sh is missing (running on Windows?)")
 	}
 	cmd := exec.Command(shellPath, "-c", command)
 	// We ignore command's status
@@ -234,8 +234,12 @@ func setup(env []string) {
 		"rblf_wildcard": starlark.NewBuiltin("rblf_wildcard", wildcard),
 	}
 
-	// NOTE(asmundak): OS-specific.
-	shellPath, _ = os.LookupEnv("SHELL")
+	// NOTE(asmundak): OS-specific. Behave similar to Linux `system` call,
+	// which always uses /bin/sh to run the command
+	shellPath = "/bin/sh"
+	if _, err := os.Stat(shellPath); err != nil {
+		shellPath = ""
+	}
 }
 
 // Parses, resolves, and executes a Starlark file.
