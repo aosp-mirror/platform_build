@@ -1,4 +1,3 @@
-
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load(":build_id.rbc|init", _build_id_init="init")
+load(":build_id.rbc|init", _build_id_init = "init")
 
 def _all_versions():
     """Returns all known versions."""
-    versions = ["OPR1", "OPD1", "OPD2","OPM1", "OPM2", "PPR1", "PPD1", "PPD2", "PPM1",  "PPM2", "QPR1" ]
+    versions = ["OPR1", "OPD1", "OPD2", "OPM1", "OPM2", "PPR1", "PPD1", "PPD2", "PPM1", "PPM2", "QPR1"]
     for v in ("Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"):
-        for e in ("P1A", "P1B", "P2A", "P2B", "D1A", "D1B", "D2A", "D2B", "Q1A", "Q1B", "Q2A", "Q2B", "Q3A",  "Q3B"):
-            versions.append(v+e)
+        for e in ("P1A", "P1B", "P2A", "P2B", "D1A", "D1B", "D2A", "D2B", "Q1A", "Q1B", "Q2A", "Q2B", "Q3A", "Q3B"):
+            versions.append(v + e)
     return versions
 
 def _allowed_versions(all_versions, min_version, max_version, default_version):
@@ -36,7 +35,7 @@ def _allowed_versions(all_versions, min_version, max_version, default_version):
         fail("%s should come before %s in the version list" % (min_version, max_version))
     if def_i < min_i or def_i > max_i:
         fail("%s should come between % and %s" % (default_version, min_version, max_version))
-    return all_versions[min_i:max_i+1]
+    return all_versions[min_i:max_i + 1]
 
 # This function is a manual conversion of the version_defaults.mk
 def _versions_default(g, all_versions):
@@ -70,21 +69,22 @@ def _versions_default(g, all_versions):
     g.setdefault("PLATFORM_VERSION_CODENAME", g["TARGET_PLATFORM_VERSION"])
     # TODO(asmundak): set PLATFORM_VERSION_ALL_CODENAMES
 
-    g.setdefault("PLATFORM_VERSION",
-        g["PLATFORM_VERSION_LAST_STABLE"] if g["PLATFORM_VERSION_CODENAME"] == "REL" else g["PLATFORM_VERSION_CODENAME"])
     g.setdefault("PLATFORM_SDK_VERSION", 30)
-    if g["PLATFORM_VERSION_CODENAME"] == "REL":
+    version_codename = g["PLATFORM_VERSION_CODENAME"]
+    if version_codename == "REL":
+        g.setdefault("PLATFORM_VERSION", g["PLATFORM_VERSION_LAST_STABLE"])
         g["PLATFORM_PREVIEW_SDK_VERSION"] = 0
+        g.setdefault("DEFAULT_APP_TARGET_SDK", g["PLATFORM_SDK_VERSION"])
+        g.setdefault("PLATFORM_VNDK_VERSION", g["PLATFORM_SDK_VERSION"])
     else:
+        g.setdefault("PLATFORM_VERSION", version_codename)
         g.setdefault("PLATFORM_PREVIEW_SDK_VERSION", 1)
+        g.setdefault("DEFAULT_APP_TARGET_SDK", version_codename)
+        g.setdefault("PLATFORM_VNDK_VERSION", version_codename)
 
-    g.setdefault("DEFAULT_APP_TARGET_SDK",
-        g["PLATFORM_SDK_VERSION"] if g["PLATFORM_VERSION_CODENAME"] == "REL" else g["PLATFORM_VERSION_CODENAME"])
-    g.setdefault("PLATFORM_VNDK_VERSION",
-        g["PLATFORM_SDK_VERSION"] if g["PLATFORM_VERSION_CODENAME"] == "REL" else g["PLATFORM_VERSION_CODENAME"])
     g.setdefault("PLATFORM_SYSTEMSDK_MIN_VERSION", 28)
     versions = [str(i) for i in range(g["PLATFORM_SYSTEMSDK_MIN_VERSION"], g["PLATFORM_SDK_VERSION"] + 1)]
-    versions.append(g["PLATFORM_VERSION_CODENAME"])
+    versions.append(version_codename)
     g["PLATFORM_SYSTEMSDK_VERSIONS"] = sorted(versions)
 
     #  Used to indicate the security patch that has been applied to the device.
@@ -117,6 +117,13 @@ def _versions_default(g, all_versions):
     g.setdefault("PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION", 23)
 
 def init(g):
+    """Initializes globals.
+
+    The code is the Starlark counterpart of the contents of the
+    envsetup.mk file.
+    Args:
+        g: globals dictionary
+    """
     all_versions = _all_versions()
     _versions_default(g, all_versions)
     for v in all_versions:
@@ -168,7 +175,8 @@ def init(g):
     g["HOST_CROSS_2ND_ARCH_MODULE_SUFFIX"] = "_64"
     g["TARGET_2ND_ARCH_VAR_PREFIX"] = "2ND_"
 
-    # TODO(asmundak): combo-related stuff
+    # TODO(asmundak): envsetup.mk lines 216-226:
+    # convert combo-related stuff from combo/select.mk
 
     # on windows, the tools have .exe at the end, and we depend on the
     # host config stuff being done first
@@ -177,22 +185,22 @@ def init(g):
 
     # the host build defaults to release, and it must be release or debug
     g.setdefault("HOST_BUILD_TYPE", "release")
-    if g["HOST_BUILD_TYPE"] != "release" and g["HOST_BUILD_TYPE"] != "debug":
+    if g["HOST_BUILD_TYPE"] not in ["release", "debug"]:
         fail("HOST_BUILD_TYPE must be either release or debug, not '%s'" % g["HOST_BUILD_TYPE"])
 
-    # TODO(asmundak): a lot more, but not needed for the product configuration
+    # TODO(asmundak): there is more stuff in envsetup.mk lines 249-292, but
+    # it does not seem to affect product configuration. Revisit this.
 
     g["ART_APEX_JARS"] = [
         "com.android.art:core-oj",
         "com.android.art:core-libart",
         "com.android.art:okhttp",
         "com.android.art:bouncycastle",
-        "com.android.art:apache-xml"
+        "com.android.art:apache-xml",
     ]
 
     if g.get("TARGET_BUILD_TYPE", "") != "debug":
         g["TARGET_BUILD_TYPE"] = "release"
-
 
 v_default = "SP1A"
 v_min = "SP1A"
