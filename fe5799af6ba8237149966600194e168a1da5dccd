@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "95d151e5_dd908f15",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-02T06:09:35Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "560dec67_debaae31",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "09e227da_8df23cfa",
@@ -31,6 +49,24 @@
       "writtenOn": "2021-04-01T17:51:05Z",
       "side": 0,
       "message": "Combine these two lines into pcm_stack \u003d [(top_pcm_name, 0)]",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8b2a3d3c_6c86275e",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-02T06:09:35Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "09e227da_8df23cfa",
       "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -52,6 +88,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ce312f1_b84a13f1",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-02T06:09:35Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "95a100ea_244762af",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "331affda_eb411ab1",
@@ -65,6 +119,24 @@
       "writtenOn": "2021-04-01T17:51:05Z",
       "side": 0,
       "message": "What would cause cfg to be set or be none?",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4124420_c4ee447d",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-02T06:09:35Z",
+      "side": 0,
+      "message": "The comment right above explains it. Elaborated now.",
+      "parentUuid": "331affda_eb411ab1",
       "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -86,6 +158,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d508c91e_0a7d4c26",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-02T06:09:35Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "4645052e_1e32c4f5",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2c4c759c_160a438e",
@@ -99,6 +189,24 @@
       "writtenOn": "2021-04-01T17:51:05Z",
       "side": 0,
       "message": "Can you provide an example here in the docs?",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6936e1e8_76d63c84",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-02T06:09:35Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "2c4c759c_160a438e",
       "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
@@ -120,6 +228,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b24d575_b82ebb79",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-02T06:09:35Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "f936f009_874ccecb",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "330792d0_cd7f750c",
@@ -137,6 +263,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6dc605a3_5b426d75",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-02T06:09:35Z",
+      "side": 0,
+      "message": "I have added the explanation for substitute_inherited.",
+      "parentUuid": "330792d0_cd7f750c",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ffc57663_48b064af",
@@ -150,6 +294,24 @@
       "writtenOn": "2021-04-01T17:51:05Z",
       "side": 0,
       "message": "Can you elaborate on what a handle is? Perhaps also rename \"h\" here (and other functions) to \"handle\" ?\n\nIn general, this code is a bit confusing in several places due to some of the data structures used; unfortunately Starlark doesn\u0027t have the best mechanism for declaring typed data structures (i.e. classes), and so we should try to be very explicit when we are defining a data structure. More comments here would be great.\n\nAlternatively, you could consider using structs instead of tuples. This has the effect that struct fields are named, which might help with readability.",
+      "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ac8ca10_0bc4adcb",
+        "filename": "core/product_config.rbc",
+        "patchSetId": 2
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-02T06:09:35Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "ffc57663_48b064af",
       "revId": "fe5799af6ba8237149966600194e168a1da5dccd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
