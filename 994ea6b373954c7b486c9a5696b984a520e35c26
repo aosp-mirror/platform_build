@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8654da2a_cb43028d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-04-02T12:01:08Z",
+      "side": 1,
+      "message": "lunch aosp_arm64-userdebug\nBoth \"make dist\" and \"make target-files-package\" has passed.\n\n",
+      "revId": "994ea6b373954c7b486c9a5696b984a520e35c26",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
