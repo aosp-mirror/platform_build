@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "60701db1_e46eef9f",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1468,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-02T19:59:34Z",
+      "side": 1,
+      "message": "Change this to ValueError.\n\nExternalError are for executing other binaries.",
+      "range": {
+        "startLine": 1468,
+        "startChar": 10,
+        "endLine": 1468,
+        "endChar": 23
+      },
+      "revId": "82b52f45ff466da8072ed08ee61a0e5254ae7361",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
