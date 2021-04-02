@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9dbda82_6122fffa",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2021-04-02T19:09:58Z",
+      "side": 1,
+      "message": "Maybe we should still use SHELL if it is set, but fallback to /bin/sh if it is not?",
+      "range": {
+        "startLine": 239,
+        "startChar": 1,
+        "endLine": 239,
+        "endChar": 22
+      },
+      "revId": "57bb5081d7a901fafb33f0314b4f955db2e84191",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
