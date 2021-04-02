@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "323f5663_ec351828",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-04-02T00:00:52Z",
+      "side": 1,
+      "message": "Yes, that looks like a bug, we set quite a few environment variables that are expected to be in the action environment. I know we already set --action_env\u003d for a number of variables, it seems like this should also be one of them.",
+      "parentUuid": "479ce6a3_8855ba5b",
+      "range": {
+        "startLine": 239,
+        "startChar": 14,
+        "endLine": 239,
+        "endChar": 21
+      },
+      "revId": "5bef40e935b5403c735d08fe53073fb7d76cb5eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d8cc4aac_9fa57993",
         "filename": "tools/rbcrun/host.go",
         "patchSetId": 1
