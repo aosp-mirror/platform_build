@@ -72,6 +72,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4dc9220_c8264aeb",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-02T02:16:21Z",
+      "side": 1,
+      "message": "Should I open a separate bug for that? IMHO there\u0027s nothing wrong with wiring /bin/sh as that\u0027s the semantics of system() call.",
+      "parentUuid": "323f5663_ec351828",
+      "range": {
+        "startLine": 239,
+        "startChar": 14,
+        "endLine": 239,
+        "endChar": 21
+      },
+      "revId": "5bef40e935b5403c735d08fe53073fb7d76cb5eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d8cc4aac_9fa57993",
