@@ -22,6 +22,30 @@
       },
       "revId": "57bb5081d7a901fafb33f0314b4f955db2e84191",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b8db980_dfdd962e",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2021-04-02T19:18:02Z",
+      "side": 1,
+      "message": "(I added a suggestion to http://b/184365741 for how to ensure that SHELL is set)",
+      "parentUuid": "b9dbda82_6122fffa",
+      "range": {
+        "startLine": 239,
+        "startChar": 1,
+        "endLine": 239,
+        "endChar": 22
+      },
+      "revId": "57bb5081d7a901fafb33f0314b4f955db2e84191",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
