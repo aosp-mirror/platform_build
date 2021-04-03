@@ -1,4 +1,3 @@
-
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//build/make/core:envsetup.rbc", _envsetup_init="init")
+load("//build/make/core:envsetup.rbc", _envsetup_init = "init")
+
 """Runtime functions."""
 
 def _global_init():
@@ -33,10 +33,13 @@ def _global_init():
 
     # Variables that should be defined.
     mandatory_vars = [
-        "PLATFORM_VERSION_CODENAME", "PLATFORM_VERSION",
+        "PLATFORM_VERSION_CODENAME",
+        "PLATFORM_VERSION",
         "PRODUCT_SOONG_NAMESPACES",
         # TODO(asmundak): do we need TARGET_ARCH? AOSP does not reference it
-        "TARGET_BUILD_TYPE", "TARGET_BUILD_VARIANT", "TARGET_PRODUCT",
+        "TARGET_BUILD_TYPE",
+        "TARGET_BUILD_VARIANT",
+        "TARGET_PRODUCT",
     ]
     for bv in mandatory_vars:
         if not bv in globals:
@@ -56,29 +59,26 @@ def __print_attr(attr, value):
             print(attr, "=", repr(value))
         elif _options.format == "make":
             print(attr, ":=", " ".join(value))
+    elif _options.format == "pretty":
+        print(attr, "=", repr(value))
+    elif _options.format == "make":
+        print(attr, ":=", value)
     else:
-        if _options.format == "pretty":
-            print(attr, "=", repr(value))
-        elif _options.format == "make":
-            print(attr, ":=", value)
-        else:
-            fail("bad output format", _options.format)
-
+        fail("bad output format", _options.format)
 
 def _printvars(globals, cfg):
     """Prints known configuration variables."""
     for attr, val in sorted(cfg.items()):
         __print_attr(attr, val)
     if _options.print_globals:
+        print()
         for attr, val in sorted(globals.items()):
-            print()
             if attr not in _globals_base:
                 __print_attr(attr, val)
 
-
-def __printvars_rearrange_list(l):
+def __printvars_rearrange_list(value_list):
     """Rearrange value list: return only distinct elements, maybe sorted."""
-    seen = { item: 0 for item in l}
+    seen = {item: 0 for item in value_list}
     return sorted(seen.keys()) if _options.rearrange == "sort" else seen.keys()
 
 def _product_configuration(top_pcm_name, top_pcm):
@@ -97,44 +97,49 @@ def _product_configuration(top_pcm_name, top_pcm):
 
     globals = dict(**_globals_base)
 
-    config_postfix = []     # Configs in postfix order
+    config_postfix = []  # Configs in postfix order
+
     # Each PCM is represented by a quadruple of function, config, children names
     # and readyness (that is, the configurations from inherited PCMs have been
     # substituted).
-    configs = { top_pcm_name: (top_pcm, None, [], False)}  # All known PCMs
+    configs = {top_pcm_name: (top_pcm, None, [], False)}  # All known PCMs
 
-    stash = []              # Configs to push once their descendants are done
+    stash = []  # Configs to push once their descendants are done
 
-    # Stack maintaining PCMs to be processed. An item in the stack
+    # Stack containing PCMs to be processed. An item in the stack
     # is a pair of PCMs name and its height in the product inheritance tree.
-    pcm_stack = []
-    pcm_stack.append((top_pcm_name, 0))
+    pcm_stack = [(top_pcm_name, 0)]
     pcm_count = 0
+
     # Run it until pcm_stack is exhausted, but no more than N times
     for n in range(1000):
         if not pcm_stack:
             break
         (name, height) = pcm_stack.pop()
         pcm, cfg, c, _ = configs[name]
-        # each PCM is executed once
+
+        # cfg is set only after PCM has been called, leverage this
+        # to prevent calling the same PCM twice
         if cfg != None:
             continue
+
         # Push ancestors until we reach this node's height
         config_postfix.extend([stash.pop() for i in range(len(stash) - height)])
 
         # Run this one, obtaining its configuration and child PCMs.
         if _options.trace_modules:
-            print("%s:" % n[0])
+            print("%d:" % n)
 
-        # The handle passed to the PCM consists of config and inheritance state.dict of inherited modules
-        # and a list containing the current default value of a list variable.
+        # Run PCM.
         handle = __h_new()
         pcm(globals, handle)
+
+        # Now we know everything about this PCM, record it in 'configs'.
         children = __h_inherited_modules(handle)
         if _options.trace_modules:
             print("   ", "    ".join(children.keys()))
         configs[name] = (pcm, __h_cfg(handle), children.keys(), False)
-        pcm_count = pcm_count+1
+        pcm_count = pcm_count + 1
 
         if len(children) == 0:
             # Leaf PCM goes straight to the config_postfix
@@ -143,16 +148,17 @@ def _product_configuration(top_pcm_name, top_pcm):
 
         # Stash this PCM, process children in the sorted order
         stash.append(name)
-        for child_name in sorted(children, reverse=True):
+        for child_name in sorted(children, reverse = True):
             if child_name not in configs:
                 configs[child_name] = (children[child_name], None, [], False)
             pcm_stack.append((child_name, len(stash)))
+    if pcm_stack:
+        fail("Inheritance processing took too many iterations")
 
     # Flush the stash
     config_postfix.extend([stash.pop() for i in range(len(stash))])
     if len(config_postfix) != pcm_count:
         fail("Ran %d modules but postfix tree has only %d entries" % (pcm_count, len(config_postfix)))
-
 
     if _options.trace_modules:
         print("\n---Postfix---")
@@ -162,55 +168,56 @@ def _product_configuration(top_pcm_name, top_pcm):
     # Traverse the tree from the bottom, evaluating inherited values
     for pcm_name in config_postfix:
         pcm, cfg, children_names, ready = configs[pcm_name]
+
         # Should run
         if cfg == None:
             fail("%s: has not been run" % pcm_name)
+
         # Ready once
         if ready:
             continue
+
         # Children should be ready
         for child_name in children_names:
             if not configs[child_name][3]:
                 fail("%s: child is not ready" % child_name)
 
-        # if _options.trace_modules:
-        #     print(">%s: %s" % (pcm_name, cfg))
-
         _substitute_inherited(configs, pcm_name, cfg)
         _percolate_inherited(configs, pcm_name, cfg, children_names)
         configs[pcm_name] = pcm, cfg, children_names, True
-        # if _options.trace_modules:
-        #     print("<%s: %s" % (pcm_name, cfg))
 
     return globals, configs[top_pcm_name][1]
 
-
 def _substitute_inherited(configs, pcm_name, cfg):
-    """Substitutes inherited values in all the configuration settings."""
-    for attr, val in cfg.items():
-        trace_it = attr in _options.trace_variables
-        if trace_it:
-            old_val = val
+    """Substitutes inherited values in all the attributes.
 
+    When a value of an attribute is a list, some of its items may be
+    references to a value of a same attribute in an inherited product,
+    e.g., for a given module PRODUCT_PACKAGES can be
+      ["foo", (submodule), "bar"]
+    and for 'submodule' PRODUCT_PACKAGES may be ["baz"]
+    (we use a tuple to distinguish submodule references).
+    After the substitution the value of PRODUCT_PACKAGES for the module
+    will become ["foo", "baz", "bar"]
+    """
+    for attr, val in cfg.items():
         # TODO(asmundak): should we handle single vars?
         if type(val) != "list":
             continue
 
-        if trace_it:
+        if attr not in _options.trace_variables:
+            cfg[attr] = _value_expand(configs, attr, val)
+        else:
+            old_val = val
             new_val = _value_expand(configs, attr, val)
             if new_val != old_val:
                 print("%s(i): %s=%s (was %s)" % (pcm_name, attr, new_val, old_val))
             cfg[attr] = new_val
-            continue
-
-        cfg[attr] = _value_expand(configs, attr, val)
-
-
 
 def _value_expand(configs, attr, values_list):
     """Expands references to inherited values in a given list."""
     result = []
-    expanded={}
+    expanded = {}
     for item in values_list:
         # Inherited values are 1-tuples
         if type(item) != "tuple":
@@ -226,7 +233,6 @@ def _value_expand(configs, attr, values_list):
         __move_items(result, child[1], attr)
 
     return result
-
 
 def _percolate_inherited(configs, cfg_name, cfg, children_names):
     """Percolates the settings that are present only in children."""
@@ -251,18 +257,15 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
         if attr in percolated_attrs:
             print("%s: %s^=%s" % (cfg_name, attr, cfg[attr]))
 
-
 def __move_items(to_list, from_cfg, attr):
-    l = from_cfg.get(attr, [])
-    if l:
-        to_list.extend(l)
+    value = from_cfg.get(attr, [])
+    if value:
+        to_list.extend(value)
         from_cfg[attr] = []
-
 
 def _indirect(pcm_name):
     """Returns configuration item for the inherited module."""
     return (pcm_name,)
-
 
 def _addprefix(prefix, string_or_list):
     """Adds prefix and returns a list.
@@ -276,8 +279,7 @@ def _addprefix(prefix, string_or_list):
         string_or_list
 
     """
-    return [ prefix + x for x in __words(string_or_list)]
-
+    return [prefix + x for x in __words(string_or_list)]
 
 def _addsuffix(suffix, string_or_list):
     """Adds suffix and returns a list.
@@ -290,66 +292,81 @@ def _addsuffix(suffix, string_or_list):
       suffix
       string_or_list
     """
-    return [ x + suffix for x in __words(string_or_list)]
-
+    return [x + suffix for x in __words(string_or_list)]
 
 def __words(string_or_list):
     if type(string_or_list) == "list":
         return string_or_list
     return string_or_list.split()
 
-
+# Handle manipulation functions.
+# A handle passed to a PCM consists of:
+#   product attributes dict ("cfg")
+#   inherited modules dict (maps module name to PCM)
+#   default value list (initially empty, modified by inheriting)
 def __h_new():
     """Constructs a handle which is passed to PCM."""
     return (dict(), dict(), list())
 
 def __h_inherited_modules(handle):
+    """Returns PCM's inherited modules dict."""
     return handle[1]
 
-
 def __h_cfg(handle):
+    """Returns PCM's product configuration attributes dict.
+
+    This function is also exported as rblf.cfg, and every PCM
+    calls it at the beginning.
+    """
     return handle[0]
 
-
 def _setdefault(handle, attr):
-    """Sets given attribute's value if it has not been set."""
+    """If attribute has not been set, assigns default value to it.
+
+    This function is exported as rblf.setdefault().
+    Only list attributes are initialized this way. The default
+    value is kept in the PCM's handle. Calling inherit() updates it.
+    """
     cfg = handle[0]
     if cfg.get(attr) == None:
         cfg[attr] = list(handle[2])
     return cfg[attr]
 
 def _inherit(handle, pcm_name, pcm):
-    """Records inheritance."""
+    """Records inheritance.
+
+    This function is exported as rblf.inherit, PCM calls it when
+    a module is inherited.
+    """
     cfg, inherited, default_lv = handle
-    inherited[pcm_name]=pcm
+    inherited[pcm_name] = pcm
     default_lv.append(_indirect(pcm_name))
+
     # Add inherited module reference to all configuration values
     for attr, val in cfg.items():
         if type(val) == "list":
             val.append(_indirect(pcm_name))
 
-
 def _copy_if_exists(path_pair):
     """If from file exists, returns [from:to] pair."""
-    l = path_pair.split(":", 2)
+    value = path_pair.split(":", 2)
+
     # Check that l[0] exists
-    return [":".join(l)] if rblf_file_exists(l[0]) else []
+    return [":".join(value)] if rblf_file_exists(value[0]) else []
 
 def _enforce_product_packages_exist(pkg_string_or_list):
     """Makes including non-existent modules in PRODUCT_PACKAGES an error."""
+
     #TODO(asmundak)
     pass
-
 
 def _file_wildcard_exists(file_pattern):
     """Return True if there are files matching given bash pattern."""
     return len(rblf_wildcard(file_pattern)) > 0
 
-
 def _find_and_copy(pattern, from_dir, to_dir):
     """Return a copy list for the files matching the pattern."""
     return ["%s/%s:%s/%s" % (from_dir, f, to_dir, f) for f in rblf_wildcard(pattern, from_dir)]
-
 
 def _filter_out(pattern, text):
     """Return all the words from `text' that do not match any word in `pattern'.
@@ -367,7 +384,6 @@ def _filter_out(pattern, text):
             res.append(w)
     return res
 
-
 def _filter(pattern, text):
     """Return all the words in `text` that match `pattern`.
 
@@ -383,48 +399,38 @@ def _filter(pattern, text):
             res.append(w)
     return res
 
-
 def __mk2regex(words):
     """Returns regular expression equivalent to Make pattern."""
 
     # TODO(asmundak): this will mishandle '\%'
     return "^(" + "|".join([w.replace("%", ".*", 1) for w in words]) + ")"
 
-
 def _regex_match(regex, w):
     return rblf_regex(regex, w)
 
-
 def _require_artifacts_in_path(paths, allowed_paths):
     """TODO."""
-    #print("require_artifacts_in_path(", __words(paths), ",", __words(allowed_paths), ")")
     pass
-
 
 def _require_artifacts_in_path_relaxed(paths, allowed_paths):
     """TODO."""
     pass
 
-
 def _expand_wildcard(pattern):
     """Expands shell wildcard pattern."""
     return rblf_wildcard(pattern)
 
-
-def _mkerror(file, message=""):
+def _mkerror(file, message = ""):
     """Prints error and stops."""
     fail("%s: %s. Stop" % (file, message))
 
-
-def _mkwarning(file, message=""):
+def _mkwarning(file, message = ""):
     """Prints warning."""
     print("%s: warning: %s" % (file, message))
 
-
-def _mkinfo(file, message=""):
+def _mkinfo(file, message = ""):
     """Prints info."""
     print(message)
-
 
 def __get_options():
     """Returns struct containing runtime global settings."""
@@ -455,29 +461,29 @@ def __get_options():
 
 # Settings used during debugging.
 _options = __get_options()
-rblf = struct(addprefix=_addprefix,
-              addsuffix=_addsuffix,
-              copy_if_exists=_copy_if_exists,
-              cfg=__h_cfg,
-              enforce_product_packages_exist=_enforce_product_packages_exist,
-              expand_wildcard=_expand_wildcard,
-              file_exists=rblf_file_exists,
-              file_wildcard_exists=_file_wildcard_exists,
-              filter=_filter,
-              filter_out=_filter_out,
-              find_and_copy=_find_and_copy,
-              global_init=_global_init,
-              inherit=_inherit,
-              indirect=_indirect,
-              mkinfo=_mkinfo,
-              mkerror=_mkerror,
-              mkwarning=_mkwarning,
-              printvars=_printvars,
-              product_configuration=_product_configuration,
-              require_artifacts_in_path=_require_artifacts_in_path,
-              require_artifacts_in_path_relaxed=_require_artifacts_in_path_relaxed,
-              setdefault=_setdefault,
-              shell=rblf_shell,
-              warning=_mkwarning,
-              )
-
+rblf = struct(
+    addprefix = _addprefix,
+    addsuffix = _addsuffix,
+    copy_if_exists = _copy_if_exists,
+    cfg = __h_cfg,
+    enforce_product_packages_exist = _enforce_product_packages_exist,
+    expand_wildcard = _expand_wildcard,
+    file_exists = rblf_file_exists,
+    file_wildcard_exists = _file_wildcard_exists,
+    filter = _filter,
+    filter_out = _filter_out,
+    find_and_copy = _find_and_copy,
+    global_init = _global_init,
+    inherit = _inherit,
+    indirect = _indirect,
+    mkinfo = _mkinfo,
+    mkerror = _mkerror,
+    mkwarning = _mkwarning,
+    printvars = _printvars,
+    product_configuration = _product_configuration,
+    require_artifacts_in_path = _require_artifacts_in_path,
+    require_artifacts_in_path_relaxed = _require_artifacts_in_path_relaxed,
+    setdefault = _setdefault,
+    shell = rblf_shell,
+    warning = _mkwarning,
+)
