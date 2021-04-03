@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d1cfd228_da113be7",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1453,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-04-03T06:09:43Z",
+      "side": 1,
+      "message": "line limit is 80 characters, same below\n\nThe old logic actually use minigzip as default. Though I don\u0027t find if the change break anything",
+      "range": {
+        "startLine": 1453,
+        "startChar": 49,
+        "endLine": 1453,
+        "endChar": 63
+      },
+      "revId": "e3f149f9717c0a102e634bb40887f22f69f952b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
