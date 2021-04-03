@@ -22,6 +22,30 @@
       },
       "revId": "e3f149f9717c0a102e634bb40887f22f69f952b4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d828e172_e9421201",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1453,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-04-03T10:22:55Z",
+      "side": 1,
+      "message": "Thanks, current patch set shall be fine.",
+      "parentUuid": "d1cfd228_da113be7",
+      "range": {
+        "startLine": 1453,
+        "startChar": 49,
+        "endLine": 1453,
+        "endChar": 63
+      },
+      "revId": "e3f149f9717c0a102e634bb40887f22f69f952b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
