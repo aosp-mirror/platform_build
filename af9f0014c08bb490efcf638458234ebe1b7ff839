@@ -33,6 +33,24 @@
       "message": "seems alright. I don\u0027t recall the build description get parsed or used anywhere",
       "revId": "af9f0014c08bb490efcf638458234ebe1b7ff839",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a10191e_ebd28f2f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1474387
+      },
+      "writtenOn": "2021-04-04T21:43:28Z",
+      "side": 1,
+      "message": "Only via this assertion as far as I or anyone I\u0027ve talked to can tell\n\nthanks",
+      "parentUuid": "e9138d75_68727048",
+      "revId": "af9f0014c08bb490efcf638458234ebe1b7ff839",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
