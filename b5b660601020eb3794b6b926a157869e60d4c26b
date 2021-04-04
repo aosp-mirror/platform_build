@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c16a028c_9ed37adf",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1049,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-04T16:29:59Z",
+      "side": 1,
+      "message": "Can you add indents here instead?",
+      "range": {
+        "startLine": 1043,
+        "startChar": 0,
+        "endLine": 1049,
+        "endChar": 37
+      },
+      "revId": "b5b660601020eb3794b6b926a157869e60d4c26b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
