@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4919fff6_3801f12f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-04-04T14:13:43Z",
+      "side": 1,
+      "message": "PTAL, Does this change provide the requirement of b/182417593 ?",
+      "revId": "bf162a20232d496a47c45e53808f1e44d89c4f8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
