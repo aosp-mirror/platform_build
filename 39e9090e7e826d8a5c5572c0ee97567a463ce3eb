@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c020905_9d891d42",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2021-04-05T23:33:35Z",
+      "side": 1,
+      "message": "We can further clean up fdo.mk and some of the other out-dated references (like `-O0` needed on clang native coverage builds) later, but this one should go away immediately.",
+      "revId": "39e9090e7e826d8a5c5572c0ee97567a463ce3eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
