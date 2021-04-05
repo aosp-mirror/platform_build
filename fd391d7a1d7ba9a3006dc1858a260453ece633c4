@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d368d6e_96dd97ce",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-04-05T12:43:38Z",
+      "side": 1,
+      "message": "\u003e Patch Set 8: Code-Review+2 Presubmit-Ready+1\n\u003e \n\u003e By voting Code-Review+2 the following files are now code-owner approved by Tianjie Xu:\n\u003e * tools/releasetools/common.py\n\u003e \n\nRebased.",
+      "revId": "fd391d7a1d7ba9a3006dc1858a260453ece633c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
