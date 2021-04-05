@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d461af6_c4458f79",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4253,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-05T20:35:53Z",
+      "side": 1,
+      "message": "This isn\u0027t valid, the file at $(SOONG_APEX_KEYS_FILE) is written by a rule, but $(shell) runs during Makefile parsing.  On a clean build the file won\u0027t exist yet, and on an incremental build it will be the old contents if anything has changed.\n\nIn general, don\u0027t use $(shell), it has to be rerun on every incremental build to make sure the output doesn\u0027t change.\n\nThis is tricky to do right, because the file listing the keys is generated during the build, so you can\u0027t know what to depend on at Makefile parsing time.  You have to depend on every possible key, and then when packaging otatools use $(SOONG_APEX_KEYS_FILE) to list the files you need to package.  One way we often do that is to depend on the files that go into the built images like system.img, which will indirectly depend on the keys that were used to build the apexes, but even that may not work here because SOONG_APEX_KEYS_FILE can list keys for packages that are not installed in the images.",
+      "range": {
+        "startLine": 4253,
+        "startChar": 20,
+        "endLine": 4253,
+        "endChar": 28
+      },
+      "revId": "20b4650931d8dce5616fb4e1aa083c749dd7dfec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
