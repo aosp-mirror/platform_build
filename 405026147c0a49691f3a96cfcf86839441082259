@@ -34,6 +34,24 @@
       "parentUuid": "b61583a5_3a3f1ea0",
       "revId": "405026147c0a49691f3a96cfcf86839441082259",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8992fe88_3f45de2f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-04-05T07:15:18Z",
+      "side": 1,
+      "message": "You can add a cmdline parameter (e.g. --sdk_version) to give any information you would like to give.\n\nThat might require you to pass disallowed_key(s) also via a parameter, not via positional arguments.",
+      "parentUuid": "d84fb942_9005a5b0",
+      "revId": "405026147c0a49691f3a96cfcf86839441082259",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
