@@ -41,7 +41,6 @@ import zipfile
 from hashlib import sha1, sha256
 
 import images
-import rangelib
 import sparse_img
 from blockimgdiff import BlockImageDiff
 
@@ -138,7 +137,6 @@ PARTITIONS_WITH_BUILD_PROP = PARTITIONS_WITH_CARE_MAP + ['boot']
 # existing search paths.
 RAMDISK_BUILD_PROP_REL_PATHS = ['system/etc/ramdisk/build.prop']
 
-
 class ErrorCode(object):
   """Define error_codes for failures that happen during the actual
   update package installation.
@@ -227,7 +225,6 @@ def InitLogging():
 def SetHostToolLocation(tool_name, location):
   OPTIONS.host_tools[tool_name] = location
 
-
 def FindHostToolPath(tool_name):
   """Finds the path to the host tool.
 
@@ -247,7 +244,6 @@ def FindHostToolPath(tool_name):
     return tool_path
 
   return tool_name
-
 
 def Run(args, verbose=None, **kwargs):
   """Creates and returns a subprocess.Popen object.
@@ -464,7 +460,7 @@ class BuildInfo(object):
     """Returns the inquired build property for the provided partition."""
 
     # Boot image uses ro.[product.]bootimage instead of boot.
-    prop_partition = "bootimage" if partition == "boot" else partition
+    prop_partition =  "bootimage" if partition == "boot" else partition
 
     # If provided a partition for this property, only look within that
     # partition's build.prop.
@@ -773,13 +769,13 @@ def LoadInfoDict(input_file, repacking=False):
     for partition in PARTITIONS_WITH_BUILD_PROP:
       fingerprint = build_info.GetPartitionFingerprint(partition)
       if fingerprint:
-        d["avb_{}_salt".format(partition)] = sha256(
-            fingerprint.encode()).hexdigest()
+        d["avb_{}_salt".format(partition)] = sha256(fingerprint.encode()).hexdigest()
   try:
     d["ab_partitions"] = read_helper("META/ab_partitions.txt").split("\n")
   except KeyError:
     logger.warning("Can't find META/ab_partitions.txt")
   return d
+
 
 
 def LoadListFromFile(file_path):
@@ -1095,7 +1091,7 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
     return " ".join(sorted(combined))
 
   if (framework_dict.get("use_dynamic_partitions") !=
-          "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
+      "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
     raise ValueError("Both dictionaries must have use_dynamic_partitions=true")
 
   merged_dict = {"use_dynamic_partitions": "true"}
@@ -1573,7 +1569,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   RunAndCheckOutput(cmd)
 
   if (info_dict.get("boot_signer") == "true" and
-          info_dict.get("verity_key")):
+      info_dict.get("verity_key")):
     # Hard-code the path as "/boot" for two-step special recovery image (which
     # will be loaded into /boot during the two-step OTA).
     if two_step_image:
@@ -1738,19 +1734,15 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
   if os.access(fn, os.F_OK):
     ramdisk_fragments = shlex.split(open(fn).read().rstrip("\n"))
     for ramdisk_fragment in ramdisk_fragments:
-      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS",
-                        ramdisk_fragment, "mkbootimg_args")
+      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment, "mkbootimg_args")
       cmd.extend(shlex.split(open(fn).read().rstrip("\n")))
-      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS",
-                        ramdisk_fragment, "prebuilt_ramdisk")
+      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment, "prebuilt_ramdisk")
       # Use prebuilt image if found, else create ramdisk from supplied files.
       if os.access(fn, os.F_OK):
         ramdisk_fragment_pathname = fn
       else:
-        ramdisk_fragment_root = os.path.join(
-            sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment)
-        ramdisk_fragment_img = _MakeRamdisk(
-            ramdisk_fragment_root, lz4_ramdisks=use_lz4)
+        ramdisk_fragment_root = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment)
+        ramdisk_fragment_img = _MakeRamdisk(ramdisk_fragment_root, lz4_ramdisks=use_lz4)
         ramdisk_fragment_imgs.append(ramdisk_fragment_img)
         ramdisk_fragment_pathname = ramdisk_fragment_img.name
       cmd.extend(["--vendor_ramdisk_fragment", ramdisk_fragment_pathname])
@@ -3521,7 +3513,7 @@ class DynamicPartitionsDifference(object):
 
     for g in tgt_groups:
       for p in shlex.split(info_dict.get(
-              "super_%s_partition_list" % g, "").strip()):
+          "super_%s_partition_list" % g, "").strip()):
         assert p in self._partition_updates, \
             "{} is in target super_{}_partition_list but no BlockDifference " \
             "object is provided.".format(p, g)
@@ -3529,7 +3521,7 @@ class DynamicPartitionsDifference(object):
 
     for g in src_groups:
       for p in shlex.split(source_info_dict.get(
-              "super_%s_partition_list" % g, "").strip()):
+          "super_%s_partition_list" % g, "").strip()):
         assert p in self._partition_updates, \
             "{} is in source super_{}_partition_list but no BlockDifference " \
             "object is provided.".format(p, g)
@@ -3638,7 +3630,7 @@ class DynamicPartitionsDifference(object):
       if u.src_size is not None and u.tgt_size is None:
         append('remove_group %s' % g)
       if (u.src_size is not None and u.tgt_size is not None and
-              u.src_size > u.tgt_size):
+          u.src_size > u.tgt_size):
         comment('Shrink group %s from %d to %d' % (g, u.src_size, u.tgt_size))
         append('resize_group %s %d' % (g, u.tgt_size))
 
@@ -3647,7 +3639,7 @@ class DynamicPartitionsDifference(object):
         comment('Add group %s with maximum size %d' % (g, u.tgt_size))
         append('add_group %s %d' % (g, u.tgt_size))
       if (u.src_size is not None and u.tgt_size is not None and
-              u.src_size < u.tgt_size):
+          u.src_size < u.tgt_size):
         comment('Grow group %s from %d to %d' % (g, u.src_size, u.tgt_size))
         append('resize_group %s %d' % (g, u.tgt_size))
 
@@ -3681,8 +3673,7 @@ def GetBootImageBuildProp(boot_img):
   """
   tmp_dir = MakeTempDir('boot_', suffix='.img')
   try:
-    RunAndCheckOutput(['unpack_bootimg', '--boot_img',
-                       boot_img, '--out', tmp_dir])
+    RunAndCheckOutput(['unpack_bootimg', '--boot_img', boot_img, '--out', tmp_dir])
     ramdisk = os.path.join(tmp_dir, 'ramdisk')
     if not os.path.isfile(ramdisk):
       logger.warning('Unable to get boot image timestamp: no ramdisk in boot')
@@ -3695,14 +3686,13 @@ def GetBootImageBuildProp(boot_img):
     # Use "toybox cpio" instead of "cpio" because the latter invokes cpio from
     # the host environment.
     RunAndCheckOutput(['toybox', 'cpio', '-F', abs_uncompressed_ramdisk, '-i'],
-                      cwd=extracted_ramdisk)
+               cwd=extracted_ramdisk)
 
     for search_path in RAMDISK_BUILD_PROP_REL_PATHS:
       prop_file = os.path.join(extracted_ramdisk, search_path)
       if os.path.isfile(prop_file):
         return prop_file
-      logger.warning(
-          'Unable to get boot image timestamp: no %s in ramdisk', search_path)
+      logger.warning('Unable to get boot image timestamp: no %s in ramdisk', search_path)
 
     return None
 
@@ -3735,116 +3725,9 @@ def GetBootImageTimestamp(boot_img):
     timestamp = props.GetProp('ro.bootimage.build.date.utc')
     if timestamp:
       return int(timestamp)
-    logger.warning(
-        'Unable to get boot image timestamp: ro.bootimage.build.date.utc is undefined')
+    logger.warning('Unable to get boot image timestamp: ro.bootimage.build.date.utc is undefined')
     return None
 
   except ExternalError as e:
     logger.warning('Unable to get boot image timestamp: %s', e)
     return None
-
-
-def GetCareMap(which, imgname):
-  """Returns the care_map string for the given partition.
-
-  Args:
-    which: The partition name, must be listed in PARTITIONS_WITH_CARE_MAP.
-    imgname: The filename of the image.
-
-  Returns:
-    (which, care_map_ranges): care_map_ranges is the raw string of the care_map
-    RangeSet; or None.
-  """
-  assert which in PARTITIONS_WITH_CARE_MAP
-
-  # which + "_image_size" contains the size that the actual filesystem image
-  # resides in, which is all that needs to be verified. The additional blocks in
-  # the image file contain verity metadata, by reading which would trigger
-  # invalid reads.
-  image_size = OPTIONS.info_dict.get(which + "_image_size")
-  if not image_size:
-    return None
-
-  image_blocks = int(image_size) // 4096 - 1
-  assert image_blocks > 0, "blocks for {} must be positive".format(which)
-
-  # For sparse images, we will only check the blocks that are listed in the care
-  # map, i.e. the ones with meaningful data.
-  if "extfs_sparse_flag" in OPTIONS.info_dict:
-    simg = sparse_img.SparseImage(imgname)
-    care_map_ranges = simg.care_map.intersect(
-        rangelib.RangeSet("0-{}".format(image_blocks)))
-
-  # Otherwise for non-sparse images, we read all the blocks in the filesystem
-  # image.
-  else:
-    care_map_ranges = rangelib.RangeSet("0-{}".format(image_blocks))
-
-  return [which, care_map_ranges.to_string_raw()]
-
-
-def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
-  """Generates and adds care_map.pb for a/b partition that has care_map.
-
-  Args:
-    output_zip: The output zip file (needs to be already open), or None to
-        write care_map.pb to OPTIONS.input_tmp/.
-    ab_partitions: The list of A/B partitions.
-    image_paths: A map from the partition name to the image path.
-  """
-  care_map_list = []
-  for partition in ab_partitions:
-    partition = partition.strip()
-    if partition not in PARTITIONS_WITH_CARE_MAP:
-      continue
-
-    verity_block_device = "{}_verity_block_device".format(partition)
-    avb_hashtree_enable = "avb_{}_hashtree_enable".format(partition)
-    if (verity_block_device in OPTIONS.info_dict or
-            OPTIONS.info_dict.get(avb_hashtree_enable) == "true"):
-      image_path = image_paths[partition]
-      assert os.path.exists(image_path)
-
-      care_map = GetCareMap(partition, image_path)
-      if not care_map:
-        continue
-      care_map_list += care_map
-
-      # adds fingerprint field to the care_map
-      # TODO(xunchang) revisit the fingerprint calculation for care_map.
-      partition_props = OPTIONS.info_dict.get(partition + ".build.prop")
-      prop_name_list = ["ro.{}.build.fingerprint".format(partition),
-                        "ro.{}.build.thumbprint".format(partition)]
-
-      present_props = [x for x in prop_name_list if
-                       partition_props and partition_props.GetProp(x)]
-      if not present_props:
-        logger.warning(
-            "fingerprint is not present for partition %s", partition)
-        property_id, fingerprint = "unknown", "unknown"
-      else:
-        property_id = present_props[0]
-        fingerprint = partition_props.GetProp(property_id)
-      care_map_list += [property_id, fingerprint]
-
-  if not care_map_list:
-    return
-
-  # Converts the list into proto buf message by calling care_map_generator; and
-  # writes the result to a temp file.
-  temp_care_map_text = MakeTempFile(prefix="caremap_text-",
-                                           suffix=".txt")
-  with open(temp_care_map_text, 'w') as text_file:
-    text_file.write('\n'.join(care_map_list))
-
-  temp_care_map = MakeTempFile(prefix="caremap-", suffix=".pb")
-  care_map_gen_cmd = ["care_map_generator", temp_care_map_text, temp_care_map]
-  RunAndCheckOutput(care_map_gen_cmd)
-
-  care_map_path = "META/care_map.pb"
-  if output_zip and care_map_path not in output_zip.namelist():
-    ZipWrite(output_zip, temp_care_map, arcname=care_map_path)
-  else:
-    shutil.copy(temp_care_map, os.path.join(OPTIONS.input_tmp, care_map_path))
-    if output_zip:
-      OPTIONS.replace_updated_files_list.append(care_map_path)
