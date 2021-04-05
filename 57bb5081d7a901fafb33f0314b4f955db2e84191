@@ -70,6 +70,30 @@
       },
       "revId": "57bb5081d7a901fafb33f0314b4f955db2e84191",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "07233545_68b96548",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-04-05T17:06:02Z",
+      "side": 1,
+      "message": "I am not sure at this point. When I was writing this code, I was mistakenly under the impression that system() call in libc checks SHELL environment variable. It turned out that it is always using /bin/sh. On the other hand, ckati uses the value of SHELL environment variable. Oh well. Once your aosp/1663462 lands, I\u0027ll revert my change.\n(I forgot to post this earlier, sorry).",
+      "parentUuid": "9b8db980_dfdd962e",
+      "range": {
+        "startLine": 239,
+        "startChar": 1,
+        "endLine": 239,
+        "endChar": 22
+      },
+      "revId": "57bb5081d7a901fafb33f0314b4f955db2e84191",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
