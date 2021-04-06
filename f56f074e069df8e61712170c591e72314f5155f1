@@ -22,6 +22,30 @@
       },
       "revId": "f56f074e069df8e61712170c591e72314f5155f1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "faa72da4_edfce90c",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-04-06T11:03:39Z",
+      "side": 0,
+      "message": "The framework-atb-backward-compatibility doesn\u0027t actually contain any of ATB. It contains the support for adding android.test.base to the App\u0027s classpath if the targetSdkVersion is for an sdk version where the android.test.base library was previously on the bootclasspath.",
+      "parentUuid": "cd0d6be4_4c7d24a2",
+      "range": {
+        "startLine": 49,
+        "startChar": 2,
+        "endLine": 49,
+        "endChar": 40
+      },
+      "revId": "f56f074e069df8e61712170c591e72314f5155f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
