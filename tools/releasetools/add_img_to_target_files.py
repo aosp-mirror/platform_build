@@ -59,12 +59,11 @@ import zipfile
 import build_image
 import build_super_image
 import common
-import rangelib
-import sparse_img
 import verity_utils
 import ota_metadata_pb2
 
 from apex_utils import GetSystemApexInfoFromTargetFiles
+from common import AddCareMapForAbOta
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -110,45 +109,6 @@ class OutputFile(object):
       common.ZipWrite(self._output_zip, self.name, self._zip_name)
 
 
-def GetCareMap(which, imgname):
-  """Returns the care_map string for the given partition.
-
-  Args:
-    which: The partition name, must be listed in PARTITIONS_WITH_CARE_MAP.
-    imgname: The filename of the image.
-
-  Returns:
-    (which, care_map_ranges): care_map_ranges is the raw string of the care_map
-    RangeSet; or None.
-  """
-  assert which in common.PARTITIONS_WITH_CARE_MAP
-
-  # which + "_image_size" contains the size that the actual filesystem image
-  # resides in, which is all that needs to be verified. The additional blocks in
-  # the image file contain verity metadata, by reading which would trigger
-  # invalid reads.
-  image_size = OPTIONS.info_dict.get(which + "_image_size")
-  if not image_size:
-    return None
-
-  image_blocks = int(image_size) // 4096 - 1
-  assert image_blocks > 0, "blocks for {} must be positive".format(which)
-
-  # For sparse images, we will only check the blocks that are listed in the care
-  # map, i.e. the ones with meaningful data.
-  if "extfs_sparse_flag" in OPTIONS.info_dict:
-    simg = sparse_img.SparseImage(imgname)
-    care_map_ranges = simg.care_map.intersect(
-        rangelib.RangeSet("0-{}".format(image_blocks)))
-
-  # Otherwise for non-sparse images, we read all the blocks in the filesystem
-  # image.
-  else:
-    care_map_ranges = rangelib.RangeSet("0-{}".format(image_blocks))
-
-  return [which, care_map_ranges.to_string_raw()]
-
-
 def AddSystem(output_zip, recovery_img=None, boot_img=None):
   """Turn the contents of SYSTEM into a system image and store it in
   output_zip. Returns the name of the system image file."""
@@ -174,12 +134,13 @@ def AddSystem(output_zip, recovery_img=None, boot_img=None):
       "board_uses_vendorimage") == "true"
 
   if (OPTIONS.rebuild_recovery and not board_uses_vendorimage and
-      recovery_img is not None and boot_img is not None):
+          recovery_img is not None and boot_img is not None):
     logger.info("Building new recovery patch on system at system/vendor")
     common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink, recovery_img,
                              boot_img, info_dict=OPTIONS.info_dict)
 
-  block_list = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system.map")
+  block_list = OutputFile(output_zip, OPTIONS.input_tmp,
+                          "IMAGES", "system.map")
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "system", img,
               block_list=block_list)
   return img.name
@@ -222,12 +183,13 @@ def AddVendor(output_zip, recovery_img=None, boot_img=None):
       "board_uses_vendorimage") == "true"
 
   if (OPTIONS.rebuild_recovery and board_uses_vendorimage and
-      recovery_img is not None and boot_img is not None):
+          recovery_img is not None and boot_img is not None):
     logger.info("Building new recovery patch on vendor")
     common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink, recovery_img,
                              boot_img, info_dict=OPTIONS.info_dict)
 
-  block_list = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vendor.map")
+  block_list = OutputFile(output_zip, OPTIONS.input_tmp,
+                          "IMAGES", "vendor.map")
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "vendor", img,
               block_list=block_list)
   return img.name
@@ -299,6 +261,7 @@ def AddVendorDlkm(output_zip):
       block_list=block_list)
   return img.name
 
+
 def AddOdmDlkm(output_zip):
   """Turn the contents of OdmDlkm into an odm_dlkm image and store it in output_zip."""
 
@@ -350,6 +313,7 @@ def AddDtbo(output_zip):
   img.Write()
   return img.name
 
+
 def AddPvmfw(output_zip):
   """Adds the pvmfw image.
 
@@ -385,6 +349,7 @@ def AddPvmfw(output_zip):
   img.Write()
   return img.name
 
+
 def AddCustomImages(output_zip, partition_name):
   """Adds and signs custom images in IMAGES/.
 
@@ -413,15 +378,16 @@ def AddCustomImages(output_zip, partition_name):
       key_path, algorithm, extra_args)
 
   for img_name in OPTIONS.info_dict.get(
-      "avb_{}_image_list".format(partition_name)).split():
-    custom_image = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", img_name)
+          "avb_{}_image_list".format(partition_name)).split():
+    custom_image = OutputFile(
+        output_zip, OPTIONS.input_tmp, "IMAGES", img_name)
     if os.path.exists(custom_image.name):
       continue
 
     custom_image_prebuilt_path = os.path.join(
         OPTIONS.input_tmp, "PREBUILT_IMAGES", img_name)
     assert os.path.exists(custom_image_prebuilt_path), \
-      "Failed to find %s at %s" % (img_name, custom_image_prebuilt_path)
+        "Failed to find %s at %s" % (img_name, custom_image_prebuilt_path)
 
     shutil.copy(custom_image_prebuilt_path, custom_image.name)
 
@@ -644,72 +610,6 @@ def CheckAbOtaImages(output_zip, ab_partitions):
     assert available, "Failed to find " + img_name
 
 
-def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
-  """Generates and adds care_map.pb for a/b partition that has care_map.
-
-  Args:
-    output_zip: The output zip file (needs to be already open), or None to
-        write care_map.pb to OPTIONS.input_tmp/.
-    ab_partitions: The list of A/B partitions.
-    image_paths: A map from the partition name to the image path.
-  """
-  care_map_list = []
-  for partition in ab_partitions:
-    partition = partition.strip()
-    if partition not in common.PARTITIONS_WITH_CARE_MAP:
-      continue
-
-    verity_block_device = "{}_verity_block_device".format(partition)
-    avb_hashtree_enable = "avb_{}_hashtree_enable".format(partition)
-    if (verity_block_device in OPTIONS.info_dict or
-        OPTIONS.info_dict.get(avb_hashtree_enable) == "true"):
-      image_path = image_paths[partition]
-      assert os.path.exists(image_path)
-
-      care_map = GetCareMap(partition, image_path)
-      if not care_map:
-        continue
-      care_map_list += care_map
-
-      # adds fingerprint field to the care_map
-      # TODO(xunchang) revisit the fingerprint calculation for care_map.
-      partition_props = OPTIONS.info_dict.get(partition + ".build.prop")
-      prop_name_list = ["ro.{}.build.fingerprint".format(partition),
-                        "ro.{}.build.thumbprint".format(partition)]
-
-      present_props = [x for x in prop_name_list if
-                       partition_props and partition_props.GetProp(x)]
-      if not present_props:
-        logger.warning("fingerprint is not present for partition %s", partition)
-        property_id, fingerprint = "unknown", "unknown"
-      else:
-        property_id = present_props[0]
-        fingerprint = partition_props.GetProp(property_id)
-      care_map_list += [property_id, fingerprint]
-
-  if not care_map_list:
-    return
-
-  # Converts the list into proto buf message by calling care_map_generator; and
-  # writes the result to a temp file.
-  temp_care_map_text = common.MakeTempFile(prefix="caremap_text-",
-                                           suffix=".txt")
-  with open(temp_care_map_text, 'w') as text_file:
-    text_file.write('\n'.join(care_map_list))
-
-  temp_care_map = common.MakeTempFile(prefix="caremap-", suffix=".pb")
-  care_map_gen_cmd = ["care_map_generator", temp_care_map_text, temp_care_map]
-  common.RunAndCheckOutput(care_map_gen_cmd)
-
-  care_map_path = "META/care_map.pb"
-  if output_zip and care_map_path not in output_zip.namelist():
-    common.ZipWrite(output_zip, temp_care_map, arcname=care_map_path)
-  else:
-    shutil.copy(temp_care_map, os.path.join(OPTIONS.input_tmp, care_map_path))
-    if output_zip:
-      OPTIONS.replace_updated_files_list.append(care_map_path)
-
-
 def AddPackRadioImages(output_zip, images):
   """Copies images listed in META/pack_radioimages.txt from RADIO/ to IMAGES/.
 
@@ -785,11 +685,12 @@ def HasPartition(partition_name):
 
   return ((os.path.isdir(
       os.path.join(OPTIONS.input_tmp, partition_name.upper())) and
-           OPTIONS.info_dict.get(
-               "building_{}_image".format(partition_name)) == "true") or
-          os.path.exists(
-              os.path.join(OPTIONS.input_tmp, "IMAGES",
-                           "{}.img".format(partition_name))))
+      OPTIONS.info_dict.get(
+      "building_{}_image".format(partition_name)) == "true") or
+      os.path.exists(
+      os.path.join(OPTIONS.input_tmp, "IMAGES",
+                   "{}.img".format(partition_name))))
+
 
 def AddApexInfo(output_zip):
   apex_infos = GetSystemApexInfoFromTargetFiles(OPTIONS.input_tmp)
@@ -878,7 +779,7 @@ def AddImagesToTargetFiles(filename):
     boot_images = OPTIONS.info_dict.get("boot_images")
     if boot_images is None:
       boot_images = "boot.img"
-    for index,b in enumerate(boot_images.split()):
+    for index, b in enumerate(boot_images.split()):
       # common.GetBootableImage() returns the image directly if present.
       boot_image = common.GetBootableImage(
           "IMAGES/" + b, b, OPTIONS.input_tmp, "BOOT")
@@ -1033,7 +934,7 @@ def AddImagesToTargetFiles(filename):
 
   if OPTIONS.info_dict.get("build_super_partition") == "true":
     if OPTIONS.info_dict.get(
-        "build_retrofit_dynamic_partitions_ota_package") == "true":
+            "build_retrofit_dynamic_partitions_ota_package") == "true":
       banner("super split images")
       AddSuperSplit(output_zip)
 
@@ -1098,6 +999,7 @@ def main(argv):
 
   AddImagesToTargetFiles(args[0])
   logger.info("done.")
+
 
 if __name__ == '__main__':
   try:
