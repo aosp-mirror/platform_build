@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd0d6be4_4c7d24a2",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-04-06T10:41:49Z",
+      "side": 0,
+      "message": "AFAIU framework-atb-backward-compatibility was only part of ATB (the necessary minimum). Now we have that part in framework-minus-apex. But presumably that is not the same as having full ATB in bootclasspath. So, we no longer want to support a configuration with full ATB in bootclasspath? Can you expand the commit message to explain why that configuration is no longer needed?",
+      "range": {
+        "startLine": 49,
+        "startChar": 2,
+        "endLine": 49,
+        "endChar": 40
+      },
+      "revId": "f56f074e069df8e61712170c591e72314f5155f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
