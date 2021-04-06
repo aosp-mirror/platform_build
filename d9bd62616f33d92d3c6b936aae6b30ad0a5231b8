@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3de66c7_b9c928de",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-04-06T07:29:59Z",
+      "side": 1,
+      "message": "move this before the call to validate?",
+      "range": {
+        "startLine": 283,
+        "startChar": 0,
+        "endLine": 284,
+        "endChar": 15
+      },
+      "revId": "d9bd62616f33d92d3c6b936aae6b30ad0a5231b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

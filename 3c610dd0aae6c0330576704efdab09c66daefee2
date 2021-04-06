@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8c4f713_6de9b129",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-04-06T07:29:59Z",
+      "side": 0,
+      "message": "Thanks!",
+      "range": {
+        "startLine": 45,
+        "startChar": 51,
+        "endLine": 45,
+        "endChar": 52
+      },
+      "revId": "3c610dd0aae6c0330576704efdab09c66daefee2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
