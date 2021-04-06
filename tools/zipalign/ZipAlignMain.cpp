@@ -39,7 +39,7 @@ void usage(void)
         "  <align>: alignment in bytes, e.g. '4' provides 32-bit alignment\n");
     fprintf(stderr, "  -c: check alignment only (does not modify file)\n");
     fprintf(stderr, "  -f: overwrite existing outfile.zip\n");
-    fprintf(stderr, "  -p: memory page alignment for stored shared object files\n");
+    fprintf(stderr, "  -p: page-align uncompressed .so files\n");
     fprintf(stderr, "  -v: verbose output\n");
     fprintf(stderr, "  -z: recompress using Zopfli\n");
 }
