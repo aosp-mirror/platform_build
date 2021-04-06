@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac2f9776_72f08a18",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-04-06T18:36:35Z",
+      "side": 1,
+      "message": "Verified with forrest: https://android-build.googleplex.com/builds/forrest/run/L52500000852410960",
+      "revId": "1ed0fd54dc230203db5ec549cc74da953e7995e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
