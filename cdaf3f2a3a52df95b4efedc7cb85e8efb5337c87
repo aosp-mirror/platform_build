@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1da9d3ee_bfb88113",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2528,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-06T21:21:54Z",
+      "side": 1,
+      "message": "Could you add --chmod\u003du+w to the rsync instead to fix this more globally?  If not, can you add a comment here on why this is necessary?",
+      "revId": "cdaf3f2a3a52df95b4efedc7cb85e8efb5337c87",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
