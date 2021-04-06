@@ -16,6 +16,24 @@
       "message": "I\u0027m not very familiar with this code but it looks good on a first pass to me. Maybe Yifan would could take a look?",
       "revId": "6c7e02e74e047bbbb9901c8d86e45cd638abc87f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b5c5f5aa_8c706b91",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-04-06T13:00:24Z",
+      "side": 1,
+      "message": "FYI I used aosp/1665344 for testing",
+      "parentUuid": "6c57528a_8a16c3d4",
+      "revId": "6c7e02e74e047bbbb9901c8d86e45cd638abc87f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
