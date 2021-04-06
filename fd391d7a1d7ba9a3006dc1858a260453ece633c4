@@ -33,6 +33,24 @@
       "message": "Please rebase and upload the change again",
       "revId": "fd391d7a1d7ba9a3006dc1858a260453ece633c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31c8706d_974067b8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-06T00:37:49Z",
+      "side": 1,
+      "message": "It still shows up as \"merge conflict\"",
+      "parentUuid": "1e8010ec_83cd41d4",
+      "revId": "fd391d7a1d7ba9a3006dc1858a260453ece633c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
