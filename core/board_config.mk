@@ -25,6 +25,7 @@ _board_strip_readonly_list += BOARD_EGL_CFG
 _board_strip_readonly_list += BOARD_HAVE_BLUETOOTH
 _board_strip_readonly_list += BOARD_INSTALLER_CMDLINE
 _board_strip_readonly_list += BOARD_KERNEL_CMDLINE
+_board_strip_readonly_list += BOARD_BOOT_HEADER_VERSION
 _board_strip_readonly_list += BOARD_BOOTCONFIG
 _board_strip_readonly_list += BOARD_KERNEL_BASE
 _board_strip_readonly_list += BOARD_USES_GENERIC_AUDIO
@@ -461,6 +462,25 @@ ifeq ($(PRODUCT_BUILD_VBMETA_IMAGE),false)
 endif
 .KATI_READONLY := BUILDING_VBMETA_IMAGE
 
+# Are we building a super_empty image
+BUILDING_SUPER_EMPTY_IMAGE :=
+ifeq ($(PRODUCT_BUILD_SUPER_EMPTY_IMAGE),)
+  ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
+    ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
+      BUILDING_SUPER_EMPTY_IMAGE := true
+    endif
+  endif
+else ifeq ($(PRODUCT_BUILD_SUPER_EMPTY_IMAGE),true)
+  ifneq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
+    $(error PRODUCT_BUILD_SUPER_EMPTY_IMAGE set to true, but PRODUCT_USE_DYNAMIC_PARTITIONS is not true)
+  endif
+  ifeq ($(BOARD_SUPER_PARTITION_SIZE),)
+    $(error PRODUCT_BUILD_SUPER_EMPTY_IMAGE set to true, but BOARD_SUPER_PARTITION_SIZE is not defined)
+  endif
+  BUILDING_SUPER_EMPTY_IMAGE := true
+endif
+.KATI_READONLY := BUILDING_SUPER_EMPTY_IMAGE
+
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR
 ifeq ($(TARGET_COPY_OUT_VENDOR),$(_vendor_path_placeholder))
@@ -809,7 +829,14 @@ ifndef BUILDING_VENDOR_BOOT_IMAGE
   ifdef BOARD_VENDOR_RAMDISK_FRAGMENTS
     $(error Should not set BOARD_VENDOR_RAMDISK_FRAGMENTS if not building vendor_boot image)
   endif
-endif
+else # BUILDING_VENDOR_BOOT_IMAGE
+  ifneq (,$(call math_lt,$(BOARD_BOOT_HEADER_VERSION),4))
+    ifdef BOARD_VENDOR_RAMDISK_FRAGMENTS
+      $(error Should not set BOARD_VENDOR_RAMDISK_FRAGMENTS if \
+        BOARD_BOOT_HEADER_VERSION is less than 4)
+    endif
+  endif
+endif # BUILDING_VENDOR_BOOT_IMAGE
 
 ifneq ($(words $(BOARD_VENDOR_RAMDISK_FRAGMENTS)),$(words $(sort $(BOARD_VENDOR_RAMDISK_FRAGMENTS))))
   $(error BOARD_VENDOR_RAMDISK_FRAGMENTS has duplicate entries: $(BOARD_VENDOR_RAMDISK_FRAGMENTS))

@@ -116,7 +116,6 @@ PRODUCT_PACKAGES += \
     iptables \
     ip-up-vpn \
     javax.obex \
-    keystore \
     keystore2 \
     credstore \
     ld.mc \
@@ -385,11 +384,6 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     SettingsProvider \
     WallpaperBackup
 
-# Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
-PRODUCT_PACKAGES_DEBUG_ASAN := \
-    fuzz \
-    honggfuzz
-
 PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
     libdumpcoverage
 
@@ -400,9 +394,5 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 #       for known dirty objects in the image will be empty.
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
-
-# This property allows enabling Keystore 2.0 selectively for testing.
-# TODO Remove when Keystore 2.0 migration is complete. b/171563717
-PRODUCT_SYSTEM_PROPERTIES += persist.android.security.keystore2.enable=true
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
