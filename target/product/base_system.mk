@@ -120,7 +120,6 @@ PRODUCT_PACKAGES += \
     iptables \
     ip-up-vpn \
     javax.obex \
-    keystore \
     keystore2 \
     credstore \
     ld.mc \
