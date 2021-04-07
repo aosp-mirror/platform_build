@@ -44,16 +44,6 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.tethering:framework-connectivity \
     com.android.ipsec:android.net.ipsec.ike
 
-# Add the compatibility library that is needed when android.test.base
-# is removed from the bootclasspath.
-# Default to excluding android.test.base from the bootclasspath.
-ifneq ($(REMOVE_ATB_FROM_BCP),false)
-  PRODUCT_PACKAGES += framework-atb-backward-compatibility
-  PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
-else
-  PRODUCT_BOOT_JARS += android.test.base
-endif
-
 # Minimal configuration for running dex2oat (default argument values).
 # PRODUCT_USES_DEFAULT_ART_CONFIG must be true to enable boot image compilation.
 PRODUCT_USES_DEFAULT_ART_CONFIG := true
