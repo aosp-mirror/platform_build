@@ -33,6 +33,63 @@
       "message": "ping",
       "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "47c1149d_af5e1819",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-07T20:19:29Z",
+      "side": 1,
+      "message": "I don\u0027t understand this whole section, so this may be a naive question.\n\nDoesn\u0027t L236,L237 reset STAGING_DIR and FILES to empty?",
+      "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9628af5_4462d107",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1033,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-07T20:19:29Z",
+      "side": 1,
+      "message": "nit: add a comment above this line? e.g.\n\nIf including the recovery ramdisk itself in vendor_boot, exclude recovery files in the default vendor ramdisk image.",
+      "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "95e83941_78ce56da",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-07T20:19:29Z",
+      "side": 1,
+      "message": "note: please update source.android.com/preview as well (ping me for exact link)",
+      "range": {
+        "startLine": 111,
+        "startChar": 4,
+        "endLine": 111,
+        "endChar": 49
+      },
+      "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
