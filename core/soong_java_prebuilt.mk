@@ -151,6 +151,9 @@ endif
 # modules can find them.
 ifdef LOCAL_SOONG_DEXPREOPT_CONFIG
   $(eval $(call copy-one-file,$(LOCAL_SOONG_DEXPREOPT_CONFIG), $(call local-intermediates-dir,)/dexpreopt.config))
+  my_dexpreopt_config := $(PRODUCT_OUT)/dexpreopt_config/$(LOCAL_MODULE)_dexpreopt.config
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEXPREOPT_CONFIG), $(my_dexpreopt_config)))
+  $(LOCAL_BUILT_MODULE): $(my_dexpreopt_config)
 endif
 
 javac-check : $(full_classes_jar)

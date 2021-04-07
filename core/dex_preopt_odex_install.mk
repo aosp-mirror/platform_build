@@ -381,6 +381,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call json_end)
 
   my_dexpreopt_config := $(intermediates)/dexpreopt.config
+  my_dexpreopt_config_for_postprocessing := $(PRODUCT_OUT)/dexpreopt_config/$(LOCAL_MODULE)_dexpreopt.config
   my_dexpreopt_script := $(intermediates)/dexpreopt.sh
   my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
   my_dexpreopt_config_merger := $(BUILD_SYSTEM)/dex_preopt_config_merger.py
@@ -409,6 +410,8 @@ ifdef LOCAL_DEX_PREOPT
 	-module $(PRIVATE_MODULE_CONFIG) \
 	-dexpreopt_script $@ \
 	-out_dir $(OUT_DIR)
+
+  $(eval $(call copy-one-file,$(my_dexpreopt_config),$(my_dexpreopt_config_for_postprocessing)))
 
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
@@ -445,10 +448,12 @@ ifdef LOCAL_DEX_PREOPT
 
   $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
   $(LOCAL_INSTALLED_MODULE): $(my_dexpreopt_zip)
+  $(LOCAL_INSTALLED_MODULE): $(my_dexpreopt_config_for_postprocessing)
 
   $(my_all_targets): $(my_dexpreopt_zip)
 
   my_dexpreopt_config :=
   my_dexpreopt_script :=
   my_dexpreopt_zip :=
+  my_dexpreopt_config_for_postprocessing :=
 endif # LOCAL_DEX_PREOPT

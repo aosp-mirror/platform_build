@@ -13,6 +13,7 @@
 # LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH)
 # LOCAL_SOONG_JNI_LIBS_$(TARGET_2ND_ARCH)
 # LOCAL_SOONG_JNI_LIBS_SYMBOLS
+# LOCAL_SOONG_DEXPREOPT_CONFIG
 
 ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   $(call pretty-error,soong_app_prebuilt.mk may only be used from Soong)
@@ -48,6 +49,14 @@ ifdef LOCAL_SOONG_CLASSES_JAR
   javac-check-$(LOCAL_MODULE) : $(full_classes_jar)
   .PHONY: javac-check-$(LOCAL_MODULE)
 endif
+
+ifdef LOCAL_SOONG_DEXPREOPT_CONFIG
+  my_dexpreopt_config := $(PRODUCT_OUT)/dexpreopt_config/$(LOCAL_MODULE)_dexpreopt.config
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEXPREOPT_CONFIG), $(my_dexpreopt_config)))
+  $(LOCAL_BUILT_MODULE): $(my_dexpreopt_config)
+endif
+
+
 
 # Run veridex on product, system_ext and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
