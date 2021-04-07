@@ -103,8 +103,6 @@ import img_from_target_files
 import find_shareduid_violation
 import ota_from_target_files
 
-from common import AddCareMapForAbOta, ExternalError, PARTITIONS_WITH_CARE_MAP
-
 logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
@@ -358,7 +356,7 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
       has_error = True
 
   if ('dynamic_partition_list' in framework_misc_info_keys) or (
-          'super_partition_groups' in framework_misc_info_keys):
+      'super_partition_groups' in framework_misc_info_keys):
     logger.error('Dynamic partition misc info keys should come from '
                  'the vendor instance of META/misc_info.txt.')
     has_error = True
@@ -450,7 +448,7 @@ def process_misc_info_txt(framework_target_files_temp_dir,
 
   # Merge misc info keys used for Dynamic Partitions.
   if (merged_dict.get('use_dynamic_partitions') == 'true') and (
-          framework_dict.get('use_dynamic_partitions') == 'true'):
+      framework_dict.get('use_dynamic_partitions') == 'true'):
     merged_dynamic_partitions_dict = common.MergeDynamicPartitionInfoDicts(
         framework_dict=framework_dict, vendor_dict=merged_dict)
     merged_dict.update(merged_dynamic_partitions_dict)
@@ -695,7 +693,7 @@ def compile_split_sepolicy(product_out, partition_map, output_policy):
   vendor_plat_version_file = get_file('vendor',
                                       'etc/selinux/plat_sepolicy_vers.txt')
   if not vendor_plat_version_file or not os.path.exists(
-          vendor_plat_version_file):
+      vendor_plat_version_file):
     raise ExternalError('Missing required sepolicy file %s',
                         vendor_plat_version_file)
   with open(vendor_plat_version_file) as f:
@@ -1094,8 +1092,6 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
                                            temp_dir)
 
   # Create the IMG package from the merged target files package.
-  with zipfile.ZipFile(output_zip, allowZip64=True) as zfp:
-    AddCareMapForAbOta(zfp, PARTITIONS_WITH_CARE_MAP, partition_map)
 
   if output_img:
     img_from_target_files.main([output_zip, output_img])
@@ -1168,8 +1164,7 @@ def main():
     elif o == '--vendor-target-files':
       OPTIONS.vendor_target_files = a
     elif o == '--other-item-list':
-      logger.warning(
-          '--other-item-list has been renamed to --vendor-item-list')
+      logger.warning('--other-item-list has been renamed to --vendor-item-list')
       OPTIONS.vendor_item_list = a
     elif o == '--vendor-item-list':
       OPTIONS.vendor_item_list = a
@@ -1225,7 +1220,7 @@ def main():
   if (args or OPTIONS.framework_target_files is None or
       OPTIONS.vendor_target_files is None or
       (OPTIONS.output_target_files is None and OPTIONS.output_dir is None) or
-          (OPTIONS.output_dir is not None and OPTIONS.output_item_list is None)):
+      (OPTIONS.output_dir is not None and OPTIONS.output_item_list is None)):
     common.Usage(__doc__)
     sys.exit(1)
 
@@ -1251,9 +1246,9 @@ def main():
     output_item_list = None
 
   if not validate_config_lists(
-          framework_item_list=framework_item_list,
-          framework_misc_info_keys=framework_misc_info_keys,
-          vendor_item_list=vendor_item_list):
+      framework_item_list=framework_item_list,
+      framework_misc_info_keys=framework_misc_info_keys,
+      vendor_item_list=vendor_item_list):
     sys.exit(1)
 
   call_func_with_temp_dir(
