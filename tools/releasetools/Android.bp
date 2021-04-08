@@ -133,6 +133,7 @@ python_defaults {
     required: [
         "brillo_update_payload",
         "checkvintf",
+        "minigzip",
         "lz4",
         "toybox",
         "unpack_bootimg",

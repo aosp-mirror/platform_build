@@ -745,6 +745,42 @@ $(strip \
 endef
 
 ###########################################################
+## The packaging directory for a module.  Similar to intermedates, but
+## in a location that will be wiped by an m installclean.
+###########################################################
+
+# $(1): subdir in PACKAGING
+# $(2): target class, like "APPS"
+# $(3): target name, like "NotePad"
+# $(4): { HOST, HOST_CROSS, <empty (TARGET)>, <other non-empty (HOST)> }
+define packaging-dir-for
+$(strip \
+    $(eval _pdfClass := $(strip $(2))) \
+    $(if $(_pdfClass),, \
+        $(error $(LOCAL_PATH): Class not defined in call to generated-sources-dir-for)) \
+    $(eval _pdfName := $(strip $(3))) \
+    $(if $(_pdfName),, \
+        $(error $(LOCAL_PATH): Name not defined in call to generated-sources-dir-for)) \
+    $(call intermediates-dir-for,PACKAGING,$(1),$(4))/$(_pdfClass)/$(_pdfName)_intermediates \
+)
+endef
+
+# Uses LOCAL_MODULE_CLASS, LOCAL_MODULE, and LOCAL_IS_HOST_MODULE
+# to determine the packaging directory.
+#
+# $(1): subdir in PACKAGING
+define local-packaging-dir
+$(strip \
+    $(if $(strip $(LOCAL_MODULE_CLASS)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-generated-sources-dir)) \
+    $(if $(strip $(LOCAL_MODULE)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-generated-sources-dir)) \
+    $(call packaging-dir-for,$(1),$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST)) \
+)
+endef
+
+
+###########################################################
 ## Convert a list of short module names (e.g., "framework", "Browser")
 ## into the list of files that are built for those modules.
 ## NOTE: this won't return reliable results until after all
@@ -1752,7 +1788,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
-  $(PRIVATE_TARGET_LIBATOMIC) \
   $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
   $(PRIVATE_LDFLAGS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
@@ -1787,7 +1822,6 @@ $(hide) $(PRIVATE_CXX_LINK) -pie \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
-  $(PRIVATE_TARGET_LIBATOMIC) \
   $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
   $(PRIVATE_LDFLAGS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
@@ -1831,7 +1865,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(filter %libc.a %libc.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
   $(filter %libc_nomalloc.a %libc_nomalloc.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
-  $(PRIVATE_TARGET_LIBATOMIC) \
   $(filter %libcompiler_rt.a %libcompiler_rt.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
   -Wl,--end-group \

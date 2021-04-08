@@ -211,6 +211,40 @@ $(INSTALLED_SDK_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
 	$(hide) mv $@.tmp $@
 
 # -----------------------------------------------------------------
+# Declare vendor ramdisk fragments
+INTERNAL_VENDOR_RAMDISK_FRAGMENTS :=
+
+# Validation check and assign default --ramdisk_type.
+$(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
+  $(if $(and $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).KERNEL_MODULE_DIRS), \
+             $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).PREBUILT)), \
+    $(error Must not specify KERNEL_MODULE_DIRS for prebuilt vendor ramdisk fragment "$(vendor_ramdisk_fragment)": $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).KERNEL_MODULE_DIRS))) \
+  $(eval VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).STAGING_DIR := $(call intermediates-dir-for,PACKAGING,vendor_ramdisk_fragment-stage-$(vendor_ramdisk_fragment))) \
+  $(eval VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).FILES :=) \
+  $(if $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).KERNEL_MODULE_DIRS), \
+    $(if $(filter --ramdisk_type,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS)),, \
+      $(eval BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS += --ramdisk_type DLKM))) \
+)
+
+# Create the "kernel module directory" to "vendor ramdisk fragment" inverse mapping.
+$(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
+  $(foreach kmd,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).KERNEL_MODULE_DIRS), \
+    $(eval kmd_vrf := KERNEL_MODULE_DIR_VENDOR_RAMDISK_FRAGMENT_$(kmd)) \
+    $(if $($(kmd_vrf)),$(error Kernel module directory "$(kmd)" belongs to multiple vendor ramdisk fragments: "$($(kmd_vrf))" "$(vendor_ramdisk_fragment)", each kernel module directory should belong to exactly one or none vendor ramdisk fragment)) \
+    $(eval $(kmd_vrf) := $(vendor_ramdisk_fragment)) \
+  ) \
+)
+INTERNAL_VENDOR_RAMDISK_FRAGMENTS += $(BOARD_VENDOR_RAMDISK_FRAGMENTS)
+
+# Assign --ramdisk_name for each vendor ramdisk fragment.
+$(foreach vendor_ramdisk_fragment,$(INTERNAL_VENDOR_RAMDISK_FRAGMENTS), \
+  $(if $(filter --ramdisk_name,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS)), \
+    $(error Must not specify --ramdisk_name for vendor ramdisk fragment: $(vendor_ramdisk_fragment))) \
+  $(eval BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS += --ramdisk_name $(vendor_ramdisk_fragment)) \
+  $(eval .KATI_READONLY := BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS) \
+)
+
+# -----------------------------------------------------------------
 # kernel modules
 
 # Depmod requires a well-formed kernel version so 0.0 is used as a placeholder.
@@ -415,38 +449,24 @@ else
   VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR :=
 endif
 
-# Create the "kernel module directory" to "vendor ramdisk fragment" inverse mapping.
-$(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
-  $(if $(and $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).KERNEL_MODULE_DIRS), \
-             $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).PREBUILT)), \
-    $(error Must not specify KERNEL_MODULE_DIRS for prebuilt vendor ramdisk fragment "$(vendor_ramdisk_fragment)": $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).KERNEL_MODULE_DIRS))) \
-  $(eval VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).STAGING_DIR := $(call intermediates-dir-for,PACKAGING,vendor_ramdisk_fragment-dlkm-$(vendor_ramdisk_fragment))) \
-  $(eval VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).FILES :=) \
-  $(foreach dir,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).KERNEL_MODULE_DIRS), \
-    $(eval kmd_vrf := KERNEL_MODULE_DIR_VENDOR_RAMDISK_FRAGMENT_$(dir)) \
-    $(if $($(kmd_vrf)),$(error Kernel module directory "$(dir)" belongs to multiple vendor ramdisk fragments: "$($(kmd_vrf))" "$(vendor_ramdisk_fragment)", each kernel module directory should belong to exactly one or none vendor ramdisk fragment)) \
-    $(eval $(kmd_vrf) := $(vendor_ramdisk_fragment)) \
-  ) \
-)
-
 BOARD_KERNEL_MODULE_DIRS += top
-$(foreach dir,$(BOARD_KERNEL_MODULE_DIRS), \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,RECOVERY,$(TARGET_RECOVERY_ROOT_OUT),,modules.load.recovery,,$(dir))) \
-  $(eval vendor_ramdisk_fragment := $(KERNEL_MODULE_DIR_VENDOR_RAMDISK_FRAGMENT_$(dir))) \
+$(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,RECOVERY,$(TARGET_RECOVERY_ROOT_OUT),,modules.load.recovery,,$(kmd))) \
+  $(eval vendor_ramdisk_fragment := $(KERNEL_MODULE_DIR_VENDOR_RAMDISK_FRAGMENT_$(kmd))) \
   $(if $(vendor_ramdisk_fragment), \
     $(eval output_dir := $(VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).STAGING_DIR)) \
     $(eval result_var := VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).FILES) \
     $(eval ### else ###), \
     $(eval output_dir := $(TARGET_VENDOR_RAMDISK_OUT)) \
     $(eval result_var := ALL_DEFAULT_INSTALLED_MODULES)) \
-  $(eval $(result_var) += $(call build-image-kernel-modules-dir,VENDOR_RAMDISK,$(output_dir),,modules.load,$(VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR),$(dir))) \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-ramdisk-recovery-load,$(dir))) \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR,$(if $(filter true,$(BOARD_USES_VENDOR_DLKMIMAGE)),$(TARGET_OUT_VENDOR_DLKM),$(TARGET_OUT_VENDOR)),vendor,modules.load,$(VENDOR_STRIPPED_MODULE_STAGING_DIR),$(dir))) \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-charger-load,$(dir))) \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,ODM,$(if $(filter true,$(BOARD_USES_ODM_DLKMIMAGE)),$(TARGET_OUT_ODM_DLKM),$(TARGET_OUT_ODM)),odm,modules.load,,$(dir))) \
+  $(eval $(result_var) += $(call build-image-kernel-modules-dir,VENDOR_RAMDISK,$(output_dir),,modules.load,$(VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-ramdisk-recovery-load,$(kmd))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR,$(if $(filter true,$(BOARD_USES_VENDOR_DLKMIMAGE)),$(TARGET_OUT_VENDOR_DLKM),$(TARGET_OUT_VENDOR)),vendor,modules.load,$(VENDOR_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-charger-load,$(kmd))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,ODM,$(if $(filter true,$(BOARD_USES_ODM_DLKMIMAGE)),$(TARGET_OUT_ODM_DLKM),$(TARGET_OUT_ODM)),odm,modules.load,,$(kmd))) \
   $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
-    $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-recovery-as-boot-load,$(dir))),\
-    $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,,$(dir)))))
+    $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-recovery-as-boot-load,$(kmd))),\
+    $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,,$(kmd)))))
 
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
@@ -1040,13 +1060,13 @@ ifdef INTERNAL_KERNEL_CMDLINE
 endif
 
 ifdef INTERNAL_BOOTCONFIG
-ifneq (,$(findstring androidboot.hardware=, $(INTERNAL_BOOTCONFIG)))
-$(error "androidboot.hardware" BOOTCONFIG parameter is not supported due to \
-  bootconfig limitations. Use "hardware" instead. INTERNAL_BOOTCONFIG: \
-  $(INTERNAL_BOOTCONFIG))
-endif
-INTERNAL_VENDOR_BOOTCONFIG_TARGET := $(PRODUCT_OUT)/vendor-bootconfig.img
-$(INTERNAL_VENDOR_BOOTCONFIG_TARGET):
+  ifneq (,$(findstring androidboot.hardware=, $(INTERNAL_BOOTCONFIG)))
+    $(error "androidboot.hardware" BOOTCONFIG parameter is not supported due \
+      to bootconfig limitations. Use "hardware" instead. INTERNAL_BOOTCONFIG: \
+      $(INTERNAL_BOOTCONFIG))
+  endif
+  INTERNAL_VENDOR_BOOTCONFIG_TARGET := $(PRODUCT_OUT)/vendor-bootconfig.img
+  $(INTERNAL_VENDOR_BOOTCONFIG_TARGET):
 	rm -f $@
 	$(foreach param,$(INTERNAL_BOOTCONFIG), \
 	 printf "%s\n" $(param) >> $@;)
@@ -1083,17 +1103,12 @@ endef
 INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS :=
 INTERNAL_VENDOR_RAMDISK_FRAGMENT_ARGS :=
 
-$(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
+$(foreach vendor_ramdisk_fragment,$(INTERNAL_VENDOR_RAMDISK_FRAGMENTS), \
   $(eval prebuilt_vendor_ramdisk_fragment_file := $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).PREBUILT)) \
   $(if $(prebuilt_vendor_ramdisk_fragment_file), \
     $(eval vendor_ramdisk_fragment_target := $(call build-prebuilt-vendor-ramdisk-fragment,$(vendor_ramdisk_fragment),$(prebuilt_vendor_ramdisk_fragment_file))) \
     $(eval ### else ###), \
-    $(eval vendor_ramdisk_fragment_target := $(call build-vendor-ramdisk-fragment,$(vendor_ramdisk_fragment))) \
-    $(if $(filter --ramdisk_type,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS)),, \
-      $(eval BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS += --ramdisk_type DLKM))) \
-  $(if $(filter --ramdisk_name,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS)), \
-    $(error Must not specify --ramdisk_name for vendor ramdisk fragment: $(vendor_ramdisk_fragment))) \
-  $(eval BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS += --ramdisk_name $(vendor_ramdisk_fragment)) \
+    $(eval vendor_ramdisk_fragment_target := $(call build-vendor-ramdisk-fragment,$(vendor_ramdisk_fragment)))) \
   $(eval INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS += $(vendor_ramdisk_fragment_target)) \
   $(eval INTERNAL_VENDOR_RAMDISK_FRAGMENT_ARGS += $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS) --vendor_ramdisk_fragment $(vendor_ramdisk_fragment_target)) \
 )
@@ -2509,7 +2524,7 @@ endef
 $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): $(INSTALLED_DEBUG_RAMDISK_TARGET)
 $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_TEST_HARNESS_RAMDISK_FILES) | $(COMPRESSION_COMMAND_DEPS)
 	$(call pretty,"Target test harness ramdisk: $@")
-	rsync -a $(TEST_HARNESS_RAMDISK_SYNC_DIR)/ $(TEST_HARNESS_RAMDISK_ROOT_DIR)
+	rsync --chmod=u+w -a $(TEST_HARNESS_RAMDISK_SYNC_DIR)/ $(TEST_HARNESS_RAMDISK_ROOT_DIR)
 	$(call append-test-harness-props,$(ADDITIONAL_TEST_HARNESS_PROPERTIES),$(TEST_HARNESS_PROP_TARGET))
 	$(MKBOOTFS) -d $(TARGET_OUT) $(TEST_HARNESS_RAMDISK_ROOT_DIR) | $(COMPRESSION_COMMAND) > $@
 
@@ -2527,6 +2542,7 @@ endif # BUILDING_RAMDISK_IMAGE
 #
 # Note: it's intentional to skip signing for boot-test-harness.img, because it
 # can only be used if the device is unlocked with verification error.
+ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 
 ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
@@ -2567,6 +2583,7 @@ bootimage_test_harness-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBT
 	$(foreach b,$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET),$(call build-boot-test-harness-target,$b))
 
 endif # TARGET_NO_KERNEL
+endif # INSTALLED_BOOTIMAGE_TARGET
 endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
 
 # Creates a compatibility symlink between two partitions, e.g. /system/vendor to /vendor
@@ -3937,6 +3954,9 @@ $(warning No INSTALLED_KERNEL_TARGET is defined when PRODUCT_OTA_ENFORCE_VINTF_K
     or (2) extracting kernel configuration and defining BOARD_KERNEL_CONFIG_FILE and \
     BOARD_KERNEL_VERSION manually; or (3) unsetting PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
     manually.)
+# Clear their values to indicate that these two files does not exist.
+BUILT_KERNEL_CONFIGS_FILE :=
+BUILT_KERNEL_VERSION_FILE :=
 else
 
 # Tools for decompression that is not in PATH.
@@ -3981,8 +4001,10 @@ check_vintf_compatible_args :=
 check_vintf_compatible_deps := $(check_vintf_common_srcs)
 
 ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),true)
+ifneq (,$(BUILT_KERNEL_VERSION_FILE)$(BUILT_KERNEL_CONFIGS_FILE))
 check_vintf_compatible_args += --kernel $(BUILT_KERNEL_VERSION_FILE):$(BUILT_KERNEL_CONFIGS_FILE)
 check_vintf_compatible_deps += $(BUILT_KERNEL_CONFIGS_FILE) $(BUILT_KERNEL_VERSION_FILE)
+endif # BUILT_KERNEL_VERSION_FILE != "" || BUILT_KERNEL_CONFIGS_FILE != ""
 endif # PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
 check_vintf_compatible_args += \
@@ -4887,9 +4909,9 @@ ifdef BOARD_KERNEL_PAGESIZE
 	echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/VENDOR_BOOT/pagesize
 endif
 	echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/VENDOR_BOOT/vendor_cmdline
-ifdef BOARD_VENDOR_RAMDISK_FRAGMENTS
-	echo "$(BOARD_VENDOR_RAMDISK_FRAGMENTS)" > "$(zip_root)/VENDOR_BOOT/vendor_ramdisk_fragments"
-	$(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
+ifdef INTERNAL_VENDOR_RAMDISK_FRAGMENTS
+	echo "$(INTERNAL_VENDOR_RAMDISK_FRAGMENTS)" > "$(zip_root)/VENDOR_BOOT/vendor_ramdisk_fragments"
+	$(foreach vendor_ramdisk_fragment,$(INTERNAL_VENDOR_RAMDISK_FRAGMENTS), \
 	  mkdir -p $(zip_root)/VENDOR_BOOT/RAMDISK_FRAGMENTS/$(vendor_ramdisk_fragment); \
 	  echo "$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS)" > "$(zip_root)/VENDOR_BOOT/RAMDISK_FRAGMENTS/$(vendor_ramdisk_fragment)/mkbootimg_args"; \
 	  $(eval prebuilt_ramdisk := $(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).PREBUILT)) \
@@ -4899,7 +4921,7 @@ ifdef BOARD_VENDOR_RAMDISK_FRAGMENTS
 	      $(VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).STAGING_DIR), \
 	      $(zip_root)/VENDOR_BOOT/RAMDISK_FRAGMENTS/$(vendor_ramdisk_fragment)/RAMDISK); \
 	  ))
-endif # BOARD_VENDOR_RAMDISK_FRAGMENTS != ""
+endif # INTERNAL_VENDOR_RAMDISK_FRAGMENTS != ""
 endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET
 ifdef BUILDING_SYSTEM_IMAGE
 	@# Contents of the system image
@@ -5331,10 +5353,18 @@ ifeq (true,$(EMMA_INSTRUMENT))
 # Any dependencies are set up later in build/make/core/main.mk.
 
 JACOCO_REPORT_CLASSES_ALL := $(PRODUCT_OUT)/jacoco-report-classes-all.jar
+$(JACOCO_REPORT_CLASSES_ALL): PRIVATE_TARGET_JACOCO_DIR := $(call intermediates-dir-for,PACKAGING,jacoco)
+$(JACOCO_REPORT_CLASSES_ALL): PRIVATE_HOST_JACOCO_DIR := $(call intermediates-dir-for,PACKAGING,jacoco,HOST)
+$(JACOCO_REPORT_CLASSES_ALL): PRIVATE_TARGET_PROGUARD_USAGE_DIR := $(call intermediates-dir-for,PACKAGING,proguard_usage)
+$(JACOCO_REPORT_CLASSES_ALL): PRIVATE_HOST_PROGUARD_USAGE_DIR := $(call intermediates-dir-for,PACKAGING,proguard_usage,HOST)
 $(JACOCO_REPORT_CLASSES_ALL) :
 	@echo "Collecting uninstrumented classes"
-	find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" -o -name "proguard_usage.zip" 2>/dev/null | sort > $@.list
-	$(SOONG_ZIP) -o $@ -L 0 -C $(OUT_DIR) -P out -l $@.list
+	mkdir -p $(PRIVATE_TARGET_JACOCO_DIR) $(PRIVATE_HOST_JACOCO_DIR) $(PRIVATE_TARGET_PROGUARD_USAGE_DIR) $(PRIVATE_HOST_PROGUARD_USAGE_DIR)
+	$(SOONG_ZIP) -o $@ -L 0 \
+	  -C $(PRIVATE_TARGET_JACOCO_DIR) -P out/target/common/obj -D $(PRIVATE_TARGET_JACOCO_DIR) \
+	  -C $(PRIVATE_HOST_JACOCO_DIR) -P out/target/common/obj -D $(PRIVATE_HOST_JACOCO_DIR) \
+	  -C $(PRIVATE_TARGET_PROGUARD_USAGE_DIR) -P out/target/common/obj -D $(PRIVATE_TARGET_PROGUARD_USAGE_DIR) \
+	  -C $(PRIVATE_HOST_PROGUARD_USAGE_DIR) -P out/target/common/obj -D $(PRIVATE_HOST_PROGUARD_USAGE_DIR)
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
   $(JACOCO_REPORT_CLASSES_ALL): $(INTERNAL_ALLIMAGES_FILES)
@@ -5350,13 +5380,11 @@ PROGUARD_DICT_ZIP := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict-$(FILE_NAME_
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
 $(PROGUARD_DICT_ZIP): $(INTERNAL_ALLIMAGES_FILES) $(updater_dep)
 endif
-$(PROGUARD_DICT_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,proguard)/filelist
+$(PROGUARD_DICT_ZIP): PRIVATE_PACKAGING_DIR := $(call intermediates-dir-for,PACKAGING,proguard_dictionary)
 $(PROGUARD_DICT_ZIP): $(SOONG_ZIP)
 	@echo "Packaging Proguard obfuscation dictionary files."
-	mkdir -p $(dir $@) $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS $(dir $(PRIVATE_LIST_FILE))
-	find $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS -name proguard_dictionary | \
-	    sed -e 's/\(.*\)\/proguard_dictionary/\0\n\1\/classes.jar/' > $(PRIVATE_LIST_FILE)
-	$(SOONG_ZIP) --ignore_missing_files -d -o $@ -C $(OUT_DIR)/.. -l $(PRIVATE_LIST_FILE)
+	mkdir -p $(dir $@) $(PRIVATE_PACKAGING_DIR)
+	$(SOONG_ZIP) --ignore_missing_files -d -o $@ -C $(PRIVATE_PACKAGING_DIR) -P out/target/common/obj -D $(PRIVATE_PACKAGING_DIR)
 
 #------------------------------------------------------------------
 # A zip of Proguard usage files.
@@ -5377,11 +5405,12 @@ $(PROGUARD_USAGE_ZIP): \
     $(INSTALLED_ODM_DLKMIMAGE_TARGET) \
     $(updater_dep)
 endif
-$(PROGUARD_USAGE_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,proguard_usage)/filelist
+$(PROGUARD_USAGE_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,proguard_usage.zip)/filelist
+$(PROGUARD_USAGE_ZIP): PRIVATE_PACKAGING_DIR := $(call intermediates-dir-for,PACKAGING,proguard_usage)
 $(PROGUARD_USAGE_ZIP): $(MERGE_ZIPS)
 	@echo "Packaging Proguard usage files."
-	mkdir -p $(dir $@) $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS $(dir $(PRIVATE_LIST_FILE))
-	find $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS -name proguard_usage.zip > $(PRIVATE_LIST_FILE)
+	mkdir -p $(dir $@) $(PRIVATE_PACKAGING_DIR) $(dir $(PRIVATE_LIST_FILE))
+	find $(PRIVATE_PACKAGING_DIR) -name proguard_usage.zip > $(PRIVATE_LIST_FILE)
 	$(MERGE_ZIPS) $@ @$(PRIVATE_LIST_FILE)
 
 ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
