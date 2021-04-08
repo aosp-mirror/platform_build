@@ -72,6 +72,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "de64bd62_6630ad9c",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-08T21:19:07Z",
+      "side": 1,
+      "message": "Ack, that makes sense.\n\nInstead of relying on L228, can you add a line before L224 that explicitly checks that recovery cannot be in BOARD_VENDOR_RAMDISK_FRAGMENTS? This also gives the user a better error message.",
+      "parentUuid": "df188cb6_493c3d71",
+      "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "b9628af5_4462d107",
         "filename": "core/Makefile",
         "patchSetId": 3
@@ -142,6 +160,30 @@
       "side": 1,
       "message": "I plan to update SAC preview after this is sent. Or should I send the preview doc first?",
       "parentUuid": "95e83941_78ce56da",
+      "range": {
+        "startLine": 111,
+        "startChar": 4,
+        "endLine": 111,
+        "endChar": 49
+      },
+      "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f31c78a9_e4caf91d",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-08T21:19:07Z",
+      "side": 1,
+      "message": "It is okay to send later. Just keep that in mind",
+      "parentUuid": "1c9c548c_9e9d5232",
       "range": {
         "startLine": 111,
         "startChar": 4,
