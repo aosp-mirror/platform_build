@@ -90,6 +90,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "23eb646c_8562543d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-08T21:21:18Z",
+      "side": 1,
+      "message": "Something like:\n\n  $(if $(filter recovery,$(BOARD_VENDOR_RAMDISK_FRAGMENTS)),\n    $(error BOARD_VENDOR_RAMDISK_FRAGMENTS must not contain recovery if BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT is set))",
+      "parentUuid": "de64bd62_6630ad9c",
+      "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "b9628af5_4462d107",
         "filename": "core/Makefile",
         "patchSetId": 3
