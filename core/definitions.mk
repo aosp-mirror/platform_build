@@ -745,6 +745,42 @@ $(strip \
 endef
 
 ###########################################################
+## The packaging directory for a module.  Similar to intermedates, but
+## in a location that will be wiped by an m installclean.
+###########################################################
+
+# $(1): subdir in PACKAGING
+# $(2): target class, like "APPS"
+# $(3): target name, like "NotePad"
+# $(4): { HOST, HOST_CROSS, <empty (TARGET)>, <other non-empty (HOST)> }
+define packaging-dir-for
+$(strip \
+    $(eval _pdfClass := $(strip $(2))) \
+    $(if $(_pdfClass),, \
+        $(error $(LOCAL_PATH): Class not defined in call to generated-sources-dir-for)) \
+    $(eval _pdfName := $(strip $(3))) \
+    $(if $(_pdfName),, \
+        $(error $(LOCAL_PATH): Name not defined in call to generated-sources-dir-for)) \
+    $(call intermediates-dir-for,PACKAGING,$(1),$(4))/$(_pdfClass)/$(_pdfName)_intermediates \
+)
+endef
+
+# Uses LOCAL_MODULE_CLASS, LOCAL_MODULE, and LOCAL_IS_HOST_MODULE
+# to determine the packaging directory.
+#
+# $(1): subdir in PACKAGING
+define local-packaging-dir
+$(strip \
+    $(if $(strip $(LOCAL_MODULE_CLASS)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-generated-sources-dir)) \
+    $(if $(strip $(LOCAL_MODULE)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-generated-sources-dir)) \
+    $(call packaging-dir-for,$(1),$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST)) \
+)
+endef
+
+
+###########################################################
 ## Convert a list of short module names (e.g., "framework", "Browser")
 ## into the list of files that are built for those modules.
 ## NOTE: this won't return reliable results until after all
