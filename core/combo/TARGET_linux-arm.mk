@@ -64,7 +64,6 @@ ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
 endif
 
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
-include $(BUILD_SYSTEM)/combo/fdo.mk
 
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
