@@ -122,7 +122,7 @@ endif
 	        echo "$$(line)" >> $$@;\
 	    )\
 	)
-	$(hide) $(POST_PROCESS_PROPS) $$(_option) $$@ $(5)
+	$(hide) $(POST_PROCESS_PROPS) $$(_option) --sdk-version $(PLATFORM_SDK_VERSION) $$@ $(5)
 	$(hide) $(foreach file,$(strip $(6)),\
 	    if [ -f "$(file)" ]; then\
 	        cat $(file) >> $$@;\
