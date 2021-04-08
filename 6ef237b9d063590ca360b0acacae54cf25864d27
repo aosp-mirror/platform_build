@@ -156,6 +156,24 @@
       "parentUuid": "cdfa6495_08254d81",
       "revId": "6ef237b9d063590ca360b0acacae54cf25864d27",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f74a6a3d_143b7464",
+        "filename": "target/board/generic_arm64/device.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-04-08T04:21:46Z",
+      "side": 1,
+      "message": ".",
+      "parentUuid": "e5c01c7e_64d4190e",
+      "revId": "6ef237b9d063590ca360b0acacae54cf25864d27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
