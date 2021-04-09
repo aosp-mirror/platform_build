@@ -290,6 +290,13 @@ ADDITIONAL_VENDOR_PROPERTIES += \
     ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
 endif
 
+ifneq ($(TARGET_BUILD_VARIANT),user)
+  ifdef PRODUCT_SET_DEBUGFS_RESTRICTIONS
+    ADDITIONAL_VENDOR_PROPERTIES += \
+      ro.product.enforce_debugfs_restrictions=$(PRODUCT_SET_DEBUGFS_RESTRICTIONS)
+  endif
+endif
+
 # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
 # This must not be defined for the non-GRF devices.
 ifdef BOARD_SHIPPING_API_LEVEL
