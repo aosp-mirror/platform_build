@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2faeb3b9_63802fb1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-04-09T20:39:55Z",
+      "side": 1,
+      "message": "looks like there is a merge conflict, and presubmit is failing when executing this line:\n```\n  else:\n    shutil.copy(temp_care_map, output_file)\n```\n\nLet\u0027s split this change into two cls, so it gives us some flexibility to revert one of them.  1. move the AddCareMap to common.py 2. call it in merge_target_files\n",
+      "revId": "d9dd417cecb45cc1017bf73e7e657c182ee207a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
