@@ -470,6 +470,17 @@ endif
 
 ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
   $(built_dex_intermediate): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary) $(proguard_configuration)
+
+  # Make a rule to copy the proguard_dictionary to a packaging directory.
+  $(eval $(call copy-one-file,$(proguard_dictionary),\
+    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary))
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary)
+
+  $(eval $(call copy-one-file,$(full_classes_pre_proguard_jar),\
+    $(call local-packaging-dir,proguard_dictionary)/classes.jar))
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(call local-packaging-dir,proguard_dictionary)/classes.jar)
 endif
 
 endif # LOCAL_PROGUARD_ENABLED defined
