@@ -56,6 +56,11 @@ PRODUCT_COPY_FILES += \
     kernel/prebuilts/mainline/arm64/kernel-mainline-gz-allsyms:kernel-mainline-gz \
     kernel/prebuilts/mainline/arm64/kernel-mainline-lz4-allsyms:kernel-mainline-lz4 \
 
+$(call dist-for-goals, dist_files, kernel/prebuilts/4.19/arm64/prebuilt-info.txt:kernel/4.19/prebuilt-info.txt)
+$(call dist-for-goals, dist_files, kernel/prebuilts/5.4/arm64/prebuilt-info.txt:kernel/5.4/prebuilt-info.txt)
+$(call dist-for-goals, dist_files, kernel/prebuilts/5.10/arm64/prebuilt-info.txt:kernel/5.10/prebuilt-info.txt)
+$(call dist-for-goals, dist_files, kernel/prebuilts/mainline/arm64/prebuilt-info.txt:kernel/mainline/prebuilt-info.txt)
+
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 PRODUCT_COPY_FILES += \
     kernel/prebuilts/5.4/arm64/kernel-5.4:kernel-5.4-allsyms \
