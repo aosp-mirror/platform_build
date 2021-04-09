@@ -128,9 +128,11 @@ ifdef LOCAL_SOONG_DEX_JAR
 
     $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
     $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(common_javalib.jar)))
-    $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar)))
-    ifneq ($(TURBINE_ENABLED),false)
-      $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_header_jar)))
+    ifdef LOCAL_SOONG_CLASSES_JAR
+      $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar)))
+      ifneq ($(TURBINE_ENABLED),false)
+        $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_header_jar)))
+      endif
     endif
   endif
 
@@ -161,8 +163,10 @@ ifdef LOCAL_SOONG_DEXPREOPT_CONFIG
   $(eval $(call copy-one-file,$(LOCAL_SOONG_DEXPREOPT_CONFIG), $(call local-intermediates-dir,)/dexpreopt.config))
 endif
 
+ifdef LOCAL_SOONG_CLASSES_JAR
 javac-check : $(full_classes_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_jar)
+endif
 .PHONY: javac-check-$(LOCAL_MODULE)
 
 ifndef LOCAL_IS_HOST_MODULE
