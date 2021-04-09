@@ -16,6 +16,24 @@
       "message": "looks like there is a merge conflict, and presubmit is failing when executing this line:\n```\n  else:\n    shutil.copy(temp_care_map, output_file)\n```\n\nLet\u0027s split this change into two cls, so it gives us some flexibility to revert one of them.  1. move the AddCareMap to common.py 2. call it in merge_target_files\n",
       "revId": "d9dd417cecb45cc1017bf73e7e657c182ee207a4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d48c577_9a005640",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-04-09T22:36:53Z",
+      "side": 1,
+      "message": "Done. I also reverted some of the autoformatting done in this change previously to hopefully prevent too many more merge conflicts.",
+      "parentUuid": "2faeb3b9_63802fb1",
+      "revId": "d9dd417cecb45cc1017bf73e7e657c182ee207a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
