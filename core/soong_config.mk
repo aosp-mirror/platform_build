@@ -256,6 +256,8 @@ $(call add_json_bool, BuildBrokenEnforceSyspropOwner,     $(filter true,$(BUILD_
 $(call add_json_bool, BuildBrokenTrebleSyspropNeverallow, $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
 $(call add_json_bool, BuildBrokenVendorPropertyNamespace, $(filter true,$(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE)))
 
+$(call add_json_bool, BuildDebugfsRestrictionsEnabled, $(filter true,$(PRODUCT_SET_DEBUGFS_RESTRICTIONS)))
+
 $(call add_json_bool, RequiresInsecureExecmemForSwiftshader, $(filter true,$(PRODUCT_REQUIRES_INSECURE_EXECMEM_FOR_SWIFTSHADER)))
 
 $(call add_json_bool, SelinuxIgnoreNeverallows, $(filter true,$(SELINUX_IGNORE_NEVERALLOWS)))
