@@ -655,6 +655,13 @@ class RamdiskFormat(object):
   LZ4 = 1
   GZ = 2
 
+def _GetRamdiskFormat(info_dict):
+  if info_dict.get('lz4_ramdisks') == 'true':
+    ramdisk_format = RamdiskFormat.LZ4
+  else:
+    ramdisk_format = RamdiskFormat.GZ
+  return ramdisk_format
+
 def LoadInfoDict(input_file, repacking=False):
   """Loads the key/value pairs from the given input target_files.
 
@@ -756,10 +763,7 @@ def LoadInfoDict(input_file, repacking=False):
 
   # Load recovery fstab if applicable.
   d["fstab"] = _FindAndLoadRecoveryFstab(d, input_file, read_helper)
-  if d.get('lz4_ramdisks') == 'true':
-    ramdisk_format = RamdiskFormat.LZ4
-  else:
-    ramdisk_format = RamdiskFormat.GZ
+  ramdisk_format = _GetRamdiskFormat(d)
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
@@ -1446,7 +1450,8 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
     AddAftlInclusionProof(image_path)
 
 
-def _MakeRamdisk(sourcedir, fs_config_file=None, lz4_ramdisks=False):
+def _MakeRamdisk(sourcedir, fs_config_file=None,
+                 ramdisk_format=RamdiskFormat.GZ):
   ramdisk_img = tempfile.NamedTemporaryFile()
 
   if fs_config_file is not None and os.access(fs_config_file, os.F_OK):
@@ -1455,11 +1460,13 @@ def _MakeRamdisk(sourcedir, fs_config_file=None, lz4_ramdisks=False):
   else:
     cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
   p1 = Run(cmd, stdout=subprocess.PIPE)
-  if lz4_ramdisks:
+  if ramdisk_format == RamdiskFormat.LZ4:
     p2 = Run(["lz4", "-l", "-12", "--favor-decSpeed"], stdin=p1.stdout,
              stdout=ramdisk_img.file.fileno())
-  else:
+  elif ramdisk_format == RamdiskFormat.GZ:
     p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
+  else:
+    raise ValueError("Only support lz4 or minigzip ramdisk format.")
 
   p2.wait()
   p1.wait()
@@ -1506,8 +1513,9 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   img = tempfile.NamedTemporaryFile()
 
   if has_ramdisk:
-    use_lz4 = info_dict.get("lz4_ramdisks") == 'true'
-    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file, lz4_ramdisks=use_lz4)
+    ramdisk_format = _GetRamdiskFormat(info_dict)
+    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file,
+                               ramdisk_format=ramdisk_format)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
@@ -1695,8 +1703,8 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
 
   img = tempfile.NamedTemporaryFile()
 
-  use_lz4 = info_dict.get("lz4_ramdisks") == 'true'
-  ramdisk_img = _MakeRamdisk(sourcedir, lz4_ramdisks=use_lz4)
+  ramdisk_format = _GetRamdiskFormat(info_dict)
+  ramdisk_img = _MakeRamdisk(sourcedir, ramdisk_format=ramdisk_format)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
@@ -1752,7 +1760,8 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
         ramdisk_fragment_pathname = fn
       else:
         ramdisk_fragment_root = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment)
-        ramdisk_fragment_img = _MakeRamdisk(ramdisk_fragment_root, lz4_ramdisks=use_lz4)
+        ramdisk_fragment_img = _MakeRamdisk(ramdisk_fragment_root,
+                                            ramdisk_format=ramdisk_format)
         ramdisk_fragment_imgs.append(ramdisk_fragment_img)
         ramdisk_fragment_pathname = ramdisk_fragment_img.name
       cmd.extend(["--vendor_ramdisk_fragment", ramdisk_fragment_pathname])
