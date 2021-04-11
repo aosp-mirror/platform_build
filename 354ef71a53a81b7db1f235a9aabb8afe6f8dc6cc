@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e3de31e_02c0ea24",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-04-11T07:27:59Z",
+      "side": 1,
+      "message": "Can you check the care map for a partition exactly equals the old one before merge?",
+      "range": {
+        "startLine": 773,
+        "startChar": 2,
+        "endLine": 773,
+        "endChar": 20
+      },
+      "revId": "354ef71a53a81b7db1f235a9aabb8afe6f8dc6cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
