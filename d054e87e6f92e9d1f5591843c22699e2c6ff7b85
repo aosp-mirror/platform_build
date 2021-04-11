@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c2a6122b_7b66036b",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 3876,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-04-11T07:17:53Z",
+      "side": 1,
+      "message": "I honestly forgot what the old code was doing... let\u0027s cleanup this logic a bit, consider a new helper function if necessary\n\nif not output_file:\n  return\nif not isinstance(output_file, zipfile.ZipFile)\n  # check output_file is str? (path) \n  shutil.copy()\n  return\n# output_file is zip\nif care_map_path in output_file.namelist():\n  # initialize OPTIONS.replace_updated_files_list if none\n  OPTIONS.replace_updated_files_list.append() \n\n  # The old code does shutil.copy(), seems unnecessary.\nelse:  \n   ZipWrite(output_file, temp_care_map, arcname\u003dcare_map_path)",
+      "range": {
+        "startLine": 3868,
+        "startChar": 0,
+        "endLine": 3876,
+        "endChar": 47
+      },
+      "revId": "d054e87e6f92e9d1f5591843c22699e2c6ff7b85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
