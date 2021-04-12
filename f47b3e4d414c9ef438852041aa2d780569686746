@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2170eb7_510d3a57",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-12T10:50:21Z",
+      "side": 1,
+      "message": "Btw, there\u0027s a Tapas function in Soong too, but I didn\u0027t see it being used anywhere so I didn\u0027t do anything there. https://cs.android.com/android/platform/superproject/+/master:build/soong/ui/build/config.go;l\u003d671;drc\u003dd1e3f1ff080a23cdd99653d2509a581e983dc3d3",
+      "revId": "f47b3e4d414c9ef438852041aa2d780569686746",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
