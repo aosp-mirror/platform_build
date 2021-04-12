@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "90720d9d_390da318",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-04-12T06:46:52Z",
+      "side": 1,
+      "message": "Hi Colin, PTAL owner-reviewer this change",
+      "revId": "12f92447a5d5afc9d4fe0e016ee9aec05c1dbba9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
