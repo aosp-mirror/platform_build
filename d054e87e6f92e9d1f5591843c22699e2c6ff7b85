@@ -22,6 +22,30 @@
       },
       "revId": "d054e87e6f92e9d1f5591843c22699e2c6ff7b85",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c35c426_3497bc0e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 3876,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-04-12T21:19:43Z",
+      "side": 1,
+      "message": "Done. I think the shutil.copy from temp_care_map to OPTIONS.input_tmp was needed for the `replace_updated_files_list` which grabs from OPTIONS.input_tmp here: https://cs.android.com/android/platform/superproject/+/master:build/make/tools/releasetools/add_img_to_target_files.py;drc\u003d2d7989a6355612eceabf1a714814690bcfac5068;l\u003d766",
+      "parentUuid": "c2a6122b_7b66036b",
+      "range": {
+        "startLine": 3868,
+        "startChar": 0,
+        "endLine": 3876,
+        "endChar": 47
+      },
+      "revId": "d054e87e6f92e9d1f5591843c22699e2c6ff7b85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
