@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "c87eb6be_8aef1f9d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-12T11:08:32Z",
+      "side": 1,
+      "message": "It seems to be using other products?",
+      "range": {
+        "startLine": 9,
+        "startChar": 16,
+        "endLine": 9,
+        "endChar": 34
+      },
+      "revId": "f47b3e4d414c9ef438852041aa2d780569686746",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "e2170eb7_510d3a57",
@@ -14,6 +37,69 @@
       "writtenOn": "2021-04-12T10:50:21Z",
       "side": 1,
       "message": "Btw, there\u0027s a Tapas function in Soong too, but I didn\u0027t see it being used anywhere so I didn\u0027t do anything there. https://cs.android.com/android/platform/superproject/+/master:build/soong/ui/build/config.go;l\u003d671;drc\u003dd1e3f1ff080a23cdd99653d2509a581e983dc3d3",
+      "revId": "f47b3e4d414c9ef438852041aa2d780569686746",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "022ce2ca_2c6171ff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-12T11:08:32Z",
+      "side": 1,
+      "message": "LGTM, leaving for Colin to approve if there are more subtleties",
+      "revId": "f47b3e4d414c9ef438852041aa2d780569686746",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4f23eb5_a9f7c47f",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 798,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-12T11:08:32Z",
+      "side": 1,
+      "message": "APEXes are always defined in soong. LOCAL_PACKAGE_NAME doesn\u0027t exist",
+      "range": {
+        "startLine": 798,
+        "startChar": 50,
+        "endLine": 798,
+        "endChar": 68
+      },
+      "revId": "f47b3e4d414c9ef438852041aa2d780569686746",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31d9e9bc_aa25b08a",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 804,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-12T11:08:32Z",
+      "side": 1,
+      "message": "what does xargs achieve here? Does it put all the args back on one line?  Seems fragile if so:\n\n\"The command line for command is built up until it reaches a system-defined limit\"\n\nbut maybe good enough..",
+      "range": {
+        "startLine": 804,
+        "startChar": 106,
+        "endLine": 804,
+        "endChar": 111
+      },
       "revId": "f47b3e4d414c9ef438852041aa2d780569686746",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
