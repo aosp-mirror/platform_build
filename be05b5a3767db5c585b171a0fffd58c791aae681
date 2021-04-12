@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28f73471_c86f313f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1576409
+      },
+      "writtenOn": "2021-04-12T07:50:45Z",
+      "side": 1,
+      "message": "Forrest build on https://android-build.googleplex.com/builds/forrest/run/L65900000856549940 can fix build breakage on git_master/blueline-userdebug.\nWe cannot phase in this solution since it potentially break b/184989544#comment3. Wait for the final solution from ioffe@.\n",
+      "revId": "be05b5a3767db5c585b171a0fffd58c791aae681",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
