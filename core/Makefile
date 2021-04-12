@@ -236,6 +236,10 @@ $(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
 )
 INTERNAL_VENDOR_RAMDISK_FRAGMENTS += $(BOARD_VENDOR_RAMDISK_FRAGMENTS)
 
+# Strip the list in case of any whitespace.
+INTERNAL_VENDOR_RAMDISK_FRAGMENTS := \
+  $(strip $(INTERNAL_VENDOR_RAMDISK_FRAGMENTS))
+
 # Assign --ramdisk_name for each vendor ramdisk fragment.
 $(foreach vendor_ramdisk_fragment,$(INTERNAL_VENDOR_RAMDISK_FRAGMENTS), \
   $(if $(filter --ramdisk_name,$(BOARD_VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).MKBOOTIMG_ARGS)), \
