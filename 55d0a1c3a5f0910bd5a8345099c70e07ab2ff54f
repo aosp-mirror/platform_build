@@ -16,6 +16,24 @@
       "message": "should this include NATIVE_TESTS, too?\n\nIt appears that we are missing the logic to auto-enable memtag in native tests on the make side.",
       "revId": "55d0a1c3a5f0910bd5a8345099c70e07ab2ff54f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "45cbaa03_d5e2f5a3",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1067098
+      },
+      "writtenOn": "2021-04-12T19:06:23Z",
+      "side": 1,
+      "message": "\u003e should this include NATIVE_TESTS, too?\n\nDone\n\n\u003e It appears that we are missing the logic to auto-enable memtag in native tests on the make side.\n\nYeah, looks like it. Let\u0027s deal with that separately though.",
+      "parentUuid": "f1691b19_da205c95",
+      "revId": "55d0a1c3a5f0910bd5a8345099c70e07ab2ff54f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
