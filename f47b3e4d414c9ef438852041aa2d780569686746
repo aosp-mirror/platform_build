@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "217307e9_535f0dbf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-12T13:22:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c87eb6be_8aef1f9d",
+      "range": {
+        "startLine": 9,
+        "startChar": 16,
+        "endLine": 9,
+        "endChar": 34
+      },
+      "revId": "f47b3e4d414c9ef438852041aa2d780569686746",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "e2170eb7_510d3a57",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 4
@@ -81,6 +105,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe2c8b43_9fbd32d7",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 798,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-12T13:22:25Z",
+      "side": 1,
+      "message": "Thanks, copy-paste leftover.",
+      "parentUuid": "a4f23eb5_a9f7c47f",
+      "range": {
+        "startLine": 798,
+        "startChar": 50,
+        "endLine": 798,
+        "endChar": 68
+      },
+      "revId": "f47b3e4d414c9ef438852041aa2d780569686746",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "31d9e9bc_aa25b08a",
@@ -94,6 +142,30 @@
       "writtenOn": "2021-04-12T11:08:32Z",
       "side": 1,
       "message": "what does xargs achieve here? Does it put all the args back on one line?  Seems fragile if so:\n\n\"The command line for command is built up until it reaches a system-defined limit\"\n\nbut maybe good enough..",
+      "range": {
+        "startLine": 804,
+        "startChar": 106,
+        "endLine": 804,
+        "endChar": 111
+      },
+      "revId": "f47b3e4d414c9ef438852041aa2d780569686746",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3ad00bd_c67b08d5",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 804,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-12T13:22:25Z",
+      "side": 1,
+      "message": "Yes, that\u0027s my impression too. I copied this from the tapas command, so if it needs to be addressed it\u0027s better done separately.",
+      "parentUuid": "31d9e9bc_aa25b08a",
       "range": {
         "startLine": 804,
         "startChar": 106,
