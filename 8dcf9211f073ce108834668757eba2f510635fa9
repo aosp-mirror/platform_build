@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "966a9cdf_9b44f898",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-13T19:42:40Z",
+      "side": 1,
+      "message": "I\u0027d suggest setting the author to Mateusz",
+      "revId": "8dcf9211f073ce108834668757eba2f510635fa9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "fc51fcc3_d1a9f990",
