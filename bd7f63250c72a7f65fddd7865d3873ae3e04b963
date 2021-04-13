@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a216a770_c3838e2c",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-04-13T18:20:32Z",
+      "side": 1,
+      "message": "let\u0027s make a new variable to make it more readable.",
+      "range": {
+        "startLine": 947,
+        "startChar": 23,
+        "endLine": 948,
+        "endChar": 78
+      },
+      "revId": "bd7f63250c72a7f65fddd7865d3873ae3e04b963",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
