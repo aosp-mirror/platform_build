@@ -16,6 +16,24 @@
       "message": "Just a reminder, please update the preview site of https://source.android.com/devices/bootloader/boot-image-header",
       "revId": "b728919895b05eab0b83fddc8375b65ee2d365fa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2d890a4_204daec3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-13T08:34:05Z",
+      "side": 1,
+      "message": "Thanks for the reminder, will do: b/185204506.",
+      "parentUuid": "3981cc5b_3f6037cb",
+      "revId": "b728919895b05eab0b83fddc8375b65ee2d365fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
