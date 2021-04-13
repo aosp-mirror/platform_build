@@ -22,6 +22,30 @@
       },
       "revId": "354ef71a53a81b7db1f235a9aabb8afe6f8dc6cc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8adc4d5_efb54510",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-04-13T23:50:19Z",
+      "side": 1,
+      "message": "Done, verified for a merged build https://android-build.googleplex.com/builds/forrest/run/L47700000857876575 that its care_map.pb equals a combination of its two input builds\u0027 care_map.pb files, for each partition that is used from the given input build.",
+      "parentUuid": "3e3de31e_02c0ea24",
+      "range": {
+        "startLine": 773,
+        "startChar": 2,
+        "endLine": 773,
+        "endChar": 20
+      },
+      "revId": "354ef71a53a81b7db1f235a9aabb8afe6f8dc6cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
