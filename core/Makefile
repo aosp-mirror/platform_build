@@ -353,14 +353,34 @@ $(1)/$(DEPMOD_STAGING_SUBDIR)/$(4): $(2)
 	@echo '$$(strip $$(notdir $$(PRIVATE_LOAD_MODULES)))' | tr ' ' '\n' > $$(@)
 endef
 
+# $(1): source options file
+# $(2): destination pathname
+# Returns a build rule that checks the syntax of and installs a kernel modules
+# options file. Strip and squeeze any extra space and blank lines.
+# For use via $(eval).
+define build-image-kernel-modules-options-file
+$(2): $(1)
+	@echo "libmodprobe options $$(@)"
+	$(hide) mkdir -p "$$(dir $$@)"
+	$(hide) rm -f "$$@"
+	$(hide) awk <"$$<" >"$$@" \
+	  '/^#/ { print; next } \
+	   NF == 0 { next } \
+	   NF < 2 || $$$$1 != "options" \
+	     { print "Invalid options line " FNR ": " $$$$0 >"/dev/stderr"; \
+	       exit_status = 1; next } \
+	   { $$$$1 = $$$$1; print } \
+	   END { exit exit_status }'
+endef
+
 # $(1): source blocklist file
 # $(2): destination pathname
 # Returns a build rule that checks the syntax of and installs a kernel modules
-# blocklist file. Strip and squeeze any extra space in the blocklist.
+# blocklist file. Strip and squeeze any extra space and blank lines.
 # For use via $(eval).
 define build-image-kernel-modules-blocklist-file
 $(2): $(1)
-	@echo "modprobe blocklist $$(@)"
+	@echo "libmodprobe blocklist $$(@)"
 	$(hide) mkdir -p "$$(dir $$@)"
 	$(hide) rm -f "$$@"
 	$(hide) awk <"$$<" >"$$@" \
@@ -390,11 +410,19 @@ $(if $(strip $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver))$(BOARD_$(1)_KERNEL_MODU
   $(if $(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),,\
     $(eval BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver) := $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)))) \
   $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver)))) \
+$(if $(_kver), \
+  $(eval _dir := $(_kver)/), \
+  $(eval _dir :=)) \
+$(if $(BOARD_$(1)_KERNEL_MODULES_OPTIONS_FILE$(_sep)$(_kver)), \
+  $(eval $(call build-image-kernel-modules-options-file, \
+    $(BOARD_$(1)_KERNEL_MODULES_OPTIONS_FILE$(_sep)$(_kver)), \
+    $(2)/lib/modules/$(_dir)modules.options)) \
+  $(2)/lib/modules/$(_dir)modules.options) \
 $(if $(BOARD_$(1)_KERNEL_MODULES_BLOCKLIST_FILE$(_sep)$(_kver)), \
   $(eval $(call build-image-kernel-modules-blocklist-file, \
     $(BOARD_$(1)_KERNEL_MODULES_BLOCKLIST_FILE$(_sep)$(_kver)), \
-    $(2)/lib/modules/modules.blocklist)) \
-  $(2)/lib/modules/modules.blocklist)
+    $(2)/lib/modules/$(_dir)modules.blocklist)) \
+  $(2)/lib/modules/$(_dir)modules.blocklist)
 endef
 
 # $(1): kernel module directory name (top is an out of band value for no directory)
