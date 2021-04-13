@@ -139,7 +139,7 @@ ifeq ($(filter memtag_heap, $(my_sanitize)),)
     ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_sync_include_paths)),\
            $(filter $(dir)%,$(LOCAL_PATH)))),)
       my_sanitize := memtag_heap $(my_sanitize)
-      my_sanitize_diag := memtag_heap $(my_sanitize)
+      my_sanitize_diag := memtag_heap $(my_sanitize_diag)
     else ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_async_include_paths)),\
            $(filter $(dir)%,$(LOCAL_PATH)))),)
       my_sanitize := memtag_heap $(my_sanitize)
