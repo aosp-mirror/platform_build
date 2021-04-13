@@ -37,6 +37,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8ee4e90e_7fc4368a",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 1246512
+      },
+      "writtenOn": "2021-04-13T09:22:51Z",
+      "side": 1,
+      "message": "here output_zip is set to None",
+      "range": {
+        "startLine": 748,
+        "startChar": 2,
+        "endLine": 749,
+        "endChar": 21
+      },
+      "revId": "0cd5414c69ae32c2b3759a35839033b0d0409e28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9568f3fd_2b271966",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 7
