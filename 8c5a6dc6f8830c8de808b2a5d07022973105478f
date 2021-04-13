@@ -228,6 +228,30 @@
       },
       "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa10a50b_73d78931",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-04-13T04:56:48Z",
+      "side": 1,
+      "message": "Please re-review this one last time, and the doc update is ready for review cl/367953647",
+      "parentUuid": "f31c78a9_e4caf91d",
+      "range": {
+        "startLine": 111,
+        "startChar": 4,
+        "endLine": 111,
+        "endChar": 49
+      },
+      "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
