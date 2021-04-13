@@ -16,6 +16,24 @@
       "message": "Why this change?",
       "revId": "6ef5779c988af610e5ff18866479e5a8ff296d9d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "43a8b35f_74e429fe",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-04-13T13:43:23Z",
+      "side": 1,
+      "message": "Because add_json_bool sets true if the argument is non-empty (so, false becomes true), and that now LOCAL_ENFORCE_USES_LIBRARIES is set to false in more cases the error in the code started to show.",
+      "parentUuid": "3cfad603_3d4c2959",
+      "revId": "6ef5779c988af610e5ff18866479e5a8ff296d9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
