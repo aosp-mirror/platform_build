@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d1ff646_42e3712a",
+        "filename": "banchanHelp.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-13T01:31:17Z",
+      "side": 1,
+      "message": "There\u0027s already tapasHelp.sh, so I\u0027m trying to be consistent.",
+      "parentUuid": "3ea2ebb6_04f3f141",
+      "revId": "e73f3435493d55eab7942a856bf8852fcfd10249",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0cda5c5a_da70283b",
@@ -41,6 +59,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9e1df3f_0e38fd27",
+        "filename": "banchanHelp.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-13T01:31:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0cda5c5a_da70283b",
+      "range": {
+        "startLine": 12,
+        "startChar": 1,
+        "endLine": 12,
+        "endChar": 6
+      },
+      "revId": "e73f3435493d55eab7942a856bf8852fcfd10249",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b950a3d8_eca51695",
@@ -54,6 +96,30 @@
       "writtenOn": "2021-04-13T00:00:47Z",
       "side": 1,
       "message": "This seems dangerous, as we could end up with a mixture of developers using tapas and banchan.  Can we somehow make it an error to use tapas to build a mainline module?",
+      "range": {
+        "startLine": 840,
+        "startChar": 30,
+        "endLine": 840,
+        "endChar": 57
+      },
+      "revId": "e73f3435493d55eab7942a856bf8852fcfd10249",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7227a53c_7a2969e7",
+        "filename": "envsetup.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 840,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-13T01:31:17Z",
+      "side": 1,
+      "message": "It\u0027s similar to the issue that it\u0027s possible to lunch the module_* products and build a system image with them. (I vaguely remember a discussion with Anton about that a while ago, but I can\u0027t find a ticket about it.)\n\nWhat we\u0027d like is a way to limit certain products to be used for certain kinds of builds, and it should work for both these cases.\n\nAnother side of it is that we don\u0027t really know what the stuff on TARGET_BUILD_APPS is. We\u0027d have to introduce something like LOCAL_MODULE_TYPE Android.mk variable that we set either \"apex\" or \"app\" for each make module (much like LOCAL_MODULE_CLASS), and then check it for each TARGET_BUILD_APPS entry at the end of the kati stage. But that wouldn\u0027t give an error when tapas/banchan runs.",
+      "parentUuid": "b950a3d8_eca51695",
       "range": {
         "startLine": 840,
         "startChar": 30,
