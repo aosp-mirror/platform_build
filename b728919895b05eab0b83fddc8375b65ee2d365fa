@@ -34,6 +34,23 @@
       "parentUuid": "3981cc5b_3f6037cb",
       "revId": "b728919895b05eab0b83fddc8375b65ee2d365fa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c835afaf_7e491058",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-13T17:17:41Z",
+      "side": 1,
+      "message": "It seems strange to use a key in external/avb, should it use a key somewhere in build/make instead?",
+      "revId": "b728919895b05eab0b83fddc8375b65ee2d365fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
