@@ -36,6 +36,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d850f93_4567a3e5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-13T19:54:31Z",
+      "side": 1,
+      "message": "git commit --amend --author \"Mateusz Zięba \u003cmateuszz@google.com\u003e\"",
+      "parentUuid": "181d4403_c5276e98",
+      "revId": "8dcf9211f073ce108834668757eba2f510635fa9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "fc51fcc3_d1a9f990",
