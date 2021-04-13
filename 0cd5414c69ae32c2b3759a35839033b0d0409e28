@@ -82,6 +82,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "66863098_f24ebe77",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-04-13T17:42:51Z",
+      "side": 1,
+      "message": "Right, Håkan\u0027s comment was from before my latest patchset. I\u0027ve updated after their comment to pass the string if None. Thank you both!",
+      "parentUuid": "9239a867_09dd0a2b",
+      "range": {
+        "startLine": 748,
+        "startChar": 2,
+        "endLine": 749,
+        "endChar": 21
+      },
+      "revId": "0cd5414c69ae32c2b3759a35839033b0d0409e28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9568f3fd_2b271966",
@@ -99,6 +123,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7596ba8_e23ad9ad",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 3809,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-04-13T17:42:51Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9568f3fd_2b271966",
+      "revId": "0cd5414c69ae32c2b3759a35839033b0d0409e28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6b2dbdac_e8ded279",
@@ -112,6 +154,30 @@
       "writtenOn": "2021-04-13T09:08:57Z",
       "side": 1,
       "message": "If output_file is None here, shutil.copy will be executed and an exception will be raised.",
+      "range": {
+        "startLine": 3867,
+        "startChar": 1,
+        "endLine": 3870,
+        "endChar": 25
+      },
+      "revId": "0cd5414c69ae32c2b3759a35839033b0d0409e28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b394bfb_d93f23f3",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 3870,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-04-13T17:42:51Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6b2dbdac_e8ded279",
       "range": {
         "startLine": 3867,
         "startChar": 1,
