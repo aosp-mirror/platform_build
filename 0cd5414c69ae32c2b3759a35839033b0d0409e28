@@ -60,6 +60,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9239a867_09dd0a2b",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-04-13T17:30:15Z",
+      "side": 1,
+      "message": "But in L947 we pass a string if output_zip is None, so AddCareMapForAbOta shouldn\u0027t see a None input parameter.",
+      "parentUuid": "8ee4e90e_7fc4368a",
+      "range": {
+        "startLine": 748,
+        "startChar": 2,
+        "endLine": 749,
+        "endChar": 21
+      },
+      "revId": "0cd5414c69ae32c2b3759a35839033b0d0409e28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9568f3fd_2b271966",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 7
