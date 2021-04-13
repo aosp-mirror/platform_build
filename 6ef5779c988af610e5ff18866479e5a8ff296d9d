@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3cfad603_3d4c2959",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2021-04-13T13:32:43Z",
+      "side": 1,
+      "message": "Why this change?",
+      "revId": "6ef5779c988af610e5ff18866479e5a8ff296d9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
