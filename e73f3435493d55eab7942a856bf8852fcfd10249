@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ea2ebb6_04f3f141",
+        "filename": "banchanHelp.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-13T00:00:47Z",
+      "side": 1,
+      "message": "nit: maybe banchan_help.sh?",
+      "revId": "e73f3435493d55eab7942a856bf8852fcfd10249",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0cda5c5a_da70283b",
+        "filename": "banchanHelp.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-13T00:00:47Z",
+      "side": 1,
+      "message": "Maybe mention how this is different from tapas?",
+      "range": {
+        "startLine": 12,
+        "startChar": 1,
+        "endLine": 12,
+        "endChar": 6
+      },
+      "revId": "e73f3435493d55eab7942a856bf8852fcfd10249",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b950a3d8_eca51695",
+        "filename": "envsetup.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 840,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-13T00:00:47Z",
+      "side": 1,
+      "message": "This seems dangerous, as we could end up with a mixture of developers using tapas and banchan.  Can we somehow make it an error to use tapas to build a mainline module?",
+      "range": {
+        "startLine": 840,
+        "startChar": 30,
+        "endLine": 840,
+        "endChar": 57
+      },
+      "revId": "e73f3435493d55eab7942a856bf8852fcfd10249",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
