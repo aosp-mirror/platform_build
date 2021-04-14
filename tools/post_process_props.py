@@ -44,14 +44,12 @@ def mangle_build_prop(prop_list):
   if not prop_list.get_value("persist.sys.usb.config"):
     prop_list.put("persist.sys.usb.config", "none")
 
-def validate_and_add_grf_props(prop_list, sdk_version):
+def validate_grf_props(prop_list, sdk_version):
   """Validate GRF properties if exist.
 
   If ro.board.first_api_level is defined, check if its value is valid for the
   sdk version.
-  Also, validate the value of ro.board.api_level if defined. If the
-  ro.board.api_level property is not defined, define it with the required
-  vendor API level for the GRF policy.
+  Also, validate the value of ro.board.api_level if defined.
 
   Returns:
     True if the GRF properties are valid.
@@ -74,10 +72,6 @@ def validate_and_add_grf_props(prop_list, sdk_version):
                      % (grf_api_level, sdk_version))
     return False
 
-  grf_window = 4
-  grf_required_api_level = (grf_api_level
-                  + grf_window * ((sdk_version - grf_api_level) // grf_window))
-
   if board_api_level:
     board_api_level = int(board_api_level)
     if board_api_level < grf_api_level or board_api_level > sdk_version:
@@ -86,13 +80,6 @@ def validate_and_add_grf_props(prop_list, sdk_version):
                        "ro.build.version.sdk(%d)\n"
                        % (board_api_level, grf_api_level, sdk_version))
       return False
-    if board_api_level < grf_required_api_level:
-      sys.stderr.write("error: ro.board.api_level(%d) must be greater than or "
-                       "equal to %d based on GRF policy\n"
-                       % (board_api_level, grf_required_api_level))
-      return False
-  else:
-    prop_list.put("ro.board.api_level", str(grf_required_api_level))
 
   return True
 
@@ -278,7 +265,7 @@ def main(argv):
   mangle_build_prop(props)
   if not override_optional_props(props, args.allow_dup):
     sys.exit(1)
-  if not validate_and_add_grf_props(props, args.sdk_version):
+  if not validate_grf_props(props, args.sdk_version):
     sys.exit(1)
   if not validate(props):
     sys.exit(1)
