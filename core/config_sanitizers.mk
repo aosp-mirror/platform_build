@@ -139,7 +139,7 @@ ifeq ($(filter memtag_heap, $(my_sanitize)),)
     ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_sync_include_paths)),\
            $(filter $(dir)%,$(LOCAL_PATH)))),)
       my_sanitize := memtag_heap $(my_sanitize)
-      my_sanitize_diag := memtag_heap $(my_sanitize)
+      my_sanitize_diag := memtag_heap $(my_sanitize_diag)
     else ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_async_include_paths)),\
            $(filter $(dir)%,$(LOCAL_PATH)))),)
       my_sanitize := memtag_heap $(my_sanitize)
@@ -211,10 +211,12 @@ endif
 
 ifneq ($(filter memtag_heap,$(my_sanitize)),)
   # Add memtag ELF note.
-  ifneq ($(filter memtag_heap,$(my_sanitize_diag)),)
-    my_whole_static_libraries += note_memtag_heap_sync
-  else
-    my_whole_static_libraries += note_memtag_heap_async
+  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    ifneq ($(filter memtag_heap,$(my_sanitize_diag)),)
+      my_whole_static_libraries += note_memtag_heap_sync
+    else
+      my_whole_static_libraries += note_memtag_heap_async
+    endif
   endif
   # This is all that memtag_heap does - it is not an actual -fsanitize argument.
   # Remove it from the list.
