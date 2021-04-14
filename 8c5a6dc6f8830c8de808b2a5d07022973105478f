@@ -252,6 +252,30 @@
       },
       "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb9a2a08_9e746117",
+        "filename": "core/board_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-04-14T18:53:22Z",
+      "side": 1,
+      "message": "*ping*",
+      "parentUuid": "fa10a50b_73d78931",
+      "range": {
+        "startLine": 111,
+        "startChar": 4,
+        "endLine": 111,
+        "endChar": 49
+      },
+      "revId": "8c5a6dc6f8830c8de808b2a5d07022973105478f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
