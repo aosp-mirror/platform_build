@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "65403b51_3ea5d8ee",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-14T13:45:45Z",
+      "side": 1,
+      "message": "Correct the typo for the 2nd command:\n\n  avbtool verify_image --image $OUT/boot.img",
+      "parentUuid": "c55a478b_c58377d5",
+      "range": {
+        "startLine": 14,
+        "startChar": 37,
+        "endLine": 14,
+        "endChar": 52
+      },
+      "revId": "dbc90f571ecfd330a18390ff09e51204ea4bff74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "81fe4bf7_9eda4ed7",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
