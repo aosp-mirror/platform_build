@@ -16,6 +16,23 @@
       "message": "Fixes build issue.",
       "revId": "2e046e6c610f95a9e3ab464421da3ca541c66b89",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "39e205d4_d3744c82",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-04-14T17:10:29Z",
+      "side": 1,
+      "message": "I tried to add +2, but cannot as the UI won\u0027t allow me after Sahana\u0027s BCO. This is how it looks like: https://screenshot.googleplex.com/8w5MtRYrrLRVnTX.png",
+      "revId": "2e046e6c610f95a9e3ab464421da3ca541c66b89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
