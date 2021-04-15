@@ -31,9 +31,8 @@ ifeq (false,$(LOCAL_DEX_PREOPT))
   LOCAL_DEX_PREOPT :=
 endif
 
-# Disable <uses-library> checks and preopt for tests.
+# Disable preopt for tests.
 ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
-  LOCAL_ENFORCE_USES_LIBRARIES := false
   LOCAL_DEX_PREOPT :=
 endif
 
@@ -52,25 +51,12 @@ ifneq (true,$(WITH_DEXPREOPT))
   LOCAL_DEX_PREOPT :=
 endif
 
-# Disable <uses-library> checks if dexpreopt is globally disabled.
-# Without dexpreopt the check is not necessary, and although it is good to have,
-# it is difficult to maintain on non-linux build platforms where dexpreopt is
-# generally disabled (the check may fail due to various unrelated reasons, such
-# as a failure to get manifest from an APK).
-ifneq (true,$(WITH_DEXPREOPT))
-  LOCAL_ENFORCE_USES_LIBRARIES := false
-endif
-ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
-  LOCAL_ENFORCE_USES_LIBRARIES := false
-endif
-
 ifdef LOCAL_UNINSTALLABLE_MODULE
   LOCAL_DEX_PREOPT :=
 endif
 
-# Disable <uses-library> checks and preopt if the app contains no java code.
+# Disable preopt if the app contains no java code.
 ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
-  LOCAL_ENFORCE_USES_LIBRARIES := false
   LOCAL_DEX_PREOPT :=
 endif
 
@@ -217,6 +203,27 @@ ifndef my_manifest_or_apk
   else
     LOCAL_ENFORCE_USES_LIBRARIES := false
   endif
+endif
+
+# Disable the check for tests.
+ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
+endif
+
+# Disable the check if the app contains no java code.
+ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
+endif
+
+# Disable <uses-library> checks if dexpreopt is globally disabled.
+# Without dexpreopt the check is not necessary, and although it is good to have,
+# it is difficult to maintain on non-linux build platforms where dexpreopt is
+# generally disabled (the check may fail due to various unrelated reasons, such
+# as a failure to get manifest from an APK).
+ifneq (true,$(WITH_DEXPREOPT))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
+else ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
 endif
 
 # Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES
