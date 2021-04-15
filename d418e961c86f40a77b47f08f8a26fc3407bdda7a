@@ -34,6 +34,24 @@
       "parentUuid": "e37504ed_2433e858",
       "revId": "d418e961c86f40a77b47f08f8a26fc3407bdda7a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1bfcb605_65a9201a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-04-15T09:12:24Z",
+      "side": 1,
+      "message": "Ah, thanks for the explanation about _vendor.\n\nRe ArtApexJars, it all started when we had no apex-qualification on the list components, so there was no way to distinguish ART jars from other boot jars. The other purpose of ART_APEX_JARS is to be available early in envsetup.sh, so that ART can use it in its build scripts. If you make the change (compute ArtApexJars by filtering), then I\u0027d also add a sanity check that ART_APEX_JARS does not contain anything else.",
+      "parentUuid": "c60cce6f_b9c624e2",
+      "revId": "d418e961c86f40a77b47f08f8a26fc3407bdda7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
