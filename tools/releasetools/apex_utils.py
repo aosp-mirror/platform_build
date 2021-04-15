@@ -516,7 +516,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
     raise ApexInfoError(
         'Failed to get type for {}:\n{}'.format(apex_file, e))
 
-def GetSystemApexInfoFromTargetFiles(input_file):
+def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
   """
   Get information about system APEX stored in the input_file zip
 
@@ -532,15 +532,17 @@ def GetSystemApexInfoFromTargetFiles(input_file):
   if not isinstance(input_file, str):
     raise RuntimeError("must pass filepath to target-files zip or directory")
 
+  apex_subdir = os.path.join(partition.upper(), 'apex')
   if os.path.isdir(input_file):
     tmp_dir = input_file
   else:
-    tmp_dir = UnzipTemp(input_file, ["SYSTEM/apex/*"])
-  target_dir = os.path.join(tmp_dir, "SYSTEM/apex/")
+    tmp_dir = UnzipTemp(input_file, [os.path.join(apex_subdir, '*')])
+  target_dir = os.path.join(tmp_dir, apex_subdir)
 
   # Partial target-files packages for vendor-only builds may not contain
   # a system apex directory.
   if not os.path.exists(target_dir):
+    logger.info('No APEX directory at path: %s', target_dir)
     return []
 
   apex_infos = []
@@ -585,6 +587,7 @@ def GetSystemApexInfoFromTargetFiles(input_file):
                          '--output', decompressed_file_path])
       apex_info.decompressed_size = os.path.getsize(decompressed_file_path)
 
+    if not compressed_only or apex_info.is_compressed:
       apex_infos.append(apex_info)
 
   return apex_infos
