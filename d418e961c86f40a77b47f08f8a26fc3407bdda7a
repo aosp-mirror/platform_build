@@ -16,6 +16,24 @@
       "message": "I\u0027m not sure if the broken configuration (sdk_* targets) should instead include build/target/product/default_art_config.mk, which ensures that PRODUCT_BOOT_JARS include ART_APEX_JARS. It may be a more correct fix. But I don\u0027t know enough about SDK builds to be sure if they are supposed to build ART boot images and anything related to dexpreopt (if yes, then they need default_art_config.mk).\n",
       "revId": "d418e961c86f40a77b47f08f8a26fc3407bdda7a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c60cce6f_b9c624e2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-04-15T08:58:25Z",
+      "side": 1,
+      "message": "The broken configuration is sdk_phone_x86_vendor. The key is the _vendor part. sdk_phone_x86 worked fine. The sdk_phone_x86_vendor did not. That is because it is only intended to build the vendor.img (don\u0027t know why) and so purposely does not include anything in the PRODUCT_BOOT_JARS.\n\nI\u0027m wondering whether instead of passing in ArtApexJars separately to the dexpreopt.GlobalConfig it should be computed by extracting any jars that start with com.android.art:",
+      "parentUuid": "e37504ed_2433e858",
+      "revId": "d418e961c86f40a77b47f08f8a26fc3407bdda7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
