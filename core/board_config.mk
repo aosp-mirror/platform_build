@@ -108,6 +108,8 @@ _board_strip_readonly_list += BOARD_KERNEL_MODULE_INTERFACE_VERSIONS
 #   contains a kernel or not.
 # - BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT controls whether ramdisk
 #   recovery resources are built to vendor_boot.
+# - BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT controls whether recovery
+#   resources are built as a standalone recovery ramdisk in vendor_boot.
 # - BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT controls whether GSI AVB keys are
 #   built to vendor_boot.
 # - BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES controls whether boot images in $OUT are added
@@ -115,6 +117,7 @@ _board_strip_readonly_list += BOARD_KERNEL_MODULE_INTERFACE_VERSIONS
 _board_strip_readonly_list += BOARD_USES_GENERIC_KERNEL_IMAGE
 _board_strip_readonly_list += BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE
 _board_strip_readonly_list += BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT
+_board_strip_readonly_list += BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES
 
@@ -835,11 +838,22 @@ else # BUILDING_VENDOR_BOOT_IMAGE
       $(error Should not set BOARD_VENDOR_RAMDISK_FRAGMENTS if \
         BOARD_BOOT_HEADER_VERSION is less than 4)
     endif
+    ifeq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
+      $(error Should not set BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT if \
+        BOARD_BOOT_HEADER_VERSION is less than 4)
+    endif
   endif
 endif # BUILDING_VENDOR_BOOT_IMAGE
 
 ifneq ($(words $(BOARD_VENDOR_RAMDISK_FRAGMENTS)),$(words $(sort $(BOARD_VENDOR_RAMDISK_FRAGMENTS))))
   $(error BOARD_VENDOR_RAMDISK_FRAGMENTS has duplicate entries: $(BOARD_VENDOR_RAMDISK_FRAGMENTS))
+endif
+
+ifeq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
+  ifneq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+    $(error Should not set BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT if \
+      BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT is not set)
+  endif
 endif
 
 # If BOARD_USES_GENERIC_KERNEL_IMAGE is set, BOARD_USES_RECOVERY_AS_BOOT must not be set.
