@@ -201,6 +201,7 @@ calculate_effective_conditions() {
        for d in ${depfiles}; do
          if cat "${d}" | egrep -q 'effective_condition\s*:.*restricted' ; then
            lconditions="${lconditions}${lconditions:+ }restricted"
+           break
          fi
        done
      ;;
