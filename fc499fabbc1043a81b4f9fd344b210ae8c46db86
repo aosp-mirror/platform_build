@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d01bf25_ffb7d469",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1241863
+      },
+      "writtenOn": "2021-04-15T15:21:02Z",
+      "side": 1,
+      "message": "Elvis - please rebase due to merge conflict",
+      "revId": "fc499fabbc1043a81b4f9fd344b210ae8c46db86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
