@@ -209,7 +209,7 @@ endif
 ifeq ($(module_run_appcompat),true)
 $(built_module) : $(AAPT2)
 endif
-$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR)
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR) $(SIGNAPK_JNI_LIBRARY_PATH)
 	$(transform-prebuilt-to-target)
 	$(uncompress-prebuilt-embedded-jni-libs)
 	$(remove-unwanted-prebuilt-embedded-jni-libs)
