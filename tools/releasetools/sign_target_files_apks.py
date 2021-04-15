@@ -1383,6 +1383,6 @@ if __name__ == '__main__':
     main(sys.argv[1:])
   except common.ExternalError as e:
     print("\n   ERROR: %s\n" % (e,))
-    sys.exit(1)
+    raise
   finally:
     common.Cleanup()
