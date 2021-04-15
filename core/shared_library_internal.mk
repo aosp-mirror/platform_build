@@ -39,7 +39,6 @@ my_target_libcrt_builtins :=
 else
 my_target_libcrt_builtins := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBCRT_BUILTINS)
 endif
-my_target_libatomic := $(call intermediates-dir-for,STATIC_LIBRARIES,libatomic,,,$(LOCAL_2ND_ARCH_VAR_PREFIX))/libatomic.a
 ifeq ($(LOCAL_NO_CRT),true)
 my_target_crtbegin_so_o :=
 my_target_crtend_so_o :=
@@ -55,7 +54,6 @@ my_target_crtbegin_so_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crt
 my_target_crtend_so_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtend_so.sdk.$(my_ndk_crt_version))
 endif
 $(linked_module): PRIVATE_TARGET_LIBCRT_BUILTINS := $(my_target_libcrt_builtins)
-$(linked_module): PRIVATE_TARGET_LIBATOMIC := $(my_target_libatomic)
 $(linked_module): PRIVATE_TARGET_CRTBEGIN_SO_O := $(my_target_crtbegin_so_o)
 $(linked_module): PRIVATE_TARGET_CRTEND_SO_O := $(my_target_crtend_so_o)
 
@@ -65,7 +63,6 @@ $(linked_module): \
         $(my_target_crtbegin_so_o) \
         $(my_target_crtend_so_o) \
         $(my_target_libcrt_builtins) \
-        $(my_target_libatomic) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) $(CLANG_CXX)
 	$(transform-o-to-shared-lib)
 

@@ -290,11 +290,25 @@ ADDITIONAL_VENDOR_PROPERTIES += \
     ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
 endif
 
+ifneq ($(TARGET_BUILD_VARIANT),user)
+  ifdef PRODUCT_SET_DEBUGFS_RESTRICTIONS
+    ADDITIONAL_VENDOR_PROPERTIES += \
+      ro.product.enforce_debugfs_restrictions=$(PRODUCT_SET_DEBUGFS_RESTRICTIONS)
+  endif
+endif
+
 # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
 # This must not be defined for the non-GRF devices.
 ifdef BOARD_SHIPPING_API_LEVEL
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.board.first_api_level=$(BOARD_SHIPPING_API_LEVEL)
+
+# To manually set the vendor API level of the vendor modules, BOARD_API_LEVEL can be used.
+# The values of the GRF properties will be verified by post_process_props.py
+ifdef BOARD_API_LEVEL
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.board.api_level=$(BOARD_API_LEVEL)
+endif
 endif
 
 ADDITIONAL_VENDOR_PROPERTIES += \
@@ -1573,6 +1587,8 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_SUPERIMAGE_EMPTY_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
     $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
+    $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
+    $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
     $(INSTALLED_FILES_FILE) \
     $(INSTALLED_FILES_JSON) \
     $(INSTALLED_FILES_FILE_VENDOR) \
@@ -1750,13 +1766,11 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
       $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK) \
       $(INSTALLED_DEBUG_RAMDISK_TARGET) \
       $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
+      $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
+      $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_RAMDISK_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
-    )
-    $(call dist-for-goals, bootimage_test_harness, \
-      $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
-      $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
     )
   endif
 
@@ -1870,7 +1884,7 @@ tidy_only:
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
 
-# Checks that build/soong/apex/allowed_deps.txt remains up to date
+# Checks that allowed_deps.txt remains up to date
 ifneq ($(UNSAFE_DISABLE_APEX_ALLOWED_DEPS_CHECK),true)
   droidcore: ${APEX_ALLOWED_DEPS_CHECK}
 endif

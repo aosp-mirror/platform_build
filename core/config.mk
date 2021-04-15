@@ -158,6 +158,7 @@ $(KATI_obsolete_var LOCAL_SANITIZE_BLACKLIST,Use LOCAL_SANITIZE_BLOCKLIST instea
 $(KATI_deprecated_var BOARD_PLAT_PUBLIC_SEPOLICY_DIR,Use SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS instead)
 $(KATI_deprecated_var BOARD_PLAT_PRIVATE_SEPOLICY_DIR,Use SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS instead)
 $(KATI_obsolete_var TARGET_NO_VENDOR_BOOT,Use PRODUCT_BUILD_VENDOR_BOOT_IMAGE instead)
+$(KATI_obsolete_var PRODUCT_CHECK_ELF_FILES,Use BUILD_BROKEN_PREBUILT_ELF_FILES instead)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -478,17 +479,6 @@ USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 # This should match the soong version.
 USE_D8 := true
 .KATI_READONLY := USE_D8
-
-# Whether to fail immediately if verify_uses_libraries check fails, or to keep
-# going and restrict dexpreopt to not compile any code for the failed module.
-#
-# The intended use case for this flag is to have a smoother migration path for
-# the Java modules that need to add <uses-library> information in their build
-# files. The flag allows to quickly silence build errors. This flag should be
-# used with caution and only as a temporary measure, as it masks real errors
-# and affects performance.
-RELAX_USES_LIBRARY_CHECK ?= false
-.KATI_READONLY := RELAX_USES_LIBRARY_CHECK
 
 #
 # Tools that are prebuilts for TARGET_BUILD_USE_PREBUILT_SDKS

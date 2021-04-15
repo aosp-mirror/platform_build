@@ -25,6 +25,7 @@ _board_strip_readonly_list += BOARD_EGL_CFG
 _board_strip_readonly_list += BOARD_HAVE_BLUETOOTH
 _board_strip_readonly_list += BOARD_INSTALLER_CMDLINE
 _board_strip_readonly_list += BOARD_KERNEL_CMDLINE
+_board_strip_readonly_list += BOARD_BOOT_HEADER_VERSION
 _board_strip_readonly_list += BOARD_BOOTCONFIG
 _board_strip_readonly_list += BOARD_KERNEL_BASE
 _board_strip_readonly_list += BOARD_USES_GENERIC_AUDIO
@@ -107,6 +108,8 @@ _board_strip_readonly_list += BOARD_KERNEL_MODULE_INTERFACE_VERSIONS
 #   contains a kernel or not.
 # - BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT controls whether ramdisk
 #   recovery resources are built to vendor_boot.
+# - BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT controls whether recovery
+#   resources are built as a standalone recovery ramdisk in vendor_boot.
 # - BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT controls whether GSI AVB keys are
 #   built to vendor_boot.
 # - BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES controls whether boot images in $OUT are added
@@ -114,6 +117,7 @@ _board_strip_readonly_list += BOARD_KERNEL_MODULE_INTERFACE_VERSIONS
 _board_strip_readonly_list += BOARD_USES_GENERIC_KERNEL_IMAGE
 _board_strip_readonly_list += BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE
 _board_strip_readonly_list += BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT
+_board_strip_readonly_list += BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES
 
@@ -329,7 +333,8 @@ endif
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_DEBUG_RAMDISK
 ifneq (,$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT) \
-  $(BOARD_GKI_NONAB_COMPAT) $(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT)))
+  $(BOARD_GKI_NONAB_COMPAT) $(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT) \
+  $(BOARD_USES_GENERIC_KERNEL_IMAGE)))
 TARGET_COPY_OUT_DEBUG_RAMDISK := debug_ramdisk/first_stage_ramdisk
 TARGET_COPY_OUT_VENDOR_DEBUG_RAMDISK := vendor_debug_ramdisk/first_stage_ramdisk
 TARGET_COPY_OUT_TEST_HARNESS_RAMDISK := test_harness_ramdisk/first_stage_ramdisk
@@ -459,6 +464,25 @@ ifeq ($(PRODUCT_BUILD_VBMETA_IMAGE),false)
   BUILDING_VBMETA_IMAGE :=
 endif
 .KATI_READONLY := BUILDING_VBMETA_IMAGE
+
+# Are we building a super_empty image
+BUILDING_SUPER_EMPTY_IMAGE :=
+ifeq ($(PRODUCT_BUILD_SUPER_EMPTY_IMAGE),)
+  ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
+    ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
+      BUILDING_SUPER_EMPTY_IMAGE := true
+    endif
+  endif
+else ifeq ($(PRODUCT_BUILD_SUPER_EMPTY_IMAGE),true)
+  ifneq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
+    $(error PRODUCT_BUILD_SUPER_EMPTY_IMAGE set to true, but PRODUCT_USE_DYNAMIC_PARTITIONS is not true)
+  endif
+  ifeq ($(BOARD_SUPER_PARTITION_SIZE),)
+    $(error PRODUCT_BUILD_SUPER_EMPTY_IMAGE set to true, but BOARD_SUPER_PARTITION_SIZE is not defined)
+  endif
+  BUILDING_SUPER_EMPTY_IMAGE := true
+endif
+.KATI_READONLY := BUILDING_SUPER_EMPTY_IMAGE
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR
@@ -808,10 +832,28 @@ ifndef BUILDING_VENDOR_BOOT_IMAGE
   ifdef BOARD_VENDOR_RAMDISK_FRAGMENTS
     $(error Should not set BOARD_VENDOR_RAMDISK_FRAGMENTS if not building vendor_boot image)
   endif
-endif
+else # BUILDING_VENDOR_BOOT_IMAGE
+  ifneq (,$(call math_lt,$(BOARD_BOOT_HEADER_VERSION),4))
+    ifdef BOARD_VENDOR_RAMDISK_FRAGMENTS
+      $(error Should not set BOARD_VENDOR_RAMDISK_FRAGMENTS if \
+        BOARD_BOOT_HEADER_VERSION is less than 4)
+    endif
+    ifeq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
+      $(error Should not set BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT if \
+        BOARD_BOOT_HEADER_VERSION is less than 4)
+    endif
+  endif
+endif # BUILDING_VENDOR_BOOT_IMAGE
 
 ifneq ($(words $(BOARD_VENDOR_RAMDISK_FRAGMENTS)),$(words $(sort $(BOARD_VENDOR_RAMDISK_FRAGMENTS))))
   $(error BOARD_VENDOR_RAMDISK_FRAGMENTS has duplicate entries: $(BOARD_VENDOR_RAMDISK_FRAGMENTS))
+endif
+
+ifeq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
+  ifneq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+    $(error Should not set BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT if \
+      BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT is not set)
+  endif
 endif
 
 # If BOARD_USES_GENERIC_KERNEL_IMAGE is set, BOARD_USES_RECOVERY_AS_BOOT must not be set.

@@ -7,7 +7,7 @@
 # LOCAL_SOONG_HEADER_JAR
 # LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
 # LOCAL_SOONG_PROGUARD_DICT
-# LOCAL_SOONG_PROGUARD_USAGE
+# LOCAL_SOONG_PROGUARD_USAGE_ZIP
 # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 # LOCAL_SOONG_RRO_DIRS
 # LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH)
@@ -74,23 +74,31 @@ endif
 
 ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
-    $(intermediates.COMMON)/jacoco-report-classes.jar))
+    $(call local-packaging-dir,jacoco)/jacoco-report-classes.jar))
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(intermediates.COMMON)/jacoco-report-classes.jar)
+    $(call local-packaging-dir,jacoco)/jacoco-report-classes.jar)
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_DICT
   $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
     $(intermediates.COMMON)/proguard_dictionary))
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
+    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary))
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),\
+    $(call local-packaging-dir,proguard_dictionary)/classes.jar))
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
     $(intermediates.COMMON)/proguard_dictionary)
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary)
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(call local-packaging-dir,proguard_dictionary)/classes.jar)
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_USAGE_ZIP
   $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_USAGE_ZIP),\
-    $(intermediates.COMMON)/proguard_usage.zip))
+    $(call local-packaging-dir,proguard_usage)/proguard_usage.zip))
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(intermediates.COMMON)/proguard_usage.zip)
+    $(call local-packaging-dir,proguard_usage)/proguard_usage.zip)
 endif
 
 ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE

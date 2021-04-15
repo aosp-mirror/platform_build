@@ -92,55 +92,6 @@ my_preopt_for_extracted_apk := true
 endif
 endif
 
-# Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES
-# If LOCAL_ENFORCE_USES_LIBRARIES is not set, default to true if either of LOCAL_USES_LIBRARIES or
-# LOCAL_OPTIONAL_USES_LIBRARIES are specified.
-# Will change the default to true unconditionally in the future.
-ifndef LOCAL_ENFORCE_USES_LIBRARIES
-  ifneq (,$(strip $(LOCAL_USES_LIBRARIES)$(LOCAL_OPTIONAL_USES_LIBRARIES)))
-    LOCAL_ENFORCE_USES_LIBRARIES := true
-  endif
-endif
-
-# Disable verify_uses_libraries check if dexpreopt is globally disabled.
-# Without dexpreopt the check is not necessary, and although it is good to have,
-# it is difficult to maintain on non-linux build platforms where dexpreopt is
-# generally disabled (the check may fail due to various unrelated reasons, such
-# as a failure to get manifest from an APK).
-ifneq ($(WITH_DEXPREOPT),true)
-  LOCAL_ENFORCE_USES_LIBRARIES :=
-endif
-
-my_enforced_uses_libraries :=
-ifdef LOCAL_ENFORCE_USES_LIBRARIES
-  my_verify_script := build/soong/scripts/manifest_check.py
-  my_uses_libs := $(patsubst %,--uses-library %,$(LOCAL_USES_LIBRARIES))
-  my_optional_uses_libs := $(patsubst %,--optional-uses-library %, \
-    $(LOCAL_OPTIONAL_USES_LIBRARIES))
-  my_relax_check := $(if $(filter true,$(RELAX_USES_LIBRARY_CHECK)), \
-    --enforce-uses-libraries-relax,)
-  my_enforced_uses_libraries := $(intermediates.COMMON)/enforce_uses_libraries.status
-  $(my_enforced_uses_libraries): PRIVATE_USES_LIBRARIES := $(my_uses_libs)
-  $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(my_optional_uses_libs)
-  $(my_enforced_uses_libraries): PRIVATE_RELAX_CHECK := $(my_relax_check)
-  $(my_enforced_uses_libraries): $(AAPT)
-  $(my_enforced_uses_libraries): $(my_verify_script)
-  $(my_enforced_uses_libraries): $(my_prebuilt_src_file)
-	@echo Verifying uses-libraries: $<
-	rm -f $@
-	$(my_verify_script) \
-	  --enforce-uses-libraries \
-	  --enforce-uses-libraries-status $@ \
-	  --aapt $(AAPT) \
-	  $(PRIVATE_USES_LIBRARIES) \
-	  $(PRIVATE_OPTIONAL_USES_LIBRARIES) \
-	  $(PRIVATE_RELAX_CHECK) \
-	  $<
-  $(built_module) : $(my_enforced_uses_libraries)
-endif
-
-dex_preopt_profile_src_file := $(my_prebuilt_src_file)
-
 rs_compatibility_jni_libs :=
 include $(BUILD_SYSTEM)/install_jni_libs.mk
 
@@ -218,10 +169,13 @@ LOCAL_DEX_PREOPT := false
 endif
 
 my_dex_jar := $(my_prebuilt_src_file)
+dex_preopt_profile_src_file := $(my_prebuilt_src_file)
 
 #######################################
 # defines built_odex along with rule to install odex
+my_manifest_or_apk := $(my_prebuilt_src_file)
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+my_manifest_or_apk :=
 #######################################
 ifneq ($(LOCAL_REPLACE_PREBUILT_APK_INSTALLED),)
 # There is a replacement for the prebuilt .apk we can install without any processing.
@@ -255,7 +209,7 @@ endif
 ifeq ($(module_run_appcompat),true)
 $(built_module) : $(AAPT2)
 endif
-$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR)
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR) $(SIGNAPK_JNI_LIBRARY_PATH)
 	$(transform-prebuilt-to-target)
 	$(uncompress-prebuilt-embedded-jni-libs)
 	$(remove-unwanted-prebuilt-embedded-jni-libs)

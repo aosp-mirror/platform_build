@@ -58,3 +58,7 @@ PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_x86
 PRODUCT_DEVICE := emulator_x86
 PRODUCT_MODEL := Android SDK built for x86
+# Disable <uses-library> checks for SDK product. It lacks some libraries (e.g.
+# RadioConfigLib), which makes it impossible to translate their module names to
+# library name, so the check fails.
+PRODUCT_BROKEN_VERIFY_USES_LIBRARIES := true

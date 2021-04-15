@@ -43,7 +43,9 @@ ALL_MODULES.$(my_register_name).CLASSES_JAR := $(common_classes_jar)
 
 #######################################
 # defines built_odex along with rule to install odex
+my_manifest_or_apk := $(my_prebuilt_src_file)
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+my_manifest_or_apk :=
 #######################################
 $(built_module) : $(my_prebuilt_src_file)
 	$(call copy-file-to-target)
