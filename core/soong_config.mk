@@ -240,7 +240,7 @@ $(call add_json_list, InterPartitionJavaLibraryAllowList, $(PRODUCT_INTER_PARTIT
 
 $(call add_json_bool, InstallExtraFlattenedApexes, $(PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES))
 
-$(call add_json_bool, CompressedApex, $(PRODUCT_COMPRESSED_APEX))
+$(call add_json_bool, CompressedApex, $(filter true,$(PRODUCT_COMPRESSED_APEX)))
 
 $(call add_json_bool, BoardUsesRecoveryAsBoot, $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
 
