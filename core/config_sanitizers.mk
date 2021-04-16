@@ -120,10 +120,15 @@ ifeq ($(filter cfi, $(my_sanitize)),)
   ifneq ($(filter arm64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
     combined_include_paths := $(CFI_INCLUDE_PATHS) \
                               $(PRODUCT_CFI_INCLUDE_PATHS)
+    combined_exclude_paths := $(CFI_EXCLUDE_PATHS) \
+                              $(PRODUCT_CFI_EXCLUDE_PATHS)
 
     ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
            $(filter $(dir)%,$(LOCAL_PATH)))),)
-      my_sanitize := cfi $(my_sanitize)
+      ifeq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
+           $(filter $(dir)%,$(LOCAL_PATH)))),)
+        my_sanitize := cfi $(my_sanitize)
+      endif
     endif
   endif
 endif
@@ -135,14 +140,19 @@ ifeq ($(filter memtag_heap, $(my_sanitize)),)
                                    $(PRODUCT_MEMTAG_HEAP_SYNC_INCLUDE_PATHS)
     combined_async_include_paths := $(MEMTAG_HEAP_ASYNC_INCLUDE_PATHS) \
                                     $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS)
+    combined_exclude_paths := $(MEMTAG_HEAP_EXCLUDE_PATHS) \
+                              $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS)
 
-    ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_sync_include_paths)),\
-           $(filter $(dir)%,$(LOCAL_PATH)))),)
-      my_sanitize := memtag_heap $(my_sanitize)
-      my_sanitize_diag := memtag_heap $(my_sanitize_diag)
-    else ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_async_include_paths)),\
-           $(filter $(dir)%,$(LOCAL_PATH)))),)
-      my_sanitize := memtag_heap $(my_sanitize)
+    ifeq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
+          $(filter $(dir)%,$(LOCAL_PATH)))),)
+      ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_sync_include_paths)),\
+             $(filter $(dir)%,$(LOCAL_PATH)))),)
+        my_sanitize := memtag_heap $(my_sanitize)
+        my_sanitize_diag := memtag_heap $(my_sanitize_diag)
+      else ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_async_include_paths)),\
+             $(filter $(dir)%,$(LOCAL_PATH)))),)
+        my_sanitize := memtag_heap $(my_sanitize)
+      endif
     endif
   endif
 endif
