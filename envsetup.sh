@@ -799,17 +799,19 @@ function tapas()
 function banchan()
 {
     local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
-    local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|arm64|x86_64)$' | xargs)"
+    local product="$(echo $* | xargs -n 1 echo | \grep -E '^(.*_)?(arm|x86|arm64|x86_64)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
-    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|arm64|x86_64)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|(.*_)?(arm|x86|arm64|x86_64))$' | xargs)"
 
     if [ "$showHelp" != "" ]; then
       $(gettop)/build/make/banchanHelp.sh
       return
     fi
 
-    if [ $(echo $arch | wc -w) -gt 1 ]; then
-        echo "banchan: Error: Multiple build archs supplied: $arch"
+    if [ -z "$product" ]; then
+        product=arm
+    elif [ $(echo $product | wc -w) -gt 1 ]; then
+        echo "banchan: Error: Multiple build archs or products supplied: $products"
         return
     fi
     if [ $(echo $variant | wc -w) -gt 1 ]; then
@@ -821,8 +823,8 @@ function banchan()
         return
     fi
 
-    local product=module_arm
-    case $arch in
+    case $product in
+      arm)    product=module_arm;;
       x86)    product=module_x86;;
       arm64)  product=module_arm64;;
       x86_64) product=module_x86_64;;
