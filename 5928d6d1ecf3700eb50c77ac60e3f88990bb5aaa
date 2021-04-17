@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb812c64_c49bdd80",
+        "filename": "core/misc_prebuilt_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-17T00:10:41Z",
+      "side": 1,
+      "message": "It\u0027s generally better to use empty for false in Make, that\u0027s what functions like $(if) or ifdef expect.",
+      "range": {
+        "startLine": 30,
+        "startChar": 19,
+        "endLine": 30,
+        "endChar": 24
+      },
+      "revId": "5928d6d1ecf3700eb50c77ac60e3f88990bb5aaa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2bd4d0d4_5160d722",
+        "filename": "core/misc_prebuilt_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-17T00:10:41Z",
+      "side": 1,
+      "message": "$(check_init_file)",
+      "range": {
+        "startLine": 37,
+        "startChar": 6,
+        "endLine": 37,
+        "endChar": 21
+      },
+      "revId": "5928d6d1ecf3700eb50c77ac60e3f88990bb5aaa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
