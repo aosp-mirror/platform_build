@@ -16,6 +16,23 @@
       "message": "Martin, any idea if this is desired or not?",
       "revId": "5f024ff6641a26cb829d1ea07239487d101c8112",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6b2a083_39aa1c2d",
+        "filename": "target/product/module_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-19T22:45:11Z",
+      "side": 1,
+      "message": "Iiuc this enables CFI for com.android.media.swcodec. Do you need both directories to avoid a diff?\n\nIf it only enables CFI then it\u0027d be better to do that in the module rather than here. I.e. with\n\n  sanitizer {\n    cfi: true,\n  },\n\nin the cc_* modules that make up the APEX. I can imagine someone thought it was easier to set it in the product rather than adding those all over, though.\n\nI also see that enabling CFI has the side-effect to potentially enable installation of some vendor variant of VNDK libraries, but I doubt that\u0027s significant when building an APEX: https://cs.android.com/android/platform/superproject/+/master:build/soong/cc/library.go;l\u003d1563;drc\u003dmaster\n\nStepping back, I wonder why a module wants to control this - call frames get enough info by default to make stack traces sensible, don\u0027t they? I\u0027m not familiar enough with CFI to understand what it adds beyond that. Can you find a reviewer that knows the context a bit more?",
+      "revId": "5f024ff6641a26cb829d1ea07239487d101c8112",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
