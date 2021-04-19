@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "25533973_5df8e120",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-19T23:09:28Z",
+      "side": 1,
+      "message": "PRODUCT_SHIPPING_API_LEVEL?",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 32
+      },
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "01c5ee50_724674e1",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -38,6 +61,30 @@
       "side": 1,
       "message": "I think we can\u0027t, because the switch should be applied to all modules (including direct and transitive dependencies) that are part of the APEX.",
       "parentUuid": "01c5ee50_724674e1",
+      "range": {
+        "startLine": 11,
+        "startChar": 33,
+        "endLine": 12,
+        "endChar": 67
+      },
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "21d579bd_fed4750f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-19T23:09:28Z",
+      "side": 1,
+      "message": "Ok, but at least it\u0027s static, i.e. it\u0027s not a define specifically for unbundled building only, or something similar?\n\nBtw, which define(s) are we talking about? Can they be mentioned here so curious readers can search for them?",
+      "parentUuid": "d340335d_7bac9e48",
       "range": {
         "startLine": 11,
         "startChar": 33,
