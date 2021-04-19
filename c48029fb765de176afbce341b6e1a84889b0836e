@@ -46,6 +46,30 @@
       },
       "revId": "c48029fb765de176afbce341b6e1a84889b0836e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "afdc3325_59a9cffd",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2021-04-19T22:35:49Z",
+      "side": 1,
+      "message": "Oh right! If there was a dup in partitions, *then* there\u0027d be a failure.",
+      "parentUuid": "7b707a74_a2a10b49",
+      "range": {
+        "startLine": 759,
+        "startChar": 66,
+        "endLine": 759,
+        "endChar": 74
+      },
+      "revId": "c48029fb765de176afbce341b6e1a84889b0836e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
