@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01c5ee50_724674e1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-19T22:57:55Z",
+      "side": 1,
+      "message": "Stupid question, but can the define be added as a cflags on the module instead?",
+      "range": {
+        "startLine": 11,
+        "startChar": 33,
+        "endLine": 12,
+        "endChar": 67
+      },
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "28248fd4_270d0d19",
+        "filename": "target/product/module_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-19T22:57:55Z",
+      "side": 1,
+      "message": "Please mention which module(s) need this.\n\nAlso, whenever we need to add stuff like this for the sake of specific modules I think we should have the goal to move it into the module, so there should tickets and TODO comments here pointing to them.",
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
