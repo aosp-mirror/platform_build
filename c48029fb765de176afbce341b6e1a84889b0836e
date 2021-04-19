@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac98a1e9_45edb2a4",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2021-04-19T22:26:06Z",
+      "side": 1,
+      "message": "\u0027system\u0027 appears twice. It seems like would always fail. All the system apexes would be in apex_packages already the second time you process \u0027system\u0027. But maybe I\u0027m missing a key point.",
+      "range": {
+        "startLine": 759,
+        "startChar": 66,
+        "endLine": 759,
+        "endChar": 74
+      },
+      "revId": "c48029fb765de176afbce341b6e1a84889b0836e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
