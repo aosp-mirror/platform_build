@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a64025c3_a5e6f20e",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-19T23:01:07Z",
+      "side": 1,
+      "message": "Judging from b/185769808 this should go away again. Can you please add a TODO comment pointing to that ticket?",
+      "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
