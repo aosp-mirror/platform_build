@@ -26,6 +26,47 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d340335d_7bac9e48",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-04-19T23:01:08Z",
+      "side": 1,
+      "message": "I think we can\u0027t, because the switch should be applied to all modules (including direct and transitive dependencies) that are part of the APEX.",
+      "parentUuid": "01c5ee50_724674e1",
+      "range": {
+        "startLine": 11,
+        "startChar": 33,
+        "endLine": 12,
+        "endChar": 67
+      },
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "424a048a_9984b0de",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-04-19T23:01:08Z",
+      "side": 1,
+      "message": "+2 modulo Martin\u0027s comments",
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "28248fd4_270d0d19",
         "filename": "target/product/module_common.mk",
         "patchSetId": 1
