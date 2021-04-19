@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_arm.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/module_common.mk)
 
 PRODUCT_NAME := module_arm
 PRODUCT_BRAND := Android
