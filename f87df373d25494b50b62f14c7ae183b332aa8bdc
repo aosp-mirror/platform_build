@@ -16,6 +16,24 @@
       "message": "Keeping the first one as is.",
       "revId": "f87df373d25494b50b62f14c7ae183b332aa8bdc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d423ac7c_3fbbdb16",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-19T18:22:32Z",
+      "side": 1,
+      "message": "I don\u0027t see any reason that the others should not be treated the same way.",
+      "parentUuid": "b9feff5c_ee37baf1",
+      "revId": "f87df373d25494b50b62f14c7ae183b332aa8bdc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
