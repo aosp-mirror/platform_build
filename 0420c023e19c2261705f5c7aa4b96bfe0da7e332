@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "225d7133_28e7edb2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-19T16:06:49Z",
+      "side": 1,
+      "message": "Joe, the first unset was added by you in cl/67394820.  Any idea if it\u0027s safe to remove?  Given the unknown reason it was added, it seems safest to leave it as is.",
+      "revId": "0420c023e19c2261705f5c7aa4b96bfe0da7e332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
