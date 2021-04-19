@@ -22,6 +22,30 @@
       },
       "revId": "c48029fb765de176afbce341b6e1a84889b0836e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b707a74_a2a10b49",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-04-19T22:33:21Z",
+      "side": 1,
+      "message": "Gah, left that in by accident when I was (erroneously) trying to force it to fail while testing. It actually doesn\u0027t cause a failure because it\u0027s used as the filter set (\"allow list\") of the real partition list you pass to the function, so it doesn\u0027t matter that it\u0027s in here twice. The actual partitions that get checked are the ones thew caller passes to the `partitions` function argument.\n\n(If the caller passes the same partition multiple times then yes it does fail. That\u0027s how I did end up stress testing it. But the one caller doesn\u0027t do that, since it passes the keys() of a dict)",
+      "parentUuid": "ac98a1e9_45edb2a4",
+      "range": {
+        "startLine": 759,
+        "startChar": 66,
+        "endLine": 759,
+        "endChar": 74
+      },
+      "revId": "c48029fb765de176afbce341b6e1a84889b0836e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
