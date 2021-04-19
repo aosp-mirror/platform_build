@@ -16,6 +16,24 @@
       "message": "Joe, the first unset was added by you in cl/67394820.  Any idea if it\u0027s safe to remove?  Given the unknown reason it was added, it seems safest to leave it as is.",
       "revId": "0420c023e19c2261705f5c7aa4b96bfe0da7e332",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "69d785f3_0e8156c6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-04-19T16:20:47Z",
+      "side": 1,
+      "message": "The comment about \"Tiger\" makes me think it was some weird Mac OS nonstandard bash problem. Maybe if the variables had somehow been set to array variables or something?\n\nYeah, I think leaving it as is is probably best.",
+      "parentUuid": "225d7133_28e7edb2",
+      "revId": "0420c023e19c2261705f5c7aa4b96bfe0da7e332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
