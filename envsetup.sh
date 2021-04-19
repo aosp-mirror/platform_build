@@ -111,7 +111,7 @@ function get_abs_build_var()
     if [ "$BUILD_VAR_CACHE_READY" = "true" ]
     then
         eval "echo \"\${abs_var_cache_$1}\""
-    return
+        return
     fi
 
     local T=$(gettop)
