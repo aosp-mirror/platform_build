@@ -52,6 +52,24 @@
       "parentUuid": "a32abdf1_726dc9ea",
       "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a5a4e7ab_498243ed",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-04-20T12:32:54Z",
+      "side": 1,
+      "message": "For the media.swcodec APEX, it should always be \"current\". For other APEXes in the vendor partition it could be any valid value (\"current\" or \u003cnumber\u003e) by the device where the APEXes are pre-installed.\n\nI am not sure if making this a per-module setting is feasible or not, but I don\u0027t see a value there. What we need is this one line and the media.swcodec APEX the only and the last Mainline APEX using VNDK.",
+      "parentUuid": "c497af52_46fe44c8",
+      "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
