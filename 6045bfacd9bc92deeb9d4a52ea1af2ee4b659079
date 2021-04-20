@@ -95,6 +95,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "81c72fd1_f99bb147",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-04-20T03:13:30Z",
+      "side": 1,
+      "message": "The macro is __ANDROID_VNDK__. But it\u0027s not the only one we need for the swcodec APEX. We also expect that the modules that are part of the APEX be built with target.vendor specializations. e.g. adding/removing files/libraries depending on whether it\u0027s built for vendor or not.",
+      "parentUuid": "21d579bd_fed4750f",
+      "range": {
+        "startLine": 11,
+        "startChar": 33,
+        "endLine": 12,
+        "endChar": 67
+      },
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "424a048a_9984b0de",
