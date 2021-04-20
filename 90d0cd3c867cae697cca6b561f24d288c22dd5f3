@@ -106,6 +106,24 @@
       "parentUuid": "d4fd8315_76e3831c",
       "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5db1712f_e2bf9e81",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-04-20T22:59:10Z",
+      "side": 1,
+      "message": "\u003e Are you saying it\u0027s only com.android.media.swcodec that currently does and ever will need these special settings, and they also won\u0027t get in the way of other APEXes?\n\nYes",
+      "parentUuid": "17aca552_9e48679b",
+      "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
