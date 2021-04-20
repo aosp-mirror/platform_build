@@ -193,6 +193,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "5372d4c9_f67e3a25",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-20T23:07:25Z",
+      "side": 1,
+      "message": "I think I\u0027m missing the basic picture for what it means when APEXes are \"built for vendor\" and how it relates to unbundled/updatable APEXes. Regardless of vendor/VNDK dependencies I\u0027d have thought there only is a single way to build them in an updatable form. It\u0027s still not clear after this thread, but I\u0027m fine just stepping back here.",
+      "parentUuid": "8ddf51cd_91d023be",
+      "range": {
+        "startLine": 11,
+        "startChar": 33,
+        "endLine": 12,
+        "endChar": 67
+      },
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "424a048a_9984b0de",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
