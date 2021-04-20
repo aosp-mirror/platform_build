@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "afeee168_97d69c5f",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-04-20T06:27:08Z",
+      "side": 0,
+      "message": "@Samiul, do you recall why do we add compressed apex only; maybe we don\u0027t need to copy the uncompressed one to data?",
+      "range": {
+        "startLine": 588,
+        "startChar": 17,
+        "endLine": 588,
+        "endChar": 23
+      },
+      "revId": "06b891d2bd11b88f809e0ce95c8e3db05f9b751a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
