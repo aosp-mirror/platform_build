@@ -295,7 +295,7 @@ endif
 ifneq ($(TARGET_BUILD_VARIANT),user)
   ifdef PRODUCT_SET_DEBUGFS_RESTRICTIONS
     ADDITIONAL_VENDOR_PROPERTIES += \
-      ro.product.enforce_debugfs_restrictions=$(PRODUCT_SET_DEBUGFS_RESTRICTIONS)
+      ro.product.debugfs_restrictions.enabled=$(PRODUCT_SET_DEBUGFS_RESTRICTIONS)
   endif
 endif
 
