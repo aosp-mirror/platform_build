@@ -167,6 +167,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ddf51cd_91d023be",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-20T15:38:21Z",
+      "side": 1,
+      "message": "FTR, we need this because this is in the Android.bp of libhidlbase:\n        enforce_vintf_manifest: {\n            cflags: [\"-DENFORCE_VINTF_MANIFEST\"],\n        },\n\nhttps://cs.android.com/android/platform/superproject/+/master:system/libhidl/Android.bp;l\u003d231-233?q\u003dname.*libhidlbase%20f:Android.bp\u0026ss\u003dandroid",
+      "parentUuid": "c8b89aa4_526b6e0c",
+      "range": {
+        "startLine": 11,
+        "startChar": 33,
+        "endLine": 12,
+        "endChar": 67
+      },
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "424a048a_9984b0de",
@@ -197,6 +221,24 @@
       "writtenOn": "2021-04-19T22:57:55Z",
       "side": 1,
       "message": "Please mention which module(s) need this.\n\nAlso, whenever we need to add stuff like this for the sake of specific modules I think we should have the goal to move it into the module, so there should tickets and TODO comments here pointing to them.",
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0edcc02c_177ba03d",
+        "filename": "target/product/module_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-20T15:38:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28248fd4_270d0d19",
       "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
