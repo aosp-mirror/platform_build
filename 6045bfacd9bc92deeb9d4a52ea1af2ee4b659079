@@ -143,6 +143,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8b89aa4_526b6e0c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-04-20T10:05:02Z",
+      "side": 1,
+      "message": "No, it\u0027s not like that. This is mainly to reduce the set of dependencies when a module is built for vendor. This is an example: https://source.corp.google.com/android/frameworks/av/media/libstagefright/bqhelper/Android.bp;rcl\u003de4bf72bdb74cbb87b8fae969bfcc0762705b27d1;l\u003d79\n\nwe don\u0027t need the dependency to libgui when the module is built for vendor. Instead we provide other libs that can provide some subset features of libgui.",
+      "parentUuid": "5413b4d9_a978a715",
+      "range": {
+        "startLine": 11,
+        "startChar": 33,
+        "endLine": 12,
+        "endChar": 67
+      },
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "424a048a_9984b0de",
