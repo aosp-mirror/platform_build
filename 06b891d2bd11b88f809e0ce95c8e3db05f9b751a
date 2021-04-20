@@ -22,6 +22,30 @@
       },
       "revId": "06b891d2bd11b88f809e0ce95c8e3db05f9b751a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc157612_f4286daa",
+        "filename": "tools/releasetools/apex_utils.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1439319
+      },
+      "writtenOn": "2021-04-20T15:41:07Z",
+      "side": 0,
+      "message": "We only needed to reserve space for compressed APEX, so we skipped adding uncompressed APEX. There is no harm in adding them if there is any use for them now. For our use case, we already skip uncompressed APEX files at [1].\n\n[1] https://source.corp.google.com/android/system/update_engine/aosp/apex_handler_android.cc;l\u003d32?q\u003d%22calculateSizeForCompressedApex%22%20package:android$",
+      "parentUuid": "afeee168_97d69c5f",
+      "range": {
+        "startLine": 588,
+        "startChar": 17,
+        "endLine": 588,
+        "endChar": 23
+      },
+      "revId": "06b891d2bd11b88f809e0ce95c8e3db05f9b751a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
