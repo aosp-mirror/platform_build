@@ -70,6 +70,24 @@
       "parentUuid": "c497af52_46fe44c8",
       "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4fd8315_76e3831c",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-20T12:53:03Z",
+      "side": 1,
+      "message": "Note that this config is used for all unbundled APEXes; in general we can\u0027t have APEX-specific settings here.\n\n\u003e the media.swcodec APEX the only and the last Mainline APEX using VNDK\n\nAre you saying it\u0027s only com.android.media.swcodec that currently does and ever will need these special settings, and they also won\u0027t get in the way of other APEXes?\n\nIf so I suppose it\u0027s decent enough to not require more engineering effort, but there should be a comment that explains the situation, saying that it applies only to com.android.media.swcodec because it\u0027s the only APEX with use_vendor:true.",
+      "parentUuid": "a5a4e7ab_498243ed",
+      "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
