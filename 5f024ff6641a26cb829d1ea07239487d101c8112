@@ -20,6 +20,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "83631ac8_f7757c90",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-20T17:31:20Z",
+      "side": 1,
+      "message": "Fine for resolving diffs, but seems like duplicating the list is going to cause future issues when it is only set in one of the lists.  Should the list be moved to a separate product file that both places can inherit from?",
+      "revId": "5f024ff6641a26cb829d1ea07239487d101c8112",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c6b2a083_39aa1c2d",
         "filename": "target/product/module_common.mk",
         "patchSetId": 1
