@@ -34,6 +34,24 @@
       "parentUuid": "a64025c3_a5e6f20e",
       "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c497af52_46fe44c8",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-20T11:54:36Z",
+      "side": 1,
+      "message": "Should it always be \"current\" then? It sounds like this is also an example of a per-module setting rather than a product one.\n\nOr should it be a flag saying basically \"yes we assume VNDK exists\", and then use the min_sdk_version logic otherwise?",
+      "parentUuid": "a32abdf1_726dc9ea",
+      "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
