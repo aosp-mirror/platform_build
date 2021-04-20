@@ -51,6 +51,24 @@
       "parentUuid": "c6b2a083_39aa1c2d",
       "revId": "5f024ff6641a26cb829d1ea07239487d101c8112",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "61bdd8e1_e715fbac",
+        "filename": "target/product/module_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-20T17:23:53Z",
+      "side": 1,
+      "message": "CFI is a security measure, as I understand it it prevents using arbitrary code sequences in ROP gadgets.\n\nI don\u0027t know why it is enabled at the product level instead of the module level, maybe it\u0027s easier to enforce it as a policy if it affects the whole directory rather than having to remember to put it on every module?",
+      "parentUuid": "043b2717_675bb63e",
+      "revId": "5f024ff6641a26cb829d1ea07239487d101c8112",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
