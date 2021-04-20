@@ -14,6 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Signs a given image using avbtool
+
+Usage:  verity_utils properties_file output_image
+"""
+
 from __future__ import print_function
 
 import logging
@@ -31,6 +37,9 @@ OPTIONS = common.OPTIONS
 BLOCK_SIZE = common.BLOCK_SIZE
 FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
 
+# From external/avb/avbtool.py
+MAX_VBMETA_SIZE = 64 * 1024
+MAX_FOOTER_SIZE = 4096
 
 class BuildVerityImageError(Exception):
   """An Exception raised during verity image building."""
@@ -714,3 +723,55 @@ def CreateCustomImageBuilder(info_dict, partition_name, partition_size,
         signing_args)
 
   return builder
+
+
+def GetDiskUsage(path):
+  """Returns the number of bytes that "path" occupies on host.
+
+  Args:
+    path: The directory or file to calculate size on.
+
+  Returns:
+    The number of bytes based on a 1K block_size.
+  """
+  cmd = ["du", "-b", "-k", "-s", path]
+  output = common.RunAndCheckOutput(cmd, verbose=False)
+  return int(output.split()[0]) * 1024
+
+
+def main(argv):
+  if len(argv) != 2:
+    print(__doc__)
+    sys.exit(1)
+
+  common.InitLogging()
+
+  dict_file = argv[0]
+  out_file = argv[1]
+
+  prop_dict = {}
+  with open(dict_file, 'r') as f:
+    for line in f:
+      line = line.strip()
+      if not line or line.startswith("#"):
+        continue
+      k, v = line.split("=", 1)
+      prop_dict[k] = v
+
+  builder = CreateVerityImageBuilder(prop_dict)
+
+  if "partition_size" not in prop_dict:
+    image_size = GetDiskUsage(out_file)
+    # make sure that the image is big enough to hold vbmeta and footer
+    image_size = image_size + (MAX_VBMETA_SIZE + MAX_FOOTER_SIZE)
+    size = builder.CalculateDynamicPartitionSize(image_size)
+    prop_dict["partition_size"] = size
+
+  builder.Build(out_file)
+
+
+if __name__ == '__main__':
+  try:
+    main(sys.argv[1:])
+  finally:
+    common.Cleanup()

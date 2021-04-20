@@ -9,6 +9,9 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
               build, and stores those selections in the environment to be read by subsequent
               invocations of 'm' etc.
 - tapas:      tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
+              Sets up the build environment for building unbundled apps (APKs).
+- banchan:    banchan <module1> [<module2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
+              Sets up the build environment for building unbundled modules (APEXes).
 - croot:      Changes directory to the top of the tree, or a subdirectory thereof.
 - m:          Makes from the top of the tree.
 - mm:         Builds and installs all of the modules in the current directory, and their
@@ -23,6 +26,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - ggrep:      Greps on all local Gradle files.
 - gogrep:     Greps on all local Go files.
 - jgrep:      Greps on all local Java files.
+- ktgrep:     Greps on all local Kotlin files.
 - resgrep:    Greps on all local res/*.xml files.
 - mangrep:    Greps on all local AndroidManifest.xml files.
 - mgrep:      Greps on all local Makefiles and *.bp files.
@@ -107,7 +111,7 @@ function get_abs_build_var()
     if [ "$BUILD_VAR_CACHE_READY" = "true" ]
     then
         eval "echo \"\${abs_var_cache_$1}\""
-    return
+        return
     fi
 
     local T=$(gettop)
@@ -790,6 +794,60 @@ function tapas()
     destroy_build_var_cache
 }
 
+# Configures the build to build unbundled Android modules (APEXes).
+# Run banchan with one or more module names (from apex{} modules).
+function banchan()
+{
+    local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
+    local product="$(echo $* | xargs -n 1 echo | \grep -E '^(.*_)?(arm|x86|arm64|x86_64)$' | xargs)"
+    local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|(.*_)?(arm|x86|arm64|x86_64))$' | xargs)"
+
+    if [ "$showHelp" != "" ]; then
+      $(gettop)/build/make/banchanHelp.sh
+      return
+    fi
+
+    if [ -z "$product" ]; then
+        product=arm
+    elif [ $(echo $product | wc -w) -gt 1 ]; then
+        echo "banchan: Error: Multiple build archs or products supplied: $products"
+        return
+    fi
+    if [ $(echo $variant | wc -w) -gt 1 ]; then
+        echo "banchan: Error: Multiple build variants supplied: $variant"
+        return
+    fi
+    if [ -z "$apps" ]; then
+        echo "banchan: Error: No modules supplied"
+        return
+    fi
+
+    case $product in
+      arm)    product=module_arm;;
+      x86)    product=module_x86;;
+      arm64)  product=module_arm64;;
+      x86_64) product=module_x86_64;;
+    esac
+    if [ -z "$variant" ]; then
+        variant=eng
+    fi
+
+    export TARGET_PRODUCT=$product
+    export TARGET_BUILD_VARIANT=$variant
+    export TARGET_BUILD_DENSITY=alldpi
+    export TARGET_BUILD_TYPE=release
+
+    # This setup currently uses TARGET_BUILD_APPS just like tapas, but the use
+    # case is different and it may diverge in the future.
+    export TARGET_BUILD_APPS=$apps
+
+    build_build_var_cache
+    set_stuff_for_environment
+    printconfig
+    destroy_build_var_cache
+}
+
 function gettop
 {
     local TOPFILE=build/make/core/envsetup.mk
@@ -1002,7 +1060,7 @@ case `uname -s` in
     Darwin)
         function sgrep()
         {
-            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cc|cpp|hpp|S|java|xml|sh|mk|aidl|vts|proto)' \
+            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cc|cpp|hpp|S|java|kt|xml|sh|mk|aidl|vts|proto)' \
                 -exec grep --color -n "$@" {} +
         }
 
@@ -1010,7 +1068,7 @@ case `uname -s` in
     *)
         function sgrep()
         {
-            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cc\|cpp\|hpp\|S\|java\|xml\|sh\|mk\|aidl\|vts\|proto\)' \
+            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cc\|cpp\|hpp\|S\|java\|kt\|xml\|sh\|mk\|aidl\|vts\|proto\)' \
                 -exec grep --color -n "$@" {} +
         }
         ;;
@@ -1042,6 +1100,12 @@ function jgrep()
 function rsgrep()
 {
     find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.rs" \
+        -exec grep --color -n "$@" {} +
+}
+
+function ktgrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.kt" \
         -exec grep --color -n "$@" {} +
 }
 
@@ -1093,7 +1157,7 @@ case `uname -s` in
 
         function treegrep()
         {
-            find -E . -name .repo -prune -o -name .git -prune -o -type f -iregex '.*\.(c|h|cpp|hpp|S|java|xml)' \
+            find -E . -name .repo -prune -o -name .git -prune -o -type f -iregex '.*\.(c|h|cpp|hpp|S|java|kt|xml)' \
                 -exec grep --color -n -i "$@" {} +
         }
 
@@ -1107,7 +1171,7 @@ case `uname -s` in
 
         function treegrep()
         {
-            find . -name .repo -prune -o -name .git -prune -o -regextype posix-egrep -iregex '.*\.(c|h|cpp|hpp|S|java|xml)' -type f \
+            find . -name .repo -prune -o -name .git -prune -o -regextype posix-egrep -iregex '.*\.(c|h|cpp|hpp|S|java|kt|xml)' -type f \
                 -exec grep --color -n -i "$@" {} +
         }
 

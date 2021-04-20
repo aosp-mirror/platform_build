@@ -20,6 +20,22 @@ endif
 # The default value for LOCAL_DEX_PREOPT
 DEX_PREOPT_DEFAULT ?= $(ENABLE_PREOPT)
 
+# Whether to fail immediately if verify_uses_libraries check fails, or to keep
+# going and restrict dexpreopt to not compile any code for the failed module.
+#
+# The intended use case for this flag is to have a smoother migration path for
+# the Java modules that need to add <uses-library> information in their build
+# files. The flag allows to quickly silence build errors. This flag should be
+# used with caution and only as a temporary measure, as it masks real errors
+# and affects performance.
+ifndef RELAX_USES_LIBRARY_CHECK
+  RELAX_USES_LIBRARY_CHECK := $(if \
+    $(filter true,$(PRODUCT_BROKEN_VERIFY_USES_LIBRARIES)),true,false)
+else
+  # Let the environment variable override PRODUCT_BROKEN_VERIFY_USES_LIBRARIES.
+endif
+.KATI_READONLY := RELAX_USES_LIBRARY_CHECK
+
 # The default filter for which files go into the system_other image (if it is
 # being used). Note that each pattern p here matches both '/<p>' and /system/<p>'.
 # To bundle everything one should set this to '%'.
@@ -30,6 +46,9 @@ SYSTEM_OTHER_ODEX_FILTER ?= \
     system_ext/priv-app/% \
     product/app/% \
     product/priv-app/% \
+
+# Global switch to control if updatable boot jars are included in dexpreopt.
+DEX_PREOPT_WITH_UPDATABLE_BCP := true
 
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
@@ -76,6 +95,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, DisablePreoptBootImages,                 $(call invert_bool,$(ENABLE_PREOPT_BOOT_IMAGES)))
   $(call add_json_list, DisablePreoptModules,                    $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer,      $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
+  $(call add_json_bool, PreoptWithUpdatableBcp,                  $(filter true,$(DEX_PREOPT_WITH_UPDATABLE_BCP)))
   $(call add_json_bool, UseArtImage,                             $(filter true,$(DEXPREOPT_USE_ART_IMAGE)))
   $(call add_json_bool, DontUncompressPrivAppsDex,               $(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS)))
   $(call add_json_list, ModulesLoadedByPrivilegedModules,        $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
@@ -85,7 +105,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  ProfileDir,                              $(PRODUCT_DEX_PREOPT_PROFILE_DIR))
   $(call add_json_list, BootJars,                                $(PRODUCT_BOOT_JARS))
   $(call add_json_list, UpdatableBootJars,                       $(PRODUCT_UPDATABLE_BOOT_JARS))
-  $(call add_json_list, ArtApexJars,                             $(ART_APEX_JARS))
+  $(call add_json_list, ArtApexJars,                             $(filter $(PRODUCT_BOOT_JARS),$(ART_APEX_JARS)))
   $(call add_json_list, SystemServerJars,                        $(PRODUCT_SYSTEM_SERVER_JARS))
   $(call add_json_list, SystemServerApps,                        $(PRODUCT_SYSTEM_SERVER_APPS))
   $(call add_json_list, UpdatableSystemServerJars,               $(PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS))

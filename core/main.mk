@@ -41,7 +41,12 @@ include $(BUILD_SYSTEM)/clang/config.mk
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
 $(shell mkdir -p $(SOONG_OUT_DIR) && \
-    echo -n $(BUILD_NUMBER) > $(SOONG_OUT_DIR)/build_number.txt)
+    echo -n $(BUILD_NUMBER) > $(SOONG_OUT_DIR)/build_number.tmp; \
+    if ! cmp -s $(SOONG_OUT_DIR)/build_number.tmp $(SOONG_OUT_DIR)/build_number.txt; then \
+        mv $(SOONG_OUT_DIR)/build_number.tmp $(SOONG_OUT_DIR)/build_number.txt; \
+    else \
+        rm $(SOONG_OUT_DIR)/build_number.tmp; \
+    fi)
 BUILD_NUMBER_FILE := $(SOONG_OUT_DIR)/build_number.txt
 .KATI_READONLY := BUILD_NUMBER_FILE
 $(KATI_obsolete_var BUILD_NUMBER,See https://android.googlesource.com/platform/build/+/master/Changes.md#BUILD_NUMBER)
@@ -283,6 +288,27 @@ endif
 ifdef PRODUCT_SHIPPING_API_LEVEL
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
+endif
+
+ifneq ($(TARGET_BUILD_VARIANT),user)
+  ifdef PRODUCT_SET_DEBUGFS_RESTRICTIONS
+    ADDITIONAL_VENDOR_PROPERTIES += \
+      ro.product.debugfs_restrictions.enabled=$(PRODUCT_SET_DEBUGFS_RESTRICTIONS)
+  endif
+endif
+
+# Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
+# This must not be defined for the non-GRF devices.
+ifdef BOARD_SHIPPING_API_LEVEL
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.board.first_api_level=$(BOARD_SHIPPING_API_LEVEL)
+
+# To manually set the vendor API level of the vendor modules, BOARD_API_LEVEL can be used.
+# The values of the GRF properties will be verified by post_process_props.py
+ifdef BOARD_API_LEVEL
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.board.api_level=$(BOARD_API_LEVEL)
+endif
 endif
 
 ADDITIONAL_VENDOR_PROPERTIES += \
@@ -888,7 +914,7 @@ endef
 # Scan all modules in general-tests, device-tests and other selected suites and
 # flatten the shared library dependencies.
 define update-host-shared-libs-deps-for-suites
-$(foreach suite,general-tests device-tests vts art-host-tests host-unit-tests,\
+$(foreach suite,general-tests device-tests vts tvts art-host-tests host-unit-tests,\
   $(foreach m,$(COMPATIBILITY.$(suite).MODULES),\
     $(eval my_deps := $(call get-all-shared-libs-deps,$(m)))\
     $(foreach dep,$(my_deps),\
@@ -1258,8 +1284,10 @@ ifdef FULL_BUILD
         $(if $(or $(ALL_MODULES.$(m).PATH),$(call get-modules-for-2nd-arch,TARGET,$(m))),,$(m)))
       $(call maybe-print-list-and-error,$(filter-out $(_allow_list),$(_nonexistent_modules)),\
         $(INTERNAL_PRODUCT) includes non-existent modules in PRODUCT_PACKAGES)
-      $(call maybe-print-list-and-error,$(filter-out $(_nonexistent_modules),$(_allow_list)),\
-        $(INTERNAL_PRODUCT) includes redundant allow list entries for non-existent PRODUCT_PACKAGES)
+      # TODO(b/182105280): Consider re-enabling this check when the ART modules
+      # have been cleaned up from the allowed_list in target/product/generic.mk.
+      #$(call maybe-print-list-and-error,$(filter-out $(_nonexistent_modules),$(_allow_list)),\
+      #  $(INTERNAL_PRODUCT) includes redundant allow list entries for non-existent PRODUCT_PACKAGES)
     endif
 
     # Check to ensure that all modules in PRODUCT_HOST_PACKAGES exist
@@ -1487,6 +1515,12 @@ vendorbootimage: $(INSTALLED_VENDOR_BOOTIMAGE_TARGET)
 .PHONY: vendorbootimage_debug
 vendorbootimage_debug: $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET)
 
+.PHONY: vendorramdisk
+vendorramdisk: $(INSTALLED_VENDOR_RAMDISK_TARGET)
+
+.PHONY: vendorramdisk_debug
+vendorramdisk_debug: $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET)
+
 .PHONY: productimage
 productimage: $(INSTALLED_PRODUCTIMAGE_TARGET)
 
@@ -1545,12 +1579,16 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_RAMDISK_TARGET) \
+    $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
     $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) \
     $(INSTALLED_ODM_DLKMIMAGE_TARGET) \
     $(INSTALLED_SUPERIMAGE_EMPTY_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
     $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
+    $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
+    $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
     $(INSTALLED_FILES_FILE) \
     $(INSTALLED_FILES_JSON) \
     $(INSTALLED_FILES_FILE_VENDOR) \
@@ -1728,11 +1766,11 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
       $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK) \
       $(INSTALLED_DEBUG_RAMDISK_TARGET) \
       $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
-      $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
-    )
-    $(call dist-for-goals, bootimage_test_harness, \
       $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
       $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
+      $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+      $(INSTALLED_VENDOR_RAMDISK_TARGET) \
+      $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     )
   endif
 
@@ -1846,7 +1884,7 @@ tidy_only:
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
 
-# Checks that build/soong/apex/allowed_deps.txt remains up to date
+# Checks that allowed_deps.txt remains up to date
 ifneq ($(UNSAFE_DISABLE_APEX_ALLOWED_DEPS_CHECK),true)
   droidcore: ${APEX_ALLOWED_DEPS_CHECK}
 endif

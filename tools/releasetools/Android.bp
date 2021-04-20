@@ -133,6 +133,7 @@ python_defaults {
     required: [
         "brillo_update_payload",
         "checkvintf",
+        "minigzip",
         "lz4",
         "toybox",
         "unpack_bootimg",
@@ -520,6 +521,23 @@ python_binary_host {
     ],
     libs: [
         "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "verity_utils",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "verity_utils.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+    required: [
+        "append2simg",
+        "build_verity_metadata",
+        "build_verity_tree",
+        "fec",
     ],
 }
 
