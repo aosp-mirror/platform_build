@@ -119,6 +119,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "5413b4d9_a978a715",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-20T09:24:41Z",
+      "side": 1,
+      "message": "\u003e e.g. adding/removing files/libraries depending on whether it\u0027s built for vendor or not.\n\nDo I understand correctly that this is to avoid compiling in vendor-specific hacks? If so, it sounds like something that should be enabled in general in unbundled builds, and then it belongs here (ideally with a bit more obvious flag, but that\u0027s a detail).",
+      "parentUuid": "81c72fd1_f99bb147",
+      "range": {
+        "startLine": 11,
+        "startChar": 33,
+        "endLine": 12,
+        "endChar": 67
+      },
+      "revId": "6045bfacd9bc92deeb9d4a52ea1af2ee4b659079",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "424a048a_9984b0de",
