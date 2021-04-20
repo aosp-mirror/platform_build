@@ -16,6 +16,24 @@
       "message": "Judging from b/185769808 this should go away again. Can you please add a TODO comment pointing to that ticket?",
       "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a32abdf1_726dc9ea",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-04-20T11:36:43Z",
+      "side": 1,
+      "message": "I don\u0027t think we can make the build without BOARD_VNDK_VERSION. I\u0027d rather make the absence of BOARD_VNDK_VERSION an error when building an APEX having \u0027use_vendor: true\u0027.",
+      "parentUuid": "a64025c3_a5e6f20e",
+      "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
