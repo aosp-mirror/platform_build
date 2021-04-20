@@ -40,6 +40,7 @@ if sys.hexversion < 0x02070000:
 
 logger = logging.getLogger(__name__)
 
+
 class Expression(object):
   def __init__(self, desc, expr, value=None):
     # Human-readable description
@@ -57,6 +58,20 @@ class Expression(object):
                   *format_args)
     else:
       msg = "{} is greater than {}:\n{} == {} > {} == {}".format(*format_args)
+      if level == logging.ERROR:
+        raise RuntimeError(msg)
+      else:
+        logger.log(level, msg)
+
+  def CheckLt(self, other, level=logging.ERROR):
+    format_args = (self.desc, other.desc, self.expr, self.value,
+                   other.expr, other.value)
+    if self.value < other.value:
+      logger.info("%s is less than %s:\n%s == %d < %s == %d",
+                  *format_args)
+    else:
+      msg = "{} is greater than or equal to {}:\n{} == {} >= {} == {}".format(
+          *format_args)
       if level == logging.ERROR:
         raise RuntimeError(msg)
       else:
@@ -116,7 +131,6 @@ class DynamicPartitionSizeChecker(object):
             int(info_dict["super_partition_size"])
     self.info_dict = info_dict
 
-
   def _ReadSizeOfPartition(self, name):
     # Tests uses *_image_size instead (to avoid creating empty sparse images
     # on disk)
@@ -124,14 +138,12 @@ class DynamicPartitionSizeChecker(object):
       return int(self.info_dict[name + "_image_size"])
     return sparse_img.GetImagePartitionSize(self.info_dict[name + "_image"])
 
-
   # Round result to BOARD_SUPER_PARTITION_ALIGNMENT
   def _RoundPartitionSize(self, size):
     alignment = self.info_dict.get("super_partition_alignment")
     if alignment is None:
       return size
     return (size + alignment - 1) // alignment * alignment
-
 
   def _CheckSuperPartitionSize(self):
     info_dict = self.info_dict
@@ -239,7 +251,20 @@ class DynamicPartitionSizeChecker(object):
       max_size = Expression(
           "BOARD_SUPER_PARTITION_SIZE{}".format(size_limit_suffix),
           int(info_dict["super_partition_size"]) // num_slots)
-      sum_size.CheckLe(max_size)
+      # Retrofit DAP will build metadata as part of super image.
+      if Dap.Get(info_dict) == Dap.RDAP:
+        sum_size.CheckLe(max_size)
+        return
+
+      sum_size.CheckLt(max_size)
+      # Display a warning if group size + 1M >= super size
+      minimal_metadata_size = 1024 * 1024  # 1MiB
+      sum_size_plus_metadata = Expression(
+          "sum of sizes of {} plus 1M metadata".format(groups),
+          "+".join(str(size) for size in
+                   group_size_list + [minimal_metadata_size]),
+          sum(group_size_list) + minimal_metadata_size)
+      sum_size_plus_metadata.CheckLe(max_size, level=logging.WARNING)
 
   def Run(self):
     self._CheckAllPartitionSizes()

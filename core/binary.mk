@@ -266,10 +266,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
       endif
     endif
 
-    ifneq (,$(filter armeabi armeabi-v7a,$(my_cpu_variant)))
-      my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
-    endif
-
+    my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
     my_ldlibs += -ldl
   else # LOCAL_NDK_STL_VARIANT must be none
     # Do nothing.
@@ -311,6 +308,15 @@ ifneq ($(LOCAL_USE_VNDK),)
     my_api_level := $(call codename-or-sdk-to-sdk,$(BOARD_VNDK_VERSION))
   endif
   my_cflags += -D__ANDROID_VNDK__
+  ifneq ($(LOCAL_USE_VNDK_VENDOR),)
+    # Vendor modules have LOCAL_USE_VNDK_VENDOR when
+    # BOARD_VNDK_VERSION is defined.
+    my_cflags += -D__ANDROID_VENDOR__
+  else ifneq ($(LOCAL_USE_VNDK_PRODUCT),)
+    # Product modules have LOCAL_USE_VNDK_PRODUCT when
+    # PRODUCT_PRODUCT_VNDK_VERSION is defined.
+    my_cflags += -D__ANDROID_PRODUCT__
+  endif
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
@@ -463,27 +469,6 @@ my_soong_problems += dotdot_srcs
 endif
 ifneq ($(foreach i,$(my_c_includes),$(filter %/..,$(i))$(findstring /../,$(i))),)
 my_soong_problems += dotdot_incs
-endif
-
-####################################################
-## Add FDO flags if FDO is turned on and supported
-## Please note that we will do option filtering during FDO build.
-## i.e. Os->O2, remove -fno-early-inline and -finline-limit.
-##################################################################
-my_fdo_build :=
-ifneq ($(filter true always, $(LOCAL_FDO_SUPPORT)),)
-  ifeq ($(BUILD_FDO_INSTRUMENT),true)
-    my_cflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_INSTRUMENT_CFLAGS)
-    my_ldflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_INSTRUMENT_LDFLAGS)
-    my_fdo_build := true
-  else ifneq ($(filter true,$(BUILD_FDO_OPTIMIZE))$(filter always,$(LOCAL_FDO_SUPPORT)),)
-    my_cflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_OPTIMIZE_CFLAGS)
-    my_fdo_build := true
-  endif
-  # Disable ccache (or other compiler wrapper) except gomacc, which
-  # can handle -fprofile-use properly.
-  my_cc_wrapper := $(filter $(GOMA_CC) $(RBE_WRAPPER),$(my_cc_wrapper))
-  my_cxx_wrapper := $(filter $(GOMA_CC) $(RBE_WRAPPER),$(my_cxx_wrapper))
 endif
 
 ###########################################################
@@ -1472,12 +1457,6 @@ my_cflags := $(call convert-to-clang-flags,$(my_cflags))
 my_cppflags := $(call convert-to-clang-flags,$(my_cppflags))
 my_asflags := $(call convert-to-clang-flags,$(my_asflags))
 my_ldflags := $(call convert-to-clang-flags,$(my_ldflags))
-
-ifeq ($(my_fdo_build), true)
-  my_cflags := $(patsubst -Os,-O2,$(my_cflags))
-  fdo_incompatible_flags := -fno-early-inlining -finline-limit=%
-  my_cflags := $(filter-out $(fdo_incompatible_flags),$(my_cflags))
-endif
 
 # No one should ever use this flag. On GCC it's mere presence will disable all
 # warnings, even those that are specified after it (contrary to typical warning
