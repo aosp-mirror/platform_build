@@ -88,6 +88,24 @@
       "parentUuid": "a5a4e7ab_498243ed",
       "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "17aca552_9e48679b",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-20T15:08:41Z",
+      "side": 1,
+      "message": "Added a comment. It\u0027d be good to verify that this variable only affects the media.swcodec apex and causes no diffs in other apexes (I may try that later on).",
+      "parentUuid": "d4fd8315_76e3831c",
+      "revId": "90d0cd3c867cae697cca6b561f24d288c22dd5f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
