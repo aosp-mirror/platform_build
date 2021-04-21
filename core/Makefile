@@ -211,8 +211,26 @@ $(INSTALLED_SDK_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
 	$(hide) mv $@.tmp $@
 
 # -----------------------------------------------------------------
+# declare recovery ramdisk files
+ifeq ($(BUILDING_RECOVERY_IMAGE),true)
+INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP := $(call intermediates-dir-for,PACKAGING,recovery)/ramdisk_files-timestamp
+endif
+
+# -----------------------------------------------------------------
 # Declare vendor ramdisk fragments
 INTERNAL_VENDOR_RAMDISK_FRAGMENTS :=
+
+ifeq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
+  ifneq (,$(filter recovery,$(BOARD_VENDOR_RAMDISK_FRAGMENTS)))
+    $(error BOARD_VENDOR_RAMDISK_FRAGMENTS must not contain "recovery" if \
+      BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT is set)
+  endif
+  INTERNAL_VENDOR_RAMDISK_FRAGMENTS += recovery
+  VENDOR_RAMDISK_FRAGMENT.recovery.STAGING_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+  VENDOR_RAMDISK_FRAGMENT.recovery.FILES := $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
+  BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.MKBOOTIMG_ARGS += --ramdisk_type RECOVERY
+  .KATI_READONLY := VENDOR_RAMDISK_FRAGMENT.recovery.STAGING_DIR
+endif
 
 # Validation check and assign default --ramdisk_type.
 $(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
@@ -235,6 +253,10 @@ $(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
   ) \
 )
 INTERNAL_VENDOR_RAMDISK_FRAGMENTS += $(BOARD_VENDOR_RAMDISK_FRAGMENTS)
+
+# Strip the list in case of any whitespace.
+INTERNAL_VENDOR_RAMDISK_FRAGMENTS := \
+  $(strip $(INTERNAL_VENDOR_RAMDISK_FRAGMENTS))
 
 # Assign --ramdisk_name for each vendor ramdisk fragment.
 $(foreach vendor_ramdisk_fragment,$(INTERNAL_VENDOR_RAMDISK_FRAGMENTS), \
@@ -349,14 +371,34 @@ $(1)/$(DEPMOD_STAGING_SUBDIR)/$(4): $(2)
 	@echo '$$(strip $$(notdir $$(PRIVATE_LOAD_MODULES)))' | tr ' ' '\n' > $$(@)
 endef
 
+# $(1): source options file
+# $(2): destination pathname
+# Returns a build rule that checks the syntax of and installs a kernel modules
+# options file. Strip and squeeze any extra space and blank lines.
+# For use via $(eval).
+define build-image-kernel-modules-options-file
+$(2): $(1)
+	@echo "libmodprobe options $$(@)"
+	$(hide) mkdir -p "$$(dir $$@)"
+	$(hide) rm -f "$$@"
+	$(hide) awk <"$$<" >"$$@" \
+	  '/^#/ { print; next } \
+	   NF == 0 { next } \
+	   NF < 2 || $$$$1 != "options" \
+	     { print "Invalid options line " FNR ": " $$$$0 >"/dev/stderr"; \
+	       exit_status = 1; next } \
+	   { $$$$1 = $$$$1; print } \
+	   END { exit exit_status }'
+endef
+
 # $(1): source blocklist file
 # $(2): destination pathname
 # Returns a build rule that checks the syntax of and installs a kernel modules
-# blocklist file. Strip and squeeze any extra space in the blocklist.
+# blocklist file. Strip and squeeze any extra space and blank lines.
 # For use via $(eval).
 define build-image-kernel-modules-blocklist-file
 $(2): $(1)
-	@echo "modprobe blocklist $$(@)"
+	@echo "libmodprobe blocklist $$(@)"
 	$(hide) mkdir -p "$$(dir $$@)"
 	$(hide) rm -f "$$@"
 	$(hide) awk <"$$<" >"$$@" \
@@ -386,11 +428,19 @@ $(if $(strip $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver))$(BOARD_$(1)_KERNEL_MODU
   $(if $(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),,\
     $(eval BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver) := $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)))) \
   $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver)))) \
+$(if $(_kver), \
+  $(eval _dir := $(_kver)/), \
+  $(eval _dir :=)) \
+$(if $(BOARD_$(1)_KERNEL_MODULES_OPTIONS_FILE$(_sep)$(_kver)), \
+  $(eval $(call build-image-kernel-modules-options-file, \
+    $(BOARD_$(1)_KERNEL_MODULES_OPTIONS_FILE$(_sep)$(_kver)), \
+    $(2)/lib/modules/$(_dir)modules.options)) \
+  $(2)/lib/modules/$(_dir)modules.options) \
 $(if $(BOARD_$(1)_KERNEL_MODULES_BLOCKLIST_FILE$(_sep)$(_kver)), \
   $(eval $(call build-image-kernel-modules-blocklist-file, \
     $(BOARD_$(1)_KERNEL_MODULES_BLOCKLIST_FILE$(_sep)$(_kver)), \
-    $(2)/lib/modules/modules.blocklist)) \
-  $(2)/lib/modules/modules.blocklist)
+    $(2)/lib/modules/$(_dir)modules.blocklist)) \
+  $(2)/lib/modules/$(_dir)modules.blocklist)
 endef
 
 # $(1): kernel module directory name (top is an out of band value for no directory)
@@ -1001,12 +1051,6 @@ my_apex_extracted_boot_image :=
 my_installed_prebuilt_gki_apex :=
 
 # -----------------------------------------------------------------
-# declare recovery ramdisk files
-ifeq ($(BUILDING_RECOVERY_IMAGE),true)
-INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP := $(call intermediates-dir-for,PACKAGING,recovery)/ramdisk_files-timestamp
-endif
-
-# -----------------------------------------------------------------
 # vendor boot image
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 
@@ -1020,9 +1064,13 @@ INTERNAL_VENDOR_RAMDISK_FILES := $(filter $(TARGET_VENDOR_RAMDISK_OUT)/%, \
 
 INTERNAL_VENDOR_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_boot)/vendor_ramdisk.cpio$(RAMDISK_EXT)
 
+# Exclude recovery files in the default vendor ramdisk if including a standalone
+# recovery ramdisk in vendor_boot.
 ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+ifneq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
 $(INTERNAL_VENDOR_RAMDISK_TARGET): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
 $(INTERNAL_VENDOR_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+endif
 endif
 
 $(INTERNAL_VENDOR_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_VENDOR_RAMDISK_FILES) | $(COMPRESSION_COMMAND_DEPS)
@@ -2416,8 +2464,13 @@ INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,v
 $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_FILES := $(INTERNAL_DEBUG_RAMDISK_FILES)
 $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): VENDOR_RAMDISK_DIR := $(TARGET_VENDOR_RAMDISK_OUT)
 
+# Exclude recovery files in the default vendor ramdisk if including a standalone
+# recovery ramdisk in vendor_boot.
 ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+ifneq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
+$(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
 $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+endif
 endif
 
 INTERNAL_VENDOR_DEBUG_RAMDISK_FILES := $(filter $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/%, \
@@ -4818,8 +4871,12 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT))$(filter true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT)))
 	@# Components of the recovery image
 	$(hide) mkdir -p $(zip_root)/$(PRIVATE_RECOVERY_OUT)
+# Exclude recovery files in the default vendor ramdisk if including a standalone
+# recovery ramdisk in vendor_boot.
+ifneq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_RECOVERY_ROOT_OUT),$(zip_root)/$(PRIVATE_RECOVERY_OUT)/RAMDISK)
+endif
 ifdef INSTALLED_KERNEL_TARGET
 ifneq (,$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
 	cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/

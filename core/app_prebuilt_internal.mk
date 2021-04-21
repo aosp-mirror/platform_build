@@ -169,12 +169,13 @@ LOCAL_DEX_PREOPT := false
 endif
 
 my_dex_jar := $(my_prebuilt_src_file)
-my_manifest_or_apk := $(my_prebuilt_src_file)
 dex_preopt_profile_src_file := $(my_prebuilt_src_file)
 
 #######################################
 # defines built_odex along with rule to install odex
+my_manifest_or_apk := $(my_prebuilt_src_file)
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+my_manifest_or_apk :=
 #######################################
 ifneq ($(LOCAL_REPLACE_PREBUILT_APK_INSTALLED),)
 # There is a replacement for the prebuilt .apk we can install without any processing.
@@ -208,7 +209,7 @@ endif
 ifeq ($(module_run_appcompat),true)
 $(built_module) : $(AAPT2)
 endif
-$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR)
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR) $(SIGNAPK_JNI_LIBRARY_PATH)
 	$(transform-prebuilt-to-target)
 	$(uncompress-prebuilt-embedded-jni-libs)
 	$(remove-unwanted-prebuilt-embedded-jni-libs)

@@ -31,9 +31,8 @@ ifeq (false,$(LOCAL_DEX_PREOPT))
   LOCAL_DEX_PREOPT :=
 endif
 
-# Disable <uses-library> checks and preopt for tests.
+# Disable preopt for tests.
 ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
-  LOCAL_ENFORCE_USES_LIBRARIES := false
   LOCAL_DEX_PREOPT :=
 endif
 
@@ -52,25 +51,12 @@ ifneq (true,$(WITH_DEXPREOPT))
   LOCAL_DEX_PREOPT :=
 endif
 
-# Disable <uses-library> checks if dexpreopt is globally disabled.
-# Without dexpreopt the check is not necessary, and although it is good to have,
-# it is difficult to maintain on non-linux build platforms where dexpreopt is
-# generally disabled (the check may fail due to various unrelated reasons, such
-# as a failure to get manifest from an APK).
-ifneq (true,$(WITH_DEXPREOPT))
-  LOCAL_ENFORCE_USES_LIBRARIES := false
-endif
-ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
-  LOCAL_ENFORCE_USES_LIBRARIES := false
-endif
-
 ifdef LOCAL_UNINSTALLABLE_MODULE
   LOCAL_DEX_PREOPT :=
 endif
 
-# Disable <uses-library> checks and preopt if the app contains no java code.
+# Disable preopt if the app contains no java code.
 ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
-  LOCAL_ENFORCE_USES_LIBRARIES := false
   LOCAL_DEX_PREOPT :=
 endif
 
@@ -207,6 +193,38 @@ add_json_class_loader_context = \
 ################################################################################
 # Verify <uses-library> coherence between the build system and the manifest.
 ################################################################################
+
+# Some libraries do not have a manifest, so there is nothing to check against.
+# Handle it as if the manifest had zero <uses-library> tags: it is ok unless the
+# module has non-empty LOCAL_USES_LIBRARIES or LOCAL_OPTIONAL_USES_LIBRARIES.
+ifndef my_manifest_or_apk
+  ifneq (,$(strip $(LOCAL_USES_LIBRARIES)$(LOCAL_OPTIONAL_USES_LIBRARIES)))
+    $(error $(LOCAL_MODULE) has non-empty <uses-library> list but no manifest)
+  else
+    LOCAL_ENFORCE_USES_LIBRARIES := false
+  endif
+endif
+
+# Disable the check for tests.
+ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
+endif
+
+# Disable the check if the app contains no java code.
+ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
+endif
+
+# Disable <uses-library> checks if dexpreopt is globally disabled.
+# Without dexpreopt the check is not necessary, and although it is good to have,
+# it is difficult to maintain on non-linux build platforms where dexpreopt is
+# generally disabled (the check may fail due to various unrelated reasons, such
+# as a failure to get manifest from an APK).
+ifneq (true,$(WITH_DEXPREOPT))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
+else ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
+endif
 
 # Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES
 # If LOCAL_ENFORCE_USES_LIBRARIES is not set, default to true if either of LOCAL_USES_LIBRARIES or
@@ -360,7 +378,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_str,  ProfileClassListing,            $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE)))
   $(call add_json_bool, ProfileIsTextListing,           $(my_profile_is_text_listing))
   $(call add_json_str,  EnforceUsesLibrariesStatusFile, $(my_enforced_uses_libraries))
-  $(call add_json_bool, EnforceUsesLibraries,           $(LOCAL_ENFORCE_USES_LIBRARIES))
+  $(call add_json_bool, EnforceUsesLibraries,           $(filter true,$(LOCAL_ENFORCE_USES_LIBRARIES)))
   $(call add_json_str,  ProvidesUsesLibrary,            $(firstword $(LOCAL_PROVIDES_USES_LIBRARY) $(LOCAL_MODULE)))
   $(call add_json_map,  ClassLoaderContexts)
   $(call add_json_class_loader_context, any, $(my_dexpreopt_libs))

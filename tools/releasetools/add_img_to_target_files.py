@@ -59,12 +59,11 @@ import zipfile
 import build_image
 import build_super_image
 import common
-import rangelib
-import sparse_img
 import verity_utils
 import ota_metadata_pb2
 
-from apex_utils import GetSystemApexInfoFromTargetFiles
+from apex_utils import GetApexInfoFromTargetFiles
+from common import AddCareMapForAbOta
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -108,45 +107,6 @@ class OutputFile(object):
   def Write(self):
     if self._output_zip:
       common.ZipWrite(self._output_zip, self.name, self._zip_name)
-
-
-def GetCareMap(which, imgname):
-  """Returns the care_map string for the given partition.
-
-  Args:
-    which: The partition name, must be listed in PARTITIONS_WITH_CARE_MAP.
-    imgname: The filename of the image.
-
-  Returns:
-    (which, care_map_ranges): care_map_ranges is the raw string of the care_map
-    RangeSet; or None.
-  """
-  assert which in common.PARTITIONS_WITH_CARE_MAP
-
-  # which + "_image_size" contains the size that the actual filesystem image
-  # resides in, which is all that needs to be verified. The additional blocks in
-  # the image file contain verity metadata, by reading which would trigger
-  # invalid reads.
-  image_size = OPTIONS.info_dict.get(which + "_image_size")
-  if not image_size:
-    return None
-
-  image_blocks = int(image_size) // 4096 - 1
-  assert image_blocks > 0, "blocks for {} must be positive".format(which)
-
-  # For sparse images, we will only check the blocks that are listed in the care
-  # map, i.e. the ones with meaningful data.
-  if "extfs_sparse_flag" in OPTIONS.info_dict:
-    simg = sparse_img.SparseImage(imgname)
-    care_map_ranges = simg.care_map.intersect(
-        rangelib.RangeSet("0-{}".format(image_blocks)))
-
-  # Otherwise for non-sparse images, we read all the blocks in the filesystem
-  # image.
-  else:
-    care_map_ranges = rangelib.RangeSet("0-{}".format(image_blocks))
-
-  return [which, care_map_ranges.to_string_raw()]
 
 
 def AddSystem(output_zip, recovery_img=None, boot_img=None):
@@ -644,72 +604,6 @@ def CheckAbOtaImages(output_zip, ab_partitions):
     assert available, "Failed to find " + img_name
 
 
-def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
-  """Generates and adds care_map.pb for a/b partition that has care_map.
-
-  Args:
-    output_zip: The output zip file (needs to be already open), or None to
-        write care_map.pb to OPTIONS.input_tmp/.
-    ab_partitions: The list of A/B partitions.
-    image_paths: A map from the partition name to the image path.
-  """
-  care_map_list = []
-  for partition in ab_partitions:
-    partition = partition.strip()
-    if partition not in common.PARTITIONS_WITH_CARE_MAP:
-      continue
-
-    verity_block_device = "{}_verity_block_device".format(partition)
-    avb_hashtree_enable = "avb_{}_hashtree_enable".format(partition)
-    if (verity_block_device in OPTIONS.info_dict or
-        OPTIONS.info_dict.get(avb_hashtree_enable) == "true"):
-      image_path = image_paths[partition]
-      assert os.path.exists(image_path)
-
-      care_map = GetCareMap(partition, image_path)
-      if not care_map:
-        continue
-      care_map_list += care_map
-
-      # adds fingerprint field to the care_map
-      # TODO(xunchang) revisit the fingerprint calculation for care_map.
-      partition_props = OPTIONS.info_dict.get(partition + ".build.prop")
-      prop_name_list = ["ro.{}.build.fingerprint".format(partition),
-                        "ro.{}.build.thumbprint".format(partition)]
-
-      present_props = [x for x in prop_name_list if
-                       partition_props and partition_props.GetProp(x)]
-      if not present_props:
-        logger.warning("fingerprint is not present for partition %s", partition)
-        property_id, fingerprint = "unknown", "unknown"
-      else:
-        property_id = present_props[0]
-        fingerprint = partition_props.GetProp(property_id)
-      care_map_list += [property_id, fingerprint]
-
-  if not care_map_list:
-    return
-
-  # Converts the list into proto buf message by calling care_map_generator; and
-  # writes the result to a temp file.
-  temp_care_map_text = common.MakeTempFile(prefix="caremap_text-",
-                                           suffix=".txt")
-  with open(temp_care_map_text, 'w') as text_file:
-    text_file.write('\n'.join(care_map_list))
-
-  temp_care_map = common.MakeTempFile(prefix="caremap-", suffix=".pb")
-  care_map_gen_cmd = ["care_map_generator", temp_care_map_text, temp_care_map]
-  common.RunAndCheckOutput(care_map_gen_cmd)
-
-  care_map_path = "META/care_map.pb"
-  if output_zip and care_map_path not in output_zip.namelist():
-    common.ZipWrite(output_zip, temp_care_map, arcname=care_map_path)
-  else:
-    shutil.copy(temp_care_map, os.path.join(OPTIONS.input_tmp, care_map_path))
-    if output_zip:
-      OPTIONS.replace_updated_files_list.append(care_map_path)
-
-
 def AddPackRadioImages(output_zip, images):
   """Copies images listed in META/pack_radioimages.txt from RADIO/ to IMAGES/.
 
@@ -792,7 +686,7 @@ def HasPartition(partition_name):
                            "{}.img".format(partition_name))))
 
 def AddApexInfo(output_zip):
-  apex_infos = GetSystemApexInfoFromTargetFiles(OPTIONS.input_tmp)
+  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp, 'system')
   apex_metadata_proto = ota_metadata_pb2.ApexMetadata()
   apex_metadata_proto.apex_info.extend(apex_infos)
   apex_info_bytes = apex_metadata_proto.SerializeToString()
@@ -1050,7 +944,9 @@ def AddImagesToTargetFiles(filename):
 
     # Generate care_map.pb for ab_partitions, then write this file to
     # target_files package.
-    AddCareMapForAbOta(output_zip, ab_partitions, partitions)
+    output_care_map = os.path.join(OPTIONS.input_tmp, "META", "care_map.pb")
+    AddCareMapForAbOta(output_zip if output_zip else output_care_map,
+                       ab_partitions, partitions)
 
   # Radio images that need to be packed into IMAGES/, and product-img.zip.
   pack_radioimages_txt = os.path.join(
