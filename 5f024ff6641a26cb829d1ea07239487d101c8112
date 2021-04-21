@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc9449c3_2944519e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-21T09:19:34Z",
+      "side": 1,
+      "message": "That product file exists already. I was hoping there\u0027d be some traction on the bug I filed and that the goal should be removal of these 2 paths. I switched to inheriting that the cfi product makefile instead.",
+      "parentUuid": "83631ac8_f7757c90",
+      "revId": "5f024ff6641a26cb829d1ea07239487d101c8112",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c6b2a083_39aa1c2d",
