@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "621f5b38_244f07e0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-04-21T08:58:54Z",
+      "side": 1,
+      "message": "Sometimes, simlar variable(or typo) was mistaken when writing/debugging build scripts . \nSo, any tiny mistakes will cause \"input_file\" does not exists. Then \"input_file is not exist\" log makes more clear. Meanwhile \"input_file is not a valid zipfile\" log will make confused(might think why this file is not zip format, but not exist), especially CI build was deployed on jenkins slave, and lines of build log will be shown.",
+      "revId": "d12dc8d94779147715fbf5971ff1b1d5740b942e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
