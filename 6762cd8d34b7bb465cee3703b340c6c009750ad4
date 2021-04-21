@@ -88,6 +88,24 @@
       "parentUuid": "2acb76cd_6900a10a",
       "revId": "6762cd8d34b7bb465cee3703b340c6c009750ad4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4b55e222_0f8b2b59",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-21T08:50:33Z",
+      "side": 1,
+      "message": "If it isn\u0027t that, then what makes swcodec depend on VNDK? Jiyong talked about use_vendor in http://b/185769808#comment2.\n\nOr can we cherry-pick that change into AOSP instead?",
+      "parentUuid": "ce2a2caa_34e2becf",
+      "revId": "6762cd8d34b7bb465cee3703b340c6c009750ad4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
