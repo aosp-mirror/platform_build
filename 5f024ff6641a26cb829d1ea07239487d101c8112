@@ -53,6 +53,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2dcd1b4_b4ff80d7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-04-21T11:14:19Z",
+      "side": 1,
+      "message": "Since cfi-common.mk only contains that list of paths it doesn\u0027t look that bad. After all, it only affects the APEXes in those locations, not anything else.",
+      "parentUuid": "bc9449c3_2944519e",
+      "revId": "5f024ff6641a26cb829d1ea07239487d101c8112",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c6b2a083_39aa1c2d",
