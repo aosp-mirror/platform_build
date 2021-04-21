@@ -104,6 +104,24 @@
       "parentUuid": "043b2717_675bb63e",
       "revId": "5f024ff6641a26cb829d1ea07239487d101c8112",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51e67dfb_d2168e0f",
+        "filename": "target/product/module_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-21T09:20:34Z",
+      "side": 1,
+      "message": "ack, let\u0027s discuss further on the bug about whether it should stay this way.",
+      "parentUuid": "61bdd8e1_e715fbac",
+      "revId": "5f024ff6641a26cb829d1ea07239487d101c8112",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
