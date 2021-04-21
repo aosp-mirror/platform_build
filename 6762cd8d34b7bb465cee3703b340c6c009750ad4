@@ -52,6 +52,24 @@
       "parentUuid": "1b9b68b5_defc19ce",
       "revId": "6762cd8d34b7bb465cee3703b340c6c009750ad4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2acb76cd_6900a10a",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-21T08:40:34Z",
+      "side": 1,
+      "message": "That isn\u0027t set in the internal master revision. Is this whole thing obsolete? http://cs/android/frameworks/av/apex/Android.bp?l\u003d108",
+      "parentUuid": "d29af916_dd80bd53",
+      "revId": "6762cd8d34b7bb465cee3703b340c6c009750ad4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
