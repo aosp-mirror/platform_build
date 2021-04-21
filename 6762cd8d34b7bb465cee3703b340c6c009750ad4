@@ -106,6 +106,24 @@
       "parentUuid": "ce2a2caa_34e2becf",
       "revId": "6762cd8d34b7bb465cee3703b340c6c009750ad4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0bdac856_e61e1fef",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-21T08:59:02Z",
+      "side": 1,
+      "message": "I suspect it isn\u0027t trivial to do so but I\u0027m not sure. AOSP is not sufficient, I\u0027m trying to eliminate the diffs in mainline-prod really. For now I will make a not that this may be removable soon and make bugjuggler ping it in a few months.",
+      "parentUuid": "4b55e222_0f8b2b59",
+      "revId": "6762cd8d34b7bb465cee3703b340c6c009750ad4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
