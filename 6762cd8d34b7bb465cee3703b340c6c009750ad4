@@ -16,6 +16,24 @@
       "message": "I think it\u0027s useful to mention that it\u0027s the use_vendor:true flag that does this. It\u0027s a good thing to search for.",
       "revId": "6762cd8d34b7bb465cee3703b340c6c009750ad4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b9b68b5_defc19ce",
+        "filename": "target/board/BoardConfigModuleCommon.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-21T08:35:35Z",
+      "side": 1,
+      "message": "I don\u0027t think it is, because I don\u0027t see any usages of \"use_vendor:.*true\" outside of soong tests.",
+      "parentUuid": "75059840_1d818d62",
+      "revId": "6762cd8d34b7bb465cee3703b340c6c009750ad4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
