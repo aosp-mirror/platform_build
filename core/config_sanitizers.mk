@@ -115,20 +115,18 @@ ifeq ($(LOCAL_SANITIZE),never)
   my_sanitize_diag :=
 endif
 
-# Enable CFI in included paths (for Arm64 only).
+# Enable CFI in included paths.
 ifeq ($(filter cfi, $(my_sanitize)),)
-  ifneq ($(filter arm64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
-    combined_include_paths := $(CFI_INCLUDE_PATHS) \
-                              $(PRODUCT_CFI_INCLUDE_PATHS)
-    combined_exclude_paths := $(CFI_EXCLUDE_PATHS) \
-                              $(PRODUCT_CFI_EXCLUDE_PATHS)
+  combined_include_paths := $(CFI_INCLUDE_PATHS) \
+                            $(PRODUCT_CFI_INCLUDE_PATHS)
+  combined_exclude_paths := $(CFI_EXCLUDE_PATHS) \
+                            $(PRODUCT_CFI_EXCLUDE_PATHS)
 
-    ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
-           $(filter $(dir)%,$(LOCAL_PATH)))),)
-      ifeq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
-           $(filter $(dir)%,$(LOCAL_PATH)))),)
-        my_sanitize := cfi $(my_sanitize)
-      endif
+  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+    ifeq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+      my_sanitize := cfi $(my_sanitize)
     endif
   endif
 endif
