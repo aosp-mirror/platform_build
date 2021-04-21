@@ -295,7 +295,7 @@ endif
 ifneq ($(TARGET_BUILD_VARIANT),user)
   ifdef PRODUCT_SET_DEBUGFS_RESTRICTIONS
     ADDITIONAL_VENDOR_PROPERTIES += \
-      ro.product.enforce_debugfs_restrictions=$(PRODUCT_SET_DEBUGFS_RESTRICTIONS)
+      ro.product.debugfs_restrictions.enabled=$(PRODUCT_SET_DEBUGFS_RESTRICTIONS)
   endif
 endif
 
@@ -916,7 +916,7 @@ endef
 # Scan all modules in general-tests, device-tests and other selected suites and
 # flatten the shared library dependencies.
 define update-host-shared-libs-deps-for-suites
-$(foreach suite,general-tests device-tests vts art-host-tests host-unit-tests,\
+$(foreach suite,general-tests device-tests vts tvts art-host-tests host-unit-tests,\
   $(foreach m,$(COMPATIBILITY.$(suite).MODULES),\
     $(eval my_deps := $(call get-all-shared-libs-deps,$(m)))\
     $(foreach dep,$(my_deps),\
