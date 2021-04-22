@@ -16,6 +16,23 @@
       "message": "Tianjie, PTAL",
       "revId": "92be6ee9d7edd0c2ec08db28ece1bd38d5375549",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5a4028c_ff92680a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1399011
+      },
+      "writtenOn": "2021-04-22T03:10:22Z",
+      "side": 1,
+      "message": "Hi Tianjie, Yifan,\n\nThanks!\n\nCan not access failed info by \"Treehugger Robot\" -1. Please help take a look~\n\n",
+      "revId": "92be6ee9d7edd0c2ec08db28ece1bd38d5375549",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
