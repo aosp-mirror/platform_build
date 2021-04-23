@@ -16,6 +16,23 @@
       "message": "ping for ORV 😊",
       "revId": "08443ce5e92797f0b95f5d9553632ac21e188761",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b0b79272_cb3d3de7",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 5265,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-23T00:11:33Z",
+      "side": 1,
+      "message": "The find isn\u0027t necessary if you want the whole directory, use $(SOONG_ZIP) -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config",
+      "revId": "08443ce5e92797f0b95f5d9553632ac21e188761",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
