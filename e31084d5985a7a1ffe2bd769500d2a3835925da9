@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc339959_acdb56b1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-04-23T15:04:56Z",
+      "side": 1,
+      "message": "thank you! Looks much better, consistent and easier to follow now!",
+      "revId": "e31084d5985a7a1ffe2bd769500d2a3835925da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
