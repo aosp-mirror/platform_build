@@ -608,7 +608,7 @@ function print_lunch_menu()
 {
     local uname=$(uname)
     local choices
-    choices=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
+    choices=$(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_BUILD_VARIANT= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
     local ret=$?
 
     echo
