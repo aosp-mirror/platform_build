@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c07115d_c5578c24",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2353,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-23T14:18:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9871a37_62f4ce89",
+      "range": {
+        "startLine": 2353,
+        "startChar": 0,
+        "endLine": 2353,
+        "endChar": 42
+      },
+      "revId": "9be6a5ba6e1bc6db3a0e21907de81599900b44c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "05ed5b63_ea2e4d19",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-04-23T07:26:54Z",
       "side": 1,
       "message": "x",
+      "range": {
+        "startLine": 2467,
+        "startChar": 1,
+        "endLine": 2468,
+        "endChar": 124
+      },
+      "revId": "9be6a5ba6e1bc6db3a0e21907de81599900b44c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e05f7a90_c0bdb01b",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2468,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-23T14:18:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05ed5b63_ea2e4d19",
       "range": {
         "startLine": 2467,
         "startChar": 1,
@@ -70,6 +118,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f590caf4_e0249247",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2469,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-23T14:18:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "499618db_b099bffa",
+      "range": {
+        "startLine": 2469,
+        "startChar": 58,
+        "endLine": 2469,
+        "endChar": 59
+      },
+      "revId": "9be6a5ba6e1bc6db3a0e21907de81599900b44c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "55596b07_18502b52",
@@ -83,6 +155,30 @@
       "writtenOn": "2021-04-23T07:26:54Z",
       "side": 1,
       "message": "Merge L2550 \u0026 L2559 ?",
+      "range": {
+        "startLine": 2550,
+        "startChar": 0,
+        "endLine": 2550,
+        "endChar": 4
+      },
+      "revId": "9be6a5ba6e1bc6db3a0e21907de81599900b44c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c5e7cd9_76ef0a8e",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2550,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-23T14:18:38Z",
+      "side": 1,
+      "message": "OK, sound good.\n\nWe just need to keep target-specific variable assignment (e.g., PRIVATE_ADDITIONAL_DIR :\u003d .,..) before prerequisites.",
+      "parentUuid": "55596b07_18502b52",
       "range": {
         "startLine": 2550,
         "startChar": 0,
