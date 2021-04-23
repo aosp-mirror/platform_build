@@ -33,6 +33,24 @@
       "message": "The find isn\u0027t necessary if you want the whole directory, use $(SOONG_ZIP) -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config",
       "revId": "08443ce5e92797f0b95f5d9553632ac21e188761",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d67a8050_a99ba0a0",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 5265,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-04-23T01:02:27Z",
+      "side": 1,
+      "message": "Thanks! Done.",
+      "parentUuid": "b0b79272_cb3d3de7",
+      "revId": "08443ce5e92797f0b95f5d9553632ac21e188761",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
