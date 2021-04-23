@@ -1,6 +1,98 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "f9871a37_62f4ce89",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2353,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-04-23T07:26:54Z",
+      "side": 1,
+      "message": "Can we merge this if-block with L2345?",
+      "range": {
+        "startLine": 2353,
+        "startChar": 0,
+        "endLine": 2353,
+        "endChar": 42
+      },
+      "revId": "9be6a5ba6e1bc6db3a0e21907de81599900b44c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "05ed5b63_ea2e4d19",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2468,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-04-23T07:26:54Z",
+      "side": 1,
+      "message": "x",
+      "range": {
+        "startLine": 2467,
+        "startChar": 1,
+        "endLine": 2468,
+        "endChar": 124
+      },
+      "revId": "9be6a5ba6e1bc6db3a0e21907de81599900b44c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "499618db_b099bffa",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2469,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-04-23T07:26:54Z",
+      "side": 1,
+      "message": "add $(TARGET_DEBUG_RAMDISK_OUT)",
+      "range": {
+        "startLine": 2469,
+        "startChar": 58,
+        "endLine": 2469,
+        "endChar": 59
+      },
+      "revId": "9be6a5ba6e1bc6db3a0e21907de81599900b44c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55596b07_18502b52",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2550,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-04-23T07:26:54Z",
+      "side": 1,
+      "message": "Merge L2550 \u0026 L2559 ?",
+      "range": {
+        "startLine": 2550,
+        "startChar": 0,
+        "endLine": 2550,
+        "endChar": 4
+      },
+      "revId": "9be6a5ba6e1bc6db3a0e21907de81599900b44c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "dc4022e9_26128312",
