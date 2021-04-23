@@ -34,6 +34,23 @@
       "parentUuid": "fc339959_acdb56b1",
       "revId": "e31084d5985a7a1ffe2bd769500d2a3835925da9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "21261a28_8ce3ebeb",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2341,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-23T18:14:59Z",
+      "side": 1,
+      "message": "Suggest indenting all of these conditionals.",
+      "revId": "e31084d5985a7a1ffe2bd769500d2a3835925da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
