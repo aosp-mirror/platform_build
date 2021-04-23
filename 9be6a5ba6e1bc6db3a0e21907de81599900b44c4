@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc4022e9_26128312",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2585,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-23T07:04:09Z",
+      "side": 1,
+      "message": "The presubmit failure is because of the following revert CL, which places userdebug_plat_sepolicy.cil under first_stage_ramdisk/.\n\nhttps://android-review.googlesource.com/c/platform/build/soong/+/1683875/1/android/paths.go#1693\n\n\nBuild error on devices with BoardUsesRecoveryAsBoot():\n\ncp: out/target/product/crosshatch/test_harness_ramdisk/first_stage_ramdisk/userdebug_plat_sepolicy.cil: No such file or directory\n\n\nThe build error can be fixed after we revert that CL again.\nAnyway, I\u0027m thinking that using `rsync` is probably batter then `cp` here, because rsync doesn\u0027t need to mkdir if the dir does not exist. Will switch to `rsync` in the next PS.",
+      "range": {
+        "startLine": 2584,
+        "startChar": 1,
+        "endLine": 2585,
+        "endChar": 91
+      },
+      "revId": "9be6a5ba6e1bc6db3a0e21907de81599900b44c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
