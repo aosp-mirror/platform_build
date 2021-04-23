@@ -187,6 +187,9 @@ def ImgFromTargetFiles(input_file, output_file):
   Raises:
     ValueError: On invalid input.
   """
+  if not os.path.exists(input_file):
+    raise ValueError('%s is not exist' % input_file)
+
   if not zipfile.is_zipfile(input_file):
     raise ValueError('%s is not a valid zipfile' % input_file)
 
