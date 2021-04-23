@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "380c9cb5_cd8056b8",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2514,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-23T14:29:00Z",
+      "side": 0,
+      "message": "This part is moved to the beginning of the vendor debug ramdisk section: L2458 on the right hand side.",
+      "range": {
+        "startLine": 2501,
+        "startChar": 0,
+        "endLine": 2514,
+        "endChar": 42
+      },
+      "revId": "85c91dcee9261d78b890617282b4d05c01ded12f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

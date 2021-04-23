@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a1cfd85b_1727d41a",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2363,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-23T14:29:00Z",
+      "side": 1,
+      "message": "Adding this dependency: when we `make bootimage_debug`, file `installed-files-ramdisk-debug.txt` gets updated as well.",
+      "range": {
+        "startLine": 2363,
+        "startChar": 35,
+        "endLine": 2363,
+        "endChar": 72
+      },
+      "revId": "503b6839169246c4058a4b31cabc0097f05c6140",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c38a40a0_d29c16db",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2466,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-23T14:29:00Z",
+      "side": 1,
+      "message": "This is necessary because currently no module is installed to $(TARGET_VENDOR_DEBUG_RAMDISK_OUT).\n\nThe debug ramdisk files are installed to $(TARGET_DEBUG_RAMDISK_OUT) then being packed into the vendor debug ramdisk at L2486.\n\nHowever, it\u0027s possible if an OEM wants to add a file only in $(TARGET_VENDOR_DEBUG_RAMDISK_OUT). e.g., they can do:\n\n  PRODUCT_COPY_FILES +\u003d \\         \n      $(LOCAL_PATH)/some_file:$(TARGET_COPY_OUT_VENDOR_DEBUG_RAMDISK)/some_file",
+      "range": {
+        "startLine": 2466,
+        "startChar": 1,
+        "endLine": 2466,
+        "endChar": 44
+      },
+      "revId": "503b6839169246c4058a4b31cabc0097f05c6140",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "44564fee_2d24a742",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2483,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-23T14:29:00Z",
+      "side": 1,
+      "message": "Same here, when we `make vendorbootimage_debug`, file installed-files-vendor-ramdisk-debug.txt gets updated automatically.",
+      "range": {
+        "startLine": 2483,
+        "startChar": 43,
+        "endLine": 2483,
+        "endChar": 84
+      },
+      "revId": "503b6839169246c4058a4b31cabc0097f05c6140",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
