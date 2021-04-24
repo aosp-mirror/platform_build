@@ -5325,6 +5325,22 @@ $(APPCOMPAT_ZIP): $(SOONG_ZIP)
 	$(hide) find $(PRODUCT_OUT)/appcompat | sort >$(PRIVATE_LIST_FILE)
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/appcompat -l $(PRIVATE_LIST_FILE)
 
+DEXPREOPT_CONFIG_ZIP := $(PRODUCT_OUT)/dexpreopt_config.zip
+$(DEXPREOPT_CONFIG_ZIP): $(FULL_SYSTEMIMAGE_DEPS) \
+	    $(INTERNAL_RAMDISK_FILES) \
+	    $(INTERNAL_USERDATAIMAGE_FILES) \
+	    $(INTERNAL_VENDORIMAGE_FILES) \
+	    $(INTERNAL_PRODUCTIMAGE_FILES) \
+	    $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
+	    $(DEX_PREOPT_CONFIG_FOR_MAKE) \
+	    $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)
+
+$(DEXPREOPT_CONFIG_ZIP): $(SOONG_ZIP)
+	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/dexpreopt_config
+	$(hide) cp $(DEX_PREOPT_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
+	$(hide) cp $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config
+
 # -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it
 # more obvious where these files came from.
