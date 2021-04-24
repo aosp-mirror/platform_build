@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "97bd8914_4a903801",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-24T02:35:25Z",
+      "side": 0,
+      "message": "Add 5.10-android12-1 but keep -0",
+      "revId": "50a00289eaece04f678a7a60ae118f845d0ab7c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
