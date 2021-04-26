@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "508053a5_bf0c2a76",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-04-26T05:27:40Z",
+      "side": 1,
+      "message": "Filed b/186370487 for the GKI presubmit failure.\n(Should not be related to this change).",
+      "revId": "610286a88f49f72ddf1717ba587b476afcceaeca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
