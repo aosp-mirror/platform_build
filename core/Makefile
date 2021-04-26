@@ -5337,8 +5337,12 @@ $(DEXPREOPT_CONFIG_ZIP): $(FULL_SYSTEMIMAGE_DEPS) \
 
 $(DEXPREOPT_CONFIG_ZIP): $(SOONG_ZIP)
 	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/dexpreopt_config
+ifneq (,$(DEX_PREOPT_CONFIG_FOR_MAKE))
 	$(hide) cp $(DEX_PREOPT_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
+endif
+ifneq (,$(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE))
 	$(hide) cp $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
+endif
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config
 
 # -----------------------------------------------------------------
