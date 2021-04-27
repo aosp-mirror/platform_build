@@ -22,6 +22,30 @@
       },
       "revId": "20f068c056771414c6ed86b67845db5d64a9f64d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c10353f_258185f9",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2021-04-27T05:20:28Z",
+      "side": 1,
+      "message": "Thanks SzuWei, done!",
+      "parentUuid": "77e227a5_ab2ce5f8",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 40
+      },
+      "revId": "20f068c056771414c6ed86b67845db5d64a9f64d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
