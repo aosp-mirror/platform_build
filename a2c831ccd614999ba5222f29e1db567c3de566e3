@@ -72,6 +72,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5af0b5f_090d5b21",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-04-27T16:20:05Z",
+      "side": 1,
+      "message": "Will we mandate bootclasspath_fragment{} definitions to exist for non-updatable apex? Probably yes, and I believe this is what Paul is going to do at some point. bootclasspath_fragment{} would then generate apex\u0027s classpaths.proto config.\n\nFrom my perspective I\u0027d say we should treat them as any other apex jars, let them have their own config and put them after /system jars in derive_classpath. Once that new apex decides to be updatable -- i.e. the ordering will not be a surprise for them. They would also have time to measure any system health regressions if any.\n\nWith this perspective, I\u0027d love to not treat icu4j specially in derive_classpath.\n\nOne of the meaningful difference is that updatable jars are not part of DEX2OATBOOTCLASSPATH, and I believe that should stay the same.\n\nderive_classpath already knows to insert art jars above system, we can just add a glob pattern right betwen art and system. (or we could skip that and icu4j would come after system once it has its own config.)",
+      "parentUuid": "feab2c41_73e23a85",
+      "range": {
+        "startLine": 9,
+        "startChar": 31,
+        "endLine": 9,
+        "endChar": 58
+      },
+      "revId": "a2c831ccd614999ba5222f29e1db567c3de566e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "2e9015f8_5b597c92",
