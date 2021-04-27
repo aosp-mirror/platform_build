@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "feab2c41_73e23a85",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-04-27T16:01:55Z",
+      "side": 1,
+      "message": "My question was, if some system jar from PRODUCT_BOOT_JARS moves to a non-updatable apex, will that be a problem, and if yes, how will it manifest? Maybe we should have a build system check in the makefile to fail if one of the (non-updatable) apex jars in PRODUCT_BOOT_JARS is higher on the list than system jars?\n\nMaybe this was missing from the original ordering request, but it seems that:\n- non-updatable apex jars in PRODUCT_BOOT_JARS should be grouped at the end\n- derive_classpath should have some logic to walk non-updatable apexes before updatable ones\n\nOr else, how will derive_classpath know to insert icu4j before updatable apex jars?\n\n\u003e At runtime we\u0027ll do the right thing.\n\nCan you explain this a bit?",
+      "parentUuid": "6c387844_dd95f370",
+      "range": {
+        "startLine": 9,
+        "startChar": 31,
+        "endLine": 9,
+        "endChar": 58
+      },
+      "revId": "a2c831ccd614999ba5222f29e1db567c3de566e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "2e9015f8_5b597c92",
@@ -102,6 +126,30 @@
       "side": 1,
       "message": "That\u0027s not true actually, apex jars should generally go into PRODUCT_UPDATABLE_BOOT_JARS below. Ideally, ART_APEX_JARS would not be part of PRODUCT_BOOT_JARS, but for historic reasons they are. \n\nToday, PRODUCT_BOOT_JARS ordering matters because it defines relative ordering of /system/ jars in BCP, but I am trying to modularize that config, so as a follow up I\u0027ll add a special case for icu4j in derive_classpath to load after ART jars.\n\n(Unless we decide there is nothing special about icu4j and it should be part of all other normal apex jars.)",
       "parentUuid": "431328a2_3a9bf3e7",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 57
+      },
+      "revId": "a2c831ccd614999ba5222f29e1db567c3de566e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e42db445_cbbb8324",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-04-27T16:01:55Z",
+      "side": 1,
+      "message": "One correction: *updatable* apex jars should go in PRODUCT_UPDATABLE_BOOT_JARS. Non-updatable apex jars should go in PRODUCT_BOOT_JARS, like icu4j.",
+      "parentUuid": "50d46252_51b4e0ce",
       "range": {
         "startLine": 21,
         "startChar": 0,
