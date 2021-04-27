@@ -96,6 +96,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "e1849e0e_0546d151",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-04-27T16:36:38Z",
+      "side": 1,
+      "message": "What we need to ensure is that the resulting bootclasspath does not put icu4j after some updatable jars -- that would invalidate framework boot image extension, because icu4j is part of it, unlike updatable jars (I expect the device would fail to boot).\n\nAside from that restriction, it can go before or after system jars, whichever is easier for you (provided that the order is always the same).\n\nI think that some special handling is needed in derive_classpath to put non-updatable apex jars before the updatable ones (or before system jars) on the resulting bootclasspath, but I don\u0027t see it in the current CL (is it intended as a follow-up?).",
+      "parentUuid": "e5af0b5f_090d5b21",
+      "range": {
+        "startLine": 9,
+        "startChar": 31,
+        "endLine": 9,
+        "endChar": 58
+      },
+      "revId": "a2c831ccd614999ba5222f29e1db567c3de566e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "2e9015f8_5b597c92",
