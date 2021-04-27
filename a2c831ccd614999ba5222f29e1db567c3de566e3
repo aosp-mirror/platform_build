@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c387844_dd95f370",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-04-27T15:08:42Z",
+      "side": 1,
+      "message": "Note that this is not part of an _updatable_ module. All updatable apex jars go into PRODUCT_UPDATABLE_BOOT_JARS (except art).\n\nIn general, there was a request to have following ordering:\n\n1. ART jars\n2. /system jars\n3. /apex jars\n4. /system_ext, etc.\n\nART_APEX_JARS are special cased and live above everything else, given that icu4j was part of ART, I moved it here as well, but happy to put below /system jars just like any other existing apex. In fact maybe we should?\n\nAny other boot jar moving into apex would have to be in the (3) category. At runtime we\u0027ll do the right thing. Nothing exists to check any of this at build time, but with Paul\u0027s work we are also changing how we even define these... with introduction of bootclasspath_fragments and platform_bootclasspath_fragments we could do more at build time probably.",
+      "parentUuid": "04b10852_0c61ea04",
+      "range": {
+        "startLine": 9,
+        "startChar": 31,
+        "endLine": 9,
+        "endChar": 58
+      },
+      "revId": "a2c831ccd614999ba5222f29e1db567c3de566e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "2e9015f8_5b597c92",
@@ -54,6 +78,30 @@
       "writtenOn": "2021-04-27T14:50:38Z",
       "side": 1,
       "message": "Can you expand this comment to say that all apex boot jars must go before other (system or system_ext) jars, and why?",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 57
+      },
+      "revId": "a2c831ccd614999ba5222f29e1db567c3de566e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "50d46252_51b4e0ce",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-04-27T15:08:42Z",
+      "side": 1,
+      "message": "That\u0027s not true actually, apex jars should generally go into PRODUCT_UPDATABLE_BOOT_JARS below. Ideally, ART_APEX_JARS would not be part of PRODUCT_BOOT_JARS, but for historic reasons they are. \n\nToday, PRODUCT_BOOT_JARS ordering matters because it defines relative ordering of /system/ jars in BCP, but I am trying to modularize that config, so as a follow up I\u0027ll add a special case for icu4j in derive_classpath to load after ART jars.\n\n(Unless we decide there is nothing special about icu4j and it should be part of all other normal apex jars.)",
+      "parentUuid": "431328a2_3a9bf3e7",
       "range": {
         "startLine": 21,
         "startChar": 0,
