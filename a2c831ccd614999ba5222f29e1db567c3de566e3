@@ -120,6 +120,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d92bfbc_d6b4f857",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-04-27T16:45:43Z",
+      "side": 1,
+      "message": "I see.. that\u0027s the kind of details I was hoping to see :-)\n\nNote that derive_classpath is only reading one config in /system that contains all apexes as well, soong changes are incoming. This change (and the next follow up one) should be safe with that regard.\n\nNow, for the ordering of updatable / non-updatable. To summarize, we want:\n1. ART jars\n2. System jars\n3. Non updatable apex jars\n4. Updatable apex jars\n5. system_ext jars\n\nDoes the above seem reasonable? Maybe we could (as you mentioned) combine 3 and 4 at build time and put them into /system config; this way we minimize required logic (and thus potential risk of bugs) on the device side. Soong already knows this information, so combining them should be doable...\n\nThe implication is that the ordering on BCP would change when the apex decides to be updatable, but that shouldn\u0027t be a surprize if they have to modify this file anyhow.\n\nI\u0027ll update this cl tomorrow.",
+      "parentUuid": "e1849e0e_0546d151",
+      "range": {
+        "startLine": 9,
+        "startChar": 31,
+        "endLine": 9,
+        "endChar": 58
+      },
+      "revId": "a2c831ccd614999ba5222f29e1db567c3de566e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "2e9015f8_5b597c92",
