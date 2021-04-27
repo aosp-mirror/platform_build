@@ -52,8 +52,8 @@
 #   emit_js_data():
 
 from __future__ import print_function
-import cgi
 import csv
+import html
 import sys
 
 # pylint:disable=relative-beyond-top-level
@@ -582,10 +582,7 @@ def emit_const_string_array(name, array, writer):
 def emit_const_html_string_array(name, array, writer):
   writer('const ' + name + ' = [')
   for s in array:
-    # Not using html.escape yet, to work for both python 2 and 3,
-    # until all users switch to python 3.
-    # pylint:disable=deprecated-method
-    writer('"' + cgi.escape(strip_escape_string(s)) + '",')
+    writer('"' + html.escape(strip_escape_string(s)) + '",')
   writer('];')
 
 
