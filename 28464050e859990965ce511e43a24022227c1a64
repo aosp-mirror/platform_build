@@ -46,6 +46,30 @@
       },
       "revId": "28464050e859990965ce511e43a24022227c1a64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2a6e4c05_155673de",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-28T14:00:39Z",
+      "side": 1,
+      "message": "I don\u0027t understand how to interpret the comment. BOOTCLASSPATH is set in a different repository all together. Maybe this should be phrased in terms of PRODUCT_BOOT_JARS and PRODUCT_UPDATABLE_BOOT_JARS?",
+      "parentUuid": "b9de1811_c1f78cfd",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 24
+      },
+      "revId": "28464050e859990965ce511e43a24022227c1a64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
