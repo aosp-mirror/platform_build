@@ -2544,8 +2544,12 @@ endef
 # $(1): source file
 # $(2): destination file
 define copy-init-script-file-checked
+ifdef TARGET_BUILD_UNBUNDLED
+# TODO (b/185624993): Remove the chck on TARGET_BUILD_UNBUNDLED when host_init_verifier can run
+# without requiring the HIDL interface map.
+$(2): $(1)
+else ifneq ($(HOST_OS),darwin)
 # Host init verifier doesn't exist on darwin.
-ifneq ($(HOST_OS),darwin)
 $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
