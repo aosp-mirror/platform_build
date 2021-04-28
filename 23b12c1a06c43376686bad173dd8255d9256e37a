@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8946baca_91889250",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-28T18:32:34Z",
+      "side": 1,
+      "message": "Actually, drop this line because we don\u0027t have kernel binaries for this.",
+      "range": {
+        "startLine": 103,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 22
+      },
+      "revId": "23b12c1a06c43376686bad173dd8255d9256e37a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
