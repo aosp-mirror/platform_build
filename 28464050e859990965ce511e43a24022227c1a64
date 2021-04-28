@@ -22,6 +22,30 @@
       },
       "revId": "28464050e859990965ce511e43a24022227c1a64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9de1811_c1f78cfd",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-04-28T13:40:09Z",
+      "side": 1,
+      "message": "I think this order does matter, as this is the order used by all build tools (dexpreopt, boot image compilation). The comment on line 28 refers to runtime order.",
+      "parentUuid": "416357d1_20fc7e23",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 24
+      },
+      "revId": "28464050e859990965ce511e43a24022227c1a64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
