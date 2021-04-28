@@ -194,6 +194,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "dfd5651f_dc83f3cb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-04-28T12:45:47Z",
+      "side": 1,
+      "message": "\u003e I am still not fully aware on how system_ext jars gets introduced\n\nOne would add \"system_ext:some-jar-name\" to PRODUCT_BOOT_JARS.\n\n\u003e Added some comments in the file.\n\nVery helpful, thanks!\n\n\u003e At the least I will introduce a CTS test to test the above ordering in a follow up.\n\nThat would be great.",
+      "parentUuid": "5d87f57c_38b0209b",
+      "range": {
+        "startLine": 9,
+        "startChar": 31,
+        "endLine": 9,
+        "endChar": 58
+      },
+      "revId": "a2c831ccd614999ba5222f29e1db567c3de566e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "2e9015f8_5b597c92",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
