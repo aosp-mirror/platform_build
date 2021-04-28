@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "416357d1_20fc7e23",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-28T13:29:05Z",
+      "side": 1,
+      "message": "Why is this comment here if the order here does not matter? It would be better if it said the order of PRODUCT_BOOT_JARS matters but the order in PRODUCT_UPDATABLE_* does not",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 24
+      },
+      "revId": "28464050e859990965ce511e43a24022227c1a64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
