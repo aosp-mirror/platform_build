@@ -168,6 +168,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "5d87f57c_38b0209b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-04-28T12:29:48Z",
+      "side": 1,
+      "message": "Not your fault, I didn\u0027t realize that updatable jars must come after _all_ non-updatable jars, and was blindly following security team\u0027s advise.\n\nAdded some comments in the file. Ideally, with Paul\u0027s work progressing further, we would remove this and move the logic to soong eventually.\n\nNote that in the latest patch icu4j comes after system jars.\n\nI am still not fully aware on how system_ext jars gets introduced, perhaps we need to update some other comments / instructions? At the least I will introduce a CTS test to test the above ordering in a follow up.",
+      "parentUuid": "b48506aa_7e70ae9e",
+      "range": {
+        "startLine": 9,
+        "startChar": 31,
+        "endLine": 9,
+        "endChar": 58
+      },
+      "revId": "a2c831ccd614999ba5222f29e1db567c3de566e3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "2e9015f8_5b597c92",
