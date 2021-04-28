@@ -70,6 +70,30 @@
       },
       "revId": "28464050e859990965ce511e43a24022227c1a64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "905f2b77_0516331f",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-04-28T15:58:47Z",
+      "side": 1,
+      "message": "Tried to clarify in the comment. The order defined here is still useful I imagine (especially for partners) since this the historic place to define boot jars.",
+      "parentUuid": "2a6e4c05_155673de",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 24
+      },
+      "revId": "28464050e859990965ce511e43a24022227c1a64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
