@@ -52,8 +52,8 @@ import os
 import re
 import sys
 
-# pylint:disable=relative-beyond-top-level
-# pylint:disable=g-importing-member
+# pylint:disable=relative-beyond-top-level,no-name-in-module
+# suppress false positive of no-name-in-module warnings
 from . import android_project_list
 from . import chrome_project_list
 from . import cpp_warn_patterns as cpp_patterns
@@ -115,6 +115,8 @@ def get_project_names(project_list):
 
 
 def find_project_index(line, project_patterns):
+  """Return the index to the project pattern array."""
+  # pylint:disable=invalid-name
   for i, p in enumerate(project_patterns):
     if p.match(line):
       return i
@@ -124,30 +126,30 @@ def find_project_index(line, project_patterns):
 def classify_one_warning(warning, link, results, project_patterns,
                          warn_patterns):
   """Classify one warning line."""
+  # pylint:disable=invalid-name
   for i, w in enumerate(warn_patterns):
     for cpat in w['compiled_patterns']:
       if cpat.match(warning):
         p = find_project_index(warning, project_patterns)
         results.append([warning, link, i, p])
         return
-      else:
-        # If we end up here, there was a problem parsing the log
-        # probably caused by 'make -j' mixing the output from
-        # 2 or more concurrent compiles
-        pass
+  # If we end up here, there was a problem parsing the log
+  # probably caused by 'make -j' mixing the output from
+  # 2 or more concurrent compiles
 
 
-def remove_prefix(s, sub):
-  """Remove everything before last occurrence of substring sub in string s."""
-  if sub in s:
-    inc_sub = s.rfind(sub)
-    return s[inc_sub:]
-  return s
+def remove_prefix(src, sub):
+  """Remove everything before last occurrence of substring sub in string src."""
+  if sub in src:
+    inc_sub = src.rfind(sub)
+    return src[inc_sub:]
+  return src
 
 
 # TODO(emmavukelj): Don't have any generate_*_cs_link functions call
 # normalize_path a second time (the first time being in parse_input_file)
 def generate_cs_link(warning_line, flags, android_root=None):
+  """Try to add code search HTTP URL prefix."""
   if flags.platform == 'chrome':
     return generate_chrome_cs_link(warning_line, flags)
   if flags.platform == 'android':
@@ -279,8 +281,7 @@ def normalize_path(path, flags, android_root=None):
   if idx >= 0:
     # remove chrome_root/, we want path relative to that
     return path[idx + len('chrome_root/'):]
-  else:
-    return path
+  return path
 
 
 def normalize_warning_line(line, flags, android_root=None):
@@ -309,6 +310,7 @@ def parse_input_file_chrome(infile, flags):
   # Remove the duplicated warnings save ~8% of time when parsing
   # one typical build log than before
   unique_warnings = dict()
+  # pylint:disable=invalid-name
   for line in infile:
     if warning_pattern.match(line):
       normalized_line = normalize_warning_line(line, flags)
@@ -344,6 +346,7 @@ def add_normalized_line_to_warnings(line, flags, android_root, unique_warnings):
 
 def parse_input_file_android(infile, flags):
   """Parse Android input file, collect parameters and warning lines."""
+  # pylint:disable=too-many-locals,too-many-branches
   platform_version = 'unknown'
   target_product = 'unknown'
   target_variant = 'unknown'
@@ -393,6 +396,7 @@ def parse_input_file_android(infile, flags):
             line, flags, android_root, unique_warnings)
       continue
 
+    # pylint:disable=invalid-name
     if line_counter < 100:
       # save a little bit of time by only doing this for the first few lines
       line_counter += 1
@@ -424,6 +428,7 @@ def parse_input_file_android(infile, flags):
 
 
 def parse_input_file(infile, flags):
+  """Parse one input file for chrome or android."""
   if flags.platform == 'chrome':
     return parse_input_file_chrome(infile, flags)
   if flags.platform == 'android':
@@ -448,9 +453,12 @@ def get_warn_patterns(platform):
   if platform == 'chrome':
     warn_patterns = cpp_patterns.warn_patterns
   elif platform == 'android':
-    warn_patterns = make_patterns.warn_patterns + cpp_patterns.warn_patterns + java_patterns.warn_patterns + tidy_patterns.warn_patterns + other_patterns.warn_patterns
+    warn_patterns = (make_patterns.warn_patterns + cpp_patterns.warn_patterns +
+                     java_patterns.warn_patterns + tidy_patterns.warn_patterns +
+                     other_patterns.warn_patterns)
   else:
     raise Exception('platform name %s is not valid' % platform)
+  # pylint:disable=invalid-name
   for w in warn_patterns:
     w['members'] = []
     # Each warning pattern has a 'projects' dictionary, that
@@ -473,6 +481,7 @@ def parallel_classify_warnings(warning_data, args, project_names,
                                use_google3, create_launch_subprocs_fn,
                                classify_warnings_fn):
   """Classify all warning lines with num_cpu parallel processes."""
+  # pylint:disable=too-many-arguments,too-many-locals
   num_cpu = args.processes
   group_results = []
 
@@ -531,8 +540,10 @@ def parallel_classify_warnings(warning_data, args, project_names,
 def process_log(logfile, flags, project_names, project_patterns, warn_patterns,
                 html_path, use_google3, create_launch_subprocs_fn,
                 classify_warnings_fn, logfile_object):
-  # pylint: disable=g-doc-args
-  # pylint: disable=g-doc-return-or-yield
+  # pylint does not recognize g-doc-*
+  # pylint: disable=bad-option-value,g-doc-args
+  # pylint: disable=bad-option-value,g-doc-return-or-yield
+  # pylint: disable=too-many-arguments,too-many-locals
   """Function that handles processing of a log.
 
   This is isolated into its own function (rather than just taking place in main)

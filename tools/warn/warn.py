@@ -20,7 +20,8 @@ import multiprocessing
 import signal
 import sys
 
-# pylint:disable=relative-beyond-top-level
+# pylint:disable=relative-beyond-top-level,no-name-in-module
+# suppress false positive of no-name-in-module warnings
 from . import warn_common as common
 
 
@@ -50,6 +51,7 @@ def classify_warnings(args):
 
 def create_and_launch_subprocesses(num_cpu, classify_warnings_fn, arg_groups,
                                    group_results):
+  """Fork num_cpu processes to classify warnings."""
   pool = multiprocessing.Pool(num_cpu)
   for cpu in range(num_cpu):
     proc_result = pool.map(classify_warnings_fn, arg_groups[cpu])
@@ -59,6 +61,7 @@ def create_and_launch_subprocesses(num_cpu, classify_warnings_fn, arg_groups,
 
 
 def main():
+  """Old main() calls new common_main."""
   use_google3 = False
   common.common_main(use_google3, create_and_launch_subprocesses,
                      classify_warnings)
