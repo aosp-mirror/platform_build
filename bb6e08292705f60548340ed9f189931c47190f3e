@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c13adae_f15a06a8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1408266
+      },
+      "writtenOn": "2021-04-29T21:49:48Z",
+      "side": 1,
+      "message": "Manually CP this CL to branch oreo-mr1-cts-dev since merge path oreo-cts-dev \u003d\u003e oreo-mr1-cts-dev doesn\u0027t exsit for project platform/build",
+      "revId": "bb6e08292705f60548340ed9f189931c47190f3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
