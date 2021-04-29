@@ -33,6 +33,23 @@
       "message": "Hi Norman could you review this? I learned today that the merge paths between cts dev branches don\u0027t exist for build/ project. So we have to CP this CL manually to each cts dev branch.",
       "revId": "bb6e08292705f60548340ed9f189931c47190f3e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f64015ab_482bdf14",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1408266
+      },
+      "writtenOn": "2021-04-29T22:54:15Z",
+      "side": 1,
+      "message": "Hi Colin could you give a owner review? I learned today that the merge paths between cts dev branches don\u0027t exist for build/ project, I have to CP this CL manually to each cts dev branch.",
+      "revId": "bb6e08292705f60548340ed9f189931c47190f3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
