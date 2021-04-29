@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "074a92bf_67f2ec5b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-04-29T09:18:01Z",
+      "side": 1,
+      "message": "you\u0027ll need an internal CP (perhaps alphabetically sorted is not the best order for conflict-prone lists?)",
+      "revId": "ab9a55c2383a5a001f6e956d9b05a5266b4fd155",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
