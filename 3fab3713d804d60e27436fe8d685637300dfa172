@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2fffe7d9_2f97edd1",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1062,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-04-29T17:32:33Z",
+      "side": 1,
+      "message": "I think it\u0027s now just `not OPTIONS.disable_vabc`",
+      "range": {
+        "startLine": 1060,
+        "startChar": 0,
+        "endLine": 1062,
+        "endChar": 17
+      },
+      "revId": "3fab3713d804d60e27436fe8d685637300dfa172",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
