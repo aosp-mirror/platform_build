@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2f7a9a35_7ff6e6ef",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5982,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2021-04-29T20:02:59Z",
+      "side": 1,
+      "message": "don\u0027t copy the comment, just change the comment above to be plural (/s/\"build all fuzz targets\"/\"build all fuzz targets for C++ and Rust\")",
+      "range": {
+        "startLine": 5972,
+        "startChar": 0,
+        "endLine": 5982,
+        "endChar": 0
+      },
+      "revId": "ee17a42667009922a67756f91d8cd91ce4bd5435",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
