@@ -33,6 +33,24 @@
       "message": "Note that build/ project is not configured on branch android11-tests-dev so I have to directly CP it to android11-tests-release.",
       "revId": "bcda87f9f72b9b6da82a4e279492fe656cb66ba1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c580d72b_1c21320d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-04-30T20:45:30Z",
+      "side": 1,
+      "message": "android11-tests-release is a snapshot branch, if there is no android11-tests-dev branch here maybe it gets it from android11-dev?",
+      "parentUuid": "bf0080a9_42e35307",
+      "revId": "bcda87f9f72b9b6da82a4e279492fe656cb66ba1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
