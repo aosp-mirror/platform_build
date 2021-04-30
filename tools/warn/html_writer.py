@@ -15,6 +15,9 @@
 
 """Emit warning messages to html or csv files."""
 
+# Many functions in this module have too many arguments to be refactored.
+# pylint:disable=too-many-arguments,missing-function-docstring
+
 # To emit html page of warning messages:
 #   flags: --byproject, --url, --separator
 # Old stuff for static html components:
@@ -57,11 +60,10 @@ import html
 import sys
 
 # pylint:disable=relative-beyond-top-level
-# pylint:disable=g-importing-member
 from .severity import Severity
 
 
-html_head_scripts = """\
+HTML_HEAD_SCRIPTS = """\
   <script type="text/javascript">
   function expand(id) {
     var e = document.getElementById(id);
@@ -113,7 +115,7 @@ def html_big(param):
 def dump_html_prologue(title, writer, warn_patterns, project_names):
   writer('<html>\n<head>')
   writer('<title>' + title + '</title>')
-  writer(html_head_scripts)
+  writer(HTML_HEAD_SCRIPTS)
   emit_stats_by_project(writer, warn_patterns, project_names)
   writer('</head>\n<body>')
   writer(html_big(title))
@@ -142,7 +144,7 @@ def create_warnings(warn_patterns, project_names):
     2D warnings array where warnings[p][s] is # of warnings in project name p of
     severity level s
   """
-  # pylint:disable=g-complex-comprehension
+  # pylint:disable=invalid-name
   warnings = {p: {s.value: 0 for s in Severity.levels} for p in project_names}
   for i in warn_patterns:
     s = i['severity'].value
@@ -153,7 +155,6 @@ def create_warnings(warn_patterns, project_names):
 
 def get_total_by_project(warnings, project_names):
   """Returns dict, project as key and # warnings for that project as value."""
-  # pylint:disable=g-complex-comprehension
   return {
       p: sum(warnings[p][s.value] for s in Severity.levels)
       for p in project_names
@@ -162,7 +163,6 @@ def get_total_by_project(warnings, project_names):
 
 def get_total_by_severity(warnings, project_names):
   """Returns dict, severity as key and # warnings of that severity as value."""
-  # pylint:disable=g-complex-comprehension
   return {
       s.value: sum(warnings[p][s.value] for p in project_names)
       for s in Severity.levels
@@ -235,7 +235,7 @@ def emit_row_counts_per_severity(total_by_severity, stats_header, stats_rows,
   writer('<script>')
   emit_const_string_array('StatsHeader', stats_header, writer)
   emit_const_object_array('StatsRows', stats_rows, writer)
-  writer(draw_table_javascript)
+  writer(DRAW_TABLE_JAVASCRIPT)
   writer('</script>')
 
 
@@ -246,8 +246,8 @@ def emit_stats_by_project(writer, warn_patterns, project_names):
   total_by_project = get_total_by_project(warnings, project_names)
   total_by_severity = get_total_by_severity(warnings, project_names)
   stats_header = emit_table_header(total_by_severity)
-  total_all_projects, stats_rows = \
-    emit_row_counts_per_project(warnings, total_by_project, total_by_severity, project_names)
+  total_all_projects, stats_rows = emit_row_counts_per_project(
+      warnings, total_by_project, total_by_severity, project_names)
   emit_row_counts_per_severity(total_by_severity, stats_header, stats_rows,
                                total_all_projects, writer)
 
@@ -287,6 +287,7 @@ def dump_stats(writer, warn_patterns):
 #     id for each warning pattern
 #     sort by project, severity, warn_id, warning_message
 def emit_buttons(writer):
+  """Write the button elements in HTML."""
   writer('<button class="button" onclick="expandCollapse(1);">'
          'Expand all warnings</button>\n'
          '<button class="button" onclick="expandCollapse(0);">'
@@ -412,7 +413,7 @@ def emit_warning_arrays(writer, warn_patterns):
   writer('];')
 
 
-scripts_for_warning_groups = """
+SCRIPTS_FOR_WARNING_GROUPS = """
   function compareMessages(x1, x2) { // of the same warning type
     return (WarningMessages[x1[2]] <= WarningMessages[x2[2]]) ? -1 : 1;
   }
@@ -620,7 +621,7 @@ def emit_js_data(writer, flags, warning_messages, warning_links,
     emit_const_html_string_array('WarningLinks', warning_links, writer)
 
 
-draw_table_javascript = """
+DRAW_TABLE_JAVASCRIPT = """
 google.charts.load('current', {'packages':['table']});
 google.charts.setOnLoadCallback(drawTable);
 function drawTable() {
@@ -653,7 +654,7 @@ def dump_html(flags, output_stream, warning_messages, warning_links,
   writer('\n<script>')
   emit_js_data(writer, flags, warning_messages, warning_links, warning_records,
                warn_patterns, project_names)
-  writer(scripts_for_warning_groups)
+  writer(SCRIPTS_FOR_WARNING_GROUPS)
   writer('</script>')
   emit_buttons(writer)
   # Warning messages are grouped by severities or project names.
