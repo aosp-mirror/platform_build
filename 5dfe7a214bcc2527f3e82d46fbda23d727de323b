@@ -34,6 +34,24 @@
       "parentUuid": "f73412e6_92d359ca",
       "revId": "5dfe7a214bcc2527f3e82d46fbda23d727de323b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3447cdaf_321f6d2b",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 5973,
+      "author": {
+        "id": 1353865
+      },
+      "writtenOn": "2021-04-30T16:47:56Z",
+      "side": 1,
+      "message": "We had an internal discussion on this. I dont have a strong reason to keep them separate, but if it is not too expensive to keep them separate, then preferably we want to keep them separate. It is easy to mix them later if we need to but separating them later will be hard if we decided to.",
+      "parentUuid": "b96ed35c_25fb8549",
+      "revId": "5dfe7a214bcc2527f3e82d46fbda23d727de323b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
