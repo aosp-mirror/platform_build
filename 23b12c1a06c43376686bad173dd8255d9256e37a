@@ -22,6 +22,30 @@
       },
       "revId": "23b12c1a06c43376686bad173dd8255d9256e37a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d266b4b_66778466",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-04-30T00:32:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8946baca_91889250",
+      "range": {
+        "startLine": 103,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 22
+      },
+      "revId": "23b12c1a06c43376686bad173dd8255d9256e37a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
