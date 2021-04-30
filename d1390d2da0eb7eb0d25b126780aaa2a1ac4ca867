@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68e2c9de_57696830",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1408266
+      },
+      "writtenOn": "2021-04-30T00:52:35Z",
+      "side": 1,
+      "message": "Manually CP this CL to android10 cts dev branch as merge paths between cts dev branches don\u0027t exist for build/ project.",
+      "revId": "d1390d2da0eb7eb0d25b126780aaa2a1ac4ca867",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
