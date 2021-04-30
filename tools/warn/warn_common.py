@@ -116,22 +116,20 @@ def get_project_names(project_list):
 
 def find_project_index(line, project_patterns):
   """Return the index to the project pattern array."""
-  # pylint:disable=invalid-name
-  for i, p in enumerate(project_patterns):
-    if p.match(line):
-      return i
+  for idx, pattern in enumerate(project_patterns):
+    if pattern.match(line):
+      return idx
   return -1
 
 
 def classify_one_warning(warning, link, results, project_patterns,
                          warn_patterns):
   """Classify one warning line."""
-  # pylint:disable=invalid-name
-  for i, w in enumerate(warn_patterns):
-    for cpat in w['compiled_patterns']:
+  for idx, pattern in enumerate(warn_patterns):
+    for cpat in pattern['compiled_patterns']:
       if cpat.match(warning):
-        p = find_project_index(warning, project_patterns)
-        results.append([warning, link, i, p])
+        project_idx = find_project_index(warning, project_patterns)
+        results.append([warning, link, idx, project_idx])
         return
   # If we end up here, there was a problem parsing the log
   # probably caused by 'make -j' mixing the output from
@@ -310,7 +308,6 @@ def parse_input_file_chrome(infile, flags):
   # Remove the duplicated warnings save ~8% of time when parsing
   # one typical build log than before
   unique_warnings = dict()
-  # pylint:disable=invalid-name
   for line in infile:
     if warning_pattern.match(line):
       normalized_line = normalize_warning_line(line, flags)
@@ -318,17 +315,17 @@ def parse_input_file_chrome(infile, flags):
         unique_warnings[normalized_line] = generate_cs_link(line, flags)
     elif (platform_version == 'unknown' or board_name == 'unknown' or
           architecture == 'unknown'):
-      m = re.match(r'.+Package:.+chromeos-base/chromeos-chrome-', line)
-      if m is not None:
+      result = re.match(r'.+Package:.+chromeos-base/chromeos-chrome-', line)
+      if result is not None:
         platform_version = 'R' + line.split('chrome-')[1].split('_')[0]
         continue
-      m = re.match(r'.+Source\sunpacked\sin\s(.+)', line)
-      if m is not None:
-        board_name = m.group(1).split('/')[2]
+      result = re.match(r'.+Source\sunpacked\sin\s(.+)', line)
+      if result is not None:
+        board_name = result.group(1).split('/')[2]
         continue
-      m = re.match(r'.+USE:\s*([^\s]*).*', line)
-      if m is not None:
-        architecture = m.group(1)
+      result = re.match(r'.+USE:\s*([^\s]*).*', line)
+      if result is not None:
+        architecture = result.group(1)
         continue
 
   header_str = '%s - %s - %s' % (platform_version, board_name, architecture)
@@ -396,22 +393,21 @@ def parse_input_file_android(infile, flags):
             line, flags, android_root, unique_warnings)
       continue
 
-    # pylint:disable=invalid-name
     if line_counter < 100:
       # save a little bit of time by only doing this for the first few lines
       line_counter += 1
-      m = re.search('(?<=^PLATFORM_VERSION=).*', line)
-      if m is not None:
-        platform_version = m.group(0)
-      m = re.search('(?<=^TARGET_PRODUCT=).*', line)
-      if m is not None:
-        target_product = m.group(0)
-      m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
-      if m is not None:
-        target_variant = m.group(0)
-      m = re.search('(?<=^TOP=).*', line)
-      if m is not None:
-        android_root = m.group(1)
+      result = re.search('(?<=^PLATFORM_VERSION=).*', line)
+      if result is not None:
+        platform_version = result.group(0)
+      result = re.search('(?<=^TARGET_PRODUCT=).*', line)
+      if result is not None:
+        target_product = result.group(0)
+      result = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
+      if result is not None:
+        target_variant = result.group(0)
+      result = re.search('(?<=^TOP=).*', line)
+      if result is not None:
+        android_root = result.group(1)
 
   if android_root:
     new_unique_warnings = dict()
@@ -458,12 +454,11 @@ def get_warn_patterns(platform):
                      other_patterns.warn_patterns)
   else:
     raise Exception('platform name %s is not valid' % platform)
-  # pylint:disable=invalid-name
-  for w in warn_patterns:
-    w['members'] = []
+  for pattern in warn_patterns:
+    pattern['members'] = []
     # Each warning pattern has a 'projects' dictionary, that
     # maps a project name to number of warnings in that project.
-    w['projects'] = {}
+    pattern['projects'] = {}
   return warn_patterns
 
 
