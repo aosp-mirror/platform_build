@@ -69,6 +69,24 @@
       "parentUuid": "c580d72b_1c21320d",
       "revId": "bcda87f9f72b9b6da82a4e279492fe656cb66ba1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96ef4de0_339dd485",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1244622
+      },
+      "writtenOn": "2021-04-30T22:15:07Z",
+      "side": 1,
+      "message": "I think we can do the similar setup as in android10-tests-dev. We can point the project platform/build to the revision: android11-tests-dev. (ref using android10-tests-dev manifest: https://android.git.corp.google.com/platform/manifest/+/refs/heads/android10-tests-dev/default.xml)",
+      "parentUuid": "a300a5c0_7d3c7211",
+      "revId": "bcda87f9f72b9b6da82a4e279492fe656cb66ba1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
