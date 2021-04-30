@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ee64221b_7488ef0a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1408266
+      },
+      "writtenOn": "2021-04-30T00:12:43Z",
+      "side": 1,
+      "message": "Manually CP this CL to pie cts dev branch as merge paths between cts dev branches don\u0027t exist for build/ project.",
+      "revId": "a19613d41e0959e7c6bc2759045a9fd23b710738",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
