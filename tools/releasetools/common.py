@@ -138,6 +138,7 @@ PARTITIONS_WITH_BUILD_PROP = PARTITIONS_WITH_CARE_MAP + ['boot']
 # existing search paths.
 RAMDISK_BUILD_PROP_REL_PATHS = ['system/etc/ramdisk/build.prop']
 
+
 class ErrorCode(object):
   """Define error_codes for failures that happen during the actual
   update package installation.
@@ -226,6 +227,7 @@ def InitLogging():
 def SetHostToolLocation(tool_name, location):
   OPTIONS.host_tools[tool_name] = location
 
+
 def FindHostToolPath(tool_name):
   """Finds the path to the host tool.
 
@@ -245,6 +247,7 @@ def FindHostToolPath(tool_name):
     return tool_path
 
   return tool_name
+
 
 def Run(args, verbose=None, **kwargs):
   """Creates and returns a subprocess.Popen object.
@@ -434,6 +437,13 @@ class BuildInfo(object):
     return self._fingerprint
 
   @property
+  def is_vabc(self):
+    vendor_prop = self.info_dict.get("vendor.build.prop")
+    vabc_enabled = vendor_prop and \
+        vendor_prop.GetProp("ro.virtual_ab.compression.enabled") == "true"
+    return vabc_enabled
+
+  @property
   def oem_props(self):
     return self._oem_props
 
@@ -461,7 +471,7 @@ class BuildInfo(object):
     """Returns the inquired build property for the provided partition."""
 
     # Boot image uses ro.[product.]bootimage instead of boot.
-    prop_partition =  "bootimage" if partition == "boot" else partition
+    prop_partition = "bootimage" if partition == "boot" else partition
 
     # If provided a partition for this property, only look within that
     # partition's build.prop.
@@ -652,9 +662,11 @@ def ExtractFromInputFile(input_file, fn):
       raise KeyError(fn)
     return file
 
+
 class RamdiskFormat(object):
   LZ4 = 1
   GZ = 2
+
 
 def _GetRamdiskFormat(info_dict):
   if info_dict.get('lz4_ramdisks') == 'true':
@@ -662,6 +674,7 @@ def _GetRamdiskFormat(info_dict):
   else:
     ramdisk_format = RamdiskFormat.GZ
   return ramdisk_format
+
 
 def LoadInfoDict(input_file, repacking=False):
   """Loads the key/value pairs from the given input target_files.
@@ -781,13 +794,13 @@ def LoadInfoDict(input_file, repacking=False):
     for partition in PARTITIONS_WITH_BUILD_PROP:
       fingerprint = build_info.GetPartitionFingerprint(partition)
       if fingerprint:
-        d["avb_{}_salt".format(partition)] = sha256(fingerprint.encode()).hexdigest()
+        d["avb_{}_salt".format(partition)] = sha256(
+            fingerprint.encode()).hexdigest()
   try:
     d["ab_partitions"] = read_helper("META/ab_partitions.txt").split("\n")
   except KeyError:
     logger.warning("Can't find META/ab_partitions.txt")
   return d
-
 
 
 def LoadListFromFile(file_path):
@@ -859,7 +872,8 @@ class PartitionBuildProps(object):
     """Loads the build.prop file and builds the attributes."""
 
     if name == "boot":
-      data = PartitionBuildProps._ReadBootPropFile(input_file, ramdisk_format=ramdisk_format)
+      data = PartitionBuildProps._ReadBootPropFile(
+          input_file, ramdisk_format=ramdisk_format)
     else:
       data = PartitionBuildProps._ReadPartitionPropFile(input_file, name)
 
@@ -1106,7 +1120,7 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
     return " ".join(sorted(combined))
 
   if (framework_dict.get("use_dynamic_partitions") !=
-      "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
+          "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
     raise ValueError("Both dictionaries must have use_dynamic_partitions=true")
 
   merged_dict = {"use_dynamic_partitions": "true"}
@@ -1371,7 +1385,8 @@ def AppendGkiSigningArgs(cmd):
 
   # Checks key_path exists, before appending --gki_signing_* args.
   if not os.path.exists(key_path):
-    raise ExternalError('gki_signing_key_path: "{}" not found'.format(key_path))
+    raise ExternalError(
+        'gki_signing_key_path: "{}" not found'.format(key_path))
 
   algorithm = OPTIONS.info_dict.get("gki_signing_algorithm")
   if key_path and algorithm:
@@ -1588,7 +1603,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   RunAndCheckOutput(cmd)
 
   if (info_dict.get("boot_signer") == "true" and
-      info_dict.get("verity_key")):
+          info_dict.get("verity_key")):
     # Hard-code the path as "/boot" for two-step special recovery image (which
     # will be loaded into /boot during the two-step OTA).
     if two_step_image:
@@ -1753,14 +1768,17 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
   if os.access(fn, os.F_OK):
     ramdisk_fragments = shlex.split(open(fn).read().rstrip("\n"))
     for ramdisk_fragment in ramdisk_fragments:
-      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment, "mkbootimg_args")
+      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS",
+                        ramdisk_fragment, "mkbootimg_args")
       cmd.extend(shlex.split(open(fn).read().rstrip("\n")))
-      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment, "prebuilt_ramdisk")
+      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS",
+                        ramdisk_fragment, "prebuilt_ramdisk")
       # Use prebuilt image if found, else create ramdisk from supplied files.
       if os.access(fn, os.F_OK):
         ramdisk_fragment_pathname = fn
       else:
-        ramdisk_fragment_root = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment)
+        ramdisk_fragment_root = os.path.join(
+            sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment)
         ramdisk_fragment_img = _MakeRamdisk(ramdisk_fragment_root,
                                             ramdisk_format=ramdisk_format)
         ramdisk_fragment_imgs.append(ramdisk_fragment_img)
@@ -3533,7 +3551,7 @@ class DynamicPartitionsDifference(object):
 
     for g in tgt_groups:
       for p in shlex.split(info_dict.get(
-          "super_%s_partition_list" % g, "").strip()):
+              "super_%s_partition_list" % g, "").strip()):
         assert p in self._partition_updates, \
             "{} is in target super_{}_partition_list but no BlockDifference " \
             "object is provided.".format(p, g)
@@ -3541,7 +3559,7 @@ class DynamicPartitionsDifference(object):
 
     for g in src_groups:
       for p in shlex.split(source_info_dict.get(
-          "super_%s_partition_list" % g, "").strip()):
+              "super_%s_partition_list" % g, "").strip()):
         assert p in self._partition_updates, \
             "{} is in source super_{}_partition_list but no BlockDifference " \
             "object is provided.".format(p, g)
@@ -3650,7 +3668,7 @@ class DynamicPartitionsDifference(object):
       if u.src_size is not None and u.tgt_size is None:
         append('remove_group %s' % g)
       if (u.src_size is not None and u.tgt_size is not None and
-          u.src_size > u.tgt_size):
+              u.src_size > u.tgt_size):
         comment('Shrink group %s from %d to %d' % (g, u.src_size, u.tgt_size))
         append('resize_group %s %d' % (g, u.tgt_size))
 
@@ -3659,7 +3677,7 @@ class DynamicPartitionsDifference(object):
         comment('Add group %s with maximum size %d' % (g, u.tgt_size))
         append('add_group %s %d' % (g, u.tgt_size))
       if (u.src_size is not None and u.tgt_size is not None and
-          u.src_size < u.tgt_size):
+              u.src_size < u.tgt_size):
         comment('Grow group %s from %d to %d' % (g, u.src_size, u.tgt_size))
         append('resize_group %s %d' % (g, u.tgt_size))
 
@@ -3693,7 +3711,8 @@ def GetBootImageBuildProp(boot_img, ramdisk_format=RamdiskFormat.LZ4):
   """
   tmp_dir = MakeTempDir('boot_', suffix='.img')
   try:
-    RunAndCheckOutput(['unpack_bootimg', '--boot_img', boot_img, '--out', tmp_dir])
+    RunAndCheckOutput(['unpack_bootimg', '--boot_img',
+                      boot_img, '--out', tmp_dir])
     ramdisk = os.path.join(tmp_dir, 'ramdisk')
     if not os.path.isfile(ramdisk):
       logger.warning('Unable to get boot image timestamp: no ramdisk in boot')
@@ -3704,7 +3723,8 @@ def GetBootImageBuildProp(boot_img, ramdisk_format=RamdiskFormat.LZ4):
     elif ramdisk_format == RamdiskFormat.GZ:
       with open(ramdisk, 'rb') as input_stream:
         with open(uncompressed_ramdisk, 'wb') as output_stream:
-          p2 = Run(['minigzip', '-d'], stdin=input_stream.fileno(), stdout=output_stream.fileno())
+          p2 = Run(['minigzip', '-d'], stdin=input_stream.fileno(),
+                   stdout=output_stream.fileno())
           p2.wait()
     else:
       logger.error('Only support lz4 or minigzip ramdisk format.')
@@ -3715,13 +3735,14 @@ def GetBootImageBuildProp(boot_img, ramdisk_format=RamdiskFormat.LZ4):
     # Use "toybox cpio" instead of "cpio" because the latter invokes cpio from
     # the host environment.
     RunAndCheckOutput(['toybox', 'cpio', '-F', abs_uncompressed_ramdisk, '-i'],
-               cwd=extracted_ramdisk)
+                      cwd=extracted_ramdisk)
 
     for search_path in RAMDISK_BUILD_PROP_REL_PATHS:
       prop_file = os.path.join(extracted_ramdisk, search_path)
       if os.path.isfile(prop_file):
         return prop_file
-      logger.warning('Unable to get boot image timestamp: no %s in ramdisk', search_path)
+      logger.warning(
+          'Unable to get boot image timestamp: no %s in ramdisk', search_path)
 
     return None
 
@@ -3754,7 +3775,8 @@ def GetBootImageTimestamp(boot_img):
     timestamp = props.GetProp('ro.bootimage.build.date.utc')
     if timestamp:
       return int(timestamp)
-    logger.warning('Unable to get boot image timestamp: ro.bootimage.build.date.utc is undefined')
+    logger.warning(
+        'Unable to get boot image timestamp: ro.bootimage.build.date.utc is undefined')
     return None
 
   except ExternalError as e:
