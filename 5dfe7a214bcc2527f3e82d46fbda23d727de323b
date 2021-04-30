@@ -16,6 +16,24 @@
       "message": "Does this need to be separate target, or can it be added to haiku?",
       "revId": "5dfe7a214bcc2527f3e82d46fbda23d727de323b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b96ed35c_25fb8549",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 5973,
+      "author": {
+        "id": 1353865
+      },
+      "writtenOn": "2021-04-30T01:41:27Z",
+      "side": 1,
+      "message": "This is adding Rust and we will be adding Java in Q3. Our design is to keep them separate in our pipeline.",
+      "parentUuid": "f73412e6_92d359ca",
+      "revId": "5dfe7a214bcc2527f3e82d46fbda23d727de323b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
