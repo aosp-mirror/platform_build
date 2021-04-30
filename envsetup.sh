@@ -1473,7 +1473,7 @@ function verifymodinfo() {
 function allmod() {
     verifymodinfo || return 1
 
-    python -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
+    python3 -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
 }
 
 # Get the path of a specific module in the android tree, as cached in module-info.json.
@@ -1487,7 +1487,7 @@ function pathmod() {
 
     verifymodinfo || return 1
 
-    local relpath=$(python -c "import json, os
+    local relpath=$(python3 -c "import json, os
 module = '$1'
 module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
 if module not in module_info:
@@ -1513,7 +1513,7 @@ function dirmods() {
 
     verifymodinfo || return 1
 
-    python -c "import json, os
+    python3 -c "import json, os
 dir = '$1'
 while dir.endswith('/'):
     dir = dir[:-1]
@@ -1558,7 +1558,7 @@ function outmod() {
     verifymodinfo || return 1
 
     local relpath
-    relpath=$(python -c "import json, os
+    relpath=$(python3 -c "import json, os
 module = '$1'
 module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
 if module not in module_info:
