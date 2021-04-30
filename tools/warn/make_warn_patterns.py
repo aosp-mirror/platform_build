@@ -16,12 +16,12 @@
 """Warning patterns for build make tools."""
 
 # pylint:disable=relative-beyond-top-level
-# pylint:disable=g-importing-member
 from .cpp_warn_patterns import compile_patterns
 from .severity import Severity
 
 warn_patterns = [
-    # pylint:disable=line-too-long,g-inconsistent-quotes
+    # pylint does not recognize g-inconsistent-quotes
+    # pylint:disable=line-too-long,bad-option-value,g-inconsistent-quotes
     {'category': 'make', 'severity': Severity.MEDIUM,
      'description': 'make: overriding commands/ignoring old commands',
      'patterns': [r".*: warning: overriding commands for target .+",
