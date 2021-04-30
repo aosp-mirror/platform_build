@@ -87,8 +87,13 @@ endif
 ###########################################################
 ## Strip
 ###########################################################
-strip_input := $(symbolic_output)
+strip_input := $(inject_module)
 strip_output := $(LOCAL_BUILT_MODULE)
+
+# Use an order-only dependency to ensure the unstripped file in the symbols
+# directory is copied when the module is built, but does not force the
+# module to be rebuilt when the symbols directory is cleaned by installclean.
+$(strip_output): | $(symbolic_output)
 
 my_strip_module := $(firstword \
   $(LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
