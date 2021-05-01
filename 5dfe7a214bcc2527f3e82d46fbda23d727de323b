@@ -70,6 +70,24 @@
       "parentUuid": "3447cdaf_321f6d2b",
       "revId": "5dfe7a214bcc2527f3e82d46fbda23d727de323b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2ce5a45_395d2cbd",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 5973,
+      "author": {
+        "id": 1353865
+      },
+      "writtenOn": "2021-05-01T17:20:39Z",
+      "side": 1,
+      "message": "The plan is to have separate ab/ build targets for rust and in the future for Java. Out of curiosity, how would I add multiple zip to a single phony?  Do you have an example.",
+      "parentUuid": "b7d3e313_2b89841e",
+      "revId": "5dfe7a214bcc2527f3e82d46fbda23d727de323b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
