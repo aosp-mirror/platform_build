@@ -27,6 +27,7 @@ import sys
 
 
 def main():
+  """Old main() calls warn.warn."""
   os.environ['PYTHONPATH'] = os.path.dirname(os.path.abspath(__file__))
   subprocess.check_call(['/usr/bin/python3', '-m', 'warn.warn'] + sys.argv[1:])
 
