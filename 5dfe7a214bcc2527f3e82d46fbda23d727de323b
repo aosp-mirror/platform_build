@@ -88,6 +88,24 @@
       "parentUuid": "b7d3e313_2b89841e",
       "revId": "5dfe7a214bcc2527f3e82d46fbda23d727de323b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6613c509_fff0fbab",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 5973,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-05-03T16:22:30Z",
+      "side": 1,
+      "message": "You can add additional dependencies to an existing target in Make:\n\n .PHONY: haiku\n haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)\n $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))\n\n haiku: $(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_RUST_FUZZ_TARGETS)\n $(call dist-for-goals,haiku,$(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES))",
+      "parentUuid": "d2ce5a45_395d2cbd",
+      "revId": "5dfe7a214bcc2527f3e82d46fbda23d727de323b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
