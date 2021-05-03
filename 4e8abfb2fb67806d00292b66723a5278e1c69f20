@@ -33,6 +33,23 @@
       "message": "build is green now for pixel3_mainline. We can leave this revert open just in case",
       "revId": "4e8abfb2fb67806d00292b66723a5278e1c69f20",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d5b8edc_83307f2f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-05-03T23:47:47Z",
+      "side": 1,
+      "message": "Is this still needed?",
+      "revId": "4e8abfb2fb67806d00292b66723a5278e1c69f20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
