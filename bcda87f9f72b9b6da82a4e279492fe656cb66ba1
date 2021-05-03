@@ -87,6 +87,24 @@
       "parentUuid": "a300a5c0_7d3c7211",
       "revId": "bcda87f9f72b9b6da82a4e279492fe656cb66ba1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "93bee53c_d44fbf12",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1244622
+      },
+      "writtenOn": "2021-05-03T23:54:29Z",
+      "side": 1,
+      "message": "There is a bug tracking the platform/build project on android11-tests-dev branch: https://b.corp.google.com/issues/186874534",
+      "parentUuid": "96ef4de0_339dd485",
+      "revId": "bcda87f9f72b9b6da82a4e279492fe656cb66ba1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
