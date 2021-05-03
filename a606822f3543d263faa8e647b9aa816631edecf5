@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bdffaf8b_f8a42fc2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2021-05-03T17:37:37Z",
+      "side": 1,
+      "message": "only 1 failed TH test build is unrelated to this change\n",
+      "revId": "a606822f3543d263faa8e647b9aa816631edecf5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
