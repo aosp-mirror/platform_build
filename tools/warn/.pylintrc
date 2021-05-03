@@ -1,0 +1,4 @@
+[FORMAT]
+
+# Two spaces for each indentation level.
+indent-string='  '
