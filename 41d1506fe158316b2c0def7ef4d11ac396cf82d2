@@ -35,6 +35,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3900e76e_e8d1fbbc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-04T19:06:55Z",
+      "side": 1,
+      "message": "Note that we already have system server jars in apexes. They go into PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS and follow \u003capex\u003e:\u003cmodule\u003e format.\n\nAFAICT, there is no non-updatable apex with system server jar today.",
+      "parentUuid": "d1f87dd9_04567907",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a527e98e_1189c3ff",
@@ -54,6 +72,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "856f0927_e0db8812",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-04T19:06:55Z",
+      "side": 1,
+      "message": "Right... This would fail if there is a non-updatable system-server jar introduced in the future.\n\nThis line should look something like this I think?\n\n$(if $(findstring platform:,$(m)), \\\n  $(PRODUCT_OUT)/system/framework/$(call word-colon,2,$(m)).jar), \\\n  $(PRODUCT_OUT)/apex/$(call word-colon,1,$(m))/javalibs/$(call word-colon,2,$(m)).jar))\n\nDoes this look right?",
+      "parentUuid": "a527e98e_1189c3ff",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7c58937f_22d587d4",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 4
@@ -65,6 +101,24 @@
       "writtenOn": "2021-05-04T18:56:30Z",
       "side": 1,
       "message": "Could this use the full \u003capex\u003e:\u003cmodule\u003e pair and filter it based on another list of \u003capex\u003e:\u003cmodule\u003e pairs?",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "220abea6_fd772bee",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-04T19:06:55Z",
+      "side": 1,
+      "message": "Sorry, I am not sure I follow you here. Can you elaborate more please? :-)",
+      "parentUuid": "7c58937f_22d587d4",
       "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
