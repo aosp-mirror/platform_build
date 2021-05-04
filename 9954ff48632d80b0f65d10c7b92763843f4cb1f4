@@ -70,6 +70,29 @@
       },
       "revId": "9954ff48632d80b0f65d10c7b92763843f4cb1f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3593623a_1e703927",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1359,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-04T22:58:25Z",
+      "side": 1,
+      "message": "I think we want to check OPTIONS.wipe_user_data instead",
+      "range": {
+        "startLine": 1359,
+        "startChar": 13,
+        "endLine": 1359,
+        "endChar": 22
+      },
+      "revId": "9954ff48632d80b0f65d10c7b92763843f4cb1f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
