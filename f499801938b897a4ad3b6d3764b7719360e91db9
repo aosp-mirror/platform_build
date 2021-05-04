@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b96a4b8c_bb94efe1",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-04T18:16:36Z",
+      "side": 1,
+      "message": "In case we introduce non-updatable apex jar in system jars? Wouldn\u0027t really hurt I imagine.\n\nThank you for the example, first time modifying make files!",
+      "parentUuid": "927649ae_efc88f26",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 105
+      },
+      "revId": "f499801938b897a4ad3b6d3764b7719360e91db9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bd3971fb_436e98c7",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-05-04T15:56:44Z",
       "side": 1,
       "message": "Should it cut off any prefix, not just platform? Something like:\n\n  $(foreach, m,$(PRODUCT_SYSTEM_SERVER_JARS),$(call word-colon,2,$(m)))",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 71
+      },
+      "revId": "f499801938b897a4ad3b6d3764b7719360e91db9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6bd989c_45f9da01",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-04T18:16:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd3971fb_436e98c7",
       "range": {
         "startLine": 73,
         "startChar": 0,
