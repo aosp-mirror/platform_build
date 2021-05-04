@@ -16,6 +16,57 @@
       "message": "Presubmit seems to be happy as well.",
       "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1f87dd9_04567907",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-05-04T18:56:30Z",
+      "side": 1,
+      "message": "I like the idea. I am just concerned that it does not fully support system server jars being in an APEX and so will cause issues if and when someone tries to do that.",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a527e98e_1189c3ff",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-05-04T18:56:30Z",
+      "side": 1,
+      "message": "The path is probably wrong if this does have an apex.",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c58937f_22d587d4",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-05-04T18:56:30Z",
+      "side": 1,
+      "message": "Could this use the full \u003capex\u003e:\u003cmodule\u003e pair and filter it based on another list of \u003capex\u003e:\u003cmodule\u003e pairs?",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
