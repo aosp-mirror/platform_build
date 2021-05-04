@@ -5956,7 +5956,7 @@ endif
 FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INSTALL_PAIRS)))
 
 # -----------------------------------------------------------------
-# The rule to build all fuzz targets, and package them.
+# The rule to build all fuzz targets for C++ and Rust, and package them.
 # Note: The packages are created in Soong, and in a perfect world,
 # we'd be able to create the phony rule there. But, if we want to
 # have dist goals for the fuzz target, we need to have the PHONY
@@ -5968,3 +5968,7 @@ FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INS
 .PHONY: haiku
 haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
 $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
+
+.PHONY: haiku-rust
+haiku-rust: $(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_RUST_FUZZ_TARGETS)
+$(call dist-for-goals,haiku-rust,$(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES))
