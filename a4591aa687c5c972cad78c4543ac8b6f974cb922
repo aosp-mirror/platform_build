@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "017e9881_57f2a3fe",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-05-04T17:24:59Z",
+      "side": 1,
+      "message": "This seems updated on a ~monthly basis, is this something we need to track parity with? For example, with a test?",
+      "revId": "a4591aa687c5c972cad78c4543ac8b6f974cb922",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
