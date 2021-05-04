@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2b76f230_cd8ed46d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-05-04T21:20:52Z",
+      "side": 1,
+      "message": "Ok. I didn\u0027t realise. In that case there seems to be little chance that PRODUCT_SYSTEM_SERVER_JARS will ever have a module that is from an apex.\n\nIn which case is there any point in complicating the make build having to deal with it. Why not simply do the work to map the list of modules to a ConfiguredJarList in Soong itself? e.g. You could make the logic to unmarshal JSON treat a list that looks like {\"module1\", \"module2\", \"module3\"} as if it was {\"platform:module1\", \"platform:module2\", \"platform:module3\"}.",
+      "parentUuid": "3900e76e_e8d1fbbc",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a527e98e_1189c3ff",
         "filename": "core/dex_preopt.mk",
         "patchSetId": 4
@@ -90,6 +108,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e742a9fd_8219ea8a",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-05-04T21:20:52Z",
+      "side": 1,
+      "message": "I\u0027m not sure.",
+      "parentUuid": "856f0927_e0db8812",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7c58937f_22d587d4",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 4
@@ -119,6 +155,24 @@
       "side": 1,
       "message": "Sorry, I am not sure I follow you here. Can you elaborate more please? :-)",
       "parentUuid": "7c58937f_22d587d4",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df59a3f7_0a985c2a",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-05-04T21:20:52Z",
+      "side": 1,
+      "message": "My concern was that you are dropping the apex which means you could end up filtering things out that you shouldn\u0027t. I\u0027m not sure it will be a problem in practice though.",
+      "parentUuid": "220abea6_fd772bee",
       "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
