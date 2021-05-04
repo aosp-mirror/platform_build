@@ -34,6 +34,24 @@
       "parentUuid": "017e9881_57f2a3fe",
       "revId": "a4591aa687c5c972cad78c4543ac8b6f974cb922",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "705fe5d7_0e2fff71",
+        "filename": "core/envsetup.rbc",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1605027
+      },
+      "writtenOn": "2021-05-04T17:44:08Z",
+      "side": 1,
+      "message": "A consistency checker would work, too. I don\u0027t have any good ideas here without further investigation -- perhaps reach out to Android Build Team?",
+      "parentUuid": "9868c0ec_ccfbaee6",
+      "revId": "a4591aa687c5c972cad78c4543ac8b6f974cb922",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
