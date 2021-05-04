@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "927649ae_efc88f26",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-04T15:56:44Z",
+      "side": 1,
+      "message": "Should it cut off any prefix, not just platform? Something like:\n\n  $(foreach, m,$(PRODUCT_SYSTEM_SERVER_JARS),\\\n    $(PRODUCT_OUT)/system/framework/$(call word-colon,2,$(m)).jar)\n\n\nAs in https://source.corp.google.com/aosp-master/build/make/core/soong_java_prebuilt.mk;l\u003d111",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 105
+      },
+      "revId": "f499801938b897a4ad3b6d3764b7719360e91db9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd3971fb_436e98c7",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-04T15:56:44Z",
+      "side": 1,
+      "message": "Should it cut off any prefix, not just platform? Something like:\n\n  $(foreach, m,$(PRODUCT_SYSTEM_SERVER_JARS),$(call word-colon,2,$(m)))",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 71
+      },
+      "revId": "f499801938b897a4ad3b6d3764b7719360e91db9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
