@@ -1458,13 +1458,17 @@ function refreshmod() {
 # Verifies that module-info.txt exists, creating it if it doesn't.
 function verifymodinfo() {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
+        if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
+            echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
+        fi
         return 1
     fi
 
     if [ ! -f "$ANDROID_PRODUCT_OUT/module-info.json" ]; then
-        echo "Could not find module-info.json. It will only be built once, and it can be updated with 'refreshmod'" >&2
-        refreshmod || return 1
+        if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
+            echo "Could not find module-info.json. It will only be built once, and it can be updated with 'refreshmod'" >&2
+        fi
+        return 1
     fi
 }
 
@@ -1602,7 +1606,7 @@ function installmod() {
 
 function _complete_android_module_names() {
     local word=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(allmod | grep -E "^$word") )
+    COMPREPLY=( $(QUIET_VERIFYMODINFO=true allmod | grep -E "^$word") )
 }
 
 # Print colored exit condition
