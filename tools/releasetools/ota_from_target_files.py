@@ -215,6 +215,12 @@ A/B OTA specific options
   --disable_vabc
       Disable Virtual A/B Compression, for builds that have compression enabled
       by default.
+
+  --vabc_downgrade
+      Don't disable Virtual A/B Compression for downgrading OTAs.
+      For VABC downgrades, we must finish merging before doing data wipe, and
+      since data wipe is required for downgrading OTA, this might cause long
+      wait time in recovery.
 """
 
 from __future__ import print_function
@@ -278,6 +284,7 @@ OPTIONS.partial = None
 OPTIONS.custom_images = {}
 OPTIONS.disable_vabc = False
 OPTIONS.spl_downgrade = False
+OPTIONS.vabc_downgrade = False
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -1284,6 +1291,8 @@ def main(argv):
     elif o == "--spl_downgrade":
       OPTIONS.spl_downgrade = True
       OPTIONS.wipe_user_data = True
+    elif o == "--vabc_downgrade":
+      OPTIONS.vabc_downgrade = True
     else:
       return False
     return True
@@ -1326,7 +1335,8 @@ def main(argv):
                                  "partial=",
                                  "custom_image=",
                                  "disable_vabc",
-                                 "spl_downgrade"
+                                 "spl_downgrade",
+                                 "vabc_downgrade",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -1347,7 +1357,14 @@ def main(argv):
   else:
     OPTIONS.info_dict = ParseInfoDict(args[0])
 
-  if OPTIONS.downgrade:
+  if OPTIONS.wipe_user_data:
+    if not OPTIONS.vabc_downgrade:
+      logger.info("Detected downgrade/datawipe OTA."
+                  "When wiping userdata, VABC OTA makes the user "
+                  "wait in recovery mode for merge to finish. Disable VABC by "
+                  "default. If you really want to do VABC downgrade, pass "
+                  "--vabc_downgrade")
+      OPTIONS.disable_vabc = True
     # We should only allow downgrading incrementals (as opposed to full).
     # Otherwise the device may go back from arbitrary build with this full
     # OTA package.
