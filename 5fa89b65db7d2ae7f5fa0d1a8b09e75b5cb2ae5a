@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "00ae825b_1adbf669",
+        "filename": "core/product_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T13:26:20Z",
+      "side": 1,
+      "message": "oh, silly copy-paste error.",
+      "parentUuid": "2694ce1e_1afad731",
+      "range": {
+        "startLine": 241,
+        "startChar": 0,
+        "endLine": 241,
+        "endChar": 35
+      },
+      "revId": "5fa89b65db7d2ae7f5fa0d1a8b09e75b5cb2ae5a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "35bf2754_0f42eb3d",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-05-05T12:25:22Z",
       "side": 1,
       "message": "Can you make it accept a list of jars rather than a single jar to deduplicate the foreach on lines 252 and 272?",
+      "range": {
+        "startLine": 244,
+        "startChar": 0,
+        "endLine": 244,
+        "endChar": 28
+      },
+      "revId": "5fa89b65db7d2ae7f5fa0d1a8b09e75b5cb2ae5a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51052023_e931fb90",
+        "filename": "core/product_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T13:26:20Z",
+      "side": 1,
+      "message": "Phew.. I think I managed to move the call. Make isn\u0027t as scary as I thought.",
+      "parentUuid": "35bf2754_0f42eb3d",
       "range": {
         "startLine": 244,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2aa54a24_45389527",
+        "filename": "core/product_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T13:26:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "53cbef1d_0988748e",
+      "range": {
+        "startLine": 251,
+        "startChar": 0,
+        "endLine": 251,
+        "endChar": 49
+      },
+      "revId": "5fa89b65db7d2ae7f5fa0d1a8b09e75b5cb2ae5a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2806bd48_da62c311",
@@ -83,6 +155,30 @@
       "writtenOn": "2021-05-05T12:25:22Z",
       "side": 1,
       "message": "This can be dropped after moving foreach into qualify-platform-jars.",
+      "range": {
+        "startLine": 271,
+        "startChar": 0,
+        "endLine": 271,
+        "endChar": 58
+      },
+      "revId": "5fa89b65db7d2ae7f5fa0d1a8b09e75b5cb2ae5a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "72389633_3e81518c",
+        "filename": "core/product_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T13:26:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2806bd48_da62c311",
       "range": {
         "startLine": 271,
         "startChar": 0,

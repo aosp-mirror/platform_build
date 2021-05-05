@@ -214,6 +214,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc1b320c_0a06aa4e",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T13:26:20Z",
+      "side": 1,
+      "message": "Dropped /apex part.\n\nIt\u0027s not too much work, I just wanted to keep changes to the minimum in the CL: just adding platform: where needed.\n\n(If you really want the TODOs, I am happy to add them! :-))",
+      "parentUuid": "906566f6_a8b00b77",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7c58937f_22d587d4",
