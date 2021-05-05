@@ -22,6 +22,30 @@
       },
       "revId": "18c03ff81077e7dbe19feba71f16aed85b66dd79",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0fdc23d8_5e8022d3",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 962,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-05T18:04:10Z",
+      "side": 1,
+      "message": "We will use the digest value provided by bootloader at runtime. Following up in https://android-review.googlesource.com/q/topic:compatible_fingerprint\n\nThis vbmeta_digest.txt is used for OTA package generation, where we turn target_file.zip into ota.zip. And we put the fingerprint in the ota metadata for update delivery. Because we don\u0027t have runtime fingerprint when analyzing images, we need to call avbtools to get them.\n\n\nThe case above will be handled differently\n\n1. system-only OTA: we won\u0027t have a top-level fingerprint in the ota metadata. (We don\u0027t support delivery it today. But in the future, the delivery will base on system partition fingerprint)\n\n2. merge_builds: It should regenerate the vbmeta_digest.txt after merge.",
+      "parentUuid": "a563cf30_a4a2f948",
+      "range": {
+        "startLine": 961,
+        "startChar": 1,
+        "endLine": 962,
+        "endChar": 20
+      },
+      "revId": "18c03ff81077e7dbe19feba71f16aed85b66dd79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
