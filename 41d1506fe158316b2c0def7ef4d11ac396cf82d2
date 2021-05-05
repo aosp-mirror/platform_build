@@ -73,6 +73,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3d6ca237_395e61a5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T09:24:52Z",
+      "side": 1,
+      "message": "It\u0027s still a non-zero chance, especially if partner apexes become a thing in some form.\n\nThis cl came along after a chat with Ulya. I could update the logic in UnmarshalJson(), but doesn\u0027t this bring consistency all around: boot jars have the same logic, the lists have similar formats both in make and soong?",
+      "parentUuid": "2b76f230_cd8ed46d",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a527e98e_1189c3ff",
         "filename": "core/dex_preopt.mk",
         "patchSetId": 4
@@ -126,6 +144,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6587f1b1_f445ef06",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T09:24:52Z",
+      "side": 1,
+      "message": "The path format is right (that\u0027s what Soong does for DevicePaths logic as well). I just never used make before, and not sure if the syntax is correct.\n\nShould there be anyone else on R\u003d beside you and Ulya?",
+      "parentUuid": "e742a9fd_8219ea8a",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7c58937f_22d587d4",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 4
@@ -173,6 +209,24 @@
       "side": 1,
       "message": "My concern was that you are dropping the apex which means you could end up filtering things out that you shouldn\u0027t. I\u0027m not sure it will be a problem in practice though.",
       "parentUuid": "220abea6_fd772bee",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98f8c19f_04a80875",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T09:24:52Z",
+      "side": 1,
+      "message": "Right.. Doesn\u0027t LOCAL_MODULE omit variant and just contains a module name?\n\nI could also just drop \"platform:\" from $(PRODUCT_SYSTEM_SERVER_JARS), I just don\u0027t know what this really needs.",
+      "parentUuid": "df59a3f7_0a985c2a",
       "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
