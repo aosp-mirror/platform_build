@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "555b3529_a19cb9ec",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-05-05T02:36:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f93ff519_0ceb652f",
+      "range": {
+        "startLine": 221,
+        "startChar": 77,
+        "endLine": 221,
+        "endChar": 78
+      },
+      "revId": "9954ff48632d80b0f65d10c7b92763843f4cb1f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7a0c2cb7_ef69b946",
@@ -72,6 +96,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "305caedc_ff675d03",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-05-05T02:36:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a0c2cb7_ef69b946",
+      "range": {
+        "startLine": 222,
+        "startChar": 76,
+        "endLine": 222,
+        "endChar": 77
+      },
+      "revId": "9954ff48632d80b0f65d10c7b92763843f4cb1f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3593623a_1e703927",
@@ -85,6 +133,30 @@
       "writtenOn": "2021-05-04T22:58:25Z",
       "side": 1,
       "message": "I think we want to check OPTIONS.wipe_user_data instead",
+      "range": {
+        "startLine": 1359,
+        "startChar": 13,
+        "endLine": 1359,
+        "endChar": 22
+      },
+      "revId": "9954ff48632d80b0f65d10c7b92763843f4cb1f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3b78d9b_807b530b",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1359,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-05-05T02:36:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3593623a_1e703927",
       "range": {
         "startLine": 1359,
         "startChar": 13,
