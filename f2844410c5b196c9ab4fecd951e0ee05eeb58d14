@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a237606a_b42c46a2",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-05T04:58:16Z",
+      "side": 1,
+      "message": "maybe force_vabc... meh",
+      "range": {
+        "startLine": 219,
+        "startChar": 4,
+        "endLine": 219,
+        "endChar": 18
+      },
+      "revId": "f2844410c5b196c9ab4fecd951e0ee05eeb58d14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
