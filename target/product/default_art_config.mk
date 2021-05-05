@@ -49,10 +49,11 @@ PRODUCT_BOOT_JARS += \
 PRODUCT_BOOT_JARS += \
     com.android.i18n:core-icu4j
 
-# Updatable APEX jars. Keep the list sorted.
+# Updatable APEX jars. Keep the list sorted by module names and then library names.
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
     com.android.conscrypt:conscrypt \
+    com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.os.statsd:framework-statsd \
@@ -60,10 +61,9 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.permission:framework-permission-s \
     com.android.scheduling:framework-scheduling \
     com.android.sdkext:framework-sdkextensions \
-    com.android.wifi:framework-wifi \
-    com.android.tethering:framework-tethering \
     com.android.tethering:framework-connectivity \
-    com.android.ipsec:android.net.ipsec.ike
+    com.android.tethering:framework-tethering \
+    com.android.wifi:framework-wifi
 
 # Minimal configuration for running dex2oat (default argument values).
 # PRODUCT_USES_DEFAULT_ART_CONFIG must be true to enable boot image compilation.
