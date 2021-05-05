@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3dc8e94c_55f753b5",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-05T10:34:27Z",
+      "side": 1,
+      "message": "\u003e In case we introduce non-updatable apex jar in system jars?\n\nYes, or system_ext:XXX entries.",
+      "parentUuid": "b96a4b8c_bb94efe1",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 105
+      },
+      "revId": "f499801938b897a4ad3b6d3764b7719360e91db9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bd3971fb_436e98c7",

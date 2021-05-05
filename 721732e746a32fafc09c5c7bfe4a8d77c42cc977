@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0af67e5d_c944ae23",
+        "filename": "core/product_config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-05T10:34:27Z",
+      "side": 1,
+      "message": "Ideally this should be deduplicated with PRODUCT_BOOT_JARS (e.g. by adding a function with a comment explaining why we are adding \u0027platform:\u0027 prefix).",
+      "range": {
+        "startLine": 257,
+        "startChar": 0,
+        "endLine": 257,
+        "endChar": 58
+      },
+      "revId": "721732e746a32fafc09c5c7bfe4a8d77c42cc977",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

@@ -162,6 +162,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a614112a_c09513f2",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-05T10:34:27Z",
+      "side": 1,
+      "message": "Anton is the Android renown makefile expert in London. 😄\n\nThis is still not right though, it would do the wrong thing for system_ext. The correct makefile code that used to do this was https://android-review.googlesource.com/c/platform/build/+/1478737/2/core/tasks/boot_jars_package_check.mk (now Paul has moved it to Soong).\n\nI don\u0027t like the idea of re-introducing that code... it better be done from Soong, analogous to DEXPREOPT_SYSTEM_SERVER_DEX_FILES on line 64.\n\nBut then there is also a place in Soong that assumes /system/framework and needs to be fixed: https://source.corp.google.com/aosp-master/build/soong/dexpreopt/dexpreopt.go;l\u003d250. And all the paths need to be gathered by a new SingletonModule with MakeVars(), because currently there is no good place to stick it into.\n\nAll in all this is too much work for this CL, so I suggest supporting only /system/framework for now, and marking this place and the one in Soong that I linked above with a:\n\n  TODO(b/155630745): support jars in /apex, /system_ext, etc.",
+      "parentUuid": "6587f1b1_f445ef06",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7c58937f_22d587d4",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 4
@@ -227,6 +245,24 @@
       "side": 1,
       "message": "Right.. Doesn\u0027t LOCAL_MODULE omit variant and just contains a module name?\n\nI could also just drop \"platform:\" from $(PRODUCT_SYSTEM_SERVER_JARS), I just don\u0027t know what this really needs.",
       "parentUuid": "df59a3f7_0a985c2a",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "365313e3_b2e68a37",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-05T10:34:27Z",
+      "side": 1,
+      "message": "What Paul suggests would be a nice simplification now that configured jar lists are used everywhere, but I think it should be done as a follow up, and also cover boot jars which use similar filters in the makefiles. For now I\u0027d add a TODO.",
+      "parentUuid": "98f8c19f_04a80875",
       "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
