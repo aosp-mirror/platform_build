@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "edfbc294_ca70731e",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T13:30:43Z",
+      "side": 1,
+      "message": "Done. Typo, sorry.",
+      "parentUuid": "e61598b6_99ec2113",
+      "range": {
+        "startLine": 66,
+        "startChar": 11,
+        "endLine": 66,
+        "endChar": 12
+      },
+      "revId": "2ad61293bcda688e3871be4976416672a4046c55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ee7eaad5_9d60c575",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-05-05T13:28:25Z",
       "side": 1,
       "message": "ditto. definitely unconventional if it does work",
+      "range": {
+        "startLine": 73,
+        "startChar": 31,
+        "endLine": 73,
+        "endChar": 32
+      },
+      "revId": "2ad61293bcda688e3871be4976416672a4046c55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd9d79ef_01c18fde",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T13:30:43Z",
+      "side": 1,
+      "message": "no, sorry, that was a typo in the latest patch.",
+      "parentUuid": "ee7eaad5_9d60c575",
       "range": {
         "startLine": 73,
         "startChar": 31,
