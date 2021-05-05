@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8570d86f_c88bfd6b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T11:18:15Z",
+      "side": 1,
+      "message": "+Anton as a local make expert.",
+      "revId": "721732e746a32fafc09c5c7bfe4a8d77c42cc977",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0af67e5d_c944ae23",
@@ -14,6 +31,30 @@
       "writtenOn": "2021-05-05T10:34:27Z",
       "side": 1,
       "message": "Ideally this should be deduplicated with PRODUCT_BOOT_JARS (e.g. by adding a function with a comment explaining why we are adding \u0027platform:\u0027 prefix).",
+      "range": {
+        "startLine": 257,
+        "startChar": 0,
+        "endLine": 257,
+        "endChar": 58
+      },
+      "revId": "721732e746a32fafc09c5c7bfe4a8d77c42cc977",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f9b176c4_ec4e2ca5",
+        "filename": "core/product_config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T11:18:15Z",
+      "side": 1,
+      "message": "Done. LMK if you had something else in mind. :-)",
+      "parentUuid": "0af67e5d_c944ae23",
       "range": {
         "startLine": 257,
         "startChar": 0,

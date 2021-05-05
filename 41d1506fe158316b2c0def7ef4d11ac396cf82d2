@@ -178,6 +178,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9fc89f89_e28ae5fc",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T11:18:15Z",
+      "side": 1,
+      "message": "I imagine supporting /system_ext would require more changes than these two TODOs would imply. I\u0027d rather not add them for now if you don\u0027t mind.",
+      "parentUuid": "a614112a_c09513f2",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7c58937f_22d587d4",
@@ -263,6 +281,24 @@
       "side": 1,
       "message": "What Paul suggests would be a nice simplification now that configured jar lists are used everywhere, but I think it should be done as a follow up, and also cover boot jars which use similar filters in the makefiles. For now I\u0027d add a TODO.",
       "parentUuid": "98f8c19f_04a80875",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8097f56a_2ae18930",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T11:18:15Z",
+      "side": 1,
+      "message": "Note sure what even to put in that todo, could you rather file a bug to remember changing this?",
+      "parentUuid": "365313e3_b2e68a37",
       "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
