@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f517b97f_98e82d56",
+        "filename": "core/sysprop.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-05-05T23:04:24Z",
+      "side": 1,
+      "message": "Use tab and spaces to indent to match the rest of the lines",
+      "revId": "0c4130a64c4fc59bea366c3fe7b92ee200588720",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
