@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "01a41a3d_745083a3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-05T18:05:33Z",
+      "side": 1,
+      "message": "+Daniel to cc, as I\u0027ll touch the merge file later",
+      "revId": "bbde59f9eb656f6150815b6a74f95273c646dc35",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
