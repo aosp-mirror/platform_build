@@ -198,6 +198,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "906566f6_a8b00b77",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-05T12:25:22Z",
+      "side": 1,
+      "message": "Ok, if that\u0027s too much work then feel free to leave it as is.\n\n(In this case I think that a TODO is helpful, especially since the other place in Soong is not immediately obvious. You could mention on b/155630745 that the work is half-done for this bug --- there isn\u0027t much to do on the build system size besides what I mentioned).\n\nIn any case, please remove the /apex part (go back to PS4), as it\u0027s not supported in Soong as well as /system_ext.",
+      "parentUuid": "9fc89f89_e28ae5fc",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7c58937f_22d587d4",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 4
