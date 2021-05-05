@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "3cc7f609_b127aabb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T14:18:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5c2170aa_22ee8724",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 14
+      },
+      "revId": "91ad8fe605ba39ad60f237dbcd403643be9bd35d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "1447a674_bcb7dd48",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 9
@@ -64,6 +88,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0197b3f_0ab7e9db",
+        "filename": "core/product_config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T14:18:59Z",
+      "side": 1,
+      "message": "You are right, local merge conflict that also introduced types Anton mentioned. :-(\n\nHonestly, I\u0027d rather stay away from make... :D",
+      "parentUuid": "ebef74ca_392eac34",
+      "range": {
+        "startLine": 250,
+        "startChar": 49,
+        "endLine": 250,
+        "endChar": 50
+      },
+      "revId": "91ad8fe605ba39ad60f237dbcd403643be9bd35d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6947f9a9_d472288b",
@@ -77,6 +125,30 @@
       "writtenOn": "2021-05-05T13:41:58Z",
       "side": 1,
       "message": "This should probably be a comma.",
+      "range": {
+        "startLine": 268,
+        "startChar": 58,
+        "endLine": 268,
+        "endChar": 59
+      },
+      "revId": "91ad8fe605ba39ad60f237dbcd403643be9bd35d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9a04f8e_bddeacd3",
+        "filename": "core/product_config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-05T14:18:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6947f9a9_d472288b",
       "range": {
         "startLine": 268,
         "startChar": 58,
