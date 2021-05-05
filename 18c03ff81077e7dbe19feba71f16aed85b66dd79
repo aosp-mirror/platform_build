@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a563cf30_a4a2f948",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 962,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-05T14:03:13Z",
+      "side": 1,
+      "message": "This is one case, some other cases might also cause digest mismatch between the digest calculated here (vbmeta_digest.txt) v.s. the digest calculated by the bootloader at runtime.\n\ne.g.,\n\n1. system-only OTA (a.k.a. Vendor Freeze)\n   https://docs.google.com/presentation/d/1-SPW3iF47wL0gGdDsnkN3Jg-T-Vdmf1YN093OYMnlCI/edit#slide\u003did.g5bcc607afa_0_19\n\n2. Build split. Some partners have a repo manifest that only build system/system_ext/product and another repo manifest build for vendor.img/boot.img, etc.  Then merge the build later with different combinations.\n\n./build/make/tools/releasetools/merge_builds.py\n./build/make/tools/releasetools/merge_target_files.py\n\nJust wonder how the vbmeta_digest.txt will be used.\n\nWhy not just use the digest value calculated by the bootloader at runtime?",
+      "range": {
+        "startLine": 961,
+        "startChar": 1,
+        "endLine": 962,
+        "endChar": 20
+      },
+      "revId": "18c03ff81077e7dbe19feba71f16aed85b66dd79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
