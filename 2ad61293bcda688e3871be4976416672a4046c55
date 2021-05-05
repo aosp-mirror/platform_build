@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e61598b6_99ec2113",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-05T13:28:25Z",
+      "side": 1,
+      "message": "typo? or does a comma there actually work?",
+      "range": {
+        "startLine": 66,
+        "startChar": 11,
+        "endLine": 66,
+        "endChar": 12
+      },
+      "revId": "2ad61293bcda688e3871be4976416672a4046c55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ee7eaad5_9d60c575",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-05T13:28:25Z",
+      "side": 1,
+      "message": "ditto. definitely unconventional if it does work",
+      "range": {
+        "startLine": 73,
+        "startChar": 31,
+        "endLine": 73,
+        "endChar": 32
+      },
+      "revId": "2ad61293bcda688e3871be4976416672a4046c55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
