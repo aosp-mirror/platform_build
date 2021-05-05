@@ -232,6 +232,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7572c96_0e9e1567",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-05T13:41:58Z",
+      "side": 1,
+      "message": "Fine by me as is.",
+      "parentUuid": "fc1b320c_0a06aa4e",
+      "revId": "41d1506fe158316b2c0def7ef4d11ac396cf82d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7c58937f_22d587d4",

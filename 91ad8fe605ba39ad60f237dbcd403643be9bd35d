@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c2170aa_22ee8724",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-05T13:41:58Z",
+      "side": 1,
+      "message": "Add 155630745",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 14
+      },
+      "revId": "91ad8fe605ba39ad60f237dbcd403643be9bd35d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "1447a674_bcb7dd48",
@@ -14,6 +37,52 @@
       "writtenOn": "2021-05-05T13:33:58Z",
       "side": 1,
       "message": "I have no complaints but I will leave it up to Ulya as she understands this a lot better than I do.",
+      "revId": "91ad8fe605ba39ad60f237dbcd403643be9bd35d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ebef74ca_392eac34",
+        "filename": "core/product_config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-05T13:41:58Z",
+      "side": 1,
+      "message": "This should probably be a comma.\n\n(This is a very good summary of GNU Make BTW: https://www.gnu.org/software/make/manual/html_node/index.html, in particular https://www.gnu.org/software/make/manual/html_node/Syntax-of-Functions.html#Syntax-of-Functions)",
+      "range": {
+        "startLine": 250,
+        "startChar": 49,
+        "endLine": 250,
+        "endChar": 50
+      },
+      "revId": "91ad8fe605ba39ad60f237dbcd403643be9bd35d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6947f9a9_d472288b",
+        "filename": "core/product_config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-05T13:41:58Z",
+      "side": 1,
+      "message": "This should probably be a comma.",
+      "range": {
+        "startLine": 268,
+        "startChar": 58,
+        "endLine": 268,
+        "endChar": 59
+      },
       "revId": "91ad8fe605ba39ad60f237dbcd403643be9bd35d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }

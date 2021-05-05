@@ -95,6 +95,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f28c8c59_ae5d1e24",
+        "filename": "core/product_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-05T13:41:58Z",
+      "side": 1,
+      "message": "Reminds me of https://preview.redd.it/xi216hy4g0m21.jpg?auto\u003dwebp\u0026s\u003d5f8caf84ab15e528b60b6aadc46fd3ac1e331370 :D",
+      "parentUuid": "51052023_e931fb90",
+      "range": {
+        "startLine": 244,
+        "startChar": 0,
+        "endLine": 244,
+        "endChar": 28
+      },
+      "revId": "5fa89b65db7d2ae7f5fa0d1a8b09e75b5cb2ae5a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "53cbef1d_0988748e",
