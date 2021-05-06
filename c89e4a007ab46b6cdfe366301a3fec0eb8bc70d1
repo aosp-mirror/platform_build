@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5529db2b_6bacf5bf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 16
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-05-06T11:26:50Z",
+      "side": 1,
+      "message": "Anton, PTAL, this change is already in sc-dev.",
+      "revId": "c89e4a007ab46b6cdfe366301a3fec0eb8bc70d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
