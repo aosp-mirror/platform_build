@@ -46,6 +46,30 @@
       },
       "revId": "18c03ff81077e7dbe19feba71f16aed85b66dd79",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4d8303f_901dbeeb",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 962,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-06T07:25:19Z",
+      "side": 1,
+      "message": "OK, thanks for the reply.",
+      "parentUuid": "0fdc23d8_5e8022d3",
+      "range": {
+        "startLine": 961,
+        "startChar": 1,
+        "endLine": 962,
+        "endChar": 20
+      },
+      "revId": "18c03ff81077e7dbe19feba71f16aed85b66dd79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
