@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "71293de1_388e5d61",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1216,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-06T20:36:05Z",
+      "side": 1,
+      "message": "I have reworded the comment to explain the approach.",
+      "parentUuid": "b2d0b1bd_6365aa10",
+      "range": {
+        "startLine": 1213,
+        "startChar": 24,
+        "endLine": 1216,
+        "endChar": 13
+      },
+      "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e5e780c6_43fcdf37",
         "filename": "core/main.mk",
         "patchSetId": 2
@@ -37,6 +61,30 @@
       "writtenOn": "2021-05-05T07:05:23Z",
       "side": 1,
       "message": "why are we duplicating the logic?",
+      "range": {
+        "startLine": 1268,
+        "startChar": 4,
+        "endLine": 1269,
+        "endChar": 30
+      },
+      "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9299f0e4_4dc257c4",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1269,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-06T20:36:05Z",
+      "side": 1,
+      "message": "In this case we filter from $(PRODUCT_PACKAGES_ENG) instead of filtering from $(call get-product-var,$(1),PRODUCT_PACKAGES_ENG)",
+      "parentUuid": "e5e780c6_43fcdf37",
       "range": {
         "startLine": 1268,
         "startChar": 4,
