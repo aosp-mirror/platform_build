@@ -51,6 +51,24 @@
       "parentUuid": "b1d3c647_62ca71c1",
       "revId": "6e8ed2a841cf9e1605a5466290c095de9c58152e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f27306f_1a639b07",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1408266
+      },
+      "writtenOn": "2021-05-06T21:33:04Z",
+      "side": 1,
+      "message": "Actually, RESTRICT AUTOMERGE has no effect for build/ project currently, because the merge paths between cts test dev branches don\u0027t exist for build/ project.",
+      "parentUuid": "86052000_e51593ba",
+      "revId": "6e8ed2a841cf9e1605a5466290c095de9c58152e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
