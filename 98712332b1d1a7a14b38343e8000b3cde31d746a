@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "79375220_2b56ad5d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-05-06T14:51:23Z",
+      "side": 1,
+      "message": "Can\u0027t this be done in Android.bp using genrule?\n\nAn example: https://source.corp.google.com/android/system/apex/tools/Android.bp;rcl\u003d3533e8709ab865959b26bc234c3a628a083f2df4;l\u003d79",
+      "revId": "98712332b1d1a7a14b38343e8000b3cde31d746a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
