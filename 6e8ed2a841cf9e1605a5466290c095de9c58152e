@@ -33,6 +33,24 @@
       "message": "Pls add DO NOT MERGE or RESTRICT AUTOMERGE to the commit message. This helps minimizing merge conflict when the next test dev branch becomes available. ",
       "revId": "6e8ed2a841cf9e1605a5466290c095de9c58152e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86052000_e51593ba",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1408266
+      },
+      "writtenOn": "2021-05-06T18:21:43Z",
+      "side": 1,
+      "message": "Oh no.. should I have done so to other CP branches?",
+      "parentUuid": "b1d3c647_62ca71c1",
+      "revId": "6e8ed2a841cf9e1605a5466290c095de9c58152e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
