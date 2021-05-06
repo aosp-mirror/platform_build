@@ -266,7 +266,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
 	  $(PRIVATE_DEXPREOPT_CONFIGS) \
 	  $(PRIVATE_RELAX_CHECK) \
 	  $<
-  $(built_module) : $(my_enforced_uses_libraries)
+  $(LOCAL_BUILT_MODULE) : $(my_enforced_uses_libraries)
 endif
 
 ################################################################################
