@@ -231,8 +231,8 @@ def main(argv):
 
     input_dirs = [os.path.normpath(source_dir) for source_dir in args.source_dir]
     # Find all the notice files and md5 them
+    files_with_same_hash = defaultdict(list)
     for input_dir in input_dirs:
-        files_with_same_hash = defaultdict(list)
         for root, dir, files in os.walk(input_dir):
             for file in files:
                 matched = True
@@ -252,10 +252,9 @@ def main(argv):
                     file_md5sum = md5sum(filename)
                     files_with_same_hash[file_md5sum].append(filename)
 
-        filesets = [sorted(files_with_same_hash[md5]) for md5 in sorted(files_with_same_hash.keys())]
-
     print "Combining NOTICE files into text"
 
+    filesets = [sorted(files_with_same_hash[md5]) for md5 in sorted(files_with_same_hash.keys())]
     combine_notice_files_text(filesets, input_dirs, txt_output_file, file_title)
 
     if html_output_file is not None:
