@@ -16,6 +16,23 @@
       "message": "Hi all, android11-tests-dev is created. Now we can CP to this branch.",
       "revId": "6e8ed2a841cf9e1605a5466290c095de9c58152e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1d3c647_62ca71c1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1244622
+      },
+      "writtenOn": "2021-05-06T18:19:06Z",
+      "side": 1,
+      "message": "Pls add DO NOT MERGE or RESTRICT AUTOMERGE to the commit message. This helps minimizing merge conflict when the next test dev branch becomes available. ",
+      "revId": "6e8ed2a841cf9e1605a5466290c095de9c58152e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
