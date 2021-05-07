@@ -26,6 +26,7 @@ import logging
 import os.path
 import shlex
 import struct
+import sys
 
 import common
 import sparse_img
@@ -737,6 +738,30 @@ def GetDiskUsage(path):
   cmd = ["du", "-b", "-k", "-s", path]
   output = common.RunAndCheckOutput(cmd, verbose=False)
   return int(output.split()[0]) * 1024
+
+
+def CalculateVbmetaDigest(extracted_dir, avbtool):
+  """Calculates the vbmeta digest of the images in the extracted target_file"""
+
+  images_dir = common.MakeTempDir()
+  for name in ("PREBUILT_IMAGES", "RADIO", "IMAGES"):
+    path = os.path.join(extracted_dir, name)
+    if not os.path.exists(path):
+      continue
+
+    # Create symlink for image files under PREBUILT_IMAGES, RADIO and IMAGES,
+    # and put them into one directory.
+    for filename in os.listdir(path):
+      if not filename.endswith(".img"):
+        continue
+      symlink_path = os.path.join(images_dir, filename)
+      # The files in latter directory overwrite the existing links
+      common.RunAndCheckOutput(
+        ['ln', '-sf', os.path.join(path, filename), symlink_path])
+
+  cmd = [avbtool, "calculate_vbmeta_digest", "--image",
+         os.path.join(images_dir, 'vbmeta.img')]
+  return common.RunAndCheckOutput(cmd)
 
 
 def main(argv):
