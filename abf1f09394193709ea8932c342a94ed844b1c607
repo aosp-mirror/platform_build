@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "905fc20e_55098573",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1385,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-07T13:23:40Z",
+      "side": 1,
+      "message": "is there a tracking bug to support artifact path checks?",
+      "range": {
+        "startLine": 1385,
+        "startChar": 70,
+        "endLine": 1385,
+        "endChar": 88
+      },
+      "revId": "abf1f09394193709ea8932c342a94ed844b1c607",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

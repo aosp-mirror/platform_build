@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8aa86297_ae63e484",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1216,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-07T13:23:40Z",
+      "side": 1,
+      "message": "makes sense to me, but we shouldn\u0027t copy/paste the logic",
+      "parentUuid": "71293de1_388e5d61",
+      "range": {
+        "startLine": 1213,
+        "startChar": 24,
+        "endLine": 1216,
+        "endChar": 13
+      },
+      "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e5e780c6_43fcdf37",
@@ -85,6 +109,30 @@
       "side": 1,
       "message": "In this case we filter from $(PRODUCT_PACKAGES_ENG) instead of filtering from $(call get-product-var,$(1),PRODUCT_PACKAGES_ENG)",
       "parentUuid": "e5e780c6_43fcdf37",
+      "range": {
+        "startLine": 1268,
+        "startChar": 4,
+        "endLine": 1269,
+        "endChar": 30
+      },
+      "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49c6af39_2255046e",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1269,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-07T13:23:40Z",
+      "side": 1,
+      "message": "can you either\n- redefine get-product-var to be a passthrough for RBC_PRODUCT_CONFIG\n- keep this one macro (or make a new shared one) that either uses get-product-var or doesn\u0027t, based on RBC_PRODUCT_CONFIG?",
+      "parentUuid": "9299f0e4_4dc257c4",
       "range": {
         "startLine": 1268,
         "startChar": 4,
