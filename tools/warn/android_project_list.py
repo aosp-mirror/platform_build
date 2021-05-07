@@ -17,6 +17,7 @@
 
 
 def create_pattern(name, pattern=None):
+  """Return a tuple of name and warn patten."""
   if pattern is not None:
     return [name, '(^|.*/)' + pattern + '/.*: warning:']
   return [name, '(^|.*/)' + name + '/.*: warning:']

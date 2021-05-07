@@ -15,10 +15,12 @@
 
 """Warning patterns for C/C++ compiler, but not clang-tidy."""
 
+# No need of doc strings for trivial small functions.
+# pylint:disable=missing-function-docstring
+
 import re
 
 # pylint:disable=relative-beyond-top-level
-# pylint:disable=g-importing-member
 from .severity import Severity
 
 
@@ -56,7 +58,8 @@ def harmless(description, pattern_list):
 
 
 warn_patterns = [
-    # pylint:disable=line-too-long,g-inconsistent-quotes
+    # pylint does not recognize g-inconsistent-quotes
+    # pylint:disable=line-too-long,bad-option-value,g-inconsistent-quotes
     medium('Implicit function declaration',
            [r".*: warning: implicit declaration of function .+",
             r".*: warning: implicitly declaring library function"]),
@@ -300,7 +303,7 @@ warn_patterns = [
     medium('Missing noreturn',
            [r".*: warning: function '.*' could be declared with attribute 'noreturn'"]),
     medium('User warning',
-           [r".*: warning: #warning "".+"""]),
+           [r".*: warning: #warning \".+\""]),
     medium('Vexing parsing problem',
            [r".*: warning: empty parentheses interpreted as a function declaration"]),
     medium('Dereferencing void*',

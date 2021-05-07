@@ -15,6 +15,9 @@
 
 """Emit warning messages to html or csv files."""
 
+# Many functions in this module have too many arguments to be refactored.
+# pylint:disable=too-many-arguments,missing-function-docstring
+
 # To emit html page of warning messages:
 #   flags: --byproject, --url, --separator
 # Old stuff for static html components:
@@ -52,16 +55,15 @@
 #   emit_js_data():
 
 from __future__ import print_function
-import cgi
 import csv
+import html
 import sys
 
 # pylint:disable=relative-beyond-top-level
-# pylint:disable=g-importing-member
 from .severity import Severity
 
 
-html_head_scripts = """\
+HTML_HEAD_SCRIPTS = """\
   <script type="text/javascript">
   function expand(id) {
     var e = document.getElementById(id);
@@ -113,7 +115,7 @@ def html_big(param):
 def dump_html_prologue(title, writer, warn_patterns, project_names):
   writer('<html>\n<head>')
   writer('<title>' + title + '</title>')
-  writer(html_head_scripts)
+  writer(HTML_HEAD_SCRIPTS)
   emit_stats_by_project(writer, warn_patterns, project_names)
   writer('</head>\n<body>')
   writer(html_big(title))
@@ -142,18 +144,16 @@ def create_warnings(warn_patterns, project_names):
     2D warnings array where warnings[p][s] is # of warnings in project name p of
     severity level s
   """
-  # pylint:disable=g-complex-comprehension
   warnings = {p: {s.value: 0 for s in Severity.levels} for p in project_names}
-  for i in warn_patterns:
-    s = i['severity'].value
-    for p in i['projects']:
-      warnings[p][s] += i['projects'][p]
+  for pattern in warn_patterns:
+    value = pattern['severity'].value
+    for project in pattern['projects']:
+      warnings[project][value] += pattern['projects'][project]
   return warnings
 
 
 def get_total_by_project(warnings, project_names):
   """Returns dict, project as key and # warnings for that project as value."""
-  # pylint:disable=g-complex-comprehension
   return {
       p: sum(warnings[p][s.value] for s in Severity.levels)
       for p in project_names
@@ -162,7 +162,6 @@ def get_total_by_project(warnings, project_names):
 
 def get_total_by_severity(warnings, project_names):
   """Returns dict, severity as key and # warnings of that severity as value."""
-  # pylint:disable=g-complex-comprehension
   return {
       s.value: sum(warnings[p][s.value] for p in project_names)
       for s in Severity.levels
@@ -173,11 +172,11 @@ def emit_table_header(total_by_severity):
   """Returns list of HTML-formatted content for severity stats."""
 
   stats_header = ['Project']
-  for s in Severity.levels:
-    if total_by_severity[s.value]:
+  for severity in Severity.levels:
+    if total_by_severity[severity.value]:
       stats_header.append(
           '<span style=\'background-color:{}\'>{}</span>'.format(
-              s.color, s.column_header))
+              severity.color, severity.column_header))
   stats_header.append('TOTAL')
   return stats_header
 
@@ -200,15 +199,15 @@ def emit_row_counts_per_project(warnings, total_by_project, total_by_severity,
 
   total_all_projects = 0
   stats_rows = []
-  for p in project_names:
-    if total_by_project[p]:
-      one_row = [p]
-      for s in Severity.levels:
-        if total_by_severity[s.value]:
-          one_row.append(warnings[p][s.value])
-      one_row.append(total_by_project[p])
+  for p_name in project_names:
+    if total_by_project[p_name]:
+      one_row = [p_name]
+      for severity in Severity.levels:
+        if total_by_severity[severity.value]:
+          one_row.append(warnings[p_name][severity.value])
+      one_row.append(total_by_project[p_name])
       stats_rows.append(one_row)
-      total_all_projects += total_by_project[p]
+      total_all_projects += total_by_project[p_name]
   return total_all_projects, stats_rows
 
 
@@ -226,16 +225,16 @@ def emit_row_counts_per_severity(total_by_severity, stats_header, stats_rows,
 
   total_all_severities = 0
   one_row = ['<b>TOTAL</b>']
-  for s in Severity.levels:
-    if total_by_severity[s.value]:
-      one_row.append(total_by_severity[s.value])
-      total_all_severities += total_by_severity[s.value]
+  for severity in Severity.levels:
+    if total_by_severity[severity.value]:
+      one_row.append(total_by_severity[severity.value])
+      total_all_severities += total_by_severity[severity.value]
   one_row.append(total_all_projects)
   stats_rows.append(one_row)
   writer('<script>')
   emit_const_string_array('StatsHeader', stats_header, writer)
   emit_const_object_array('StatsRows', stats_rows, writer)
-  writer(draw_table_javascript)
+  writer(DRAW_TABLE_JAVASCRIPT)
   writer('</script>')
 
 
@@ -246,8 +245,8 @@ def emit_stats_by_project(writer, warn_patterns, project_names):
   total_by_project = get_total_by_project(warnings, project_names)
   total_by_severity = get_total_by_severity(warnings, project_names)
   stats_header = emit_table_header(total_by_severity)
-  total_all_projects, stats_rows = \
-    emit_row_counts_per_project(warnings, total_by_project, total_by_severity, project_names)
+  total_all_projects, stats_rows = emit_row_counts_per_project(
+      warnings, total_by_project, total_by_severity, project_names)
   emit_row_counts_per_severity(total_by_severity, stats_header, stats_rows,
                                total_all_projects, writer)
 
@@ -287,6 +286,7 @@ def dump_stats(writer, warn_patterns):
 #     id for each warning pattern
 #     sort by project, severity, warn_id, warning_message
 def emit_buttons(writer):
+  """Write the button elements in HTML."""
   writer('<button class="button" onclick="expandCollapse(1);">'
          'Expand all warnings</button>\n'
          '<button class="button" onclick="expandCollapse(0);">'
@@ -327,8 +327,8 @@ def dump_fixed(writer, warn_patterns):
   for text in fixed_patterns:
     cur_row_class = 1 - cur_row_class
     # remove last '\n'
-    t = text[:-1] if text[-1] == '\n' else text
-    writer('<tr><td class="c' + str(cur_row_class) + '">' + t + '</td></tr>')
+    out_text = text[:-1] if text[-1] == '\n' else text
+    writer('<tr><td class="c' + str(cur_row_class) + '">' + out_text + '</td></tr>')
   writer('</table></div>')
   writer('</blockquote>')
 
@@ -338,10 +338,10 @@ def write_severity(csvwriter, sev, kind, warn_patterns):
   total = 0
   for pattern in warn_patterns:
     if pattern['severity'] == sev and pattern['members']:
-      n = len(pattern['members'])
-      total += n
+      num_members = len(pattern['members'])
+      total += num_members
       warning = kind + ': ' + (pattern['description'] or '?')
-      csvwriter.writerow([n, '', warning])
+      csvwriter.writerow([num_members, '', warning])
       # print number of warnings for each project, ordered by project name
       projects = sorted(pattern['projects'].keys())
       for project in projects:
@@ -354,8 +354,8 @@ def dump_csv(csvwriter, warn_patterns):
   """Dump number of warnings in CSV format to writer."""
   sort_warnings(warn_patterns)
   total = 0
-  for s in Severity.levels:
-    total += write_severity(csvwriter, s, s.column_header, warn_patterns)
+  for severity in Severity.levels:
+    total += write_severity(csvwriter, severity, severity.column_header, warn_patterns)
   csvwriter.writerow([total, '', 'All warnings'])
 
 
@@ -378,41 +378,41 @@ def dump_csv_with_description(csvwriter, warning_records, warning_messages,
     csvwriter.writerow(output)
 
 
-# Return s with escaped backslash and quotation characters.
-def escape_string(s):
-  return s.replace('\\', '\\\\').replace('"', '\\"')
+# Return line with escaped backslash and quotation characters.
+def escape_string(line):
+  return line.replace('\\', '\\\\').replace('"', '\\"')
 
 
-# Return s without trailing '\n' and escape the quotation characters.
-def strip_escape_string(s):
-  if not s:
-    return s
-  s = s[:-1] if s[-1] == '\n' else s
-  return escape_string(s)
+# Return line without trailing '\n' and escape the quotation characters.
+def strip_escape_string(line):
+  if not line:
+    return line
+  line = line[:-1] if line[-1] == '\n' else line
+  return escape_string(line)
 
 
 def emit_warning_array(name, writer, warn_patterns):
   writer('var warning_{} = ['.format(name))
-  for w in warn_patterns:
+  for pattern in warn_patterns:
     if name == 'severity':
-      writer('{},'.format(w[name].value))
+      writer('{},'.format(pattern[name].value))
     else:
-      writer('{},'.format(w[name]))
+      writer('{},'.format(pattern[name]))
   writer('];')
 
 
 def emit_warning_arrays(writer, warn_patterns):
   emit_warning_array('severity', writer, warn_patterns)
   writer('var warning_description = [')
-  for w in warn_patterns:
-    if w['members']:
-      writer('"{}",'.format(escape_string(w['description'])))
+  for pattern in warn_patterns:
+    if pattern['members']:
+      writer('"{}",'.format(escape_string(pattern['description'])))
     else:
       writer('"",')  # no such warning
   writer('];')
 
 
-scripts_for_warning_groups = """
+SCRIPTS_FOR_WARNING_GROUPS = """
   function compareMessages(x1, x2) { // of the same warning type
     return (WarningMessages[x1[2]] <= WarningMessages[x2[2]]) ? -1 : 1;
   }
@@ -565,35 +565,32 @@ def emit_const_string(name, value, writer):
 # Emit a JavaScript const integer array.
 def emit_const_int_array(name, array, writer):
   writer('const ' + name + ' = [')
-  for n in array:
-    writer(str(n) + ',')
+  for item in array:
+    writer(str(item) + ',')
   writer('];')
 
 
 # Emit a JavaScript const string array.
 def emit_const_string_array(name, array, writer):
   writer('const ' + name + ' = [')
-  for s in array:
-    writer('"' + strip_escape_string(s) + '",')
+  for item in array:
+    writer('"' + strip_escape_string(item) + '",')
   writer('];')
 
 
 # Emit a JavaScript const string array for HTML.
 def emit_const_html_string_array(name, array, writer):
   writer('const ' + name + ' = [')
-  for s in array:
-    # Not using html.escape yet, to work for both python 2 and 3,
-    # until all users switch to python 3.
-    # pylint:disable=deprecated-method
-    writer('"' + cgi.escape(strip_escape_string(s)) + '",')
+  for item in array:
+    writer('"' + html.escape(strip_escape_string(item)) + '",')
   writer('];')
 
 
 # Emit a JavaScript const object array.
 def emit_const_object_array(name, array, writer):
   writer('const ' + name + ' = [')
-  for x in array:
-    writer(str(x) + ',')
+  for item in array:
+    writer(str(item) + ',')
   writer('];')
 
 
@@ -623,7 +620,7 @@ def emit_js_data(writer, flags, warning_messages, warning_links,
     emit_const_html_string_array('WarningLinks', warning_links, writer)
 
 
-draw_table_javascript = """
+DRAW_TABLE_JAVASCRIPT = """
 google.charts.load('current', {'packages':['table']});
 google.charts.setOnLoadCallback(drawTable);
 function drawTable() {
@@ -656,7 +653,7 @@ def dump_html(flags, output_stream, warning_messages, warning_links,
   writer('\n<script>')
   emit_js_data(writer, flags, warning_messages, warning_links, warning_records,
                warn_patterns, project_names)
-  writer(scripts_for_warning_groups)
+  writer(SCRIPTS_FOR_WARNING_GROUPS)
   writer('</script>')
   emit_buttons(writer)
   # Warning messages are grouped by severities or project names.
@@ -673,8 +670,8 @@ def write_html(flags, project_names, warn_patterns, html_path, warning_messages,
                warning_links, warning_records, header_str):
   """Write warnings html file."""
   if html_path:
-    with open(html_path, 'w') as f:
-      dump_html(flags, f, warning_messages, warning_links, warning_records,
+    with open(html_path, 'w') as outf:
+      dump_html(flags, outf, warning_messages, warning_links, warning_records,
                 header_str, warn_patterns, project_names)
 
 
@@ -682,12 +679,12 @@ def write_out_csv(flags, warn_patterns, warning_messages, warning_links,
                   warning_records, header_str, project_names):
   """Write warnings csv file."""
   if flags.csvpath:
-    with open(flags.csvpath, 'w') as f:
-      dump_csv(csv.writer(f, lineterminator='\n'), warn_patterns)
+    with open(flags.csvpath, 'w') as outf:
+      dump_csv(csv.writer(outf, lineterminator='\n'), warn_patterns)
 
   if flags.csvwithdescription:
-    with open(flags.csvwithdescription, 'w') as f:
-      dump_csv_with_description(csv.writer(f, lineterminator='\n'),
+    with open(flags.csvwithdescription, 'w') as outf:
+      dump_csv_with_description(csv.writer(outf, lineterminator='\n'),
                                 warning_records, warning_messages,
                                 warn_patterns, project_names)
 

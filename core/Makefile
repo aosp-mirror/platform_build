@@ -2330,64 +2330,54 @@ INTERNAL_DEBUG_RAMDISK_FILES := $(filter $(TARGET_DEBUG_RAMDISK_OUT)/%, \
     $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
-# Note: TARGET_DEBUG_RAMDISK_OUT will be $(PRODUCT_OUT)/debug_ramdisk/first_stage_ramdisk,
-# if BOARD_USES_RECOVERY_AS_BOOT is true. Otherwise, it will be $(PRODUCT_OUT)/debug_ramdisk.
-# But the root dir of the ramdisk to build is always $(PRODUCT_OUT)/debug_ramdisk.
-my_debug_ramdisk_root_dir := $(PRODUCT_OUT)/debug_ramdisk
-
 INSTALLED_FILES_FILE_DEBUG_RAMDISK := $(PRODUCT_OUT)/installed-files-ramdisk-debug.txt
 INSTALLED_FILES_JSON_DEBUG_RAMDISK := $(INSTALLED_FILES_FILE_DEBUG_RAMDISK:.txt=.json)
 $(INSTALLED_FILES_FILE_DEBUG_RAMDISK): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_DEBUG_RAMDISK)
-$(INSTALLED_FILES_FILE_DEBUG_RAMDISK): DEBUG_RAMDISK_ROOT_DIR := $(my_debug_ramdisk_root_dir)
 
-# Cannot just depend on INTERNAL_DEBUG_RAMDISK_FILES like other INSTALLED_FILES_FILE_* rules.
-# Because ramdisk-debug.img will rsync from either ramdisk.img or ramdisk-recovery.img.
-# Need to depend on the built ramdisk-debug.img, to get a complete list of the installed files.
-$(INSTALLED_FILES_FILE_DEBUG_RAMDISK) : $(INSTALLED_DEBUG_RAMDISK_TARGET)
+# ramdisk-debug.img will merge the content from either ramdisk.img or
+# ramdisk-recovery.img, depending on whether BOARD_USES_RECOVERY_AS_BOOT
+# is set or not.
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+  $(INSTALLED_FILES_FILE_DEBUG_RAMDISK): PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+  $(INSTALLED_FILES_FILE_DEBUG_RAMDISK): $(recovery_ramdisk)
+else
+  $(INSTALLED_FILES_FILE_DEBUG_RAMDISK): PRIVATE_ADDITIONAL_DIR := $(TARGET_RAMDISK_OUT)
+  $(INSTALLED_FILES_FILE_DEBUG_RAMDISK): $(INSTALLED_RAMDISK_TARGET)
+endif # BOARD_USES_RECOVERY_AS_BOOT
+
 $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) : $(INTERNAL_DEBUG_RAMDISK_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
 	mkdir -p $(dir $@)
 	rm -f $@
-	$(FILESLIST) $(DEBUG_RAMDISK_ROOT_DIR) > $(@:.txt=.json)
+	$(FILESLIST) $(TARGET_DEBUG_RAMDISK_OUT) $(PRIVATE_ADDITIONAL_DIR) > $(@:.txt=.json)
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
-# ramdisk-debug.img will rsync the content from either ramdisk.img or ramdisk-recovery.img,
-# depending on whether BOARD_USES_RECOVERY_AS_BOOT is set or not.
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-my_debug_ramdisk_sync_dir := $(TARGET_RECOVERY_ROOT_OUT)
+  $(INSTALLED_DEBUG_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+  $(INSTALLED_DEBUG_RAMDISK_TARGET): $(recovery_ramdisk)
 else
-my_debug_ramdisk_sync_dir := $(TARGET_RAMDISK_OUT)
+  $(INSTALLED_DEBUG_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RAMDISK_OUT)
+  $(INSTALLED_DEBUG_RAMDISK_TARGET): $(INSTALLED_RAMDISK_TARGET)
 endif # BOARD_USES_RECOVERY_AS_BOOT
 
-$(INSTALLED_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_SYNC_DIR := $(my_debug_ramdisk_sync_dir)
-$(INSTALLED_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_ROOT_DIR := $(my_debug_ramdisk_root_dir)
-
-ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-# ramdisk-recovery.img isn't a make target, need to depend on boot.img if it's for recovery.
-$(INSTALLED_DEBUG_RAMDISK_TARGET): $(INSTALLED_BOOTIMAGE_TARGET)
-else
-# Depends on ramdisk.img, note that some target has ramdisk.img but no boot.img, e.g., emulator.
-$(INSTALLED_DEBUG_RAMDISK_TARGET): $(INSTALLED_RAMDISK_TARGET)
-endif # BOARD_USES_RECOVERY_AS_BOOT
+$(INSTALLED_DEBUG_RAMDISK_TARGET): $(INSTALLED_FILES_FILE_DEBUG_RAMDISK)
 $(INSTALLED_DEBUG_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_DEBUG_RAMDISK_FILES) | $(COMPRESSION_COMMAND_DEPS)
 	$(call pretty,"Target debug ramdisk: $@")
 	mkdir -p $(TARGET_DEBUG_RAMDISK_OUT)
 	touch $(TARGET_DEBUG_RAMDISK_OUT)/force_debuggable
-	rsync -a $(DEBUG_RAMDISK_SYNC_DIR)/ $(DEBUG_RAMDISK_ROOT_DIR)
-	$(MKBOOTFS) -d $(TARGET_OUT) $(DEBUG_RAMDISK_ROOT_DIR) | $(COMPRESSION_COMMAND) > $@
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_DEBUG_RAMDISK_OUT) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $@
 
 .PHONY: ramdisk_debug-nodeps
-ramdisk_debug-nodeps: DEBUG_RAMDISK_SYNC_DIR := $(my_debug_ramdisk_sync_dir)
-ramdisk_debug-nodeps: DEBUG_RAMDISK_ROOT_DIR := $(my_debug_ramdisk_root_dir)
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+  ramdisk_debug-nodeps: PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+else
+  ramdisk_debug-nodeps: PRIVATE_ADDITIONAL_DIR := $(TARGET_RAMDISK_OUT)
+endif # BOARD_USES_RECOVERY_AS_BOOT
 ramdisk_debug-nodeps: $(MKBOOTFS) | $(COMPRESSION_COMMAND_DEPS)
 	echo "make $@: ignoring dependencies"
 	mkdir -p $(TARGET_DEBUG_RAMDISK_OUT)
 	touch $(TARGET_DEBUG_RAMDISK_OUT)/force_debuggable
-	rsync -a $(DEBUG_RAMDISK_SYNC_DIR)/ $(DEBUG_RAMDISK_ROOT_DIR)
-	$(MKBOOTFS) -d $(TARGET_OUT) $(DEBUG_RAMDISK_ROOT_DIR) | $(COMPRESSION_COMMAND) > $(INSTALLED_DEBUG_RAMDISK_TARGET)
-
-my_debug_ramdisk_sync_dir :=
-my_debug_ramdisk_root_dir :=
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_DEBUG_RAMDISK_OUT) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $(INSTALLED_DEBUG_RAMDISK_TARGET)
 
 endif # BUILDING_RAMDISK_IMAGE
 
@@ -2407,9 +2397,9 @@ endif
 
 # Replace ramdisk.img in $(MKBOOTIMG) ARGS with ramdisk-debug.img to build boot-debug.img
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-INTERNAL_DEBUG_BOOTIMAGE_ARGS := $(subst $(recovery_ramdisk),$(INSTALLED_DEBUG_RAMDISK_TARGET), $(INTERNAL_RECOVERYIMAGE_ARGS))
+  INTERNAL_DEBUG_BOOTIMAGE_ARGS := $(subst $(recovery_ramdisk),$(INSTALLED_DEBUG_RAMDISK_TARGET), $(INTERNAL_RECOVERYIMAGE_ARGS))
 else
-INTERNAL_DEBUG_BOOTIMAGE_ARGS := $(subst $(INSTALLED_RAMDISK_TARGET),$(INSTALLED_DEBUG_RAMDISK_TARGET), $(INTERNAL_BOOTIMAGE_ARGS))
+  INTERNAL_DEBUG_BOOTIMAGE_ARGS := $(subst $(INSTALLED_RAMDISK_TARGET),$(INSTALLED_DEBUG_RAMDISK_TARGET), $(INTERNAL_BOOTIMAGE_ARGS))
 endif
 
 # If boot.img is chained but boot-debug.img is not signed, libavb in bootloader
@@ -2460,9 +2450,24 @@ ifeq ($(BUILDING_RAMDISK_IMAGE),true)
 # -----------------------------------------------------------------
 # vendor debug ramdisk
 # Combines vendor ramdisk files and debug ramdisk files to build the vendor debug ramdisk.
+#
+INTERNAL_VENDOR_DEBUG_RAMDISK_FILES := $(filter $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/%, \
+    $(ALL_GENERATED_SOURCES) \
+    $(ALL_DEFAULT_INSTALLED_MODULES))
+
+INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK := $(PRODUCT_OUT)/installed-files-vendor-ramdisk-debug.txt
+INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK := $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK:.txt=.json)
+$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK)
+$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_DEBUG_RAMDISK_TARGET)
+$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): $(INTERNAL_VENDOR_DEBUG_RAMDISK_FILES) $(FILESLIST) $(FILESLIST_UTIL)
+	@echo Installed file list: $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	mkdir -p $(TARGET_VENDOR_DEBUG_RAMDISK_OUT) # The dir might not be created if no modules are installed here.
+	$(FILESLIST) $(TARGET_VENDOR_RAMDISK_OUT) $(TARGET_DEBUG_RAMDISK_OUT) $(TARGET_VENDOR_DEBUG_RAMDISK_OUT) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+
 INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_boot-debug)/vendor_ramdisk-debug.cpio$(RAMDISK_EXT)
-$(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_FILES := $(INTERNAL_DEBUG_RAMDISK_FILES)
-$(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): VENDOR_RAMDISK_DIR := $(TARGET_VENDOR_RAMDISK_OUT)
 
 # Exclude recovery files in the default vendor ramdisk if including a standalone
 # recovery ramdisk in vendor_boot.
@@ -2473,23 +2478,12 @@ $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RECO
 endif
 endif
 
-INTERNAL_VENDOR_DEBUG_RAMDISK_FILES := $(filter $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/%, \
-    $(ALL_GENERATED_SOURCES) \
-    $(ALL_DEFAULT_INSTALLED_MODULES))
-
-# Note: TARGET_VENDOR_DEBUG_RAMDISK_OUT will be $(PRODUCT_OUT)/vendor_debug_ramdisk/first_stage_ramdisk,
-# if BOARD_USES_RECOVERY_AS_BOOT is true. Otherwise, it will be $(PRODUCT_OUT)/vendor_debug_ramdisk.
-# But the path of $(VENDOR_DEBUG_RAMDISK_DIR) to build the vendor debug ramdisk, is always
-# $(PRODUCT_OUT)/vendor_debug_ramdisk.
-$(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_DIR := $(PRODUCT_OUT)/debug_ramdisk
-$(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): VENDOR_DEBUG_RAMDISK_DIR := $(PRODUCT_OUT)/vendor_debug_ramdisk
+# The vendor debug ramdisk combines vendor ramdisk and debug ramdisk.
 $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_DEBUG_RAMDISK_TARGET)
+$(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK)
 $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_VENDOR_DEBUG_RAMDISK_FILES) | $(COMPRESSION_COMMAND_DEPS)
 	mkdir -p $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)
-	touch $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/force_debuggable
-	$(foreach debug_file,$(DEBUG_RAMDISK_FILES), \
-	  cp -f $(debug_file) $(patsubst $(DEBUG_RAMDISK_DIR)/%,$(VENDOR_DEBUG_RAMDISK_DIR)/%,$(debug_file)) &&) true
-	$(MKBOOTFS) -d $(TARGET_OUT) $(VENDOR_RAMDISK_DIR) $(VENDOR_DEBUG_RAMDISK_DIR) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $@
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_VENDOR_RAMDISK_OUT) $(TARGET_DEBUG_RAMDISK_OUT) $(TARGET_VENDOR_DEBUG_RAMDISK_OUT) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $@
 
 ifeq (true,$(BOARD_BUILD_VENDOR_RAMDISK_IMAGE))
 INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET := $(PRODUCT_OUT)/vendor_ramdisk-debug.img
@@ -2497,21 +2491,6 @@ $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET): $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET
 	$(call pretty,"Target vendor debug ramdisk: $@")
 	$(copy-file-to-target)
 endif
-
-INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK := $(PRODUCT_OUT)/installed-files-vendor-ramdisk-debug.txt
-INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK := $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK:.txt=.json)
-$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK)
-$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): VENDOR_DEBUG_RAMDISK_DIR := $(PRODUCT_OUT)/vendor_debug_ramdisk
-
-# The vendor debug ramdisk will rsync from $(TARGET_VENDOR_RAMDISK_OUT) and $(INTERNAL_DEBUG_RAMDISK_FILES),
-# so we have to wait for the vendor debug ramdisk to be built before generating the installed file list.
-$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): $(INTERNAL_VENDOR_DEBUG_RAMDISK_TARGET)
-$(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK): $(INTERNAL_VENDOR_DEBUG_RAMDISK_FILES) $(FILESLIST) $(FILESLIST_UTIL)
-	@echo Installed file list: $@
-	mkdir -p $(dir $@)
-	rm -f $@
-	$(FILESLIST) $(VENDOR_DEBUG_RAMDISK_DIR) > $(@:.txt=.json)
-	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 # -----------------------------------------------------------------
 # vendor_boot-debug.img.
@@ -2554,13 +2533,7 @@ ifdef BUILDING_RAMDISK_IMAGE
 BUILT_TEST_HARNESS_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk-test-harness.img
 INSTALLED_TEST_HARNESS_RAMDISK_TARGET := $(BUILT_TEST_HARNESS_RAMDISK_TARGET)
 
-# rsync the content from ramdisk-debug.img to ramdisk-test-harness.img, then
-# appends a few test harness specific properties into the adb_debug.prop.
-TEST_HARNESS_RAMDISK_SYNC_DIR := $(PRODUCT_OUT)/debug_ramdisk
-TEST_HARNESS_RAMDISK_ROOT_DIR := $(PRODUCT_OUT)/test_harness_ramdisk
-
-# The following TARGET_TEST_HARNESS_RAMDISK_OUT will be $(PRODUCT_OUT)/test_harness_ramdisk/first_stage_ramdisk,
-# if BOARD_USES_RECOVERY_AS_BOOT is true. Otherwise, it will be $(PRODUCT_OUT)/test_harness_ramdisk.
+# Appends a few test harness specific properties into the adb_debug.prop.
 TEST_HARNESS_PROP_TARGET := $(TARGET_TEST_HARNESS_RAMDISK_OUT)/adb_debug.prop
 ADDITIONAL_TEST_HARNESS_PROPERTIES := ro.audio.silent=1
 ADDITIONAL_TEST_HARNESS_PROPERTIES += ro.test_harness=1
@@ -2574,19 +2547,40 @@ define append-test-harness-props
   $(foreach line,$(1), echo "$(line)" >> $(2);)
 endef
 
+INTERNAL_TEST_HARNESS_RAMDISK_FILES := $(filter $(TARGET_TEST_HARNESS_RAMDISK_OUT)/%, \
+    $(ALL_GENERATED_SOURCES) \
+    $(ALL_DEFAULT_INSTALLED_MODULES))
+
+# ramdisk-test-harness.img will merge the content from either ramdisk.img or
+# ramdisk-recovery.img, depending on whether BOARD_USES_RECOVERY_AS_BOOT is set
+# or not.
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+  $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+  $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): $(recovery_ramdisk)
+else
+  $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RAMDISK_OUT)
+  $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): $(INSTALLED_RAMDISK_TARGET)
+endif # BOARD_USES_RECOVERY_AS_BOOT
+
+# The test harness ramdisk will rsync the files from the debug ramdisk, then appends some props.
 $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): $(INSTALLED_DEBUG_RAMDISK_TARGET)
 $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_TEST_HARNESS_RAMDISK_FILES) | $(COMPRESSION_COMMAND_DEPS)
 	$(call pretty,"Target test harness ramdisk: $@")
-	rsync --chmod=u+w -a $(TEST_HARNESS_RAMDISK_SYNC_DIR)/ $(TEST_HARNESS_RAMDISK_ROOT_DIR)
+	rsync --chmod=u+w -a $(TARGET_DEBUG_RAMDISK_OUT)/ $(TARGET_TEST_HARNESS_RAMDISK_OUT)
 	$(call append-test-harness-props,$(ADDITIONAL_TEST_HARNESS_PROPERTIES),$(TEST_HARNESS_PROP_TARGET))
-	$(MKBOOTFS) -d $(TARGET_OUT) $(TEST_HARNESS_RAMDISK_ROOT_DIR) | $(COMPRESSION_COMMAND) > $@
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_TEST_HARNESS_RAMDISK_OUT) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $@
 
 .PHONY: ramdisk_test_harness-nodeps
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+  ramdisk_test_harness-nodeps: PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+else
+  ramdisk_test_harness-nodeps: PRIVATE_ADDITIONAL_DIR := $(TARGET_RAMDISK_OUT)
+endif # BOARD_USES_RECOVERY_AS_BOOT
 ramdisk_test_harness-nodeps: $(MKBOOTFS) | $(COMPRESSION_COMMAND_DEPS)
 	echo "make $@: ignoring dependencies"
-	rsync -a $(TEST_HARNESS_RAMDISK_SYNC_DIR)/ $(TEST_HARNESS_RAMDISK_ROOT_DIR)
+	rsync --chmod=u+w -a $(TARGET_DEBUG_RAMDISK_OUT)/ $(TARGET_TEST_HARNESS_RAMDISK_OUT)
 	$(call append-test-harness-props,$(ADDITIONAL_TEST_HARNESS_PROPERTIES),$(TEST_HARNESS_PROP_TARGET))
-	$(MKBOOTFS) -d $(TARGET_OUT) $(TEST_HARNESS_RAMDISK_ROOT_DIR) | $(COMPRESSION_COMMAND) > $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_TEST_HARNESS_RAMDISK_OUT) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
 
 endif # BUILDING_RAMDISK_IMAGE
 
@@ -5962,7 +5956,7 @@ endif
 FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INSTALL_PAIRS)))
 
 # -----------------------------------------------------------------
-# The rule to build all fuzz targets, and package them.
+# The rule to build all fuzz targets for C++ and Rust, and package them.
 # Note: The packages are created in Soong, and in a perfect world,
 # we'd be able to create the phony rule there. But, if we want to
 # have dist goals for the fuzz target, we need to have the PHONY
@@ -5974,3 +5968,7 @@ FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INS
 .PHONY: haiku
 haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
 $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
+
+.PHONY: haiku-rust
+haiku-rust: $(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_RUST_FUZZ_TARGETS)
+$(call dist-for-goals,haiku-rust,$(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES))
