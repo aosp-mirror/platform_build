@@ -629,6 +629,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif OPTIONS.replace_verity_keyid and filename == "BOOT/cmdline":
       pass
 
+    # Skip the vbmeta digest as we will recalculate it.
+    elif filename == "META/vbmeta_digest.txt":
+      pass
+
     # Skip the care_map as we will regenerate the system/vendor images.
     elif filename in ["META/care_map.pb", "META/care_map.txt"]:
       pass
