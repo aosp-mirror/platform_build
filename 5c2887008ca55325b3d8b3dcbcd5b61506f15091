@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6faffb88_26b7fca3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1368430
+      },
+      "writtenOn": "2021-05-08T00:13:28Z",
+      "side": 1,
+      "message": "This needs the ANGLE CL to land first, which marks ANGLE as \"product-specific\":\nhttps://chromium-review.googlesource.com/c/angle/angle/+/2876213",
+      "revId": "5c2887008ca55325b3d8b3dcbcd5b61506f15091",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
