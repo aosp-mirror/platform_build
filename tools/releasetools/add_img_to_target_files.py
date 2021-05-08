@@ -259,6 +259,7 @@ def AddVendorDlkm(output_zip):
       block_list=block_list)
   return img.name
 
+
 def AddOdmDlkm(output_zip):
   """Turn the contents of OdmDlkm into an odm_dlkm image and store it in output_zip."""
 
@@ -310,6 +311,7 @@ def AddDtbo(output_zip):
   img.Write()
   return img.name
 
+
 def AddPvmfw(output_zip):
   """Adds the pvmfw image.
 
@@ -345,6 +347,7 @@ def AddPvmfw(output_zip):
   img.Write()
   return img.name
 
+
 def AddCustomImages(output_zip, partition_name):
   """Adds and signs custom images in IMAGES/.
 
@@ -359,8 +362,6 @@ def AddCustomImages(output_zip, partition_name):
     AssertionError: If image can't be found.
   """
 
-  partition_size = OPTIONS.info_dict.get(
-      "avb_{}_partition_size".format(partition_name))
   key_path = OPTIONS.info_dict.get("avb_{}_key_path".format(partition_name))
   algorithm = OPTIONS.info_dict.get("avb_{}_algorithm".format(partition_name))
   extra_args = OPTIONS.info_dict.get(
@@ -954,6 +955,20 @@ def AddImagesToTargetFiles(filename):
   if os.path.exists(pack_radioimages_txt):
     with open(pack_radioimages_txt) as f:
       AddPackRadioImages(output_zip, f.readlines())
+
+  # Calculate the vbmeta digest and put the result in to META/
+  boot_images = OPTIONS.info_dict.get("boot_images")
+  # Disable the digest calculation if the target_file is used as a container
+  # for boot images.
+  boot_container = boot_images and len(boot_images.split()) >= 2
+  if (OPTIONS.info_dict.get("avb_enable") == "true" and not boot_container and
+      OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true"):
+    avbtool = OPTIONS.info_dict["avb_avbtool"]
+    digest = verity_utils.CalculateVbmetaDigest(OPTIONS.input_tmp, avbtool)
+    vbmeta_digest_txt = os.path.join(OPTIONS.input_tmp, "META",
+                                     "vbmeta_digest.txt")
+    with open(vbmeta_digest_txt, 'w') as f:
+      f.write(digest)
 
   if output_zip:
     common.ZipClose(output_zip)
