@@ -23,6 +23,8 @@ syntax = "proto3";
 
 package build.tools.releasetools;
 option optimize_for = LITE_RUNTIME;
+option java_package = "android.ota";
+option java_outer_classname = "OtaPackageMetadata";
 
 // The build information of a particular partition on the device.
 message PartitionState {
