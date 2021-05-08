@@ -98,9 +98,9 @@ endif
 BOARD_USES_RECOVERY_AS_BOOT :=
 TARGET_NO_KERNEL := false
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
+# TODO(b/187432172): Add 5.10-android12-unstable
 BOARD_KERNEL_MODULE_INTERFACE_VERSIONS := \
     5.4-android12-0 \
-    5.10-android12-0 \
 
 # Copy boot image in $OUT to target files. This is defined for targets where
 # the installed GKI APEXes are built from source.
