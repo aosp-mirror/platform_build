@@ -46,6 +46,30 @@
       },
       "revId": "d5d4f7bff7303e2d2a670983b60eaad5b11805c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9bc9841b_28743e8c",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-10T13:08:04Z",
+      "side": 1,
+      "message": "Uploaded: https://r.android.com/1700885",
+      "parentUuid": "98aa8a7a_614eb565",
+      "range": {
+        "startLine": 86,
+        "startChar": 35,
+        "endLine": 86,
+        "endChar": 50
+      },
+      "revId": "d5d4f7bff7303e2d2a670983b60eaad5b11805c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
