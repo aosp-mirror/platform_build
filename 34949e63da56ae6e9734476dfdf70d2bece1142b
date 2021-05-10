@@ -22,6 +22,30 @@
       },
       "revId": "34949e63da56ae6e9734476dfdf70d2bece1142b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eb6ffd2d_9b33eb57",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2021-05-10T08:21:12Z",
+      "side": 0,
+      "message": "It\u0027s copied from generic_arm64/BoardConfig.mk.\nI searched the codebase for \"PRODUCT_DEVICE :\u003d generic_x86_64\". There is no sdk_phone using this board config.",
+      "parentUuid": "7c22d021_2ed01703",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 19
+      },
+      "revId": "34949e63da56ae6e9734476dfdf70d2bece1142b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
