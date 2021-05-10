@@ -77,10 +77,6 @@ BOARD_RAMDISK_USE_LZ4 := true
 BOARD_BOOT_HEADER_VERSION := 4
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 
-# Enable GKI 2.0 signing.
-BOARD_GKI_SIGNING_KEY_PATH := build/make/target/product/gsi/testkey_rsa2048.pem
-BOARD_GKI_SIGNING_ALGORITHM := SHA256_RSA2048
-
 BOARD_KERNEL_BINARIES := \
     kernel-4.19-gz \
     kernel-5.4 kernel-5.4-gz kernel-5.4-lz4 \
