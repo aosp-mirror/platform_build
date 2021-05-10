@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9f865aa_1928fcc7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-05-10T08:48:21Z",
+      "side": 1,
+      "message": "Will prepare a patch to merge the common GKI settings between generic_arm64 and generic_x86_64.",
+      "revId": "3036ee010585a07cda560118f0ad172503a30fde",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
