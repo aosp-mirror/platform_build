@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8bd6d9e4_6a021ae4",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-10T05:19:47Z",
+      "side": 1,
+      "message": "Note we will keep the old signature args, i.e. foo:bar, during signing. Should we change that line into replace instead.\n\nhttps://source.corp.google.com/aosp-master/build/make/tools/releasetools/sign_target_files_apks.py;l\u003d1037?q\u003dgki_signing_signature_args\u0026sq\u003dp:aosp-master",
+      "range": {
+        "startLine": 86,
+        "startChar": 35,
+        "endLine": 86,
+        "endChar": 50
+      },
+      "revId": "d5d4f7bff7303e2d2a670983b60eaad5b11805c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
