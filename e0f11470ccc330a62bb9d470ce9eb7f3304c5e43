@@ -22,6 +22,30 @@
       },
       "revId": "e0f11470ccc330a62bb9d470ce9eb7f3304c5e43",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d2f2276_2e6d724e",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 5327,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-05-11T03:51:59Z",
+      "side": 1,
+      "message": "You can use -symlinks\u003dfalse (or maybe -no-symlinks?) to follow the symlink instead of storing it.",
+      "parentUuid": "332e364a_6b05e62c",
+      "range": {
+        "startLine": 5327,
+        "startChar": 92,
+        "endLine": 5327,
+        "endChar": 99
+      },
+      "revId": "e0f11470ccc330a62bb9d470ce9eb7f3304c5e43",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
