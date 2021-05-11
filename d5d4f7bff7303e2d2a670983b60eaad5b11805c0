@@ -52,6 +52,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8028e1d5_9816690f",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-11T09:52:31Z",
+      "side": 1,
+      "message": "We only require GKI 2.0 on arm64 for now (x86 isn\u0027t needed).\n\nMaybe still keep this here and move to BoardConfigGsiCommon if we also require GKI signing for x86 targets later? (we might consider adding a new BoardGkiCommon.mk as well).\n\nThose BOARD_GKI_SIGNING_* args are more relevant to BOARD_BOOT_HEADER_VERSION (L78) and BOARD_KERNEL_BINARIES (L88) here, which are used when invoking mkbootimg.\n\nhttps://r.android.com/1620621",
+      "parentUuid": "0de7cbf9_1c04cd8a",
+      "revId": "d5d4f7bff7303e2d2a670983b60eaad5b11805c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8bd6d9e4_6a021ae4",
