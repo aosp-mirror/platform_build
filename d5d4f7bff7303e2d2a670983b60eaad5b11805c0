@@ -70,6 +70,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c12b105b_88f4a6c7",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-11T10:04:45Z",
+      "side": 1,
+      "message": "On a second thought, since those BOARD_GKI_SIGNING_* args aren\u0027t related to arch, it might be better to just have one copy in BoardConfigGsiCommon.\n\nLet me fix it.",
+      "parentUuid": "8028e1d5_9816690f",
+      "revId": "d5d4f7bff7303e2d2a670983b60eaad5b11805c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8bd6d9e4_6a021ae4",
