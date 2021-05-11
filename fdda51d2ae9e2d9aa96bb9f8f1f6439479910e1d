@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "455e559c_64a1e12b",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-11T07:29:09Z",
+      "side": 1,
+      "message": "nit: should we only raise this error when self.use_legacy_id is true?",
+      "range": {
+        "startLine": 577,
+        "startChar": 12,
+        "endLine": 577,
+        "endChar": 68
+      },
+      "revId": "fdda51d2ae9e2d9aa96bb9f8f1f6439479910e1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
