@@ -22,6 +22,30 @@
       },
       "revId": "fdda51d2ae9e2d9aa96bb9f8f1f6439479910e1d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9902f423_b15946b4",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-11T07:47:42Z",
+      "side": 1,
+      "message": "We actually need to raise in both cases, because we will need the legacy_build_id to determine the build id. (we should\u0027t have a empty legacy_build_id)\n\nuse_legacy_id:     build_id \u003d legacy_build_id \nnot use_legacy_id: build_id \u003d legacy_build_id + digest",
+      "parentUuid": "455e559c_64a1e12b",
+      "range": {
+        "startLine": 577,
+        "startChar": 12,
+        "endLine": 577,
+        "endChar": 68
+      },
+      "revId": "fdda51d2ae9e2d9aa96bb9f8f1f6439479910e1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
