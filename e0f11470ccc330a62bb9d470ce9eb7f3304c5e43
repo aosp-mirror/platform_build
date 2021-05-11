@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "332e364a_6b05e62c",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 5327,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-05-11T02:39:28Z",
+      "side": 1,
+      "message": "DEX2OAT is a symlink, so adding realpath to get the actual file as well.",
+      "range": {
+        "startLine": 5327,
+        "startChar": 92,
+        "endLine": 5327,
+        "endChar": 99
+      },
+      "revId": "e0f11470ccc330a62bb9d470ce9eb7f3304c5e43",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
