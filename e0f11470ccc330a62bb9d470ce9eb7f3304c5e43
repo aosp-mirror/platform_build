@@ -46,6 +46,30 @@
       },
       "revId": "e0f11470ccc330a62bb9d470ce9eb7f3304c5e43",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7aeb3241_0ab6fcd8",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 5327,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-05-11T04:04:43Z",
+      "side": 1,
+      "message": "I think both are necessary in this case because dex2oat symlink is used in dexpreopt.config.",
+      "parentUuid": "1d2f2276_2e6d724e",
+      "range": {
+        "startLine": 5327,
+        "startChar": 92,
+        "endLine": 5327,
+        "endChar": 99
+      },
+      "revId": "e0f11470ccc330a62bb9d470ce9eb7f3304c5e43",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
