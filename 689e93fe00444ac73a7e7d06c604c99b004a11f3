@@ -46,6 +46,30 @@
       },
       "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f4d1bf45_c7f91e91",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-11T09:03:27Z",
+      "side": 1,
+      "message": "why not do that immediately? I don\u0027t see much value in this intermediary step (which BTW is much more difficult to review than re-use of settings would be).",
+      "parentUuid": "e9aea6f0_f4125397",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 19
+      },
+      "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
