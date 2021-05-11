@@ -22,6 +22,30 @@
       },
       "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9aea6f0_f4125397",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-05-11T06:00:17Z",
+      "side": 1,
+      "message": "Just like I mentioned in a previous comment. Will move these common settings to a shared file by the next patch.",
+      "parentUuid": "c1d92050_fd582471",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 19
+      },
+      "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
