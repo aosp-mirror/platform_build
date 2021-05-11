@@ -37,6 +37,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0de7cbf9_1c04cd8a",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-11T09:00:18Z",
+      "side": 1,
+      "message": "is BoardConfigGsiCommon not a suitable place for this stuff?",
+      "revId": "d5d4f7bff7303e2d2a670983b60eaad5b11805c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8bd6d9e4_6a021ae4",
         "filename": "target/board/generic_arm64/BoardConfig.mk",
         "patchSetId": 1
