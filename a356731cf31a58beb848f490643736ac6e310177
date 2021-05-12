@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4ae39602_b571d42f",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-05-12T11:43:26Z",
+      "side": 0,
+      "message": "I see that these lines were added in the precursor change. Why not flip aosp/1705170 and aosp/1699575?\n\nSo that this change land first to add BoardConfigGkiCommon.mk, and aosp/1699575 land next to update generic_x86_64/BoardConfig.mk in one go.",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 0
+      },
+      "revId": "a356731cf31a58beb848f490643736ac6e310177",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
