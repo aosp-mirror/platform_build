@@ -70,6 +70,30 @@
       },
       "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f09d38b_499c25de",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-05-12T07:25:42Z",
+      "side": 1,
+      "message": "Agree merging the common settings is helpful. Hsin-Yi has no knowledge about which are the \"common\" settings, and the merging task does not relative with his job. \n\nIf you really serious on this, maybe let me upload the patch merging the common settings over the patch at the same time.",
+      "parentUuid": "f4d1bf45_c7f91e91",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 19
+      },
+      "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
