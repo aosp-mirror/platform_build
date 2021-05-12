@@ -1033,9 +1033,8 @@ def ReplaceGkiSigningKey(misc_info):
 
   extra_args = OPTIONS.gki_signing_extra_args
   if extra_args:
-    print('Setting extra GKI signing args: "%s"' % (extra_args))
-    misc_info["gki_signing_signature_args"] = (
-        misc_info.get("gki_signing_signature_args", '') + ' ' + extra_args)
+    print('Setting GKI signing args: "%s"' % (extra_args))
+    misc_info["gki_signing_signature_args"] = extra_args
 
 
 def BuildKeyMap(misc_info, key_mapping_options):
