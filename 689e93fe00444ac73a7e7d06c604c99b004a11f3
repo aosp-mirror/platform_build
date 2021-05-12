@@ -94,6 +94,30 @@
       },
       "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89801659_afbc2c5f",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-12T09:15:23Z",
+      "side": 1,
+      "message": "What is the plan for these generic_* devices now? It seems like instead of having settings like this:\n\nifdef BUILDING_GSI\n  ...\nelse\n  ...\nendif\n\nit would be better to have a gsi_x86_64 device, and not have the conditional?",
+      "parentUuid": "3f09d38b_499c25de",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 19
+      },
+      "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
