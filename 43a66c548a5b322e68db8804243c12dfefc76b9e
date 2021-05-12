@@ -16,6 +16,24 @@
       "message": "It\u0027s still better to use the rule-local variable for the recipe, as the recipe is evaluated later after all makefile parsing.  Changing the value of the global DEXPREOPT_TOOLS_DEPS between here and the end of the makefiles would affect the recipe but not the deps.  I\u0027d suggest:\n\n\n dexpreopt_tools_deps :\u003d $(DEXPREOPT_GEN_DEPS) $(DEXPREOPT_GEN) $(AAPT2)\n DEXPREOPT_TOOLS_ZIP :\u003d $(PRODUCT_OUT)/dexpreopt_tools.zip\n $(DEXPREOPT_TOOLS_ZIP): $(dexpreopt_tools_deps)\n $(DEXPREOPT_TOOLS_ZIP): PRIVATE_DEXPREOPT_TOOLS_DEPS :\u003d $(dexpreopt_tools_deps)\n $(DEXPREOPT_TOOLS_ZIP): $(SOONG_ZIP)\n\t$(hide) mkdir -p $(dir $@)\n\t$(hide) $(SOONG_ZIP) -d -o $@ -j $(addprefix -f ,$(PRIVATE_DEXPREOPT_TOOLS_DEPS)) -f $$(realpath $(DEX2OAT))",
       "revId": "43a66c548a5b322e68db8804243c12dfefc76b9e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d94a85db_a5be169b",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 5324,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-05-12T00:34:24Z",
+      "side": 1,
+      "message": "Thanks for suggestion, done.",
+      "parentUuid": "5f30b81a_9837786f",
+      "revId": "43a66c548a5b322e68db8804243c12dfefc76b9e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
