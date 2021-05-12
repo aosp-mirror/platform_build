@@ -88,6 +88,23 @@
       "parentUuid": "fb2e4517_5c128ca1",
       "revId": "eb039dcbead6cc03886434d68b1579db037d6da1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1db26975_86318d62",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-05-12T11:32:36Z",
+      "side": 1,
+      "message": "TODO: Define macros and factor out common GKI code in \"generic_{arm64,x86_64}/{BoardConfig,device}.mk\" ",
+      "revId": "eb039dcbead6cc03886434d68b1579db037d6da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
