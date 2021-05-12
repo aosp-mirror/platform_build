@@ -420,8 +420,9 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
     image_props["block_list"] = block_list.name
 
   # Use repeatable ext4 FS UUID and hash_seed UUID (based on partition name and
-  # build fingerprint).
-  build_info = common.BuildInfo(info_dict)
+  # build fingerprint). Also use the legacy build id, because the vbmeta digest
+  # isn't available at this point.
+  build_info = common.BuildInfo(info_dict, use_legacy_id=True)
   uuid_seed = what + "-" + build_info.GetPartitionFingerprint(what)
   image_props["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_seed))
   hash_seed = "hash_seed-" + uuid_seed
