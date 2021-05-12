@@ -48,6 +48,22 @@ def get_2gb_string():
 
 class BuildInfoTest(test_utils.ReleaseToolsTestCase):
 
+  TEST_INFO_FINGERPRINT_DICT = {
+      'build.prop': common.PartitionBuildProps.FromDictionary(
+          'system', {
+              'ro.product.brand': 'product-brand',
+              'ro.product.name': 'product-name',
+              'ro.product.device': 'product-device',
+              'ro.build.version.release': 'version-release',
+              'ro.build.id': 'build-id',
+              'ro.build.version.incremental': 'version-incremental',
+              'ro.build.type': 'build-type',
+              'ro.build.tags': 'build-tags',
+              'ro.build.version.sdk': 30,
+          }
+      ),
+  }
+
   TEST_INFO_DICT = {
       'build.prop': common.PartitionBuildProps.FromDictionary(
           'system', {
@@ -201,6 +217,33 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
     info_dict['build.prop'].build_props[
         'ro.build.fingerprint'] = 'bad\x80fingerprint'
     self.assertRaises(ValueError, common.BuildInfo, info_dict, None)
+
+  def test_init_goodFingerprint(self):
+    info_dict = copy.deepcopy(self.TEST_INFO_FINGERPRINT_DICT)
+    build_info = common.BuildInfo(info_dict)
+    self.assertEqual(
+      'product-brand/product-name/product-device:version-release/build-id/'
+      'version-incremental:build-type/build-tags', build_info.fingerprint)
+
+    build_props = info_dict['build.prop'].build_props
+    del build_props['ro.build.id']
+    build_props['ro.build.legacy.id'] = 'legacy-build-id'
+    build_info = common.BuildInfo(info_dict, use_legacy_id=True)
+    self.assertEqual(
+      'product-brand/product-name/product-device:version-release/'
+      'legacy-build-id/version-incremental:build-type/build-tags',
+      build_info.fingerprint)
+
+    self.assertRaises(common.ExternalError, common.BuildInfo, info_dict, None,
+                      False)
+
+    info_dict['avb_enable'] = 'true'
+    info_dict['vbmeta_digest'] = 'abcde12345'
+    build_info = common.BuildInfo(info_dict, use_legacy_id=False)
+    self.assertEqual(
+      'product-brand/product-name/product-device:version-release/'
+      'legacy-build-id.abcde123/version-incremental:build-type/build-tags',
+      build_info.fingerprint)
 
   def test___getitem__(self):
     target_info = common.BuildInfo(self.TEST_INFO_DICT, None)

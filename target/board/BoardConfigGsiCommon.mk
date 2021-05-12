@@ -30,6 +30,14 @@ BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE :=
 # the devices with metadata parition
 BOARD_USES_METADATA_PARTITION := true
 
+# Enable GKI 2.0 signing.
+BOARD_GKI_SIGNING_KEY_PATH := build/make/target/product/gsi/testkey_rsa2048.pem
+BOARD_GKI_SIGNING_ALGORITHM := SHA256_RSA2048
+# The following is needed to allow release signing process appends more extra
+# args, e.g., passing --signing_helper_with_files from mkbootimg to avbtool.
+# See b/178559811 for more details.
+BOARD_GKI_SIGNING_SIGNATURE_ARGS := --prop foo:bar
+
 # Android Verified Boot (AVB):
 #   Set the rollback index to zero, to prevent the device bootloader from
 #   updating the last seen rollback index in the tamper-evident storage.
@@ -41,6 +49,10 @@ BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
+
+# Using sha256 for dm-verity partitions. b/156162446
+BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += --hash_algorithm sha256
+
 ifdef BUILDING_GSI
 # super.img spec for GSI targets
 BOARD_SUPER_PARTITION_SIZE := 3229614080

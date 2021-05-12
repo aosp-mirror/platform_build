@@ -62,7 +62,7 @@ import common
 import verity_utils
 import ota_metadata_pb2
 
-from apex_utils import GetSystemApexInfoFromTargetFiles
+from apex_utils import GetApexInfoFromTargetFiles
 from common import AddCareMapForAbOta
 
 if sys.hexversion < 0x02070000:
@@ -259,6 +259,7 @@ def AddVendorDlkm(output_zip):
       block_list=block_list)
   return img.name
 
+
 def AddOdmDlkm(output_zip):
   """Turn the contents of OdmDlkm into an odm_dlkm image and store it in output_zip."""
 
@@ -310,6 +311,7 @@ def AddDtbo(output_zip):
   img.Write()
   return img.name
 
+
 def AddPvmfw(output_zip):
   """Adds the pvmfw image.
 
@@ -345,6 +347,7 @@ def AddPvmfw(output_zip):
   img.Write()
   return img.name
 
+
 def AddCustomImages(output_zip, partition_name):
   """Adds and signs custom images in IMAGES/.
 
@@ -359,8 +362,6 @@ def AddCustomImages(output_zip, partition_name):
     AssertionError: If image can't be found.
   """
 
-  partition_size = OPTIONS.info_dict.get(
-      "avb_{}_partition_size".format(partition_name))
   key_path = OPTIONS.info_dict.get("avb_{}_key_path".format(partition_name))
   algorithm = OPTIONS.info_dict.get("avb_{}_algorithm".format(partition_name))
   extra_args = OPTIONS.info_dict.get(
@@ -419,8 +420,9 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
     image_props["block_list"] = block_list.name
 
   # Use repeatable ext4 FS UUID and hash_seed UUID (based on partition name and
-  # build fingerprint).
-  build_info = common.BuildInfo(info_dict)
+  # build fingerprint). Also use the legacy build id, because the vbmeta digest
+  # isn't available at this point.
+  build_info = common.BuildInfo(info_dict, use_legacy_id=True)
   uuid_seed = what + "-" + build_info.GetPartitionFingerprint(what)
   image_props["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_seed))
   hash_seed = "hash_seed-" + uuid_seed
@@ -686,7 +688,7 @@ def HasPartition(partition_name):
                            "{}.img".format(partition_name))))
 
 def AddApexInfo(output_zip):
-  apex_infos = GetSystemApexInfoFromTargetFiles(OPTIONS.input_tmp)
+  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp, 'system')
   apex_metadata_proto = ota_metadata_pb2.ApexMetadata()
   apex_metadata_proto.apex_info.extend(apex_infos)
   apex_info_bytes = apex_metadata_proto.SerializeToString()
@@ -954,6 +956,20 @@ def AddImagesToTargetFiles(filename):
   if os.path.exists(pack_radioimages_txt):
     with open(pack_radioimages_txt) as f:
       AddPackRadioImages(output_zip, f.readlines())
+
+  # Calculate the vbmeta digest and put the result in to META/
+  boot_images = OPTIONS.info_dict.get("boot_images")
+  # Disable the digest calculation if the target_file is used as a container
+  # for boot images.
+  boot_container = boot_images and len(boot_images.split()) >= 2
+  if (OPTIONS.info_dict.get("avb_enable") == "true" and not boot_container and
+      OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true"):
+    avbtool = OPTIONS.info_dict["avb_avbtool"]
+    digest = verity_utils.CalculateVbmetaDigest(OPTIONS.input_tmp, avbtool)
+    vbmeta_digest_txt = os.path.join(OPTIONS.input_tmp, "META",
+                                     "vbmeta_digest.txt")
+    with open(vbmeta_digest_txt, 'w') as f:
+      f.write(digest)
 
   if output_zip:
     common.ZipClose(output_zip)

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2019 The Android Open Source Project
 #
@@ -27,8 +27,9 @@ import sys
 
 
 def main():
+  """Old main() calls warn.warn."""
   os.environ['PYTHONPATH'] = os.path.dirname(os.path.abspath(__file__))
-  subprocess.check_call(['/usr/bin/python', '-m', 'warn.warn'] + sys.argv[1:])
+  subprocess.check_call(['/usr/bin/python3', '-m', 'warn.warn'] + sys.argv[1:])
 
 
 if __name__ == '__main__':
