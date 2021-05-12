@@ -34,6 +34,23 @@
       "parentUuid": "e699cb8e_aa3edb8b",
       "revId": "29c1639715de0f2bde8b251e044def77b7da42f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d1bf660_64b89d1c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-05-12T22:09:51Z",
+      "side": 1,
+      "message": "Verified that build succeeds by `mmma packages/module/Gki`. I\u0027ll wait for forrest to finish to confirm as well.",
+      "revId": "29c1639715de0f2bde8b251e044def77b7da42f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
