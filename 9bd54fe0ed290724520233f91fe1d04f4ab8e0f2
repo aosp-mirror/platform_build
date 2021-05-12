@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b87a5a23_5f06261f",
+        "filename": "target/board/BoardConfigGkiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-05-12T22:02:33Z",
+      "side": 1,
+      "message": "Note: this conflicts with\n\nhttps://android-review.googlesource.com/c/platform/build/+/1706146\n\nCan you wait for that CL to be stablized before submitting this please?",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 21
+      },
+      "revId": "9bd54fe0ed290724520233f91fe1d04f4ab8e0f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
