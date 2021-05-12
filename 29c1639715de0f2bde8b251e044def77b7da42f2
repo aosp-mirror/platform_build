@@ -16,6 +16,24 @@
       "message": "Howard / Todd, the binary checked-in for 5.4-android12 is 5.4-android12-2, not 5.4-android12-0?\n\nIs it because of https://android-review.googlesource.com/c/kernel/prebuilts/5.4/arm64/+/1693487 ?",
       "revId": "29c1639715de0f2bde8b251e044def77b7da42f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9d6000a_13447591",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-05-12T21:33:39Z",
+      "side": 1,
+      "message": "```\n$ build/make/tools/extract_kernel.py --input kernel/prebuilts/5.4/arm64/kernel-5.4 --output-release\n5.4.115-android12-2-00418-g70d6cf06760d-ab7330999\n```\n\nDoes this mean the KMI version for 5.4 is also not frozen yet?",
+      "parentUuid": "e699cb8e_aa3edb8b",
+      "revId": "29c1639715de0f2bde8b251e044def77b7da42f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
