@@ -16,6 +16,24 @@
       "message": "This is going to break the mac build, which doesn\u0027t build dex2oat.  You\u0027ll need to make the dependency on this zip file conditional on BUILD_OS\u003d\u003dlinux.",
       "revId": "ee248a4afc0e604663bc40f22246bb2575e7103c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3dc6fdee_50589fab",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 5322,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-05-12T14:30:00Z",
+      "side": 1,
+      "message": "I think the tools don\u0027t need to be created in the case of the mac build which doesn\u0027t build dex2oat, so make the zip file conditional on BUILD_OS.",
+      "parentUuid": "70b0d8b3_a6476528",
+      "revId": "ee248a4afc0e604663bc40f22246bb2575e7103c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
