@@ -15,8 +15,10 @@
 
 """Warning patterns from other tools."""
 
+# No need of doc strings for trivial small functions.
+# pylint:disable=missing-function-docstring
+
 # pylint:disable=relative-beyond-top-level
-# pylint:disable=g-importing-member
 from .cpp_warn_patterns import compile_patterns
 from .severity import Severity
 
@@ -57,7 +59,8 @@ def rust(severity, description, pattern):
 
 
 warn_patterns = [
-    # pylint:disable=line-too-long,g-inconsistent-quotes
+    # pylint does not recognize g-inconsistent-quotes
+    # pylint:disable=line-too-long,bad-option-value,g-inconsistent-quotes
     # aapt warnings
     aapt('No comment for public symbol',
          [r".*: warning: No comment for public symbol .+"]),

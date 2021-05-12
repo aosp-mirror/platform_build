@@ -18,26 +18,47 @@ ifeq ($(ART_APEX_JARS),)
   $(error ART_APEX_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
 endif
 
-# The order matters for runtime class lookup performance.
+# Order of the jars on BOOTCLASSPATH follows:
+# 1. ART APEX jars
+# 2. System jars
+# 3. System_ext jars
+# 4. Non-updatable APEX jars
+# 5. Updatable APEX jars
+#
+# ART APEX jars (1) are defined in ART_APEX_JARS. System, system_ext, and non updatable boot jars
+# are defined below in PRODUCT_BOOT_JARS. All updatable APEX boot jars are part of
+# PRODUCT_UPDATABLE_BOOT_JARS.
+#
+# The actual runtime ordering matching above is determined by derive_classpath service at runtime.
+# See packages/modules/SdkExtensions/README.md for more details.
+
+# The order of PRODUCT_BOOT_JARS matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
-    $(ART_APEX_JARS) \
+    $(ART_APEX_JARS)
+
+# /system and /system_ext boot jars.
+PRODUCT_BOOT_JARS += \
     framework-minus-apex \
     ext \
-    com.android.i18n:core-icu4j \
     telephony-common \
     voip-common \
     ims-common
 
+# Non-updatable APEX jars. Keep the list sorted.
+PRODUCT_BOOT_JARS += \
+    com.android.i18n:core-icu4j
+
+# Updatable APEX jars. Keep the list sorted by module names and then library names.
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
+    com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
     com.android.sdkext:framework-sdkextensions \
-    com.android.wifi:framework-wifi \
     com.android.tethering:framework-tethering \
-    com.android.ipsec:android.net.ipsec.ike
+    com.android.wifi:framework-wifi
 
 # Minimal configuration for running dex2oat (default argument values).
 # PRODUCT_USES_DEFAULT_ART_CONFIG must be true to enable boot image compilation.
