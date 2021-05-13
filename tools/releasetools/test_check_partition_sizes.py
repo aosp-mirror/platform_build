@@ -33,6 +33,7 @@ class CheckPartitionSizesTest(test_utils.ReleaseToolsTestCase):
         system_image_size=50
         vendor_image_size=20
         product_image_size=20
+        system_other_image_size=10
         """.split("\n"))
 
   def test_ab(self):
@@ -123,6 +124,16 @@ class CheckPartitionSizesTest(test_utils.ReleaseToolsTestCase):
         super_partition_size=100
         super_super_device_size=100
         system_image_size=100
+        """.split("\n")))
+    with self.assertRaises(RuntimeError):
+      CheckPartitionSizes(self.info_dict)
+
+  def test_vab_too_big_with_system_other(self):
+    self.info_dict.update(common.LoadDictionaryFromLines("""
+        virtual_ab=true
+        system_other_image_size=20
+        super_partition_size=101
+        super_super_device_size=101
         """.split("\n")))
     with self.assertRaises(RuntimeError):
       CheckPartitionSizes(self.info_dict)

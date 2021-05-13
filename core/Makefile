@@ -3395,7 +3395,7 @@ endif # BOARD_PREBUILT_PVMFWIMAGE
 # $(INSTALLED_VENDORIMAGE_TARGET)" for "system vendor".
 # (1): list of partitions like "system", "vendor" or "system product system_ext".
 define images-for-partitions
-$(strip $(foreach item,$(1),$(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET)))
+$(strip $(foreach item,$(1),$(if $(filter $(item),system_other),$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET))))
 endef
 
 # -----------------------------------------------------------------
@@ -4124,13 +4124,20 @@ ifeq (,$(TARGET_BUILD_UNBUNDLED))
 
 ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 
+PARTITIONS_AND_OTHER_IN_SUPER := $(BOARD_SUPER_PARTITION_PARTITION_LIST)
+
+# Add the system other image to the misc_info. Because factory ota may install system_other to the super partition.
+ifdef BUILDING_SYSTEM_OTHER_IMAGE
+PARTITIONS_AND_OTHER_IN_SUPER += system_other
+endif # BUILDING_SYSTEM_OTHER_IMAGE
+
 # $(1): misc_info.txt
 # #(2): optional log file
 define check-all-partition-sizes-target
   mkdir -p $(dir $(1))
   rm -f $(1)
   $(call dump-super-image-info, $(1))
-  $(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+  $(foreach partition,$(PARTITIONS_AND_OTHER_IN_SUPER), \
     echo "$(partition)_image="$(call images-for-partitions,$(partition)) >> $(1);)
   $(CHECK_PARTITION_SIZES) $(if $(2),--logfile $(2),-v) $(1)
 endef
@@ -4141,7 +4148,7 @@ $(call dist-for-goals, droid_targets, $(check_all_partition_sizes_log))
 
 $(check_all_partition_sizes_log): \
     $(CHECK_PARTITION_SIZES) \
-    $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
+    $(call images-for-partitions,$(PARTITIONS_AND_OTHER_IN_SUPER))
 	$(call check-all-partition-sizes-target, \
 	  $(call intermediates-dir-for,PACKAGING,check-all-partition-sizes)/misc_info.txt, \
 	  $@)
