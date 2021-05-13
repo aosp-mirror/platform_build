@@ -118,6 +118,30 @@
       },
       "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d0329eba_dc7ad5f2",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2021-05-13T05:54:52Z",
+      "side": 1,
+      "message": "No. There is emulator_x86_64/BoardConfig.mk. It is not necessary to create the 3rd board config.\nAs Hung-ying commented on Patch Set 2, some emulator targets are still based on this device. I can\u0027t remove the condition at this moment.",
+      "parentUuid": "89801659_afbc2c5f",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 19
+      },
+      "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
