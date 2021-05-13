@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "00968563_c6ccc2cd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-05-13T05:09:07Z",
+      "side": 1,
+      "message": "https://android-build.googleplex.com/builds/forrest/run/L20300000887483412?referrer\u003demail",
+      "revId": "62519def7bb2714e005097e93ff34353a7deed12",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
