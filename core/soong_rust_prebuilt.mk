@@ -71,7 +71,7 @@ ifndef LOCAL_IS_HOST_MODULE
     my_unstripped_path := $(patsubst $(TARGET_OUT_UNSTRIPPED)/root/%,$(TARGET_OUT_UNSTRIPPED)/%, $(my_unstripped_path))
     symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
     $(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))
-    $(call add-dependency,$(LOCAL_BUILT_MODULE),$(symbolic_output))
+    $(LOCAL_BUILT_MODULE): | $(symbolic_output)
   endif
 endif
 
