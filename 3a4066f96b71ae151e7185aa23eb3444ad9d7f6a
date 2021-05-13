@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0e4ad371_5a5c2b00",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4131,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-05-13T23:33:39Z",
+      "side": 1,
+      "message": "Note: there are other places where BOARD_SUPER_PARTITION_PARTITION_LIST is used. To avoid confusion, maybe do one of the following:\n\n- make this a variable private to individual build targets;\n- unset it at L4160;\n- rename it to something else to indicate that this is (partition_in_super) + system_other, e.g. PRIVATE_PARTITIONS_AND_OTHER_IN_SUPER ?",
+      "range": {
+        "startLine": 4131,
+        "startChar": 0,
+        "endLine": 4131,
+        "endChar": 70
+      },
+      "revId": "3a4066f96b71ae151e7185aa23eb3444ad9d7f6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
