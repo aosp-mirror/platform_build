@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1ab9764d_1085787d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2021-05-13T23:18:22Z",
+      "side": 1,
+      "message": "Ignoring system_current for now due to the logic in local_systemsdk.mk",
+      "revId": "b34f64fc7a017ebadd5fb2b1c81341491e4de9a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
