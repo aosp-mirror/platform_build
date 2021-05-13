@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "57acea11_5aaeb817",
+        "filename": "core/app_prebuilt_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-05-13T05:00:37Z",
+      "side": 1,
+      "message": "You should also check for the other *_current options, see https://cs.android.com/android/platform/superproject/+/master:build/make/core/definitions.mk;l\u003d2252;drc\u003d095bc7d668dd1a862e2fe5fd333e909bdd821b87",
+      "range": {
+        "startLine": 197,
+        "startChar": 10,
+        "endLine": 197,
+        "endChar": 17
+      },
+      "revId": "e84a44b730ba37bf9c0bce8c9a685506f8485c5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
