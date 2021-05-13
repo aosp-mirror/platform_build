@@ -14,7 +14,8 @@
 # limitations under the License.
 #
 
-$(call inherit-product, $(SRC_TARGET_DIR)/board/module_x86_64/device.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/module_common.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 
 PRODUCT_NAME := module_x86_64
 PRODUCT_BRAND := Android
