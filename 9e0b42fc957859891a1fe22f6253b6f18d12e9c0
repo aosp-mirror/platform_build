@@ -141,6 +141,30 @@
       },
       "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2e935a01_e57794c6",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1269,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-13T20:21:02Z",
+      "side": 1,
+      "message": "I am wary of redefining get-product-var.\nI tried to have a single `define` with conditional bodies (i.e.\ndefine host-installed-files\n ifndef RBC_PRODUCT_CONFIG\n  ...\n else\n  ...\n endif\nendef\n)\nbut that doesn\u0027t work.\nI have rearranged the code slightly, perhaps it\u0027s more readable.",
+      "parentUuid": "49c6af39_2255046e",
+      "range": {
+        "startLine": 1268,
+        "startChar": 4,
+        "endLine": 1269,
+        "endChar": 30
+      },
+      "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
