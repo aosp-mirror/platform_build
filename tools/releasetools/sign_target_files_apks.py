@@ -629,6 +629,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif OPTIONS.replace_verity_keyid and filename == "BOOT/cmdline":
       pass
 
+    # Skip the vbmeta digest as we will recalculate it.
+    elif filename == "META/vbmeta_digest.txt":
+      pass
+
     # Skip the care_map as we will regenerate the system/vendor images.
     elif filename in ["META/care_map.pb", "META/care_map.txt"]:
       pass
@@ -1029,9 +1033,8 @@ def ReplaceGkiSigningKey(misc_info):
 
   extra_args = OPTIONS.gki_signing_extra_args
   if extra_args:
-    print('Setting extra GKI signing args: "%s"' % (extra_args))
-    misc_info["gki_signing_signature_args"] = (
-        misc_info.get("gki_signing_signature_args", '') + ' ' + extra_args)
+    print('Setting GKI signing args: "%s"' % (extra_args))
+    misc_info["gki_signing_signature_args"] = extra_args
 
 
 def BuildKeyMap(misc_info, key_mapping_options):
