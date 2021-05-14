@@ -2380,6 +2380,15 @@ $(hide) if ! $(ZIPALIGN) -c -p 4 $@ >/dev/null ; then \
   fi
 endef
 
+# Verifies ZIP alignment of a package.
+#
+define check-package-alignment
+$(hide) if ! $(ZIPALIGN) -c -p 4 $@ >/dev/null ; then \
+    $(call echo-error,$@,Improper package alignment); \
+    exit 1; \
+  fi
+endef
+
 # Compress a package using the standard gzip algorithm.
 define compress-package
 $(hide) \
@@ -2445,6 +2454,15 @@ endef
 define uncompress-prebuilt-embedded-jni-libs
   if (zipinfo $@ 'lib/*.so' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
     $(ZIP2ZIP) -i $@ -o $@.tmp -0 'lib/**/*.so' && mv -f $@.tmp $@ ; \
+  fi
+endef
+
+# Verifies shared JNI libraries and dex files in an apk are uncompressed.
+#
+define check-jni-dex-compression
+  if (zipinfo $@ 'lib/*.so' '*.dex' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
+    $(call echo-error,$@,Contains compressed JNI libraries and/or dex files); \
+    exit 1; \
   fi
 endef
 
