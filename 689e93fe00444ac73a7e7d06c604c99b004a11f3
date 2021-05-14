@@ -166,6 +166,30 @@
       },
       "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "630a3795_9dd429fc",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-05-14T04:47:53Z",
+      "side": 1,
+      "message": "Both aosp_$arch and gsi_$arch are GSI now. aosp_$arch is for public development, and gsi_$arch is for compliance testing.\n\nWe need to keep the \"ifdef BUILDING_GSI\" before no emulator is using the `BoardConfig.mk`, however there are still some implicit dependency to other product line.",
+      "parentUuid": "059dd7e4_8bbb2ce3",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 19
+      },
+      "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
