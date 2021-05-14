@@ -16,6 +16,23 @@
       "message": "I don\u0027t fully understand the implication of this. So over to SzuWei.",
       "revId": "329d896e5299e23c952b52ecd9cde17b59f4580f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2a894de_4f1d3877",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-05-14T02:04:49Z",
+      "side": 1,
+      "message": "Thanks Hridya.\n\nMaybe we will a solution to enable it in real time by checking the device launching version.\n\n\n\n",
+      "revId": "329d896e5299e23c952b52ecd9cde17b59f4580f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
