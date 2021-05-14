@@ -33,6 +33,24 @@
       "message": "These could also go into definitions.mk as well.",
       "revId": "7d3db36b66391525f681878bd59f29a52fbcb6c8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cfce32e9_e1e84a91",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-05-14T18:59:08Z",
+      "side": 1,
+      "message": "This code originates at Qualcomm, which is why we see multiple (different) copies of it. Considering it doesn\u0027t have a license header, are we sure we\u0027re allowed to include it into the core build?\n\nHow are you planning on handling this for all of the other vendors?\n\nHow is QC supposed to work with this, considering they support multiple Android versions with the same codebase?",
+      "parentUuid": "d035244d_64c868ae",
+      "revId": "7d3db36b66391525f681878bd59f29a52fbcb6c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

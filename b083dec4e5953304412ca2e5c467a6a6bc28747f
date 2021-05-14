@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25539eeb_cdb950e9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3458,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-05-14T18:59:08Z",
+      "side": 1,
+      "message": "Everything added here should be marked as readonly, otherwise vendor code may overwrite these definitions, causing different calls to have different implementations.",
+      "revId": "b083dec4e5953304412ca2e5c467a6a6bc28747f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "499e44ef_b1b83870",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3460,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-05-14T18:59:08Z",
+      "side": 1,
+      "message": "We already have `empty` and `space` defined as core constants in build/make/common/core.mk",
+      "range": {
+        "startLine": 3459,
+        "startChar": 0,
+        "endLine": 3460,
+        "endChar": 32
+      },
+      "revId": "b083dec4e5953304412ca2e5c467a6a6bc28747f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30f98539_84f976f4",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3620,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-05-14T18:59:08Z",
+      "side": 1,
+      "message": "NAK. This needs to be rewritten not to use $(shell) -- we have the IS_AT_LEAST_* macros for proper version-specific checks, but to preserve compatibility this could switch to our math functions.",
+      "revId": "b083dec4e5953304412ca2e5c467a6a6bc28747f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8280d11a_ac1cf267",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3629,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-05-14T18:59:08Z",
+      "side": 1,
+      "message": "This can always return false, considering *_SDK_VERSIONS only supports up to Jelly Bean, and this code will only exists in S/T+",
+      "revId": "b083dec4e5953304412ca2e5c467a6a6bc28747f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "007d306e_461f8b44",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3640,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-05-14T18:59:08Z",
+      "side": 1,
+      "message": "This can also always return false",
+      "revId": "b083dec4e5953304412ca2e5c467a6a6bc28747f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
