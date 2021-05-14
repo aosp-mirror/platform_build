@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2519282e_737f7de6",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-05-14T10:14:59Z",
+      "side": 1,
+      "message": "(no action needed)\n\nWhat does this actually do? Does setting this to other value affect GSI?\nOr is this one of those \"we just need this to be some non-empty value so \u003csome build rules\u003e won\u0027t complain\" thing?",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 47
+      },
+      "revId": "41ed11787b53978eb07279ff991a37531cd382fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
