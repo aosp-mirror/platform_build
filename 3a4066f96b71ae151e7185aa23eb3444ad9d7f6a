@@ -22,6 +22,30 @@
       },
       "revId": "3a4066f96b71ae151e7185aa23eb3444ad9d7f6a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bfbe7303_a0f40e6c",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4131,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-14T00:45:19Z",
+      "side": 1,
+      "message": "looks like if I unset, the partitions aren\u0027t set correctly when check_size is called. So I rename the variable, and also remove the private prefix. The other way is to duplicate the definition for both check size target.",
+      "parentUuid": "0e4ad371_5a5c2b00",
+      "range": {
+        "startLine": 4131,
+        "startChar": 0,
+        "endLine": 4131,
+        "endChar": 70
+      },
+      "revId": "3a4066f96b71ae151e7185aa23eb3444ad9d7f6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
