@@ -51,6 +51,24 @@
       "parentUuid": "d035244d_64c868ae",
       "revId": "7d3db36b66391525f681878bd59f29a52fbcb6c8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cec899e_7372d623",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-14T19:31:31Z",
+      "side": 1,
+      "message": "1. This code is in AOSP, I wasn\u0027t aware there may be still license issues. Who should I talk to about this?\n2. I don\u0027t understand the question about the other vendors.\n3. I don\u0027t know how QC is supposed to work on this -- perhaps adding a version check?",
+      "parentUuid": "cfce32e9_e1e84a91",
+      "revId": "7d3db36b66391525f681878bd59f29a52fbcb6c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
