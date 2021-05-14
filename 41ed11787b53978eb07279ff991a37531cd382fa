@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1b52c982_5911faad",
+        "filename": "target/board/generic_x86_64/device.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-05-14T10:23:46Z",
+      "side": 0,
+      "message": "Update commit message with what these changes does. \"Remove emulator configurations from generic_x86_64/device.mk; Add GKI configurations to generic_x86_64/device.mk\"",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 21
+      },
+      "revId": "41ed11787b53978eb07279ff991a37531cd382fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
