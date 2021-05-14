@@ -46,6 +46,30 @@
       },
       "revId": "a356731cf31a58beb848f490643736ac6e310177",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "27a39652_c963b921",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-05-14T08:53:24Z",
+      "side": 0,
+      "message": "Reasonable to me. Also, most of the dependent patches are merged. The last known patch is aosp/1699575. Maybe let me revert these 2 patches at the same time. 😊",
+      "parentUuid": "f4a4dbbe_dde624be",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 0
+      },
+      "revId": "a356731cf31a58beb848f490643736ac6e310177",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
