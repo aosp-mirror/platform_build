@@ -22,6 +22,30 @@
       },
       "revId": "4de9bb23f280d4e2910456ff8a9934bc73e67ee7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3fb4228_4de74b58",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-05-14T18:52:55Z",
+      "side": 1,
+      "message": "I always paused.resume the update multiple times, and apply with --no-slot-switch first. Which is equivalent to automatic update off.",
+      "parentUuid": "914ab597_ab370ab8",
+      "range": {
+        "startLine": 10,
+        "startChar": 6,
+        "endLine": 10,
+        "endChar": 16
+      },
+      "revId": "4de9bb23f280d4e2910456ff8a9934bc73e67ee7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
