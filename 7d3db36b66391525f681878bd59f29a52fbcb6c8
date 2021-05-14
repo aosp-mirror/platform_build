@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d035244d_64c868ae",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-14T16:57:39Z",
+      "side": 1,
+      "message": "Expanded explanation:\nThe plan is to include this file into core/config.mk, making the macros defined in it available in any subsequent makefiles, and then removing its inclusion from product configuration makefiles.\nI suspect that there is history behind this file\u0027s replication and thus the approach proposed here may be wrong, but the problem described in the commit message is real.\n",
+      "revId": "7d3db36b66391525f681878bd59f29a52fbcb6c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
