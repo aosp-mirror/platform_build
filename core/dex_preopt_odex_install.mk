@@ -227,9 +227,14 @@ else ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
   LOCAL_ENFORCE_USES_LIBRARIES := false
 endif
 
-# Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES against the manifest.
+# Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES
+# If LOCAL_ENFORCE_USES_LIBRARIES is not set, default to true if either of LOCAL_USES_LIBRARIES or
+# LOCAL_OPTIONAL_USES_LIBRARIES are specified.
+# Will change the default to true unconditionally in the future.
 ifndef LOCAL_ENFORCE_USES_LIBRARIES
-  LOCAL_ENFORCE_USES_LIBRARIES := true
+  ifneq (,$(strip $(LOCAL_USES_LIBRARIES)$(LOCAL_OPTIONAL_USES_LIBRARIES)))
+    LOCAL_ENFORCE_USES_LIBRARIES := true
+  endif
 endif
 
 my_enforced_uses_libraries :=
