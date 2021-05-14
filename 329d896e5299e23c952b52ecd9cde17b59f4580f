@@ -33,6 +33,24 @@
       "message": "Thanks Hridya.\n\nMaybe we will a solution to enable it in real time by checking the device launching version.\n\n\n\n",
       "revId": "329d896e5299e23c952b52ecd9cde17b59f4580f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b13a009_52c7bfdc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2021-05-14T05:05:10Z",
+      "side": 1,
+      "message": "Thank you SzuWei! Yes, the launch API level is already used to enable the runtime restrictions. The build-time sepolicy restrictions enabled by this flag are the ones that caused trouble with mixed build GSI testing for older devices because they eliminated some debugfs permissions. I guess it should be ok to not have build time restrictions for GSI images.",
+      "parentUuid": "d2a894de_4f1d3877",
+      "revId": "329d896e5299e23c952b52ecd9cde17b59f4580f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
