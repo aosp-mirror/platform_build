@@ -1034,10 +1034,6 @@ endif # BUILDING_BOOT_IMAGE
 
 else # TARGET_NO_KERNEL == "true"
 ifdef BOARD_PREBUILT_BOOTIMAGE
-ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-# Remove when b/63676296 is resolved.
-$(error Prebuilt bootimage is only supported for AB targets)
-endif
 INTERNAL_PREBUILT_BOOTIMAGE := $(BOARD_PREBUILT_BOOTIMAGE)
 INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 $(eval $(call copy-one-file,$(INTERNAL_PREBUILT_BOOTIMAGE),$(INSTALLED_BOOTIMAGE_TARGET)))
