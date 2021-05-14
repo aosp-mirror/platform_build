@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "012db63e_20520399",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-05-14T00:42:53Z",
+      "side": 1,
+      "message": "I don\u0027t fully understand the implication of this. So over to SzuWei.",
+      "revId": "329d896e5299e23c952b52ecd9cde17b59f4580f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
