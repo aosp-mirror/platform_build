@@ -43,6 +43,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "aff15d6f_d0b062dd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3538,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-05-14T21:30:58Z",
+      "side": 1,
+      "message": "I don\u0027t think AOSP currently has this concept (we have TARGET_BOARD_PLATFORM, but not \u003cvendor\u003e_BOARD_PLATFORMS, which appears to be something Qualcomm has added)",
+      "revId": "b083dec4e5953304412ca2e5c467a6a6bc28747f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "30f98539_84f976f4",
         "filename": "core/definitions.mk",
         "patchSetId": 2

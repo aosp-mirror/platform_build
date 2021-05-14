@@ -69,6 +69,24 @@
       "parentUuid": "cfce32e9_e1e84a91",
       "revId": "7d3db36b66391525f681878bd59f29a52fbcb6c8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e48912c3_51d33e1c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-05-14T21:30:58Z",
+      "side": 1,
+      "message": "1. I\u0027d verify with Bob -- there are several parts of AOSP that aren\u0027t necessarily like the rest, the biggest being external/..., but device/... and hardware/... are also considered third party much of the time.\n\n2. This type of utility makefile isn\u0027t unique to Qualcomm, many other vendors have something similar (or larger), we just happen to see the Qualcomm version more often because the Qualcomm-based Pixel devices. Upstreaming all of them into the common build system seems unlikely to happen (both from a contribution standpoint, and logistical -- it seems likely that there will be overlapping incompatible definitions)\n\n3. This includes their version checks 😊. But in a more general sense, this is currently their utility library -- if they need a change, they just make it in their codebase, and it applies to all android versions they\u0027re currently supporting. After this change goes in, we\u0027ll start silently overriding portions/all of it with these functions, effectively locking in the implementation with the android release. If they chose to override these implementations (which I\u0027m advocating against my asking for them to be marked read-only), that could break other users that start relying on these exported macros. More explicitly, this doesn\u0027t even appear to be their latest version -- we appear to have 4 different versions in our master branch, and the one copied here doesn\u0027t seem to appear in the Code Aurora history at all: https://source.codeaurora.org/quic/la/device/qcom/common/tree/utils.mk?h\u003dqcom-devices.lnx.6.0.r20-rel",
+      "parentUuid": "1cec899e_7372d623",
+      "revId": "7d3db36b66391525f681878bd59f29a52fbcb6c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
