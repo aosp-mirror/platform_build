@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9845d42f_11868a34",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-05-14T10:18:31Z",
+      "side": 0,
+      "message": "Add to commit message: \"Remove obsolete TARGET_PRELINK_MODULE :\u003d false\"",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 30
+      },
+      "revId": "04d72d0a46516442b531cf360f249a7ff445686f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
