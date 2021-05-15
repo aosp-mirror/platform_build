@@ -183,6 +183,30 @@ $(built_module) : $(LOCAL_REPLACE_PREBUILT_APK_INSTALLED)
 	$(transform-prebuilt-to-target)
 
 else  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
+
+# If the SDK version is 30 or higher, the apk is signed with a v2+ scheme.
+# Altering it will invalidate the signature. Just do error checks instead.
+do_not_alter_apk :=
+ifeq (PRESIGNED,$(LOCAL_CERTIFICATE))
+  ifneq (,$(LOCAL_SDK_VERSION))
+    ifeq ($(call math_is_number,$(LOCAL_SDK_VERSION)),true)
+      ifeq ($(call math_gt,$(LOCAL_SDK_VERSION),29),true)
+        do_not_alter_apk := true
+      endif
+    endif
+    # TODO: Add system_current after fixing the existing modules.
+    ifneq ($(filter current test_current core_current,$(LOCAL_SDK_VERSION)),)
+        do_not_alter_apk := true
+    endif
+  endif
+endif
+
+ifeq ($(do_not_alter_apk),true)
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN)
+	$(transform-prebuilt-to-target)
+	$(check-jni-dex-compression)
+	$(check-package-alignment)
+else
 # Sign and align non-presigned .apks.
 # The embedded prebuilt jni to uncompress.
 ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
@@ -229,6 +253,7 @@ endif  # LOCAL_CERTIFICATE
 ifdef LOCAL_COMPRESSED_MODULE
 	$(compress-package)
 endif  # LOCAL_COMPRESSED_MODULE
+endif  # ! do_not_alter_apk
 endif  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
 
 
