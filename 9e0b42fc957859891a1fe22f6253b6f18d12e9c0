@@ -165,6 +165,30 @@
       },
       "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac19abd9_9595e975",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1269,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-17T10:27:13Z",
+      "side": 1,
+      "message": "- what\u0027s wrong with redefining get-product-var?\n- I\u0027m not sure what you\u0027re saying \"doesn\u0027t work\", can you clarify? do you have a WIP somewhere?\n- I don\u0027t think duplicating this whole macro is reasonable. Besides, not having the artifact path check makes the starlark thing unusable for anything that matters. Why not make this work instead of working around it?",
+      "parentUuid": "2e935a01_e57794c6",
+      "range": {
+        "startLine": 1268,
+        "startChar": 4,
+        "endLine": 1269,
+        "endChar": 30
+      },
+      "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
