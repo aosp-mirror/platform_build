@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e88f63b_8e7cea34",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1039,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-17T08:38:35Z",
+      "side": 1,
+      "message": "The original CL just REMOVES this $(error), it shouldn\u0027t be related to the build error in b/188384361.",
+      "range": {
+        "startLine": 1039,
+        "startChar": 0,
+        "endLine": 1039,
+        "endChar": 60
+      },
+      "revId": "cd98b56f0a7956f8cfde9ca2fc5b5752bf26a18c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
