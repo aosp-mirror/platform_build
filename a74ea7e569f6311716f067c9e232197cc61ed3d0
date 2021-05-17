@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d245ca2_466c328d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-17T09:07:43Z",
+      "side": 1,
+      "message": "thanks for the rebase, and sorry for the delay, was OOO Friday",
+      "revId": "a74ea7e569f6311716f067c9e232197cc61ed3d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
