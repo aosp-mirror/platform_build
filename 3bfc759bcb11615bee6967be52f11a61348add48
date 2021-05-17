@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "16aa0b29_e407bf03",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-17T10:15:19Z",
+      "side": 1,
+      "message": "what is $(trim)? I have never seen it before and could not find it defined in our codebase either 😕",
+      "range": {
+        "startLine": 344,
+        "startChar": 90,
+        "endLine": 344,
+        "endChar": 94
+      },
+      "revId": "3bfc759bcb11615bee6967be52f11a61348add48",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
