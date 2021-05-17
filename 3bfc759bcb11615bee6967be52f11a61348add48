@@ -22,6 +22,30 @@
       },
       "revId": "3bfc759bcb11615bee6967be52f11a61348add48",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1f3040a_e728d1ea",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-17T22:18:51Z",
+      "side": 1,
+      "message": "It\u0027s actually $(strip), sorry.",
+      "parentUuid": "16aa0b29_e407bf03",
+      "range": {
+        "startLine": 344,
+        "startChar": 90,
+        "endLine": 344,
+        "endChar": 94
+      },
+      "revId": "3bfc759bcb11615bee6967be52f11a61348add48",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
