@@ -190,6 +190,30 @@
       },
       "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37341655_1b2f8d1a",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-17T09:10:57Z",
+      "side": 1,
+      "message": "\u003e before no emulator is using the `BoardConfig.mk`, \n\nThis is not going to happen on its own. Is there a plan for removing these ifdefs?",
+      "parentUuid": "630a3795_9dd429fc",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 19
+      },
+      "revId": "689e93fe00444ac73a7e7d06c604c99b004a11f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

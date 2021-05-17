@@ -22,6 +22,30 @@
       },
       "revId": "41ed11787b53978eb07279ff991a37531cd382fa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf5098bb_acf804a4",
+        "filename": "target/board/generic_x86_64/device.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-17T09:10:57Z",
+      "side": 0,
+      "message": "+1 to this",
+      "parentUuid": "1b52c982_5911faad",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 21
+      },
+      "revId": "41ed11787b53978eb07279ff991a37531cd382fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
