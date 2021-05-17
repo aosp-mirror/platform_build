@@ -75,10 +75,21 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     hiddenapi-package-whitelist.xml \
 
+# The dalvik.vm.dexopt.thermal-cutoff property must contain one of the values
+# listed here:
+#
+# https://source.android.com/devices/architecture/hidl/thermal-mitigation#thermal-api
+#
+# If the thermal status of the device reaches or exceeds the value set here
+# background dexopt will be terminated and rescheduled using an exponential
+# backoff polcy.
+#
+# The thermal cutoff value is currently set to THERMAL_STATUS_MODERATE.
 PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.usejit=true \
     dalvik.vm.usejitprofiles=true \
     dalvik.vm.dexopt.secondary=true \
+    dalvik.vm.dexopt.thermal-cutoff=2 \
     dalvik.vm.appimageformat=lz4
 
 PRODUCT_SYSTEM_PROPERTIES += \
