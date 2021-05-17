@@ -189,6 +189,30 @@
       },
       "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c9d5151_7133ec85",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1269,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-17T22:16:35Z",
+      "side": 1,
+      "message": "\u003e - what\u0027s wrong with redefining get-product-var?\nIt should return the value of a configuration variable as set by a specific makefile. Starlark configuration does not have it at the moment.\n\u003e - I\u0027m not sure what you\u0027re saying \"doesn\u0027t work\", can you clarify? do you have a WIP somewhere?\nIf I define it as I have described above, Make (actually, Kati) spits out the following message:\nbuild/make/core/Makefile:1465: error: real file \"out/host/linux-x86/obj/NOTICE.txt\" depends on PHONY target \"RBC_PRODUCT_CONFIG\"\nI don\u0027t know of any simple way of investigating what is happening. I can find out exactly what is happening by browsing Kati source code and  probably discovering that inside the body of `define` block `ifndef` directive is not processed, but this will not make it work.\n\u003e - I don\u0027t think duplicating this whole macro is reasonable. Besides, not having the artifact path check makes the starlark thing unusable for anything that matters. Why not make this work instead of working around it?\nThe immediate goal of this set of CLs is to be verify that Starlark-based product configuration generates the same Ninja files aside from product graph generation and artifact path checking. AFAIK the absence of the artifact path checking does not prevent building an image, and the target directory looks very similar. \nAs to duplicating the whole macro, the only alternative I see is to have the value assigned to _pif_modules / _hif_modules as a separate macro. Is that what you are proposing?",
+      "parentUuid": "ac19abd9_9595e975",
+      "range": {
+        "startLine": 1268,
+        "startChar": 4,
+        "endLine": 1269,
+        "endChar": 30
+      },
+      "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
