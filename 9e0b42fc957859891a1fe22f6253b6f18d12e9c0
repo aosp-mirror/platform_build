@@ -213,6 +213,30 @@
       },
       "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "517f91fd_2d020413",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1269,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-18T09:39:49Z",
+      "side": 1,
+      "message": "\u003e Starlark configuration does not have it at the moment.\n\nRight, so that\u0027s why you would re-define it only for the experimental starlark builds, with the condition to fix the hack before it\u0027s used for anything important.\n\n\u003e If I define it as I have described above [..]\n\nTBH that error sounds like there\u0027s a mistake in the definition, and it\u0027s impossible to help without seeing the code.\n\n\u003e As to duplicating the whole macro, the only alternative I see is to have the value assigned to _pif_modules / _hif_modules as a separate macro. Is that what you are proposing?\n\nRe-defining get-product-var seems simplest. If you want something more complicated, you could share the bulk of this define in a new define X, and then conditionally define product-installed-files to pass different variables to X",
+      "parentUuid": "8c9d5151_7133ec85",
+      "range": {
+        "startLine": 1268,
+        "startChar": 4,
+        "endLine": 1269,
+        "endChar": 30
+      },
+      "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
