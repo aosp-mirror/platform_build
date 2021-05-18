@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2c09e6e_6561cd9b",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1696,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-05-18T14:07:06Z",
+      "side": 1,
+      "message": "I think this should check that gettop succees before starting.  (m will do it too, but looking at _trigger_build, m won\u0027t return a nonzero status code, so making it explicit here is better.",
+      "revId": "7a51e29b24bfefff16a8a83eb26517eef8a402cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09d4b259_7447819c",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1697,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-05-18T14:07:06Z",
+      "side": 1,
+      "message": "I think we should stop if m fails. If we don\u0027t, CONTROL+C won\u0027t stop it, which will be really annoying.  That\u0027ll mean going back and making _trigger_build return an error code too, but that\u0027s probably an improvement anyway.",
+      "revId": "7a51e29b24bfefff16a8a83eb26517eef8a402cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
