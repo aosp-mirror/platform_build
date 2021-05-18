@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd3ef3bc_b89e6195",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1696,
+      "author": {
+        "id": 1514900
+      },
+      "writtenOn": "2021-05-18T22:39:12Z",
+      "side": 1,
+      "message": "Made _trigger_build return nonzero if it fails.",
+      "parentUuid": "a2c09e6e_6561cd9b",
+      "revId": "7a51e29b24bfefff16a8a83eb26517eef8a402cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "09d4b259_7447819c",
@@ -35,6 +53,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "09b24461_db197781",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1697,
+      "author": {
+        "id": 1514900
+      },
+      "writtenOn": "2021-05-18T22:39:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "09d4b259_7447819c",
+      "revId": "7a51e29b24bfefff16a8a83eb26517eef8a402cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "51a7b663_f104b175",
@@ -48,6 +84,30 @@
       "writtenOn": "2021-05-18T22:27:23Z",
       "side": 1,
       "message": "Would generally suggest putting user specified flags last\n\nSo that they can override any previous flags\n\nIn the current version, if --config\u003dbp2build sets something that a user wants to change, they won\u0027t be able to...",
+      "range": {
+        "startLine": 1699,
+        "startChar": 28,
+        "endLine": 1699,
+        "endChar": 32
+      },
+      "revId": "7a51e29b24bfefff16a8a83eb26517eef8a402cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c340e554_077b8cc7",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1699,
+      "author": {
+        "id": 1514900
+      },
+      "writtenOn": "2021-05-18T22:39:12Z",
+      "side": 1,
+      "message": "We\u0027re not expecting users to work outside of the synthetic workspace with `b` right now, so we should actually enforce it here IMO.\n\n(also --config\u003dbp2build cannot occur before $@, since it\u0027s not a startup flag, and we\u0027d need to do some command line parsing to inject it at the right place)",
+      "parentUuid": "51a7b663_f104b175",
       "range": {
         "startLine": 1699,
         "startChar": 28,
