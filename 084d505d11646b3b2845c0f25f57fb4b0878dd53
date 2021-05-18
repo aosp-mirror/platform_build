@@ -22,6 +22,29 @@
       },
       "revId": "084d505d11646b3b2845c0f25f57fb4b0878dd53",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "32c7625a_0f57a6c5",
+        "filename": "common/json.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-05-18T12:48:17Z",
+      "side": 1,
+      "message": "How worried are we about quoting issues? (e.g. some variable having the string value \": true\" and the like)? It sounds like it should cause a wild debugging session.",
+      "range": {
+        "startLine": 45,
+        "startChar": 28,
+        "endLine": 45,
+        "endChar": 37
+      },
+      "revId": "084d505d11646b3b2845c0f25f57fb4b0878dd53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
