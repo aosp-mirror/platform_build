@@ -116,6 +116,30 @@
       },
       "revId": "7a51e29b24bfefff16a8a83eb26517eef8a402cb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bbd04ab_6a09af32",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1699,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2021-05-18T23:13:08Z",
+      "side": 1,
+      "message": "Re: https://cs.android.com/android/platform/superproject/+/master:build/soong/ui/build/bazel.go\n\nIt would be nice if we could do something like this\n\nBAZEL_BUILD_ARGS\u003d\"--config\u003dbp2build ${BAZEL_BUILD_ARGS}\" \"$(gettop)/tools/bazel\" \"$@\"\n\nHowever, the BAZEL_BUILD_ARGS logic is only in bazel.go and not bazel.sh. So I guess maybe an idea for later...",
+      "parentUuid": "c340e554_077b8cc7",
+      "range": {
+        "startLine": 1699,
+        "startChar": 28,
+        "endLine": 1699,
+        "endChar": 32
+      },
+      "revId": "7a51e29b24bfefff16a8a83eb26517eef8a402cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
