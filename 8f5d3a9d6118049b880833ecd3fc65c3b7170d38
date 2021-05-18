@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a10acbb_00951d10",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-18T09:28:14Z",
+      "side": 1,
+      "message": "is that true? I think the extra spaces are coming from somewhere else, I tested this Makefile:\n\n    x :\u003d a \\\n        b \\\n        c\n\n    y :\u003d a  b  c\n\n    $(info $(x))\n    $(info $(y))\n    $(info $(strip $(y)))\n\nResult:\n    a b c\n    a  b  c\n    a b c",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 48
+      },
+      "revId": "8f5d3a9d6118049b880833ecd3fc65c3b7170d38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3c06c5d_66b2f325",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-18T09:28:14Z",
+      "side": 1,
+      "message": "can you set PRIVATE_MODULES to $(strip $(1)) instead? (ditto for other variables in this CL -- it seems better to fix it at the point of definition instead of use, which potentially needs to be duplicated)",
+      "range": {
+        "startLine": 342,
+        "startChar": 17,
+        "endLine": 342,
+        "endChar": 32
+      },
+      "revId": "8f5d3a9d6118049b880833ecd3fc65c3b7170d38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d127eb9_d35a668e",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-18T09:28:14Z",
+      "side": 1,
+      "message": "Can you add AB_OTA_PARTITIONS to _board_strip_readonly_list in board_config.mk instead?",
+      "range": {
+        "startLine": 344,
+        "startChar": 98,
+        "endLine": 344,
+        "endChar": 115
+      },
+      "revId": "8f5d3a9d6118049b880833ecd3fc65c3b7170d38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
