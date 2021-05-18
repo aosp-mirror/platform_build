@@ -22,6 +22,30 @@
       },
       "revId": "cd2b03b86393f7247886d7e877b3a9665d47ff4e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "245a308b_c177e231",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-05-18T10:42:19Z",
+      "side": 1,
+      "message": "That\u0027s what I thought initially, but then I saw https://cs.android.com/search?ss\u003dandroid%2Fplatform%2Fsuperproject\u0026q\u003dPRODUCT_COPY_FILES%20f:boardconfig\n\nthus I fired the presubmit to see what would happen anyway...\n\nIf this failed then I\u0027ll consider add a new BOARD_ macro (or extend BOARD_KERNEL_BINARIES) to install kernel prebuilts",
+      "parentUuid": "a0a7d367_6b45f9f7",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 18
+      },
+      "revId": "cd2b03b86393f7247886d7e877b3a9665d47ff4e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
