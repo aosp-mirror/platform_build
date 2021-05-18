@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "88a8240e_660938e6",
+        "filename": "common/json.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1687194
+      },
+      "writtenOn": "2021-05-18T22:37:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aece7902_c9d745a7",
+      "range": {
+        "startLine": 41,
+        "startChar": 2,
+        "endLine": 41,
+        "endChar": 62
+      },
+      "revId": "084d505d11646b3b2845c0f25f57fb4b0878dd53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "32c7625a_0f57a6c5",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-05-18T12:48:17Z",
       "side": 1,
       "message": "How worried are we about quoting issues? (e.g. some variable having the string value \": true\" and the like)? It sounds like it should cause a wild debugging session.",
+      "range": {
+        "startLine": 45,
+        "startChar": 28,
+        "endLine": 45,
+        "endChar": 37
+      },
+      "revId": "084d505d11646b3b2845c0f25f57fb4b0878dd53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "321f074b_b2c424e7",
+        "filename": "common/json.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1687194
+      },
+      "writtenOn": "2021-05-18T22:37:24Z",
+      "side": 1,
+      "message": "Right now, not super worried since we\u0027re only accessing boolean and integer values currently.\n\nIn general, the potential values are fairly constrained. I filed a bug with a TODO...But I do hope that we can take advantage of the Starlark-based product config tool rather than spend a lot of effort here.",
+      "parentUuid": "32c7625a_0f57a6c5",
       "range": {
         "startLine": 45,
         "startChar": 28,
