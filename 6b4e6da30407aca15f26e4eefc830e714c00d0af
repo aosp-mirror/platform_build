@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98759cb9_dddbc186",
+        "filename": "envsetup.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 1698,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-05-18T23:19:17Z",
+      "side": 1,
+      "message": "return, not exit",
+      "range": {
+        "startLine": 1698,
+        "startChar": 43,
+        "endLine": 1698,
+        "endChar": 47
+      },
+      "revId": "6b4e6da30407aca15f26e4eefc830e714c00d0af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
