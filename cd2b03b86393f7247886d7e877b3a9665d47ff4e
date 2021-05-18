@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0a7d367_6b45f9f7",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-18T10:38:53Z",
+      "side": 1,
+      "message": "PRODUCT_ variables aren\u0027t meant to be set in the board config. I\u0027d be surprised if this works..?",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 18
+      },
+      "revId": "cd2b03b86393f7247886d7e877b3a9665d47ff4e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
