@@ -16,6 +16,23 @@
       "message": "thanks for the rebase, and sorry for the delay, was OOO Friday",
       "revId": "a74ea7e569f6311716f067c9e232197cc61ed3d0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1bd4267_867bc2ff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-05-18T12:00:59Z",
+      "side": 1,
+      "message": "remember to cherry-pick these to sc-dev too",
+      "revId": "a74ea7e569f6311716f067c9e232197cc61ed3d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
