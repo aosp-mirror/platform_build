@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aece7902_c9d745a7",
+        "filename": "common/json.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1514900
+      },
+      "writtenOn": "2021-05-18T03:26:20Z",
+      "side": 1,
+      "message": "Add TODO bug?",
+      "range": {
+        "startLine": 41,
+        "startChar": 2,
+        "endLine": 41,
+        "endChar": 62
+      },
+      "revId": "084d505d11646b3b2845c0f25f57fb4b0878dd53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
