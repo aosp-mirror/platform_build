@@ -531,6 +531,113 @@ $(_idf_val_)
 endef
 
 ###########################################################
+## Sometimes a notice dependency will reference an unadorned
+## module name that only appears in ALL_MODULES adorned with
+## an ARCH suffix or a `host_cross_` prefix.
+##
+## After all of the modules are processed in base_rules.mk,
+## replace all such dependencies with every matching adorned
+## module name.
+###########################################################
+
+define fix-notice-deps
+$(strip \
+  $(eval _all_module_refs := \
+    $(sort \
+      $(foreach m,$(sort $(ALL_MODULES)), \
+        $(ALL_MODULES.$(m).NOTICE_DEPS) \
+      ) \
+    ) \
+  ) \
+  $(foreach m, $(_all_module_refs), \
+    $(eval _lookup.$(m) := \
+      $(sort \
+        $(if $(strip $(ALL_MODULES.$(m).PATH)), \
+          $(m), \
+          $(filter $(m)_32 $(m)_64 host_cross_$(m) host_cross_$(m)_32 host_cross_$(m)_64, $(ALL_MODULES)) \
+        ) \
+      ) \
+    ) \
+  ) \
+  $(foreach m, $(ALL_MODULES), \
+    $(eval ALL_MODULES.$(m).NOTICE_DEPS := \
+      $(sort \
+         $(foreach d,$(sort $(ALL_MODULES.$(m).NOTICE_DEPS)), \
+           $(_lookup.$(d)) \
+        ) \
+      ) \
+    ) \
+  ) \
+)
+endef
+
+###########################################################
+## Target directory for license metadata files.
+###########################################################
+define license-metadata-dir
+$(call generated-sources-dir-for,META,lic,)
+endef
+
+###########################################################
+## License metadata build rule for my_register_name $1
+###########################################################
+define license-metadata-rule
+$(strip $(eval _dir := $(call license-metadata-dir)))
+$(strip $(eval _deps := $(sort $(filter-out $(_dir)/$(1).meta_lic,$(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS), $(_dir)/$(d).meta_lic)))))
+$(strip $(eval _notices := $(sort $(ALL_MODULES.$(1).NOTICES))))
+$(strip $(eval _tgts := $(sort $(ALL_MODULES.$(1).BUILT) $(ALL_MODULES.$(1).INSTALLED))))
+$(foreach b,$(_tgts),
+$(_dir)/$(b).meta_module ::
+	mkdir -p $$(dir $$@)
+	echo $(_dir)/$(1).meta_lic >> $$@
+	sort -u $$@ -o $$@
+
+)
+$(_dir)/$(1).meta_lic: PRIVATE_KINDS := $(sort $(ALL_MODULES.$(1).LICENSE_KINDS))
+$(_dir)/$(1).meta_lic: PRIVATE_CONDITIONS := $(sort $(ALL_MODULES.$(1).LICENSE_CONDITIONS))
+$(_dir)/$(1).meta_lic: PRIVATE_NOTICES := $(_notices)
+$(_dir)/$(1).meta_lic: PRIVATE_NOTICE_DEPS := $(_deps)
+$(_dir)/$(1).meta_lic: PRIVATE_TARGETS := $(_tgts)
+$(_dir)/$(1).meta_lic: PRIVATE_IS_CONTAINER := $(ALL_MODULES.$(1).IS_CONTAINER)
+$(_dir)/$(1).meta_lic: PRIVATE_PACKAGE_NAME := $(strip $(ALL_MODULES.$(1).LICENSE_PACKAGE_NAME))
+$(_dir)/$(1).meta_lic: PRIVATE_INSTALL_MAP := $(sort $(ALL_MODULES.$(1).LICENSE_INSTALL_MAP))
+$(_dir)/$(1).meta_lic : $(_deps) $(_notices) $(foreach b,$(_tgts), $(_dir)/$(b).meta_module) build/make/tools/build-license-metadata.sh
+	rm -f $$@
+	mkdir -p $$(dir $$@)
+	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(PRIVATE_IS_CONTAINER),-is_container) -p $$(PRIVATE_PACKAGE_NAME) -o $$@
+
+.PHONY: $(1).meta_lic
+$(1).meta_lic : $(_dir)/$(1).meta_lic
+
+$(strip $(eval _mifs := $(sort $(ALL_MODULES.$(1).MODULE_INSTALLED_FILENAMES))))
+$(strip $(eval _infs := $(sort $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE))))
+
+# Emit each installed notice file rule if it references the current module
+$(if $(_infs),$(foreach inf,$(_infs),
+$(if $(strip $(filter $(1),$(INSTALLED_NOTICE_FILES.$(inf).MODULE))),
+$(strip $(eval _mif := $(firstword $(foreach m,$(_mifs),$(if $(filter %/src/$(m).txt,$(inf)),$(m))))))
+
+$(inf) : $(_dir)/$(1).meta_lic
+$(inf): PRIVATE_INSTALLED_MODULE := $(_mif)
+$(inf) : PRIVATE_NOTICES := $(_notices)
+
+$(inf): $(_notices)
+	@echo Notice file: $$< -- $$@
+	mkdir -p $$(dir $$@)
+	awk 'FNR==1 && NR > 1 {print "\n"} {print}' $$(PRIVATE_NOTICES) > $$@
+
+)))
+
+endef
+
+###########################################################
+## Declares a license metadata build rule for ALL_MODULES
+###########################################################
+define build-license-metadata
+$(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m))))
+endef
+
+###########################################################
 ## Returns correct _idfPrefix from the list:
 ##   { HOST, HOST_CROSS, AUX, TARGET }
 ###########################################################
