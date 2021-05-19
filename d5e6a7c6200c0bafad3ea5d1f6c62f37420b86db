@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb1293b3_5e16091f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-19T17:19:09Z",
+      "side": 1,
+      "message": "I\u0027m not completely sure `LOCAL_COMPATIBILITY_SUITE` cannot be set for a non-test module, but I have seen it set for many tests. Previously I disabled the checks for tests on a per-module basis. I can do that for AOSP tests as well if needed.",
+      "revId": "d5e6a7c6200c0bafad3ea5d1f6c62f37420b86db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
