@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0285a943_ac9a88b3",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5116,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-19T19:45:07Z",
+      "side": 1,
+      "message": "I wonder if it will cause mismatch if we `make bootimage` vs make dist. I also did a quick code search for \"BOARD_PREBUILT_BOOTIMAGE\", and seems no one is using this config. https://source.corp.google.com/search?q\u003dBOARD_PREBUILT_BOOTIMAGE\u0026sq\u003dp:%5Eandroid\n\nSo I suggest change the existing handling of BOARD_PREBUILT_BOOTIMAGE to copy into PREBUILT_IMAGES/, instead of IMAGES/. And call add_hash_footer when making bootimage. This is similar to the handle of dtbo.\nhttps://source.corp.google.com/android/build/make/core/Makefile;l\u003d1039?q\u003dBOARD_PREBUILT_BOOTIMAGE\u0026sq\u003dp:%5Eandroid\n\nSimilarly, I think we also need to put the boot size into the misc_info for BOARD_PREBUILT_BOOTIMAGE. Beware today BUILDING_BOOT_IMAGE is overridden to true if BOARD_BOOTIMAGE_PARTITION_SIZE is set. We might want BUILDING_BOOT_IMAGE to be false in the prebuilt case? We can then adjust the logic board_config.mk \nhttps://cs.android.com/android/platform/superproject/+/master:build/make/core/board_config.mk;l\u003d382",
+      "range": {
+        "startLine": 5116,
+        "startChar": 6,
+        "endLine": 5116,
+        "endChar": 30
+      },
+      "revId": "29ea992be302fd7e9e8be59b2b3dd342084b2bd6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
