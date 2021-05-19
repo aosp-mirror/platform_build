@@ -93,6 +93,30 @@
       },
       "revId": "084d505d11646b3b2845c0f25f57fb4b0878dd53",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c7effe1_61e3f4e4",
+        "filename": "common/json.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-05-19T07:45:46Z",
+      "side": 1,
+      "message": "That\u0027s actually a good argument -- I hope that Sasha\u0027s tool will make this unnecessary",
+      "parentUuid": "321f074b_b2c424e7",
+      "range": {
+        "startLine": 45,
+        "startChar": 28,
+        "endLine": 45,
+        "endChar": 37
+      },
+      "revId": "084d505d11646b3b2845c0f25f57fb4b0878dd53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
