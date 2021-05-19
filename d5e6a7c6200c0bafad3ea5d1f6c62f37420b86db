@@ -33,6 +33,24 @@
       "message": "Out of curiosity, is this a temporary change? I.e. are authors of test suite modules supposed to \"fix\" the definition of their modules?\n",
       "revId": "d5e6a7c6200c0bafad3ea5d1f6c62f37420b86db",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ed933d4_671fa3c2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-05-19T17:31:32Z",
+      "side": 1,
+      "message": "For tests we don\u0027t care about dexpreopt, so it\u0027s not temporary, it\u0027s permament (unless test owners want to have correct dexpreopt). I am not notifying test owners about these changes. Given enough time, it can all be fixed.",
+      "parentUuid": "71c6bb56_30ad70e6",
+      "revId": "d5e6a7c6200c0bafad3ea5d1f6c62f37420b86db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
