@@ -384,7 +384,7 @@ python_binary_host {
         "releasetools_common",
     ],
     required: [
-        "aapt",
+        "aapt2",
     ],
 }
 
