@@ -46,6 +46,30 @@
       },
       "revId": "d728ee1a065aafa0d4833d4f01225738bfaa249a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9d6ad1c_1d0ff001",
+        "filename": "envsetup.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 1700,
+      "author": {
+        "id": 1066075
+      },
+      "writtenOn": "2021-05-19T08:33:01Z",
+      "side": 1,
+      "message": "Fair point. I do think automatically generating those BUILD files is the solution, but probably not right now; it will have to be faster than it is now and we have other things to do at the moment.",
+      "parentUuid": "64840cac_2d1228d9",
+      "range": {
+        "startLine": 1700,
+        "startChar": 33,
+        "endLine": 1700,
+        "endChar": 50
+      },
+      "revId": "d728ee1a065aafa0d4833d4f01225738bfaa249a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
