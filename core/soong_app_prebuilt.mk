@@ -130,7 +130,7 @@ endif
 # install symbol files of JNI libraries
 my_jni_lib_symbols_copy_files := $(foreach f,$(LOCAL_SOONG_JNI_LIBS_SYMBOLS),\
   $(call word-colon,1,$(f)):$(patsubst $(PRODUCT_OUT)/%,$(TARGET_OUT_UNSTRIPPED)/%,$(call word-colon,2,$(f))))
-$(LOCAL_BUILT_MODULE): $(call copy-many-files, $(my_jni_lib_symbols_copy_files))
+$(LOCAL_BUILT_MODULE): | $(call copy-many-files, $(my_jni_lib_symbols_copy_files))
 
 # embedded JNI will already have been handled by soong
 my_embed_jni :=

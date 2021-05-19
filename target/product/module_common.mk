@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020 The Android Open Source Project
+# Copyright (C) 2021 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,5 +14,10 @@
 # limitations under the License.
 #
 
-$(call inherit-product, build/make/target/product/bootclasspath.mk)
-$(call inherit-product, build/make/target/product/languages_default.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/bootclasspath.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
+
+# Enables treble, which enabled certain -D compilation flags. In particular, libhidlbase
+# uses -DENFORCE_VINTF_MANIFEST. See b/185759877
+PRODUCT_SHIPPING_API_LEVEL := 29
