@@ -46,6 +46,30 @@
       },
       "revId": "cd2b03b86393f7247886d7e877b3a9665d47ff4e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b14a1331_9d717d71",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-05-19T07:39:11Z",
+      "side": 1,
+      "message": "We should avoid using PRODUCT_* in BoardConfig. That\u0027s why it looks like this. BOARD_KERNEL_BINARIES sounds a good solution to me.",
+      "parentUuid": "245a308b_c177e231",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 18
+      },
+      "revId": "cd2b03b86393f7247886d7e877b3a9665d47ff4e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
