@@ -52,8 +52,8 @@ import os
 import re
 import sys
 
-# pylint:disable=relative-beyond-top-level
-# pylint:disable=g-importing-member
+# pylint:disable=relative-beyond-top-level,no-name-in-module
+# suppress false positive of no-name-in-module warnings
 from . import android_project_list
 from . import chrome_project_list
 from . import cpp_warn_patterns as cpp_patterns
@@ -115,39 +115,39 @@ def get_project_names(project_list):
 
 
 def find_project_index(line, project_patterns):
-  for i, p in enumerate(project_patterns):
-    if p.match(line):
-      return i
+  """Return the index to the project pattern array."""
+  for idx, pattern in enumerate(project_patterns):
+    if pattern.match(line):
+      return idx
   return -1
 
 
 def classify_one_warning(warning, link, results, project_patterns,
                          warn_patterns):
   """Classify one warning line."""
-  for i, w in enumerate(warn_patterns):
-    for cpat in w['compiled_patterns']:
+  for idx, pattern in enumerate(warn_patterns):
+    for cpat in pattern['compiled_patterns']:
       if cpat.match(warning):
-        p = find_project_index(warning, project_patterns)
-        results.append([warning, link, i, p])
+        project_idx = find_project_index(warning, project_patterns)
+        results.append([warning, link, idx, project_idx])
         return
-      else:
-        # If we end up here, there was a problem parsing the log
-        # probably caused by 'make -j' mixing the output from
-        # 2 or more concurrent compiles
-        pass
+  # If we end up here, there was a problem parsing the log
+  # probably caused by 'make -j' mixing the output from
+  # 2 or more concurrent compiles
 
 
-def remove_prefix(s, sub):
-  """Remove everything before last occurrence of substring sub in string s."""
-  if sub in s:
-    inc_sub = s.rfind(sub)
-    return s[inc_sub:]
-  return s
+def remove_prefix(src, sub):
+  """Remove everything before last occurrence of substring sub in string src."""
+  if sub in src:
+    inc_sub = src.rfind(sub)
+    return src[inc_sub:]
+  return src
 
 
 # TODO(emmavukelj): Don't have any generate_*_cs_link functions call
 # normalize_path a second time (the first time being in parse_input_file)
 def generate_cs_link(warning_line, flags, android_root=None):
+  """Try to add code search HTTP URL prefix."""
   if flags.platform == 'chrome':
     return generate_chrome_cs_link(warning_line, flags)
   if flags.platform == 'android':
@@ -279,8 +279,7 @@ def normalize_path(path, flags, android_root=None):
   if idx >= 0:
     # remove chrome_root/, we want path relative to that
     return path[idx + len('chrome_root/'):]
-  else:
-    return path
+  return path
 
 
 def normalize_warning_line(line, flags, android_root=None):
@@ -316,17 +315,17 @@ def parse_input_file_chrome(infile, flags):
         unique_warnings[normalized_line] = generate_cs_link(line, flags)
     elif (platform_version == 'unknown' or board_name == 'unknown' or
           architecture == 'unknown'):
-      m = re.match(r'.+Package:.+chromeos-base/chromeos-chrome-', line)
-      if m is not None:
+      result = re.match(r'.+Package:.+chromeos-base/chromeos-chrome-', line)
+      if result is not None:
         platform_version = 'R' + line.split('chrome-')[1].split('_')[0]
         continue
-      m = re.match(r'.+Source\sunpacked\sin\s(.+)', line)
-      if m is not None:
-        board_name = m.group(1).split('/')[2]
+      result = re.match(r'.+Source\sunpacked\sin\s(.+)', line)
+      if result is not None:
+        board_name = result.group(1).split('/')[2]
         continue
-      m = re.match(r'.+USE:\s*([^\s]*).*', line)
-      if m is not None:
-        architecture = m.group(1)
+      result = re.match(r'.+USE:\s*([^\s]*).*', line)
+      if result is not None:
+        architecture = result.group(1)
         continue
 
   header_str = '%s - %s - %s' % (platform_version, board_name, architecture)
@@ -344,6 +343,7 @@ def add_normalized_line_to_warnings(line, flags, android_root, unique_warnings):
 
 def parse_input_file_android(infile, flags):
   """Parse Android input file, collect parameters and warning lines."""
+  # pylint:disable=too-many-locals,too-many-branches
   platform_version = 'unknown'
   target_product = 'unknown'
   target_variant = 'unknown'
@@ -396,18 +396,18 @@ def parse_input_file_android(infile, flags):
     if line_counter < 100:
       # save a little bit of time by only doing this for the first few lines
       line_counter += 1
-      m = re.search('(?<=^PLATFORM_VERSION=).*', line)
-      if m is not None:
-        platform_version = m.group(0)
-      m = re.search('(?<=^TARGET_PRODUCT=).*', line)
-      if m is not None:
-        target_product = m.group(0)
-      m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
-      if m is not None:
-        target_variant = m.group(0)
-      m = re.search('(?<=^TOP=).*', line)
-      if m is not None:
-        android_root = m.group(1)
+      result = re.search('(?<=^PLATFORM_VERSION=).*', line)
+      if result is not None:
+        platform_version = result.group(0)
+      result = re.search('(?<=^TARGET_PRODUCT=).*', line)
+      if result is not None:
+        target_product = result.group(0)
+      result = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
+      if result is not None:
+        target_variant = result.group(0)
+      result = re.search('(?<=^TOP=).*', line)
+      if result is not None:
+        android_root = result.group(1)
 
   if android_root:
     new_unique_warnings = dict()
@@ -424,6 +424,7 @@ def parse_input_file_android(infile, flags):
 
 
 def parse_input_file(infile, flags):
+  """Parse one input file for chrome or android."""
   if flags.platform == 'chrome':
     return parse_input_file_chrome(infile, flags)
   if flags.platform == 'android':
@@ -448,14 +449,16 @@ def get_warn_patterns(platform):
   if platform == 'chrome':
     warn_patterns = cpp_patterns.warn_patterns
   elif platform == 'android':
-    warn_patterns = make_patterns.warn_patterns + cpp_patterns.warn_patterns + java_patterns.warn_patterns + tidy_patterns.warn_patterns + other_patterns.warn_patterns
+    warn_patterns = (make_patterns.warn_patterns + cpp_patterns.warn_patterns +
+                     java_patterns.warn_patterns + tidy_patterns.warn_patterns +
+                     other_patterns.warn_patterns)
   else:
     raise Exception('platform name %s is not valid' % platform)
-  for w in warn_patterns:
-    w['members'] = []
+  for pattern in warn_patterns:
+    pattern['members'] = []
     # Each warning pattern has a 'projects' dictionary, that
     # maps a project name to number of warnings in that project.
-    w['projects'] = {}
+    pattern['projects'] = {}
   return warn_patterns
 
 
@@ -473,6 +476,7 @@ def parallel_classify_warnings(warning_data, args, project_names,
                                use_google3, create_launch_subprocs_fn,
                                classify_warnings_fn):
   """Classify all warning lines with num_cpu parallel processes."""
+  # pylint:disable=too-many-arguments,too-many-locals
   num_cpu = args.processes
   group_results = []
 
@@ -531,8 +535,10 @@ def parallel_classify_warnings(warning_data, args, project_names,
 def process_log(logfile, flags, project_names, project_patterns, warn_patterns,
                 html_path, use_google3, create_launch_subprocs_fn,
                 classify_warnings_fn, logfile_object):
-  # pylint: disable=g-doc-args
-  # pylint: disable=g-doc-return-or-yield
+  # pylint does not recognize g-doc-*
+  # pylint: disable=bad-option-value,g-doc-args
+  # pylint: disable=bad-option-value,g-doc-return-or-yield
+  # pylint: disable=too-many-arguments,too-many-locals
   """Function that handles processing of a log.
 
   This is isolated into its own function (rather than just taking place in main)

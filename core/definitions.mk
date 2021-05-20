@@ -2380,6 +2380,15 @@ $(hide) if ! $(ZIPALIGN) -c -p 4 $@ >/dev/null ; then \
   fi
 endef
 
+# Verifies ZIP alignment of a package.
+#
+define check-package-alignment
+$(hide) if ! $(ZIPALIGN) -c -p 4 $@ >/dev/null ; then \
+    $(call echo-error,$@,Improper package alignment); \
+    exit 1; \
+  fi
+endef
+
 # Compress a package using the standard gzip algorithm.
 define compress-package
 $(hide) \
@@ -2445,6 +2454,15 @@ endef
 define uncompress-prebuilt-embedded-jni-libs
   if (zipinfo $@ 'lib/*.so' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
     $(ZIP2ZIP) -i $@ -o $@.tmp -0 'lib/**/*.so' && mv -f $@.tmp $@ ; \
+  fi
+endef
+
+# Verifies shared JNI libraries and dex files in an apk are uncompressed.
+#
+define check-jni-dex-compression
+  if (zipinfo $@ 'lib/*.so' '*.dex' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
+    $(call echo-error,$@,Contains compressed JNI libraries and/or dex files); \
+    exit 1; \
   fi
 endef
 
@@ -2544,8 +2562,12 @@ endef
 # $(1): source file
 # $(2): destination file
 define copy-init-script-file-checked
+ifdef TARGET_BUILD_UNBUNDLED
+# TODO (b/185624993): Remove the chck on TARGET_BUILD_UNBUNDLED when host_init_verifier can run
+# without requiring the HIDL interface map.
+$(2): $(1)
+else ifneq ($(HOST_OS),darwin)
 # Host init verifier doesn't exist on darwin.
-ifneq ($(HOST_OS),darwin)
 $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
@@ -2765,7 +2787,7 @@ endef
 define _symlink-file
 $(3): $(1)
 	@echo "Symlink: $$@ -> $(2)"
-	@mkdir -p $(dir $$@)
+	@mkdir -p $$(dir $$@)
 	@rm -rf $$@
 	$(hide) ln -sf $(2) $$@
 $(3): .KATI_SYMLINK_OUTPUTS := $(3)
