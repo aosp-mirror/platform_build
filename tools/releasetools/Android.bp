@@ -114,6 +114,20 @@ python_library_host {
     },
 }
 
+cc_library_static {
+    name: "ota_metadata_proto_cc",
+    srcs: [
+       "ota_metadata.proto",
+    ],
+    host_supported: true,
+    recovery_available: true,
+    proto: {
+        canonical_path_from_root: false,
+        type: "lite",
+        export_proto_headers: true,
+    },
+}
+
 java_library_static {
     name: "ota_metadata_proto_java",
     host_supported: true,
@@ -384,7 +398,7 @@ python_binary_host {
         "releasetools_common",
     ],
     required: [
-        "aapt",
+        "aapt2",
     ],
 }
 
