@@ -73,6 +73,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "be3ac925_0552c69b",
+        "filename": "core/main.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-20T13:25:48Z",
+      "side": 1,
+      "message": "\u003e just not do the artifact_path_requirements check for now\n\nThat is already the case with this CL (line 1361), but the macro is used in product-installed-files which is used regardless of artifact path checks",
+      "parentUuid": "57366ec4_ce740274",
+      "range": {
+        "startLine": 1242,
+        "startChar": 25,
+        "endLine": 1243,
+        "endChar": 19
+      },
+      "revId": "1d1f0f253e1c48bfa437deaf55a694c3e91ed62e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7ea0146e_8350de40",
         "filename": "core/main.mk",
         "patchSetId": 10
