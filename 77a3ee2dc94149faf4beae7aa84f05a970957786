@@ -16,6 +16,24 @@
       "message": "This all seems reasonable, but is it complete? Is there a checklist or anything of things to do to bump it every year?",
       "revId": "77a3ee2dc94149faf4beae7aa84f05a970957786",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "12713a09_cb7d266c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-05-20T23:56:57Z",
+      "side": 1,
+      "message": "I\u0027m going off b/186121492#comment3, but I\u0027ll split this off the API finalization playbook into a new branch creation playbook and document it there.",
+      "parentUuid": "d46e3e1c_37c7a465",
+      "revId": "77a3ee2dc94149faf4beae7aa84f05a970957786",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
