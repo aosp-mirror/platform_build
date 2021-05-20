@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "559a24b9_c1b46270",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-20T14:52:37Z",
+      "side": 1,
+      "message": "Step 6 has error now, need further check.\n\n\".../out/soong/host/linux-x86/bin/sign_target_files_apks/add_img_to_target_files.py\", line 945, in AddImagesToTargetFiles\n\n\".../out/soong/host/linux-x86/bin/sign_target_files_apks/add_img_to_target_files.py\", line 606, in CheckAbOtaImages\nAssertionError: Failed to find boot.img",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 4
+      },
+      "revId": "71d91b7651b8cfa7bcec2ca6efd1bd9b3344dedd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
