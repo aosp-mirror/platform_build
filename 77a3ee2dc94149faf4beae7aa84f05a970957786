@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d46e3e1c_37c7a465",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-05-20T23:42:52Z",
+      "side": 1,
+      "message": "This all seems reasonable, but is it complete? Is there a checklist or anything of things to do to bump it every year?",
+      "revId": "77a3ee2dc94149faf4beae7aa84f05a970957786",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
