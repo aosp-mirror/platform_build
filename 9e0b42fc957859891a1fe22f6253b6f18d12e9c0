@@ -237,6 +237,30 @@
       },
       "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "59dadc8e_a8c7a85b",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1269,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-20T00:31:17Z",
+      "side": 1,
+      "message": "I\u0027ve added a new define",
+      "parentUuid": "517f91fd_2d020413",
+      "range": {
+        "startLine": 1268,
+        "startChar": 4,
+        "endLine": 1269,
+        "endChar": 30
+      },
+      "revId": "9e0b42fc957859891a1fe22f6253b6f18d12e9c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
