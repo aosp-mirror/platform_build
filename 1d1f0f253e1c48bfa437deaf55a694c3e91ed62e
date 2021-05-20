@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6770a6b9_b3f6f154",
+        "filename": "core/main.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 1229,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-20T10:22:47Z",
+      "side": 1,
+      "message": "Any thoughts on how it\u0027s going to implement this check without doing so?",
+      "range": {
+        "startLine": 1228,
+        "startChar": 2,
+        "endLine": 1229,
+        "endChar": 8
+      },
+      "revId": "1d1f0f253e1c48bfa437deaf55a694c3e91ed62e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "419b0f4e_cc8d8fe6",
+        "filename": "core/main.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-20T10:22:47Z",
+      "side": 1,
+      "message": "I was thinking you\u0027d change to get-product-var define itself based on RBC_PRODUCT_CONFIG. That would probably make product-graph less broken / not needing the disablement as well right?\n\nWould also make sense to print a $(warning) or something to make it more obvious to RBC_PRODUCT_CONFIG users the build results are not to be trusted",
+      "range": {
+        "startLine": 1242,
+        "startChar": 25,
+        "endLine": 1243,
+        "endChar": 19
+      },
+      "revId": "1d1f0f253e1c48bfa437deaf55a694c3e91ed62e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ea0146e_8350de40",
+        "filename": "core/main.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 1250,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-20T10:22:47Z",
+      "side": 1,
+      "message": "could you please indent this?",
+      "range": {
+        "startLine": 1241,
+        "startChar": 0,
+        "endLine": 1250,
+        "endChar": 5
+      },
+      "revId": "1d1f0f253e1c48bfa437deaf55a694c3e91ed62e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6f91e2e_0a8849f2",
+        "filename": "core/product_config.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-20T10:22:47Z",
+      "side": 1,
+      "message": "indent",
+      "range": {
+        "startLine": 203,
+        "startChar": 10,
+        "endLine": 214,
+        "endChar": 12
+      },
+      "revId": "1d1f0f253e1c48bfa437deaf55a694c3e91ed62e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
