@@ -22,6 +22,30 @@
       },
       "revId": "29ea992be302fd7e9e8be59b2b3dd342084b2bd6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68784760_0176b3bf",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5116,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-20T14:47:12Z",
+      "side": 1,
+      "message": "\u003e for \"BOARD_PREBUILT_BOOTIMAGE\", and seems no one is using this config. \n\nRight, but more and more device will use it to support the GKI architecture.\n(i.e., using a prebuilt generic boot.img).\n\n\u003e  existing handling of BOARD_PREBUILT_BOOTIMAGE to copy into PREBUILT_IMAGES/, instead of IMAGES/\n\nBOARD_PREBUILT_BOOTIMAGE isn\u0027t copied to IMAGES/ currently:\nhttps://cs.android.com/search?q\u003dBOARD_PREBUILT_BOOTIMAGE\n\nOr did you mean do not copy boot.img to IMAGES in common-\u003eGetBootableImage()?\n\n\n\u003e And call add_hash_footer when making bootimage. This is similar to the handle of dtbo.\n\nDone, thanks for catching this.\n\n\u003e to put the boot size into the misc_info for BOARD_PREBUILT_BOOTIMAGE.\n\nThis is already done in \u0027misc_boot_size\u0027. \n\nhttps://android-review.googlesource.com/c/platform/build/+/1311913/5/core/Makefile#4193\n\nI also checked that $OUT/misc_info.txt contains \n  - boot_size\u003d0x06000000                                                                                                                            \n  - boot_images\u003dboot.img  \n\n\u003e We might want BUILDING_BOOT_IMAGE to be false in the prebuilt case? \n\nRight, we should set BUILDING_BOOT_IMAGE to false since we don\u0027t have to build boot.img in Makefile. Thanks for catching this.",
+      "parentUuid": "0285a943_ac9a88b3",
+      "range": {
+        "startLine": 5116,
+        "startChar": 6,
+        "endLine": 5116,
+        "endChar": 30
+      },
+      "revId": "29ea992be302fd7e9e8be59b2b3dd342084b2bd6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
