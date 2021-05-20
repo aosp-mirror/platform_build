@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b35abf5_faeb50c5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-20T22:27:14Z",
+      "side": 1,
+      "message": "lgtm overall. Also add elsk@ who worked a lot on GKI/boot.",
+      "revId": "dcea0ffb293102cafc94ad53b21244c508bf707d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "975663f8_33199cbc",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 5126,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-20T22:27:14Z",
+      "side": 1,
+      "message": "I wonder if we should skip copying the boot image to IMAGES/ in the prebuilt case. Though it\u0027s probably fine if we have the build logic consistent in makefile and ota script.",
+      "range": {
+        "startLine": 5126,
+        "startChar": 54,
+        "endLine": 5126,
+        "endChar": 61
+      },
+      "revId": "dcea0ffb293102cafc94ad53b21244c508bf707d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "16dd56b3_922855a7",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1761,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-20T22:27:14Z",
+      "side": 1,
+      "message": "I suggest move the logic after checking \"IMAGES\", because signing will rebuild \"IMAGES\" from scratch?",
+      "range": {
+        "startLine": 1761,
+        "startChar": 2,
+        "endLine": 1761,
+        "endChar": 15
+      },
+      "revId": "dcea0ffb293102cafc94ad53b21244c508bf707d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dc88cf47_98be6dcb",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1764,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-20T22:27:14Z",
+      "side": 1,
+      "message": "does common.MakeTempFile work",
+      "range": {
+        "startLine": 1764,
+        "startChar": 26,
+        "endLine": 1764,
+        "endChar": 44
+      },
+      "revId": "dcea0ffb293102cafc94ad53b21244c508bf707d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
