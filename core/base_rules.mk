@@ -573,9 +573,14 @@ my_vintf_installed:=
 my_vintf_pairs:=
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 ifndef LOCAL_IS_HOST_MODULE
-ifneq ($(strip $(LOCAL_VINTF_FRAGMENTS)),)
+ifneq ($(strip $(LOCAL_FULL_VINTF_FRAGMENTS)),)
+my_vintf_fragments := $(LOCAL_FULL_VINTF_FRAGMENTS)
+else
+my_vintf_fragments := $(foreach xml,$(LOCAL_VINTF_FRAGMENTS),$(LOCAL_PATH)/$(xml))
+endif
+ifneq ($(strip $(my_vintf_fragments)),)
 
-my_vintf_pairs := $(foreach xml,$(LOCAL_VINTF_FRAGMENTS),$(LOCAL_PATH)/$(xml):$(TARGET_OUT$(partition_tag)_ETC)/vintf/manifest/$(notdir $(xml)))
+my_vintf_pairs := $(foreach xml,$(my_vintf_fragments),$(xml):$(TARGET_OUT$(partition_tag)_ETC)/vintf/manifest/$(notdir $(xml)))
 my_vintf_installed := $(foreach xml,$(my_vintf_pairs),$(call word-colon,2,$(xml)))
 
 # Only set up copy rules once, even if another arch variant shares it
@@ -1005,7 +1010,9 @@ ALL_MODULES.$(my_register_name).TEST_MAINLINE_MODULES := $(LOCAL_TEST_MAINLINE_M
 ifndef LOCAL_IS_HOST_MODULE
 ALL_MODULES.$(my_register_name).FILE_CONTEXTS := $(LOCAL_FILE_CONTEXTS)
 endif
+ifdef LOCAL_IS_UNIT_TEST
 ALL_MODULES.$(my_register_name).IS_UNIT_TEST := $(LOCAL_IS_UNIT_TEST)
+endif
 test_config :=
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)

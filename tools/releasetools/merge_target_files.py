@@ -96,6 +96,7 @@ import zipfile
 from xml.etree import ElementTree
 
 import add_img_to_target_files
+import apex_utils
 import build_image
 import build_super_image
 import check_target_files_vintf
@@ -739,6 +740,35 @@ def compile_split_sepolicy(product_out, partition_map, output_policy):
   return cmd
 
 
+def validate_merged_apex_info(output_target_files_dir, partitions):
+  """Validates the APEX files in the merged target files directory.
+
+  Checks the APEX files in all possible preinstalled APEX directories.
+  Depends on the <partition>/apex/* APEX files within partitions.
+
+  Args:
+    output_target_files_dir: Output directory containing merged partition directories.
+    partitions: A list of all the partitions in the output directory.
+
+  Raises:
+    RuntimeError: if apex_utils fails to parse any APEX file.
+    ExternalError: if the same APEX package is provided by multiple partitions.
+  """
+  apex_packages = set()
+
+  apex_partitions = ('system', 'system_ext', 'product', 'vendor')
+  for partition in filter(lambda p: p in apex_partitions, partitions):
+    apex_info = apex_utils.GetApexInfoFromTargetFiles(
+        output_target_files_dir, partition, compressed_only=False)
+    partition_apex_packages = set([info.package_name for info in apex_info])
+    duplicates = apex_packages.intersection(partition_apex_packages)
+    if duplicates:
+      raise ExternalError(
+          'Duplicate APEX packages found in multiple partitions: %s' %
+          ' '.join(duplicates))
+    apex_packages.update(partition_apex_packages)
+
+
 def generate_care_map(partitions, output_target_files_dir):
   """Generates a merged META/care_map.pb file in the output target files dir.
 
@@ -1115,6 +1145,9 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   logger.info('Compiling split sepolicy: %s', ' '.join(split_sepolicy_cmd))
   common.RunAndCheckOutput(split_sepolicy_cmd)
   # TODO(b/178864050): Run tests on the combined.policy file.
+
+  # Run validation checks on the pre-installed APEX files.
+  validate_merged_apex_info(output_target_files_temp_dir, partition_map.keys())
 
   generate_images(output_target_files_temp_dir, rebuild_recovery)
 

@@ -1,8 +1,7 @@
-The "generic_x86_64" product defines a non-hardware-specific IA target
-without a kernel or bootloader.
+The "generic_x86_64" product defines a non-hardware-specific x86_64 target
+without a bootloader.
 
-It can be used to build the entire user-level system, and
-will work with the IA version of the emulator,
+It is also the target to build the generic kernel image (GKI).
 
 It is not a product "base class"; no other products inherit
 from it or use it in any way.

@@ -68,7 +68,7 @@ ifneq (,$(my_copy_pairs))
   endif
   LOCAL_MODULE_CLASS := ETC
   include $(BUILD_PREBUILT)
-  $(LOCAL_BUILT_MODULE): $(my_unstripped_installed)
+  $(LOCAL_BUILT_MODULE): | $(my_unstripped_installed)
   # Installing boot.art causes all boot image bits to be installed.
   # Keep this old behavior in case anyone still needs it.
   $(LOCAL_INSTALLED_MODULE): $(my_installed)

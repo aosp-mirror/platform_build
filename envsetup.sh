@@ -111,7 +111,7 @@ function get_abs_build_var()
     if [ "$BUILD_VAR_CACHE_READY" = "true" ]
     then
         eval "echo \"\${abs_var_cache_$1}\""
-    return
+        return
     fi
 
     local T=$(gettop)
@@ -608,7 +608,7 @@ function print_lunch_menu()
 {
     local uname=$(uname)
     local choices
-    choices=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
+    choices=$(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_BUILD_VARIANT= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
     local ret=$?
 
     echo
@@ -799,17 +799,19 @@ function tapas()
 function banchan()
 {
     local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
-    local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|arm64|x86_64)$' | xargs)"
+    local product="$(echo $* | xargs -n 1 echo | \grep -E '^(.*_)?(arm|x86|arm64|x86_64)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
-    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|arm64|x86_64)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|(.*_)?(arm|x86|arm64|x86_64))$' | xargs)"
 
     if [ "$showHelp" != "" ]; then
       $(gettop)/build/make/banchanHelp.sh
       return
     fi
 
-    if [ $(echo $arch | wc -w) -gt 1 ]; then
-        echo "banchan: Error: Multiple build archs supplied: $arch"
+    if [ -z "$product" ]; then
+        product=arm
+    elif [ $(echo $product | wc -w) -gt 1 ]; then
+        echo "banchan: Error: Multiple build archs or products supplied: $products"
         return
     fi
     if [ $(echo $variant | wc -w) -gt 1 ]; then
@@ -821,8 +823,8 @@ function banchan()
         return
     fi
 
-    local product=module_arm
-    case $arch in
+    case $product in
+      arm)    product=module_arm;;
       x86)    product=module_x86;;
       arm64)  product=module_arm64;;
       x86_64) product=module_x86_64;;
@@ -1456,13 +1458,17 @@ function refreshmod() {
 # Verifies that module-info.txt exists, creating it if it doesn't.
 function verifymodinfo() {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
+        if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
+            echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
+        fi
         return 1
     fi
 
     if [ ! -f "$ANDROID_PRODUCT_OUT/module-info.json" ]; then
-        echo "Could not find module-info.json. It will only be built once, and it can be updated with 'refreshmod'" >&2
-        refreshmod || return 1
+        if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
+            echo "Could not find module-info.json. It will only be built once, and it can be updated with 'refreshmod'" >&2
+        fi
+        return 1
     fi
 }
 
@@ -1471,7 +1477,7 @@ function verifymodinfo() {
 function allmod() {
     verifymodinfo || return 1
 
-    python -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
+    python3 -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
 }
 
 # Get the path of a specific module in the android tree, as cached in module-info.json.
@@ -1485,7 +1491,7 @@ function pathmod() {
 
     verifymodinfo || return 1
 
-    local relpath=$(python -c "import json, os
+    local relpath=$(python3 -c "import json, os
 module = '$1'
 module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
 if module not in module_info:
@@ -1511,7 +1517,7 @@ function dirmods() {
 
     verifymodinfo || return 1
 
-    python -c "import json, os
+    python3 -c "import json, os
 dir = '$1'
 while dir.endswith('/'):
     dir = dir[:-1]
@@ -1556,7 +1562,7 @@ function outmod() {
     verifymodinfo || return 1
 
     local relpath
-    relpath=$(python -c "import json, os
+    relpath=$(python3 -c "import json, os
 module = '$1'
 module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
 if module not in module_info:
@@ -1600,7 +1606,7 @@ function installmod() {
 
 function _complete_android_module_names() {
     local word=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(allmod | grep -E "^$word") )
+    COMPREPLY=( $(QUIET_VERIFYMODINFO=true allmod | grep -E "^$word") )
 }
 
 # Print colored exit condition
@@ -1681,8 +1687,17 @@ function _trigger_build()
     if T="$(gettop)"; then
       _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
     else
-      echo "Couldn't locate the top of the tree. Try setting TOP."
+      >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
+      return 1
     fi
+)
+
+function b()
+(
+    # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
+    m nothing GENERATE_BAZEL_FILES=true || return 1
+    # Then, run Bazel using the synthetic workspace as the --package_path.
+    "$(gettop)/tools/bazel" "$@" --config=bp2build
 )
 
 function m()

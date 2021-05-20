@@ -629,6 +629,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif OPTIONS.replace_verity_keyid and filename == "BOOT/cmdline":
       pass
 
+    # Skip the vbmeta digest as we will recalculate it.
+    elif filename == "META/vbmeta_digest.txt":
+      pass
+
     # Skip the care_map as we will regenerate the system/vendor images.
     elif filename in ["META/care_map.pb", "META/care_map.txt"]:
       pass
@@ -799,7 +803,7 @@ def RewriteProps(data):
         value = "/".join(pieces)
       elif key == "ro.build.description":
         pieces = value.split(" ")
-        assert len(pieces) == 5
+        assert pieces[-1].endswith("-keys")
         pieces[-1] = EditTags(pieces[-1])
         value = " ".join(pieces)
       elif key.startswith("ro.") and key.endswith(".build.tags"):
@@ -1029,9 +1033,8 @@ def ReplaceGkiSigningKey(misc_info):
 
   extra_args = OPTIONS.gki_signing_extra_args
   if extra_args:
-    print('Setting extra GKI signing args: "%s"' % (extra_args))
-    misc_info["gki_signing_signature_args"] = (
-        misc_info.get("gki_signing_signature_args", '') + ' ' + extra_args)
+    print('Setting GKI signing args: "%s"' % (extra_args))
+    misc_info["gki_signing_signature_args"] = extra_args
 
 
 def BuildKeyMap(misc_info, key_mapping_options):
@@ -1383,6 +1386,6 @@ if __name__ == '__main__':
     main(sys.argv[1:])
   except common.ExternalError as e:
     print("\n   ERROR: %s\n" % (e,))
-    sys.exit(1)
+    raise
   finally:
     common.Cleanup()

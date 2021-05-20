@@ -283,7 +283,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
     if "flash_logical_block_size" in prop_dict:
       build_command.extend(["-o", prop_dict["flash_logical_block_size"]])
     # Specify UUID and hash_seed if using mke2fs.
-    if prop_dict["ext_mkuserimg"] == "mkuserimg_mke2fs":
+    if os.path.basename(prop_dict["ext_mkuserimg"]) == "mkuserimg_mke2fs":
       if "uuid" in prop_dict:
         build_command.extend(["-U", prop_dict["uuid"]])
       if "hash_seed" in prop_dict:
@@ -386,13 +386,14 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
             in_dir, du_str,
             int(prop_dict.get("partition_reserved_size", 0)),
             int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
-    print(
-        "The max image size for filesystem files is {} bytes ({} MB), out of a "
-        "total partition size of {} bytes ({} MB).".format(
-            int(prop_dict["image_size"]),
-            int(prop_dict["image_size"]) // BYTES_IN_MB,
-            int(prop_dict["partition_size"]),
-            int(prop_dict["partition_size"]) // BYTES_IN_MB))
+    if ("image_size" in prop_dict and "partition_size" in prop_dict):
+      print(
+          "The max image size for filesystem files is {} bytes ({} MB), "
+          "out of a total partition size of {} bytes ({} MB).".format(
+              int(prop_dict["image_size"]),
+              int(prop_dict["image_size"]) // BYTES_IN_MB,
+              int(prop_dict["partition_size"]),
+              int(prop_dict["partition_size"]) // BYTES_IN_MB))
     raise
 
   if run_e2fsck and prop_dict.get("skip_fsck") != "true":
