@@ -22,6 +22,29 @@
       },
       "revId": "71d91b7651b8cfa7bcec2ca6efd1bd9b3344dedd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "16296148_ef526387",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1765,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-20T15:09:36Z",
+      "side": 1,
+      "message": "Cannot add boot.img to IMAGES/ here.\nOtherwise, test step-6 will fail with:\n\nin CheckAbOtaImages\nAssertionError: Failed to find boot.img",
+      "range": {
+        "startLine": 1765,
+        "startChar": 44,
+        "endLine": 1765,
+        "endChar": 50
+      },
+      "revId": "71d91b7651b8cfa7bcec2ca6efd1bd9b3344dedd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
