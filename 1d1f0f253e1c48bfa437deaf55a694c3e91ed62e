@@ -49,6 +49,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "57366ec4_ce740274",
+        "filename": "core/main.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-05-20T13:05:49Z",
+      "side": 1,
+      "message": "I think a better option is to just not do the artifact_path_requirements check for now, when using RBC_PRODUCT_CONFIG.  At some point before it gets turned on for real, those checks can just be rewritten in starlark and it\u0027ll be way cleaner than re-including a different set of product files.",
+      "parentUuid": "419b0f4e_cc8d8fe6",
+      "range": {
+        "startLine": 1242,
+        "startChar": 25,
+        "endLine": 1243,
+        "endChar": 19
+      },
+      "revId": "1d1f0f253e1c48bfa437deaf55a694c3e91ed62e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7ea0146e_8350de40",
         "filename": "core/main.mk",
         "patchSetId": 10
