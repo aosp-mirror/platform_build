@@ -97,6 +97,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4a38cb99_c8b147a3",
+        "filename": "core/main.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-05-20T13:33:33Z",
+      "side": 1,
+      "message": "Without the artifact_path_requirements check though, product-installed-files is only used with INTERNAL_PRODUCT, right? This definitely changes the meaning of _product-var, but as a stopgap (with the TODO above especially), it should work?",
+      "parentUuid": "be3ac925_0552c69b",
+      "range": {
+        "startLine": 1242,
+        "startChar": 25,
+        "endLine": 1243,
+        "endChar": 19
+      },
+      "revId": "1d1f0f253e1c48bfa437deaf55a694c3e91ed62e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7ea0146e_8350de40",
         "filename": "core/main.mk",
         "patchSetId": 10
