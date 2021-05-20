@@ -140,6 +140,30 @@
       },
       "revId": "8f5d3a9d6118049b880833ecd3fc65c3b7170d38",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0e747dde_49d9a1f7",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-20T09:11:49Z",
+      "side": 1,
+      "message": "Yes, I guess so. Wow, that seems like a bad setup. Best would probably be to strip/readonly/check-validity immediately immediately after parsing the Android.mk files then for clarity.",
+      "parentUuid": "1bd7ede0_5c54053b",
+      "range": {
+        "startLine": 344,
+        "startChar": 98,
+        "endLine": 344,
+        "endChar": 115
+      },
+      "revId": "8f5d3a9d6118049b880833ecd3fc65c3b7170d38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

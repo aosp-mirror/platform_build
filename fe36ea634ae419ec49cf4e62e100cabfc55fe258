@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d02ae90_e4cdff69",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-20T09:11:49Z",
+      "side": 1,
+      "message": "this one comes from soong right? can we fix soong to not put spaces in lists?\n\nbtw, does the bash for-loop actually care about the number of spaces?",
+      "range": {
+        "startLine": 662,
+        "startChar": 20,
+        "endLine": 662,
+        "endChar": 58
+      },
+      "revId": "fe36ea634ae419ec49cf4e62e100cabfc55fe258",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2238048b_85fd5788",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 5085,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-20T09:11:49Z",
+      "side": 1,
+      "message": "is this also set in Android.mk files? I don\u0027t see examples of that in our tree",
+      "range": {
+        "startLine": 5085,
+        "startChar": 31,
+        "endLine": 5085,
+        "endChar": 56
+      },
+      "revId": "fe36ea634ae419ec49cf4e62e100cabfc55fe258",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
