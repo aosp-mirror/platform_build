@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea895ff8_eaf2cbff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-20T00:34:32Z",
+      "side": 1,
+      "message": "The claim is this:\n\n$ cat \u003c\u003c\"EOF\" | make -f-\n\u003e x :\u003d a \\\n\u003e  b \\\n\u003e \n\u003e $(info \"$(x)\")\n\u003e EOF\n\"a b \"\nmake: *** No targets.  Stop.",
+      "parentUuid": "1a10acbb_00951d10",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 48
+      },
+      "revId": "8f5d3a9d6118049b880833ecd3fc65c3b7170d38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a3c06c5d_66b2f325",
@@ -47,6 +71,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd7e0b9a_bf59feba",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-20T00:34:32Z",
+      "side": 1,
+      "message": "Aside from PRIVATE_MODULES, other variables are updated in multiple places.",
+      "parentUuid": "a3c06c5d_66b2f325",
+      "range": {
+        "startLine": 342,
+        "startChar": 17,
+        "endLine": 342,
+        "endChar": 32
+      },
+      "revId": "8f5d3a9d6118049b880833ecd3fc65c3b7170d38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9d127eb9_d35a668e",
@@ -60,6 +108,30 @@
       "writtenOn": "2021-05-18T09:28:14Z",
       "side": 1,
       "message": "Can you add AB_OTA_PARTITIONS to _board_strip_readonly_list in board_config.mk instead?",
+      "range": {
+        "startLine": 344,
+        "startChar": 98,
+        "endLine": 344,
+        "endChar": 115
+      },
+      "revId": "8f5d3a9d6118049b880833ecd3fc65c3b7170d38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1bd7ede0_5c54053b",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-20T00:34:32Z",
+      "side": 1,
+      "message": "Doesn\u0027t the comment at core/Makefile:4637 mean that this variable may be updated after board_config.mk:206 is executed?",
+      "parentUuid": "9d127eb9_d35a668e",
       "range": {
         "startLine": 344,
         "startChar": 98,
