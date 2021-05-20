@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc726e17_ca47c2bd",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-20T16:27:18Z",
+      "side": 1,
+      "message": "Correct. Removing.",
+      "parentUuid": "4d02ae90_e4cdff69",
+      "range": {
+        "startLine": 662,
+        "startChar": 20,
+        "endLine": 662,
+        "endChar": 58
+      },
+      "revId": "fe36ea634ae419ec49cf4e62e100cabfc55fe258",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2238048b_85fd5788",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-05-20T09:11:49Z",
       "side": 1,
       "message": "is this also set in Android.mk files? I don\u0027t see examples of that in our tree",
+      "range": {
+        "startLine": 5085,
+        "startChar": 31,
+        "endLine": 5085,
+        "endChar": 56
+      },
+      "revId": "fe36ea634ae419ec49cf4e62e100cabfc55fe258",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1731fbdd_7f86aa1e",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 5085,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-20T16:27:18Z",
+      "side": 1,
+      "message": "Here:\ndevice/google/coral/device.mk:181\ndevice/google/sunfish/device.mk:163\netc.",
+      "parentUuid": "2238048b_85fd5788",
       "range": {
         "startLine": 5085,
         "startChar": 31,
