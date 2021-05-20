@@ -93,6 +93,30 @@
       },
       "revId": "fe36ea634ae419ec49cf4e62e100cabfc55fe258",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eb3f1c38_65faeee5",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 5085,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-20T16:48:06Z",
+      "side": 1,
+      "message": "Those are product mk files, read before boardconfig",
+      "parentUuid": "1731fbdd_7f86aa1e",
+      "range": {
+        "startLine": 5085,
+        "startChar": 31,
+        "endLine": 5085,
+        "endChar": 56
+      },
+      "revId": "fe36ea634ae419ec49cf4e62e100cabfc55fe258",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
