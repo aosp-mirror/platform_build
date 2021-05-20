@@ -18,6 +18,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb77e91f_ea3544d4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-05-20T22:32:37Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we be dropping a pre-signed boot image instead?",
+      "revId": "dcea0ffb293102cafc94ad53b21244c508bf707d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "975663f8_33199cbc",
