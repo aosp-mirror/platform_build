@@ -34,6 +34,23 @@
       "parentUuid": "83b2db2c_8e01698f",
       "revId": "cf9ead8972dd2b7c90772b6a1fd26bd4311a7c74",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a31a5cfe_88d2e914",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-21T23:52:40Z",
+      "side": 1,
+      "message": "The change lgtm if the prebuilt boot image is unsigned",
+      "revId": "cf9ead8972dd2b7c90772b6a1fd26bd4311a7c74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
