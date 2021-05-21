@@ -73,6 +73,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "76eec7d4_2dee6e1b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-21T02:23:34Z",
+      "side": 1,
+      "message": "dtbo.img has similar logic.\nhttps://android-review.googlesource.com/c/platform/build/+/407572\n\nBtw, the generic boot.img (with GKI 2.0) won\u0027t be signed with a release key to produce AVB metadata.\n\nInstead, a \"certificate\" is embedded to the boot.img content itself, as \u0027boot_signature\u0027. (unpack_bootimg --boot_img /path/to/boot.img, then see \u0027out/boot_signature\u0027). This certificate is used to verify the boot.img is generic.\n\nOEMs still need to re-sign the generic boot.img with their own AVB key, to pass device-specific verified boot process.\n\nhttps://docs.google.com/presentation/d/1kWdPPZ852AugJgUxZeZsUM46yoo9cP2xdLuWXQDH9ho/edit#slide\u003did.gc8cc847157_0_12",
+      "parentUuid": "64b14638_5ad0e61e",
+      "revId": "dcea0ffb293102cafc94ad53b21244c508bf707d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "975663f8_33199cbc",
         "filename": "core/Makefile",
         "patchSetId": 3
