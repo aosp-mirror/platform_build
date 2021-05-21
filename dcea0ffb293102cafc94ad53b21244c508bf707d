@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "64b14638_5ad0e61e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-21T02:09:54Z",
+      "side": 1,
+      "message": "Sorry, cannot quite understand this.\n\nDid you mean that we should use a pre-signed boot.img without re-signing?",
+      "parentUuid": "1b02d048_b882d463",
+      "revId": "dcea0ffb293102cafc94ad53b21244c508bf707d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "975663f8_33199cbc",
         "filename": "core/Makefile",
         "patchSetId": 3
@@ -66,6 +84,30 @@
       "writtenOn": "2021-05-20T22:27:14Z",
       "side": 1,
       "message": "I wonder if we should skip copying the boot image to IMAGES/ in the prebuilt case. Though it\u0027s probably fine if we have the build logic consistent in makefile and ota script.",
+      "range": {
+        "startLine": 5126,
+        "startChar": 54,
+        "endLine": 5126,
+        "endChar": 61
+      },
+      "revId": "dcea0ffb293102cafc94ad53b21244c508bf707d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "772b7bd0_3defbad9",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 5126,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-21T02:09:54Z",
+      "side": 1,
+      "message": "Ack, let\u0027s skip copying to IMAGES in the prebuilt case.",
+      "parentUuid": "975663f8_33199cbc",
       "range": {
         "startLine": 5126,
         "startChar": 54,
@@ -99,6 +141,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "90b3dcfe_fe2a936c",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1761,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-21T02:09:54Z",
+      "side": 1,
+      "message": "OK, sg.",
+      "parentUuid": "16dd56b3_922855a7",
+      "range": {
+        "startLine": 1761,
+        "startChar": 2,
+        "endLine": 1761,
+        "endChar": 15
+      },
+      "revId": "dcea0ffb293102cafc94ad53b21244c508bf707d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dc88cf47_98be6dcb",
@@ -112,6 +178,30 @@
       "writtenOn": "2021-05-20T22:27:14Z",
       "side": 1,
       "message": "does common.MakeTempFile work",
+      "range": {
+        "startLine": 1764,
+        "startChar": 26,
+        "endLine": 1764,
+        "endChar": 44
+      },
+      "revId": "dcea0ffb293102cafc94ad53b21244c508bf707d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bf5dd69_f28b5477",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1764,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-21T02:09:54Z",
+      "side": 1,
+      "message": "OK, that looks better.",
+      "parentUuid": "dc88cf47_98be6dcb",
       "range": {
         "startLine": 1764,
         "startChar": 26,
