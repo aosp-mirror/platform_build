@@ -1691,8 +1691,17 @@ function _trigger_build()
     if T="$(gettop)"; then
       _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
     else
-      echo "Couldn't locate the top of the tree. Try setting TOP."
+      >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
+      return 1
     fi
+)
+
+function b()
+(
+    # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
+    m nothing GENERATE_BAZEL_FILES=true || return 1
+    # Then, run Bazel using the synthetic workspace as the --package_path.
+    "$(gettop)/tools/bazel" "$@" --config=bp2build
 )
 
 function m()
