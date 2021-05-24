@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d8d740bf_97ef62f6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-24T17:31:58Z",
+      "side": 1,
+      "message": "Abandoning this CL in favor of product-specific ones: aog/1715988 for device/google/bonito, aog/1715479 for device/google/crosshatch.",
+      "parentUuid": "b4d1a632_0b2f2506",
+      "range": {
+        "startLine": 13,
+        "startChar": 26,
+        "endLine": 15,
+        "endChar": 51
+      },
+      "revId": "b083dec4e5953304412ca2e5c467a6a6bc28747f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "25539eeb_cdb950e9",
         "filename": "core/definitions.mk",
         "patchSetId": 2
