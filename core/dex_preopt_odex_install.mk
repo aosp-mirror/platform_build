@@ -210,6 +210,9 @@ endif
 ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
   LOCAL_ENFORCE_USES_LIBRARIES := false
 endif
+ifneq (,$(LOCAL_COMPATIBILITY_SUITE))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
+endif
 
 # Disable the check if the app contains no java code.
 ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
