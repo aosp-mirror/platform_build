@@ -22,6 +22,30 @@
       },
       "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99aaa5d2_2355c6c0",
+        "filename": "core/main.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 1249,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-24T17:52:29Z",
+      "side": 1,
+      "message": "I have introduced this macro in order to avoid having Starlark-specific definitions for the `product-installed-files` and `host-installed-files`. Perhaps I misunderstood what you were suggesting?",
+      "parentUuid": "e16a429b_4ad98ce4",
+      "range": {
+        "startLine": 1247,
+        "startChar": 0,
+        "endLine": 1249,
+        "endChar": 5
+      },
+      "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
