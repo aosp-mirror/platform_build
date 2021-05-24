@@ -94,6 +94,30 @@
       },
       "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "06e3eb8b_9cabdb36",
+        "filename": "core/main.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 1249,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-24T18:31:22Z",
+      "side": 1,
+      "message": "isn\u0027t $(call get-product-var,$(INTERNAL_PRODUCT),foo) \u003d\u003d foo ?",
+      "parentUuid": "9f4b5c32_c0c6f9c0",
+      "range": {
+        "startLine": 1247,
+        "startChar": 0,
+        "endLine": 1249,
+        "endChar": 5
+      },
+      "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
