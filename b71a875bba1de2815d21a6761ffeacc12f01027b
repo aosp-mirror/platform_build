@@ -34,6 +34,23 @@
       "parentUuid": "6fbc271d_0a29b1e2",
       "revId": "b71a875bba1de2815d21a6761ffeacc12f01027b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d197a045_25bfcd7b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1453063
+      },
+      "writtenOn": "2021-05-24T19:12:52Z",
+      "side": 1,
+      "message": "Colin - do you have the Autosubmit button on your end? I don\u0027t see anything relevant changed in the repro config (https://android.googlesource.com/All-Projects/+log/5c8f917fc795742e1a6abfe9748cfcd93ac50e24/project.config) recently. Not sure if this is isolated to us \"not android org working on android\" cool kids though.",
+      "revId": "b71a875bba1de2815d21a6761ffeacc12f01027b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
