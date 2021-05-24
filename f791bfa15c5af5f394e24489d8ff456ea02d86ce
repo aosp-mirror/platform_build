@@ -46,6 +46,30 @@
       },
       "revId": "f791bfa15c5af5f394e24489d8ff456ea02d86ce",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c80bab7e_5a83ffb2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-05-24T23:51:06Z",
+      "side": 1,
+      "message": "aosp/master (and internal/master as well) currently is for the T development. So unless you don\u0027t want to ship this even in T, you can keep this change here.",
+      "parentUuid": "3176a9cc_a30eea25",
+      "range": {
+        "startLine": 11,
+        "startChar": 54,
+        "endLine": 11,
+        "endChar": 68
+      },
+      "revId": "f791bfa15c5af5f394e24489d8ff456ea02d86ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
