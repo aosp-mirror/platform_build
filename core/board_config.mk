@@ -764,8 +764,8 @@ ifeq ($(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY),true)
 endif
 
 ###########################################
-# APEXes are by default flattened, i.e. non-updatable.
-# It can be unflattened (and updatable) by inheriting from
+# APEXes are by default flattened, i.e. non-updatable, if not building unbundled
+# apps. It can be unflattened (and updatable) by inheriting from
 # updatable_apex.mk
 #
 # APEX flattening can also be forcibly enabled (resp. disabled) by
@@ -774,7 +774,7 @@ endif
 ifdef OVERRIDE_TARGET_FLATTEN_APEX
   TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
 else
-  ifeq (,$(TARGET_FLATTEN_APEX))
+  ifeq (,$(TARGET_BUILD_APPS)$(TARGET_FLATTEN_APEX))
     TARGET_FLATTEN_APEX := true
   endif
 endif
