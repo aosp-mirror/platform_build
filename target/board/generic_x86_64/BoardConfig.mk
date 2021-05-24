@@ -22,8 +22,8 @@ TARGET_2ND_CPU_ABI := x86
 TARGET_2ND_ARCH := x86
 TARGET_2ND_ARCH_VARIANT := x86_64
 
-TARGET_PRELINK_MODULE := false
 include build/make/target/board/BoardConfigGsiCommon.mk
+
 ifndef BUILDING_GSI
 include build/make/target/board/BoardConfigEmuCommon.mk
 
