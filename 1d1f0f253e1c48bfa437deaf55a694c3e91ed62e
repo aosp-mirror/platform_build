@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e58ebcb_4e84362d",
+        "filename": "core/main.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 1229,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-24T08:19:46Z",
+      "side": 1,
+      "message": "Happy to chat over VC if you want some explanations, or add a bunch of comments if you prefer. The short version:\n\nA product.mk can claim a particular path, e.g. /system on device. The build system will then enforce two things:\n- that product.mk actually only installs files in /system\n- that no product inheriting product.mk installs files  on /system other than the ones  product.mk is installing",
+      "parentUuid": "920a6d22_9406871d",
+      "range": {
+        "startLine": 1228,
+        "startChar": 2,
+        "endLine": 1229,
+        "endChar": 8
+      },
+      "revId": "1d1f0f253e1c48bfa437deaf55a694c3e91ed62e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "419b0f4e_cc8d8fe6",
