@@ -70,6 +70,30 @@
       },
       "revId": "f791bfa15c5af5f394e24489d8ff456ea02d86ce",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "030830a1_2217c928",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1125923
+      },
+      "writtenOn": "2021-05-25T00:00:32Z",
+      "side": 1,
+      "message": "This revert-change was already submitted to Android S in ag/14631649. This CL makes the same change everywhere else for consistency.\n\nWe\u0027re removing libneuralnetworks_shim.so from everywhere. It was originally introduced in S, and then removed from S.",
+      "parentUuid": "c80bab7e_5a83ffb2",
+      "range": {
+        "startLine": 11,
+        "startChar": 54,
+        "endLine": 11,
+        "endChar": 68
+      },
+      "revId": "f791bfa15c5af5f394e24489d8ff456ea02d86ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
