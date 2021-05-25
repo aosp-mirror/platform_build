@@ -75,10 +75,21 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     hiddenapi-package-whitelist.xml \
 
+# The dalvik.vm.dexopt.thermal-cutoff property must contain one of the values
+# listed here:
+#
+# https://source.android.com/devices/architecture/hidl/thermal-mitigation#thermal-api
+#
+# If the thermal status of the device reaches or exceeds the value set here
+# background dexopt will be terminated and rescheduled using an exponential
+# backoff polcy.
+#
+# The thermal cutoff value is currently set to THERMAL_STATUS_MODERATE.
 PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.usejit=true \
     dalvik.vm.usejitprofiles=true \
     dalvik.vm.dexopt.secondary=true \
+    dalvik.vm.dexopt.thermal-cutoff=2 \
     dalvik.vm.appimageformat=lz4
 
 PRODUCT_SYSTEM_PROPERTIES += \
@@ -99,6 +110,9 @@ endif
 # The install filter is speed-profile in order to enable the use of
 # profiles from the dex metadata files. Note that if a profile is not provided
 # or if it is empty speed-profile is equivalent to (quicken + empty app image).
+# Note that `cmdline` is not strictly needed but it simplifies the management
+# of compilation reason in the platform (as we have a unified, single path,
+# without exceptions).
 PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.post-boot?=extract \
     pm.dexopt.install?=speed-profile \
@@ -110,6 +124,7 @@ PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.bg-dexopt?=speed-profile \
     pm.dexopt.ab-ota?=speed-profile \
     pm.dexopt.inactive?=verify \
+    pm.dexopt.cmdline?=verify \
     pm.dexopt.shared?=speed
 
 # Pass file with the list of updatable boot class path packages to dex2oat.
