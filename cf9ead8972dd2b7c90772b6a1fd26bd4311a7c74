@@ -86,6 +86,23 @@
       "parentUuid": "207b7547_bd5638a0",
       "revId": "cf9ead8972dd2b7c90772b6a1fd26bd4311a7c74",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b358fde8_e41ac79c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-25T08:28:51Z",
+      "side": 1,
+      "message": "Adding Anton for reviewing Makefile (owner vote).",
+      "revId": "cf9ead8972dd2b7c90772b6a1fd26bd4311a7c74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
