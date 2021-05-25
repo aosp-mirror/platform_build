@@ -142,6 +142,30 @@
       },
       "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad67a59d_981bcac8",
+        "filename": "core/main.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 1249,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-25T13:46:10Z",
+      "side": 1,
+      "message": "Is that a bug in RBC_CONFIG then? Maybe it doesn\u0027t deal well with \"raw\" includes like this: https://cs.android.com/android/platform/superproject/+/master:device/google/crosshatch/device.mk;l\u003d899?q\u003dPixelLogger\u0026ss\u003dandroid ?",
+      "parentUuid": "2b6063c6_bfd15982",
+      "range": {
+        "startLine": 1247,
+        "startChar": 0,
+        "endLine": 1249,
+        "endChar": 5
+      },
+      "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
