@@ -110,6 +110,9 @@ endif
 # The install filter is speed-profile in order to enable the use of
 # profiles from the dex metadata files. Note that if a profile is not provided
 # or if it is empty speed-profile is equivalent to (quicken + empty app image).
+# Note that `cmdline` is not strictly needed but it simplifies the management
+# of compilation reason in the platform (as we have a unified, single path,
+# without exceptions).
 PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.post-boot?=extract \
     pm.dexopt.install?=speed-profile \
@@ -121,6 +124,7 @@ PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.bg-dexopt?=speed-profile \
     pm.dexopt.ab-ota?=speed-profile \
     pm.dexopt.inactive?=verify \
+    pm.dexopt.cmdline?=verify \
     pm.dexopt.shared?=speed
 
 # Pass file with the list of updatable boot class path packages to dex2oat.
