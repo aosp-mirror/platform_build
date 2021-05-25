@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "99cc35b6_7e0f5aba",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-05-25T18:17:06Z",
+      "side": 1,
+      "message": "run on the build of http://b/181787095#comment1, make sure it fails?",
+      "range": {
+        "startLine": 10,
+        "startChar": 6,
+        "endLine": 10,
+        "endChar": 8
+      },
+      "revId": "31b434bdfbf2cbffdc9fb42db67be1a3b10c5a88",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
