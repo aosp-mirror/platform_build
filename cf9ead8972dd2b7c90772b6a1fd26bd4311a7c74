@@ -68,6 +68,24 @@
       "message": "Hi Colin,\nMay we have you review and the owner vote? (this is needed for sc-dev, need cherry-pick later).\nThanks,",
       "revId": "cf9ead8972dd2b7c90772b6a1fd26bd4311a7c74",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a29ff301_f15dcbe6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-05-25T08:28:14Z",
+      "side": 1,
+      "message": "Also see the clarification here: b/188485657#comment12",
+      "parentUuid": "207b7547_bd5638a0",
+      "revId": "cf9ead8972dd2b7c90772b6a1fd26bd4311a7c74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
