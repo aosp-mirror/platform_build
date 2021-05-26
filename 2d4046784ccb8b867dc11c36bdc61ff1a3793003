@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b70d6d52_22e033d0",
+        "filename": "core/board_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-05-26T01:48:45Z",
+      "side": 1,
+      "message": "Makefiles generally work better with \"\" instead of \"false\" for false, and TARGET_FLATTEN_APEX is already empty here.",
+      "range": {
+        "startLine": 779,
+        "startChar": 29,
+        "endLine": 779,
+        "endChar": 34
+      },
+      "revId": "2d4046784ccb8b867dc11c36bdc61ff1a3793003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
