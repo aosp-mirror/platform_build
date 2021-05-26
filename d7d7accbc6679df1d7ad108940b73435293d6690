@@ -166,6 +166,30 @@
       },
       "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3f0c268_96fd0544",
+        "filename": "core/main.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 1249,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-05-26T21:26:06Z",
+      "side": 1,
+      "message": "I think directly include is handled correctly, and am I not sure why it is related. get-product-var is defined as `$(PRODUCTS.$(strip $(1)).$(2))`, so why should it handle INTERNAL_PRODUCT case differently? Do you mean that it is redefined as side effect of calling strip-product-vars?",
+      "parentUuid": "ad67a59d_981bcac8",
+      "range": {
+        "startLine": 1247,
+        "startChar": 0,
+        "endLine": 1249,
+        "endChar": 5
+      },
+      "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
