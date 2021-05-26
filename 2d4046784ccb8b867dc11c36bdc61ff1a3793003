@@ -22,6 +22,30 @@
       },
       "revId": "2d4046784ccb8b867dc11c36bdc61ff1a3793003",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b8e1fc4_d4f38d0d",
+        "filename": "core/board_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-05-26T10:59:57Z",
+      "side": 1,
+      "message": "Done. (I just learned that\n\n  foo\u003d\n  if $foo; then :; fi\n\nworks in bash, while\n\n  if ; then :; fi\n\nis a syntax error.)",
+      "parentUuid": "b70d6d52_22e033d0",
+      "range": {
+        "startLine": 779,
+        "startChar": 29,
+        "endLine": 779,
+        "endChar": 34
+      },
+      "revId": "2d4046784ccb8b867dc11c36bdc61ff1a3793003",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
