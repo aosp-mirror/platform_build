@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "733e15b8_29dab310",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-05-26T17:12:25Z",
+      "side": 1,
+      "message": "nit: \"nextgen\" will become dated and could be confusing for the next fingerprint revision.  Something like ro.vendor.build.fingerprint_has_digest or fingerprint.v2 would stay accurate.",
+      "range": {
+        "startLine": 318,
+        "startChar": 20,
+        "endLine": 318,
+        "endChar": 27
+      },
+      "revId": "5830746a0aa9232270c5347d6d2cfd47f1a2b15d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
