@@ -52,7 +52,6 @@ PRODUCT_PACKAGES += \
     com.android.adbd \
     com.android.appsearch \
     com.android.conscrypt \
-    com.android.cronet \
     com.android.extservices \
     com.android.geotz \
     com.android.i18n \
