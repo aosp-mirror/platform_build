@@ -70,8 +70,8 @@ VNDK-core: android.hardware.graphics.allocator@4.0.so
 VNDK-core: android.hardware.graphics.bufferqueue@1.0.so
 VNDK-core: android.hardware.graphics.bufferqueue@2.0.so
 VNDK-core: android.hardware.health.storage-V1-ndk_platform.so
-VNDK-core: android.hardware.identity-V2-ndk_platform.so
-VNDK-core: android.hardware.keymaster-V2-ndk_platform.so
+VNDK-core: android.hardware.identity-V3-ndk_platform.so
+VNDK-core: android.hardware.keymaster-V3-ndk_platform.so
 VNDK-core: android.hardware.light-V1-ndk_platform.so
 VNDK-core: android.hardware.media.bufferpool@2.0.so
 VNDK-core: android.hardware.media.omx@1.0.so
@@ -79,7 +79,7 @@ VNDK-core: android.hardware.media@1.0.so
 VNDK-core: android.hardware.memtrack-V1-ndk_platform.so
 VNDK-core: android.hardware.memtrack@1.0.so
 VNDK-core: android.hardware.oemlock-V1-ndk_platform.so
-VNDK-core: android.hardware.power-V1-ndk_platform.so
+VNDK-core: android.hardware.power-V2-ndk_platform.so
 VNDK-core: android.hardware.power.stats-V1-ndk_platform.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk_platform.so
 VNDK-core: android.hardware.security.keymint-V1-ndk_platform.so
@@ -87,7 +87,7 @@ VNDK-core: android.hardware.security.secureclock-V1-ndk_platform.so
 VNDK-core: android.hardware.security.sharedsecret-V1-ndk_platform.so
 VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
-VNDK-core: android.hardware.vibrator-V1-ndk_platform.so
+VNDK-core: android.hardware.vibrator-V2-ndk_platform.so
 VNDK-core: android.hardware.weaver-V1-ndk_platform.so
 VNDK-core: android.hidl.token@1.0-utils.so
 VNDK-core: android.hidl.token@1.0.so
