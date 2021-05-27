@@ -167,6 +167,13 @@ ifneq ($(filter address,$(my_sanitize)),)
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
 
+# Disable memtag for host targets. Host executables in AndroidMk files are
+# deprecated, but some partners still have them floating around.
+ifdef LOCAL_IS_HOST_MODULE
+  my_sanitize := $(filter-out memtag_heap,$(my_sanitize))
+  my_sanitize_diag := $(filter-out memtag_heap,$(my_sanitize_diag))
+endif
+
 # Disable sanitizers which need the UBSan runtime for host targets.
 ifdef LOCAL_IS_HOST_MODULE
   my_sanitize := $(filter-out cfi,$(my_sanitize))
