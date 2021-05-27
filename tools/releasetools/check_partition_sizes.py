@@ -223,9 +223,15 @@ class DynamicPartitionSizeChecker(object):
       error_limit = Expression(
           "BOARD_SUPER_PARTITION_ERROR_LIMIT{}".format(size_limit_suffix),
           int(info_dict["super_partition_error_limit"]) // num_slots)
-      self._CheckSumOfPartitionSizes(
-          max_size, info_dict["dynamic_partition_list"].strip().split(),
-          warn_limit, error_limit)
+      partitions_in_super = info_dict["dynamic_partition_list"].strip().split()
+      # In the vab case, factory OTA will allocate space on super to install
+      # the system_other partition. So add system_other to the partition list.
+      if DeviceType.Get(self.info_dict) == DeviceType.VAB and (
+          "system_other_image" in info_dict or
+          "system_other_image_size" in info_dict):
+        partitions_in_super.append("system_other")
+      self._CheckSumOfPartitionSizes(max_size, partitions_in_super,
+                                     warn_limit, error_limit)
 
     groups = info_dict.get("super_partition_groups", "").strip().split()
 
