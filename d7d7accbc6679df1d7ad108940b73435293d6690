@@ -190,6 +190,30 @@
       },
       "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4bc3bf37_7a20552f",
+        "filename": "core/main.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 1249,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-05-27T07:44:26Z",
+      "side": 1,
+      "message": "I see, you\u0027re saying PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_xxx is not set when using RBC_CONFIG?\n\nIf so, I think you should just set them when you set the PRODUCT_xxx variables.",
+      "parentUuid": "a3f0c268_96fd0544",
+      "range": {
+        "startLine": 1247,
+        "startChar": 0,
+        "endLine": 1249,
+        "endChar": 5
+      },
+      "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
