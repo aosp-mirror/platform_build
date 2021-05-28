@@ -1603,7 +1603,7 @@ $(if $(filter $(2),system),\
     $(if $(BOARD_SYSTEMIMAGE_PARTITION_SIZE),$(hide) echo "system_size=$(BOARD_SYSTEMIMAGE_PARTITION_SIZE)" >> $(1))
     $(if $(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE),$(hide) echo "system_other_size=$(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE)" >> $(1))
     $(if $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "system_fs_type=$(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "system_fs_compress=$(BOARD_SYSTEMIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
+    $(if $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "system_f2fs_compress=$(BOARD_SYSTEMIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
     $(if $(BOARD_SYSTEMIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "system_f2fs_sldc_flags=$(BOARD_SYSTEMIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
     $(if $(BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "system_extfs_inode_count=$(BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
     $(if $(BOARD_SYSTEMIMAGE_EXTFS_RSV_PCT),$(hide) echo "system_extfs_rsv_pct=$(BOARD_SYSTEMIMAGE_EXTFS_RSV_PCT)" >> $(1))
@@ -1638,6 +1638,8 @@ $(if $(filter $(2),cache),\
 )
 $(if $(filter $(2),vendor),\
     $(if $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "vendor_fs_type=$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
+    $(if $(BOARD_VENDORIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "vendor_f2fs_compress=$(BOARD_VENDORIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
+    $(if $(BOARD_VENDORIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "vendor_f2fs_sldc_flags=$(BOARD_VENDORIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
     $(if $(BOARD_VENDORIMAGE_EXTFS_INODE_COUNT),$(hide) echo "vendor_extfs_inode_count=$(BOARD_VENDORIMAGE_EXTFS_INODE_COUNT)" >> $(1))
     $(if $(BOARD_VENDORIMAGE_EXTFS_RSV_PCT),$(hide) echo "vendor_extfs_rsv_pct=$(BOARD_VENDORIMAGE_EXTFS_RSV_PCT)" >> $(1))
     $(if $(BOARD_VENDORIMAGE_PARTITION_SIZE),$(hide) echo "vendor_size=$(BOARD_VENDORIMAGE_PARTITION_SIZE)" >> $(1))
@@ -1653,6 +1655,8 @@ $(if $(filter $(2),vendor),\
 )
 $(if $(filter $(2),product),\
     $(if $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "product_fs_type=$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
+    $(if $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "product_f2fs_compress=$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
+    $(if $(BOARD_PRODUCTIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "product_f2fs_sldc_flags=$(BOARD_PRODUCTIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
     $(if $(BOARD_PRODUCTIMAGE_EXTFS_INODE_COUNT),$(hide) echo "product_extfs_inode_count=$(BOARD_PRODUCTIMAGE_EXTFS_INODE_COUNT)" >> $(1))
     $(if $(BOARD_PRODUCTIMAGE_EXTFS_RSV_PCT),$(hide) echo "product_extfs_rsv_pct=$(BOARD_PRODUCTIMAGE_EXTFS_RSV_PCT)" >> $(1))
     $(if $(BOARD_PRODUCTIMAGE_PARTITION_SIZE),$(hide) echo "product_size=$(BOARD_PRODUCTIMAGE_PARTITION_SIZE)" >> $(1))
@@ -1668,6 +1672,8 @@ $(if $(filter $(2),product),\
 )
 $(if $(filter $(2),system_ext),\
     $(if $(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "system_ext_fs_type=$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
+    $(if $(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "system_ext_f2fs_compress=$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
+    $(if $(BOARD_SYSTEM_EXTIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "system_ext_f2fs_sldc_flags=$(BOARD_SYSTEM_EXTIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
     $(if $(BOARD_SYSTEM_EXTIMAGE_EXTFS_INODE_COUNT),$(hide) echo "system_ext_extfs_inode_count=$(BOARD_SYSTEM_EXTIMAGE_EXTFS_INODE_COUNT)" >> $(1))
     $(if $(BOARD_SYSTEM_EXTIMAGE_EXTFS_RSV_PCT),$(hide) echo "system_ext_extfs_rsv_pct=$(BOARD_SYSTEM_EXTIMAGE_EXTFS_RSV_PCT)" >> $(1))
     $(if $(BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE),$(hide) echo "system_ext_size=$(BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE)" >> $(1))
@@ -1697,6 +1703,8 @@ $(if $(filter $(2),odm),\
 )
 $(if $(filter $(2),vendor_dlkm),\
     $(if $(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "vendor_dlkm_fs_type=$(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
+    $(if $(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "vendor_dlkm_f2fs_compress=$(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
+    $(if $(BOARD_VENDOR_DLKMIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "vendor_dlkm_f2fs_sldc_flags=$(BOARD_VENDOR_DLKMIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
     $(if $(BOARD_VENDOR_DLKMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "vendor_dlkm_extfs_inode_count=$(BOARD_VENDOR_DLKMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
     $(if $(BOARD_VENDOR_DLKMIMAGE_EXTFS_RSV_PCT),$(hide) echo "vendor_dlkm_extfs_rsv_pct=$(BOARD_VENDOR_DLKMIMAGE_EXTFS_RSV_PCT)" >> $(1))
     $(if $(BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE),$(hide) echo "vendor_dlkm_size=$(BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE)" >> $(1))
@@ -3408,7 +3416,7 @@ endif # BOARD_PREBUILT_PVMFWIMAGE
 # $(INSTALLED_VENDORIMAGE_TARGET)" for "system vendor".
 # (1): list of partitions like "system", "vendor" or "system product system_ext".
 define images-for-partitions
-$(strip $(foreach item,$(1),$(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET)))
+$(strip $(foreach item,$(1),$(if $(filter $(item),system_other),$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET))))
 endef
 
 # -----------------------------------------------------------------
@@ -4137,13 +4145,20 @@ ifeq (,$(TARGET_BUILD_UNBUNDLED))
 
 ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 
+PARTITIONS_AND_OTHER_IN_SUPER := $(BOARD_SUPER_PARTITION_PARTITION_LIST)
+
+# Add the system other image to the misc_info. Because factory ota may install system_other to the super partition.
+ifdef BUILDING_SYSTEM_OTHER_IMAGE
+PARTITIONS_AND_OTHER_IN_SUPER += system_other
+endif # BUILDING_SYSTEM_OTHER_IMAGE
+
 # $(1): misc_info.txt
 # #(2): optional log file
 define check-all-partition-sizes-target
   mkdir -p $(dir $(1))
   rm -f $(1)
   $(call dump-super-image-info, $(1))
-  $(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+  $(foreach partition,$(PARTITIONS_AND_OTHER_IN_SUPER), \
     echo "$(partition)_image="$(call images-for-partitions,$(partition)) >> $(1);)
   $(CHECK_PARTITION_SIZES) $(if $(2),--logfile $(2),-v) $(1)
 endef
@@ -4154,7 +4169,7 @@ $(call dist-for-goals, droid_targets, $(check_all_partition_sizes_log))
 
 $(check_all_partition_sizes_log): \
     $(CHECK_PARTITION_SIZES) \
-    $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
+    $(call images-for-partitions,$(PARTITIONS_AND_OTHER_IN_SUPER))
 	$(call check-all-partition-sizes-target, \
 	  $(call intermediates-dir-for,PACKAGING,check-all-partition-sizes)/misc_info.txt, \
 	  $@)
