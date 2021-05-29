@@ -1710,6 +1710,38 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   return data
 
 
+def _SignBootableImage(image_path, prebuilt_name, partition_name,
+                       info_dict=None):
+  """Performs AVB signing for a prebuilt boot.img.
+
+  Args:
+    image_path: The full path of the image, e.g., /path/to/boot.img.
+    prebuilt_name: The prebuilt image name, e.g., boot.img, boot-5.4-gz.img,
+        boot-5.10.img, recovery.img.
+    partition_name: The partition name, e.g., 'boot' or 'recovery'.
+    info_dict: The information dict read from misc_info.txt.
+  """
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  # AVB: if enabled, calculate and add hash to boot.img or recovery.img.
+  if info_dict.get("avb_enable") == "true":
+    avbtool = info_dict["avb_avbtool"]
+    if partition_name == "recovery":
+      part_size = info_dict["recovery_size"]
+    else:
+      part_size = info_dict[prebuilt_name.replace(".img", "_size")]
+
+    cmd = [avbtool, "add_hash_footer", "--image", image_path,
+           "--partition_size", str(part_size), "--partition_name",
+           partition_name]
+    AppendAVBSigningArgs(cmd, partition_name)
+    args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
+    if args and args.strip():
+      cmd.extend(shlex.split(args))
+    RunAndCheckOutput(cmd)
+
+
 def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
                      info_dict=None, two_step_image=False):
   """Return a File object with the desired bootable image.
@@ -1717,6 +1749,9 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name 'prebuilt_name',
   otherwise look for it under 'unpack_dir'/IMAGES, otherwise construct it from
   the source files in 'unpack_dir'/'tree_subdir'."""
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
 
   prebuilt_path = os.path.join(unpack_dir, "BOOTABLE_IMAGES", prebuilt_name)
   if os.path.exists(prebuilt_path):
@@ -1728,10 +1763,16 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
     logger.info("using prebuilt %s from IMAGES...", prebuilt_name)
     return File.FromLocalFile(name, prebuilt_path)
 
-  logger.info("building image from target_files %s...", tree_subdir)
+  prebuilt_path = os.path.join(unpack_dir, "PREBUILT_IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    logger.info("Re-signing prebuilt %s from PREBUILT_IMAGES...", prebuilt_name)
+    signed_img = MakeTempFile()
+    shutil.copy(prebuilt_path, signed_img)
+    partition_name = tree_subdir.lower()
+    _SignBootableImage(signed_img, prebuilt_name, partition_name, info_dict)
+    return File.FromLocalFile(name, signed_img)
 
-  if info_dict is None:
-    info_dict = OPTIONS.info_dict
+  logger.info("building image from target_files %s...", tree_subdir)
 
   # With system_root_image == "true", we don't pack ramdisk into the boot image.
   # Unless "recovery_as_boot" is specified, in which case we carry the ramdisk
