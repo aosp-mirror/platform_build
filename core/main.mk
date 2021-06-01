@@ -311,6 +311,13 @@ ADDITIONAL_VENDOR_PROPERTIES += \
 endif
 endif
 
+# Set the flag in vendor. So VTS would know if the new fingerprint format is in use when
+# the system images are replaced by GSI.
+ifeq ($(BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT),true)
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.vendor.build.fingerprint_has_digest=1
+endif
+
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.vendor.build.security_patch=$(VENDOR_SECURITY_PATCH) \
     ro.product.board=$(TARGET_BOOTLOADER_BOARD_NAME) \
