@@ -759,6 +759,12 @@ ifeq (,$(test_config))
 endif
 is_instrumentation_test :=
 
+# Currently this flag variable is true only for the `android_test_helper_app` type module
+# which should not have any .config file
+ifeq (true, $(LOCAL_DISABLE_TEST_CONFIG))
+  test_config :=
+endif
+
 # Make sure we only add the files once for multilib modules.
 ifdef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
   # Sync the auto_test_config value for multilib modules.
