@@ -357,6 +357,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
     if (needs_compress or prop_dict.get("system_fs_compress") == "true"):
       build_command.append("--compression")
     if (prop_dict.get("system_fs_compress") == "true"):
+      build_command.append("--readonly")
       build_command.append("--sldc")
       if (prop_dict.get("system_f2fs_sldc_flags") == None):
         build_command.append(str(0))
