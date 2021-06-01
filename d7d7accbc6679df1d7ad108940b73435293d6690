@@ -238,6 +238,30 @@
       },
       "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd2dcfca_6fb3c23b",
+        "filename": "core/main.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 1249,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-06-01T18:20:00Z",
+      "side": 1,
+      "message": "hmm ok but why? seems easy, even if we don\u0027t set it for other products than $(INTERNAL_PRODUCT)?\n\n(what you\u0027re doing atm just seems more complicated)",
+      "parentUuid": "07784790_d5c73fb7",
+      "range": {
+        "startLine": 1247,
+        "startChar": 0,
+        "endLine": 1249,
+        "endChar": 5
+      },
+      "revId": "d7d7accbc6679df1d7ad108940b73435293d6690",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
