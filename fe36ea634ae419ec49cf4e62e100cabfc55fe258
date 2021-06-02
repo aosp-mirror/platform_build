@@ -117,6 +117,30 @@
       },
       "revId": "fe36ea634ae419ec49cf4e62e100cabfc55fe258",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82887e9e_806f7a79",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 5085,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-06-02T16:53:33Z",
+      "side": 1,
+      "message": "Internal tree has it in vendor/mediatek/vendor/common/BoardConfig.mk",
+      "parentUuid": "eb3f1c38_65faeee5",
+      "range": {
+        "startLine": 5085,
+        "startChar": 31,
+        "endLine": 5085,
+        "endChar": 56
+      },
+      "revId": "fe36ea634ae419ec49cf4e62e100cabfc55fe258",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
