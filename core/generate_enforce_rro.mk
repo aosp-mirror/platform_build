@@ -29,8 +29,11 @@ $(rro_android_manifest_file): build/make/tools/generate-enforce-rro-android-mani
 
 LOCAL_PATH:= $(intermediates)
 
+# TODO(b/187404676): remove this condition when the prebuilt for packges exporting resource exists.
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
 ifeq ($(enforce_rro_use_res_lib),true)
   LOCAL_RES_LIBRARIES := $(enforce_rro_source_module)
+endif
 endif
 
 LOCAL_FULL_MANIFEST_FILE := $(rro_android_manifest_file)
@@ -45,8 +48,9 @@ else ifeq (vendor,$(enforce_rro_partition))
 else
   $(error Unsupported partition. Want: [vendor/product] Got: [$(enforce_rro_partition)])
 endif
-
-ifneq (,$(LOCAL_RES_LIBRARIES))
+ifneq (,$(TARGET_BUILD_UNBUNDLED))
+  LOCAL_SDK_VERSION := current
+else ifneq (,$(LOCAL_RES_LIBRARIES))
   # Technically we are linking against the app (if only to grab its resources),
   # and because it's potentially not building against the SDK, we can't either.
   LOCAL_PRIVATE_PLATFORM_APIS := true
