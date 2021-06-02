@@ -1166,14 +1166,12 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     else:
       logger.warning("Cannot find care map file in target_file package")
 
-  # Copy apex_info.pb over to generated OTA package.
-  try:
-    apex_info_entry = target_zip.getinfo("META/apex_info.pb")
-    with target_zip.open(apex_info_entry, "r") as zfp:
-      common.ZipWriteStr(output_zip, "apex_info.pb", zfp.read(),
-                         compress_type=zipfile.ZIP_STORED)
-  except KeyError:
-    logger.warning("target_file doesn't contain apex_info.pb %s", target_file)
+  # Add the source apex version for incremental ota updates, and write the
+  # result apex info to the ota package.
+  ota_apex_info = ota_utils.ConstructOtaApexInfo(target_zip, source_file)
+  if ota_apex_info is not None:
+    common.ZipWriteStr(output_zip, "apex_info.pb", ota_apex_info,
+                       compress_type=zipfile.ZIP_STORED)
 
   common.ZipClose(target_zip)
 
