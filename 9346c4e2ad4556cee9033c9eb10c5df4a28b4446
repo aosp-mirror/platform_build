@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2bee27a2_6ad198d8",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2021-06-03T10:26:41Z",
+      "side": 1,
+      "message": "why is this needed?",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 21
+      },
+      "revId": "9346c4e2ad4556cee9033c9eb10c5df4a28b4446",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
