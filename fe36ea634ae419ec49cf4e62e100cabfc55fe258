@@ -141,6 +141,30 @@
       },
       "revId": "fe36ea634ae419ec49cf4e62e100cabfc55fe258",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d016d4dd_7099052f",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 5085,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-06-03T14:08:21Z",
+      "side": 1,
+      "message": "so we could strip in board_config.mk after parsing the BC I guess?",
+      "parentUuid": "82887e9e_806f7a79",
+      "range": {
+        "startLine": 5085,
+        "startChar": 31,
+        "endLine": 5085,
+        "endChar": 56
+      },
+      "revId": "fe36ea634ae419ec49cf4e62e100cabfc55fe258",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
