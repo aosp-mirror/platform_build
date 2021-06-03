@@ -46,6 +46,30 @@
       },
       "revId": "9346c4e2ad4556cee9033c9eb10c5df4a28b4446",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d2a1e61_e73d8a0e",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2021-06-03T10:46:56Z",
+      "side": 1,
+      "message": "Thanks for the clarification. I didn\u0027t notice that the file is generated here.",
+      "parentUuid": "99c53fad_31bae127",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 21
+      },
+      "revId": "9346c4e2ad4556cee9033c9eb10c5df4a28b4446",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
