@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8906f611_012394ed",
+        "filename": "tools/releasetools/care_map_pb2.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-06-04T19:10:45Z",
+      "side": 1,
+      "message": "can you write a genrule in android.bp to compute this file from proto? So we don\u0027t need update the file manually. You can do it in a separate cl.",
+      "revId": "2f6675819db5b27b33371dee617abac1a468c2f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd880117_0c0b317c",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 842,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-06-04T19:10:45Z",
+      "side": 1,
+      "message": "seems better to make a new object... in case we forget to clear some fields in the old ones.",
+      "range": {
+        "startLine": 842,
+        "startChar": 0,
+        "endLine": 842,
+        "endChar": 31
+      },
+      "revId": "2f6675819db5b27b33371dee617abac1a468c2f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2bf2f3a1_4ee5146e",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 856,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-06-04T19:10:45Z",
+      "side": 1,
+      "message": "remove?",
+      "range": {
+        "startLine": 856,
+        "startChar": 28,
+        "endLine": 856,
+        "endChar": 46
+      },
+      "revId": "2f6675819db5b27b33371dee617abac1a468c2f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

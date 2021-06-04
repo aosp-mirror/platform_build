@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9198402_3871de9f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1495,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-06-04T19:10:45Z",
+      "side": 0,
+      "message": "do we call finally after exit?",
+      "range": {
+        "startLine": 1495,
+        "startChar": 0,
+        "endLine": 1495,
+        "endChar": 15
+      },
+      "revId": "041770b553a794f1bf955ef231d6c4c3bc1b5a16",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
