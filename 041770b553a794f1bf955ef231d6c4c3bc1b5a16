@@ -22,6 +22,30 @@
       },
       "revId": "041770b553a794f1bf955ef231d6c4c3bc1b5a16",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "efce088d_e38b8039",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1495,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-06-04T20:18:01Z",
+      "side": 0,
+      "message": "Looks like it would... NVM, let me revert this. IF os.exit is called, finally won\u0027t be executed.",
+      "parentUuid": "c9198402_3871de9f",
+      "range": {
+        "startLine": 1495,
+        "startChar": 0,
+        "endLine": 1495,
+        "endChar": 15
+      },
+      "revId": "041770b553a794f1bf955ef231d6c4c3bc1b5a16",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
