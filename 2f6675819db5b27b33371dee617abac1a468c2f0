@@ -83,6 +83,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "303d2cd6_a65d51f5",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 842,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-06-04T20:13:05Z",
+      "side": 1,
+      "message": "meh, we need to explicit the new fields anyway",
+      "parentUuid": "4402581b_beef00ef",
+      "range": {
+        "startLine": 842,
+        "startChar": 0,
+        "endLine": 842,
+        "endChar": 31
+      },
+      "revId": "2f6675819db5b27b33371dee617abac1a468c2f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2bf2f3a1_4ee5146e",
