@@ -18,6 +18,24 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "86143f9f_d9b9dc4e",
+        "filename": "tools/releasetools/care_map_pb2.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-06-04T19:55:11Z",
+      "side": 1,
+      "message": "Sure",
+      "parentUuid": "8906f611_012394ed",
+      "revId": "2f6675819db5b27b33371dee617abac1a468c2f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bd880117_0c0b317c",
@@ -41,6 +59,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4402581b_beef00ef",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 842,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-06-04T19:55:11Z",
+      "side": 1,
+      "message": "Caremap protobuf messages doesn\u0027t have other fields, if we added some in the future, we likely want to inherit them for generated partial target file?",
+      "parentUuid": "bd880117_0c0b317c",
+      "range": {
+        "startLine": 842,
+        "startChar": 0,
+        "endLine": 842,
+        "endChar": 31
+      },
+      "revId": "2f6675819db5b27b33371dee617abac1a468c2f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2bf2f3a1_4ee5146e",
@@ -54,6 +96,30 @@
       "writtenOn": "2021-06-04T19:10:45Z",
       "side": 1,
       "message": "remove?",
+      "range": {
+        "startLine": 856,
+        "startChar": 28,
+        "endLine": 856,
+        "endChar": 46
+      },
+      "revId": "2f6675819db5b27b33371dee617abac1a468c2f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "19c4f5f0_cadd930a",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 856,
+      "author": {
+        "id": 1710792
+      },
+      "writtenOn": "2021-06-04T19:55:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2bf2f3a1_4ee5146e",
       "range": {
         "startLine": 856,
         "startChar": 28,
