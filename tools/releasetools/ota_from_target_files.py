@@ -237,6 +237,7 @@ import subprocess
 import sys
 import zipfile
 
+import care_map_pb2
 import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
@@ -832,6 +833,17 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
   with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
     common.ZipWriteStr(partial_target_zip, 'META/ab_partitions.txt',
                        '\n'.join(ab_partitions))
+    CARE_MAP_ENTRY = "META/care_map.pb"
+    if CARE_MAP_ENTRY in input_zip.namelist():
+      caremap = care_map_pb2.CareMap()
+      caremap.ParseFromString(input_zip.read(CARE_MAP_ENTRY))
+      filtered = [
+          part for part in caremap.partitions if part.name in ab_partitions]
+      del caremap.partitions[:]
+      caremap.partitions.extend(filtered)
+      common.ZipWriteStr(partial_target_zip, CARE_MAP_ENTRY,
+                         caremap.SerializeToString())
+
     for info_file in ['META/misc_info.txt', DYNAMIC_PARTITION_INFO]:
       if info_file not in input_zip.namelist():
         logger.warning('Cannot find %s in input zipfile', info_file)
@@ -841,7 +853,8 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
           content, lambda p: p in ab_partitions)
       common.ZipWriteStr(partial_target_zip, info_file, modified_info)
 
-    # TODO(xunchang) handle 'META/care_map.pb', 'META/postinstall_config.txt'
+    # TODO(xunchang) handle META/postinstall_config.txt'
+
   common.ZipClose(partial_target_zip)
 
   return partial_target_file
