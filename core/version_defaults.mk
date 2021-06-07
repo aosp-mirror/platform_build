@@ -93,7 +93,7 @@ PLATFORM_VERSION_LAST_STABLE := 12
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.SP1A := S
+PLATFORM_VERSION_CODENAME.SP1A := REL
 
 ifndef PLATFORM_VERSION_CODENAME
   PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
