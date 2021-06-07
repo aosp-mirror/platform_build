@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "48600745_125b415d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-06-07T10:59:11Z",
+      "side": 1,
+      "message": "This CL cannot pass mixed flash presubmit, e.g.,\n\ngsi/mixed_flash/boot_test/vendor_img_qt_pixel3 on aosp_arm64-userdebug\n\n\nWill need to change targetprep in TradeFed: b/189990989#comment3",
+      "revId": "9346c4e2ad4556cee9033c9eb10c5df4a28b4446",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2bee27a2_6ad198d8",
