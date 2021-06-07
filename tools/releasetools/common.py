@@ -276,6 +276,9 @@ def Run(args, verbose=None, **kwargs):
     args = args[:]
     args[0] = FindHostToolPath(args[0])
 
+  if verbose is None:
+    verbose = OPTIONS.verbose
+
   # Don't log any if caller explicitly says so.
   if verbose:
     logger.info("  Running: \"%s\"", " ".join(args))
