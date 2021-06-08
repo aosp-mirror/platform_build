@@ -80,6 +80,8 @@ warn_patterns = [
         [r".*: warning: value size does not match register size specified by the constraint and modifier"]),
     asm('IT instruction is deprecated',
         [r".*: warning: applying IT instruction .* is deprecated"]),
+    asm('section flags ignored',
+        [r".*: warning: section flags ignored on section redeclaration"]),
     asm('setjmp/longjmp/vfork changed binding',
         [r".*: warning: .*(setjmp|longjmp|vfork) changed binding to .*"]),
     # NDK warnings
