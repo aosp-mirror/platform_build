@@ -569,3 +569,45 @@ def SignOutput(temp_zip_name, output_zip_name):
 
   SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw,
            whole_file=True)
+
+
+def ConstructOtaApexInfo(target_zip, source_file=None):
+  """If applicable, add the source version to the apex info."""
+
+  def _ReadApexInfo(input_zip):
+    if "META/apex_info.pb" not in input_zip.namelist():
+      logger.warning("target_file doesn't contain apex_info.pb %s", input_zip)
+      return None
+
+    with input_zip.open("META/apex_info.pb", "r") as zfp:
+      return zfp.read()
+
+  target_apex_string = _ReadApexInfo(target_zip)
+  # Return early if the target apex info doesn't exist or is empty.
+  if not target_apex_string:
+    return target_apex_string
+
+  # If the source apex info isn't available, just return the target info
+  if not source_file:
+    return target_apex_string
+
+  with zipfile.ZipFile(source_file, "r", allowZip64=True) as source_zip:
+    source_apex_string = _ReadApexInfo(source_zip)
+  if not source_apex_string:
+    return target_apex_string
+
+  source_apex_proto = ota_metadata_pb2.ApexMetadata()
+  source_apex_proto.ParseFromString(source_apex_string)
+  source_apex_versions = {apex.package_name: apex.version for apex in
+                          source_apex_proto.apex_info}
+
+  # If the apex package is available in the source build, initialize the source
+  # apex version.
+  target_apex_proto = ota_metadata_pb2.ApexMetadata()
+  target_apex_proto.ParseFromString(target_apex_string)
+  for target_apex in target_apex_proto.apex_info:
+    name = target_apex.package_name
+    if name in source_apex_versions:
+      target_apex.source_version = source_apex_versions[name]
+
+  return target_apex_proto.SerializeToString()
