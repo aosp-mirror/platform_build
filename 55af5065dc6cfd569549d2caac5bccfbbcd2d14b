@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8daa7c53_bbdd23a0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1644679
+      },
+      "writtenOn": "2021-06-09T23:11:51Z",
+      "side": 1,
+      "message": "Looks like presubmit infra is in bad shape right now. ",
+      "revId": "55af5065dc6cfd569549d2caac5bccfbbcd2d14b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
