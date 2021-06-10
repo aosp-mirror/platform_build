@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "75095a30_73070469",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1755,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2021-06-10T11:04:13Z",
+      "side": 1,
+      "message": "I don\u0027t think duplicating the list is reasonable. They\u0027ll get out of sync and one of them will be wrong almost immediately. Can you put the shared items into a variable and reuse the variable?",
+      "parentUuid": "62a6baf4_0d661ca9",
+      "range": {
+        "startLine": 1715,
+        "startChar": 0,
+        "endLine": 1755,
+        "endChar": 33
+      },
+      "revId": "d0a66e4cc01b21e6013e9f74a44acaecc718d283",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "66d6f7ad_0a116407",
         "filename": "core/main.mk",
         "patchSetId": 1
