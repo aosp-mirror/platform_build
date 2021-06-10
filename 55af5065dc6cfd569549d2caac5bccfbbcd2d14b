@@ -18,6 +18,23 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3666b994_31af8956",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1644679
+      },
+      "writtenOn": "2021-06-10T18:27:45Z",
+      "side": 1,
+      "message": "Retrying presubmit. omg/35377 has an update saying infra should be better now than it was.",
+      "revId": "55af5065dc6cfd569549d2caac5bccfbbcd2d14b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "61f7a0d7_7c89d75f",
