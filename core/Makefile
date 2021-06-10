@@ -4257,6 +4257,7 @@ INTERNAL_OTATOOLS_MODULES := \
   e2fsdroid \
   fc_sort \
   fec \
+  fsck.f2fs \
   fs_config \
   generate_verity_key \
   host_init_verifier \
