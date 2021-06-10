@@ -33,9 +33,7 @@ test_tools := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/tradefed-test-framework.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/loganalysis.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util-tests.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-common-util-tests.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-tradefed-tests.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-tradefed.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed).jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed)-tests.jar \
   $(HOST_OUT_EXECUTABLES)/$(test_suite_tradefed) \
