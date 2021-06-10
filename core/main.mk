@@ -311,6 +311,13 @@ ADDITIONAL_VENDOR_PROPERTIES += \
 endif
 endif
 
+# Set build prop. This prop is read by ota_from_target_files when generating OTA,
+# to decide if VABC should be disabled.
+ifeq ($(BOARD_DONT_USE_VABC_OTA),true)
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.vendor.build.dont_use_vabc=true
+endif
+
 # Set the flag in vendor. So VTS would know if the new fingerprint format is in use when
 # the system images are replaced by GSI.
 ifeq ($(BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT),true)
