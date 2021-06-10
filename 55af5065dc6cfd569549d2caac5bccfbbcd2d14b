@@ -33,6 +33,24 @@
       "message": "This adds a dependency but doesn\u0027t change the rule that builds BUILT_TARGET_FILES_PACKAGE, how does the new file get into the package?",
       "revId": "55af5065dc6cfd569549d2caac5bccfbbcd2d14b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c9e29bd_74ef499a",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4775,
+      "author": {
+        "id": 1150933
+      },
+      "writtenOn": "2021-06-10T02:13:33Z",
+      "side": 1,
+      "message": "Just guessing here: Line 4980 maybe?\n\ncp $(INTERNAL_VENDOR_BOOTCONFIG_TARGET) $(zip_root)/VENDOR_BOOT/vendor_bootconfig\n\nI believe it\u0027s just the dependency that is missing.",
+      "parentUuid": "61f7a0d7_7c89d75f",
+      "revId": "55af5065dc6cfd569549d2caac5bccfbbcd2d14b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
