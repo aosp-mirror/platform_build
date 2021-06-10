@@ -16,6 +16,23 @@
       "message": "Looks like presubmit infra is in bad shape right now. ",
       "revId": "55af5065dc6cfd569549d2caac5bccfbbcd2d14b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "61f7a0d7_7c89d75f",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4775,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-06-10T01:49:21Z",
+      "side": 1,
+      "message": "This adds a dependency but doesn\u0027t change the rule that builds BUILT_TARGET_FILES_PACKAGE, how does the new file get into the package?",
+      "revId": "55af5065dc6cfd569549d2caac5bccfbbcd2d14b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
