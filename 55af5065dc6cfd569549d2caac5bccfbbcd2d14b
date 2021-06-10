@@ -69,6 +69,24 @@
       "parentUuid": "4c9e29bd_74ef499a",
       "revId": "55af5065dc6cfd569549d2caac5bccfbbcd2d14b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "919800a7_420320eb",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4775,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-06-10T15:51:30Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "bd473d0e_dc5b0671",
+      "revId": "55af5065dc6cfd569549d2caac5bccfbbcd2d14b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
