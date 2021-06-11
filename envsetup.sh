@@ -331,15 +331,15 @@ function setpaths()
 
 function bazel()
 {
-    local T="$(gettop)"
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP."
-        return
+    if which bazel &>/dev/null; then
+        >&2 echo "NOTE: bazel() function sourced from Android's envsetup.sh is being used instead of $(which bazel)"
+        >&2 echo
     fi
 
-    if which bazel &>/dev/null; then
-        >&2 echo "NOTE: bazel() function sourced from envsetup.sh is being used instead of $(which bazel)"
-        >&2 echo
+    local T="$(gettop)"
+    if [ ! "$T" ]; then
+        >&2 echo "Couldn't locate the top of the Android tree. Try setting TOP. This bazel() function cannot be used outside of the AOSP directory."
+        return
     fi
 
     "$T/tools/bazel" "$@"
