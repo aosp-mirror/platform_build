@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65128820_228d1ad4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-06-11T06:28:16Z",
+      "side": 1,
+      "message": "add a comment saying the prop is owned by vendor(oems)\n\nAlso add the prop to system/sepolicy/private/property_contexts",
+      "revId": "130f0878a80c9662422b2d8b3fdb3a8542df898e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8aeec026_90c4c7a5",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-06-11T06:28:16Z",
+      "side": 1,
+      "message": "how about merge the logic into is_vabc?",
+      "range": {
+        "startLine": 457,
+        "startChar": 6,
+        "endLine": 457,
+        "endChar": 28
+      },
+      "revId": "130f0878a80c9662422b2d8b3fdb3a8542df898e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
