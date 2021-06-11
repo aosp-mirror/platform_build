@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f5fa929f_cc54fb65",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1858,
+      "author": {
+        "id": 1598676
+      },
+      "writtenOn": "2021-06-11T18:58:37Z",
+      "side": 1,
+      "message": "TARGET_BUILD_UNBUNDLED_IMAGE?",
+      "range": {
+        "startLine": 1858,
+        "startChar": 34,
+        "endLine": 1858,
+        "endChar": 56
+      },
+      "revId": "02aea3c3db84bf509ed66328a7fd09fe9621acac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
