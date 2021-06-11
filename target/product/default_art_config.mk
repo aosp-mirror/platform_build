@@ -49,7 +49,7 @@ PRODUCT_BOOT_JARS += \
 PRODUCT_BOOT_JARS += \
     com.android.i18n:core-icu4j
 
-# Updatable APEX jars. Keep the list sorted by module names and then library names.
+# Updatable APEX boot jars. Keep the list sorted by module names and then library names.
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
     com.android.conscrypt:conscrypt \
@@ -64,6 +64,13 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.tethering:framework-connectivity \
     com.android.tethering:framework-tethering \
     com.android.wifi:framework-wifi
+
+# Updatable APEX system server jars. Keep the list sorted by module names and then library names.
+PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
+    com.android.appsearch:service-appsearch \
+    com.android.media:service-media-s \
+    com.android.permission:service-permission \
+    com.android.geotz:geotz
 
 # Minimal configuration for running dex2oat (default argument values).
 # PRODUCT_USES_DEFAULT_ART_CONFIG must be true to enable boot image compilation.
