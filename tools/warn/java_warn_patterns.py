@@ -807,6 +807,8 @@ warn_patterns = [
                 [r".*: warning: \[path\] bad path element .*\.jar"]),
     java_medium('Supported version from annotation processor',
                 [r".*: warning: Supported source version .+ from annotation processor"]),
+    java_medium('Schema export directory is not provided',
+                [r".*\.(java|kt):.*: warning: Schema export directory is not provided"]),
 ]
 
 compile_patterns(warn_patterns)
