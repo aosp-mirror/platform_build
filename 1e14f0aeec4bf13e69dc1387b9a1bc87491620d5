@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2010320_ac6a8779",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2021-06-12T04:58:44Z",
+      "side": 1,
+      "message": "Sadly this looks like the simplest approach for P21 folks to temporarily disable vabc. Otherwise, the change of config for incremental OTAs live in google3, and that config change take weeks to make effect. ",
+      "revId": "1e14f0aeec4bf13e69dc1387b9a1bc87491620d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
