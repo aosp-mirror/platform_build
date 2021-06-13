@@ -16,6 +16,52 @@
       "message": "Sadly this looks like the simplest approach for P21 folks to temporarily disable vabc. Otherwise, the change of config for incremental OTAs live in google3, and that config change take weeks to make effect. ",
       "revId": "1e14f0aeec4bf13e69dc1387b9a1bc87491620d5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d806626b_9f6a28b9",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-06-13T23:15:06Z",
+      "side": 1,
+      "message": "true?",
+      "range": {
+        "startLine": 318,
+        "startChar": 34,
+        "endLine": 318,
+        "endChar": 35
+      },
+      "revId": "1e14f0aeec4bf13e69dc1387b9a1bc87491620d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c668fe33_c611b2cd",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 461,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2021-06-13T23:15:06Z",
+      "side": 1,
+      "message": "\u003d\u003d \"true\"",
+      "range": {
+        "startLine": 461,
+        "startChar": 55,
+        "endLine": 461,
+        "endChar": 71
+      },
+      "revId": "1e14f0aeec4bf13e69dc1387b9a1bc87491620d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
