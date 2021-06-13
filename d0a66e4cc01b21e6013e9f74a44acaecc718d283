@@ -74,6 +74,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "44dcf88c_a6adf7d1",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1755,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-06-13T11:41:17Z",
+      "side": 1,
+      "message": "Since `droidcore-unbundled` seems to always be a strict subset of `droidcore`, how about we `s/droidcore/droidcore-unbundled` for the common deps, and make droidcore depend on droidcore-unbundled?\n\nSo for example,\n\ndroidcore: droidcore-unbundled\ndroidcore-unbundled: $(DROIDCORE_DEPS)\n$(call dist-for-goals, droidcore, $(APPCOMPAT_ZIP) ...)\n$(call dist-for-goals, droidcore-unbundled, $(INTERNAL_UPDATE_PACKAGE_TARGET) ...)",
+      "parentUuid": "3c39716c_5a17749e",
+      "range": {
+        "startLine": 1715,
+        "startChar": 0,
+        "endLine": 1755,
+        "endChar": 33
+      },
+      "revId": "d0a66e4cc01b21e6013e9f74a44acaecc718d283",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "66d6f7ad_0a116407",
         "filename": "core/main.mk",
         "patchSetId": 1
