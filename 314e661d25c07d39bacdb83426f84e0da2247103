@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5331f7d8_41c091cc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 16
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-06-14T18:30:29Z",
+      "side": 1,
+      "message": "Amend the change, `rbc-run` is now in build/soong/scripts. PTAL.",
+      "revId": "314e661d25c07d39bacdb83426f84e0da2247103",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
