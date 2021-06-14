@@ -1076,6 +1076,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     # serve I/O request when device boots. Therefore, disable VABC if source
     # build doesn't supports it.
     if not source_info.is_vabc or not target_info.is_vabc:
+      logger.info("Either source or target does not support VABC, disabling.")
       OPTIONS.disable_vabc = True
 
   else:
@@ -1084,6 +1085,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
     source_info = None
 
+  if target_info.vendor_suppressed_vabc:
+    logger.info("Vendor suppressed VABC. Disabling")
+    OPTIONS.disable_vabc = True
   additional_args = []
 
   # Prepare custom images.
