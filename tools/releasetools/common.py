@@ -454,6 +454,13 @@ class BuildInfo(object):
     return vabc_enabled
 
   @property
+  def vendor_suppressed_vabc(self):
+    vendor_prop = self.info_dict.get("vendor.build.prop")
+    vabc_suppressed = vendor_prop and \
+        vendor_prop.GetProp("ro.vendor.build.dont_use_vabc")
+    return vabc_suppressed and vabc_suppressed.lower() == "true"
+
+  @property
   def oem_props(self):
     return self._oem_props
 
