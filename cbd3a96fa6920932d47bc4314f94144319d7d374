@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ed47a15_0effd414",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2021-06-15T11:03:12Z",
+      "side": 1,
+      "message": "for it to be back into DEX2OATBOOTCLASSPATH, it needs to be the first entry of PRODUCT_UPDATABLE_BOOT_JARS.",
+      "revId": "cbd3a96fa6920932d47bc4314f94144319d7d374",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
