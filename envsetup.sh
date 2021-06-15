@@ -703,6 +703,10 @@ function lunch()
     build_build_var_cache
     if [ $? -ne 0 ]
     then
+        if [[ "$product" =~ .*_(eng|user|userdebug) ]]
+        then
+            echo "Did you mean -${product/*_/}? (dash instead of underscore)"
+        fi
         return 1
     fi
     export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
