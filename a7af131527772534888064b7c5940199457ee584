@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8cdcc099_50d663a1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-06-15T15:47:32Z",
+      "side": 1,
+      "message": "This has to land alongside new vendor blobs, which is going to take some time to step back through the branches.  I\u0027ll land it internally first, then walk it back, updating blobs as I go.",
+      "revId": "a7af131527772534888064b7c5940199457ee584",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
