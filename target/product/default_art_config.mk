@@ -44,13 +44,11 @@ PRODUCT_BOOT_JARS += \
     voip-common \
     ims-common
 
-# Non-updatable APEX jars. Keep the list sorted.
-PRODUCT_BOOT_JARS += \
-    com.android.i18n:core-icu4j
-
-# Updatable APEX boot jars. Keep the list sorted by module names and then library names.
+# APEX boot jars. Keep the list sorted by module names and then library names.
+# Note: core-icu4j is moved back to PRODUCT_BOOT_JARS in product_config.mk at a later stage.
 PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.conscrypt:conscrypt \
+    com.android.i18n:core-icu4j \
     com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
@@ -60,7 +58,7 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.tethering:framework-tethering \
     com.android.wifi:framework-wifi
 
-# Updatable APEX system server jars. Keep the list sorted by module names and then library names.
+# APEX system server jars. Keep the list sorted by module names and then library names.
 PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
     com.android.art:service-art \
     com.android.permission:service-permission \
