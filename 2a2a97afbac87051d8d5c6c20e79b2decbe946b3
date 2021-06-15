@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "70938e19_9605352c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2021-06-15T04:32:14Z",
+      "side": 1,
+      "message": "Hi Szuwei and Jiyong,\n\nI realized that aosp/1707468 alone is insufficient for disabling the build-time debugfs restrictions for GSI builds since we will shortly set launch API level to 31 on GSI builds too(which will then cause PRODUCT_SET_DEBUGFS_RESTRICTIONS to be set to true for the target). Run-time restrictions would continue to be enabled on S launch devices running GSI builds. Please do take a look and let me know your thoughts. Thanks again!\n\nRegards,\nHridya",
+      "revId": "2a2a97afbac87051d8d5c6c20e79b2decbe946b3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
