@@ -98,6 +98,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f95db658_6864fd68",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1755,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2021-06-15T09:10:31Z",
+      "side": 1,
+      "message": "The patchset looks much better. Now I understand what droidcore-unbundled is doing.\nIf we don\u0027t expect droidcore-unbundled has packages for its own, +1 to Yi-Yo\u0027s suggestion.",
+      "parentUuid": "44dcf88c_a6adf7d1",
+      "range": {
+        "startLine": 1715,
+        "startChar": 0,
+        "endLine": 1755,
+        "endChar": 33
+      },
+      "revId": "d0a66e4cc01b21e6013e9f74a44acaecc718d283",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "66d6f7ad_0a116407",
         "filename": "core/main.mk",
         "patchSetId": 1
