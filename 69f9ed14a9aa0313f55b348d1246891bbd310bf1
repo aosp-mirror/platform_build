@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8fda5798_64666ee4",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1707,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2021-06-16T12:53:07Z",
+      "side": 1,
+      "message": "How about we provide a b-specific help message, something like\n\n\"Usage: b \u003cBazel args\u003e\n\"Examples:\n\"  b help\n\"  b build //bionic/...\n\"  b query //bionic/...",
+      "range": {
+        "startLine": 1707,
+        "startChar": 8,
+        "endLine": 1707,
+        "endChar": 36
+      },
+      "revId": "69f9ed14a9aa0313f55b348d1246891bbd310bf1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
