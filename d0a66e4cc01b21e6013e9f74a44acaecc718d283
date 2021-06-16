@@ -120,6 +120,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ede21d12_d32d9f54",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1755,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2021-06-16T00:17:24Z",
+      "side": 1,
+      "message": "More revisions based on review of the 1-pager, including integrating Yi-Yo\u0027s comments.",
+      "parentUuid": "f95db658_6864fd68",
+      "range": {
+        "startLine": 1715,
+        "startChar": 0,
+        "endLine": 1755,
+        "endChar": 33
+      },
+      "revId": "d0a66e4cc01b21e6013e9f74a44acaecc718d283",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "66d6f7ad_0a116407",
