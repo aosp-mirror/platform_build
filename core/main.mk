@@ -313,6 +313,13 @@ ADDITIONAL_VENDOR_PROPERTIES += \
 endif
 endif
 
+# Set build prop. This prop is read by ota_from_target_files when generating OTA,
+# to decide if VABC should be disabled.
+ifeq ($(BOARD_DONT_USE_VABC_OTA),true)
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.vendor.build.dont_use_vabc=true
+endif
+
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.vendor.build.security_patch=$(VENDOR_SECURITY_PATCH) \
     ro.product.board=$(TARGET_BOOTLOADER_BOARD_NAME) \
