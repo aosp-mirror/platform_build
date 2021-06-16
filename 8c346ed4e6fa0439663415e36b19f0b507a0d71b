@@ -22,6 +22,30 @@
       },
       "revId": "8c346ed4e6fa0439663415e36b19f0b507a0d71b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b40607ce_4e8bc1dc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2021-06-16T02:25:57Z",
+      "side": 1,
+      "message": "Hmm. Looking at the history, I think I shouldn\u0027t add RESTRICT AUTOMERGE here. For whatever reason I add it to 30.0 change, but I can\u0027t think any reasons to add this here.",
+      "parentUuid": "27b6f362_90e39648",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 18
+      },
+      "revId": "8c346ed4e6fa0439663415e36b19f0b507a0d71b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
