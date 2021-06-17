@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "47b643d3_3f1c585f",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1701,
+      "author": {
+        "id": 1514900
+      },
+      "writtenOn": "2021-06-17T07:06:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43d52727_2e0bc0c3",
+      "range": {
+        "startLine": 1701,
+        "startChar": 4,
+        "endLine": 1701,
+        "endChar": 28
+      },
+      "revId": "b6fbcbd4783c5d47a30a477970c425c96423e45b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6063bbce_9df42120",
@@ -47,6 +71,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f356e545_86ca9992",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1710,
+      "author": {
+        "id": 1514900
+      },
+      "writtenOn": "2021-06-17T07:06:04Z",
+      "side": 1,
+      "message": "true/1 are valid options for Soong boolean env var checks. I removed TRUE, since that\u0027s not a condition in IsEnvTrue().\n\nAlso see: https://android-review.googlesource.com/c/platform/build/soong/+/1738873",
+      "parentUuid": "6063bbce_9df42120",
+      "range": {
+        "startLine": 1710,
+        "startChar": 39,
+        "endLine": 1710,
+        "endChar": 50
+      },
+      "revId": "b6fbcbd4783c5d47a30a477970c425c96423e45b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "592c6495_8761b0c0",
@@ -60,6 +108,30 @@
       "writtenOn": "2021-06-17T06:40:00Z",
       "side": 1,
       "message": "Why is it implemented in this somewhat convoluted way with $() as opposed to\n\nb cquery ...\nif [[ $? \u003d\u003d 0 ]]; then\n  bazel build...\nelse\n  _trigger_build ...\nfi\n\n?",
+      "range": {
+        "startLine": 1712,
+        "startChar": 64,
+        "endLine": 1712,
+        "endChar": 135
+      },
+      "revId": "b6fbcbd4783c5d47a30a477970c425c96423e45b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae7a07e2_47b9b7cc",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1712,
+      "author": {
+        "id": 1514900
+      },
+      "writtenOn": "2021-06-17T07:06:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "592c6495_8761b0c0",
       "range": {
         "startLine": 1712,
         "startChar": 64,
