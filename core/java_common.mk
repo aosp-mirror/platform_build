@@ -6,10 +6,6 @@ ifneq ($(filter ../%,$(LOCAL_SRC_FILES)),)
 my_soong_problems += dotdot_srcs
 endif
 
-ifneq (,$(LOCAL_JNI_SHARED_LIBRARIES))
-my_soong_problems += jni_libs
-endif
-
 ###########################################################
 ## Java version
 ###########################################################
@@ -29,7 +25,7 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.7
   else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT)))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.8
-  else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS_USE_PREBUILT_SDK))
+  else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_USE_PREBUILT_SDKS))
     # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
     LOCAL_JAVA_LANGUAGE_VERSION := 1.8
   else
@@ -235,7 +231,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAVA_SOURCE_LIST := $(java_source_list_fi
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 
-# Sanity check class path vars.
+# Quickly check class path vars.
 disallowed_deps := $(foreach sdk,$(TARGET_AVAILABLE_SDK_VERSIONS),$(call resolve-prebuilt-sdk-module,$(sdk)))
 disallowed_deps += $(foreach sdk,$(TARGET_AVAILABLE_SDK_VERSIONS),\
   $(foreach sdk_lib,$(JAVA_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,$(sdk),$(sdk_lib))))
@@ -265,14 +261,14 @@ ifndef LOCAL_IS_HOST_MODULE
       # Most users of LOCAL_NO_STANDARD_LIBRARIES really mean no framework libs,
       # and manually add back the core libs.  The ones that don't are in soong
       # now, so just always assume that they want the default system modules
-      my_system_modules := $(DEFAULT_SYSTEM_MODULES)
+      my_system_modules := $(LEGACY_CORE_PLATFORM_SYSTEM_MODULES)
     else  # LOCAL_NO_STANDARD_LIBRARIES
-      full_java_bootclasspath_libs := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
-      LOCAL_JAVA_LIBRARIES := $(filter-out $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
-      my_system_modules := $(DEFAULT_SYSTEM_MODULES)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,$(LEGACY_CORE_PLATFORM_BOOTCLASSPATH_LIBRARIES) $(FRAMEWORK_LIBRARIES))
+      LOCAL_JAVA_LIBRARIES := $(filter-out $(LEGACY_CORE_PLATFORM_BOOTCLASSPATH_LIBRARIES) $(FRAMEWORK_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
+      my_system_modules := $(LEGACY_CORE_PLATFORM_SYSTEM_MODULES)
     endif  # LOCAL_NO_STANDARD_LIBRARIES
 
-    ifneq (,$(TARGET_BUILD_APPS_USE_PREBUILT_SDK))
+    ifneq (,$(TARGET_BUILD_USE_PREBUILT_SDKS))
       sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,system_current,$(lib_name)))
     else
       # When SDK libraries are referenced from modules built without SDK, provide the all APIs to them
@@ -287,8 +283,8 @@ ifndef LOCAL_IS_HOST_MODULE
              Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
     endif
 
-    ifneq (,$(TARGET_BUILD_APPS_USE_PREBUILT_SDK)$(filter-out %current,$(LOCAL_SDK_VERSION)))
-      # TARGET_BUILD_APPS mode or numbered SDK. Use prebuilt modules.
+    ifneq (,$(TARGET_BUILD_USE_PREBUILT_SDKS)$(filter-out %current,$(LOCAL_SDK_VERSION)))
+      # TARGET_BUILD_USE_PREBUILT_SDKS mode or numbered SDK. Use prebuilt modules.
       sdk_module := $(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION))
       sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION),$(lib_name)))
     else
@@ -329,7 +325,7 @@ ifndef LOCAL_IS_HOST_MODULE
   # related classes to be present. This change adds stubs needed for
   # javac to compile lambdas.
   ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-    ifdef TARGET_BUILD_APPS_USE_PREBUILT_SDK
+    ifdef TARGET_BUILD_USE_PREBUILT_SDKS
       full_java_bootclasspath_libs += $(call java-lib-header-files,sdk-core-lambda-stubs)
     else
       full_java_bootclasspath_libs += $(call java-lib-header-files,core-lambda-stubs)
@@ -352,10 +348,10 @@ else # LOCAL_IS_HOST_MODULE
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
       empty_bootclasspath := ""
     else
-      full_java_bootclasspath_libs := $(call java-lib-header-files,$(addsuffix -hostdex,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES)),true)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,$(addsuffix -hostdex,$(LEGACY_CORE_PLATFORM_BOOTCLASSPATH_LIBRARIES)),true)
     endif
 
-    my_system_modules := $(DEFAULT_SYSTEM_MODULES)
+    my_system_modules := $(LEGACY_CORE_PLATFORM_SYSTEM_MODULES)
     full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
     full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),true)
   else # !USE_CORE_LIB_BOOTCLASSPATH
@@ -382,7 +378,9 @@ else # LOCAL_IS_HOST_MODULE
   endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
 
+ifdef RECORD_ALL_DEPS
 ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) $(full_java_bootclasspath_libs)
+endif
 
 # Export the SDK libs. The sdk library names listed in LOCAL_SDK_LIBRARIES are first exported.
 # Then sdk library names exported from dependencies are all re-exported.
@@ -544,6 +542,10 @@ SOONG_CONV.$(LOCAL_MODULE).DEPS := \
     $(LOCAL_JAVA_LIBRARIES) \
     $(LOCAL_JNI_SHARED_LIBRARIES)
 SOONG_CONV.$(LOCAL_MODULE).TYPE := java
+SOONG_CONV.$(LOCAL_MODULE).MAKEFILES := \
+    $(SOONG_CONV.$(LOCAL_MODULE).MAKEFILES) $(LOCAL_MODULE_MAKEFILE)
+SOONG_CONV.$(LOCAL_MODULE).INSTALLED := \
+    $(SOONG_CONV.$(LOCAL_MODULE).INSTALLED) $(LOCAL_INSTALLED_MODULE)
 SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
 
 endif

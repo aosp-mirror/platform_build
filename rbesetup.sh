@@ -31,7 +31,7 @@ _source_env_setup_script || return
 # for the build to be executed with RBE.
 function use_rbe() {
   local RBE_LOG_DIR="/tmp"
-  local RBE_BINARIES_DIR="prebuilts/remoteexecution-client/latest/"
+  local RBE_BINARIES_DIR="prebuilts/remoteexecution-client/latest"
   local DOCKER_IMAGE="gcr.io/androidbuild-re-dockerimage/android-build-remoteexec-image@sha256:582efb38f0c229ea39952fff9e132ccbe183e14869b39888010dacf56b360d62"
 
   # Do not set an invocation-ID and let reproxy auto-generate one.
@@ -63,6 +63,7 @@ function _export_metrics_uploader() {
 # This function sets RBE specific environment variables needed for the build to
 # executed by RBE. This file should be sourced once per checkout of Android code.
 function _set_rbe_vars() {
+  unset USE_GOMA
   export USE_RBE="true"
   export RBE_CXX_EXEC_STRATEGY="racing"
   export RBE_JAVAC_EXEC_STRATEGY="racing"

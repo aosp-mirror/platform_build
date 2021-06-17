@@ -1,0 +1,66 @@
+#!/bin/bash
+# Tests for compare_builds.py
+# usage (from root of source tree):
+#   build/make/tools/exercise_compare_builds
+
+HIDE_BUILD_OUTPUT=--hide-build-output
+
+function run()
+{
+    echo
+    echo
+    echo ============================================================
+    echo $1
+    shift
+    echo ./build/make/tools/compare_builds.py $HIDE_BUILD_OUTPUT --target incidentd $@
+    echo ============================================================
+    time ./build/make/tools/compare_builds.py $HIDE_BUILD_OUTPUT --target incidentd $@
+}
+
+function run_tests()
+{
+    # These should error out
+
+    run "Incremental build,  Separate work dirs  (invalid flag combo, should error out)" \
+        --incremental --detect-embedded-paths
+    run "Use out/ as work dir, Separate work dirs  (invalid flag combo, should error out)" \
+        --no-check-out-dir --detect-embedded-paths
+
+    # Each grouping starts with a build, and the following ones use --no-build to save time
+
+    run "REBUILD: Full builds,  Same work dir,  Whole out dir"
+    run "Full builds,  Same work dir,  Default subdirs" \
+        --no-build --subdirs
+    run "Full builds,  Same work dir,  Only $PRODUCT_OUT/system" \
+        --no-build --subdirs system
+
+    run "REBUILD: Full builds,  Use out/ as work dir,  Whole out dir" \
+        --no-check-out-dir
+    run "Full builds,  Use out/ as work dir,  Default subdirs" \
+        --no-build --no-check-out-dir --subdirs
+    run "Full builds,  Use out/ as work dir,  Only $PRODUCT_OUT/system" \
+        --no-build --no-check-out-dir --subdirs system
+
+    run "REBUILD: Full builds,  Separate work dirs,  Whole out dir" \
+        --detect-embedded-paths
+    run "Full builds,  Separate work dirs,  Default subdirs" \
+        --no-build --detect-embedded-paths --subdirs
+    run "Full builds,  Separate work dirs,  Only $PRODUCT_OUT/system" \
+        --no-build --detect-embedded-paths --subdirs system
+
+    run "REBUILD: Incremental build,  Same work dir,  Whole out dir" \
+        --incremental
+    run "Incremental build,  Same work dir,  Default subdirs" \
+        --no-build --incremental --subdirs
+    run "Incremental build,  Same work dir,  Only $PRODUCT_OUT/system" \
+        --no-build --incremental --subdirs system
+
+    run "REBUILD: Incremental build,  Use out/ as work dir,  Whole out dir" \
+        --incremental --no-check-out-dir
+    run "Incremental build,  Use out/ as work dir,  Default subdirs" \
+        --no-build --incremental --no-check-out-dir --subdirs
+    run "Incremental build,  Use out/ as work dir,  Only $PRODUCT_OUT/system" \
+        --no-build --incremental --no-check-out-dir --subdirs system
+}
+
+time run_tests 2>&1 | tee exercise_compare_builds.txt

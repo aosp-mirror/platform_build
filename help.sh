@@ -12,10 +12,14 @@ cd '"${TOP}"'
 source build/envsetup.sh    # Add "lunch" (and other utilities and variables)
                             # to the shell environment.
 lunch [<product>-<variant>] # Choose the device to target.
-m -j [<goals>]              # Execute the configured build.
+m [<goals>]                 # Execute the configured build.
 
 Usage of "m" imitates usage of the program "make".
 See '"${SCRIPT_DIR}"'/Usage.txt for more info about build usage and concepts.
+
+The parallelism of the build can be set with a -jN argument to "m".  If you
+don'\''t provide a -j argument, the build system automatically selects a parallel
+task count that it thinks is optimal for your system.
 
 Common goals are:
 
@@ -43,7 +47,11 @@ Common goals are:
     senod                   Quickly rebuild the system_ext image from built packages
                             Stands for "SystemExt, NO Dependencies"
     onod                    Quickly rebuild the odm image from built packages
-                            Stands for "ODM, NO Dependencies"
+                            Stands for "Odm, NO Dependencies"
+    vdnod                   Quickly rebuild the vendor_dlkm image from built packages
+                            Stands for "VendorDlkm, NO Dependencies"
+    odnod                   Quickly rebuild the odm_dlkm image from built packages
+                            Stands for "OdmDlkm, NO Dependencies"
 
 
 So, for example, you could run:

@@ -57,3 +57,17 @@ class SignApexTest(test_utils.ReleaseToolsTestCase):
         False,
         apk_keys)
     self.assertTrue(os.path.exists(signed_test_apex))
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_SignCompressedApexFile(self):
+    apex = os.path.join(test_utils.get_current_dir(), 'com.android.apex.compressed.v1.capex')
+    payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
+    container_key = os.path.join(self.testdata_dir, 'testkey')
+    signed_apex = sign_apex.SignApexFile(
+        'avbtool',
+        apex,
+        payload_key,
+        container_key,
+        False,
+        codename_to_api_level_map={'S': 31})
+    self.assertTrue(os.path.exists(signed_apex))
