@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b1eb03da_a5631408",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 1721,
+      "author": {
+        "id": 1726181
+      },
+      "writtenOn": "2021-06-17T10:53:46Z",
+      "side": 1,
+      "message": "Maybe return the Bazel exit status instead?",
+      "range": {
+        "startLine": 1721,
+        "startChar": 12,
+        "endLine": 1721,
+        "endChar": 20
+      },
+      "revId": "a11427ab2108fb73581b5c9dcb4c30b0be01d169",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
