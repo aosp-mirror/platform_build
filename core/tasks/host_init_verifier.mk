@@ -53,4 +53,4 @@ $(host_init_verifier_output): $(HOST_INIT_VERIFIER)
 		--out_product $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT) \
 		> $@
 
-$(call dist-for-goals,droidcore,$(host_init_verifier_output))
+$(call dist-for-goals,droidcore-unbundled,$(host_init_verifier_output))
