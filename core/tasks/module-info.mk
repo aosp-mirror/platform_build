@@ -26,7 +26,7 @@ $(MODULE_INFO_JSON):
 	$(hide) echo '}' >> $@
 
 
-droidcore: $(MODULE_INFO_JSON)
+droidcore-unbundled: $(MODULE_INFO_JSON)
 
 $(call dist-for-goals, general-tests, $(MODULE_INFO_JSON))
-$(call dist-for-goals, droidcore, $(MODULE_INFO_JSON))
+$(call dist-for-goals, droidcore-unbundled, $(MODULE_INFO_JSON))
