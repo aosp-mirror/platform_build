@@ -61,6 +61,7 @@ PRODUCT_PACKAGES += \
     com.android.media \
     com.android.media.swcodec \
     com.android.mediaprovider \
+    com.android.nearby \
     com.android.os.statsd \
     com.android.permission \
     com.android.resolv \
