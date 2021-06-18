@@ -1700,12 +1700,19 @@ function _trigger_build()
     fi
 )
 
+# Convenience entry point (like m) to use Bazel in AOSP.
 function b()
 (
     # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
     m nothing GENERATE_BAZEL_FILES=true || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
-    "$(gettop)/tools/bazel" "$@" --config=bp2build
+    if [[ -z "$@" ]]; then
+        # If there are no args, show help.
+        "$(gettop)/tools/bazel" help
+    else
+        # Else, always run with the bp2build configuration, which sets Bazel's package path to the synthetic workspace.
+        "$(gettop)/tools/bazel" "$@" --config=bp2build
+    fi
 )
 
 function m()
