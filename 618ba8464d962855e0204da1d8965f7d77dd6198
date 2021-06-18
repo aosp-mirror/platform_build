@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "45f0fe6a_01e8a935",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1086523
+      },
+      "writtenOn": "2021-06-18T22:43:45Z",
+      "side": 1,
+      "message": "Refreshed with the change restored.\n\nNote that if we land this version, stage-aosp-master will remain having the change reverted.",
+      "revId": "618ba8464d962855e0204da1d8965f7d77dd6198",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
