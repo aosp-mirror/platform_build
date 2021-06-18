@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "08c0427f_01e1fc34",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2021-06-18T19:36:23Z",
+      "side": 1,
+      "message": "This looks like it undoes some of Ulya\u0027s changes that were probably skipped going into rvc-qpr-dev-plus-aosp.",
+      "revId": "7f402eb62a30b9758b1807e245c6ce768da25ede",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
