@@ -1,0 +1,6 @@
+<configuration description="Config to run post_process_props_unittest">
+    <test class="com.android.tradefed.testtype.python.PythonBinaryHostTest" >
+        <option name="par-file-name" value="post_process_props_unittest" />
+        <option name="test-timeout" value="1m" />
+    </test>
+</configuration>

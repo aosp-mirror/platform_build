@@ -24,16 +24,16 @@ ifneq ($(wildcard $(TARGET_DEVICE_DIR)/android_filesystem_config.h),)
 $(error Using $(TARGET_DEVICE_DIR)/android_filesystem_config.h is deprecated, please use TARGET_FS_CONFIG_GEN instead)
 endif
 
-system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
+system_android_filesystem_config := system/core/libcutils/include/private/android_filesystem_config.h
 system_capability_header := bionic/libc/kernel/uapi/linux/capability.h
 
-# List of supported vendor, oem, odm, product and system_ext Partitions
+# List of supported vendor, oem, odm, vendor_dlkm, odm_dlkm, product and system_ext Partitions
 fs_config_generate_extra_partition_list := $(strip \
   $(if $(BOARD_USES_VENDORIMAGE)$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),vendor) \
   $(if $(BOARD_USES_OEMIMAGE)$(BOARD_OEMIMAGE_FILE_SYSTEM_TYPE),oem) \
   $(if $(BOARD_USES_ODMIMAGE)$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),odm) \
-  $(if $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),product) \
-  $(if $(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),system_ext) \
+  $(if $(BOARD_USES_VENDOR_DLKMIMAGE)$(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE),vendor_dlkm) \
+  $(if $(BOARD_USES_ODM_DLKMIMAGE)$(BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE),odm_dlkm) \
 )
 
 ##################################
@@ -42,11 +42,14 @@ fs_config_generate_extra_partition_list := $(strip \
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := \
-	fs_config_dirs_system \
-	$(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
+  fs_config_dirs_system \
+  fs_config_dirs_system_ext \
+  fs_config_dirs_product \
+  fs_config_dirs_nonsystem
 include $(BUILD_PHONY_PACKAGE)
-
 
 ##################################
 # Generate the <p>/etc/fs_config_files binary files for each partition.
@@ -54,29 +57,85 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := \
   fs_config_files_system \
-  $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
+  fs_config_files_system_ext \
+  fs_config_files_product \
+  fs_config_files_nonsystem
+include $(BUILD_PHONY_PACKAGE)
+
+##################################
+# Generate the system_ext/etc/fs_config_dirs binary file for the target if the
+# system_ext partition is generated. Add fs_config_dirs or fs_config_dirs_system_ext
+# to PRODUCT_PACKAGES in the device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_system_ext
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),_fs_config_dirs_system_ext)
+include $(BUILD_PHONY_PACKAGE)
+
+##################################
+# Generate the system_ext/etc/fs_config_files binary file for the target if the
+# system_ext partition is generated. Add fs_config_files or fs_config_files_system_ext
+# to PRODUCT_PACKAGES in the device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files_system_ext
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),_fs_config_files_system_ext)
+include $(BUILD_PHONY_PACKAGE)
+
+##################################
+# Generate the product/etc/fs_config_dirs binary file for the target if the
+# product partition is generated. Add fs_config_dirs or fs_config_dirs_product
+# to PRODUCT_PACKAGES in the device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_product
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),_fs_config_dirs_product)
+include $(BUILD_PHONY_PACKAGE)
+
+##################################
+# Generate the product/etc/fs_config_files binary file for the target if the
+# product partition is generated. Add fs_config_files or fs_config_files_product
+# to PRODUCT_PACKAGES in the device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files_product
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),_fs_config_files_product)
 include $(BUILD_PHONY_PACKAGE)
 
 ##################################
 # Generate the <p>/etc/fs_config_dirs binary files for all enabled partitions
-# excluding /system. Add fs_config_dirs_nonsystem to PRODUCT_PACKAGES in the
-# device make file to enable.
+# excluding /system, /system_ext and /product. Add fs_config_dirs_nonsystem to
+# PRODUCT_PACKAGES in the device make file to enable.
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs_nonsystem
-LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),fs_config_dirs_$(t))
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),_fs_config_dirs_$(t))
 include $(BUILD_PHONY_PACKAGE)
 
 ##################################
 # Generate the <p>/etc/fs_config_files binary files for all enabled partitions
-# excluding /system. Add fs_config_files_nonsystem to PRODUCT_PACKAGES in the
-# device make file to enable.
+# excluding /system, /system_ext and /product. Add fs_config_files_nonsystem to
+# PRODUCT_PACKAGES in the device make file to enable.
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files_nonsystem
-LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),fs_config_files_$(t))
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),_fs_config_files_$(t))
 include $(BUILD_PHONY_PACKAGE)
 
 ##################################
@@ -86,6 +145,8 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs_system
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -111,6 +172,8 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files_system
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -132,11 +195,13 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 ifneq ($(filter vendor,$(fs_config_generate_extra_partition_list)),)
 ##################################
 # Generate the vendor/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs or fs_config_dirs_vendor to PRODUCT_PACKAGES in
-# the device make file to enable.
+# Add fs_config_dirs or fs_config_dirs_nonsystem to PRODUCT_PACKAGES
+# in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_dirs_vendor
+LOCAL_MODULE := _fs_config_dirs_vendor
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
@@ -156,11 +221,13 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 
 ##################################
 # Generate the vendor/etc/fs_config_files binary file for the target
-# Add fs_config_files or fs_config_files_vendor to PRODUCT_PACKAGES in
-# the device make file to enable
+# Add fs_config_files or fs_config_files_nonsystem to PRODUCT_PACKAGES
+# in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_files_vendor
+LOCAL_MODULE := _fs_config_files_vendor
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
@@ -183,11 +250,13 @@ endif
 ifneq ($(filter oem,$(fs_config_generate_extra_partition_list)),)
 ##################################
 # Generate the oem/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs or fs_config_dirs_oem to PRODUCT_PACKAGES in
-# the device make file to enable
+# Add fs_config_dirs or fs_config_dirs_nonsystem to PRODUCT_PACKAGES
+# in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_dirs_oem
+LOCAL_MODULE := _fs_config_dirs_oem
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_OEM)/etc
@@ -207,11 +276,13 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 
 ##################################
 # Generate the oem/etc/fs_config_files binary file for the target
-# Add fs_config_files or fs_config_files_oem to PRODUCT_PACKAGES in
-# the device make file to enable
+# Add fs_config_files or fs_config_files_nonsystem to PRODUCT_PACKAGES
+# in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_files_oem
+LOCAL_MODULE := _fs_config_files_oem
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_OEM)/etc
@@ -234,11 +305,13 @@ endif
 ifneq ($(filter odm,$(fs_config_generate_extra_partition_list)),)
 ##################################
 # Generate the odm/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs or fs_config_dirs_odm to PRODUCT_PACKAGES in
-# the device make file to enable
+# Add fs_config_dirs or fs_config_dirs_nonsystem to PRODUCT_PACKAGES
+# in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_dirs_odm
+LOCAL_MODULE := _fs_config_dirs_odm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
@@ -258,11 +331,13 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 
 ##################################
 # Generate the odm/etc/fs_config_files binary file for the target
-# Add fs_config_files of fs_config_files_odm to PRODUCT_PACKAGES in
-# the device make file to enable
+# Add fs_config_files or fs_config_files_nonsystem to PRODUCT_PACKAGES
+# in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_files_odm
+LOCAL_MODULE := _fs_config_files_odm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
@@ -282,14 +357,126 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 
 endif
 
-ifneq ($(filter product,$(fs_config_generate_extra_partition_list)),)
+ifneq ($(filter vendor_dlkm,$(fs_config_generate_extra_partition_list)),)
+##################################
+# Generate the vendor_dlkm/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_nonsystem to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := _fs_config_dirs_vendor_dlkm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
+LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_DLKM)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+	@mkdir -p $(dir $@)
+	$< fsconfig \
+	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
+	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
+	   --partition vendor_dlkm \
+	   --dirs \
+	   --out_file $@ \
+	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
+
+##################################
+# Generate the vendor_dlkm/etc/fs_config_files binary file for the target
+# Add fs_config_files or fs_config_files_nonsystem to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := _fs_config_files_vendor_dlkm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_files
+LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_DLKM)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+	@mkdir -p $(dir $@)
+	$< fsconfig \
+	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
+	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
+	   --partition vendor_dlkm \
+	   --files \
+	   --out_file $@ \
+	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
+
+endif
+
+ifneq ($(filter odm_dlkm,$(fs_config_generate_extra_partition_list)),)
+##################################
+# Generate the odm_dlkm/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_nonsystem to PRODUCT_PACKAGES
+# in the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := _fs_config_dirs_odm_dlkm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
+LOCAL_MODULE_PATH := $(TARGET_OUT_ODM_DLKM)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+	@mkdir -p $(dir $@)
+	$< fsconfig \
+	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
+	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
+	   --partition odm_dlkm \
+	   --dirs \
+	   --out_file $@ \
+	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
+
+##################################
+# Generate the odm_dlkm/etc/fs_config_files binary file for the target
+# Add fs_config_files or fs_config_files_nonsystem to PRODUCT_PACKAGES
+# in the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := _fs_config_files_odm_dlkm
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_files
+LOCAL_MODULE_PATH := $(TARGET_OUT_ODM_DLKM)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+	@mkdir -p $(dir $@)
+	$< fsconfig \
+	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
+	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
+	   --partition odm_dlkm \
+	   --files \
+	   --out_file $@ \
+	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
+
+endif
+
+ifneq ($(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),)
 ##################################
 # Generate the product/etc/fs_config_dirs binary file for the target
 # Add fs_config_dirs or fs_config_dirs_product to PRODUCT_PACKAGES in
 # the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_dirs_product
+LOCAL_MODULE := _fs_config_dirs_product
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT)/etc
@@ -309,11 +496,13 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 
 ##################################
 # Generate the product/etc/fs_config_files binary file for the target
-# Add fs_config_files of fs_config_files_product to PRODUCT_PACKAGES in
+# Add fs_config_files or fs_config_files_product to PRODUCT_PACKAGES in
 # the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_files_product
+LOCAL_MODULE := _fs_config_files_product
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT)/etc
@@ -332,14 +521,16 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
 endif
 
-ifneq ($(filter system_ext,$(fs_config_generate_extra_partition_list)),)
+ifneq ($(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),)
 ##################################
 # Generate the system_ext/etc/fs_config_dirs binary file for the target
 # Add fs_config_dirs or fs_config_dirs_system_ext to PRODUCT_PACKAGES in
 # the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_dirs_system_ext
+LOCAL_MODULE := _fs_config_dirs_system_ext
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_EXT)/etc
@@ -359,11 +550,13 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 
 ##################################
 # Generate the system_ext/etc/fs_config_files binary file for the target
-# Add fs_config_files of fs_config_files_system_ext to PRODUCT_PACKAGES in
+# Add fs_config_files or fs_config_files_system_ext to PRODUCT_PACKAGES in
 # the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_files_system_ext
+LOCAL_MODULE := _fs_config_files_system_ext
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_EXT)/etc

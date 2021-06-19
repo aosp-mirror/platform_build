@@ -35,6 +35,8 @@ ifdef DEVICE_MANIFEST_FILE
 # $(DEVICE_MANIFEST_FILE) can be a list of files
 include $(CLEAR_VARS)
 LOCAL_MODULE        := vendor_manifest.xml
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0 legacy_not_a_contribution
+LOCAL_LICENSE_CONDITIONS := by_exception_only not_allowed notice
 LOCAL_MODULE_STEM   := manifest.xml
 LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)/etc/vintf
@@ -65,6 +67,8 @@ endif
 my_fragment_files := $$($$(my_fragment_files_var))
 include $$(CLEAR_VARS)
 LOCAL_MODULE := vendor_manifest_$(1).xml
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0 legacy_not_a_contribution
+LOCAL_LICENSE_CONDITIONS := by_exception_only not_allowed notice
 LOCAL_MODULE_STEM := manifest_$(1).xml
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)/etc/vintf
@@ -94,6 +98,8 @@ ifdef ODM_MANIFEST_FILES
 # ODM_MANIFEST_FILES is a list of files that is combined and installed as the default ODM manifest.
 include $(CLEAR_VARS)
 LOCAL_MODULE := odm_manifest.xml
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0 legacy_not_a_contribution
+LOCAL_LICENSE_CONDITIONS := by_exception_only not_allowed notice
 LOCAL_MODULE_STEM := manifest.xml
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_RELATIVE_PATH := vintf
@@ -124,6 +130,8 @@ endif
 my_fragment_files := $$($$(my_fragment_files_var))
 include $$(CLEAR_VARS)
 LOCAL_MODULE := odm_manifest_$(1).xml
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0 legacy_not_a_contribution
+LOCAL_LICENSE_CONDITIONS := by_exception_only not_allowed notice
 LOCAL_MODULE_STEM := manifest_$(1).xml
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_RELATIVE_PATH := vintf

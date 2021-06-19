@@ -24,9 +24,14 @@ ANDROID_CLANG_PREBUILTS := prebuilts/clang/host/$(HOST_PREBUILT_TAG)
 # Input variables:
 #   DUMP_MANY_VARS: the list of variable names.
 #   DUMP_VAR_PREFIX: an optional prefix of the variable name added to the output.
+# The value is printed in parts because large variables like PRODUCT_PACKAGES
+# can exceed the maximum linux command line size
 .PHONY: dump-many-vars
 dump-many-vars :
 	@$(foreach v, $(DUMP_MANY_VARS),\
-	  printf "%s='%s'\n" '$(DUMP_VAR_PREFIX)$(v)' '$($(v))';)
+	  printf "%s='%s" '$(DUMP_VAR_PREFIX)$(v)' '$(firstword $($(v)))'; \
+	  $(foreach part, $(wordlist 2, $(words $($(v))), $($(v))),\
+	    printf " %s" '$(part)'$(newline))\
+	  printf "'\n";)
 
 endif # CALLED_FROM_SETUP
