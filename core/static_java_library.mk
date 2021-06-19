@@ -111,7 +111,7 @@ endif
 framework_res_package_export :=
 # Please refer to package.mk
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS_USE_PREBUILT_SDK),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
+ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_USE_PREBUILT_SDKS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
 framework_res_package_export := \
     $(call resolve-prebuilt-sdk-jar-path,$(LOCAL_SDK_RES_VERSION))
 else
@@ -209,7 +209,7 @@ $(built_aar) : $(aar_classes_jar) $(full_android_manifest) $(intermediates.COMMO
 	  $(call jar-args-sorted-files-in-directory,$(dir $@)aar)
 
 # Register the aar file.
-ALL_MODULES.$(LOCAL_MODULE).AAR := $(built_aar)
+ALL_MODULES.$(my_register_name).AAR := $(built_aar)
 endif  # need_compile_res
 
 # Reset internal variables.

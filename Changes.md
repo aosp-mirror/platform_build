@@ -1,5 +1,159 @@
 # Build System Changes for Android.mk Writers
 
+## Dexpreopt starts enforcing `<uses-library>` checks (for Java modules)
+
+In order to construct correct class loader context for dexpreopt, build system
+needs to know about the shared library dependencies of Java modules listed in
+the `<uses-library>` tags in the manifest. Since the build system does not have
+access to the manifest contents, that information must be present in the build
+files. In simple cases Soong is able to infer it from its knowledge of Java SDK
+libraries and the `libs` property in Android.bp, but in more complex cases it is
+necessary to add the missing information in Android.bp/Android.mk manually.
+
+To specify a list of libraries for a given modules, use:
+
+* Android.bp properties: `uses_libs`, `optional_uses_libs`
+* Android.mk variables: `LOCAL_USES_LIBRARIES`, `LOCAL_OPTIONAL_USES_LIBRARIES`
+
+If a library is in `libs`, it usually should *not* be added to the above
+properties, and Soong should be able to infer the `<uses-library>` tag. But
+sometimes a library also needs additional information in its
+Android.bp/Android.mk file (e.g. when it is a `java_library` rather than a
+`java_sdk_library`, or when the library name is different from its module name,
+or when the module is defined in Android.mk rather than Android.bp). In such
+cases it is possible to tell the build system that the library provides a
+`<uses-library>` with a given name (however, this is discouraged and will be
+deprecated in the future, and it is recommended to fix the underlying problem):
+
+* Android.bp property: `provides_uses_lib`
+* Android.mk variable: `LOCAL_PROVIDES_USES_LIBRARY`
+
+It is possible to disable the check on a per-module basis. When doing that it is
+also recommended to disable dexpreopt, as disabling a failed check will result
+in incorrect class loader context recorded in the .odex file, which will cause
+class loader context mismatch and dexopt at first boot.
+
+* Android.bp property: `enforce_uses_lib`
+* Android.mk variable: `LOCAL_ENFORCE_USES_LIBRARIES`
+
+Finally, it is possible to globally disable the check:
+
+* For a given product: `PRODUCT_BROKEN_VERIFY_USES_LIBRARIES := true`
+* On the command line: `RELAX_USES_LIBRARY_CHECK=true`
+
+The environment variable overrides the product variable, so it is possible to
+disable the check for a product, but quickly re-enable it for a local build.
+
+## `LOCAL_REQUIRED_MODULES` requires listed modules to exist {#BUILD_BROKEN_MISSING_REQUIRED_MODULES}
+
+Modules listed in `LOCAL_REQUIRED_MODULES`, `LOCAL_HOST_REQUIRED_MODULES` and
+`LOCAL_TARGET_REQUIRED_MODULES` need to exist unless `ALLOW_MISSING_DEPENDENCIES`
+is set.
+
+To temporarily relax missing required modules check, use:
+
+`BUILD_BROKEN_MISSING_REQUIRED_MODULES := true`
+
+## Changes in system properties settings
+
+### Product variables
+
+System properties for each of the partition is supposed to be set via following
+product config variables.
+
+For system partition,
+
+* `PRODUCT_SYSTEM_PROPERTIES`
+* `PRODUCT_SYSTEM_DEFAULT_PROPERTIES` is highly discouraged. Will be deprecated.
+
+For vendor partition,
+
+* `PRODUCT_VENDOR_PROPERTIES`
+* `PRODUCT_PROPERTY_OVERRIDES` is highly discouraged. Will be deprecated.
+* `PRODUCT_DEFAULT_PROPERTY_OVERRIDES` is also discouraged. Will be deprecated.
+
+For odm partition,
+
+* `PRODUCT_ODM_PROPERTIES`
+
+For system_ext partition,
+
+* `PRODUCT_SYSTEM_EXT_PROPERTIES`
+
+For product partition,
+
+* `PRODUCT_PRODUCT_PROPERTIES`
+
+### Duplication is not allowed within a partition
+
+For each partition, having multiple sysprop assignments for the same name is
+prohibited. For example, the following will now trigger an error:
+
+`PRODUCT_VENDOR_PROPERTIES += foo=true foo=false`
+
+Having duplication across partitions are still allowed. So, the following is
+not an error:
+
+`PRODUCT_VENDOR_PROPERTIES += foo=true`
+`PRODUCT_SYSTEM_PROPERTIES += foo=false`
+
+In that case, the final value is determined at runtime. The precedence is
+
+* product
+* odm
+* vendor
+* system_ext
+* system
+
+So, `foo` becomes `true` because vendor has higher priority than system.
+
+To temporarily turn the build-time restriction off, use
+
+`BUILD_BROKEN_DUP_SYSPROP := true`
+
+### Optional assignments
+
+System properties can now be set as optional using the new syntax:
+
+`name ?= value`
+
+Then the system property named `name` gets the value `value` only when there
+is no other non-optional assignments having the same name. For example, the
+following is allowed and `foo` gets `true`
+
+`PRODUCT_VENDOR_PROPERTIES += foo=true foo?=false`
+
+Note that the order between the optional and the non-optional assignments
+doesn't matter. The following gives the same result as above.
+
+`PRODUCT_VENDOR_PROPERTIES += foo?=false foo=true`
+
+Optional assignments can be duplicated and in that case their order matters.
+Specifically, the last one eclipses others.
+
+`PRODUCT_VENDOR_PROPERTIES += foo?=apple foo?=banana foo?=mango`
+
+With above, `foo` becomes `mango` since its the last one.
+
+Note that this behavior is different from the previous behavior of preferring
+the first one. To go back to the original behavior for compatability reason,
+use:
+
+`BUILD_BROKEN_DUP_SYSPROP := true`
+
+## ELF prebuilts in `PRODUCT_COPY_FILES` {#BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES}
+
+ELF prebuilts in `PRODUCT_COPY_FILES` that are installed into these paths are an
+error:
+
+* `<partition>/bin/*`
+* `<partition>/lib/*`
+* `<partition>/lib64/*`
+
+Define prebuilt modules and add them to `PRODUCT_PACKAGES` instead.
+To temporarily relax this check and restore the behavior prior to this change,
+set `BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true` in `BoardConfig.mk`.
+
 ## COPY_HEADERS usage now produces warnings {#copy_headers}
 
 We've considered `BUILD_COPY_HEADERS`/`LOCAL_COPY_HEADERS` to be deprecated for
