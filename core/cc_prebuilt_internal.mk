@@ -65,7 +65,7 @@ ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module
   built_module := $(linked_module)
 
   ifneq ($(LOCAL_SDK_VERSION),)
-    # binary.mk filters out NDK_MIGRATED_LIBS from my_shared_libs, thus those NDK libs are not added
+    # binary.mk filters out NDK_KNOWN_LIBS from my_shared_libs, thus those NDK libs are not added
     # to DEPENDENCIES_ON_SHARED_LIBRARIES. Assign $(my_ndk_shared_libraries_fullpath) to
     # my_check_elf_file_shared_lib_files so that check_elf_file.py can see those NDK stub libs.
     my_check_elf_file_shared_lib_files := $(my_ndk_shared_libraries_fullpath)

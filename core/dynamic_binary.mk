@@ -132,12 +132,16 @@ endif
 ifneq (,$(my_strip_module))
   $(strip_output): PRIVATE_STRIP_ARGS := $(my_strip_args)
   $(strip_output): PRIVATE_TOOLS_PREFIX := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)TOOLS_PREFIX)
-  $(strip_output): $(strip_input) $(SOONG_STRIP_PATH)
+  $(strip_output): $(strip_input) $(SOONG_STRIP_PATH) $(XZ)
 	@echo "$($(PRIVATE_PREFIX)DISPLAY) Strip: $(PRIVATE_MODULE) ($@)"
 	CLANG_BIN=$(LLVM_PREBUILTS_PATH) \
 	CROSS_COMPILE=$(PRIVATE_TOOLS_PREFIX) \
 	XZ=$(XZ) \
+	CREATE_MINIDEBUGINFO=${CREATE_MINIDEBUGINFO} \
 	$(SOONG_STRIP_PATH) -i $< -o $@ -d $@.strip.d $(PRIVATE_STRIP_ARGS)
+  ifneq ($(HOST_OS),darwin)
+    $(strip_output): $(CREATE_MINIDEBUGINFO)
+  endif
   $(call include-depfile,$(strip_output).strip.d,$(strip_output))
 else
   # Don't strip the binary, just copy it.  We can't skip this step

@@ -33,8 +33,8 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
   # emulator needs super.img
   BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT := true
 
-  # 3G + header
-  BOARD_SUPER_PARTITION_SIZE := 3229614080
+  # 4G + 8M
+  BOARD_SUPER_PARTITION_SIZE := 4303355904
   BOARD_SUPER_PARTITION_GROUPS := emulator_dynamic_partitions
 
   ifeq ($(QEMU_USE_SYSTEM_EXT_PARTITIONS),true)
@@ -56,8 +56,8 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
         vendor
   endif
 
-  # 3G
-  BOARD_EMULATOR_DYNAMIC_PARTITIONS_SIZE := 3221225472
+  # 4G
+  BOARD_EMULATOR_DYNAMIC_PARTITIONS_SIZE := 4294967296
 
   # in build environment to speed up make -j
   ifeq ($(QEMU_DISABLE_AVB),true)
@@ -73,11 +73,11 @@ else
 endif
 
 #vendor boot
-TARGET_NO_VENDOR_BOOT := false
 BOARD_INCLUDE_DTB_IN_BOOTIMG := false
-BOARD_BOOT_HEADER_VERSION := 3
+BOARD_BOOT_HEADER_VERSION := 4
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 0x06000000
+BOARD_RAMDISK_USE_LZ4 := true
 
 # Enable chain partition for system.
 BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
