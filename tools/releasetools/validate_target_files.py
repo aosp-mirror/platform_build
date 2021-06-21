@@ -237,6 +237,17 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
   logging.info('Done checking %s', script_path)
 
 
+# Symlink files in `src` to `dst`, if the files do not
+# already exists in `dst` directory.
+def symlinkIfNotExists(src, dst):
+  if not os.path.isdir(src):
+    return
+  for filename in os.listdir(src):
+    if os.path.exists(os.path.join(dst, filename)):
+      continue
+    os.symlink(os.path.join(src, filename), os.path.join(dst, filename))
+
+
 def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   """Validates the Verified Boot related images.
 
@@ -257,6 +268,12 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   Raises:
     AssertionError: On any verification failure.
   """
+  # See bug 159299583
+  # After commit 5277d1015, some images (e.g. acpio.img and tos.img) are no
+  # longer copied from RADIO to the IMAGES folder. But avbtool assumes that
+  # images are in IMAGES folder. So we symlink them.
+  symlinkIfNotExists(os.path.join(input_tmp, "RADIO"),
+                    os.path.join(input_tmp, "IMAGES"))
   # Verified boot 1.0 (images signed with boot_signer and verity_signer).
   if info_dict.get('boot_signer') == 'true':
     logging.info('Verifying Verified Boot images...')
@@ -409,6 +426,45 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
           stdoutdata.rstrip())
 
 
+def CheckDataInconsistency(lines):
+    build_prop = {}
+    for line in lines:
+      if line.startswith("import") or line.startswith("#"):
+        continue
+      if "=" not in line:
+        continue
+
+      key, value = line.rstrip().split("=", 1)
+      if key in build_prop:
+        logging.info("Duplicated key found for {}".format(key))
+        if value != build_prop[key]:
+          logging.error("Key {} is defined twice with different values {} vs {}"
+                        .format(key, value, build_prop[key]))
+          return key
+      build_prop[key] = value
+
+
+def CheckBuildPropDuplicity(input_tmp):
+  """Check all buld.prop files inside directory input_tmp, raise error
+  if they contain duplicates"""
+
+  if not os.path.isdir(input_tmp):
+    raise ValueError("Expect {} to be a directory".format(input_tmp))
+  for name in os.listdir(input_tmp):
+    if not name.isupper():
+      continue
+    for prop_file in ['build.prop', 'etc/build.prop']:
+      path = os.path.join(input_tmp, name, prop_file)
+      if not os.path.exists(path):
+        continue
+      logging.info("Checking {}".format(path))
+      with open(path, 'r') as fp:
+        dupKey = CheckDataInconsistency(fp.readlines())
+        if dupKey:
+          raise ValueError("{} contains duplicate keys for {}".format(
+              path, dupKey))
+
+
 def main():
   parser = argparse.ArgumentParser(
       description=__doc__,
@@ -444,8 +500,10 @@ def main():
   input_tmp = common.UnzipTemp(args.target_files)
 
   info_dict = common.LoadInfoDict(input_tmp)
-  with zipfile.ZipFile(args.target_files, 'r') as input_zip:
+  with zipfile.ZipFile(args.target_files, 'r', allowZip64=True) as input_zip:
     ValidateFileConsistency(input_zip, input_tmp, info_dict)
+
+  CheckBuildPropDuplicity(input_tmp)
 
   ValidateInstallRecoveryScript(input_tmp, info_dict)
 

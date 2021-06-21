@@ -15,10 +15,12 @@
 
 """Warning patterns for C/C++ compiler, but not clang-tidy."""
 
+# No need of doc strings for trivial small functions.
+# pylint:disable=missing-function-docstring
+
 import re
 
 # pylint:disable=relative-beyond-top-level
-# pylint:disable=g-importing-member
 from .severity import Severity
 
 
@@ -56,7 +58,8 @@ def harmless(description, pattern_list):
 
 
 warn_patterns = [
-    # pylint:disable=line-too-long,g-inconsistent-quotes
+    # pylint does not recognize g-inconsistent-quotes
+    # pylint:disable=line-too-long,bad-option-value,g-inconsistent-quotes
     medium('Implicit function declaration',
            [r".*: warning: implicit declaration of function .+",
             r".*: warning: implicitly declaring library function"]),
@@ -155,6 +158,7 @@ warn_patterns = [
            [r".*: warning: unknown attribute '.+'"]),
     medium('Attribute ignored',
            [r".*: warning: '_*packed_*' attribute ignored",
+            r".*: warning: .* not supported .*Wignored-attributes",
             r".*: warning: attribute declaration must precede definition .+ignored-attributes"]),
     medium('Visibility problem',
            [r".*: warning: declaration of '.+' will not be visible outside of this function"]),
@@ -251,6 +255,8 @@ warn_patterns = [
            [r".*: warning: taking address of temporary"]),
     medium('Taking address of packed member',
            [r".*: warning: taking address of packed member"]),
+    medium('Pack alignment value is modified',
+           [r".*: warning: .*#pragma pack alignment value is modified.*Wpragma-pack.*"]),
     medium('Possible broken line continuation',
            [r".*: warning: backslash and newline separated by space"]),
     medium('Undefined variable template',
@@ -297,7 +303,7 @@ warn_patterns = [
     medium('Missing noreturn',
            [r".*: warning: function '.*' could be declared with attribute 'noreturn'"]),
     medium('User warning',
-           [r".*: warning: #warning "".+"""]),
+           [r".*: warning: #warning \".+\""]),
     medium('Vexing parsing problem',
            [r".*: warning: empty parentheses interpreted as a function declaration"]),
     medium('Dereferencing void*',
@@ -332,7 +338,7 @@ warn_patterns = [
              [r".*: warning: extra tokens at end of #endif directive"]),
     medium('Comparison between different enums',
            [r".*: warning: comparison between '.+' and '.+'.+Wenum-compare",
-            r".*: warning: comparison of .* enumeration types .*-Wenum-compare-switch"]),
+            r".*: warning: comparison of .* enumeration types .*-Wenum-compare.*"]),
     medium('Conversion may change value',
            [r".*: warning: converting negative value '.+' to '.+'",
             r".*: warning: conversion to '.+' .+ may (alter|change)"]),
@@ -396,6 +402,8 @@ warn_patterns = [
          r".*: warning: absolute value function '.+' given .+ which may cause truncation .+Wabsolute-value"]),
     low('Using C++11 extensions',
         [r".*: warning: 'auto' type specifier is a C\+\+11 extension"]),
+    low('Using C++17 extensions',
+        [r".*: warning: .* a C\+\+17 extension .+Wc\+\+17-extensions"]),
     low('Refers to implicitly defined namespace',
         [r".*: warning: using directive refers to implicitly-defined namespace .+"]),
     low('Invalid pp token',
@@ -437,8 +445,10 @@ warn_patterns = [
            [r".*: warning: unannotated fall-through between switch labels.+Wimplicit-fallthrough"]),
     medium('Invalid partial specialization',
            [r".*: warning: class template partial specialization.+Winvalid-partial-specialization"]),
-    medium('Overlapping compatisons',
+    medium('Overlapping comparisons',
            [r".*: warning: overlapping comparisons.+Wtautological-overlap-compare"]),
+    medium('bitwise comparison',
+           [r".*: warning: bitwise comparison.+Wtautological-bitwise-compare"]),
     medium('int in bool context',
            [r".*: warning: converting.+to a boolean.+Wint-in-bool-context"]),
     medium('bitwise conditional parentheses',

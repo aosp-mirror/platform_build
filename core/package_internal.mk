@@ -101,7 +101,6 @@ include $(BUILD_SYSTEM)/support_libraries.mk
 enforce_rro_enabled :=
 ifneq (,$(filter *, $(PRODUCT_ENFORCE_RRO_TARGETS)))
   # * means all system and system_ext APKs, so enable conditionally based on module path.
-  # Note that modules in PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS are excluded even if it is '*'
 
   # Note that base_rules.mk has not yet been included, so it's likely that only
   # one of LOCAL_MODULE_PATH and the LOCAL_X_MODULE flags has been set.
@@ -119,12 +118,6 @@ ifneq (,$(filter *, $(PRODUCT_ENFORCE_RRO_TARGETS)))
 else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
   enforce_rro_enabled := true
 endif
-
-# TODO(b/150820813) Some modules depend on static overlay, remove this after eliminating the dependency.
-ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS)))
-  enforce_rro_enabled :=
-endif
-
 
 product_package_overlays := $(strip \
     $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
@@ -377,9 +370,11 @@ ifeq ($(need_compile_res),true)
 # they want to use this module's R.java file.
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 
+ifneq ($(full_classes_jar),)
 # The R.java file must exist by the time the java source
 # list is generated
 $(java_source_list_file): $(R_file_stamp)
+endif
 
 endif # need_compile_res
 
@@ -399,7 +394,7 @@ ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 # resources.
 ifeq ($(LOCAL_SDK_RES_VERSION),core_current)
 # core_current doesn't contain any framework resources.
-else ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS_USE_PREBUILT_SDK),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
+else ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_USE_PREBUILT_SDKS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
 # for released sdk versions, the platform resources were built into android.jar.
 framework_res_package_export := \
     $(call resolve-prebuilt-sdk-jar-path,$(LOCAL_SDK_RES_VERSION))
@@ -477,31 +472,6 @@ $(LOCAL_BUILT_MODULE): PRIVATE_CERTIFICATE_LINEAGE := $(LOCAL_CERTIFICATE_LINEAG
 # Set a actual_partition_tag (calculated in base_rules.mk) for the package.
 PACKAGES.$(LOCAL_PACKAGE_NAME).PARTITION := $(actual_partition_tag)
 
-# Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES
-# If LOCAL_ENFORCE_USES_LIBRARIES is not set, default to true if either of LOCAL_USES_LIBRARIES or
-# LOCAL_OPTIONAL_USES_LIBRARIES are specified.
-# Will change the default to true unconditionally in the future.
-ifndef LOCAL_ENFORCE_USES_LIBRARIES
-  ifneq (,$(strip $(LOCAL_USES_LIBRARIES)$(LOCAL_OPTIONAL_USES_LIBRARIES)))
-    LOCAL_ENFORCE_USES_LIBRARIES := true
-  endif
-endif
-
-my_enforced_uses_libraries :=
-ifdef LOCAL_ENFORCE_USES_LIBRARIES
-  my_manifest_check := $(intermediates.COMMON)/manifest/AndroidManifest.xml.check
-  $(my_manifest_check): $(MANIFEST_CHECK)
-  $(my_manifest_check): PRIVATE_USES_LIBRARIES := $(LOCAL_USES_LIBRARIES)
-  $(my_manifest_check): PRIVATE_OPTIONAL_USES_LIBRARIES := $(LOCAL_OPTIONAL_USES_LIBRARIES)
-  $(my_manifest_check): $(full_android_manifest)
-	@echo Checking manifest: $<
-	$(MANIFEST_CHECK) --enforce-uses-libraries \
-	  $(addprefix --uses-library ,$(PRIVATE_USES_LIBRARIES)) \
-	  $(addprefix --optional-uses-library ,$(PRIVATE_OPTIONAL_USES_LIBRARIES)) \
-	  $< -o $@
-  $(LOCAL_BUILT_MODULE): $(my_manifest_check)
-endif
-
 # Define the rule to build the actual package.
 # PRIVATE_JNI_SHARED_LIBRARIES is a list of <abi>:<path_of_built_lib>.
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries_with_abis)
@@ -527,7 +497,7 @@ endif
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
 ifeq (true,$(non_system_module))
-ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
+ifeq (,$(TARGET_BUILD_APPS))  # ! unbundled app build
 ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
   module_run_appcompat := true
 endif
@@ -549,6 +519,10 @@ $(LOCAL_BUILT_MODULE) : $(MINIGZIP)
 endif
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 $(LOCAL_BUILT_MODULE) : $(ZIP2ZIP)
+endif
+ifeq ($(full_classes_jar),)
+  # We don't build jar, need to add the Java resources here.
+  $(LOCAL_BUILT_MODULE): $(java_resource_sources)
 endif
 $(LOCAL_BUILT_MODULE): PRIVATE_USE_EMBEDDED_NATIVE_LIBS := $(LOCAL_USE_EMBEDDED_NATIVE_LIBS)
 $(LOCAL_BUILT_MODULE):
@@ -601,6 +575,8 @@ ifneq ($(full_classes_jar),)
 else
   $(my_bundle_module): PRIVATE_DEX_FILE :=
   $(my_bundle_module): PRIVATE_SOURCE_ARCHIVE :=
+  # We don't build jar, need to add the Java resources here.
+  $(my_bundle_module): $(java_resource_sources)
 endif # full_classes_jar
 
 $(my_bundle_module): $(MERGE_ZIPS) $(SOONG_ZIP) $(ZIP2ZIP)
@@ -627,7 +603,7 @@ $(my_bundle_module): $(MERGE_ZIPS) $(SOONG_ZIP) $(ZIP2ZIP)
       endif  # full_classes_jar
 	$(MERGE_ZIPS) $@ $@.parts/*.zip
 	rm -rf $@.parts
-ALL_MODULES.$(LOCAL_MODULE).BUNDLE := $(my_bundle_module)
+ALL_MODULES.$(my_register_name).BUNDLE := $(my_bundle_module)
 
 ifdef TARGET_BUILD_APPS
   ifdef LOCAL_DPI_VARIANTS

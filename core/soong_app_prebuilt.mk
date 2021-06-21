@@ -7,12 +7,13 @@
 # LOCAL_SOONG_HEADER_JAR
 # LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
 # LOCAL_SOONG_PROGUARD_DICT
-# LOCAL_SOONG_PROGUARD_USAGE
+# LOCAL_SOONG_PROGUARD_USAGE_ZIP
 # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 # LOCAL_SOONG_RRO_DIRS
 # LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH)
 # LOCAL_SOONG_JNI_LIBS_$(TARGET_2ND_ARCH)
 # LOCAL_SOONG_JNI_LIBS_SYMBOLS
+# LOCAL_SOONG_DEXPREOPT_CONFIG
 
 ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   $(call pretty-error,soong_app_prebuilt.mk may only be used from Soong)
@@ -49,11 +50,19 @@ ifdef LOCAL_SOONG_CLASSES_JAR
   .PHONY: javac-check-$(LOCAL_MODULE)
 endif
 
+ifdef LOCAL_SOONG_DEXPREOPT_CONFIG
+  my_dexpreopt_config := $(PRODUCT_OUT)/dexpreopt_config/$(LOCAL_MODULE)_dexpreopt.config
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEXPREOPT_CONFIG), $(my_dexpreopt_config)))
+  $(LOCAL_BUILT_MODULE): $(my_dexpreopt_config)
+endif
+
+
+
 # Run veridex on product, system_ext and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
 ifeq (true,$(non_system_module))
-ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
+ifeq (,$(TARGET_BUILD_APPS))  # ! unbundled app build
 ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
   module_run_appcompat := true
 endif
@@ -74,23 +83,31 @@ endif
 
 ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
-    $(intermediates.COMMON)/jacoco-report-classes.jar))
+    $(call local-packaging-dir,jacoco)/jacoco-report-classes.jar))
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(intermediates.COMMON)/jacoco-report-classes.jar)
+    $(call local-packaging-dir,jacoco)/jacoco-report-classes.jar)
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_DICT
   $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
     $(intermediates.COMMON)/proguard_dictionary))
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
+    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary))
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),\
+    $(call local-packaging-dir,proguard_dictionary)/classes.jar))
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
     $(intermediates.COMMON)/proguard_dictionary)
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary)
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(call local-packaging-dir,proguard_dictionary)/classes.jar)
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_USAGE_ZIP
   $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_USAGE_ZIP),\
-    $(intermediates.COMMON)/proguard_usage.zip))
+    $(call local-packaging-dir,proguard_usage)/proguard_usage.zip))
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(intermediates.COMMON)/proguard_usage.zip)
+    $(call local-packaging-dir,proguard_usage)/proguard_usage.zip)
 endif
 
 ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
@@ -130,7 +147,7 @@ endif
 # install symbol files of JNI libraries
 my_jni_lib_symbols_copy_files := $(foreach f,$(LOCAL_SOONG_JNI_LIBS_SYMBOLS),\
   $(call word-colon,1,$(f)):$(patsubst $(PRODUCT_OUT)/%,$(TARGET_OUT_UNSTRIPPED)/%,$(call word-colon,2,$(f))))
-$(LOCAL_BUILT_MODULE): $(call copy-many-files, $(my_jni_lib_symbols_copy_files))
+$(LOCAL_BUILT_MODULE): | $(call copy-many-files, $(my_jni_lib_symbols_copy_files))
 
 # embedded JNI will already have been handled by soong
 my_embed_jni :=
@@ -181,7 +198,7 @@ endif
 PACKAGES.$(LOCAL_MODULE).PARTITION := $(actual_partition_tag)
 
 ifdef LOCAL_SOONG_BUNDLE
-  ALL_MODULES.$(LOCAL_MODULE).BUNDLE := $(LOCAL_SOONG_BUNDLE)
+  ALL_MODULES.$(my_register_name).BUNDLE := $(LOCAL_SOONG_BUNDLE)
 endif
 
 ifdef LOCAL_SOONG_LINT_REPORTS

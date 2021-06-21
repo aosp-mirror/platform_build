@@ -5,6 +5,7 @@
 # LOCAL_SOONG_HEADER_JAR
 # LOCAL_SOONG_DEX_JAR
 # LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
+# LOCAL_SOONG_DEXPREOPT_CONFIG
 
 ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   $(call pretty-error,soong_java_prebuilt.mk may only be used from Soong)
@@ -46,23 +47,31 @@ $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE))
 
 ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
-    $(intermediates.COMMON)/jacoco-report-classes.jar))
+    $(call local-packaging-dir,jacoco)/jacoco-report-classes.jar))
   $(call add-dependency,$(common_javalib.jar),\
-    $(intermediates.COMMON)/jacoco-report-classes.jar)
+    $(call local-packaging-dir,jacoco)/jacoco-report-classes.jar)
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_DICT
   $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
     $(intermediates.COMMON)/proguard_dictionary))
-  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
+    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary))
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),\
+    $(call local-packaging-dir,proguard_dictionary)/classes.jar))
+  $(call add-dependency,$(common_javalib.jar),\
     $(intermediates.COMMON)/proguard_dictionary)
+  $(call add-dependency,$(common_javalib.jar),\
+    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary)
+  $(call add-dependency,$(common_javalib.jar),\
+    $(call local-packaging-dir,proguard_dictionary)/classes.jar)
 endif
 
-ifdef LOCAL_SOONG_PROGUARD_USAGE
+ifdef LOCAL_SOONG_PROGUARD_USAGE_ZIP
   $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_USAGE_ZIP),\
-    $(intermediates.COMMON)/proguard_usage.zip))
-  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(intermediates.COMMON)/proguard_usage.zip)
+    $(call local-packaging-dir,proguard_usage)/proguard_usage.zip))
+  $(call add-dependency,$(common_javalib.jar),\
+    $(call local-packaging-dir,proguard_usage)/proguard_usage.zip)
 endif
 
 
@@ -99,26 +108,31 @@ endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
 ifdef LOCAL_SOONG_DEX_JAR
   ifndef LOCAL_IS_HOST_MODULE
-    ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)  # is_boot_jar
+    boot_jars := $(foreach pair,$(PRODUCT_BOOT_JARS), $(call word-colon,2,$(pair)))
+    ifneq ($(filter $(LOCAL_MODULE),$(boot_jars)),) # is_boot_jar
       ifeq (true,$(WITH_DEXPREOPT))
-        # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
-        # We use this installed_odex trick to get boot.art installed.
-        installed_odex := $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
-        # Append the odex for the 2nd arch if we have one.
-        installed_odex += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
-        ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
-        # Make sure to install the .odex and .vdex when you run "make <module_name>"
-       $(my_all_targets): $(installed_odex)
-       # Copy $(LOCAL_BUILT_MODULE) and its dependencies when installing boot.art
-       $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE): $(LOCAL_BUILT_MODULE)
+        # $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE) contains modules that installs
+        # all of bootjars' dexpreopt files (.art, .oat, .vdex, ...)
+        # Add them to the required list so they are installed alongside this module.
+        ALL_MODULES.$(my_register_name).REQUIRED_FROM_TARGET += \
+          $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE) \
+          $(2ND_DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE)
+        # Copy $(LOCAL_BUILT_MODULE) and its dependencies when installing boot.art
+        # so that dependencies of $(LOCAL_BUILT_MODULE) (which may include
+        # jacoco-report-classes.jar) are copied for every build.
+        $(foreach m,$(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE) $(2ND_DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE), \
+          $(eval $(call add-dependency,$(firstword $(call module-installed-files,$(m))),$(LOCAL_BUILT_MODULE))) \
+        )
       endif
     endif # is_boot_jar
 
     $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
     $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(common_javalib.jar)))
-    $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar)))
-    ifneq ($(TURBINE_ENABLED),false)
-      $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_header_jar)))
+    ifdef LOCAL_SOONG_CLASSES_JAR
+      $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar)))
+      ifneq ($(TURBINE_ENABLED),false)
+        $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_header_jar)))
+      endif
     endif
   endif
 
@@ -140,11 +154,22 @@ ALL_MODULES.$(my_register_name).CLASSES_JAR := $(full_classes_jar)
 $(my_register_name): $(my_installed)
 
 ifdef LOCAL_SOONG_AAR
-  ALL_MODULES.$(LOCAL_MODULE).AAR := $(LOCAL_SOONG_AAR)
+  ALL_MODULES.$(my_register_name).AAR := $(LOCAL_SOONG_AAR)
 endif
 
+# Copy dexpreopt.config files from Soong libraries to the location where Make
+# modules can find them.
+ifdef LOCAL_SOONG_DEXPREOPT_CONFIG
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEXPREOPT_CONFIG), $(call local-intermediates-dir,)/dexpreopt.config))
+  my_dexpreopt_config := $(PRODUCT_OUT)/dexpreopt_config/$(LOCAL_MODULE)_dexpreopt.config
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEXPREOPT_CONFIG), $(my_dexpreopt_config)))
+  $(LOCAL_BUILT_MODULE): $(my_dexpreopt_config)
+endif
+
+ifdef LOCAL_SOONG_CLASSES_JAR
 javac-check : $(full_classes_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_jar)
+endif
 .PHONY: javac-check-$(LOCAL_MODULE)
 
 ifndef LOCAL_IS_HOST_MODULE

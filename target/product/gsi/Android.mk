@@ -31,10 +31,6 @@ check-vndk-abi-dump-list-timestamp := $(call intermediates-dir-for,PACKAGING,vnd
 ifeq ($(TARGET_IS_64_BIT)|$(TARGET_2ND_ARCH),true|)
 # TODO(b/110429754) remove this condition when we support 64-bit-only device
 check-vndk-list: ;
-else ifeq ($(TARGET_BUILD_PDK),true)
-# b/118634643: don't check VNDK lib list when building PDK. Some libs (libandroid_net.so
-# and some render-script related ones) can't be built in PDK due to missing frameworks/base.
-check-vndk-list: ;
 else ifeq ($(TARGET_SKIP_CURRENT_VNDK),true)
 check-vndk-list: ;
 else ifeq ($(BOARD_VNDK_VERSION),)
@@ -67,6 +63,8 @@ $(check-vndk-list-timestamp): $(INTERNAL_VNDK_LIB_LIST) $(LATEST_VNDK_LIB_LIST) 
 # Script to update the latest VNDK lib list
 include $(CLEAR_VARS)
 LOCAL_MODULE := update-vndk-list.sh
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_CLASS := EXECUTABLES
 LOCAL_MODULE_STEM := $(LOCAL_MODULE)
 LOCAL_IS_HOST_MODULE := true
@@ -150,6 +148,8 @@ ifneq ($(BOARD_VNDK_VERSION),)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_package
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 # Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
 LOCAL_REQUIRED_MODULES := \
     $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES))
@@ -165,11 +165,16 @@ endif
 include $(BUILD_PHONY_PACKAGE)
 
 include $(CLEAR_VARS)
-_vndk_versions := $(PRODUCT_EXTRA_VNDK_VERSIONS)
+_vndk_versions :=
+ifeq ($(filter com.android.vndk.current.on_vendor, $(PRODUCT_PACKAGES)),)
+	_vndk_versions += $(PRODUCT_EXTRA_VNDK_VERSIONS)
+endif
 ifneq ($(BOARD_VNDK_VERSION),current)
 	_vndk_versions += $(BOARD_VNDK_VERSION)
 endif
 LOCAL_MODULE := vndk_apex_snapshot_package
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(_vndk_versions),com.android.vndk.v$(vndk_ver))
 include $(BUILD_PHONY_PACKAGE)
 
@@ -182,6 +187,8 @@ endif # BOARD_VNDK_VERSION is set
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := gsi_skip_mount.cfg
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_MODULE_STEM := skip_mount.cfg
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 LOCAL_MODULE_CLASS := ETC
@@ -205,6 +212,20 @@ include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := init.gsi.rc
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SYSTEM_EXT_MODULE := true
+LOCAL_MODULE_RELATIVE_PATH := init
+
+include $(BUILD_PREBUILT)
+
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := init.vndk-nodef.rc
+LOCAL_LICENSE_KINDS := legacy_restricted
+LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SYSTEM_EXT_MODULE := true
