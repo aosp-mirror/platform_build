@@ -16,6 +16,23 @@
       "message": "Is this still needed?",
       "revId": "8923c9c6651b445a2ea5464fefd30e3767bc6096",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2914aa9_153318ff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1689978
+      },
+      "writtenOn": "2021-06-21T04:42:02Z",
+      "side": 1,
+      "message": "No, it still happens, but it doesn\u0027t needed to be fixed now.\n\nI\u0027ll abandon this change, and re-apply later when it is needed.",
+      "revId": "8923c9c6651b445a2ea5464fefd30e3767bc6096",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
