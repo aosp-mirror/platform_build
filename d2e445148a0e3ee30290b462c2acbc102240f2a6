@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed51c0ab_8190bbf8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1086523
+      },
+      "writtenOn": "2021-06-21T23:31:46Z",
+      "side": 1,
+      "message": "Verified that this would work with updated blob ( https://android-build.googleplex.com/builds/abtd/run/L04500000926097429 ).  Because blobs are on a separate Gerrit instance, it\u0027s probably unable to verify the change so bypassing.",
+      "revId": "d2e445148a0e3ee30290b462c2acbc102240f2a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
