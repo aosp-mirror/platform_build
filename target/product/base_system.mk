@@ -16,6 +16,7 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
+    abx \
     adbd_system_api \
     am \
     android.hidl.allocator@1.0-service \
@@ -37,7 +38,6 @@ PRODUCT_PACKAGES += \
     bcc \
     blank_screen \
     blkid \
-    service-blobstore \
     bmgr \
     bootanimation \
     bootstat \
@@ -50,8 +50,11 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.adbd \
+    com.android.appsearch \
     com.android.conscrypt \
+    com.android.cronet \
     com.android.extservices \
+    com.android.geotz \
     com.android.i18n \
     com.android.ipsec \
     com.android.location.provider \
@@ -62,13 +65,13 @@ PRODUCT_PACKAGES += \
     com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
+    com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
     com.android.tzdata \
     com.android.wifi \
     ContactsProvider \
     content \
-    crash_dump \
     CtsShimPrebuilt \
     CtsShimPrivPrebuilt \
     debuggerd\
@@ -83,6 +86,7 @@ PRODUCT_PACKAGES += \
     e2fsck \
     ExtShared \
     flags_health_check \
+    framework-graphics \
     framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
@@ -116,11 +120,11 @@ PRODUCT_PACKAGES += \
     iptables \
     ip-up-vpn \
     javax.obex \
-    service-jobscheduler \
-    keystore \
+    keystore2 \
     credstore \
     ld.mc \
     libaaudio \
+    libalarm_jni \
     libamidi \
     libandroid \
     libandroidfw \
@@ -184,7 +188,6 @@ PRODUCT_PACKAGES += \
     libstagefright_foundation \
     libstagefright_omx \
     libstdc++ \
-    libsurfaceflinger \
     libsysutils \
     libui \
     libusbhost \
@@ -193,6 +196,7 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     linker \
     linkerconfig \
+    llkd \
     lmkd \
     LocalTransport \
     locksettings \
@@ -213,6 +217,7 @@ PRODUCT_PACKAGES += \
     ndc \
     netd \
     NetworkStack \
+    odsign \
     org.apache.http.legacy \
     otacerts \
     PackageInstaller \
@@ -248,6 +253,7 @@ PRODUCT_PACKAGES += \
     shell_and_utilities_system \
     sm \
     snapshotctl \
+    snapuserd \
     SoundPicker \
     storaged \
     surfaceflinger \
@@ -262,6 +268,7 @@ PRODUCT_PACKAGES += \
     tune2fs \
     tzdatacheck \
     uiautomator \
+    uinput \
     uncrypt \
     usbd \
     vdc \
@@ -278,6 +285,29 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     system_manifest.xml \
     system_compatibility_matrix.xml \
+
+# HWASAN runtime for SANITIZE_TARGET=hwaddress builds
+ifneq (,$(filter hwaddress,$(SANITIZE_TARGET)))
+  PRODUCT_PACKAGES += \
+   libclang_rt.hwasan-aarch64-android.bootstrap
+endif
+
+# Jacoco agent JARS to be built and installed, if any.
+ifeq ($(EMMA_INSTRUMENT),true)
+  ifneq ($(EMMA_INSTRUMENT_STATIC),true)
+    # For instrumented build, if Jacoco is not being included statically
+    # in instrumented packages then include Jacoco classes in the product
+    # packages.
+    PRODUCT_PACKAGES += jacocoagent
+    ifneq ($(EMMA_INSTRUMENT_FRAMEWORK),true)
+      # For instrumented build, if Jacoco is not being included statically
+      # in instrumented packages and has not already been included in the
+      # bootclasspath via ART_APEX_JARS then include Jacoco classes into the
+      # bootclasspath.
+      PRODUCT_BOOT_JARS += jacocoagent
+    endif # EMMA_INSTRUMENT_FRAMEWORK
+  endif # EMMA_INSTRUMENT_STATIC
+endif # EMMA_INSTRUMENT
 
 # Host tools to install
 PRODUCT_HOST_PACKAGES += \
@@ -322,15 +352,16 @@ PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/hosts:system/etc/hosts
 
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
+PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += persist.traced.enable=1
+PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
+PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
+    dmuserd \
     gdbserver \
     idlcli \
     init-debug.rc \
@@ -340,6 +371,8 @@ PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     logtagd.rc \
     procrank \
+    profcollectd \
+    profcollectctl \
     remount \
     showmap \
     sqlite3 \
@@ -360,11 +393,6 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     SettingsProvider \
     WallpaperBackup
 
-# Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
-PRODUCT_PACKAGES_DEBUG_ASAN := \
-    fuzz \
-    honggfuzz
-
 PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
     libdumpcoverage
 
@@ -376,5 +404,4 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/bootclasspath.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)

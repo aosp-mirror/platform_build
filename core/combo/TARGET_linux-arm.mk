@@ -39,7 +39,7 @@ ifeq (,$(strip $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)))
   TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT := generic
 endif
 
-# This sanity checks TARGET_2ND_ARCH_VARIANT against the lists above.
+# This quickly checks TARGET_2ND_ARCH_VARIANT against the lists above.
 ifneq (,$(filter $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT), $(KNOWN_ARMv82a_CORES)))
   ifeq (,$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT))
     TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT := armv8-2a
@@ -64,7 +64,6 @@ ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
 endif
 
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
-include $(BUILD_SYSTEM)/combo/fdo.mk
 
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))

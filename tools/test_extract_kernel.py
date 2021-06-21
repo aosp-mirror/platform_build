@@ -15,16 +15,16 @@
 # limitations under the License.
 
 import unittest
-from extract_kernel import get_version, dump_version
+from extract_kernel import dump_version
 
 class ExtractKernelTest(unittest.TestCase):
   def test_extract_version(self):
-    self.assertEqual("4.9.100", get_version(
-        b'Linux version 4.9.100-a123 (a@a) (a) a\n\x00', 0))
-    self.assertEqual("4.9.123", get_version(
-        b'Linux version 4.9.123 (@) () \n\x00', 0))
+    self.assertEqual("4.9.100", dump_version(
+        b'Linux version 4.9.100-a123 (a@a) (a) a\n\x00'))
+    self.assertEqual("4.9.123", dump_version(
+        b'Linux version 4.9.123 (@) () \n\x00'))
 
   def test_dump_self(self):
     self.assertEqual("4.9.1", dump_version(
         b"trash\x00Linux version 4.8.8\x00trash\x00"
-        "other trash Linux version 4.9.1-g3 (2@s) (2) a\n\x00"))
+        b"other trash Linux version 4.9.1-g3 (2@s) (2) a\n\x00"))

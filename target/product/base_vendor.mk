@@ -57,6 +57,7 @@ PRODUCT_PACKAGES += \
     libdynproc \
     libeffectproxy \
     libeffects \
+    libhapticgenerator \
     libldnhncr \
     libreference-ril \
     libreverbwrapper \
@@ -66,11 +67,11 @@ PRODUCT_PACKAGES += \
     passwd_vendor \
     selinux_policy_nonsystem \
     shell_and_utilities_vendor \
-    vndservice \
 
 # Base module when shipping api level is less than or equal to 29
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29 += \
     android.hardware.configstore@1.1-service \
+    vndservice \
     vndservicemanager \
 
 # VINTF data for vendor image
