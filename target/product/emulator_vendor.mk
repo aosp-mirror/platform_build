@@ -26,7 +26,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
 PRODUCT_PACKAGES += \
     vndk-sp
 
-PRODUCT_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
+DEVICE_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
 
 PRODUCT_CHARACTERISTICS := emulator
 
@@ -39,7 +39,7 @@ $(call inherit-product-if-exists, device/generic/goldfish/vendor.mk)
 #responding, disble it for now.
 #still keep it on internal master as it is still working
 #once it is fixed in aosp, remove this block of comment.
-#PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+#PRODUCT_VENDOR_PROPERTIES += \
 #config.disable_location=true
 
 # enable Google-specific location features,
@@ -49,4 +49,4 @@ PRODUCT_SYSTEM_EXT_PROPERTIES += \
 
 # disable setupwizard
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
-    ro.setupwizard.mode=DISABLED
+    ro.setupwizard.mode?=DISABLED
