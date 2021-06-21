@@ -23,9 +23,9 @@ $(call inherit-product-if-exists, frameworks/base/data/sounds/AllAudio.mk)
 
 # Additional settings used in all AOSP builds
 PRODUCT_PRODUCT_PROPERTIES += \
-    ro.config.ringtone=Ring_Synth_04.ogg \
-    ro.config.notification_sound=pixiedust.ogg \
-    ro.com.android.dataroaming=true \
+    ro.config.ringtone?=Ring_Synth_04.ogg \
+    ro.config.notification_sound?=pixiedust.ogg \
+    ro.com.android.dataroaming?=true \
 
 # More AOSP packages
 PRODUCT_PACKAGES += \
@@ -38,8 +38,3 @@ PRODUCT_PACKAGES += \
 #   Provide a APN configuration to GSI product
 PRODUCT_COPY_FILES += \
     device/sample/etc/apns-full-conf.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/apns-conf.xml
-
-# NFC:
-#   Provide a libnfc-nci.conf to GSI product
-PRODUCT_COPY_FILES += \
-    device/generic/common/nfc/libnfc-nci.conf:$(TARGET_COPY_OUT_PRODUCT)/etc/libnfc-nci.conf

@@ -57,7 +57,7 @@ def GetDiskUsage(path):
   Returns:
     The number of bytes based on a 1K block_size.
   """
-  cmd = ["du", "-k", "-s", path]
+  cmd = ["du", "-b", "-k", "-s", path]
   output = common.RunAndCheckOutput(cmd, verbose=False)
   return int(output.split()[0]) * 1024
 
@@ -73,16 +73,16 @@ def GetInodeUsage(path):
   """
   cmd = ["find", path, "-print"]
   output = common.RunAndCheckOutput(cmd, verbose=False)
-  # increase by > 4% as number of files and directories is not whole picture.
+  # increase by > 6% as number of files and directories is not whole picture.
   inodes = output.count('\n')
-  spare_inodes = inodes * 4 // 100
+  spare_inodes = inodes * 6 // 100
   min_spare_inodes = 12
   if spare_inodes < min_spare_inodes:
     spare_inodes = min_spare_inodes
   return inodes + spare_inodes
 
 
-def GetFilesystemCharacteristics(image_path, sparse_image=True):
+def GetFilesystemCharacteristics(fs_type, image_path, sparse_image=True):
   """Returns various filesystem characteristics of "image_path".
 
   Args:
@@ -96,7 +96,11 @@ def GetFilesystemCharacteristics(image_path, sparse_image=True):
   if sparse_image:
     unsparse_image_path = UnsparseImage(image_path, replace=False)
 
-  cmd = ["tune2fs", "-l", unsparse_image_path]
+  if fs_type.startswith("ext"):
+    cmd = ["tune2fs", "-l", unsparse_image_path]
+  elif fs_type.startswith("f2fs"):
+    cmd = ["fsck.f2fs", "-l", unsparse_image_path]
+
   try:
     output = common.RunAndCheckOutput(cmd, verbose=False)
   finally:
@@ -250,6 +254,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   run_e2fsck = False
   needs_projid = prop_dict.get("needs_projid", 0)
   needs_casefold = prop_dict.get("needs_casefold", 0)
+  needs_compress = prop_dict.get("needs_compress", 0)
 
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
@@ -295,6 +300,22 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.extend(["--inode_size", "256"])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
+  elif fs_type.startswith("erofs"):
+    build_command = ["mkerofsimage.sh"]
+    build_command.extend([in_dir, out_file])
+    if "erofs_sparse_flag" in prop_dict:
+      build_command.extend([prop_dict["erofs_sparse_flag"]])
+    build_command.extend(["-m", prop_dict["mount_point"]])
+    if target_out:
+      build_command.extend(["-d", target_out])
+    if fs_config:
+      build_command.extend(["-C", fs_config])
+    if "selinux_fc" in prop_dict:
+      build_command.extend(["-c", prop_dict["selinux_fc"]])
+    if "timestamp" in prop_dict:
+      build_command.extend(["-T", str(prop_dict["timestamp"])])
+    if "uuid" in prop_dict:
+      build_command.extend(["-U", prop_dict["uuid"]])
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
@@ -337,6 +358,18 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.append("--prjquota")
     if (needs_casefold):
       build_command.append("--casefold")
+    if (needs_compress or prop_dict.get("f2fs_compress") == "true"):
+      build_command.append("--compression")
+    if (prop_dict.get("f2fs_compress") == "true"):
+      build_command.append("--readonly")
+      build_command.append("--sldc")
+      if (prop_dict.get("f2fs_sldc_flags") == None):
+        build_command.append(str(0))
+      else:
+        sldc_flags_str = prop_dict.get("f2fs_sldc_flags")
+        sldc_flags = sldc_flags_str.split()
+        build_command.append(str(len(sldc_flags)))
+        build_command.extend(sldc_flags)
   else:
     raise BuildImageError(
         "Error: unknown filesystem type: {}".format(fs_type))
@@ -358,13 +391,14 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
             in_dir, du_str,
             int(prop_dict.get("partition_reserved_size", 0)),
             int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
-    print(
-        "The max image size for filesystem files is {} bytes ({} MB), out of a "
-        "total partition size of {} bytes ({} MB).".format(
-            int(prop_dict["image_size"]),
-            int(prop_dict["image_size"]) // BYTES_IN_MB,
-            int(prop_dict["partition_size"]),
-            int(prop_dict["partition_size"]) // BYTES_IN_MB))
+    if ("image_size" in prop_dict and "partition_size" in prop_dict):
+      print(
+          "The max image size for filesystem files is {} bytes ({} MB), "
+          "out of a total partition size of {} bytes ({} MB).".format(
+              int(prop_dict["image_size"]),
+              int(prop_dict["image_size"]) // BYTES_IN_MB,
+              int(prop_dict["partition_size"]),
+              int(prop_dict["partition_size"]) // BYTES_IN_MB))
     raise
 
   if run_e2fsck and prop_dict.get("skip_fsck") != "true":
@@ -402,7 +436,9 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   fs_type = prop_dict.get("fs_type", "")
 
   fs_spans_partition = True
-  if fs_type.startswith("squash"):
+  if fs_type.startswith("squash") or fs_type.startswith("erofs"):
+    fs_spans_partition = False
+  elif fs_type.startswith("f2fs") and prop_dict.get("f2fs_compress") == "true":
     fs_spans_partition = False
 
   # Get a builder for creating an image that's to be verified by Verified Boot,
@@ -412,7 +448,16 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   if (prop_dict.get("use_dynamic_partition_size") == "true" and
       "partition_size" not in prop_dict):
     # If partition_size is not defined, use output of `du' + reserved_size.
-    size = GetDiskUsage(in_dir)
+    # For compressed file system, it's better to use the compressed size to avoid wasting space.
+    if fs_type.startswith("erofs"):
+      tmp_dict = prop_dict.copy()
+      if "erofs_sparse_flag" in tmp_dict:
+        tmp_dict.pop("erofs_sparse_flag")
+      BuildImageMkfs(in_dir, tmp_dict, out_file, target_out, fs_config)
+      size = GetDiskUsage(out_file)
+      os.remove(out_file)
+    else:
+      size = GetDiskUsage(in_dir)
     logger.info(
         "The tree size of %s is %d MB.", in_dir, size // BYTES_IN_MB)
     # If not specified, give us 16MB margin for GetDiskUsage error ...
@@ -435,7 +480,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       sparse_image = False
       if "extfs_sparse_flag" in prop_dict:
         sparse_image = True
-      fs_dict = GetFilesystemCharacteristics(out_file, sparse_image)
+      fs_dict = GetFilesystemCharacteristics(fs_type, out_file, sparse_image)
       os.remove(out_file)
       block_size = int(fs_dict.get("Block size", "4096"))
       free_size = int(fs_dict.get("Free blocks", "0")) * block_size
@@ -472,6 +517,19 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       prop_dict["partition_size"] = str(size)
       logger.info(
           "Allocating %d Inodes for %s.", inodes, out_file)
+    elif fs_type.startswith("f2fs") and prop_dict.get("f2fs_compress") == "true":
+      prop_dict["partition_size"] = str(size)
+      prop_dict["image_size"] = str(size)
+      BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
+      sparse_image = False
+      if "f2fs_sparse_flag" in prop_dict:
+        sparse_image = True
+      fs_dict = GetFilesystemCharacteristics(fs_type, out_file, sparse_image)
+      os.remove(out_file)
+      block_count = int(fs_dict.get("block_count", "0"))
+      log_blocksize = int(fs_dict.get("log_blocksize", "12"))
+      size = block_count << log_blocksize
+      prop_dict["partition_size"] = str(size)
     if verity_image_builder:
       size = verity_image_builder.CalculateDynamicPartitionSize(size)
     prop_dict["partition_size"] = str(size)
@@ -529,7 +587,10 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
 
   common_props = (
       "extfs_sparse_flag",
+      "erofs_sparse_flag",
       "squashfs_sparse_flag",
+      "system_f2fs_compress",
+      "system_f2fs_sldc_flags",
       "f2fs_sparse_flag",
       "skip_fsck",
       "ext_mkuserimg",
@@ -566,6 +627,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("root_dir", "root_dir")
     copy_prop("root_fs_config", "root_fs_config")
     copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
+    copy_prop("system_f2fs_compress", "f2fs_compress")
+    copy_prop("system_f2fs_sldc_flags", "f2fs_sldc_flags")
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
@@ -592,6 +655,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["journal_size"] = "0"
     copy_prop("system_verity_block_device", "verity_block_device")
     copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
+    copy_prop("system_f2fs_compress", "f2fs_compress")
+    copy_prop("system_f2fs_sldc_flags", "f2fs_sldc_flags")
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
@@ -610,6 +675,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("userdata_selinux_fc", "selinux_fc")
     copy_prop("needs_casefold", "needs_casefold")
     copy_prop("needs_projid", "needs_projid")
+    copy_prop("needs_compress", "needs_compress")
   elif mount_point == "cache":
     copy_prop("cache_fs_type", "fs_type")
     copy_prop("cache_size", "partition_size")
@@ -627,6 +693,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["journal_size"] = "0"
     copy_prop("vendor_verity_block_device", "verity_block_device")
     copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
+    copy_prop("vendor_f2fs_compress", "f2fs_compress")
+    copy_prop("vendor_f2fs_sldc_flags", "f2fs_sldc_flags")
     copy_prop("vendor_squashfs_compressor", "squashfs_compressor")
     copy_prop("vendor_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("vendor_squashfs_block_size", "squashfs_block_size")
@@ -650,6 +718,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["journal_size"] = "0"
     copy_prop("product_verity_block_device", "verity_block_device")
     copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
+    copy_prop("product_f2fs_compress", "f2fs_compress")
+    copy_prop("product_f2fs_sldc_flags", "f2fs_sldc_flags")
     copy_prop("product_squashfs_compressor", "squashfs_compressor")
     copy_prop("product_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("product_squashfs_block_size", "squashfs_block_size")
@@ -673,6 +743,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["journal_size"] = "0"
     copy_prop("system_ext_verity_block_device", "verity_block_device")
     copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
+    copy_prop("system_ext_f2fs_compress", "f2fs_compress")
+    copy_prop("system_ext_f2fs_sldc_flags", "f2fs_sldc_flags")
     copy_prop("system_ext_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_ext_squashfs_compressor_opt",
               "squashfs_compressor_opt")
@@ -708,6 +780,54 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("odm_reserved_size", "partition_reserved_size")
     copy_prop("odm_selinux_fc", "selinux_fc")
+  elif mount_point == "vendor_dlkm":
+    copy_prop("avb_vendor_dlkm_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_vendor_dlkm_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
+    copy_prop("avb_vendor_dlkm_key_path", "avb_key_path")
+    copy_prop("avb_vendor_dlkm_algorithm", "avb_algorithm")
+    copy_prop("avb_vendor_dlkm_salt", "avb_salt")
+    copy_prop("vendor_dlkm_fs_type", "fs_type")
+    copy_prop("vendor_dlkm_size", "partition_size")
+    copy_prop("vendor_dlkm_f2fs_compress", "f2fs_compress")
+    copy_prop("vendor_dlkm_f2fs_sldc_flags", "f2fs_sldc_flags")
+    if not copy_prop("vendor_dlkm_journal_size", "journal_size"):
+      d["journal_size"] = "0"
+    copy_prop("vendor_dlkm_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
+    copy_prop("vendor_dlkm_squashfs_compressor", "squashfs_compressor")
+    copy_prop("vendor_dlkm_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("vendor_dlkm_squashfs_block_size", "squashfs_block_size")
+    copy_prop("vendor_dlkm_squashfs_disable_4k_align", "squashfs_disable_4k_align")
+    copy_prop("vendor_dlkm_base_fs_file", "base_fs_file")
+    copy_prop("vendor_dlkm_extfs_inode_count", "extfs_inode_count")
+    if not copy_prop("vendor_dlkm_extfs_rsv_pct", "extfs_rsv_pct"):
+      d["extfs_rsv_pct"] = "0"
+    copy_prop("vendor_dlkm_reserved_size", "partition_reserved_size")
+    copy_prop("vendor_dlkm_selinux_fc", "selinux_fc")
+  elif mount_point == "odm_dlkm":
+    copy_prop("avb_odm_dlkm_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_odm_dlkm_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
+    copy_prop("avb_odm_dlkm_key_path", "avb_key_path")
+    copy_prop("avb_odm_dlkm_algorithm", "avb_algorithm")
+    copy_prop("avb_odm_dlkm_salt", "avb_salt")
+    copy_prop("odm_dlkm_fs_type", "fs_type")
+    copy_prop("odm_dlkm_size", "partition_size")
+    if not copy_prop("odm_dlkm_journal_size", "journal_size"):
+      d["journal_size"] = "0"
+    copy_prop("odm_dlkm_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
+    copy_prop("odm_dlkm_squashfs_compressor", "squashfs_compressor")
+    copy_prop("odm_dlkm_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("odm_dlkm_squashfs_block_size", "squashfs_block_size")
+    copy_prop("odm_dlkm_squashfs_disable_4k_align", "squashfs_disable_4k_align")
+    copy_prop("odm_dlkm_base_fs_file", "base_fs_file")
+    copy_prop("odm_dlkm_extfs_inode_count", "extfs_inode_count")
+    if not copy_prop("odm_dlkm_extfs_rsv_pct", "extfs_rsv_pct"):
+      d["extfs_rsv_pct"] = "0"
+    copy_prop("odm_dlkm_reserved_size", "partition_reserved_size")
+    copy_prop("odm_dlkm_selinux_fc", "selinux_fc")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
@@ -752,6 +872,10 @@ def GlobalDictFromImageProp(image_prop, mount_point):
     copy_prop("partition_size", "vendor_size")
   elif mount_point == "odm":
     copy_prop("partition_size", "odm_size")
+  elif mount_point == "vendor_dlkm":
+    copy_prop("partition_size", "vendor_dlkm_size")
+  elif mount_point == "odm_dlkm":
+    copy_prop("partition_size", "odm_dlkm_size")
   elif mount_point == "product":
     copy_prop("partition_size", "product_size")
   elif mount_point == "system_ext":
@@ -791,6 +915,10 @@ def main(argv):
       mount_point = "vendor"
     elif image_filename == "odm.img":
       mount_point = "odm"
+    elif image_filename == "vendor_dlkm.img":
+      mount_point = "vendor_dlkm"
+    elif image_filename == "odm_dlkm.img":
+      mount_point = "odm_dlkm"
     elif image_filename == "oem.img":
       mount_point = "oem"
     elif image_filename == "product.img":
