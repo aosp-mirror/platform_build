@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84d72630_7d7d081d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1466604
+      },
+      "writtenOn": "2021-06-22T03:57:02Z",
+      "side": 1,
+      "message": "Yifan, should I turn this one down as well per b/191705721?",
+      "revId": "0cf7a3706a9088ed990351fd07e0fbfc9f64a684",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
