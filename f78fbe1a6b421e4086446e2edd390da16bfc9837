@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d07193fc_0dd03f45",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1561651
+      },
+      "writtenOn": "2021-06-23T15:31:42Z",
+      "side": 1,
+      "message": "test_transparency_key.pub was also added in eaed60c. Could you remove it? Thanks.",
+      "revId": "f78fbe1a6b421e4086446e2edd390da16bfc9837",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
