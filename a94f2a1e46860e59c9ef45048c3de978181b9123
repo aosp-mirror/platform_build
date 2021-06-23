@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89c8a3c1_9ed72988",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-06-23T07:58:10Z",
+      "side": 1,
+      "message": "There is no Legacy GSI from S. The patch is only for GSI R.\n",
+      "revId": "a94f2a1e46860e59c9ef45048c3de978181b9123",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
