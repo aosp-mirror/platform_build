@@ -15,9 +15,11 @@
 
 """Warning patterns for Java compiler tools."""
 
+# No need of doc strings for trivial small functions.
+# pylint:disable=missing-function-docstring
+
 # pylint:disable=relative-beyond-top-level
 from .cpp_warn_patterns import compile_patterns
-# pylint:disable=g-importing-member
 from .severity import Severity
 
 
@@ -59,7 +61,8 @@ def low(name, description=None):
 
 
 warn_patterns = [
-    # pylint:disable=line-too-long,g-inconsistent-quotes
+    # pylint does not recognize g-inconsistent-quotes
+    # pylint:disable=line-too-long,bad-option-value,g-inconsistent-quotes
     # Warnings from Javac
     java_medium('Use of deprecated',
                 [r'.*: warning: \[deprecation\] .+',
@@ -485,16 +488,27 @@ warn_patterns = [
     java_medium('Static method should be qualified',
                 [r'.*\.java:.*: warning: \[static\] static method should be qualified']),
     medium('AbstractInner'),
+    medium('BothPackageInfoAndHtml'),
+    medium('BuilderSetStyle'),
     medium('CallbackName'),
     medium('ExecutorRegistration'),
+    medium('HiddenTypeParameter'),
     medium('JavaApiUsedByMainlineModule'),
     medium('ListenerLast'),
+    medium('MinMaxConstant'),
     medium('MissingBuildMethod'),
+    medium('MissingGetterMatchingBuilder'),
     medium('NoByteOrShort'),
     medium('OverlappingConstants'),
     medium('SetterReturnsThis'),
+    medium('StaticFinalBuilder'),
+    medium('StreamFiles'),
     medium('Typo'),
     medium('UseIcu'),
+    medium('fallthrough'),
+    medium('overrides'),
+    medium('serial'),
+    medium('try'),
     high('AndroidInjectionBeforeSuper',
          'AndroidInjection.inject() should always be invoked before calling super.lifecycleMethod()'),
     high('AndroidJdkLibsChecker',
@@ -783,6 +797,8 @@ warn_patterns = [
     # Other javac tool warnings
     java_medium('addNdkApiCoverage failed to getPackage',
                 [r".*: warning: addNdkApiCoverage failed to getPackage"]),
+    java_medium('bad path element',
+                [r".*: warning: \[path\] bad path element .*\.jar"]),
     java_medium('Supported version from annotation processor',
                 [r".*: warning: Supported source version .+ from annotation processor"]),
 ]

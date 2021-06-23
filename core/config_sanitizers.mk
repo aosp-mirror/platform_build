@@ -53,6 +53,18 @@ ifneq ($(filter cfi, $(my_global_sanitize)),)
   endif
 endif
 
+# Disable global memtag_heap in excluded paths
+ifneq ($(filter memtag_heap, $(my_global_sanitize)),)
+  combined_exclude_paths := $(MEMTAG_HEAP_EXCLUDE_PATHS) \
+                            $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS)
+
+  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+    my_global_sanitize := $(filter-out memtag_heap,$(my_global_sanitize))
+    my_global_sanitize_diag := $(filter-out memtag_heap,$(my_global_sanitize_diag))
+  endif
+endif
+
 ifneq ($(my_global_sanitize),)
   my_sanitize := $(my_global_sanitize) $(my_sanitize)
 endif
@@ -103,15 +115,42 @@ ifeq ($(LOCAL_SANITIZE),never)
   my_sanitize_diag :=
 endif
 
-# Enable CFI in included paths (for Arm64 only).
+# Enable CFI in included paths.
 ifeq ($(filter cfi, $(my_sanitize)),)
-  ifneq ($(filter arm64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
-    combined_include_paths := $(CFI_INCLUDE_PATHS) \
-                              $(PRODUCT_CFI_INCLUDE_PATHS)
+  combined_include_paths := $(CFI_INCLUDE_PATHS) \
+                            $(PRODUCT_CFI_INCLUDE_PATHS)
+  combined_exclude_paths := $(CFI_EXCLUDE_PATHS) \
+                            $(PRODUCT_CFI_EXCLUDE_PATHS)
 
-    ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
-           $(filter $(dir)%,$(LOCAL_PATH)))),)
+  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+    ifeq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
       my_sanitize := cfi $(my_sanitize)
+    endif
+  endif
+endif
+
+# Enable memtag_heap in included paths (for Arm64 only).
+ifeq ($(filter memtag_heap, $(my_sanitize)),)
+  ifneq ($(filter arm64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
+    combined_sync_include_paths := $(MEMTAG_HEAP_SYNC_INCLUDE_PATHS) \
+                                   $(PRODUCT_MEMTAG_HEAP_SYNC_INCLUDE_PATHS)
+    combined_async_include_paths := $(MEMTAG_HEAP_ASYNC_INCLUDE_PATHS) \
+                                    $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS)
+    combined_exclude_paths := $(MEMTAG_HEAP_EXCLUDE_PATHS) \
+                              $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS)
+
+    ifeq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
+          $(filter $(dir)%,$(LOCAL_PATH)))),)
+      ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_sync_include_paths)),\
+             $(filter $(dir)%,$(LOCAL_PATH)))),)
+        my_sanitize := memtag_heap $(my_sanitize)
+        my_sanitize_diag := memtag_heap $(my_sanitize_diag)
+      else ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_async_include_paths)),\
+             $(filter $(dir)%,$(LOCAL_PATH)))),)
+        my_sanitize := memtag_heap $(my_sanitize)
+      endif
     endif
   endif
 endif
@@ -122,22 +161,17 @@ ifeq ($(strip $(ENABLE_CFI)),false)
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
 
-# Disable CFI for arm32 (b/35157333).
-ifneq ($(filter arm,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
-  my_sanitize := $(filter-out cfi,$(my_sanitize))
-  my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
-endif
-
 # Also disable CFI if ASAN is enabled.
 ifneq ($(filter address,$(my_sanitize)),)
   my_sanitize := $(filter-out cfi,$(my_sanitize))
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
 
-# CFI needs gold linker, and mips toolchain does not have one.
-ifneq ($(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
-  my_sanitize := $(filter-out cfi,$(my_sanitize))
-  my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
+# Disable memtag for host targets. Host executables in AndroidMk files are
+# deprecated, but some partners still have them floating around.
+ifdef LOCAL_IS_HOST_MODULE
+  my_sanitize := $(filter-out memtag_heap,$(my_sanitize))
+  my_sanitize_diag := $(filter-out memtag_heap,$(my_sanitize_diag))
 endif
 
 # Disable sanitizers which need the UBSan runtime for host targets.
@@ -150,8 +184,8 @@ endif
 
 # Support for local sanitize blacklist paths.
 ifneq ($(my_sanitize)$(my_global_sanitize),)
-  ifneq ($(LOCAL_SANITIZE_BLACKLIST),)
-    my_cflags += -fsanitize-blacklist=$(LOCAL_PATH)/$(LOCAL_SANITIZE_BLACKLIST)
+  ifneq ($(LOCAL_SANITIZE_BLOCKLIST),)
+    my_cflags += -fsanitize-blacklist=$(LOCAL_PATH)/$(LOCAL_SANITIZE_BLOCKLIST)
   endif
 endif
 
@@ -170,6 +204,7 @@ endif
 
 ifneq ($(filter arm x86 x86_64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
   my_sanitize := $(filter-out hwaddress,$(my_sanitize))
+  my_sanitize := $(filter-out memtag_heap,$(my_sanitize))
 endif
 
 ifneq ($(filter hwaddress,$(my_sanitize)),)
@@ -188,6 +223,22 @@ ifneq ($(filter hwaddress,$(my_sanitize)),)
     endif
   endif
 endif
+
+ifneq ($(filter memtag_heap,$(my_sanitize)),)
+  # Add memtag ELF note.
+  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    ifneq ($(filter memtag_heap,$(my_sanitize_diag)),)
+      my_whole_static_libraries += note_memtag_heap_sync
+    else
+      my_whole_static_libraries += note_memtag_heap_async
+    endif
+  endif
+  # This is all that memtag_heap does - it is not an actual -fsanitize argument.
+  # Remove it from the list.
+  my_sanitize := $(filter-out memtag_heap,$(my_sanitize))
+endif
+
+my_sanitize_diag := $(filter-out memtag_heap,$(my_sanitize_diag))
 
 # TSAN is not supported on 32-bit architectures. For non-multilib cases, make
 # its use an error. For multilib cases, don't use it for the 32-bit case.
@@ -378,8 +429,8 @@ ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_cflags += $(HWADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
 endif
 
-# Use minimal diagnostics when integer overflow is enabled; never do it for HOST or AUX modules
-ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
+# Use minimal diagnostics when integer overflow is enabled; never do it for HOST modules
+ifeq ($(LOCAL_IS_HOST_MODULE),)
   # Pre-emptively add UBSAN minimal runtime incase a static library dependency requires it
   ifeq ($(filter STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
     ifndef LOCAL_SDK_VERSION
@@ -444,6 +495,16 @@ ifneq ($(findstring fsanitize,$(my_cflags)),)
   ifneq ($(findstring integer,$(my_cflags)),)
     ifeq ($(findstring sanitize=implicit-integer-sign-change,$(my_cflags)),)
       my_cflags += -fno-sanitize=implicit-integer-sign-change
+    endif
+  endif
+endif
+
+# http://b/177566116, libc++ may crash with this sanitizer.
+# Disable this check unless it has been explicitly specified.
+ifneq ($(findstring fsanitize,$(my_cflags)),)
+  ifneq ($(findstring integer,$(my_cflags)),)
+    ifeq ($(findstring sanitize=unsigned-shift-base,$(my_cflags)),)
+      my_cflags += -fno-sanitize=unsigned-shift-base
     endif
   endif
 endif
