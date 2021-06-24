@@ -19,8 +19,9 @@ This file stores definition for class Severity that is used in warn_patterns.
 """
 
 
-# pylint:disable=old-style-class
+# pylint:disable=too-few-public-methods
 class SeverityInfo:
+  """Class of Severity Info, part of a Severity object."""
 
   def __init__(self, value, color, column_header, header):
     self.value = value
@@ -29,7 +30,7 @@ class SeverityInfo:
     self.header = header
 
 
-# pylint:disable=old-style-class
+# pylint:disable=too-few-public-methods
 class Severity:
   """Class of Severity levels where each level is a SeverityInfo."""
 

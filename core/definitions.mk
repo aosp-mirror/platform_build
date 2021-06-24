@@ -598,7 +598,7 @@ $(_dir)/$(1).meta_lic: PRIVATE_INSTALL_MAP := $(sort $(ALL_MODULES.$(1).LICENSE_
 $(_dir)/$(1).meta_lic : $(_deps) $(_notices) $(foreach b,$(_tgts), $(_dir)/$(b).meta_module) build/make/tools/build-license-metadata.sh
 	rm -f $$@
 	mkdir -p $$(dir $$@)
-	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(PRIVATE_IS_CONTAINER),-is_container) -p $$(PRIVATE_PACKAGE_NAME) -o $$@
+	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(PRIVATE_IS_CONTAINER),-is_container) -p '$$(PRIVATE_PACKAGE_NAME)' -o $$@
 
 .PHONY: $(1).meta_lic
 $(1).meta_lic : $(_dir)/$(1).meta_lic
@@ -743,6 +743,42 @@ $(strip \
     $(call generated-sources-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST),$(1)) \
 )
 endef
+
+###########################################################
+## The packaging directory for a module.  Similar to intermedates, but
+## in a location that will be wiped by an m installclean.
+###########################################################
+
+# $(1): subdir in PACKAGING
+# $(2): target class, like "APPS"
+# $(3): target name, like "NotePad"
+# $(4): { HOST, HOST_CROSS, <empty (TARGET)>, <other non-empty (HOST)> }
+define packaging-dir-for
+$(strip \
+    $(eval _pdfClass := $(strip $(2))) \
+    $(if $(_pdfClass),, \
+        $(error $(LOCAL_PATH): Class not defined in call to generated-sources-dir-for)) \
+    $(eval _pdfName := $(strip $(3))) \
+    $(if $(_pdfName),, \
+        $(error $(LOCAL_PATH): Name not defined in call to generated-sources-dir-for)) \
+    $(call intermediates-dir-for,PACKAGING,$(1),$(4))/$(_pdfClass)/$(_pdfName)_intermediates \
+)
+endef
+
+# Uses LOCAL_MODULE_CLASS, LOCAL_MODULE, and LOCAL_IS_HOST_MODULE
+# to determine the packaging directory.
+#
+# $(1): subdir in PACKAGING
+define local-packaging-dir
+$(strip \
+    $(if $(strip $(LOCAL_MODULE_CLASS)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-generated-sources-dir)) \
+    $(if $(strip $(LOCAL_MODULE)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-generated-sources-dir)) \
+    $(call packaging-dir-for,$(1),$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST)) \
+)
+endef
+
 
 ###########################################################
 ## Convert a list of short module names (e.g., "framework", "Browser")
@@ -1712,7 +1748,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
   $(PRIVATE_ALL_STATIC_LIBRARIES) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-  $(if $(filter true,$(NATIVE_COVERAGE)),-lgcov) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
   -o $@ \
@@ -1856,7 +1891,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
   $(PRIVATE_ALL_STATIC_LIBRARIES) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-  $(if $(filter true,$(NATIVE_COVERAGE)),-lgcov) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
   $(foreach path,$(PRIVATE_RPATHS), \
@@ -2346,6 +2380,15 @@ $(hide) if ! $(ZIPALIGN) -c -p 4 $@ >/dev/null ; then \
   fi
 endef
 
+# Verifies ZIP alignment of a package.
+#
+define check-package-alignment
+$(hide) if ! $(ZIPALIGN) -c -p 4 $@ >/dev/null ; then \
+    $(call echo-error,$@,Improper package alignment); \
+    exit 1; \
+  fi
+endef
+
 # Compress a package using the standard gzip algorithm.
 define compress-package
 $(hide) \
@@ -2411,6 +2454,15 @@ endef
 define uncompress-prebuilt-embedded-jni-libs
   if (zipinfo $@ 'lib/*.so' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
     $(ZIP2ZIP) -i $@ -o $@.tmp -0 'lib/**/*.so' && mv -f $@.tmp $@ ; \
+  fi
+endef
+
+# Verifies shared JNI libraries and dex files in an apk are uncompressed.
+#
+define check-jni-dex-compression
+  if (zipinfo $@ 'lib/*.so' '*.dex' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
+    $(call echo-error,$@,Contains compressed JNI libraries and/or dex files); \
+    exit 1; \
   fi
 endef
 
@@ -2510,8 +2562,12 @@ endef
 # $(1): source file
 # $(2): destination file
 define copy-init-script-file-checked
+ifdef TARGET_BUILD_UNBUNDLED
+# TODO (b/185624993): Remove the chck on TARGET_BUILD_UNBUNDLED when host_init_verifier can run
+# without requiring the HIDL interface map.
+$(2): $(1)
+else ifneq ($(HOST_OS),darwin)
 # Host init verifier doesn't exist on darwin.
-ifneq ($(HOST_OS),darwin)
 $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
@@ -2731,7 +2787,7 @@ endef
 define _symlink-file
 $(3): $(1)
 	@echo "Symlink: $$@ -> $(2)"
-	@mkdir -p $(dir $$@)
+	@mkdir -p $$(dir $$@)
 	@rm -rf $$@
 	$(hide) ln -sf $(2) $$@
 $(3): .KATI_SYMLINK_OUTPUTS := $(3)

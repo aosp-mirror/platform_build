@@ -215,6 +215,12 @@ A/B OTA specific options
   --disable_vabc
       Disable Virtual A/B Compression, for builds that have compression enabled
       by default.
+
+  --vabc_downgrade
+      Don't disable Virtual A/B Compression for downgrading OTAs.
+      For VABC downgrades, we must finish merging before doing data wipe, and
+      since data wipe is required for downgrading OTA, this might cause long
+      wait time in recovery.
 """
 
 from __future__ import print_function
@@ -231,6 +237,7 @@ import subprocess
 import sys
 import zipfile
 
+import care_map_pb2
 import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
@@ -278,6 +285,7 @@ OPTIONS.partial = None
 OPTIONS.custom_images = {}
 OPTIONS.disable_vabc = False
 OPTIONS.spl_downgrade = False
+OPTIONS.vabc_downgrade = False
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -825,6 +833,17 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
   with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
     common.ZipWriteStr(partial_target_zip, 'META/ab_partitions.txt',
                        '\n'.join(ab_partitions))
+    CARE_MAP_ENTRY = "META/care_map.pb"
+    if CARE_MAP_ENTRY in input_zip.namelist():
+      caremap = care_map_pb2.CareMap()
+      caremap.ParseFromString(input_zip.read(CARE_MAP_ENTRY))
+      filtered = [
+          part for part in caremap.partitions if part.name in ab_partitions]
+      del caremap.partitions[:]
+      caremap.partitions.extend(filtered)
+      common.ZipWriteStr(partial_target_zip, CARE_MAP_ENTRY,
+                         caremap.SerializeToString())
+
     for info_file in ['META/misc_info.txt', DYNAMIC_PARTITION_INFO]:
       if info_file not in input_zip.namelist():
         logger.warning('Cannot find %s in input zipfile', info_file)
@@ -834,7 +853,8 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
           content, lambda p: p in ab_partitions)
       common.ZipWriteStr(partial_target_zip, info_file, modified_info)
 
-    # TODO(xunchang) handle 'META/care_map.pb', 'META/postinstall_config.txt'
+    # TODO(xunchang) handle META/postinstall_config.txt'
+
   common.ZipClose(partial_target_zip)
 
   return partial_target_file
@@ -1051,21 +1071,23 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         "META/ab_partitions.txt is required for ab_update."
     target_info = common.BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
     source_info = common.BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
-    vendor_prop = source_info.info_dict.get("vendor.build.prop")
-    vabc_used = vendor_prop and \
-        vendor_prop.GetProp("ro.virtual_ab.compression.enabled") == "true" and \
-        not OPTIONS.disable_vabc
-    if vabc_used:
-      # TODO(zhangkelvin) Remove this once FEC on VABC is supported
-      logger.info("Virtual AB Compression enabled, disabling FEC")
-      OPTIONS.disable_fec_computation = True
-      OPTIONS.disable_verity_computation = True
+    # If source supports VABC, delta_generator/update_engine will attempt to
+    # use VABC. This dangerous, as the target build won't have snapuserd to
+    # serve I/O request when device boots. Therefore, disable VABC if source
+    # build doesn't supports it.
+    if not source_info.is_vabc or not target_info.is_vabc:
+      logger.info("Either source or target does not support VABC, disabling.")
+      OPTIONS.disable_vabc = True
+
   else:
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
     target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
     source_info = None
 
+  if target_info.vendor_suppressed_vabc:
+    logger.info("Vendor suppressed VABC. Disabling")
+    OPTIONS.disable_vabc = True
   additional_args = []
 
   # Prepare custom images.
@@ -1161,14 +1183,12 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     else:
       logger.warning("Cannot find care map file in target_file package")
 
-  # Copy apex_info.pb over to generated OTA package.
-  try:
-    apex_info_entry = target_zip.getinfo("META/apex_info.pb")
-    with target_zip.open(apex_info_entry, "r") as zfp:
-      common.ZipWriteStr(output_zip, "apex_info.pb", zfp.read(),
-                         compress_type=zipfile.ZIP_STORED)
-  except KeyError:
-    logger.warning("target_file doesn't contain apex_info.pb %s", target_file)
+  # Add the source apex version for incremental ota updates, and write the
+  # result apex info to the ota package.
+  ota_apex_info = ota_utils.ConstructOtaApexInfo(target_zip, source_file)
+  if ota_apex_info is not None:
+    common.ZipWriteStr(output_zip, "apex_info.pb", ota_apex_info,
+                       compress_type=zipfile.ZIP_STORED)
 
   common.ZipClose(target_zip)
 
@@ -1281,6 +1301,8 @@ def main(argv):
     elif o == "--spl_downgrade":
       OPTIONS.spl_downgrade = True
       OPTIONS.wipe_user_data = True
+    elif o == "--vabc_downgrade":
+      OPTIONS.vabc_downgrade = True
     else:
       return False
     return True
@@ -1323,7 +1345,8 @@ def main(argv):
                                  "partial=",
                                  "custom_image=",
                                  "disable_vabc",
-                                 "spl_downgrade"
+                                 "spl_downgrade",
+                                 "vabc_downgrade",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -1344,7 +1367,14 @@ def main(argv):
   else:
     OPTIONS.info_dict = ParseInfoDict(args[0])
 
-  if OPTIONS.downgrade:
+  if OPTIONS.wipe_user_data:
+    if not OPTIONS.vabc_downgrade:
+      logger.info("Detected downgrade/datawipe OTA."
+                  "When wiping userdata, VABC OTA makes the user "
+                  "wait in recovery mode for merge to finish. Disable VABC by "
+                  "default. If you really want to do VABC downgrade, pass "
+                  "--vabc_downgrade")
+      OPTIONS.disable_vabc = True
     # We should only allow downgrading incrementals (as opposed to full).
     # Otherwise the device may go back from arbitrary build with this full
     # OTA package.

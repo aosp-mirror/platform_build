@@ -22,4 +22,9 @@ ifneq ($(OVERRIDE_TARGET_FLATTEN_APEX),true)
   PRODUCT_PACKAGES += com.android.apex.cts.shim.v1_prebuilt
   PRODUCT_VENDOR_PROPERTIES := ro.apex.updatable=true
   TARGET_FLATTEN_APEX := false
+  # Use compressed apexes in pre-installed partitions.
+  # Note: this doesn't mean that all pre-installed apexes will be compressed.
+  #  Whether an apex is compressed or not is controlled at apex Soong module
+  #  via compresible property.
+  PRODUCT_COMPRESSED_APEX := true
 endif

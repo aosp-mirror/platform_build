@@ -15,6 +15,7 @@
 #
 
 import os.path
+import shutil
 
 import common
 import test_utils
@@ -22,7 +23,7 @@ from merge_target_files import (
     validate_config_lists, DEFAULT_FRAMEWORK_ITEM_LIST,
     DEFAULT_VENDOR_ITEM_LIST, DEFAULT_FRAMEWORK_MISC_INFO_KEYS, copy_items,
     item_list_to_partition_set, process_apex_keys_apk_certs_common,
-    compile_split_sepolicy)
+    compile_split_sepolicy, validate_merged_apex_info)
 
 
 class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
@@ -274,3 +275,36 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
                       '{OTP}/vendor/etc/selinux/plat_pub_versioned.cil '
                       '{OTP}/product/etc/selinux/mapping/30.0.cil').format(
                           OTP=product_out_dir))
+
+  def _copy_apex(self, source, output_dir, partition):
+    shutil.copy(
+        source,
+        os.path.join(output_dir, partition, 'apex', os.path.basename(source)))
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_validate_merged_apex_info(self):
+    output_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(output_dir, 'SYSTEM/apex'))
+    os.makedirs(os.path.join(output_dir, 'VENDOR/apex'))
+
+    self._copy_apex(
+        os.path.join(self.testdata_dir, 'has_apk.apex'), output_dir, 'SYSTEM')
+    self._copy_apex(
+        os.path.join(test_utils.get_current_dir(),
+                     'com.android.apex.compressed.v1.capex'), output_dir,
+        'VENDOR')
+    validate_merged_apex_info(output_dir, ('system', 'vendor'))
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_validate_merged_apex_info_RaisesOnPackageInMultiplePartitions(self):
+    output_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(output_dir, 'SYSTEM/apex'))
+    os.makedirs(os.path.join(output_dir, 'VENDOR/apex'))
+
+    same_apex_package = os.path.join(self.testdata_dir, 'has_apk.apex')
+    self._copy_apex(same_apex_package, output_dir, 'SYSTEM')
+    self._copy_apex(same_apex_package, output_dir, 'VENDOR')
+    self.assertRaisesRegexp(
+        common.ExternalError,
+        'Duplicate APEX packages found in multiple partitions: com.android.wifi',
+        validate_merged_apex_info, output_dir, ('system', 'vendor'))

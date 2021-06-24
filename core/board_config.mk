@@ -108,6 +108,8 @@ _board_strip_readonly_list += BOARD_KERNEL_MODULE_INTERFACE_VERSIONS
 #   contains a kernel or not.
 # - BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT controls whether ramdisk
 #   recovery resources are built to vendor_boot.
+# - BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT controls whether recovery
+#   resources are built as a standalone recovery ramdisk in vendor_boot.
 # - BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT controls whether GSI AVB keys are
 #   built to vendor_boot.
 # - BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES controls whether boot images in $OUT are added
@@ -115,6 +117,7 @@ _board_strip_readonly_list += BOARD_KERNEL_MODULE_INTERFACE_VERSIONS
 _board_strip_readonly_list += BOARD_USES_GENERIC_KERNEL_IMAGE
 _board_strip_readonly_list += BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE
 _board_strip_readonly_list += BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT
+_board_strip_readonly_list += BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES
 
@@ -328,16 +331,6 @@ TARGET_COPY_OUT_RAMDISK := $(TARGET_COPY_OUT_ROOT)
 endif
 
 ###########################################
-# Now we can substitute with the real value of TARGET_COPY_OUT_DEBUG_RAMDISK
-ifneq (,$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT) \
-  $(BOARD_GKI_NONAB_COMPAT) $(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT) \
-  $(BOARD_USES_GENERIC_KERNEL_IMAGE)))
-TARGET_COPY_OUT_DEBUG_RAMDISK := debug_ramdisk/first_stage_ramdisk
-TARGET_COPY_OUT_VENDOR_DEBUG_RAMDISK := vendor_debug_ramdisk/first_stage_ramdisk
-TARGET_COPY_OUT_TEST_HARNESS_RAMDISK := test_harness_ramdisk/first_stage_ramdisk
-endif
-
-###########################################
 # Configure whether we're building the system image
 BUILDING_SYSTEM_IMAGE := true
 ifeq ($(PRODUCT_BUILD_SYSTEM_IMAGE),)
@@ -385,6 +378,8 @@ endif
 BUILDING_BOOT_IMAGE :=
 ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),)
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    BUILDING_BOOT_IMAGE :=
+  else ifdef BOARD_PREBUILT_BOOTIMAGE
     BUILDING_BOOT_IMAGE :=
   else ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
     BUILDING_BOOT_IMAGE := true
@@ -771,8 +766,8 @@ ifeq ($(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY),true)
 endif
 
 ###########################################
-# APEXes are by default flattened, i.e. non-updatable.
-# It can be unflattened (and updatable) by inheriting from
+# APEXes are by default flattened, i.e. non-updatable, if not building unbundled
+# apps. It can be unflattened (and updatable) by inheriting from
 # updatable_apex.mk
 #
 # APEX flattening can also be forcibly enabled (resp. disabled) by
@@ -781,7 +776,7 @@ endif
 ifdef OVERRIDE_TARGET_FLATTEN_APEX
   TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
 else
-  ifeq (,$(TARGET_FLATTEN_APEX))
+  ifeq (,$(TARGET_BUILD_APPS)$(TARGET_FLATTEN_APEX))
     TARGET_FLATTEN_APEX := true
   endif
 endif
@@ -835,11 +830,22 @@ else # BUILDING_VENDOR_BOOT_IMAGE
       $(error Should not set BOARD_VENDOR_RAMDISK_FRAGMENTS if \
         BOARD_BOOT_HEADER_VERSION is less than 4)
     endif
+    ifeq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
+      $(error Should not set BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT if \
+        BOARD_BOOT_HEADER_VERSION is less than 4)
+    endif
   endif
 endif # BUILDING_VENDOR_BOOT_IMAGE
 
 ifneq ($(words $(BOARD_VENDOR_RAMDISK_FRAGMENTS)),$(words $(sort $(BOARD_VENDOR_RAMDISK_FRAGMENTS))))
   $(error BOARD_VENDOR_RAMDISK_FRAGMENTS has duplicate entries: $(BOARD_VENDOR_RAMDISK_FRAGMENTS))
+endif
+
+ifeq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
+  ifneq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+    $(error Should not set BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT if \
+      BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT is not set)
+  endif
 endif
 
 # If BOARD_USES_GENERIC_KERNEL_IMAGE is set, BOARD_USES_RECOVERY_AS_BOOT must not be set.

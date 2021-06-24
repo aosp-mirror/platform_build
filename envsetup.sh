@@ -9,6 +9,9 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
               build, and stores those selections in the environment to be read by subsequent
               invocations of 'm' etc.
 - tapas:      tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
+              Sets up the build environment for building unbundled apps (APKs).
+- banchan:    banchan <module1> [<module2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
+              Sets up the build environment for building unbundled modules (APEXes).
 - croot:      Changes directory to the top of the tree, or a subdirectory thereof.
 - m:          Makes from the top of the tree.
 - mm:         Builds and installs all of the modules in the current directory, and their
@@ -108,7 +111,7 @@ function get_abs_build_var()
     if [ "$BUILD_VAR_CACHE_READY" = "true" ]
     then
         eval "echo \"\${abs_var_cache_$1}\""
-    return
+        return
     fi
 
     local T=$(gettop)
@@ -328,15 +331,15 @@ function setpaths()
 
 function bazel()
 {
-    local T="$(gettop)"
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP."
-        return
+    if which bazel &>/dev/null; then
+        >&2 echo "NOTE: bazel() function sourced from Android's envsetup.sh is being used instead of $(which bazel)"
+        >&2 echo
     fi
 
-    if which bazel &>/dev/null; then
-        >&2 echo "NOTE: bazel() function sourced from envsetup.sh is being used instead of $(which bazel)"
-        >&2 echo
+    local T="$(gettop)"
+    if [ ! "$T" ]; then
+        >&2 echo "Couldn't locate the top of the Android tree. Try setting TOP. This bazel() function cannot be used outside of the AOSP directory."
+        return
     fi
 
     "$T/tools/bazel" "$@"
@@ -605,7 +608,7 @@ function print_lunch_menu()
 {
     local uname=$(uname)
     local choices
-    choices=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
+    choices=$(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_BUILD_VARIANT= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
     local ret=$?
 
     echo
@@ -700,6 +703,10 @@ function lunch()
     build_build_var_cache
     if [ $? -ne 0 ]
     then
+        if [[ "$product" =~ .*_(eng|user|userdebug) ]]
+        then
+            echo "Did you mean -${product/*_/}? (dash instead of underscore)"
+        fi
         return 1
     fi
     export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
@@ -783,6 +790,60 @@ function tapas()
     export TARGET_BUILD_VARIANT=$variant
     export TARGET_BUILD_DENSITY=$density
     export TARGET_BUILD_TYPE=release
+    export TARGET_BUILD_APPS=$apps
+
+    build_build_var_cache
+    set_stuff_for_environment
+    printconfig
+    destroy_build_var_cache
+}
+
+# Configures the build to build unbundled Android modules (APEXes).
+# Run banchan with one or more module names (from apex{} modules).
+function banchan()
+{
+    local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
+    local product="$(echo $* | xargs -n 1 echo | \grep -E '^(.*_)?(arm|x86|arm64|x86_64)$' | xargs)"
+    local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|(.*_)?(arm|x86|arm64|x86_64))$' | xargs)"
+
+    if [ "$showHelp" != "" ]; then
+      $(gettop)/build/make/banchanHelp.sh
+      return
+    fi
+
+    if [ -z "$product" ]; then
+        product=arm
+    elif [ $(echo $product | wc -w) -gt 1 ]; then
+        echo "banchan: Error: Multiple build archs or products supplied: $products"
+        return
+    fi
+    if [ $(echo $variant | wc -w) -gt 1 ]; then
+        echo "banchan: Error: Multiple build variants supplied: $variant"
+        return
+    fi
+    if [ -z "$apps" ]; then
+        echo "banchan: Error: No modules supplied"
+        return
+    fi
+
+    case $product in
+      arm)    product=module_arm;;
+      x86)    product=module_x86;;
+      arm64)  product=module_arm64;;
+      x86_64) product=module_x86_64;;
+    esac
+    if [ -z "$variant" ]; then
+        variant=eng
+    fi
+
+    export TARGET_PRODUCT=$product
+    export TARGET_BUILD_VARIANT=$variant
+    export TARGET_BUILD_DENSITY=alldpi
+    export TARGET_BUILD_TYPE=release
+
+    # This setup currently uses TARGET_BUILD_APPS just like tapas, but the use
+    # case is different and it may diverge in the future.
     export TARGET_BUILD_APPS=$apps
 
     build_build_var_cache
@@ -1401,13 +1462,17 @@ function refreshmod() {
 # Verifies that module-info.txt exists, creating it if it doesn't.
 function verifymodinfo() {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
+        if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
+            echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
+        fi
         return 1
     fi
 
     if [ ! -f "$ANDROID_PRODUCT_OUT/module-info.json" ]; then
-        echo "Could not find module-info.json. It will only be built once, and it can be updated with 'refreshmod'" >&2
-        refreshmod || return 1
+        if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
+            echo "Could not find module-info.json. It will only be built once, and it can be updated with 'refreshmod'" >&2
+        fi
+        return 1
     fi
 }
 
@@ -1416,7 +1481,7 @@ function verifymodinfo() {
 function allmod() {
     verifymodinfo || return 1
 
-    python -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
+    python3 -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
 }
 
 # Get the path of a specific module in the android tree, as cached in module-info.json.
@@ -1430,7 +1495,7 @@ function pathmod() {
 
     verifymodinfo || return 1
 
-    local relpath=$(python -c "import json, os
+    local relpath=$(python3 -c "import json, os
 module = '$1'
 module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
 if module not in module_info:
@@ -1456,7 +1521,7 @@ function dirmods() {
 
     verifymodinfo || return 1
 
-    python -c "import json, os
+    python3 -c "import json, os
 dir = '$1'
 while dir.endswith('/'):
     dir = dir[:-1]
@@ -1501,7 +1566,7 @@ function outmod() {
     verifymodinfo || return 1
 
     local relpath
-    relpath=$(python -c "import json, os
+    relpath=$(python3 -c "import json, os
 module = '$1'
 module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
 if module not in module_info:
@@ -1545,7 +1610,7 @@ function installmod() {
 
 function _complete_android_module_names() {
     local word=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(allmod | grep -E "^$word") )
+    COMPREPLY=( $(QUIET_VERIFYMODINFO=true allmod | grep -E "^$word") )
 }
 
 # Print colored exit condition
@@ -1626,12 +1691,36 @@ function _trigger_build()
     if T="$(gettop)"; then
       _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
     else
-      echo "Couldn't locate the top of the tree. Try setting TOP."
+      >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
+      return 1
+    fi
+)
+
+# Convenience entry point (like m) to use Bazel in AOSP.
+function b()
+(
+    # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
+    _trigger_build "all-modules" nothing GENERATE_BAZEL_FILES=true USE_BAZEL_ANALYSIS= || return 1
+    # Then, run Bazel using the synthetic workspace as the --package_path.
+    if [[ -z "$@" ]]; then
+        # If there are no args, show help.
+        bazel help
+    else
+        # Else, always run with the bp2build configuration, which sets Bazel's package path to the synthetic workspace.
+        bazel "$@" --config=bp2build
     fi
 )
 
 function m()
 (
+    if [[ "${USE_BAZEL_ANALYSIS}" =~ ^(true|1)$ ]]; then
+        # This only short-circuits to Bazel for a single module target now.
+        b cquery "@soong_injection//module_name_to_label:$@" 2>/dev/null
+        if [[ $? == 0 ]]; then
+            bazel build "@soong_injection//module_name_to_label:$@" --config=bp2build
+            return $?
+        fi
+    fi
     _trigger_build "all-modules" "$@"
 )
 

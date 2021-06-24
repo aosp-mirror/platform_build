@@ -15,8 +15,10 @@
 
 """Warning patterns for clang-tidy."""
 
+# No need of doc strings for trivial small functions.
+# pylint:disable=missing-function-docstring
+
 # pylint:disable=relative-beyond-top-level
-# pylint:disable=g-importing-member
 from .cpp_warn_patterns import compile_patterns
 from .severity import Severity
 
@@ -39,7 +41,6 @@ def group_tidy_warn_pattern(description):
 
 
 def analyzer_high(description, patterns):
-  # Important clang analyzer warnings to be fixed ASAP.
   return {
       'category': 'C/C++',
       'severity': Severity.HIGH,
@@ -74,7 +75,8 @@ def analyzer_group_check(check):
 
 
 warn_patterns = [
-    # pylint:disable=line-too-long,g-inconsistent-quotes
+    # pylint does not recognize g-inconsistent-quotes
+    # pylint:disable=line-too-long,bad-option-value,g-inconsistent-quotes
     group_tidy_warn_pattern('android'),
     simple_tidy_warn_pattern('abseil-string-find-startswith'),
     simple_tidy_warn_pattern('bugprone-argument-comment'),

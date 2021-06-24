@@ -27,7 +27,6 @@ PRODUCT_PACKAGES += \
     android.test.base \
     android.test.mock \
     android.test.runner \
-    ANGLE \
     apexd \
     appops \
     app_process \
@@ -129,6 +128,7 @@ PRODUCT_PACKAGES += \
     libaudioeffect_jni \
     libbinder \
     libbinder_ndk \
+    libbinder_rpc_unstable \
     libc.bootstrap \
     libcamera2ndk \
     libcutils \
@@ -291,10 +291,16 @@ endif
 ifeq ($(EMMA_INSTRUMENT),true)
   ifneq ($(EMMA_INSTRUMENT_STATIC),true)
     # For instrumented build, if Jacoco is not being included statically
-    # in instrumented packages then include Jacoco classes into the
-    # bootclasspath.
+    # in instrumented packages then include Jacoco classes in the product
+    # packages.
     PRODUCT_PACKAGES += jacocoagent
-    PRODUCT_BOOT_JARS += jacocoagent
+    ifneq ($(EMMA_INSTRUMENT_FRAMEWORK),true)
+      # For instrumented build, if Jacoco is not being included statically
+      # in instrumented packages and has not already been included in the
+      # bootclasspath via ART_APEX_JARS then include Jacoco classes into the
+      # bootclasspath.
+      PRODUCT_BOOT_JARS += jacocoagent
+    endif # EMMA_INSTRUMENT_FRAMEWORK
   endif # EMMA_INSTRUMENT_STATIC
 endif # EMMA_INSTRUMENT
 
@@ -345,8 +351,6 @@ PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
-
-PRODUCT_PROPERTY_OVERRIDES += ro.gfx.angle.supported=true
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \

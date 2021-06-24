@@ -14,7 +14,6 @@ LLNDK: libm.so
 LLNDK: libmediandk.so
 LLNDK: libnativewindow.so
 LLNDK: libneuralnetworks.so
-LLNDK: libneuralnetworks_shim.so
 LLNDK: libselinux.so
 LLNDK: libsync.so
 LLNDK: libvndksupport.so

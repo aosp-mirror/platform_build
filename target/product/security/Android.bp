@@ -13,7 +13,16 @@ android_app_certificate {
     certificate: "testkey",
 }
 
-// Google-owned certificate for CTS testing, since we can't trust arbitrary keys on release devices.
+// Certificate for CTS tests that rely on UICC hardware conforming to the
+// updated CTS UICC card specification introduced in 2021. See
+// //cts/tests/tests/carrierapi/Android.bp for more details.
+android_app_certificate {
+    name: "cts-uicc-2021-testkey",
+    certificate: "cts_uicc_2021",
+}
+
+// Google-owned certificate for CTS testing, since we can't trust arbitrary keys
+// on release devices.
 prebuilt_etc {
     name: "fsverity-release-cert-der",
     src: "fsverity-release.x509.der",

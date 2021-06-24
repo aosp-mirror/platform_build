@@ -62,7 +62,9 @@ ifeq ($(PRODUCT_USES_DEFAULT_ART_CONFIG), true)
 
 boot_zip := $(PRODUCT_OUT)/boot.zip
 bootclasspath_jars := $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
-system_server_jars := $(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),$(PRODUCT_OUT)/system/framework/$(m).jar)
+system_server_jars := \
+  $(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),\
+    $(PRODUCT_OUT)/system/framework/$(call word-colon,2,$(m)).jar)
 
 $(boot_zip): PRIVATE_BOOTCLASSPATH_JARS := $(bootclasspath_jars)
 $(boot_zip): PRIVATE_SYSTEM_SERVER_JARS := $(system_server_jars)

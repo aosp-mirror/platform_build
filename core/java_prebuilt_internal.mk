@@ -33,7 +33,6 @@ endif
 
 ifeq ($(prebuilt_module_is_dex_javalib),true)
 my_dex_jar := $(my_prebuilt_src_file)
-my_manifest_or_apk := $(my_prebuilt_src_file)
 # This is a target shared library, i.e. a jar with classes.dex.
 
 $(foreach pair,$(PRODUCT_BOOT_JARS), \

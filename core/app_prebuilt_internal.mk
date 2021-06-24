@@ -169,12 +169,13 @@ LOCAL_DEX_PREOPT := false
 endif
 
 my_dex_jar := $(my_prebuilt_src_file)
-my_manifest_or_apk := $(my_prebuilt_src_file)
 dex_preopt_profile_src_file := $(my_prebuilt_src_file)
 
 #######################################
 # defines built_odex along with rule to install odex
+my_manifest_or_apk := $(my_prebuilt_src_file)
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+my_manifest_or_apk :=
 #######################################
 ifneq ($(LOCAL_REPLACE_PREBUILT_APK_INSTALLED),)
 # There is a replacement for the prebuilt .apk we can install without any processing.
@@ -182,6 +183,30 @@ $(built_module) : $(LOCAL_REPLACE_PREBUILT_APK_INSTALLED)
 	$(transform-prebuilt-to-target)
 
 else  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
+
+# If the SDK version is 30 or higher, the apk is signed with a v2+ scheme.
+# Altering it will invalidate the signature. Just do error checks instead.
+do_not_alter_apk :=
+ifeq (PRESIGNED,$(LOCAL_CERTIFICATE))
+  ifneq (,$(LOCAL_SDK_VERSION))
+    ifeq ($(call math_is_number,$(LOCAL_SDK_VERSION)),true)
+      ifeq ($(call math_gt,$(LOCAL_SDK_VERSION),29),true)
+        do_not_alter_apk := true
+      endif
+    endif
+    # TODO: Add system_current after fixing the existing modules.
+    ifneq ($(filter current test_current core_current,$(LOCAL_SDK_VERSION)),)
+        do_not_alter_apk := true
+    endif
+  endif
+endif
+
+ifeq ($(do_not_alter_apk),true)
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN)
+	$(transform-prebuilt-to-target)
+	$(check-jni-dex-compression)
+	$(check-package-alignment)
+else
 # Sign and align non-presigned .apks.
 # The embedded prebuilt jni to uncompress.
 ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
@@ -208,7 +233,7 @@ endif
 ifeq ($(module_run_appcompat),true)
 $(built_module) : $(AAPT2)
 endif
-$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR)
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR) $(SIGNAPK_JNI_LIBRARY_PATH)
 	$(transform-prebuilt-to-target)
 	$(uncompress-prebuilt-embedded-jni-libs)
 	$(remove-unwanted-prebuilt-embedded-jni-libs)
@@ -228,6 +253,7 @@ endif  # LOCAL_CERTIFICATE
 ifdef LOCAL_COMPRESSED_MODULE
 	$(compress-package)
 endif  # LOCAL_COMPRESSED_MODULE
+endif  # ! do_not_alter_apk
 endif  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
 
 

@@ -53,7 +53,7 @@ class PropTestCase(unittest.TestCase):
 
     p.make_as_comment()
     self.assertTrue(p.is_comment())
-    self.assertTrue("# a comment\n#a=b", str(p))
+    self.assertEqual("# a comment\n#a=b", str(p))
 
 class PropListTestcase(unittest.TestCase):
   def setUp(self):
@@ -250,6 +250,28 @@ class PropListTestcase(unittest.TestCase):
         # we have duplicated foo=true and foo=false, but that's allowed
         # because it's explicitly allowed
         self.assertTrue(override_optional_props(props, allow_dup=True))
+
+  def test_validateGrfProps(self):
+    stderr_redirect = io.StringIO()
+    with contextlib.redirect_stderr(stderr_redirect):
+      props = PropList("hello")
+      props.put("ro.board.first_api_level","25")
+
+      # ro.board.first_api_level must be less than or equal to the sdk version
+      self.assertFalse(validate_grf_props(props, 20))
+      self.assertTrue(validate_grf_props(props, 26))
+      self.assertTrue(validate_grf_props(props, 35))
+
+      # manually set ro.board.api_level to an invalid value
+      props.put("ro.board.api_level","20")
+      self.assertFalse(validate_grf_props(props, 26))
+
+      props.get_all_props()[-1].make_as_comment()
+      # manually set ro.board.api_level to a valid value
+      props.put("ro.board.api_level","26")
+      self.assertTrue(validate_grf_props(props, 26))
+      # ro.board.api_level must be less than or equal to the sdk version
+      self.assertFalse(validate_grf_props(props, 25))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
