@@ -8,6 +8,7 @@ unification of the Chrome and Android warn.py.
 
 
 def create_pattern(pattern):
+  """Return a tuple of name and warn patten."""
   return [pattern, '(^|.*/)' + pattern + '/.*: warning:']
 
 

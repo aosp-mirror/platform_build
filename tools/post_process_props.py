@@ -42,7 +42,46 @@ def mangle_build_prop(prop_list):
   # default to "adb". That might not the right policy there, but it's better
   # to be explicit.
   if not prop_list.get_value("persist.sys.usb.config"):
-    prop_list.put("persist.sys.usb.config", "none");
+    prop_list.put("persist.sys.usb.config", "none")
+
+def validate_grf_props(prop_list, sdk_version):
+  """Validate GRF properties if exist.
+
+  If ro.board.first_api_level is defined, check if its value is valid for the
+  sdk version.
+  Also, validate the value of ro.board.api_level if defined.
+
+  Returns:
+    True if the GRF properties are valid.
+  """
+  grf_api_level = prop_list.get_value("ro.board.first_api_level")
+  board_api_level = prop_list.get_value("ro.board.api_level")
+
+  if not grf_api_level:
+    if board_api_level:
+      sys.stderr.write("error: non-GRF device must not define "
+                       "ro.board.api_level\n")
+      return False
+    # non-GRF device skips the GRF validation test
+    return True
+
+  grf_api_level = int(grf_api_level)
+  if grf_api_level > sdk_version:
+    sys.stderr.write("error: ro.board.first_api_level(%d) must be less than "
+                     "or equal to ro.build.version.sdk(%d)\n"
+                     % (grf_api_level, sdk_version))
+    return False
+
+  if board_api_level:
+    board_api_level = int(board_api_level)
+    if board_api_level < grf_api_level or board_api_level > sdk_version:
+      sys.stderr.write("error: ro.board.api_level(%d) must be neither less "
+                       "than ro.board.first_api_level(%d) nor greater than "
+                       "ro.build.version.sdk(%d)\n"
+                       % (board_api_level, grf_api_level, sdk_version))
+      return False
+
+  return True
 
 def validate(prop_list):
   """Validate the properties.
@@ -215,6 +254,7 @@ def main(argv):
                       default=False)
   parser.add_argument("filename")
   parser.add_argument("disallowed_keys", metavar="KEY", type=str, nargs="*")
+  parser.add_argument("--sdk-version", type=int, required=True)
   args = parser.parse_args()
 
   if not args.filename.endswith("/build.prop"):
@@ -224,6 +264,8 @@ def main(argv):
   props = PropList(args.filename)
   mangle_build_prop(props)
   if not override_optional_props(props, args.allow_dup):
+    sys.exit(1)
+  if not validate_grf_props(props, args.sdk_version):
     sys.exit(1)
   if not validate(props):
     sys.exit(1)

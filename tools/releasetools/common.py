@@ -41,6 +41,7 @@ import zipfile
 from hashlib import sha1, sha256
 
 import images
+import rangelib
 import sparse_img
 from blockimgdiff import BlockImageDiff
 
@@ -137,6 +138,7 @@ PARTITIONS_WITH_BUILD_PROP = PARTITIONS_WITH_CARE_MAP + ['boot']
 # existing search paths.
 RAMDISK_BUILD_PROP_REL_PATHS = ['system/etc/ramdisk/build.prop']
 
+
 class ErrorCode(object):
   """Define error_codes for failures that happen during the actual
   update package installation.
@@ -225,6 +227,7 @@ def InitLogging():
 def SetHostToolLocation(tool_name, location):
   OPTIONS.host_tools[tool_name] = location
 
+
 def FindHostToolPath(tool_name):
   """Finds the path to the host tool.
 
@@ -244,6 +247,7 @@ def FindHostToolPath(tool_name):
     return tool_path
 
   return tool_name
+
 
 def Run(args, verbose=None, **kwargs):
   """Creates and returns a subprocess.Popen object.
@@ -271,6 +275,9 @@ def Run(args, verbose=None, **kwargs):
     # Make a copy of args in case client relies on the content of args later.
     args = args[:]
     args[0] = FindHostToolPath(args[0])
+
+  if verbose is None:
+    verbose = OPTIONS.verbose
 
   # Don't log any if caller explicitly says so.
   if verbose:
@@ -368,7 +375,10 @@ class BuildInfo(object):
       "product", "product_services", "odm", "vendor", "system"]
   _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER_LEGACY = []
 
-  def __init__(self, info_dict, oem_dicts=None):
+  # The length of vbmeta digest to append to the fingerprint
+  _VBMETA_DIGEST_SIZE_USED = 8
+
+  def __init__(self, info_dict, oem_dicts=None, use_legacy_id=False):
     """Initializes a BuildInfo instance with the given dicts.
 
     Note that it only wraps up the given dicts, without making copies.
@@ -379,6 +389,9 @@ class BuildInfo(object):
           that it always uses the first dict to calculate the fingerprint or the
           device name. The rest would be used for asserting OEM properties only
           (e.g. one package can be installed on one of these devices).
+      use_legacy_id: Use the legacy build id to construct the fingerprint. This
+          is used when we need a BuildInfo class, while the vbmeta digest is
+          unavailable.
 
     Raises:
       ValueError: On invalid inputs.
@@ -387,6 +400,7 @@ class BuildInfo(object):
     self.oem_dicts = oem_dicts
 
     self._is_ab = info_dict.get("ab_update") == "true"
+    self.use_legacy_id = use_legacy_id
 
     # Skip _oem_props if oem_dicts is None to use BuildInfo in
     # sign_target_files_apks
@@ -433,6 +447,20 @@ class BuildInfo(object):
     return self._fingerprint
 
   @property
+  def is_vabc(self):
+    vendor_prop = self.info_dict.get("vendor.build.prop")
+    vabc_enabled = vendor_prop and \
+        vendor_prop.GetProp("ro.virtual_ab.compression.enabled") == "true"
+    return vabc_enabled
+
+  @property
+  def vendor_suppressed_vabc(self):
+    vendor_prop = self.info_dict.get("vendor.build.prop")
+    vabc_suppressed = vendor_prop and \
+        vendor_prop.GetProp("ro.vendor.build.dont_use_vabc")
+    return vabc_suppressed and vabc_suppressed.lower() == "true"
+
+  @property
   def oem_props(self):
     return self._oem_props
 
@@ -460,7 +488,7 @@ class BuildInfo(object):
     """Returns the inquired build property for the provided partition."""
 
     # Boot image uses ro.[product.]bootimage instead of boot.
-    prop_partition =  "bootimage" if partition == "boot" else partition
+    prop_partition = "bootimage" if partition == "boot" else partition
 
     # If provided a partition for this property, only look within that
     # partition's build.prop.
@@ -479,6 +507,9 @@ class BuildInfo(object):
     """Returns the inquired build property from the standard build.prop file."""
     if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
       return self._ResolveRoProductBuildProp(prop)
+
+    if prop == "ro.build.id":
+      return self._GetBuildId()
 
     prop_val = self._GetRawBuildProp(prop, None)
     if prop_val is not None:
@@ -545,6 +576,34 @@ class BuildInfo(object):
         logger.warning('Failed to find ro.build.version.release_or_codename')
 
     return self.GetBuildProp("ro.build.version.release")
+
+  def _GetBuildId(self):
+    build_id = self._GetRawBuildProp("ro.build.id", None)
+    if build_id:
+      return build_id
+
+    legacy_build_id = self.GetBuildProp("ro.build.legacy.id")
+    if not legacy_build_id:
+      raise ExternalError("Couldn't find build id in property file")
+
+    if self.use_legacy_id:
+      return legacy_build_id
+
+    # Append the top 8 chars of vbmeta digest to the existing build id. The
+    # logic needs to match the one in init, so that OTA can deliver correctly.
+    avb_enable = self.info_dict.get("avb_enable") == "true"
+    if not avb_enable:
+      raise ExternalError("AVB isn't enabled when using legacy build id")
+
+    vbmeta_digest = self.info_dict.get("vbmeta_digest")
+    if not vbmeta_digest:
+      raise ExternalError("Vbmeta digest isn't provided when using legacy build"
+                          " id")
+    if len(vbmeta_digest) < self._VBMETA_DIGEST_SIZE_USED:
+      raise ExternalError("Invalid vbmeta digest " + vbmeta_digest)
+
+    digest_prefix = vbmeta_digest[:self._VBMETA_DIGEST_SIZE_USED]
+    return legacy_build_id + '.' + digest_prefix
 
   def _GetPartitionPlatformVersion(self, partition):
     try:
@@ -651,9 +710,19 @@ def ExtractFromInputFile(input_file, fn):
       raise KeyError(fn)
     return file
 
+
 class RamdiskFormat(object):
   LZ4 = 1
   GZ = 2
+
+
+def _GetRamdiskFormat(info_dict):
+  if info_dict.get('lz4_ramdisks') == 'true':
+    ramdisk_format = RamdiskFormat.LZ4
+  else:
+    ramdisk_format = RamdiskFormat.GZ
+  return ramdisk_format
+
 
 def LoadInfoDict(input_file, repacking=False):
   """Loads the key/value pairs from the given input target_files.
@@ -756,10 +825,7 @@ def LoadInfoDict(input_file, repacking=False):
 
   # Load recovery fstab if applicable.
   d["fstab"] = _FindAndLoadRecoveryFstab(d, input_file, read_helper)
-  if d.get('lz4_ramdisks') == 'true':
-    ramdisk_format = RamdiskFormat.LZ4
-  else:
-    ramdisk_format = RamdiskFormat.GZ
+  ramdisk_format = _GetRamdiskFormat(d)
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
@@ -772,17 +838,24 @@ def LoadInfoDict(input_file, repacking=False):
   # Set up the salt (based on fingerprint) that will be used when adding AVB
   # hash / hashtree footers.
   if d.get("avb_enable") == "true":
-    build_info = BuildInfo(d)
+    build_info = BuildInfo(d, use_legacy_id=True)
     for partition in PARTITIONS_WITH_BUILD_PROP:
       fingerprint = build_info.GetPartitionFingerprint(partition)
       if fingerprint:
-        d["avb_{}_salt".format(partition)] = sha256(fingerprint.encode()).hexdigest()
+        d["avb_{}_salt".format(partition)] = sha256(
+            fingerprint.encode()).hexdigest()
+
+    # Set the vbmeta digest if exists
+    try:
+      d["vbmeta_digest"] = read_helper("META/vbmeta_digest.txt").rstrip()
+    except KeyError:
+      pass
+
   try:
     d["ab_partitions"] = read_helper("META/ab_partitions.txt").split("\n")
   except KeyError:
     logger.warning("Can't find META/ab_partitions.txt")
   return d
-
 
 
 def LoadListFromFile(file_path):
@@ -854,7 +927,8 @@ class PartitionBuildProps(object):
     """Loads the build.prop file and builds the attributes."""
 
     if name == "boot":
-      data = PartitionBuildProps._ReadBootPropFile(input_file, ramdisk_format=ramdisk_format)
+      data = PartitionBuildProps._ReadBootPropFile(
+          input_file, ramdisk_format=ramdisk_format)
     else:
       data = PartitionBuildProps._ReadPartitionPropFile(input_file, name)
 
@@ -1101,7 +1175,7 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
     return " ".join(sorted(combined))
 
   if (framework_dict.get("use_dynamic_partitions") !=
-      "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
+          "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
     raise ValueError("Both dictionaries must have use_dynamic_partitions=true")
 
   merged_dict = {"use_dynamic_partitions": "true"}
@@ -1320,7 +1394,7 @@ def ConstructAftlMakeImageCommands(output_image):
 
   vbmeta_image = MakeTempFile()
   os.rename(output_image, vbmeta_image)
-  build_info = BuildInfo(OPTIONS.info_dict)
+  build_info = BuildInfo(OPTIONS.info_dict, use_legacy_id=True)
   version_incremental = build_info.GetBuildProp("ro.build.version.incremental")
   aftltool = OPTIONS.aftl_tool_path
   server_argument_list = [OPTIONS.aftl_server, OPTIONS.aftl_key_path]
@@ -1366,7 +1440,8 @@ def AppendGkiSigningArgs(cmd):
 
   # Checks key_path exists, before appending --gki_signing_* args.
   if not os.path.exists(key_path):
-    raise ExternalError('gki_signing_key_path: "{}" not found'.format(key_path))
+    raise ExternalError(
+        'gki_signing_key_path: "{}" not found'.format(key_path))
 
   algorithm = OPTIONS.info_dict.get("gki_signing_algorithm")
   if key_path and algorithm:
@@ -1446,7 +1521,8 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
     AddAftlInclusionProof(image_path)
 
 
-def _MakeRamdisk(sourcedir, fs_config_file=None, lz4_ramdisks=False):
+def _MakeRamdisk(sourcedir, fs_config_file=None,
+                 ramdisk_format=RamdiskFormat.GZ):
   ramdisk_img = tempfile.NamedTemporaryFile()
 
   if fs_config_file is not None and os.access(fs_config_file, os.F_OK):
@@ -1455,11 +1531,13 @@ def _MakeRamdisk(sourcedir, fs_config_file=None, lz4_ramdisks=False):
   else:
     cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
   p1 = Run(cmd, stdout=subprocess.PIPE)
-  if lz4_ramdisks:
+  if ramdisk_format == RamdiskFormat.LZ4:
     p2 = Run(["lz4", "-l", "-12", "--favor-decSpeed"], stdin=p1.stdout,
              stdout=ramdisk_img.file.fileno())
-  else:
+  elif ramdisk_format == RamdiskFormat.GZ:
     p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
+  else:
+    raise ValueError("Only support lz4 or minigzip ramdisk format.")
 
   p2.wait()
   p1.wait()
@@ -1506,8 +1584,9 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   img = tempfile.NamedTemporaryFile()
 
   if has_ramdisk:
-    use_lz4 = info_dict.get("lz4_ramdisks") == 'true'
-    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file, lz4_ramdisks=use_lz4)
+    ramdisk_format = _GetRamdiskFormat(info_dict)
+    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file,
+                               ramdisk_format=ramdisk_format)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
@@ -1579,7 +1658,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   RunAndCheckOutput(cmd)
 
   if (info_dict.get("boot_signer") == "true" and
-      info_dict.get("verity_key")):
+          info_dict.get("verity_key")):
     # Hard-code the path as "/boot" for two-step special recovery image (which
     # will be loaded into /boot during the two-step OTA).
     if two_step_image:
@@ -1641,6 +1720,38 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   return data
 
 
+def _SignBootableImage(image_path, prebuilt_name, partition_name,
+                       info_dict=None):
+  """Performs AVB signing for a prebuilt boot.img.
+
+  Args:
+    image_path: The full path of the image, e.g., /path/to/boot.img.
+    prebuilt_name: The prebuilt image name, e.g., boot.img, boot-5.4-gz.img,
+        boot-5.10.img, recovery.img.
+    partition_name: The partition name, e.g., 'boot' or 'recovery'.
+    info_dict: The information dict read from misc_info.txt.
+  """
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  # AVB: if enabled, calculate and add hash to boot.img or recovery.img.
+  if info_dict.get("avb_enable") == "true":
+    avbtool = info_dict["avb_avbtool"]
+    if partition_name == "recovery":
+      part_size = info_dict["recovery_size"]
+    else:
+      part_size = info_dict[prebuilt_name.replace(".img", "_size")]
+
+    cmd = [avbtool, "add_hash_footer", "--image", image_path,
+           "--partition_size", str(part_size), "--partition_name",
+           partition_name]
+    AppendAVBSigningArgs(cmd, partition_name)
+    args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
+    if args and args.strip():
+      cmd.extend(shlex.split(args))
+    RunAndCheckOutput(cmd)
+
+
 def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
                      info_dict=None, two_step_image=False):
   """Return a File object with the desired bootable image.
@@ -1648,6 +1759,9 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name 'prebuilt_name',
   otherwise look for it under 'unpack_dir'/IMAGES, otherwise construct it from
   the source files in 'unpack_dir'/'tree_subdir'."""
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
 
   prebuilt_path = os.path.join(unpack_dir, "BOOTABLE_IMAGES", prebuilt_name)
   if os.path.exists(prebuilt_path):
@@ -1659,10 +1773,16 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
     logger.info("using prebuilt %s from IMAGES...", prebuilt_name)
     return File.FromLocalFile(name, prebuilt_path)
 
-  logger.info("building image from target_files %s...", tree_subdir)
+  prebuilt_path = os.path.join(unpack_dir, "PREBUILT_IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    logger.info("Re-signing prebuilt %s from PREBUILT_IMAGES...", prebuilt_name)
+    signed_img = MakeTempFile()
+    shutil.copy(prebuilt_path, signed_img)
+    partition_name = tree_subdir.lower()
+    _SignBootableImage(signed_img, prebuilt_name, partition_name, info_dict)
+    return File.FromLocalFile(name, signed_img)
 
-  if info_dict is None:
-    info_dict = OPTIONS.info_dict
+  logger.info("building image from target_files %s...", tree_subdir)
 
   # With system_root_image == "true", we don't pack ramdisk into the boot image.
   # Unless "recovery_as_boot" is specified, in which case we carry the ramdisk
@@ -1695,8 +1815,8 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
 
   img = tempfile.NamedTemporaryFile()
 
-  use_lz4 = info_dict.get("lz4_ramdisks") == 'true'
-  ramdisk_img = _MakeRamdisk(sourcedir, lz4_ramdisks=use_lz4)
+  ramdisk_format = _GetRamdiskFormat(info_dict)
+  ramdisk_img = _MakeRamdisk(sourcedir, ramdisk_format=ramdisk_format)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
@@ -1744,15 +1864,19 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
   if os.access(fn, os.F_OK):
     ramdisk_fragments = shlex.split(open(fn).read().rstrip("\n"))
     for ramdisk_fragment in ramdisk_fragments:
-      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment, "mkbootimg_args")
+      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS",
+                        ramdisk_fragment, "mkbootimg_args")
       cmd.extend(shlex.split(open(fn).read().rstrip("\n")))
-      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment, "prebuilt_ramdisk")
+      fn = os.path.join(sourcedir, "RAMDISK_FRAGMENTS",
+                        ramdisk_fragment, "prebuilt_ramdisk")
       # Use prebuilt image if found, else create ramdisk from supplied files.
       if os.access(fn, os.F_OK):
         ramdisk_fragment_pathname = fn
       else:
-        ramdisk_fragment_root = os.path.join(sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment)
-        ramdisk_fragment_img = _MakeRamdisk(ramdisk_fragment_root, lz4_ramdisks=use_lz4)
+        ramdisk_fragment_root = os.path.join(
+            sourcedir, "RAMDISK_FRAGMENTS", ramdisk_fragment)
+        ramdisk_fragment_img = _MakeRamdisk(ramdisk_fragment_root,
+                                            ramdisk_format=ramdisk_format)
         ramdisk_fragment_imgs.append(ramdisk_fragment_img)
         ramdisk_fragment_pathname = ramdisk_fragment_img.name
       cmd.extend(["--vendor_ramdisk_fragment", ramdisk_fragment_pathname])
@@ -3523,7 +3647,7 @@ class DynamicPartitionsDifference(object):
 
     for g in tgt_groups:
       for p in shlex.split(info_dict.get(
-          "super_%s_partition_list" % g, "").strip()):
+              "super_%s_partition_list" % g, "").strip()):
         assert p in self._partition_updates, \
             "{} is in target super_{}_partition_list but no BlockDifference " \
             "object is provided.".format(p, g)
@@ -3531,7 +3655,7 @@ class DynamicPartitionsDifference(object):
 
     for g in src_groups:
       for p in shlex.split(source_info_dict.get(
-          "super_%s_partition_list" % g, "").strip()):
+              "super_%s_partition_list" % g, "").strip()):
         assert p in self._partition_updates, \
             "{} is in source super_{}_partition_list but no BlockDifference " \
             "object is provided.".format(p, g)
@@ -3640,7 +3764,7 @@ class DynamicPartitionsDifference(object):
       if u.src_size is not None and u.tgt_size is None:
         append('remove_group %s' % g)
       if (u.src_size is not None and u.tgt_size is not None and
-          u.src_size > u.tgt_size):
+              u.src_size > u.tgt_size):
         comment('Shrink group %s from %d to %d' % (g, u.src_size, u.tgt_size))
         append('resize_group %s %d' % (g, u.tgt_size))
 
@@ -3649,7 +3773,7 @@ class DynamicPartitionsDifference(object):
         comment('Add group %s with maximum size %d' % (g, u.tgt_size))
         append('add_group %s %d' % (g, u.tgt_size))
       if (u.src_size is not None and u.tgt_size is not None and
-          u.src_size < u.tgt_size):
+              u.src_size < u.tgt_size):
         comment('Grow group %s from %d to %d' % (g, u.src_size, u.tgt_size))
         append('resize_group %s %d' % (g, u.tgt_size))
 
@@ -3683,7 +3807,8 @@ def GetBootImageBuildProp(boot_img, ramdisk_format=RamdiskFormat.LZ4):
   """
   tmp_dir = MakeTempDir('boot_', suffix='.img')
   try:
-    RunAndCheckOutput(['unpack_bootimg', '--boot_img', boot_img, '--out', tmp_dir])
+    RunAndCheckOutput(['unpack_bootimg', '--boot_img',
+                      boot_img, '--out', tmp_dir])
     ramdisk = os.path.join(tmp_dir, 'ramdisk')
     if not os.path.isfile(ramdisk):
       logger.warning('Unable to get boot image timestamp: no ramdisk in boot')
@@ -3694,7 +3819,8 @@ def GetBootImageBuildProp(boot_img, ramdisk_format=RamdiskFormat.LZ4):
     elif ramdisk_format == RamdiskFormat.GZ:
       with open(ramdisk, 'rb') as input_stream:
         with open(uncompressed_ramdisk, 'wb') as output_stream:
-          p2 = Run(['minigzip', '-d'], stdin=input_stream.fileno(), stdout=output_stream.fileno())
+          p2 = Run(['minigzip', '-d'], stdin=input_stream.fileno(),
+                   stdout=output_stream.fileno())
           p2.wait()
     else:
       logger.error('Only support lz4 or minigzip ramdisk format.')
@@ -3705,13 +3831,14 @@ def GetBootImageBuildProp(boot_img, ramdisk_format=RamdiskFormat.LZ4):
     # Use "toybox cpio" instead of "cpio" because the latter invokes cpio from
     # the host environment.
     RunAndCheckOutput(['toybox', 'cpio', '-F', abs_uncompressed_ramdisk, '-i'],
-               cwd=extracted_ramdisk)
+                      cwd=extracted_ramdisk)
 
     for search_path in RAMDISK_BUILD_PROP_REL_PATHS:
       prop_file = os.path.join(extracted_ramdisk, search_path)
       if os.path.isfile(prop_file):
         return prop_file
-      logger.warning('Unable to get boot image timestamp: no %s in ramdisk', search_path)
+      logger.warning(
+          'Unable to get boot image timestamp: no %s in ramdisk', search_path)
 
     return None
 
@@ -3744,9 +3871,131 @@ def GetBootImageTimestamp(boot_img):
     timestamp = props.GetProp('ro.bootimage.build.date.utc')
     if timestamp:
       return int(timestamp)
-    logger.warning('Unable to get boot image timestamp: ro.bootimage.build.date.utc is undefined')
+    logger.warning(
+        'Unable to get boot image timestamp: ro.bootimage.build.date.utc is undefined')
     return None
 
   except ExternalError as e:
     logger.warning('Unable to get boot image timestamp: %s', e)
     return None
+
+
+def GetCareMap(which, imgname):
+  """Returns the care_map string for the given partition.
+
+  Args:
+    which: The partition name, must be listed in PARTITIONS_WITH_CARE_MAP.
+    imgname: The filename of the image.
+
+  Returns:
+    (which, care_map_ranges): care_map_ranges is the raw string of the care_map
+    RangeSet; or None.
+  """
+  assert which in PARTITIONS_WITH_CARE_MAP
+
+  # which + "_image_size" contains the size that the actual filesystem image
+  # resides in, which is all that needs to be verified. The additional blocks in
+  # the image file contain verity metadata, by reading which would trigger
+  # invalid reads.
+  image_size = OPTIONS.info_dict.get(which + "_image_size")
+  if not image_size:
+    return None
+
+  image_blocks = int(image_size) // 4096 - 1
+  assert image_blocks > 0, "blocks for {} must be positive".format(which)
+
+  # For sparse images, we will only check the blocks that are listed in the care
+  # map, i.e. the ones with meaningful data.
+  if "extfs_sparse_flag" in OPTIONS.info_dict:
+    simg = sparse_img.SparseImage(imgname)
+    care_map_ranges = simg.care_map.intersect(
+        rangelib.RangeSet("0-{}".format(image_blocks)))
+
+  # Otherwise for non-sparse images, we read all the blocks in the filesystem
+  # image.
+  else:
+    care_map_ranges = rangelib.RangeSet("0-{}".format(image_blocks))
+
+  return [which, care_map_ranges.to_string_raw()]
+
+
+def AddCareMapForAbOta(output_file, ab_partitions, image_paths):
+  """Generates and adds care_map.pb for a/b partition that has care_map.
+
+  Args:
+    output_file: The output zip file (needs to be already open),
+        or file path to write care_map.pb.
+    ab_partitions: The list of A/B partitions.
+    image_paths: A map from the partition name to the image path.
+  """
+  if not output_file:
+    raise ExternalError('Expected output_file for AddCareMapForAbOta')
+
+  care_map_list = []
+  for partition in ab_partitions:
+    partition = partition.strip()
+    if partition not in PARTITIONS_WITH_CARE_MAP:
+      continue
+
+    verity_block_device = "{}_verity_block_device".format(partition)
+    avb_hashtree_enable = "avb_{}_hashtree_enable".format(partition)
+    if (verity_block_device in OPTIONS.info_dict or
+            OPTIONS.info_dict.get(avb_hashtree_enable) == "true"):
+      if partition not in image_paths:
+        logger.warning('Potential partition with care_map missing from images: %s',
+                       partition)
+        continue
+      image_path = image_paths[partition]
+      if not os.path.exists(image_path):
+        raise ExternalError('Expected image at path {}'.format(image_path))
+
+      care_map = GetCareMap(partition, image_path)
+      if not care_map:
+        continue
+      care_map_list += care_map
+
+      # adds fingerprint field to the care_map
+      # TODO(xunchang) revisit the fingerprint calculation for care_map.
+      partition_props = OPTIONS.info_dict.get(partition + ".build.prop")
+      prop_name_list = ["ro.{}.build.fingerprint".format(partition),
+                        "ro.{}.build.thumbprint".format(partition)]
+
+      present_props = [x for x in prop_name_list if
+                       partition_props and partition_props.GetProp(x)]
+      if not present_props:
+        logger.warning(
+            "fingerprint is not present for partition %s", partition)
+        property_id, fingerprint = "unknown", "unknown"
+      else:
+        property_id = present_props[0]
+        fingerprint = partition_props.GetProp(property_id)
+      care_map_list += [property_id, fingerprint]
+
+  if not care_map_list:
+    return
+
+  # Converts the list into proto buf message by calling care_map_generator; and
+  # writes the result to a temp file.
+  temp_care_map_text = MakeTempFile(prefix="caremap_text-",
+                                           suffix=".txt")
+  with open(temp_care_map_text, 'w') as text_file:
+    text_file.write('\n'.join(care_map_list))
+
+  temp_care_map = MakeTempFile(prefix="caremap-", suffix=".pb")
+  care_map_gen_cmd = ["care_map_generator", temp_care_map_text, temp_care_map]
+  RunAndCheckOutput(care_map_gen_cmd)
+
+  if not isinstance(output_file, zipfile.ZipFile):
+    shutil.copy(temp_care_map, output_file)
+    return
+  # output_file is a zip file
+  care_map_path = "META/care_map.pb"
+  if care_map_path in output_file.namelist():
+    # Copy the temp file into the OPTIONS.input_tmp dir and update the
+    # replace_updated_files_list used by add_img_to_target_files
+    if not OPTIONS.replace_updated_files_list:
+      OPTIONS.replace_updated_files_list = []
+    shutil.copy(temp_care_map, os.path.join(OPTIONS.input_tmp, care_map_path))
+    OPTIONS.replace_updated_files_list.append(care_map_path)
+  else:
+    ZipWrite(output_file, temp_care_map, arcname=care_map_path)

@@ -602,7 +602,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     expected_dict = {
         'gki_signing_key_path': 'release_gki_key',
         'gki_signing_algorithm': 'release_gki_algorithm',
-        'gki_signing_signature_args': 'default_gki_signature_args release_gki_signature_extra_args',
+        'gki_signing_signature_args': 'release_gki_signature_extra_args',
     }
     ReplaceGkiSigningKey(misc_info)
     self.assertDictEqual(expected_dict, misc_info)

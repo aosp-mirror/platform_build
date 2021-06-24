@@ -341,6 +341,9 @@ _product_list_vars += PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
 # This flag implies PRODUCT_USE_DYNAMIC_PARTITIONS.
 _product_single_value_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 
+# When this is true, various build time as well as runtime debugfs restrictions are enabled.
+_product_single_value_vars += PRODUCT_SET_DEBUGFS_RESTRICTIONS
+
 # Other dynamic partition feature flags.PRODUCT_USE_DYNAMIC_PARTITION_SIZE and
 # PRODUCT_BUILD_SUPER_PARTITION default to the value of PRODUCT_USE_DYNAMIC_PARTITIONS.
 _product_single_value_vars += \

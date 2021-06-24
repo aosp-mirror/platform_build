@@ -15,10 +15,12 @@
 
 """Warning patterns for C/C++ compiler, but not clang-tidy."""
 
+# No need of doc strings for trivial small functions.
+# pylint:disable=missing-function-docstring
+
 import re
 
 # pylint:disable=relative-beyond-top-level
-# pylint:disable=g-importing-member
 from .severity import Severity
 
 
@@ -56,7 +58,8 @@ def harmless(description, pattern_list):
 
 
 warn_patterns = [
-    # pylint:disable=line-too-long,g-inconsistent-quotes
+    # pylint does not recognize g-inconsistent-quotes
+    # pylint:disable=line-too-long,bad-option-value,g-inconsistent-quotes
     medium('Implicit function declaration',
            [r".*: warning: implicit declaration of function .+",
             r".*: warning: implicitly declaring library function"]),
@@ -88,6 +91,8 @@ warn_patterns = [
          [r".*: warning: incompatible redeclaration of library function .+"]),
     high('Null passed as non-null argument',
          [r".*: warning: Null passed to a callee that requires a non-null"]),
+    medium('Unused command line argument',
+           [r".*: warning: argument unused during compilation: .+"]),
     medium('Unused parameter',
            [r".*: warning: unused parameter '.*'"]),
     medium('Unused function, variable, label, comparison, etc.',
@@ -163,6 +168,8 @@ warn_patterns = [
            [r".*: warning: '.+' declared with greater visibility than the type of its field '.+'"]),
     medium('Shift count greater than width of type',
            [r".*: warning: (left|right) shift count >= width of type"]),
+    medium('Shift operator precedence',
+           [r".*: warning: operator .* has lower precedence .+Wshift-op-parentheses.+"]),
     medium('extern &lt;foo&gt; is initialized',
            [r".*: warning: '.+' initialized and declared 'extern'",
             r".*: warning: 'extern' variable has an initializer"]),
@@ -236,6 +243,8 @@ warn_patterns = [
            [r".*: warning: ignoring #pragma .+"]),
     medium('Pragma warning messages',
            [r".*: warning: .+W#pragma-messages"]),
+    medium('Pragma once in main file',
+           [r".*: warning: #pragma once in main file .+Wpragma-once-outside-header.*"]),
     medium('Variable might be clobbered by longjmp or vfork',
            [r".*: warning: variable '.+' might be clobbered by 'longjmp' or 'vfork'"]),
     medium('Argument might be clobbered by longjmp or vfork',
@@ -300,7 +309,7 @@ warn_patterns = [
     medium('Missing noreturn',
            [r".*: warning: function '.*' could be declared with attribute 'noreturn'"]),
     medium('User warning',
-           [r".*: warning: #warning "".+"""]),
+           [r".*: warning: #warning \".+\""]),
     medium('Vexing parsing problem',
            [r".*: warning: empty parentheses interpreted as a function declaration"]),
     medium('Dereferencing void*',
@@ -330,7 +339,7 @@ warn_patterns = [
     low('Deprecated register',
         [r".*: warning: 'register' storage class specifier is deprecated"]),
     low('Converts between pointers to integer types with different sign',
-        [r".*: warning: .+ converts between pointers to integer types with different sign"]),
+        [r".*: warning: .+ converts between pointers to integer types .+Wpointer-sign\]"]),
     harmless('Extra tokens after #endif',
              [r".*: warning: extra tokens at end of #endif directive"]),
     medium('Comparison between different enums',
@@ -407,6 +416,32 @@ warn_patterns = [
         [r".*: warning: missing .+Winvalid-pp-token"]),
     low('need glibc to link',
         [r".*: warning: .* requires at runtime .* glibc .* for linking"]),
+    low('Add braces to avoid dangling else',
+        [r".*: warning: add explicit braces to avoid dangling else"]),
+    low('Assigning value to self',
+        [r".*: warning: explicitly assigning value of .+ to itself"]),
+    low('Comparison of integers of different signs',
+        [r".*: warning: comparison of integers of different signs.+sign-compare"]),
+    low('Incompatible pointer types',
+        [r".*: warning: incompatible .*pointer types .*-Wincompatible-.*pointer-types"]),
+    low('Missing braces',
+        [r".*: warning: suggest braces around initialization of",
+         r".*: warning: too many braces around scalar initializer .+Wmany-braces-around-scalar-init",
+         r".*: warning: braces around scalar initializer"]),
+    low('Missing field initializers',
+        [r".*: warning: missing field '.+' initializer"]),
+    low('Typedef redefinition',
+        [r".*: warning: redefinition of typedef '.+' is a C11 feature"]),
+    low('GNU old-style field designator',
+        [r".*: warning: use of GNU old-style field designator extension"]),
+    low('Initializer overrides prior initialization',
+        [r".*: warning: initializer overrides prior initialization of this subobject"]),
+    low('GNU extension, variable sized type not at end',
+        [r".*: warning: field '.+' with variable sized type '.+' not at the end of a struct or class"]),
+    low('Comparison of constant is always false/true',
+        [r".*: comparison of .+ is always .+Wtautological-constant-out-of-range-compare"]),
+    low('Hides overloaded virtual function',
+        [r".*: '.+' hides overloaded virtual function"]),
     medium('Operator new returns NULL',
            [r".*: warning: 'operator new' must not return NULL unless it is declared 'throw\(\)' .+"]),
     medium('NULL used in arithmetic',

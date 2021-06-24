@@ -96,12 +96,18 @@ import zipfile
 from xml.etree import ElementTree
 
 import add_img_to_target_files
+import apex_utils
+import build_image
 import build_super_image
 import check_target_files_vintf
 import common
 import img_from_target_files
 import find_shareduid_violation
 import ota_from_target_files
+import sparse_img
+import verity_utils
+
+from common import AddCareMapForAbOta, ExternalError, PARTITIONS_WITH_CARE_MAP
 
 logger = logging.getLogger(__name__)
 
@@ -355,8 +361,9 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
           ' includes %s.', partition, partition)
       has_error = True
 
-  if ('dynamic_partition_list' in framework_misc_info_keys) or (
-      'super_partition_groups' in framework_misc_info_keys):
+  if ('dynamic_partition_list'
+      in framework_misc_info_keys) or ('super_partition_groups'
+                                       in framework_misc_info_keys):
     logger.error('Dynamic partition misc info keys should come from '
                  'the vendor instance of META/misc_info.txt.')
     has_error = True
@@ -447,8 +454,8 @@ def process_misc_info_txt(framework_target_files_temp_dir,
     merged_dict[key] = framework_dict[key]
 
   # Merge misc info keys used for Dynamic Partitions.
-  if (merged_dict.get('use_dynamic_partitions') == 'true') and (
-      framework_dict.get('use_dynamic_partitions') == 'true'):
+  if (merged_dict.get('use_dynamic_partitions')
+      == 'true') and (framework_dict.get('use_dynamic_partitions') == 'true'):
     merged_dynamic_partitions_dict = common.MergeDynamicPartitionInfoDicts(
         framework_dict=framework_dict, vendor_dict=merged_dict)
     merged_dict.update(merged_dynamic_partitions_dict)
@@ -731,6 +738,71 @@ def compile_split_sepolicy(product_out, partition_map, output_policy):
       cmd.append(policy)
 
   return cmd
+
+
+def validate_merged_apex_info(output_target_files_dir, partitions):
+  """Validates the APEX files in the merged target files directory.
+
+  Checks the APEX files in all possible preinstalled APEX directories.
+  Depends on the <partition>/apex/* APEX files within partitions.
+
+  Args:
+    output_target_files_dir: Output directory containing merged partition directories.
+    partitions: A list of all the partitions in the output directory.
+
+  Raises:
+    RuntimeError: if apex_utils fails to parse any APEX file.
+    ExternalError: if the same APEX package is provided by multiple partitions.
+  """
+  apex_packages = set()
+
+  apex_partitions = ('system', 'system_ext', 'product', 'vendor')
+  for partition in filter(lambda p: p in apex_partitions, partitions):
+    apex_info = apex_utils.GetApexInfoFromTargetFiles(
+        output_target_files_dir, partition, compressed_only=False)
+    partition_apex_packages = set([info.package_name for info in apex_info])
+    duplicates = apex_packages.intersection(partition_apex_packages)
+    if duplicates:
+      raise ExternalError(
+          'Duplicate APEX packages found in multiple partitions: %s' %
+          ' '.join(duplicates))
+    apex_packages.update(partition_apex_packages)
+
+
+def generate_care_map(partitions, output_target_files_dir):
+  """Generates a merged META/care_map.pb file in the output target files dir.
+
+  Depends on the info dict from META/misc_info.txt, as well as built images
+  within IMAGES/.
+
+  Args:
+    partitions: A list of partitions to potentially include in the care map.
+    output_target_files_dir: The name of a directory that will be used to create
+      the output target files package after all the special cases are processed.
+  """
+  OPTIONS.info_dict = common.LoadInfoDict(output_target_files_dir)
+  partition_image_map = {}
+  for partition in partitions:
+    image_path = os.path.join(output_target_files_dir, 'IMAGES',
+                              '{}.img'.format(partition))
+    if os.path.exists(image_path):
+      partition_image_map[partition] = image_path
+      # Regenerated images should have their image_size property already set.
+      image_size_prop = '{}_image_size'.format(partition)
+      if image_size_prop not in OPTIONS.info_dict:
+        # Images copied directly from input target files packages will need
+        # their image sizes calculated.
+        partition_size = sparse_img.GetImagePartitionSize(image_path)
+        image_props = build_image.ImagePropFromGlobalDict(
+            OPTIONS.info_dict, partition)
+        verity_image_builder = verity_utils.CreateVerityImageBuilder(
+            image_props)
+        image_size = verity_image_builder.CalculateMaxImageSize(partition_size)
+        OPTIONS.info_dict[image_size_prop] = image_size
+
+  AddCareMapForAbOta(
+      os.path.join(output_target_files_dir, 'META', 'care_map.pb'),
+      PARTITIONS_WITH_CARE_MAP, partition_image_map)
 
 
 def process_special_cases(framework_target_files_temp_dir,
@@ -1074,6 +1146,9 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   common.RunAndCheckOutput(split_sepolicy_cmd)
   # TODO(b/178864050): Run tests on the combined.policy file.
 
+  # Run validation checks on the pre-installed APEX files.
+  validate_merged_apex_info(output_target_files_temp_dir, partition_map.keys())
+
   generate_images(output_target_files_temp_dir, rebuild_recovery)
 
   generate_super_empty_image(output_target_files_temp_dir, output_super_empty)
@@ -1087,12 +1162,14 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   if not output_target_files:
     return
 
+  # Create the merged META/care_map.bp
+  generate_care_map(partition_map.keys(), output_target_files_temp_dir)
+
   output_zip = create_target_files_archive(output_target_files,
                                            output_target_files_temp_dir,
                                            temp_dir)
 
   # Create the IMG package from the merged target files package.
-
   if output_img:
     img_from_target_files.main([output_zip, output_img])
 

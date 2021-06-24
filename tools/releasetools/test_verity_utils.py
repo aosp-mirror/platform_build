@@ -27,7 +27,8 @@ from rangelib import RangeSet
 from test_utils import (
     get_testdata_dir, ReleaseToolsTestCase, SkipIfExternalToolsUnavailable)
 from verity_utils import (
-    CreateHashtreeInfoGenerator, CreateVerityImageBuilder, HashtreeInfo,
+    CalculateVbmetaDigest, CreateHashtreeInfoGenerator,
+    CreateVerityImageBuilder, HashtreeInfo,
     VerifiedBootVersion1HashtreeInfoGenerator)
 
 BLOCK_SIZE = common.BLOCK_SIZE
@@ -388,3 +389,31 @@ class VerifiedBootVersion2VerityImageBuilderTest(ReleaseToolsTestCase):
       self.assertLess(
           _SizeCalculator(min_partition_size - BLOCK_SIZE),
           image_size)
+
+  @SkipIfExternalToolsUnavailable()
+  def test_CalculateVbmetaDigest(self):
+    prop_dict = copy.deepcopy(self.DEFAULT_PROP_DICT)
+    verity_image_builder = CreateVerityImageBuilder(prop_dict)
+    self.assertEqual(2, verity_image_builder.version)
+
+    input_dir = common.MakeTempDir()
+    image_dir = common.MakeTempDir()
+    os.mkdir(os.path.join(image_dir, 'IMAGES'))
+    system_image = os.path.join(image_dir, 'IMAGES', 'system.img')
+    system_image_size = verity_image_builder.CalculateMaxImageSize()
+    cmd = ['mkuserimg_mke2fs', input_dir, system_image, 'ext4', '/system',
+           str(system_image_size), '-j', '0', '-s']
+    common.RunAndCheckOutput(cmd)
+    verity_image_builder.Build(system_image)
+
+    # Additionally make vbmeta image
+    vbmeta_image = os.path.join(image_dir, 'IMAGES', 'vbmeta.img')
+    cmd = ['avbtool', 'make_vbmeta_image', '--include_descriptors_from_image',
+           system_image, '--output', vbmeta_image]
+    common.RunAndCheckOutput(cmd)
+
+    # Verify the verity metadata.
+    cmd = ['avbtool', 'verify_image', '--image', vbmeta_image]
+    common.RunAndCheckOutput(cmd)
+    digest = CalculateVbmetaDigest(image_dir, 'avbtool')
+    self.assertIsNotNone(digest)
