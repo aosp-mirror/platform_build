@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ee078c64_98766673",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-06-25T15:50:35Z",
+      "side": 1,
+      "message": "What does it mean?",
+      "range": {
+        "startLine": 11,
+        "startChar": 4,
+        "endLine": 11,
+        "endChar": 6
+      },
+      "revId": "acf2dd37e38ab5448a94a1c0a893899a997bd036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0fc811b0_e16dd265",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-06-25T15:50:35Z",
+      "side": 1,
+      "message": "To be more foolproof, can you add a check that core-icu4j is indeed there? Something like this:\n\n  ifeq(,$(filter com.android.i18n:core-icu4j,$(PRODUCT_UPDATABLE_BOOT_JARS))\n    $(error expected com.android.i18n:core-icu4j in PRODUCT_UPDATABLE_BOOT_JARS)\n  endif",
+      "range": {
+        "startLine": 255,
+        "startChar": 0,
+        "endLine": 255,
+        "endChar": 103
+      },
+      "revId": "acf2dd37e38ab5448a94a1c0a893899a997bd036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d565089_4df3c8a1",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-06-25T15:50:35Z",
+      "side": 1,
+      "message": "Could you please add a comment here that core-icu4j is special and is moved to PRODUCT_BOOT_JARS later as an exception?",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 78
+      },
+      "revId": "acf2dd37e38ab5448a94a1c0a893899a997bd036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
