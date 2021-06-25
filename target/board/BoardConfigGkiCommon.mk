@@ -29,9 +29,6 @@ BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_USES_RECOVERY_AS_BOOT :=
 TARGET_NO_KERNEL := false
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
-BOARD_KERNEL_MODULE_INTERFACE_VERSIONS := \
-    5.4-android12-unstable \
-    5.10-android12-unstable \
 
 # Copy boot image in $OUT to target files. This is defined for targets where
 # the installed GKI APEXes are built from source.
