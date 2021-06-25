@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5aa6fe00_efb74268",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-06-25T16:19:42Z",
+      "side": 1,
+      "message": "I thought it was a common abbr for System Health.. maybe not? :-)",
+      "parentUuid": "ee078c64_98766673",
+      "range": {
+        "startLine": 11,
+        "startChar": 4,
+        "endLine": 11,
+        "endChar": 6
+      },
+      "revId": "acf2dd37e38ab5448a94a1c0a893899a997bd036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0fc811b0_e16dd265",
@@ -49,6 +73,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e84bcab8_2839f8cb",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-06-25T16:19:42Z",
+      "side": 1,
+      "message": "Are there products that don\u0027t use default_art_config? Note that we already have CTS test to check that core-icu4j is present on BOOTCLASSPATH at runtime; if anything is misconfigured.",
+      "parentUuid": "0fc811b0_e16dd265",
+      "range": {
+        "startLine": 255,
+        "startChar": 0,
+        "endLine": 255,
+        "endChar": 103
+      },
+      "revId": "acf2dd37e38ab5448a94a1c0a893899a997bd036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1d565089_4df3c8a1",
         "filename": "target/product/default_art_config.mk",
         "patchSetId": 4
@@ -60,6 +108,30 @@
       "writtenOn": "2021-06-25T15:50:35Z",
       "side": 1,
       "message": "Could you please add a comment here that core-icu4j is special and is moved to PRODUCT_BOOT_JARS later as an exception?",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 78
+      },
+      "revId": "acf2dd37e38ab5448a94a1c0a893899a997bd036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b440c65_e2e5f20a",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-06-25T16:19:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d565089_4df3c8a1",
       "range": {
         "startLine": 47,
         "startChar": 0,
