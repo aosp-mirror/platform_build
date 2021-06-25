@@ -48,6 +48,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a61e3b9_d38a3985",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-06-25T16:33:24Z",
+      "side": 1,
+      "message": "Probably, I could have guessed.",
+      "parentUuid": "5aa6fe00_efb74268",
+      "range": {
+        "startLine": 11,
+        "startChar": 4,
+        "endLine": 11,
+        "endChar": 6
+      },
+      "revId": "acf2dd37e38ab5448a94a1c0a893899a997bd036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0fc811b0_e16dd265",
@@ -85,6 +109,30 @@
       "side": 1,
       "message": "Are there products that don\u0027t use default_art_config? Note that we already have CTS test to check that core-icu4j is present on BOOTCLASSPATH at runtime; if anything is misconfigured.",
       "parentUuid": "0fc811b0_e16dd265",
+      "range": {
+        "startLine": 255,
+        "startChar": 0,
+        "endLine": 255,
+        "endChar": 103
+      },
+      "revId": "acf2dd37e38ab5448a94a1c0a893899a997bd036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcb61269_9aab210d",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-06-25T16:33:24Z",
+      "side": 1,
+      "message": "Ah, good point about default_art_config. And it\u0027s good to know that we have a test for it.",
+      "parentUuid": "e84bcab8_2839f8cb",
       "range": {
         "startLine": 255,
         "startChar": 0,
