@@ -34,6 +34,24 @@
       "parentUuid": "5ed47a15_0effd414",
       "revId": "cbd3a96fa6920932d47bc4314f94144319d7d374",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed43a0d0_1e9d0829",
+        "filename": "target/product/default_art_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-06-25T12:46:31Z",
+      "side": 1,
+      "message": "Ack.",
+      "parentUuid": "2451f8e9_73d74841",
+      "revId": "cbd3a96fa6920932d47bc4314f94144319d7d374",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
