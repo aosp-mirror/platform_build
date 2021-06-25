@@ -167,6 +167,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5584e3e7_4750bb3f",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-06-25T16:44:44Z",
+      "side": 1,
+      "message": "Thanks for the link!",
+      "parentUuid": "505dd7fd_c497cb8d",
+      "range": {
+        "startLine": 255,
+        "startChar": 0,
+        "endLine": 255,
+        "endChar": 103
+      },
+      "revId": "acf2dd37e38ab5448a94a1c0a893899a997bd036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1d565089_4df3c8a1",
