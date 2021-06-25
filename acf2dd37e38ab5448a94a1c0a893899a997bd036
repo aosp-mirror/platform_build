@@ -143,6 +143,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "505dd7fd_c497cb8d",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-06-25T16:38:48Z",
+      "side": 1,
+      "message": "For posterity, cs/aosp-master/packages/modules/SdkExtensions/tests/cts/Classpaths/src/android/os/ext/classpath/cts/ClasspathsTest.java?l\u003d83.",
+      "parentUuid": "dcb61269_9aab210d",
+      "range": {
+        "startLine": 255,
+        "startChar": 0,
+        "endLine": 255,
+        "endChar": 103
+      },
+      "revId": "acf2dd37e38ab5448a94a1c0a893899a997bd036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1d565089_4df3c8a1",
