@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "03a953ce_dfd6fe05",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-06-26T16:09:30Z",
+      "side": 1,
+      "message": "Note that in the not too distant future, there probably won\u0027t be builds where all APEX stub libraries are built from source at the same time. E.g. our goal is to make the ART module completely unbundled (\u003d no sources outside ART\u0027s own module-only tree) in T.\n\nHence I think the APEX coverage added in https://r.android.com/1513138 will need to be reworked a bit to allow separate ABI dumps for each module. This is only a quick remedy to keep the build from failing when prebuilts are used, and I need it to go into sc-dev to be able to enable the prebuilt ART module SDK there.",
+      "range": {
+        "startLine": 120,
+        "startChar": 44,
+        "endLine": 121,
+        "endChar": 62
+      },
+      "revId": "246fe4a5b5270f983d042fe83b897f07f8d1579c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
