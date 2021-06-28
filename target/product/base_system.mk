@@ -128,6 +128,7 @@ PRODUCT_PACKAGES += \
     libaudioeffect_jni \
     libbinder \
     libbinder_ndk \
+    libbinder_rpc_unstable \
     libc.bootstrap \
     libcamera2ndk \
     libcutils \
