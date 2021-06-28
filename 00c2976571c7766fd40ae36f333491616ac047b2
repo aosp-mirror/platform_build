@@ -94,6 +94,30 @@
       },
       "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40b88ac6_225643fc",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-06-28T14:16:20Z",
+      "side": 1,
+      "message": "And maybe \"added_ndk_abi_dumps\" too. I\u0027m not really sure about NDK... Are NDKs provided (or going to be provided) by APEXes?",
+      "parentUuid": "a2ca780f_d37e1911",
+      "range": {
+        "startLine": 121,
+        "startChar": 64,
+        "endLine": 122,
+        "endChar": 75
+      },
+      "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
