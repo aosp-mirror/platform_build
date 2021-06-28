@@ -142,6 +142,30 @@
       },
       "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "badb1e9b_4617e851",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-06-28T15:38:52Z",
+      "side": 1,
+      "message": "Sounds fair to me. Let\u0027s see if Hsin-Yi has any input?",
+      "parentUuid": "9961bfcd_982a429f",
+      "range": {
+        "startLine": 121,
+        "startChar": 64,
+        "endLine": 122,
+        "endChar": 75
+      },
+      "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
