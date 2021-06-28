@@ -46,6 +46,30 @@
       },
       "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0f4a34b3_a39ffb2c",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-06-28T13:49:45Z",
+      "side": 1,
+      "message": "Note that building from source or prebuilts is an aspect of the build, not the source in the APEX module. There will be builds with the same sources building from either sources or prebuilts.\n\nIsn\u0027t the intention with https://r.android.com/1513138 to check APEXes? I\u0027m definitely in favour of having ABI checks for APEX APIs, also for modules like ART aiming for unbundling. Although this place doesn\u0027t fit unbundled modules very well, it fills a purpose in at least SC since there still are builds where they are built from source.\n\nAlso, for partners I believe the plan is to enable prebuilts for essentially all module SDKs, which means they all would need to be disabled.\n\nHence I prefer to keep the abidump checks and just relax the check for superfluous files. If we instead go for disabling the libraries that may be built from prebuilts and remove their lsdump files, doesn\u0027t that mean we\u0027ll have to identify and return false from them in shouldCreateSourceAbiDumpForLibrary in sabi.go as well?",
+      "parentUuid": "1d3f9c04_9a560736",
+      "range": {
+        "startLine": 121,
+        "startChar": 64,
+        "endLine": 122,
+        "endChar": 75
+      },
+      "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
