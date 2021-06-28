@@ -59,6 +59,8 @@ python_defaults {
         "mkuserimg_mke2fs",
         "simg2img",
         "tune2fs",
+        "mkf2fsuserimg.sh",
+        "fsck.f2fs",
     ],
 }
 
@@ -162,6 +164,7 @@ python_defaults {
         "releasetools_common",
         "releasetools_verity_utils",
         "apex_manifest",
+        "care_map_proto_py",
     ],
     required: [
         "brillo_update_payload",

@@ -276,6 +276,9 @@ def Run(args, verbose=None, **kwargs):
     args = args[:]
     args[0] = FindHostToolPath(args[0])
 
+  if verbose is None:
+    verbose = OPTIONS.verbose
+
   # Don't log any if caller explicitly says so.
   if verbose:
     logger.info("  Running: \"%s\"", " ".join(args))
@@ -449,6 +452,13 @@ class BuildInfo(object):
     vabc_enabled = vendor_prop and \
         vendor_prop.GetProp("ro.virtual_ab.compression.enabled") == "true"
     return vabc_enabled
+
+  @property
+  def vendor_suppressed_vabc(self):
+    vendor_prop = self.info_dict.get("vendor.build.prop")
+    vabc_suppressed = vendor_prop and \
+        vendor_prop.GetProp("ro.vendor.build.dont_use_vabc")
+    return vabc_suppressed and vabc_suppressed.lower() == "true"
 
   @property
   def oem_props(self):
