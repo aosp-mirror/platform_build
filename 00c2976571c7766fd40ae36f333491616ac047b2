@@ -118,6 +118,30 @@
       },
       "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9961bfcd_982a429f",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-06-28T15:21:38Z",
+      "side": 1,
+      "message": "\u003e In this case can you export a list libraries from soong that contains libraries that are \"exported by an APEX and such APEX is prebuilt_apex\"\n\nUnfortunately that\u0027s nontrivial, because we don\u0027t have any notion of which APEXes correspond to which prebuilt libraries in Soong. It would be possible to export a list of the prebuilt libraries with stubs, but given that a lot of (all?) current module SDKs are getting prebuilts in b/188427719 (also in AOSP and git_master), the difference from STUB_LIBRARIES would be small or nonexistent in practice.\n\n\u003e Are NDKs provided (or going to be provided) by APEXes?\n\nYes, e.g. the ART module provides the NDK library libnativehelper. Of the three checks below the only one I don\u0027t have issues with atm is the first for LLNDK, VNDK-SP, VNDK-core. I\u0027ve excluded that one.",
+      "parentUuid": "40b88ac6_225643fc",
+      "range": {
+        "startLine": 121,
+        "startChar": 64,
+        "endLine": 122,
+        "endChar": 75
+      },
+      "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
