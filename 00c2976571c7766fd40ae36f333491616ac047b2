@@ -70,6 +70,30 @@
       },
       "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2ca780f_d37e1911",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-06-28T14:14:12Z",
+      "side": 1,
+      "message": "I thought the intention of this change was to eventually remove the source of ART APEX from master and build the ART APEX from the mainline branch, so I suggested removing the reference dump from master, as the APEX ABI is checked in the mainline branch already.\n\n\u003e Note that building from source or prebuilts is an aspect of the build, not the source in the APEX module. *There will be builds with the same sources building from either sources or prebuilts.*\n\nACK. I think this seals the deal. We shouldn\u0027t remove the reference dumps for (ART) APEX libraries, because other build configs would need them.\n\n\u003e Isn\u0027t the intention with https://r.android.com/1513138 to check APEXes? I\u0027m definitely in favour of having ABI checks for APEX APIs, also for modules like ART aiming for unbundling. \n\nYes and Yes.\n\n\u003e Hence I prefer to keep the abidump checks and just relax the check for superfluous files.\n\nYes let\u0027s do this. In this case can you export a list libraries from soong that contains libraries that are \"exported by an APEX and such APEX is prebuilt_apex\", and here we should only exclude these libraries when checking \"added_platform_abi_dumps\".",
+      "parentUuid": "0f4a34b3_a39ffb2c",
+      "range": {
+        "startLine": 121,
+        "startChar": 64,
+        "endLine": 122,
+        "endChar": 75
+      },
+      "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
