@@ -22,6 +22,30 @@
       },
       "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d3f9c04_9a560736",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-06-28T11:30:38Z",
+      "side": 1,
+      "message": "Or just remove the reference lsdumps of prebuilt APEXes on master if they are going to be prebuilt APEXes",
+      "parentUuid": "ab2351f5_371e5273",
+      "range": {
+        "startLine": 121,
+        "startChar": 64,
+        "endLine": 122,
+        "endChar": 75
+      },
+      "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
