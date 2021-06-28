@@ -28,6 +28,8 @@ $(call add_soong_config_namespace,ANDROID)
 
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
+$(call add_soong_config_var,ANDROID,BOARD_USES_RECOVERY_AS_BOOT)
+$(call add_soong_config_var,ANDROID,BOARD_BUILD_SYSTEM_ROOT_IMAGE)
 
 # TODO(b/172480615): Remove when platform uses ART Module prebuilts by default.
 ifeq (,$(filter art_module,$(SOONG_CONFIG_NAMESPACES)))
@@ -59,4 +61,8 @@ endif
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
 $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
+endif
+
+ifdef MODULE_BUILD_FROM_SOURCE
+$(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
 endif
