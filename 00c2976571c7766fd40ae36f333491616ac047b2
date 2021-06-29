@@ -190,6 +190,30 @@
       },
       "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa546fc5_7bb1151c",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-06-29T09:40:10Z",
+      "side": 1,
+      "message": "Yes, that\u0027s what it means. I\u0027d like to see ABI checks per module for APEXes, so we can update and check them in our module tree before we make prebuilt drops. There\u0027s already prebuilts/module_sdk where the prebuilt SDKs go, so having the abidump files there seems reasonable. We should also check every versioned API for each module (e.g. the \"1\" directories for each module there), which may be more frequent than the dessert releases.\n\n(I also heard some effort is going on with libabigail for ABI checking, but I don\u0027t know what the plan is; if it\u0027s intended to be used for APEXes or not.)\n\n\u003e Is there a branch where we can build all libraries and their ABI dumps from source?\n\nPossibly in T, but not in the long run.\n\nHowever, that\u0027s a different subject. Thanks for the +1\u0027s - who can give a +2 here?",
+      "parentUuid": "b5d1ba46_900f6df0",
+      "range": {
+        "startLine": 121,
+        "startChar": 64,
+        "endLine": 122,
+        "endChar": 75
+      },
+      "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
