@@ -166,6 +166,30 @@
       },
       "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5d1ba46_900f6df0",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2021-06-29T08:59:43Z",
+      "side": 1,
+      "message": "\u003e given that a lot of (all?) current module SDKs are getting prebuilts in b/188427719 (also in AOSP and git_master)\n\nDoes that mean some libraries in AOSP and in T branch will be prebuilt?\nIf so, we have to adjust the ABI freeze process. Is there a branch where we can build all libraries and their ABI dumps from source?",
+      "parentUuid": "badb1e9b_4617e851",
+      "range": {
+        "startLine": 121,
+        "startChar": 64,
+        "endLine": 122,
+        "endChar": 75
+      },
+      "revId": "00c2976571c7766fd40ae36f333491616ac047b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
