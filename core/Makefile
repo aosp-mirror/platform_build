@@ -4234,7 +4234,6 @@ ifeq ($(build_otatools_package),true)
 INTERNAL_OTATOOLS_MODULES := \
   aapt2 \
   add_img_to_target_files \
-  aftltool \
   apksigner \
   append2simg \
   avbtool \
