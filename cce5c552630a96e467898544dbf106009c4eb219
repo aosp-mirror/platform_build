@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8384ea03_7a00e12b",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1687194
+      },
+      "writtenOn": "2021-06-30T17:26:41Z",
+      "side": 1,
+      "message": "Why do we need to make regex support available for patsubst? Make\u0027s patsubst isn\u0027t a full regex substitution, it only supports `%` as a wildcard.",
+      "range": {
+        "startLine": 242,
+        "startChar": 3,
+        "endLine": 242,
+        "endChar": 19
+      },
+      "revId": "cce5c552630a96e467898544dbf106009c4eb219",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
