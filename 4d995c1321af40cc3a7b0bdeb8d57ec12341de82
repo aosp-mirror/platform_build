@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c46add60_66b6b0a1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-06-30T15:58:42Z",
+      "side": 1,
+      "message": "Hi Anton, please help owner-approve !",
+      "revId": "4d995c1321af40cc3a7b0bdeb8d57ec12341de82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
