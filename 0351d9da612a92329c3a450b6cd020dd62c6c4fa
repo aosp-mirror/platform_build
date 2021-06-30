@@ -16,6 +16,23 @@
       "message": "lgtm",
       "revId": "0351d9da612a92329c3a450b6cd020dd62c6c4fa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "06b726c7_c0898e4b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-06-30T07:34:45Z",
+      "side": 1,
+      "message": "Hi Anton,\n\nCould you help to Owner+1 for the patch if you have no concern?\n\nThanks!",
+      "revId": "0351d9da612a92329c3a450b6cd020dd62c6c4fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
