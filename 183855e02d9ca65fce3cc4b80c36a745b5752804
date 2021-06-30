@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "444fdb7b_ba4bbf4c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1878380
+      },
+      "writtenOn": "2021-06-30T18:57:47Z",
+      "side": 1,
+      "message": "Test failure seems unrelated (it is failing on other builds as well). Will wait for this test to be stable before rerunning presubmit.",
+      "revId": "183855e02d9ca65fce3cc4b80c36a745b5752804",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
