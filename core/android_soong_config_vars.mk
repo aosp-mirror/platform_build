@@ -51,6 +51,12 @@ else ifneq (,$(PRODUCT_FUCHSIA))
   # Fuchsia picks out ART internal packages that aren't available in the
   # prebuilt.
   SOONG_CONFIG_art_module_source_build := true
+else ifeq (,$(filter com.google.android.art,$(PRODUCT_PACKAGES)))
+  # TODO(b/192006406): There is currently no good way to control which prebuilt
+  # APEX (com.google.android.art or com.android.art) gets picked for deapexing
+  # to provide dex jars for hiddenapi and dexpreopting. Instead the AOSP APEX is
+  # completely disabled, and we build from source for AOSP products.
+  SOONG_CONFIG_art_module_source_build := true
 else
   # This sets the default for building ART APEXes from source rather than
   # prebuilts (in packages/modules/ArtPrebuilt and prebuilt/module_sdk/art) in
