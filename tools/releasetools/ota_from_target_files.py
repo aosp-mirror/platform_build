@@ -530,6 +530,8 @@ class StreamingPropertyFiles(PropertyFiles):
         'payload_properties.txt',
     )
     self.optional = (
+        # apex_info.pb isn't directly used in the update flow
+        'apex_info.pb',
         # care_map is available only if dm-verity is enabled.
         'care_map.pb',
         'care_map.txt',
