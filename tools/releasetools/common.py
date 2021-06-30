@@ -80,11 +80,6 @@ class Options(object):
     self.boot_signer_args = []
     self.verity_signer_path = None
     self.verity_signer_args = []
-    self.aftl_tool_path = None
-    self.aftl_server = None
-    self.aftl_key_path = None
-    self.aftl_manufacturer_key_path = None
-    self.aftl_signer_helper = None
     self.verbose = False
     self.tempfiles = []
     self.device_specific = None
@@ -1383,46 +1378,6 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
 
 
-def ConstructAftlMakeImageCommands(output_image):
-  """Constructs the command to append the aftl image to vbmeta."""
-
-  # Ensure the other AFTL parameters are set as well.
-  assert OPTIONS.aftl_tool_path is not None, 'No aftl tool provided.'
-  assert OPTIONS.aftl_key_path is not None, 'No AFTL key provided.'
-  assert OPTIONS.aftl_manufacturer_key_path is not None, \
-      'No AFTL manufacturer key provided.'
-
-  vbmeta_image = MakeTempFile()
-  os.rename(output_image, vbmeta_image)
-  build_info = BuildInfo(OPTIONS.info_dict, use_legacy_id=True)
-  version_incremental = build_info.GetBuildProp("ro.build.version.incremental")
-  aftltool = OPTIONS.aftl_tool_path
-  server_argument_list = [OPTIONS.aftl_server, OPTIONS.aftl_key_path]
-  aftl_cmd = [aftltool, "make_icp_from_vbmeta",
-              "--vbmeta_image_path", vbmeta_image,
-              "--output", output_image,
-              "--version_incremental", version_incremental,
-              "--transparency_log_servers", ','.join(server_argument_list),
-              "--manufacturer_key", OPTIONS.aftl_manufacturer_key_path,
-              "--algorithm", "SHA256_RSA4096",
-              "--padding", "4096"]
-  if OPTIONS.aftl_signer_helper:
-    aftl_cmd.extend(shlex.split(OPTIONS.aftl_signer_helper))
-  return aftl_cmd
-
-
-def AddAftlInclusionProof(output_image):
-  """Appends the aftl inclusion proof to the vbmeta image."""
-
-  aftl_cmd = ConstructAftlMakeImageCommands(output_image)
-  RunAndCheckOutput(aftl_cmd)
-
-  verify_cmd = ['aftltool', 'verify_image_icp', '--vbmeta_image_path',
-                output_image, '--transparency_log_pub_keys',
-                OPTIONS.aftl_key_path]
-  RunAndCheckOutput(verify_cmd)
-
-
 def AppendGkiSigningArgs(cmd):
   """Append GKI signing arguments for mkbootimg."""
   # e.g., --gki_signing_key path/to/signing_key
@@ -1515,10 +1470,6 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
     cmd.extend(split_args)
 
   RunAndCheckOutput(cmd)
-
-  # Generate the AFTL inclusion proof.
-  if OPTIONS.aftl_server is not None:
-    AddAftlInclusionProof(image_path)
 
 
 def _MakeRamdisk(sourcedir, fs_config_file=None,
@@ -2477,9 +2428,7 @@ def ParseOptions(argv,
          "java_path=", "java_args=", "android_jar_path=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
-         "extra=", "logfile=", "aftl_tool_path=", "aftl_server=",
-         "aftl_key_path=", "aftl_manufacturer_key_path=",
-         "aftl_signer_helper="] + list(extra_long_opts))
+         "extra=", "logfile="] + list(extra_long_opts))
   except getopt.GetoptError as err:
     Usage(docstring)
     print("**", str(err), "**")
@@ -2517,16 +2466,6 @@ def ParseOptions(argv,
       OPTIONS.verity_signer_path = a
     elif o in ("--verity_signer_args",):
       OPTIONS.verity_signer_args = shlex.split(a)
-    elif o in ("--aftl_tool_path",):
-      OPTIONS.aftl_tool_path = a
-    elif o in ("--aftl_server",):
-      OPTIONS.aftl_server = a
-    elif o in ("--aftl_key_path",):
-      OPTIONS.aftl_key_path = a
-    elif o in ("--aftl_manufacturer_key_path",):
-      OPTIONS.aftl_manufacturer_key_path = a
-    elif o in ("--aftl_signer_helper",):
-      OPTIONS.aftl_signer_helper = a
     elif o in ("-s", "--device_specific"):
       OPTIONS.device_specific = a
     elif o in ("-x", "--extra"):
