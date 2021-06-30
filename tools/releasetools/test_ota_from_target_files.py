@@ -863,6 +863,7 @@ class StreamingPropertyFilesTest(PropertyFilesTestCase):
         property_files.required)
     self.assertEqual(
         (
+            'apex_info.pb',
             'care_map.pb',
             'care_map.txt',
             'compatibility.zip',
@@ -962,6 +963,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
         property_files.required)
     self.assertEqual(
         (
+            'apex_info.pb',
             'care_map.pb',
             'care_map.txt',
             'compatibility.zip',
