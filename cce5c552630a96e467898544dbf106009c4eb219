@@ -46,6 +46,30 @@
       },
       "revId": "cce5c552630a96e467898544dbf106009c4eb219",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ead4d38f_e19f13b4",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1687194
+      },
+      "writtenOn": "2021-07-01T15:38:20Z",
+      "side": 1,
+      "message": "But this becomes part of our API, it\u0027s more powerful than what is currently available and AFAIK regex is not supported in Bazel starlark. We should try to minimize giving features that are more powerful than necessary and avoid incompatibilities with Bazel starlark.",
+      "parentUuid": "6e8dd871_5fc8d606",
+      "range": {
+        "startLine": 242,
+        "startChar": 3,
+        "endLine": 242,
+        "endChar": 19
+      },
+      "revId": "cce5c552630a96e467898544dbf106009c4eb219",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
