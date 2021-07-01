@@ -54,7 +54,6 @@ PRODUCT_PACKAGES += \
     com.android.conscrypt \
     com.android.cronet \
     com.android.extservices \
-    com.android.geotz \
     com.android.i18n \
     com.android.ipsec \
     com.android.location.provider \
