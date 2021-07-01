@@ -33,6 +33,7 @@ PRODUCT_COPY_FILES += \
 
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 PRODUCT_COPY_FILES += \
+    kernel/prebuilts/4.19/arm64/kernel-4.19-gz:kernel-4.19-gz-allsyms \
     kernel/prebuilts/5.4/arm64/kernel-5.4:kernel-5.4-allsyms \
     kernel/prebuilts/5.4/arm64/kernel-5.4-gz:kernel-5.4-gz-allsyms \
     kernel/prebuilts/5.4/arm64/kernel-5.4-lz4:kernel-5.4-lz4-allsyms \
