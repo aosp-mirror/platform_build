@@ -72,7 +72,6 @@ PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
     com.android.art:service-art \
     com.android.media:service-media-s \
     com.android.permission:service-permission \
-    com.android.geotz:geotz
 
 # Minimal configuration for running dex2oat (default argument values).
 # PRODUCT_USES_DEFAULT_ART_CONFIG must be true to enable boot image compilation.
