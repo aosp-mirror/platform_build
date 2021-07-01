@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "77f49fda_f2b470c6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-07-01T11:26:02Z",
+      "side": 1,
+      "message": "Hey, you catch a big issue. Yes, we\u0027ll need to sign these boot image, or partners will still need to download the signed boot image from the zip file.",
+      "parentUuid": "d0c6aa5d_9814babd",
+      "range": {
+        "startLine": 10,
+        "startChar": 36,
+        "endLine": 11,
+        "endChar": 27
+      },
+      "revId": "35edafb82116a863d4854fbba3d1f4dbb384dbfb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "99ffd18e_03997f9a",
@@ -89,6 +113,24 @@
       "side": 1,
       "message": "I think it\u0027s better to have this conditional because it also implies the dist boot.img is the exact same as the one in target_files.zip",
       "parentUuid": "ab99e910_0e41dc98",
+      "revId": "35edafb82116a863d4854fbba3d1f4dbb384dbfb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7be90c54_e1b26edf",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1801,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2021-07-01T11:26:02Z",
+      "side": 1,
+      "message": "Thanks Joe and Yi-Yo. This is a good suggestion and I thought for a while. Just like Yi-Yo\u0027s comment, I would like not to touch all targets and focus on the exact targets for release GKI at this time.",
+      "parentUuid": "de32b0aa_6e485601",
       "revId": "35edafb82116a863d4854fbba3d1f4dbb384dbfb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
