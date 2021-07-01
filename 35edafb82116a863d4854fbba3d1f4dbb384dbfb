@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0c6aa5d_9814babd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-07-01T08:53:01Z",
+      "side": 1,
+      "message": "SzuWei, Would the new boot images be signed by the signer? Does it need to be signed?",
+      "range": {
+        "startLine": 10,
+        "startChar": 36,
+        "endLine": 11,
+        "endChar": 27
+      },
+      "revId": "35edafb82116a863d4854fbba3d1f4dbb384dbfb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "99ffd18e_03997f9a",
@@ -48,6 +71,24 @@
       "writtenOn": "2021-07-01T05:06:20Z",
       "side": 1,
       "message": "Do we need the conditional, or would it be better to just always copy the file?",
+      "revId": "35edafb82116a863d4854fbba3d1f4dbb384dbfb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "de32b0aa_6e485601",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1801,
+      "author": {
+        "id": 1337669
+      },
+      "writtenOn": "2021-07-01T08:53:01Z",
+      "side": 1,
+      "message": "I think it\u0027s better to have this conditional because it also implies the dist boot.img is the exact same as the one in target_files.zip",
+      "parentUuid": "ab99e910_0e41dc98",
       "revId": "35edafb82116a863d4854fbba3d1f4dbb384dbfb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
