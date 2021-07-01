@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7cdeb6d6_f6390878",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-07-01T15:49:53Z",
+      "side": 1,
+      "message": "LGTM!\nJust have one nit question.",
+      "revId": "eeabc1e31be7dc3dd4a09dd384d01f27aea948bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a3424be_f03a34c1",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1022,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-07-01T15:49:53Z",
+      "side": 1,
+      "message": "Just curious, in what condition that building_[vendor|odm}_image might be missing?\n\nAlso, when it\u0027s missing, do we also have to append other params related to build this image?  e.g., vendor_fs_type\u003dext4, vendor_selinux_fc\u003dpath/to/file_contexts.bin",
+      "range": {
+        "startLine": 1022,
+        "startChar": 25,
+        "endLine": 1022,
+        "endChar": 47
+      },
+      "revId": "eeabc1e31be7dc3dd4a09dd384d01f27aea948bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
