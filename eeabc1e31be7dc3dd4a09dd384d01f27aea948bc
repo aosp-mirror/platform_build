@@ -39,6 +39,30 @@
       },
       "revId": "eeabc1e31be7dc3dd4a09dd384d01f27aea948bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ce6f78ad_5c86a6a8",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1022,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-07-01T20:07:52Z",
+      "side": 1,
+      "message": "I originally added this to look out for the case mentioned in http://b/178727214#comment8, where:\n- Builds in R do not include the `building_odm_image` tag. It wasn\u0027t added until after R.\n- In R, otatools.zip rebuilds odm.img if ODM/* exists. But in S, otatools.zip rebuilds odm.img only if `building_odm_image\u003dtrue`.\n- Therefore, trying to use S otatools.zip to rebuild R odm.img would never cause odm.img to be regenerated because the R build didn\u0027t have that field.\n\nHowever, you\u0027re right that there are probably other params that may need to be modified / carried over.\n\nI\u0027m removing this altogether for now, since it isn\u0027t needed for the code as-is, because:\n- If you\u0027re merging R+S you should use --vendor-otatools (until backwards-compatible regeneration is fixed in b/192253131). That otatools from R doesn\u0027t depend on `building_odm_image\u003dtrue`.\n- If you\u0027re merging S+S your vendor build should have `building_odm_image\u003dtrue` already set if needed.\n\nIf b/192253131 gets resolved and we start trying to use otatools.zip from S for generating odm.img from R, then we will look into fixing up misc_info.txt as required.",
+      "parentUuid": "1a3424be_f03a34c1",
+      "range": {
+        "startLine": 1022,
+        "startChar": 25,
+        "endLine": 1022,
+        "endChar": 47
+      },
+      "revId": "eeabc1e31be7dc3dd4a09dd384d01f27aea948bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
