@@ -87,6 +87,30 @@
       },
       "revId": "eeabc1e31be7dc3dd4a09dd384d01f27aea948bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a9b1905_0fc9fd74",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1022,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-07-02T18:05:22Z",
+      "side": 1,
+      "message": "Sounds good! Thank you for the review Bowgo",
+      "parentUuid": "0559cf20_47a217fa",
+      "range": {
+        "startLine": 1022,
+        "startChar": 25,
+        "endLine": 1022,
+        "endChar": 47
+      },
+      "revId": "eeabc1e31be7dc3dd4a09dd384d01f27aea948bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }

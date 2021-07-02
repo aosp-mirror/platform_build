@@ -22,6 +22,30 @@
       },
       "revId": "571e182e9cd517128d5fb0bae44b071296a70d6f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "645e895d_aaa8b14b",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1026,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-07-02T18:05:22Z",
+      "side": 1,
+      "message": "Some background context: The first step in merge_target_files.py is to extract from the vendor target-files.zip and the framework target-files.zip into a merged destination (target_files_dir here). Which contents come from which zip is controlled by input config files, but with the restriction that each individual partition must only come from one build (not a combo of vendor+framework).\n\n\nTo use vendor otatools.zip to regenerate vendor.img/odm.img within vendor_target_files_dir, I\u0027m working with the assumption that the input vendor target-files.zip is \"complete\" and could regenerate vendor.img/odm.img without any modifications necessary. This should be the case for any properly-created target-files archive -- they\u0027re supposed to be able to regenerate their images from the contents within the archive.\n\nWith that assumption, we\u0027re now trying to regenerate vendor.img/odm.img to include just 4 more files: the files copied in lines 1008-1015.\n\nThe reason I copy them first to the merged target_files_dir is to keep that promise, that {PARTITION}/* should be able to regenerate {partition}.img if necessary later, and this merged target_files_dir is the final output of merge_target_files. Then I copy the entirety of {VENDOR|ODM}/* from the merged target_files_dir to the temp unzipped vendor_target_files_dir to continue with that promise. In reality all this copy actually changes is the addition of these 4 files, but I think it\u0027s clearer to copy the whole partition dir to show readers that the partition contents will match the target-files dir exactly.\n\nWhen I was testing this change there was no need to copy any file_contexts since they are already present in the vendor target-files.zip, and therefore present when this is unzipped to the temp vendor_target_files_dir.",
+      "parentUuid": "24a55afb_5bb558d6",
+      "range": {
+        "startLine": 1026,
+        "startChar": 11,
+        "endLine": 1026,
+        "endChar": 70
+      },
+      "revId": "571e182e9cd517128d5fb0bae44b071296a70d6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
