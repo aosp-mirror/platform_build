@@ -22,6 +22,30 @@
       },
       "revId": "d38fc9cf1245166c4cbfc93cc0670bad51f5f792",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a5dbb093_fff756af",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2021-07-02T00:40:56Z",
+      "side": 1,
+      "message": "Same comment for the other changes.",
+      "parentUuid": "32664b1d_f31c3bb2",
+      "range": {
+        "startLine": 14,
+        "startChar": 6,
+        "endLine": 14,
+        "endChar": 27
+      },
+      "revId": "d38fc9cf1245166c4cbfc93cc0670bad51f5f792",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
