@@ -22,6 +22,30 @@
       },
       "revId": "b0c9f421f918986fd411f98e27a41eebf945edd7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "14627d9b_d254a88d",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1047255
+      },
+      "writtenOn": "2021-07-02T18:48:24Z",
+      "side": 1,
+      "message": "SELinux rules added in the associated system/sepolicy CL.",
+      "parentUuid": "cdab21f7_152ca57c",
+      "range": {
+        "startLine": 170,
+        "startChar": 4,
+        "endLine": 170,
+        "endChar": 30
+      },
+      "revId": "b0c9f421f918986fd411f98e27a41eebf945edd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
