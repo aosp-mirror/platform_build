@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "24a55afb_5bb558d6",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1026,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-07-02T05:15:01Z",
+      "side": 1,
+      "message": "In L1042 below, the partition content will be copied from target_files_dir to vendor_target_files_dir.\n\nJust curios, what files are needed from the vendor_target_files?\nIs it file_contexts.bin?",
+      "range": {
+        "startLine": 1026,
+        "startChar": 11,
+        "endLine": 1026,
+        "endChar": 70
+      },
+      "revId": "571e182e9cd517128d5fb0bae44b071296a70d6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}

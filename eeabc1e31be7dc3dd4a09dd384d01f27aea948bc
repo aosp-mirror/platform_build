@@ -63,6 +63,30 @@
       },
       "revId": "eeabc1e31be7dc3dd4a09dd384d01f27aea948bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0559cf20_47a217fa",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1022,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-07-02T05:15:01Z",
+      "side": 1,
+      "message": "\u003e I\u0027m removing this altogether for now, since it isn\u0027t needed for the code as-is\n\nSGTM.\n\nIf it turns out that we still need append `building_{}_image\u003dtrue` here, it might worth a single CL with those info (could be a brief version) in the commit message and/or in the comments.\n\nLet\u0027s keep this CL focus on regenerating the precompiled sepolicy.",
+      "parentUuid": "ce6f78ad_5c86a6a8",
+      "range": {
+        "startLine": 1022,
+        "startChar": 25,
+        "endLine": 1022,
+        "endChar": 47
+      },
+      "revId": "eeabc1e31be7dc3dd4a09dd384d01f27aea948bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
