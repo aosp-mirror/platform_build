@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "32664b1d_f31c3bb2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2021-07-02T00:34:59Z",
+      "side": 1,
+      "message": "I\u0027d maybe say \"new TestHostSnapshotGen\".",
+      "range": {
+        "startLine": 14,
+        "startChar": 6,
+        "endLine": 14,
+        "endChar": 27
+      },
+      "revId": "d38fc9cf1245166c4cbfc93cc0670bad51f5f792",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
