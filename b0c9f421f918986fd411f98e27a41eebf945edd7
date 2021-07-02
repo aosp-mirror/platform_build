@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cdab21f7_152ca57c",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2021-07-02T17:54:37Z",
+      "side": 1,
+      "message": "if you add it in dalvik.vm.* then you don\u0027t need SElinux rules. otherwise you have to define an SE linux property context",
+      "range": {
+        "startLine": 170,
+        "startChar": 4,
+        "endLine": 170,
+        "endChar": 30
+      },
+      "revId": "b0c9f421f918986fd411f98e27a41eebf945edd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
