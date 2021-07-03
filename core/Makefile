@@ -815,8 +815,13 @@ endif
 
 # We just build this directly to the install location.
 INSTALLED_RAMDISK_TARGET := $(BUILT_RAMDISK_TARGET)
+$(INSTALLED_RAMDISK_TARGET): PRIVATE_DIRS := debug_ramdisk dev metadata mnt proc second_stage_resources sys
 $(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES) $(INSTALLED_FILES_FILE_RAMDISK) | $(COMPRESSION_COMMAND_DEPS)
 	$(call pretty,"Target ramdisk: $@")
+	$(hide) mkdir -p $(addprefix $(TARGET_RAMDISK_OUT)/,$(PRIVATE_DIRS))
+ifeq (true,$(BOARD_USES_GENERIC_KERNEL_IMAGE))
+	$(hide) mkdir -p $(addprefix $(TARGET_RAMDISK_OUT)/first_stage_ramdisk/,$(PRIVATE_DIRS))
+endif
 	$(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RAMDISK_OUT) | $(COMPRESSION_COMMAND) > $@
 
 .PHONY: ramdisk-nodeps
@@ -1117,11 +1122,6 @@ ifdef INTERNAL_KERNEL_CMDLINE
 endif
 
 ifdef INTERNAL_BOOTCONFIG
-  ifneq (,$(findstring androidboot.hardware=, $(INTERNAL_BOOTCONFIG)))
-    $(error "androidboot.hardware" BOOTCONFIG parameter is not supported due \
-      to bootconfig limitations. Use "hardware" instead. INTERNAL_BOOTCONFIG: \
-      $(INTERNAL_BOOTCONFIG))
-  endif
   INTERNAL_VENDOR_BOOTCONFIG_TARGET := $(PRODUCT_OUT)/vendor-bootconfig.img
   $(INTERNAL_VENDOR_BOOTCONFIG_TARGET):
 	rm -f $@
