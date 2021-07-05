@@ -16,6 +16,23 @@
       "message": "Thanks!",
       "revId": "cad6ca64504eccfdc81fa5226fc2af96213774a1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6051e81c_20bc3a95",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-07-05T20:38:36Z",
+      "side": 1,
+      "message": "Arthur, can you also update the comment in java/dexpreopt_bootjars.go? I got reminded of that thanks to Martin\u0027s change aosp/1756729, see a comment on that CL that marks the place that needs to be updated (pointing to the CL as Martin is modifying nearby code).\n\nRemoving +2 temporarily to attract attention.",
+      "revId": "cad6ca64504eccfdc81fa5226fc2af96213774a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
