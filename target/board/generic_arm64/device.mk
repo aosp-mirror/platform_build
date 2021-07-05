@@ -37,9 +37,9 @@ PRODUCT_COPY_FILES += \
     kernel/prebuilts/5.4/arm64/kernel-5.4:kernel-5.4-allsyms \
     kernel/prebuilts/5.4/arm64/kernel-5.4-gz:kernel-5.4-gz-allsyms \
     kernel/prebuilts/5.4/arm64/kernel-5.4-lz4:kernel-5.4-lz4-allsyms \
-    $(OUT_DIR)/target/kernel/5.10/arm64/kernel-5.10:kernel-5.10-allsyms \
-    $(OUT_DIR)/target/kernel/5.10/arm64/kernel-5.10-gz:kernel-5.10-gz-allsyms \
-    $(OUT_DIR)/target/kernel/5.10/arm64/kernel-5.10-lz4:kernel-5.10-lz4-allsyms \
+    $(OUT_DIR)/target/kernel/5.10/arm64/kernel-5.10-allsyms:kernel-5.10-allsyms \
+    $(OUT_DIR)/target/kernel/5.10/arm64/kernel-5.10-gz-allsyms:kernel-5.10-gz-allsyms \
+    $(OUT_DIR)/target/kernel/5.10/arm64/kernel-5.10-lz4-allsyms:kernel-5.10-lz4-allsyms \
 
 endif
 
