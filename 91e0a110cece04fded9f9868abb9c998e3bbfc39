@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "67ad6844_3b317efd",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-07-05T20:45:22Z",
+      "side": 1,
+      "message": "It would help to mention why there could be different modules, with some examples.",
+      "range": {
+        "startLine": 298,
+        "startChar": 43,
+        "endLine": 299,
+        "endChar": 7
+      },
+      "revId": "91e0a110cece04fded9f9868abb9c998e3bbfc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "099365d6_cf79b17e",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-07-05T20:45:22Z",
+      "side": 1,
+      "message": "This can also be \"platform\" (which you explain later) and \"system_ext\", which is not mentioned here but probably should be.",
+      "range": {
+        "startLine": 217,
+        "startChar": 27,
+        "endLine": 217,
+        "endChar": 70
+      },
+      "revId": "91e0a110cece04fded9f9868abb9c998e3bbfc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f459ba6a_7ad355f1",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-07-05T20:45:22Z",
+      "side": 1,
+      "message": "This should be marked somehow (backticks or quotes) and please say that this is Soong property.",
+      "range": {
+        "startLine": 219,
+        "startChar": 50,
+        "endLine": 219,
+        "endChar": 59
+      },
+      "revId": "91e0a110cece04fded9f9868abb9c998e3bbfc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "60929e10_6a850c24",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-07-05T20:45:22Z",
+      "side": 1,
+      "message": "It would have to give an example, like \"com.android.art rather than com.android.art.something\".",
+      "range": {
+        "startLine": 219,
+        "startChar": 71,
+        "endLine": 220,
+        "endChar": 21
+      },
+      "revId": "91e0a110cece04fded9f9868abb9c998e3bbfc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e1a28bc_d23805f0",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-07-05T20:45:22Z",
+      "side": 1,
+      "message": "Arthur (satayev@) is about to change this in aosp/1736332, and rename PRODUCT_UPDATABLE_BOOT_JARS to PRODUCT_APEX_JARS. See bug b/191127295.",
+      "range": {
+        "startLine": 398,
+        "startChar": 34,
+        "endLine": 398,
+        "endChar": 43
+      },
+      "revId": "91e0a110cece04fded9f9868abb9c998e3bbfc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
