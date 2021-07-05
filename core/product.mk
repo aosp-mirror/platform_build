@@ -213,12 +213,18 @@ _product_list_vars += PRODUCT_RESTRICT_VENDOR_FILES
 # The list of product-specific kernel header dirs
 _product_list_vars += PRODUCT_VENDOR_KERNEL_HEADERS
 
-# A list of module names of BOOTCLASSPATH (jar files)
+# A list of module names in BOOTCLASSPATH (jar files). Each module may be
+# prefixed with "<apex>:", which identifies the APEX that provides it. APEXes
+# are identified by their "variant" names, i.e. their `apex_name` values in
+# Soong, which default to the `name` values. The prefix can also be "platform:"
+# or "system_ext:", and defaults to "platform:" if left out. See the long
+# comment in build/soong/java/dexprepopt_bootjars.go for details.
 _product_list_vars += PRODUCT_BOOT_JARS
 
-# A list of extra BOOTCLASSPATH jars (to be appended after common jars).
-# Products that include device-specific makefiles before AOSP makefiles should use this
-# instead of PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
+# A list of extra BOOTCLASSPATH jars (to be appended after common jars),
+# following the same format as PRODUCT_BOOT_JARS. Products that include
+# device-specific makefiles before AOSP makefiles should use this instead of
+# PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
 _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 
 _product_single_value_vars += PRODUCT_SUPPORTS_BOOT_SIGNER
@@ -389,7 +395,8 @@ _product_single_value_vars += PRODUCT_BUILD_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SUPER_EMPTY_IMAGE
 
-# List of boot jars delivered via apex
+# List of boot jars delivered via updatable APEXes, following the same format as
+# PRODUCT_BOOT_JARS.
 _product_list_vars += PRODUCT_UPDATABLE_BOOT_JARS
 
 # If set, device uses virtual A/B.
