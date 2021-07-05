@@ -63,6 +63,30 @@
       },
       "revId": "571e182e9cd517128d5fb0bae44b071296a70d6f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f8fa1ac_a4428ca0",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1026,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-07-05T03:51:44Z",
+      "side": 1,
+      "message": "Ack, thanks for the detailed info.",
+      "parentUuid": "645e895d_aaa8b14b",
+      "range": {
+        "startLine": 1026,
+        "startChar": 11,
+        "endLine": 1026,
+        "endChar": 70
+      },
+      "revId": "571e182e9cd517128d5fb0bae44b071296a70d6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
