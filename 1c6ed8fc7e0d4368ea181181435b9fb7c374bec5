@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a8db21cd_d977d777",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-07-07T15:53:37Z",
+      "side": 1,
+      "message": "Thank you for the fixes! Just one small suggestion to consolidate some repeated logic.",
+      "revId": "1c6ed8fc7e0d4368ea181181435b9fb7c374bec5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d582db27_9c186038",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1002,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2021-07-07T15:53:37Z",
+      "side": 1,
+      "message": "What do you think about editing this function to be more robust, instead of the changes down below.\n\nMaybe something like:\n\n  def copy_selinux_file(input_path, output_filename):\n    input_filename \u003d os.path.join(target_files_dir, input_path)\n    if not os.path.exists(input_filename):\n      input_filename \u003d\n        input_filename.replace(\u0027SYSTEM_EXT\u0027, \u0027SYSTEM/system_ext\u0027).replace(\u0027PRODUCT\u0027, \u0027SYSTEM/product\u0027)\n      if not os.path.exists(input_filename):\n        logger.info(\u0027Skipping copy_selinux_file for %s\u0027, input_filename)\n        \n    shutil.copy(\n        input_filename,\n        os.path.join(target_files_dir, partition.upper(), \u0027etc/selinux\u0027,\n                     output_filename))\n\n\nAnd then the original lines 1008-1015 could stay as-is.",
+      "revId": "1c6ed8fc7e0d4368ea181181435b9fb7c374bec5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
