@@ -16,6 +16,24 @@
       "message": "Don\u0027t you need this any more?",
       "revId": "b84ff8ff62d89347b8f4ef01a6665ad70541911f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "209732d4_522c1f58",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-07-07T18:09:43Z",
+      "side": 1,
+      "message": "It is required. Sorry for the delay. This CL is ready to be reviewed.",
+      "parentUuid": "7af720b2_df728b41",
+      "revId": "b84ff8ff62d89347b8f4ef01a6665ad70541911f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
