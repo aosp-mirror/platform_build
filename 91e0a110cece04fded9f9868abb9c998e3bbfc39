@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "11fca6db_e389c918",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-07-08T22:29:51Z",
+      "side": 1,
+      "message": "I don\u0027t want to duplicate that, so I only added a reference to the longer discussion in dexpreopt_bootjars.go.",
+      "parentUuid": "67ad6844_3b317efd",
+      "range": {
+        "startLine": 298,
+        "startChar": 43,
+        "endLine": 299,
+        "endChar": 7
+      },
+      "revId": "91e0a110cece04fded9f9868abb9c998e3bbfc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "099365d6_cf79b17e",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-07-05T20:45:22Z",
       "side": 1,
       "message": "This can also be \"platform\" (which you explain later) and \"system_ext\", which is not mentioned here but probably should be.",
+      "range": {
+        "startLine": 217,
+        "startChar": 27,
+        "endLine": 217,
+        "endChar": 70
+      },
+      "revId": "91e0a110cece04fded9f9868abb9c998e3bbfc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "631fd856_d8ae9733",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-07-08T22:29:51Z",
+      "side": 1,
+      "message": "Done. system_ext isn\u0027t discussed in dexprepopt_bootjars.go at all, so I mentioned it there too.",
+      "parentUuid": "099365d6_cf79b17e",
       "range": {
         "startLine": 217,
         "startChar": 27,
@@ -70,6 +118,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9c54378_2fcb9bdc",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-07-08T22:29:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f459ba6a_7ad355f1",
+      "range": {
+        "startLine": 219,
+        "startChar": 50,
+        "endLine": 219,
+        "endChar": 59
+      },
+      "revId": "91e0a110cece04fded9f9868abb9c998e3bbfc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "60929e10_6a850c24",
@@ -93,6 +165,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "918cc8ed_927b7da6",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-07-08T22:29:51Z",
+      "side": 1,
+      "message": "As above, I prefer to keep that longer discussion in a single place.",
+      "parentUuid": "60929e10_6a850c24",
+      "range": {
+        "startLine": 219,
+        "startChar": 71,
+        "endLine": 220,
+        "endChar": 21
+      },
+      "revId": "91e0a110cece04fded9f9868abb9c998e3bbfc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6e1a28bc_d23805f0",
@@ -106,6 +202,30 @@
       "writtenOn": "2021-07-05T20:45:22Z",
       "side": 1,
       "message": "Arthur (satayev@) is about to change this in aosp/1736332, and rename PRODUCT_UPDATABLE_BOOT_JARS to PRODUCT_APEX_JARS. See bug b/191127295.",
+      "range": {
+        "startLine": 398,
+        "startChar": 34,
+        "endLine": 398,
+        "endChar": 43
+      },
+      "revId": "91e0a110cece04fded9f9868abb9c998e3bbfc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ce91556_575cdf4e",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2021-07-08T22:29:51Z",
+      "side": 1,
+      "message": "All right. I\u0027m not familiar with that, so I better leave it out here.",
+      "parentUuid": "6e1a28bc_d23805f0",
       "range": {
         "startLine": 398,
         "startChar": 34,
