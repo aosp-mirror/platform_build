@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "28e215b6_2f1ed9f9",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 5392,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-07-08T11:41:28Z",
+      "side": 1,
+      "message": "Should this be scoped under TARGET_BUILD_UNBUNDLED (as well as lines 5365-5376 perhaps)? I don\u0027t think it\u0027s always needed.",
+      "range": {
+        "startLine": 5391,
+        "startChar": 0,
+        "endLine": 5392,
+        "endChar": 45
+      },
+      "revId": "94b41c7b21ba579c00a830ab112c6902ab03712f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98450051_7fc5ff4a",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-07-08T11:41:28Z",
+      "side": 1,
+      "message": "Nit: rename into shorter `my_create_dexpreopt_config`",
+      "range": {
+        "startLine": 281,
+        "startChar": 0,
+        "endLine": 281,
+        "endChar": 33
+      },
+      "revId": "94b41c7b21ba579c00a830ab112c6902ab03712f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1dd0d624_e4bfab1a",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1550939
+      },
+      "writtenOn": "2021-07-08T11:41:28Z",
+      "side": 1,
+      "message": "Add a comment explaining why dexpreopt.config is needed in this case.",
+      "range": {
+        "startLine": 300,
+        "startChar": 0,
+        "endLine": 300,
+        "endChar": 43
+      },
+      "revId": "94b41c7b21ba579c00a830ab112c6902ab03712f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
