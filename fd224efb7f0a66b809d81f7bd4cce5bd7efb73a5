@@ -16,6 +16,41 @@
       "message": "This seems to be getting further on aosp-sdk-release/sdk_mac (though the build isn\u0027t finished yet)",
       "revId": "fd224efb7f0a66b809d81f7bd4cce5bd7efb73a5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "16cbc098_6c674e09",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-07-09T00:33:01Z",
+      "side": 1,
+      "message": "We\u0027re",
+      "revId": "fd224efb7f0a66b809d81f7bd4cce5bd7efb73a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "58a48dbe_0238d0f8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2021-07-09T00:33:01Z",
+      "side": 1,
+      "message": "We\u0027re back to the previous error (v8), so this fixes some of the issues.",
+      "parentUuid": "53b9ed5e_718d1b9d",
+      "revId": "fd224efb7f0a66b809d81f7bd4cce5bd7efb73a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
