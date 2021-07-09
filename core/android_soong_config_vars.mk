@@ -39,6 +39,10 @@ endif
 ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
   # Build ART modules from source if they are listed in TARGET_BUILD_APPS.
   SOONG_CONFIG_art_module_source_build := true
+else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
+  # Always build from source for the module targets. This ought to be covered by
+  # the TARGET_BUILD_APPS check above, but there are test builds that don't set it.
+  SOONG_CONFIG_art_module_source_build := true
 else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
   # Always build ART APEXes from source in coverage builds since the prebuilts
   # aren't built with instrumentation.
@@ -50,6 +54,13 @@ else ifneq (,$(SANITIZE_TARGET)$(SANITIZE_HOST))
 else ifneq (,$(PRODUCT_FUCHSIA))
   # Fuchsia picks out ART internal packages that aren't available in the
   # prebuilt.
+  SOONG_CONFIG_art_module_source_build := true
+else ifeq (,$(filter x86 x86_64,$(HOST_CROSS_ARCH)))
+  # We currently only provide prebuilts for x86 on host. This skips prebuilts in
+  # cuttlefish builds for ARM servers.
+  SOONG_CONFIG_art_module_source_build := true
+else ifneq (,$(filter dex2oatds dex2oats,$(PRODUCT_HOST_PACKAGES)))
+  # Some products depend on host tools that aren't available as prebuilts.
   SOONG_CONFIG_art_module_source_build := true
 else ifeq (,$(filter com.google.android.art,$(PRODUCT_PACKAGES)))
   # TODO(b/192006406): There is currently no good way to control which prebuilt
