@@ -62,7 +62,8 @@ def __print_attr(attr, value):
     elif _options.format == "pretty":
         print(attr, "=", repr(value))
     elif _options.format == "make":
-        print(attr, ":=", value)
+        # Trim all spacing to a single space
+        print(attr, ":=", _mkstrip(value))
     else:
         fail("bad output format", _options.format)
 
@@ -432,6 +433,23 @@ def _mkinfo(file, message = ""):
     """Prints info."""
     print(message)
 
+def _mkstrip(s):
+    """Emulates Make's strip.
+
+    That is, removes string's leading and trailing whitespace characters and
+    replaces any sequence of whitespace characters with with a single space.
+    """
+    result = ""
+    was_space = False
+    for ch in s.strip().elems():
+        is_space = ch.isspace()
+        if not is_space:
+            if was_space:
+                result += " "
+            result += ch
+        was_space = is_space
+    return result
+
 def __get_options():
     """Returns struct containing runtime global settings."""
     settings = dict(
@@ -479,6 +497,7 @@ rblf = struct(
     mkinfo = _mkinfo,
     mkerror = _mkerror,
     mkwarning = _mkwarning,
+    mkstrip = _mkstrip,
     printvars = _printvars,
     product_configuration = _product_configuration,
     require_artifacts_in_path = _require_artifacts_in_path,
