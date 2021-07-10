@@ -1,4 +1,3 @@
-
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +27,9 @@ def assert_eq(expected, actual):
     if expected != actual:
         fail("Expected %s, got %s" % (expected, actual))
 
+# Unit tests for non-trivial runtime functions
+assert_eq("", rblf.mkstrip(" \n \t    "))
+assert_eq("a b c", rblf.mkstrip("  a b   \n  c \t"))
 
 globals, config = rblf.product_configuration("test/device", init)
 assert_eq(
