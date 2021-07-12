@@ -450,6 +450,17 @@ def _mkstrip(s):
         was_space = is_space
     return result
 
+def _mksubst(old, new, s):
+    """Emulates Make's subst.
+
+    Replaces each occurence of 'old' with 'new'.
+    If 's' is a list, applies substitution to each item.
+    """
+    if type(s) == "list":
+        return [e.replace(old, new) for e in s]
+    return s.replace(old, new)
+
+
 def __get_options():
     """Returns struct containing runtime global settings."""
     settings = dict(
@@ -498,6 +509,7 @@ rblf = struct(
     mkerror = _mkerror,
     mkwarning = _mkwarning,
     mkstrip = _mkstrip,
+    mksubst = _mksubst,
     printvars = _printvars,
     product_configuration = _product_configuration,
     require_artifacts_in_path = _require_artifacts_in_path,
