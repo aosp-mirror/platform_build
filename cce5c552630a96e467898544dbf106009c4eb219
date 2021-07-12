@@ -70,6 +70,30 @@
       },
       "revId": "cce5c552630a96e467898544dbf106009c4eb219",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c020d63_fedc8273",
+        "filename": "tools/rbcrun/host.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-07-12T22:47:10Z",
+      "side": 1,
+      "message": "Abandoning this, please review go/aog/1764007 iinstead",
+      "parentUuid": "ead4d38f_e19f13b4",
+      "range": {
+        "startLine": 242,
+        "startChar": 3,
+        "endLine": 242,
+        "endChar": 19
+      },
+      "revId": "cce5c552630a96e467898544dbf106009c4eb219",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
