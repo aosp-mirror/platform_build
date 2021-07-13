@@ -31,6 +31,9 @@ def assert_eq(expected, actual):
 assert_eq("", rblf.mkstrip(" \n \t    "))
 assert_eq("a b c", rblf.mkstrip("  a b   \n  c \t"))
 
+assert_eq("b1 b2", rblf.mksubst("a", "b", "a1 a2"))
+assert_eq(["b1", "x2"], rblf.mksubst("a", "b", ["a1", "x2"]))
+
 globals, config = rblf.product_configuration("test/device", init)
 assert_eq(
     {
