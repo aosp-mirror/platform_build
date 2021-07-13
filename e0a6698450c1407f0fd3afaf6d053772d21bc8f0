@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7ea489b_325f19ea",
+        "filename": "tests/run.rbc",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-07-13T16:26:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6409dd0a_7556a5db",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 66
+      },
+      "revId": "e0a6698450c1407f0fd3afaf6d053772d21bc8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "34ba7a73_55bcf087",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-07-13T14:33:20Z",
       "side": 1,
       "message": "If there is no %, make\u0027s patsubst only replaces if there is an exact match for the whole string.",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 52
+      },
+      "revId": "e0a6698450c1407f0fd3afaf6d053772d21bc8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "13861a63_3c4f658f",
+        "filename": "tests/run.rbc",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1344584
+      },
+      "writtenOn": "2021-07-13T16:26:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34ba7a73_55bcf087",
       "range": {
         "startLine": 41,
         "startChar": 0,
