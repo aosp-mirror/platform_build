@@ -34,6 +34,16 @@ assert_eq("a b c", rblf.mkstrip("  a b   \n  c \t"))
 assert_eq("b1 b2", rblf.mksubst("a", "b", "a1 a2"))
 assert_eq(["b1", "x2"], rblf.mksubst("a", "b", ["a1", "x2"]))
 
+assert_eq("ABcdYZ", rblf.mkpatsubst("ab%yz", "AB%YZ", "abcdyz"))
+assert_eq("bcz", rblf.mkpatsubst("a%z", "A%Z", "bcz"))
+assert_eq(["Ay", "Az"], rblf.mkpatsubst("a%", "A%", ["ay", "az"]))
+assert_eq("AcZ bcz", rblf.mkpatsubst("a%z", "A%Z", "acz  bcz"))
+assert_eq("Abcd", rblf.mkpatsubst("a%", "A%", "abcd"))
+assert_eq("abcZ", rblf.mkpatsubst("%z", "%Z", "abcz"))
+assert_eq("azx b", rblf.mkpatsubst("az", "AZ", "azx  b"))
+assert_eq(["azx", "b"], rblf.mkpatsubst("az", "AZ", ["azx", "b"]))
+assert_eq("ABC", rblf.mkpatsubst("abc", "ABC", "abc"))
+
 globals, config = rblf.product_configuration("test/device", init)
 assert_eq(
     {
