@@ -1928,21 +1928,10 @@ endef
 # b/37750224
 AAPT_ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=0
 
-# Search for generated R.java/Manifest.java in $1, copy the found R.java as $2.
-# Also copy them to a central 'R' directory to make it easier to add the files to an IDE.
+# Search for generated R.java in $1, copy the found R.java as $2.
 define find-generated-R.java
-$(hide) for GENERATED_MANIFEST_FILE in `find $(1) \
-  -name Manifest.java 2> /dev/null`; do \
-    dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_MANIFEST_FILE`; \
-    mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
-    cp $$GENERATED_MANIFEST_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
-  done;
 $(hide) for GENERATED_R_FILE in `find $(1) \
   -name R.java 2> /dev/null`; do \
-    dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_R_FILE`; \
-    mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
-    cp $$GENERATED_R_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir \
-      || exit 31; \
     cp $$GENERATED_R_FILE $(2) || exit 32; \
   done;
 @# Ensure that the target file is always created, i.e. also in case we did not
