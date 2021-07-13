@@ -24,11 +24,8 @@ function _source_env_setup_script() {
 }
 
 # This function needs to run first as the remaining defining functions may be
-# using the envsetup.sh defined functions. Skip this part if this script is already
-# being invoked from envsetup.sh.
-if [[ "$1" != "--skip-envsetup" ]]; then
-  _source_env_setup_script || return
-fi
+# using the envsetup.sh defined functions.
+_source_env_setup_script || return
 
 # This function prefixes the given command with appropriate variables needed
 # for the build to be executed with RBE.
