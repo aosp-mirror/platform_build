@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6409dd0a_7556a5db",
+        "filename": "tests/run.rbc",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1687194
+      },
+      "writtenOn": "2021-07-13T14:33:20Z",
+      "side": 1,
+      "message": "we should also have a test for % at the beginning",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 66
+      },
+      "revId": "e0a6698450c1407f0fd3afaf6d053772d21bc8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "34ba7a73_55bcf087",
+        "filename": "tests/run.rbc",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1687194
+      },
+      "writtenOn": "2021-07-13T14:33:20Z",
+      "side": 1,
+      "message": "If there is no %, make\u0027s patsubst only replaces if there is an exact match for the whole string.",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 52
+      },
+      "revId": "e0a6698450c1407f0fd3afaf6d053772d21bc8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
