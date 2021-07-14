@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4858f093_6413440c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-07-14T22:36:31Z",
+      "side": 1,
+      "message": "Note: without this change, I can use PRODUCT_BUILD_GENERIC_OTA_PACKAGE, but that seems weird on a non-generic (real device) target.\n\nTianjie, WDYT?",
+      "revId": "cf3a957686738d4ecf5b6929d1fc841d3fdb7507",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
