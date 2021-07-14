@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ebe751bd_f1f7af06",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-14T00:12:20Z",
+      "side": 1,
+      "message": "Hi Chad, please take a look.\n\nThe new flag(--align-file-size) is to make an output size aligned by padding a EOCD comment (just like we align entries by padding \"extra\" in local header.",
+      "revId": "86b0c1e86ecc3292b4feafdf8cec518f53271758",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
