@@ -757,6 +757,9 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/soong/host/*/lib*/libconscrypt_openjdk_
 # vendor-ramdisk renamed to vendor_ramdisk
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor-ramdisk)
 
+# Common R directory has been removed.
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/R)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
