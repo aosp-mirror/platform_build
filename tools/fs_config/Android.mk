@@ -27,7 +27,22 @@ endif
 system_android_filesystem_config := system/core/libcutils/include/private/android_filesystem_config.h
 system_capability_header := bionic/libc/kernel/uapi/linux/capability.h
 
-# List of supported vendor, oem, odm, vendor_dlkm, odm_dlkm, product and system_ext Partitions
+# Use snapshots if exist
+vendor_android_filesystem_config := $(strip \
+  $(if $(filter-out current,$(BOARD_VNDK_VERSION)), \
+    $(SOONG_VENDOR_$(BOARD_VNDK_VERSION)_SNAPSHOT_DIR)/include/$(system_android_filesystem_config)))
+ifeq (,$(wildcard $(vendor_android_filesystem_config)))
+vendor_android_filesystem_config := $(system_android_filesystem_config)
+endif
+
+vendor_capability_header := $(strip \
+  $(if $(filter-out current,$(BOARD_VNDK_VERSION)), \
+    $(SOONG_VENDOR_$(BOARD_VNDK_VERSION)_SNAPSHOT_DIR)/include/$(system_capability_header)))
+ifeq (,$(wildcard $(vendor_capability_header)))
+vendor_capability_header := $(system_capability_header)
+endif
+
+# List of supported vendor, oem, odm, vendor_dlkm and odm_dlkm Partitions
 fs_config_generate_extra_partition_list := $(strip \
   $(if $(BOARD_USES_VENDORIMAGE)$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),vendor) \
   $(if $(BOARD_USES_OEMIMAGE)$(BOARD_OEMIMAGE_FILE_SYSTEM_TYPE),oem) \
@@ -206,10 +221,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -232,10 +247,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -316,10 +331,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -342,10 +357,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -371,10 +386,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_DLKM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -397,10 +412,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_DLKM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -426,10 +441,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM_DLKM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -452,10 +467,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM_DLKM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
