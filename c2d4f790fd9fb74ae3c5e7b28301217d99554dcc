@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dfd0e078_dfec99b6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2021-07-14T22:12:54Z",
+      "side": 1,
+      "message": "I just filed https://b.corp.google.com/issues/193703183 which I think is a better way of solving this. Can you take a look?",
+      "revId": "c2d4f790fd9fb74ae3c5e7b28301217d99554dcc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
