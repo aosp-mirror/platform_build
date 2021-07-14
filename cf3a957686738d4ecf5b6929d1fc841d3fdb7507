@@ -3,6 +3,29 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "75f99b18_fb4c407a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-07-14T22:47:15Z",
+      "side": 1,
+      "message": "A more accurate name could be\n\n```\nPRODUCT_BUILD_OTA_PACKAGE_EVEN_WITHOUT_KERNEL_OR_RECOVERY_FSTAB\n```\n\nthough, I think this is too long.",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 29
+      },
+      "revId": "cf3a957686738d4ecf5b6929d1fc841d3fdb7507",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "4858f093_6413440c",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
