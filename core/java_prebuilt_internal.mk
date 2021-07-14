@@ -35,15 +35,17 @@ ifeq ($(prebuilt_module_is_dex_javalib),true)
 my_dex_jar := $(my_prebuilt_src_file)
 # This is a target shared library, i.e. a jar with classes.dex.
 
-ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)
-  $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)
-endif
+$(foreach pair,$(PRODUCT_BOOT_JARS), \
+  $(if $(filter $(LOCAL_MODULE),$(call word-colon,2,$(pair))), \
+    $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)))
 
 ALL_MODULES.$(my_register_name).CLASSES_JAR := $(common_classes_jar)
 
 #######################################
 # defines built_odex along with rule to install odex
+my_manifest_or_apk := $(my_prebuilt_src_file)
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+my_manifest_or_apk :=
 #######################################
 $(built_module) : $(my_prebuilt_src_file)
 	$(call copy-file-to-target)
@@ -173,7 +175,7 @@ endif
 framework_res_package_export :=
 # Please refer to package.mk
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
+ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_USE_PREBUILT_SDKS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
 framework_res_package_export := \
     $(call resolve-prebuilt-sdk-jar-path,$(LOCAL_SDK_RES_VERSION))
 else

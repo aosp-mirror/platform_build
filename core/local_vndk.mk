@@ -5,6 +5,7 @@ ifndef LOCAL_IS_HOST_MODULE
 ifndef LOCAL_SDK_VERSION
   ifneq (,$(filter true,$(LOCAL_VENDOR_MODULE) $(LOCAL_ODM_MODULE) $(LOCAL_OEM_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
     LOCAL_USE_VNDK:=true
+    LOCAL_USE_VNDK_VENDOR:=true
     # Note: no need to check LOCAL_MODULE_PATH* since LOCAL_[VENDOR|ODM|OEM]_MODULE is already
     # set correctly before this is included.
   endif
@@ -40,6 +41,7 @@ ifdef LOCAL_USE_VNDK
   # If we're not using the VNDK, drop all restrictions
   ifndef BOARD_VNDK_VERSION
     LOCAL_USE_VNDK:=
+    LOCAL_USE_VNDK_VENDOR:=
     LOCAL_USE_VNDK_PRODUCT:=
   endif
 endif

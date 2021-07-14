@@ -15,15 +15,15 @@
 #
 
 import os.path
+import shutil
 
 import common
 import test_utils
-from merge_target_files import (validate_config_lists,
-                                DEFAULT_FRAMEWORK_ITEM_LIST,
-                                DEFAULT_VENDOR_ITEM_LIST,
-                                DEFAULT_FRAMEWORK_MISC_INFO_KEYS, copy_items,
-                                item_list_to_partition_set,
-                                process_apex_keys_apk_certs_common)
+from merge_target_files import (
+    validate_config_lists, DEFAULT_FRAMEWORK_ITEM_LIST,
+    DEFAULT_VENDOR_ITEM_LIST, DEFAULT_FRAMEWORK_MISC_INFO_KEYS, copy_items,
+    item_list_to_partition_set, process_apex_keys_apk_certs_common,
+    compile_split_sepolicy, validate_merged_apex_info)
 
 
 class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
@@ -117,6 +117,15 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
                               DEFAULT_FRAMEWORK_MISC_INFO_KEYS,
                               vendor_item_list))
 
+  def test_validate_config_lists_ReturnsFalseIfSharedExtractedPartitionImage(
+      self):
+    vendor_item_list = list(DEFAULT_VENDOR_ITEM_LIST)
+    vendor_item_list.append('IMAGES/system.img')
+    self.assertFalse(
+        validate_config_lists(DEFAULT_FRAMEWORK_ITEM_LIST,
+                              DEFAULT_FRAMEWORK_MISC_INFO_KEYS,
+                              vendor_item_list))
+
   def test_validate_config_lists_ReturnsFalseIfBadSystemMiscInfoKeys(self):
     for bad_key in ['dynamic_partition_list', 'super_partition_groups']:
       framework_misc_info_keys = list(DEFAULT_FRAMEWORK_MISC_INFO_KEYS)
@@ -144,8 +153,7 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     process_apex_keys_apk_certs_common(framework_dir, vendor_dir, output_dir,
                                        set(['product', 'system', 'system_ext']),
-                                       set(['odm', 'vendor']),
-                                       'apexkeys.txt')
+                                       set(['odm', 'vendor']), 'apexkeys.txt')
 
     merged_entries = []
     merged_path = os.path.join(self.testdata_dir, 'apexkeys_merge.txt')
@@ -180,8 +188,7 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(ValueError, process_apex_keys_apk_certs_common,
                       framework_dir, conflict_dir, output_dir,
                       set(['product', 'system', 'system_ext']),
-                      set(['odm', 'vendor']),
-                      'apexkeys.txt')
+                      set(['odm', 'vendor']), 'apexkeys.txt')
 
   def test_process_apex_keys_apk_certs_HandlesApkCertsSyntax(self):
     output_dir = common.MakeTempDir()
@@ -201,8 +208,7 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     process_apex_keys_apk_certs_common(framework_dir, vendor_dir, output_dir,
                                        set(['product', 'system', 'system_ext']),
-                                       set(['odm', 'vendor']),
-                                       'apkcerts.txt')
+                                       set(['odm', 'vendor']), 'apkcerts.txt')
 
     merged_entries = []
     merged_path = os.path.join(self.testdata_dir, 'apkcerts_merge.txt')
@@ -229,3 +235,76 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
     ]
     partition_set = item_list_to_partition_set(item_list)
     self.assertEqual(set(['product', 'system', 'system_ext']), partition_set)
+
+  def test_compile_split_sepolicy(self):
+    product_out_dir = common.MakeTempDir()
+
+    def write_temp_file(path, data=''):
+      full_path = os.path.join(product_out_dir, path)
+      if not os.path.exists(os.path.dirname(full_path)):
+        os.makedirs(os.path.dirname(full_path))
+      with open(full_path, 'w') as f:
+        f.write(data)
+
+    write_temp_file(
+        'system/etc/vintf/compatibility_matrix.device.xml', """
+      <compatibility-matrix>
+        <sepolicy>
+          <kernel-sepolicy-version>30</kernel-sepolicy-version>
+        </sepolicy>
+      </compatibility-matrix>""")
+    write_temp_file('vendor/etc/selinux/plat_sepolicy_vers.txt', '30.0')
+
+    write_temp_file('system/etc/selinux/plat_sepolicy.cil')
+    write_temp_file('system/etc/selinux/mapping/30.0.cil')
+    write_temp_file('product/etc/selinux/mapping/30.0.cil')
+    write_temp_file('vendor/etc/selinux/vendor_sepolicy.cil')
+    write_temp_file('vendor/etc/selinux/plat_pub_versioned.cil')
+
+    cmd = compile_split_sepolicy(product_out_dir, {
+        'system': 'system',
+        'product': 'product',
+        'vendor': 'vendor',
+    }, os.path.join(product_out_dir, 'policy'))
+    self.assertEqual(' '.join(cmd),
+                     ('secilc -m -M true -G -N -c 30 '
+                      '-o {OTP}/policy -f /dev/null '
+                      '{OTP}/system/etc/selinux/plat_sepolicy.cil '
+                      '{OTP}/system/etc/selinux/mapping/30.0.cil '
+                      '{OTP}/vendor/etc/selinux/vendor_sepolicy.cil '
+                      '{OTP}/vendor/etc/selinux/plat_pub_versioned.cil '
+                      '{OTP}/product/etc/selinux/mapping/30.0.cil').format(
+                          OTP=product_out_dir))
+
+  def _copy_apex(self, source, output_dir, partition):
+    shutil.copy(
+        source,
+        os.path.join(output_dir, partition, 'apex', os.path.basename(source)))
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_validate_merged_apex_info(self):
+    output_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(output_dir, 'SYSTEM/apex'))
+    os.makedirs(os.path.join(output_dir, 'VENDOR/apex'))
+
+    self._copy_apex(
+        os.path.join(self.testdata_dir, 'has_apk.apex'), output_dir, 'SYSTEM')
+    self._copy_apex(
+        os.path.join(test_utils.get_current_dir(),
+                     'com.android.apex.compressed.v1.capex'), output_dir,
+        'VENDOR')
+    validate_merged_apex_info(output_dir, ('system', 'vendor'))
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_validate_merged_apex_info_RaisesOnPackageInMultiplePartitions(self):
+    output_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(output_dir, 'SYSTEM/apex'))
+    os.makedirs(os.path.join(output_dir, 'VENDOR/apex'))
+
+    same_apex_package = os.path.join(self.testdata_dir, 'has_apk.apex')
+    self._copy_apex(same_apex_package, output_dir, 'SYSTEM')
+    self._copy_apex(same_apex_package, output_dir, 'VENDOR')
+    self.assertRaisesRegexp(
+        common.ExternalError,
+        'Duplicate APEX packages found in multiple partitions: com.android.wifi',
+        validate_merged_apex_info, output_dir, ('system', 'vendor'))

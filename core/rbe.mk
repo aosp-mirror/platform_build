@@ -25,7 +25,13 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   ifdef RBE_CXX_EXEC_STRATEGY
     cxx_rbe_exec_strategy := $(RBE_CXX_EXEC_STRATEGY)
   else
-    cxx_rbe_exec_strategy := "local"
+    cxx_rbe_exec_strategy := local
+  endif
+
+  ifdef RBE_CXX_COMPARE
+    cxx_compare := $(RBE_CXX_COMPARE)
+  else
+    cxx_compare := false
   endif
 
   ifdef RBE_CXX_COMPARE
@@ -52,9 +58,9 @@ ifneq ($(filter-out false,$(USE_RBE)),)
     d8_exec_strategy := remote_local_fallback
   endif
 
-  platform := "container-image=docker://gcr.io/androidbuild-re-dockerimage/android-build-remoteexec-image@sha256:582efb38f0c229ea39952fff9e132ccbe183e14869b39888010dacf56b360d62"
-  cxx_platform := $(platform)",Pool=default"
-  java_r8_d8_platform := $(platform)",Pool=java16"
+  platform := container-image=docker://gcr.io/androidbuild-re-dockerimage/android-build-remoteexec-image@sha256:582efb38f0c229ea39952fff9e132ccbe183e14869b39888010dacf56b360d62
+  cxx_platform := $(platform),Pool=default
+  java_r8_d8_platform := $(platform),Pool=java16
 
   RBE_WRAPPER := $(rbe_dir)/rewrapper
   RBE_CXX := --labels=type=compile,lang=cpp,compiler=clang --env_var_allowlist=PWD --exec_strategy=$(cxx_rbe_exec_strategy) --platform=$(cxx_platform) --compare=$(cxx_compare)
@@ -65,15 +71,15 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   CXX_WRAPPER := $(strip $(CXX_WRAPPER) $(RBE_WRAPPER) $(RBE_CXX))
 
   ifdef RBE_JAVAC
-    JAVAC_WRAPPER := $(strip $(JAVAC_WRAPPER) $(RBE_WRAPPER) --labels=type=compile,lang=java,compiler=javac --exec_strategy=$(javac_exec_strategy) --platform="$(java_r8_d8_platform)")
+    JAVAC_WRAPPER := $(strip $(JAVAC_WRAPPER) $(RBE_WRAPPER) --labels=type=compile,lang=java,compiler=javac --exec_strategy=$(javac_exec_strategy) --platform=$(java_r8_d8_platform))
   endif
 
   ifdef RBE_R8
-    R8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=r8 --exec_strategy=$(r8_exec_strategy) --platform="$(java_r8_d8_platform)" --inputs=out/soong/host/linux-x86/framework/r8-compat-proguard.jar,build/make/core/proguard_basic_keeps.flags --toolchain_inputs=prebuilts/jdk/jdk11/linux-x86/bin/java)
+    R8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=r8 --exec_strategy=$(r8_exec_strategy) --platform=$(java_r8_d8_platform) --inputs=out/soong/host/linux-x86/framework/r8-compat-proguard.jar,build/make/core/proguard_basic_keeps.flags --toolchain_inputs=prebuilts/jdk/jdk11/linux-x86/bin/java)
   endif
 
   ifdef RBE_D8
-    D8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=d8 --exec_strategy=$(d8_exec_strategy) --platform="$(java_r8_d8_platform)" --inputs=out/soong/host/linux-x86/framework/d8.jar --toolchain_inputs=prebuilts/jdk/jdk11/linux-x86/bin/java)
+    D8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=d8 --exec_strategy=$(d8_exec_strategy) --platform=$(java_r8_d8_platform) --inputs=out/soong/host/linux-x86/framework/d8.jar --toolchain_inputs=prebuilts/jdk/jdk11/linux-x86/bin/java)
   endif
 
   rbe_dir :=
