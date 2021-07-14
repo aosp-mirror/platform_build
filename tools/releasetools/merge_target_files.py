@@ -78,6 +78,14 @@ Usage: merge_target_files [args]
       If provided, duplicate APK/APEX keys are ignored and the value from the
       framework is used.
 
+  --rebuild-sepolicy
+      If provided, rebuilds odm.img or vendor.img to include merged sepolicy
+      files. If odm is present then odm is preferred.
+
+  --vendor-otatools otatools.zip
+      If provided, use this otatools.zip when recompiling the odm or vendor
+      image to include sepolicy.
+
   --keep-tmp
       Keep tempoary files for debugging purposes.
 """
@@ -129,6 +137,8 @@ OPTIONS.output_super_empty = None
 OPTIONS.rebuild_recovery = False
 # TODO(b/150582573): Remove this option.
 OPTIONS.allow_duplicate_apkapex_keys = False
+OPTIONS.vendor_otatools = None
+OPTIONS.rebuild_sepolicy = False
 OPTIONS.keep_tmp = False
 
 # In an item list (framework or vendor), we may see entries that select whole
@@ -666,7 +676,7 @@ def copy_file_contexts(framework_target_files_dir, vendor_target_files_dir,
       os.path.join(output_target_files_dir, 'META', 'vendor_file_contexts.bin'))
 
 
-def compile_split_sepolicy(product_out, partition_map, output_policy):
+def compile_split_sepolicy(product_out, partition_map):
   """Uses secilc to compile a split sepolicy file.
 
   Depends on various */etc/selinux/* and */etc/vintf/* files within partitions.
@@ -674,7 +684,6 @@ def compile_split_sepolicy(product_out, partition_map, output_policy):
   Args:
     product_out: PRODUCT_OUT directory, containing partition directories.
     partition_map: A map of partition name -> relative path within product_out.
-    output_policy: The name of the output policy created by secilc.
 
   Returns:
     A command list that can be executed to create the compiled sepolicy.
@@ -709,7 +718,7 @@ def compile_split_sepolicy(product_out, partition_map, output_policy):
   # Use the same flags and arguments as selinux.cpp OpenSplitPolicy().
   cmd = ['secilc', '-m', '-M', 'true', '-G', '-N']
   cmd.extend(['-c', kernel_sepolicy_version])
-  cmd.extend(['-o', output_policy])
+  cmd.extend(['-o', os.path.join(product_out, 'META/combined_sepolicy')])
   cmd.extend(['-f', '/dev/null'])
 
   required_policy_files = (
@@ -747,7 +756,8 @@ def validate_merged_apex_info(output_target_files_dir, partitions):
   Depends on the <partition>/apex/* APEX files within partitions.
 
   Args:
-    output_target_files_dir: Output directory containing merged partition directories.
+    output_target_files_dir: Output directory containing merged partition
+      directories.
     partitions: A list of all the partitions in the output directory.
 
   Raises:
@@ -965,6 +975,92 @@ def generate_images(target_files_dir, rebuild_recovery):
   add_img_to_target_files.main(add_img_args)
 
 
+def rebuild_image_with_sepolicy(target_files_dir,
+                                vendor_otatools=None,
+                                vendor_target_files=None):
+  """Rebuilds odm.img or vendor.img to include merged sepolicy files.
+
+  If odm is present then odm is preferred -- otherwise vendor is used.
+
+  Args:
+    target_files_dir: Path to the extracted merged target-files package.
+    vendor_otatools: If not None, path to an otatools.zip from the vendor build
+      that is used when recompiling the image.
+    vendor_target_files: Expected if vendor_otatools is not None. Path to the
+      vendor target-files zip.
+  """
+  partition = 'vendor'
+  if os.path.exists(os.path.join(target_files_dir, 'ODM')) or os.path.exists(
+      os.path.join(target_files_dir, 'IMAGES/odm.img')):
+    partition = 'odm'
+  partition_img = '{}.img'.format(partition)
+
+  logger.info('Recompiling %s using the merged sepolicy files.', partition_img)
+
+  # Copy the combined SEPolicy file and framework hashes to the image that is
+  # being rebuilt.
+  def copy_selinux_file(input_path, output_filename):
+    shutil.copy(
+        os.path.join(target_files_dir, input_path),
+        os.path.join(target_files_dir, partition.upper(), 'etc/selinux',
+                     output_filename))
+
+  copy_selinux_file('META/combined_sepolicy', 'precompiled_sepolicy')
+  copy_selinux_file('SYSTEM/etc/selinux/plat_sepolicy_and_mapping.sha256',
+                    'precompiled_sepolicy.plat_sepolicy_and_mapping.sha256')
+  copy_selinux_file(
+      'SYSTEM_EXT/etc/selinux/system_ext_sepolicy_and_mapping.sha256',
+      'precompiled_sepolicy.system_ext_sepolicy_and_mapping.sha256')
+  copy_selinux_file('PRODUCT/etc/selinux/product_sepolicy_and_mapping.sha256',
+                    'precompiled_sepolicy.product_sepolicy_and_mapping.sha256')
+
+  if not vendor_otatools:
+    # Remove the partition from the merged target-files archive. It will be
+    # rebuilt later automatically by generate_images().
+    os.remove(os.path.join(target_files_dir, 'IMAGES', partition_img))
+  else:
+    # TODO(b/192253131): Remove the need for vendor_otatools by fixing
+    # backwards-compatibility issues when compiling images on R from S+.
+    if not vendor_target_files:
+      raise ValueError(
+          'Expected vendor_target_files if vendor_otatools is not None.')
+    logger.info(
+        '%s recompilation will be performed using the vendor otatools.zip',
+        partition_img)
+
+    # Unzip the vendor build's otatools.zip and target-files archive.
+    vendor_otatools_dir = common.MakeTempDir(
+        prefix='merge_target_files_vendor_otatools_')
+    vendor_target_files_dir = common.MakeTempDir(
+        prefix='merge_target_files_vendor_target_files_')
+    common.UnzipToDir(vendor_otatools, vendor_otatools_dir)
+    common.UnzipToDir(vendor_target_files, vendor_target_files_dir)
+
+    # Copy the partition contents from the merged target-files archive to the
+    # vendor target-files archive.
+    shutil.rmtree(os.path.join(vendor_target_files_dir, partition.upper()))
+    shutil.copytree(
+        os.path.join(target_files_dir, partition.upper()),
+        os.path.join(vendor_target_files_dir, partition.upper()))
+
+    # Delete then rebuild the partition.
+    os.remove(os.path.join(vendor_target_files_dir, 'IMAGES', partition_img))
+    rebuild_partition_command = [
+        os.path.join(vendor_otatools_dir, 'bin', 'add_img_to_target_files'),
+        '--verbose',
+        '--add_missing',
+        vendor_target_files_dir,
+    ]
+    logger.info('Recompiling %s: %s', partition_img,
+                ' '.join(rebuild_partition_command))
+    common.RunAndCheckOutput(rebuild_partition_command, verbose=True)
+
+    # Move the newly-created image to the merged target files dir.
+    shutil.move(
+        os.path.join(vendor_target_files_dir, 'IMAGES', partition_img),
+        os.path.join(target_files_dir, 'IMAGES', partition_img))
+
+
 def generate_super_empty_image(target_dir, output_super_empty):
   """Generates super_empty image from target package.
 
@@ -1049,7 +1145,8 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
                        framework_misc_info_keys, vendor_target_files,
                        vendor_item_list, output_target_files, output_dir,
                        output_item_list, output_ota, output_img,
-                       output_super_empty, rebuild_recovery):
+                       output_super_empty, rebuild_recovery, vendor_otatools,
+                       rebuild_sepolicy):
   """Merges two target files packages together.
 
   This function takes framework and vendor target files packages as input,
@@ -1085,6 +1182,9 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
       merged target files package and saves it at this path.
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
       devices and write it to the system image.
+    vendor_otatools: Path to an otatools zip used for recompiling vendor images.
+    rebuild_sepolicy: If true, rebuild odm.img (if target uses ODM) or
+      vendor.img using a merged precompiled_sepolicy file.
   """
 
   logger.info('starting: merge framework %s and vendor %s into output %s',
@@ -1137,14 +1237,14 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
       partition_map=filtered_partitions)
 
   # Check that the split sepolicy from the multiple builds can compile.
-  split_sepolicy_cmd = compile_split_sepolicy(
-      product_out=output_target_files_temp_dir,
-      partition_map=filtered_partitions,
-      output_policy=os.path.join(output_target_files_temp_dir,
-                                 'META/combined.policy'))
+  split_sepolicy_cmd = compile_split_sepolicy(output_target_files_temp_dir,
+                                              filtered_partitions)
   logger.info('Compiling split sepolicy: %s', ' '.join(split_sepolicy_cmd))
   common.RunAndCheckOutput(split_sepolicy_cmd)
-  # TODO(b/178864050): Run tests on the combined.policy file.
+  # Include the compiled policy in an image if requested.
+  if rebuild_sepolicy:
+    rebuild_image_with_sepolicy(output_target_files_temp_dir, vendor_otatools,
+                                vendor_target_files)
 
   # Run validation checks on the pre-installed APEX files.
   validate_merged_apex_info(output_target_files_temp_dir, partition_map.keys())
@@ -1261,6 +1361,10 @@ def main():
       OPTIONS.rebuild_recovery = True
     elif o == '--allow-duplicate-apkapex-keys':
       OPTIONS.allow_duplicate_apkapex_keys = True
+    elif o == '--vendor-otatools':
+      OPTIONS.vendor_otatools = a
+    elif o == '--rebuild-sepolicy':
+      OPTIONS.rebuild_sepolicy = True
     elif o == '--keep-tmp':
       OPTIONS.keep_tmp = True
     else:
@@ -1289,6 +1393,8 @@ def main():
           'output-super-empty=',
           'rebuild_recovery',
           'allow-duplicate-apkapex-keys',
+          'vendor-otatools=',
+          'rebuild-sepolicy',
           'keep-tmp',
       ],
       extra_option_handler=option_handler)
@@ -1342,7 +1448,9 @@ def main():
           output_ota=OPTIONS.output_ota,
           output_img=OPTIONS.output_img,
           output_super_empty=OPTIONS.output_super_empty,
-          rebuild_recovery=OPTIONS.rebuild_recovery), OPTIONS.keep_tmp)
+          rebuild_recovery=OPTIONS.rebuild_recovery,
+          vendor_otatools=OPTIONS.vendor_otatools,
+          rebuild_sepolicy=OPTIONS.rebuild_sepolicy), OPTIONS.keep_tmp)
 
 
 if __name__ == '__main__':
