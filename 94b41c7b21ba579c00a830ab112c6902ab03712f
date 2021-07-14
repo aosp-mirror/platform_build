@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f58401b4_974c751c",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 5392,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-07-14T09:59:22Z",
+      "side": 1,
+      "message": "May or may not. Even under bundled build(system+vendor) postdexpreopting might be necessary in system-only update(with system-only build). It would be okay because it takes very few space, and build time.",
+      "parentUuid": "28e215b6_2f1ed9f9",
+      "range": {
+        "startLine": 5391,
+        "startChar": 0,
+        "endLine": 5392,
+        "endChar": 45
+      },
+      "revId": "94b41c7b21ba579c00a830ab112c6902ab03712f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "98450051_7fc5ff4a",
@@ -47,6 +71,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0e9704d2_e076ca9c",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-07-14T09:59:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98450051_7fc5ff4a",
+      "range": {
+        "startLine": 281,
+        "startChar": 0,
+        "endLine": 281,
+        "endChar": 33
+      },
+      "revId": "94b41c7b21ba579c00a830ab112c6902ab03712f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1dd0d624_e4bfab1a",
@@ -60,6 +108,30 @@
       "writtenOn": "2021-07-08T11:41:28Z",
       "side": 1,
       "message": "Add a comment explaining why dexpreopt.config is needed in this case.",
+      "range": {
+        "startLine": 300,
+        "startChar": 0,
+        "endLine": 300,
+        "endChar": 43
+      },
+      "revId": "94b41c7b21ba579c00a830ab112c6902ab03712f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e8f0028_30c46549",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2021-07-14T09:59:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1dd0d624_e4bfab1a",
       "range": {
         "startLine": 300,
         "startChar": 0,
