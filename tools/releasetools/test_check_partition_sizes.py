@@ -27,12 +27,13 @@ class CheckPartitionSizesTest(test_utils.ReleaseToolsTestCase):
         dynamic_partition_list=system vendor product
         super_partition_groups=group
         super_group_partition_list=system vendor product
-        super_partition_size=200
-        super_super_device_size=200
+        super_partition_size=202
+        super_super_device_size=202
         super_group_group_size=100
         system_image_size=50
         vendor_image_size=20
         product_image_size=20
+        system_other_image_size=10
         """.split("\n"))
 
   def test_ab(self):
@@ -41,8 +42,8 @@ class CheckPartitionSizesTest(test_utils.ReleaseToolsTestCase):
   def test_non_ab(self):
     self.info_dict.update(common.LoadDictionaryFromLines("""
         ab_update=false
-        super_partition_size=100
-        super_super_device_size=100
+        super_partition_size=101
+        super_super_device_size=101
         """.split("\n")))
     CheckPartitionSizes(self.info_dict)
 
@@ -112,8 +113,8 @@ class CheckPartitionSizesTest(test_utils.ReleaseToolsTestCase):
   def test_vab(self):
     self.info_dict.update(common.LoadDictionaryFromLines("""
         virtual_ab=true
-        super_partition_size=100
-        super_super_device_size=100
+        super_partition_size=101
+        super_super_device_size=101
         """.split("\n")))
     CheckPartitionSizes(self.info_dict)
 
@@ -123,6 +124,16 @@ class CheckPartitionSizesTest(test_utils.ReleaseToolsTestCase):
         super_partition_size=100
         super_super_device_size=100
         system_image_size=100
+        """.split("\n")))
+    with self.assertRaises(RuntimeError):
+      CheckPartitionSizes(self.info_dict)
+
+  def test_vab_too_big_with_system_other(self):
+    self.info_dict.update(common.LoadDictionaryFromLines("""
+        virtual_ab=true
+        system_other_image_size=20
+        super_partition_size=101
+        super_super_device_size=101
         """.split("\n")))
     with self.assertRaises(RuntimeError):
       CheckPartitionSizes(self.info_dict)

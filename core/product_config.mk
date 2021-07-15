@@ -146,6 +146,11 @@ load_all_product_makefiles := true
 endif
 endif
 
+ifneq ($(ALLOW_RULES_IN_PRODUCT_CONFIG),)
+_product_config_saved_KATI_ALLOW_RULES := $(.KATI_ALLOW_RULES)
+.KATI_ALLOW_RULES := $(ALLOW_RULES_IN_PRODUCT_CONFIG)
+endif
+
 ifeq ($(load_all_product_makefiles),true)
 # Import all product makefiles.
 $(call import-products, $(all_product_makefiles))
@@ -160,14 +165,22 @@ endif
 $(call import-products, $(current_product_makefile))
 endif  # Import all or just the current product makefile
 
+# Quick check
+$(check-all-products)
+
+ifeq ($(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
 # Import all the products that have made artifact path requirements, so that we can verify
 # the artifacts they produce.
+# These are imported after check-all-products because some of them might not be real products.
 $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(if $(filter-out $(makefile),$(PRODUCTS)),$(eval $(call import-products,$(makefile))))\
 )
+endif
 
-# Sanity check
-$(check-all-products)
+ifneq ($(ALLOW_RULES_IN_PRODUCT_CONFIG),)
+.KATI_ALLOW_RULES := $(_saved_KATI_ALLOW_RULES)
+_product_config_saved_KATI_ALLOW_RULES :=
+endif
 
 ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
 $(dump-products)
@@ -180,28 +193,18 @@ INTERNAL_PRODUCT := $(call resolve-short-product-name, $(TARGET_PRODUCT))
 ifneq ($(current_product_makefile),$(INTERNAL_PRODUCT))
 $(error PRODUCT_NAME inconsistent in $(current_product_makefile) and $(INTERNAL_PRODUCT))
 endif
-current_product_makefile :=
-all_product_makefiles :=
-all_product_configs :=
 
-# Jacoco agent JARS to be built and installed, if any.
-ifeq ($(EMMA_INSTRUMENT),true)
-  ifneq ($(EMMA_INSTRUMENT_STATIC),true)
-    # For instrumented build, if Jacoco is not being included statically
-    # in instrumented packages then include Jacoco classes into the
-    # bootclasspath.
-    $(foreach product,$(PRODUCTS),\
-      $(eval PRODUCTS.$(product).PRODUCT_PACKAGES += jacocoagent)\
-      $(eval PRODUCTS.$(product).PRODUCT_BOOT_JARS += jacocoagent))
-  endif # EMMA_INSTRUMENT_STATIC
-endif # EMMA_INSTRUMENT
 
 ############################################################################
 # Strip and assign the PRODUCT_ variables.
 $(call strip-product-vars)
 
+current_product_makefile :=
+all_product_makefiles :=
+all_product_configs :=
+
 #############################################################################
-# Sanity check and assign default values
+# Quick check and assign default values
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
 
@@ -228,11 +231,41 @@ PRODUCT_AAPT_CONFIG := $(PRODUCT_LOCALES) $(PRODUCT_AAPT_CONFIG)
 PRODUCT_AAPT_CONFIG_SP := $(PRODUCT_AAPT_CONFIG)
 PRODUCT_AAPT_CONFIG := $(subst $(space),$(comma),$(PRODUCT_AAPT_CONFIG))
 
+###########################################################
+## Add 'platform:' prefix to jars not in <apex>:<module> format.
+##
+## This makes sure that a jar corresponds to ConfigureJarList format of <apex> and <module> pairs
+## where needed.
+##
+## $(1): a list of jars either in <module> or <apex>:<module> format
+###########################################################
+
+define qualify-platform-jars
+  $(foreach jar,$(1),$(if $(findstring :,$(jar)),,platform:)$(jar))
+endef
+
 # Extra boot jars must be appended at the end after common boot jars.
 PRODUCT_BOOT_JARS += $(PRODUCT_BOOT_JARS_EXTRA)
 
+PRODUCT_BOOT_JARS := $(call qualify-platform-jars,$(PRODUCT_BOOT_JARS))
+
+# Replaces references to overridden boot jar modules in a boot jars variable.
+# $(1): Name of a boot jars variable with <apex>:<jar> pairs.
+define replace-boot-jar-module-overrides
+  $(foreach pair,$(PRODUCT_BOOT_JAR_MODULE_OVERRIDES),\
+    $(eval _rbjmo_from := $(call word-colon,1,$(pair)))\
+    $(eval _rbjmo_to := $(call word-colon,2,$(pair)))\
+    $(eval $(1) := $(patsubst $(_rbjmo_from):%,$(_rbjmo_to):%,$($(1)))))
+endef
+
+$(call replace-boot-jar-module-overrides,PRODUCT_BOOT_JARS)
+$(call replace-boot-jar-module-overrides,PRODUCT_UPDATABLE_BOOT_JARS)
+$(call replace-boot-jar-module-overrides,ART_APEX_JARS)
+
 # The extra system server jars must be appended at the end after common system server jars.
 PRODUCT_SYSTEM_SERVER_JARS += $(PRODUCT_SYSTEM_SERVER_JARS_EXTRA)
+
+PRODUCT_SYSTEM_SERVER_JARS := $(call qualify-platform-jars,$(PRODUCT_SYSTEM_SERVER_JARS))
 
 ifndef PRODUCT_SYSTEM_NAME
   PRODUCT_SYSTEM_NAME := $(PRODUCT_NAME)
@@ -271,11 +304,9 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
 endif
 
 $(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS), \
-  $(if $(findstring $(call word-colon,2,$(pair)),$(PRODUCT_BOOT_JARS)), \
-    $(error A jar in PRODUCT_UPDATABLE_BOOT_JARS must not be in PRODUCT_BOOT_JARS, \
-      but $(call word-colon,2,$(pair)) is) \
-  ) \
-)
+  $(eval jar := $(call word-colon,2,$(pair))) \
+  $(if $(findstring $(jar), $(PRODUCT_BOOT_JARS)), \
+    $(error A jar in PRODUCT_UPDATABLE_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(jar) is)))
 
 ENFORCE_SYSTEM_CERTIFICATE := $(PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT)
 ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST := $(PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST)
@@ -341,6 +372,14 @@ ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),)
   endif
 endif
 
+ifeq ($(PRODUCT_SET_DEBUGFS_RESTRICTIONS),)
+  ifdef PRODUCT_SHIPPING_API_LEVEL
+    ifeq (true,$(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),31))
+      PRODUCT_SET_DEBUGFS_RESTRICTIONS := true
+    endif
+  endif
+endif
+
 ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq (,$(call math_gt_or_eq,29,$(PRODUCT_SHIPPING_API_LEVEL)))
     PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29)
@@ -353,9 +392,25 @@ ifdef OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS
   PRODUCT_EXTRA_VNDK_VERSIONS := $(OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS)
 endif
 
+###########################################
+# APEXes are by default not compressed
+#
+# APEX compression can be forcibly enabled (resp. disabled) by
+# setting OVERRIDE_PRODUCT_COMPRESSED_APEX to true (resp. false), e.g. by
+# setting the OVERRIDE_PRODUCT_COMPRESSED_APEX environment variable.
+ifdef OVERRIDE_PRODUCT_COMPRESSED_APEX
+  PRODUCT_COMPRESSED_APEX := $(OVERRIDE_PRODUCT_COMPRESSED_APEX)
+endif
+
 $(KATI_obsolete_var OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS \
     ,Use PRODUCT_EXTRA_VNDK_VERSIONS instead)
 
+# If build command defines OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE,
+# override PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE with it unless it is
+# defined as `false`. If the value is `false` clear
+# PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
+# OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE can be used for
+# testing only.
 ifdef OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
   ifeq (false,$(OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE))
     PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE :=
@@ -365,10 +420,39 @@ ifdef OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
   # No shipping level defined
 else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
+  # Enforce product interface if PRODUCT_SHIPPING_API_LEVEL is greater than 29.
   PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
 endif
 
 $(KATI_obsolete_var OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE,Use PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE instead)
+
+# If build command defines PRODUCT_USE_PRODUCT_VNDK_OVERRIDE as `false`,
+# PRODUCT_PRODUCT_VNDK_VERSION will not be defined automatically.
+# PRODUCT_USE_PRODUCT_VNDK_OVERRIDE can be used for testing only.
+PRODUCT_USE_PRODUCT_VNDK := false
+ifneq ($(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE),)
+  PRODUCT_USE_PRODUCT_VNDK := $(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE)
+else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+  # No shipping level defined
+else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
+  # Enforce product interface for VNDK if PRODUCT_SHIPPING_API_LEVEL is greater
+  # than 29.
+  PRODUCT_USE_PRODUCT_VNDK := true
+endif
+
+ifeq ($(PRODUCT_USE_PRODUCT_VNDK),true)
+  ifndef PRODUCT_PRODUCT_VNDK_VERSION
+    PRODUCT_PRODUCT_VNDK_VERSION := current
+  endif
+endif
+
+$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
+$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK_OVERRIDE,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
+
+ifdef PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
+    $(error PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS is deprecated, consider using RRO for \
+      $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS))
+endif
 
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
@@ -397,6 +481,8 @@ $(foreach image, \
     PRODUCT \
     SYSTEM_EXT \
     ODM \
+    VENDOR_DLKM \
+    ODM_DLKM \
     CACHE \
     RAMDISK \
     USERDATA \

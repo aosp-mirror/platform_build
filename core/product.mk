@@ -120,7 +120,7 @@ _product_single_value_vars += PRODUCT_MODEL
 # The resoure configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
 _product_list_vars += PRODUCT_AAPT_CONFIG
-_product_list_vars += PRODUCT_AAPT_PREF_CONFIG
+_product_single_value_vars += PRODUCT_AAPT_PREF_CONFIG
 _product_list_vars += PRODUCT_AAPT_PREBUILT_DPI
 _product_list_vars += PRODUCT_HOST_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES
@@ -145,25 +145,27 @@ _product_single_value_vars += \
     PRODUCT_SYSTEM_BRAND \
     PRODUCT_SYSTEM_MANUFACTURER \
 
-# A list of property assignments, like "key = value", with zero or more
-# whitespace characters on either side of the '='.
-_product_list_vars += PRODUCT_PROPERTY_OVERRIDES
+# PRODUCT_<PARTITION>_PROPERTIES are lists of property assignments
+# that go to <partition>/build.prop. Each property assignment is
+# "key = value" with zero or more whitespace characters on either
+# side of the '='.
+_product_list_vars += \
+    PRODUCT_SYSTEM_PROPERTIES \
+    PRODUCT_SYSTEM_EXT_PROPERTIES \
+    PRODUCT_VENDOR_PROPERTIES \
+    PRODUCT_ODM_PROPERTIES \
+    PRODUCT_PRODUCT_PROPERTIES
 
-# A list of property assignments, like "key = value", with zero or more
-# whitespace characters on either side of the '='.
-# used for adding properties to default.prop
+# TODO(b/117892318) deprecate these:
+# ... in favor or PRODUCT_SYSTEM_PROPERTIES
+_product_list_vars += PRODUCT_SYSTEM_DEFAULT_PROPERTIES
+# ... in favor of PRODUCT_VENDOR_PROPERTIES
+_product_list_vars += PRODUCT_PROPERTY_OVERRIDES
 _product_list_vars += PRODUCT_DEFAULT_PROPERTY_OVERRIDES
 
-# A list of property assignments, like "key = value", with zero or more
-# whitespace characters on either side of the '='.
-# used for adding properties to build.prop of product partition
-_product_list_vars += PRODUCT_PRODUCT_PROPERTIES
-
-# A list of property assignments, like "key = value", with zero or more
-# whitespace characters on either side of the '='.
-# used for adding properties to build.prop of system_ext and odm partitions
-_product_list_vars += PRODUCT_SYSTEM_EXT_PROPERTIES
-_product_list_vars += PRODUCT_ODM_PROPERTIES
+# TODO(b/117892318) consider deprecating these too
+_product_list_vars += PRODUCT_SYSTEM_PROPERTY_BLACKLIST
+_product_list_vars += PRODUCT_VENDOR_PROPERTY_BLACKLIST
 
 # The characteristics of the product, which among other things is passed to aapt
 _product_single_value_vars += PRODUCT_CHARACTERISTICS
@@ -193,9 +195,6 @@ _product_list_vars += PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS
 # Package list to apply enforcing RRO.
 _product_list_vars += PRODUCT_ENFORCE_RRO_TARGETS
 
-# Packages to skip auto-generating RROs for when PRODUCT_ENFORCE_RRO_TARGETS is set to *.
-_product_list_vars += PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
-
 _product_list_vars += PRODUCT_SDK_ATREE_FILES
 _product_list_vars += PRODUCT_SDK_ADDON_NAME
 _product_list_vars += PRODUCT_SDK_ADDON_COPY_FILES
@@ -207,7 +206,7 @@ _product_list_vars += PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP
 _product_list_vars += PRODUCT_SOONG_NAMESPACES
 
 _product_list_vars += PRODUCT_DEFAULT_WIFI_CHANNELS
-_product_list_vars += PRODUCT_DEFAULT_DEV_CERTIFICATE
+_product_single_value_vars += PRODUCT_DEFAULT_DEV_CERTIFICATE
 _product_list_vars += PRODUCT_MAINLINE_SEPOLICY_DEV_CERTIFICATES
 _product_list_vars += PRODUCT_RESTRICT_VENDOR_FILES
 
@@ -222,27 +221,23 @@ _product_list_vars += PRODUCT_BOOT_JARS
 # instead of PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
 _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 
-_product_list_vars += PRODUCT_SUPPORTS_BOOT_SIGNER
-_product_list_vars += PRODUCT_SUPPORTS_VBOOT
-_product_list_vars += PRODUCT_SUPPORTS_VERITY
-_product_list_vars += PRODUCT_SUPPORTS_VERITY_FEC
-_product_list_vars += PRODUCT_OEM_PROPERTIES
-
-# A list of property assignments, like "key = value", with zero or more
-# whitespace characters on either side of the '='.
-# used for adding properties to default.prop of system partition
-_product_list_vars += PRODUCT_SYSTEM_DEFAULT_PROPERTIES
-
-_product_list_vars += PRODUCT_SYSTEM_PROPERTY_BLACKLIST
-_product_list_vars += PRODUCT_VENDOR_PROPERTY_BLACKLIST
+_product_single_value_vars += PRODUCT_SUPPORTS_BOOT_SIGNER
+_product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
+_product_single_value_vars += PRODUCT_SUPPORTS_VERITY
+_product_single_value_vars += PRODUCT_SUPPORTS_VERITY_FEC
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
 # List of system_server jars delivered via apex. Format = <apex name>:<jar name>.
 _product_list_vars += PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS
+# If true, then suboptimal order of system server jars does not cause an error.
+_product_single_value_vars += PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS
 
 # Additional system server jars to be appended at the end of the common list.
 # This is necessary to avoid jars reordering due to makefile inheritance order.
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS_EXTRA
+
+# Set to true to disable <uses-library> checks for a product.
+_product_list_vars += PRODUCT_BROKEN_VERIFY_USES_LIBRARIES
 
 # All of the apps that we force preopt, this overrides WITH_DEXPREOPT.
 _product_list_vars += PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK
@@ -256,18 +251,20 @@ _product_single_value_vars += PRODUCT_VENDOR_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_PRODUCT_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_SYSTEM_EXT_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_ODM_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_VENDOR_DLKM_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_ODM_DLKM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_SYSTEM_SERVER_DEBUG_INFO
 _product_single_value_vars += PRODUCT_OTHER_JAVA_DEBUG_INFO
 
 # Per-module dex-preopt configs.
 _product_list_vars += PRODUCT_DEX_PREOPT_MODULE_CONFIGS
-_product_list_vars += PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER
+_product_single_value_vars += PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER
 _product_list_vars += PRODUCT_DEX_PREOPT_DEFAULT_FLAGS
-_product_list_vars += PRODUCT_DEX_PREOPT_BOOT_FLAGS
-_product_list_vars += PRODUCT_DEX_PREOPT_PROFILE_DIR
-_product_list_vars += PRODUCT_DEX_PREOPT_GENERATE_DM_FILES
-_product_list_vars += PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING
-_product_list_vars += PRODUCT_DEX_PREOPT_RESOLVE_STARTUP_STRINGS
+_product_single_value_vars += PRODUCT_DEX_PREOPT_BOOT_FLAGS
+_product_single_value_vars += PRODUCT_DEX_PREOPT_PROFILE_DIR
+_product_single_value_vars += PRODUCT_DEX_PREOPT_GENERATE_DM_FILES
+_product_single_value_vars += PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING
+_product_single_value_vars += PRODUCT_DEX_PREOPT_RESOLVE_STARTUP_STRINGS
 
 # Boot image options.
 _product_single_value_vars += \
@@ -275,7 +272,7 @@ _product_single_value_vars += \
     PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
     PRODUCT_USES_DEFAULT_ART_CONFIG \
 
-_product_list_vars += PRODUCT_SYSTEM_SERVER_COMPILER_FILTER
+_product_single_value_vars += PRODUCT_SYSTEM_SERVER_COMPILER_FILTER
 # Per-module sanitizer configs
 _product_list_vars += PRODUCT_SANITIZER_MODULE_CONFIGS
 _product_single_value_vars += PRODUCT_SYSTEM_BASE_FS_PATH
@@ -283,6 +280,8 @@ _product_single_value_vars += PRODUCT_VENDOR_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_PRODUCT_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_SYSTEM_EXT_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_ODM_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_VENDOR_DLKM_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_ODM_DLKM_BASE_FS_PATH
 
 # The first API level this product shipped with
 _product_single_value_vars += PRODUCT_SHIPPING_API_LEVEL
@@ -316,18 +315,15 @@ _product_list_vars += PRODUCT_CFI_EXCLUDE_PATHS
 # Whether the Scudo hardened allocator is disabled platform-wide
 _product_single_value_vars += PRODUCT_DISABLE_SCUDO
 
-# A flag to override PRODUCT_COMPATIBLE_PROPERTY
-_product_single_value_vars += PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE
-
 # List of extra VNDK versions to be included
 _product_list_vars += PRODUCT_EXTRA_VNDK_VERSIONS
 
+# Whether APEX should be compressed or not
+_product_single_value_vars += PRODUCT_COMPRESSED_APEX
+
 # VNDK version of product partition. It can be 'current' if the product
 # partitions uses PLATFORM_VNDK_VERSION.
-_product_single_value_var += PRODUCT_PRODUCT_VNDK_VERSION
-
-# Whether the list of allowed of actionable compatible properties should be disabled or not
-_product_single_value_vars += PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE
+_product_single_value_vars += PRODUCT_PRODUCT_VNDK_VERSION
 
 _product_single_value_vars += PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS
 _product_single_value_vars += PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT
@@ -344,6 +340,9 @@ _product_list_vars += PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
 # is launched with dynamic partitions.
 # This flag implies PRODUCT_USE_DYNAMIC_PARTITIONS.
 _product_single_value_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
+
+# When this is true, various build time as well as runtime debugfs restrictions are enabled.
+_product_single_value_vars += PRODUCT_SET_DEBUGFS_RESTRICTIONS
 
 # Other dynamic partition feature flags.PRODUCT_USE_DYNAMIC_PARTITION_SIZE and
 # PRODUCT_BUILD_SUPER_PARTITION default to the value of PRODUCT_USE_DYNAMIC_PARTITIONS.
@@ -367,6 +366,11 @@ _product_list_vars += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
 
+# A list of <overridden-apex>:<override-apex> pairs that specifies APEX module
+# overrides to be applied to the APEX names in the boot jar variables
+# (PRODUCT_BOOT_JARS, PRODUCT_UPDATABLE_BOOT_JARS etc).
+_product_list_vars += PRODUCT_BOOT_JAR_MODULE_OVERRIDES
+
 # Controls for whether different partitions are built for the current product.
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_OTHER_IMAGE
@@ -374,21 +378,25 @@ _product_single_value_vars += PRODUCT_BUILD_VENDOR_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_PRODUCT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_EXT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_ODM_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_VENDOR_DLKM_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_ODM_DLKM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_CACHE_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_USERDATA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RECOVERY_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_SUPER_EMPTY_IMAGE
 
 # List of boot jars delivered via apex
 _product_list_vars += PRODUCT_UPDATABLE_BOOT_JARS
 
-# Whether the product would like to check prebuilt ELF files.
-_product_single_value_vars += PRODUCT_CHECK_ELF_FILES
-
 # If set, device uses virtual A/B.
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA
+
+# If set, device uses virtual A/B Compression.
+_product_single_value_vars += PRODUCT_VIRTUAL_AB_COMPRESSION
 
 # If set, device retrofits virtual A/B.
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA_RETROFIT
@@ -402,6 +410,20 @@ _product_single_value_vars += PRODUCT_OTA_FORCE_NON_AB_PACKAGE
 
 # If set, Java module in product partition cannot use hidden APIs.
 _product_single_value_vars += PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
+
+# If set, only java_sdk_library can be used at inter-partition dependency.
+# Note: Build error if BOARD_VNDK_VERSION is not set while
+#       PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is true, because
+#       PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY has no meaning if
+#       BOARD_VNDK_VERSION is not set.
+# Note: When PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE is not set, there are
+#       no restrictions at dependency between system and product partition.
+_product_single_value_vars += PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY
+
+# Allowlist for PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY option.
+# Listed modules are allowed at inter-partition dependency even if it isn't
+# a java_sdk_library module.
+_product_list_vars += PRODUCT_INTER_PARTITION_JAVA_LIBRARY_ALLOWLIST
 
 _product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
 
@@ -444,7 +466,9 @@ define inherit-product
   $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
   $(eval inherit_var := PRODUCTS.$(current_mk).INHERITS_FROM) \
   $(eval $(inherit_var) := $(sort $($(inherit_var)) $(np))) \
-  $(eval PARENT_PRODUCT_FILES := $(sort $(PARENT_PRODUCT_FILES) $(current_mk)))
+  $(eval PARENT_PRODUCT_FILES := $(sort $(PARENT_PRODUCT_FILES) $(current_mk))) \
+  $(call dump-inherit,$(strip $(word 1,$(_include_stack))),$(1)) \
+  $(call dump-config-vals,$(current_mk),inherit)
 endef
 
 # Specifies a number of path prefixes, relative to PRODUCT_OUT, where the
@@ -456,6 +480,13 @@ define require-artifacts-in-path
   $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_ALLOWED_LIST := $(strip $(2))) \
   $(eval ARTIFACT_PATH_REQUIREMENT_PRODUCTS := \
     $(sort $(ARTIFACT_PATH_REQUIREMENT_PRODUCTS) $(current_mk)))
+endef
+
+# Like require-artifacts-in-path, but does not require all allow-list entries to
+# have an effect.
+define require-artifacts-in-path-relaxed
+  $(require-artifacts-in-path) \
+  $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_REQUIREMENT_IS_RELAXED := true)
 endef
 
 # Makes including non-existent modules in PRODUCT_PACKAGES an error.
@@ -584,6 +615,8 @@ get-product-var = $(PRODUCTS.$(strip $(1)).$(2))
 # to a shorthand that is more convenient to read from elsewhere.
 #
 define strip-product-vars
+$(call dump-phase-start,PRODUCT-EXPAND,,$(_product_var_list),$(_product_single_value_vars), \
+		build/make/core/product.mk) \
 $(foreach v,\
   $(_product_var_list) \
     PRODUCT_ENFORCE_PACKAGES_EXIST \
@@ -591,7 +624,8 @@ $(foreach v,\
   $(eval $(v) := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).$(v)))) \
   $(eval get-product-var = $$(if $$(filter $$(1),$$(INTERNAL_PRODUCT)),$$($$(2)),$$(PRODUCTS.$$(strip $$(1)).$$(2)))) \
   $(KATI_obsolete_var PRODUCTS.$(INTERNAL_PRODUCT).$(v),Use $(v) instead) \
-)
+) \
+$(call dump-phase-end,build/make/core/product.mk)
 endef
 
 define add-to-product-copy-files-if-exists
