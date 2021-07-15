@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ed0ef01_d63f80a2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1018026
+      },
+      "writtenOn": "2021-07-15T02:49:36Z",
+      "side": 1,
+      "message": "+Billy - as he may have DrNo powers for sc-dev, where we would need this in sc-d1-release",
+      "revId": "c3bf3d00a3077b66aa178f00fb789d34a042c9e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
