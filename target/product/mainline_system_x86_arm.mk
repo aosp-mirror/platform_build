@@ -14,27 +14,10 @@
 # limitations under the License.
 #
 
-#
-# All components inherited here go to system image
-#
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
-$(call enforce-product-packages-exist,)
+# Do not modify this file. It's just alias of generic_system_x86_arm.mk
+# Will be removed when renaming from mainline_system to generic_system
+# complete
 
-# Enable mainline checking
-PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
-
-PRODUCT_BUILD_CACHE_IMAGE := false
-PRODUCT_BUILD_ODM_IMAGE := false
-PRODUCT_BUILD_PRODUCT_IMAGE  := false
-PRODUCT_BUILD_RAMDISK_IMAGE := false
-PRODUCT_BUILD_SYSTEM_IMAGE := true
-PRODUCT_BUILD_SYSTEM_EXT_IMAGE := false
-PRODUCT_BUILD_SYSTEM_OTHER_IMAGE := false
-PRODUCT_BUILD_USERDATA_IMAGE := false
-PRODUCT_BUILD_VENDOR_IMAGE := false
-
-PRODUCT_SHIPPING_API_LEVEL := 29
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_system_x86_arm.mk)
 
 PRODUCT_NAME := mainline_system_x86_arm
-PRODUCT_DEVICE := mainline_x86_arm
-PRODUCT_BRAND := generic

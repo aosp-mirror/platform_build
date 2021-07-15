@@ -45,7 +45,7 @@ my_target_sdk_version := $(call module-target-sdk-version)
 my_min_sdk_version := $(call module-min-sdk-version)
 
 ifdef TARGET_BUILD_APPS
-  ifndef TARGET_BUILD_APPS_USE_PREBUILT_SDK
+  ifndef TARGET_BUILD_USE_PREBUILT_SDKS
     ifeq ($(my_target_sdk_version),$(PLATFORM_VERSION_CODENAME))
       ifdef UNBUNDLED_BUILD_TARGET_SDK_WITH_API_FINGERPRINT
         my_target_sdk_version := $(my_target_sdk_version).$$(cat $(API_FINGERPRINT))

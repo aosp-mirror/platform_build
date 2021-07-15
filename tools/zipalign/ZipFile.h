@@ -102,14 +102,14 @@ public:
     }
 
     /*
-     * Add an entry by copying it from another zip file.  If "padding" is
-     * nonzero, the specified number of bytes will be added to the "extra"
-     * field in the header.
+     * Add an entry by copying it from another zip file.  If "alignment" is
+     * nonzero, an appropriate number of bytes will be added to the "extra"
+     * field in the header so the entry payload is aligned.
      *
      * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
      */
     status_t add(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
-        int padding, ZipEntry** ppEntry);
+        int alignment, ZipEntry** ppEntry);
 
     /*
      * Add an entry by copying it from another zip file, recompressing with
@@ -162,6 +162,8 @@ private:
     /* these are private and not defined */
     ZipFile(const ZipFile& src);
     ZipFile& operator=(const ZipFile& src);
+
+    status_t alignEntry(android::ZipEntry* pEntry, uint32_t alignTo);
 
     class EndOfCentralDir {
     public:
