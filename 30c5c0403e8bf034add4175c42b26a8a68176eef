@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e37efefb_3b96c4ab",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4214,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-07-15T19:12:40Z",
+      "side": 1,
+      "message": "OTA package usually isn\u0027t built",
+      "range": {
+        "startLine": 4214,
+        "startChar": 42,
+        "endLine": 4214,
+        "endChar": 75
+      },
+      "revId": "30c5c0403e8bf034add4175c42b26a8a68176eef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b1f1463_3f4b6022",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4215,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-07-15T19:12:40Z",
+      "side": 1,
+      "message": "Remove? PRODUCT_BUILD_OTA_PACKAGE no longer exists in this patch set.",
+      "range": {
+        "startLine": 4215,
+        "startChar": 6,
+        "endLine": 4215,
+        "endChar": 52
+      },
+      "revId": "30c5c0403e8bf034add4175c42b26a8a68176eef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ffc4212_22c3f740",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4217,
+      "author": {
+        "id": 1224979
+      },
+      "writtenOn": "2021-07-15T19:12:40Z",
+      "side": 1,
+      "message": "to force OTA package generation.",
+      "range": {
+        "startLine": 4216,
+        "startChar": 59,
+        "endLine": 4217,
+        "endChar": 30
+      },
+      "revId": "30c5c0403e8bf034add4175c42b26a8a68176eef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
