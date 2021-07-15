@@ -15,9 +15,11 @@
 
 """Warning patterns from other tools."""
 
+# No need of doc strings for trivial small functions.
+# pylint:disable=missing-function-docstring
+
 # pylint:disable=relative-beyond-top-level
 from .cpp_warn_patterns import compile_patterns
-# pylint:disable=g-importing-member
 from .severity import Severity
 
 
@@ -42,16 +44,23 @@ def asm(description, pattern_list):
   return warn('asm', Severity.MEDIUM, description, pattern_list)
 
 
-def kotlin(description, pattern_list):
-  return warn('Kotlin', Severity.MEDIUM, description, pattern_list)
+def kotlin(description, pattern):
+  return warn('Kotlin', Severity.MEDIUM, description,
+              [r'.*\.kt:.*: warning: ' + pattern])
 
 
 def yacc(description, pattern_list):
   return warn('yacc', Severity.MEDIUM, description, pattern_list)
 
 
+def rust(severity, description, pattern):
+  return warn('Rust', severity, description,
+              [r'.*\.rs:.*: warning: ' + pattern])
+
+
 warn_patterns = [
-    # pylint:disable=line-too-long,g-inconsistent-quotes
+    # pylint does not recognize g-inconsistent-quotes
+    # pylint:disable=line-too-long,bad-option-value,g-inconsistent-quotes
     # aapt warnings
     aapt('No comment for public symbol',
          [r".*: warning: No comment for public symbol .+"]),
@@ -109,44 +118,56 @@ warn_patterns = [
      'description': 'Proto: Import not used',
      'patterns': [r".*: warning: Import .*/.*\.proto but not used.$"]},
     # Kotlin warnings
-    kotlin('never used parameter or variable',
-           [r".*\.kt:.*: warning: (parameter|variable) '.*' is never used$",
-            r".*\.kt:.*: warning: (parameter|variable) '.*' is never used, could be renamed to _$"]),
-    kotlin('initializer is redundant',
-           [r".*\.kt:.*: warning: .* initializer is redundant$"]),
+    kotlin('never used parameter or variable', '.+ \'.*\' is never used'),
+    kotlin('multiple labels', '.+ more than one label .+ in this scope'),
+    kotlin('type mismatch', 'type mismatch: '),
+    kotlin('is always true', '.+ is always \'true\''),
+    kotlin('no effect', '.+ annotation has no effect for '),
+    kotlin('no cast needed', 'no cast needed'),
+    kotlin('accessor not generated', 'an accessor will not be generated '),
+    kotlin('initializer is redundant', '.* initializer is redundant$'),
     kotlin('elvis operator always returns ...',
-           [r".*\.kt:.*: warning: elvis operator \(\?:\) always returns .+"]),
-    kotlin('shadowed name',
-           [r".*\.kt:.*: warning: name shadowed: .+"]),
-    kotlin('unchecked cast',
-           [r".*\.kt:.*: warning: unchecked cast: .* to .*$"]),
+           'elvis operator (?:) always returns .+'),
+    kotlin('shadowed name', 'name shadowed: .+'),
+    kotlin('unchecked cast', 'unchecked cast: .* to .*$'),
+    kotlin('unreachable code', 'unreachable code'),
+    kotlin('unnecessary assertion', 'unnecessary .+ assertion .+'),
     kotlin('unnecessary safe call on a non-null receiver',
-           [r".*\.kt:.*: warning: unnecessary safe call on a non-null receiver"]),
+           'unnecessary safe call on a non-null receiver'),
     kotlin('Deprecated in Java',
-           [r".*\.kt:.*: warning: '.*' is deprecated. Deprecated in Java"]),
+           '\'.*\' is deprecated. Deprecated in Java'),
     kotlin('Replacing Handler for Executor',
-           [r".*\.kt:.*: warning: .+ Replacing Handler for Executor in "]),
+           '.+ Replacing Handler for Executor in '),
     kotlin('library has Kotlin runtime',
-           [r".*: warning: library has Kotlin runtime bundled into it",
-            r".*: warning: some JAR files .* have the Kotlin Runtime library"]),
+           '.+ has Kotlin runtime (bundled|library)'),
+    warn('Kotlin', Severity.MEDIUM, 'bundled Kotlin runtime',
+         ['.*warning: .+ (has|have the) Kotlin (runtime|Runtime library) bundled']),
+    kotlin('other warnings', '.+'),  # catch all other Kotlin warnings
     # Yacc warnings
     yacc('deprecate directive',
          [r".*\.yy?:.*: warning: deprecated directive: "]),
+    yacc('reduce/reduce conflicts',
+         [r".*\.yy?: warning: .+ reduce/reduce conflicts "]),
     yacc('shift/reduce conflicts',
          [r".*\.yy?: warning: .+ shift/reduce conflicts "]),
     {'category': 'yacc', 'severity': Severity.SKIP,
      'description': 'yacc: fix-its can be applied',
      'patterns': [r".*\.yy?: warning: fix-its can be applied."]},
     # Rust warnings
-    {'category': 'Rust', 'severity': Severity.HIGH,
-     'description': 'Rust: Does not derive Copy',
-     'patterns': [r".*: warning: .+ does not derive Copy"]},
-    {'category': 'Rust', 'severity': Severity.MEDIUM,
-     'description': 'Rust: Deprecated range pattern',
-     'patterns': [r".*: warning: .+ range patterns are deprecated"]},
-    {'category': 'Rust', 'severity': Severity.MEDIUM,
-     'description': 'Rust: Deprecated missing explicit \'dyn\'',
-     'patterns': [r".*: warning: .+ without an explicit `dyn` are deprecated"]},
+    rust(Severity.HIGH, 'Does not derive Copy', '.+ does not derive Copy'),
+    rust(Severity.MEDIUM, '... are deprecated',
+         ('(.+ are deprecated$|' +
+          'use of deprecated item .* (use .* instead|is now preferred))')),
+    rust(Severity.MEDIUM, 'never used', '.* is never used:'),
+    rust(Severity.MEDIUM, 'unused import', 'unused import: '),
+    rust(Severity.MEDIUM, 'unnecessary attribute',
+         '.+ no longer requires an attribute'),
+    rust(Severity.MEDIUM, 'unnecessary parentheses',
+         'unnecessary parentheses around'),
+    # Catch all RenderScript warnings
+    {'category': 'RenderScript', 'severity': Severity.LOW,
+     'description': 'RenderScript warnings',
+     'patterns': [r'.*\.rscript:.*: warning: ']},
     # Broken/partial warning messages will be skipped.
     {'category': 'Misc', 'severity': Severity.SKIP,
      'description': 'skip, ,',

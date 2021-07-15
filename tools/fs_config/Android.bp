@@ -12,6 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+package {
+    // See: http://go/android-license-faq
+    // A large-scale-change added 'default_applicable_licenses' to import
+    // all of the 'license_kinds' from "build_make_license"
+    // to get the below license kinds:
+    //   legacy_restricted
+    default_applicable_licenses: ["build_make_license"],
+}
+
 bootstrap_go_package {
     name: "soong-fs_config",
     pkgPath: "android/soong/fs_config",

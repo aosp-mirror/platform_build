@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 QEMU_USE_SYSTEM_EXT_PARTITIONS := true
-
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # This is a build configuration for a full-featured build of the
@@ -22,11 +21,16 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
 
+# Enable mainline checking for exact this product name
+ifeq (sdk_phone_arm64,$(TARGET_PRODUCT))
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+endif
+
 #
 # All components inherited here go to system image
 #
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_system.mk)
 
 #
 # All components inherited here go to system_ext image
@@ -59,5 +63,9 @@ PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_arm64
 PRODUCT_DEVICE := emulator_arm64
 PRODUCT_MODEL := Android SDK built for arm64
+# Disable <uses-library> checks for SDK product. It lacks some libraries (e.g.
+# RadioConfigLib), which makes it impossible to translate their module names to
+# library name, so the check fails.
+PRODUCT_BROKEN_VERIFY_USES_LIBRARIES := true
 
 

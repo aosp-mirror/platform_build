@@ -4,17 +4,6 @@
 # LOCAL_MODULE_CLASS
 # all_res_assets
 
-ifeq ($(TARGET_BUILD_PDK),true)
-ifeq ($(TARGET_BUILD_PDK_JAVA_PLATFORM),)
-# LOCAL_SDK not defined or set to current
-ifeq ($(filter-out current,$(LOCAL_SDK_VERSION)),)
-ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-LOCAL_SDK_VERSION := $(PDK_BUILD_SDK_VERSION)
-endif #!LOCAL_NO_STANDARD_LIBRARIES
-endif
-endif # !PDK_JAVA
-endif #PDK
-
 LOCAL_NO_STANDARD_LIBRARIES:=$(strip $(LOCAL_NO_STANDARD_LIBRARIES))
 LOCAL_SDK_VERSION:=$(strip $(LOCAL_SDK_VERSION))
 
@@ -106,8 +95,8 @@ ifneq ($(strip $(aidl_sources)),)
 
 aidl_preprocess_import :=
 ifdef LOCAL_SDK_VERSION
-ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS_USE_PREBUILT_SDK)),)
-  # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
+ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_USE_PREBUILT_SDKS)),)
+  # LOCAL_SDK_VERSION is current and no TARGET_BUILD_USE_PREBUILT_SDKS
   aidl_preprocess_import := $(FRAMEWORK_AIDL)
 else
   aidl_preprocess_import := $(call resolve-prebuilt-sdk-aidl-path,$(LOCAL_SDK_VERSION))
@@ -187,7 +176,9 @@ endif
 
 #######################################
 # defines built_odex along with rule to install odex
+my_manifest_or_apk := $(full_android_manifest)
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+my_manifest_or_apk :=
 #######################################
 
 # Make sure there's something to build.
@@ -207,7 +198,7 @@ ifdef full_classes_jar
 # allowing it to use the classes.jar as the "stubs" that would be use to link
 # against, for the cases where someone needs the jar to link against.
 $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_stubs_jar)))
-ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
+ALL_MODULES.$(my_register_name).STUBS := $(full_classes_stubs_jar)
 
 # The layers file allows you to enforce a layering between java packages.
 # Run build/make/tools/java-layers.py for more details.
@@ -264,8 +255,7 @@ $(full_classes_turbine_jar): \
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_header_jarjar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 $(full_classes_header_jarjar): $(full_classes_turbine_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
-	@echo Header JarJar: $@
-	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+	$(call transform-jarjar)
 else
 full_classes_header_jarjar := $(full_classes_turbine_jar)
 endif
@@ -274,7 +264,8 @@ $(eval $(call copy-one-file,$(full_classes_header_jarjar),$(full_classes_header_
 
 endif # TURBINE_ENABLED != false
 
-$(full_classes_compiled_jar): .KATI_NINJA_POOL := $(GOMA_POOL)
+# TODO(b/143658984): goma can't handle the --system argument to javac.
+#$(full_classes_compiled_jar): .KATI_NINJA_POOL := $(GOMA_POOL)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
@@ -295,6 +286,7 @@ $(full_classes_compiled_jar): \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
     $(ZIPSYNC) \
+    $(SOONG_ZIP) \
     | $(SOONG_JAVAC_WRAPPER)
 	@echo "Target Java: $@
 	$(call compile-java,$(TARGET_JAVAC),$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))
@@ -343,8 +335,7 @@ endif
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 $(full_classes_jarjar_jar): $(full_classes_processed_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
-	@echo JarJar: $@
-	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+	$(call transform-jarjar)
 else
 full_classes_jarjar_jar := $(full_classes_processed_jar)
 endif
@@ -391,7 +382,7 @@ endif
 else
   # For platform build, we can't just raise to the "current" SDK,
   # that would break apps that use APIs removed from the current SDK.
-  my_proguard_sdk_raise := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
+  my_proguard_sdk_raise := $(call java-lib-header-files,$(LEGACY_CORE_PLATFORM_BOOTCLASSPATH_LIBRARIES) $(FRAMEWORK_LIBRARIES))
 endif
 ifdef BOARD_SYSTEMSDK_VERSIONS
 ifneq (,$(filter true,$(LOCAL_VENDOR_MODULE) $(LOCAL_ODM_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
@@ -479,6 +470,17 @@ endif
 
 ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
   $(built_dex_intermediate): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary) $(proguard_configuration)
+
+  # Make a rule to copy the proguard_dictionary to a packaging directory.
+  $(eval $(call copy-one-file,$(proguard_dictionary),\
+    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary))
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary)
+
+  $(eval $(call copy-one-file,$(full_classes_pre_proguard_jar),\
+    $(call local-packaging-dir,proguard_dictionary)/classes.jar))
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(call local-packaging-dir,proguard_dictionary)/classes.jar)
 endif
 
 endif # LOCAL_PROGUARD_ENABLED defined
@@ -499,9 +501,9 @@ else # !LOCAL_PROGUARD_ENABLED
 	$(transform-classes.jar-to-dex)
 endif
 
-ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)
-  $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)
-endif
+$(foreach pair,$(PRODUCT_BOOT_JARS), \
+  $(if $(filter $(LOCAL_MODULE),$(call word-colon,2,$(pair))), \
+    $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)))
 
 $(built_dex): $(built_dex_intermediate)
 	@echo Copying: $@
