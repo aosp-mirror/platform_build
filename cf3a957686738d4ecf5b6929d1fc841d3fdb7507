@@ -56,6 +56,24 @@
       "message": "Can you explain the purpose of this logic?  Why is an OTA package not normally built if there is no kernel, and why does it need to be built without a kernel in this case?",
       "revId": "cf3a957686738d4ecf5b6929d1fc841d3fdb7507",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dff62d83_ad63c2e9",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4217,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-07-15T01:52:44Z",
+      "side": 1,
+      "message": "Added a comment, PTAL",
+      "parentUuid": "a5c966f2_7d5b5f53",
+      "revId": "cf3a957686738d4ecf5b6929d1fc841d3fdb7507",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
