@@ -70,7 +70,8 @@ java_sources_deps := \
 $(java_source_list_file): $(java_sources_deps)
 	$(write-java-source-list)
 
-$(full_classes_compiled_jar): .KATI_NINJA_POOL := $(GOMA_POOL)
+# TODO(b/143658984): goma can't handle the --system argument to javac.
+#$(full_classes_compiled_jar): .KATI_NINJA_POOL := $(GOMA_POOL)
 $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
@@ -89,6 +90,7 @@ $(full_classes_compiled_jar): \
     $(ZIPTIME) \
     $(JAR_ARGS) \
     $(ZIPSYNC) \
+    $(SOONG_ZIP) \
     | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-package)
 	$(remove-timestamps-from-package)
@@ -111,8 +113,7 @@ $(full_classes_combined_jar): $(full_classes_compiled_jar) \
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 $(full_classes_jarjar_jar): $(full_classes_combined_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
-	@echo JarJar: $@
-	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+	$(call transform-jarjar)
 else
 full_classes_jarjar_jar := $(full_classes_combined_jar)
 endif

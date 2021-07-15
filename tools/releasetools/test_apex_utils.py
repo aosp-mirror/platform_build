@@ -160,7 +160,7 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
 
     self.payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
     apex_file = signer.ProcessApexFile(apk_keys, self.payload_key)
-    package_name_extract_cmd = ['aapt', 'dump', 'badging', apex_file]
+    package_name_extract_cmd = ['aapt2', 'dump', 'badging', apex_file]
     output = common.RunAndCheckOutput(package_name_extract_cmd)
     for line in output.splitlines():
       # Sample output from aapt: "package: name='com.google.android.wifi'
@@ -174,8 +174,8 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_ApexApkSigner_noAssetDir(self):
     no_asset = common.MakeTempFile(suffix='.apex')
-    with zipfile.ZipFile(no_asset, 'w') as output_zip:
-      with zipfile.ZipFile(self.apex_with_apk, 'r') as input_zip:
+    with zipfile.ZipFile(no_asset, 'w', allowZip64=True) as output_zip:
+      with zipfile.ZipFile(self.apex_with_apk, 'r', allowZip64=True) as input_zip:
         name_list = input_zip.namelist()
         for name in name_list:
           if not name.startswith('assets'):

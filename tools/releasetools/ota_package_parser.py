@@ -215,7 +215,7 @@ def main(argv):
   logging.basicConfig(level=logging.INFO, format=logging_format)
 
   try:
-    with zipfile.ZipFile(args.ota_package, 'r') as package:
+    with zipfile.ZipFile(args.ota_package, 'r', allowZip64=True) as package:
       package_parser = OtaPackageParser(package)
       package_parser.Analyze()
   except:
