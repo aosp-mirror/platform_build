@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "49ad968c_81be31e9",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 4214,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-07-15T18:00:29Z",
+      "side": 1,
+      "message": "This is the existing behavior and it is irrelevant to this bug.",
+      "parentUuid": "df06f487_780cc7c9",
+      "range": {
+        "startLine": 4214,
+        "startChar": 38,
+        "endLine": 4214,
+        "endChar": 75
+      },
+      "revId": "85769d9774d03f7a174ae5d689819a7b96c06248",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fdcc0070_54b86711",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-07-15T17:43:45Z",
       "side": 1,
       "message": "Can we detect that this new case is a real device target without having to manually set PRODUCT_BUILD_OTA_PACKAGE?  I.e. detect that this is a a GKI device that has a kernel despite TARGET_NO_KERNEL :\u003d true.\n\nAlternatively, could we not set TARGET_NO_KERNEL :\u003d true for GKI builds (since they do have a kernel, just not the normal way), and instead detect the GKI kernel and skip the kernel copying rules or whatever else TARGET_NO_KERNEL disables?",
+      "range": {
+        "startLine": 4218,
+        "startChar": 6,
+        "endLine": 4218,
+        "endChar": 26
+      },
+      "revId": "85769d9774d03f7a174ae5d689819a7b96c06248",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fefa7aaf_ed71f41e",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 4218,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-07-15T18:00:29Z",
+      "side": 1,
+      "message": "Sure, maybe I can check for BOARD_PREBUILT_BOOTIMAGE or INSTALLED_BOOTIMAGE_TARGET?",
+      "parentUuid": "fdcc0070_54b86711",
       "range": {
         "startLine": 4218,
         "startChar": 6,
