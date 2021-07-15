@@ -15,11 +15,31 @@
 #
 
 PRODUCT_COPY_FILES += \
-    kernel/prebuilts/4.19/arm64/Image.gz:kernel-4.19-gz \
-    device/google/cuttlefish_kernel/5.4-arm64/kernel-5.4:kernel-5.4 \
-    device/google/cuttlefish_kernel/5.4-arm64/kernel-5.4-gz:kernel-5.4-gz \
-    device/google/cuttlefish_kernel/5.4-arm64/kernel-5.4-lz4:kernel-5.4-lz4
+    kernel/prebuilts/4.19/arm64/kernel-4.19-gz:kernel-4.19-gz \
+    kernel/prebuilts/5.4/arm64/kernel-5.4:kernel-5.4 \
+    kernel/prebuilts/5.4/arm64/kernel-5.4-gz:kernel-5.4-gz \
+    kernel/prebuilts/5.4/arm64/kernel-5.4-lz4:kernel-5.4-lz4 \
+    kernel/prebuilts/5.10/arm64/kernel-5.10:kernel-5.10 \
+    kernel/prebuilts/5.10/arm64/kernel-5.10-gz:kernel-5.10-gz \
+    kernel/prebuilts/5.10/arm64/kernel-5.10-lz4:kernel-5.10-lz4 \
 
-# Adjust the Dalvik heap to be appropriate for a tablet.
-$(call inherit-product-if-exists, frameworks/base/build/tablet-dalvik-heap.mk)
-$(call inherit-product-if-exists, frameworks/native/build/tablet-dalvik-heap.mk)
+$(call dist-for-goals, dist_files, kernel/prebuilts/4.19/arm64/prebuilt-info.txt:kernel/4.19/prebuilt-info.txt)
+$(call dist-for-goals, dist_files, kernel/prebuilts/5.4/arm64/prebuilt-info.txt:kernel/5.4/prebuilt-info.txt)
+$(call dist-for-goals, dist_files, kernel/prebuilts/5.10/arm64/prebuilt-info.txt:kernel/5.10/prebuilt-info.txt)
+
+ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+PRODUCT_COPY_FILES += \
+    kernel/prebuilts/4.19/arm64/kernel-4.19-gz-allsyms:kernel-4.19-gz-allsyms \
+    kernel/prebuilts/5.4/arm64/kernel-5.4-allsyms:kernel-5.4-allsyms \
+    kernel/prebuilts/5.4/arm64/kernel-5.4-gz-allsyms:kernel-5.4-gz-allsyms \
+    kernel/prebuilts/5.4/arm64/kernel-5.4-lz4-allsyms:kernel-5.4-lz4-allsyms \
+    kernel/prebuilts/5.10/arm64/kernel-5.10-allsyms:kernel-5.10-allsyms \
+    kernel/prebuilts/5.10/arm64/kernel-5.10-gz-allsyms:kernel-5.10-gz-allsyms \
+    kernel/prebuilts/5.10/arm64/kernel-5.10-lz4-allsyms:kernel-5.10-lz4-allsyms \
+
+endif
+
+PRODUCT_BUILD_VENDOR_BOOT_IMAGE := false
+PRODUCT_BUILD_RECOVERY_IMAGE := false
+
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_ramdisk.mk)

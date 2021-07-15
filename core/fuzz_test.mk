@@ -19,35 +19,6 @@ LOCAL_SANITIZE += fuzzer
 
 ifeq ($(my_fuzzer),libFuzzer)
 LOCAL_STATIC_LIBRARIES += libFuzzer
-else ifeq ($(my_fuzzer),honggfuzz)
-LOCAL_STATIC_LIBRARIES += honggfuzz_libhfuzz
-LOCAL_REQUIRED_MODULES += honggfuzz
-LOCAL_LDFLAGS += \
-        "-Wl,--wrap=strcmp" \
-        "-Wl,--wrap=strcasecmp" \
-        "-Wl,--wrap=strncmp" \
-        "-Wl,--wrap=strncasecmp" \
-        "-Wl,--wrap=strstr" \
-        "-Wl,--wrap=strcasestr" \
-        "-Wl,--wrap=memcmp" \
-        "-Wl,--wrap=bcmp" \
-        "-Wl,--wrap=memmem" \
-        "-Wl,--wrap=ap_cstr_casecmp" \
-        "-Wl,--wrap=ap_cstr_casecmpn" \
-        "-Wl,--wrap=ap_strcasestr" \
-        "-Wl,--wrap=apr_cstr_casecmp" \
-        "-Wl,--wrap=apr_cstr_casecmpn" \
-        "-Wl,--wrap=CRYPTO_memcmp" \
-        "-Wl,--wrap=OPENSSL_memcmp" \
-        "-Wl,--wrap=OPENSSL_strcasecmp" \
-        "-Wl,--wrap=OPENSSL_strncasecmp" \
-        "-Wl,--wrap=xmlStrncmp" \
-        "-Wl,--wrap=xmlStrcmp" \
-        "-Wl,--wrap=xmlStrEqual" \
-        "-Wl,--wrap=xmlStrcasecmp" \
-        "-Wl,--wrap=xmlStrncasecmp" \
-        "-Wl,--wrap=xmlStrstr" \
-        "-Wl,--wrap=xmlStrcasestr"
 else
 $(call pretty-error, Unknown fuzz engine $(my_fuzzer))
 endif

@@ -15,6 +15,8 @@
 -include external/linux-kselftest/android/kselftest_test_list.mk
 -include external/ltp/android/ltp_package_list.mk
 
+include $(BUILD_SYSTEM)/tasks/tools/vts_package_utils.mk
+
 test_suite_name := vts
 test_suite_tradefed := vts-tradefed
 test_suite_readme := test/vts/tools/vts-core-tradefed/README
