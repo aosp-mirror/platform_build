@@ -440,6 +440,33 @@ $(GEN): $(intermediates)/<font color=red>%.lut.h</font> : $(LOCAL_PATH)/<font co
 LOCAL_GENERATED_SOURCES += $(GEN)
 </pre>
 
+<h3><a name="unbundled-build"/>Unbundled build</h3>
+<p>Unbundled build has several meanings by the context.
+Let me explain the meaning by the flags related to "unbundled build"</p>
+<h4>TARGET_BUILD_UNBUNDLED</h4>
+<p>The source tree might not have the full platform sources. It is always set if
+<code>TARGET_BUILD_APPS</code> or <code>TARGET_BUILD_UNBUNDLED_IMAGE</code> is set.</p>
+<h4>TARGET_BUILD_USE_PREBUILT_SDKS</h4>
+<p>It is an internal flag. If it is set, prebuilt SDKs are used, even if a module's
+<code>LOCAL_SDK_VERSION</code> is <code>current</code> (including <code>system_current</code>,
+<code>core_current</code>, and so on). If it is unset, build current SDKs,
+and use them as usual.</p>
+<h4>DISABLE_PREOPT</h4>
+<p>It is an internal flag as well. If it is set, dexpreopt is disabled.
+It is always set if <code>TARGET_BUILD_APPS</code> or <code>TARGET_BUILD_UNBUNDLED_IMAGE</code> is set,
+because dexpreopt tightly depends on the platform.</p>
+<h4>TARGET_BUILD_APPS</h4>
+<p>Build the apps that can be distributed outside the platform, so it turns on
+<code>TARGET_BUILD_UNBUNDLED</code> and <code>DISABLE_PREOPT</code>.
+Also, it turns on <code>TARGET_BUILD_USE_PREBUILT_SDKS</code>, unless
+<code>UNBUNDLED_BUILD_SDKS_FROM_SOURCE</code> is set.</p>
+<h4>TARGET_BUILD_UNBUNDLED_IMAGE</h4>
+<p>It is similar to <code>TARGET_BUILD_APPS</code>, but its target is an unbundled partition
+(such as the vendor partition). Accordingly, it sets <code>TARGET_BUILD_UNBUNDLED</code> and <code>DISABLE_PREOPT</code>.
+We can call the partition unbundled, because the partition can be distributed outside the platform.
+And also, it turns on <code>TARGET_BUILD_USE_PREBUILT_SDKS</code>, unless
+<code>UNBUNDLED_BUILD_SDKS_FROM_SOURCE</code> is set.</p>
+
 <h3><a name="platform-specific"/>Platform specific conditionals</h3>
 <p>Sometimes you need to set flags specifically for different platforms.  Here
 is a list of which values the different build-system defined variables will be
@@ -467,8 +494,6 @@ set to and some examples.</p>
         <b>TARGET_ARCH</b><br/>
         arm<br/>
         arm64<br/>
-        mips<br/>
-        mips64<br/>
         x86<br/>
         x86_64
     </td>

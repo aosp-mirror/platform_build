@@ -93,15 +93,38 @@ TARGET_BUILD_VARIANT := eng
 endif
 
 TARGET_BUILD_APPS ?=
+TARGET_BUILD_UNBUNDLED_IMAGE ?=
+
+# Set to true for an unbundled build, i.e. a build without
+# support for platform targets like the system image. This also
+# disables consistency checks that only apply to full platform
+# builds.
+TARGET_BUILD_UNBUNDLED ?=
+
+# TARGET_BUILD_APPS implies unbundled build, otherwise we default
+# to bundled (i.e. platform targets such as the system image are
+# included).
+ifneq ($(TARGET_BUILD_APPS),)
+  TARGET_BUILD_UNBUNDLED := true
+endif
+
+# TARGET_BUILD_UNBUNDLED_IMAGE also implies unbundled build.
+# (i.e. it targets to only unbundled image, such as the vendor image,
+# ,or the product image). 
+ifneq ($(TARGET_BUILD_UNBUNDLED_IMAGE),)
+  TARGET_BUILD_UNBUNDLED := true
+endif
 
 .KATI_READONLY := \
   TARGET_PRODUCT \
   TARGET_BUILD_VARIANT \
-  TARGET_BUILD_APPS
+  TARGET_BUILD_APPS \
+  TARGET_BUILD_UNBUNDLED \
+  TARGET_BUILD_UNBUNDLED_IMAGE \
 
 # ---------------------------------------------------------------
 # Set up configuration for host machine.  We don't do cross-
-# compiles except for arm/mips, so the HOST is whatever we are
+# compiles except for arm, so the HOST is whatever we are
 # running on
 
 # HOST_OS
@@ -125,15 +148,25 @@ HOST_OS_EXTRA := $(subst $(space),-,$(HOST_OS_EXTRA))
 # BUILD_OS is the real host doing the build.
 BUILD_OS := $(HOST_OS)
 
-HOST_CROSS_OS :=
-# We can cross-build Windows binaries on Linux
+# We can do the cross-build only on Linux
 ifeq ($(HOST_OS),linux)
-ifeq ($(BUILD_HOST_static),)
-HOST_CROSS_OS := windows
-HOST_CROSS_ARCH := x86
-HOST_CROSS_2ND_ARCH := x86_64
-2ND_HOST_CROSS_IS_64_BIT := true
-endif
+  # Windows has been the default host_cross OS
+  ifeq (,$(filter-out windows,$(HOST_CROSS_OS)))
+    # We can only create static host binaries for Linux, so if static host
+    # binaries are requested, turn off Windows cross-builds.
+    ifeq ($(BUILD_HOST_static),)
+      HOST_CROSS_OS := windows
+      HOST_CROSS_ARCH := x86
+      HOST_CROSS_2ND_ARCH := x86_64
+      2ND_HOST_CROSS_IS_64_BIT := true
+    endif
+  else ifeq ($(HOST_CROSS_OS),linux_bionic)
+    ifeq (,$(HOST_CROSS_ARCH))
+      $(error HOST_CROSS_ARCH missing.)
+    endif
+  else
+    $(error Unsupported HOST_CROSS_OS $(HOST_CROSS_OS))
+  endif
 endif
 
 ifeq ($(HOST_OS),)
@@ -239,14 +272,18 @@ _vendor_path_placeholder := ||VENDOR-PATH-PH||
 _product_path_placeholder := ||PRODUCT-PATH-PH||
 _system_ext_path_placeholder := ||SYSTEM_EXT-PATH-PH||
 _odm_path_placeholder := ||ODM-PATH-PH||
+_vendor_dlkm_path_placeholder := ||VENDOR_DLKM-PATH-PH||
+_odm_dlkm_path_placeholder := ||ODM_DLKM-PATH-PH||
 TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
-TARGET_COPY_OUT_VENDOR_RAMDISK := vendor-ramdisk
+TARGET_COPY_OUT_VENDOR_RAMDISK := vendor_ramdisk
 TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
 # TODO(b/135957588) TARGET_COPY_OUT_PRODUCT_SERVICES will copy the target to
 # product
 TARGET_COPY_OUT_PRODUCT_SERVICES := $(_product_path_placeholder)
 TARGET_COPY_OUT_SYSTEM_EXT := $(_system_ext_path_placeholder)
 TARGET_COPY_OUT_ODM := $(_odm_path_placeholder)
+TARGET_COPY_OUT_VENDOR_DLKM := $(_vendor_dlkm_path_placeholder)
+TARGET_COPY_OUT_ODM_DLKM := $(_odm_dlkm_path_placeholder)
 
 # Returns the non-sanitized version of the path provided in $1.
 define get_non_asan_path
@@ -258,7 +295,16 @@ endef
 # java code with dalvikvm/art.
 # Jars present in the ART apex. These should match exactly the list of
 # Java libraries in the ART apex build rule.
-ART_APEX_JARS := core-oj core-libart core-icu4j okhttp bouncycastle apache-xml
+ART_APEX_JARS := \
+    com.android.art:core-oj \
+    com.android.art:core-libart \
+    com.android.art:okhttp \
+    com.android.art:bouncycastle \
+    com.android.art:apache-xml
+# With EMMA_INSTRUMENT_FRAMEWORK=true the Core libraries depend on jacoco.
+ifeq (true,$(EMMA_INSTRUMENT_FRAMEWORK))
+  ART_APEX_JARS += com.android.art:jacocoagent
+endif
 #################################################################
 
 # Read the product specs so we can get TARGET_DEVICE and other
@@ -296,7 +342,7 @@ HOST_OUT_ROOT := $(OUT_DIR)/host
 HOST_OUT := $(HOST_OUT_ROOT)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 SOONG_HOST_OUT := $(SOONG_OUT_DIR)/host/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 
-HOST_CROSS_OUT := $(HOST_OUT_ROOT)/windows-$(HOST_PREBUILT_ARCH)
+HOST_CROSS_OUT := $(HOST_OUT_ROOT)/$(HOST_CROSS_OS)-$(HOST_CROSS_ARCH)
 
 .KATI_READONLY := HOST_OUT SOONG_HOST_OUT HOST_CROSS_OUT
 
@@ -360,9 +406,6 @@ HOST_OUT_FAKE := $(HOST_OUT)/fake_packages
   HOST_OUT_COMMON_INTERMEDIATES \
   HOST_OUT_FAKE
 
-# Nano environment config
-include $(BUILD_SYSTEM)/aux_config.mk
-
 HOST_CROSS_OUT_INTERMEDIATES := $(HOST_CROSS_OUT)/obj
 HOST_CROSS_OUT_NOTICE_FILES := $(HOST_CROSS_OUT_INTERMEDIATES)/NOTICE_FILES
 .KATI_READONLY := \
@@ -377,9 +420,6 @@ HOST_OUT_COMMON_GEN := $(HOST_COMMON_OUT_ROOT)/gen
 
 HOST_CROSS_OUT_GEN := $(HOST_CROSS_OUT)/gen
 .KATI_READONLY := HOST_CROSS_OUT_GEN
-
-HOST_OUT_TEST_CONFIG := $(HOST_OUT)/test_config
-.KATI_READONLY := HOST_OUT_TEST_CONFIG
 
 # Out for HOST_2ND_ARCH
 $(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATES := $(HOST_OUT)/obj32
@@ -466,7 +506,6 @@ TARGET_OUT_ETC := $(TARGET_OUT)/etc
 TARGET_OUT_NOTICE_FILES := $(TARGET_OUT_INTERMEDIATES)/NOTICE_FILES
 TARGET_OUT_FAKE := $(PRODUCT_OUT)/fake_packages
 TARGET_OUT_TESTCASES := $(PRODUCT_OUT)/testcases
-TARGET_OUT_TEST_CONFIG := $(PRODUCT_OUT)/test_config
 .KATI_READONLY := \
   TARGET_OUT_EXECUTABLES \
   TARGET_OUT_OPTIONAL_EXECUTABLES \
@@ -480,8 +519,7 @@ TARGET_OUT_TEST_CONFIG := $(PRODUCT_OUT)/test_config
   TARGET_OUT_ETC \
   TARGET_OUT_NOTICE_FILES \
   TARGET_OUT_FAKE \
-  TARGET_OUT_TESTCASES \
-  TARGET_OUT_TEST_CONFIG
+  TARGET_OUT_TESTCASES
 
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
@@ -707,6 +745,74 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_APPS_PRIVILEGED := $(TARGET_OUT_ODM_
   $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_RENDERSCRIPT_BITCODE \
   $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_APPS \
   $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_APPS_PRIVILEGED
+
+TARGET_OUT_VENDOR_DLKM := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR_DLKM)
+
+TARGET_OUT_VENDOR_DLKM_ETC := $(TARGET_OUT_VENDOR_DLKM)/etc
+.KATI_READONLY := \
+  TARGET_OUT_VENDOR_DLKM_ETC
+
+# Unlike other partitions, vendor_dlkm should only contain kernel modules.
+TARGET_OUT_VENDOR_DLKM_EXECUTABLES :=
+TARGET_OUT_VENDOR_DLKM_OPTIONAL_EXECUTABLES :=
+TARGET_OUT_VENDOR_DLKM_SHARED_LIBRARIES :=
+TARGET_OUT_VENDOR_DLKM_RENDERSCRIPT_BITCODE :=
+TARGET_OUT_VENDOR_DLKM_JAVA_LIBRARIES :=
+TARGET_OUT_VENDOR_DLKM_APPS :=
+TARGET_OUT_VENDOR_DLKM_APPS_PRIVILEGED :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_EXECUTABLES :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_SHARED_LIBRARIES :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_RENDERSCRIPT_BITCODE :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_APPS :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_APPS_PRIVILEGED :=
+$(KATI_obsolete_var \
+    TARGET_OUT_VENDOR_DLKM_EXECUTABLES \
+    TARGET_OUT_VENDOR_DLKM_OPTIONAL_EXECUTABLES \
+    TARGET_OUT_VENDOR_DLKM_SHARED_LIBRARIES \
+    TARGET_OUT_VENDOR_DLKM_RENDERSCRIPT_BITCODE \
+    TARGET_OUT_VENDOR_DLKM_JAVA_LIBRARIES \
+    TARGET_OUT_VENDOR_DLKM_APPS \
+    TARGET_OUT_VENDOR_DLKM_APPS_PRIVILEGED \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_EXECUTABLES \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_SHARED_LIBRARIES \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_RENDERSCRIPT_BITCODE \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_APPS \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_DLKM_APPS_PRIVILEGED \
+    , vendor_dlkm should not contain any executables, libraries, or apps)
+
+TARGET_OUT_ODM_DLKM := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ODM_DLKM)
+
+TARGET_OUT_ODM_DLKM_ETC := $(TARGET_OUT_ODM_DLKM)/etc
+.KATI_READONLY := \
+  TARGET_OUT_ODM_DLKM_ETC
+
+# Unlike other partitions, odm_dlkm should only contain kernel modules.
+TARGET_OUT_ODM_DLKM_EXECUTABLES :=
+TARGET_OUT_ODM_DLKM_OPTIONAL_EXECUTABLES :=
+TARGET_OUT_ODM_DLKM_SHARED_LIBRARIES :=
+TARGET_OUT_ODM_DLKM_RENDERSCRIPT_BITCODE :=
+TARGET_OUT_ODM_DLKM_JAVA_LIBRARIES :=
+TARGET_OUT_ODM_DLKM_APPS :=
+TARGET_OUT_ODM_DLKM_APPS_PRIVILEGED :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_EXECUTABLES :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_SHARED_LIBRARIES :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_RENDERSCRIPT_BITCODE :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_APPS :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_APPS_PRIVILEGED :=
+$(KATI_obsolete_var \
+    TARGET_OUT_ODM_DLKM_EXECUTABLES \
+    TARGET_OUT_ODM_DLKM_OPTIONAL_EXECUTABLES \
+    TARGET_OUT_ODM_DLKM_SHARED_LIBRARIES \
+    TARGET_OUT_ODM_DLKM_RENDERSCRIPT_BITCODE \
+    TARGET_OUT_ODM_DLKM_JAVA_LIBRARIES \
+    TARGET_OUT_ODM_DLKM_APPS \
+    TARGET_OUT_ODM_DLKM_APPS_PRIVILEGED \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_EXECUTABLES \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_SHARED_LIBRARIES \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_RENDERSCRIPT_BITCODE \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_APPS \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_APPS_PRIVILEGED \
+    , odm_dlkm should not contain any executables, libraries, or apps)
 
 TARGET_OUT_PRODUCT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT)
 TARGET_OUT_PRODUCT_EXECUTABLES := $(TARGET_OUT_PRODUCT)/bin

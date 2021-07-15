@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/bootclasspath.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
 
