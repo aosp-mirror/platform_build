@@ -22,6 +22,30 @@
       },
       "revId": "549dbab12742a882b2a46d537856f27507eacb76",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71d55d73_273276a5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2021-07-15T00:38:58Z",
+      "side": 1,
+      "message": "I understood. This commit message was intended to align with the change I made. The logic checks INSTALLED_BOOTIMAGE_TARGET, not BOARD_PREBUILT_BOOTIMAGE directly. \n\nSo this is intentional in a way.",
+      "parentUuid": "c3a55891_eec771af",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 44
+      },
+      "revId": "549dbab12742a882b2a46d537856f27507eacb76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
