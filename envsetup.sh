@@ -1880,7 +1880,7 @@ function source_rbe() {
     local T=$(gettop)
 
     if [[ "x$USE_RBE" != "x" && "$USE_RBE" != "false" ]]; then
-        . $T/make/rbesetup.sh --skip-envsetup
+        . $T/build/make/rbesetup.sh --skip-envsetup
     fi
 }
 
