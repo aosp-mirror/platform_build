@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a895dcb1_302f0711",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2021-07-15T02:04:23Z",
+      "side": 1,
+      "message": "Anton is OOO, adding Colin for the OWNER vote.",
+      "revId": "7472a1e6f9fbcb36da1df7f0c640ff293e6efed0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
