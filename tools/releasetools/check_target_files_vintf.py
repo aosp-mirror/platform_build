@@ -46,6 +46,7 @@ DIR_SEARCH_PATHS = {
     '/product': ('PRODUCT', 'SYSTEM/product'),
     '/odm': ('ODM', 'VENDOR/odm', 'SYSTEM/vendor/odm'),
     '/system_ext': ('SYSTEM_EXT', 'SYSTEM/system_ext'),
+    # vendor_dlkm and odm_dlkm does not have VINTF files.
 }
 
 UNZIP_PATTERN = ['META/*', '*/build.prop']
@@ -99,10 +100,7 @@ def GetArgsForKernel(input_tmp):
                 'PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS is not set')
     return []
 
-  with open(version_path) as f:
-    version = f.read().strip()
-
-  return ['--kernel', '{}:{}'.format(version, config_path)]
+  return ['--kernel', '{}:{}'.format(version_path, config_path)]
 
 
 def CheckVintfFromExtractedTargetFiles(input_tmp, info_dict=None):
@@ -218,6 +216,52 @@ def CheckVintf(inp, info_dict=None):
     return CheckVintfFromTargetFiles(inp, info_dict)
 
   raise ValueError('{} is not a valid directory or zip file'.format(inp))
+
+def CheckVintfIfTrebleEnabled(target_files, target_info):
+  """Checks compatibility info of the input target files.
+
+  Metadata used for compatibility verification is retrieved from target_zip.
+
+  Compatibility should only be checked for devices that have enabled
+  Treble support.
+
+  Args:
+    target_files: Path to zip file containing the source files to be included
+        for OTA. Can also be the path to extracted directory.
+    target_info: The BuildInfo instance that holds the target build info.
+  """
+
+  # Will only proceed if the target has enabled the Treble support (as well as
+  # having a /vendor partition).
+  if not HasTrebleEnabled(target_files, target_info):
+    return
+
+  # Skip adding the compatibility package as a workaround for b/114240221. The
+  # compatibility will always fail on devices without qualified kernels.
+  if OPTIONS.skip_compatibility_check:
+    return
+
+  if not CheckVintf(target_files, target_info):
+    raise RuntimeError("VINTF compatibility check failed")
+
+def HasTrebleEnabled(target_files, target_info):
+  def HasVendorPartition(target_files):
+    if os.path.isdir(target_files):
+      return os.path.isdir(os.path.join(target_files, "VENDOR"))
+    if zipfile.is_zipfile(target_files):
+      return HasPartition(zipfile.ZipFile(target_files, allowZip64=True), "vendor")
+    raise ValueError("Unknown target_files argument")
+
+  return (HasVendorPartition(target_files) and
+          target_info.GetBuildProp("ro.treble.enabled") == "true")
+
+
+def HasPartition(target_files_zip, partition):
+  try:
+    target_files_zip.getinfo(partition.upper() + "/")
+    return True
+  except KeyError:
+    return False
 
 
 def main(argv):

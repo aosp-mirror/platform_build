@@ -123,6 +123,17 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       mounted on the partition (e.g. "--signing_helper /path/to/helper"). The
       args will be appended to the existing ones in info dict.
 
+  --gki_signing_algorithm <algorithm>
+  --gki_signing_key <key>
+      Use the specified algorithm (e.g. SHA256_RSA4096) and the key to generate
+      'boot signature' in a v4 boot.img. Otherwise it uses the existing values
+      in info dict.
+
+  --gki_signing_extra_args <args>
+      Specify any additional args that are needed to generate 'boot signature'
+      (e.g. --prop foo:bar). The args will be appended to the existing ones
+      in info dict.
+
   --android_jar_path <path>
       Path to the android.jar to repack the apex file.
 """
@@ -174,21 +185,48 @@ OPTIONS.tag_changes = ("-test-keys", "-dev-keys", "+release-keys")
 OPTIONS.avb_keys = {}
 OPTIONS.avb_algorithms = {}
 OPTIONS.avb_extra_args = {}
+OPTIONS.gki_signing_key = None
+OPTIONS.gki_signing_algorithm = None
+OPTIONS.gki_signing_extra_args = None
 OPTIONS.android_jar_path = None
 
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
-    'boot' : 'avb_boot_add_hash_footer_args',
-    'dtbo' : 'avb_dtbo_add_hash_footer_args',
-    'recovery' : 'avb_recovery_add_hash_footer_args',
-    'system' : 'avb_system_add_hashtree_footer_args',
-    'system_other' : 'avb_system_other_add_hashtree_footer_args',
-    'vendor' : 'avb_vendor_add_hashtree_footer_args',
-    'vendor_boot' : 'avb_vendor_boot_add_hash_footer_args',
-    'vbmeta' : 'avb_vbmeta_args',
-    'vbmeta_system' : 'avb_vbmeta_system_args',
-    'vbmeta_vendor' : 'avb_vbmeta_vendor_args',
+    'boot': 'avb_boot_add_hash_footer_args',
+    'dtbo': 'avb_dtbo_add_hash_footer_args',
+    'product': 'avb_product_add_hashtree_footer_args',
+    'recovery': 'avb_recovery_add_hash_footer_args',
+    'system': 'avb_system_add_hashtree_footer_args',
+    'system_ext': 'avb_system_ext_add_hashtree_footer_args',
+    'system_other': 'avb_system_other_add_hashtree_footer_args',
+    'odm': 'avb_odm_add_hashtree_footer_args',
+    'odm_dlkm': 'avb_odm_dlkm_add_hashtree_footer_args',
+    'pvmfw': 'avb_pvmfw_add_hash_footer_args',
+    'vendor': 'avb_vendor_add_hashtree_footer_args',
+    'vendor_boot': 'avb_vendor_boot_add_hash_footer_args',
+    'vendor_dlkm': "avb_vendor_dlkm_add_hashtree_footer_args",
+    'vbmeta': 'avb_vbmeta_args',
+    'vbmeta_system': 'avb_vbmeta_system_args',
+    'vbmeta_vendor': 'avb_vbmeta_vendor_args',
 }
+
+
+# Check that AVB_FOOTER_ARGS_BY_PARTITION is in sync with AVB_PARTITIONS.
+for partition in common.AVB_PARTITIONS:
+  if partition not in AVB_FOOTER_ARGS_BY_PARTITION:
+    raise RuntimeError("Missing {} in AVB_FOOTER_ARGS".format(partition))
+
+
+def IsApexFile(filename):
+  return filename.endswith(".apex") or filename.endswith(".capex")
+
+
+def GetApexFilename(filename):
+  name = os.path.basename(filename)
+  # Replace the suffix for compressed apex
+  if name.endswith(".capex"):
+    return name.replace(".capex", ".apex")
+  return name
 
 
 def GetApkCerts(certmap):
@@ -329,10 +367,9 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
   """
   unknown_files = []
   for info in input_tf_zip.infolist():
-    # Handle APEXes first, e.g. SYSTEM/apex/com.android.tzdata.apex.
-    if (info.filename.startswith('SYSTEM/apex') and
-        info.filename.endswith('.apex')):
-      name = os.path.basename(info.filename)
+    # Handle APEXes on all partitions
+    if IsApexFile(info.filename):
+      name = GetApexFilename(info.filename)
       if name not in known_keys:
         unknown_files.append(name)
       continue
@@ -363,11 +400,11 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
 
   invalid_apexes = []
   for info in input_tf_zip.infolist():
-    if (not info.filename.startswith('SYSTEM/apex') or
-        not info.filename.endswith('.apex')):
+    if not IsApexFile(info.filename):
       continue
 
-    name = os.path.basename(info.filename)
+    name = GetApexFilename(info.filename)
+
     (payload_key, container_key) = apex_keys[name]
     if ((payload_key in common.SPECIAL_CERT_STRINGS and
          container_key not in common.SPECIAL_CERT_STRINGS) or
@@ -383,8 +420,8 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
 
 
 def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
-            is_compressed):
-  unsigned = tempfile.NamedTemporaryFile()
+            is_compressed, apk_name):
+  unsigned = tempfile.NamedTemporaryFile(suffix='_' + apk_name)
   unsigned.write(data)
   unsigned.flush()
 
@@ -402,7 +439,7 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
     unsigned.close()
     unsigned = uncompressed
 
-  signed = tempfile.NamedTemporaryFile()
+  signed = tempfile.NamedTemporaryFile(suffix='_' + apk_name)
 
   # For pre-N builds, don't upgrade to SHA-256 JAR signatures based on the APK's
   # minSdkVersion to avoid increasing incremental OTA update sizes. If an APK
@@ -443,6 +480,25 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
   signed.close()
 
   return data
+
+
+def IsBuildPropFile(filename):
+  return filename in (
+        "SYSTEM/etc/prop.default",
+        "BOOT/RAMDISK/prop.default",
+        "RECOVERY/RAMDISK/prop.default",
+
+        "VENDOR_BOOT/RAMDISK/default.prop",
+        "VENDOR_BOOT/RAMDISK/prop.default",
+
+        # ROOT/default.prop is a legacy path, but may still exist for upgrading
+        # devices that don't support `property_overrides_split_enabled`.
+        "ROOT/default.prop",
+
+        # RECOVERY/RAMDISK/default.prop is a legacy path, but will always exist
+        # as a symlink in the current code. So it's a no-op here. Keeping the
+        # path here for clarity.
+        "RECOVERY/RAMDISK/default.prop") or filename.endswith("build.prop")
 
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
@@ -488,7 +544,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if key not in common.SPECIAL_CERT_STRINGS:
         print("    signing: %-*s (%s)" % (maxsize, name, key))
         signed_data = SignApk(data, key, key_passwords[key], platform_api_level,
-                              codename_to_api_level_map, is_compressed)
+                              codename_to_api_level_map, is_compressed, name)
         common.ZipWriteStr(output_tf_zip, out_info, signed_data)
       else:
         # an APK we're not supposed to sign.
@@ -497,9 +553,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             "        (skipped due to special cert string)" % (name,))
         common.ZipWriteStr(output_tf_zip, out_info, data)
 
-    # Sign bundled APEX files.
-    elif filename.startswith("SYSTEM/apex") and filename.endswith(".apex"):
-      name = os.path.basename(filename)
+    # Sign bundled APEX files on all partitions
+    elif IsApexFile(filename):
+      name = GetApexFilename(filename)
+
       payload_key, container_key = apex_keys[name]
 
       # We've asserted not having a case with only one of them PRESIGNED.
@@ -515,7 +572,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             data,
             payload_key,
             container_key,
-            key_passwords[container_key],
+            key_passwords,
             apk_keys,
             codename_to_api_level_map,
             no_hashtree=True,
@@ -528,39 +585,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             "        (skipped due to special cert string)" % (name,))
         common.ZipWriteStr(output_tf_zip, out_info, data)
 
-    # AVB public keys for the installed APEXes, which will be updated later.
-    elif (os.path.dirname(filename) == 'SYSTEM/etc/security/apex' and
-          filename != 'SYSTEM/etc/security/apex/'):
-      continue
-
     # System properties.
-    elif filename in (
-        "SYSTEM/build.prop",
-
-        "VENDOR/build.prop",
-        "SYSTEM/vendor/build.prop",
-
-        "ODM/etc/build.prop",
-        "VENDOR/odm/etc/build.prop",
-
-        "PRODUCT/build.prop",
-        "SYSTEM/product/build.prop",
-
-        "SYSTEM_EXT/build.prop",
-        "SYSTEM/system_ext/build.prop",
-
-        "SYSTEM/etc/prop.default",
-        "BOOT/RAMDISK/prop.default",
-        "RECOVERY/RAMDISK/prop.default",
-
-        # ROOT/default.prop is a legacy path, but may still exist for upgrading
-        # devices that don't support `property_overrides_split_enabled`.
-        "ROOT/default.prop",
-
-        # RECOVERY/RAMDISK/default.prop is a legacy path, but will always exist
-        # as a symlink in the current code. So it's a no-op here. Keeping the
-        # path here for clarity.
-        "RECOVERY/RAMDISK/default.prop"):
+    elif IsBuildPropFile(filename):
       print("Rewriting %s:" % (filename,))
       if stat.S_ISLNK(info.external_attr >> 16):
         new_data = data
@@ -588,12 +614,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
     # Don't copy OTA certs if we're replacing them.
     # Replacement of update-payload-key.pub.pem was removed in b/116660991.
-    elif (
-        OPTIONS.replace_ota_keys and
-        filename in (
-            "BOOT/RAMDISK/system/etc/security/otacerts.zip",
-            "RECOVERY/RAMDISK/system/etc/security/otacerts.zip",
-            "SYSTEM/etc/security/otacerts.zip")):
+    elif OPTIONS.replace_ota_keys and filename.endswith("/otacerts.zip"):
       pass
 
     # Skip META/misc_info.txt since we will write back the new values later.
@@ -608,22 +629,30 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif (OPTIONS.remove_avb_public_keys and
           (filename.startswith("BOOT/RAMDISK/avb/") or
            filename.startswith("BOOT/RAMDISK/first_stage_ramdisk/avb/"))):
-        matched_removal = False
-        for key_to_remove in OPTIONS.remove_avb_public_keys:
-          if filename.endswith(key_to_remove):
-            matched_removal = True
-            print("Removing AVB public key from ramdisk: %s" % filename)
-            break
-        if not matched_removal:
-          # Copy it verbatim if we don't want to remove it.
-          common.ZipWriteStr(output_tf_zip, out_info, data)
+      matched_removal = False
+      for key_to_remove in OPTIONS.remove_avb_public_keys:
+        if filename.endswith(key_to_remove):
+          matched_removal = True
+          print("Removing AVB public key from ramdisk: %s" % filename)
+          break
+      if not matched_removal:
+        # Copy it verbatim if we don't want to remove it.
+        common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # Skip verity keyid (for system_root_image use) if we will replace it.
     elif OPTIONS.replace_verity_keyid and filename == "BOOT/cmdline":
       pass
 
+    # Skip the vbmeta digest as we will recalculate it.
+    elif filename == "META/vbmeta_digest.txt":
+      pass
+
     # Skip the care_map as we will regenerate the system/vendor images.
-    elif filename == "META/care_map.pb" or filename == "META/care_map.txt":
+    elif filename in ["META/care_map.pb", "META/care_map.txt"]:
+      pass
+
+    # Skip apex_info.pb because we sign/modify apexes
+    elif filename == "META/apex_info.pb":
       pass
 
     # Updates system_other.avbpubkey in /product/etc/.
@@ -679,6 +708,9 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
   # Rewrite the props in AVB signing args.
   if misc_info.get('avb_enable') == 'true':
     RewriteAvbProps(misc_info)
+
+  # Replace the GKI signing key for boot.img, if any.
+  ReplaceGkiSigningKey(misc_info)
 
   # Write back misc_info with the latest values.
   ReplaceMiscInfoTxt(input_tf_zip, output_tf_zip, misc_info)
@@ -785,7 +817,7 @@ def RewriteProps(data):
         value = "/".join(pieces)
       elif key == "ro.build.description":
         pieces = value.split(" ")
-        assert len(pieces) == 5
+        assert pieces[-1].endswith("-keys")
         pieces[-1] = EditTags(pieces[-1])
         value = " ".join(pieces)
       elif key.startswith("ro.") and key.endswith(".build.tags"):
@@ -813,7 +845,7 @@ def WriteOtacerts(output_zip, filename, keys):
     keys: A list of public keys to use during OTA package verification.
   """
   temp_file = io.BytesIO()
-  certs_zip = zipfile.ZipFile(temp_file, "w")
+  certs_zip = zipfile.ZipFile(temp_file, "w", allowZip64=True)
   for k in keys:
     common.ZipWrite(certs_zip, k)
   common.ZipClose(certs_zip)
@@ -857,21 +889,12 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
     print("META/otakeys.txt has no keys; using %s for OTA package"
           " verification." % (mapped_keys[0],))
 
-  # recovery now uses the same x509.pem version of the keys.
-  # extra_recovery_keys are used only in recovery.
-  if misc_info.get("recovery_as_boot") == "true":
-    recovery_keys_location = "BOOT/RAMDISK/system/etc/security/otacerts.zip"
-  else:
-    recovery_keys_location = "RECOVERY/RAMDISK/system/etc/security/otacerts.zip"
-
-  WriteOtacerts(output_tf_zip, recovery_keys_location,
-                mapped_keys + extra_recovery_keys)
-
-  # SystemUpdateActivity uses the x509.pem version of the keys, but
-  # put into a zipfile system/etc/security/otacerts.zip.
-  # We DO NOT include the extra_recovery_keys (if any) here.
-  WriteOtacerts(output_tf_zip, "SYSTEM/etc/security/otacerts.zip", mapped_keys)
-
+  otacerts = [info
+              for info in input_tf_zip.infolist()
+              if info.filename.endswith("/otacerts.zip")]
+  for info in otacerts:
+    print("Rewriting OTA key:", info.filename, mapped_keys)
+    WriteOtacerts(output_tf_zip, info.filename, mapped_keys)
 
 
 def ReplaceVerityPublicKey(output_zip, filename, key_path):
@@ -967,11 +990,10 @@ def ReplaceAvbSigningKeys(misc_info):
     if extra_args:
       print('Setting extra AVB signing args for %s to "%s"' % (
           partition, extra_args))
-      if partition in AVB_FOOTER_ARGS_BY_PARTITION:
-        args_key = AVB_FOOTER_ARGS_BY_PARTITION[partition]
-      else:
-        # custom partition
-        args_key = "avb_{}_add_hashtree_footer_args".format(partition)
+      args_key = AVB_FOOTER_ARGS_BY_PARTITION.get(
+          partition,
+          # custom partition
+          "avb_{}_add_hashtree_footer_args".format(partition))
       misc_info[args_key] = (misc_info.get(args_key, '') + ' ' + extra_args)
 
   for partition in AVB_FOOTER_ARGS_BY_PARTITION:
@@ -1006,6 +1028,27 @@ def RewriteAvbProps(misc_info):
       print('  replace: {}'.format(args))
       print('     with: {}'.format(result))
       misc_info[args_key] = result
+
+
+def ReplaceGkiSigningKey(misc_info):
+  """Replaces the GKI signing key."""
+
+  key = OPTIONS.gki_signing_key
+  if not key:
+    return
+
+  algorithm = OPTIONS.gki_signing_algorithm
+  if not algorithm:
+    raise ValueError("Missing --gki_signing_algorithm")
+
+  print('Replacing GKI signing key with "%s" (%s)' % (key, algorithm))
+  misc_info["gki_signing_algorithm"] = algorithm
+  misc_info["gki_signing_key_path"] = key
+
+  extra_args = OPTIONS.gki_signing_extra_args
+  if extra_args:
+    print('Setting GKI signing args: "%s"' % (extra_args))
+    misc_info["gki_signing_signature_args"] = extra_args
 
 
 def BuildKeyMap(misc_info, key_mapping_options):
@@ -1117,7 +1160,7 @@ def ReadApexKeysInfo(tf_zip):
               privkey.endswith(privkey_suffix) and
               pubkey[:-pubkey_suffix_len] == privkey[:-privkey_suffix_len])
 
-    # Sanity check on the container key names, as we'll carry them without the
+    # Check the container key names, as we'll carry them without the
     # extensions. This doesn't apply to payload keys though, which we will use
     # full names only.
     container_cert = matches.group("CONTAINER_CERT")
@@ -1150,7 +1193,7 @@ def main(argv):
       apex_name, key = a.split("=")
       OPTIONS.extra_apex_payload_keys[apex_name] = key
     elif o == "--skip_apks_with_path_prefix":
-      # Sanity check the prefix, which must be in all upper case.
+      # Check the prefix, which must be in all upper case.
       prefix = a.split('/')[0]
       if not prefix or prefix != prefix.upper():
         raise ValueError("Invalid path prefix '%s'" % (a,))
@@ -1239,6 +1282,12 @@ def main(argv):
       # 'oem=--signing_helper_with_files=/tmp/avbsigner.sh'.
       partition, extra_args = a.split("=", 1)
       OPTIONS.avb_extra_args[partition] = extra_args
+    elif o == "--gki_signing_key":
+      OPTIONS.gki_signing_key = a
+    elif o == "--gki_signing_algorithm":
+      OPTIONS.gki_signing_algorithm = a
+    elif o == "--gki_signing_extra_args":
+      OPTIONS.gki_signing_extra_args = a
     else:
       return False
     return True
@@ -1286,6 +1335,9 @@ def main(argv):
           "avb_extra_custom_image_key=",
           "avb_extra_custom_image_algorithm=",
           "avb_extra_custom_image_extra_args=",
+          "gki_signing_key=",
+          "gki_signing_algorithm=",
+          "gki_signing_extra_args=",
       ],
       extra_option_handler=option_handler)
 
@@ -1295,7 +1347,7 @@ def main(argv):
 
   common.InitLogging()
 
-  input_zip = zipfile.ZipFile(args[0], "r")
+  input_zip = zipfile.ZipFile(args[0], "r", allowZip64=True)
   output_zip = zipfile.ZipFile(args[1], "w",
                                compression=zipfile.ZIP_DEFLATED,
                                allowZip64=True)
@@ -1348,6 +1400,6 @@ if __name__ == '__main__':
     main(sys.argv[1:])
   except common.ExternalError as e:
     print("\n   ERROR: %s\n" % (e,))
-    sys.exit(1)
+    raise
   finally:
     common.Cleanup()
