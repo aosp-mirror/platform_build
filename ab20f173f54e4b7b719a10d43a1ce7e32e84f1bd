@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e664595_358981f8",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-15T19:49:18Z",
+      "side": 1,
+      "message": "I would rather have this value passed to zout in the constructor.\n\nThis way, the comment size can be calculated after the CD has been written but before the EOCD is written when the destructor RAII triggers. This removes the need for estimating sizes.",
+      "range": {
+        "startLine": 97,
+        "startChar": 36,
+        "endLine": 97,
+        "endChar": 49
+      },
+      "revId": "ab20f173f54e4b7b719a10d43a1ce7e32e84f1bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
