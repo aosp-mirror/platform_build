@@ -22,6 +22,30 @@
       },
       "revId": "ab20f173f54e4b7b719a10d43a1ce7e32e84f1bd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6af6c2a_f8ac1053",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T02:54:00Z",
+      "side": 1,
+      "message": "Done. alignment is done in flush(), which seems much better/safer than having separate alignment step.",
+      "parentUuid": "1e664595_358981f8",
+      "range": {
+        "startLine": 97,
+        "startChar": 36,
+        "endLine": 97,
+        "endChar": 49
+      },
+      "revId": "ab20f173f54e4b7b719a10d43a1ce7e32e84f1bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
