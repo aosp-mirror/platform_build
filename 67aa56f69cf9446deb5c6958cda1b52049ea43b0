@@ -52,6 +52,24 @@
       "parentUuid": "a0ab83f7_b7836cda",
       "revId": "67aa56f69cf9446deb5c6958cda1b52049ea43b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "07d5bb84_c4fe59f7",
+        "filename": "core/product_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-07-16T13:38:32Z",
+      "side": 1,
+      "message": "The boot image definition also affects how dexpreopt is performed; I am not sure if changes in art-bootclasspath-fragment help here?\n\nThe very specific problem I had when I tried to force the core-icu4j into bootimage modules is that there is a check that GlobalConfig is identical to Soong config (is that what it is called?). And ctx.Config() seems to be just parsed directly, without any place to inject a special if-statement for core-icu4j.\n\nI guess an alternative to this make shenanigans is to ignore core-icu4j when we compare globalconfig and ctx.config to be identical, which I thought wasn\u0027t really nice..\n\nThanks! Added todo.",
+      "parentUuid": "1a251ffb_3bba3334",
+      "revId": "67aa56f69cf9446deb5c6958cda1b52049ea43b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
