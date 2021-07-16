@@ -4005,25 +4005,16 @@ endif # BOARD_KERNEL_VERSION
 endif # BOARD_KERNEL_CONFIG_FILE
 
 ifneq ($(my_board_extracted_kernel),true)
-ifndef INSTALLED_KERNEL_TARGET
-$(warning No INSTALLED_KERNEL_TARGET is defined when PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
-    is true. Information about the updated kernel cannot be built into OTA update package. \
-    You can fix this by: (1) setting TARGET_NO_KERNEL to false and installing the built kernel \
-    to $(PRODUCT_OUT)/kernel, so that kernel information will be extracted from the built kernel; \
-    or (2) extracting kernel configuration and defining BOARD_KERNEL_CONFIG_FILE and \
-    BOARD_KERNEL_VERSION manually; or (3) unsetting PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
-    manually.)
-# Clear their values to indicate that these two files does not exist.
-BUILT_KERNEL_CONFIGS_FILE :=
-BUILT_KERNEL_VERSION_FILE :=
-else
-
 # Tools for decompression that is not in PATH.
 # Check $(EXTRACT_KERNEL) for decompression algorithms supported by the script.
 # Algorithms that are in the script but not in this list will be found in PATH.
 my_decompress_tools := \
     lz4:$(HOST_OUT_EXECUTABLES)/lz4 \
 
+endif # my_board_extracted_kernel
+
+ifneq ($(my_board_extracted_kernel),true)
+ifdef INSTALLED_KERNEL_TARGET
 $(BUILT_KERNEL_CONFIGS_FILE): .KATI_IMPLICIT_OUTPUTS := $(BUILT_KERNEL_VERSION_FILE)
 $(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
 $(BUILT_KERNEL_CONFIGS_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
@@ -4032,12 +4023,46 @@ $(BUILT_KERNEL_CONFIGS_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_T
 	  --output-configs $@ \
 	  --output-release $(BUILT_KERNEL_VERSION_FILE)
 
-my_decompress_tools :=
-
-endif # my_board_extracted_kernel
-my_board_extracted_kernel :=
-
+my_board_extracted_kernel := true
 endif # INSTALLED_KERNEL_TARGET
+endif # my_board_extracted_kernel
+
+ifneq ($(my_board_extracted_kernel),true)
+ifdef INSTALLED_BOOTIMAGE_TARGET
+$(BUILT_KERNEL_CONFIGS_FILE): .KATI_IMPLICIT_OUTPUTS := $(BUILT_KERNEL_VERSION_FILE)
+$(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
+$(BUILT_KERNEL_CONFIGS_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
+$(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_UNPACKED_BOOTIMG := $(intermediates)/unpacked_bootimage
+$(BUILT_KERNEL_CONFIGS_FILE): \
+        $(HOST_OUT_EXECUTABLES)/unpack_bootimg \
+        $(EXTRACT_KERNEL) \
+        $(INSTALLED_BOOTIMAGE_TARGET)
+	$(HOST_OUT_EXECUTABLES)/unpack_bootimg --boot_img $(INSTALLED_BOOTIMAGE_TARGET) --out $(PRIVATE_UNPACKED_BOOTIMG)
+	$(EXTRACT_KERNEL) --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(PRIVATE_UNPACKED_BOOTIMG)/kernel \
+	  --output-configs $@ \
+	  --output-release $(BUILT_KERNEL_VERSION_FILE)
+
+my_board_extracted_kernel := true
+endif # INSTALLED_BOOTIMAGE_TARGET
+endif # my_board_extracted_kernel
+
+ifneq ($(my_board_extracted_kernel),true)
+$(warning Neither INSTALLED_KERNEL_TARGET nor INSTALLED_BOOTIMAGE_TARGET is defined when \
+    PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS  is true. Information about the updated kernel \
+    cannot be built into OTA update package. You can fix this by: \
+    (1) setting TARGET_NO_KERNEL to false and installing the built kernel to $(PRODUCT_OUT)/kernel,\
+        so that kernel information will be extracted from the built kernel; or \
+    (2) Add a prebuilt boot image and specify it in BOARD_PREBUILT_BOOTIMAGE; or \
+    (3) extracting kernel configuration and defining BOARD_KERNEL_CONFIG_FILE and \
+        BOARD_KERNEL_VERSION manually; or \
+    (4) unsetting PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS manually.)
+# Clear their values to indicate that these two files does not exist.
+BUILT_KERNEL_CONFIGS_FILE :=
+BUILT_KERNEL_VERSION_FILE :=
+endif
+
+my_decompress_tools :=
+my_board_extracted_kernel :=
 
 endif # PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
