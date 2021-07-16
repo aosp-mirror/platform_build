@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "80bff7ad_9aa53fbf",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-16T21:55:57Z",
+      "side": 1,
+      "message": "printf something so we know what went wrong in the logs.",
+      "range": {
+        "startLine": 185,
+        "startChar": 12,
+        "endLine": 185,
+        "endChar": 21
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52524916_e5ffbe7f",
+        "filename": "tools/zipalign/ZipAlignMain.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-16T21:55:57Z",
+      "side": 1,
+      "message": "I don\u0027t see the relation between entries alignment and file size alignment.\nIt seems it just happens that in b/192991318 alignment (for apex) and file size requirement (for block devices) are both equal to 4096.\n\nWhat if we want to align on 4 (like all regular apks) but also pad on 4096?\n\nI realize it is more work but I think the padding value should be part of -s.",
+      "range": {
+        "startLine": 43,
+        "startChar": 23,
+        "endLine": 43,
+        "endChar": 25
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "94dc93a4_1e84c66c",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1451,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-16T21:55:57Z",
+      "side": 1,
+      "message": "Why did you inverse these parameters? The previous version is more efficient isn\u0027t it?",
+      "range": {
+        "startLine": 1451,
+        "startChar": 29,
+        "endLine": 1451,
+        "endChar": 43
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0d7eadd_db777b5d",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1471,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-16T21:55:57Z",
+      "side": 1,
+      "message": "We don\u0027t need incremental update of comment and I don\u0027t see it us ever needing it. I suggest to make it a setter.",
+      "range": {
+        "startLine": 1471,
+        "startChar": 31,
+        "endLine": 1471,
+        "endChar": 41
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4a13a2c5_f54e979f",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1472,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-16T21:55:57Z",
+      "side": 1,
+      "message": "nullptr",
+      "range": {
+        "startLine": 1472,
+        "startChar": 20,
+        "endLine": 1472,
+        "endChar": 24
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "83f129c5_82410750",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1475,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-16T21:55:57Z",
+      "side": 1,
+      "message": "This is reading past buf right? Should\u0027t it be:\n\nmemcpy(mComment, buf, mCommentLen);",
+      "range": {
+        "startLine": 1475,
+        "startChar": 8,
+        "endLine": 1475,
+        "endChar": 54
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7fa0caf8_909dbbe1",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1489,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-16T21:55:57Z",
+      "side": 1,
+      "message": "\"add\" is ambiguous. It carries the idea that it add to the previous padding already there. I suggest to call this method setEocdPadding (as opposed to setEocdComment because you are really padding, not commenting).",
+      "range": {
+        "startLine": 1489,
+        "startChar": 14,
+        "endLine": 1489,
+        "endChar": 35
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b5b16be_b5b12b17",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1491,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-16T21:55:57Z",
+      "side": 1,
+      "message": "Combine these into calloc",
+      "range": {
+        "startLine": 1490,
+        "startChar": 19,
+        "endLine": 1491,
+        "endChar": 35
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "012951f8_406fd37b",
+        "filename": "tools/zipalign/ZipFile.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-16T21:55:57Z",
+      "side": 1,
+      "message": "Instead of passing two arguments, we should mirror what is done in ZipAlign and use a single value \"padTo\" and call this constructor like this:\n\nZipFile z(padTo? alignment : 0)",
+      "range": {
+        "startLine": 52,
+        "startChar": 12,
+        "endLine": 52,
+        "endChar": 45
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "42990f0b_9cd02ed8",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1083168
+      },
+      "writtenOn": "2021-07-16T21:55:57Z",
+      "side": 1,
+      "message": "Is there such a thing as file size alignment? I would say \"padding\" is more explanatory. \n\nIn the same line, I would call this parameter \"padTo\" to match \"alignTo\".",
+      "range": {
+        "startLine": 26,
+        "startChar": 20,
+        "endLine": 26,
+        "endChar": 44
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
