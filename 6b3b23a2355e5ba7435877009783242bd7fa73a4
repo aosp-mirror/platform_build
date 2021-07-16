@@ -24,6 +24,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f296610d_b52fd52a",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T22:59:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80bff7ad_9aa53fbf",
+      "range": {
+        "startLine": 185,
+        "startChar": 12,
+        "endLine": 185,
+        "endChar": 21
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "52524916_e5ffbe7f",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-07-16T21:55:57Z",
       "side": 1,
       "message": "I don\u0027t see the relation between entries alignment and file size alignment.\nIt seems it just happens that in b/192991318 alignment (for apex) and file size requirement (for block devices) are both equal to 4096.\n\nWhat if we want to align on 4 (like all regular apks) but also pad on 4096?\n\nI realize it is more work but I think the padding value should be part of -s.",
+      "range": {
+        "startLine": 43,
+        "startChar": 23,
+        "endLine": 43,
+        "endChar": 25
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99b55fc1_cde2222c",
+        "filename": "tools/zipalign/ZipAlignMain.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T22:59:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52524916_e5ffbe7f",
       "range": {
         "startLine": 43,
         "startChar": 23,
@@ -70,6 +118,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ac72c4d_1d674d55",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1451,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T22:59:29Z",
+      "side": 1,
+      "message": "When I tested, it fwrite only wrote 1 byte. I think this deserves a separate change.",
+      "parentUuid": "94dc93a4_1e84c66c",
+      "range": {
+        "startLine": 1451,
+        "startChar": 29,
+        "endLine": 1451,
+        "endChar": 43
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f0d7eadd_db777b5d",
@@ -83,6 +155,30 @@
       "writtenOn": "2021-07-16T21:55:57Z",
       "side": 1,
       "message": "We don\u0027t need incremental update of comment and I don\u0027t see it us ever needing it. I suggest to make it a setter.",
+      "range": {
+        "startLine": 1471,
+        "startChar": 31,
+        "endLine": 1471,
+        "endChar": 41
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bbfc745f_6e0e0f3e",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1471,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T22:59:29Z",
+      "side": 1,
+      "message": "Because EOCD size is \"fixed size + comment len\", technically we need to \"append(or add)\" comment to change \"comment len\" of EOCD. But yeah, setting would be simpler.\n\nDone",
+      "parentUuid": "f0d7eadd_db777b5d",
       "range": {
         "startLine": 1471,
         "startChar": 31,
@@ -116,6 +212,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d7c2c4b2_6cd7f3ac",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1472,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T22:59:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4a13a2c5_f54e979f",
+      "range": {
+        "startLine": 1472,
+        "startChar": 20,
+        "endLine": 1472,
+        "endChar": 24
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "83f129c5_82410750",
@@ -129,6 +249,30 @@
       "writtenOn": "2021-07-16T21:55:57Z",
       "side": 1,
       "message": "This is reading past buf right? Should\u0027t it be:\n\nmemcpy(mComment, buf, mCommentLen);",
+      "range": {
+        "startLine": 1475,
+        "startChar": 8,
+        "endLine": 1475,
+        "endChar": 54
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cec6d0a1_a95aaf90",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1475,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T22:59:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "83f129c5_82410750",
       "range": {
         "startLine": 1475,
         "startChar": 8,
@@ -162,6 +306,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a56dbf2_b57aaff9",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1489,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T22:59:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7fa0caf8_909dbbe1",
+      "range": {
+        "startLine": 1489,
+        "startChar": 14,
+        "endLine": 1489,
+        "endChar": 35
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3b5b16be_b5b12b17",
@@ -175,6 +343,30 @@
       "writtenOn": "2021-07-16T21:55:57Z",
       "side": 1,
       "message": "Combine these into calloc",
+      "range": {
+        "startLine": 1490,
+        "startChar": 19,
+        "endLine": 1491,
+        "endChar": 35
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b56cf2c_0fd084cb",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1491,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T22:59:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3b5b16be_b5b12b17",
       "range": {
         "startLine": 1490,
         "startChar": 19,
@@ -208,6 +400,30 @@
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2366ddf7_308065c0",
+        "filename": "tools/zipalign/ZipFile.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T22:59:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "012951f8_406fd37b",
+      "range": {
+        "startLine": 52,
+        "startChar": 12,
+        "endLine": 52,
+        "endChar": 45
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "42990f0b_9cd02ed8",
@@ -221,6 +437,30 @@
       "writtenOn": "2021-07-16T21:55:57Z",
       "side": 1,
       "message": "Is there such a thing as file size alignment? I would say \"padding\" is more explanatory. \n\nIn the same line, I would call this parameter \"padTo\" to match \"alignTo\".",
+      "range": {
+        "startLine": 26,
+        "startChar": 20,
+        "endLine": 26,
+        "endChar": 44
+      },
+      "revId": "6b3b23a2355e5ba7435877009783242bd7fa73a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab605a00_352ec9ee",
+        "filename": "tools/zipalign/include/ZipAlign.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2021-07-16T22:59:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42990f0b_9cd02ed8",
       "range": {
         "startLine": 26,
         "startChar": 20,
