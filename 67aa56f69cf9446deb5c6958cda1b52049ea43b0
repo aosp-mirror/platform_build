@@ -16,6 +16,24 @@
       "message": "I presume that at some point this will be removed.",
       "revId": "67aa56f69cf9446deb5c6958cda1b52049ea43b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a0ab83f7_b7836cda",
+        "filename": "core/product_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1061164
+      },
+      "writtenOn": "2021-07-16T13:22:58Z",
+      "side": 1,
+      "message": "If we switch boot image definition from just static context into a SingletonModule I think it would be easier to do this definition change there: force core-icu4j into boot image without affecting rest of the configuration.\n\nOr if we get rid of PRODUCT_UPDATABLE_BOOT_JARS all together b/191686720, then this stops being a problem.",
+      "parentUuid": "9904fc7e_055efa12",
+      "revId": "67aa56f69cf9446deb5c6958cda1b52049ea43b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
