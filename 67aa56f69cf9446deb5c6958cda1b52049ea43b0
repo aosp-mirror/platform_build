@@ -34,6 +34,24 @@
       "parentUuid": "9904fc7e_055efa12",
       "revId": "67aa56f69cf9446deb5c6958cda1b52049ea43b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a251ffb_3bba3334",
+        "filename": "core/product_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-07-16T13:29:36Z",
+      "side": 1,
+      "message": "I\u0027m not quite sure how a SingletonModule would help. Generally we want to avoid singletons because they won\u0027t work in Bazel. While the creation of the bootImageConfig structs is done in a static context as you say the rules to create the boot image are now generated in art-bootclasspath-fragment and platform-bootclasspath.\n\n\u003e Or if we get rid of PRODUCT_UPDATABLE_BOOT_JARS all together b/191686720, then this stops being a problem.\n\nThat was what I was assuming would allow this to be removed but there was no todo here.",
+      "parentUuid": "a0ab83f7_b7836cda",
+      "revId": "67aa56f69cf9446deb5c6958cda1b52049ea43b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
     }
   ]
 }
