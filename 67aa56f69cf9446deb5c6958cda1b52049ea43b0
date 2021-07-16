@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9904fc7e_055efa12",
+        "filename": "core/product_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2021-07-16T13:14:37Z",
+      "side": 1,
+      "message": "I presume that at some point this will be removed.",
+      "revId": "67aa56f69cf9446deb5c6958cda1b52049ea43b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889"
+    }
+  ]
+}
