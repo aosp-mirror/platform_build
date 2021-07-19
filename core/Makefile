@@ -4010,25 +4010,16 @@ endif # BOARD_KERNEL_VERSION
 endif # BOARD_KERNEL_CONFIG_FILE
 
 ifneq ($(my_board_extracted_kernel),true)
-ifndef INSTALLED_KERNEL_TARGET
-$(warning No INSTALLED_KERNEL_TARGET is defined when PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
-    is true. Information about the updated kernel cannot be built into OTA update package. \
-    You can fix this by: (1) setting TARGET_NO_KERNEL to false and installing the built kernel \
-    to $(PRODUCT_OUT)/kernel, so that kernel information will be extracted from the built kernel; \
-    or (2) extracting kernel configuration and defining BOARD_KERNEL_CONFIG_FILE and \
-    BOARD_KERNEL_VERSION manually; or (3) unsetting PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
-    manually.)
-# Clear their values to indicate that these two files does not exist.
-BUILT_KERNEL_CONFIGS_FILE :=
-BUILT_KERNEL_VERSION_FILE :=
-else
-
 # Tools for decompression that is not in PATH.
 # Check $(EXTRACT_KERNEL) for decompression algorithms supported by the script.
 # Algorithms that are in the script but not in this list will be found in PATH.
 my_decompress_tools := \
     lz4:$(HOST_OUT_EXECUTABLES)/lz4 \
 
+endif # my_board_extracted_kernel
+
+ifneq ($(my_board_extracted_kernel),true)
+ifdef INSTALLED_KERNEL_TARGET
 $(BUILT_KERNEL_CONFIGS_FILE): .KATI_IMPLICIT_OUTPUTS := $(BUILT_KERNEL_VERSION_FILE)
 $(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
 $(BUILT_KERNEL_CONFIGS_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
@@ -4037,12 +4028,46 @@ $(BUILT_KERNEL_CONFIGS_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_T
 	  --output-configs $@ \
 	  --output-release $(BUILT_KERNEL_VERSION_FILE)
 
-my_decompress_tools :=
-
-endif # my_board_extracted_kernel
-my_board_extracted_kernel :=
-
+my_board_extracted_kernel := true
 endif # INSTALLED_KERNEL_TARGET
+endif # my_board_extracted_kernel
+
+ifneq ($(my_board_extracted_kernel),true)
+ifdef INSTALLED_BOOTIMAGE_TARGET
+$(BUILT_KERNEL_CONFIGS_FILE): .KATI_IMPLICIT_OUTPUTS := $(BUILT_KERNEL_VERSION_FILE)
+$(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
+$(BUILT_KERNEL_CONFIGS_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
+$(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_UNPACKED_BOOTIMG := $(intermediates)/unpacked_bootimage
+$(BUILT_KERNEL_CONFIGS_FILE): \
+        $(HOST_OUT_EXECUTABLES)/unpack_bootimg \
+        $(EXTRACT_KERNEL) \
+        $(INSTALLED_BOOTIMAGE_TARGET)
+	$(HOST_OUT_EXECUTABLES)/unpack_bootimg --boot_img $(INSTALLED_BOOTIMAGE_TARGET) --out $(PRIVATE_UNPACKED_BOOTIMG)
+	$(EXTRACT_KERNEL) --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(PRIVATE_UNPACKED_BOOTIMG)/kernel \
+	  --output-configs $@ \
+	  --output-release $(BUILT_KERNEL_VERSION_FILE)
+
+my_board_extracted_kernel := true
+endif # INSTALLED_BOOTIMAGE_TARGET
+endif # my_board_extracted_kernel
+
+ifneq ($(my_board_extracted_kernel),true)
+$(warning Neither INSTALLED_KERNEL_TARGET nor INSTALLED_BOOTIMAGE_TARGET is defined when \
+    PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS  is true. Information about the updated kernel \
+    cannot be built into OTA update package. You can fix this by: \
+    (1) setting TARGET_NO_KERNEL to false and installing the built kernel to $(PRODUCT_OUT)/kernel,\
+        so that kernel information will be extracted from the built kernel; or \
+    (2) Add a prebuilt boot image and specify it in BOARD_PREBUILT_BOOTIMAGE; or \
+    (3) extracting kernel configuration and defining BOARD_KERNEL_CONFIG_FILE and \
+        BOARD_KERNEL_VERSION manually; or \
+    (4) unsetting PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS manually.)
+# Clear their values to indicate that these two files does not exist.
+BUILT_KERNEL_CONFIGS_FILE :=
+BUILT_KERNEL_VERSION_FILE :=
+endif
+
+my_decompress_tools :=
+my_board_extracted_kernel :=
 
 endif # PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
@@ -4210,16 +4235,25 @@ else
   ifeq ($(TARGET_PRODUCT),sdk)
     build_ota_package := false
   endif
+  # A target without a kernel or recovery fstab may be one of the following:
+  # - A generic target. In this case, the OTA package usually isn't built.
+  #   PRODUCT_BUILD_GENERIC_OTA_PACKAGE may be set to true to force OTA package
+  #   generation.
+  # - A real device target, with TARGET_NO_KERNEL set to true and
+  #   BOARD_PREBUILT_BOOTIMAGE set. In this case, it is valid to generate
+  #   an OTA package.
   ifneq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
     ifneq ($(filter generic%,$(TARGET_DEVICE)),)
       build_ota_package := false
     endif
-    ifeq ($(TARGET_NO_KERNEL),true)
-      build_ota_package := false
-    endif
-    ifeq ($(recovery_fstab),)
-      build_ota_package := false
-    endif
+    ifeq ($(INSTALLED_BOOTIMAGE_TARGET),)
+      ifeq ($(TARGET_NO_KERNEL),true)
+        build_ota_package := false
+      endif
+      ifeq ($(recovery_fstab),)
+        build_ota_package := false
+      endif
+    endif # INSTALLED_BOOTIMAGE_TARGET == ""
   endif # PRODUCT_BUILD_GENERIC_OTA_PACKAGE
 
   # Set build_otatools_package, and allow opt-out below.
@@ -5363,24 +5397,33 @@ endif # DEX2OAT is set
 endif # BUILD_OS == linux
 
 DEXPREOPT_CONFIG_ZIP := $(PRODUCT_OUT)/dexpreopt_config.zip
-$(DEXPREOPT_CONFIG_ZIP): $(FULL_SYSTEMIMAGE_DEPS) \
-	    $(INTERNAL_RAMDISK_FILES) \
-	    $(INTERNAL_USERDATAIMAGE_FILES) \
-	    $(INTERNAL_VENDORIMAGE_FILES) \
-	    $(INTERNAL_PRODUCTIMAGE_FILES) \
-	    $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
-	    $(DEX_PREOPT_CONFIG_FOR_MAKE) \
-	    $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)
+
+$(DEXPREOPT_CONFIG_ZIP): $(INSTALLED_SYSTEMIMAGE_TARGET) \
+    $(INSTALLED_VENDORIMAGE_TARGET) \
+    $(INSTALLED_ODMIMAGE_TARGET) \
+    $(INSTALLED_PRODUCTIMAGE_TARGET) \
+
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
+$(DEXPREOPT_CONFIG_ZIP): $(DEX_PREOPT_CONFIG_FOR_MAKE) \
+	  $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) \
+
+endif
 
 $(DEXPREOPT_CONFIG_ZIP): $(SOONG_ZIP)
 	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/dexpreopt_config
+
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
 ifneq (,$(DEX_PREOPT_CONFIG_FOR_MAKE))
 	$(hide) cp $(DEX_PREOPT_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
 endif
 ifneq (,$(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE))
 	$(hide) cp $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
 endif
+endif #!TARGET_BUILD_UNBUNDLED
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config
+
+.PHONY: dexpreopt_config_zip
+dexpreopt_config_zip: $(DEXPREOPT_CONFIG_ZIP)
 
 # -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it
