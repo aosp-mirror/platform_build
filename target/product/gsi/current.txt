@@ -119,6 +119,7 @@ VNDK-core: android.media.soundtrigger.types-V1-ndk.so
 VNDK-core: android.media.soundtrigger.types-V1-ndk_platform.so
 VNDK-core: android.system.keystore2-V1-ndk.so
 VNDK-core: android.system.keystore2-V1-ndk_platform.so
+VNDK-core: android.system.suspend-V1-ndk_platform.so
 VNDK-core: android.system.suspend@1.0.so
 VNDK-core: libaudioroute.so
 VNDK-core: libaudioutils.so
