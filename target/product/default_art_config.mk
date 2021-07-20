@@ -25,9 +25,8 @@ endif
 # 4. Non-updatable APEX jars
 # 5. Updatable APEX jars
 #
-# ART APEX jars (1) are defined in ART_APEX_JARS. System, system_ext, and non updatable boot jars
-# are defined below in PRODUCT_BOOT_JARS. All updatable APEX boot jars are part of
-# PRODUCT_UPDATABLE_BOOT_JARS.
+# ART APEX jars (1) are defined in ART_APEX_JARS. System and system_ext boot jars are defined below
+# in PRODUCT_BOOT_JARS. All other non-art APEX boot jars are part of the PRODUCT_APEX_BOOT_JARS.
 #
 # The actual runtime ordering matching above is determined by derive_classpath service at runtime.
 # See packages/modules/SdkExtensions/README.md for more details.
@@ -47,7 +46,7 @@ PRODUCT_BOOT_JARS += \
 
 # APEX boot jars. Keep the list sorted by module names and then library names.
 # Note: core-icu4j is moved back to PRODUCT_BOOT_JARS in product_config.mk at a later stage.
-PRODUCT_UPDATABLE_BOOT_JARS := \
+PRODUCT_APEX_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
     com.android.conscrypt:conscrypt \
     com.android.i18n:core-icu4j \
