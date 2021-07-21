@@ -252,9 +252,9 @@ PRODUCT_BOOT_JARS := $(call qualify-platform-jars,$(PRODUCT_BOOT_JARS))
 # b/191127295: force core-icu4j onto boot image. It comes from a non-updatable APEX jar, but has
 # historically been part of the boot image; even though APEX jars are not meant to be part of the
 # boot image.
-# TODO(b/191686720): remove PRODUCT_UPDATABLE_BOOT_JARS to avoid a special handling of core-icu4j
+# TODO(b/191686720): remove PRODUCT_APEX_BOOT_JARS to avoid a special handling of core-icu4j
 # in make rules.
-PRODUCT_UPDATABLE_BOOT_JARS := $(filter-out com.android.i18n:core-icu4j,$(PRODUCT_UPDATABLE_BOOT_JARS))
+PRODUCT_APEX_BOOT_JARS := $(filter-out com.android.i18n:core-icu4j,$(PRODUCT_APEX_BOOT_JARS))
 # All APEX jars come after /system and /system_ext jars, so adding core-icu4j at the end of the list
 PRODUCT_BOOT_JARS += com.android.i18n:core-icu4j
 
@@ -268,7 +268,7 @@ define replace-boot-jar-module-overrides
 endef
 
 $(call replace-boot-jar-module-overrides,PRODUCT_BOOT_JARS)
-$(call replace-boot-jar-module-overrides,PRODUCT_UPDATABLE_BOOT_JARS)
+$(call replace-boot-jar-module-overrides,PRODUCT_APEX_BOOT_JARS)
 $(call replace-boot-jar-module-overrides,ART_APEX_JARS)
 
 # The extra system server jars must be appended at the end after common system server jars.
@@ -312,10 +312,10 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
   endif
 endif
 
-$(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS), \
+$(foreach pair,$(PRODUCT_APEX_BOOT_JARS), \
   $(eval jar := $(call word-colon,2,$(pair))) \
   $(if $(findstring $(jar), $(PRODUCT_BOOT_JARS)), \
-    $(error A jar in PRODUCT_UPDATABLE_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(jar) is)))
+    $(error A jar in PRODUCT_APEX_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(jar) is)))
 
 ENFORCE_SYSTEM_CERTIFICATE := $(PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT)
 ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST := $(PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST)
