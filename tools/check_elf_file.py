@@ -174,7 +174,7 @@ class ELFParser(object):
   @classmethod
   def open(cls, elf_file_path, llvm_readobj):
     """Open and parse the ELF file."""
-    # Parse the ELF header for simple sanity checks.
+    # Parse the ELF header to check the magic word.
     header = cls._read_elf_header(elf_file_path)
     if not header or header.ei_magic != _ELF_MAGIC:
       raise ELFInvalidMagicError()
@@ -207,8 +207,8 @@ class ELFParser(object):
   def _parse_llvm_readobj(cls, elf_file_path, header, lines):
     """Parse the output of llvm-readobj."""
     lines_it = iter(lines)
-    imported, exported = cls._parse_dynamic_symbols(lines_it)
     dt_soname, dt_needed = cls._parse_dynamic_table(elf_file_path, lines_it)
+    imported, exported = cls._parse_dynamic_symbols(lines_it)
     return ELF(dt_soname, dt_needed, imported, exported, header)
 
 
@@ -397,7 +397,7 @@ class Checker(object):
       sys.exit(2)
 
 
-  def check_dt_needed(self):
+  def check_dt_needed(self, system_shared_lib_names):
     """Check whether all DT_NEEDED entries are specified in the build
     system."""
 
@@ -416,6 +416,11 @@ class Checker(object):
     if missing_shared_libs:
       dt_needed = sorted(set(self._file_under_test.dt_needed))
       modules = [re.sub('\\.so$', '', lib) for lib in dt_needed]
+
+      # Remove system shared libraries from the suggestion since they are added
+      # by default.
+      modules = [name for name in modules
+                 if name not in system_shared_lib_names]
 
       self._note()
       self._note('Fix suggestions:')
@@ -502,6 +507,11 @@ def _parse_args():
   parser.add_argument('--shared-lib', action='append', default=[],
                       help='Path to shared library dependencies')
 
+  # System Shared library names
+  parser.add_argument('--system-shared-lib', action='append', default=[],
+                      help='System shared libraries to be hidden from fix '
+                      'suggestions')
+
   # Check options
   parser.add_argument('--skip-bad-elf-magic', action='store_true',
                       help='Ignore the input file without the ELF magic word')
@@ -535,7 +545,7 @@ def main():
   if args.soname:
     checker.check_dt_soname(args.soname)
 
-  checker.check_dt_needed()
+  checker.check_dt_needed(args.system_shared_lib)
 
   if not args.allow_undefined_symbols:
     checker.check_symbols()
