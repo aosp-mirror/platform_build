@@ -1000,8 +1000,15 @@ def rebuild_image_with_sepolicy(target_files_dir,
   # Copy the combined SEPolicy file and framework hashes to the image that is
   # being rebuilt.
   def copy_selinux_file(input_path, output_filename):
+    input_filename = os.path.join(target_files_dir, input_path)
+    if not os.path.exists(input_filename):
+      input_filename = input_filename.replace('SYSTEM_EXT/', 'SYSTEM/system_ext/') \
+          .replace('PRODUCT/', 'SYSTEM/product/')
+      if not os.path.exists(input_filename):
+        logger.info('Skipping copy_selinux_file for %s', input_filename)
+        return
     shutil.copy(
-        os.path.join(target_files_dir, input_path),
+        input_filename,
         os.path.join(target_files_dir, partition.upper(), 'etc/selinux',
                      output_filename))
 
@@ -1041,7 +1048,8 @@ def rebuild_image_with_sepolicy(target_files_dir,
     shutil.rmtree(os.path.join(vendor_target_files_dir, partition.upper()))
     shutil.copytree(
         os.path.join(target_files_dir, partition.upper()),
-        os.path.join(vendor_target_files_dir, partition.upper()))
+        os.path.join(vendor_target_files_dir, partition.upper()),
+        symlinks=True)
 
     # Delete then rebuild the partition.
     os.remove(os.path.join(vendor_target_files_dir, 'IMAGES', partition_img))
@@ -1056,6 +1064,8 @@ def rebuild_image_with_sepolicy(target_files_dir,
     common.RunAndCheckOutput(rebuild_partition_command, verbose=True)
 
     # Move the newly-created image to the merged target files dir.
+    if not os.path.exists(os.path.join(target_files_dir, 'IMAGES')):
+      os.makedirs(os.path.join(target_files_dir, 'IMAGES'))
     shutil.move(
         os.path.join(vendor_target_files_dir, 'IMAGES', partition_img),
         os.path.join(target_files_dir, 'IMAGES', partition_img))
