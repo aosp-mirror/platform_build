@@ -1020,6 +1020,7 @@ class SignApk {
     private static void usage() {
         System.err.println("Usage: signapk [-w] " +
                            "[-a <alignment>] " +
+                           "[--align-file-size] " +
                            "[-providerClass <className>] " +
                            "[--min-sdk-version <n>] " +
                            "[--disable-v2] " +
@@ -1044,6 +1045,7 @@ class SignApk {
         boolean signWholeFile = false;
         String providerClass = null;
         int alignment = 4;
+        boolean alignFileSize = false;
         Integer minSdkVersionOverride = null;
         boolean signUsingApkSignatureSchemeV2 = true;
         boolean signUsingApkSignatureSchemeV4 = false;
@@ -1062,6 +1064,9 @@ class SignApk {
                 ++argstart;
             } else if ("-a".equals(args[argstart])) {
                 alignment = Integer.parseInt(args[++argstart]);
+                ++argstart;
+            } else if ("--align-file-size".equals(args[argstart])) {
+                alignFileSize = true;
                 ++argstart;
             } else if ("--min-sdk-version".equals(args[argstart])) {
                 String minSdkVersionString = args[++argstart];
@@ -1206,12 +1211,22 @@ class SignApk {
                     ByteBuffer[] outputChunks = new ByteBuffer[] {v1SignedApk};
 
                     ZipSections zipSections = findMainZipSections(v1SignedApk);
-                    ApkSignerEngine.OutputApkSigningBlockRequest2 addV2SignatureRequest =
-                            apkSigner.outputZipSections2(
-                                    DataSources.asDataSource(zipSections.beforeCentralDir),
-                                    DataSources.asDataSource(zipSections.centralDir),
-                                    DataSources.asDataSource(zipSections.eocd));
-                    if (addV2SignatureRequest != null) {
+
+                    ByteBuffer eocd = ByteBuffer.allocate(zipSections.eocd.remaining());
+                    eocd.put(zipSections.eocd);
+                    eocd.flip();
+                    eocd.order(ByteOrder.LITTLE_ENDIAN);
+                    // This loop is supposed to be iterated twice at most.
+                    // The second pass is to align the file size after amending EOCD comments
+                    // with assumption that re-generated signing block would be the same size.
+                    while (true) {
+                        ApkSignerEngine.OutputApkSigningBlockRequest2 addV2SignatureRequest =
+                                apkSigner.outputZipSections2(
+                                        DataSources.asDataSource(zipSections.beforeCentralDir),
+                                        DataSources.asDataSource(zipSections.centralDir),
+                                        DataSources.asDataSource(eocd));
+                        if (addV2SignatureRequest == null) break;
+
                         // Need to insert the returned APK Signing Block before ZIP Central
                         // Directory.
                         int padding = addV2SignatureRequest.getPaddingSizeBeforeApkSigningBlock();
@@ -1219,8 +1234,8 @@ class SignApk {
                         // Because the APK Signing Block is inserted before the Central Directory,
                         // we need to adjust accordingly the offset of Central Directory inside the
                         // ZIP End of Central Directory (EoCD) record.
-                        ByteBuffer modifiedEocd = ByteBuffer.allocate(zipSections.eocd.remaining());
-                        modifiedEocd.put(zipSections.eocd);
+                        ByteBuffer modifiedEocd = ByteBuffer.allocate(eocd.remaining());
+                        modifiedEocd.put(eocd);
                         modifiedEocd.flip();
                         modifiedEocd.order(ByteOrder.LITTLE_ENDIAN);
                         ApkUtils.setZipEocdCentralDirectoryOffset(
@@ -1235,6 +1250,32 @@ class SignApk {
                                         zipSections.centralDir,
                                         modifiedEocd};
                         addV2SignatureRequest.done();
+
+                        // Exit the loop if we don't need to align the file size
+                        if (!alignFileSize || alignment < 2) {
+                            break;
+                        }
+
+                        // Calculate the file size
+                        eocd = modifiedEocd;
+                        int fileSize = 0;
+                        for (ByteBuffer buf : outputChunks) {
+                            fileSize += buf.remaining();
+                        }
+                        // Exit the loop because the file size is aligned.
+                        if (fileSize % alignment == 0) {
+                            break;
+                        }
+                        // Pad EOCD comment to align the file size.
+                        int commentLen = alignment - fileSize % alignment;
+                        modifiedEocd = ByteBuffer.allocate(eocd.remaining() + commentLen);
+                        modifiedEocd.put(eocd);
+                        modifiedEocd.rewind();
+                        modifiedEocd.order(ByteOrder.LITTLE_ENDIAN);
+                        ApkUtils.updateZipEocdCommentLen(modifiedEocd);
+                        // Since V2 signing block should cover modified EOCD,
+                        // re-iterate the loop with modified EOCD.
+                        eocd = modifiedEocd;
                     }
 
                     // This assumes outputChunks are array-backed. To avoid this assumption, the
