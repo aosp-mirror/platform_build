@@ -41,7 +41,7 @@ else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
   # Always build from source for the module targets. This ought to be covered by
   # the TARGET_BUILD_APPS check above, but there are test builds that don't set it.
   SOONG_CONFIG_art_module_source_build := true
-else ifdef MODULES_BUILD_FROM_SOURCE
+else ifdef MODULE_BUILD_FROM_SOURCE
   # Build from source if other Mainline modules are.
   SOONG_CONFIG_art_module_source_build := true
 else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
@@ -52,6 +52,7 @@ else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
 else ifneq (,$(SANITIZE_TARGET)$(SANITIZE_HOST))
   # Prebuilts aren't built with sanitizers either.
   SOONG_CONFIG_art_module_source_build := true
+  MODULE_BUILD_FROM_SOURCE := true
 else ifneq (,$(PRODUCT_FUCHSIA))
   # Fuchsia picks out ART internal packages that aren't available in the
   # prebuilt.
