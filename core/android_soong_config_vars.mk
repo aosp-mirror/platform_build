@@ -54,10 +54,6 @@ else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
 else ifneq (,$(SANITIZE_TARGET)$(SANITIZE_HOST))
   # Prebuilts aren't built with sanitizers either.
   SOONG_CONFIG_art_module_source_build := true
-else ifneq (,$(PRODUCT_FUCHSIA))
-  # Fuchsia picks out ART internal packages that aren't available in the
-  # prebuilt.
-  SOONG_CONFIG_art_module_source_build := true
 else ifeq (,$(filter x86 x86_64,$(HOST_CROSS_ARCH)))
   # We currently only provide prebuilts for x86 on host. This skips prebuilts in
   # cuttlefish builds for ARM servers.
