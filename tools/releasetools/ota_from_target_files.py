@@ -286,6 +286,7 @@ OPTIONS.custom_images = {}
 OPTIONS.disable_vabc = False
 OPTIONS.spl_downgrade = False
 OPTIONS.vabc_downgrade = False
+OPTIONS.enable_vabc_xor = False
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -1132,6 +1133,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   if OPTIONS.disable_vabc:
     additional_args += ["--disable_vabc", "true"]
+  if OPTIONS.enable_vabc_xor:
+    additional_args += ["--enable_vabc_xor", "true"]
   additional_args += ["--max_timestamp", max_timestamp]
 
   if SupportsMainlineGkiUpdates(source_file):
@@ -1305,6 +1308,8 @@ def main(argv):
       OPTIONS.wipe_user_data = True
     elif o == "--vabc_downgrade":
       OPTIONS.vabc_downgrade = True
+    elif o == "--enable_vabc_xor":
+      OPTIONS.enable_vabc_xor = True
     else:
       return False
     return True
@@ -1349,6 +1354,7 @@ def main(argv):
                                  "disable_vabc",
                                  "spl_downgrade",
                                  "vabc_downgrade",
+                                 "enable_vabc_xor",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
