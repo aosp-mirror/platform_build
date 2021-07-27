@@ -459,6 +459,10 @@ class BuildInfo(object):
   def oem_props(self):
     return self._oem_props
 
+  @property
+  def avb_enabled(self):
+    return self.get("avb_enable") == "true"
+
   def __getitem__(self, key):
     return self.info_dict[key]
 
