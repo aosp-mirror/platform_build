@@ -63,7 +63,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.wifi:framework-wifi
 
 # APEX system server jars. Keep the list sorted by module names and then library names.
-PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
+PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
     com.android.art:service-art \
     com.android.media:service-media-s \
