@@ -39,7 +39,7 @@ _output-kernel-info-files-debug := \
     manifest.xml:manifest.xml \
     System.map-allsyms:System.map \
     vmlinux-allsyms:vmlinux \
-    vmlinux.symvers-allsyms:vmlinux.symvers \
+    vmlinux-allsyms.symvers:vmlinux.symvers \
     modules.builtin:modules.builtin \
     modules.builtin.modinfo:modules.builtin.modinfo \
 
