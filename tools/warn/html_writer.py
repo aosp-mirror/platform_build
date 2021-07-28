@@ -328,7 +328,8 @@ def dump_fixed(writer, warn_patterns):
     cur_row_class = 1 - cur_row_class
     # remove last '\n'
     out_text = text[:-1] if text[-1] == '\n' else text
-    writer('<tr><td class="c' + str(cur_row_class) + '">' + out_text + '</td></tr>')
+    writer('<tr><td class="c' + str(cur_row_class) + '">'
+           + out_text + '</td></tr>')
   writer('</table></div>')
   writer('</blockquote>')
 
@@ -355,7 +356,8 @@ def dump_csv(csvwriter, warn_patterns):
   sort_warnings(warn_patterns)
   total = 0
   for severity in Severity.levels:
-    total += write_severity(csvwriter, severity, severity.column_header, warn_patterns)
+    total += write_severity(
+        csvwriter, severity, severity.column_header, warn_patterns)
   csvwriter.writerow([total, '', 'All warnings'])
 
 

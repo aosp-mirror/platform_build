@@ -331,15 +331,15 @@ function setpaths()
 
 function bazel()
 {
-    local T="$(gettop)"
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP."
-        return
+    if which bazel &>/dev/null; then
+        >&2 echo "NOTE: bazel() function sourced from Android's envsetup.sh is being used instead of $(which bazel)"
+        >&2 echo
     fi
 
-    if which bazel &>/dev/null; then
-        >&2 echo "NOTE: bazel() function sourced from envsetup.sh is being used instead of $(which bazel)"
-        >&2 echo
+    local T="$(gettop)"
+    if [ ! "$T" ]; then
+        >&2 echo "Couldn't locate the top of the Android tree. Try setting TOP. This bazel() function cannot be used outside of the AOSP directory."
+        return
     fi
 
     "$T/tools/bazel" "$@"
@@ -703,6 +703,10 @@ function lunch()
     build_build_var_cache
     if [ $? -ne 0 ]
     then
+        if [[ "$product" =~ .*_(eng|user|userdebug) ]]
+        then
+            echo "Did you mean -${product/*_/}? (dash instead of underscore)"
+        fi
         return 1
     fi
     export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
@@ -1687,12 +1691,36 @@ function _trigger_build()
     if T="$(gettop)"; then
       _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
     else
-      echo "Couldn't locate the top of the tree. Try setting TOP."
+      >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
+      return 1
+    fi
+)
+
+# Convenience entry point (like m) to use Bazel in AOSP.
+function b()
+(
+    # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
+    _trigger_build "all-modules" nothing GENERATE_BAZEL_FILES=true USE_BAZEL_ANALYSIS= || return 1
+    # Then, run Bazel using the synthetic workspace as the --package_path.
+    if [[ -z "$@" ]]; then
+        # If there are no args, show help.
+        bazel help
+    else
+        # Else, always run with the bp2build configuration, which sets Bazel's package path to the synthetic workspace.
+        bazel "$@" --config=bp2build
     fi
 )
 
 function m()
 (
+    if [[ "${USE_BAZEL_ANALYSIS}" =~ ^(true|1)$ ]]; then
+        # This only short-circuits to Bazel for a single module target now.
+        b cquery "@soong_injection//module_name_to_label:$@" 2>/dev/null
+        if [[ $? == 0 ]]; then
+            bazel build "@soong_injection//module_name_to_label:$@" --config=bp2build
+            return $?
+        fi
+    fi
     _trigger_build "all-modules" "$@"
 )
 
@@ -1843,6 +1871,16 @@ function showcommands() {
     fi
 }
 
+# Source necessary setup scripts needed to run the build with Remote Execution.
+function source_rbe() {
+    local T=$(gettop)
+
+    if [[ "x$USE_RBE" != "x" && "$USE_RBE" != "false" ]]; then
+        . $T/build/make/rbesetup.sh --skip-envsetup
+    fi
+}
+
 validate_current_shell
 source_vendorsetup
+source_rbe
 addcompletions

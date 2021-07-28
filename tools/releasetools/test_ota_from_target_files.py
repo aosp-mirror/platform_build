@@ -24,7 +24,7 @@ import ota_metadata_pb2
 import test_utils
 from ota_utils import (
     BuildLegacyOtaMetadata, CalculateRuntimeDevicesAndFingerprints,
-    FinalizeMetadata, GetPackageMetadata, PropertyFiles)
+    ConstructOtaApexInfo, FinalizeMetadata, GetPackageMetadata, PropertyFiles)
 from ota_from_target_files import (
     _LoadOemDicts, AbOtaPropertyFiles,
     GetTargetFilesZipForCustomImagesUpdates,
@@ -294,6 +294,35 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         test_utils.get_current_dir(), original_apex_name)
     uncompressed_apex_size = os.path.getsize(original_apex_filepath)
     self.assertEqual(apex_infos[0].decompressed_size, uncompressed_apex_size)
+
+  @staticmethod
+  def construct_tf_with_apex_info(infos):
+    apex_metadata_proto = ota_metadata_pb2.ApexMetadata()
+    apex_metadata_proto.apex_info.extend(infos)
+
+    output = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(output, 'w') as zfp:
+      common.ZipWriteStr(zfp, "META/apex_info.pb",
+                         apex_metadata_proto.SerializeToString())
+    return output
+
+  def test_ConstructOtaApexInfo_incremental_package(self):
+    infos = [ota_metadata_pb2.ApexInfo(package_name='com.android.apex.1',
+                                       version=1000, is_compressed=False),
+             ota_metadata_pb2.ApexInfo(package_name='com.android.apex.2',
+                                       version=2000, is_compressed=True)]
+    target_file = self.construct_tf_with_apex_info(infos)
+
+    with zipfile.ZipFile(target_file) as target_zip:
+      info_bytes = ConstructOtaApexInfo(target_zip, source_file=target_file)
+    apex_metadata_proto = ota_metadata_pb2.ApexMetadata()
+    apex_metadata_proto.ParseFromString(info_bytes)
+
+    info_list = apex_metadata_proto.apex_info
+    self.assertEqual(2, len(info_list))
+    self.assertEqual('com.android.apex.1', info_list[0].package_name)
+    self.assertEqual(1000, info_list[0].version)
+    self.assertEqual(1000, info_list[0].source_version)
 
   def test_GetPackageMetadata_retrofitDynamicPartitions(self):
     target_info = common.BuildInfo(self.TEST_TARGET_INFO_DICT, None)
@@ -834,6 +863,7 @@ class StreamingPropertyFilesTest(PropertyFilesTestCase):
         property_files.required)
     self.assertEqual(
         (
+            'apex_info.pb',
             'care_map.pb',
             'care_map.txt',
             'compatibility.zip',
@@ -933,6 +963,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
         property_files.required)
     self.assertEqual(
         (
+            'apex_info.pb',
             'care_map.pb',
             'care_map.txt',
             'compatibility.zip',
