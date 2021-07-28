@@ -63,3 +63,17 @@ assert_eq(
     },
     { k:v for k, v in sorted(config.items()) }
 )
+
+ns = globals["$SOONG_CONFIG_NAMESPACES"]
+assert_eq(
+    {
+        "NS1": {
+            "v1": "abc",
+            "v2": "def"
+        },
+        "NS2": {
+            "v3": "xyz"
+        }
+    },
+    {k:v for k, v in sorted(ns.items()) }
+)
