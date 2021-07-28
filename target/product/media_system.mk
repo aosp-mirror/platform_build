@@ -54,12 +54,6 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service
 
-# system server jars which are updated via apex modules.
-# The values should be of the format <apex name>:<jar name>
-PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
-    com.android.art:service-art \
-    com.android.permission:service-permission \
-
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
 

@@ -194,7 +194,8 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
 
     # Check we have the same recovery target in the check and flash commands.
     assert check_partition == flash_partition, \
-        "Mismatching targets: {} vs {}".format(check_partition, flash_partition)
+        "Mismatching targets: {} vs {}".format(
+            check_partition, flash_partition)
 
     # Validate the SHA-1 of the recovery image.
     recovery_sha1 = flash_partition.split(':')[3]
@@ -248,6 +249,39 @@ def symlinkIfNotExists(src, dst):
     os.symlink(os.path.join(src, filename), os.path.join(dst, filename))
 
 
+def ValidatePartitionFingerprints(input_tmp, info_dict):
+  build_info = common.BuildInfo(info_dict)
+  if not build_info.avb_enabled:
+    logging.info("AVB not enabled, skipping partition fingerprint checks")
+    return
+  # Expected format:
+  #  Prop: com.android.build.vendor.fingerprint -> 'generic/aosp_cf_x86_64_phone/vsoc_x86_64:S/AOSP.MASTER/7335886:userdebug/test-keys'
+  #  Prop: com.android.build.vendor_boot.fingerprint -> 'generic/aosp_cf_x86_64_phone/vsoc_x86_64:S/AOSP.MASTER/7335886:userdebug/test-keys'
+  p = re.compile(
+      r"Prop: com.android.build.(?P<partition>\w+).fingerprint -> '(?P<fingerprint>[\w\/:\.-]+)'")
+  for vbmeta_partition in ["vbmeta", "vbmeta_system"]:
+    image = os.path.join(input_tmp, "IMAGES", vbmeta_partition + ".img")
+    if not os.path.exists(image):
+      assert vbmeta_partition != "vbmeta",\
+          "{} is a required partition for AVB.".format(
+              vbmeta_partition)
+      logging.info("vb partition %s not present, skipping", vbmeta_partition)
+      continue
+
+    output = common.RunAndCheckOutput(
+        [info_dict["avb_avbtool"], "info_image", "--image", image])
+    matches = p.findall(output)
+    for (partition, fingerprint) in matches:
+      actual_fingerprint = build_info.GetPartitionFingerprint(
+          partition)
+      if actual_fingerprint is None:
+        logging.warning(
+            "Failed to get fingerprint for partition %s", partition)
+        continue
+      assert fingerprint == actual_fingerprint, "Fingerprint mismatch for partition {}, expected: {} actual: {}".format(
+          partition, fingerprint, actual_fingerprint)
+
+
 def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   """Validates the Verified Boot related images.
 
@@ -273,7 +307,7 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   # longer copied from RADIO to the IMAGES folder. But avbtool assumes that
   # images are in IMAGES folder. So we symlink them.
   symlinkIfNotExists(os.path.join(input_tmp, "RADIO"),
-                    os.path.join(input_tmp, "IMAGES"))
+                     os.path.join(input_tmp, "IMAGES"))
   # Verified boot 1.0 (images signed with boot_signer and verity_signer).
   if info_dict.get('boot_signer') == 'true':
     logging.info('Verifying Verified Boot images...')
@@ -325,11 +359,12 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
     if info_dict.get("system_root_image") != "true":
       verity_key_ramdisk = os.path.join(
           input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
-      assert os.path.exists(verity_key_ramdisk), 'Missing verity_key in ramdisk'
+      assert os.path.exists(
+          verity_key_ramdisk), 'Missing verity_key in ramdisk'
 
       assert filecmp.cmp(
           verity_key_mincrypt, verity_key_ramdisk, shallow=False), \
-              'Mismatching verity_key files in root and ramdisk'
+          'Mismatching verity_key files in root and ramdisk'
       logging.info('Verified the content of /verity_key in ramdisk')
 
     # Then verify the verity signed system/vendor/product images, against the
@@ -361,6 +396,8 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
     key = options['verity_key']
     if key is None:
       key = info_dict['avb_vbmeta_key_path']
+
+    ValidatePartitionFingerprints(input_tmp, info_dict)
 
     # avbtool verifies all the images that have descriptors listed in vbmeta.
     # Using `--follow_chain_partitions` so it would additionally verify chained
@@ -411,7 +448,7 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
 
     # avbtool verifies recovery image for non-A/B devices.
     if (info_dict.get('ab_update') != 'true' and
-        info_dict.get('no_recovery') != 'true'):
+            info_dict.get('no_recovery') != 'true'):
       image = os.path.join(input_tmp, 'IMAGES', 'recovery.img')
       key = info_dict['avb_recovery_key_path']
       cmd = [info_dict['avb_avbtool'], 'verify_image', '--image', image,
@@ -427,21 +464,21 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
 
 
 def CheckDataInconsistency(lines):
-    build_prop = {}
-    for line in lines:
-      if line.startswith("import") or line.startswith("#"):
-        continue
-      if "=" not in line:
-        continue
+  build_prop = {}
+  for line in lines:
+    if line.startswith("import") or line.startswith("#"):
+      continue
+    if "=" not in line:
+      continue
 
-      key, value = line.rstrip().split("=", 1)
-      if key in build_prop:
-        logging.info("Duplicated key found for {}".format(key))
-        if value != build_prop[key]:
-          logging.error("Key {} is defined twice with different values {} vs {}"
-                        .format(key, value, build_prop[key]))
-          return key
-      build_prop[key] = value
+    key, value = line.rstrip().split("=", 1)
+    if key in build_prop:
+      logging.info("Duplicated key found for {}".format(key))
+      if value != build_prop[key]:
+        logging.error("Key {} is defined twice with different values {} vs {}"
+                      .format(key, value, build_prop[key]))
+        return key
+    build_prop[key] = value
 
 
 def CheckBuildPropDuplicity(input_tmp):

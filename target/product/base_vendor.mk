@@ -81,3 +81,9 @@ PRODUCT_PACKAGES += \
 # /vendor. TODO(b/141648565): Don't install these unless they're needed.
 PRODUCT_PACKAGES += \
     applypatch
+
+# Base modules and settings for the debug ramdisk, which is then packed
+# into a boot-debug.img and a vendor_boot-debug.img.
+PRODUCT_PACKAGES += \
+    adb_debug.prop \
+    userdebug_plat_sepolicy.cil
