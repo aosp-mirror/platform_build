@@ -16,6 +16,7 @@ import copy
 import itertools
 import logging
 import os
+import struct
 import zipfile
 
 import ota_metadata_pb2
@@ -399,6 +400,35 @@ def CalculateRuntimeDevicesAndFingerprints(default_build_info,
   return device_names, fingerprints
 
 
+def GetZipEntryOffset(zfp, entry_info):
+  """Get offset to a beginning of a particular zip entry
+  Args:
+    fp: zipfile.ZipFile
+    entry_info: zipfile.ZipInfo
+
+  Returns:
+    (offset, size) tuple
+  """
+  # Don't use len(entry_info.extra). Because that returns size of extra
+  # fields in central directory. We need to look at local file directory,
+  # as these two might have different sizes.
+
+  # We cannot work with zipfile.ZipFile instances, we need a |fp| for the underlying file.
+  zfp = zfp.fp
+  zfp.seek(entry_info.header_offset)
+  data = zfp.read(zipfile.sizeFileHeader)
+  fheader = struct.unpack(zipfile.structFileHeader, data)
+  # Last two fields of local file header are filename length and
+  # extra length
+  filename_len = fheader[-2]
+  extra_len = fheader[-1]
+  offset = entry_info.header_offset
+  offset += zipfile.sizeFileHeader
+  offset += filename_len + extra_len
+  size = entry_info.file_size
+  return (offset, size)
+
+
 class PropertyFiles(object):
   """A class that computes the property-files string for an OTA package.
 
@@ -517,10 +547,7 @@ class PropertyFiles(object):
     def ComputeEntryOffsetSize(name):
       """Computes the zip entry offset and size."""
       info = zip_file.getinfo(name)
-      offset = info.header_offset
-      offset += zipfile.sizeFileHeader
-      offset += len(info.extra) + len(info.filename)
-      size = info.file_size
+      (offset, size) = GetZipEntryOffset(zip_file, info)
       return '%s:%d:%d' % (os.path.basename(name), offset, size)
 
     tokens = []
