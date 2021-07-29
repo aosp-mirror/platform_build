@@ -361,11 +361,7 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
   common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
   common.ZipClose(apex_zip)
 
-  # 3. Align the files at page boundary (same as in apexer).
-  aligned_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
-  common.RunAndCheckOutput(['zipalign', '-f', '4096', apex_file, aligned_apex])
-
-  # 4. Sign the APEX container with container_key.
+  # 3. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
 
   # Specify the 4K alignment when calling SignApk.
@@ -374,7 +370,7 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
 
   password = container_pw.get(container_key) if container_pw else None
   common.SignFile(
-      aligned_apex,
+      apex_file,
       signed_apex,
       container_key,
       password,
@@ -434,26 +430,17 @@ def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
                             '--input', signed_original_apex_file,
                             '--output', compressed_apex_file])
 
-  # 4. Align apex
-  aligned_apex = common.MakeTempFile(prefix='apex-container-', suffix='.capex')
-  common.RunAndCheckOutput(['zipalign', '-f', '4096', compressed_apex_file,
-                            aligned_apex])
-
-  # 5. Sign the APEX container with container_key.
+  # 4. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.capex')
-
-  # Specify the 4K alignment when calling SignApk.
-  extra_signapk_args = OPTIONS.extra_signapk_args[:]
-  extra_signapk_args.extend(['-a', '4096'])
 
   password = container_pw.get(container_key) if container_pw else None
   common.SignFile(
-      aligned_apex,
+      compressed_apex_file,
       signed_apex,
       container_key,
       password,
       codename_to_api_level_map=codename_to_api_level_map,
-      extra_signapk_args=extra_signapk_args)
+      extra_signapk_args=OPTIONS.extra_signapk_args)
 
   return signed_apex
 

@@ -31,6 +31,14 @@ $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
 $(call add_soong_config_var,ANDROID,BOARD_USES_RECOVERY_AS_BOOT)
 $(call add_soong_config_var,ANDROID,BOARD_BUILD_SYSTEM_ROOT_IMAGE)
 
+ifeq (,$(filter com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
+  # Prebuilt module SDKs require prebuilt modules to work, and currently
+  # prebuilt modules are only provided for com.google.android.xxx. If we can't
+  # find one of them in PRODUCT_PACKAGES then assume com.android.xxx are in use,
+  # and disable prebuilt SDKs. In particular this applies to AOSP builds.
+  MODULE_BUILD_FROM_SOURCE := true
+endif
+
 # TODO(b/172480615): Remove when platform uses ART Module prebuilts by default.
 ifeq (,$(filter art_module,$(SOONG_CONFIG_NAMESPACES)))
   $(call add_soong_config_namespace,art_module)
