@@ -369,6 +369,10 @@ def _inherit(handle, pcm_name, pcm):
         if type(val) == "list":
             val.append(_indirect(pcm_name))
 
+def _copy_files(l, outdir):
+    """Generate <item>:<outdir>/item for each item."""
+    return ["%s:%s/%s" % (item, outdir, item) for item in __words(l)]
+
 def _copy_if_exists(path_pair):
     """If from file exists, returns [from:to] pair."""
     value = path_pair.split(":", 2)
@@ -548,6 +552,7 @@ rblf = struct(
     add_soong_config_var_value = _add_soong_config_var_value,
     addprefix = _addprefix,
     addsuffix = _addsuffix,
+    copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
     enforce_product_packages_exist = _enforce_product_packages_exist,
