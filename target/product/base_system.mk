@@ -153,6 +153,7 @@ PRODUCT_PACKAGES += \
     libgui \
     libhardware \
     libhardware_legacy \
+    libincident \
     libinput \
     libinputflinger \
     libiprouteutil \
