@@ -77,6 +77,16 @@ define find-copy-subdir-files
 $(sort $(shell find $(2) -name "$(1)" -type f | $(SED_EXTENDED) "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g"))
 endef
 
+#
+# Convert file file to the PRODUCT_COPY_FILES/PRODUCT_SDK_ADDON_COPY_FILES
+# format: for each file F return $(F):$(PREFIX)/$(notdir $(F))
+# $(1): files list
+# $(2): prefix
+
+define copy-files
+$(foreach f,$(1),$(f):$(2)/$(notdir $(f)))
+endef
+
 # ---------------------------------------------------------------
 # Check for obsolete PRODUCT- and APP- goals
 ifeq ($(CALLED_FROM_SETUP),true)
