@@ -120,6 +120,9 @@ ifeq (true,$(EMMA_INSTRUMENT))
 ifndef SKIP_BOOT_JARS_CHECK
 SKIP_BOOT_JARS_CHECK := true
 endif
+# Mainline modules prebuilts do support coverage. Build them from source.
+# See b/159241638
+MODULE_BUILD_FROM_SOURCE := true
 endif
 
 ifdef TARGET_ARCH_SUITE
