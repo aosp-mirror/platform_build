@@ -29,6 +29,7 @@ $(art_host_tests_zip) : PRIVATE_HOST_SHARED_LIBS := $(my_host_shared_lib_for_art
 $(art_host_tests_zip) : $(COMPATIBILITY.art-host-tests.FILES) $(my_host_shared_lib_for_art_host_tests) $(SOONG_ZIP)
 	echo $(sort $(COMPATIBILITY.art-host-tests.FILES)) | tr " " "\n" > $@.list
 	grep $(HOST_OUT_TESTCASES) $@.list > $@-host.list || true
+	$(hide) touch $@-host-libs.list
 	$(hide) for shared_lib in $(PRIVATE_HOST_SHARED_LIBS); do \
 	  echo $$shared_lib >> $@-host-libs.list; \
 	done
