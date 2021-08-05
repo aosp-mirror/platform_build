@@ -51,7 +51,9 @@ assert_eq(
           "part_from:part_to",
           "device_from:device_to",
           "device/google/redfin/audio/audio_platform_info_noextcodec_snd.xml:||VENDOR-PATH-PH||/etc/audio_platform_info_noextcodec_snd.xml",
-          "xyz"
+          "xyz:/etc/xyz",
+          "x.xml:/etc/x.xml",
+          "y.xml:/etc/y.xml",
       ],
       "PRODUCT_HOST_PACKAGES": ["host"],
       "PRODUCT_PACKAGES": [
@@ -62,4 +64,18 @@ assert_eq(
       "PRODUCT_PRODUCT_PROPERTIES": ["part_properties"]
     },
     { k:v for k, v in sorted(config.items()) }
+)
+
+ns = globals["$SOONG_CONFIG_NAMESPACES"]
+assert_eq(
+    {
+        "NS1": {
+            "v1": "abc",
+            "v2": "def"
+        },
+        "NS2": {
+            "v3": "xyz"
+        }
+    },
+    {k:v for k, v in sorted(ns.items()) }
 )

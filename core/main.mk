@@ -120,6 +120,9 @@ ifeq (true,$(EMMA_INSTRUMENT))
 ifndef SKIP_BOOT_JARS_CHECK
 SKIP_BOOT_JARS_CHECK := true
 endif
+# Mainline modules prebuilts do not support coverage. Build them from source.
+# See b/159241638
+MODULE_BUILD_FROM_SOURCE := true
 endif
 
 ifdef TARGET_ARCH_SUITE
@@ -355,7 +358,7 @@ endif
 ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)
 
 ifeq ($(AB_OTA_UPDATER),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(AB_OTA_PARTITIONS))
+ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(strip $(AB_OTA_PARTITIONS)))
 endif
 
 # -----------------------------------------------------------------
@@ -1534,6 +1537,9 @@ vendorbootimage: $(INSTALLED_VENDOR_BOOTIMAGE_TARGET)
 .PHONY: vendorbootimage_debug
 vendorbootimage_debug: $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET)
 
+.PHONY: vendorbootimage_test_harness
+vendorbootimage_test_harness: $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET)
+
 .PHONY: vendorramdisk
 vendorramdisk: $(INSTALLED_VENDOR_RAMDISK_TARGET)
 
@@ -1599,6 +1605,7 @@ droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_RAMDISK_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
@@ -1818,6 +1825,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
       $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
       $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+      $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_RAMDISK_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     )
