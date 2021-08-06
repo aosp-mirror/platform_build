@@ -79,6 +79,10 @@ def _printvars(globals, cfg):
             if attr == _soong_config_namespaces_key:
                 __print_attr("SOONG_CONFIG_NAMESPACES", val.keys())
                 for nsname, nsvars in sorted(val.items()):
+                    # Define SOONG_CONFIG_<ns> for Make, othewise
+                    # it cannot be added to .KATI_READONLY list
+                    if _options.format == "make":
+                        print("SOONG_CONFIG_" + nsname, ":=")
                     for var, val in sorted(nsvars.items()):
                         __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
             elif attr not in _globals_base:
