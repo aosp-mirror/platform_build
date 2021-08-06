@@ -2937,7 +2937,7 @@ class Difference(object):
           th.join()
 
       if p.returncode != 0:
-        logger.warning("Failure running %s:\n%s\n", diff_program, "".join(err))
+        logger.warning("Failure running %s:\n%s\n", cmd, "".join(err))
         self.patch = None
         return None, None, None
       diff = ptemp.read()
