@@ -93,6 +93,7 @@ PLATFORM_VERSION_LAST_STABLE := 12
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
+PLATFORM_VERSION_CODENAME.SP2A := Sv2
 PLATFORM_VERSION_CODENAME.TP1A := Tiramisu
 
 ifndef PLATFORM_VERSION_CODENAME
