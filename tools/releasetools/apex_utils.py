@@ -340,6 +340,8 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
     zip_items = apex_fd.namelist()
 
   payload_info = ParseApexPayloadInfo(avbtool, payload_file)
+  if no_hashtree is None:
+    no_hashtree = payload_info.get("Tree Size", 0) == 0
   SignApexPayload(
       avbtool,
       payload_file,
@@ -381,8 +383,8 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
 
 
 def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
-                         container_pw, apk_keys, codename_to_api_level_map,
-                         no_hashtree, signing_args=None):
+                       container_pw, apk_keys, codename_to_api_level_map,
+                       no_hashtree, signing_args=None):
   """Signs the current compressed APEX with the given payload/container keys.
 
   Args:
@@ -503,6 +505,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
     raise ApexInfoError(
         'Failed to get type for {}:\n{}'.format(apex_file, e))
 
+
 def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
   """
   Get information about system APEX stored in the input_file zip
@@ -545,7 +548,7 @@ def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
   for apex_filename in os.listdir(target_dir):
     apex_filepath = os.path.join(target_dir, apex_filename)
     if not os.path.isfile(apex_filepath) or \
-        not zipfile.is_zipfile(apex_filepath):
+            not zipfile.is_zipfile(apex_filepath):
       logger.info("Skipping %s because it's not a zipfile", apex_filepath)
       continue
     apex_info = ota_metadata_pb2.ApexInfo()
