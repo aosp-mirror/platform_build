@@ -2329,6 +2329,7 @@ endef
 define add-jar-resources-to-package
   rm -rf $(3)
   mkdir -p $(3)
+  zipinfo -1 $(2) > /dev/null
   unzip -qo $(2) -d $(3) $$(zipinfo -1 $(2) | grep -v -E "\.class$$")
   $(JAR) uf $(1) $(call jar-args-sorted-files-in-directory,$(3))
 endef
