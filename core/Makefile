@@ -2645,6 +2645,48 @@ endif # TARGET_NO_KERNEL
 endif # INSTALLED_BOOTIMAGE_TARGET
 endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
 
+ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+ifeq ($(BUILDING_RAMDISK_IMAGE),true)
+# -----------------------------------------------------------------
+# vendor test harness ramdisk, which is a vendor ramdisk combined with
+# a test harness ramdisk.
+
+INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_boot-test-harness)/vendor_ramdisk-test-harness.cpio$(RAMDISK_EXT)
+
+# Exclude recovery files in the default vendor ramdisk if including a standalone
+# recovery ramdisk in vendor_boot.
+ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+ifneq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
+$(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
+$(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+endif
+endif
+
+# The vendor test harness ramdisk combines vendor ramdisk and test harness ramdisk.
+$(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET): $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
+$(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET): $(MKBOOTFS) | $(COMPRESSION_COMMAND_DEPS)
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_VENDOR_RAMDISK_OUT) $(TARGET_TEST_HARNESS_RAMDISK_OUT) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $@
+
+# -----------------------------------------------------------------
+# vendor_boot-test-harness.img.
+INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/vendor_boot-test-harness.img
+
+ifneq ($(BOARD_AVB_VENDOR_BOOT_KEY_PATH),)
+$(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOT_TEST_KEY_PATH)
+endif
+
+# Depends on vendor_boot.img and vendor_ramdisk-test-harness.cpio$(RAMDISK_EXT) to build the new vendor_boot-test-harness.img
+$(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_VENDOR_BOOTIMAGE_TARGET)
+$(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET): $(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET)
+$(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS)
+	$(call pretty,"Target vendor_boot test harness image: $@")
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET) $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_ARGS) --vendor_boot $@
+	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
+	$(if $(BOARD_AVB_VENDOR_BOOT_KEY_PATH),$(call test-key-sign-vendor-bootimage,$@))
+
+endif # BUILDING_RAMDISK_IMAGE
+endif # BUILDING_VENDOR_BOOT_IMAGE
+
 # Creates a compatibility symlink between two partitions, e.g. /system/vendor to /vendor
 # $1: from location (e.g $(TARGET_OUT)/vendor)
 # $2: destination location (e.g. /vendor)
