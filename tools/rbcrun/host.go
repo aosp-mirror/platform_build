@@ -118,7 +118,7 @@ func fileExists(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
 	if err := starlark.UnpackPositionalArgs(b.Name(), args, kwargs, 1, &path); err != nil {
 		return starlark.None, err
 	}
-	if stat, err := os.Stat(path); err != nil || stat.IsDir() {
+	if _, err := os.Stat(path); err != nil {
 		return starlark.False, nil
 	}
 	return starlark.True, nil
