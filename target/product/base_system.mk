@@ -376,6 +376,7 @@ PRODUCT_PACKAGES_DEBUG := \
     profcollectd \
     profcollectctl \
     remount \
+    servicedispatcher \
     showmap \
     sqlite3 \
     ss \
