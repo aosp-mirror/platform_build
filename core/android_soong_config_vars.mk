@@ -29,6 +29,14 @@ $(call add_soong_config_namespace,ANDROID)
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
 
+ifeq (,$(filter com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
+  # Prebuilt module SDKs require prebuilt modules to work, and currently
+  # prebuilt modules are only provided for com.google.android.xxx. If we can't
+  # find one of them in PRODUCT_PACKAGES then assume com.android.xxx are in use,
+  # and disable prebuilt SDKs. In particular this applies to AOSP builds.
+  MODULE_BUILD_FROM_SOURCE := true
+endif
+
 # TODO(b/172480615): Remove when platform uses ART Module prebuilts by default.
 ifeq (,$(filter art_module,$(SOONG_CONFIG_NAMESPACES)))
   $(call add_soong_config_namespace,art_module)
@@ -41,7 +49,7 @@ else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
   # Always build from source for the module targets. This ought to be covered by
   # the TARGET_BUILD_APPS check above, but there are test builds that don't set it.
   SOONG_CONFIG_art_module_source_build := true
-else ifdef MODULES_BUILD_FROM_SOURCE
+else ifdef MODULE_BUILD_FROM_SOURCE
   # Build from source if other Mainline modules are.
   SOONG_CONFIG_art_module_source_build := true
 else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
@@ -52,6 +60,7 @@ else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
 else ifneq (,$(SANITIZE_TARGET)$(SANITIZE_HOST))
   # Prebuilts aren't built with sanitizers either.
   SOONG_CONFIG_art_module_source_build := true
+  MODULE_BUILD_FROM_SOURCE := true
 else ifneq (,$(PRODUCT_FUCHSIA))
   # Fuchsia picks out ART internal packages that aren't available in the
   # prebuilt.
