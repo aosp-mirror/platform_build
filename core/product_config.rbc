@@ -16,6 +16,7 @@ load("//build/make/core:envsetup.rbc", _envsetup_init = "init")
 
 """Runtime functions."""
 
+_soong_config_namespaces_key = "$SOONG_CONFIG_NAMESPACES"
 def _global_init():
     """Returns dict created from the runtime environment."""
     globals = dict()
@@ -29,6 +30,7 @@ def _global_init():
         globals[k] = getattr(rblf_cli, k)
 
     globals.setdefault("PRODUCT_SOONG_NAMESPACES", [])
+    globals.setdefault(_soong_config_namespaces_key, {})
     _envsetup_init(globals)
 
     # Variables that should be defined.
@@ -74,7 +76,16 @@ def _printvars(globals, cfg):
     if _options.print_globals:
         print()
         for attr, val in sorted(globals.items()):
-            if attr not in _globals_base:
+            if attr == _soong_config_namespaces_key:
+                __print_attr("SOONG_CONFIG_NAMESPACES", val.keys())
+                for nsname, nsvars in sorted(val.items()):
+                    # Define SOONG_CONFIG_<ns> for Make, othewise
+                    # it cannot be added to .KATI_READONLY list
+                    if _options.format == "make":
+                        print("SOONG_CONFIG_" + nsname, ":=")
+                    for var, val in sorted(nsvars.items()):
+                        __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
+            elif attr not in _globals_base:
                 __print_attr(attr, val)
 
 def __printvars_rearrange_list(value_list):
@@ -268,6 +279,20 @@ def _indirect(pcm_name):
     """Returns configuration item for the inherited module."""
     return (pcm_name,)
 
+def _add_soong_config_namespace(g, nsname):
+    """Adds given namespace."""
+
+    # A value cannot be updated, so we need to create a new dictionary
+    old = g[_soong_config_namespaces_key]
+    g[_soong_config_namespaces_key] = dict([(k,v) for k,v in old.items()] + [(nsname, {})])
+
+def _add_soong_config_var_value(g, nsname, var, value):
+    """Defines a variable and adds it to the given namespace."""
+    ns = g[_soong_config_namespaces_key].get(nsname)
+    if ns == None:
+        fail("no such namespace: " + nsname)
+    ns[var] = value
+
 def _addprefix(prefix, string_or_list):
     """Adds prefix and returns a list.
 
@@ -347,6 +372,10 @@ def _inherit(handle, pcm_name, pcm):
     for attr, val in cfg.items():
         if type(val) == "list":
             val.append(_indirect(pcm_name))
+
+def _copy_files(l, outdir):
+    """Generate <item>:<outdir>/item for each item."""
+    return ["%s:%s/%s" % (item, outdir, item) for item in __words(l)]
 
 def _copy_if_exists(path_pair):
     """If from file exists, returns [from:to] pair."""
@@ -523,8 +552,11 @@ def __get_options():
 # Settings used during debugging.
 _options = __get_options()
 rblf = struct(
+    add_soong_config_namespace = _add_soong_config_namespace,
+    add_soong_config_var_value = _add_soong_config_var_value,
     addprefix = _addprefix,
     addsuffix = _addsuffix,
+    copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
     enforce_product_packages_exist = _enforce_product_packages_exist,

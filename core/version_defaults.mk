@@ -94,7 +94,7 @@ PLATFORM_VERSION_LAST_STABLE := 11
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
 PLATFORM_VERSION_CODENAME.SP1A := S
-PLATFORM_VERSION_CODENAME.TP1A := T
+PLATFORM_VERSION_CODENAME.TP1A := Tiramisu
 
 ifndef PLATFORM_VERSION_CODENAME
   PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
@@ -241,7 +241,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2021-07-05
+      PLATFORM_SECURITY_PATCH := 2021-08-05
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH
 
