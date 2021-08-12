@@ -61,6 +61,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.sdkext:framework-sdkextensions \
     com.android.tethering:framework-connectivity \
     com.android.tethering:framework-tethering \
+    com.android.uwb:framework-uwb \
     com.android.wifi:framework-wifi
 
 # APEX system server jars. Keep the list sorted by module names and then library names.
