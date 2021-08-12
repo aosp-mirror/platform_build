@@ -21,7 +21,14 @@
 ### PRODUCT_COPY_FILES += device_from:device_to
 ### include $(LOCAL_PATH)/include1.mk
 ### PRODUCT_PACKAGES += dev_after
-### PRODUCT_COPY_FILES += $(call find-copy-subdir-files,audio_platform_info*.xml,device/google/redfin/audio,$(TARGET_COPY_OUT_VENDOR)/etc) xyz
+### PRODUCT_COPY_FILES += $(call find-copy-subdir-files,audio_platform_info*.xml,device/google/redfin/audio,$(TARGET_COPY_OUT_VENDOR)/etc) xyz:/etc/xyz
+### PRODUCT_COPY_FILES += $(call copy-files,x.xml y.xml,/etc)
+### $(call add_soong_namespace,NS1)
+### $(call add_soong_config_var_value,NS1,v1,abc)
+### $(call add_soong_config_var_value,NS1,v2,def)
+### $(call add_soong_namespace,NS2)
+### $(call add_soong_config_var_value,NS2,v3,abc)
+### $(call add_soong_config_var_value,NS2,v3,xyz)
 
 load("//build/make/core:product_config.rbc", "rblf")
 load(":part1.rbc", _part1_init = "init")
@@ -39,4 +46,12 @@ def init(g, handle):
   _include1_init(g, handle)
   cfg["PRODUCT_PACKAGES"] += ["dev_after"]
   cfg["PRODUCT_COPY_FILES"] += (rblf.find_and_copy("audio_platform_info*.xml", "device/google/redfin/audio", "||VENDOR-PATH-PH||/etc") +
-      ["xyz"])
+      ["xyz:/etc/xyz"])
+  cfg["PRODUCT_COPY_FILES"] += rblf.copy_files("x.xml y.xml", "/etc")
+  rblf.add_soong_config_namespace(g, "NS1")
+  rblf.add_soong_config_var_value(g, "NS1", "v1", "abc")
+  rblf.add_soong_config_var_value(g, "NS1", "v2", "def")
+  rblf.add_soong_config_namespace(g, "NS2")
+  rblf.add_soong_config_var_value(g, "NS2", "v3", "abc")
+  rblf.add_soong_config_var_value(g, "NS2", "v3", "xyz")
+

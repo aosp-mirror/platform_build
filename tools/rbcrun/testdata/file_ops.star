@@ -4,6 +4,7 @@ load("assert.star", "assert")
 
 def test():
     myname = "file_ops.star"
+    assert.true(rblf_file_exists("."), "./ exists ")
     assert.true(rblf_file_exists(myname), "the file %s does exist" % myname)
     assert.true(not rblf_file_exists("no_such_file"), "the file no_such_file does not exist")
     files = rblf_wildcard("*.star")
