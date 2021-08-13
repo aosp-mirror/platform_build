@@ -1091,6 +1091,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   if target_info.vendor_suppressed_vabc:
     logger.info("Vendor suppressed VABC. Disabling")
     OPTIONS.disable_vabc = True
+  if not target_info.is_vabc_xor or OPTIONS.disable_vabc:
+    logger.info("VABC XOR Not supported, disabling")
+    OPTIONS.enable_vabc_xor = False
   additional_args = []
 
   # Prepare custom images.
