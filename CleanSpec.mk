@@ -744,7 +744,7 @@ $(call add-clean-step, rm -rf $(HOST_OUT)/vts-core/*)
 $(call add-clean-step, rm -rf $(HOST_OUT)/framework/vts-core-tradefed.jar)
 $(call add-clean-step, rm -rf $(HOST_OUT)/vts10/*)
 $(call add-clean-step, rm -rf $(HOST_OUT)/framework/vts10-tradefed.jar)
-# Clean up VTS again as VTS-Core will be renamed to VTS
+# Clean up VTS again as VTS-Core will be renamed to VTS 
 $(call add-clean-step, rm -rf $(HOST_OUT)/vts/*)
 $(call add-clean-step, rm -rf $(HOST_OUT)/framework/vts-tradefed.jar)
 
