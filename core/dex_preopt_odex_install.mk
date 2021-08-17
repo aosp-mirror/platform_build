@@ -61,7 +61,7 @@ ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
 endif
 
 # Don't preopt system server jars that are updatable.
-ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS)))
+ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_APEX_SYSTEM_SERVER_JARS)))
   LOCAL_DEX_PREOPT :=
 endif
 
