@@ -241,7 +241,7 @@ import care_map_pb2
 import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
-                       PropertyFiles, SECURITY_PATCH_LEVEL_PROP_NAME)
+                       PropertyFiles, SECURITY_PATCH_LEVEL_PROP_NAME, GetZipEntryOffset)
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
@@ -286,6 +286,7 @@ OPTIONS.custom_images = {}
 OPTIONS.disable_vabc = False
 OPTIONS.spl_downgrade = False
 OPTIONS.vabc_downgrade = False
+OPTIONS.enable_vabc_xor = False
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -602,20 +603,20 @@ class AbOtaPropertyFiles(StreamingPropertyFiles):
     payload, till the end of 'medatada_signature_message'.
     """
     payload_info = input_zip.getinfo('payload.bin')
-    payload_offset = payload_info.header_offset
-    payload_offset += zipfile.sizeFileHeader
-    payload_offset += len(payload_info.extra) + len(payload_info.filename)
-    payload_size = payload_info.file_size
+    (payload_offset, payload_size) = GetZipEntryOffset(input_zip, payload_info)
 
-    with input_zip.open('payload.bin') as payload_fp:
-      header_bin = payload_fp.read(24)
+    # Read the underlying raw zipfile at specified offset
+    payload_fp = input_zip.fp
+    payload_fp.seek(payload_offset)
+    header_bin = payload_fp.read(24)
 
     # network byte order (big-endian)
     header = struct.unpack("!IQQL", header_bin)
 
     # 'CrAU'
     magic = header[0]
-    assert magic == 0x43724155, "Invalid magic: {:x}".format(magic)
+    assert magic == 0x43724155, "Invalid magic: {:x}, computed offset {}" \
+        .format(magic, payload_offset)
 
     manifest_size = header[2]
     metadata_signature_size = header[3]
@@ -1090,6 +1091,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   if target_info.vendor_suppressed_vabc:
     logger.info("Vendor suppressed VABC. Disabling")
     OPTIONS.disable_vabc = True
+  if not target_info.is_vabc_xor or OPTIONS.disable_vabc:
+    logger.info("VABC XOR Not supported, disabling")
+    OPTIONS.enable_vabc_xor = False
   additional_args = []
 
   # Prepare custom images.
@@ -1132,6 +1136,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   if OPTIONS.disable_vabc:
     additional_args += ["--disable_vabc", "true"]
+  if OPTIONS.enable_vabc_xor:
+    additional_args += ["--enable_vabc_xor", "true"]
   additional_args += ["--max_timestamp", max_timestamp]
 
   if SupportsMainlineGkiUpdates(source_file):
@@ -1305,6 +1311,8 @@ def main(argv):
       OPTIONS.wipe_user_data = True
     elif o == "--vabc_downgrade":
       OPTIONS.vabc_downgrade = True
+    elif o == "--enable_vabc_xor":
+      OPTIONS.enable_vabc_xor = True
     else:
       return False
     return True
@@ -1349,6 +1357,7 @@ def main(argv):
                                  "disable_vabc",
                                  "spl_downgrade",
                                  "vabc_downgrade",
+                                 "enable_vabc_xor",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:

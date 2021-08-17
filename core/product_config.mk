@@ -77,6 +77,16 @@ define find-copy-subdir-files
 $(sort $(shell find $(2) -name "$(1)" -type f | $(SED_EXTENDED) "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g"))
 endef
 
+#
+# Convert file file to the PRODUCT_COPY_FILES/PRODUCT_SDK_ADDON_COPY_FILES
+# format: for each file F return $(F):$(PREFIX)/$(notdir $(F))
+# $(1): files list
+# $(2): prefix
+
+define copy-files
+$(foreach f,$(1),$(f):$(2)/$(notdir $(f)))
+endef
+
 # ---------------------------------------------------------------
 # Check for obsolete PRODUCT- and APP- goals
 ifeq ($(CALLED_FROM_SETUP),true)
@@ -162,11 +172,24 @@ endif
 ifneq (1,$(words $(current_product_makefile)))
 $(error Product "$(TARGET_PRODUCT)" ambiguous: matches $(current_product_makefile))
 endif
+
+ifndef RBC_PRODUCT_CONFIG
 $(call import-products, $(current_product_makefile))
+else
+  rbcscript=build/soong/scripts/rbc-run
+  rc := $(shell $(rbcscript) $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT) >$(OUT_DIR)/rbctemp.mk || echo $$?)
+  ifneq (,$(rc))
+    $(error product configuration converter failed: $(rc))
+  endif
+  include $(OUT_DIR)/rbctemp.mk
+  PRODUCTS += $(current_product_makefile)
+endif
 endif  # Import all or just the current product makefile
 
+ifndef RBC_PRODUCT_CONFIG
 # Quick check
 $(check-all-products)
+endif
 
 ifeq ($(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
 # Import all the products that have made artifact path requirements, so that we can verify
@@ -186,6 +209,7 @@ ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
 $(dump-products)
 endif
 
+ifndef RBC_PRODUCT_CONFIG
 # Convert a short name like "sooner" into the path to the product
 # file defining that product.
 #
@@ -198,6 +222,9 @@ endif
 ############################################################################
 # Strip and assign the PRODUCT_ variables.
 $(call strip-product-vars)
+else
+INTERNAL_PRODUCT := $(current_product_makefile)
+endif
 
 current_product_makefile :=
 all_product_makefiles :=
@@ -249,18 +276,14 @@ PRODUCT_BOOT_JARS += $(PRODUCT_BOOT_JARS_EXTRA)
 
 PRODUCT_BOOT_JARS := $(call qualify-platform-jars,$(PRODUCT_BOOT_JARS))
 
-# Replaces references to overridden boot jar modules in a boot jars variable.
-# $(1): Name of a boot jars variable with <apex>:<jar> pairs.
-define replace-boot-jar-module-overrides
-  $(foreach pair,$(PRODUCT_BOOT_JAR_MODULE_OVERRIDES),\
-    $(eval _rbjmo_from := $(call word-colon,1,$(pair)))\
-    $(eval _rbjmo_to := $(call word-colon,2,$(pair)))\
-    $(eval $(1) := $(patsubst $(_rbjmo_from):%,$(_rbjmo_to):%,$($(1)))))
-endef
-
-$(call replace-boot-jar-module-overrides,PRODUCT_BOOT_JARS)
-$(call replace-boot-jar-module-overrides,PRODUCT_UPDATABLE_BOOT_JARS)
-$(call replace-boot-jar-module-overrides,ART_APEX_JARS)
+# b/191127295: force core-icu4j onto boot image. It comes from a non-updatable APEX jar, but has
+# historically been part of the boot image; even though APEX jars are not meant to be part of the
+# boot image.
+# TODO(b/191686720): remove PRODUCT_APEX_BOOT_JARS to avoid a special handling of core-icu4j
+# in make rules.
+PRODUCT_APEX_BOOT_JARS := $(filter-out com.android.i18n:core-icu4j,$(PRODUCT_APEX_BOOT_JARS))
+# All APEX jars come after /system and /system_ext jars, so adding core-icu4j at the end of the list
+PRODUCT_BOOT_JARS += com.android.i18n:core-icu4j
 
 # The extra system server jars must be appended at the end after common system server jars.
 PRODUCT_SYSTEM_SERVER_JARS += $(PRODUCT_SYSTEM_SERVER_JARS_EXTRA)
@@ -303,10 +326,10 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
   endif
 endif
 
-$(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS), \
+$(foreach pair,$(PRODUCT_APEX_BOOT_JARS), \
   $(eval jar := $(call word-colon,2,$(pair))) \
   $(if $(findstring $(jar), $(PRODUCT_BOOT_JARS)), \
-    $(error A jar in PRODUCT_UPDATABLE_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(jar) is)))
+    $(error A jar in PRODUCT_APEX_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(jar) is)))
 
 ENFORCE_SYSTEM_CERTIFICATE := $(PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT)
 ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST := $(PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST)
