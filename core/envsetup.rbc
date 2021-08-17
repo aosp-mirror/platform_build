@@ -188,9 +188,18 @@ def init(g):
     if g["HOST_BUILD_TYPE"] not in ["release", "debug"]:
         fail("HOST_BUILD_TYPE must be either release or debug, not '%s'" % g["HOST_BUILD_TYPE"])
 
+    g.update([
+	    ("TARGET_COPY_OUT_VENDOR", "||VENDOR-PATH-PH||"),
+    	("TARGET_COPY_OUT_PRODUCT", "||PRODUCT-PATH-PH||"),
+	    ("TARGET_COPY_OUT_PRODUCT_SERVICES", "||PRODUCT-PATH-PH||"),
+	    ("TARGET_COPY_OUT_SYSTEM_EXT", "||SYSTEM_EXT-PATH-PH||"),
+	    ("TARGET_COPY_OUT_ODM", "||ODM-PATH-PH||"),
+	    ("TARGET_COPY_OUT_VENDOR_DLKM", "||VENDOR_DLKM-PATH-PH||"),
+	    ("TARGET_COPY_OUT_ODM_DLKM", "||ODM_DLKM-PATH-PH||"),
+        ])
+
     # TODO(asmundak): there is more stuff in envsetup.mk lines 249-292, but
     # it does not seem to affect product configuration. Revisit this.
-
     g["ART_APEX_JARS"] = [
         "com.android.art:core-oj",
         "com.android.art:core-libart",
