@@ -88,11 +88,23 @@ Usage: merge_target_files [args]
 
   --keep-tmp
       Keep tempoary files for debugging purposes.
+
+  The following only apply when using the VSDK to perform dexopt on vendor apps:
+
+  --framework-dexpreopt-config
+      If provided, the location of framwework's dexpreopt_config.zip.
+
+  --framework-dexpreopt-tools
+      if provided, the location of framework's dexpreopt_tools.zip.
+
+  --vendor-dexpreopt-config
+      If provided, the location of vendor's dexpreopt_config.zip.
 """
 
 from __future__ import print_function
 
 import fnmatch
+import glob
 import json
 import logging
 import os
@@ -140,6 +152,9 @@ OPTIONS.allow_duplicate_apkapex_keys = False
 OPTIONS.vendor_otatools = None
 OPTIONS.rebuild_sepolicy = False
 OPTIONS.keep_tmp = False
+OPTIONS.framework_dexpreopt_config = None
+OPTIONS.framework_dexpreopt_tools = None
+OPTIONS.vendor_dexpreopt_config = None
 
 # In an item list (framework or vendor), we may see entries that select whole
 # partitions. Such an entry might look like this 'SYSTEM/*' (e.g., for the
@@ -815,21 +830,23 @@ def generate_care_map(partitions, output_target_files_dir):
       PARTITIONS_WITH_CARE_MAP, partition_image_map)
 
 
-def process_special_cases(framework_target_files_temp_dir,
-                          vendor_target_files_temp_dir,
+def process_special_cases(temp_dir, framework_meta, vendor_meta,
                           output_target_files_temp_dir,
                           framework_misc_info_keys, framework_partition_set,
-                          vendor_partition_set):
+                          vendor_partition_set, framework_dexpreopt_tools,
+                          framework_dexpreopt_config, vendor_dexpreopt_config):
   """Performs special-case processing for certain target files items.
 
   Certain files in the output target files package require special-case
   processing. This function performs all that special-case processing.
 
   Args:
-    framework_target_files_temp_dir: The name of a directory containing the
-      special items extracted from the framework target files package.
-    vendor_target_files_temp_dir: The name of a directory containing the special
-      items extracted from the vendor target files package.
+    temp_dir: Location containing an 'output' directory where target files have
+      been extracted, e.g. <temp_dir>/output/SYSTEM, <temp_dir>/output/IMAGES, etc.
+    framework_meta: The name of a directory containing the special items
+      extracted from the framework target files package.
+    vendor_meta: The name of a directory containing the special items
+      extracted from the vendor target files package.
     output_target_files_temp_dir: The name of a directory that will be used to
       create the output target files package after all the special cases are
       processed.
@@ -840,50 +857,361 @@ def process_special_cases(framework_target_files_temp_dir,
       partitions. Used to filter apexkeys.txt and apkcerts.txt.
     vendor_partition_set: Partitions that are considered vendor partitions. Used
       to filter apexkeys.txt and apkcerts.txt.
+
+    The following are only used if dexpreopt is applied:
+
+    framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
+    framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
+    vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
   """
 
   if 'ab_update' in framework_misc_info_keys:
     process_ab_partitions_txt(
-        framework_target_files_temp_dir=framework_target_files_temp_dir,
-        vendor_target_files_temp_dir=vendor_target_files_temp_dir,
+        framework_target_files_temp_dir=framework_meta,
+        vendor_target_files_temp_dir=vendor_meta,
         output_target_files_temp_dir=output_target_files_temp_dir)
 
   copy_file_contexts(
-      framework_target_files_dir=framework_target_files_temp_dir,
-      vendor_target_files_dir=vendor_target_files_temp_dir,
+      framework_target_files_dir=framework_meta,
+      vendor_target_files_dir=vendor_meta,
       output_target_files_dir=output_target_files_temp_dir)
 
   process_misc_info_txt(
-      framework_target_files_temp_dir=framework_target_files_temp_dir,
-      vendor_target_files_temp_dir=vendor_target_files_temp_dir,
+      framework_target_files_temp_dir=framework_meta,
+      vendor_target_files_temp_dir=vendor_meta,
       output_target_files_temp_dir=output_target_files_temp_dir,
       framework_misc_info_keys=framework_misc_info_keys)
 
   process_dynamic_partitions_info_txt(
-      framework_target_files_dir=framework_target_files_temp_dir,
-      vendor_target_files_dir=vendor_target_files_temp_dir,
+      framework_target_files_dir=framework_meta,
+      vendor_target_files_dir=vendor_meta,
       output_target_files_dir=output_target_files_temp_dir)
 
   process_apex_keys_apk_certs_common(
-      framework_target_files_dir=framework_target_files_temp_dir,
-      vendor_target_files_dir=vendor_target_files_temp_dir,
+      framework_target_files_dir=framework_meta,
+      vendor_target_files_dir=vendor_meta,
       output_target_files_dir=output_target_files_temp_dir,
       framework_partition_set=framework_partition_set,
       vendor_partition_set=vendor_partition_set,
       file_name='apkcerts.txt')
 
   process_apex_keys_apk_certs_common(
-      framework_target_files_dir=framework_target_files_temp_dir,
-      vendor_target_files_dir=vendor_target_files_temp_dir,
+      framework_target_files_dir=framework_meta,
+      vendor_target_files_dir=vendor_meta,
       output_target_files_dir=output_target_files_temp_dir,
       framework_partition_set=framework_partition_set,
       vendor_partition_set=vendor_partition_set,
       file_name='apexkeys.txt')
 
+  process_dexopt(
+      temp_dir=temp_dir,
+      framework_meta=framework_meta,
+      vendor_meta=vendor_meta,
+      output_target_files_temp_dir=output_target_files_temp_dir,
+      framework_dexpreopt_tools=framework_dexpreopt_tools,
+      framework_dexpreopt_config=framework_dexpreopt_config,
+      vendor_dexpreopt_config=vendor_dexpreopt_config)
+
+
+def process_dexopt(temp_dir, framework_meta, vendor_meta,
+                   output_target_files_temp_dir,
+                   framework_dexpreopt_tools, framework_dexpreopt_config,
+                   vendor_dexpreopt_config):
+  """If needed, generates dexopt files for vendor apps.
+
+  Args:
+    temp_dir: Location containing an 'output' directory where target files have
+      been extracted, e.g. <temp_dir>/output/SYSTEM, <temp_dir>/output/IMAGES, etc.
+    framework_meta: The name of a directory containing the special items
+      extracted from the framework target files package.
+    vendor_meta: The name of a directory containing the special items extracted
+      from the vendor target files package.
+    output_target_files_temp_dir: The name of a directory that will be used to
+      create the output target files package after all the special cases are
+      processed.
+    framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
+    framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
+    vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
+  """
+  # Load vendor and framework META/misc_info.txt.
+  misc_info_path = ['META', 'misc_info.txt']
+  vendor_misc_info_dict = common.LoadDictionaryFromFile(
+      os.path.join(vendor_meta, *misc_info_path))
+
+  if (vendor_misc_info_dict.get('building_with_vsdk') != 'true' or
+      framework_dexpreopt_tools is None or
+      framework_dexpreopt_config is None or
+      vendor_dexpreopt_config is None):
+    return
+
+  logger.info('applying dexpreopt')
+
+  # The directory structure to apply dexpreopt is:
+  #
+  # <temp_dir>/
+  #     framework_meta/
+  #         META/
+  #     vendor_meta/
+  #         META/
+  #     output/
+  #         SYSTEM/
+  #         VENDOR/
+  #         IMAGES/
+  #         <other items extracted from system and vendor target files>
+  #     tools/
+  #         <contents of dexpreopt_tools.zip>
+  #     system_config/
+  #         <contents of system dexpreopt_config.zip>
+  #     vendor_config/
+  #         <contents of vendor dexpreopt_config.zip>
+  #     system -> output/SYSTEM
+  #     vendor -> output/VENDOR
+  #     apex -> output/SYSTEM/apex (only for flattened APEX builds)
+  #     apex/ (extracted updatable APEX)
+  #         <apex 1>/
+  #             ...
+  #         <apex 2>/
+  #             ...
+  #         ...
+  #     out/dex2oat_result/vendor/
+  #         <app>
+  #             oat/arm64/
+  #                 package.vdex
+  #                 package.odex
+  #         <priv-app>
+  #             oat/arm64/
+  #                 package.vdex
+  #                 package.odex
+  dexpreopt_tools_files_temp_dir = os.path.join(temp_dir, 'tools')
+  dexpreopt_framework_config_files_temp_dir = os.path.join(temp_dir, 'system_config')
+  dexpreopt_vendor_config_files_temp_dir = os.path.join(temp_dir, 'vendor_config')
+
+  extract_items(
+      target_files=OPTIONS.framework_dexpreopt_tools,
+      target_files_temp_dir=dexpreopt_tools_files_temp_dir,
+      extract_item_list=('*',))
+  extract_items(
+      target_files=OPTIONS.framework_dexpreopt_config,
+      target_files_temp_dir=dexpreopt_framework_config_files_temp_dir,
+      extract_item_list=('*',))
+  extract_items(
+      target_files=OPTIONS.vendor_dexpreopt_config,
+      target_files_temp_dir=dexpreopt_vendor_config_files_temp_dir,
+      extract_item_list=('*',))
+
+  os.symlink(os.path.join(output_target_files_temp_dir, "SYSTEM"),
+             os.path.join(temp_dir, "system"))
+  os.symlink(os.path.join(output_target_files_temp_dir, "VENDOR"),
+             os.path.join(temp_dir, "vendor"))
+
+  # The directory structure for flatteded APEXes is:
+  #
+  # SYSTEM
+  #     apex
+  #         <APEX name, e.g., com.android.wifi>
+  #             apex_manifest.pb
+  #             apex_pubkey
+  #             etc/
+  #             javalib/
+  #             lib/
+  #             lib64/
+  #             priv-app/
+  #
+  # The directory structure for updatable APEXes is:
+  #
+  # SYSTEM
+  #     apex
+  #         com.android.adbd.apex
+  #         com.android.appsearch.apex
+  #         com.android.art.apex
+  #         ...
+  apex_root = os.path.join(output_target_files_temp_dir, "SYSTEM", "apex")
+  framework_misc_info_dict = common.LoadDictionaryFromFile(
+      os.path.join(framework_meta, *misc_info_path))
+
+  # Check for flattended versus updatable APEX.
+  if framework_misc_info_dict.get('target_flatten_apex') == 'false':
+    # Extract APEX.
+    logging.info('extracting APEX')
+
+    apex_extract_root_dir = os.path.join(temp_dir, 'apex')
+    os.makedirs(apex_extract_root_dir)
+
+    for apex in (glob.glob(os.path.join(apex_root, '*.apex')) +
+                 glob.glob(os.path.join(apex_root, '*.capex'))):
+      logging.info('  apex: %s', apex)
+      # deapexer is in the same directory as the merge_target_files binary extracted
+      # from otatools.zip.
+      apex_json_info = subprocess.check_output(['deapexer', 'info', apex])
+      logging.info('    info: %s', apex_json_info)
+      apex_info = json.loads(apex_json_info)
+      apex_name = apex_info['name']
+      logging.info('    name: %s', apex_name)
+
+      apex_extract_dir = os.path.join(apex_extract_root_dir, apex_name)
+      os.makedirs(apex_extract_dir)
+
+      # deapexer uses debugfs_static, which is part of otatools.zip.
+      command = [
+          'deapexer',
+          '--debugfs_path',
+          'debugfs_static',
+          'extract',
+          apex,
+          apex_extract_dir,
+      ]
+      logging.info('    running %s', command)
+      subprocess.check_call(command)
+  else:
+    # Flattened APEXes don't need to be extracted since they have the necessary
+    # directory structure.
+    os.symlink(os.path.join(apex_root), os.path.join(temp_dir, 'apex'))
+
+  # Modify system config to point to the tools that have been extracted.
+  # Absolute or .. paths are not allowed  by the dexpreopt_gen tool in
+  # dexpreopt_soong.config.
+  dexpreopt_framework_soon_config = os.path.join(
+      dexpreopt_framework_config_files_temp_dir, 'dexpreopt_soong.config')
+  with open(dexpreopt_framework_soon_config, 'w') as f:
+    dexpreopt_soong_config = {
+        'Profman': 'tools/profman',
+        'Dex2oat': 'tools/dex2oatd',
+        'Aapt': 'tools/aapt2',
+        'SoongZip': 'tools/soong_zip',
+        'Zip2zip': 'tools/zip2zip',
+        'ManifestCheck': 'tools/manifest_check',
+        'ConstructContext': 'tools/construct_context',
+    }
+    json.dump(dexpreopt_soong_config, f)
+
+  # TODO(b/188179859): Make *dex location configurable to vendor or system_other.
+  use_system_other_odex = False
+
+  if use_system_other_odex:
+    dex_img = 'SYSTEM_OTHER'
+  else:
+    dex_img = 'VENDOR'
+    # Open vendor_filesystem_config to append the items generated by dexopt.
+    vendor_file_system_config = open(
+        os.path.join(temp_dir, 'output', 'META', 'vendor_filesystem_config.txt'),
+        'a')
+
+  # Dexpreopt vendor apps.
+  dexpreopt_config_suffix = '_dexpreopt.config'
+  for config in glob.glob(os.path.join(
+      dexpreopt_vendor_config_files_temp_dir, '*' + dexpreopt_config_suffix)):
+    app = os.path.basename(config)[:-len(dexpreopt_config_suffix)]
+    logging.info('dexpreopt config: %s %s', config, app)
+
+    apk_dir = 'app'
+    apk_path = os.path.join(temp_dir, 'vendor', apk_dir, app, app + '.apk')
+    if not os.path.exists(apk_path):
+      apk_dir = 'priv-app'
+      apk_path = os.path.join(temp_dir, 'vendor', apk_dir, app, app + '.apk')
+      if not os.path.exists(apk_path):
+        logging.warning('skipping dexpreopt for %s, no apk found in vendor/app '
+                        'or vendor/priv-app', app)
+        continue
+
+    # Generate dexpreopting script. Note 'out_dir' is not the output directory
+    # where the script is generated, but the OUT_DIR at build time referenced
+    # in the dexpreot config files, e.g., "out/.../core-oj.jar", so the tool knows
+    # how to adjust the path.
+    command = [
+        os.path.join(dexpreopt_tools_files_temp_dir, 'dexpreopt_gen'),
+        '-global',
+        os.path.join(dexpreopt_framework_config_files_temp_dir, 'dexpreopt.config'),
+        '-global_soong',
+        os.path.join(
+            dexpreopt_framework_config_files_temp_dir, 'dexpreopt_soong.config'),
+        '-module',
+        config,
+        '-dexpreopt_script',
+        'dexpreopt_app.sh',
+        '-out_dir',
+        'out',
+        '-base_path',
+        '.',
+        '--uses_target_files',
+    ]
+
+    # Run the command from temp_dir so all tool paths are its descendants.
+    logging.info("running %s", command)
+    subprocess.check_call(command, cwd = temp_dir)
+
+    # Call the generated script.
+    command = ['sh', 'dexpreopt_app.sh', apk_path]
+    logging.info("running %s", command)
+    subprocess.check_call(command, cwd = temp_dir)
+
+    # Output files are in:
+    #
+    # <temp_dir>/out/dex2oat_result/vendor/priv-app/<app>/oat/arm64/package.vdex
+    # <temp_dir>/out/dex2oat_result/vendor/priv-app/<app>/oat/arm64/package.odex
+    # <temp_dir>/out/dex2oat_result/vendor/app/<app>/oat/arm64/package.vdex
+    # <temp_dir>/out/dex2oat_result/vendor/app/<app>/oat/arm64/package.odex
+    #
+    # Copy the files to their destination. The structure of system_other is:
+    #
+    # system_other/
+    #     system-other-odex-marker
+    #     system/
+    #         app/
+    #             <app>/oat/arm64/
+    #                 <app>.odex
+    #                 <app>.vdex
+    #             ...
+    #         priv-app/
+    #             <app>/oat/arm64/
+    #                 <app>.odex
+    #                 <app>.vdex
+    #             ...
+
+    # TODO(b/188179859): Support for other architectures.
+    arch = 'arm64'
+
+    dex_destination = os.path.join(temp_dir, 'output', dex_img, apk_dir, app, 'oat', arch)
+    os.makedirs(dex_destination)
+    dex2oat_path = os.path.join(
+        temp_dir, 'out', 'dex2oat_result', 'vendor', apk_dir, app, 'oat', arch)
+    shutil.copy(os.path.join(dex2oat_path, 'package.vdex'),
+                os.path.join(dex_destination, app + '.vdex'))
+    shutil.copy(os.path.join(dex2oat_path, 'package.odex'),
+                os.path.join(dex_destination, app + '.odex'))
+
+    # Append entries to vendor_file_system_config.txt, such as:
+    #
+    # vendor/app/<app>/oat 0 2000 755 selabel=u:object_r:vendor_app_file:s0 capabilities=0x0
+    # vendor/app/<app>/oat/arm64 0 2000 755 selabel=u:object_r:vendor_app_file:s0 capabilities=0x0
+    # vendor/app/<app>/oat/arm64/<app>.odex 0 0 644 selabel=u:object_r:vendor_app_file:s0 capabilities=0x0
+    # vendor/app/<app>/oat/arm64/<app>.vdex 0 0 644 selabel=u:object_r:vendor_app_file:s0 capabilities=0x0
+    if not use_system_other_odex:
+      vendor_app_prefix = 'vendor/' + apk_dir + '/' + app + '/oat'
+      selabel = 'selabel=u:object_r:vendor_app_file:s0 capabilities=0x0'
+      vendor_file_system_config.writelines([
+          vendor_app_prefix + ' 0 2000 755 ' + selabel + '\n',
+          vendor_app_prefix + '/' + arch + ' 0 2000 755 ' + selabel + '\n',
+          vendor_app_prefix + '/' + arch + '/' + app + '.odex 0 0 644 ' + selabel + '\n',
+          vendor_app_prefix + '/' + arch + '/' + app + '.vdex 0 0 644 ' + selabel + '\n',
+      ])
+
+  if not use_system_other_odex:
+    vendor_file_system_config.close()
+    # Delete vendor.img so that it will be regenerated.
+    # TODO(b/188179859): Rebuilding a vendor image in GRF mode (e.g., T(framework)
+    #                    and S(vendor) may require logic similar to that in
+    #                    rebuild_image_with_sepolicy.
+    vendor_img = os.path.join(output_target_files_temp_dir, 'IMAGES', 'vendor.img')
+    if os.path.exists(vendor_img):
+      logging.info('Deleting %s', vendor_img)
+      os.remove(vendor_img)
+
 
 def create_merged_package(temp_dir, framework_target_files, framework_item_list,
                           vendor_target_files, vendor_item_list,
-                          framework_misc_info_keys, rebuild_recovery):
+                          framework_misc_info_keys, rebuild_recovery,
+                          framework_dexpreopt_tools, framework_dexpreopt_config,
+                          vendor_dexpreopt_config):
   """Merges two target files packages into one target files structure.
 
   Args:
@@ -908,6 +1236,12 @@ def create_merged_package(temp_dir, framework_target_files, framework_item_list,
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
       devices and write it to the system image.
 
+    The following are only used if dexpreopt is applied:
+
+    framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
+    framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
+    vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
+
   Returns:
     Path to merged package under temp directory.
   """
@@ -928,23 +1262,27 @@ def create_merged_package(temp_dir, framework_target_files, framework_item_list,
   # Perform special case processing on META/* items.
   # After this function completes successfully, all the files we need to create
   # the output target files package are in place.
-  framework_target_files_temp_dir = os.path.join(temp_dir, 'framework')
-  vendor_target_files_temp_dir = os.path.join(temp_dir, 'vendor')
+  framework_meta = os.path.join(temp_dir, 'framework_meta')
+  vendor_meta = os.path.join(temp_dir, 'vendor_meta')
   extract_items(
       target_files=framework_target_files,
-      target_files_temp_dir=framework_target_files_temp_dir,
+      target_files_temp_dir=framework_meta,
       extract_item_list=('META/*',))
   extract_items(
       target_files=vendor_target_files,
-      target_files_temp_dir=vendor_target_files_temp_dir,
+      target_files_temp_dir=vendor_meta,
       extract_item_list=('META/*',))
   process_special_cases(
-      framework_target_files_temp_dir=framework_target_files_temp_dir,
-      vendor_target_files_temp_dir=vendor_target_files_temp_dir,
+      temp_dir=temp_dir,
+      framework_meta=framework_meta,
+      vendor_meta=vendor_meta,
       output_target_files_temp_dir=output_target_files_temp_dir,
       framework_misc_info_keys=framework_misc_info_keys,
       framework_partition_set=item_list_to_partition_set(framework_item_list),
-      vendor_partition_set=item_list_to_partition_set(vendor_item_list))
+      vendor_partition_set=item_list_to_partition_set(vendor_item_list),
+      framework_dexpreopt_tools=framework_dexpreopt_tools,
+      framework_dexpreopt_config=framework_dexpreopt_config,
+      vendor_dexpreopt_config=vendor_dexpreopt_config)
 
   return output_target_files_temp_dir
 
@@ -1000,8 +1338,15 @@ def rebuild_image_with_sepolicy(target_files_dir,
   # Copy the combined SEPolicy file and framework hashes to the image that is
   # being rebuilt.
   def copy_selinux_file(input_path, output_filename):
+    input_filename = os.path.join(target_files_dir, input_path)
+    if not os.path.exists(input_filename):
+      input_filename = input_filename.replace('SYSTEM_EXT/', 'SYSTEM/system_ext/') \
+          .replace('PRODUCT/', 'SYSTEM/product/')
+      if not os.path.exists(input_filename):
+        logger.info('Skipping copy_selinux_file for %s', input_filename)
+        return
     shutil.copy(
-        os.path.join(target_files_dir, input_path),
+        input_filename,
         os.path.join(target_files_dir, partition.upper(), 'etc/selinux',
                      output_filename))
 
@@ -1041,7 +1386,8 @@ def rebuild_image_with_sepolicy(target_files_dir,
     shutil.rmtree(os.path.join(vendor_target_files_dir, partition.upper()))
     shutil.copytree(
         os.path.join(target_files_dir, partition.upper()),
-        os.path.join(vendor_target_files_dir, partition.upper()))
+        os.path.join(vendor_target_files_dir, partition.upper()),
+        symlinks=True)
 
     # Delete then rebuild the partition.
     os.remove(os.path.join(vendor_target_files_dir, 'IMAGES', partition_img))
@@ -1056,6 +1402,8 @@ def rebuild_image_with_sepolicy(target_files_dir,
     common.RunAndCheckOutput(rebuild_partition_command, verbose=True)
 
     # Move the newly-created image to the merged target files dir.
+    if not os.path.exists(os.path.join(target_files_dir, 'IMAGES')):
+      os.makedirs(os.path.join(target_files_dir, 'IMAGES'))
     shutil.move(
         os.path.join(vendor_target_files_dir, 'IMAGES', partition_img),
         os.path.join(target_files_dir, 'IMAGES', partition_img))
@@ -1146,7 +1494,8 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
                        vendor_item_list, output_target_files, output_dir,
                        output_item_list, output_ota, output_img,
                        output_super_empty, rebuild_recovery, vendor_otatools,
-                       rebuild_sepolicy):
+                       rebuild_sepolicy, framework_dexpreopt_tools,
+                       framework_dexpreopt_config, vendor_dexpreopt_config):
   """Merges two target files packages together.
 
   This function takes framework and vendor target files packages as input,
@@ -1185,6 +1534,12 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
     vendor_otatools: Path to an otatools zip used for recompiling vendor images.
     rebuild_sepolicy: If true, rebuild odm.img (if target uses ODM) or
       vendor.img using a merged precompiled_sepolicy file.
+
+    The following are only used if dexpreopt is applied:
+
+    framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
+    framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
+    vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
   """
 
   logger.info('starting: merge framework %s and vendor %s into output %s',
@@ -1193,7 +1548,8 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   output_target_files_temp_dir = create_merged_package(
       temp_dir, framework_target_files, framework_item_list,
       vendor_target_files, vendor_item_list, framework_misc_info_keys,
-      rebuild_recovery)
+      rebuild_recovery, framework_dexpreopt_tools, framework_dexpreopt_config,
+      vendor_dexpreopt_config)
 
   if not check_target_files_vintf.CheckVintf(output_target_files_temp_dir):
     raise RuntimeError('Incompatible VINTF metadata')
@@ -1367,6 +1723,12 @@ def main():
       OPTIONS.rebuild_sepolicy = True
     elif o == '--keep-tmp':
       OPTIONS.keep_tmp = True
+    elif o == '--framework-dexpreopt-config':
+      OPTIONS.framework_dexpreopt_config = a
+    elif o == '--framework-dexpreopt-tools':
+      OPTIONS.framework_dexpreopt_tools = a
+    elif o == '--vendor-dexpreopt-config':
+      OPTIONS.vendor_dexpreopt_config = a
     else:
       return False
     return True
@@ -1391,6 +1753,9 @@ def main():
           'output-ota=',
           'output-img=',
           'output-super-empty=',
+          'framework-dexpreopt-config=',
+          'framework-dexpreopt-tools=',
+          'vendor-dexpreopt-config=',
           'rebuild_recovery',
           'allow-duplicate-apkapex-keys',
           'vendor-otatools=',
@@ -1450,7 +1815,10 @@ def main():
           output_super_empty=OPTIONS.output_super_empty,
           rebuild_recovery=OPTIONS.rebuild_recovery,
           vendor_otatools=OPTIONS.vendor_otatools,
-          rebuild_sepolicy=OPTIONS.rebuild_sepolicy), OPTIONS.keep_tmp)
+          rebuild_sepolicy=OPTIONS.rebuild_sepolicy,
+          framework_dexpreopt_tools=OPTIONS.framework_dexpreopt_tools,
+          framework_dexpreopt_config=OPTIONS.framework_dexpreopt_config,
+          vendor_dexpreopt_config=OPTIONS.vendor_dexpreopt_config), OPTIONS.keep_tmp)
 
 
 if __name__ == '__main__':

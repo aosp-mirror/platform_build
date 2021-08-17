@@ -251,6 +251,9 @@ def symlinkIfNotExists(src, dst):
 
 def ValidatePartitionFingerprints(input_tmp, info_dict):
   build_info = common.BuildInfo(info_dict)
+  if not build_info.avb_enabled:
+    logging.info("AVB not enabled, skipping partition fingerprint checks")
+    return
   # Expected format:
   #  Prop: com.android.build.vendor.fingerprint -> 'generic/aosp_cf_x86_64_phone/vsoc_x86_64:S/AOSP.MASTER/7335886:userdebug/test-keys'
   #  Prop: com.android.build.vendor_boot.fingerprint -> 'generic/aosp_cf_x86_64_phone/vsoc_x86_64:S/AOSP.MASTER/7335886:userdebug/test-keys'
@@ -258,6 +261,13 @@ def ValidatePartitionFingerprints(input_tmp, info_dict):
       r"Prop: com.android.build.(?P<partition>\w+).fingerprint -> '(?P<fingerprint>[\w\/:\.-]+)'")
   for vbmeta_partition in ["vbmeta", "vbmeta_system"]:
     image = os.path.join(input_tmp, "IMAGES", vbmeta_partition + ".img")
+    if not os.path.exists(image):
+      assert vbmeta_partition != "vbmeta",\
+          "{} is a required partition for AVB.".format(
+              vbmeta_partition)
+      logging.info("vb partition %s not present, skipping", vbmeta_partition)
+      continue
+
     output = common.RunAndCheckOutput(
         [info_dict["avb_avbtool"], "info_image", "--image", image])
     matches = p.findall(output)

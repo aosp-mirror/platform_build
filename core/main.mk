@@ -355,7 +355,7 @@ endif
 ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)
 
 ifeq ($(AB_OTA_UPDATER),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(AB_OTA_PARTITIONS))
+ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(strip $(AB_OTA_PARTITIONS)))
 endif
 
 # -----------------------------------------------------------------
@@ -1239,14 +1239,43 @@ endef
 # Name resolution for LOCAL_REQUIRED_MODULES:
 #   See the select-bitness-of-required-modules definition.
 # $(1): product makefile
+
+# TODO(asmundak):
+# `product-installed-files` and `host-installed-files` macros below used to
+# call `get-product-var` directly to obtain per-file configuration variable
+# values (the value of variable FOO is fetched from PRODUCT.<product-makefile>.FOO).
+# Starlark-based configuration does not maintain per-file variable variable
+# values. To work around this problem, we utilize the fact that
+# `product-installed-files` and `host-installed-files` are called only in
+# two places:
+# 1. For the top-level product makefile (in this file). In this case
+#    $(call get-product-var <product>, FOO) is the same as $(FOO) as the
+#    product configuration has been run already. Therefore we define
+#    _product-var macro to pick the values directly from product config
+#    variables when using Starlark-based configuration.
+# 2. To check the path requirements (in artifact_path_requirements.mk).
+#    Starlark-based configuration does not perform this check at the moment.
+# In the longer run most of the logic of this file will be moved to the
+# Starlark.
+
+ifndef RBC_PRODUCT_CONFIG
+define _product-var
+  $(call get-product-var,$(1),$(2))
+endef
+else
+define _product-var
+  $(call $(2))
+endef
+endif
+
 define product-installed-files
   $(eval _pif_modules := \
-    $(call get-product-var,$(1),PRODUCT_PACKAGES) \
-    $(if $(filter eng,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ENG)) \
-    $(if $(filter debug,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG)) \
-    $(if $(filter tests,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
-    $(if $(filter asan,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
-    $(if $(filter java_coverage,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
+    $(call _product-var,$(1),PRODUCT_PACKAGES) \
+    $(if $(filter eng,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_ENG)) \
+    $(if $(filter debug,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG)) \
+    $(if $(filter tests,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
+    $(if $(filter asan,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
+    $(if $(filter java_coverage,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
@@ -1257,13 +1286,13 @@ define product-installed-files
   $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \
   $(filter-out $(HOST_OUT_ROOT)/%,$(call module-installed-files, $(_pif_modules))) \
   $(call resolve-product-relative-paths,\
-    $(foreach cf,$(call get-product-var,$(1),PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
+    $(foreach cf,$(call _product-var,$(1),PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
 endef
 
 # Similar to product-installed-files above, but handles PRODUCT_HOST_PACKAGES instead
 # This does support the :32 / :64 syntax, but does not support module overrides.
 define host-installed-files
-  $(eval _hif_modules := $(call get-product-var,$(1),PRODUCT_HOST_PACKAGES)) \
+  $(eval _hif_modules := $(call _product-var,$(1),PRODUCT_HOST_PACKAGES)) \
   $(eval ### Split host vs host cross modules) \
   $(eval _hcif_modules := $(filter host_cross_%,$(_hif_modules))) \
   $(eval _hif_modules := $(filter-out host_cross_%,$(_hif_modules))) \
@@ -1348,7 +1377,7 @@ ifdef FULL_BUILD
 
   # Verify the artifact path requirements made by included products.
   is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
-  ifneq (true,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS)))
+  ifeq (,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS),$(RBC_PRODUCT_CONFIG)))
     include $(BUILD_SYSTEM)/artifact_path_requirements.mk
   endif
 else
@@ -1534,6 +1563,9 @@ vendorbootimage: $(INSTALLED_VENDOR_BOOTIMAGE_TARGET)
 .PHONY: vendorbootimage_debug
 vendorbootimage_debug: $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET)
 
+.PHONY: vendorbootimage_test_harness
+vendorbootimage_test_harness: $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET)
+
 .PHONY: vendorramdisk
 vendorramdisk: $(INSTALLED_VENDOR_RAMDISK_TARGET)
 
@@ -1599,6 +1631,7 @@ droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_RAMDISK_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
@@ -1737,7 +1770,6 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   $(call dist-for-goals, droidcore, \
     $(BUILT_OTATOOLS_PACKAGE) \
     $(APPCOMPAT_ZIP) \
-    $(DEXPREOPT_CONFIG_ZIP) \
     $(DEXPREOPT_TOOLS_ZIP) \
   )
 
@@ -1785,6 +1817,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_MISC_INFO_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
+    $(DEXPREOPT_CONFIG_ZIP) \
   )
 
   # Put a copy of the radio/bootloader files in the dist dir.
@@ -1818,6 +1851,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
       $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
       $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+      $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_RAMDISK_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     )

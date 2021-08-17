@@ -206,7 +206,7 @@ $(INSTALLED_SDK_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
 	@mkdir -p $(dir $@)
 	$(hide) grep -v "$(subst $(space),\|,$(strip \
 	            $(sdk_build_prop_remove)))" $< > $@.tmp
-	$(hide) for x in $(sdk_build_prop_remove); do \
+	$(hide) for x in $(strip $(sdk_build_prop_remove)); do \
 	            echo "$$x"generic >> $@.tmp; done
 	$(hide) mv $@.tmp $@
 
@@ -320,11 +320,11 @@ endef
 define build-image-kernel-modules-depmod
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: .KATI_IMPLICIT_OUTPUTS := $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.alias $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(DEPMOD)
-$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULES := $(1)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULES := $(strip $(1))
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MOUNT_POINT := $(2)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULE_DIR := $(3)/$(DEPMOD_STAGING_SUBDIR)/$(2)/lib/modules/$(8)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_STAGING_DIR := $(3)
-$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_LOAD_MODULES := $(4)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_LOAD_MODULES := $(strip $(4))
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_LOAD_FILE := $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULE_ARCHIVE := $(6)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_OUTPUT_DIR := $(7)
@@ -2650,6 +2650,48 @@ endif # TARGET_NO_KERNEL
 endif # INSTALLED_BOOTIMAGE_TARGET
 endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
 
+ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+ifeq ($(BUILDING_RAMDISK_IMAGE),true)
+# -----------------------------------------------------------------
+# vendor test harness ramdisk, which is a vendor ramdisk combined with
+# a test harness ramdisk.
+
+INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_boot-test-harness)/vendor_ramdisk-test-harness.cpio$(RAMDISK_EXT)
+
+# Exclude recovery files in the default vendor ramdisk if including a standalone
+# recovery ramdisk in vendor_boot.
+ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
+ifneq (true,$(BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT))
+$(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
+$(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET): PRIVATE_ADDITIONAL_DIR := $(TARGET_RECOVERY_ROOT_OUT)
+endif
+endif
+
+# The vendor test harness ramdisk combines vendor ramdisk and test harness ramdisk.
+$(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET): $(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
+$(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET): $(MKBOOTFS) | $(COMPRESSION_COMMAND_DEPS)
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_VENDOR_RAMDISK_OUT) $(TARGET_TEST_HARNESS_RAMDISK_OUT) $(PRIVATE_ADDITIONAL_DIR) | $(COMPRESSION_COMMAND) > $@
+
+# -----------------------------------------------------------------
+# vendor_boot-test-harness.img.
+INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/vendor_boot-test-harness.img
+
+ifneq ($(BOARD_AVB_VENDOR_BOOT_KEY_PATH),)
+$(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOT_TEST_KEY_PATH)
+endif
+
+# Depends on vendor_boot.img and vendor_ramdisk-test-harness.cpio$(RAMDISK_EXT) to build the new vendor_boot-test-harness.img
+$(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_VENDOR_BOOTIMAGE_TARGET)
+$(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET): $(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET)
+$(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS)
+	$(call pretty,"Target vendor_boot test harness image: $@")
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_ramdisk $(INTERNAL_VENDOR_TEST_HARNESS_RAMDISK_TARGET) $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_ARGS) --vendor_boot $@
+	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
+	$(if $(BOARD_AVB_VENDOR_BOOT_KEY_PATH),$(call test-key-sign-vendor-bootimage,$@))
+
+endif # BUILDING_RAMDISK_IMAGE
+endif # BUILDING_VENDOR_BOOT_IMAGE
+
 # Creates a compatibility symlink between two partitions, e.g. /system/vendor to /vendor
 # $1: from location (e.g $(TARGET_OUT)/vendor)
 # $2: destination location (e.g. /vendor)
@@ -4010,25 +4052,16 @@ endif # BOARD_KERNEL_VERSION
 endif # BOARD_KERNEL_CONFIG_FILE
 
 ifneq ($(my_board_extracted_kernel),true)
-ifndef INSTALLED_KERNEL_TARGET
-$(warning No INSTALLED_KERNEL_TARGET is defined when PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
-    is true. Information about the updated kernel cannot be built into OTA update package. \
-    You can fix this by: (1) setting TARGET_NO_KERNEL to false and installing the built kernel \
-    to $(PRODUCT_OUT)/kernel, so that kernel information will be extracted from the built kernel; \
-    or (2) extracting kernel configuration and defining BOARD_KERNEL_CONFIG_FILE and \
-    BOARD_KERNEL_VERSION manually; or (3) unsetting PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
-    manually.)
-# Clear their values to indicate that these two files does not exist.
-BUILT_KERNEL_CONFIGS_FILE :=
-BUILT_KERNEL_VERSION_FILE :=
-else
-
 # Tools for decompression that is not in PATH.
 # Check $(EXTRACT_KERNEL) for decompression algorithms supported by the script.
 # Algorithms that are in the script but not in this list will be found in PATH.
 my_decompress_tools := \
     lz4:$(HOST_OUT_EXECUTABLES)/lz4 \
 
+endif # my_board_extracted_kernel
+
+ifneq ($(my_board_extracted_kernel),true)
+ifdef INSTALLED_KERNEL_TARGET
 $(BUILT_KERNEL_CONFIGS_FILE): .KATI_IMPLICIT_OUTPUTS := $(BUILT_KERNEL_VERSION_FILE)
 $(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
 $(BUILT_KERNEL_CONFIGS_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
@@ -4037,12 +4070,46 @@ $(BUILT_KERNEL_CONFIGS_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_T
 	  --output-configs $@ \
 	  --output-release $(BUILT_KERNEL_VERSION_FILE)
 
-my_decompress_tools :=
-
-endif # my_board_extracted_kernel
-my_board_extracted_kernel :=
-
+my_board_extracted_kernel := true
 endif # INSTALLED_KERNEL_TARGET
+endif # my_board_extracted_kernel
+
+ifneq ($(my_board_extracted_kernel),true)
+ifdef INSTALLED_BOOTIMAGE_TARGET
+$(BUILT_KERNEL_CONFIGS_FILE): .KATI_IMPLICIT_OUTPUTS := $(BUILT_KERNEL_VERSION_FILE)
+$(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
+$(BUILT_KERNEL_CONFIGS_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
+$(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_UNPACKED_BOOTIMG := $(intermediates)/unpacked_bootimage
+$(BUILT_KERNEL_CONFIGS_FILE): \
+        $(HOST_OUT_EXECUTABLES)/unpack_bootimg \
+        $(EXTRACT_KERNEL) \
+        $(INSTALLED_BOOTIMAGE_TARGET)
+	$(HOST_OUT_EXECUTABLES)/unpack_bootimg --boot_img $(INSTALLED_BOOTIMAGE_TARGET) --out $(PRIVATE_UNPACKED_BOOTIMG)
+	$(EXTRACT_KERNEL) --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(PRIVATE_UNPACKED_BOOTIMG)/kernel \
+	  --output-configs $@ \
+	  --output-release $(BUILT_KERNEL_VERSION_FILE)
+
+my_board_extracted_kernel := true
+endif # INSTALLED_BOOTIMAGE_TARGET
+endif # my_board_extracted_kernel
+
+ifneq ($(my_board_extracted_kernel),true)
+$(warning Neither INSTALLED_KERNEL_TARGET nor INSTALLED_BOOTIMAGE_TARGET is defined when \
+    PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS  is true. Information about the updated kernel \
+    cannot be built into OTA update package. You can fix this by: \
+    (1) setting TARGET_NO_KERNEL to false and installing the built kernel to $(PRODUCT_OUT)/kernel,\
+        so that kernel information will be extracted from the built kernel; or \
+    (2) Add a prebuilt boot image and specify it in BOARD_PREBUILT_BOOTIMAGE; or \
+    (3) extracting kernel configuration and defining BOARD_KERNEL_CONFIG_FILE and \
+        BOARD_KERNEL_VERSION manually; or \
+    (4) unsetting PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS manually.)
+# Clear their values to indicate that these two files does not exist.
+BUILT_KERNEL_CONFIGS_FILE :=
+BUILT_KERNEL_VERSION_FILE :=
+endif
+
+my_decompress_tools :=
+my_board_extracted_kernel :=
 
 endif # PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
@@ -4210,13 +4277,22 @@ else
   ifeq ($(TARGET_PRODUCT),sdk)
     build_ota_package := false
   endif
+  # A target without a kernel may be one of the following:
+  # - A generic target. In this case, the OTA package usually isn't built.
+  #   PRODUCT_BUILD_GENERIC_OTA_PACKAGE may be set to true to force OTA package
+  #   generation.
+  # - A real device target, with TARGET_NO_KERNEL set to true and
+  #   BOARD_PREBUILT_BOOTIMAGE set. In this case, it is valid to generate
+  #   an OTA package.
   ifneq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
     ifneq ($(filter generic%,$(TARGET_DEVICE)),)
       build_ota_package := false
     endif
-    ifeq ($(TARGET_NO_KERNEL),true)
-      build_ota_package := false
-    endif
+    ifeq ($(INSTALLED_BOOTIMAGE_TARGET),)
+      ifeq ($(TARGET_NO_KERNEL),true)
+        build_ota_package := false
+      endif
+    endif # INSTALLED_BOOTIMAGE_TARGET == ""
     ifeq ($(recovery_fstab),)
       build_ota_package := false
     endif
@@ -4586,6 +4662,12 @@ ifeq ($(BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE),true)
 endif
 ifneq ($(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST),)
 	$(hide) echo "partial_ota_update_partitions_list=$(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST)" >> $@
+endif
+ifeq ($(BUILDING_WITH_VSDK),true)
+	$(hide) echo "building_with_vsdk=true" >> $@
+endif
+ifeq ($(TARGET_FLATTEN_APEX),false)
+	$(hide) echo "target_flatten_apex=false" >> $@
 endif
 
 .PHONY: misc_info
@@ -5108,10 +5190,10 @@ endif
 ifeq ($(AB_OTA_UPDATER),true)
 	@# When using the A/B updater, include the updater config files in the zip.
 	$(hide) cp $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
-	$(hide) for part in $(AB_OTA_PARTITIONS); do \
+	$(hide) for part in $(strip $(AB_OTA_PARTITIONS)); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
-	$(hide) for conf in $(AB_OTA_POSTINSTALL_CONFIG); do \
+	$(hide) for conf in $(strip $(AB_OTA_POSTINSTALL_CONFIG)); do \
 	  echo "$${conf}" >> $(zip_root)/META/postinstall_config.txt; \
 	done
 ifdef OSRELEASED_DIRECTORY
@@ -5363,24 +5445,33 @@ endif # DEX2OAT is set
 endif # BUILD_OS == linux
 
 DEXPREOPT_CONFIG_ZIP := $(PRODUCT_OUT)/dexpreopt_config.zip
-$(DEXPREOPT_CONFIG_ZIP): $(FULL_SYSTEMIMAGE_DEPS) \
-	    $(INTERNAL_RAMDISK_FILES) \
-	    $(INTERNAL_USERDATAIMAGE_FILES) \
-	    $(INTERNAL_VENDORIMAGE_FILES) \
-	    $(INTERNAL_PRODUCTIMAGE_FILES) \
-	    $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
-	    $(DEX_PREOPT_CONFIG_FOR_MAKE) \
-	    $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)
+
+$(DEXPREOPT_CONFIG_ZIP): $(INSTALLED_SYSTEMIMAGE_TARGET) \
+    $(INSTALLED_VENDORIMAGE_TARGET) \
+    $(INSTALLED_ODMIMAGE_TARGET) \
+    $(INSTALLED_PRODUCTIMAGE_TARGET) \
+
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
+$(DEXPREOPT_CONFIG_ZIP): $(DEX_PREOPT_CONFIG_FOR_MAKE) \
+	  $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) \
+
+endif
 
 $(DEXPREOPT_CONFIG_ZIP): $(SOONG_ZIP)
 	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/dexpreopt_config
+
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
 ifneq (,$(DEX_PREOPT_CONFIG_FOR_MAKE))
 	$(hide) cp $(DEX_PREOPT_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
 endif
 ifneq (,$(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE))
 	$(hide) cp $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
 endif
+endif #!TARGET_BUILD_UNBUNDLED
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config
+
+.PHONY: dexpreopt_config_zip
+dexpreopt_config_zip: $(DEXPREOPT_CONFIG_ZIP)
 
 # -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it
@@ -5899,7 +5990,7 @@ $(INTERNAL_SDK_TARGET): PRIVATE_INPUT_FILES := $(sdk_atree_files)
 $(INTERNAL_SDK_TARGET): $(deps)
 	@echo "Package SDK: $@"
 	$(hide) rm -rf $(PRIVATE_DIR) $@
-	$(hide) for f in $(target_gnu_MODULES); do \
+	$(hide) for f in $(strip $(target_gnu_MODULES)); do \
 	  if [ -f $$f ]; then \
 	    echo SDK: $(if $(SDK_GNU_ERROR),ERROR:,warning:) \
 	        including GNU target $$f >&2; \

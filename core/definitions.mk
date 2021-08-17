@@ -1106,11 +1106,11 @@ define transform-bc-to-so
 $(hide) mkdir -p $(dir $@)
 $(hide) $(BCC_COMPAT) -O3 -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
   -rt-path $(RS_PREBUILT_CLCORE) -mtriple $(RS_COMPAT_TRIPLE) $<
-$(hide) $(PRIVATE_CXX_LINK) -shared -Wl,-soname,$(notdir $@) -nostdlib \
+$(hide) $(PRIVATE_CXX_LINK) -fuse-ld=lld -target $(CLANG_TARGET_TRIPLE) -shared -Wl,-soname,$(notdir $@) -nostdlib \
   -Wl,-rpath,\$$ORIGIN/../lib \
   $(dir $@)/$(notdir $(<:.bc=.o)) \
   $(RS_PREBUILT_COMPILER_RT) \
-  -o $@ $(CLANG_TARGET_GLOBAL_LDFLAGS) -Wl,--hash-style=sysv \
+  -o $@ $(CLANG_TARGET_GLOBAL_LLDFLAGS) -Wl,--hash-style=sysv \
   -L $(SOONG_OUT_DIR)/ndk/platforms/android-$(PRIVATE_SDK_VERSION)/arch-$(TARGET_ARCH)/usr/lib64 \
   -L $(SOONG_OUT_DIR)/ndk/platforms/android-$(PRIVATE_SDK_VERSION)/arch-$(TARGET_ARCH)/usr/lib \
   $(call intermediates-dir-for,SHARED_LIBRARIES,libRSSupport)/libRSSupport.so \
@@ -2329,6 +2329,7 @@ endef
 define add-jar-resources-to-package
   rm -rf $(3)
   mkdir -p $(3)
+  zipinfo -1 $(2) > /dev/null
   unzip -qo $(2) -d $(3) $$(zipinfo -1 $(2) | grep -v -E "\.class$$")
   $(JAR) uf $(1) $(call jar-args-sorted-files-in-directory,$(3))
 endef

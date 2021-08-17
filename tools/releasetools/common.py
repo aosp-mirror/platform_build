@@ -449,6 +449,13 @@ class BuildInfo(object):
     return vabc_enabled
 
   @property
+  def is_vabc_xor(self):
+    vendor_prop = self.info_dict.get("vendor.build.prop")
+    vabc_xor_enabled = vendor_prop and \
+        vendor_prop.GetProp("ro.virtual_ab.compression.xor.enabled") == "true"
+    return vabc_xor_enabled
+
+  @property
   def vendor_suppressed_vabc(self):
     vendor_prop = self.info_dict.get("vendor.build.prop")
     vabc_suppressed = vendor_prop and \
@@ -458,6 +465,10 @@ class BuildInfo(object):
   @property
   def oem_props(self):
     return self._oem_props
+
+  @property
+  def avb_enabled(self):
+    return self.get("avb_enable") == "true"
 
   def __getitem__(self, key):
     return self.info_dict[key]
@@ -2933,7 +2944,7 @@ class Difference(object):
           th.join()
 
       if p.returncode != 0:
-        logger.warning("Failure running %s:\n%s\n", diff_program, "".join(err))
+        logger.warning("Failure running %s:\n%s\n", cmd, "".join(err))
         self.patch = None
         return None, None, None
       diff = ptemp.read()
