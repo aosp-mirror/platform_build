@@ -64,7 +64,7 @@ compatibility_zip_deps := \
   $(SOONG_ZIP) \
   $(host_shared_libs) \
 
-compatibility_zip_resources := $(out_dir)/tools $(out_dir)/testcases
+compatibility_zip_resources := $(out_dir)/tools $(out_dir)/testcases $(out_dir)/lib $(out_dir)/lib64
 
 # Test Suite NOTICE files
 test_suite_notice_txt := $(out_dir)/NOTICE.txt
