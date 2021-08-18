@@ -53,7 +53,7 @@ assert_eq(
       "PRODUCT_COPY_FILES": [
           "part_from:part_to",
           "device_from:device_to",
-          "device/google/redfin/audio/audio_platform_info_noextcodec_snd.xml:||VENDOR-PATH-PH||/etc/audio_platform_info_noextcodec_snd.xml",
+          "device/google/redfin/audio/audio_platform_info_noextcodec_snd.xml:||VENDOR-PATH-PH||/etc/audio/audio_platform_info_noextcodec_snd.xml",
           "xyz:/etc/xyz",
           "x.xml:/etc/x.xml",
           "y.xml:/etc/y.xml",
