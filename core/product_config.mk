@@ -285,19 +285,6 @@ PRODUCT_APEX_BOOT_JARS := $(filter-out com.android.i18n:core-icu4j,$(PRODUCT_APE
 # All APEX jars come after /system and /system_ext jars, so adding core-icu4j at the end of the list
 PRODUCT_BOOT_JARS += com.android.i18n:core-icu4j
 
-# Replaces references to overridden boot jar modules in a boot jars variable.
-# $(1): Name of a boot jars variable with <apex>:<jar> pairs.
-define replace-boot-jar-module-overrides
-  $(foreach pair,$(PRODUCT_BOOT_JAR_MODULE_OVERRIDES),\
-    $(eval _rbjmo_from := $(call word-colon,1,$(pair)))\
-    $(eval _rbjmo_to := $(call word-colon,2,$(pair)))\
-    $(eval $(1) := $(patsubst $(_rbjmo_from):%,$(_rbjmo_to):%,$($(1)))))
-endef
-
-$(call replace-boot-jar-module-overrides,PRODUCT_BOOT_JARS)
-$(call replace-boot-jar-module-overrides,PRODUCT_APEX_BOOT_JARS)
-$(call replace-boot-jar-module-overrides,ART_APEX_JARS)
-
 # The extra system server jars must be appended at the end after common system server jars.
 PRODUCT_SYSTEM_SERVER_JARS += $(PRODUCT_SYSTEM_SERVER_JARS_EXTRA)
 
