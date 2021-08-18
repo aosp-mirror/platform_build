@@ -372,11 +372,6 @@ _product_list_vars += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
 
-# A list of <overridden-apex>:<override-apex> pairs that specifies APEX module
-# overrides to be applied to the APEX names in the boot jar variables
-# (PRODUCT_BOOT_JARS, PRODUCT_APEX_BOOT_JARS etc).
-_product_list_vars += PRODUCT_BOOT_JAR_MODULE_OVERRIDES
-
 # Controls for whether different partitions are built for the current product.
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_OTHER_IMAGE
