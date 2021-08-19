@@ -373,9 +373,14 @@ def _inherit(handle, pcm_name, pcm):
         if type(val) == "list":
             val.append(_indirect(pcm_name))
 
+def __base(path):
+    """Returns basename."""
+    return path.rsplit("/",1)[-1]
+
+
 def _copy_files(l, outdir):
     """Generate <item>:<outdir>/item for each item."""
-    return ["%s:%s/%s" % (item, outdir, item) for item in __words(l)]
+    return ["%s:%s/%s" % (path, outdir, __base(path)) for path in __words(l)]
 
 def _copy_if_exists(path_pair):
     """If from file exists, returns [from:to] pair."""

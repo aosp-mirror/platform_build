@@ -57,6 +57,8 @@ assert_eq(
           "xyz:/etc/xyz",
           "x.xml:/etc/x.xml",
           "y.xml:/etc/y.xml",
+          "from/sub/x:to/x",
+          "from/sub/y:to/y",
       ],
       "PRODUCT_HOST_PACKAGES": ["host"],
       "PRODUCT_PACKAGES": [
