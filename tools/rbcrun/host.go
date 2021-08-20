@@ -16,6 +16,7 @@ package rbcrun
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -170,6 +171,46 @@ func wildcard(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
 	return makeStringList(files), nil
 }
 
+// find(top, pattern, only_files = 0) returns all the paths under 'top'
+// whose basename matches 'pattern' (which is a shell's glob pattern).
+// If 'only_files' is non-zero, only the paths to the regular files are
+// returned. The returned paths are relative to 'top'.
+func find(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
+	kwargs []starlark.Tuple) (starlark.Value, error) {
+	var top, pattern string
+	var onlyFiles int
+	if err := starlark.UnpackArgs(b.Name(), args, kwargs,
+		"top", &top, "pattern", &pattern, "only_files?", &onlyFiles); err != nil {
+		return starlark.None, err
+	}
+	top = filepath.Clean(top)
+	pattern = filepath.Clean(pattern)
+	// Go's filepath.Walk is slow, consider using OS's find
+	var res []string
+	err := filepath.WalkDir(top, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			if d != nil && d.IsDir() {
+				return fs.SkipDir
+			} else {
+				return nil
+			}
+		}
+		relPath := strings.TrimPrefix(path, top)
+		if len(relPath) > 0 && relPath[0] == os.PathSeparator {
+			relPath = relPath[1:]
+		}
+		// Do not return top-level dir
+		if len(relPath) == 0 {
+			return nil
+		}
+		if matched, err := filepath.Match(pattern, d.Name()); err == nil && matched && (onlyFiles == 0 || d.Type().IsRegular()) {
+			res = append(res, relPath)
+		}
+		return nil
+	})
+	return makeStringList(res), err
+}
+
 // shell(command) runs OS shell with given command and returns back
 // its output the same way as Make's $(shell ) function. The end-of-lines
 // ("\n" or "\r\n") are replaced with " " in the result, and the trailing
@@ -226,6 +267,8 @@ func setup(env []string) {
 		"rblf_env": structFromEnv(os.Environ()),
 		// To convert makefile's $(wildcard foo)
 		"rblf_file_exists": starlark.NewBuiltin("rblf_file_exists", fileExists),
+		// To convert find-copy-subdir and product-copy-files-by pattern
+		"rblf_find_files": starlark.NewBuiltin("rblf_find_files", find),
 		// To convert makefile's $(filter ...)/$(filter-out)
 		"rblf_regex": starlark.NewBuiltin("rblf_regex", regexMatch),
 		// To convert makefile's $(shell cmd)
