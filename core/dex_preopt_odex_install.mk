@@ -61,7 +61,7 @@ ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
 endif
 
 # Don't preopt system server jars that are updatable.
-ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS)))
+ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_APEX_SYSTEM_SERVER_JARS)))
   LOCAL_DEX_PREOPT :=
 endif
 
@@ -275,7 +275,8 @@ endif
 my_dexpreopt_archs :=
 my_dexpreopt_images :=
 my_dexpreopt_images_deps :=
-my_dexpreopt_image_locations :=
+my_dexpreopt_image_locations_on_host :=
+my_dexpreopt_image_locations_on_device :=
 my_dexpreopt_infix := boot
 ifeq (true, $(DEXPREOPT_USE_ART_IMAGE))
   my_dexpreopt_infix := art
@@ -348,7 +349,8 @@ ifdef LOCAL_DEX_PREOPT
     endif  # TARGET_2ND_ARCH
   endif  # LOCAL_MODULE_CLASS
 
-  my_dexpreopt_image_locations += $(DEXPREOPT_IMAGE_LOCATIONS_$(my_dexpreopt_infix))
+  my_dexpreopt_image_locations_on_host += $(DEXPREOPT_IMAGE_LOCATIONS_ON_HOST$(my_dexpreopt_infix))
+  my_dexpreopt_image_locations_on_device += $(DEXPREOPT_IMAGE_LOCATIONS_ON_DEVICE$(my_dexpreopt_infix))
 
   # Record dex-preopt config.
   DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -387,7 +389,8 @@ ifdef LOCAL_DEX_PREOPT
   $(call end_json_map)
   $(call add_json_list, Archs,                          $(my_dexpreopt_archs))
   $(call add_json_list, DexPreoptImages,                $(my_dexpreopt_images))
-  $(call add_json_list, DexPreoptImageLocationsOnHost,  $(my_dexpreopt_image_locations))
+  $(call add_json_list, DexPreoptImageLocationsOnHost,  $(my_dexpreopt_image_locations_on_host))
+  $(call add_json_list, DexPreoptImageLocationsOnDevice,$(my_dexpreopt_image_locations_on_device))
   $(call add_json_list, PreoptBootClassPathDexFiles,    $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
   $(call add_json_list, PreoptBootClassPathDexLocations,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
   $(call add_json_bool, PreoptExtractedApk,             $(my_preopt_for_extracted_apk))
