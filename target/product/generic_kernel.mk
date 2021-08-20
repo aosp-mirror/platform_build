@@ -17,11 +17,6 @@
 _output-kernel-info-files := \
     prebuilt-info.txt \
     manifest.xml \
-    System.map \
-    vmlinux \
-    vmlinux.symvers \
-    modules.builtin \
-    modules.builtin.modinfo \
 
 # Output the kernel prebuilt files to dist folder
 #
@@ -37,11 +32,6 @@ endef
 _output-kernel-info-files-debug := \
     prebuilt-info.txt:prebuilt-info.txt \
     manifest.xml:manifest.xml \
-    System.map-allsyms:System.map \
-    vmlinux-allsyms:vmlinux \
-    vmlinux-allsyms.symvers:vmlinux.symvers \
-    modules.builtin:modules.builtin \
-    modules.builtin.modinfo:modules.builtin.modinfo \
 
 # Output the debug kernel prebuilt files to dist folder
 #
