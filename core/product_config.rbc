@@ -373,9 +373,14 @@ def _inherit(handle, pcm_name, pcm):
         if type(val) == "list":
             val.append(_indirect(pcm_name))
 
+def __base(path):
+    """Returns basename."""
+    return path.rsplit("/",1)[-1]
+
+
 def _copy_files(l, outdir):
     """Generate <item>:<outdir>/item for each item."""
-    return ["%s:%s/%s" % (item, outdir, item) for item in __words(l)]
+    return ["%s:%s/%s" % (path, outdir, __base(path)) for path in __words(l)]
 
 def _copy_if_exists(path_pair):
     """If from file exists, returns [from:to] pair."""
@@ -396,7 +401,8 @@ def _file_wildcard_exists(file_pattern):
 
 def _find_and_copy(pattern, from_dir, to_dir):
     """Return a copy list for the files matching the pattern."""
-    return ["%s/%s:%s/%s" % (from_dir, f, to_dir, f) for f in rblf_wildcard(pattern, from_dir)]
+    return ["%s/%s:%s/%s" % (
+        from_dir, f, to_dir, f) for f in rblf_find_files(from_dir, pattern, only_files=1)]
 
 def _filter_out(pattern, text):
     """Return all the words from `text' that do not match any word in `pattern'.
