@@ -57,12 +57,13 @@ $(foreach m,$(CUSTOM_IMAGE_MODULES),\
 my_kernel_module_copy_files :=
 my_custom_image_modules_var := BOARD_$(strip $(call to-upper,$(my_custom_image_name)))_KERNEL_MODULES
 ifdef $(my_custom_image_modules_var)
-  my_kernel_module_copy_files += $(call build-image-kernel-modules,$(my_custom_image_modules_var),$(my_staging_dir),$(my_custom_image_name)/,$(call intermediates-dir-for,PACKAGING,depmod_$(my_custom_image_name)))
+  my_kernel_module_copy_files += $(call build-image-kernel-modules,$($(my_custom_image_modules_var)),$(my_staging_dir),$(CUSTOM_IMAGE_MOUNT_POINT),$(call intermediates-dir-for,PACKAGING,depmod_$(my_custom_image_name)),$($(my_custom_image_modules_var)),modules.load,,$(call intermediates-dir-for,PACKAGING,depmod_$(my_custom_image_name)_stripped))
+  my_copy_pairs += $(my_kernel_module_copy_files)
 endif
 
 # Collect CUSTOM_IMAGE_COPY_FILES.
 my_image_copy_files :=
-$(foreach f,$(CUSTOM_IMAGE_COPY_FILES) $(my_kernel_module_copy_files),\
+$(foreach f,$(CUSTOM_IMAGE_COPY_FILES),\
   $(eval pair := $(subst :,$(space),$(f)))\
   $(eval src := $(word 1,$(pair)))\
   $(eval my_image_copy_files += $(src))\
