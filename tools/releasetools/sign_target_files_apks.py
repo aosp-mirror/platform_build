@@ -217,6 +217,18 @@ for partition in common.AVB_PARTITIONS:
     raise RuntimeError("Missing {} in AVB_FOOTER_ARGS".format(partition))
 
 
+def IsApexFile(filename):
+  return filename.endswith(".apex") or filename.endswith(".capex")
+
+
+def GetApexFilename(filename):
+  name = os.path.basename(filename)
+  # Replace the suffix for compressed apex
+  if name.endswith(".capex"):
+    return name.replace(".capex", ".apex")
+  return name
+
+
 def GetApkCerts(certmap):
   # apply the key remapping to the contents of the file
   for apk, cert in certmap.items():
@@ -356,8 +368,8 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
   unknown_files = []
   for info in input_tf_zip.infolist():
     # Handle APEXes on all partitions
-    if info.filename.endswith('.apex'):
-      name = os.path.basename(info.filename)
+    if IsApexFile(info.filename):
+      name = GetApexFilename(info.filename)
       if name not in known_keys:
         unknown_files.append(name)
       continue
@@ -388,10 +400,11 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
 
   invalid_apexes = []
   for info in input_tf_zip.infolist():
-    if not info.filename.endswith('.apex'):
+    if not IsApexFile(info.filename):
       continue
 
-    name = os.path.basename(info.filename)
+    name = GetApexFilename(info.filename)
+
     (payload_key, container_key) = apex_keys[name]
     if ((payload_key in common.SPECIAL_CERT_STRINGS and
          container_key not in common.SPECIAL_CERT_STRINGS) or
@@ -415,7 +428,7 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
   if is_compressed:
     uncompressed = tempfile.NamedTemporaryFile()
     with gzip.open(unsigned.name, "rb") as in_file, \
-         open(uncompressed.name, "wb") as out_file:
+            open(uncompressed.name, "wb") as out_file:
       shutil.copyfileobj(in_file, out_file)
 
     # Finally, close the "unsigned" file (which is gzip compressed), and then
@@ -455,7 +468,7 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
     # Recompress the file after it has been signed.
     compressed = tempfile.NamedTemporaryFile()
     with open(signed.name, "rb") as in_file, \
-         gzip.open(compressed.name, "wb") as out_file:
+            gzip.open(compressed.name, "wb") as out_file:
       shutil.copyfileobj(in_file, out_file)
 
     data = compressed.read()
@@ -471,21 +484,21 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
 
 def IsBuildPropFile(filename):
   return filename in (
-        "SYSTEM/etc/prop.default",
-        "BOOT/RAMDISK/prop.default",
-        "RECOVERY/RAMDISK/prop.default",
+      "SYSTEM/etc/prop.default",
+      "BOOT/RAMDISK/prop.default",
+      "RECOVERY/RAMDISK/prop.default",
 
-        "VENDOR_BOOT/RAMDISK/default.prop",
-        "VENDOR_BOOT/RAMDISK/prop.default",
+      "VENDOR_BOOT/RAMDISK/default.prop",
+      "VENDOR_BOOT/RAMDISK/prop.default",
 
-        # ROOT/default.prop is a legacy path, but may still exist for upgrading
-        # devices that don't support `property_overrides_split_enabled`.
-        "ROOT/default.prop",
+      # ROOT/default.prop is a legacy path, but may still exist for upgrading
+      # devices that don't support `property_overrides_split_enabled`.
+      "ROOT/default.prop",
 
-        # RECOVERY/RAMDISK/default.prop is a legacy path, but will always exist
-        # as a symlink in the current code. So it's a no-op here. Keeping the
-        # path here for clarity.
-        "RECOVERY/RAMDISK/default.prop") or filename.endswith("build.prop")
+      # RECOVERY/RAMDISK/default.prop is a legacy path, but will always exist
+      # as a symlink in the current code. So it's a no-op here. Keeping the
+      # path here for clarity.
+      "RECOVERY/RAMDISK/default.prop") or filename.endswith("build.prop")
 
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
@@ -541,13 +554,14 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # Sign bundled APEX files on all partitions
-    elif filename.endswith(".apex"):
-      name = os.path.basename(filename)
+    elif IsApexFile(filename):
+      name = GetApexFilename(filename)
+
       payload_key, container_key = apex_keys[name]
 
       # We've asserted not having a case with only one of them PRESIGNED.
       if (payload_key not in common.SPECIAL_CERT_STRINGS and
-          container_key not in common.SPECIAL_CERT_STRINGS):
+              container_key not in common.SPECIAL_CERT_STRINGS):
         print("    signing: %-*s container (%s)" % (
             maxsize, name, container_key))
         print("           : %-*s payload   (%s)" % (
@@ -561,7 +575,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             key_passwords,
             apk_keys,
             codename_to_api_level_map,
-            no_hashtree=True,
+            no_hashtree=None,  # Let apex_util determine if hash tree is needed
             signing_args=OPTIONS.avb_extra_args.get('apex'))
         common.ZipWrite(output_tf_zip, signed_apex, filename)
 
@@ -644,7 +658,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # Updates system_other.avbpubkey in /product/etc/.
     elif filename in (
         "PRODUCT/etc/security/avb/system_other.avbpubkey",
-        "SYSTEM/product/etc/security/avb/system_other.avbpubkey"):
+            "SYSTEM/product/etc/security/avb/system_other.avbpubkey"):
       # Only update system_other's public key, if the corresponding signing
       # key is specified via --avb_system_other_key.
       signing_key = OPTIONS.avb_keys.get("system_other")
@@ -657,7 +671,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # Should NOT sign boot-debug.img.
     elif filename in (
         "BOOT/RAMDISK/force_debuggable",
-        "BOOT/RAMDISK/first_stage_ramdisk/force_debuggable"):
+            "BOOT/RAMDISK/first_stage_ramdisk/force_debuggable"):
       raise common.ExternalError("debuggable boot.img cannot be signed")
 
     # A non-APK file; copy it verbatim.
@@ -748,7 +762,8 @@ def ReplaceCerts(data):
   # it's only checking entries with global seinfo at the moment (i.e. ignoring
   # the ones with inner packages). (Bug: 69479366)
   root = ElementTree.fromstring(data)
-  signatures = [signer.attrib['signature'] for signer in root.findall('signer')]
+  signatures = [signer.attrib['signature']
+                for signer in root.findall('signer')]
   assert len(signatures) == len(set(signatures)), \
       "Found duplicate entries after cert replacement: {}".format(data)
 
@@ -793,7 +808,7 @@ def RewriteProps(data):
     if line and line[0] != '#' and "=" in line:
       key, value = line.split("=", 1)
       if (key.startswith("ro.") and
-          key.endswith((".build.fingerprint", ".build.thumbprint"))):
+              key.endswith((".build.fingerprint", ".build.thumbprint"))):
         pieces = value.split("/")
         pieces[-1] = EditTags(pieces[-1])
         value = "/".join(pieces)
@@ -986,7 +1001,7 @@ def ReplaceAvbSigningKeys(misc_info):
     ReplaceAvbPartitionSigningKey(partition)
 
   for custom_partition in misc_info.get(
-      "avb_custom_images_partition_list", "").strip().split():
+          "avb_custom_images_partition_list", "").strip().split():
     ReplaceAvbPartitionSigningKey(custom_partition)
 
 
@@ -1051,7 +1066,7 @@ def BuildKeyMap(misc_info, key_mapping_options):
           devkeydir + "/shared":   d + "/shared",
           devkeydir + "/platform": d + "/platform",
           devkeydir + "/networkstack": d + "/networkstack",
-          })
+      })
     else:
       OPTIONS.key_map[s] = d
 
@@ -1154,8 +1169,8 @@ def ReadApexKeysInfo(tf_zip):
     if container_cert == 'PRESIGNED' and container_private_key == 'PRESIGNED':
       container_key = 'PRESIGNED'
     elif CompareKeys(
-        container_cert, OPTIONS.public_key_suffix,
-        container_private_key, OPTIONS.private_key_suffix):
+            container_cert, OPTIONS.public_key_suffix,
+            container_private_key, OPTIONS.private_key_suffix):
       container_key = container_cert[:-len(OPTIONS.public_key_suffix)]
     else:
       raise ValueError("Failed to parse container keys: \n{}".format(line))

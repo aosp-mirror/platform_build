@@ -1,4 +1,3 @@
-
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +27,25 @@ def assert_eq(expected, actual):
     if expected != actual:
         fail("Expected %s, got %s" % (expected, actual))
 
+# Unit tests for non-trivial runtime functions
+assert_eq("", rblf.mkstrip(" \n \t    "))
+assert_eq("a b c", rblf.mkstrip("  a b   \n  c \t"))
+
+assert_eq("b1 b2", rblf.mksubst("a", "b", "a1 a2"))
+assert_eq(["b1", "x2"], rblf.mksubst("a", "b", ["a1", "x2"]))
+
+assert_eq("ABcdYZ", rblf.mkpatsubst("ab%yz", "AB%YZ", "abcdyz"))
+assert_eq("bcz", rblf.mkpatsubst("a%z", "A%Z", "bcz"))
+assert_eq(["Ay", "Az"], rblf.mkpatsubst("a%", "A%", ["ay", "az"]))
+assert_eq("AcZ bcz", rblf.mkpatsubst("a%z", "A%Z", "acz  bcz"))
+assert_eq("Abcd", rblf.mkpatsubst("a%", "A%", "abcd"))
+assert_eq("abcZ", rblf.mkpatsubst("%z", "%Z", "abcz"))
+assert_eq("azx b", rblf.mkpatsubst("az", "AZ", "azx  b"))
+assert_eq(["azx", "b"], rblf.mkpatsubst("az", "AZ", ["azx", "b"]))
+assert_eq("ABC", rblf.mkpatsubst("abc", "ABC", "abc"))
+assert_eq(["%/foo"], rblf.mkpatsubst("%", "\\%/%", ["foo"]))
+assert_eq(["foo/%"], rblf.mkpatsubst("%", "%/%", ["foo"]))
+assert_eq(["from/a:to/a", "from/b:to/b"], rblf.product_copy_files_by_pattern("from/%", "to/%", "a b"))
 
 globals, config = rblf.product_configuration("test/device", init)
 assert_eq(
@@ -35,8 +53,12 @@ assert_eq(
       "PRODUCT_COPY_FILES": [
           "part_from:part_to",
           "device_from:device_to",
-          "device/google/redfin/audio/audio_platform_info_noextcodec_snd.xml:||VENDOR-PATH-PH||/etc/audio_platform_info_noextcodec_snd.xml",
-          "xyz"
+          "device/google/redfin/audio/audio_platform_info_noextcodec_snd.xml:||VENDOR-PATH-PH||/etc/audio/audio_platform_info_noextcodec_snd.xml",
+          "xyz:/etc/xyz",
+          "x.xml:/etc/x.xml",
+          "y.xml:/etc/y.xml",
+          "from/sub/x:to/x",
+          "from/sub/y:to/y",
       ],
       "PRODUCT_HOST_PACKAGES": ["host"],
       "PRODUCT_PACKAGES": [
@@ -47,4 +69,18 @@ assert_eq(
       "PRODUCT_PRODUCT_PROPERTIES": ["part_properties"]
     },
     { k:v for k, v in sorted(config.items()) }
+)
+
+ns = globals["$SOONG_CONFIG_NAMESPACES"]
+assert_eq(
+    {
+        "NS1": {
+            "v1": "abc",
+            "v2": "def"
+        },
+        "NS2": {
+            "v3": "xyz"
+        }
+    },
+    {k:v for k, v in sorted(ns.items()) }
 )

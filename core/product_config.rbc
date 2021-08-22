@@ -16,6 +16,7 @@ load("//build/make/core:envsetup.rbc", _envsetup_init = "init")
 
 """Runtime functions."""
 
+_soong_config_namespaces_key = "$SOONG_CONFIG_NAMESPACES"
 def _global_init():
     """Returns dict created from the runtime environment."""
     globals = dict()
@@ -29,6 +30,7 @@ def _global_init():
         globals[k] = getattr(rblf_cli, k)
 
     globals.setdefault("PRODUCT_SOONG_NAMESPACES", [])
+    globals.setdefault(_soong_config_namespaces_key, {})
     _envsetup_init(globals)
 
     # Variables that should be defined.
@@ -62,7 +64,8 @@ def __print_attr(attr, value):
     elif _options.format == "pretty":
         print(attr, "=", repr(value))
     elif _options.format == "make":
-        print(attr, ":=", value)
+        # Trim all spacing to a single space
+        print(attr, ":=", _mkstrip(value))
     else:
         fail("bad output format", _options.format)
 
@@ -73,7 +76,16 @@ def _printvars(globals, cfg):
     if _options.print_globals:
         print()
         for attr, val in sorted(globals.items()):
-            if attr not in _globals_base:
+            if attr == _soong_config_namespaces_key:
+                __print_attr("SOONG_CONFIG_NAMESPACES", val.keys())
+                for nsname, nsvars in sorted(val.items()):
+                    # Define SOONG_CONFIG_<ns> for Make, othewise
+                    # it cannot be added to .KATI_READONLY list
+                    if _options.format == "make":
+                        print("SOONG_CONFIG_" + nsname, ":=")
+                    for var, val in sorted(nsvars.items()):
+                        __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
+            elif attr not in _globals_base:
                 __print_attr(attr, val)
 
 def __printvars_rearrange_list(value_list):
@@ -267,6 +279,20 @@ def _indirect(pcm_name):
     """Returns configuration item for the inherited module."""
     return (pcm_name,)
 
+def _add_soong_config_namespace(g, nsname):
+    """Adds given namespace."""
+
+    # A value cannot be updated, so we need to create a new dictionary
+    old = g[_soong_config_namespaces_key]
+    g[_soong_config_namespaces_key] = dict([(k,v) for k,v in old.items()] + [(nsname, {})])
+
+def _add_soong_config_var_value(g, nsname, var, value):
+    """Defines a variable and adds it to the given namespace."""
+    ns = g[_soong_config_namespaces_key].get(nsname)
+    if ns == None:
+        fail("no such namespace: " + nsname)
+    ns[var] = value
+
 def _addprefix(prefix, string_or_list):
     """Adds prefix and returns a list.
 
@@ -347,6 +373,15 @@ def _inherit(handle, pcm_name, pcm):
         if type(val) == "list":
             val.append(_indirect(pcm_name))
 
+def __base(path):
+    """Returns basename."""
+    return path.rsplit("/",1)[-1]
+
+
+def _copy_files(l, outdir):
+    """Generate <item>:<outdir>/item for each item."""
+    return ["%s:%s/%s" % (path, outdir, __base(path)) for path in __words(l)]
+
 def _copy_if_exists(path_pair):
     """If from file exists, returns [from:to] pair."""
     value = path_pair.split(":", 2)
@@ -366,7 +401,8 @@ def _file_wildcard_exists(file_pattern):
 
 def _find_and_copy(pattern, from_dir, to_dir):
     """Return a copy list for the files matching the pattern."""
-    return ["%s/%s:%s/%s" % (from_dir, f, to_dir, f) for f in rblf_wildcard(pattern, from_dir)]
+    return ["%s/%s:%s/%s" % (
+        from_dir, f, to_dir, f) for f in rblf_find_files(from_dir, pattern, only_files=1)]
 
 def _filter_out(pattern, text):
     """Return all the words from `text' that do not match any word in `pattern'.
@@ -432,6 +468,102 @@ def _mkinfo(file, message = ""):
     """Prints info."""
     print(message)
 
+
+def __mkparse_pattern(pattern):
+    """Parses Make's patsubst pattern."""
+    in_escape = False
+    res = []
+    acc = ""
+    for c in pattern.elems():
+        if in_escape:
+            in_escape = False
+            acc += c
+        elif c == '\\':
+            in_escape = True
+        elif c == '%' and not res:
+            res.append(acc)
+            acc = ''
+        else:
+            acc += c
+    if in_escape:
+        acc += '\\'
+    res.append(acc)
+    return res
+
+
+def __mkpatsubst_word(parsed_pattern,parsed_subst, word):
+    (before, after) = parsed_pattern
+    if not word.startswith(before):
+        return word
+    if not word.endswith(after):
+        return word
+    if len(parsed_subst) < 2:
+        return parsed_subst[0]
+    return parsed_subst[0] + word[len(before):len(word) - len(after)] + parsed_subst[1]
+
+
+def _mkpatsubst(pattern, replacement, s):
+    """Emulates Make's patsubst.
+
+    Tokenizes `s` (unless it is already a list), and then performs a simple
+    wildcard substitution (in other words, `foo%bar` pattern is equivalent to
+    the regular expression `^foo(.*)bar$, and the first `%` in replacement is
+    $1 in regex terms).
+    """
+    parsed_pattern = __mkparse_pattern(pattern)
+    words = s if type(s) == "list" else _mkstrip(s).split(" ")
+    if len(parsed_pattern) == 1:
+        out_words = [ replacement if x == pattern else x for x in words]
+    else:
+        parsed_replacement = __mkparse_pattern(replacement)
+        out_words = [__mkpatsubst_word(parsed_pattern, parsed_replacement, x) for x in words]
+    return out_words if type(s) == "list" else " ".join(out_words)
+
+
+def _mkstrip(s):
+    """Emulates Make's strip.
+
+    That is, removes string's leading and trailing whitespace characters and
+    replaces any sequence of whitespace characters with with a single space.
+    """
+    result = ""
+    was_space = False
+    for ch in s.strip().elems():
+        is_space = ch.isspace()
+        if not is_space:
+            if was_space:
+                result += " "
+            result += ch
+        was_space = is_space
+    return result
+
+def _mksubst(old, new, s):
+    """Emulates Make's subst.
+
+    Replaces each occurence of 'old' with 'new'.
+    If 's' is a list, applies substitution to each item.
+    """
+    if type(s) == "list":
+        return [e.replace(old, new) for e in s]
+    return s.replace(old, new)
+
+
+def _product_copy_files_by_pattern(src, dest, s):
+    """Creates a copy list.
+
+    For each item in a given list, create <from>:<to> pair, where <from> and
+    <to> are the results of applying Make-style patsubst of <src> and <dest>
+    respectively. E.g. the result of calling this function with
+    ("foo/%", "bar/%", ["a", "b"])  will be
+    ["foo/a:bar/a", "foo/b:bar/b"].
+    """
+    parsed_src = __mkparse_pattern(src)
+    parsed_dest = __mkparse_pattern(dest)
+    parsed_percent = ["", ""]
+    words = s if type(s) == "list" else _mkstrip(s).split(" ")
+    return [ __mkpatsubst_word(parsed_percent, parsed_src, x) + ":" + __mkpatsubst_word(parsed_percent, parsed_dest, x) for x in words]
+
+
 def __get_options():
     """Returns struct containing runtime global settings."""
     settings = dict(
@@ -462,8 +594,11 @@ def __get_options():
 # Settings used during debugging.
 _options = __get_options()
 rblf = struct(
+    add_soong_config_namespace = _add_soong_config_namespace,
+    add_soong_config_var_value = _add_soong_config_var_value,
     addprefix = _addprefix,
     addsuffix = _addsuffix,
+    copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
     enforce_product_packages_exist = _enforce_product_packages_exist,
@@ -478,9 +613,13 @@ rblf = struct(
     indirect = _indirect,
     mkinfo = _mkinfo,
     mkerror = _mkerror,
+    mkpatsubst = _mkpatsubst,
     mkwarning = _mkwarning,
+    mkstrip = _mkstrip,
+    mksubst = _mksubst,
     printvars = _printvars,
     product_configuration = _product_configuration,
+    product_copy_files_by_pattern = _product_copy_files_by_pattern,
     require_artifacts_in_path = _require_artifacts_in_path,
     require_artifacts_in_path_relaxed = _require_artifacts_in_path_relaxed,
     setdefault = _setdefault,

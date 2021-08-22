@@ -687,8 +687,10 @@ def HasPartition(partition_name):
               os.path.join(OPTIONS.input_tmp, "IMAGES",
                            "{}.img".format(partition_name))))
 
+
 def AddApexInfo(output_zip):
-  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp, 'system')
+  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp, 'system',
+                                          compressed_only=False)
   apex_metadata_proto = ota_metadata_pb2.ApexMetadata()
   apex_metadata_proto.apex_info.extend(apex_infos)
   apex_info_bytes = apex_metadata_proto.SerializeToString()
@@ -702,6 +704,31 @@ def AddApexInfo(output_zip):
       OPTIONS.replace_updated_files_list.append(arc_name)
     else:
       common.ZipWrite(output_zip, output_file, arc_name)
+
+
+def AddVbmetaDigest(output_zip):
+  """Write the vbmeta digest to the output dir and zipfile."""
+
+  # Calculate the vbmeta digest and put the result in to META/
+  boot_images = OPTIONS.info_dict.get("boot_images")
+  # Disable the digest calculation if the target_file is used as a container
+  # for boot images.
+  boot_container = boot_images and len(boot_images.split()) >= 2
+  if (OPTIONS.info_dict.get("avb_enable") == "true" and not boot_container and
+      OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true"):
+    avbtool = OPTIONS.info_dict["avb_avbtool"]
+    digest = verity_utils.CalculateVbmetaDigest(OPTIONS.input_tmp, avbtool)
+    vbmeta_digest_txt = os.path.join(OPTIONS.input_tmp, "META",
+                                     "vbmeta_digest.txt")
+    with open(vbmeta_digest_txt, 'w') as f:
+      f.write(digest)
+    # writes to the output zipfile
+    if output_zip:
+      arc_name = "META/vbmeta_digest.txt"
+      if arc_name in output_zip.namelist():
+        OPTIONS.replace_updated_files_list.append(arc_name)
+      else:
+        common.ZipWriteStr(output_zip, arc_name, digest)
 
 
 def AddImagesToTargetFiles(filename):
@@ -957,19 +984,7 @@ def AddImagesToTargetFiles(filename):
     with open(pack_radioimages_txt) as f:
       AddPackRadioImages(output_zip, f.readlines())
 
-  # Calculate the vbmeta digest and put the result in to META/
-  boot_images = OPTIONS.info_dict.get("boot_images")
-  # Disable the digest calculation if the target_file is used as a container
-  # for boot images.
-  boot_container = boot_images and len(boot_images.split()) >= 2
-  if (OPTIONS.info_dict.get("avb_enable") == "true" and not boot_container and
-      OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true"):
-    avbtool = OPTIONS.info_dict["avb_avbtool"]
-    digest = verity_utils.CalculateVbmetaDigest(OPTIONS.input_tmp, avbtool)
-    vbmeta_digest_txt = os.path.join(OPTIONS.input_tmp, "META",
-                                     "vbmeta_digest.txt")
-    with open(vbmeta_digest_txt, 'w') as f:
-      f.write(digest)
+  AddVbmetaDigest(output_zip)
 
   if output_zip:
     common.ZipClose(output_zip)
@@ -1015,8 +1030,5 @@ if __name__ == '__main__':
   try:
     common.CloseInheritedPipes()
     main(sys.argv[1:])
-  except common.ExternalError:
-    logger.exception("\n   ERROR:\n")
-    sys.exit(1)
   finally:
     common.Cleanup()

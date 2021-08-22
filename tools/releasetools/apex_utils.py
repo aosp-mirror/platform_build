@@ -340,6 +340,8 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
     zip_items = apex_fd.namelist()
 
   payload_info = ParseApexPayloadInfo(avbtool, payload_file)
+  if no_hashtree is None:
+    no_hashtree = payload_info.get("Tree Size", 0) == 0
   SignApexPayload(
       avbtool,
       payload_file,
@@ -361,20 +363,16 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
   common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
   common.ZipClose(apex_zip)
 
-  # 3. Align the files at page boundary (same as in apexer).
-  aligned_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
-  common.RunAndCheckOutput(['zipalign', '-f', '4096', apex_file, aligned_apex])
-
-  # 4. Sign the APEX container with container_key.
+  # 3. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
 
   # Specify the 4K alignment when calling SignApk.
   extra_signapk_args = OPTIONS.extra_signapk_args[:]
-  extra_signapk_args.extend(['-a', '4096'])
+  extra_signapk_args.extend(['-a', '4096', '--align-file-size'])
 
   password = container_pw.get(container_key) if container_pw else None
   common.SignFile(
-      aligned_apex,
+      apex_file,
       signed_apex,
       container_key,
       password,
@@ -385,8 +383,8 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
 
 
 def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
-                         container_pw, apk_keys, codename_to_api_level_map,
-                         no_hashtree, signing_args=None):
+                       container_pw, apk_keys, codename_to_api_level_map,
+                       no_hashtree, signing_args=None):
   """Signs the current compressed APEX with the given payload/container keys.
 
   Args:
@@ -434,26 +432,17 @@ def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
                             '--input', signed_original_apex_file,
                             '--output', compressed_apex_file])
 
-  # 4. Align apex
-  aligned_apex = common.MakeTempFile(prefix='apex-container-', suffix='.capex')
-  common.RunAndCheckOutput(['zipalign', '-f', '4096', compressed_apex_file,
-                            aligned_apex])
-
-  # 5. Sign the APEX container with container_key.
+  # 4. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.capex')
-
-  # Specify the 4K alignment when calling SignApk.
-  extra_signapk_args = OPTIONS.extra_signapk_args[:]
-  extra_signapk_args.extend(['-a', '4096'])
 
   password = container_pw.get(container_key) if container_pw else None
   common.SignFile(
-      aligned_apex,
+      compressed_apex_file,
       signed_apex,
       container_key,
       password,
       codename_to_api_level_map=codename_to_api_level_map,
-      extra_signapk_args=extra_signapk_args)
+      extra_signapk_args=OPTIONS.extra_signapk_args)
 
   return signed_apex
 
@@ -516,6 +505,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
     raise ApexInfoError(
         'Failed to get type for {}:\n{}'.format(apex_file, e))
 
+
 def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
   """
   Get information about system APEX stored in the input_file zip
@@ -558,7 +548,7 @@ def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
   for apex_filename in os.listdir(target_dir):
     apex_filepath = os.path.join(target_dir, apex_filename)
     if not os.path.isfile(apex_filepath) or \
-        not zipfile.is_zipfile(apex_filepath):
+            not zipfile.is_zipfile(apex_filepath):
       logger.info("Skipping %s because it's not a zipfile", apex_filepath)
       continue
     apex_info = ota_metadata_pb2.ApexInfo()

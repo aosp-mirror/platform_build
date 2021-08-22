@@ -311,6 +311,20 @@ ADDITIONAL_VENDOR_PROPERTIES += \
 endif
 endif
 
+# Set build prop. This prop is read by ota_from_target_files when generating OTA,
+# to decide if VABC should be disabled.
+ifeq ($(BOARD_DONT_USE_VABC_OTA),true)
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.vendor.build.dont_use_vabc=true
+endif
+
+# Set the flag in vendor. So VTS would know if the new fingerprint format is in use when
+# the system images are replaced by GSI.
+ifeq ($(BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT),true)
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.vendor.build.fingerprint_has_digest=1
+endif
+
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.vendor.build.security_patch=$(VENDOR_SECURITY_PATCH) \
     ro.product.board=$(TARGET_BOOTLOADER_BOARD_NAME) \
@@ -341,7 +355,7 @@ endif
 ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)
 
 ifeq ($(AB_OTA_UPDATER),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(AB_OTA_PARTITIONS))
+ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(strip $(AB_OTA_PARTITIONS)))
 endif
 
 # -----------------------------------------------------------------
@@ -533,7 +547,12 @@ subdir_makefiles_total := $(words int $(subdir_makefiles) post finish)
 
 $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
 
+# For an unbundled image, we can skip blueprint_tools because unbundled image
+# aims to remove a large number framework projects from the manifest, the
+# sources or dependencies for these tools may be missing from the tree.
+ifeq (,$(TARGET_BUILD_UNBUNDLED_IMAGE))
 droid_targets : blueprint_tools
+endif
 
 endif # dont_bother
 
@@ -1220,14 +1239,43 @@ endef
 # Name resolution for LOCAL_REQUIRED_MODULES:
 #   See the select-bitness-of-required-modules definition.
 # $(1): product makefile
+
+# TODO(asmundak):
+# `product-installed-files` and `host-installed-files` macros below used to
+# call `get-product-var` directly to obtain per-file configuration variable
+# values (the value of variable FOO is fetched from PRODUCT.<product-makefile>.FOO).
+# Starlark-based configuration does not maintain per-file variable variable
+# values. To work around this problem, we utilize the fact that
+# `product-installed-files` and `host-installed-files` are called only in
+# two places:
+# 1. For the top-level product makefile (in this file). In this case
+#    $(call get-product-var <product>, FOO) is the same as $(FOO) as the
+#    product configuration has been run already. Therefore we define
+#    _product-var macro to pick the values directly from product config
+#    variables when using Starlark-based configuration.
+# 2. To check the path requirements (in artifact_path_requirements.mk).
+#    Starlark-based configuration does not perform this check at the moment.
+# In the longer run most of the logic of this file will be moved to the
+# Starlark.
+
+ifndef RBC_PRODUCT_CONFIG
+define _product-var
+  $(call get-product-var,$(1),$(2))
+endef
+else
+define _product-var
+  $(call $(2))
+endef
+endif
+
 define product-installed-files
   $(eval _pif_modules := \
-    $(call get-product-var,$(1),PRODUCT_PACKAGES) \
-    $(if $(filter eng,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ENG)) \
-    $(if $(filter debug,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG)) \
-    $(if $(filter tests,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
-    $(if $(filter asan,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
-    $(if $(filter java_coverage,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
+    $(call _product-var,$(1),PRODUCT_PACKAGES) \
+    $(if $(filter eng,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_ENG)) \
+    $(if $(filter debug,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG)) \
+    $(if $(filter tests,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
+    $(if $(filter asan,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
+    $(if $(filter java_coverage,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
@@ -1238,13 +1286,13 @@ define product-installed-files
   $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \
   $(filter-out $(HOST_OUT_ROOT)/%,$(call module-installed-files, $(_pif_modules))) \
   $(call resolve-product-relative-paths,\
-    $(foreach cf,$(call get-product-var,$(1),PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
+    $(foreach cf,$(call _product-var,$(1),PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
 endef
 
 # Similar to product-installed-files above, but handles PRODUCT_HOST_PACKAGES instead
 # This does support the :32 / :64 syntax, but does not support module overrides.
 define host-installed-files
-  $(eval _hif_modules := $(call get-product-var,$(1),PRODUCT_HOST_PACKAGES)) \
+  $(eval _hif_modules := $(call _product-var,$(1),PRODUCT_HOST_PACKAGES)) \
   $(eval ### Split host vs host cross modules) \
   $(eval _hcif_modules := $(filter host_cross_%,$(_hif_modules))) \
   $(eval _hif_modules := $(filter-out host_cross_%,$(_hif_modules))) \
@@ -1329,7 +1377,7 @@ ifdef FULL_BUILD
 
   # Verify the artifact path requirements made by included products.
   is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
-  ifneq (true,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS)))
+  ifeq (,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS),$(RBC_PRODUCT_CONFIG)))
     include $(BUILD_SYSTEM)/artifact_path_requirements.mk
   endif
 else
@@ -1515,6 +1563,9 @@ vendorbootimage: $(INSTALLED_VENDOR_BOOTIMAGE_TARGET)
 .PHONY: vendorbootimage_debug
 vendorbootimage_debug: $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET)
 
+.PHONY: vendorbootimage_test_harness
+vendorbootimage_test_harness: $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET)
+
 .PHONY: vendorramdisk
 vendorramdisk: $(INSTALLED_VENDOR_RAMDISK_TARGET)
 
@@ -1560,9 +1611,10 @@ vbmetasystemimage: $(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET)
 .PHONY: vbmetavendorimage
 vbmetavendorimage: $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
 
-# Build files and then package it into the rom formats
-.PHONY: droidcore
-droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
+# The droidcore-unbundled target depends on the subset of targets necessary to
+# perform a full system build (either unbundled or not).
+.PHONY: droidcore-unbundled
+droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_SYSTEMIMAGE_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_BOOTIMAGE_TARGET) \
@@ -1579,6 +1631,7 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_RAMDISK_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
@@ -1619,6 +1672,11 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_RECOVERY) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     soong_docs
+
+# The droidcore target depends on the droidcore-unbundled subset and any other
+# targets for a non-unbundled (full source) full system build.
+.PHONY: droidcore
+droidcore: droidcore-unbundled
 
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
@@ -1695,21 +1753,42 @@ $(eval $(call combine-notice-files, html, \
     $(apps_only_installed_files)))
 
 
-else ifeq (,$(TARGET_BUILD_UNBUNDLED))
+else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
+
+  # Truth table for entering this block of code:
+  # TARGET_BUILD_UNBUNDLED | TARGET_BUILD_UNBUNDLED_IMAGE | Action
+  # -----------------------|------------------------------|-------------------------
+  # not set                | not set                      | droidcore path
+  # not set                | true                         | invalid
+  # true                   | not set                      | skip
+  # true                   | true                         | droidcore-unbundled path
+
+  # We dist the following targets only for droidcore full build. These items
+  # can include java-related targets that would cause building framework java
+  # sources in a droidcore full build.
+
   $(call dist-for-goals, droidcore, \
+    $(BUILT_OTATOOLS_PACKAGE) \
+    $(APPCOMPAT_ZIP) \
+    $(DEXPREOPT_TOOLS_ZIP) \
+  )
+
+  # We dist the following targets for droidcore-unbundled (and droidcore since
+  # droidcore depends on droidcore-unbundled). The droidcore-unbundled target
+  # is a subset of droidcore. It can be used used for an unbundled build to
+  # avoid disting targets that would cause building framework java sources,
+  # which we want to avoid in an unbundled build.
+
+  $(call dist-for-goals, droidcore-unbundled, \
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
     $(INTERNAL_OTA_PACKAGE_TARGET) \
     $(INTERNAL_OTA_METADATA) \
     $(INTERNAL_OTA_PARTIAL_PACKAGE_TARGET) \
     $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET) \
-    $(BUILT_OTATOOLS_PACKAGE) \
     $(SYMBOLS_ZIP) \
     $(PROGUARD_DICT_ZIP) \
     $(PROGUARD_USAGE_ZIP) \
     $(COVERAGE_ZIP) \
-    $(APPCOMPAT_ZIP) \
-    $(DEXPREOPT_CONFIG_ZIP) \
-    $(DEXPREOPT_TOOLS_ZIP) \
     $(INSTALLED_FILES_FILE) \
     $(INSTALLED_FILES_JSON) \
     $(INSTALLED_FILES_FILE_VENDOR) \
@@ -1738,11 +1817,12 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_MISC_INFO_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
-   )
+    $(DEXPREOPT_CONFIG_ZIP) \
+  )
 
   # Put a copy of the radio/bootloader files in the dist dir.
   $(foreach f,$(INSTALLED_RADIOIMAGE_TARGET), \
-    $(call dist-for-goals, droidcore, $(f)))
+    $(call dist-for-goals, droidcore-unbundled, $(f)))
 
   ifneq ($(ANDROID_BUILD_EMBEDDED),true)
     $(call dist-for-goals, droidcore, \
@@ -1751,13 +1831,13 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
     )
   endif
 
-  $(call dist-for-goals, droidcore, \
+  $(call dist-for-goals, droidcore-unbundled, \
     $(INSTALLED_FILES_FILE_ROOT) \
     $(INSTALLED_FILES_JSON_ROOT) \
   )
 
   ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-    $(call dist-for-goals, droidcore, \
+    $(call dist-for-goals, droidcore-unbundled, \
       $(INSTALLED_FILES_FILE_RAMDISK) \
       $(INSTALLED_FILES_JSON_RAMDISK) \
       $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) \
@@ -1771,13 +1851,14 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
       $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
       $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+      $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_RAMDISK_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     )
   endif
 
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-    $(call dist-for-goals, droidcore, \
+    $(call dist-for-goals, droidcore-unbundled, \
       $(recovery_ramdisk) \
     )
   endif
@@ -1807,10 +1888,25 @@ else ifeq (,$(TARGET_BUILD_UNBUNDLED))
         $(call dist-for-goals,droidcore,$(f):ndk_apis/$(notdir $(f))))
   endif
 
-# Building a full system-- the default is to build droidcore
-droid_targets: droidcore dist_files
+  # For full system build (whether unbundled or not), we configure
+  # droid_targets to depend on droidcore-unbundled, which will set up the full
+  # system dependencies and also dist the subset of targets that correspond to
+  # an unbundled build (exclude building some framework sources).
 
-endif # !TARGET_BUILD_UNBUNDLED
+  droid_targets: droidcore-unbundled
+
+  ifeq (,$(TARGET_BUILD_UNBUNDLED_IMAGE))
+
+    # If we're building a full system (including the framework sources excluded
+    # by droidcore-unbundled), we configure droid_targets also to depend on
+    # droidcore, which includes all dist for droidcore, and will build the
+    # necessary framework sources.
+
+    droid_targets: droidcore dist_files
+
+  endif
+
+endif # TARGET_BUILD_UNBUNDLED == TARGET_BUILD_UNBUNDLED_IMAGE
 
 .PHONY: docs
 docs: $(ALL_DOCS)
