@@ -27,7 +27,6 @@ PRODUCT_PACKAGES += \
     android.test.base \
     android.test.mock \
     android.test.runner \
-    ANGLE \
     apexd \
     appops \
     app_process \
@@ -129,6 +128,7 @@ PRODUCT_PACKAGES += \
     libaudioeffect_jni \
     libbinder \
     libbinder_ndk \
+    libbinder_rpc_unstable \
     libc.bootstrap \
     libcamera2ndk \
     libcutils \
@@ -352,8 +352,6 @@ PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 
-PRODUCT_PROPERTY_OVERRIDES += ro.gfx.angle.supported=true
-
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
@@ -371,6 +369,7 @@ PRODUCT_PACKAGES_DEBUG := \
     profcollectd \
     profcollectctl \
     remount \
+    servicedispatcher \
     showmap \
     sqlite3 \
     ss \

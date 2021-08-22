@@ -61,7 +61,7 @@ ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
 endif
 
 # Don't preopt system server jars that are updatable.
-ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS)))
+ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_APEX_SYSTEM_SERVER_JARS)))
   LOCAL_DEX_PREOPT :=
 endif
 
@@ -210,6 +210,9 @@ endif
 ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
   LOCAL_ENFORCE_USES_LIBRARIES := false
 endif
+ifneq (,$(LOCAL_COMPATIBILITY_SUITE))
+  LOCAL_ENFORCE_USES_LIBRARIES := false
+endif
 
 # Disable the check if the app contains no java code.
 ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
@@ -272,8 +275,10 @@ endif
 my_dexpreopt_archs :=
 my_dexpreopt_images :=
 my_dexpreopt_images_deps :=
-my_dexpreopt_image_locations :=
+my_dexpreopt_image_locations_on_host :=
+my_dexpreopt_image_locations_on_device :=
 my_dexpreopt_infix := boot
+my_create_dexpreopt_config :=
 ifeq (true, $(DEXPREOPT_USE_ART_IMAGE))
   my_dexpreopt_infix := art
 endif
@@ -289,7 +294,16 @@ ifdef LOCAL_DEX_PREOPT
       LOCAL_UNCOMPRESS_DEX := true
     endif
   endif
+  my_create_dexpreopt_config := true
+endif
 
+# dexpreopt is disabled when TARGET_BUILD_UNBUNDLED_IMAGE is true,
+# but dexpreopt config files are required to dexpreopt in post-processing.
+ifeq ($(TARGET_BUILD_UNBUNDLED_IMAGE),true)
+  my_create_dexpreopt_config := true
+endif
+
+ifeq ($(my_create_dexpreopt_config), true)
   ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
     my_module_multilib := $(LOCAL_MULTILIB)
     # If the module is not an SDK library and it's a system server jar, only preopt the primary arch.
@@ -345,7 +359,8 @@ ifdef LOCAL_DEX_PREOPT
     endif  # TARGET_2ND_ARCH
   endif  # LOCAL_MODULE_CLASS
 
-  my_dexpreopt_image_locations += $(DEXPREOPT_IMAGE_LOCATIONS_$(my_dexpreopt_infix))
+  my_dexpreopt_image_locations_on_host += $(DEXPREOPT_IMAGE_LOCATIONS_ON_HOST$(my_dexpreopt_infix))
+  my_dexpreopt_image_locations_on_device += $(DEXPREOPT_IMAGE_LOCATIONS_ON_DEVICE$(my_dexpreopt_infix))
 
   # Record dex-preopt config.
   DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -384,7 +399,8 @@ ifdef LOCAL_DEX_PREOPT
   $(call end_json_map)
   $(call add_json_list, Archs,                          $(my_dexpreopt_archs))
   $(call add_json_list, DexPreoptImages,                $(my_dexpreopt_images))
-  $(call add_json_list, DexPreoptImageLocationsOnHost,  $(my_dexpreopt_image_locations))
+  $(call add_json_list, DexPreoptImageLocationsOnHost,  $(my_dexpreopt_image_locations_on_host))
+  $(call add_json_list, DexPreoptImageLocationsOnDevice,$(my_dexpreopt_image_locations_on_device))
   $(call add_json_list, PreoptBootClassPathDexFiles,    $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
   $(call add_json_list, PreoptBootClassPathDexLocations,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
   $(call add_json_bool, PreoptExtractedApk,             $(my_preopt_for_extracted_apk))
@@ -396,8 +412,6 @@ ifdef LOCAL_DEX_PREOPT
 
   my_dexpreopt_config := $(intermediates)/dexpreopt.config
   my_dexpreopt_config_for_postprocessing := $(PRODUCT_OUT)/dexpreopt_config/$(LOCAL_MODULE)_dexpreopt.config
-  my_dexpreopt_script := $(intermediates)/dexpreopt.sh
-  my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
   my_dexpreopt_config_merger := $(BUILD_SYSTEM)/dex_preopt_config_merger.py
 
   $(my_dexpreopt_config): $(my_dexpreopt_dep_configs) $(my_dexpreopt_config_merger)
@@ -410,6 +424,13 @@ ifdef LOCAL_DEX_PREOPT
 	echo -e -n '$(subst $(newline),\n,$(subst ','\'',$(subst \,\\,$(PRIVATE_CONTENTS))))' > $@
 	$(PRIVATE_CONFIG_MERGER) $@ $(PRIVATE_DEP_CONFIGS)
 
+$(eval $(call copy-one-file,$(my_dexpreopt_config),$(my_dexpreopt_config_for_postprocessing)))
+
+$(LOCAL_INSTALLED_MODULE): $(my_dexpreopt_config_for_postprocessing)
+
+ifdef LOCAL_DEX_PREOPT
+  my_dexpreopt_script := $(intermediates)/dexpreopt.sh
+  my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
   .KATI_RESTAT: $(my_dexpreopt_script)
   $(my_dexpreopt_script): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_script): PRIVATE_GLOBAL_SOONG_CONFIG := $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)
@@ -424,8 +445,6 @@ ifdef LOCAL_DEX_PREOPT
 	-module $(PRIVATE_MODULE_CONFIG) \
 	-dexpreopt_script $@ \
 	-out_dir $(OUT_DIR)
-
-  $(eval $(call copy-one-file,$(my_dexpreopt_config),$(my_dexpreopt_config_for_postprocessing)))
 
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
@@ -462,7 +481,6 @@ ifdef LOCAL_DEX_PREOPT
 
   $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
   $(LOCAL_INSTALLED_MODULE): $(my_dexpreopt_zip)
-  $(LOCAL_INSTALLED_MODULE): $(my_dexpreopt_config_for_postprocessing)
 
   $(my_all_targets): $(my_dexpreopt_zip)
 
@@ -471,3 +489,4 @@ ifdef LOCAL_DEX_PREOPT
   my_dexpreopt_zip :=
   my_dexpreopt_config_for_postprocessing :=
 endif # LOCAL_DEX_PREOPT
+endif # my_create_dexpreopt_config

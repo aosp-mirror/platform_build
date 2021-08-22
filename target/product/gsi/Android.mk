@@ -117,7 +117,13 @@ VNDK_ABI_DUMPS := $(call find-abi-dump-paths,$(VNDK_ABI_DUMP_DIR))
 NDK_ABI_DUMPS := $(call find-abi-dump-paths,$(NDK_ABI_DUMP_DIR))
 PLATFORM_ABI_DUMPS := $(call find-abi-dump-paths,$(PLATFORM_ABI_DUMP_DIR))
 
+# Check for superfluous lsdump files. Since LSDUMP_PATHS only covers the
+# libraries that can be built from source in the current build, and prebuilts of
+# Mainline modules may be in use, we also allow the libs in STUB_LIBRARIES for
+# NDK and platform ABIs.
+
 $(check-vndk-abi-dump-list-timestamp): PRIVATE_LSDUMP_PATHS := $(LSDUMP_PATHS)
+$(check-vndk-abi-dump-list-timestamp): PRIVATE_STUB_LIBRARIES := $(STUB_LIBRARIES)
 $(check-vndk-abi-dump-list-timestamp):
 	$(eval added_vndk_abi_dumps := $(strip $(sort $(filter-out \
 	  $(call filter-abi-dump-paths,LLNDK VNDK-SP VNDK-core,$(PRIVATE_LSDUMP_PATHS)), \
@@ -126,13 +132,15 @@ $(check-vndk-abi-dump-list-timestamp):
 	  echo -e "Found unexpected ABI reference dump files under $(VNDK_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(VNDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_vndk_abi_dumps)) ')' -delete\` to delete the dump files.")
 
 	$(eval added_ndk_abi_dumps := $(strip $(sort $(filter-out \
-	  $(call filter-abi-dump-paths,NDK,$(PRIVATE_LSDUMP_PATHS)), \
+	  $(call filter-abi-dump-paths,NDK,$(PRIVATE_LSDUMP_PATHS)) \
+	  $(addsuffix .lsdump,$(PRIVATE_STUB_LIBRARIES)), \
 	  $(notdir $(NDK_ABI_DUMPS))))))
 	$(if $(added_ndk_abi_dumps), \
 	  echo -e "Found unexpected ABI reference dump files under $(NDK_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(NDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_ndk_abi_dumps)) ')' -delete\` to delete the dump files.")
 
 	$(eval added_platform_abi_dumps := $(strip $(sort $(filter-out \
-	  $(call filter-abi-dump-paths,PLATFORM,$(PRIVATE_LSDUMP_PATHS)), \
+	  $(call filter-abi-dump-paths,PLATFORM,$(PRIVATE_LSDUMP_PATHS)) \
+	  $(addsuffix .lsdump,$(PRIVATE_STUB_LIBRARIES)), \
 	  $(notdir $(PLATFORM_ABI_DUMPS))))))
 	$(if $(added_platform_abi_dumps), \
 	  echo -e "Found unexpected ABI reference dump files under $(PLATFORM_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(PLATFORM_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_platform_abi_dumps)) ')' -delete\` to delete the dump files.")
@@ -229,6 +237,6 @@ LOCAL_LICENSE_CONDITIONS := restricted
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SYSTEM_EXT_MODULE := true
-LOCAL_MODULE_RELATIVE_PATH := init
+LOCAL_MODULE_RELATIVE_PATH := gsi
 
 include $(BUILD_PREBUILT)

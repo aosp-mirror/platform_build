@@ -80,11 +80,6 @@ class Options(object):
     self.boot_signer_args = []
     self.verity_signer_path = None
     self.verity_signer_args = []
-    self.aftl_tool_path = None
-    self.aftl_server = None
-    self.aftl_key_path = None
-    self.aftl_manufacturer_key_path = None
-    self.aftl_signer_helper = None
     self.verbose = False
     self.tempfiles = []
     self.device_specific = None
@@ -276,6 +271,9 @@ def Run(args, verbose=None, **kwargs):
     args = args[:]
     args[0] = FindHostToolPath(args[0])
 
+  if verbose is None:
+    verbose = OPTIONS.verbose
+
   # Don't log any if caller explicitly says so.
   if verbose:
     logger.info("  Running: \"%s\"", " ".join(args))
@@ -451,8 +449,26 @@ class BuildInfo(object):
     return vabc_enabled
 
   @property
+  def is_vabc_xor(self):
+    vendor_prop = self.info_dict.get("vendor.build.prop")
+    vabc_xor_enabled = vendor_prop and \
+        vendor_prop.GetProp("ro.virtual_ab.compression.xor.enabled") == "true"
+    return vabc_xor_enabled
+
+  @property
+  def vendor_suppressed_vabc(self):
+    vendor_prop = self.info_dict.get("vendor.build.prop")
+    vabc_suppressed = vendor_prop and \
+        vendor_prop.GetProp("ro.vendor.build.dont_use_vabc")
+    return vabc_suppressed and vabc_suppressed.lower() == "true"
+
+  @property
   def oem_props(self):
     return self._oem_props
+
+  @property
+  def avb_enabled(self):
+    return self.get("avb_enable") == "true"
 
   def __getitem__(self, key):
     return self.info_dict[key]
@@ -1373,46 +1389,6 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
 
 
-def ConstructAftlMakeImageCommands(output_image):
-  """Constructs the command to append the aftl image to vbmeta."""
-
-  # Ensure the other AFTL parameters are set as well.
-  assert OPTIONS.aftl_tool_path is not None, 'No aftl tool provided.'
-  assert OPTIONS.aftl_key_path is not None, 'No AFTL key provided.'
-  assert OPTIONS.aftl_manufacturer_key_path is not None, \
-      'No AFTL manufacturer key provided.'
-
-  vbmeta_image = MakeTempFile()
-  os.rename(output_image, vbmeta_image)
-  build_info = BuildInfo(OPTIONS.info_dict, use_legacy_id=True)
-  version_incremental = build_info.GetBuildProp("ro.build.version.incremental")
-  aftltool = OPTIONS.aftl_tool_path
-  server_argument_list = [OPTIONS.aftl_server, OPTIONS.aftl_key_path]
-  aftl_cmd = [aftltool, "make_icp_from_vbmeta",
-              "--vbmeta_image_path", vbmeta_image,
-              "--output", output_image,
-              "--version_incremental", version_incremental,
-              "--transparency_log_servers", ','.join(server_argument_list),
-              "--manufacturer_key", OPTIONS.aftl_manufacturer_key_path,
-              "--algorithm", "SHA256_RSA4096",
-              "--padding", "4096"]
-  if OPTIONS.aftl_signer_helper:
-    aftl_cmd.extend(shlex.split(OPTIONS.aftl_signer_helper))
-  return aftl_cmd
-
-
-def AddAftlInclusionProof(output_image):
-  """Appends the aftl inclusion proof to the vbmeta image."""
-
-  aftl_cmd = ConstructAftlMakeImageCommands(output_image)
-  RunAndCheckOutput(aftl_cmd)
-
-  verify_cmd = ['aftltool', 'verify_image_icp', '--vbmeta_image_path',
-                output_image, '--transparency_log_pub_keys',
-                OPTIONS.aftl_key_path]
-  RunAndCheckOutput(verify_cmd)
-
-
 def AppendGkiSigningArgs(cmd):
   """Append GKI signing arguments for mkbootimg."""
   # e.g., --gki_signing_key path/to/signing_key
@@ -1505,10 +1481,6 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
     cmd.extend(split_args)
 
   RunAndCheckOutput(cmd)
-
-  # Generate the AFTL inclusion proof.
-  if OPTIONS.aftl_server is not None:
-    AddAftlInclusionProof(image_path)
 
 
 def _MakeRamdisk(sourcedir, fs_config_file=None,
@@ -1710,6 +1682,38 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   return data
 
 
+def _SignBootableImage(image_path, prebuilt_name, partition_name,
+                       info_dict=None):
+  """Performs AVB signing for a prebuilt boot.img.
+
+  Args:
+    image_path: The full path of the image, e.g., /path/to/boot.img.
+    prebuilt_name: The prebuilt image name, e.g., boot.img, boot-5.4-gz.img,
+        boot-5.10.img, recovery.img.
+    partition_name: The partition name, e.g., 'boot' or 'recovery'.
+    info_dict: The information dict read from misc_info.txt.
+  """
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  # AVB: if enabled, calculate and add hash to boot.img or recovery.img.
+  if info_dict.get("avb_enable") == "true":
+    avbtool = info_dict["avb_avbtool"]
+    if partition_name == "recovery":
+      part_size = info_dict["recovery_size"]
+    else:
+      part_size = info_dict[prebuilt_name.replace(".img", "_size")]
+
+    cmd = [avbtool, "add_hash_footer", "--image", image_path,
+           "--partition_size", str(part_size), "--partition_name",
+           partition_name]
+    AppendAVBSigningArgs(cmd, partition_name)
+    args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
+    if args and args.strip():
+      cmd.extend(shlex.split(args))
+    RunAndCheckOutput(cmd)
+
+
 def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
                      info_dict=None, two_step_image=False):
   """Return a File object with the desired bootable image.
@@ -1717,6 +1721,9 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name 'prebuilt_name',
   otherwise look for it under 'unpack_dir'/IMAGES, otherwise construct it from
   the source files in 'unpack_dir'/'tree_subdir'."""
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
 
   prebuilt_path = os.path.join(unpack_dir, "BOOTABLE_IMAGES", prebuilt_name)
   if os.path.exists(prebuilt_path):
@@ -1728,10 +1735,16 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
     logger.info("using prebuilt %s from IMAGES...", prebuilt_name)
     return File.FromLocalFile(name, prebuilt_path)
 
-  logger.info("building image from target_files %s...", tree_subdir)
+  prebuilt_path = os.path.join(unpack_dir, "PREBUILT_IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    logger.info("Re-signing prebuilt %s from PREBUILT_IMAGES...", prebuilt_name)
+    signed_img = MakeTempFile()
+    shutil.copy(prebuilt_path, signed_img)
+    partition_name = tree_subdir.lower()
+    _SignBootableImage(signed_img, prebuilt_name, partition_name, info_dict)
+    return File.FromLocalFile(name, signed_img)
 
-  if info_dict is None:
-    info_dict = OPTIONS.info_dict
+  logger.info("building image from target_files %s...", tree_subdir)
 
   # With system_root_image == "true", we don't pack ramdisk into the boot image.
   # Unless "recovery_as_boot" is specified, in which case we carry the ramdisk
@@ -2426,9 +2439,7 @@ def ParseOptions(argv,
          "java_path=", "java_args=", "android_jar_path=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
-         "extra=", "logfile=", "aftl_tool_path=", "aftl_server=",
-         "aftl_key_path=", "aftl_manufacturer_key_path=",
-         "aftl_signer_helper="] + list(extra_long_opts))
+         "extra=", "logfile="] + list(extra_long_opts))
   except getopt.GetoptError as err:
     Usage(docstring)
     print("**", str(err), "**")
@@ -2466,16 +2477,6 @@ def ParseOptions(argv,
       OPTIONS.verity_signer_path = a
     elif o in ("--verity_signer_args",):
       OPTIONS.verity_signer_args = shlex.split(a)
-    elif o in ("--aftl_tool_path",):
-      OPTIONS.aftl_tool_path = a
-    elif o in ("--aftl_server",):
-      OPTIONS.aftl_server = a
-    elif o in ("--aftl_key_path",):
-      OPTIONS.aftl_key_path = a
-    elif o in ("--aftl_manufacturer_key_path",):
-      OPTIONS.aftl_manufacturer_key_path = a
-    elif o in ("--aftl_signer_helper",):
-      OPTIONS.aftl_signer_helper = a
     elif o in ("-s", "--device_specific"):
       OPTIONS.device_specific = a
     elif o in ("-x", "--extra"):
@@ -2943,7 +2944,7 @@ class Difference(object):
           th.join()
 
       if p.returncode != 0:
-        logger.warning("Failure running %s:\n%s\n", diff_program, "".join(err))
+        logger.warning("Failure running %s:\n%s\n", cmd, "".join(err))
         self.patch = None
         return None, None, None
       diff = ptemp.read()

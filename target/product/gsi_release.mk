@@ -42,6 +42,9 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
+# Disable the build-time debugfs restrictions on GSI builds
+PRODUCT_SET_DEBUGFS_RESTRICTIONS := false
+
 # GSI targets should install "unflattened" APEXes in /system
 TARGET_FLATTEN_APEX := false
 
@@ -68,3 +71,6 @@ PRODUCT_BUILD_USERDATA_IMAGE := false
 PRODUCT_BUILD_VENDOR_IMAGE := false
 PRODUCT_BUILD_SUPER_PARTITION := false
 PRODUCT_BUILD_SUPER_EMPTY_IMAGE := false
+
+# Always build modules from source
+MODULE_BUILD_FROM_SOURCE := true

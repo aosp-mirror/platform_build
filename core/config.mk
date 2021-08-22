@@ -445,6 +445,11 @@ endif
 ifneq ($(filter true,$(SOONG_ALLOW_MISSING_DEPENDENCIES)),)
 ALLOW_MISSING_DEPENDENCIES := true
 endif
+# Mac builds default to ALLOW_MISSING_DEPENDENCIES, at least until the host
+# tools aren't enabled by default for Mac.
+ifeq ($(HOST_OS),darwin)
+  ALLOW_MISSING_DEPENDENCIES := true
+endif
 .KATI_READONLY := ALLOW_MISSING_DEPENDENCIES
 
 TARGET_BUILD_USE_PREBUILT_SDKS :=
@@ -603,7 +608,7 @@ EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 # Path to tools.jar
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 
-APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner --compatible-output=no
+APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner
 
 # Boolean variable determining if the allow list for compatible properties is enabled
 PRODUCT_COMPATIBLE_PROPERTY := true
@@ -792,6 +797,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     28.0 \
     29.0 \
     30.0 \
+    31.0 \
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
