@@ -1661,12 +1661,19 @@ function _wrap_build()
     if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
         color_failed=$'\E'"[0;31m"
         color_success=$'\E'"[0;32m"
+        color_warning=$'\E'"[0;33m"
         color_reset=$'\E'"[00m"
     else
         color_failed=""
         color_success=""
         color_reset=""
     fi
+
+    if [[ "x${USE_RBE}" == "x" && $mins -gt 15 && "${ANDROID_BUILD_ENVIRONMENT_CONFIG}" == "googler" ]]; then
+        echo
+        echo "${color_warning}Start using RBE (http://go/build-fast) to get faster builds!${color_reset}"
+    fi
+
     echo
     if [ $ret -eq 0 ] ; then
         echo -n "${color_success}#### build completed successfully "
