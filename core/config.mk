@@ -259,7 +259,7 @@ SOONG_CONFIG_NAMESPACES :=
 
 define add_soong_config_namespace
 $(eval SOONG_CONFIG_NAMESPACES += $1) \
-$(eval SOONG_CONFIG_$1 :=)
+$(eval SOONG_CONFIG_$(strip $1) :=)
 endef
 
 # The add_soong_config_var function adds a a list of soong config variables to
@@ -268,8 +268,8 @@ endef
 # $1 is the namespace. $2 is the list of variables.
 # Ex: $(call add_soong_config_var,acme,COOL_FEATURE_A COOL_FEATURE_B)
 define add_soong_config_var
-$(eval SOONG_CONFIG_$1 += $2) \
-$(foreach v,$2,$(eval SOONG_CONFIG_$1_$v := $($v)))
+$(eval SOONG_CONFIG_$(strip $1) += $2) \
+$(foreach v,$(strip $2),$(eval SOONG_CONFIG_$(strip $1)_$v := $($v)))
 endef
 
 # The add_soong_config_var_value function defines a make variable and also adds
