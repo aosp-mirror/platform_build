@@ -373,9 +373,14 @@ def _inherit(handle, pcm_name, pcm):
         if type(val) == "list":
             val.append(_indirect(pcm_name))
 
+def __base(path):
+    """Returns basename."""
+    return path.rsplit("/",1)[-1]
+
+
 def _copy_files(l, outdir):
     """Generate <item>:<outdir>/item for each item."""
-    return ["%s:%s/%s" % (item, outdir, item) for item in __words(l)]
+    return ["%s:%s/%s" % (path, outdir, __base(path)) for path in __words(l)]
 
 def _copy_if_exists(path_pair):
     """If from file exists, returns [from:to] pair."""
@@ -396,7 +401,8 @@ def _file_wildcard_exists(file_pattern):
 
 def _find_and_copy(pattern, from_dir, to_dir):
     """Return a copy list for the files matching the pattern."""
-    return ["%s/%s:%s/%s" % (from_dir, f, to_dir, f) for f in rblf_wildcard(pattern, from_dir)]
+    return ["%s/%s:%s/%s" % (
+        from_dir, f, to_dir, f) for f in rblf_find_files(from_dir, pattern, only_files=1)]
 
 def _filter_out(pattern, text):
     """Return all the words from `text' that do not match any word in `pattern'.
@@ -463,6 +469,28 @@ def _mkinfo(file, message = ""):
     print(message)
 
 
+def __mkparse_pattern(pattern):
+    """Parses Make's patsubst pattern."""
+    in_escape = False
+    res = []
+    acc = ""
+    for c in pattern.elems():
+        if in_escape:
+            in_escape = False
+            acc += c
+        elif c == '\\':
+            in_escape = True
+        elif c == '%' and not res:
+            res.append(acc)
+            acc = ''
+        else:
+            acc += c
+    if in_escape:
+        acc += '\\'
+    res.append(acc)
+    return res
+
+
 def __mkpatsubst_word(parsed_pattern,parsed_subst, word):
     (before, after) = parsed_pattern
     if not word.startswith(before):
@@ -480,16 +508,14 @@ def _mkpatsubst(pattern, replacement, s):
     Tokenizes `s` (unless it is already a list), and then performs a simple
     wildcard substitution (in other words, `foo%bar` pattern is equivalent to
     the regular expression `^foo(.*)bar$, and the first `%` in replacement is
-    $1 in regex terms). Escaping % is not supported
+    $1 in regex terms).
     """
-    if pattern.find("\\") >= 0:
-        fail("'\\' in pattern is not allowed")
-    parsed_pattern = pattern.split("%", 1)
+    parsed_pattern = __mkparse_pattern(pattern)
     words = s if type(s) == "list" else _mkstrip(s).split(" ")
     if len(parsed_pattern) == 1:
         out_words = [ replacement if x == pattern else x for x in words]
     else:
-        parsed_replacement = replacement.split("%", 1)
+        parsed_replacement = __mkparse_pattern(replacement)
         out_words = [__mkpatsubst_word(parsed_pattern, parsed_replacement, x) for x in words]
     return out_words if type(s) == "list" else " ".join(out_words)
 
@@ -520,6 +546,22 @@ def _mksubst(old, new, s):
     if type(s) == "list":
         return [e.replace(old, new) for e in s]
     return s.replace(old, new)
+
+
+def _product_copy_files_by_pattern(src, dest, s):
+    """Creates a copy list.
+
+    For each item in a given list, create <from>:<to> pair, where <from> and
+    <to> are the results of applying Make-style patsubst of <src> and <dest>
+    respectively. E.g. the result of calling this function with
+    ("foo/%", "bar/%", ["a", "b"])  will be
+    ["foo/a:bar/a", "foo/b:bar/b"].
+    """
+    parsed_src = __mkparse_pattern(src)
+    parsed_dest = __mkparse_pattern(dest)
+    parsed_percent = ["", ""]
+    words = s if type(s) == "list" else _mkstrip(s).split(" ")
+    return [ __mkpatsubst_word(parsed_percent, parsed_src, x) + ":" + __mkpatsubst_word(parsed_percent, parsed_dest, x) for x in words]
 
 
 def __get_options():
@@ -577,6 +619,7 @@ rblf = struct(
     mksubst = _mksubst,
     printvars = _printvars,
     product_configuration = _product_configuration,
+    product_copy_files_by_pattern = _product_copy_files_by_pattern,
     require_artifacts_in_path = _require_artifacts_in_path,
     require_artifacts_in_path_relaxed = _require_artifacts_in_path_relaxed,
     setdefault = _setdefault,
