@@ -45,9 +45,11 @@ def init(g, handle):
   cfg["PRODUCT_COPY_FILES"] += ["device_from:device_to"]
   _include1_init(g, handle)
   cfg["PRODUCT_PACKAGES"] += ["dev_after"]
-  cfg["PRODUCT_COPY_FILES"] += (rblf.find_and_copy("audio_platform_info*.xml", "device/google/redfin/audio", "||VENDOR-PATH-PH||/etc") +
+  cfg["PRODUCT_COPY_FILES"] += (rblf.find_and_copy("audio_platform_info*.xml", "device/google/redfin", "||VENDOR-PATH-PH||/etc") +
       ["xyz:/etc/xyz"])
   cfg["PRODUCT_COPY_FILES"] += rblf.copy_files("x.xml y.xml", "/etc")
+  cfg["PRODUCT_COPY_FILES"] += rblf.copy_files(["from/sub/x", "from/sub/y"], "to")
+
   rblf.add_soong_config_namespace(g, "NS1")
   rblf.add_soong_config_var_value(g, "NS1", "v1", "abc")
   rblf.add_soong_config_var_value(g, "NS1", "v2", "def")
