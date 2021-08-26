@@ -69,7 +69,9 @@ assert_eq(
       "PRODUCT_PACKAGES": [
           "dev",
           "inc",
-          "dev_after"
+          "dev_after",
+          "board1_in",
+          "board1_is",
       ],
       "PRODUCT_PRODUCT_PROPERTIES": ["part_properties"]
     },

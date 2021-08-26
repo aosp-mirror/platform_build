@@ -396,6 +396,18 @@ def __base(path):
     """Returns basename."""
     return path.rsplit("/",1)[-1]
 
+def _board_platform_in(g, string_or_list):
+    """Returns true if board is in the list."""
+    board = g.get("TARGET_BOARD_PLATFORM","")
+    if not board:
+        return False
+    return board in __words(string_or_list)
+
+
+def _board_platform_is(g, s):
+    """True if board is the same as argument."""
+    return g.get("TARGET_BOARD_PLATFORM","") == s
+
 
 def _copy_files(l, outdir):
     """Generate <item>:<outdir>/item for each item."""
@@ -621,6 +633,8 @@ rblf = struct(
     abspath = _abspath,
     addprefix = _addprefix,
     addsuffix = _addsuffix,
+    board_platform_in = _board_platform_in,
+    board_platform_is = _board_platform_is,
     copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
