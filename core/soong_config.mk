@@ -73,6 +73,7 @@ $(call add_json_str,  NativeBridgeSecondaryRelativePath, $(TARGET_NATIVE_BRIDGE_
 $(call add_json_str,  HostArch,                          $(HOST_ARCH))
 $(call add_json_str,  HostSecondaryArch,                 $(HOST_2ND_ARCH))
 $(call add_json_bool, HostStaticBinaries,                $(BUILD_HOST_static))
+$(call add_json_bool, HostMusl,                          $(USE_HOST_MUSL))
 
 $(call add_json_str,  CrossHost,                         $(HOST_CROSS_OS))
 $(call add_json_str,  CrossHostArch,                     $(HOST_CROSS_ARCH))
