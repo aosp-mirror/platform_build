@@ -19,7 +19,8 @@ TARGET_COPY_OUT_PRODUCT := product
 # the devices with metadata parition
 BOARD_USES_METADATA_PARTITION := true
 
-BOARD_VNDK_VERSION := current
+# Default is current, but allow devices to override vndk version if needed.
+BOARD_VNDK_VERSION ?= current
 
 # Required flag for non-64 bit devices from P.
 TARGET_USES_64_BIT_BINDER := true

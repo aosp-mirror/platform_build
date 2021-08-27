@@ -18,9 +18,41 @@ endif
 ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED),$(PRODUCT_OUT))
 
 # Install boot images. Note that there can be multiple.
-DEFAULT_DEX_PREOPT_INSTALLED_IMAGE :=
-$(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE :=
-$(foreach my_boot_image_name,$(DEXPREOPT_IMAGE_NAMES),$(eval include $(BUILD_SYSTEM)/dex_preopt_libart.mk))
+my_boot_image_arch := TARGET_ARCH
+my_boot_image_out := $(PRODUCT_OUT)
+my_boot_image_syms := $(TARGET_OUT_UNSTRIPPED)
+DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE := \
+  $(foreach my_boot_image_name,$(DEXPREOPT_IMAGE_NAMES),$(strip \
+    $(eval include $(BUILD_SYSTEM)/dex_preopt_libart.mk) \
+    $(my_boot_image_module)))
+ifdef TARGET_2ND_ARCH
+  my_boot_image_arch := TARGET_2ND_ARCH
+  2ND_DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE := \
+    $(foreach my_boot_image_name,$(DEXPREOPT_IMAGE_NAMES),$(strip \
+      $(eval include $(BUILD_SYSTEM)/dex_preopt_libart.mk) \
+      $(my_boot_image_module)))
+endif
+# Install boot images for testing on host. We exclude framework image as it is not part of art manifest.
+my_boot_image_arch := HOST_ARCH
+my_boot_image_out := $(HOST_OUT)
+my_boot_image_syms := $(HOST_OUT)/symbols
+HOST_BOOT_IMAGE_MODULE := \
+  $(foreach my_boot_image_name,art_host,$(strip \
+    $(eval include $(BUILD_SYSTEM)/dex_preopt_libart.mk) \
+    $(my_boot_image_module)))
+HOST_BOOT_IMAGE := $(call module-installed-files,$(HOST_BOOT_IMAGE_MODULE))
+ifdef HOST_2ND_ARCH
+  my_boot_image_arch := HOST_2ND_ARCH
+  2ND_HOST_BOOT_IMAGE_MODULE := \
+    $(foreach my_boot_image_name,art_host,$(strip \
+      $(eval include $(BUILD_SYSTEM)/dex_preopt_libart.mk) \
+      $(my_boot_image_module)))
+  2ND_HOST_BOOT_IMAGE := $(call module-installed-files,$(2ND_HOST_BOOT_IMAGE_MODULE))
+endif
+my_boot_image_arch :=
+my_boot_image_out :=
+my_boot_image_syms :=
+my_boot_image_module :=
 
 # Build the boot.zip which contains the boot jars and their compilation output
 # We can do this only if preopt is enabled and if the product uses libart config (which sets the
@@ -30,7 +62,9 @@ ifeq ($(PRODUCT_USES_DEFAULT_ART_CONFIG), true)
 
 boot_zip := $(PRODUCT_OUT)/boot.zip
 bootclasspath_jars := $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
-system_server_jars := $(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),$(PRODUCT_OUT)/system/framework/$(m).jar)
+system_server_jars := \
+  $(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),\
+    $(PRODUCT_OUT)/system/framework/$(call word-colon,2,$(m)).jar)
 
 $(boot_zip): PRIVATE_BOOTCLASSPATH_JARS := $(bootclasspath_jars)
 $(boot_zip): PRIVATE_SYSTEM_SERVER_JARS := $(system_server_jars)

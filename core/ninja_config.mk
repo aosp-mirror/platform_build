@@ -15,7 +15,6 @@ PARSE_TIME_MAKE_GOALS := \
 	$(dont_bother_goals) \
 	all \
 	ECLIPSE-% \
-	AUX-% \
 	brillo_tests \
 	btnod \
 	build-art% \
@@ -25,30 +24,21 @@ PARSE_TIME_MAKE_GOALS := \
 	continuous_native_tests \
 	cts \
 	custom_images \
-	deps-license \
 	dicttool_aosp \
 	dump-products \
 	eng \
-	fusion \
 	oem_image \
 	online-system-api-sdk-docs \
-	pdk \
-	platform \
-	platform-java \
 	product-graph \
 	samplecode \
 	sdk \
 	sdk_addon \
 	sdk_repo \
-	snod \
 	stnod \
-	systemimage-nodeps \
-	target-files-package \
 	test-art% \
 	user \
 	userdataimage \
 	userdebug \
-	vts10 \
 	win_sdk \
 	winsdk-tools
 

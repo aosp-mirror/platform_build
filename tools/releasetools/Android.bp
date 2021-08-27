@@ -22,12 +22,18 @@
 //    `releasetools_X_defaults` in their defaults.
 //
 
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
 python_defaults {
     name: "releasetools_add_img_to_target_files_defaults",
     srcs: [
         "add_img_to_target_files.py",
     ],
     libs: [
+        "ota_metadata_proto",
+        "releasetools_apex_utils",
         "releasetools_build_image",
         "releasetools_build_super_image",
         "releasetools_common",
@@ -49,8 +55,12 @@ python_defaults {
     required: [
         "blk_alloc_to_base_fs",
         "e2fsck",
+        "mkerofsimage.sh",
+        "mkuserimg_mke2fs",
         "simg2img",
         "tune2fs",
+        "mkf2fsuserimg.sh",
+        "fsck.f2fs",
     ],
 }
 
@@ -73,9 +83,6 @@ python_defaults {
         "releasetools_build_super_image",
         "releasetools_common",
     ],
-    required: [
-        "zip2zip",
-    ],
 }
 
 python_defaults {
@@ -91,22 +98,88 @@ python_defaults {
     ],
 }
 
+python_library_host {
+    name: "ota_metadata_proto",
+    version: {
+        py2: {
+            enabled: true,
+        },
+        py3: {
+            enabled: true,
+        },
+    },
+    srcs: [
+       "ota_metadata.proto",
+    ],
+    proto: {
+        canonical_path_from_root: false,
+    },
+}
+
+cc_library_static {
+    name: "ota_metadata_proto_cc",
+    srcs: [
+       "ota_metadata.proto",
+    ],
+    host_supported: true,
+    recovery_available: true,
+    proto: {
+        canonical_path_from_root: false,
+        type: "lite",
+        export_proto_headers: true,
+    },
+}
+
+java_library_static {
+    name: "ota_metadata_proto_java",
+    host_supported: true,
+    proto: {
+        type: "nano",
+    },
+    srcs: ["ota_metadata.proto"],
+    sdk_version: "9",
+    target: {
+        android: {
+            jarjar_rules: "jarjar-rules.txt",
+        },
+        host: {
+            static_libs: ["libprotobuf-java-nano"],
+        },
+    },
+    visibility: ["//frameworks/base:__subpackages__"]
+}
+
 python_defaults {
     name: "releasetools_ota_from_target_files_defaults",
     srcs: [
         "edify_generator.py",
+        "non_ab_ota.py",
         "ota_from_target_files.py",
+        "ota_utils.py",
         "target_files_diff.py",
     ],
     libs: [
+        "ota_metadata_proto",
         "releasetools_check_target_files_vintf",
         "releasetools_common",
         "releasetools_verity_utils",
+        "apex_manifest",
     ],
     required: [
         "brillo_update_payload",
         "checkvintf",
+        "minigzip",
+        "lz4",
+        "toybox",
+        "unpack_bootimg",
+        "deapexer",
     ],
+    target: {
+        darwin: {
+            // required module "brillo_update_payload" is disabled on darwin
+            enabled: false,
+        },
+    },
 }
 
 //
@@ -140,6 +213,8 @@ python_library_host {
         "apex_utils.py",
     ],
     libs: [
+        "apex_manifest",
+        "ota_metadata_proto",
         "releasetools_common",
     ],
 }
@@ -190,6 +265,8 @@ python_library_host {
         "lz4",
         "mkbootfs",
         "signapk",
+        "toybox",
+        "unpack_bootimg",
     ],
 }
 
@@ -239,6 +316,21 @@ python_defaults {
             embedded_launcher: false,
         },
     },
+    // TODO (b/140144201) Build imgdiff from releasetools_common
+    required: [
+        "aapt2",
+        "boot_signer",
+        "brotli",
+        "bsdiff",
+        "deapexer",
+        "imgdiff",
+        "minigzip",
+        "lz4",
+        "mkbootfs",
+        "signapk",
+        "toybox",
+        "unpack_bootimg",
+    ],
 }
 
 python_binary_host {
@@ -290,6 +382,12 @@ python_binary_host {
     required: [
         "delta_generator",
     ],
+    target: {
+        darwin: {
+            // required module "delta_generator" is disabled on darwin
+            enabled: false,
+        },
+    },
 }
 
 python_binary_host {
@@ -319,6 +417,32 @@ python_binary_host {
     defaults: [
         "releasetools_binary_defaults",
         "releasetools_img_from_target_files_defaults",
+    ],
+}
+
+python_defaults {
+    name: "releasetools_find_shareduid_violation_defaults",
+    srcs: [
+        "find_shareduid_violation.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "find_shareduid_violation",
+    defaults: [
+        "releasetools_binary_defaults",
+        "releasetools_find_shareduid_violation_defaults",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_find_shareduid_violation",
+    defaults: [
+        "releasetools_find_shareduid_violation_defaults",
+        "releasetools_library_defaults",
     ],
 }
 
@@ -356,12 +480,21 @@ python_binary_host {
         "releasetools_build_super_image",
         "releasetools_check_target_files_vintf",
         "releasetools_common",
+        "releasetools_find_shareduid_violation",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
     ],
     required: [
         "checkvintf",
+        "host_init_verifier",
+        "secilc",
     ],
+    target: {
+        darwin: {
+            // libs dep "releasetools_ota_from_target_files" is disabled on darwin
+            enabled: false,
+        },
+    },
 }
 
 python_binary_host {
@@ -426,6 +559,23 @@ python_binary_host {
     ],
 }
 
+python_binary_host {
+    name: "verity_utils",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "verity_utils.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+    required: [
+        "append2simg",
+        "build_verity_metadata",
+        "build_verity_tree",
+        "fec",
+    ],
+}
+
 //
 // Tests.
 //
@@ -452,15 +602,24 @@ python_defaults {
         "releasetools_build_super_image",
         "releasetools_check_target_files_vintf",
         "releasetools_common",
+        "releasetools_find_shareduid_violation",
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
         "releasetools_verity_utils",
     ],
     data: [
         "testdata/**/*",
+        ":com.android.apex.compressed.v1",
+        ":com.android.apex.compressed.v1_original",
     ],
+    target: {
+        darwin: {
+            // libs dep "releasetools_ota_from_target_files" is disabled on darwin
+            enabled: false,
+        },
+    },
     required: [
-        "otatools",
+        "deapexer",
     ],
 }
 
@@ -481,13 +640,16 @@ python_test_host {
             embedded_launcher: false,
         },
     },
-    test_suites: ["general-tests"],
+    test_options: {
+        unit_test: true,
+    },
 }
 
 python_test_host {
     name: "releasetools_py3_test",
     defaults: ["releasetools_test_defaults"],
     main: "test_utils.py",
+    test_suites: ["general-tests"],
     version: {
         py2: {
             enabled: false,
@@ -498,5 +660,7 @@ python_test_host {
             embedded_launcher: false,
         },
     },
-    test_suites: ["general-tests"],
+    test_options: {
+        unit_test: true,
+    },
 }

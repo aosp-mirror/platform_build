@@ -25,9 +25,8 @@ import common
 import test_utils
 from rangelib import RangeSet
 from validate_target_files import (ValidateVerifiedBootImages,
-                                   ValidateFileConsistency)
+                                   ValidateFileConsistency, CheckBuildPropDuplicity)
 from verity_utils import CreateVerityImageBuilder
-
 
 class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
@@ -273,7 +272,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     input_file = common.MakeTempFile()
     all_entries = ['SYSTEM/', 'SYSTEM/b', 'SYSTEM/a', 'IMAGES/',
                    'IMAGES/system.map', 'IMAGES/system.img']
-    with zipfile.ZipFile(input_file, 'w') as input_zip:
+    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
       for name in all_entries:
         input_zip.write(os.path.join(input_tmp, name), arcname=name)
 
@@ -322,10 +321,42 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     input_file = common.MakeTempFile()
     all_entries = ['SYSTEM/', 'SYSTEM/abc', 'IMAGES/',
                    'IMAGES/system.map', 'IMAGES/system.img']
-    with zipfile.ZipFile(input_file, 'w') as input_zip:
+    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
       for name in all_entries:
         input_zip.write(os.path.join(input_tmp, name), arcname=name)
 
     with zipfile.ZipFile(input_file) as input_zip:
       info_dict = {'extfs_sparse_flag': '-s'}
       ValidateFileConsistency(input_zip, input_tmp, info_dict)
+
+  @staticmethod
+  def make_build_prop(build_prop):
+    input_tmp = common.MakeTempDir()
+    system_dir = os.path.join(input_tmp, 'SYSTEM')
+    os.makedirs(system_dir)
+    prop_file = os.path.join(system_dir, 'build.prop')
+    with open(prop_file, 'w') as output_file:
+      output_file.write("\n".join(build_prop))
+    return input_tmp
+
+  def test_checkDuplicateProps_noDuplicate(self):
+    build_prop = [
+        'ro.odm.build.date.utc=1578430045',
+        'ro.odm.build.fingerprint='
+        'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
+        'ro.product.odm.device=coral',
+    ]
+    input_tmp = ValidateTargetFilesTest.make_build_prop(build_prop)
+    CheckBuildPropDuplicity(input_tmp)
+
+  def test_checkDuplicateProps_withDuplicate(self):
+    build_prop = [
+        'ro.odm.build.date.utc=1578430045',
+        'ro.odm.build.date.utc=1578430049',
+        'ro.odm.build.fingerprint='
+        'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
+        'ro.product.odm.device=coral',
+    ]
+    input_tmp = ValidateTargetFilesTest.make_build_prop(build_prop)
+
+    self.assertRaises(ValueError, CheckBuildPropDuplicity, input_tmp)
