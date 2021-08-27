@@ -52,7 +52,6 @@ PRODUCT_PACKAGES += \
     com.android.adbd \
     com.android.appsearch \
     com.android.conscrypt \
-    com.android.cronet \
     com.android.extservices \
     com.android.i18n \
     com.android.ipsec \
@@ -152,6 +151,7 @@ PRODUCT_PACKAGES += \
     libgui \
     libhardware \
     libhardware_legacy \
+    libincident \
     libinput \
     libinputflinger \
     libiprouteutil \
