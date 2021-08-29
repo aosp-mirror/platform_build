@@ -259,7 +259,7 @@ SOONG_CONFIG_NAMESPACES :=
 
 define add_soong_config_namespace
 $(eval SOONG_CONFIG_NAMESPACES += $1) \
-$(eval SOONG_CONFIG_$1 :=)
+$(eval SOONG_CONFIG_$(strip $1) :=)
 endef
 
 # The add_soong_config_var function adds a a list of soong config variables to
@@ -268,8 +268,8 @@ endef
 # $1 is the namespace. $2 is the list of variables.
 # Ex: $(call add_soong_config_var,acme,COOL_FEATURE_A COOL_FEATURE_B)
 define add_soong_config_var
-$(eval SOONG_CONFIG_$1 += $2) \
-$(foreach v,$2,$(eval SOONG_CONFIG_$1_$v := $($v)))
+$(eval SOONG_CONFIG_$(strip $1) += $2) \
+$(foreach v,$(strip $2),$(eval SOONG_CONFIG_$(strip $1)_$v := $($v)))
 endef
 
 # The add_soong_config_var_value function defines a make variable and also adds
@@ -1003,6 +1003,14 @@ endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 # hiddenapi-index.csv.
 BOARD_PREBUILT_HIDDENAPI_DIR ?=
 .KATI_READONLY := BOARD_PREBUILT_HIDDENAPI_DIR
+
+ifdef USE_HOST_MUSL
+  ifneq (,$(or $(BUILD_BROKEN_USES_BUILD_HOST_EXECUTABLE),\
+               $(BUILD_BROKEN_USES_BUILD_HOST_SHARED_LIBRARY),\
+               $(BUILD_BROKEN_USES_BUILD_HOST_STATIC_LIBRARY)))
+    $(error USE_HOST_MUSL can't be set when native host builds are enabled in Make with BUILD_BROKEN_USES_BUILD_HOST_*)
+  endif
+endif
 
 # ###############################################################
 # Set up final options.
