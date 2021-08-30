@@ -3289,7 +3289,8 @@ define build-odmimage-target
   $(call pretty,"Target odm fs image: $(INSTALLED_ODMIMAGE_TARGET)")
   @mkdir -p $(TARGET_OUT_ODM)
   @mkdir -p $(odmimage_intermediates) && rm -rf $(odmimage_intermediates)/odm_image_info.txt
-  $(call generate-userimage-prop-dictionary, $(odmimage_intermediates)/odm_image_info.txt, skip_fsck=true)
+  $(call generate-image-prop-dictionary, $(odmimage_intermediates)/odm_image_info.txt, odm, \
+	  skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(TARGET_OUT_ODM) $(odmimage_intermediates)/odm_image_info.txt \
@@ -3340,7 +3341,8 @@ define build-vendor_dlkmimage-target
   $(call pretty,"Target vendor_dlkm fs image: $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)")
   @mkdir -p $(TARGET_OUT_VENDOR_DLKM)
   @mkdir -p $(vendor_dlkmimage_intermediates) && rm -rf $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt
-  $(call generate-userimage-prop-dictionary, $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt, skip_fsck=true)
+  $(call generate-image-prop-dictionary, $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt, \
+	  vendor_dlkm, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(TARGET_OUT_VENDOR_DLKM) $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt \
@@ -3391,7 +3393,8 @@ define build-odm_dlkmimage-target
   $(call pretty,"Target odm_dlkm fs image: $(INSTALLED_ODM_DLKMIMAGE_TARGET)")
   @mkdir -p $(TARGET_OUT_ODM_DLKM)
   @mkdir -p $(odm_dlkmimage_intermediates) && rm -rf $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt
-  $(call generate-userimage-prop-dictionary, $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt, skip_fsck=true)
+  $(call generate-image-prop-dictionary, $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt, \
+	  odm_dlkm, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(TARGET_OUT_ODM_DLKM) $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt \
