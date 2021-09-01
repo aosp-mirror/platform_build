@@ -47,6 +47,9 @@ assert_eq(["%/foo"], rblf.mkpatsubst("%", "\\%/%", ["foo"]))
 assert_eq(["foo/%"], rblf.mkpatsubst("%", "%/%", ["foo"]))
 assert_eq(["from/a:to/a", "from/b:to/b"], rblf.product_copy_files_by_pattern("from/%", "to/%", "a b"))
 
+assert_eq([], rblf.filter(["a", "", "b"], "f"))
+assert_eq(["", "b"], rblf.filter_out(["a", "" ], ["a", "", "b"] ))
+
 globals, config = rblf.product_configuration("test/device", init)
 assert_eq(
     {
