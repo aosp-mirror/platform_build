@@ -439,7 +439,7 @@ def __mk2regex(words):
     """Returns regular expression equivalent to Make pattern."""
 
     # TODO(asmundak): this will mishandle '\%'
-    return "^(" + "|".join([w.replace("%", ".*", 1) for w in words]) + ")"
+    return "^(" + "|".join([w.replace("%", ".*", 1) for w in words if w]) + ")$"
 
 def _regex_match(regex, w):
     return rblf_regex(regex, w)
