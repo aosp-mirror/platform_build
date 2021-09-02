@@ -156,6 +156,12 @@ ifndef PLATFORM_SDK_VERSION
 endif
 .KATI_READONLY := PLATFORM_SDK_VERSION
 
+# This is the sdk extension version of this tree.
+PLATFORM_SDK_EXTENSION_VERSION :=$= 0
+
+# This is the sdk extension version that PLATFORM_SDK_VERSION ships with.
+PLATFORM_BASE_SDK_EXTENSION_VERSION :=$= 0
+
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
   PLATFORM_PREVIEW_SDK_VERSION := 0
 else

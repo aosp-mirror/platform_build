@@ -1004,6 +1004,14 @@ endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 BOARD_PREBUILT_HIDDENAPI_DIR ?=
 .KATI_READONLY := BOARD_PREBUILT_HIDDENAPI_DIR
 
+ifdef USE_HOST_MUSL
+  ifneq (,$(or $(BUILD_BROKEN_USES_BUILD_HOST_EXECUTABLE),\
+               $(BUILD_BROKEN_USES_BUILD_HOST_SHARED_LIBRARY),\
+               $(BUILD_BROKEN_USES_BUILD_HOST_STATIC_LIBRARY)))
+    $(error USE_HOST_MUSL can't be set when native host builds are enabled in Make with BUILD_BROKEN_USES_BUILD_HOST_*)
+  endif
+endif
+
 # ###############################################################
 # Set up final options.
 # ###############################################################
