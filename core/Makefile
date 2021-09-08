@@ -1601,6 +1601,18 @@ endif
 
 endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 
+# $(1) the partition variable component (eg SYSTEM)
+# $(2) the partition prefix in properties (eg system)
+# $(3) the image prop file
+# $(4) optional "other" size
+define add-sparse-flags-to-image-props
+$(eval _size := $(BOARD_$(1)IMAGE_PARTITION_SIZE))
+$(eval _reserved := $(BOARD_$(1)IMAGE_PARTITION_RESERVED_SIZE))
+$(eval _headroom := $(PRODUCT_$(1)_HEADROOM))
+$(if $(or $(_size), $(_reserved), $(_headroom), $(4)),,
+    $(hide) echo "$(2)_disable_sparse=true" >> $(3))
+endef
+
 # $(1): the path of the output dictionary file
 # $(2): a subset of "system vendor cache userdata product system_ext oem odm vendor_dlkm odm_dlkm"
 # $(3): additional "key=value" pairs to append to the dictionary file.
@@ -1621,11 +1633,14 @@ $(if $(filter $(2),system),\
     $(if $(PRODUCT_SYSTEM_BASE_FS_PATH),$(hide) echo "system_base_fs_file=$(PRODUCT_SYSTEM_BASE_FS_PATH)" >> $(1))
     $(if $(PRODUCT_SYSTEM_HEADROOM),$(hide) echo "system_headroom=$(PRODUCT_SYSTEM_HEADROOM)" >> $(1))
     $(if $(BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "system_reserved_size=$(BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
+    $(call add-sparse-flags-to-image-props,SYSTEM,system,$(1))
     $(hide) echo "system_selinux_fc=$(SELINUX_FC)" >> $(1)
     $(hide) echo "building_system_image=$(BUILDING_SYSTEM_IMAGE)" >> $(1)
 )
 $(if $(filter $(2),system_other),\
     $(hide) echo "building_system_other_image=$(BUILDING_SYSTEM_OTHER_IMAGE)" >> $(1)
+    $(if $(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE),,
+        $(hide) echo "system_other_disable_sparse=true" >> $(1))
 )
 $(if $(filter $(2),userdata),\
     $(if $(BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "userdata_fs_type=$(BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
@@ -1656,6 +1671,7 @@ $(if $(filter $(2),vendor),\
     $(if $(BOARD_VENDORIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "vendor_squashfs_disable_4k_align=$(BOARD_VENDORIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
     $(if $(PRODUCT_VENDOR_BASE_FS_PATH),$(hide) echo "vendor_base_fs_file=$(PRODUCT_VENDOR_BASE_FS_PATH)" >> $(1))
     $(if $(BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "vendor_reserved_size=$(BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
+    $(call add-sparse-flags-to-image-props,VENDOR,vendor,$(1))
     $(hide) echo "vendor_selinux_fc=$(SELINUX_FC)" >> $(1)
     $(hide) echo "building_vendor_image=$(BUILDING_VENDOR_IMAGE)" >> $(1)
 )
@@ -1673,6 +1689,7 @@ $(if $(filter $(2),product),\
     $(if $(BOARD_PRODUCTIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "product_squashfs_disable_4k_align=$(BOARD_PRODUCTIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
     $(if $(PRODUCT_PRODUCT_BASE_FS_PATH),$(hide) echo "product_base_fs_file=$(PRODUCT_PRODUCT_BASE_FS_PATH)" >> $(1))
     $(if $(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "product_reserved_size=$(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
+    $(call add-sparse-flags-to-image-props,PRODUCT,product,$(1))
     $(hide) echo "product_selinux_fc=$(SELINUX_FC)" >> $(1)
     $(hide) echo "building_product_image=$(BUILDING_PRODUCT_IMAGE)" >> $(1)
 )
@@ -1689,6 +1706,7 @@ $(if $(filter $(2),system_ext),\
     $(if $(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "system_ext_squashfs_block_size=$(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
     $(if $(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "system_ext_squashfs_disable_4k_align=$(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
     $(if $(BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "system_ext_reserved_size=$(BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
+    $(call add-sparse-flags-to-image-props,SYSTEM_EXT,system_ext,$(1))
     $(hide) echo "system_ext_selinux_fc=$(SELINUX_FC)" >> $(1)
     $(hide) echo "building_system_ext_image=$(BUILDING_SYSTEM_EXT_IMAGE)" >> $(1)
 )
@@ -1704,6 +1722,7 @@ $(if $(filter $(2),odm),\
     $(if $(BOARD_ODMIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "odm_squashfs_disable_4k_align=$(BOARD_ODMIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
     $(if $(PRODUCT_ODM_BASE_FS_PATH),$(hide) echo "odm_base_fs_file=$(PRODUCT_ODM_BASE_FS_PATH)" >> $(1))
     $(if $(BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "odm_reserved_size=$(BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
+    $(call add-sparse-flags-to-image-props,ODM,odm,$(1))
     $(hide) echo "odm_selinux_fc=$(SELINUX_FC)" >> $(1)
     $(hide) echo "building_odm_image=$(BUILDING_ODM_IMAGE)" >> $(1)
 )
@@ -1720,6 +1739,7 @@ $(if $(filter $(2),vendor_dlkm),\
     $(if $(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "vendor_dlkm_squashfs_block_size=$(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
     $(if $(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "vendor_dlkm_squashfs_disable_4k_align=$(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
     $(if $(BOARD_VENDOR_DLKMIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "vendor_dlkm_reserved_size=$(BOARD_VENDOR_DLKMIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
+    $(call add-sparse-flags-to-image-props,VENDOR_DLKM,vendor_dlkm,$(1))
     $(hide) echo "vendor_dlkm_selinux_fc=$(SELINUX_FC)" >> $(1)
     $(hide) echo "building_vendor_dlkm_image=$(BUILDING_VENDOR_DLKM_IMAGE)" >> $(1)
 )
@@ -1734,6 +1754,7 @@ $(if $(filter $(2),odm_dlkm),\
     $(if $(BOARD_ODM_DLKMIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "odm_dlkm_squashfs_block_size=$(BOARD_ODM_DLKMIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
     $(if $(BOARD_ODM_DLKMIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "odm_dlkm_squashfs_disable_4k_align=$(BOARD_ODM_DLKMIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
     $(if $(BOARD_ODM_DLKMIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "odm_dlkm_reserved_size=$(BOARD_ODM_DLKMIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
+    $(call add-sparse-flags-to-image-props,ODM_DLKM,odm_dlkm,$(1))
     $(hide) echo "odm_dlkm_selinux_fc=$(SELINUX_FC)" >> $(1)
     $(hide) echo "building_odm_dlkm_image=$(BUILDING_ODM_DLKM_IMAGE)" >> $(1)
 )
