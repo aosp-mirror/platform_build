@@ -1983,6 +1983,8 @@ def GetUserImage(which, tmpdir, input_zip,
     info_dict = LoadInfoDict(input_zip)
 
   is_sparse = info_dict.get("extfs_sparse_flag")
+  if info_dict.get(which + "_disable_sparse"):
+    is_sparse = False
 
   # When target uses 'BOARD_EXT4_SHARE_DUP_BLOCKS := true', images may contain
   # shared blocks (i.e. some blocks will show up in multiple files' block
@@ -3851,12 +3853,14 @@ def GetCareMap(which, imgname):
   if not image_size:
     return None
 
+  disable_sparse = OPTIONS.info_dict.get(which + "_disable_sparse")
+
   image_blocks = int(image_size) // 4096 - 1
   assert image_blocks > 0, "blocks for {} must be positive".format(which)
 
   # For sparse images, we will only check the blocks that are listed in the care
   # map, i.e. the ones with meaningful data.
-  if "extfs_sparse_flag" in OPTIONS.info_dict:
+  if "extfs_sparse_flag" in OPTIONS.info_dict and not disable_sparse:
     simg = sparse_img.SparseImage(imgname)
     care_map_ranges = simg.care_map.intersect(
         rangelib.RangeSet("0-{}".format(image_blocks)))
