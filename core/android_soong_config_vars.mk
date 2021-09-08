@@ -44,7 +44,9 @@ ifeq (,$(filter art_module,$(SOONG_CONFIG_NAMESPACES)))
   $(call add_soong_config_namespace,art_module)
   SOONG_CONFIG_art_module += source_build
 endif
-ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
+ifneq (,$(SOONG_CONFIG_art_module_source_build))
+  # Keep an explicit setting.
+else ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
   # Build ART modules from source if they are listed in TARGET_BUILD_APPS.
   SOONG_CONFIG_art_module_source_build := true
 else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
