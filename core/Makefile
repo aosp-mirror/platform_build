@@ -2398,6 +2398,7 @@ endif # BUILDING_RAMDISK_IMAGE
 #
 # Note: it's intentional to skip signing for boot-debug.img, because it
 # can only be used if the device is unlocked with verification error.
+ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
@@ -2456,6 +2457,7 @@ bootimage_debug-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
 
 endif # TARGET_NO_KERNEL
 endif # INSTALLED_BOOTIMAGE_TARGET
+endif # BUILDING_VENDOR_BOOT_IMAGE is not true
 
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifeq ($(BUILDING_RAMDISK_IMAGE),true)
@@ -2601,6 +2603,7 @@ endif # BUILDING_RAMDISK_IMAGE
 #
 # Note: it's intentional to skip signing for boot-test-harness.img, because it
 # can only be used if the device is unlocked with verification error.
+ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 
@@ -2643,6 +2646,7 @@ bootimage_test_harness-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBT
 
 endif # TARGET_NO_KERNEL
 endif # INSTALLED_BOOTIMAGE_TARGET
+endif # BUILDING_VENDOR_BOOT_IMAGE is not true
 endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
 
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
