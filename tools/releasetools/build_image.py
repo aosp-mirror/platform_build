@@ -451,18 +451,19 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   verity_image_builder = verity_utils.CreateVerityImageBuilder(prop_dict)
 
   disable_sparse = "disable_sparse" in prop_dict
-
+  mkfs_output = None
   if (prop_dict.get("use_dynamic_partition_size") == "true" and
       "partition_size" not in prop_dict):
     # If partition_size is not defined, use output of `du' + reserved_size.
     # For compressed file system, it's better to use the compressed size to avoid wasting space.
     if fs_type.startswith("erofs"):
-      tmp_dict = prop_dict.copy()
-      if "erofs_sparse_flag" in tmp_dict:
-        tmp_dict.pop("erofs_sparse_flag")
-      BuildImageMkfs(in_dir, tmp_dict, out_file, target_out, fs_config)
-      size = GetDiskUsage(out_file)
-      os.remove(out_file)
+      mkfs_output = BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
+      if "erofs_sparse_flag" in prop_dict and not disable_sparse:
+        image_path = UnsparseImage(out_file, replace=False)
+        size = GetDiskUsage(image_path)
+        os.remove(image_path)
+      else:
+        size = GetDiskUsage(out_file)
     else:
       size = GetDiskUsage(in_dir)
     logger.info(
@@ -550,7 +551,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     max_image_size = verity_image_builder.CalculateMaxImageSize()
     prop_dict["image_size"] = str(max_image_size)
 
-  mkfs_output = BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
+  if not mkfs_output:
+    mkfs_output = BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
 
   # Check if there's enough headroom space available for ext4 image.
   if "partition_headroom" in prop_dict and fs_type.startswith("ext4"):
