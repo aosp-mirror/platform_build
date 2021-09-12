@@ -93,6 +93,8 @@ VNDK-core: android.hardware.power-V1-ndk.so
 VNDK-core: android.hardware.power-V1-ndk_platform.so
 VNDK-core: android.hardware.power.stats-V1-ndk.so
 VNDK-core: android.hardware.power.stats-V1-ndk_platform.so
+VNDK-core: android.hardware.radio-V1-ndk.so
+VNDK-core: android.hardware.radio-V1-ndk_platform.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk_platform.so
 VNDK-core: android.hardware.security.keymint-V1-ndk.so
@@ -107,6 +109,8 @@ VNDK-core: android.hardware.vibrator-V1-ndk.so
 VNDK-core: android.hardware.vibrator-V1-ndk_platform.so
 VNDK-core: android.hardware.weaver-V1-ndk.so
 VNDK-core: android.hardware.weaver-V1-ndk_platform.so
+VNDK-core: android.hardware.wifi.hostapd-V1-ndk.so
+VNDK-core: android.hardware.wifi.hostapd-V1-ndk_platform.so
 VNDK-core: android.hidl.token@1.0-utils.so
 VNDK-core: android.hidl.token@1.0.so
 VNDK-core: android.system.keystore2-V1-ndk.so

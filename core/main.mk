@@ -1670,8 +1670,7 @@ droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_ROOT) \
     $(INSTALLED_FILES_FILE_RECOVERY) \
     $(INSTALLED_FILES_JSON_RECOVERY) \
-    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
-    soong_docs
+    $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 
 # The droidcore target depends on the droidcore-unbundled subset and any other
 # targets for a non-unbundled (full source) full system build.
