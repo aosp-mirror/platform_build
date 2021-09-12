@@ -256,9 +256,11 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   needs_casefold = prop_dict.get("needs_casefold", 0)
   needs_compress = prop_dict.get("needs_compress", 0)
 
+  disable_sparse = "disable_sparse" in prop_dict
+
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
-    if "extfs_sparse_flag" in prop_dict:
+    if "extfs_sparse_flag" in prop_dict and not disable_sparse:
       build_command.append(prop_dict["extfs_sparse_flag"])
       run_e2fsck = True
     build_command.extend([in_dir, out_file, fs_type,
@@ -303,7 +305,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   elif fs_type.startswith("erofs"):
     build_command = ["mkerofsimage.sh"]
     build_command.extend([in_dir, out_file])
-    if "erofs_sparse_flag" in prop_dict:
+    if "erofs_sparse_flag" in prop_dict and not disable_sparse:
       build_command.extend([prop_dict["erofs_sparse_flag"]])
     build_command.extend(["-m", prop_dict["mount_point"]])
     if target_out:
@@ -319,7 +321,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
-    if "squashfs_sparse_flag" in prop_dict:
+    if "squashfs_sparse_flag" in prop_dict and not disable_sparse:
       build_command.extend([prop_dict["squashfs_sparse_flag"]])
     build_command.extend(["-m", prop_dict["mount_point"]])
     if target_out:
@@ -341,7 +343,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
     build_command.extend([out_file, prop_dict["image_size"]])
-    if "f2fs_sparse_flag" in prop_dict:
+    if "f2fs_sparse_flag" in prop_dict and not disable_sparse:
       build_command.extend([prop_dict["f2fs_sparse_flag"]])
     if fs_config:
       build_command.extend(["-C", fs_config])
@@ -448,17 +450,20 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # or None if not applicable.
   verity_image_builder = verity_utils.CreateVerityImageBuilder(prop_dict)
 
+  disable_sparse = "disable_sparse" in prop_dict
+  mkfs_output = None
   if (prop_dict.get("use_dynamic_partition_size") == "true" and
       "partition_size" not in prop_dict):
     # If partition_size is not defined, use output of `du' + reserved_size.
     # For compressed file system, it's better to use the compressed size to avoid wasting space.
     if fs_type.startswith("erofs"):
-      tmp_dict = prop_dict.copy()
-      if "erofs_sparse_flag" in tmp_dict:
-        tmp_dict.pop("erofs_sparse_flag")
-      BuildImageMkfs(in_dir, tmp_dict, out_file, target_out, fs_config)
-      size = GetDiskUsage(out_file)
-      os.remove(out_file)
+      mkfs_output = BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
+      if "erofs_sparse_flag" in prop_dict and not disable_sparse:
+        image_path = UnsparseImage(out_file, replace=False)
+        size = GetDiskUsage(image_path)
+        os.remove(image_path)
+      else:
+        size = GetDiskUsage(out_file)
     else:
       size = GetDiskUsage(in_dir)
     logger.info(
@@ -481,7 +486,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
           size // BYTES_IN_MB, prop_dict["extfs_inode_count"])
       BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
       sparse_image = False
-      if "extfs_sparse_flag" in prop_dict:
+      if "extfs_sparse_flag" in prop_dict and not disable_sparse:
         sparse_image = True
       fs_dict = GetFilesystemCharacteristics(fs_type, out_file, sparse_image)
       os.remove(out_file)
@@ -525,7 +530,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       prop_dict["image_size"] = str(size)
       BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
       sparse_image = False
-      if "f2fs_sparse_flag" in prop_dict:
+      if "f2fs_sparse_flag" in prop_dict and not disable_sparse:
         sparse_image = True
       fs_dict = GetFilesystemCharacteristics(fs_type, out_file, sparse_image)
       os.remove(out_file)
@@ -546,7 +551,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     max_image_size = verity_image_builder.CalculateMaxImageSize()
     prop_dict["image_size"] = str(max_image_size)
 
-  mkfs_output = BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
+  if not mkfs_output:
+    mkfs_output = BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
 
   # Check if there's enough headroom space available for ext4 image.
   if "partition_headroom" in prop_dict and fs_type.startswith("ext4"):
@@ -642,6 +648,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("system_reserved_size", "partition_reserved_size")
     copy_prop("system_selinux_fc", "selinux_fc")
+    copy_prop("system_disable_sparse", "disable_sparse")
   elif mount_point == "system_other":
     # We inherit the selinux policies of /system since we contain some of its
     # files.
@@ -668,6 +675,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("system_reserved_size", "partition_reserved_size")
     copy_prop("system_selinux_fc", "selinux_fc")
+    copy_prop("system_disable_sparse", "disable_sparse")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
@@ -708,6 +716,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("vendor_reserved_size", "partition_reserved_size")
     copy_prop("vendor_selinux_fc", "selinux_fc")
+    copy_prop("vendor_disable_sparse", "disable_sparse")
   elif mount_point == "product":
     copy_prop("avb_product_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_product_add_hashtree_footer_args",
@@ -733,6 +742,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("product_reserved_size", "partition_reserved_size")
     copy_prop("product_selinux_fc", "selinux_fc")
+    copy_prop("product_disable_sparse", "disable_sparse")
   elif mount_point == "system_ext":
     copy_prop("avb_system_ext_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_system_ext_add_hashtree_footer_args",
@@ -760,6 +770,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("system_ext_reserved_size", "partition_reserved_size")
     copy_prop("system_ext_selinux_fc", "selinux_fc")
+    copy_prop("system_ext_disable_sparse", "disable_sparse")
   elif mount_point == "odm":
     copy_prop("avb_odm_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_odm_add_hashtree_footer_args",
@@ -783,6 +794,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("odm_reserved_size", "partition_reserved_size")
     copy_prop("odm_selinux_fc", "selinux_fc")
+    copy_prop("odm_disable_sparse", "disable_sparse")
   elif mount_point == "vendor_dlkm":
     copy_prop("avb_vendor_dlkm_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_vendor_dlkm_add_hashtree_footer_args",
@@ -808,6 +820,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("vendor_dlkm_reserved_size", "partition_reserved_size")
     copy_prop("vendor_dlkm_selinux_fc", "selinux_fc")
+    copy_prop("vendor_dlkm_disable_sparse", "disable_sparse")
   elif mount_point == "odm_dlkm":
     copy_prop("avb_odm_dlkm_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_odm_dlkm_add_hashtree_footer_args",
@@ -831,6 +844,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("odm_dlkm_reserved_size", "partition_reserved_size")
     copy_prop("odm_dlkm_selinux_fc", "selinux_fc")
+    copy_prop("odm_dlkm_disable_sparse", "disable_sparse")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
