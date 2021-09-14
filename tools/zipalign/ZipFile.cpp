@@ -654,7 +654,7 @@ status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSour
 {
     ZipEntry* pEntry = NULL;
     status_t result;
-    long lfhPosn, startPosn, endPosn, uncompressedLen;
+    long lfhPosn, uncompressedLen;
 
     if (mReadOnly)
         return INVALID_OPERATION;
@@ -690,7 +690,6 @@ status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSour
      */
     lfhPosn = ftell(mZipFp);
     pEntry->mLFH.write(mZipFp);
-    startPosn = ftell(mZipFp);
 
     /*
      * Copy the data over.
@@ -741,18 +740,13 @@ status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSour
     }
 
     /*
-     * Update file offsets.
-     */
-    endPosn = ftell(mZipFp);
-
-    /*
      * Success!  Fill out new values.
      */
     pEntry->setLFHOffset(lfhPosn);
     mEOCD.mNumEntries++;
     mEOCD.mTotalNumEntries++;
     mEOCD.mCentralDirSize = 0;      // mark invalid; set by flush()
-    mEOCD.mCentralDirOffset = endPosn;
+    mEOCD.mCentralDirOffset = ftell(mZipFp);
 
     /*
      * Go back and write the LFH.
