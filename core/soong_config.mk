@@ -165,6 +165,7 @@ $(call add_json_list, VendorSnapshotDirsIncluded,        $(VENDOR_SNAPSHOT_DIRS_
 $(call add_json_list, VendorSnapshotDirsExcluded,        $(VENDOR_SNAPSHOT_DIRS_EXCLUDED))
 $(call add_json_list, RecoverySnapshotDirsIncluded,      $(RECOVERY_SNAPSHOT_DIRS_INCLUDED))
 $(call add_json_list, RecoverySnapshotDirsExcluded,      $(RECOVERY_SNAPSHOT_DIRS_EXCLUDED))
+$(call add_json_bool, HostFakeSnapshotEnabled,           $(HOST_FAKE_SNAPSHOT_ENABLE))
 
 $(call add_json_bool, Treble_linker_namespaces,          $(filter true,$(PRODUCT_TREBLE_LINKER_NAMESPACES)))
 $(call add_json_bool, Enforce_vintf_manifest,            $(filter true,$(PRODUCT_ENFORCE_VINTF_MANIFEST)))
