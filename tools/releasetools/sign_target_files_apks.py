@@ -189,6 +189,8 @@ OPTIONS.gki_signing_key = None
 OPTIONS.gki_signing_algorithm = None
 OPTIONS.gki_signing_extra_args = None
 OPTIONS.android_jar_path = None
+OPTIONS.vendor_partitions = []
+OPTIONS.vendor_otatools = None
 
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
@@ -1289,6 +1291,10 @@ def main(argv):
       OPTIONS.gki_signing_algorithm = a
     elif o == "--gki_signing_extra_args":
       OPTIONS.gki_signing_extra_args = a
+    elif o == "--vendor_otatools":
+      OPTIONS.vendor_otatools = a
+    elif o == "--vendor_partitions":
+      OPTIONS.vendor_partitions = a.split(",")
     else:
       return False
     return True
@@ -1339,6 +1345,8 @@ def main(argv):
           "gki_signing_key=",
           "gki_signing_algorithm=",
           "gki_signing_extra_args=",
+          "vendor_partitions=",
+          "vendor_otatools=",
       ],
       extra_option_handler=option_handler)
 
@@ -1385,13 +1393,31 @@ def main(argv):
   common.ZipClose(output_zip)
 
   # Skip building userdata.img and cache.img when signing the target files.
-  new_args = ["--is_signing"]
+  new_args = ["--is_signing", "--verbose"]
+  if OPTIONS.vendor_partitions:
+    new_args += [
+        "--skip_list",
+        ','.join(OPTIONS.vendor_partitions),
+    ]
   # add_img_to_target_files builds the system image from scratch, so the
   # recovery patch is guaranteed to be regenerated there.
   if OPTIONS.rebuild_recovery:
     new_args.append("--rebuild_recovery")
   new_args.append(args[1])
   add_img_to_target_files.main(new_args)
+
+  # Rebuild the vendor partitions using vendor_otatools.
+  # TODO(b/192253131): Remove the need for image compilation with vendor_otatools
+  if OPTIONS.vendor_partitions and OPTIONS.vendor_otatools:
+    vendor_otatools_dir = common.MakeTempDir(prefix="vendor_otatools_")
+    common.UnzipToDir(OPTIONS.vendor_otatools, vendor_otatools_dir)
+    cmd = [
+        os.path.join(vendor_otatools_dir, "bin", "add_img_to_target_files"),
+        "--verbose",
+        "--add_missing",
+        args[1],
+    ]
+    common.RunAndCheckOutput(cmd, verbose=True)
 
   print("done.")
 
