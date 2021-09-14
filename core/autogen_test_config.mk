@@ -22,8 +22,7 @@
 #   autogen_test_config_file: Path to the test config file generated.
 
 autogen_test_config_file := $(dir $(LOCAL_BUILT_MODULE))$(LOCAL_MODULE).config
-# TODO: (b/167308193) Switch to /data/local/tests/unrestricted as the default install base.
-autogen_test_install_base := /data/local/tmp
+autogen_test_install_base := /data/local/tests/unrestricted
 # Automatically setup test root for native test.
 ifeq (true,$(is_native))
   ifeq (true,$(LOCAL_VENDOR_MODULE))
