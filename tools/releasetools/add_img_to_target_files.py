@@ -589,7 +589,7 @@ def CheckAbOtaImages(output_zip, ab_partitions):
     AssertionError: If it can't find an image.
   """
   for partition in ab_partitions:
-    img_name = partition.strip() + ".img"
+    img_name = partition + ".img"
 
     # Assert that the image is present under IMAGES/ now.
     if output_zip:
@@ -856,39 +856,23 @@ def AddImagesToTargetFiles(filename):
         if output_zip:
           recovery_two_step_image.AddToZip(output_zip)
 
-  if has_system:
-    banner("system")
-    partitions['system'] = AddSystem(
-        output_zip, recovery_img=recovery_image, boot_img=boot_image)
+  def add_partition(partition, has_partition, add_func, add_args):
+    if has_partition:
+      banner(partition)
+      partitions[partition] = add_func(output_zip, *add_args)
 
-  if has_vendor:
-    banner("vendor")
-    partitions['vendor'] = AddVendor(
-        output_zip, recovery_img=recovery_image, boot_img=boot_image)
-
-  if has_product:
-    banner("product")
-    partitions['product'] = AddProduct(output_zip)
-
-  if has_system_ext:
-    banner("system_ext")
-    partitions['system_ext'] = AddSystemExt(output_zip)
-
-  if has_odm:
-    banner("odm")
-    partitions['odm'] = AddOdm(output_zip)
-
-  if has_vendor_dlkm:
-    banner("vendor_dlkm")
-    partitions['vendor_dlkm'] = AddVendorDlkm(output_zip)
-
-  if has_odm_dlkm:
-    banner("odm_dlkm")
-    partitions['odm_dlkm'] = AddOdmDlkm(output_zip)
-
-  if has_system_other:
-    banner("system_other")
-    AddSystemOther(output_zip)
+  add_partition_calls = (
+      ("system", has_system, AddSystem, [recovery_image, boot_image]),
+      ("vendor", has_vendor, AddVendor, [recovery_image, boot_image]),
+      ("product", has_product, AddProduct, []),
+      ("system_ext", has_system_ext, AddSystemExt, []),
+      ("odm", has_odm, AddOdm, []),
+      ("vendor_dlkm", has_vendor_dlkm, AddVendorDlkm, []),
+      ("odm_dlkm", has_odm_dlkm, AddOdmDlkm, []),
+      ("system_other", has_system_other, AddSystemOther, []),
+  )
+  for call in add_partition_calls:
+    add_partition(*call)
 
   AddApexInfo(output_zip)
 
@@ -902,13 +886,10 @@ def AddImagesToTargetFiles(filename):
     banner("partition-table")
     AddPartitionTable(output_zip)
 
-  if OPTIONS.info_dict.get("has_dtbo") == "true":
-    banner("dtbo")
-    partitions['dtbo'] = AddDtbo(output_zip)
-
-  if OPTIONS.info_dict.get("has_pvmfw") == "true":
-    banner("pvmfw")
-    partitions['pvmfw'] = AddPvmfw(output_zip)
+  add_partition("dtbo",
+                OPTIONS.info_dict.get("has_dtbo") == "true", AddDtbo, [])
+  add_partition("pvmfw",
+                OPTIONS.info_dict.get("has_pvmfw") == "true", AddPvmfw, [])
 
   # Custom images.
   custom_partitions = OPTIONS.info_dict.get(
@@ -965,7 +946,7 @@ def AddImagesToTargetFiles(filename):
                                    "ab_partitions.txt")
   if os.path.exists(ab_partitions_txt):
     with open(ab_partitions_txt) as f:
-      ab_partitions = f.readlines()
+      ab_partitions = f.read().splitlines()
 
     # For devices using A/B update, make sure we have all the needed images
     # ready under IMAGES/ or RADIO/.
