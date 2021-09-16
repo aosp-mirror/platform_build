@@ -254,3 +254,8 @@ ifdef LOCAL_PREBUILT_COVERAGE_ARCHIVE
 endif
 
 SOONG_ALREADY_CONV += $(LOCAL_MODULE)
+
+#######################################
+# Capture deps added after base_rules.mk
+include $(BUILD_NOTICE_FILE)
+#######################################
