@@ -57,3 +57,25 @@ ifneq (,$(wildcard cts/))
     $(error $(error_msg))
   endif
 endif
+
+# Creates a "cts-verifier" directory that will contain:
+#
+# 1. Out directory with a "android-cts-verifier" containing the CTS Verifier
+#    and other binaries it needs.
+#
+# 2. Zipped version of the android-cts-verifier directory to be included with
+#    the build distribution.
+##
+cts-dir := $(HOST_OUT)/cts-verifier
+verifier-dir-name := android-cts-verifier
+verifier-dir := $(cts-dir)/$(verifier-dir-name)
+verifier-zip-name := $(verifier-dir-name).zip
+verifier-zip := $(cts-dir)/$(verifier-zip-name)
+
+cts : $(verifier-zip)
+$(verifier-zip): PRIVATE_DIR := $(cts-dir)
+$(verifier-zip): $(SOONG_ANDROID_CTS_VERIFIER_ZIP)
+	rm -rf $(PRIVATE_DIR)
+	mkdir -p $(PRIVATE_DIR)
+	unzip -q -d $(PRIVATE_DIR) $<
+	$(copy-file-to-target)
