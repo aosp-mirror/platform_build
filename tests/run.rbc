@@ -80,7 +80,7 @@ ns = globals["$SOONG_CONFIG_NAMESPACES"]
 assert_eq(
     {
         "NS1": {
-            "v1": "abc",
+            "v1": "abc abc_part1",
             "v2": "def"
         },
         "NS2": {
