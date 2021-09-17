@@ -163,7 +163,9 @@ ndk-docs: $(ndk_doxygen_out)/index.html
 .PHONY: ndk-docs
 endif
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals,sdk,$(API_FINGERPRINT))
+endif
 
 INSTALLED_RECOVERYIMAGE_TARGET :=
 # Build recovery image if
@@ -775,7 +777,9 @@ $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_U
 	$(FILESLIST) $(TARGET_ROOT_OUT) > $(@:.txt=.json)
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
+endif
 
 #------------------------------------------------------------------
 # dtb
@@ -805,7 +809,9 @@ $(INSTALLED_FILES_FILE_RAMDISK) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST) $(FILES
 	$(FILESLIST) $(TARGET_RAMDISK_OUT) > $(@:.txt=.json)
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_RAMDISK))
+endif
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
 ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
@@ -2808,7 +2814,9 @@ $(INSTALLED_FILES_FILE): $(FULL_SYSTEMIMAGE_DEPS) $(FILESLIST) $(FILESLIST_UTIL)
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE))
+endif
 
 systemimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,systemimage)
@@ -5375,7 +5383,9 @@ $(NDK_SYSROOT_TARGET): $(SOONG_OUT_DIR)/ndk.timestamp
 	@echo Package NDK sysroot...
 	$(hide) tar cjf $@ -C $(SOONG_OUT_DIR) ndk
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals,sdk,$(NDK_SYSROOT_TARGET))
+endif
 
 ifeq ($(build_ota_package),true)
 # -----------------------------------------------------------------
