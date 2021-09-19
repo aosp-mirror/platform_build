@@ -1913,6 +1913,7 @@ endif # TARGET_BUILD_UNBUNDLED == TARGET_BUILD_UNBUNDLED_IMAGE
 docs: $(ALL_DOCS)
 
 .PHONY: sdk win_sdk winsdk-tools sdk_addon
+ifeq ($(HOST_OS),linux)
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals,sdk win_sdk, \
@@ -1922,6 +1923,7 @@ $(call dist-for-goals,sdk win_sdk, \
     $(APPCOMPAT_ZIP) \
     $(INSTALLED_BUILD_PROP_TARGET) \
 )
+endif
 
 # umbrella targets to assit engineers in verifying builds
 .PHONY: java native target host java-host java-target native-host native-target \

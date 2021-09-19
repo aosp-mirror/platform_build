@@ -231,6 +231,22 @@ def CheckHeadroom(ext4fs_output, prop_dict):
             mount_point, total_blocks, used_blocks, headroom_blocks,
             adjusted_blocks))
 
+def CalculateSizeAndReserved(prop_dict, size):
+  fs_type = prop_dict.get("fs_type", "")
+  partition_headroom = int(prop_dict.get("partition_headroom", 0))
+  # If not specified, give us 16MB margin for GetDiskUsage error ...
+  reserved_size = int(prop_dict.get("partition_reserved_size", BYTES_IN_MB * 16))
+
+  if fs_type == "erofs":
+    reserved_size = int(prop_dict.get("partition_reserved_size", 0))
+    if reserved_size == 0:
+      # give .3% margin or a minimum size for AVB footer
+      return max(size * 1003 // 1000, 256 * 1024)
+
+  if fs_type.startswith("ext4") and partition_headroom > reserved_size:
+    reserved_size = partition_headroom
+
+  return size + reserved_size
 
 def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   """Builds a pure image for the files under in_dir and writes it to out_file.
@@ -468,12 +484,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       size = GetDiskUsage(in_dir)
     logger.info(
         "The tree size of %s is %d MB.", in_dir, size // BYTES_IN_MB)
-    # If not specified, give us 16MB margin for GetDiskUsage error ...
-    reserved_size = int(prop_dict.get("partition_reserved_size", BYTES_IN_MB * 16))
-    partition_headroom = int(prop_dict.get("partition_headroom", 0))
-    if fs_type.startswith("ext4") and partition_headroom > reserved_size:
-      reserved_size = partition_headroom
-    size += reserved_size
+    size = CalculateSizeAndReserved(prop_dict, size)
     # Round this up to a multiple of 4K so that avbtool works
     size = common.RoundUpTo4K(size)
     if fs_type.startswith("ext"):

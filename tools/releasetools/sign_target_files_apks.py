@@ -189,6 +189,8 @@ OPTIONS.gki_signing_key = None
 OPTIONS.gki_signing_algorithm = None
 OPTIONS.gki_signing_extra_args = None
 OPTIONS.android_jar_path = None
+OPTIONS.vendor_partitions = set()
+OPTIONS.vendor_otatools = None
 
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
@@ -215,6 +217,10 @@ AVB_FOOTER_ARGS_BY_PARTITION = {
 for partition in common.AVB_PARTITIONS:
   if partition not in AVB_FOOTER_ARGS_BY_PARTITION:
     raise RuntimeError("Missing {} in AVB_FOOTER_ARGS".format(partition))
+
+# Partitions that can be regenerated after signing using a separate
+# vendor otatools package.
+ALLOWED_VENDOR_PARTITIONS = set(["vendor", "odm"])
 
 
 def IsApexFile(filename):
@@ -1180,6 +1186,63 @@ def ReadApexKeysInfo(tf_zip):
   return keys
 
 
+def BuildVendorPartitions(output_zip_path):
+  """Builds OPTIONS.vendor_partitions using OPTIONS.vendor_otatools."""
+  if OPTIONS.vendor_partitions.difference(ALLOWED_VENDOR_PARTITIONS):
+    logger.warning("Allowed --vendor_partitions: %s",
+                   ",".join(ALLOWED_VENDOR_PARTITIONS))
+    OPTIONS.vendor_partitions = ALLOWED_VENDOR_PARTITIONS.intersection(
+        OPTIONS.vendor_partitions)
+
+  logger.info("Building vendor partitions using vendor otatools.")
+  vendor_tempdir = common.UnzipTemp(output_zip_path, [
+      "META/*",
+  ] + ["{}/*".format(p.upper()) for p in OPTIONS.vendor_partitions])
+
+  # Disable various partitions that build based on misc_info fields.
+  # Only partitions in ALLOWED_VENDOR_PARTITIONS can be rebuilt using
+  # vendor otatools. These other partitions will be rebuilt using the main
+  # otatools if necessary.
+  vendor_misc_info_path = os.path.join(vendor_tempdir, "META/misc_info.txt")
+  vendor_misc_info = common.LoadDictionaryFromFile(vendor_misc_info_path)
+  vendor_misc_info["no_boot"] = "true"  # boot
+  vendor_misc_info["vendor_boot"] = "false"  # vendor_boot
+  vendor_misc_info["no_recovery"] = "true"  # recovery
+  vendor_misc_info["board_bpt_enable"] = "false"  # partition-table
+  vendor_misc_info["has_dtbo"] = "false"  # dtbo
+  vendor_misc_info["has_pvmfw"] = "false"  # pvmfw
+  vendor_misc_info["avb_custom_images_partition_list"] = ""  # custom images
+  vendor_misc_info["avb_enable"] = "false"  # vbmeta
+  vendor_misc_info["use_dynamic_partitions"] = "false"  # super_empty
+  vendor_misc_info["build_super_partition"] = "false"  # super split
+  with open(vendor_misc_info_path, "w") as output:
+    for key in sorted(vendor_misc_info):
+      output.write("{}={}\n".format(key, vendor_misc_info[key]))
+
+  # Disable care_map.pb as not all ab_partitions are available when
+  # vendor otatools regenerates vendor images.
+  os.remove(os.path.join(vendor_tempdir, "META/ab_partitions.txt"))
+
+  # Build vendor images using vendor otatools.
+  vendor_otatools_dir = common.MakeTempDir(prefix="vendor_otatools_")
+  common.UnzipToDir(OPTIONS.vendor_otatools, vendor_otatools_dir)
+  cmd = [
+      os.path.join(vendor_otatools_dir, "bin", "add_img_to_target_files"),
+      "--is_signing",
+      "--verbose",
+      vendor_tempdir,
+  ]
+  common.RunAndCheckOutput(cmd, verbose=True)
+
+  logger.info("Writing vendor partitions to output archive.")
+  with zipfile.ZipFile(
+      output_zip_path, "a", compression=zipfile.ZIP_DEFLATED,
+      allowZip64=True) as output_zip:
+    for p in OPTIONS.vendor_partitions:
+      path = "IMAGES/{}.img".format(p)
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, path), path)
+
+
 def main(argv):
 
   key_mapping_options = []
@@ -1289,6 +1352,10 @@ def main(argv):
       OPTIONS.gki_signing_algorithm = a
     elif o == "--gki_signing_extra_args":
       OPTIONS.gki_signing_extra_args = a
+    elif o == "--vendor_otatools":
+      OPTIONS.vendor_otatools = a
+    elif o == "--vendor_partitions":
+      OPTIONS.vendor_partitions = set(a.split(","))
     else:
       return False
     return True
@@ -1339,6 +1406,8 @@ def main(argv):
           "gki_signing_key=",
           "gki_signing_algorithm=",
           "gki_signing_extra_args=",
+          "vendor_partitions=",
+          "vendor_otatools=",
       ],
       extra_option_handler=option_handler)
 
@@ -1384,8 +1453,11 @@ def main(argv):
   common.ZipClose(input_zip)
   common.ZipClose(output_zip)
 
+  if OPTIONS.vendor_partitions and OPTIONS.vendor_otatools:
+    BuildVendorPartitions(args[1])
+
   # Skip building userdata.img and cache.img when signing the target files.
-  new_args = ["--is_signing"]
+  new_args = ["--is_signing", "--add_missing", "--verbose"]
   # add_img_to_target_files builds the system image from scratch, so the
   # recovery patch is guaranteed to be regenerated there.
   if OPTIONS.rebuild_recovery:
