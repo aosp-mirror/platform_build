@@ -163,7 +163,9 @@ ndk-docs: $(ndk_doxygen_out)/index.html
 .PHONY: ndk-docs
 endif
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals,sdk,$(API_FINGERPRINT))
+endif
 
 INSTALLED_RECOVERYIMAGE_TARGET :=
 # Build recovery image if
@@ -775,7 +777,9 @@ $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_U
 	$(FILESLIST) $(TARGET_ROOT_OUT) > $(@:.txt=.json)
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
+endif
 
 #------------------------------------------------------------------
 # dtb
@@ -805,7 +809,9 @@ $(INSTALLED_FILES_FILE_RAMDISK) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST) $(FILES
 	$(FILESLIST) $(TARGET_RAMDISK_OUT) > $(@:.txt=.json)
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_RAMDISK))
+endif
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
 ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
@@ -2430,6 +2436,7 @@ endif # BUILDING_RAMDISK_IMAGE
 #
 # Note: it's intentional to skip signing for boot-debug.img, because it
 # can only be used if the device is unlocked with verification error.
+ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
@@ -2488,6 +2495,7 @@ bootimage_debug-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
 
 endif # TARGET_NO_KERNEL
 endif # INSTALLED_BOOTIMAGE_TARGET
+endif # BUILDING_VENDOR_BOOT_IMAGE is not true
 
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifeq ($(BUILDING_RAMDISK_IMAGE),true)
@@ -2633,6 +2641,7 @@ endif # BUILDING_RAMDISK_IMAGE
 #
 # Note: it's intentional to skip signing for boot-test-harness.img, because it
 # can only be used if the device is unlocked with verification error.
+ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 
@@ -2675,6 +2684,7 @@ bootimage_test_harness-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBT
 
 endif # TARGET_NO_KERNEL
 endif # INSTALLED_BOOTIMAGE_TARGET
+endif # BUILDING_VENDOR_BOOT_IMAGE is not true
 endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
 
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
@@ -2804,7 +2814,9 @@ $(INSTALLED_FILES_FILE): $(FULL_SYSTEMIMAGE_DEPS) $(FILESLIST) $(FILESLIST_UTIL)
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE))
+endif
 
 systemimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,systemimage)
@@ -5371,7 +5383,9 @@ $(NDK_SYSROOT_TARGET): $(SOONG_OUT_DIR)/ndk.timestamp
 	@echo Package NDK sysroot...
 	$(hide) tar cjf $@ -C $(SOONG_OUT_DIR) ndk
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals,sdk,$(NDK_SYSROOT_TARGET))
+endif
 
 ifeq ($(build_ota_package),true)
 # -----------------------------------------------------------------
