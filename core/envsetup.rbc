@@ -38,7 +38,7 @@ def _allowed_versions(all_versions, min_version, max_version, default_version):
     return all_versions[min_i:max_i + 1]
 
 # This function is a manual conversion of the version_defaults.mk
-def _versions_default(g, all_versions):
+def _versions_default(g, all_versions, v):
     """Handle various build version information.
 
     Guarantees that the following are defined:
@@ -59,17 +59,21 @@ def _versions_default(g, all_versions):
         _build_id_init(g)
         g["INTERNAL_BUILD_ID_MAKEFILE"] = "build/make/core/build_id"
 
-    allowed_versions = _allowed_versions(all_versions, v_min, v_max, v_default)
-    g.setdefault("TARGET_PLATFORM_VERSION", v_default)
+    allowed_versions = _allowed_versions(all_versions, v.min_platform_version, v.max_platform_version, v.default_platform_version)
+    g.setdefault("TARGET_PLATFORM_VERSION", v.default_platform_version)
     if g["TARGET_PLATFORM_VERSION"] not in allowed_versions:
         fail("% is not valid, must be one of %s" % (g["TARGET_PLATFORM_VERSION"], allowed_versions))
 
-    g["DEFAULT_PLATFORM_VERSION"] = v_default
-    g["PLATFORM_VERSION_LAST_STABLE"] = 11
-    g.setdefault("PLATFORM_VERSION_CODENAME", g["TARGET_PLATFORM_VERSION"])
+    g["DEFAULT_PLATFORM_VERSION"] = v.default_platform_version
+    g["PLATFORM_VERSION_LAST_STABLE"] = v.platform_version_last_stable
+    target_platform_version = g["TARGET_PLATFORM_VERSION"]
+    if v.codenames[target_platform_version]:
+        g.setdefault("PLATFORM_VERSION_CODENAME", v.codenames[target_platform_version])
+    else:
+        g.setdefault("PLATFORM_VERSION_CODENAME", target_platform_version)
     # TODO(asmundak): set PLATFORM_VERSION_ALL_CODENAMES
 
-    g.setdefault("PLATFORM_SDK_VERSION", 30)
+    g.setdefault("PLATFORM_SDK_VERSION", v.platform_sdk_version)
     version_codename = g["PLATFORM_VERSION_CODENAME"]
     if version_codename == "REL":
         g.setdefault("PLATFORM_VERSION", g["PLATFORM_VERSION_LAST_STABLE"])
@@ -92,7 +96,8 @@ def _versions_default(g, all_versions):
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-    g.setdefault("PLATFORM_SECURITY_PATCH", "2021-03-05")
+
+    g.setdefault("PLATFORM_SECURITY_PATCH", v.platform_security_patch)
     dt = 'TZ="GMT" %s' % g["PLATFORM_SECURITY_PATCH"]
     g.setdefault("PLATFORM_SECURITY_PATCH_TIMESTAMP", rblf_shell("date -d '%s' +%%s" % dt))
 
@@ -116,16 +121,23 @@ def _versions_default(g, all_versions):
     # in a warning being shown when any activity from the app is started.
     g.setdefault("PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION", 23)
 
-def init(g):
+    # This is the sdk extension version of this tree.
+    g["PLATFORM_SDK_EXTENSION_VERSION"] = v.platform_sdk_extension_version
+    # This is the sdk extension version that PLATFORM_SDK_VERSION ships with.
+    g["PLATFORM_BASE_SDK_EXTENSION_VERSION"] = v.platform_base_sdk_extension_version
+
+
+def init(g, v):
     """Initializes globals.
 
     The code is the Starlark counterpart of the contents of the
     envsetup.mk file.
     Args:
         g: globals dictionary
+        v: version info struct
     """
     all_versions = _all_versions()
-    _versions_default(g, all_versions)
+    _versions_default(g, all_versions, v)
     for v in all_versions:
         g["IS_AT_LEAST" + v] = True
         if v == g["TARGET_PLATFORM_VERSION"]:
@@ -210,7 +222,3 @@ def init(g):
 
     if g.get("TARGET_BUILD_TYPE", "") != "debug":
         g["TARGET_BUILD_TYPE"] = "release"
-
-v_default = "SP1A"
-v_min = "SP1A"
-v_max = "SP1A"
