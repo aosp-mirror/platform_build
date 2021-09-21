@@ -17,7 +17,7 @@ load("//build/make/core:envsetup.rbc", _envsetup_init = "init")
 """Runtime functions."""
 
 _soong_config_namespaces_key = "$SOONG_CONFIG_NAMESPACES"
-def _global_init():
+def _global_init(version_info):
     """Returns dict created from the runtime environment."""
     globals = dict()
 
@@ -31,7 +31,7 @@ def _global_init():
 
     globals.setdefault("PRODUCT_SOONG_NAMESPACES", [])
     globals.setdefault(_soong_config_namespaces_key, {})
-    _envsetup_init(globals)
+    _envsetup_init(globals, version_info)
 
     # Variables that should be defined.
     mandatory_vars = [
@@ -46,10 +46,8 @@ def _global_init():
     for bv in mandatory_vars:
         if not bv in globals:
             fail(bv, " is not defined")
-
     return globals
 
-_globals_base = _global_init()
 
 def __print_attr(attr, value):
     if not value:
@@ -69,8 +67,9 @@ def __print_attr(attr, value):
     else:
         fail("bad output format", _options.format)
 
-def _printvars(globals, cfg):
-    """Prints known configuration variables."""
+def _printvars(state):
+    """Prints configuration and global variables."""
+    (globals, cfg, globals_base) = state
     for attr, val in sorted(cfg.items()):
         __print_attr(attr, val)
     if _options.print_globals:
@@ -85,7 +84,7 @@ def _printvars(globals, cfg):
                         print("SOONG_CONFIG_" + nsname, ":=", " ".join(nsvars.keys()))
                     for var, val in sorted(nsvars.items()):
                         __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
-            elif attr not in _globals_base:
+            elif attr not in globals_base:
                 __print_attr(attr, val)
 
 def __printvars_rearrange_list(value_list):
@@ -93,7 +92,7 @@ def __printvars_rearrange_list(value_list):
     seen = {item: 0 for item in value_list}
     return sorted(seen.keys()) if _options.rearrange == "sort" else seen.keys()
 
-def _product_configuration(top_pcm_name, top_pcm):
+def _product_configuration(top_pcm_name, top_pcm, version_info):
     """Creates configuration."""
 
     # Product configuration is created by traversing product's inheritance
@@ -107,7 +106,8 @@ def _product_configuration(top_pcm_name, top_pcm):
     # PCM means "Product Configuration Module", i.e., a Starlark file
     # whose body consists of a single init function.
 
-    globals = dict(**_globals_base)
+    globals_base = _global_init(version_info)
+    globals = dict(**globals_base)
 
     config_postfix = []  # Configs in postfix order
 
@@ -198,7 +198,7 @@ def _product_configuration(top_pcm_name, top_pcm):
         _percolate_inherited(configs, pcm_name, cfg, children_names)
         configs[pcm_name] = pcm, cfg, children_names, True
 
-    return globals, configs[top_pcm_name][1]
+    return (globals, configs[top_pcm_name][1], globals_base)
 
 def _substitute_inherited(configs, pcm_name, cfg):
     """Substitutes inherited values in all the attributes.
@@ -526,6 +526,8 @@ def _mkstrip(s):
     That is, removes string's leading and trailing whitespace characters and
     replaces any sequence of whitespace characters with with a single space.
     """
+    if type(s) != "string":
+        return s
     result = ""
     was_space = False
     for ch in s.strip().elems():
