@@ -100,6 +100,16 @@ define product-copy-files-by-pattern
 $(join $(patsubst %,$(1),$(3)),$(patsubst %,:$(2),$(3)))
 endef
 
+# Return empty unless the board matches
+define is-board-platform2
+$(filter $(1), $(TARGET_BOARD_PLATFORM))
+endef
+
+# Return empty unless the board is in the list
+define is-board-platform-in-list2
+$(filter $(1),$(TARGET_BOARD_PLATFORM))
+endef
+
 # ---------------------------------------------------------------
 # Check for obsolete PRODUCT- and APP- goals
 ifeq ($(CALLED_FROM_SETUP),true)
