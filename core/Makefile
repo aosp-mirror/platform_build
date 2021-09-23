@@ -2359,10 +2359,10 @@ ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
-  INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(foreach k,$(subst kernel,boot-debug,$(BOARD_KERNEL_BINARIES)), \
+  INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(foreach k,$(subst kernel,$(DEBUG_RAMDISK_BOOT_IMAGE_NAME),$(BOARD_KERNEL_BINARIES)), \
          $(PRODUCT_OUT)/$(k).img)
 else
-  INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot-debug.img
+  INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/$(DEBUG_RAMDISK_BOOT_IMAGE_NAME).img
 endif
 
 # Replace ramdisk.img in $(MKBOOTIMG) ARGS with ramdisk-debug.img to build boot-debug.img
@@ -2396,10 +2396,10 @@ endef
 
 # $(1): output file
 define build-debug-bootimage-target
-  $(MKBOOTIMG) --kernel $(PRODUCT_OUT)/$(subst .img,,$(subst boot-debug,kernel,$(notdir $(1)))) \
+  $(MKBOOTIMG) --kernel $(PRODUCT_OUT)/$(subst .img,,$(subst $(DEBUG_RAMDISK_BOOT_IMAGE_NAME),kernel,$(notdir $(1)))) \
     $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) \
     $(INTERNAL_MKBOOTIMG_GKI_SINGING_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $1
-  $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$1,boot-debug))
+  $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$1,$(DEBUG_RAMDISK_BOOT_IMAGE_NAME)))
 endef
 
 # Depends on original boot.img and ramdisk-debug.img, to build the new boot-debug.img
