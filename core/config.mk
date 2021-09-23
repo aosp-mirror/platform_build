@@ -490,11 +490,8 @@ USE_D8 := true
 #
 ifeq (,$(TARGET_BUILD_USE_PREBUILT_SDKS))
   AAPT := $(HOST_OUT_EXECUTABLES)/aapt
-  MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
-
 else # TARGET_BUILD_USE_PREBUILT_SDKS
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
-  MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
 endif # TARGET_BUILD_USE_PREBUILT_SDKS
 
 ifeq (,$(TARGET_BUILD_USE_PREBUILT_SDKS))
