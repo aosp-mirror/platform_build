@@ -93,6 +93,8 @@ warn_patterns = [
          [r".*: warning: Null passed to a callee that requires a non-null"]),
     medium('Unused command line argument',
            [r".*: warning: argument unused during compilation: .+"]),
+    medium('Set but not used',
+           [r".*: warning: .* set but not used.*Wunused-but-set"]),
     medium('Unused parameter',
            [r".*: warning: unused parameter '.*'"]),
     medium('Unused function, variable, label, comparison, etc.',
