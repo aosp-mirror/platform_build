@@ -1720,14 +1720,6 @@ function b()
 
 function m()
 (
-    if [[ "${USE_BAZEL_ANALYSIS}" =~ ^(true|1)$ ]]; then
-        # This only short-circuits to Bazel for a single module target now.
-        b cquery "@soong_injection//module_name_to_label:$@" 2>/dev/null
-        if [[ $? == 0 ]]; then
-            bazel build "@soong_injection//module_name_to_label:$@" --config=bp2build
-            return $?
-        fi
-    fi
     _trigger_build "all-modules" "$@"
 )
 
