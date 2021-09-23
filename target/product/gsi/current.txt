@@ -95,6 +95,8 @@ VNDK-core: android.hardware.power.stats-V1-ndk.so
 VNDK-core: android.hardware.power.stats-V1-ndk_platform.so
 VNDK-core: android.hardware.radio-V1-ndk.so
 VNDK-core: android.hardware.radio-V1-ndk_platform.so
+VNDK-core: android.hardware.radio.config-V1-ndk.so
+VNDK-core: android.hardware.radio.config-V1-ndk_platform.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk_platform.so
 VNDK-core: android.hardware.security.keymint-V1-ndk.so

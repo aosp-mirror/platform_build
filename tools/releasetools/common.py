@@ -1925,14 +1925,14 @@ def UnzipToDir(filename, dirname, patterns=None):
   RunAndCheckOutput(cmd)
 
 
-def UnzipTemp(filename, pattern=None):
+def UnzipTemp(filename, patterns=None):
   """Unzips the given archive into a temporary directory and returns the name.
 
   Args:
     filename: If filename is of the form "foo.zip+bar.zip", unzip foo.zip into
     a temp dir, then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
 
-    pattern: Files to unzip from the archive. If omitted, will unzip the entire
+    patterns: Files to unzip from the archive. If omitted, will unzip the entire
     archvie.
 
   Returns:
@@ -1942,11 +1942,11 @@ def UnzipTemp(filename, pattern=None):
   tmp = MakeTempDir(prefix="targetfiles-")
   m = re.match(r"^(.*[.]zip)\+(.*[.]zip)$", filename, re.IGNORECASE)
   if m:
-    UnzipToDir(m.group(1), tmp, pattern)
-    UnzipToDir(m.group(2), os.path.join(tmp, "BOOTABLE_IMAGES"), pattern)
+    UnzipToDir(m.group(1), tmp, patterns)
+    UnzipToDir(m.group(2), os.path.join(tmp, "BOOTABLE_IMAGES"), patterns)
     filename = m.group(1)
   else:
-    UnzipToDir(filename, tmp, pattern)
+    UnzipToDir(filename, tmp, patterns)
 
   return tmp
 
