@@ -87,6 +87,29 @@ define copy-files
 $(foreach f,$(1),$(f):$(2)/$(notdir $(f)))
 endef
 
+#
+# Convert the list of file names to the list of PRODUCT_COPY_FILES items
+# $(1): from pattern
+# $(2): to pattern
+# $(3): file names
+# E.g., calling product-copy-files-by-pattern with
+#   (from/%, to/%, a b)
+# returns
+#   from/a:to/a from/b:to/b
+define product-copy-files-by-pattern
+$(join $(patsubst %,$(1),$(3)),$(patsubst %,:$(2),$(3)))
+endef
+
+# Return empty unless the board matches
+define is-board-platform2
+$(filter $(1), $(TARGET_BOARD_PLATFORM))
+endef
+
+# Return empty unless the board is in the list
+define is-board-platform-in-list2
+$(filter $(1),$(TARGET_BOARD_PLATFORM))
+endef
+
 # ---------------------------------------------------------------
 # Check for obsolete PRODUCT- and APP- goals
 ifeq ($(CALLED_FROM_SETUP),true)

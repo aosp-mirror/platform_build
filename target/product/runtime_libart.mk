@@ -93,7 +93,7 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.appimageformat=lz4
 
 PRODUCT_SYSTEM_PROPERTIES += \
-    ro.dalvik.vm.native.bridge=0
+    ro.dalvik.vm.native.bridge?=0
 
 # Different dexopt types for different package update/install times.
 # On eng builds, make "boot" reasons only extract for faster turnaround.

@@ -1707,7 +1707,7 @@ function _trigger_build()
 function b()
 (
     # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
-    _trigger_build "all-modules" nothing GENERATE_BAZEL_FILES=true USE_BAZEL_ANALYSIS= || return 1
+    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
     if [[ -z "$@" ]]; then
         # If there are no args, show help.
@@ -1720,14 +1720,6 @@ function b()
 
 function m()
 (
-    if [[ "${USE_BAZEL_ANALYSIS}" =~ ^(true|1)$ ]]; then
-        # This only short-circuits to Bazel for a single module target now.
-        b cquery "@soong_injection//module_name_to_label:$@" 2>/dev/null
-        if [[ $? == 0 ]]; then
-            bazel build "@soong_injection//module_name_to_label:$@" --config=bp2build
-            return $?
-        fi
-    fi
     _trigger_build "all-modules" "$@"
 )
 

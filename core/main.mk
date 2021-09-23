@@ -1670,8 +1670,7 @@ droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_ROOT) \
     $(INSTALLED_FILES_FILE_RECOVERY) \
     $(INSTALLED_FILES_JSON_RECOVERY) \
-    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
-    soong_docs
+    $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 
 # The droidcore target depends on the droidcore-unbundled subset and any other
 # targets for a non-unbundled (full source) full system build.
@@ -1886,6 +1885,8 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   ifdef CLANG_COVERAGE
     $(foreach f,$(SOONG_NDK_API_XML), \
         $(call dist-for-goals,droidcore,$(f):ndk_apis/$(notdir $(f))))
+    $(foreach f,$(SOONG_CC_API_XML), \
+        $(call dist-for-goals,droidcore,$(f):cc_apis/$(notdir $(f))))
   endif
 
   # For full system build (whether unbundled or not), we configure
@@ -1912,6 +1913,7 @@ endif # TARGET_BUILD_UNBUNDLED == TARGET_BUILD_UNBUNDLED_IMAGE
 docs: $(ALL_DOCS)
 
 .PHONY: sdk win_sdk winsdk-tools sdk_addon
+ifeq ($(HOST_OS),linux)
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals,sdk win_sdk, \
@@ -1921,6 +1923,7 @@ $(call dist-for-goals,sdk win_sdk, \
     $(APPCOMPAT_ZIP) \
     $(INSTALLED_BUILD_PROP_TARGET) \
 )
+endif
 
 # umbrella targets to assit engineers in verifying builds
 .PHONY: java native target host java-host java-target native-host native-target \
