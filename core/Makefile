@@ -163,7 +163,9 @@ ndk-docs: $(ndk_doxygen_out)/index.html
 .PHONY: ndk-docs
 endif
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals,sdk,$(API_FINGERPRINT))
+endif
 
 INSTALLED_RECOVERYIMAGE_TARGET :=
 # Build recovery image if
@@ -487,6 +489,12 @@ ifneq ($(strip $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)),)
   endif
 endif
 
+ifneq ($(BOARD_DO_NOT_STRIP_RECOVERY_MODULES),true)
+	RECOVERY_STRIPPED_MODULE_STAGING_DIR := $(call intermediates-dir-for,PACKAGING,depmod_recovery_stripped)
+else
+	RECOVERY_STRIPPED_MODULE_STAGING_DIR :=
+endif
+
 ifneq ($(BOARD_DO_NOT_STRIP_VENDOR_MODULES),true)
 	VENDOR_STRIPPED_MODULE_STAGING_DIR := $(call intermediates-dir-for,PACKAGING,depmod_vendor_stripped)
 else
@@ -501,7 +509,7 @@ endif
 
 BOARD_KERNEL_MODULE_DIRS += top
 $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,RECOVERY,$(TARGET_RECOVERY_ROOT_OUT),,modules.load.recovery,,$(kmd))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,RECOVERY,$(TARGET_RECOVERY_ROOT_OUT),,modules.load.recovery,$(RECOVERY_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
   $(eval vendor_ramdisk_fragment := $(KERNEL_MODULE_DIR_VENDOR_RAMDISK_FRAGMENT_$(kmd))) \
   $(if $(vendor_ramdisk_fragment), \
     $(eval output_dir := $(VENDOR_RAMDISK_FRAGMENT.$(vendor_ramdisk_fragment).STAGING_DIR)) \
@@ -769,7 +777,9 @@ $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_U
 	$(FILESLIST) $(TARGET_ROOT_OUT) > $(@:.txt=.json)
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
+endif
 
 #------------------------------------------------------------------
 # dtb
@@ -799,7 +809,9 @@ $(INSTALLED_FILES_FILE_RAMDISK) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST) $(FILES
 	$(FILESLIST) $(TARGET_RAMDISK_OUT) > $(@:.txt=.json)
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_RAMDISK))
+endif
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
 ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
@@ -1595,31 +1607,50 @@ endif
 
 endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 
+# $(1) the partition name (eg system)
+# $(2) the image prop file
+define add-common-flags-to-image-props
+$(eval _var := $(call to-upper,$(1)))
+$(hide) echo "$(1)_selinux_fc=$(SELINUX_FC)" >> $(2)
+$(hide) echo "building_$(1)_image=$(BUILDING_$(_var)_IMAGE)" >> $(2)
+endef
+
+# $(1) the partition name (eg system)
+# $(2) the image prop file
+define add-common-ro-flags-to-image-props
+$(eval _var := $(call to-upper,$(1)))
+$(if $(BOARD_$(_var)IMAGE_EXTFS_INODE_COUNT),$(hide) echo "$(1)_extfs_inode_count=$(BOARD_$(_var)IMAGE_EXTFS_INODE_COUNT)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_EXTFS_RSV_PCT),$(hide) echo "$(1)_extfs_rsv_pct=$(BOARD_$(_var)IMAGE_EXTFS_RSV_PCT)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "$(1)_f2fs_sldc_flags=$(BOARD_$(_var)IMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "$(1)_f2fs_compress=$(BOARD_$(_var)IMAGE_FILE_SYSTEM_COMPRESS)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_FILE_SYSTEM_TYPE),$(hide) echo "$(1)_fs_type=$(BOARD_$(_var)IMAGE_FILE_SYSTEM_TYPE)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_JOURNAL_SIZE),$(hide) echo "$(1)_journal_size=$(BOARD_$(_var)IMAGE_JOURNAL_SIZE)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "$(1)_reserved_size=$(BOARD_$(_var)IMAGE_PARTITION_RESERVED_SIZE)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_PARTITION_SIZE),$(hide) echo "$(1)_size=$(BOARD_$(_var)IMAGE_PARTITION_SIZE)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "$(1)_squashfs_block_size=$(BOARD_$(_var)IMAGE_SQUASHFS_BLOCK_SIZE)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "$(1)_squashfs_compressor=$(BOARD_$(_var)IMAGE_SQUASHFS_COMPRESSOR)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "$(1)_squashfs_compressor_opt=$(BOARD_$(_var)IMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "$(1)_squashfs_disable_4k_align=$(BOARD_$(_var)IMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(2))
+$(if $(PRODUCT_$(_var)_BASE_FS_PATH),$(hide) echo "$(1)_base_fs_file=$(PRODUCT_$(_var)_BASE_FS_PATH)" >> $(2))
+$(eval _size := $(BOARD_$(_var)IMAGE_PARTITION_SIZE))
+$(eval _reserved := $(BOARD_$(_var)IMAGE_PARTITION_RESERVED_SIZE))
+$(eval _headroom := $(PRODUCT_$(_var)_HEADROOM))
+$(call add-common-flags-to-image-props,$(1),$(2))
+endef
+
 # $(1): the path of the output dictionary file
 # $(2): a subset of "system vendor cache userdata product system_ext oem odm vendor_dlkm odm_dlkm"
 # $(3): additional "key=value" pairs to append to the dictionary file.
 define generate-image-prop-dictionary
 $(if $(filter $(2),system),\
-    $(if $(BOARD_SYSTEMIMAGE_PARTITION_SIZE),$(hide) echo "system_size=$(BOARD_SYSTEMIMAGE_PARTITION_SIZE)" >> $(1))
     $(if $(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE),$(hide) echo "system_other_size=$(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "system_fs_type=$(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "system_f2fs_compress=$(BOARD_SYSTEMIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "system_f2fs_sldc_flags=$(BOARD_SYSTEMIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "system_extfs_inode_count=$(BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_EXTFS_RSV_PCT),$(hide) echo "system_extfs_rsv_pct=$(BOARD_SYSTEMIMAGE_EXTFS_RSV_PCT)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_JOURNAL_SIZE),$(hide) echo "system_journal_size=$(BOARD_SYSTEMIMAGE_JOURNAL_SIZE)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "system_squashfs_compressor=$(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "system_squashfs_compressor_opt=$(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "system_squashfs_block_size=$(BOARD_SYSTEMIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "system_squashfs_disable_4k_align=$(BOARD_SYSTEMIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
-    $(if $(PRODUCT_SYSTEM_BASE_FS_PATH),$(hide) echo "system_base_fs_file=$(PRODUCT_SYSTEM_BASE_FS_PATH)" >> $(1))
     $(if $(PRODUCT_SYSTEM_HEADROOM),$(hide) echo "system_headroom=$(PRODUCT_SYSTEM_HEADROOM)" >> $(1))
-    $(if $(BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "system_reserved_size=$(BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
-    $(hide) echo "system_selinux_fc=$(SELINUX_FC)" >> $(1)
-    $(hide) echo "building_system_image=$(BUILDING_SYSTEM_IMAGE)" >> $(1)
+    $(call add-common-ro-flags-to-image-props,system,$(1))
 )
 $(if $(filter $(2),system_other),\
     $(hide) echo "building_system_other_image=$(BUILDING_SYSTEM_OTHER_IMAGE)" >> $(1)
+    $(if $(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE),,
+        $(hide) echo "system_other_disable_sparse=true" >> $(1))
 )
 $(if $(filter $(2),userdata),\
     $(if $(BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "userdata_fs_type=$(BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
@@ -1627,116 +1658,37 @@ $(if $(filter $(2),userdata),\
     $(if $(PRODUCT_FS_CASEFOLD),$(hide) echo "needs_casefold=$(PRODUCT_FS_CASEFOLD)" >> $(1))
     $(if $(PRODUCT_QUOTA_PROJID),$(hide) echo "needs_projid=$(PRODUCT_QUOTA_PROJID)" >> $(1))
     $(if $(PRODUCT_FS_COMPRESSION),$(hide) echo "needs_compress=$(PRODUCT_FS_COMPRESSION)" >> $(1))
-    $(hide) echo "userdata_selinux_fc=$(SELINUX_FC)" >> $(1)
-    $(hide) echo "building_userdata_image=$(BUILDING_USERDATA_IMAGE)" >> $(1)
+    $(call add-common-flags-to-image-props,userdata,$(1))
 )
 $(if $(filter $(2),cache),\
     $(if $(BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "cache_fs_type=$(BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
     $(if $(BOARD_CACHEIMAGE_PARTITION_SIZE),$(hide) echo "cache_size=$(BOARD_CACHEIMAGE_PARTITION_SIZE)" >> $(1))
-    $(hide) echo "cache_selinux_fc=$(SELINUX_FC)" >> $(1)
-    $(hide) echo "building_cache_image=$(BUILDING_CACHE_IMAGE)" >> $(1)
+    $(call add-common-flags-to-image-props,cache,$(1))
 )
 $(if $(filter $(2),vendor),\
-    $(if $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "vendor_fs_type=$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "vendor_f2fs_compress=$(BOARD_VENDORIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "vendor_f2fs_sldc_flags=$(BOARD_VENDORIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_EXTFS_INODE_COUNT),$(hide) echo "vendor_extfs_inode_count=$(BOARD_VENDORIMAGE_EXTFS_INODE_COUNT)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_EXTFS_RSV_PCT),$(hide) echo "vendor_extfs_rsv_pct=$(BOARD_VENDORIMAGE_EXTFS_RSV_PCT)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_PARTITION_SIZE),$(hide) echo "vendor_size=$(BOARD_VENDORIMAGE_PARTITION_SIZE)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_JOURNAL_SIZE),$(hide) echo "vendor_journal_size=$(BOARD_VENDORIMAGE_JOURNAL_SIZE)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "vendor_squashfs_compressor=$(BOARD_VENDORIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "vendor_squashfs_compressor_opt=$(BOARD_VENDORIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "vendor_squashfs_block_size=$(BOARD_VENDORIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "vendor_squashfs_disable_4k_align=$(BOARD_VENDORIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
-    $(if $(PRODUCT_VENDOR_BASE_FS_PATH),$(hide) echo "vendor_base_fs_file=$(PRODUCT_VENDOR_BASE_FS_PATH)" >> $(1))
-    $(if $(BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "vendor_reserved_size=$(BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
-    $(hide) echo "vendor_selinux_fc=$(SELINUX_FC)" >> $(1)
-    $(hide) echo "building_vendor_image=$(BUILDING_VENDOR_IMAGE)" >> $(1)
+    $(call add-common-ro-flags-to-image-props,vendor,$(1))
 )
 $(if $(filter $(2),product),\
-    $(if $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "product_fs_type=$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "product_f2fs_compress=$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "product_f2fs_sldc_flags=$(BOARD_PRODUCTIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_EXTFS_INODE_COUNT),$(hide) echo "product_extfs_inode_count=$(BOARD_PRODUCTIMAGE_EXTFS_INODE_COUNT)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_EXTFS_RSV_PCT),$(hide) echo "product_extfs_rsv_pct=$(BOARD_PRODUCTIMAGE_EXTFS_RSV_PCT)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_PARTITION_SIZE),$(hide) echo "product_size=$(BOARD_PRODUCTIMAGE_PARTITION_SIZE)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_JOURNAL_SIZE),$(hide) echo "product_journal_size=$(BOARD_PRODUCTIMAGE_JOURNAL_SIZE)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "product_squashfs_compressor=$(BOARD_PRODUCTIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "product_squashfs_compressor_opt=$(BOARD_PRODUCTIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "product_squashfs_block_size=$(BOARD_PRODUCTIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "product_squashfs_disable_4k_align=$(BOARD_PRODUCTIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
-    $(if $(PRODUCT_PRODUCT_BASE_FS_PATH),$(hide) echo "product_base_fs_file=$(PRODUCT_PRODUCT_BASE_FS_PATH)" >> $(1))
-    $(if $(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "product_reserved_size=$(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
-    $(hide) echo "product_selinux_fc=$(SELINUX_FC)" >> $(1)
-    $(hide) echo "building_product_image=$(BUILDING_PRODUCT_IMAGE)" >> $(1)
+    $(call add-common-ro-flags-to-image-props,product,$(1))
 )
 $(if $(filter $(2),system_ext),\
-    $(if $(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "system_ext_fs_type=$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "system_ext_f2fs_compress=$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "system_ext_f2fs_sldc_flags=$(BOARD_SYSTEM_EXTIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_EXTFS_INODE_COUNT),$(hide) echo "system_ext_extfs_inode_count=$(BOARD_SYSTEM_EXTIMAGE_EXTFS_INODE_COUNT)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_EXTFS_RSV_PCT),$(hide) echo "system_ext_extfs_rsv_pct=$(BOARD_SYSTEM_EXTIMAGE_EXTFS_RSV_PCT)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE),$(hide) echo "system_ext_size=$(BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_JOURNAL_SIZE),$(hide) echo "system_ext_journal_size=$(BOARD_SYSTEM_EXTIMAGE_JOURNAL_SIZE)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "system_ext_squashfs_compressor=$(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "system_ext_squashfs_compressor_opt=$(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "system_ext_squashfs_block_size=$(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "system_ext_squashfs_disable_4k_align=$(BOARD_SYSTEM_EXTIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
-    $(if $(BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "system_ext_reserved_size=$(BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
-    $(hide) echo "system_ext_selinux_fc=$(SELINUX_FC)" >> $(1)
-    $(hide) echo "building_system_ext_image=$(BUILDING_SYSTEM_EXT_IMAGE)" >> $(1)
+    $(call add-common-ro-flags-to-image-props,system_ext,$(1))
 )
 $(if $(filter $(2),odm),\
-    $(if $(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "odm_fs_type=$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
-    $(if $(BOARD_ODMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "odm_extfs_inode_count=$(BOARD_ODMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
-    $(if $(BOARD_ODMIMAGE_EXTFS_RSV_PCT),$(hide) echo "odm_extfs_rsv_pct=$(BOARD_ODMIMAGE_EXTFS_RSV_PCT)" >> $(1))
-    $(if $(BOARD_ODMIMAGE_PARTITION_SIZE),$(hide) echo "odm_size=$(BOARD_ODMIMAGE_PARTITION_SIZE)" >> $(1))
-    $(if $(BOARD_ODMIMAGE_JOURNAL_SIZE),$(hide) echo "odm_journal_size=$(BOARD_ODMIMAGE_JOURNAL_SIZE)" >> $(1))
-    $(if $(BOARD_ODMIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "odm_squashfs_compressor=$(BOARD_ODMIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
-    $(if $(BOARD_ODMIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "odm_squashfs_compressor_opt=$(BOARD_ODMIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
-    $(if $(BOARD_ODMIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "odm_squashfs_block_size=$(BOARD_ODMIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
-    $(if $(BOARD_ODMIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "odm_squashfs_disable_4k_align=$(BOARD_ODMIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
-    $(if $(PRODUCT_ODM_BASE_FS_PATH),$(hide) echo "odm_base_fs_file=$(PRODUCT_ODM_BASE_FS_PATH)" >> $(1))
-    $(if $(BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "odm_reserved_size=$(BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
-    $(hide) echo "odm_selinux_fc=$(SELINUX_FC)" >> $(1)
-    $(hide) echo "building_odm_image=$(BUILDING_ODM_IMAGE)" >> $(1)
+    $(call add-common-ro-flags-to-image-props,odm,$(1))
 )
 $(if $(filter $(2),vendor_dlkm),\
-    $(if $(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "vendor_dlkm_fs_type=$(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "vendor_dlkm_f2fs_compress=$(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_COMPRESS)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "vendor_dlkm_f2fs_sldc_flags=$(BOARD_VENDOR_DLKMIMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "vendor_dlkm_extfs_inode_count=$(BOARD_VENDOR_DLKMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_EXTFS_RSV_PCT),$(hide) echo "vendor_dlkm_extfs_rsv_pct=$(BOARD_VENDOR_DLKMIMAGE_EXTFS_RSV_PCT)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE),$(hide) echo "vendor_dlkm_size=$(BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_JOURNAL_SIZE),$(hide) echo "vendor_dlkm_journal_size=$(BOARD_VENDOR_DLKMIMAGE_JOURNAL_SIZE)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "vendor_dlkm_squashfs_compressor=$(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "vendor_dlkm_squashfs_compressor_opt=$(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "vendor_dlkm_squashfs_block_size=$(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "vendor_dlkm_squashfs_disable_4k_align=$(BOARD_VENDOR_DLKMIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
-    $(if $(BOARD_VENDOR_DLKMIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "vendor_dlkm_reserved_size=$(BOARD_VENDOR_DLKMIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
-    $(hide) echo "vendor_dlkm_selinux_fc=$(SELINUX_FC)" >> $(1)
-    $(hide) echo "building_vendor_dlkm_image=$(BUILDING_VENDOR_DLKM_IMAGE)" >> $(1)
+    $(call add-common-ro-flags-to-image-props,vendor_dlkm,$(1))
 )
 $(if $(filter $(2),odm_dlkm),\
-    $(if $(BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "odm_dlkm_fs_type=$(BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
-    $(if $(BOARD_ODM_DLKMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "odm_dlkm_extfs_inode_count=$(BOARD_ODM_DLKMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
-    $(if $(BOARD_ODM_DLKMIMAGE_EXTFS_RSV_PCT),$(hide) echo "odm_dlkm_extfs_rsv_pct=$(BOARD_ODM_DLKMIMAGE_EXTFS_RSV_PCT)" >> $(1))
-    $(if $(BOARD_ODM_DLKMIMAGE_PARTITION_SIZE),$(hide) echo "odm_dlkm_size=$(BOARD_ODM_DLKMIMAGE_PARTITION_SIZE)" >> $(1))
-    $(if $(BOARD_ODM_DLKMIMAGE_JOURNAL_SIZE),$(hide) echo "odm_dlkm_journal_size=$(BOARD_ODM_DLKMIMAGE_JOURNAL_SIZE)" >> $(1))
-    $(if $(BOARD_ODM_DLKMIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "odm_dlkm_squashfs_compressor=$(BOARD_ODM_DLKMIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
-    $(if $(BOARD_ODM_DLKMIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "odm_dlkm_squashfs_compressor_opt=$(BOARD_ODM_DLKMIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
-    $(if $(BOARD_ODM_DLKMIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "odm_dlkm_squashfs_block_size=$(BOARD_ODM_DLKMIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
-    $(if $(BOARD_ODM_DLKMIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "odm_dlkm_squashfs_disable_4k_align=$(BOARD_ODM_DLKMIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
-    $(if $(BOARD_ODM_DLKMIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "odm_dlkm_reserved_size=$(BOARD_ODM_DLKMIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
-    $(hide) echo "odm_dlkm_selinux_fc=$(SELINUX_FC)" >> $(1)
-    $(hide) echo "building_odm_dlkm_image=$(BUILDING_ODM_DLKM_IMAGE)" >> $(1)
+    $(call add-common-ro-flags-to-image-props,odm_dlkm,$(1))
 )
 $(if $(filter $(2),oem),\
     $(if $(BOARD_OEMIMAGE_PARTITION_SIZE),$(hide) echo "oem_size=$(BOARD_OEMIMAGE_PARTITION_SIZE)" >> $(1))
     $(if $(BOARD_OEMIMAGE_JOURNAL_SIZE),$(hide) echo "oem_journal_size=$(BOARD_OEMIMAGE_JOURNAL_SIZE)" >> $(1))
     $(if $(BOARD_OEMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "oem_extfs_inode_count=$(BOARD_OEMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
     $(if $(BOARD_OEMIMAGE_EXTFS_RSV_PCT),$(hide) echo "oem_extfs_rsv_pct=$(BOARD_OEMIMAGE_EXTFS_RSV_PCT)" >> $(1))
-    $(hide) echo "oem_selinux_fc=$(SELINUX_FC)" >> $(1)
+    $(call add-common-flags-to-image-props,oem,$(1))
 )
 $(hide) echo "ext_mkuserimg=$(notdir $(MKEXTUSERIMG))" >> $(1)
 
@@ -2403,6 +2355,7 @@ endif # BUILDING_RAMDISK_IMAGE
 #
 # Note: it's intentional to skip signing for boot-debug.img, because it
 # can only be used if the device is unlocked with verification error.
+ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
@@ -2461,6 +2414,7 @@ bootimage_debug-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
 
 endif # TARGET_NO_KERNEL
 endif # INSTALLED_BOOTIMAGE_TARGET
+endif # BUILDING_VENDOR_BOOT_IMAGE is not true
 
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifeq ($(BUILDING_RAMDISK_IMAGE),true)
@@ -2606,6 +2560,7 @@ endif # BUILDING_RAMDISK_IMAGE
 #
 # Note: it's intentional to skip signing for boot-test-harness.img, because it
 # can only be used if the device is unlocked with verification error.
+ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 
@@ -2648,6 +2603,7 @@ bootimage_test_harness-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBT
 
 endif # TARGET_NO_KERNEL
 endif # INSTALLED_BOOTIMAGE_TARGET
+endif # BUILDING_VENDOR_BOOT_IMAGE is not true
 endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
 
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
@@ -2777,7 +2733,9 @@ $(INSTALLED_FILES_FILE): $(FULL_SYSTEMIMAGE_DEPS) $(FILESLIST) $(FILESLIST_UTIL)
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE))
+endif
 
 systemimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,systemimage)
@@ -3283,7 +3241,8 @@ define build-odmimage-target
   $(call pretty,"Target odm fs image: $(INSTALLED_ODMIMAGE_TARGET)")
   @mkdir -p $(TARGET_OUT_ODM)
   @mkdir -p $(odmimage_intermediates) && rm -rf $(odmimage_intermediates)/odm_image_info.txt
-  $(call generate-userimage-prop-dictionary, $(odmimage_intermediates)/odm_image_info.txt, skip_fsck=true)
+  $(call generate-image-prop-dictionary, $(odmimage_intermediates)/odm_image_info.txt, odm, \
+	  skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(TARGET_OUT_ODM) $(odmimage_intermediates)/odm_image_info.txt \
@@ -3334,7 +3293,8 @@ define build-vendor_dlkmimage-target
   $(call pretty,"Target vendor_dlkm fs image: $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)")
   @mkdir -p $(TARGET_OUT_VENDOR_DLKM)
   @mkdir -p $(vendor_dlkmimage_intermediates) && rm -rf $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt
-  $(call generate-userimage-prop-dictionary, $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt, skip_fsck=true)
+  $(call generate-image-prop-dictionary, $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt, \
+	  vendor_dlkm, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(TARGET_OUT_VENDOR_DLKM) $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt \
@@ -3385,7 +3345,8 @@ define build-odm_dlkmimage-target
   $(call pretty,"Target odm_dlkm fs image: $(INSTALLED_ODM_DLKMIMAGE_TARGET)")
   @mkdir -p $(TARGET_OUT_ODM_DLKM)
   @mkdir -p $(odm_dlkmimage_intermediates) && rm -rf $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt
-  $(call generate-userimage-prop-dictionary, $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt, skip_fsck=true)
+  $(call generate-image-prop-dictionary, $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt, \
+	  odm_dlkm, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(TARGET_OUT_ODM_DLKM) $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt \
@@ -5341,7 +5302,9 @@ $(NDK_SYSROOT_TARGET): $(SOONG_OUT_DIR)/ndk.timestamp
 	@echo Package NDK sysroot...
 	$(hide) tar cjf $@ -C $(SOONG_OUT_DIR) ndk
 
+ifeq ($(HOST_OS),linux)
 $(call dist-for-goals,sdk,$(NDK_SYSROOT_TARGET))
+endif
 
 ifeq ($(build_ota_package),true)
 # -----------------------------------------------------------------

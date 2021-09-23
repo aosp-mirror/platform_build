@@ -131,3 +131,8 @@ $(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(full_classes_jar)
 ifeq ($(TURBINE_ENABLED),false)
 $(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(full_classes_header_jar)))
 endif
+
+#######################################
+# Capture deps added after base_rules.mk
+include $(BUILD_NOTICE_FILE)
+#######################################
