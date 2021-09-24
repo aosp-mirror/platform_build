@@ -462,11 +462,11 @@ def _mkerror(file, message = ""):
 
 def _mkwarning(file, message = ""):
     """Prints warning."""
-    print("%s: warning: %s" % (file, message))
+    rblf_log(file, "warning", message, sep = ':')
 
 def _mkinfo(file, message = ""):
     """Prints info."""
-    print(message)
+    rblf_log(message)
 
 
 def __mkparse_pattern(pattern):
