@@ -334,6 +334,13 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.extend(["-T", str(prop_dict["timestamp"])])
     if "uuid" in prop_dict:
       build_command.extend(["-U", prop_dict["uuid"]])
+    compressor = None
+    if "erofs_default_compressor" in prop_dict:
+      compressor = prop_dict["erofs_default_compressor"]
+    if "erofs_compressor" in prop_dict:
+      compressor = prop_dict["erofs_compressor"]
+    if compressor:
+      build_command.extend(["-z", compressor])
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
@@ -607,6 +614,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
 
   common_props = (
       "extfs_sparse_flag",
+      "erofs_default_compressor",
       "erofs_sparse_flag",
       "squashfs_sparse_flag",
       "system_f2fs_compress",
@@ -625,6 +633,12 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   )
   for p in common_props:
     copy_prop(p, p)
+
+  suffixed_props = (
+      "erofs_compressor",
+  )
+  for p in suffixed_props:
+      copy_prop("{}_{}".format(mount_point, p), p)
 
   d["mount_point"] = mount_point
   if mount_point == "system":
