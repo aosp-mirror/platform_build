@@ -60,11 +60,6 @@ ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
   LOCAL_DEX_PREOPT :=
 endif
 
-# Don't preopt system server jars that are updatable.
-ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_APEX_SYSTEM_SERVER_JARS)))
-  LOCAL_DEX_PREOPT :=
-endif
-
 # if WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true and module is not in boot class path skip
 # Also preopt system server jars since selinux prevents system server from loading anything from
 # /data. If we don't do this they will need to be extracted which is not favorable for RAM usage
@@ -429,6 +424,16 @@ $(eval $(call copy-one-file,$(my_dexpreopt_config),$(my_dexpreopt_config_for_pos
 $(LOCAL_INSTALLED_MODULE): $(my_dexpreopt_config_for_postprocessing)
 
 ifdef LOCAL_DEX_PREOPT
+  # System server jars must be copied into predefined locations expected by
+  # dexpreopt. Copy rule must be exposed to Ninja (as it uses these files as
+  # inputs), so it cannot go in dexpreopt.sh.
+  ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_SYSTEM_SERVER_JARS)))
+    my_dexpreopt_jar_copy := $(OUT_DIR)/soong/system_server_dexjars/$(LOCAL_MODULE).jar
+    $(my_dexpreopt_jar_copy): PRIVATE_BUILT_MODULE := $(LOCAL_BUILT_MODULE)
+    $(my_dexpreopt_jar_copy): $(LOCAL_BUILT_MODULE)
+	  @cp $(PRIVATE_BUILT_MODULE) $@
+  endif
+
   my_dexpreopt_script := $(intermediates)/dexpreopt.sh
   my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
   .KATI_RESTAT: $(my_dexpreopt_script)
@@ -437,6 +442,7 @@ ifdef LOCAL_DEX_PREOPT
   $(my_dexpreopt_script): PRIVATE_GLOBAL_CONFIG := $(DEX_PREOPT_CONFIG_FOR_MAKE)
   $(my_dexpreopt_script): PRIVATE_MODULE_CONFIG := $(my_dexpreopt_config)
   $(my_dexpreopt_script): $(DEXPREOPT_GEN)
+  $(my_dexpreopt_script): $(my_dexpreopt_jar_copy)
   $(my_dexpreopt_script): $(my_dexpreopt_config) $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(DEX_PREOPT_CONFIG_FOR_MAKE)
 	@echo "$(PRIVATE_MODULE) dexpreopt gen"
 	$(DEXPREOPT_GEN) \
