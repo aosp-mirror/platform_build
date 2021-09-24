@@ -511,6 +511,7 @@ endef
 
 # Copy and check the value of each PRODUCT_BUILD_*_IMAGE variable
 $(foreach image, \
+    PVMFW \
     SYSTEM \
     SYSTEM_OTHER \
     VENDOR \
