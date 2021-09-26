@@ -23,13 +23,17 @@ from .cpp_warn_patterns import compile_patterns
 from .severity import Severity
 
 
-def tidy_warn_pattern(description, pattern):
+def tidy_warn(description, patterns):
   return {
       'category': 'C/C++',
       'severity': Severity.TIDY,
       'description': 'clang-tidy ' + description,
-      'patterns': [r'.*: .+\[' + pattern + r'\]$']
+      'patterns': patterns,
   }
+
+
+def tidy_warn_pattern(description, pattern):
+  return tidy_warn(description, [r'.*: .+\[' + pattern + r'\]$'])
 
 
 def simple_tidy_warn_pattern(description):
@@ -167,6 +171,8 @@ warn_patterns = [
     group_tidy_warn_pattern('abseil'),
     simple_tidy_warn_pattern('portability-simd-intrinsics'),
     group_tidy_warn_pattern('portability'),
+
+    tidy_warn('TIMEOUT', [r".*: warning: clang-tidy aborted "]),
 
     # warnings from clang-tidy's clang-analyzer checks
     analyzer_high('clang-analyzer-core, null pointer',
