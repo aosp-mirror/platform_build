@@ -100,6 +100,16 @@ define product-copy-files-by-pattern
 $(join $(patsubst %,$(1),$(3)),$(patsubst %,:$(2),$(3)))
 endef
 
+# Return empty unless the board matches
+define is-board-platform2
+$(filter $(1), $(TARGET_BOARD_PLATFORM))
+endef
+
+# Return empty unless the board is in the list
+define is-board-platform-in-list2
+$(filter $(1),$(TARGET_BOARD_PLATFORM))
+endef
+
 # ---------------------------------------------------------------
 # Check for obsolete PRODUCT- and APP- goals
 ifeq ($(CALLED_FROM_SETUP),true)
@@ -190,7 +200,11 @@ ifndef RBC_PRODUCT_CONFIG
 $(call import-products, $(current_product_makefile))
 else
   rbcscript=build/soong/scripts/rbc-run
-  rc := $(shell $(rbcscript) $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT) >$(OUT_DIR)/rbctemp.mk || echo $$?)
+  rc := $(shell $(rbcscript) $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT) >$(OUT_DIR)/rbctemp.mk 2>$(OUT_DIR)/rbctemp.stderr || echo $$?)
+  rbcerrors := $(file <(OUT_DIR)/rbctemp.stderr)
+  ifneq (,$(rbcerrors))
+    $(info $(rbcerrors))
+  endif
   ifneq (,$(rc))
     $(error product configuration converter failed: $(rc))
   endif
@@ -384,6 +398,12 @@ ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
 endif
 ifneq ($(filter-out 0 1,$(words $(PRODUCT_ADB_KEYS))),)
   $(error Only one file may be in PRODUCT_ADB_KEYS: $(PRODUCT_ADB_KEYS))
+endif
+
+ifdef PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
+  ifeq (,$(filter gsi_arm gsi_arm64 gsi_x86 gsi_x86_64,$(PRODUCT_NAME)))
+    $(error Only GSI products are allowed to set PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
+  endif
 endif
 
 ifndef PRODUCT_USE_DYNAMIC_PARTITIONS
