@@ -1197,6 +1197,7 @@ def BuildVendorPartitions(output_zip_path):
   logger.info("Building vendor partitions using vendor otatools.")
   vendor_tempdir = common.UnzipTemp(output_zip_path, [
       "META/*",
+      "SYSTEM/build.prop",
   ] + ["{}/*".format(p.upper()) for p in OPTIONS.vendor_partitions])
 
   # Disable various partitions that build based on misc_info fields.
@@ -1219,9 +1220,25 @@ def BuildVendorPartitions(output_zip_path):
     for key in sorted(vendor_misc_info):
       output.write("{}={}\n".format(key, vendor_misc_info[key]))
 
+  # Disable system partition by a placeholder of IMAGES/system.img,
+  # instead of removing SYSTEM folder.
+  # Because SYSTEM/build.prop is still needed for:
+  #   add_img_to_target_files.CreateImage ->
+  #   common.BuildInfo ->
+  #   common.BuildInfo.CalculateFingerprint
+  vendor_images_path = os.path.join(vendor_tempdir, "IMAGES")
+  if not os.path.exists(vendor_images_path):
+    os.makedirs(vendor_images_path)
+  with open(os.path.join(vendor_images_path, "system.img"), "w") as output:
+    pass
+
   # Disable care_map.pb as not all ab_partitions are available when
   # vendor otatools regenerates vendor images.
-  os.remove(os.path.join(vendor_tempdir, "META/ab_partitions.txt"))
+  if os.path.exists(os.path.join(vendor_tempdir, "META/ab_partitions.txt")):
+    os.remove(os.path.join(vendor_tempdir, "META/ab_partitions.txt"))
+  # Disable RADIO images
+  if os.path.exists(os.path.join(vendor_tempdir, "META/pack_radioimages.txt")):
+    os.remove(os.path.join(vendor_tempdir, "META/pack_radioimages.txt"))
 
   # Build vendor images using vendor otatools.
   vendor_otatools_dir = common.MakeTempDir(prefix="vendor_otatools_")
@@ -1229,6 +1246,7 @@ def BuildVendorPartitions(output_zip_path):
   cmd = [
       os.path.join(vendor_otatools_dir, "bin", "add_img_to_target_files"),
       "--is_signing",
+      "--add_missing",
       "--verbose",
       vendor_tempdir,
   ]
