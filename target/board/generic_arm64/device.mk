@@ -39,4 +39,7 @@ endif
 PRODUCT_BUILD_VENDOR_BOOT_IMAGE := false
 PRODUCT_BUILD_RECOVERY_IMAGE := false
 
+# GKI devices should use vendor_boot-debug.img instead.
+PRODUCT_BUILD_DEBUG_BOOT_IMAGE := false
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/generic_ramdisk.mk)
