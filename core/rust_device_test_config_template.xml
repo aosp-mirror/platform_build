@@ -15,6 +15,9 @@
 -->
 <!-- This test config file is auto-generated. -->
 <configuration description="Config to run {MODULE} device tests.">
+
+    {EXTRA_CONFIGS}
+
     <target_preparer class="com.android.tradefed.targetprep.PushFilePreparer">
         <option name="cleanup" value="true" />
         <option name="push" value="{MODULE}->/data/local/tmp/{MODULE}" />
