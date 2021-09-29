@@ -712,8 +712,10 @@ def AddVbmetaDigest(output_zip):
   # Calculate the vbmeta digest and put the result in to META/
   boot_images = OPTIONS.info_dict.get("boot_images")
   # Disable the digest calculation if the target_file is used as a container
-  # for boot images.
-  boot_container = boot_images and len(boot_images.split()) >= 2
+  # for boot images. A boot container might contain boot-5.4.img, boot-5.10.img
+  # etc., instead of just a boot.img and will fail in vbmeta digest calculation.
+  boot_container = boot_images and (
+      len(boot_images.split()) >= 2 or boot_images.split()[0] != 'boot.img')
   if (OPTIONS.info_dict.get("avb_enable") == "true" and not boot_container and
       OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true"):
     avbtool = OPTIONS.info_dict["avb_avbtool"]

@@ -278,6 +278,9 @@ _product_single_value_vars += \
     PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
     PRODUCT_USES_DEFAULT_ART_CONFIG \
 
+# The file name for the boot image with a debug ramdisk.
+_product_single_value_vars += PRODUCT_DEBUG_RAMDISK_BOOT_IMAGE_NAME
+
 _product_single_value_vars += PRODUCT_SYSTEM_SERVER_COMPILER_FILTER
 # Per-module sanitizer configs
 _product_list_vars += PRODUCT_SANITIZER_MODULE_CONFIGS
@@ -428,6 +431,11 @@ _product_single_value_vars += PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY
 _product_list_vars += PRODUCT_INTER_PARTITION_JAVA_LIBRARY_ALLOWLIST
 
 _product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
+
+# Install a copy of the debug policy to the system_ext partition, and allow
+# init-second-stage to load debug policy from system_ext.
+# This option is only meant to be set by GSI products.
+_product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
