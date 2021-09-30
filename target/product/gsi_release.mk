@@ -78,3 +78,7 @@ MODULE_BUILD_FROM_SOURCE := true
 # Additional settings used in all GSI builds
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.crypto.metadata_init_delete_all_keys.enabled=false \
+
+# Renames boot-debug-*.img to boot-with-debug-ramdisk-*.img to avoid confusion
+# with GKI boot images.
+PRODUCT_DEBUG_RAMDISK_BOOT_IMAGE_NAME := boot-with-debug-ramdisk

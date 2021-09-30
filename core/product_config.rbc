@@ -401,8 +401,8 @@ def _file_wildcard_exists(file_pattern):
 
 def _find_and_copy(pattern, from_dir, to_dir):
     """Return a copy list for the files matching the pattern."""
-    return ["%s/%s:%s/%s" % (
-        from_dir, f, to_dir, f) for f in rblf_find_files(from_dir, pattern, only_files=1)]
+    return sorted(["%s/%s:%s/%s" % (
+        from_dir, f, to_dir, f) for f in rblf_find_files(from_dir, pattern, only_files=1)])
 
 def _filter_out(pattern, text):
     """Return all the words from `text' that do not match any word in `pattern'.
@@ -462,11 +462,11 @@ def _mkerror(file, message = ""):
 
 def _mkwarning(file, message = ""):
     """Prints warning."""
-    print("%s: warning: %s" % (file, message))
+    rblf_log(file, "warning", message, sep = ':')
 
 def _mkinfo(file, message = ""):
     """Prints info."""
-    print(message)
+    rblf_log(message)
 
 
 def __mkparse_pattern(pattern):
