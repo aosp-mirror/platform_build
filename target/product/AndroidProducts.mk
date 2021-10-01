@@ -67,7 +67,6 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/sdk_phone_armv7.mk \
     $(LOCAL_DIR)/sdk_phone_x86_64.mk \
     $(LOCAL_DIR)/sdk_phone_x86.mk \
-    $(LOCAL_DIR)/sdk_slim_x86_64.mk \
     $(LOCAL_DIR)/sdk_x86_64.mk \
     $(LOCAL_DIR)/sdk_x86.mk \
 
