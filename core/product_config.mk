@@ -201,9 +201,9 @@ $(call import-products, $(current_product_makefile))
 else
   rbcscript=build/soong/scripts/rbc-run
   rc := $(shell $(rbcscript) $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT) >$(OUT_DIR)/rbctemp.mk 2>$(OUT_DIR)/rbctemp.stderr || echo $$?)
-  rbcerrors := $(file <(OUT_DIR)/rbctemp.stderr)
+  rbcerrors := $(file <$(OUT_DIR)/rbctemp.stderr)
   ifneq (,$(rbcerrors))
-    $(info $(rbcerrors))
+    $(warning $(rbcerrors))
   endif
   ifneq (,$(rc))
     $(error product configuration converter failed: $(rc))
