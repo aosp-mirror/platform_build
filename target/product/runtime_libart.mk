@@ -127,10 +127,6 @@ PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.cmdline?=verify \
     pm.dexopt.shared?=speed
 
-# Pass file with the list of updatable boot class path packages to dex2oat.
-PRODUCT_SYSTEM_PROPERTIES += \
-    dalvik.vm.dex2oat-updatable-bcp-packages-file=/system/etc/updatable-bcp-packages.txt
-
 # Enable resolution of startup const strings.
 PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.dex2oat-resolve-startup-strings=true
