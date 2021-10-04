@@ -1587,6 +1587,10 @@ superimage_empty: $(INSTALLED_SUPERIMAGE_EMPTY_TARGET)
 .PHONY: bootimage
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
+ifeq (true,$(PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST))
+$(call dist-for-goals, bootimage, $(INSTALLED_BOOTIMAGE_TARGET))
+endif
+
 .PHONY: bootimage_debug
 bootimage_debug: $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
 
