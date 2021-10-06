@@ -3361,23 +3361,29 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 
 # -----------------------------------------------------------------
 # Protected VM firmware image
-ifdef BOARD_PREBUILT_PVMFWIMAGE
+ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 INSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img
+INTERNAL_PREBUILT_PVMFWIMAGE := packages/modules/Virtualization/pvmfw/pvmfw.img
+
+ifdef BOARD_PREBUILT_PVMFWIMAGE
+BUILT_PVMFWIMAGE_TARGET := $(BOARD_PREBUILT_PVMFWIMAGE)
+else ifeq ($(BUILDING_PVMFW_IMAGE),true)
+BUILT_PVMFWIMAGE_TARGET := $(INTERNAL_PREBUILT_PVMFWIMAGE)
+endif
 
 ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_PVMFWIMAGE_TARGET): $(BOARD_PREBUILT_PVMFWIMAGE) $(AVBTOOL) $(BOARD_AVB_PVMFW_KEY_PATH)
-	cp $(BOARD_PREBUILT_PVMFWIMAGE) $@
+$(INSTALLED_PVMFWIMAGE_TARGET): $(BUILT_PVMFWIMAGE_TARGET) $(AVBTOOL) $(BOARD_AVB_PVMFW_KEY_PATH)
+	cp $(BUILT_PVMFWIMAGE_TARGET) $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
 	    --partition_size $(BOARD_PVMFWIMG_PARTITION_SIZE) \
 	    --partition_name pvmfw $(INTERNAL_AVB_PVMFW_SIGNING_ARGS) \
 	    $(BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS)
 else
-$(INSTALLED_PVMFWIMAGE_TARGET): $(BOARD_PREBUILT_PVMFWIMAGE)
-	cp $(BOARD_PREBUILT_PVMFWIMAGE) $@
+$(eval $(call copy-one-file,$(BUILT_PVMFWIMAGE_TARGET),$(INSTALLED_PVMFWIMAGE_TARGET)))
 endif
 
-endif # BOARD_PREBUILT_PVMFWIMAGE
+endif # BOARD_USES_PVMFWIMAGE
 
 # Returns a list of image targets corresponding to the given list of partitions. For example, it
 # returns "$(INSTALLED_PRODUCTIMAGE_TARGET)" for "product", or "$(INSTALLED_SYSTEMIMAGE_TARGET)
@@ -4552,7 +4558,7 @@ ifdef BOARD_AVB_DTBO_KEY_PATH
 endif # BOARD_AVB_DTBO_KEY_PATH
 endif # BOARD_AVB_ENABLE
 endif # BOARD_PREBUILT_DTBOIMAGE
-ifdef BOARD_PREBUILT_PVMFWIMAGE
+ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) echo "has_pvmfw=true" >> $@
 ifeq ($(BOARD_AVB_ENABLE),true)
 	$(hide) echo "pvmfw_size=$(BOARD_PVMFWIMG_PARTITION_SIZE)" >> $@
@@ -4563,7 +4569,7 @@ ifdef BOARD_AVB_PVMFW_KEY_PATH
 	$(hide) echo "avb_pvmfw_rollback_index_location=$(BOARD_AVB_PVMFW_ROLLBACK_INDEX_LOCATION)" >> $@
 endif # BOARD_AVB_PVMFW_KEY_PATH
 endif # BOARD_AVB_ENABLE
-endif # BOARD_PREBUILT_PVMFWIMAGE
+endif # BOARD_USES_PVMFWIMAGE
 	$(call dump-dynamic-partitions-info,$@)
 	@# VINTF checks
 ifeq ($(PRODUCT_ENFORCE_VINTF_MANIFEST),true)
