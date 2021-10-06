@@ -84,7 +84,7 @@ def _printvars(state):
                         print("SOONG_CONFIG_" + nsname, ":=", " ".join(nsvars.keys()))
                     for var, val in sorted(nsvars.items()):
                         __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
-            elif attr not in globals_base:
+            elif attr not in globals_base or globals_base[attr] != val:
                 __print_attr(attr, val)
 
 def __printvars_rearrange_list(value_list):

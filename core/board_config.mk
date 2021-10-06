@@ -184,7 +184,20 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
+# TODO(colefaust) change this if to RBC_PRODUCT_CONFIG when
+# the board configuration is known to work on everything
+# the product config works on.
+ifndef RBC_BOARD_CONFIG
 include $(board_config_mk)
+else
+  rc := $(shell build/soong/scripts/rbc-run $(board_config_mk) \
+      BUILDING_GSI=$(BUILDING_GSI) >$(OUT_DIR)/rbcboardtemp.mk || echo $$?)
+  ifneq (,$(rc))
+    $(error board configuration converter failed: $(rc))
+  endif
+
+  include $(OUT_DIR)/rbcboardtemp.mk
+endif
 
 ifneq (,$(and $(TARGET_ARCH),$(TARGET_ARCH_SUITE)))
   $(error $(board_config_mk) erroneously sets both TARGET_ARCH and TARGET_ARCH_SUITE)
