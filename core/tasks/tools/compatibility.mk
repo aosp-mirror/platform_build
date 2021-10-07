@@ -80,13 +80,18 @@ $(eval $(call combine-notice-files, html, \
 compatibility_zip_deps += $(test_suite_notice_txt)
 compatibility_zip_resources += $(test_suite_notice_txt)
 
+compatibility_tests_list_zip := $(out_dir)-tests_list.zip
+
 compatibility_zip := $(out_dir).zip
+$(compatibility_zip) : .KATI_IMPLICIT_OUTPUTS := $(compatibility_tests_list_zip)
 $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
 $(compatibility_zip): PRIVATE_TOOLS := $(test_tools) $(test_suite_prebuilt_tools)
 $(compatibility_zip): PRIVATE_SUITE_NAME := $(test_suite_name)
 $(compatibility_zip): PRIVATE_DYNAMIC_CONFIG := $(test_suite_dynamic_config)
 $(compatibility_zip): PRIVATE_RESOURCES := $(compatibility_zip_resources)
 $(compatibility_zip): PRIVATE_JDK := $(test_suite_jdk)
+$(compatibility_zip): PRIVATE_tests_list := $(out_dir)-tests_list
+$(compatibility_zip): PRIVATE_tests_list_zip := $(compatibility_tests_list_zip)
 $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 # Make dir structure
 	mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases
@@ -99,6 +104,11 @@ $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 	$(SOONG_ZIP) -d -o $@.tmp -C $(dir $@) -l $@.list
 	$(MERGE_ZIPS) $@ $@.tmp $(PRIVATE_JDK)
 	rm -f $@.tmp
+# Build a list of tests
+	rm -f $(PRIVATE_tests_list)
+	$(hide) grep -e .*\\.config$$ $@.list | sed s%$(PRIVATE_OUT_DIR)/testcases/%%g > $(PRIVATE_tests_list)
+	$(SOONG_ZIP) -d -o $(PRIVATE_tests_list_zip) -j -f $(PRIVATE_tests_list)
+	rm -f $(PRIVATE_tests_list)
 
 # Reset all input variables
 test_suite_name :=
