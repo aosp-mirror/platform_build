@@ -228,7 +228,7 @@ _product_single_value_vars += PRODUCT_SUPPORTS_VERITY_FEC
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
 # List of system_server jars delivered via apex. Format = <apex name>:<jar name>.
-_product_list_vars += PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS
+_product_list_vars += PRODUCT_APEX_SYSTEM_SERVER_JARS
 # If true, then suboptimal order of system server jars does not cause an error.
 _product_single_value_vars += PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS
 
@@ -368,7 +368,7 @@ _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
 
 # A list of <overridden-apex>:<override-apex> pairs that specifies APEX module
 # overrides to be applied to the APEX names in the boot jar variables
-# (PRODUCT_BOOT_JARS, PRODUCT_UPDATABLE_BOOT_JARS etc).
+# (PRODUCT_BOOT_JARS, PRODUCT_APEX_BOOT_JARS etc).
 _product_list_vars += PRODUCT_BOOT_JAR_MODULE_OVERRIDES
 
 # Controls for whether different partitions are built for the current product.
@@ -389,8 +389,9 @@ _product_single_value_vars += PRODUCT_BUILD_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SUPER_EMPTY_IMAGE
 
-# List of boot jars delivered via apex
-_product_list_vars += PRODUCT_UPDATABLE_BOOT_JARS
+# List of boot jars delivered via updatable APEXes, following the same format as
+# PRODUCT_BOOT_JARS.
+_product_list_vars += PRODUCT_APEX_BOOT_JARS
 
 # If set, device uses virtual A/B.
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA
