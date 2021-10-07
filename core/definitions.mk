@@ -95,7 +95,6 @@ ANDROID_RESOURCE_GENERATED_CLASSES := 'R.class' 'R$$*.class' 'Manifest.class' 'M
 
 # Display names for various build targets
 TARGET_DISPLAY := target
-AUX_DISPLAY := aux
 HOST_DISPLAY := host
 HOST_CROSS_DISPLAY := host cross
 
@@ -108,7 +107,7 @@ ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 # All tests that should be skipped in presubmit check.
 ALL_DISABLED_PRESUBMIT_TESTS :=
 
-# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITES
+# All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITE
 ALL_COMPATIBILITY_SUITES :=
 
 # All compatibility suite files to dist.
@@ -525,23 +524,125 @@ define reverse-list
 $(if $(1),$(call reverse-list,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
 endef
 
-define def-host-aux-target
-$(eval _idf_val_:=$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST,$(if $(strip $(LOCAL_IS_AUX_MODULE)),AUX,))) \
-$(_idf_val_)
+###########################################################
+## Sometimes a notice dependency will reference an unadorned
+## module name that only appears in ALL_MODULES adorned with
+## an ARCH suffix or a `host_cross_` prefix.
+##
+## After all of the modules are processed in base_rules.mk,
+## replace all such dependencies with every matching adorned
+## module name.
+###########################################################
+
+define fix-notice-deps
+$(strip \
+  $(eval _all_module_refs := \
+    $(sort \
+      $(foreach m,$(sort $(ALL_MODULES)), \
+        $(ALL_MODULES.$(m).NOTICE_DEPS) \
+      ) \
+    ) \
+  ) \
+  $(foreach m, $(_all_module_refs), \
+    $(eval _lookup.$(m) := \
+      $(sort \
+        $(if $(strip $(ALL_MODULES.$(m).PATH)), \
+          $(m), \
+          $(filter $(m)_32 $(m)_64 host_cross_$(m) host_cross_$(m)_32 host_cross_$(m)_64, $(ALL_MODULES)) \
+        ) \
+      ) \
+    ) \
+  ) \
+  $(foreach m, $(ALL_MODULES), \
+    $(eval ALL_MODULES.$(m).NOTICE_DEPS := \
+      $(sort \
+         $(foreach d,$(sort $(ALL_MODULES.$(m).NOTICE_DEPS)), \
+           $(_lookup.$(d)) \
+        ) \
+      ) \
+    ) \
+  ) \
+)
+endef
+
+###########################################################
+## Target directory for license metadata files.
+###########################################################
+define license-metadata-dir
+$(call generated-sources-dir-for,META,lic,)
+endef
+
+###########################################################
+## License metadata build rule for my_register_name $1
+###########################################################
+define license-metadata-rule
+$(strip $(eval _dir := $(call license-metadata-dir)))
+$(strip $(eval _deps := $(sort $(filter-out $(_dir)/$(1).meta_lic,$(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS), $(_dir)/$(d).meta_lic)))))
+$(strip $(eval _notices := $(sort $(ALL_MODULES.$(1).NOTICES))))
+$(strip $(eval _tgts := $(sort $(ALL_MODULES.$(1).BUILT) $(ALL_MODULES.$(1).INSTALLED))))
+$(foreach b,$(_tgts),
+$(_dir)/$(b).meta_module ::
+	mkdir -p $$(dir $$@)
+	echo $(_dir)/$(1).meta_lic >> $$@
+	sort -u $$@ -o $$@
+
+)
+$(_dir)/$(1).meta_lic: PRIVATE_KINDS := $(sort $(ALL_MODULES.$(1).LICENSE_KINDS))
+$(_dir)/$(1).meta_lic: PRIVATE_CONDITIONS := $(sort $(ALL_MODULES.$(1).LICENSE_CONDITIONS))
+$(_dir)/$(1).meta_lic: PRIVATE_NOTICES := $(_notices)
+$(_dir)/$(1).meta_lic: PRIVATE_NOTICE_DEPS := $(_deps)
+$(_dir)/$(1).meta_lic: PRIVATE_TARGETS := $(_tgts)
+$(_dir)/$(1).meta_lic: PRIVATE_IS_CONTAINER := $(ALL_MODULES.$(1).IS_CONTAINER)
+$(_dir)/$(1).meta_lic: PRIVATE_PACKAGE_NAME := $(strip $(ALL_MODULES.$(1).LICENSE_PACKAGE_NAME))
+$(_dir)/$(1).meta_lic: PRIVATE_INSTALL_MAP := $(sort $(ALL_MODULES.$(1).LICENSE_INSTALL_MAP))
+$(_dir)/$(1).meta_lic : $(_deps) $(_notices) $(foreach b,$(_tgts), $(_dir)/$(b).meta_module) build/make/tools/build-license-metadata.sh
+	rm -f $$@
+	mkdir -p $$(dir $$@)
+	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(PRIVATE_IS_CONTAINER),-is_container) -p $$(PRIVATE_PACKAGE_NAME) -o $$@
+
+.PHONY: $(1).meta_lic
+$(1).meta_lic : $(_dir)/$(1).meta_lic
+
+$(strip $(eval _mifs := $(sort $(ALL_MODULES.$(1).MODULE_INSTALLED_FILENAMES))))
+$(strip $(eval _infs := $(sort $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE))))
+
+# Emit each installed notice file rule if it references the current module
+$(if $(_infs),$(foreach inf,$(_infs),
+$(if $(strip $(filter $(1),$(INSTALLED_NOTICE_FILES.$(inf).MODULE))),
+$(strip $(eval _mif := $(firstword $(foreach m,$(_mifs),$(if $(filter %/src/$(m).txt,$(inf)),$(m))))))
+
+$(inf) : $(_dir)/$(1).meta_lic
+$(inf): PRIVATE_INSTALLED_MODULE := $(_mif)
+$(inf) : PRIVATE_NOTICES := $(_notices)
+
+$(inf): $(_notices)
+	@echo Notice file: $$< -- $$@
+	mkdir -p $$(dir $$@)
+	awk 'FNR==1 && NR > 1 {print "\n"} {print}' $$(PRIVATE_NOTICES) > $$@
+
+)))
+
+endef
+
+###########################################################
+## Declares a license metadata build rule for ALL_MODULES
+###########################################################
+define build-license-metadata
+$(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m))))
 endef
 
 ###########################################################
 ## Returns correct _idfPrefix from the list:
-##   { HOST, HOST_CROSS, AUX, TARGET }
+##   { HOST, HOST_CROSS, TARGET }
 ###########################################################
 # the following rules checked in order:
-# ($1 is in {AUX, HOST_CROSS} => $1;
+# ($1 is in {HOST_CROSS} => $1;
 # ($1 is empty) => TARGET;
 # ($2 is not empty) => HOST_CROSS;
 # => HOST;
 define find-idf-prefix
 $(strip \
-    $(eval _idf_pfx_:=$(strip $(filter AUX HOST_CROSS,$(1)))) \
+    $(eval _idf_pfx_:=$(strip $(filter HOST_CROSS,$(1)))) \
     $(eval _idf_pfx_:=$(if $(strip $(1)),$(if $(_idf_pfx_),$(_idf_pfx_),$(if $(strip $(2)),HOST_CROSS,HOST)),TARGET)) \
     $(_idf_pfx_)
 )
@@ -557,7 +658,7 @@ endef
 
 # $(1): target class, like "APPS"
 # $(2): target name, like "NotePad"
-# $(3): { HOST, HOST_CROSS, AUX, <empty (TARGET)>, <other non-empty (HOST)> }
+# $(3): { HOST, HOST_CROSS, <empty (TARGET)>, <other non-empty (HOST)> }
 # $(4): if non-empty, force the intermediates to be COMMON
 # $(5): if non-empty, force the intermediates to be for the 2nd arch
 # $(6): if non-empty, force the intermediates to be for the host cross os
@@ -594,7 +695,7 @@ $(strip \
         $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-intermediates-dir)) \
     $(if $(strip $(LOCAL_MODULE)),, \
         $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-intermediates-dir)) \
-    $(call intermediates-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(call def-host-aux-target),$(1),$(2),$(3)) \
+    $(call intermediates-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST),$(1),$(2),$(3)) \
 )
 endef
 
@@ -609,7 +710,7 @@ endef
 
 # $(1): target class, like "APPS"
 # $(2): target name, like "NotePad"
-# $(3): { HOST, HOST_CROSS, AUX, <empty (TARGET)>, <other non-empty (HOST)> }
+# $(3): { HOST, HOST_CROSS, <empty (TARGET)>, <other non-empty (HOST)> }
 # $(4): if non-empty, force the generated sources to be COMMON
 define generated-sources-dir-for
 $(strip \
@@ -639,9 +740,45 @@ $(strip \
         $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-generated-sources-dir)) \
     $(if $(strip $(LOCAL_MODULE)),, \
         $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-generated-sources-dir)) \
-    $(call generated-sources-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(call def-host-aux-target),$(1)) \
+    $(call generated-sources-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST),$(1)) \
 )
 endef
+
+###########################################################
+## The packaging directory for a module.  Similar to intermedates, but
+## in a location that will be wiped by an m installclean.
+###########################################################
+
+# $(1): subdir in PACKAGING
+# $(2): target class, like "APPS"
+# $(3): target name, like "NotePad"
+# $(4): { HOST, HOST_CROSS, <empty (TARGET)>, <other non-empty (HOST)> }
+define packaging-dir-for
+$(strip \
+    $(eval _pdfClass := $(strip $(2))) \
+    $(if $(_pdfClass),, \
+        $(error $(LOCAL_PATH): Class not defined in call to generated-sources-dir-for)) \
+    $(eval _pdfName := $(strip $(3))) \
+    $(if $(_pdfName),, \
+        $(error $(LOCAL_PATH): Name not defined in call to generated-sources-dir-for)) \
+    $(call intermediates-dir-for,PACKAGING,$(1),$(4))/$(_pdfClass)/$(_pdfName)_intermediates \
+)
+endef
+
+# Uses LOCAL_MODULE_CLASS, LOCAL_MODULE, and LOCAL_IS_HOST_MODULE
+# to determine the packaging directory.
+#
+# $(1): subdir in PACKAGING
+define local-packaging-dir
+$(strip \
+    $(if $(strip $(LOCAL_MODULE_CLASS)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-generated-sources-dir)) \
+    $(if $(strip $(LOCAL_MODULE)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-generated-sources-dir)) \
+    $(call packaging-dir-for,$(1),$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST)) \
+)
+endef
+
 
 ###########################################################
 ## Convert a list of short module names (e.g., "framework", "Browser")
@@ -1514,89 +1651,6 @@ $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
 $(hide) mv -f $@.tmp $@
 endef
 
-# $(1): the full path of the source static library.
-# $(2): the full path of the destination static library.
-define _extract-and-include-single-aux-whole-static-lib
-$(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
-    rm -rf $$ldir; \
-    mkdir -p $$ldir; \
-    cp $(1) $$ldir; \
-    lib_to_include=$$ldir/$(notdir $(1)); \
-    filelist=; \
-    subdir=0; \
-    for f in `$(PRIVATE_AR) t $(1)`; do \
-        if [ -e $$ldir/$$f ]; then \
-            mkdir $$ldir/$$subdir; \
-            ext=$$subdir/; \
-            subdir=$$((subdir+1)); \
-            $(PRIVATE_AR) m $$lib_to_include $$f; \
-        else \
-            ext=; \
-        fi; \
-        $(PRIVATE_AR) p $$lib_to_include $$f > $$ldir/$$ext$$f; \
-        filelist="$$filelist $$ldir/$$ext$$f"; \
-    done ; \
-    $(PRIVATE_AR) $(AUX_GLOBAL_ARFLAGS) $(2) $$filelist
-
-endef
-
-define extract-and-include-aux-whole-static-libs
-$(call extract-and-include-whole-static-libs-first, $(firstword $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)),$(1))
-$(foreach lib,$(wordlist 2,999,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)), \
-    $(call _extract-and-include-single-aux-whole-static-lib, $(lib), $(1)))
-endef
-
-# Explicitly delete the archive first so that ar doesn't
-# try to add to an existing archive.
-define transform-o-to-aux-static-lib
-@echo "$($(PRIVATE_PREFIX)DISPLAY) StaticLib: $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-@rm -f $@ $@.tmp
-$(call extract-and-include-aux-whole-static-libs,$@.tmp)
-$(call split-long-arguments,$(PRIVATE_AR) \
-    $(AUX_GLOBAL_ARFLAGS) $@.tmp,$(PRIVATE_ALL_OBJECTS))
-$(hide) mv -f $@.tmp $@
-endef
-
-define transform-o-to-aux-executable-inner
-$(hide) $(PRIVATE_CXX_LINK) -pie \
-  -Bdynamic \
-  -Wl,--gc-sections \
-  $(PRIVATE_ALL_OBJECTS) \
-  -Wl,--whole-archive \
-  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-  -Wl,--no-whole-archive \
-  $(PRIVATE_ALL_STATIC_LIBRARIES) \
-  $(PRIVATE_LDFLAGS) \
-  -o $@
-endef
-
-define transform-o-to-aux-executable
-@echo "$(AUX_DISPLAY) Executable: $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-$(transform-o-to-aux-executable-inner)
-endef
-
-define transform-o-to-aux-static-executable-inner
-$(hide) $(PRIVATE_CXX_LINK) \
-  -Bstatic \
-  -Wl,--gc-sections \
-  $(PRIVATE_ALL_OBJECTS) \
-  -Wl,--whole-archive \
-  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-  -Wl,--no-whole-archive \
-  $(PRIVATE_ALL_STATIC_LIBRARIES) \
-  $(PRIVATE_LDFLAGS) \
-  -Wl,-Map=$(@).map \
-  -o $@
-endef
-
-define transform-o-to-aux-static-executable
-@echo "$(AUX_DISPLAY) StaticExecutable: $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-$(transform-o-to-aux-static-executable-inner)
-endef
-
 ###########################################################
 ## Commands for running host ar
 ###########################################################
@@ -1694,7 +1748,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
   $(PRIVATE_ALL_STATIC_LIBRARIES) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-  $(if $(filter true,$(NATIVE_COVERAGE)),-lgcov) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
   -o $@ \
@@ -1734,7 +1787,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
-  $(PRIVATE_TARGET_LIBATOMIC) \
   $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
   $(PRIVATE_LDFLAGS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
@@ -1769,7 +1821,6 @@ $(hide) $(PRIVATE_CXX_LINK) -pie \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
-  $(PRIVATE_TARGET_LIBATOMIC) \
   $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
   $(PRIVATE_LDFLAGS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
@@ -1813,7 +1864,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(filter %libc.a %libc.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
   $(filter %libc_nomalloc.a %libc_nomalloc.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
-  $(PRIVATE_TARGET_LIBATOMIC) \
   $(filter %libcompiler_rt.a %libcompiler_rt.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
   $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
   -Wl,--end-group \
@@ -1841,7 +1891,6 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
   $(PRIVATE_ALL_STATIC_LIBRARIES) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-  $(if $(filter true,$(NATIVE_COVERAGE)),-lgcov) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
   $(foreach path,$(PRIVATE_RPATHS), \
@@ -2108,7 +2157,7 @@ $(if $(PRIVATE_JAR_PACKAGES), \
 $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
     $(foreach pkg, $(PRIVATE_JAR_EXCLUDE_PACKAGES), \
         $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))))
-$(hide) $(JAR) -cf $@ $(call jar-args-sorted-files-in-directory,$(PRIVATE_CLASS_INTERMEDIATES_DIR))
+$(hide) $(SOONG_ZIP) -jar -o $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) -D $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
@@ -2135,6 +2184,17 @@ else \
 fi
 $(hide) $(ZIPTIME) $@.tmp
 $(hide) $(call commit-change-for-toc,$@)
+endef
+
+# Runs jarjar on an input file.  Jarjar doesn't exit with a nonzero return code
+# when there is a syntax error in a rules file and doesn't write the output
+# file, so removes the output file before running jarjar and check if it exists
+# after running jarjar.
+define transform-jarjar
+echo $($(PRIVATE_PREFIX)DISPLAY) JarJar: $@
+rm -f $@
+$(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+[ -e $@ ] || (echo "Missing output file"; exit 1)
 endef
 
 # Moves $1.tmp to $1 if necessary. This is designed to be used with
@@ -2320,6 +2380,15 @@ $(hide) if ! $(ZIPALIGN) -c -p 4 $@ >/dev/null ; then \
   fi
 endef
 
+# Verifies ZIP alignment of a package.
+#
+define check-package-alignment
+$(hide) if ! $(ZIPALIGN) -c -p 4 $@ >/dev/null ; then \
+    $(call echo-error,$@,Improper package alignment); \
+    exit 1; \
+  fi
+endef
+
 # Compress a package using the standard gzip algorithm.
 define compress-package
 $(hide) \
@@ -2384,12 +2453,26 @@ endef
 #
 define uncompress-prebuilt-embedded-jni-libs
   if (zipinfo $@ 'lib/*.so' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
-    $(ZIP2ZIP) -i $@ -o $@.tmp -0 'lib/**/*.so' \
-      $(if $(PRIVATE_EMBEDDED_JNI_LIBS), \
-        -x 'lib/**/*.so' \
-        $(addprefix -X ,$(PRIVATE_EMBEDDED_JNI_LIBS))) && \
-    mv -f $@.tmp $@ ; \
+    $(ZIP2ZIP) -i $@ -o $@.tmp -0 'lib/**/*.so' && mv -f $@.tmp $@ ; \
   fi
+endef
+
+# Verifies shared JNI libraries and dex files in an apk are uncompressed.
+#
+define check-jni-dex-compression
+  if (zipinfo $@ 'lib/*.so' '*.dex' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
+    $(call echo-error,$@,Contains compressed JNI libraries and/or dex files); \
+    exit 1; \
+  fi
+endef
+
+# Remove unwanted shared JNI libraries embedded in an apk.
+#
+define remove-unwanted-prebuilt-embedded-jni-libs
+  $(if $(PRIVATE_EMBEDDED_JNI_LIBS), \
+    $(ZIP2ZIP) -i $@ -o $@.tmp \
+      -x 'lib/**/*.so' $(addprefix -X ,$(PRIVATE_EMBEDDED_JNI_LIBS)) && \
+    mv -f $@.tmp $@)
 endef
 
 # TODO(joeo): If we can ever upgrade to post 3.81 make and get the
@@ -2479,12 +2562,17 @@ endef
 # $(1): source file
 # $(2): destination file
 define copy-init-script-file-checked
+ifdef TARGET_BUILD_UNBUNDLED
+# TODO (b/185624993): Remove the chck on TARGET_BUILD_UNBUNDLED when host_init_verifier can run
+# without requiring the HIDL interface map.
+$(2): $(1)
+else ifneq ($(HOST_OS),darwin)
 # Host init verifier doesn't exist on darwin.
-ifneq ($(HOST_OS),darwin)
 $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
 	$(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	$(call intermediates-dir-for,ETC,passwd_system_ext)/passwd_system_ext \
 	$(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
 	$(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
 	$(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
@@ -2495,6 +2583,7 @@ $(2): \
 	$(call intermediates-dir-for,ETC,odm_property_contexts)/odm_property_contexts
 	$(hide) $(HOST_INIT_VERIFIER) \
 	  -p $(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	  -p $(call intermediates-dir-for,ETC,passwd_system_ext)/passwd_system_ext \
 	  -p $(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
 	  -p $(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
 	  -p $(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
@@ -2567,6 +2656,32 @@ $(foreach f, $(1), $(strip \
     $(_cmf_dest)))
 endef
 
+# Copy the file only if it's not an ELF file. For use via $(eval).
+# $(1): source file
+# $(2): destination file
+# $(3): message to print on error
+define copy-non-elf-file-checked
+$(eval check_non_elf_file_timestamp := \
+    $(call intermediates-dir-for,FAKE,check-non-elf-file-timestamps)/$(2).timestamp)
+$(check_non_elf_file_timestamp): $(1) $(LLVM_READOBJ)
+	@echo "Check non-ELF: $$<"
+	$(hide) mkdir -p "$$(dir $$@)"
+	$(hide) rm -f "$$@"
+	$(hide) \
+	    if $(LLVM_READOBJ) -h "$$<" >/dev/null 2>&1; then \
+	        $(call echo-error,$(2),$(3)); \
+	        $(call echo-error,$(2),found ELF file: $$<); \
+	        false; \
+	    fi
+	$(hide) touch "$$@"
+
+$(2): $(1) $(check_non_elf_file_timestamp)
+	@echo "Copy non-ELF: $$@"
+	$$(copy-file-to-target)
+
+check-elf-prebuilt-product-copy-files: $(check_non_elf_file_timestamp)
+endef
+
 # The -t option to acp and the -p option to cp is
 # required for OSX.  OSX has a ridiculous restriction
 # where it's an error for a .a file's modification time
@@ -2619,6 +2734,18 @@ $(hide) rm -f $@
 $(hide) cp $< $@
 endef
 
+# The same as copy-file-to-new-target, but preserve symlinks. Symlinks are
+# converted to absolute to not break.
+define copy-file-or-link-to-new-target
+@mkdir -p $(dir $@)
+$(hide) rm -f $@
+$(hide) if [ -h $< ]; then \
+  ln -s $$(realpath $<) $@; \
+else \
+  cp $< $@; \
+fi
+endef
+
 # Copy a prebuilt file to a target location.
 define transform-prebuilt-to-target
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Prebuilt: $(PRIVATE_MODULE) ($@)"
@@ -2629,6 +2756,13 @@ endef
 define transform-prebuilt-to-target-strip-comments
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Prebuilt: $(PRIVATE_MODULE) ($@)"
 $(copy-file-to-target-strip-comments)
+endef
+
+# Copy a prebuilt file to a target location, but preserve symlinks rather than
+# dereference them.
+define copy-or-link-prebuilt-to-target
+@echo "$($(PRIVATE_PREFIX)DISPLAY) Prebuilt: $(PRIVATE_MODULE) ($@)"
+$(copy-file-or-link-to-new-target)
 endef
 
 # Copy a list of files/directories to target location, with sub dir structure preserved.
@@ -2653,9 +2787,10 @@ endef
 define _symlink-file
 $(3): $(1)
 	@echo "Symlink: $$@ -> $(2)"
-	@mkdir -p $(dir $$@)
+	@mkdir -p $$(dir $$@)
 	@rm -rf $$@
 	$(hide) ln -sf $(2) $$@
+$(3): .KATI_SYMLINK_OUTPUTS := $(3)
 endef
 
 # Copy an apk to a target location while removing classes*.dex
@@ -2705,7 +2840,8 @@ $(hide) $(R8_WRAPPER) $(R8_COMPAT_PROGUARD) $(DEX_FLAGS) \
     $(R8_DEBUG_MODE) \
     $(PRIVATE_PROGUARD_FLAGS) \
     $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR)) \
-    $(PRIVATE_DX_FLAGS)
+    $(PRIVATE_DX_FLAGS) \
+    -ignorewarnings
 $(hide) touch $(PRIVATE_PROGUARD_DICTIONARY)
 endef
 
@@ -2779,32 +2915,6 @@ INSTALLED_RADIOIMAGE_TARGET += $$(PRODUCT_OUT)/$(2)
 BOARD_INFO_CHECK += $(3):$(LOCAL_PATH)/$(1)
 $$(PRODUCT_OUT)/$(2) : $$(LOCAL_PATH)/$(1)
 	$$(transform-prebuilt-to-target)
-endef
-
-
-###########################################################
-## API Check
-###########################################################
-
-# eval this to define a rule that runs apicheck.
-#
-# Args:
-#    $(1)  target
-#    $(2)  stable api file
-#    $(3)  api file to be tested
-#    $(4)  stable removed api file
-#    $(5)  removed api file to be tested
-#    $(6)  arguments for apicheck
-#    $(7)  command to run if apicheck failed
-#    $(8)  target dependent on this api check
-#    $(9)  additional dependencies
-define check-api
-$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(4) $(APICHECK) $(9)
-	@echo "Checking API:" $(1)
-	$(hide) ( $(APICHECK_COMMAND) --check-api-files $(6) $(2) $(3) $(4) $(5) || ( $(7) ; exit 38 ) )
-	$(hide) mkdir -p $$(dir $$@)
-	$(hide) touch $$@
-$(8): $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp
 endef
 
 ## Whether to build from source if prebuilt alternative exists
@@ -3182,11 +3292,6 @@ endef
 ###########################################################
 ## Other includes
 ###########################################################
-
-# -----------------------------------------------------------------
-# Rules and functions to help copy important files to DIST_DIR
-# when requested.
-include $(BUILD_SYSTEM)/distdir.mk
 
 # Include any vendor specific definitions.mk file
 -include $(TOPDIR)vendor/*/build/core/definitions.mk

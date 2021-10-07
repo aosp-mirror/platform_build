@@ -26,4 +26,4 @@ $(gpl_source_tgz) : $(ALL_GPL_MODULE_LICENSE_FILES)
 	$(hide) tar cfz $@ --exclude ".git*" $(PRIVATE_PATHS)
 
 # Dist the tgz only if we are doing a full build
-$(call dist-for-goals,droidcore,$(gpl_source_tgz))
+$(call dist-for-goals,droidcore-unbundled,$(gpl_source_tgz))

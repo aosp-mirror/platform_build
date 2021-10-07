@@ -24,19 +24,26 @@
 # - etc.
 #
 
+BUILDING_GSI := true
+
 # Exclude all files under system/product and system/system_ext
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/product/% \
     system/system_ext/%
 
-# Split selinux policy
-PRODUCT_FULL_TREBLE_OVERRIDE := true
+# GSI should always support up-to-date platform features.
+# Keep this value at the latest API level to ensure latest build system
+# default configs are applied.
+PRODUCT_SHIPPING_API_LEVEL := 30
+
+# Enable dynamic partitions to facilitate mixing onto Cuttlefish
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
-# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
-PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+# Disable the build-time debugfs restrictions on GSI builds
+PRODUCT_SET_DEBUGFS_RESTRICTIONS := false
 
 # GSI targets should install "unflattened" APEXes in /system
 TARGET_FLATTEN_APEX := false
@@ -52,7 +59,18 @@ PRODUCT_PACKAGES += com.android.apex.cts.shim.v1_with_prebuilts.flattened
 # GSI specific tasks on boot
 PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
-    init.gsi.rc
+    init.gsi.rc \
+    init.vndk-nodef.rc \
 
-# Support addtional P and Q VNDK packages
-PRODUCT_EXTRA_VNDK_VERSIONS := 28 29
+# Support additional P, Q and R VNDK packages
+PRODUCT_EXTRA_VNDK_VERSIONS := 28 29 30
+
+# Do not build non-GSI partition images.
+PRODUCT_BUILD_CACHE_IMAGE := false
+PRODUCT_BUILD_USERDATA_IMAGE := false
+PRODUCT_BUILD_VENDOR_IMAGE := false
+PRODUCT_BUILD_SUPER_PARTITION := false
+PRODUCT_BUILD_SUPER_EMPTY_IMAGE := false
+
+# Always build modules from source
+MODULE_BUILD_FROM_SOURCE := true
