@@ -634,252 +634,88 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   for p in common_props:
     copy_prop(p, p)
 
-  suffixed_props = (
-      "erofs_compressor",
-  )
-  for p in suffixed_props:
-      copy_prop("{}_{}".format(mount_point, p), p)
+  ro_mount_points = set([
+      "odm",
+      "odm_dlkm",
+      "oem",
+      "product",
+      "system",
+      "system_ext",
+      "system_other",
+      "vendor",
+      "vendor_dlkm",
+  ])
 
+  # Tuple layout: (readonly, specific prop, general prop)
+  fmt_props = (
+      # Generic first, then specific file type.
+      (False, "fs_type", "fs_type"),
+      (False, "{}_fs_type", "fs_type"),
+
+      # Ordering for these doesn't matter.
+      (False, "{}_selinux_fc", "selinux_fc"),
+      (False, "{}_size", "partition_size"),
+      (True, "avb_{}_add_hashtree_footer_args", "avb_add_hashtree_footer_args"),
+      (True, "avb_{}_algorithm", "avb_algorithm"),
+      (True, "avb_{}_hashtree_enable", "avb_hashtree_enable"),
+      (True, "avb_{}_key_path", "avb_key_path"),
+      (True, "avb_{}_salt", "avb_salt"),
+      (True, "ext4_share_dup_blocks", "ext4_share_dup_blocks"),
+      (True, "{}_base_fs_file", "base_fs_file"),
+      (True, "{}_disable_sparse", "disable_sparse"),
+      (True, "{}_erofs_compressor", "erofs_compressor"),
+      (True, "{}_extfs_inode_count", "extfs_inode_count"),
+      (True, "{}_f2fs_compress", "f2fs_compress"),
+      (True, "{}_f2fs_sldc_flags", "f2fs_sldc_flags"),
+      (True, "{}_reserved_size", "partition_reserved_size"),
+      (True, "{}_squashfs_block_size", "squashfs_block_size"),
+      (True, "{}_squashfs_compressor", "squashfs_compressor"),
+      (True, "{}_squashfs_compressor_opt", "squashfs_compressor_opt"),
+      (True, "{}_squashfs_disable_4k_align", "squashfs_disable_4k_align"),
+      (True, "{}_verity_block_device", "verity_block_device"),
+  )
+
+  # Translate prefixed properties into generic ones.
+  if mount_point == "data":
+    prefix = "userdata"
+  else:
+    prefix = mount_point
+
+  for readonly, src_prop, dest_prop in fmt_props:
+    if readonly and mount_point not in ro_mount_points:
+      continue
+
+    if mount_point == "system_other":
+      # Propagate system properties to system_other. They'll get overridden
+      # after as needed.
+      copy_prop(src_prop.format("system"), dest_prop)
+
+    copy_prop(src_prop.format(prefix), dest_prop)
+
+  # Set prefixed properties that need a default value.
+  if mount_point in ro_mount_points:
+    prop = "{}_journal_size".format(prefix)
+    if not copy_prop(prop, "journal_size"):
+      d["journal_size"] = "0"
+
+    prop = "{}_extfs_rsv_pct".format(prefix)
+    if not copy_prop(prop, "extfs_rsv_pct"):
+      d["extfs_rsv_pct"] = "0"
+
+  # Copy partition-specific properties.
   d["mount_point"] = mount_point
   if mount_point == "system":
-    copy_prop("avb_system_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_system_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
-    copy_prop("avb_system_key_path", "avb_key_path")
-    copy_prop("avb_system_algorithm", "avb_algorithm")
-    copy_prop("avb_system_salt", "avb_salt")
-    copy_prop("fs_type", "fs_type")
-    # Copy the generic system fs type first, override with specific one if
-    # available.
-    copy_prop("system_fs_type", "fs_type")
     copy_prop("system_headroom", "partition_headroom")
-    copy_prop("system_size", "partition_size")
-    if not copy_prop("system_journal_size", "journal_size"):
-      d["journal_size"] = "0"
-    copy_prop("system_verity_block_device", "verity_block_device")
     copy_prop("system_root_image", "system_root_image")
     copy_prop("root_dir", "root_dir")
     copy_prop("root_fs_config", "root_fs_config")
-    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
-    copy_prop("system_f2fs_compress", "f2fs_compress")
-    copy_prop("system_f2fs_sldc_flags", "f2fs_sldc_flags")
-    copy_prop("system_squashfs_compressor", "squashfs_compressor")
-    copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
-    copy_prop("system_squashfs_block_size", "squashfs_block_size")
-    copy_prop("system_squashfs_disable_4k_align", "squashfs_disable_4k_align")
-    copy_prop("system_base_fs_file", "base_fs_file")
-    copy_prop("system_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("system_extfs_rsv_pct", "extfs_rsv_pct"):
-      d["extfs_rsv_pct"] = "0"
-    copy_prop("system_reserved_size", "partition_reserved_size")
-    copy_prop("system_selinux_fc", "selinux_fc")
-    copy_prop("system_disable_sparse", "disable_sparse")
-  elif mount_point == "system_other":
-    # We inherit the selinux policies of /system since we contain some of its
-    # files.
-    copy_prop("avb_system_other_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_system_other_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
-    copy_prop("avb_system_other_key_path", "avb_key_path")
-    copy_prop("avb_system_other_algorithm", "avb_algorithm")
-    copy_prop("avb_system_other_salt", "avb_salt")
-    copy_prop("fs_type", "fs_type")
-    copy_prop("system_fs_type", "fs_type")
-    copy_prop("system_other_size", "partition_size")
-    if not copy_prop("system_journal_size", "journal_size"):
-      d["journal_size"] = "0"
-    copy_prop("system_verity_block_device", "verity_block_device")
-    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
-    copy_prop("system_f2fs_compress", "f2fs_compress")
-    copy_prop("system_f2fs_sldc_flags", "f2fs_sldc_flags")
-    copy_prop("system_squashfs_compressor", "squashfs_compressor")
-    copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
-    copy_prop("system_squashfs_block_size", "squashfs_block_size")
-    copy_prop("system_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("system_extfs_rsv_pct", "extfs_rsv_pct"):
-      d["extfs_rsv_pct"] = "0"
-    copy_prop("system_reserved_size", "partition_reserved_size")
-    copy_prop("system_selinux_fc", "selinux_fc")
-    copy_prop("system_disable_sparse", "disable_sparse")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
-    copy_prop("fs_type", "fs_type")
-    copy_prop("userdata_fs_type", "fs_type")
-    copy_prop("userdata_size", "partition_size")
     copy_prop("flash_logical_block_size", "flash_logical_block_size")
     copy_prop("flash_erase_block_size", "flash_erase_block_size")
-    copy_prop("userdata_selinux_fc", "selinux_fc")
     copy_prop("needs_casefold", "needs_casefold")
     copy_prop("needs_projid", "needs_projid")
     copy_prop("needs_compress", "needs_compress")
-  elif mount_point == "cache":
-    copy_prop("cache_fs_type", "fs_type")
-    copy_prop("cache_size", "partition_size")
-    copy_prop("cache_selinux_fc", "selinux_fc")
-  elif mount_point == "vendor":
-    copy_prop("avb_vendor_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_vendor_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
-    copy_prop("avb_vendor_key_path", "avb_key_path")
-    copy_prop("avb_vendor_algorithm", "avb_algorithm")
-    copy_prop("avb_vendor_salt", "avb_salt")
-    copy_prop("vendor_fs_type", "fs_type")
-    copy_prop("vendor_size", "partition_size")
-    if not copy_prop("vendor_journal_size", "journal_size"):
-      d["journal_size"] = "0"
-    copy_prop("vendor_verity_block_device", "verity_block_device")
-    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
-    copy_prop("vendor_f2fs_compress", "f2fs_compress")
-    copy_prop("vendor_f2fs_sldc_flags", "f2fs_sldc_flags")
-    copy_prop("vendor_squashfs_compressor", "squashfs_compressor")
-    copy_prop("vendor_squashfs_compressor_opt", "squashfs_compressor_opt")
-    copy_prop("vendor_squashfs_block_size", "squashfs_block_size")
-    copy_prop("vendor_squashfs_disable_4k_align", "squashfs_disable_4k_align")
-    copy_prop("vendor_base_fs_file", "base_fs_file")
-    copy_prop("vendor_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("vendor_extfs_rsv_pct", "extfs_rsv_pct"):
-      d["extfs_rsv_pct"] = "0"
-    copy_prop("vendor_reserved_size", "partition_reserved_size")
-    copy_prop("vendor_selinux_fc", "selinux_fc")
-    copy_prop("vendor_disable_sparse", "disable_sparse")
-  elif mount_point == "product":
-    copy_prop("avb_product_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_product_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
-    copy_prop("avb_product_key_path", "avb_key_path")
-    copy_prop("avb_product_algorithm", "avb_algorithm")
-    copy_prop("avb_product_salt", "avb_salt")
-    copy_prop("product_fs_type", "fs_type")
-    copy_prop("product_size", "partition_size")
-    if not copy_prop("product_journal_size", "journal_size"):
-      d["journal_size"] = "0"
-    copy_prop("product_verity_block_device", "verity_block_device")
-    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
-    copy_prop("product_f2fs_compress", "f2fs_compress")
-    copy_prop("product_f2fs_sldc_flags", "f2fs_sldc_flags")
-    copy_prop("product_squashfs_compressor", "squashfs_compressor")
-    copy_prop("product_squashfs_compressor_opt", "squashfs_compressor_opt")
-    copy_prop("product_squashfs_block_size", "squashfs_block_size")
-    copy_prop("product_squashfs_disable_4k_align", "squashfs_disable_4k_align")
-    copy_prop("product_base_fs_file", "base_fs_file")
-    copy_prop("product_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("product_extfs_rsv_pct", "extfs_rsv_pct"):
-      d["extfs_rsv_pct"] = "0"
-    copy_prop("product_reserved_size", "partition_reserved_size")
-    copy_prop("product_selinux_fc", "selinux_fc")
-    copy_prop("product_disable_sparse", "disable_sparse")
-  elif mount_point == "system_ext":
-    copy_prop("avb_system_ext_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_system_ext_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
-    copy_prop("avb_system_ext_key_path", "avb_key_path")
-    copy_prop("avb_system_ext_algorithm", "avb_algorithm")
-    copy_prop("avb_system_ext_salt", "avb_salt")
-    copy_prop("system_ext_fs_type", "fs_type")
-    copy_prop("system_ext_size", "partition_size")
-    if not copy_prop("system_ext_journal_size", "journal_size"):
-      d["journal_size"] = "0"
-    copy_prop("system_ext_verity_block_device", "verity_block_device")
-    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
-    copy_prop("system_ext_f2fs_compress", "f2fs_compress")
-    copy_prop("system_ext_f2fs_sldc_flags", "f2fs_sldc_flags")
-    copy_prop("system_ext_squashfs_compressor", "squashfs_compressor")
-    copy_prop("system_ext_squashfs_compressor_opt",
-              "squashfs_compressor_opt")
-    copy_prop("system_ext_squashfs_block_size", "squashfs_block_size")
-    copy_prop("system_ext_squashfs_disable_4k_align",
-              "squashfs_disable_4k_align")
-    copy_prop("system_ext_base_fs_file", "base_fs_file")
-    copy_prop("system_ext_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("system_ext_extfs_rsv_pct", "extfs_rsv_pct"):
-      d["extfs_rsv_pct"] = "0"
-    copy_prop("system_ext_reserved_size", "partition_reserved_size")
-    copy_prop("system_ext_selinux_fc", "selinux_fc")
-    copy_prop("system_ext_disable_sparse", "disable_sparse")
-  elif mount_point == "odm":
-    copy_prop("avb_odm_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_odm_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
-    copy_prop("avb_odm_key_path", "avb_key_path")
-    copy_prop("avb_odm_algorithm", "avb_algorithm")
-    copy_prop("avb_odm_salt", "avb_salt")
-    copy_prop("odm_fs_type", "fs_type")
-    copy_prop("odm_size", "partition_size")
-    if not copy_prop("odm_journal_size", "journal_size"):
-      d["journal_size"] = "0"
-    copy_prop("odm_verity_block_device", "verity_block_device")
-    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
-    copy_prop("odm_squashfs_compressor", "squashfs_compressor")
-    copy_prop("odm_squashfs_compressor_opt", "squashfs_compressor_opt")
-    copy_prop("odm_squashfs_block_size", "squashfs_block_size")
-    copy_prop("odm_squashfs_disable_4k_align", "squashfs_disable_4k_align")
-    copy_prop("odm_base_fs_file", "base_fs_file")
-    copy_prop("odm_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("odm_extfs_rsv_pct", "extfs_rsv_pct"):
-      d["extfs_rsv_pct"] = "0"
-    copy_prop("odm_reserved_size", "partition_reserved_size")
-    copy_prop("odm_selinux_fc", "selinux_fc")
-    copy_prop("odm_disable_sparse", "disable_sparse")
-  elif mount_point == "vendor_dlkm":
-    copy_prop("avb_vendor_dlkm_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_vendor_dlkm_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
-    copy_prop("avb_vendor_dlkm_key_path", "avb_key_path")
-    copy_prop("avb_vendor_dlkm_algorithm", "avb_algorithm")
-    copy_prop("avb_vendor_dlkm_salt", "avb_salt")
-    copy_prop("vendor_dlkm_fs_type", "fs_type")
-    copy_prop("vendor_dlkm_size", "partition_size")
-    copy_prop("vendor_dlkm_f2fs_compress", "f2fs_compress")
-    copy_prop("vendor_dlkm_f2fs_sldc_flags", "f2fs_sldc_flags")
-    if not copy_prop("vendor_dlkm_journal_size", "journal_size"):
-      d["journal_size"] = "0"
-    copy_prop("vendor_dlkm_verity_block_device", "verity_block_device")
-    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
-    copy_prop("vendor_dlkm_squashfs_compressor", "squashfs_compressor")
-    copy_prop("vendor_dlkm_squashfs_compressor_opt", "squashfs_compressor_opt")
-    copy_prop("vendor_dlkm_squashfs_block_size", "squashfs_block_size")
-    copy_prop("vendor_dlkm_squashfs_disable_4k_align", "squashfs_disable_4k_align")
-    copy_prop("vendor_dlkm_base_fs_file", "base_fs_file")
-    copy_prop("vendor_dlkm_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("vendor_dlkm_extfs_rsv_pct", "extfs_rsv_pct"):
-      d["extfs_rsv_pct"] = "0"
-    copy_prop("vendor_dlkm_reserved_size", "partition_reserved_size")
-    copy_prop("vendor_dlkm_selinux_fc", "selinux_fc")
-    copy_prop("vendor_dlkm_disable_sparse", "disable_sparse")
-  elif mount_point == "odm_dlkm":
-    copy_prop("avb_odm_dlkm_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_odm_dlkm_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
-    copy_prop("avb_odm_dlkm_key_path", "avb_key_path")
-    copy_prop("avb_odm_dlkm_algorithm", "avb_algorithm")
-    copy_prop("avb_odm_dlkm_salt", "avb_salt")
-    copy_prop("odm_dlkm_fs_type", "fs_type")
-    copy_prop("odm_dlkm_size", "partition_size")
-    if not copy_prop("odm_dlkm_journal_size", "journal_size"):
-      d["journal_size"] = "0"
-    copy_prop("odm_dlkm_verity_block_device", "verity_block_device")
-    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
-    copy_prop("odm_dlkm_squashfs_compressor", "squashfs_compressor")
-    copy_prop("odm_dlkm_squashfs_compressor_opt", "squashfs_compressor_opt")
-    copy_prop("odm_dlkm_squashfs_block_size", "squashfs_block_size")
-    copy_prop("odm_dlkm_squashfs_disable_4k_align", "squashfs_disable_4k_align")
-    copy_prop("odm_dlkm_base_fs_file", "base_fs_file")
-    copy_prop("odm_dlkm_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("odm_dlkm_extfs_rsv_pct", "extfs_rsv_pct"):
-      d["extfs_rsv_pct"] = "0"
-    copy_prop("odm_dlkm_reserved_size", "partition_reserved_size")
-    copy_prop("odm_dlkm_selinux_fc", "selinux_fc")
-    copy_prop("odm_dlkm_disable_sparse", "disable_sparse")
-  elif mount_point == "oem":
-    copy_prop("fs_type", "fs_type")
-    copy_prop("oem_size", "partition_size")
-    if not copy_prop("oem_journal_size", "journal_size"):
-      d["journal_size"] = "0"
-    copy_prop("oem_extfs_inode_count", "extfs_inode_count")
-    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
-    if not copy_prop("oem_extfs_rsv_pct", "extfs_rsv_pct"):
-      d["extfs_rsv_pct"] = "0"
-    copy_prop("oem_selinux_fc", "selinux_fc")
   d["partition_name"] = mount_point
   return d
 
