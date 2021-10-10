@@ -49,4 +49,4 @@ PRODUCT_SYSTEM_EXT_PROPERTIES += \
 
 # disable setupwizard
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
-    ro.setupwizard.mode=DISABLED
+    ro.setupwizard.mode?=DISABLED

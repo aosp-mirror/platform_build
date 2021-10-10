@@ -16,6 +16,7 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
+    abx \
     adbd_system_api \
     am \
     android.hidl.allocator@1.0-service \
@@ -49,6 +50,7 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.adbd \
+    com.android.appsearch \
     com.android.conscrypt \
     com.android.cronet \
     com.android.extservices \
@@ -62,6 +64,7 @@ PRODUCT_PACKAGES += \
     com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
+    com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
     com.android.tzdata \
@@ -82,6 +85,7 @@ PRODUCT_PACKAGES += \
     e2fsck \
     ExtShared \
     flags_health_check \
+    framework-graphics \
     framework-minus-apex \
     framework-res \
     framework-sysconfig.xml \
@@ -119,6 +123,7 @@ PRODUCT_PACKAGES += \
     credstore \
     ld.mc \
     libaaudio \
+    libalarm_jni \
     libamidi \
     libandroid \
     libandroidfw \
@@ -148,6 +153,7 @@ PRODUCT_PACKAGES += \
     libgui \
     libhardware \
     libhardware_legacy \
+    libincident \
     libinput \
     libinputflinger \
     libiprouteutil \
@@ -183,7 +189,6 @@ PRODUCT_PACKAGES += \
     libstagefright_foundation \
     libstagefright_omx \
     libstdc++ \
-    libsurfaceflinger \
     libsysutils \
     libui \
     libusbhost \
@@ -264,6 +269,7 @@ PRODUCT_PACKAGES += \
     tune2fs \
     tzdatacheck \
     uiautomator \
+    uinput \
     uncrypt \
     usbd \
     vdc \

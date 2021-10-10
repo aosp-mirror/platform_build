@@ -88,6 +88,8 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 -include test/vts/tools/vts-core-tradefed/build/config.mk
 # CSUITE-specific config.
 -include test/app_compat/csuite/tools/build/config.mk
+# CATBox-specific config.
+-include test/catbox/tools/build/config.mk
 # CTS-Root-specific config.
 -include test/cts-root/tools/build/config.mk
 
@@ -1563,6 +1565,9 @@ vendorramdisk: $(INSTALLED_VENDOR_RAMDISK_TARGET)
 .PHONY: vendorramdisk_debug
 vendorramdisk_debug: $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET)
 
+.PHONY: vendorramdisk_test_harness
+vendorramdisk_test_harness: $(INSTALLED_VENDOR_TEST_HARNESS_RAMDISK_TARGET)
+
 .PHONY: productimage
 productimage: $(INSTALLED_PRODUCTIMAGE_TARGET)
 
@@ -1626,6 +1631,7 @@ droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_TEST_HARNESS_RAMDISK_TARGET) \
     $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_RAMDISK_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
@@ -1845,6 +1851,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
       $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
       $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+      $(INSTALLED_VENDOR_TEST_HARNESS_RAMDISK_TARGET) \
       $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_RAMDISK_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \

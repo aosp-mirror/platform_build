@@ -199,12 +199,8 @@ endif
 ifndef RBC_PRODUCT_CONFIG
 $(call import-products, $(current_product_makefile))
 else
-  rbcscript=build/soong/scripts/rbc-run
-  rc := $(shell $(rbcscript) $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT) >$(OUT_DIR)/rbctemp.mk 2>$(OUT_DIR)/rbctemp.stderr || echo $$?)
-  rbcerrors := $(file <$(OUT_DIR)/rbctemp.stderr)
-  ifneq (,$(rbcerrors))
-    $(warning $(rbcerrors))
-  endif
+  rc := $(shell build/soong/scripts/rbc-run $(current_product_makefile) \
+      >$(OUT_DIR)/rbctemp.mk || echo $$?)
   ifneq (,$(rc))
     $(error product configuration converter failed: $(rc))
   endif
@@ -531,6 +527,7 @@ endef
 
 # Copy and check the value of each PRODUCT_BUILD_*_IMAGE variable
 $(foreach image, \
+    PVMFW \
     SYSTEM \
     SYSTEM_OTHER \
     VENDOR \
