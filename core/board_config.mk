@@ -184,7 +184,20 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
+# TODO(colefaust) change this if to RBC_PRODUCT_CONFIG when
+# the board configuration is known to work on everything
+# the product config works on.
+ifndef RBC_BOARD_CONFIG
 include $(board_config_mk)
+else
+  rc := $(shell build/soong/scripts/rbc-run $(board_config_mk) \
+      BUILDING_GSI=$(BUILDING_GSI) >$(OUT_DIR)/rbcboardtemp.mk || echo $$?)
+  ifneq (,$(rc))
+    $(error board configuration converter failed: $(rc))
+  endif
+
+  include $(OUT_DIR)/rbcboardtemp.mk
+endif
 
 ifneq (,$(and $(TARGET_ARCH),$(TARGET_ARCH_SUITE)))
   $(error $(board_config_mk) erroneously sets both TARGET_ARCH and TARGET_ARCH_SUITE)
@@ -780,6 +793,24 @@ ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
   BUILDING_ODM_DLKM_IMAGE :=
 endif
 .KATI_READONLY := BUILDING_ODM_DLKM_IMAGE
+
+BOARD_USES_PVMFWIMAGE :=
+ifdef BOARD_PREBUILT_PVMFWIMAGE
+  BOARD_USES_PVMFWIMAGE := true
+endif
+ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
+  BOARD_USES_PVMFWIMAGE := true
+endif
+.KATI_READONLY := BOARD_USES_PVMFWIMAGE
+
+BUILDING_PVMFW_IMAGE :=
+ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
+  BUILDING_PVMFW_IMAGE := true
+endif
+ifdef BOARD_PREBUILT_PVMFWIMAGE
+  BUILDING_PVMFW_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_PVMFW_IMAGE
 
 ###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
