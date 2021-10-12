@@ -24,6 +24,7 @@ Usage:  build_image input_directory properties_file output_image \\
 
 from __future__ import print_function
 
+import glob
 import logging
 import os
 import os.path
@@ -33,6 +34,8 @@ import sys
 
 import common
 import verity_utils
+
+from fsverity_metadata_generator import FSVerityMetadataGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -475,6 +478,24 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   elif fs_type.startswith("f2fs") and prop_dict.get("f2fs_compress") == "true":
     fs_spans_partition = False
 
+  if "fsverity_generate_metadata" in prop_dict:
+    patterns = [
+      "system/framework/*.jar",
+      "system/framework/oat/*/*.oat",
+      "system/framework/oat/*/*.vdex",
+      "system/framework/oat/*/*.art",
+      "system/etc/boot-image.prof",
+      "system/etc/dirty-image-objects",
+    ]
+    files = []
+    for pattern in patterns:
+      files += glob.glob(os.path.join(in_dir, pattern))
+    files = sorted(set(files))
+
+    generator = FSVerityMetadataGenerator(prop_dict["fsverity"])
+    for f in files:
+      generator.generate(f)
+
   # Get a builder for creating an image that's to be verified by Verified Boot,
   # or None if not applicable.
   verity_image_builder = verity_utils.CreateVerityImageBuilder(prop_dict)
@@ -588,7 +609,6 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # Create the verified image if this is to be verified.
   if verity_image_builder:
     verity_image_builder.Build(out_file)
-
 
 def ImagePropFromGlobalDict(glob_dict, mount_point):
   """Build an image property dictionary from the global dictionary.
@@ -725,6 +745,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_root_image", "system_root_image")
     copy_prop("root_dir", "root_dir")
     copy_prop("root_fs_config", "root_fs_config")
+    copy_prop("fsverity", "fsverity")
+    copy_prop("fsverity_generate_metadata", "fsverity_generate_metadata")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("flash_logical_block_size", "flash_logical_block_size")

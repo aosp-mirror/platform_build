@@ -1672,6 +1672,8 @@ define generate-image-prop-dictionary
 $(if $(filter $(2),system),\
     $(if $(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE),$(hide) echo "system_other_size=$(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE)" >> $(1))
     $(if $(PRODUCT_SYSTEM_HEADROOM),$(hide) echo "system_headroom=$(PRODUCT_SYSTEM_HEADROOM)" >> $(1))
+    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity=$(HOST_OUT_EXECUTABLES)/fsverity" >> $(1))
+    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_generate_metadata=true" >> $(1))
     $(call add-common-ro-flags-to-image-props,system,$(1))
 )
 $(if $(filter $(2),system_other),\
@@ -2772,6 +2774,9 @@ endef
 
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
+endif
+ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
+$(BUILT_SYSTEMIMAGE): $(HOST_OUT_EXECUTABLES)/fsverity
 endif
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
 	$(call build-systemimage-target,$@)
