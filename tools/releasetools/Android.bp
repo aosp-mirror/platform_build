@@ -1,0 +1,73 @@
+// Copyright (C) 2021 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+python_defaults {
+    name: "releasetools_library_defaults",
+    version: {
+        py2: {
+            enabled: true,
+        },
+        py3: {
+            enabled: true,
+        },
+    },
+}
+
+python_library_host {
+    name: "releasetools_common",
+    defaults: ["releasetools_library_defaults"],
+    srcs: [
+        "blockimgdiff.py",
+        "common.py",
+        "rangelib.py",
+        "sparse_img.py",
+    ],
+    // Only the tools that are referenced directly are listed as required modules. For example,
+    // `avbtool` is not here, as the script always uses the one from info_dict['avb_avbtool'].
+    required: [
+        "aapt",
+        "boot_signer",
+        "brotli",
+        "bsdiff",
+        "imgdiff",
+        "minigzip",
+        "mkbootfs",
+    ],
+}
+
+python_defaults {
+    name: "releasetools_binary_defaults",
+    version: {
+        py2: {
+            enabled: true,
+            embedded_launcher: true,
+        },
+        py3: {
+            enabled: false,
+            embedded_launcher: false,
+        },
+    },
+}
+
+python_binary_host {
+    name: "build_super_image",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "build_super_image.py",
+    ],
+    main: "build_super_image.py",
+    libs: [
+        "releasetools_common",
+    ],
+}
