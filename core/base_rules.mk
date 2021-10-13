@@ -935,6 +935,12 @@ ifdef LOCAL_IS_HOST_MODULE
 my_required_modules += $(LOCAL_REQUIRED_MODULES_$($(my_prefix)OS))
 endif
 
+ALL_MODULES.$(my_register_name).SHARED_LIBS := \
+    $(ALL_MODULES.$(my_register_name).SHARED_LIBS) $(LOCAL_SHARED_LIBRARIES)
+
+ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS := \
+    $(ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS) $(LOCAL_SYSTEM_SHARED_LIBRARIES)
+
 ##########################################################################
 ## When compiling against the VNDK, add the .vendor or .product suffix to
 ## required modules.
