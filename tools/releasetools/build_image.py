@@ -343,6 +343,10 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.extend(["-U", prop_dict["uuid"]])
     if "block_list" in prop_dict:
       build_command.extend(["-B", prop_dict["block_list"]])
+    if "erofs_pcluster_size" in prop_dict:
+      build_command.extend(["-P", prop_dict["erofs_pcluster_size"]])
+    if "erofs_share_dup_blocks" in prop_dict:
+      build_command.extend(["-k", "4096"])
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
@@ -617,6 +621,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   common_props = (
       "extfs_sparse_flag",
       "erofs_default_compressor",
+      "erofs_pcluster_size",
+      "erofs_share_dup_blocks",
       "erofs_sparse_flag",
       "squashfs_sparse_flag",
       "system_f2fs_compress",
@@ -666,6 +672,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       (True, "{}_base_fs_file", "base_fs_file"),
       (True, "{}_disable_sparse", "disable_sparse"),
       (True, "{}_erofs_compressor", "erofs_compressor"),
+      (True, "{}_erofs_pcluster_size", "erofs_pcluster_size"),
+      (True, "{}_erofs_share_dup_blocks", "erofs_share_dup_blocks"),
       (True, "{}_extfs_inode_count", "extfs_inode_count"),
       (True, "{}_f2fs_compress", "f2fs_compress"),
       (True, "{}_f2fs_sldc_flags", "f2fs_sldc_flags"),
