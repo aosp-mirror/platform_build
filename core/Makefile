@@ -527,6 +527,16 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,,$(kmd)))))
 
 # -----------------------------------------------------------------
+# FSVerity metadata generation
+ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
+
+FSVERITY_APK_KEY_PATH := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
+FSVERITY_APK_OUT := system/etc/security/fsverity/BuildManifest.apk
+FSVERITY_APK_MANIFEST_PATH := system/security/fsverity/AndroidManifest.xml
+
+endif # PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
+
+# -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
 # $1 stem name of the package
@@ -575,6 +585,8 @@ $(APKCERTS_FILE):
 	    $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
 	      $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),EXTERNAL,,$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
 	      $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@))))
+	$(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),\
+	  $(call _apkcerts_write_line,$(notdir $(basename $(FSVERITY_APK_OUT))),$(FSVERITY_APK_KEY_PATH).x509.pem,$(FSVERITY_APK_KEY_PATH).pk8,,system,$@))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
@@ -1674,6 +1686,9 @@ $(if $(filter $(2),system),\
     $(if $(PRODUCT_SYSTEM_HEADROOM),$(hide) echo "system_headroom=$(PRODUCT_SYSTEM_HEADROOM)" >> $(1))
     $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity=$(HOST_OUT_EXECUTABLES)/fsverity" >> $(1))
     $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_generate_metadata=true" >> $(1))
+    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_apk_key=$(FSVERITY_APK_KEY_PATH)" >> $(1))
+    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_apk_manifest=$(FSVERITY_APK_MANIFEST_PATH)" >> $(1))
+    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_apk_out=$(FSVERITY_APK_OUT)" >> $(1))
     $(call add-common-ro-flags-to-image-props,system,$(1))
 )
 $(if $(filter $(2),system_other),\
@@ -2776,7 +2791,8 @@ ifeq ($(BOARD_AVB_ENABLE),true)
 $(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
 endif
 ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
-$(BUILT_SYSTEMIMAGE): $(HOST_OUT_EXECUTABLES)/fsverity
+$(BUILT_SYSTEMIMAGE): $(HOST_OUT_EXECUTABLES)/fsverity $(HOST_OUT_EXECUTABLES)/aapt2 \
+    $(FSVERITY_APK_MANIFEST_PATH) $(FSVERITY_APK_KEY_PATH).x509.pem $(FSVERITY_APK_KEY_PATH).pk8
 endif
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
 	$(call build-systemimage-target,$@)

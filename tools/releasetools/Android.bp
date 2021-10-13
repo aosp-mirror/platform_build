@@ -265,8 +265,8 @@ python_library_host {
     srcs: [
         "fsverity_metadata_generator.py",
     ],
-    required: [
-        "fsverity",
+    libs: [
+        "fsverity_digests_proto_python",
     ],
 }
 

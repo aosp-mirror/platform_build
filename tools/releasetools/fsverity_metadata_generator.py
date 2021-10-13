@@ -94,6 +94,13 @@ class FSVerityMetadataGenerator:
       f.seek(offset + header_len)
       return f.read(size)
 
+  def digest(self, input_file):
+    cmd = [self._fsverity_path, 'digest', input_file]
+    cmd.extend(['--compact'])
+    cmd.extend(['--hash-alg', self._hash_alg])
+    out = subprocess.check_output(cmd, universal_newlines=True).strip()
+    return bytes(bytearray.fromhex(out))
+
   def generate(self, input_file, output_file=None):
     if self._signature != 'none':
       if not self._key:
