@@ -57,6 +57,10 @@ PRODUCT_PACKAGES += \
 # Support addtional P and Q VNDK packages
 PRODUCT_EXTRA_VNDK_VERSIONS := 28 29
 
+# Do not build non-GSI partition images.
+PRODUCT_BUILD_DEBUG_BOOT_IMAGE := false
+PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE := false
+
 # Renames boot-debug-*.img to boot-with-debug-ramdisk-*.img to avoid confusion
 # with GKI boot images.
 PRODUCT_DEBUG_RAMDISK_BOOT_IMAGE_NAME := boot-with-debug-ramdisk
