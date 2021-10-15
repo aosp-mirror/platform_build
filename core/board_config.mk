@@ -84,6 +84,7 @@ _board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE
 _board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_PVMFWIMAGE_PARTITION_SIZE
 
 # Logical partitions related variables.
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE
