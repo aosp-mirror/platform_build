@@ -778,7 +778,7 @@ $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_U
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
+$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
 endif
 
 #------------------------------------------------------------------
@@ -2724,7 +2724,7 @@ $(INSTALLED_FILES_FILE): $(FULL_SYSTEMIMAGE_DEPS) $(FILESLIST) $(FILESLIST_UTIL)
 installed-file-list: $(INSTALLED_FILES_FILE)
 
 ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE))
+$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE))
 endif
 
 systemimage_intermediates := \
@@ -5860,6 +5860,8 @@ endif
 # -----------------------------------------------------------------
 # The SDK
 
+ifneq ($(filter sdk,$(MAKECMDGOALS)),)
+
 # The SDK includes host-specific components, so it belongs under HOST_OUT.
 sdk_dir := $(HOST_OUT)/sdk/$(TARGET_PRODUCT)
 
@@ -5869,15 +5871,11 @@ sdk_dir := $(HOST_OUT)/sdk/$(TARGET_PRODUCT)
 #     darwin-x86  --> android-sdk_12345_mac-x86
 #     windows-x86 --> android-sdk_12345_windows
 #
+ifneq ($(HOST_OS),linux)
+  $(error Building the monolithic SDK is only supported on Linux)
+endif
 sdk_name := android-sdk_$(FILE_NAME_TAG)
-ifeq ($(HOST_OS),darwin)
-  INTERNAL_SDK_HOST_OS_NAME := mac
-else
-  INTERNAL_SDK_HOST_OS_NAME := $(HOST_OS)
-endif
-ifneq ($(HOST_OS),windows)
-  INTERNAL_SDK_HOST_OS_NAME := $(INTERNAL_SDK_HOST_OS_NAME)-$(SDK_HOST_ARCH)
-endif
+INTERNAL_SDK_HOST_OS_NAME := linux-$(SDK_HOST_ARCH)
 sdk_name := $(sdk_name)_$(INTERNAL_SDK_HOST_OS_NAME)
 
 sdk_dep_file := $(sdk_dir)/sdk_deps.mk
@@ -5899,7 +5897,7 @@ atree_dir := development/build
 
 sdk_atree_files := \
 	$(atree_dir)/sdk.exclude.atree \
-	$(atree_dir)/sdk-$(HOST_OS)-$(SDK_HOST_ARCH).atree
+	$(atree_dir)/sdk-linux-$(SDK_HOST_ARCH).atree
 
 # development/build/sdk-android-<abi>.atree is used to differentiate
 # between architecture models (e.g. ARMv5TE versus ARMv7) when copying
@@ -5981,22 +5979,16 @@ $(INTERNAL_SDK_TARGET): $(deps)
 	        -o $(PRIVATE_DIR) && \
 	    cp -f $(target_notice_file_txt) \
 	            $(PRIVATE_DIR)/system-images/android-$(PLATFORM_VERSION)/$(TARGET_CPU_ABI)/NOTICE.txt && \
-	    cp -f $(tools_notice_file_txt) $(PRIVATE_DIR)/platform-tools/NOTICE.txt && \
 	    HOST_OUT_EXECUTABLES=$(HOST_OUT_EXECUTABLES) HOST_OS=$(HOST_OS) \
 	        development/build/tools/sdk_clean.sh $(PRIVATE_DIR) && \
 	    chmod -R ug+rwX $(PRIVATE_DIR) && \
 	    cd $(dir $@) && zip -rqX $(notdir $@) $(PRIVATE_NAME) \
 	) || ( rm -rf $(PRIVATE_DIR) $@ && exit 44 )
 
-
-# Is a Windows SDK requested? If so, we need some definitions from here
-# in order to find the Linux SDK used to create the Windows one.
-MAIN_SDK_NAME := $(sdk_name)
 MAIN_SDK_DIR  := $(sdk_dir)
 MAIN_SDK_ZIP  := $(INTERNAL_SDK_TARGET)
-ifneq ($(filter win_sdk winsdk-tools,$(MAKECMDGOALS)),)
-include $(TOPDIR)development/build/tools/windows_sdk.mk
-endif
+
+endif # sdk in MAKECMDGOALS
 
 # -----------------------------------------------------------------
 # Findbugs
