@@ -1634,6 +1634,8 @@ $(if $(PRODUCT_$(_var)_BASE_FS_PATH),$(hide) echo "$(1)_base_fs_file=$(PRODUCT_$
 $(eval _size := $(BOARD_$(_var)IMAGE_PARTITION_SIZE))
 $(eval _reserved := $(BOARD_$(_var)IMAGE_PARTITION_RESERVED_SIZE))
 $(eval _headroom := $(PRODUCT_$(_var)_HEADROOM))
+$(if $(or $(_size), $(_reserved), $(_headroom)),,
+    $(hide) echo "$(1)_disable_sparse=true" >> $(2))
 $(call add-common-flags-to-image-props,$(1),$(2))
 endef
 
@@ -3396,7 +3398,7 @@ $(INSTALLED_PVMFWIMAGE_TARGET): $(BUILT_PVMFWIMAGE_TARGET) $(AVBTOOL) $(BOARD_AV
 	cp $(BUILT_PVMFWIMAGE_TARGET) $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
-	    --partition_size $(BOARD_PVMFWIMG_PARTITION_SIZE) \
+	    --partition_size $(BOARD_PVMFWIMAGE_PARTITION_SIZE) \
 	    --partition_name pvmfw $(INTERNAL_AVB_PVMFW_SIGNING_ARGS) \
 	    $(BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS)
 else
@@ -4581,7 +4583,7 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) echo "has_pvmfw=true" >> $@
 ifeq ($(BOARD_AVB_ENABLE),true)
-	$(hide) echo "pvmfw_size=$(BOARD_PVMFWIMG_PARTITION_SIZE)" >> $@
+	$(hide) echo "pvmfw_size=$(BOARD_PVMFWIMAGE_PARTITION_SIZE)" >> $@
 	$(hide) echo "avb_pvmfw_add_hash_footer_args=$(BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS)" >> $@
 ifdef BOARD_AVB_PVMFW_KEY_PATH
 	$(hide) echo "avb_pvmfw_key_path=$(BOARD_AVB_PVMFW_KEY_PATH)" >> $@
