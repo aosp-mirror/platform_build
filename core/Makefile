@@ -5895,9 +5895,7 @@ endif
 atree_dir := development/build
 
 
-sdk_atree_files := \
-	$(atree_dir)/sdk.exclude.atree \
-	$(atree_dir)/sdk-linux-$(SDK_HOST_ARCH).atree
+sdk_atree_files := $(atree_dir)/sdk.exclude.atree
 
 # development/build/sdk-android-<abi>.atree is used to differentiate
 # between architecture models (e.g. ARMv5TE versus ARMv7) when copying
