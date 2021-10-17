@@ -359,7 +359,7 @@ endif
 
 is_sdk_build :=
 
-ifneq ($(filter sdk win_sdk sdk_addon,$(MAKECMDGOALS)),)
+ifneq ($(filter sdk sdk_addon,$(MAKECMDGOALS)),)
 is_sdk_build := true
 endif
 
@@ -1914,11 +1914,11 @@ endif # TARGET_BUILD_UNBUNDLED == TARGET_BUILD_UNBUNDLED_IMAGE
 .PHONY: docs
 docs: $(ALL_DOCS)
 
-.PHONY: sdk win_sdk winsdk-tools sdk_addon
+.PHONY: sdk sdk_addon
 ifeq ($(HOST_OS),linux)
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
-$(call dist-for-goals,sdk win_sdk, \
+$(call dist-for-goals,sdk, \
     $(ALL_SDK_TARGETS) \
     $(SYMBOLS_ZIP) \
     $(COVERAGE_ZIP) \
