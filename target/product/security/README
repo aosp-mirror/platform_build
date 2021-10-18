@@ -16,6 +16,7 @@ The following commands were used to generate the test key pairs:
   development/tools/make_key shared        '/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=android@android.com'
   development/tools/make_key media         '/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=android@android.com'
   development/tools/make_key cts_uicc_2021 '/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=android@android.com'
+  development/tools/make_key fsverity      '/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=android@android.com'
 
 signing using the openssl commandline (for boot/system images)
 --------------------------------------------------------------
