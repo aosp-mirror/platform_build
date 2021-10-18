@@ -2317,6 +2317,7 @@ ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 # files: force_debuggable, adb_debug.prop and userdebug sepolicy.
 # When /force_debuggable is present, /init will load userdebug sepolicy
 # and property files to allow adb root, if the device is unlocked.
+ifneq ($(BUILDING_DEBUG_BOOT_IMAGE)$(BUILDING_DEBUG_VENDOR_BOOT_IMAGE),)
 
 ifdef BUILDING_RAMDISK_IMAGE
 BUILT_DEBUG_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk-debug.img
@@ -2387,11 +2388,15 @@ my_debug_ramdisk_root_dir :=
 
 endif # BUILDING_RAMDISK_IMAGE
 
+endif # BUILDING_DEBUG_BOOT_IMAGE || BUILDING_DEBUG_VENDOR_BOOT_IMAGE
+
 # -----------------------------------------------------------------
 # the boot-debug.img, which is the kernel plus ramdisk-debug.img
 #
 # Note: it's intentional to skip signing for boot-debug.img, because it
 # can only be used if the device is unlocked with verification error.
+ifdef BUILDING_DEBUG_BOOT_IMAGE
+
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
   INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(foreach k,$(subst kernel,$(DEBUG_RAMDISK_BOOT_IMAGE_NAME),$(BOARD_KERNEL_BINARIES)), \
@@ -2447,6 +2452,10 @@ bootimage_debug-nodeps: $(MKBOOTIMG)
 	$(foreach b,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(call build-debug-bootimage-target,$b))
 
 endif # TARGET_NO_KERNEL
+
+endif # BUILDING_DEBUG_BOOT_IMAGE
+
+ifdef BUILDING_DEBUG_VENDOR_BOOT_IMAGE
 
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 ifeq ($(BUILDING_RAMDISK_IMAGE),true)
@@ -2523,9 +2532,12 @@ $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_VENDOR_BOOT
 endif # BUILDING_RAMDISK_IMAGE
 endif # BUILDING_VENDOR_BOOT_IMAGE
 
+endif # BUILDING_DEBUG_VENDOR_BOOT_IMAGE
+
 # -----------------------------------------------------------------
 # The test harness ramdisk, which is based off debug_ramdisk, plus a
 # few additional test-harness-specific properties in adb_debug.prop.
+ifneq ($(BUILDING_DEBUG_BOOT_IMAGE)$(BUILDING_DEBUG_VENDOR_BOOT_IMAGE),)
 
 ifdef BUILDING_RAMDISK_IMAGE
 BUILT_TEST_HARNESS_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk-test-harness.img
@@ -2567,11 +2579,15 @@ ramdisk_test_harness-nodeps: $(MKBOOTFS) | $(COMPRESSION_COMMAND_DEPS)
 
 endif # BUILDING_RAMDISK_IMAGE
 
+endif # BUILDING_DEBUG_BOOT_IMAGE || BUILDING_DEBUG_VENDOR_BOOT_IMAGE
+
 # -----------------------------------------------------------------
 # the boot-test-harness.img, which is the kernel plus ramdisk-test-harness.img
 #
 # Note: it's intentional to skip signing for boot-test-harness.img, because it
 # can only be used if the device is unlocked with verification error.
+ifdef BUILDING_DEBUG_BOOT_IMAGE
+
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 
 ifneq ($(strip $(BOARD_KERNEL_BINARIES)),)
@@ -2610,6 +2626,9 @@ bootimage_test_harness-nodeps: $(MKBOOTIMG)
 	$(foreach b,$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET),$(call build-boot-test-harness-target,$b))
 
 endif # TARGET_NO_KERNEL
+
+endif # BUILDING_DEBUG_BOOT_IMAGE
+
 endif # BOARD_BUILD_SYSTEM_ROOT_IMAGE is not true
 
 # -----------------------------------------------------------------
