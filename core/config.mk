@@ -252,6 +252,10 @@ endef
 # Initialize SOONG_CONFIG_NAMESPACES so that it isn't recursive.
 SOONG_CONFIG_NAMESPACES :=
 
+# TODO(asmundak): remove add_soong_config_namespace, add_soong_config_var,
+# and add_soong_config_var_value once all their usages are replaced with
+# soong_config_set/soong_config_append.
+
 # The add_soong_config_namespace function adds a namespace and initializes it
 # to be empty.
 # $1 is the namespace.
@@ -280,6 +284,32 @@ endef
 define add_soong_config_var_value
 $(eval $2 := $3) \
 $(call add_soong_config_var,$1,$2)
+endef
+
+# Soong config namespace variables manipulation.
+#
+# internal utility to define a namespace and a variable in it.
+define soong_config_define_internal
+$(if $(filter $1,$(SOONG_CONFIG_NAMESPACES)),,$(eval SOONG_CONFIG_NAMESPACES:=$(SOONG_CONFIG_NAMESPACES) $1)) \
+$(if $(filter $2,$(SOONG_CONFIG_$(strip $1))),,$(eval SOONG_CONFIG_$(strip $1):=$(SOONG_CONFIG_$(strip $1)) $2))
+endef
+
+# soong_config_set defines the variable in the given Soong config namespace
+# and sets its value. If the namespace does not exist, it will be defined.
+# $1 is the namespace. $2 is the variable name. $3 is the variable value.
+# Ex: $(call soong_config_set,acme,COOL_FEATURE,true)
+define soong_config_set
+$(call soong_config_define_internal,$1,$2) \
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$3)
+endef
+
+# soong_config_append appends to the value of the variable in the given Soong
+# config namespace. If the varabile does not exist, it will be defined. If the
+# namespace does not  exist, it will be defined.
+# $1 is the namespace, $2 is the variable name, $3 is the value
+define soong_config_append
+$(call soong_config_define_internal,$1,$2) \
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $3)
 endef
 
 # Set the extensions used for various packages
