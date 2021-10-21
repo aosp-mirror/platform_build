@@ -778,7 +778,7 @@ $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_U
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
+$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
 endif
 
 #------------------------------------------------------------------
@@ -1617,7 +1617,8 @@ endef
 # $(2) the image prop file
 define add-common-ro-flags-to-image-props
 $(eval _var := $(call to-upper,$(1)))
-$(if $(BOARD_$(_var)IMAGE_EROFS_COMPRESSOR),$(hide) echo "$(1)_erofs_compressor"$(BOARD_$(_var)IMAGE_EROFS_COMPRESSOR)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_EROFS_COMPRESSOR),$(hide) echo "$(1)_erofs_compressor=$(BOARD_$(_var)IMAGE_EROFS_COMPRESSOR)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_EROFS_PCLUSTER_SIZE),$(hide) echo "$(1)_erofs_pcluster_size=$(BOARD_$(_var)IMAGE_EROFS_PCLUSTER_SIZE)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_EXTFS_INODE_COUNT),$(hide) echo "$(1)_extfs_inode_count=$(BOARD_$(_var)IMAGE_EXTFS_INODE_COUNT)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_EXTFS_RSV_PCT),$(hide) echo "$(1)_extfs_rsv_pct=$(BOARD_$(_var)IMAGE_EXTFS_RSV_PCT)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "$(1)_f2fs_sldc_flags=$(BOARD_$(_var)IMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(2))
@@ -1634,6 +1635,8 @@ $(if $(PRODUCT_$(_var)_BASE_FS_PATH),$(hide) echo "$(1)_base_fs_file=$(PRODUCT_$
 $(eval _size := $(BOARD_$(_var)IMAGE_PARTITION_SIZE))
 $(eval _reserved := $(BOARD_$(_var)IMAGE_PARTITION_RESERVED_SIZE))
 $(eval _headroom := $(PRODUCT_$(_var)_HEADROOM))
+$(if $(or $(_size), $(_reserved), $(_headroom)),,
+    $(hide) echo "$(1)_disable_sparse=true" >> $(2))
 $(call add-common-flags-to-image-props,$(1),$(2))
 endef
 
@@ -1697,6 +1700,8 @@ $(if $(INTERNAL_USERIMAGES_SPARSE_EROFS_FLAG),$(hide) echo "erofs_sparse_flag=$(
 $(if $(INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG),$(hide) echo "squashfs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG)" >> $(1))
 $(if $(INTERNAL_USERIMAGES_SPARSE_F2FS_FLAG),$(hide) echo "f2fs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_F2FS_FLAG)" >> $(1))
 $(if $(BOARD_EROFS_COMPRESSOR),$(hide) echo "erofs_default_compressor=$(BOARD_EROFS_COMPRESSOR)" >> $(1))
+$(if $(BOARD_EROFS_PCLUSTER_SIZE),$(hide) echo "erofs_pcluster_size=$(BOARD_EROFS_PCLUSTER_SIZE)" >> $(1))
+$(if $(BOARD_EROFS_SHARE_DUP_BLOCKS),$(hide) echo "erofs_share_dup_blocks=$(BOARD_EROFS_SHARE_DUP_BLOCKS)" >> $(1))
 $(if $(BOARD_EXT4_SHARE_DUP_BLOCKS),$(hide) echo "ext4_share_dup_blocks=$(BOARD_EXT4_SHARE_DUP_BLOCKS)" >> $(1))
 $(if $(BOARD_FLASH_LOGICAL_BLOCK_SIZE), $(hide) echo "flash_logical_block_size=$(BOARD_FLASH_LOGICAL_BLOCK_SIZE)" >> $(1))
 $(if $(BOARD_FLASH_ERASE_BLOCK_SIZE), $(hide) echo "flash_erase_block_size=$(BOARD_FLASH_ERASE_BLOCK_SIZE)" >> $(1))
@@ -2719,7 +2724,7 @@ $(INSTALLED_FILES_FILE): $(FULL_SYSTEMIMAGE_DEPS) $(FILESLIST) $(FILESLIST_UTIL)
 installed-file-list: $(INSTALLED_FILES_FILE)
 
 ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE))
+$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE))
 endif
 
 systemimage_intermediates := \
@@ -3396,7 +3401,7 @@ $(INSTALLED_PVMFWIMAGE_TARGET): $(BUILT_PVMFWIMAGE_TARGET) $(AVBTOOL) $(BOARD_AV
 	cp $(BUILT_PVMFWIMAGE_TARGET) $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
-	    --partition_size $(BOARD_PVMFWIMG_PARTITION_SIZE) \
+	    --partition_size $(BOARD_PVMFWIMAGE_PARTITION_SIZE) \
 	    --partition_name pvmfw $(INTERNAL_AVB_PVMFW_SIGNING_ARGS) \
 	    $(BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS)
 else
@@ -4581,7 +4586,7 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) echo "has_pvmfw=true" >> $@
 ifeq ($(BOARD_AVB_ENABLE),true)
-	$(hide) echo "pvmfw_size=$(BOARD_PVMFWIMG_PARTITION_SIZE)" >> $@
+	$(hide) echo "pvmfw_size=$(BOARD_PVMFWIMAGE_PARTITION_SIZE)" >> $@
 	$(hide) echo "avb_pvmfw_add_hash_footer_args=$(BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS)" >> $@
 ifdef BOARD_AVB_PVMFW_KEY_PATH
 	$(hide) echo "avb_pvmfw_key_path=$(BOARD_AVB_PVMFW_KEY_PATH)" >> $@
@@ -5201,7 +5206,10 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 ifdef BOARD_PREBUILT_PVMFWIMAGE
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_PVMFWIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
-endif # BOARD_PREBUILT_PVMFWIMAGE
+else ifeq ($(BUILDING_PVMFW_IMAGE),true)
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_PVMFWIMAGE_TARGET) $(zip_root)/IMAGES/
+endif
 ifdef BOARD_PREBUILT_BOOTLOADER
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_BOOTLOADER_MODULE) $(zip_root)/IMAGES/
@@ -5852,6 +5860,8 @@ endif
 # -----------------------------------------------------------------
 # The SDK
 
+ifneq ($(filter sdk,$(MAKECMDGOALS)),)
+
 # The SDK includes host-specific components, so it belongs under HOST_OUT.
 sdk_dir := $(HOST_OUT)/sdk/$(TARGET_PRODUCT)
 
@@ -5861,15 +5871,11 @@ sdk_dir := $(HOST_OUT)/sdk/$(TARGET_PRODUCT)
 #     darwin-x86  --> android-sdk_12345_mac-x86
 #     windows-x86 --> android-sdk_12345_windows
 #
+ifneq ($(HOST_OS),linux)
+  $(error Building the monolithic SDK is only supported on Linux)
+endif
 sdk_name := android-sdk_$(FILE_NAME_TAG)
-ifeq ($(HOST_OS),darwin)
-  INTERNAL_SDK_HOST_OS_NAME := mac
-else
-  INTERNAL_SDK_HOST_OS_NAME := $(HOST_OS)
-endif
-ifneq ($(HOST_OS),windows)
-  INTERNAL_SDK_HOST_OS_NAME := $(INTERNAL_SDK_HOST_OS_NAME)-$(SDK_HOST_ARCH)
-endif
+INTERNAL_SDK_HOST_OS_NAME := linux-$(SDK_HOST_ARCH)
 sdk_name := $(sdk_name)_$(INTERNAL_SDK_HOST_OS_NAME)
 
 sdk_dep_file := $(sdk_dir)/sdk_deps.mk
@@ -5889,9 +5895,7 @@ endif
 atree_dir := development/build
 
 
-sdk_atree_files := \
-	$(atree_dir)/sdk.exclude.atree \
-	$(atree_dir)/sdk-$(HOST_OS)-$(SDK_HOST_ARCH).atree
+sdk_atree_files := $(atree_dir)/sdk.exclude.atree
 
 # development/build/sdk-android-<abi>.atree is used to differentiate
 # between architecture models (e.g. ARMv5TE versus ARMv7) when copying
@@ -5973,22 +5977,16 @@ $(INTERNAL_SDK_TARGET): $(deps)
 	        -o $(PRIVATE_DIR) && \
 	    cp -f $(target_notice_file_txt) \
 	            $(PRIVATE_DIR)/system-images/android-$(PLATFORM_VERSION)/$(TARGET_CPU_ABI)/NOTICE.txt && \
-	    cp -f $(tools_notice_file_txt) $(PRIVATE_DIR)/platform-tools/NOTICE.txt && \
 	    HOST_OUT_EXECUTABLES=$(HOST_OUT_EXECUTABLES) HOST_OS=$(HOST_OS) \
 	        development/build/tools/sdk_clean.sh $(PRIVATE_DIR) && \
 	    chmod -R ug+rwX $(PRIVATE_DIR) && \
 	    cd $(dir $@) && zip -rqX $(notdir $@) $(PRIVATE_NAME) \
 	) || ( rm -rf $(PRIVATE_DIR) $@ && exit 44 )
 
-
-# Is a Windows SDK requested? If so, we need some definitions from here
-# in order to find the Linux SDK used to create the Windows one.
-MAIN_SDK_NAME := $(sdk_name)
 MAIN_SDK_DIR  := $(sdk_dir)
 MAIN_SDK_ZIP  := $(INTERNAL_SDK_TARGET)
-ifneq ($(filter win_sdk winsdk-tools,$(MAKECMDGOALS)),)
-include $(TOPDIR)development/build/tools/windows_sdk.mk
-endif
+
+endif # sdk in MAKECMDGOALS
 
 # -----------------------------------------------------------------
 # Findbugs
