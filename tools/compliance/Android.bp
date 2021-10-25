@@ -17,6 +17,13 @@ package {
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
+blueprint_go_binary {
+    name: "dumpgraph",
+    srcs: ["cmd/dumpgraph.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/dumpgraph_test.go"],
+}
+
 bootstrap_go_package {
     name: "compliance-module",
     srcs: [
