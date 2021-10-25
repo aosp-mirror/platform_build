@@ -51,6 +51,7 @@ bootstrap_go_package {
         "actionset.go",
         "condition.go",
         "conditionset.go",
+        "doc.go",
         "graph.go",
         "policy/policy.go",
         "policy/resolve.go",
