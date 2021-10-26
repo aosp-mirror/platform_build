@@ -67,10 +67,17 @@ PRODUCT_EXTRA_VNDK_VERSIONS := 28 29 30
 
 # Do not build non-GSI partition images.
 PRODUCT_BUILD_CACHE_IMAGE := false
+PRODUCT_BUILD_DEBUG_BOOT_IMAGE := false
+PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE := false
 PRODUCT_BUILD_USERDATA_IMAGE := false
 PRODUCT_BUILD_VENDOR_IMAGE := false
 PRODUCT_BUILD_SUPER_PARTITION := false
 PRODUCT_BUILD_SUPER_EMPTY_IMAGE := false
+PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST := true
 
 # Always build modules from source
 MODULE_BUILD_FROM_SOURCE := true
+
+# Additional settings used in all GSI builds
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.crypto.metadata_init_delete_all_keys.enabled=false \

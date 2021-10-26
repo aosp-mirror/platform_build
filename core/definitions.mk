@@ -2994,9 +2994,10 @@ endef
 # Can be passed a subdirectory to use for the common testcase directory.
 define compatibility_suite_dirs
   $(strip \
-    $(if $(COMPATIBILITY_TESTCASES_OUT_INCLUDE_MODULE_FOLDER_$(1)),\
-      $(COMPATIBILITY_TESTCASES_OUT_$(1))/$(LOCAL_MODULE)$(2),\
-      $(COMPATIBILITY_TESTCASES_OUT_$(1))) \
+    $(if $(COMPATIBILITY_TESTCASES_OUT_$(1)), \
+      $(if $(COMPATIBILITY_TESTCASES_OUT_INCLUDE_MODULE_FOLDER_$(1))$(LOCAL_COMPATIBILITY_PER_TESTCASE_DIRECTORY),\
+        $(COMPATIBILITY_TESTCASES_OUT_$(1))/$(LOCAL_MODULE)$(2),\
+        $(COMPATIBILITY_TESTCASES_OUT_$(1)))) \
     $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)$(2))
 endef
 

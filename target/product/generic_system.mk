@@ -34,7 +34,6 @@ PRODUCT_PACKAGES += \
     PartnerBookmarksProvider \
     Stk \
     Tag \
-    TimeZoneUpdater \
 
 # OTA support
 PRODUCT_PACKAGES += \

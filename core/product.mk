@@ -274,6 +274,7 @@ _product_single_value_vars += PRODUCT_DEX_PREOPT_RESOLVE_STARTUP_STRINGS
 
 # Boot image options.
 _product_single_value_vars += \
+    PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST \
     PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE \
     PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
     PRODUCT_USES_DEFAULT_ART_CONFIG \
@@ -386,9 +387,12 @@ _product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_USERDATA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RECOVERY_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_DEBUG_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_BOOT_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SUPER_EMPTY_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_PVMFW_IMAGE
 
 # List of boot jars delivered via updatable APEXes, following the same format as
 # PRODUCT_BOOT_JARS.
@@ -428,6 +432,11 @@ _product_single_value_vars += PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY
 _product_list_vars += PRODUCT_INTER_PARTITION_JAVA_LIBRARY_ALLOWLIST
 
 _product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
+
+# Install a copy of the debug policy to the system_ext partition, and allow
+# init-second-stage to load debug policy from system_ext.
+# This option is only meant to be set by GSI products.
+_product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

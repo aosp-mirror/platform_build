@@ -57,6 +57,7 @@ PRODUCT_PACKAGES += \
     libdynproc \
     libeffectproxy \
     libeffects \
+    libhapticgenerator \
     libldnhncr \
     libreference-ril \
     libreverbwrapper \
@@ -76,11 +77,6 @@ PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29 += \
 # VINTF data for vendor image
 PRODUCT_PACKAGES += \
     vendor_compatibility_matrix.xml \
-
-# Packages to update the recovery partition, which will be installed on
-# /vendor. TODO(b/141648565): Don't install these unless they're needed.
-PRODUCT_PACKAGES += \
-    applypatch
 
 # Base modules and settings for the debug ramdisk, which is then packed
 # into a boot-debug.img and a vendor_boot-debug.img.
