@@ -87,3 +87,7 @@ Returns *True* if *text* matches *pattern*.
 Runs `sh -c "`*command*`"`, reads its output, converts all newlines into spaces, chops trailing newline returns this
 string. This is equivalent to Make's
 `shell` builtin function. *This function will be eventually removed*.
+
+#### rblf_log(*arg*,..., sep=' ')
+
+Same as `print` builtin but writes to stderr.

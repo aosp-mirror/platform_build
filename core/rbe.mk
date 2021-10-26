@@ -22,6 +22,18 @@ ifneq ($(filter-out false,$(USE_RBE)),)
     rbe_dir := prebuilts/remoteexecution-client/live/
   endif
 
+  ifdef RBE_CXX_POOL
+    cxx_pool := $(RBE_CXX_POOL)
+  else
+    cxx_pool := default
+  endif
+
+  ifdef RBE_JAVA_POOL
+    java_pool := $(RBE_JAVA_POOL)
+  else
+    java_pool := java16
+  endif
+
   ifdef RBE_CXX_EXEC_STRATEGY
     cxx_rbe_exec_strategy := $(RBE_CXX_EXEC_STRATEGY)
   else
@@ -59,8 +71,8 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   endif
 
   platform := container-image=docker://gcr.io/androidbuild-re-dockerimage/android-build-remoteexec-image@sha256:582efb38f0c229ea39952fff9e132ccbe183e14869b39888010dacf56b360d62
-  cxx_platform := $(platform),Pool=default
-  java_r8_d8_platform := $(platform),Pool=java16
+  cxx_platform := $(platform),Pool=$(cxx_pool)
+  java_r8_d8_platform := $(platform),Pool=$(java_pool)
 
   RBE_WRAPPER := $(rbe_dir)/rewrapper
   RBE_CXX := --labels=type=compile,lang=cpp,compiler=clang --env_var_allowlist=PWD --exec_strategy=$(cxx_rbe_exec_strategy) --platform=$(cxx_platform) --compare=$(cxx_compare)

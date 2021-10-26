@@ -84,6 +84,7 @@ _board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE
 _board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_PVMFWIMAGE_PARTITION_SIZE
 
 # Logical partitions related variables.
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE
@@ -184,7 +185,20 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
+# TODO(colefaust) change this if to RBC_PRODUCT_CONFIG when
+# the board configuration is known to work on everything
+# the product config works on.
+ifndef RBC_BOARD_CONFIG
 include $(board_config_mk)
+else
+  rc := $(shell build/soong/scripts/rbc-run $(board_config_mk) \
+      BUILDING_GSI=$(BUILDING_GSI) >$(OUT_DIR)/rbcboardtemp.mk || echo $$?)
+  ifneq (,$(rc))
+    $(error board configuration converter failed: $(rc))
+  endif
+
+  include $(OUT_DIR)/rbcboardtemp.mk
+endif
 
 ifneq (,$(and $(TARGET_ARCH),$(TARGET_ARCH_SUITE)))
   $(error $(board_config_mk) erroneously sets both TARGET_ARCH and TARGET_ARCH_SUITE)
@@ -438,6 +452,86 @@ else ifeq ($(PRODUCT_BUILD_RAMDISK_IMAGE),false)
   BUILDING_RAMDISK_IMAGE :=
 endif
 .KATI_READONLY := BUILDING_RAMDISK_IMAGE
+
+# Are we building a debug vendor_boot image
+BUILDING_DEBUG_VENDOR_BOOT_IMAGE :=
+# Can't build vendor_boot-debug.img if BOARD_BUILD_SYSTEM_ROOT_IMAGE is true,
+# because building debug vendor_boot image requires a ramdisk.
+ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+  ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE is true, but so is BOARD_BUILD_SYSTEM_ROOT_IMAGE. \
+      Skip building the debug vendor_boot image.)
+  endif
+# Can't build vendor_boot-debug.img if we're not building a ramdisk.
+else ifndef BUILDING_RAMDISK_IMAGE
+  ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE is true, but we're not building a ramdisk image. \
+      Skip building the debug vendor_boot image.)
+  endif
+# Can't build vendor_boot-debug.img if we're not building a vendor_boot.img.
+else ifndef BUILDING_VENDOR_BOOT_IMAGE
+  ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE is true, but we're not building a vendor_boot image. \
+      Skip building the debug vendor_boot image.)
+  endif
+else
+  ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),)
+    BUILDING_DEBUG_VENDOR_BOOT_IMAGE := true
+  else ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),true)
+    BUILDING_DEBUG_VENDOR_BOOT_IMAGE := true
+  endif
+endif
+.KATI_READONLY := BUILDING_DEBUG_VENDOR_BOOT_IMAGE
+
+_has_boot_img_artifact :=
+ifneq ($(strip $(TARGET_NO_KERNEL)),true)
+  ifdef BUILDING_BOOT_IMAGE
+    _has_boot_img_artifact := true
+  endif
+  # BUILDING_RECOVERY_IMAGE && BOARD_USES_RECOVERY_AS_BOOT implies that
+  # recovery is being built with the file name *boot.img*, which still counts
+  # as "building boot.img".
+  ifdef BUILDING_RECOVERY_IMAGE
+    ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+      _has_boot_img_artifact := true
+    endif
+  endif
+endif
+
+# Are we building a debug boot image
+BUILDING_DEBUG_BOOT_IMAGE :=
+# Can't build boot-debug.img if BOARD_BUILD_SYSTEM_ROOT_IMAGE is true,
+# because building debug boot image requires a ramdisk.
+ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but so is BOARD_BUILD_SYSTEM_ROOT_IMAGE. \
+      Skip building the debug boot image.)
+  endif
+# Can't build boot-debug.img if we're not building a ramdisk.
+else ifndef BUILDING_RAMDISK_IMAGE
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we're not building a ramdisk image. \
+      Skip building the debug boot image.)
+  endif
+# Can't build boot-debug.img if we're not building a boot.img.
+else ifndef _has_boot_img_artifact
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we're not building a boot image. \
+      Skip building the debug boot image.)
+  endif
+else
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),)
+    BUILDING_DEBUG_BOOT_IMAGE := true
+    # Don't build boot-debug.img if we're already building vendor_boot-debug.img.
+    ifdef BUILDING_DEBUG_VENDOR_BOOT_IMAGE
+      BUILDING_DEBUG_BOOT_IMAGE :=
+    endif
+  else ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    BUILDING_DEBUG_BOOT_IMAGE := true
+  endif
+endif
+.KATI_READONLY := BUILDING_DEBUG_BOOT_IMAGE
+_has_boot_img_artifact :=
 
 # Are we building a userdata image
 BUILDING_USERDATA_IMAGE :=
@@ -695,6 +789,24 @@ ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
 endif
 .KATI_READONLY := BUILDING_ODM_DLKM_IMAGE
 
+BOARD_USES_PVMFWIMAGE :=
+ifdef BOARD_PREBUILT_PVMFWIMAGE
+  BOARD_USES_PVMFWIMAGE := true
+endif
+ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
+  BOARD_USES_PVMFWIMAGE := true
+endif
+.KATI_READONLY := BOARD_USES_PVMFWIMAGE
+
+BUILDING_PVMFW_IMAGE :=
+ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
+  BUILDING_PVMFW_IMAGE := true
+endif
+ifdef BOARD_PREBUILT_PVMFWIMAGE
+  BUILDING_PVMFW_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_PVMFW_IMAGE
+
 ###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
 TARGET_RECOVERY_UPDATER_LIBS ?=
@@ -745,7 +857,7 @@ endef
 
 ifdef BOARD_VNDK_VERSION
   ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
-    $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current))
+    $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current)
   endif
   ifneq ($(BOARD_VNDK_VERSION),current)
     $(call check_vndk_version,$(BOARD_VNDK_VERSION))
@@ -803,8 +915,8 @@ $(foreach m,$(DEFAULT_WARNING_BUILD_MODULE_TYPES),\
     $(KATI_deprecated_var $(m),Please convert to Soong)))
 
 $(if $(filter true,$(BUILD_BROKEN_USES_BUILD_COPY_HEADERS)),\
-  $(KATI_deprecated_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers),\
-  $(KATI_obsolete_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers))
+  $(KATI_deprecated_var BUILD_COPY_HEADERS,See $(CHANGES_URL)\#copy_headers),\
+  $(KATI_obsolete_var BUILD_COPY_HEADERS,See $(CHANGES_URL)\#copy_headers))
 
 $(foreach m,$(filter-out BUILD_COPY_HEADERS,$(DEFAULT_ERROR_BUILD_MODULE_TYPES)),\
   $(if $(filter true,$(BUILD_BROKEN_USES_$(m))),\

@@ -259,6 +259,28 @@ func structFromEnv(env []string) *starlarkstruct.Struct {
 	return starlarkstruct.FromStringDict(starlarkstruct.Default, sd)
 }
 
+func log(thread *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+	sep := " "
+	if err := starlark.UnpackArgs("print", nil, kwargs, "sep?", &sep); err != nil {
+		return nil, err
+	}
+	for i, v := range args {
+		if i > 0 {
+			fmt.Fprint(os.Stderr, sep)
+		}
+		if s, ok := starlark.AsString(v); ok {
+			fmt.Fprint(os.Stderr, s)
+		} else if b, ok := v.(starlark.Bytes); ok {
+			fmt.Fprint(os.Stderr, string(b))
+		} else {
+			fmt.Fprintf(os.Stderr, "%s", v)
+		}
+	}
+
+	fmt.Fprintln(os.Stderr)
+	return starlark.None, nil
+}
+
 func setup(env []string) {
 	// Create the symbols that aid makefile conversion. See README.md
 	builtins = starlark.StringDict{
@@ -273,6 +295,8 @@ func setup(env []string) {
 		"rblf_regex": starlark.NewBuiltin("rblf_regex", regexMatch),
 		// To convert makefile's $(shell cmd)
 		"rblf_shell": starlark.NewBuiltin("rblf_shell", shell),
+		// Output to stderr
+		"rblf_log": starlark.NewBuiltin("rblf_log", log),
 		// To convert makefile's $(wildcard foo*)
 		"rblf_wildcard": starlark.NewBuiltin("rblf_wildcard", wildcard),
 	}

@@ -252,6 +252,10 @@ endef
 # Initialize SOONG_CONFIG_NAMESPACES so that it isn't recursive.
 SOONG_CONFIG_NAMESPACES :=
 
+# TODO(asmundak): remove add_soong_config_namespace, add_soong_config_var,
+# and add_soong_config_var_value once all their usages are replaced with
+# soong_config_set/soong_config_append.
+
 # The add_soong_config_namespace function adds a namespace and initializes it
 # to be empty.
 # $1 is the namespace.
@@ -280,6 +284,32 @@ endef
 define add_soong_config_var_value
 $(eval $2 := $3) \
 $(call add_soong_config_var,$1,$2)
+endef
+
+# Soong config namespace variables manipulation.
+#
+# internal utility to define a namespace and a variable in it.
+define soong_config_define_internal
+$(if $(filter $1,$(SOONG_CONFIG_NAMESPACES)),,$(eval SOONG_CONFIG_NAMESPACES:=$(SOONG_CONFIG_NAMESPACES) $1)) \
+$(if $(filter $2,$(SOONG_CONFIG_$(strip $1))),,$(eval SOONG_CONFIG_$(strip $1):=$(SOONG_CONFIG_$(strip $1)) $2))
+endef
+
+# soong_config_set defines the variable in the given Soong config namespace
+# and sets its value. If the namespace does not exist, it will be defined.
+# $1 is the namespace. $2 is the variable name. $3 is the variable value.
+# Ex: $(call soong_config_set,acme,COOL_FEATURE,true)
+define soong_config_set
+$(call soong_config_define_internal,$1,$2) \
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$3)
+endef
+
+# soong_config_append appends to the value of the variable in the given Soong
+# config namespace. If the varabile does not exist, it will be defined. If the
+# namespace does not  exist, it will be defined.
+# $1 is the namespace, $2 is the variable name, $3 is the value
+define soong_config_append
+$(call soong_config_define_internal,$1,$2) \
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $3)
 endef
 
 # Set the extensions used for various packages
@@ -490,11 +520,8 @@ USE_D8 := true
 #
 ifeq (,$(TARGET_BUILD_USE_PREBUILT_SDKS))
   AAPT := $(HOST_OUT_EXECUTABLES)/aapt
-  MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
-
 else # TARGET_BUILD_USE_PREBUILT_SDKS
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
-  MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
 endif # TARGET_BUILD_USE_PREBUILT_SDKS
 
 ifeq (,$(TARGET_BUILD_USE_PREBUILT_SDKS))
@@ -726,10 +753,13 @@ else
 endif
 .KATI_READONLY := BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES
 
+min_systemsdk_version := $(firstword $(BOARD_API_LEVEL) $(BOARD_SHIPPING_API_LEVEL) $(PRODUCT_SHIPPING_API_LEVEL))
+ifneq (,$(min_systemsdk_version))
+ifneq ($(call numbers_less_than,$(min_systemsdk_version),$(BOARD_SYSTEMSDK_VERSIONS)),)
+  $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to BOARD_API_LEVEL, BOARD_SHIPPING_API_LEVEL or PRODUCT_SHIPPING_API_LEVEL ($(min_systemsdk_version)))
+endif
+endif
 ifdef PRODUCT_SHIPPING_API_LEVEL
-  ifneq ($(call numbers_less_than,$(PRODUCT_SHIPPING_API_LEVEL),$(BOARD_SYSTEMSDK_VERSIONS)),)
-    $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to PRODUCT_SHIPPING_API_LEVEL ($(PRODUCT_SHIPPING_API_LEVEL)))
-  endif
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),28),)
     ifneq ($(TARGET_IS_64_BIT), true)
       ifneq ($(TARGET_USES_64_BIT_BINDER), true)
@@ -774,7 +804,7 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 # is made which breaks compatibility with the previous platform sepolicy version,
 # not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
 # be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 30
+sepolicy_major_vers := 31
 sepolicy_minor_vers := 0
 
 ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
