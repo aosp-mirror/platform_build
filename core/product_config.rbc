@@ -293,6 +293,11 @@ def _add_soong_config_var_value(g, nsname, var, value):
         fail("no such namespace: " + nsname)
     ns[var] = value
 
+def _abspath(path):
+    """Provided for compatibility, to be removed later."""
+    return path
+
+
 def _addprefix(prefix, string_or_list):
     """Adds prefix and returns a list.
 
@@ -598,6 +603,7 @@ _options = __get_options()
 rblf = struct(
     add_soong_config_namespace = _add_soong_config_namespace,
     add_soong_config_var_value = _add_soong_config_var_value,
+    abspath = _abspath,
     addprefix = _addprefix,
     addsuffix = _addsuffix,
     copy_files = _copy_files,
