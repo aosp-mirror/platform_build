@@ -1401,8 +1401,8 @@ def main(argv):
     # We should only allow downgrading incrementals (as opposed to full).
     # Otherwise the device may go back from arbitrary build with this full
     # OTA package.
-    if OPTIONS.incremental_source is None:
-      raise ValueError("Cannot generate downgradable full OTAs")
+  if OPTIONS.incremental_source is None and OPTIONS.downgrade:
+    raise ValueError("Cannot generate downgradable full OTAs")
 
   # TODO(xunchang) for retrofit and partial updates, maybe we should rebuild the
   # target-file and reload the info_dict. So the info will be consistent with
