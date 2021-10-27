@@ -59,6 +59,7 @@ VNDK-SP: libz.so
 VNDK-core: android.hardware.audio.common@2.0.so
 VNDK-core: android.hardware.authsecret-V1-ndk.so
 VNDK-core: android.hardware.automotive.occupant_awareness-V1-ndk.so
+VNDK-core: android.hardware.bluetooth.audio-V1-ndk.so
 VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
 VNDK-core: android.hardware.configstore@1.1.so
