@@ -23,12 +23,11 @@
 ### PRODUCT_PACKAGES += dev_after
 ### PRODUCT_COPY_FILES += $(call find-copy-subdir-files,audio_platform_info*.xml,device/google/redfin/audio,$(TARGET_COPY_OUT_VENDOR)/etc) xyz:/etc/xyz
 ### PRODUCT_COPY_FILES += $(call copy-files,x.xml y.xml,/etc)
-### $(call add_soong_namespace,NS1)
-### $(call add_soong_config_var_value,NS1,v1,abc)
-### $(call add_soong_config_var_value,NS1,v2,def)
-### $(call add_soong_namespace,NS2)
+### $(call add_soong_config_namespace,NS1)
+### $(call soong_config_append,NS1,v1,abc)
+### $(call soong_config_append,NS1,v2,def)
 ### $(call add_soong_config_var_value,NS2,v3,abc)
-### $(call add_soong_config_var_value,NS2,v3,xyz)
+### $(call soong_config_set,NS2,v3,xyz)
 
 load("//build/make/core:product_config.rbc", "rblf")
 load(":part1.rbc", _part1_init = "init")
@@ -50,10 +49,20 @@ def init(g, handle):
   cfg["PRODUCT_COPY_FILES"] += rblf.copy_files("x.xml y.xml", "/etc")
   cfg["PRODUCT_COPY_FILES"] += rblf.copy_files(["from/sub/x", "from/sub/y"], "to")
 
-  rblf.add_soong_config_namespace(g, "NS1")
-  rblf.add_soong_config_var_value(g, "NS1", "v1", "abc")
-  rblf.add_soong_config_var_value(g, "NS1", "v2", "def")
-  rblf.add_soong_config_namespace(g, "NS2")
-  rblf.add_soong_config_var_value(g, "NS2", "v3", "abc")
-  rblf.add_soong_config_var_value(g, "NS2", "v3", "xyz")
+  rblf.soong_config_namespace(g, "NS1")
+  rblf.soong_config_append(g, "NS1", "v1", "abc")
+  rblf.soong_config_append(g, "NS1", "v2", "def")
+  rblf.soong_config_set(g, "NS2", "v3", "abc")
+  rblf.soong_config_set(g, "NS2", "v3", "xyz")
 
+  if rblf.board_platform_in(g, "board1 board2"):
+    cfg["PRODUCT_PACKAGES"] += ["bad_package"]
+  g["TARGET_BOARD_PLATFORM"] = "board1"
+  if rblf.board_platform_in(g, "board1 board2"):
+    cfg["PRODUCT_PACKAGES"] += ["board1_in"]
+  if rblf.board_platform_in(g, ["board3","board2"]):
+    cfg["PRODUCT_PACKAGES"] += ["bad_board_in"]
+  if rblf.board_platform_is(g, "board1"):
+    cfg["PRODUCT_PACKAGES"] += ["board1_is"]
+  if rblf.board_platform_is(g, "board2"):
+    cfg["PRODUCT_PACKAGES"] += ["bad_board1_is"]
