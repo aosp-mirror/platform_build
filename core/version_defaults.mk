@@ -47,7 +47,7 @@ MAX_PLATFORM_VERSION := TP1A
 # The last stable version name of the platform that was released.  During
 # development, this stays at that previous version, while the codename indicates
 # further work based on the previous version.
-PLATFORM_VERSION_LAST_STABLE := 12
+PLATFORM_VERSION_LAST_STABLE := 12L
 .KATI_READONLY := PLATFORM_VERSION_LAST_STABLE
 
 # These are the current development codenames, if the build is not a final
@@ -68,7 +68,7 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 31
+  PLATFORM_SDK_VERSION := 32
 endif
 .KATI_READONLY := PLATFORM_SDK_VERSION
 
