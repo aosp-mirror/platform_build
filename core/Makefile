@@ -4323,6 +4323,7 @@ INTERNAL_OTATOOLS_MODULES := \
   shflags \
   sign_apex \
   sign_target_files_apks \
+  sign_virt_apex \
   signapk \
   simg2img \
   sload_f2fs \
