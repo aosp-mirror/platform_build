@@ -423,6 +423,15 @@ $(eval $(call copy-one-file,$(my_dexpreopt_config),$(my_dexpreopt_config_for_pos
 
 $(LOCAL_INSTALLED_MODULE): $(my_dexpreopt_config_for_postprocessing)
 
+# System server jars defined in Android.mk are deprecated.
+ifneq (true, $(PRODUCT_BROKEN_DEPRECATED_MK_SYSTEM_SERVER_JARS))
+  ifneq (,$(filter %:$(LOCAL_MODULE), $(PRODUCT_SYSTEM_SERVER_JARS) $(PRODUCT_APEX_SYSTEM_SERVER_JARS)))
+    $(error System server jars defined in Android.mk are deprecated. \
+      Convert $(LOCAL_MODULE) to Android.bp or temporarily disable the error \
+      with 'PRODUCT_BROKEN_DEPRECATED_MK_SYSTEM_SERVER_JARS := true')
+  endif
+endif
+
 ifdef LOCAL_DEX_PREOPT
   # System server jars must be copied into predefined locations expected by
   # dexpreopt. Copy rule must be exposed to Ninja (as it uses these files as
