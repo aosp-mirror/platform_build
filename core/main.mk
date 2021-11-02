@@ -534,7 +534,7 @@ FULL_BUILD := true
 # Include all of the makefiles in the system
 #
 
-subdir_makefiles := $(SOONG_ANDROID_MK)
+subdir_makefiles := $(SOONG_OUT_DIR)/installs-$(TARGET_PRODUCT).mk $(SOONG_ANDROID_MK)
 # Android.mk files are only used on Linux builds, Mac only supports Android.bp
 ifeq ($(HOST_OS),linux)
   subdir_makefiles += $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
