@@ -553,6 +553,7 @@ endif # !LOCAL_UNINSTALLABLE_MODULE
 ###########################################################
 
 my_vintf_installed:=
+my_vintf_path:=
 my_vintf_pairs:=
 my_init_rc_installed :=
 my_init_rc_path :=
@@ -566,8 +567,11 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
       my_vintf_fragments := $(foreach xml,$(LOCAL_VINTF_FRAGMENTS),$(LOCAL_PATH)/$(xml))
     endif
     ifneq ($(strip $(my_vintf_fragments)),)
-
-      my_vintf_pairs := $(foreach xml,$(my_vintf_fragments),$(xml):$(TARGET_OUT$(partition_tag)_ETC)/vintf/manifest/$(notdir $(xml)))
+      # Make doesn't support recovery as an output partition, but some Soong modules installed in recovery
+      # have init.rc files that need to be installed alongside them. Manually handle the case where the
+      # output file is in the recovery partition.
+      my_vintf_path := $(if $(filter $(TARGET_RECOVERY_ROOT_OUT)/%,$(my_module_path)),$(TARGET_RECOVERY_ROOT_OUT)/system/etc,$(TARGET_OUT$(partition_tag)_ETC))
+      my_vintf_pairs := $(foreach xml,$(my_vintf_fragments),$(xml):$(my_vintf_path)/vintf/manifest/$(notdir $(xml)))
       my_vintf_installed := $(foreach xml,$(my_vintf_pairs),$(call word-colon,2,$(xml)))
 
       # Only set up copy rules once, even if another arch variant shares it
