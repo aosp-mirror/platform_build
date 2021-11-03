@@ -15,8 +15,13 @@ The available options are:
 -p package...           license package name
 -n notice...            license notice file
 -d dependency...        license metadata file dependency
--t target...            targets
+-s dependency...        source (input) dependency
+-t target...            built targets
+-i target...            installed targets
+-r root...              root directory of project
 -m target:installed...  map dependent targets to their installed names
+-mc module_class...     module class
+-mt module_type...      module type
 -is_container           preserved dependent target name when given
 -o outfile              output file
 "
@@ -27,14 +32,18 @@ license_conditions=
 license_package_name=
 license_notice=
 license_deps=
+module_class=
+module_type=
+source_deps=
 targets=
+installed=
 installmap=
 is_container=false
 ofile=
+roots=
 
 # Global variables
 depfiles=" "
-effective_conditions=
 
 
 # Exits with a message.
@@ -82,14 +91,29 @@ process_args() {
       -d)
         lcurr_flag=dependency
         ;;
+      -s)
+        lcurr_flag=source
+        ;;
       -t)
         lcurr_flag=target
+        ;;
+      -i)
+        lcurr_flag=install
         ;;
       -m)
         lcurr_flag=installmap
         ;;
+      -mc)
+        lcurr_flag=class
+        ;;
+      -mt)
+        lcurr_flag=type
+        ;;
       -o)
         lcurr_flag=ofile
+        ;;
+      -r)
+        lcurr_flag=root
         ;;
       -is_container)
         lcurr_flag=
@@ -115,11 +139,35 @@ process_args() {
           dependency)
             license_deps="${license_deps}${license_deps:+ }${1}"
             ;;
+          source)
+            source_deps="${source_deps}${source_deps:+ }${1}"
+            ;;
           target)
             targets="${targets}${targets:+ }${1}"
             ;;
+          install)
+            installed="${installed}${installed:+ }${1}"
+            ;;
           installmap)
             installmap="${installmap}${installmap:+ }${1}"
+            ;;
+          class)
+            module_class="${module_class}${module_class:+ }${1}"
+            ;;
+          type)
+            module_type="${module_type}${module_type:+ }${1}"
+            ;;
+          root)
+            root="${1}"
+            while [ -n "${root}" ] && ! [ "${root}" == '.' ] && \
+                ! [ "${root}" == '/' ]; \
+            do
+              if [ -d "${root}/.git" ]; then
+                roots="${roots}${roots:+ }${root}"
+                break
+              fi
+              root=$(dirname "${root}")
+            done
             ;;
           ofile)
             if [ -n "${ofile}" ]; then
@@ -137,78 +185,6 @@ process_args() {
   done
 }
 
-# Reads a license metadata file from stdin, and outputs the named dependencies.
-#
-# No parameters.
-extract_deps() {
-  awk '$1 == "dep_name:" { sub(/^"/, "", $2); sub(/"$/, "", $2); print $2; }'
-}
-
-# Populates the depfiles variable identifying dependency files.
-#
-# Starting with the dependencies enumerated in license_deps, calculates the
-# transitive closure of all dependencies.
-#
-# Dependency names ending in .meta_module indirectly reference license
-# metadata with 1 license metadata filename per line.
-#
-# No parameters; no output.
-read_deps() {
-  lnewdeps=
-  for d in ${license_deps}; do
-    case "${d}" in
-      *.meta_module)
-        lnewdeps="${lnewdeps}${lnewdeps:+ }"$(cat "${d}") ;;
-      *)
-        lnewdeps="${lnewdeps}${lnewdeps:+ }${d}" ;;
-    esac
-  done
-  lnewdeps=$(echo "${lnewdeps}" | tr ' ' '\n' | sort -u)
-  lalldeps=
-  ldeps=
-  lmod=
-  ldep=
-  while [ "${#lnewdeps}" -gt '0' ]; do
-    ldeps="${lnewdeps}"
-    lnewdeps=
-    for ldep in ${ldeps}; do
-      depfiles="${depfiles}${ldep} "
-      lalldeps="${lalldeps}${lalldeps:+ }"$(cat "${ldep}" | extract_deps)
-    done
-    lalldeps=$(for d in ${lalldeps}; do echo "${d}"; done | sort -u)
-    for d in ${lalldeps}; do
-      ldeps="${d}"
-      case "${d}" in *.meta_module) ldeps=$(cat "${d}") ;; esac
-      for lmod in ${ldeps}; do
-        if ! expr "${depfiles}" : ".* ${lmod} .*" >/dev/null 2>&1; then
-          lnewdeps="${lnewdeps}${lnewdeps:+ }${lmod}"
-        fi
-      done
-    done
-    lalldeps=
-  done
-}
-
-# Returns the effective license conditions for the current license metadata.
-#
-# If a module is restricted or links in a restricted module, the effective
-# license has a restricted condition.
-calculate_effective_conditions() {
-  lconditions="${license_conditions}"
-  case "${license_conditions}" in
-    *restricted*) : do nothing ;;
-    *)
-       for d in ${depfiles}; do
-         if cat "${d}" | egrep -q 'effective_condition\s*:.*restricted' ; then
-           lconditions="${lconditions}${lconditions:+ }restricted"
-           break
-         fi
-       done
-     ;;
-  esac
-  echo "${lconditions}"
-}
-
 
 process_args "$@"
 
@@ -221,93 +197,40 @@ fi
 
 # spit out the license metadata file content
 (
-  echo 'license_package_name: "'${license_package_name}'"'
+  echo 'license_package_name: "'"${license_package_name}"'"'
+  for t in ${module_type}; do
+    echo 'module_type: "'"${t}"'"'
+  done
+  for c in ${module_class}; do
+    echo 'module_class: "'"${c}"'"'
+  done
+  for r in ${roots}; do
+    echo 'root: "'"${r}"'"'
+  done
   for kind in ${license_kinds}; do
-    echo 'license_kind: "'${kind}'"'
+    echo 'license_kind: "'"${kind}"'"'
   done
   for condition in ${license_conditions}; do
-    echo 'license_condition: "'${condition}'"'
+    echo 'license_condition: "'"${condition}"'"'
   done
   for f in ${license_notice}; do
-    echo 'license_text: "'${f}'"'
+    echo 'license_text: "'"${f}"'"'
   done
   echo "is_container: ${is_container}"
   for t in ${targets}; do
-    echo 'target: "'${t}'"'
+    echo 'built: "'"${t}"'"'
+  done
+  for i in ${installed}; do
+    echo 'installed: "'"${i}"'"'
   done
   for m in ${installmap}; do
-    echo 'install_map: "'${m}'"'
+    echo 'install_map: "'"${m}"'"'
+  done
+  for s in ${source_deps}; do
+    echo 'source: "'"${s}"'"'
   done
 ) >>"${ofile}"
-read_deps
-effective_conditions=$(calculate_effective_conditions)
-for condition in ${effective_conditions}; do
-  echo 'effective_condition: "'${condition}'"'
-done >>"${ofile}"
+depfiles=" $(echo $(echo ${license_deps} | tr ' ' '\n' | sort -u)) "
 for dep in ${depfiles}; do
-  echo 'dep {'
-  cat "${dep}" | \
-    awk -v name="${dep}" '
-      function strip_type() {
-        $1 = ""
-        sub(/^\s*/, "")
-      }
-      BEGIN {
-        print "  dep_name: " name
-      }
-      $1 == "license_package_name:" {
-        strip_type()
-        print "  dep_package_name: "$0
-      }
-      $1 == "dep_name:" {
-        print "  dep_sub_dep: "$2
-      }
-      $1 == "license_kind:" {
-        print "  dep_license_kind: "$2
-      }
-      $1 == "license_condition:" {
-        print "  dep_license_condition: "$2
-      }
-      $1 == "is_container:" {
-        print "  dep_is_container: "$2
-      }
-      $1 == "license_text:" {
-        strip_type()
-        print "  dep_license_text: "$0
-      }
-      $1 == "target:" {
-        print "  dep_target: "$2
-      }
-      $1 == "install_map:" {
-        print "  dep_install_map: "$2
-      }
-  '
-  # The restricted license kind is contagious to all linked dependencies.
-  dep_conditions=$(echo $(
-      cat "${dep}" | awk '
-        $1 == "effective_condition:" {
-          $1 = ""
-          sub(/^\s*/, "")
-          gsub(/"/, "")
-          print
-        }
-      '
-  ))
-  for condition in ${dep_conditions}; do
-    echo '  dep_effective_condition: "'${condition}'"'
-  done
-  if ! ${is_container}; then
-    case "${dep_conditions}" in
-      *restricted*) : already restricted -- nothing to inherit ;;
-      *)
-        case "${effective_conditions}" in
-          *restricted*)
-            # "contagious" restricted infects everything linked to restricted
-            echo '  dep_effective_condition: "restricted"'
-            ;;
-        esac
-        ;;
-    esac
-  fi
-  echo '}'
+  echo 'dep: "'"${dep}"'"'
 done >>"${ofile}"
