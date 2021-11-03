@@ -514,12 +514,6 @@ my_path_comp :=
 ###########################################################
 
 my_installed_symlinks :=
-my_default_test_module :=
-ifeq ($(use_testcase_folder),true)
-arch_dir := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-my_default_test_module := $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)/$(arch_dir)/$(my_installed_module_stem)
-arch_dir :=
-endif
 
 ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
   # Soong already generated the copy rule, but make the installed location depend on the Make
@@ -527,17 +521,15 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
   # them to exist.
   $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-  ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
-    $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
-    $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
+  $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
+  $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@"
-    ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 	$(copy-file-or-link-to-new-target)
-    else
+  else
 	$(copy-file-to-new-target)
-    endif
-	$(PRIVATE_POST_INSTALL_CMD)
   endif
+	$(PRIVATE_POST_INSTALL_CMD)
 
   # Rule to install the module's companion symlinks
   my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS) $(LOCAL_MODULE_SYMLINKS_$(my_32_64_bit_suffix)))
@@ -735,8 +727,9 @@ endif
 
 # The module itself.
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-    $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem))) \
+  $(eval my_compat_dist_$(suite) := $(patsubst %:$(LOCAL_INSTALLED_MODULE),$(LOCAL_INSTALLED_MODULE):$(LOCAL_INSTALLED_MODULE),\
+    $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
+      $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem)))) \
   $(eval my_compat_dist_config_$(suite) := ))
 
 
