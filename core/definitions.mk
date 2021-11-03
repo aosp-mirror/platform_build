@@ -608,10 +608,25 @@ $(_dir)/$(1).meta_lic: PRIVATE_INSTALL_MAP := $(_map)
 $(_dir)/$(1).meta_lic: PRIVATE_MODULE_TYPE := $(ALL_MODULES.$(1).MODULE_TYPE)
 $(_dir)/$(1).meta_lic: PRIVATE_MODULE_CLASS := $(ALL_MODULES.$(1).MODULE_CLASS)
 $(_dir)/$(1).meta_lic: PRIVATE_INSTALL_MAP := $(_map)
-$(_dir)/$(1).meta_lic : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )build/make/tools/build-license-metadata.sh
+$(_dir)/$(1).meta_lic: $(BUILD_LICENSE_METADATA)
+$(_dir)/$(1).meta_lic : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
 	rm -f $$@
 	mkdir -p $$(dir $$@)
-	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -s $$(PRIVATE_SOURCES) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) -i $$(PRIVATE_INSTALLED) $$(if $$(PRIVATE_IS_CONTAINER),-is_container) -p '$$(PRIVATE_PACKAGE_NAME)' -mt $$(PRIVATE_MODULE_TYPE) -mc $$(PRIVATE_MODULE_CLASS) -r $$(PRIVATE_PATH) -o $$@
+	$(BUILD_LICENSE_METADATA) \
+	  $$(addprefix -mt ,$$(PRIVATE_MODULE_TYPE)) \
+	  $$(addprefix -mc ,$$(PRIVATE_MODULE_CLASS)) \
+	  $$(addprefix -k ,$$(PRIVATE_KINDS)) \
+	  $$(addprefix -c ,$$(PRIVATE_CONDITIONS)) \
+	  $$(addprefix -n ,$$(PRIVATE_NOTICES)) \
+	  $$(addprefix -d ,$$(PRIVATE_NOTICE_DEPS)) \
+	  $$(addprefix -s ,$$(PRIVATE_SOURCES)) \
+	  $$(addprefix -m ,$$(PRIVATE_INSTALL_MAP)) \
+	  $$(addprefix -t ,$$(PRIVATE_TARGETS)) \
+	  $$(addprefix -i ,$$(PRIVATE_INSTALLED)) \
+	  $$(if $$(PRIVATE_IS_CONTAINER),-is_container) \
+	  -p '$$(PRIVATE_PACKAGE_NAME)' \
+	  $$(addprefix -r ,$$(PRIVATE_PATH)) \
+	  -o $$@
 
 $(strip $(eval _mifs := $(sort $(ALL_MODULES.$(1).MODULE_INSTALLED_FILENAMES))))
 $(strip $(eval _infs := $(sort $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE))))
@@ -662,10 +677,23 @@ $(_dir)/$(_tgt).meta_lic: PRIVATE_PATH := $(_path)
 $(_dir)/$(_tgt).meta_lic: PRIVATE_IS_CONTAINER := $(ALL_NON_MODULES.$(_tgt).IS_CONTAINER)
 $(_dir)/$(_tgt).meta_lic: PRIVATE_PACKAGE_NAME := $(strip $(ALL_NON_MODULES.$(_tgt).LICENSE_PACKAGE_NAME))
 $(_dir)/$(_tgt).meta_lic: PRIVATE_INSTALL_MAP := $(strip $(_install_map))
-$(_dir)/$(_tgt).meta_lic : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )build/make/tools/build-license-metadata.sh
+$(_dir)/$(_tgt).meta_lic: $(BUILD_LICENSE_METADATA)
+$(_dir)/$(_tgt).meta_lic : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
 	rm -f $$@
 	mkdir -p $$(dir $$@)
-	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -s $$(PRIVATE_SOURCES) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(PRIVATE_IS_CONTAINER),-is_container) -p '$$(PRIVATE_PACKAGE_NAME)' -mt raw -mc unknown -r $$(PRIVATE_PATH) -o $$@
+	$(BUILD_LICENSE_METADATA) \
+          -mt raw -mc unknown \
+	  $$(addprefix -k ,$$(PRIVATE_KINDS)) \
+	  $$(addprefix -c ,$$(PRIVATE_CONDITIONS)) \
+	  $$(addprefix -n ,$$(PRIVATE_NOTICES)) \
+	  $$(addprefix -d ,$$(PRIVATE_NOTICE_DEPS)) \
+	  $$(addprefix -s ,$$(PRIVATE_SOURCES)) \
+	  $$(addprefix -m ,$$(PRIVATE_INSTALL_MAP)) \
+	  $$(addprefix -t ,$$(PRIVATE_TARGETS)) \
+	  $$(if $$(PRIVATE_IS_CONTAINER),-is_container) \
+	  -p '$$(PRIVATE_PACKAGE_NAME)' \
+	  $$(addprefix -r ,$$(PRIVATE_PATH)) \
+	  -o $$@
 
 endef
 
