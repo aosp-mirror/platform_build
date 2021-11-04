@@ -100,14 +100,6 @@ python_defaults {
 
 python_library_host {
     name: "ota_metadata_proto",
-    version: {
-        py2: {
-            enabled: true,
-        },
-        py3: {
-            enabled: true,
-        },
-    },
     srcs: [
        "ota_metadata.proto",
     ],
@@ -187,29 +179,15 @@ python_defaults {
 // Host libraries.
 //
 
-python_defaults {
-    name: "releasetools_library_defaults",
-    version: {
-        py2: {
-            enabled: true,
-        },
-        py3: {
-            enabled: true,
-        },
-    },
-}
-
 python_library_host {
     name: "releasetools_add_img_to_target_files",
     defaults: [
-        "releasetools_library_defaults",
         "releasetools_add_img_to_target_files_defaults",
     ],
 }
 
 python_library_host {
     name: "releasetools_apex_utils",
-    defaults: ["releasetools_library_defaults"],
     srcs: [
         "apex_utils.py",
     ],
@@ -223,7 +201,6 @@ python_library_host {
 python_library_host {
     name: "releasetools_build_image",
     defaults: [
-        "releasetools_library_defaults",
         "releasetools_build_image_defaults",
     ],
 }
@@ -231,7 +208,6 @@ python_library_host {
 python_library_host {
     name: "releasetools_build_super_image",
     defaults: [
-        "releasetools_library_defaults",
         "releasetools_build_super_image_defaults",
     ],
 }
@@ -239,14 +215,12 @@ python_library_host {
 python_library_host {
     name: "releasetools_check_target_files_vintf",
     defaults: [
-        "releasetools_library_defaults",
         "releasetools_check_target_files_vintf_defaults",
     ],
 }
 
 python_library_host {
     name: "releasetools_common",
-    defaults: ["releasetools_library_defaults"],
     srcs: [
         "blockimgdiff.py",
         "common.py",
@@ -274,7 +248,6 @@ python_library_host {
 python_library_host {
     name: "releasetools_img_from_target_files",
     defaults: [
-        "releasetools_library_defaults",
         "releasetools_img_from_target_files_defaults",
     ],
 }
@@ -282,14 +255,12 @@ python_library_host {
 python_library_host {
     name: "releasetools_ota_from_target_files",
     defaults: [
-        "releasetools_library_defaults",
         "releasetools_ota_from_target_files_defaults",
     ],
 }
 
 python_library_host {
     name: "releasetools_verity_utils",
-    defaults: ["releasetools_library_defaults"],
     srcs: [
         "verity_utils.py",
     ],
@@ -308,13 +279,8 @@ python_library_host {
 python_defaults {
     name: "releasetools_binary_defaults",
     version: {
-        py2: {
-            enabled: true,
-            embedded_launcher: true,
-        },
         py3: {
-            enabled: false,
-            embedded_launcher: false,
+            embedded_launcher: true,
         },
     },
     // TODO (b/140144201) Build imgdiff from releasetools_common
@@ -443,7 +409,6 @@ python_library_host {
     name: "releasetools_find_shareduid_violation",
     defaults: [
         "releasetools_find_shareduid_violation_defaults",
-        "releasetools_library_defaults",
     ],
 }
 
@@ -628,39 +593,9 @@ python_test_host {
     name: "releasetools_test",
     defaults: ["releasetools_test_defaults"],
     main: "test_utils.py",
-    version: {
-        py2: {
-            enabled: true,
-            // When using embedded launcher, atest will try (but may fail) to load libc++.so from
-            // host, because the test executable won't be able to find the needed libs via its
-            // runpath.
-            embedded_launcher: false,
-        },
-        py3: {
-            enabled: false,
-            embedded_launcher: false,
-        },
-    },
-    test_options: {
-        unit_test: true,
-    },
-}
-
-python_test_host {
-    name: "releasetools_py3_test",
-    defaults: ["releasetools_test_defaults"],
-    main: "test_utils.py",
-    test_suites: ["general-tests"],
-    version: {
-        py2: {
-            enabled: false,
-            embedded_launcher: false,
-        },
-        py3: {
-            enabled: true,
-            embedded_launcher: false,
-        },
-    },
+    // Don't use embedded_launcher, atest will try (but may fail) to load libc++.so from
+    // host, because the test executable won't be able to find the needed libs via its
+    // runpath.
     test_options: {
         unit_test: true,
     },
