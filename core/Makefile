@@ -1291,6 +1291,9 @@ $(target_notice_file_html_gz): $(target_notice_file_html) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
 $(installed_notice_html_or_xml_gz): $(target_notice_file_html_gz)
 	$(copy-file-to-target)
+
+$(call declare-0p-target,$(target_notice_file_html_gz))
+$(call declare-0p-target,$(installed_notice_html_or_xml_gz))
 else
 target_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml
 target_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml.gz
@@ -1473,6 +1476,28 @@ $(installed_vendor_dlkm_notice_xml_gz): $(target_vendor_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
 $(installed_odm_dlkm_notice_xml_gz): $(target_odm_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
+
+$(call declare-0p-target,$(target_notice_file_xml))
+$(call declare-0p-target,$(target_notice_file_xml_gz))
+$(call declare-0p-target,$(target_vendor_notice_file_xml))
+$(call declare-0p-target,$(target_vendor_notice_file_xml_gz))
+$(call declare-0p-target,$(target_product_notice_file_xml))
+$(call declare-0p-target,$(target_product_notice_file_xml_gz))
+$(call declare-0p-target,$(target_system_ext_notice_file_xml))
+$(call declare-0p-target,$(target_system_ext_notice_file_xml_gz))
+$(call declare-0p-target,$(target_odm_notice_file_xml))
+$(call declare-0p-target,$(target_odm_notice_file_xml_gz))
+$(call declare-0p-target,$(target_vendor_dlkm_notice_file_xml))
+$(call declare-0p-target,$(target_vendor_dlkm_notice_file_xml_gz))
+$(call declare-0p-target,$(target_odm_dlkm_notice_file_xml))
+$(call declare-0p-target,$(target_odm_dlkm_notice_file_xml_gz))
+$(call declare-0p-target,$(installed_notice_html_or_xml_gz))
+$(call declare-0p-target,$(installed_vendor_notice_xml_gz))
+$(call declare-0p-target,$(installed_product_notice_xml_gz))
+$(call declare-0p-target,$(installed_system_ext_notice_xml_gz))
+$(call declare-0p-target,$(installed_odm_notice_xml_gz))
+$(call declare-0p-target,$(installed_vendor_dlkm_notice_xml_gz))
+$(call declare-0p-target,$(installed_odm_dlkm_notice_xml_gz))
 
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
@@ -2751,6 +2776,9 @@ endif
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
 	$(call build-systemimage-target,$@)
 
+$(call declare-1p-container,$(BUILT_SYSTEMIMAGE),system/extras)
+$(call declare-container-license-deps,$(BUILT_SYSTEMIMAGE),$(FULL_SYSTEMIMAGE_DEPS),$(PRODUCT_OUT)/:)
+
 INSTALLED_SYSTEMIMAGE_TARGET := $(PRODUCT_OUT)/system.img
 SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
 
@@ -2792,7 +2820,13 @@ $(INSTALLED_SYSTEMIMAGE_TARGET): $(BUILT_SYSTEMIMAGE)
 	$(copy-file-to-target)
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 
+$(call declare-1p-container,$(INSTALLED_SYSTEMIMAGE_TARGET),)
+$(call declare-container-license-deps,$(INSTALLED_SYSTEMIMAGE_TARGET),$(BUILT_SYSTEMIMAGE),$(BUILT_SYSTEMIMAGE):/)
+
 systemimage: $(INSTALLED_SYSTEMIMAGE_TARGET)
+
+.PHONY: systemlicense
+systemlicense: $(call license-metadata-dir)/$(INSTALLED_SYSTEMIMAGE_TARGET).meta_lic reportmissinglicenses
 
 .PHONY: systemimage-nodeps snod
 systemimage-nodeps snod: $(filter-out systemimage-nodeps snod,$(MAKECMDGOALS)) \
@@ -4323,6 +4357,7 @@ INTERNAL_OTATOOLS_MODULES := \
   shflags \
   sign_apex \
   sign_target_files_apks \
+  sign_virt_apex \
   signapk \
   simg2img \
   sload_f2fs \
