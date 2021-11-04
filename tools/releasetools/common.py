@@ -2107,7 +2107,7 @@ def GetKeyPasswords(keylist):
   devnull = open("/dev/null", "w+b")
   for k in sorted(keylist):
     # We don't need a password for things that aren't really keys.
-    if k in SPECIAL_CERT_STRINGS:
+    if k in SPECIAL_CERT_STRINGS or k is None:
       no_passwords.append(k)
       continue
 

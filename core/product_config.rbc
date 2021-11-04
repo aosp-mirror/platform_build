@@ -83,7 +83,10 @@ def _printvars(state):
                     if _options.format == "make":
                         print("SOONG_CONFIG_" + nsname, ":=", " ".join(nsvars.keys()))
                     for var, val in sorted(nsvars.items()):
-                        __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
+                        if val:
+                            __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
+                        else:
+                            print("SOONG_CONFIG_%s_%s :=" % (nsname, var))
             elif attr not in globals_base or globals_base[attr] != val:
                 __print_attr(attr, val)
 
@@ -279,19 +282,30 @@ def _indirect(pcm_name):
     """Returns configuration item for the inherited module."""
     return (pcm_name,)
 
-def _add_soong_config_namespace(g, nsname):
-    """Adds given namespace."""
+def _soong_config_namespace(g, nsname):
+    """Adds given namespace if it does not exist."""
 
+    if g[_soong_config_namespaces_key].get(nsname):
+        return
     # A value cannot be updated, so we need to create a new dictionary
     old = g[_soong_config_namespaces_key]
     g[_soong_config_namespaces_key] = dict([(k,v) for k,v in old.items()] + [(nsname, {})])
 
-def _add_soong_config_var_value(g, nsname, var, value):
-    """Defines a variable and adds it to the given namespace."""
-    ns = g[_soong_config_namespaces_key].get(nsname)
-    if ns == None:
-        fail("no such namespace: " + nsname)
-    ns[var] = value
+def _soong_config_set(g, nsname, var, value):
+    """Assigns the value to the variable in the namespace."""
+    _soong_config_namespace(g, nsname)
+    g[_soong_config_namespaces_key][nsname][var]=value
+
+def _soong_config_append(g, nsname, var, value):
+    """Appends to the value of the variable in the namespace."""
+    _soong_config_namespace(g, nsname)
+    ns = g[_soong_config_namespaces_key][nsname]
+    oldv = ns.get(var)
+    if oldv == None:
+        ns[var] = value
+    else:
+        ns[var] += " " + value
+
 
 def _abspath(path):
     """Provided for compatibility, to be removed later."""
@@ -381,6 +395,18 @@ def _inherit(handle, pcm_name, pcm):
 def __base(path):
     """Returns basename."""
     return path.rsplit("/",1)[-1]
+
+def _board_platform_in(g, string_or_list):
+    """Returns true if board is in the list."""
+    board = g.get("TARGET_BOARD_PLATFORM","")
+    if not board:
+        return False
+    return board in __words(string_or_list)
+
+
+def _board_platform_is(g, s):
+    """True if board is the same as argument."""
+    return g.get("TARGET_BOARD_PLATFORM","") == s
 
 
 def _copy_files(l, outdir):
@@ -601,11 +627,14 @@ def __get_options():
 # Settings used during debugging.
 _options = __get_options()
 rblf = struct(
-    add_soong_config_namespace = _add_soong_config_namespace,
-    add_soong_config_var_value = _add_soong_config_var_value,
+    soong_config_namespace = _soong_config_namespace,
+    soong_config_append = _soong_config_append,
+    soong_config_set = _soong_config_set,
     abspath = _abspath,
     addprefix = _addprefix,
     addsuffix = _addsuffix,
+    board_platform_in = _board_platform_in,
+    board_platform_is = _board_platform_is,
     copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
