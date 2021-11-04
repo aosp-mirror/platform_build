@@ -3953,3 +3953,10 @@ def AddCareMapForAbOta(output_file, ab_partitions, image_paths):
     OPTIONS.replace_updated_files_list.append(care_map_path)
   else:
     ZipWrite(output_file, temp_care_map, arcname=care_map_path)
+
+
+def IsSparseImage(filepath):
+  with open(filepath, 'rb') as fp:
+    # Magic for android sparse image format
+    # https://source.android.com/devices/bootloader/images
+    return fp.read(4) == b'\x3A\xFF\x26\xED'
