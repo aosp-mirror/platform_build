@@ -251,6 +251,7 @@ import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
                        PropertyFiles, SECURITY_PATCH_LEVEL_PROP_NAME, GetZipEntryOffset)
+from common import IsSparseImage
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
@@ -1019,13 +1020,6 @@ def GeneratePartitionTimestampFlagsDowngrade(
       ",".join([key + ":" + val for (key, val)
                 in partition_timestamps.items()])
   ]
-
-
-def IsSparseImage(filepath):
-  with open(filepath, 'rb') as fp:
-    # Magic for android sparse image format
-    # https://source.android.com/devices/bootloader/images
-    return fp.read(4) == b'\x3A\xFF\x26\xED'
 
 
 def SupportsMainlineGkiUpdates(target_file):
