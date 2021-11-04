@@ -542,7 +542,8 @@ else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Rule to install the module's companion symlinks
   my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS) $(LOCAL_MODULE_SYMLINKS_$(my_32_64_bit_suffix)))
   $(foreach symlink,$(my_installed_symlinks),\
-      $(call symlink-file,$(LOCAL_INSTALLED_MODULE),$(my_installed_module_stem),$(symlink)))
+      $(call symlink-file,$(LOCAL_INSTALLED_MODULE),$(my_installed_module_stem),$(symlink))\
+      $(call declare-0p-target,$(symlink)))
 
   $(my_all_targets) : | $(my_installed_symlinks)
 
