@@ -17,7 +17,7 @@ load("//build/make/core:envsetup.rbc", _envsetup_init = "init")
 """Runtime functions."""
 
 _soong_config_namespaces_key = "$SOONG_CONFIG_NAMESPACES"
-def _global_init(version_info):
+def _init_globals(version_info):
     """Returns dict created from the runtime environment."""
     globals = dict()
 
@@ -50,7 +50,8 @@ def _global_init(version_info):
 
 
 def __print_attr(attr, value):
-    if not value:
+    # Allow using empty strings to clear variables, but not None values
+    if value == None:
         return
     if type(value) == "list":
         if _options.rearrange:
@@ -74,21 +75,24 @@ def _printvars(state):
         __print_attr(attr, val)
     if _options.print_globals:
         print()
-        for attr, val in sorted(globals.items()):
-            if attr == _soong_config_namespaces_key:
-                __print_attr("SOONG_CONFIG_NAMESPACES", val.keys())
-                for nsname, nsvars in sorted(val.items()):
-                    # Define SOONG_CONFIG_<ns> for Make, othewise
-                    # it cannot be added to .KATI_READONLY list
-                    if _options.format == "make":
-                        print("SOONG_CONFIG_" + nsname, ":=", " ".join(nsvars.keys()))
-                    for var, val in sorted(nsvars.items()):
-                        if val:
-                            __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
-                        else:
-                            print("SOONG_CONFIG_%s_%s :=" % (nsname, var))
-            elif attr not in globals_base or globals_base[attr] != val:
-                __print_attr(attr, val)
+        _printglobals(globals, globals_base)
+
+def _printglobals(globals, globals_base):
+    for attr, val in sorted(globals.items()):
+        if attr == _soong_config_namespaces_key:
+            __print_attr("SOONG_CONFIG_NAMESPACES", val.keys())
+            for nsname, nsvars in sorted(val.items()):
+                # Define SOONG_CONFIG_<ns> for Make, othewise
+                # it cannot be added to .KATI_READONLY list
+                if _options.format == "make":
+                    print("SOONG_CONFIG_" + nsname, ":=", " ".join(nsvars.keys()))
+                for var, val in sorted(nsvars.items()):
+                    if val:
+                        __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
+                    else:
+                        print("SOONG_CONFIG_%s_%s :=" % (nsname, var))
+        elif attr not in globals_base or globals_base[attr] != val:
+            __print_attr(attr, val)
 
 def __printvars_rearrange_list(value_list):
     """Rearrange value list: return only distinct elements, maybe sorted."""
@@ -109,7 +113,7 @@ def _product_configuration(top_pcm_name, top_pcm, version_info):
     # PCM means "Product Configuration Module", i.e., a Starlark file
     # whose body consists of a single init function.
 
-    globals_base = _global_init(version_info)
+    globals_base = _init_globals(version_info)
     globals = dict(**globals_base)
 
     config_postfix = []  # Configs in postfix order
@@ -202,6 +206,16 @@ def _product_configuration(top_pcm_name, top_pcm, version_info):
         configs[pcm_name] = pcm, cfg, children_names, True
 
     return (globals, configs[top_pcm_name][1], globals_base)
+
+
+def _board_configuration(board_config_init, input_variables_init):
+    globals = {}
+    h = __h_new()
+    input_variables_init(globals, h)
+    globals_base = dict(**globals)
+    board_config_init(globals, h)
+    return (globals, h[1], globals_base)
+
 
 def _substitute_inherited(configs, pcm_name, cfg):
     """Substitutes inherited values in all the attributes.
@@ -645,7 +659,7 @@ rblf = struct(
     filter = _filter,
     filter_out = _filter_out,
     find_and_copy = _find_and_copy,
-    global_init = _global_init,
+    init_globals = _init_globals,
     inherit = _inherit,
     indirect = _indirect,
     mkinfo = _mkinfo,
@@ -655,7 +669,9 @@ rblf = struct(
     mkstrip = _mkstrip,
     mksubst = _mksubst,
     printvars = _printvars,
+    printglobals = _printglobals,
     product_configuration = _product_configuration,
+    board_configuration = _board_configuration,
     product_copy_files_by_pattern = _product_copy_files_by_pattern,
     require_artifacts_in_path = _require_artifacts_in_path,
     require_artifacts_in_path_relaxed = _require_artifacts_in_path_relaxed,
