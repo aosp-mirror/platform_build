@@ -1459,7 +1459,7 @@ function refreshmod() {
         > $ANDROID_PRODUCT_OUT/module-info.json.build.log 2>&1
 }
 
-# Verifies that module-info.txt exists, creating it if it doesn't.
+# Verifies that module-info.txt exists, returning nonzero if it doesn't.
 function verifymodinfo() {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
         if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
@@ -1470,7 +1470,7 @@ function verifymodinfo() {
 
     if [ ! -f "$ANDROID_PRODUCT_OUT/module-info.json" ]; then
         if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
-            echo "Could not find module-info.json. It will only be built once, and it can be updated with 'refreshmod'" >&2
+            echo "Could not find module-info.json. Please run 'refreshmod' first." >&2
         fi
         return 1
     fi
@@ -1589,6 +1589,10 @@ for output in module_info[module]['installed']:
 function installmod() {
     if [[ $# -eq 0 ]]; then
         echo "usage: installmod [adb install arguments] <module>" >&2
+        echo "" >&2
+        echo "Only flags to be passed after the \"install\" in adb install are supported," >&2
+        echo "with the exception of -s. If -s is passed it will be placed before the \"install\"." >&2
+        echo "-s must be the first flag passed if it exists." >&2
         return 1
     fi
 
@@ -1603,9 +1607,18 @@ function installmod() {
         echo "Module '$1' does not produce a file ending with .apk (try 'refreshmod' if there have been build changes?)" >&2
         return 1
     fi
+    local serial_device=""
+    if [[ "$1" == "-s" ]]; then
+        if [[ $# -le 2 ]]; then
+            echo "-s requires an argument" >&2
+            return 1
+        fi
+        serial_device="-s $2"
+        shift 2
+    fi
     local length=$(( $# - 1 ))
-    echo adb install ${@:1:$length} $_path
-    adb install ${@:1:$length} $_path
+    echo adb $serial_device install ${@:1:$length} $_path
+    adb $serial_device install ${@:1:$length} $_path
 }
 
 function _complete_android_module_names() {

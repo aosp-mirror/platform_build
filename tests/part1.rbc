@@ -26,3 +26,5 @@ def init(g, handle):
   cfg["PRODUCT_COPY_FILES"] += ["part_from:part_to"]
   rblf.setdefault(handle, "PRODUCT_PRODUCT_PROPERTIES")
   cfg["PRODUCT_PRODUCT_PROPERTIES"] += ["part_properties"]
+  rblf.soong_config_namespace(g, "NS1")
+  rblf.soong_config_append(g, "NS1", "v1", "abc_part1")

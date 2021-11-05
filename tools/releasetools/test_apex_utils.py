@@ -187,3 +187,19 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
 
     self.payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
     signer.ProcessApexFile(apk_keys, self.payload_key)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_ApexApkSigner_invokesCustomSignTool(self):
+    apex_path = common.MakeTempFile(suffix='.apex')
+    shutil.copy(self.apex_with_apk, apex_path)
+    apk_keys = {'wifi-service-resources.apk': os.path.join(
+        self.testdata_dir, 'testkey')}
+    self.payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
+
+    # pass `false` as a sign_tool to see the invocation error
+    with self.assertRaises(common.ExternalError) as cm:
+        signer = apex_utils.ApexApkSigner(apex_path, None, None, sign_tool='false')
+        signer.ProcessApexFile(apk_keys, self.payload_key)
+
+    the_exception = cm.exception
+    self.assertIn('Failed to run command \'[\'false\'', the_exception.message)
