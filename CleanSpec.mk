@@ -760,6 +760,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor-ramdisk)
 # Common R directory has been removed.
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/R)
 
+# Most of SOONG_HOST_OUT_EXECUTABLES has been moved to HOST_OUT_EXECUTABLES
+$(call add-clean-step, rm -rf $(SOONG_HOST_OUT))
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

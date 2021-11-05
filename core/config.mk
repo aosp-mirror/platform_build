@@ -539,14 +539,14 @@ prebuilt_sdk_tools_bin :=
 ACP := $(prebuilt_build_tools_bin)/acp
 CKATI := $(prebuilt_build_tools_bin)/ckati
 DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
-FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
+FILESLIST := $(HOST_OUT_EXECUTABLES)/fileslist
 FILESLIST_UTIL :=$= build/make/tools/fileslist_util.py
 HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
-XMLLINT := $(SOONG_HOST_OUT_EXECUTABLES)/xmllint
+XMLLINT := $(HOST_OUT_EXECUTABLES)/xmllint
 
 # SOONG_ZIP is exported by Soong, but needs to be defined early for
 # $OUT/dexpreopt.global.  It will be verified against the Soong version.
-SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
+SOONG_ZIP := $(HOST_OUT_EXECUTABLES)/soong_zip
 
 # ---------------------------------------------------------------
 # Generic tools.
