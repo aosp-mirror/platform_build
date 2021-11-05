@@ -2105,9 +2105,11 @@ def GetKeyPasswords(keylist):
   need_passwords = []
   key_passwords = {}
   devnull = open("/dev/null", "w+b")
-  for k in sorted(keylist):
+
+  # sorted() can't compare strings to None, so convert Nones to strings
+  for k in sorted(keylist, key=lambda x: x if x is not None else ""):
     # We don't need a password for things that aren't really keys.
-    if k in SPECIAL_CERT_STRINGS:
+    if k in SPECIAL_CERT_STRINGS or k is None:
       no_passwords.append(k)
       continue
 
@@ -3953,3 +3955,10 @@ def AddCareMapForAbOta(output_file, ab_partitions, image_paths):
     OPTIONS.replace_updated_files_list.append(care_map_path)
   else:
     ZipWrite(output_file, temp_care_map, arcname=care_map_path)
+
+
+def IsSparseImage(filepath):
+  with open(filepath, 'rb') as fp:
+    # Magic for android sparse image format
+    # https://source.android.com/devices/bootloader/images
+    return fp.read(4) == b'\x3A\xFF\x26\xED'
