@@ -2105,7 +2105,9 @@ def GetKeyPasswords(keylist):
   need_passwords = []
   key_passwords = {}
   devnull = open("/dev/null", "w+b")
-  for k in sorted(keylist):
+
+  # sorted() can't compare strings to None, so convert Nones to strings
+  for k in sorted(keylist, key=lambda x: x if x is not None else ""):
     # We don't need a password for things that aren't really keys.
     if k in SPECIAL_CERT_STRINGS or k is None:
       no_passwords.append(k)

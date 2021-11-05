@@ -132,7 +132,7 @@ def CheckVintfFromExtractedTargetFiles(input_tmp, info_dict=None):
       'checkvintf',
       '--check-compat',
   ]
-  for device_path, real_path in dirmap.items():
+  for device_path, real_path in sorted(dirmap.items()):
     common_command += ['--dirmap', '{}:{}'.format(device_path, real_path)]
   common_command += kernel_args
   common_command += shipping_api_level_args
@@ -165,7 +165,15 @@ def GetVintfFileList():
   def PathToPatterns(path):
     if path[-1] == '/':
       path += '*'
-    for device_path, target_files_rel_paths in DIR_SEARCH_PATHS.items():
+
+    # Loop over all the entries in DIR_SEARCH_PATHS and find one where the key
+    # is a prefix of path. In order to get find the correct prefix, sort the
+    # entries by decreasing length of their keys, so that we check if longer
+    # strings are prefixes before shorter strings. This is so that keys that
+    # are substrings of other keys (like /system vs /system_ext) are checked
+    # later, and we don't mistakenly mark a path that starts with /system_ext
+    # as starting with only /system.
+    for device_path, target_files_rel_paths in sorted(DIR_SEARCH_PATHS.items(), key=lambda i: len(i[0]), reverse=True):
       if path.startswith(device_path):
         suffix = path[len(device_path):]
         return [rel_path + suffix for rel_path in target_files_rel_paths]
