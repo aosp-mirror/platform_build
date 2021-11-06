@@ -185,19 +185,44 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
+# Dumps all variables that match [A-Z][A-Z0-9_]* to the file at $(1)
+# It is used to print only the variables that are likely to be relevant to the
+# board configuration.
+define dump-public-variables
+$(file >$(OUT_DIR)/dump-public-variables-temp.txt,$(subst $(space),$(newline),$(.VARIABLES)))\
+$(file >$(1),\
+$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-public-variables-temp.txt | grep -vhe "^SOONG_"),\
+$(v) := $(strip $($(v)))$(newline)))
+endef
+
 # TODO(colefaust) change this if to RBC_PRODUCT_CONFIG when
 # the board configuration is known to work on everything
 # the product config works on.
 ifndef RBC_BOARD_CONFIG
 include $(board_config_mk)
 else
-  rc := $(shell build/soong/scripts/rbc-run $(board_config_mk) \
-      BUILDING_GSI=$(BUILDING_GSI) >$(OUT_DIR)/rbcboardtemp.mk || echo $$?)
-  ifneq (,$(rc))
-    $(error board configuration converter failed: $(rc))
+  $(shell mkdir -p $(OUT_DIR)/rbc)
+
+  $(call dump-public-variables, $(OUT_DIR)/rbc/make_vars_pre_board_config.mk)
+
+  $(shell $(OUT_DIR)/soong/mk2rbc \
+    --mode=write -r --outdir $(OUT_DIR)/rbc \
+    --boardlauncher=$(OUT_DIR)/rbc/boardlauncher.rbc \
+    --input_variables=$(OUT_DIR)/rbc/make_vars_pre_board_config.mk \
+    $(board_config_mk))
+  ifneq ($(.SHELLSTATUS),0)
+    $(error board configuration converter failed: $(.SHELLSTATUS))
   endif
 
-  include $(OUT_DIR)/rbcboardtemp.mk
+  $(shell $(OUT_DIR)/soong/rbcrun \
+    RBC_OUT="make,global" \
+    $(OUT_DIR)/rbc/boardlauncher.rbc \
+    >$(OUT_DIR)/rbc/rbc_board_config_results.mk)
+  ifneq ($(.SHELLSTATUS),0)
+    $(error board configuration runner failed: $(.SHELLSTATUS))
+  endif
+
+  include $(OUT_DIR)/rbc/rbc_board_config_results.mk
 endif
 
 ifneq (,$(and $(TARGET_ARCH),$(TARGET_ARCH_SUITE)))
