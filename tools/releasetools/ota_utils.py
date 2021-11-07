@@ -154,7 +154,7 @@ def WriteMetadata(metadata_proto, output):
                 compress_type=zipfile.ZIP_STORED)
     return
 
-  with open('{}.pb'.format(output), 'w') as f:
+  with open('{}.pb'.format(output), 'wb') as f:
     f.write(metadata_proto.SerializeToString())
   with open(output, 'w') as f:
     f.write(legacy_metadata)
