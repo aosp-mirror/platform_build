@@ -61,7 +61,7 @@ else
   apex_test_module := art-check-release-apex-gen-fakebin
 endif
 
-ifeq (true,$(SOONG_CONFIG_art_module_source_build)
+ifeq (true,$(call soong_config_get,art_module,source_build))
   PRODUCT_HOST_PACKAGES += $(apex_test_module)
 endif
 
