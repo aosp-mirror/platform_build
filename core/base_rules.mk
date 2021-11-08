@@ -526,6 +526,10 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
   # copy of the intermediates for now, as some rules that collect intermediates may expect
   # them to exist.
   $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
+
+  $(foreach symlink, $(LOCAL_SOONG_INSTALL_SYMLINKS), \
+    $(call declare-0p-target,$(symlink)))
+  $(my_all_targets) : | $(LOCAL_SOONG_INSTALL_SYMLINKS)
 else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
     $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
