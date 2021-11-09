@@ -1331,49 +1331,49 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                                             extra_opts="b:k:i:d:e:t:2o:",
-                                             extra_long_opts=[
-                                                 "package_key=",
-                                                 "incremental_from=",
-                                                 "full_radio",
-                                                 "full_bootloader",
-                                                 "wipe_user_data",
-                                                 "downgrade",
-                                                 "override_timestamp",
-                                                 "extra_script=",
-                                                 "worker_threads=",
-                                                 "two_step",
-                                                 "include_secondary",
-                                                 "no_signing",
-                                                 "block",
-                                                 "binary=",
-                                                 "oem_settings=",
-                                                 "oem_no_mount",
-                                                 "verify",
-                                                 "stash_threshold=",
-                                                 "log_diff=",
-                                                 "payload_signer=",
-                                                 "payload_signer_args=",
-                                                 "payload_signer_maximum_signature_size=",
-                                                 "payload_signer_key_size=",
-                                                 "extracted_input_target_files=",
-                                                 "skip_postinstall",
-                                                 "retrofit_dynamic_partitions",
-                                                 "skip_compatibility_check",
-                                                 "output_metadata_path=",
-                                                 "disable_fec_computation",
-                                                 "disable_verity_computation",
-                                                 "force_non_ab",
-                                                 "boot_variable_file=",
-                                                 "partial=",
-                                                 "custom_image=",
-                                                 "disable_vabc",
-                                                 "spl_downgrade",
-                                                 "vabc_downgrade",
-                                                 "enable_vabc_xor=",
-                                                 "force_minor_version=",
-                                                 "compressor_types=",
-                                             ], extra_option_handler=option_handler)
+                             extra_opts="b:k:i:d:e:t:2o:",
+                             extra_long_opts=[
+                                 "package_key=",
+                                 "incremental_from=",
+                                 "full_radio",
+                                 "full_bootloader",
+                                 "wipe_user_data",
+                                 "downgrade",
+                                 "override_timestamp",
+                                 "extra_script=",
+                                 "worker_threads=",
+                                 "two_step",
+                                 "include_secondary",
+                                 "no_signing",
+                                 "block",
+                                 "binary=",
+                                 "oem_settings=",
+                                 "oem_no_mount",
+                                 "verify",
+                                 "stash_threshold=",
+                                 "log_diff=",
+                                 "payload_signer=",
+                                 "payload_signer_args=",
+                                 "payload_signer_maximum_signature_size=",
+                                 "payload_signer_key_size=",
+                                 "extracted_input_target_files=",
+                                 "skip_postinstall",
+                                 "retrofit_dynamic_partitions",
+                                 "skip_compatibility_check",
+                                 "output_metadata_path=",
+                                 "disable_fec_computation",
+                                 "disable_verity_computation",
+                                 "force_non_ab",
+                                 "boot_variable_file=",
+                                 "partial=",
+                                 "custom_image=",
+                                 "disable_vabc",
+                                 "spl_downgrade",
+                                 "vabc_downgrade",
+                                 "enable_vabc_xor=",
+                                 "force_minor_version=",
+                                 "compressor_types=",
+                             ], extra_option_handler=option_handler)
 
   if len(args) != 2:
     common.Usage(__doc__)
@@ -1473,13 +1473,18 @@ def main(argv):
           "build/make/target/product/security/testkey")
     # Get signing keys
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
-    private_key_path = OPTIONS.package_key + OPTIONS.private_key_suffix
-    if not os.path.exists(private_key_path):
-      raise common.ExternalError(
-          "Private key {} doesn't exist. Make sure you passed the"
-          " correct key path through -k option".format(
-              private_key_path)
-      )
+
+    # Only check for existence of key file if using the default signer.
+    # Because the custom signer might not need the key file AT all.
+    # b/191704641
+    if not OPTIONS.signapk_path:
+      private_key_path = OPTIONS.package_key + OPTIONS.private_key_suffix
+      if not os.path.exists(private_key_path):
+        raise common.ExternalError(
+            "Private key {} doesn't exist. Make sure you passed the"
+            " correct key path through -k option".format(
+                private_key_path)
+        )
 
   if OPTIONS.source_info_dict:
     source_build_prop = OPTIONS.source_info_dict["build.prop"]
@@ -1531,8 +1536,5 @@ if __name__ == '__main__':
   try:
     common.CloseInheritedPipes()
     main(sys.argv[1:])
-  except common.ExternalError:
-    logger.exception("\n   ERROR:\n")
-    sys.exit(1)
   finally:
     common.Cleanup()
