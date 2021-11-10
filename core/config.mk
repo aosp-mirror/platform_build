@@ -304,12 +304,20 @@ $(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$3)
 endef
 
 # soong_config_append appends to the value of the variable in the given Soong
-# config namespace. If the varabile does not exist, it will be defined. If the
+# config namespace. If the variable does not exist, it will be defined. If the
 # namespace does not  exist, it will be defined.
 # $1 is the namespace, $2 is the variable name, $3 is the value
 define soong_config_append
 $(call soong_config_define_internal,$1,$2) \
 $(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $3)
+endef
+
+# soong_config_append gets to the value of the variable in the given Soong
+# config namespace. If the namespace or variables does not exist, an
+# empty string will be returned.
+# $1 is the namespace, $2 is the variable name
+define soong_config_get
+$(SOONG_CONFIG_$(strip $1)_$(strip $2))
 endef
 
 # Set the extensions used for various packages
