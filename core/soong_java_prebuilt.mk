@@ -154,13 +154,7 @@ else  # LOCAL_SOONG_DEX_JAR
   endif
 endif  # LOCAL_SOONG_DEX_JAR
 
-my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
-  $(call word-colon,1,$(f)):$(PRODUCT_OUT)$(call word-colon,2,$(f)))
-my_installed := $(call copy-many-files, $(my_built_installed))
-ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed)
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_installed)
 ALL_MODULES.$(my_register_name).CLASSES_JAR := $(full_classes_jar)
-$(my_register_name): $(my_installed)
 
 ifdef LOCAL_SOONG_AAR
   ALL_MODULES.$(my_register_name).AAR := $(LOCAL_SOONG_AAR)
