@@ -94,3 +94,6 @@ assert_eq(
 
 assert_eq("S", globals["PLATFORM_VERSION"])
 assert_eq(30, globals["PLATFORM_SDK_VERSION"])
+
+assert_eq("xyz", rblf.soong_config_get(globals, "NS2", "v3"))
+assert_eq(None, rblf.soong_config_get(globals, "NS2", "nonexistant_var"))
