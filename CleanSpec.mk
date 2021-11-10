@@ -766,6 +766,9 @@ $(call add-clean-step, rm -rf $(SOONG_HOST_OUT))
 # More of SOONG_HOST_OUT_EXECUTABLES has been moved to HOST_OUT_EXECUTABLES
 $(call add-clean-step, rm -rf $(SOONG_HOST_OUT))
 
+# More of SOONG_HOST_OUT_EXECUTABLES has been moved to HOST_OUT_EXECUTABLES
+$(call add-clean-step, rm -rf $(SOONG_HOST_OUT))
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
