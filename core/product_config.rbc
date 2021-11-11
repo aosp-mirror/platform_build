@@ -321,6 +321,11 @@ def _soong_config_append(g, nsname, var, value):
         ns[var] += " " + value
 
 
+def _soong_config_get(g, nsname, var):
+    """Gets to the value of the variable in the namespace."""
+    return g.get(_soong_config_namespaces_key, {}).get(nsname, {}).get(var, None)
+
+
 def _abspath(path):
     """Provided for compatibility, to be removed later."""
     return path
@@ -644,6 +649,7 @@ rblf = struct(
     soong_config_namespace = _soong_config_namespace,
     soong_config_append = _soong_config_append,
     soong_config_set = _soong_config_set,
+    soong_config_get = _soong_config_get,
     abspath = _abspath,
     addprefix = _addprefix,
     addsuffix = _addsuffix,
