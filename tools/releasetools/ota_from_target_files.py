@@ -227,6 +227,9 @@ A/B OTA specific options
 
   --force_minor_version
       Override the update_engine minor version for delta generation.
+
+  --compressor_types
+      A colon ':' separated list of compressors. Allowed values are bz2 and brotli.
 """
 
 from __future__ import print_function
@@ -248,6 +251,7 @@ import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
                        PropertyFiles, SECURITY_PATCH_LEVEL_PROP_NAME, GetZipEntryOffset)
+from common import IsSparseImage
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
@@ -294,6 +298,7 @@ OPTIONS.spl_downgrade = False
 OPTIONS.vabc_downgrade = False
 OPTIONS.enable_vabc_xor = True
 OPTIONS.force_minor_version = None
+OPTIONS.compressor_types = None
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -1017,13 +1022,6 @@ def GeneratePartitionTimestampFlagsDowngrade(
   ]
 
 
-def IsSparseImage(filepath):
-  with open(filepath, 'rb') as fp:
-    # Magic for android sparse image format
-    # https://source.android.com/devices/bootloader/images
-    return fp.read(4) == b'\x3A\xFF\x26\xED'
-
-
 def SupportsMainlineGkiUpdates(target_file):
   """Return True if the build supports MainlineGKIUpdates.
 
@@ -1149,6 +1147,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     additional_args += ["--enable_vabc_xor", "true"]
   if OPTIONS.force_minor_version:
     additional_args += ["--force_minor_version", OPTIONS.force_minor_version]
+  if OPTIONS.compressor_types:
+    additional_args += ["--compressor_types", OPTIONS.compressor_types]
   additional_args += ["--max_timestamp", max_timestamp]
 
   if SupportsMainlineGkiUpdates(source_file):
@@ -1191,6 +1191,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
                      "META/" + x in target_zip.namelist()]
 
+    # TODO(b/205541521) remove the workaround after root cause is fixed.
+    care_map_list = []
     # Adds care_map if either the protobuf format or the plain text one exists.
     if care_map_list:
       care_map_name = care_map_list[0]
@@ -1324,6 +1326,8 @@ def main(argv):
       OPTIONS.enable_vabc_xor = a.lower() != "false"
     elif o == "--force_minor_version":
       OPTIONS.force_minor_version = a
+    elif o == "--compressor_types":
+      OPTIONS.compressor_types = a
     else:
       return False
     return True
@@ -1370,6 +1374,7 @@ def main(argv):
                                  "vabc_downgrade",
                                  "enable_vabc_xor=",
                                  "force_minor_version=",
+                                 "compressor_types=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -1470,13 +1475,18 @@ def main(argv):
           "build/make/target/product/security/testkey")
     # Get signing keys
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
-    private_key_path = OPTIONS.package_key + OPTIONS.private_key_suffix
-    if not os.path.exists(private_key_path):
-      raise common.ExternalError(
-          "Private key {} doesn't exist. Make sure you passed the"
-          " correct key path through -k option".format(
-              private_key_path)
-      )
+
+    # Only check for existence of key file if using the default signer.
+    # Because the custom signer might not need the key file AT all.
+    # b/191704641
+    if not OPTIONS.signapk_path:
+      private_key_path = OPTIONS.package_key + OPTIONS.private_key_suffix
+      if not os.path.exists(private_key_path):
+        raise common.ExternalError(
+            "Private key {} doesn't exist. Make sure you passed the"
+            " correct key path through -k option".format(
+                private_key_path)
+        )
 
   if OPTIONS.source_info_dict:
     source_build_prop = OPTIONS.source_info_dict["build.prop"]
@@ -1528,8 +1538,5 @@ if __name__ == '__main__':
   try:
     common.CloseInheritedPipes()
     main(sys.argv[1:])
-  except common.ExternalError:
-    logger.exception("\n   ERROR:\n")
-    sys.exit(1)
   finally:
     common.Cleanup()
