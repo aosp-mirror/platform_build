@@ -514,30 +514,26 @@ my_path_comp :=
 ###########################################################
 
 my_installed_symlinks :=
-my_default_test_module :=
-ifeq ($(use_testcase_folder),true)
-arch_dir := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-my_default_test_module := $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)/$(arch_dir)/$(my_installed_module_stem)
-arch_dir :=
-endif
 
 ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
   # Soong already generated the copy rule, but make the installed location depend on the Make
   # copy of the intermediates for now, as some rules that collect intermediates may expect
   # them to exist.
   $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
+
+  $(foreach symlink, $(LOCAL_SOONG_INSTALL_SYMLINKS), \
+    $(call declare-0p-target,$(symlink)))
+  $(my_all_targets) : | $(LOCAL_SOONG_INSTALL_SYMLINKS)
 else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-  ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
-    $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
-    $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
+  $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
+  $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@"
-    ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 	$(copy-file-or-link-to-new-target)
-    else
+  else
 	$(copy-file-to-new-target)
-    endif
-	$(PRIVATE_POST_INSTALL_CMD)
   endif
+	$(PRIVATE_POST_INSTALL_CMD)
 
   # Rule to install the module's companion symlinks
   my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS) $(LOCAL_MODULE_SYMLINKS_$(my_32_64_bit_suffix)))
@@ -554,6 +550,7 @@ endif # !LOCAL_UNINSTALLABLE_MODULE
 ###########################################################
 
 my_vintf_installed:=
+my_vintf_path:=
 my_vintf_pairs:=
 my_init_rc_installed :=
 my_init_rc_path :=
@@ -567,8 +564,11 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
       my_vintf_fragments := $(foreach xml,$(LOCAL_VINTF_FRAGMENTS),$(LOCAL_PATH)/$(xml))
     endif
     ifneq ($(strip $(my_vintf_fragments)),)
-
-      my_vintf_pairs := $(foreach xml,$(my_vintf_fragments),$(xml):$(TARGET_OUT$(partition_tag)_ETC)/vintf/manifest/$(notdir $(xml)))
+      # Make doesn't support recovery as an output partition, but some Soong modules installed in recovery
+      # have init.rc files that need to be installed alongside them. Manually handle the case where the
+      # output file is in the recovery partition.
+      my_vintf_path := $(if $(filter $(TARGET_RECOVERY_ROOT_OUT)/%,$(my_module_path)),$(TARGET_RECOVERY_ROOT_OUT)/system/etc,$(TARGET_OUT$(partition_tag)_ETC))
+      my_vintf_pairs := $(foreach xml,$(my_vintf_fragments),$(xml):$(my_vintf_path)/vintf/manifest/$(notdir $(xml)))
       my_vintf_installed := $(foreach xml,$(my_vintf_pairs),$(call word-colon,2,$(xml)))
 
       # Only set up copy rules once, even if another arch variant shares it
@@ -731,8 +731,9 @@ endif
 
 # The module itself.
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-    $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem))) \
+  $(eval my_compat_dist_$(suite) := $(patsubst %:$(LOCAL_INSTALLED_MODULE),$(LOCAL_INSTALLED_MODULE):$(LOCAL_INSTALLED_MODULE),\
+    $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
+      $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem)))) \
   $(eval my_compat_dist_config_$(suite) := ))
 
 

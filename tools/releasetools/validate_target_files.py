@@ -36,7 +36,9 @@ import logging
 import os.path
 import re
 import zipfile
+
 from hashlib import sha1
+from common import IsSparseImage
 
 import common
 import rangelib
@@ -71,10 +73,16 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
 
   def CheckAllFiles(which):
     logging.info('Checking %s image.', which)
-    # Allow having shared blocks when loading the sparse image, because allowing
-    # that doesn't affect the checks below (we will have all the blocks on file,
-    # unless it's skipped due to the holes).
-    image = common.GetSparseImage(which, input_tmp, input_zip, True)
+    path = os.path.join(input_tmp, "IMAGES", which + ".img")
+    if not IsSparseImage(path):
+      logging.info("%s is non-sparse image", which)
+      image = common.GetNonSparseImage(which, input_tmp)
+    else:
+      logging.info("%s is sparse image", which)
+      # Allow having shared blocks when loading the sparse image, because allowing
+      # that doesn't affect the checks below (we will have all the blocks on file,
+      # unless it's skipped due to the holes).
+      image = common.GetSparseImage(which, input_tmp, input_zip, True)
     prefix = '/' + which
     for entry in image.file_map:
       # Skip entries like '__NONZERO-0'.
