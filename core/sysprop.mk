@@ -430,7 +430,7 @@ INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
 $(eval $(call build-properties,\
     odm,\
     $(INSTALLED_ODM_BUILD_PROP_TARGET),\
-    $(_prop_files),\
+    $(_prop_files_),\
     $(_prop_vars_),\
     $(empty),\
     $(empty),\
