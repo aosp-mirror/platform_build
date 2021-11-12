@@ -1068,7 +1068,7 @@ INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 ##########################################################
 # Track module-level dependencies.
 # Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
-ifdef RECORD_ALL_DEPS
+# (b/204397180) Unlock RECORD_ALL_DEPS was acknowledged reasonable for better Atest performance.
 ALL_DEPS.MODULES += $(LOCAL_MODULE)
 ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) \
@@ -1085,7 +1085,6 @@ ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
 
 license_files := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*)
 ALL_DEPS.$(LOCAL_MODULE).LICENSE := $(sort $(ALL_DEPS.$(LOCAL_MODULE).LICENSE) $(license_files))
-endif
 
 ###########################################################
 ## Take care of my_module_tags

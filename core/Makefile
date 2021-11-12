@@ -5433,6 +5433,8 @@ $(APPCOMPAT_ZIP): $(SOONG_ZIP)
 ifeq ($(BUILD_OS),linux)
 ifneq ($(DEX2OAT),)
 dexpreopt_tools_deps := $(DEXPREOPT_GEN_DEPS) $(DEXPREOPT_GEN) $(AAPT2)
+dexpreopt_tools_deps += $(HOST_OUT_EXECUTABLES)/dexdump
+dexpreopt_tools_deps += $(HOST_OUT_EXECUTABLES)/oatdump
 DEXPREOPT_TOOLS_ZIP := $(PRODUCT_OUT)/dexpreopt_tools.zip
 $(DEXPREOPT_TOOLS_ZIP): $(dexpreopt_tools_deps)
 $(DEXPREOPT_TOOLS_ZIP): PRIVATE_DEXPREOPT_TOOLS_DEPS := $(dexpreopt_tools_deps)
