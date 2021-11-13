@@ -50,6 +50,7 @@ python_defaults {
     ],
     libs: [
         "releasetools_common",
+        "releasetools_fsverity_metadata_generator",
         "releasetools_verity_utils",
     ],
     required: [
@@ -256,6 +257,16 @@ python_library_host {
     name: "releasetools_ota_from_target_files",
     defaults: [
         "releasetools_ota_from_target_files_defaults",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_fsverity_metadata_generator",
+    srcs: [
+        "fsverity_metadata_generator.py",
+    ],
+    libs: [
+        "fsverity_digests_proto_python",
     ],
 }
 
