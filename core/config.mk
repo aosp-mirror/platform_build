@@ -304,12 +304,20 @@ $(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$3)
 endef
 
 # soong_config_append appends to the value of the variable in the given Soong
-# config namespace. If the varabile does not exist, it will be defined. If the
+# config namespace. If the variable does not exist, it will be defined. If the
 # namespace does not  exist, it will be defined.
 # $1 is the namespace, $2 is the variable name, $3 is the value
 define soong_config_append
 $(call soong_config_define_internal,$1,$2) \
 $(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $3)
+endef
+
+# soong_config_append gets to the value of the variable in the given Soong
+# config namespace. If the namespace or variables does not exist, an
+# empty string will be returned.
+# $1 is the namespace, $2 is the variable name
+define soong_config_get
+$(SOONG_CONFIG_$(strip $1)_$(strip $2))
 endef
 
 # Set the extensions used for various packages
@@ -753,13 +761,16 @@ else
 endif
 .KATI_READONLY := BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES
 
-min_systemsdk_version := $(firstword $(BOARD_API_LEVEL) $(BOARD_SHIPPING_API_LEVEL) $(PRODUCT_SHIPPING_API_LEVEL))
-ifneq (,$(min_systemsdk_version))
-ifneq ($(call numbers_less_than,$(min_systemsdk_version),$(BOARD_SYSTEMSDK_VERSIONS)),)
-  $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to BOARD_API_LEVEL, BOARD_SHIPPING_API_LEVEL or PRODUCT_SHIPPING_API_LEVEL ($(min_systemsdk_version)))
-endif
-endif
 ifdef PRODUCT_SHIPPING_API_LEVEL
+  board_api_level := $(firstword $(BOARD_API_LEVEL) $(BOARD_SHIPPING_API_LEVEL))
+  ifneq (,$(board_api_level))
+    min_systemsdk_version := $(call math_min,$(board_api_level),$(PRODUCT_SHIPPING_API_LEVEL))
+  else
+    min_systemsdk_version := $(PRODUCT_SHIPPING_API_LEVEL)
+  endif
+  ifneq ($(call numbers_less_than,$(min_systemsdk_version),$(BOARD_SYSTEMSDK_VERSIONS)),)
+    $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to BOARD_API_LEVEL, BOARD_SHIPPING_API_LEVEL or PRODUCT_SHIPPING_API_LEVEL ($(min_systemsdk_version)))
+  endif
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),28),)
     ifneq ($(TARGET_IS_64_BIT), true)
       ifneq ($(TARGET_USES_64_BIT_BINDER), true)
@@ -1211,8 +1222,5 @@ endif
 -include external/ltp/android/ltp_package_list.mk
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
-
-# Make RECORD_ALL_DEPS readonly.
-RECORD_ALL_DEPS :=$= $(filter true,$(RECORD_ALL_DEPS))
 
 include $(BUILD_SYSTEM)/dumpvar.mk
