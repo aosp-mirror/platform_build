@@ -21,15 +21,20 @@ endif
 # Modules can override this logic by specifying
 # LOCAL_JAVA_LANGUAGE_VERSION explicitly.
 ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
-  ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT)))
-    LOCAL_JAVA_LANGUAGE_VERSION := 1.7
-  else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT)))
-    LOCAL_JAVA_LANGUAGE_VERSION := 1.8
-  else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_USE_PREBUILT_SDKS))
-    # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
-    LOCAL_JAVA_LANGUAGE_VERSION := 1.8
-  else
+  ifdef LOCAL_IS_HOST_MODULE
+    # Host modules always default to 1.9
     LOCAL_JAVA_LANGUAGE_VERSION := 1.9
+  else
+    ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT)))
+      LOCAL_JAVA_LANGUAGE_VERSION := 1.7
+    else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT)))
+      LOCAL_JAVA_LANGUAGE_VERSION := 1.8
+    else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_USE_PREBUILT_SDKS))
+      # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
+      LOCAL_JAVA_LANGUAGE_VERSION := 1.8
+    else
+      LOCAL_JAVA_LANGUAGE_VERSION := 1.9
+    endif
   endif
 endif
 LOCAL_JAVACFLAGS += -source $(LOCAL_JAVA_LANGUAGE_VERSION) -target $(LOCAL_JAVA_LANGUAGE_VERSION)
