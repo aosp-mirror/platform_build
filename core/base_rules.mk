@@ -932,9 +932,13 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
   # of files provided by this module.  Used by custom packaging rules like
   # package-modules.mk that need to copy the built files to a custom install
   # location during packaging.
+  #
+  # Translate copies from $(LOCAL_PREBUILT_MODULE_FILE) to $(LOCAL_BUILT_MODULE)
+  # so that package-modules.mk gets any transtive dependencies added to
+  # $(LOCAL_BUILT_MODULE), for example unstripped symbols files.
   ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
-      $(LOCAL_SOONG_INSTALL_PAIRS) \
+      $(patsubst $(LOCAL_PREBUILT_MODULE_FILE):%,$(LOCAL_BUILT_MODULE):%,$(LOCAL_SOONG_INSTALL_PAIRS)) \
       $(my_init_rc_pairs) \
       $(my_test_data_pairs) \
       $(my_vintf_pairs))
