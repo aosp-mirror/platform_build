@@ -88,12 +88,12 @@ MAX_PLATFORM_VERSION :=
 # The last stable version name of the platform that was released.  During
 # development, this stays at that previous version, while the codename indicates
 # further work based on the previous version.
-PLATFORM_VERSION_LAST_STABLE := 12L
+PLATFORM_VERSION_LAST_STABLE := 12
 .KATI_READONLY := PLATFORM_VERSION_LAST_STABLE
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.SP2A := Sv2
+PLATFORM_VERSION_CODENAME.SP2A := REL
 
 ifndef PLATFORM_VERSION_CODENAME
   PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
