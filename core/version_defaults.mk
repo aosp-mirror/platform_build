@@ -47,7 +47,7 @@ MAX_PLATFORM_VERSION := TP1A
 # The last stable version name of the platform that was released.  During
 # development, this stays at that previous version, while the codename indicates
 # further work based on the previous version.
-PLATFORM_VERSION_LAST_STABLE := 12L
+PLATFORM_VERSION_LAST_STABLE := 12
 .KATI_READONLY := PLATFORM_VERSION_LAST_STABLE
 
 # These are the current development codenames, if the build is not a final
