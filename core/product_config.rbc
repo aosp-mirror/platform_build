@@ -361,7 +361,7 @@ def _addsuffix(suffix, string_or_list):
 def __words(string_or_list):
     if type(string_or_list) == "list":
         return string_or_list
-    return string_or_list.split()
+    return _mkstrip(string_or_list).split()
 
 # Handle manipulation functions.
 # A handle passed to a PCM consists of:
@@ -484,6 +484,13 @@ def _filter(pattern, text):
         if _regex_match(rex, w):
             res.append(w)
     return res
+
+def _notdir(paths):
+    """Equivalent to the GNU make function $(notdir).
+
+    Returns the name of the file at the end of each path in paths.
+    """
+    return " ".join([__base(w) for w in __words(paths)])
 
 def __mk2regex(words):
     """Returns regular expression equivalent to Make pattern."""
@@ -674,6 +681,7 @@ rblf = struct(
     mkwarning = _mkwarning,
     mkstrip = _mkstrip,
     mksubst = _mksubst,
+    notdir = _notdir,
     printvars = _printvars,
     printglobals = _printglobals,
     product_configuration = _product_configuration,
