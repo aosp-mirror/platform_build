@@ -27,7 +27,7 @@ endif
 #
 # ART APEX jars (1) are defined in ART_APEX_JARS. System, system_ext, and non updatable boot jars
 # are defined below in PRODUCT_BOOT_JARS. All updatable APEX boot jars are part of
-# PRODUCT_UPDATABLE_BOOT_JARS.
+# PRODUCT_APEX_BOOT_JARS.
 #
 # The actual runtime ordering matching above is determined by derive_classpath service at runtime.
 # See packages/modules/SdkExtensions/README.md for more details.
@@ -45,14 +45,12 @@ PRODUCT_BOOT_JARS += \
     voip-common \
     ims-common
 
-# Non-updatable APEX jars. Keep the list sorted.
-PRODUCT_BOOT_JARS += \
-    com.android.i18n:core-icu4j
-
-# Updatable APEX boot jars. Keep the list sorted by module names and then library names.
-PRODUCT_UPDATABLE_BOOT_JARS := \
+# APEX boot jars. Keep the list sorted by module names and then library names.
+# Note: core-icu4j is moved back to PRODUCT_BOOT_JARS in product_config.mk at a later stage.
+PRODUCT_APEX_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
     com.android.conscrypt:conscrypt \
+    com.android.i18n:core-icu4j \
     com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
@@ -65,12 +63,11 @@ PRODUCT_UPDATABLE_BOOT_JARS := \
     com.android.tethering:framework-tethering \
     com.android.wifi:framework-wifi
 
-# Updatable APEX system server jars. Keep the list sorted by module names and then library names.
-PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
+# APEX system server jars. Keep the list sorted by module names and then library names.
+PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
     com.android.media:service-media-s \
     com.android.permission:service-permission \
-    com.android.geotz:geotz
 
 # Minimal configuration for running dex2oat (default argument values).
 # PRODUCT_USES_DEFAULT_ART_CONFIG must be true to enable boot image compilation.
