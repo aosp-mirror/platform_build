@@ -343,7 +343,9 @@ HOST_OUT_ROOT := $(OUT_DIR)/host
 
 # We want to avoid two host bin directories in multilib build.
 HOST_OUT := $(HOST_OUT_ROOT)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
-SOONG_HOST_OUT := $(SOONG_OUT_DIR)/host/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
+
+# Soong now installs to the same directory as Make.
+SOONG_HOST_OUT := $(HOST_OUT)
 
 HOST_CROSS_OUT := $(HOST_OUT_ROOT)/$(HOST_CROSS_OS)-$(HOST_CROSS_ARCH)
 
