@@ -30,7 +30,6 @@ def _init_globals(version_info):
         globals[k] = getattr(rblf_cli, k)
 
     globals.setdefault("PRODUCT_SOONG_NAMESPACES", [])
-    globals.setdefault(_soong_config_namespaces_key, {})
     _envsetup_init(globals, version_info)
 
     # Variables that should be defined.
@@ -299,10 +298,11 @@ def _indirect(pcm_name):
 def _soong_config_namespace(g, nsname):
     """Adds given namespace if it does not exist."""
 
-    if g[_soong_config_namespaces_key].get(nsname):
+    old = g.get(_soong_config_namespaces_key, {})
+    if old.get(nsname):
         return
+
     # A value cannot be updated, so we need to create a new dictionary
-    old = g[_soong_config_namespaces_key]
     g[_soong_config_namespaces_key] = dict([(k,v) for k,v in old.items()] + [(nsname, {})])
 
 def _soong_config_set(g, nsname, var, value):
@@ -361,7 +361,7 @@ def _addsuffix(suffix, string_or_list):
 def __words(string_or_list):
     if type(string_or_list) == "list":
         return string_or_list
-    return string_or_list.split()
+    return _mkstrip(string_or_list).split()
 
 # Handle manipulation functions.
 # A handle passed to a PCM consists of:
@@ -484,6 +484,13 @@ def _filter(pattern, text):
         if _regex_match(rex, w):
             res.append(w)
     return res
+
+def _notdir(paths):
+    """Equivalent to the GNU make function $(notdir).
+
+    Returns the name of the file at the end of each path in paths.
+    """
+    return " ".join([__base(w) for w in __words(paths)])
 
 def __mk2regex(words):
     """Returns regular expression equivalent to Make pattern."""
@@ -674,6 +681,7 @@ rblf = struct(
     mkwarning = _mkwarning,
     mkstrip = _mkstrip,
     mksubst = _mksubst,
+    notdir = _notdir,
     printvars = _printvars,
     printglobals = _printglobals,
     product_configuration = _product_configuration,
