@@ -62,8 +62,12 @@ PRODUCT_PACKAGES += \
     init.gsi.rc \
     init.vndk-nodef.rc \
 
-# Support additional P, Q and R VNDK packages
-PRODUCT_EXTRA_VNDK_VERSIONS := 28 29 30
+# Support additional VNDK snapshots
+PRODUCT_EXTRA_VNDK_VERSIONS := \
+    28 \
+    29 \
+    30 \
+    31 \
 
 # Do not build non-GSI partition images.
 PRODUCT_BUILD_CACHE_IMAGE := false
