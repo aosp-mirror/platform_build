@@ -206,8 +206,8 @@ endif
 ifndef RBC_PRODUCT_CONFIG
 $(call import-products, $(current_product_makefile))
 else
-  $(shell build/soong/scripts/rbc-run $(current_product_makefile) \
-      >$(OUT_DIR)/rbctemp.mk)
+  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbctemp.mk \
+      build/soong/scripts/rbc-run $(current_product_makefile))
   ifneq ($(.SHELLSTATUS),0)
     $(error product configuration converter failed: $(.SHELLSTATUS))
   endif
