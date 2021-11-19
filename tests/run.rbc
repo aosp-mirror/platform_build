@@ -102,3 +102,11 @@ assert_eq(30, globals["PLATFORM_SDK_VERSION"])
 
 assert_eq("xyz", rblf.soong_config_get(globals, "NS2", "v3"))
 assert_eq(None, rblf.soong_config_get(globals, "NS2", "nonexistant_var"))
+
+goals = globals["$dist_for_goals"]
+assert_eq(
+    {
+        "goal": [("dir1/file1", "out1"), ("dir1/file2", "out2"), ("dir2/file2", "file2")]
+    },
+    { k:v for k,v in sorted(goals.items()) }
+)
