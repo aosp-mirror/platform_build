@@ -214,10 +214,8 @@ else
     $(error board configuration converter failed: $(.SHELLSTATUS))
   endif
 
-  $(shell $(OUT_DIR)/soong/rbcrun \
-    RBC_OUT="make,global" \
-    $(OUT_DIR)/rbc/boardlauncher.rbc \
-    >$(OUT_DIR)/rbc/rbc_board_config_results.mk)
+  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_board_config_results.mk \
+    $(OUT_DIR)/soong/rbcrun RBC_OUT="make,global" $(OUT_DIR)/rbc/boardlauncher.rbc)
   ifneq ($(.SHELLSTATUS),0)
     $(error board configuration runner failed: $(.SHELLSTATUS))
   endif
