@@ -17,6 +17,7 @@ load("//build/make/core:envsetup.rbc", _envsetup_init = "init")
 """Runtime functions."""
 
 _soong_config_namespaces_key = "$SOONG_CONFIG_NAMESPACES"
+_dist_for_goals_key = "$dist_for_goals"
 def _init_globals(version_info):
     """Returns dict created from the runtime environment."""
     globals = dict()
@@ -30,7 +31,6 @@ def _init_globals(version_info):
         globals[k] = getattr(rblf_cli, k)
 
     globals.setdefault("PRODUCT_SOONG_NAMESPACES", [])
-    globals.setdefault(_soong_config_namespaces_key, {})
     _envsetup_init(globals, version_info)
 
     # Variables that should be defined.
@@ -91,6 +91,18 @@ def _printglobals(globals, globals_base):
                         __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
                     else:
                         print("SOONG_CONFIG_%s_%s :=" % (nsname, var))
+        elif attr == _dist_for_goals_key:
+            goals = []
+            src_dst_list = []
+            goal_dst_list = []
+            for goal_name, goal_src_dst_list in sorted(val.items()):
+                goals.append(goal_name)
+                for sd in sorted(goal_src_dst_list):
+                    src_dst_list.append(":".join(sd))
+                    goal_dst_list.append(":".join((goal_name, sd[1])))
+            print("_all_dist_goal_output_pairs:=", " ".join(goal_dst_list))
+            print("_all_dist_goals:=", " ".join(goals))
+            print("_all_dist_src_dst_pairs:=", " ".join(src_dst_list))
         elif attr not in globals_base or globals_base[attr] != val:
             __print_attr(attr, val)
 
@@ -299,10 +311,11 @@ def _indirect(pcm_name):
 def _soong_config_namespace(g, nsname):
     """Adds given namespace if it does not exist."""
 
-    if g[_soong_config_namespaces_key].get(nsname):
+    old = g.get(_soong_config_namespaces_key, {})
+    if old.get(nsname):
         return
+
     # A value cannot be updated, so we need to create a new dictionary
-    old = g[_soong_config_namespaces_key]
     g[_soong_config_namespaces_key] = dict([(k,v) for k,v in old.items()] + [(nsname, {})])
 
 def _soong_config_set(g, nsname, var, value):
@@ -361,7 +374,7 @@ def _addsuffix(suffix, string_or_list):
 def __words(string_or_list):
     if type(string_or_list) == "list":
         return string_or_list
-    return string_or_list.split()
+    return _mkstrip(string_or_list).split()
 
 # Handle manipulation functions.
 # A handle passed to a PCM consists of:
@@ -485,6 +498,13 @@ def _filter(pattern, text):
             res.append(w)
     return res
 
+def _notdir(paths):
+    """Equivalent to the GNU make function $(notdir).
+
+    Returns the name of the file at the end of each path in paths.
+    """
+    return " ".join([__base(w) for w in __words(paths)])
+
 def __mk2regex(words):
     """Returns regular expression equivalent to Make pattern."""
 
@@ -506,6 +526,21 @@ def _expand_wildcard(pattern):
     """Expands shell wildcard pattern."""
     return rblf_wildcard(pattern)
 
+def _mkdist_for_goals(g, goal, src_dst_list):
+    """Implements dist-for-goals macro."""
+    goals_map = g.get(_dist_for_goals_key, {})
+    pairs = goals_map.get(goal)
+    if pairs == None:
+        pairs = []
+        g[_dist_for_goals_key] = dict([(k,v) for k,v in goals_map.items()] + [(goal, pairs)])
+    for src_dst in __words(src_dst_list):
+        pair=src_dst.split(":")
+        if len(pair) > 2:
+            fail(src_dst + " should be a :-separated pair")
+        pairs.append((pair[0],pair[1] if len(pair) == 2 and pair[1] else __base(pair[0])))
+    g[_dist_for_goals_key][goal] = pairs
+
+
 def _mkerror(file, message = ""):
     """Prints error and stops."""
     fail("%s: %s. Stop" % (file, message))
@@ -513,6 +548,18 @@ def _mkerror(file, message = ""):
 def _mkwarning(file, message = ""):
     """Prints warning."""
     rblf_log(file, "warning", message, sep = ':')
+
+def _mk2rbc_error(loc, message):
+    """Prints a message about conversion error and stops.
+
+    If RBC_MK2RBC_CONTINUE environment variable is set,
+    the execution will continue after the message is printed.
+    """
+    if _options.mk2rbc_continue:
+        rblf_log(loc, message, sep = ':')
+    else:
+        _mkerror(loc, message)
+
 
 def _mkinfo(file, message = ""):
     """Prints info."""
@@ -624,6 +671,7 @@ def __get_options():
         rearrange = "",
         trace_modules = False,
         trace_variables = [],
+        mk2rbc_continue = False,
     )
     for x in getattr(rblf_cli, "RBC_OUT", "").split(","):
         if x == "sort" or x == "unique":
@@ -641,6 +689,8 @@ def __get_options():
             settings["trace_modules"] = True
         elif x != "":
             settings["trace_variables"].append(x)
+    if getattr(rblf_cli, "RBC_MK2RBC_CONTINUE", ""):
+        settings["mk2rbc_continue"] = True
     return struct(**settings)
 
 # Settings used during debugging.
@@ -668,12 +718,15 @@ rblf = struct(
     init_globals = _init_globals,
     inherit = _inherit,
     indirect = _indirect,
+    mk2rbc_error = _mk2rbc_error,
+    mkdist_for_goals = _mkdist_for_goals,
     mkinfo = _mkinfo,
     mkerror = _mkerror,
     mkpatsubst = _mkpatsubst,
     mkwarning = _mkwarning,
     mkstrip = _mkstrip,
     mksubst = _mksubst,
+    notdir = _notdir,
     printvars = _printvars,
     printglobals = _printglobals,
     product_configuration = _product_configuration,

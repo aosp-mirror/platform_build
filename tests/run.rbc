@@ -52,6 +52,11 @@ assert_eq(["from/a:to/a", "from/b:to/b"], rblf.product_copy_files_by_pattern("fr
 assert_eq([], rblf.filter(["a", "", "b"], "f"))
 assert_eq(["", "b"], rblf.filter_out(["a", "" ], ["a", "", "b"] ))
 
+assert_eq("foo.c no_folder", rblf.notdir(["src/foo.c", "no_folder"]))
+assert_eq("foo.c no_folder", rblf.notdir("src/foo.c no_folder"))
+assert_eq("", rblf.notdir("/"))
+assert_eq("", rblf.notdir(""))
+
 (globals, config, globals_base) = rblf.product_configuration("test/device", init, version_defaults)
 assert_eq(
     {
@@ -97,3 +102,11 @@ assert_eq(30, globals["PLATFORM_SDK_VERSION"])
 
 assert_eq("xyz", rblf.soong_config_get(globals, "NS2", "v3"))
 assert_eq(None, rblf.soong_config_get(globals, "NS2", "nonexistant_var"))
+
+goals = globals["$dist_for_goals"]
+assert_eq(
+    {
+        "goal": [("dir1/file1", "out1"), ("dir1/file2", "out2"), ("dir2/file2", "file2")]
+    },
+    { k:v for k,v in sorted(goals.items()) }
+)
