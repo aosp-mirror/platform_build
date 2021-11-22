@@ -275,10 +275,10 @@ _product_single_value_vars += PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING
 _product_single_value_vars += PRODUCT_DEX_PREOPT_RESOLVE_STARTUP_STRINGS
 
 # Boot image options.
+_product_list_vars += PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION
 _product_single_value_vars += \
     PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST \
     PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE \
-    PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
     PRODUCT_USES_DEFAULT_ART_CONFIG \
 
 _product_single_value_vars += PRODUCT_SYSTEM_SERVER_COMPILER_FILTER
@@ -439,6 +439,16 @@ _product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
 # init-second-stage to load debug policy from system_ext.
 # This option is only meant to be set by GSI products.
 _product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
+
+# If set, metadata files for the following artifacts will be generated.
+# - system/framework/*.jar
+# - system/framework/oat/<arch>/*.{oat,vdex,art}
+# - system/etc/boot-image.prof
+# - system/etc/dirty-image-objects
+# One fsverity metadata container file per one input file will be generated in
+# system.img, with a suffix ".fsv_meta". e.g. a container file for
+# "/system/framework/foo.jar" will be "system/framework/foo.jar.fsv_meta".
+_product_single_value_vars += PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
