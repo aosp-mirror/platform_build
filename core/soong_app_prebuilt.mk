@@ -138,13 +138,6 @@ endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 java-dex: $(LOCAL_SOONG_DEX_JAR)
 
 
-my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
-  $(call word-colon,1,$(f)):$(PRODUCT_OUT)$(call word-colon,2,$(f)))
-my_installed := $(call copy-many-files, $(my_built_installed))
-ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed)
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_installed)
-$(my_all_targets): $(my_installed)
-
 # Copy test suite files.
 ifdef LOCAL_COMPATIBILITY_SUITE
 my_apks_to_install := $(foreach f,$(filter %.apk %.idsig,$(LOCAL_SOONG_BUILT_INSTALLED)),$(call word-colon,1,$(f)))

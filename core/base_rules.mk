@@ -514,30 +514,26 @@ my_path_comp :=
 ###########################################################
 
 my_installed_symlinks :=
-my_default_test_module :=
-ifeq ($(use_testcase_folder),true)
-arch_dir := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-my_default_test_module := $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)/$(arch_dir)/$(my_installed_module_stem)
-arch_dir :=
-endif
 
 ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
   # Soong already generated the copy rule, but make the installed location depend on the Make
   # copy of the intermediates for now, as some rules that collect intermediates may expect
   # them to exist.
   $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
+
+  $(foreach symlink, $(LOCAL_SOONG_INSTALL_SYMLINKS), \
+    $(call declare-0p-target,$(symlink)))
+  $(my_all_targets) : | $(LOCAL_SOONG_INSTALL_SYMLINKS)
 else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-  ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
-    $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
-    $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
+  $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
+  $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@"
-    ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 	$(copy-file-or-link-to-new-target)
-    else
+  else
 	$(copy-file-to-new-target)
-    endif
-	$(PRIVATE_POST_INSTALL_CMD)
   endif
+	$(PRIVATE_POST_INSTALL_CMD)
 
   # Rule to install the module's companion symlinks
   my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS) $(LOCAL_MODULE_SYMLINKS_$(my_32_64_bit_suffix)))
@@ -735,8 +731,9 @@ endif
 
 # The module itself.
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-    $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem))) \
+  $(eval my_compat_dist_$(suite) := $(patsubst %:$(LOCAL_INSTALLED_MODULE),$(LOCAL_INSTALLED_MODULE):$(LOCAL_INSTALLED_MODULE),\
+    $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
+      $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem)))) \
   $(eval my_compat_dist_config_$(suite) := ))
 
 
@@ -935,9 +932,13 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
   # of files provided by this module.  Used by custom packaging rules like
   # package-modules.mk that need to copy the built files to a custom install
   # location during packaging.
+  #
+  # Translate copies from $(LOCAL_PREBUILT_MODULE_FILE) to $(LOCAL_BUILT_MODULE)
+  # so that package-modules.mk gets any transtive dependencies added to
+  # $(LOCAL_BUILT_MODULE), for example unstripped symbols files.
   ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
-      $(LOCAL_SOONG_INSTALL_PAIRS) \
+      $(patsubst $(LOCAL_PREBUILT_MODULE_FILE):%,$(LOCAL_BUILT_MODULE):%,$(LOCAL_SOONG_INSTALL_PAIRS)) \
       $(my_init_rc_pairs) \
       $(my_test_data_pairs) \
       $(my_vintf_pairs))
@@ -1071,7 +1072,7 @@ INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 ##########################################################
 # Track module-level dependencies.
 # Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
-ifdef RECORD_ALL_DEPS
+# (b/204397180) Unlock RECORD_ALL_DEPS was acknowledged reasonable for better Atest performance.
 ALL_DEPS.MODULES += $(LOCAL_MODULE)
 ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) \
@@ -1088,7 +1089,6 @@ ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
 
 license_files := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*)
 ALL_DEPS.$(LOCAL_MODULE).LICENSE := $(sort $(ALL_DEPS.$(LOCAL_MODULE).LICENSE) $(license_files))
-endif
 
 ###########################################################
 ## Take care of my_module_tags
