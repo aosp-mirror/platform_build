@@ -206,25 +206,21 @@ class SignApk {
      *
      * @param keyFileName Name of the file containing the private key.  Used to prompt the user.
      */
-    private static String readPassword(String keyFileName) {
+    private static char[] readPassword(String keyFileName) {
         Console console;
-        char[] pwd;
         if ((console = System.console()) == null) {
             System.out.print(
                 "Enter password for " + keyFileName + " (password will not be hidden): ");
             System.out.flush();
             BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
             try {
-                return stdin.readLine();
+                String result = stdin.readLine();
+                return result == null ? null : result.toCharArray();
             } catch (IOException ex) {
                 return null;
             }
         } else {
-            if ((pwd = console.readPassword("[%s]", "Enter password for " + keyFileName)) != null) {
-                return String.valueOf(pwd);
-            } else {
-                return null;
-            }
+            return console.readPassword("[%s]", "Enter password for " + keyFileName);
         }
     }
 
@@ -247,11 +243,8 @@ class SignApk {
             return null;
         }
 
-        final String password = readPassword(keyFile.getPath());
-
         SecretKeyFactory skFactory = SecretKeyFactory.getInstance(epkInfo.getAlgName());
-        Key key = skFactory.generateSecret(
-                new PBEKeySpec(password != null ? password.toCharArray() : null));
+        Key key = skFactory.generateSecret(new PBEKeySpec(readPassword(keyFile.getPath())));
         Cipher cipher = Cipher.getInstance(epkInfo.getAlgName());
         cipher.init(Cipher.DECRYPT_MODE, key, epkInfo.getAlgParameters());
 
@@ -309,8 +302,7 @@ class SignApk {
             final KeyStore keyStore, final String keyName)
             throws CertificateException, KeyStoreException, NoSuchAlgorithmException,
                     UnrecoverableKeyException, UnrecoverableEntryException {
-        final String password = readPassword(keyName);
-        final Key key = keyStore.getKey(keyName, password != null ? password.toCharArray() : null);
+        final Key key = keyStore.getKey(keyName, readPassword(keyName));
         final PrivateKeyEntry privateKeyEntry = (PrivateKeyEntry) keyStore.getEntry(keyName, null);
         if (privateKeyEntry == null) {
         throw new Error(
