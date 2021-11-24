@@ -35,6 +35,10 @@ $(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE_SUFFIX)
 endif
 LOCAL_MODULE_SUFFIX := $(COMMON_ANDROID_PACKAGE_SUFFIX)
 
+ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)),)
+$(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE_STEM or LOCAL_BUILT_MODULE_STEM)
+endif
+
 ifneq ($(strip $(LOCAL_MODULE)),)
 $(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE)
 endif
