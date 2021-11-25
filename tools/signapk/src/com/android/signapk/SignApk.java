@@ -64,12 +64,19 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.security.Key;
 import java.security.KeyFactory;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.KeyStore.PrivateKeyEntry;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Security;
+import java.security.UnrecoverableEntryException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
@@ -284,6 +291,32 @@ class SignApk {
         } finally {
             input.close();
         }
+    }
+
+    private static KeyStore createKeyStore(String keyStoreName, String keyStorePin) throws
+            CertificateException,
+            IOException,
+            KeyStoreException,
+            NoSuchAlgorithmException {
+        KeyStore keyStore = KeyStore.getInstance(keyStoreName);
+        keyStore.load(null, keyStorePin == null ? null : keyStorePin.toCharArray());
+        return keyStore;
+    }
+
+    /** Get a PKCS#11 private key from keyStore */
+    private static PrivateKey loadPrivateKeyFromKeyStore(
+            final KeyStore keyStore, final String keyName, final String password)
+            throws CertificateException, KeyStoreException, NoSuchAlgorithmException,
+                    UnrecoverableKeyException, UnrecoverableEntryException {
+        final Key key = keyStore.getKey(keyName, password == null ? null : password.toCharArray());
+        final PrivateKeyEntry privateKeyEntry = (PrivateKeyEntry) keyStore.getEntry(keyName, null);
+        if (privateKeyEntry == null) {
+        throw new Error(
+            "Key "
+                + keyName
+                + " not found in the token provided by PKCS11 library!");
+        }
+        return privateKeyEntry.getPrivateKey();
     }
 
     /**
@@ -1022,6 +1055,8 @@ class SignApk {
                            "[-a <alignment>] " +
                            "[--align-file-size] " +
                            "[-providerClass <className>] " +
+                           "[-loadPrivateKeysFromKeyStore <keyStoreName>]" +
+                           "[-keyStorePin <pin>]" +
                            "[--min-sdk-version <n>] " +
                            "[--disable-v2] " +
                            "[--enable-v4] " +
@@ -1044,6 +1079,8 @@ class SignApk {
 
         boolean signWholeFile = false;
         String providerClass = null;
+        String keyStoreName = null;
+        String keyStorePin = null;
         int alignment = 4;
         boolean alignFileSize = false;
         Integer minSdkVersionOverride = null;
@@ -1061,6 +1098,18 @@ class SignApk {
                     usage();
                 }
                 providerClass = args[++argstart];
+                ++argstart;
+            } else if ("-loadPrivateKeysFromKeyStore".equals(args[argstart])) {
+                if (argstart + 1 >= args.length) {
+                    usage();
+                }
+                keyStoreName = args[++argstart];
+                ++argstart;
+            } else if ("-keyStorePin".equals(args[argstart])) {
+                if (argstart + 1 >= args.length) {
+                    usage();
+                }
+                keyStorePin = args[++argstart];
                 ++argstart;
             } else if ("-a".equals(args[argstart])) {
                 alignment = Integer.parseInt(args[++argstart]);
@@ -1142,11 +1191,21 @@ class SignApk {
             // timestamp using the current timezone. We thus adjust the milliseconds since epoch
             // value to end up with MS-DOS timestamp of Jan 1 2009 00:00:00.
             timestamp -= TimeZone.getDefault().getOffset(timestamp);
-
+            KeyStore keyStore = null;
+            if (keyStoreName != null) {
+                keyStore = createKeyStore(keyStoreName, keyStorePin);
+            }
             PrivateKey[] privateKey = new PrivateKey[numKeys];
             for (int i = 0; i < numKeys; ++i) {
                 int argNum = argstart + i*2 + 1;
-                privateKey[i] = readPrivateKey(new File(args[argNum]));
+                if (keyStore == null) {
+                    privateKey[i] = readPrivateKey(new File(args[argNum]));
+                } else {
+                    String[] splits = args[argNum].split(":", 2);
+                    final String keyAlias = splits[0];
+                    final String password = splits.length > 1 ? splits[1] : null;
+                    privateKey[i] = loadPrivateKeyFromKeyStore(keyStore, keyAlias, password);
+                }
             }
             inputJar = new JarFile(new File(inputFilename), false);  // Don't verify.
 

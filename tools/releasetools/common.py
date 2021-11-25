@@ -68,6 +68,9 @@ class Options(object):
     self.search_path = os.path.dirname(os.path.dirname(exec_path))
 
     self.signapk_path = "framework/signapk.jar"  # Relative to search_path
+    if not os.path.exists(os.path.join(self.search_path, self.signapk_path)):
+      if "ANDROID_HOST_OUT" in os.environ:
+        self.search_path = os.environ["ANDROID_HOST_OUT"]
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
     self.extra_signapk_args = []
     self.java_path = "java"  # Use the one on the path by default.
@@ -973,6 +976,8 @@ class PartitionBuildProps(object):
         break
       except KeyError:
         logger.warning('Failed to read %s', prop_file)
+    if data == '':
+      logger.warning("Failed to read build.prop for partition {}".format(name))
     return data
 
   @staticmethod

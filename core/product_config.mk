@@ -206,8 +206,8 @@ endif
 ifndef RBC_PRODUCT_CONFIG
 $(call import-products, $(current_product_makefile))
 else
-  $(shell build/soong/scripts/rbc-run $(current_product_makefile) \
-      >$(OUT_DIR)/rbctemp.mk)
+  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbctemp.mk \
+      build/soong/scripts/rbc-run $(current_product_makefile))
   ifneq ($(.SHELLSTATUS),0)
     $(error product configuration converter failed: $(.SHELLSTATUS))
   endif
@@ -319,6 +319,12 @@ PRODUCT_BOOT_JARS += com.android.i18n:core-icu4j
 PRODUCT_SYSTEM_SERVER_JARS += $(PRODUCT_SYSTEM_SERVER_JARS_EXTRA)
 
 PRODUCT_SYSTEM_SERVER_JARS := $(call qualify-platform-jars,$(PRODUCT_SYSTEM_SERVER_JARS))
+
+# Sort APEX system server jars. We use deterministic alphabetical order when
+# constructing SYSTEMSERVERCLASSPATH definition on device after a Mainline
+# update. Enforce it in the build system as well to avoid recompiling everything
+# after an update due a change in SYSTEMSERVERCLASSPATH order.
+PRODUCT_APEX_SYSTEM_SERVER_JARS := $(sort $(PRODUCT_APEX_SYSTEM_SERVER_JARS))
 
 ifndef PRODUCT_SYSTEM_NAME
   PRODUCT_SYSTEM_NAME := $(PRODUCT_NAME)
