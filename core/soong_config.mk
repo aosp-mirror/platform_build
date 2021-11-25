@@ -37,7 +37,7 @@ $(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_
 
 $(call add_json_bool, Allow_missing_dependencies,        $(filter true,$(ALLOW_MISSING_DEPENDENCIES)))
 $(call add_json_bool, Unbundled_build,                   $(TARGET_BUILD_UNBUNDLED))
-$(call add_json_bool, Unbundled_build_apps,              $(TARGET_BUILD_APPS))
+$(call add_json_list, Unbundled_build_apps,              $(TARGET_BUILD_APPS))
 $(call add_json_bool, Unbundled_build_image,             $(TARGET_BUILD_UNBUNDLED_IMAGE))
 $(call add_json_bool, Always_use_prebuilt_sdks,          $(TARGET_BUILD_USE_PREBUILT_SDKS))
 
