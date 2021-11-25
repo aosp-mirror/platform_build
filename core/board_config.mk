@@ -191,7 +191,7 @@ endif
 define dump-public-variables
 $(file >$(OUT_DIR)/dump-public-variables-temp.txt,$(subst $(space),$(newline),$(.VARIABLES)))\
 $(file >$(1),\
-$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-public-variables-temp.txt | grep -vhe "^SOONG_"),\
+$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-public-variables-temp.txt | grep -vhE "^(SOONG_.*|LOCAL_PATH|TOPDIR|PRODUCT_COPY_OUT_.*)$$"),\
 $(v) := $(strip $($(v)))$(newline)))
 endef
 
@@ -214,10 +214,8 @@ else
     $(error board configuration converter failed: $(.SHELLSTATUS))
   endif
 
-  $(shell $(OUT_DIR)/soong/rbcrun \
-    RBC_OUT="make,global" \
-    $(OUT_DIR)/rbc/boardlauncher.rbc \
-    >$(OUT_DIR)/rbc/rbc_board_config_results.mk)
+  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_board_config_results.mk \
+    $(OUT_DIR)/soong/rbcrun RBC_OUT="make,global" $(OUT_DIR)/rbc/boardlauncher.rbc)
   ifneq ($(.SHELLSTATUS),0)
     $(error board configuration runner failed: $(.SHELLSTATUS))
   endif
