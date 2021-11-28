@@ -220,13 +220,21 @@ def _product_configuration(top_pcm_name, top_pcm, version_info):
     return (globals, configs[top_pcm_name][1], globals_base)
 
 
+def _dictionary_difference(a, b):
+    result = {}
+    for attr, val in a.items():
+        if attr not in b or b[attr] != val:
+            result[attr] = val
+    return result
+
 def _board_configuration(board_config_init, input_variables_init):
     globals = {}
     h = __h_new()
     input_variables_init(globals, h)
+    cfg_base = dict(**h[0])
     globals_base = dict(**globals)
     board_config_init(globals, h)
-    return (globals, h[1], globals_base)
+    return (globals, _dictionary_difference(h[0], cfg_base), globals_base)
 
 
 def _substitute_inherited(configs, pcm_name, cfg):
