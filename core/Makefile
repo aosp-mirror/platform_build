@@ -4735,6 +4735,7 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSION := $(tool_extension)
 
 ifeq ($(AB_OTA_UPDATER),true)
 updater_dep := system/update_engine/update_engine.conf
+updater_dep := external/zucchini/version_info.h
 endif
 
 # Build OTA tools if non-A/B is allowed
@@ -5208,6 +5209,7 @@ endif
 ifeq ($(AB_OTA_UPDATER),true)
 	@# When using the A/B updater, include the updater config files in the zip.
 	$(hide) cp $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
+	$(hide) cp $(TOPDIR)external/zucchini/version_info.h $(zip_root)/META/zucchini_config.txt
 	$(hide) for part in $(strip $(AB_OTA_PARTITIONS)); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
