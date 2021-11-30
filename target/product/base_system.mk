@@ -362,7 +362,6 @@ PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
     dmuserd \
-    gdbserver \
     idlcli \
     init-debug.rc \
     iotop \
