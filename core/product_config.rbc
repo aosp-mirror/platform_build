@@ -12,26 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//build/make/core:envsetup.rbc", _envsetup_init = "init")
-
 """Runtime functions."""
 
 _soong_config_namespaces_key = "$SOONG_CONFIG_NAMESPACES"
 _dist_for_goals_key = "$dist_for_goals"
-def _init_globals(version_info):
-    """Returns dict created from the runtime environment."""
-    globals = dict()
+def _init_globals(input_variables_init):
+    """Initializes dictionaries of global variables.
 
-    # Environment variables
-    for k in dir(rblf_env):
-        globals[k] = getattr(rblf_env, k)
+    This function runs the given input_variables_init function,
+    passing it a globals dictionary and a handle as if it
+    were a regular product. It then returns 2 copies of
+    the globals dictionary, so that one can be kept around
+    to diff changes made to the other later.
+    """
+    globals_base = {"PRODUCT_SOONG_NAMESPACES": []}
+    input_variables_init(globals_base, __h_new())
 
-    # Variables set as var=value command line arguments
-    for k in dir(rblf_cli):
-        globals[k] = getattr(rblf_cli, k)
-
-    globals.setdefault("PRODUCT_SOONG_NAMESPACES", [])
-    _envsetup_init(globals, version_info)
+    # Rerun input_variables_init to produce a copy
+    # of globals_base, because starlark doesn't support
+    # deep copying objects.
+    globals = {"PRODUCT_SOONG_NAMESPACES": []}
+    input_variables_init(globals, __h_new())
 
     # Variables that should be defined.
     mandatory_vars = [
@@ -39,15 +40,14 @@ def _init_globals(version_info):
         "PLATFORM_VERSION",
         "PRODUCT_SOONG_NAMESPACES",
         # TODO(asmundak): do we need TARGET_ARCH? AOSP does not reference it
-        "TARGET_BUILD_TYPE",
         "TARGET_BUILD_VARIANT",
         "TARGET_PRODUCT",
     ]
     for bv in mandatory_vars:
         if not bv in globals:
             fail(bv, " is not defined")
-    return globals
 
+    return (globals, globals_base)
 
 def __print_attr(attr, value):
     # Allow using empty strings to clear variables, but not None values
@@ -111,7 +111,7 @@ def __printvars_rearrange_list(value_list):
     seen = {item: 0 for item in value_list}
     return sorted(seen.keys()) if _options.rearrange == "sort" else seen.keys()
 
-def _product_configuration(top_pcm_name, top_pcm, version_info):
+def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
     """Creates configuration."""
 
     # Product configuration is created by traversing product's inheritance
@@ -125,8 +125,7 @@ def _product_configuration(top_pcm_name, top_pcm, version_info):
     # PCM means "Product Configuration Module", i.e., a Starlark file
     # whose body consists of a single init function.
 
-    globals_base = _init_globals(version_info)
-    globals = dict(**globals_base)
+    globals, globals_base = _init_globals(input_variables_init)
 
     config_postfix = []  # Configs in postfix order
 
@@ -725,7 +724,6 @@ rblf = struct(
     filter = _filter,
     filter_out = _filter_out,
     find_and_copy = _find_and_copy,
-    init_globals = _init_globals,
     inherit = _inherit,
     indirect = _indirect,
     mk2rbc_error = _mk2rbc_error,
