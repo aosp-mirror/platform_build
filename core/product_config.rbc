@@ -228,13 +228,15 @@ def _dictionary_difference(a, b):
     return result
 
 def _board_configuration(board_config_init, input_variables_init):
+    globals_base = {}
+    h_base = __h_new()
     globals = {}
     h = __h_new()
+
+    input_variables_init(globals_base, h_base)
     input_variables_init(globals, h)
-    cfg_base = dict(**h[0])
-    globals_base = dict(**globals)
     board_config_init(globals, h)
-    return (globals, _dictionary_difference(h[0], cfg_base), globals_base)
+    return (globals, _dictionary_difference(h[0], h_base[0]), globals_base)
 
 
 def _substitute_inherited(configs, pcm_name, cfg):
