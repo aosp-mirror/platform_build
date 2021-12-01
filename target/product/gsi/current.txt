@@ -68,6 +68,7 @@ VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
 VNDK-core: android.hardware.configstore@1.1.so
 VNDK-core: android.hardware.confirmationui-support-lib.so
+VNDK-core: android.hardware.dumpstate-V1-ndk.so
 VNDK-core: android.hardware.gnss-V1-ndk.so
 VNDK-core: android.hardware.gnss-V1-ndk_platform.so
 VNDK-core: android.hardware.graphics.allocator@2.0.so
