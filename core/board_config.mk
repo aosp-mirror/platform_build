@@ -125,6 +125,42 @@ _board_strip_readonly_list += BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES
 # Defines the list of logical vendor ramdisk names to build or include in vendor_boot.
 _board_strip_readonly_list += BOARD_VENDOR_RAMDISK_FRAGMENTS
 
+# These are all variables used to build $(INSTALLED_MISC_INFO_TARGET)
+# in build/make/core/Makefile. Their values get used in command line
+# arguments, so they have to be stripped to make the ninja files stable.
+_board_strip_list :=
+_board_strip_list += BOARD_DTBOIMG_PARTITION_SIZE
+_board_strip_list += BOARD_AVB_DTBO_KEY_PATH
+_board_strip_list += BOARD_AVB_DTBO_ALGORITHM
+_board_strip_list += BOARD_AVB_DTBO_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_PVMFW_KEY_PATH
+_board_strip_list += BOARD_AVB_PVMFW_ALGORITHM
+_board_strip_list += BOARD_AVB_PVMFW_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST
+_board_strip_list += BOARD_BPT_DISK_SIZE
+_board_strip_list += BOARD_BPT_INPUT_FILES
+_board_strip_list += BOARD_BPT_MAKE_TABLE_ARGS
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR_ALGORITHM
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR_KEY_PATH
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM_ALGORITHM
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM_KEY_PATH
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM
+_board_strip_list += BOARD_AVB_RECOVERY_KEY_PATH
+_board_strip_list += BOARD_AVB_RECOVERY_ALGORITHM
+_board_strip_list += BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VENDOR_BOOT_KEY_PATH
+_board_strip_list += BOARD_AVB_VENDOR_BOOT_ALGORITHM
+_board_strip_list += BOARD_AVB_VENDOR_BOOT_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_GKI_SIGNING_SIGNATURE_ARGS
+_board_strip_list += BOARD_GKI_SIGNING_ALGORITHM
+_board_strip_list += BOARD_GKI_SIGNING_KEY_PATH
+_board_strip_list += BOARD_MKBOOTIMG_ARGS
+_board_strip_list += BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE
+
+
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_DUP_SYSPROP \
@@ -241,6 +277,7 @@ board_config_mk :=
 
 # Clean up and verify BoardConfig variables
 $(foreach var,$(_board_strip_readonly_list),$(eval $(var) := $$(strip $$($(var)))))
+$(foreach var,$(_board_strip_list),$(eval $(var) := $$(strip $$($(var)))))
 $(foreach var,$(_board_true_false_vars), \
   $(if $(filter-out true false,$($(var))), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
