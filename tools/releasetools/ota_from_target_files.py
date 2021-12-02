@@ -1191,8 +1191,6 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
                      "META/" + x in target_zip.namelist()]
 
-    # TODO(b/205541521) remove the workaround after root cause is fixed.
-    care_map_list = []
     # Adds care_map if either the protobuf format or the plain text one exists.
     if care_map_list:
       care_map_name = care_map_list[0]
