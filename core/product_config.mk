@@ -320,11 +320,15 @@ PRODUCT_SYSTEM_SERVER_JARS += $(PRODUCT_SYSTEM_SERVER_JARS_EXTRA)
 
 PRODUCT_SYSTEM_SERVER_JARS := $(call qualify-platform-jars,$(PRODUCT_SYSTEM_SERVER_JARS))
 
-# Sort APEX system server jars. We use deterministic alphabetical order when
-# constructing SYSTEMSERVERCLASSPATH definition on device after a Mainline
-# update. Enforce it in the build system as well to avoid recompiling everything
-# after an update due a change in SYSTEMSERVERCLASSPATH order.
+# Sort APEX boot and system server jars. We use deterministic alphabetical order
+# when constructing BOOTCLASSPATH and SYSTEMSERVERCLASSPATH definition on device
+# after an update. Enforce it in the build system as well to avoid recompiling
+# everything after an update due a change in the order.
+PRODUCT_APEX_BOOT_JARS := $(sort $(PRODUCT_APEX_BOOT_JARS))
 PRODUCT_APEX_SYSTEM_SERVER_JARS := $(sort $(PRODUCT_APEX_SYSTEM_SERVER_JARS))
+
+PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
+  $(call qualify-platform-jars,$(PRODUCT_STANDALONE_SYSTEM_SERVER_JARS))
 
 ifndef PRODUCT_SYSTEM_NAME
   PRODUCT_SYSTEM_NAME := $(PRODUCT_NAME)
