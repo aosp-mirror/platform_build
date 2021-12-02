@@ -65,7 +65,8 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.tethering:framework-tethering \
     com.android.wifi:framework-wifi
 
-# APEX system server jars. The list will be sorted automatically.
+# List of system_server classpath jars delivered via apex.
+# Keep the list sorted by module names and then library names.
 PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
     com.android.art:service-art \
@@ -73,6 +74,18 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.permission:service-permission \
 
 PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION += art/build/boot/boot-image-profile.txt
+
+# List of jars on the platform that system_server loads dynamically using separate classloaders.
+# Keep the list sorted library names.
+PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
+
+# List of jars delivered via apex that system_server loads dynamically using separate classloaders.
+# Keep the list sorted by module names and then library names.
+PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
+    com.android.os.statsd:service-statsd \
+    com.android.scheduling:service-scheduling \
+    com.android.tethering:service-connectivity \
+    com.android.wifi:service-wifi \
 
 # Minimal configuration for running dex2oat (default argument values).
 # PRODUCT_USES_DEFAULT_ART_CONFIG must be true to enable boot image compilation.
