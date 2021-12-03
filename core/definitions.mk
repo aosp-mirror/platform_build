@@ -580,17 +580,9 @@ endef
 ## License metadata build rule for my_register_name $(1)
 ###########################################################
 define license-metadata-rule
-$(foreach meta_lic, $(ALL_MODULES.$(1).DELAYED_META_LIC),$(call _license-metadata-rule,$(1),$(meta_lic)))
-$(call notice-rule,$(1))
-endef
-
-define _license-metadata-rule
+$(strip $(eval _dir := $(call license-metadata-dir)))
 $(strip $(eval _srcs := $(strip $(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS),$(if $(strip $(ALL_MODULES.$(call word-colon,1,$(d)).INSTALLED)), $(ALL_MODULES.$(call word-colon,1,$(d)).INSTALLED),$(if $(strip $(ALL_MODULES.$(call word-colon,1,$(d)).BUILT)), $(ALL_MODULES.$(call word-colon,1,$(d)).BUILT), $(call word-colon,1,$d)))))))
-$(strip $(eval _deps := $(sort $(filter-out $(2)%,\
-   $(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS),\
-     $(addsuffix :$(call wordlist-colon,2,9999,$(d)), \
-       $(foreach dt,$(ALL_MODULES.$(d).BUILT) $(ALL_MODULES.$(d).INSTALLED),\
-         $(ALL_TARGETS.$(dt).META_LIC))))))))
+$(strip $(eval _deps := $(sort $(filter-out $(_dir)/$(1).meta_lic%,$(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS), $(_dir)/$(call word-colon,1,$(d)).meta_lic:$(call wordlist-colon,2,9999,$d))))))
 $(strip $(eval _notices := $(sort $(ALL_MODULES.$(1).NOTICES))))
 $(strip $(eval _tgts := $(sort $(ALL_MODULES.$(1).BUILT))))
 $(strip $(eval _inst := $(sort $(ALL_MODULES.$(1).INSTALLED))))
@@ -602,22 +594,22 @@ $(strip $(eval _map := $(strip $(foreach _m,$(sort $(ALL_MODULES.$(1).LICENSE_IN
   $(foreach ns,$(_ns),$(ns):$(_d) ) \
 ))))
 
-$(2): PRIVATE_KINDS := $(sort $(ALL_MODULES.$(1).LICENSE_KINDS))
-$(2): PRIVATE_CONDITIONS := $(sort $(ALL_MODULES.$(1).LICENSE_CONDITIONS))
-$(2): PRIVATE_NOTICES := $(_notices)
-$(2): PRIVATE_NOTICE_DEPS := $(_deps)
-$(2): PRIVATE_SOURCES := $(_srcs)
-$(2): PRIVATE_TARGETS := $(_tgts)
-$(2): PRIVATE_INSTALLED := $(_inst)
-$(2): PRIVATE_PATH := $(_path)
-$(2): PRIVATE_IS_CONTAINER := $(ALL_MODULES.$(1).IS_CONTAINER)
-$(2): PRIVATE_PACKAGE_NAME := $(strip $(ALL_MODULES.$(1).LICENSE_PACKAGE_NAME))
-$(2): PRIVATE_INSTALL_MAP := $(_map)
-$(2): PRIVATE_MODULE_TYPE := $(ALL_MODULES.$(1).MODULE_TYPE)
-$(2): PRIVATE_MODULE_CLASS := $(ALL_MODULES.$(1).MODULE_CLASS)
-$(2): PRIVATE_INSTALL_MAP := $(_map)
-$(2): $(BUILD_LICENSE_METADATA)
-$(2) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
+$(_dir)/$(1).meta_lic: PRIVATE_KINDS := $(sort $(ALL_MODULES.$(1).LICENSE_KINDS))
+$(_dir)/$(1).meta_lic: PRIVATE_CONDITIONS := $(sort $(ALL_MODULES.$(1).LICENSE_CONDITIONS))
+$(_dir)/$(1).meta_lic: PRIVATE_NOTICES := $(_notices)
+$(_dir)/$(1).meta_lic: PRIVATE_NOTICE_DEPS := $(_deps)
+$(_dir)/$(1).meta_lic: PRIVATE_SOURCES := $(_srcs)
+$(_dir)/$(1).meta_lic: PRIVATE_TARGETS := $(_tgts)
+$(_dir)/$(1).meta_lic: PRIVATE_INSTALLED := $(_inst)
+$(_dir)/$(1).meta_lic: PRIVATE_PATH := $(_path)
+$(_dir)/$(1).meta_lic: PRIVATE_IS_CONTAINER := $(ALL_MODULES.$(1).IS_CONTAINER)
+$(_dir)/$(1).meta_lic: PRIVATE_PACKAGE_NAME := $(strip $(ALL_MODULES.$(1).LICENSE_PACKAGE_NAME))
+$(_dir)/$(1).meta_lic: PRIVATE_INSTALL_MAP := $(_map)
+$(_dir)/$(1).meta_lic: PRIVATE_MODULE_TYPE := $(ALL_MODULES.$(1).MODULE_TYPE)
+$(_dir)/$(1).meta_lic: PRIVATE_MODULE_CLASS := $(ALL_MODULES.$(1).MODULE_CLASS)
+$(_dir)/$(1).meta_lic: PRIVATE_INSTALL_MAP := $(_map)
+$(_dir)/$(1).meta_lic: $(BUILD_LICENSE_METADATA)
+$(_dir)/$(1).meta_lic : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
 	rm -f $$@
 	mkdir -p $$(dir $$@)
 	$(BUILD_LICENSE_METADATA) \
@@ -635,9 +627,7 @@ $(2) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$
 	  -p '$$(PRIVATE_PACKAGE_NAME)' \
 	  $$(addprefix -r ,$$(PRIVATE_PATH)) \
 	  -o $$@
-endef
 
-define notice-rule
 $(strip $(eval _mifs := $(sort $(ALL_MODULES.$(1).MODULE_INSTALLED_FILENAMES))))
 $(strip $(eval _infs := $(sort $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE))))
 
@@ -646,6 +636,7 @@ $(if $(_infs),$(foreach inf,$(_infs),
 $(if $(strip $(filter $(1),$(INSTALLED_NOTICE_FILES.$(inf).MODULE))),
 $(strip $(eval _mif := $(firstword $(foreach m,$(_mifs),$(if $(filter %/src/$(m).txt,$(inf)),$(m))))))
 
+$(inf) : $(_dir)/$(1).meta_lic
 $(inf): PRIVATE_INSTALLED_MODULE := $(_mif)
 $(inf) : PRIVATE_NOTICES := $(sort $(foreach n,$(_notices),$(call word-colon,1,$(n) )))
 
@@ -840,9 +831,14 @@ $(strip \
   $(foreach t,$(sort $(ALL_NON_MODULES)), \
     $(eval ALL_TARGETS.$(t).META_LIC := $(_dir)/$(t).meta_lic) \
   ) \
-  $(foreach t,$(sort $(ALL_NON_MODULES)),$(eval $(call non-module-license-metadata-rule,$(t)))) \
-  $(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m)))) \
-  $(eval $(call report-missing-licenses-rule)))
+  $(foreach m,$(sort $(ALL_MODULES)), \
+    $(foreach d,$(sort $(ALL_MODULES.$(m).BUILT) $(ALL_MODULES.$(m).INSTALLED)), \
+      $(eval ALL_TARGETS.$(d).META_LIC := $(_dir)/$(m).meta_lic) \
+    ) \
+  ) \
+)$(foreach t,$(sort $(ALL_NON_MODULES)),$(eval $(call non-module-license-metadata-rule,$(t))))$(strip \
+)$(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m))))$(strip \
+)$(eval $(call report-missing-licenses-rule))
 endef
 
 ###########################################################
