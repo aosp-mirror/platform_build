@@ -13,8 +13,8 @@
 # limitations under the License.
 
 
-# Run test configuration and verify its result.
-# The main configuration file is device.rbc.
+# Run test product configuration and verify its result.
+# The main configuration file is product.rbc.
 # It inherits part1.rbc and also includes include1.rbc
 # TODO(asmundak): more tests are needed to verify that:
 #  * multi-level inheritance works as expected
@@ -22,7 +22,9 @@
 
 load("//build/make/core:product_config.rbc", "rblf")
 load(":version_defaults.rbc", "version_defaults")
-load(":device.rbc", "init")
+load(":product.rbc", "init")
+load(":board.rbc", board_init = "init")
+load(":board_input_vars.rbc", board_input_vars_init = "init")
 
 def assert_eq(expected, actual):
     if expected != actual:
@@ -110,3 +112,7 @@ assert_eq(
     },
     { k:v for k,v in sorted(goals.items()) }
 )
+
+(board_globals, board_config, board_globals_base) = rblf.board_configuration(board_init, board_input_vars_init)
+assert_eq({"A_LIST_VARIABLE": ["foo", "bar"]}, board_globals)
+assert_eq({"A_LIST_VARIABLE": ["foo"]}, board_globals_base)
