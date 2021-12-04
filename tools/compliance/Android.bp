@@ -24,6 +24,13 @@ blueprint_go_binary {
     testSrcs: ["cmd/dumpgraph_test.go"],
 }
 
+blueprint_go_binary {
+    name: "dumpresolutions",
+    srcs: ["cmd/dumpresolutions.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/dumpresolutions_test.go"],
+}
+
 bootstrap_go_package {
     name: "compliance-module",
     srcs: [
