@@ -125,10 +125,10 @@ func TestResolutionSet_AttachedToTarget(t *testing.T) {
 
 	rsShare := toResolutionSet(lg, share)
 
-	if rsShare.AttachedToTarget(newTestNode(lg, "binc")) {
+	if rsShare.AttachesToTarget(newTestNode(lg, "binc")) {
 		t.Errorf("unexpected AttachedToTarget(\"binc\"): got true, want false")
 	}
-	if !rsShare.AttachedToTarget(newTestNode(lg, "image")) {
+	if !rsShare.AttachesToTarget(newTestNode(lg, "image")) {
 		t.Errorf("unexpected AttachedToTarget(\"image\"): got false want true")
 	}
 }
