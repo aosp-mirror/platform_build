@@ -833,12 +833,11 @@ sepolicy_minor_vers :=
 
 # A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
 PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
-    26.0 \
-    27.0 \
     28.0 \
     29.0 \
     30.0 \
     31.0 \
+    32.0 \
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
