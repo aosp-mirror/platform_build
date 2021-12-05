@@ -206,12 +206,18 @@ endif
 ifndef RBC_PRODUCT_CONFIG
 $(call import-products, $(current_product_makefile))
 else
-  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbctemp.mk \
-      build/soong/scripts/rbc-run $(current_product_makefile))
+  $(shell mkdir -p $(OUT_DIR)/rbc)
+  $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
+
+  $(shell build/soong/scripts/update_out \
+    $(OUT_DIR)/rbc/rbc_product_config_results.mk \
+    build/soong/scripts/rbc-run \
+    $(current_product_makefile) \
+    $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
   ifneq ($(.SHELLSTATUS),0)
     $(error product configuration converter failed: $(.SHELLSTATUS))
   endif
-  include $(OUT_DIR)/rbctemp.mk
+  include $(OUT_DIR)/rbc/rbc_product_config_results.mk
   PRODUCTS += $(current_product_makefile)
 endif
 endif  # Import all or just the current product makefile
