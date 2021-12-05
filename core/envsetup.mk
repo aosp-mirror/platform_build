@@ -310,6 +310,16 @@ ifeq (true,$(EMMA_INSTRUMENT_FRAMEWORK))
 endif
 #################################################################
 
+# Dumps all variables that match [A-Z][A-Z0-9_]* (with a few exceptions)
+# to the file at $(1). It is used to print only the variables that are
+# likely to be relevant to the product or board configuration.
+define dump-variables-rbc
+$(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(.VARIABLES)))\
+$(file >$(1),\
+$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt | grep -vhE "^(SOONG_.*|LOCAL_PATH|TOPDIR|PRODUCT_COPY_OUT_.*)$$"),\
+$(v) := $(strip $($(v)))$(newline)))
+endef
+
 # Read the product specs so we can get TARGET_DEVICE and other
 # variables that we need in order to locate the output files.
 include $(BUILD_SYSTEM)/product_config.mk
@@ -323,6 +333,12 @@ endif
 SDK_HOST_ARCH := x86
 TARGET_OS := linux
 
+# Some board configuration files use $(PRODUCT_OUT)
+TARGET_OUT_ROOT := $(OUT_DIR)/target
+TARGET_PRODUCT_OUT_ROOT := $(TARGET_OUT_ROOT)/product
+PRODUCT_OUT := $(TARGET_PRODUCT_OUT_ROOT)/$(TARGET_DEVICE)
+.KATI_READONLY := TARGET_OUT_ROOT TARGET_PRODUCT_OUT_ROOT PRODUCT_OUT
+
 include $(BUILD_SYSTEM)/board_config.mk
 
 # the target build type defaults to release
@@ -335,28 +351,24 @@ endif
 
 SOONG_OUT_DIR := $(OUT_DIR)/soong
 
-TARGET_OUT_ROOT := $(OUT_DIR)/target
-
 HOST_OUT_ROOT := $(OUT_DIR)/host
 
-.KATI_READONLY := SOONG_OUT_DIR TARGET_OUT_ROOT HOST_OUT_ROOT
+.KATI_READONLY := SOONG_OUT_DIR HOST_OUT_ROOT
 
 # We want to avoid two host bin directories in multilib build.
 HOST_OUT := $(HOST_OUT_ROOT)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
-SOONG_HOST_OUT := $(SOONG_OUT_DIR)/host/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
+
+# Soong now installs to the same directory as Make.
+SOONG_HOST_OUT := $(HOST_OUT)
 
 HOST_CROSS_OUT := $(HOST_OUT_ROOT)/$(HOST_CROSS_OS)-$(HOST_CROSS_ARCH)
 
 .KATI_READONLY := HOST_OUT SOONG_HOST_OUT HOST_CROSS_OUT
 
-TARGET_PRODUCT_OUT_ROOT := $(TARGET_OUT_ROOT)/product
-
 TARGET_COMMON_OUT_ROOT := $(TARGET_OUT_ROOT)/common
 HOST_COMMON_OUT_ROOT := $(HOST_OUT_ROOT)/common
 
-PRODUCT_OUT := $(TARGET_PRODUCT_OUT_ROOT)/$(TARGET_DEVICE)
-
-.KATI_READONLY := TARGET_PRODUCT_OUT_ROOT TARGET_COMMON_OUT_ROOT HOST_COMMON_OUT_ROOT PRODUCT_OUT
+.KATI_READONLY := TARGET_COMMON_OUT_ROOT HOST_COMMON_OUT_ROOT
 
 OUT_DOCS := $(TARGET_COMMON_OUT_ROOT)/docs
 OUT_NDK_DOCS := $(TARGET_COMMON_OUT_ROOT)/ndk-docs

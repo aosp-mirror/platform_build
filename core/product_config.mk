@@ -206,12 +206,18 @@ endif
 ifndef RBC_PRODUCT_CONFIG
 $(call import-products, $(current_product_makefile))
 else
-  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbctemp.mk \
-      build/soong/scripts/rbc-run $(current_product_makefile))
+  $(shell mkdir -p $(OUT_DIR)/rbc)
+  $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
+
+  $(shell build/soong/scripts/update_out \
+    $(OUT_DIR)/rbc/rbc_product_config_results.mk \
+    build/soong/scripts/rbc-run \
+    $(current_product_makefile) \
+    $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
   ifneq ($(.SHELLSTATUS),0)
     $(error product configuration converter failed: $(.SHELLSTATUS))
   endif
-  include $(OUT_DIR)/rbctemp.mk
+  include $(OUT_DIR)/rbc/rbc_product_config_results.mk
   PRODUCTS += $(current_product_makefile)
 endif
 endif  # Import all or just the current product makefile
@@ -320,11 +326,15 @@ PRODUCT_SYSTEM_SERVER_JARS += $(PRODUCT_SYSTEM_SERVER_JARS_EXTRA)
 
 PRODUCT_SYSTEM_SERVER_JARS := $(call qualify-platform-jars,$(PRODUCT_SYSTEM_SERVER_JARS))
 
-# Sort APEX system server jars. We use deterministic alphabetical order when
-# constructing SYSTEMSERVERCLASSPATH definition on device after a Mainline
-# update. Enforce it in the build system as well to avoid recompiling everything
-# after an update due a change in SYSTEMSERVERCLASSPATH order.
+# Sort APEX boot and system server jars. We use deterministic alphabetical order
+# when constructing BOOTCLASSPATH and SYSTEMSERVERCLASSPATH definition on device
+# after an update. Enforce it in the build system as well to avoid recompiling
+# everything after an update due a change in the order.
+PRODUCT_APEX_BOOT_JARS := $(sort $(PRODUCT_APEX_BOOT_JARS))
 PRODUCT_APEX_SYSTEM_SERVER_JARS := $(sort $(PRODUCT_APEX_SYSTEM_SERVER_JARS))
+
+PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
+  $(call qualify-platform-jars,$(PRODUCT_STANDALONE_SYSTEM_SERVER_JARS))
 
 ifndef PRODUCT_SYSTEM_NAME
   PRODUCT_SYSTEM_NAME := $(PRODUCT_NAME)
