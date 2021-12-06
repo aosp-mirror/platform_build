@@ -527,6 +527,16 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,,$(kmd)))))
 
 # -----------------------------------------------------------------
+# FSVerity metadata generation
+ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
+
+FSVERITY_APK_KEY_PATH := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
+FSVERITY_APK_OUT := system/etc/security/fsverity/BuildManifest.apk
+FSVERITY_APK_MANIFEST_PATH := system/security/fsverity/AndroidManifest.xml
+
+endif # PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
+
+# -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
 # $1 stem name of the package
@@ -575,6 +585,8 @@ $(APKCERTS_FILE):
 	    $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
 	      $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),EXTERNAL,,$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
 	      $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@))))
+	$(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),\
+	  $(call _apkcerts_write_line,$(notdir $(basename $(FSVERITY_APK_OUT))),$(FSVERITY_APK_KEY_PATH).x509.pem,$(FSVERITY_APK_KEY_PATH).pk8,,system,$@))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
@@ -1291,6 +1303,9 @@ $(target_notice_file_html_gz): $(target_notice_file_html) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
 $(installed_notice_html_or_xml_gz): $(target_notice_file_html_gz)
 	$(copy-file-to-target)
+
+$(call declare-0p-target,$(target_notice_file_html_gz))
+$(call declare-0p-target,$(installed_notice_html_or_xml_gz))
 else
 target_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml
 target_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml.gz
@@ -1474,6 +1489,28 @@ $(installed_vendor_dlkm_notice_xml_gz): $(target_vendor_dlkm_notice_file_xml_gz)
 $(installed_odm_dlkm_notice_xml_gz): $(target_odm_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
 
+$(call declare-0p-target,$(target_notice_file_xml))
+$(call declare-0p-target,$(target_notice_file_xml_gz))
+$(call declare-0p-target,$(target_vendor_notice_file_xml))
+$(call declare-0p-target,$(target_vendor_notice_file_xml_gz))
+$(call declare-0p-target,$(target_product_notice_file_xml))
+$(call declare-0p-target,$(target_product_notice_file_xml_gz))
+$(call declare-0p-target,$(target_system_ext_notice_file_xml))
+$(call declare-0p-target,$(target_system_ext_notice_file_xml_gz))
+$(call declare-0p-target,$(target_odm_notice_file_xml))
+$(call declare-0p-target,$(target_odm_notice_file_xml_gz))
+$(call declare-0p-target,$(target_vendor_dlkm_notice_file_xml))
+$(call declare-0p-target,$(target_vendor_dlkm_notice_file_xml_gz))
+$(call declare-0p-target,$(target_odm_dlkm_notice_file_xml))
+$(call declare-0p-target,$(target_odm_dlkm_notice_file_xml_gz))
+$(call declare-0p-target,$(installed_notice_html_or_xml_gz))
+$(call declare-0p-target,$(installed_vendor_notice_xml_gz))
+$(call declare-0p-target,$(installed_product_notice_xml_gz))
+$(call declare-0p-target,$(installed_system_ext_notice_xml_gz))
+$(call declare-0p-target,$(installed_odm_notice_xml_gz))
+$(call declare-0p-target,$(installed_vendor_dlkm_notice_xml_gz))
+$(call declare-0p-target,$(installed_odm_dlkm_notice_xml_gz))
+
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_notice_xml_gz)
@@ -1647,6 +1684,11 @@ define generate-image-prop-dictionary
 $(if $(filter $(2),system),\
     $(if $(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE),$(hide) echo "system_other_size=$(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE)" >> $(1))
     $(if $(PRODUCT_SYSTEM_HEADROOM),$(hide) echo "system_headroom=$(PRODUCT_SYSTEM_HEADROOM)" >> $(1))
+    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity=$(HOST_OUT_EXECUTABLES)/fsverity" >> $(1))
+    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_generate_metadata=true" >> $(1))
+    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_apk_key=$(FSVERITY_APK_KEY_PATH)" >> $(1))
+    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_apk_manifest=$(FSVERITY_APK_MANIFEST_PATH)" >> $(1))
+    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_apk_out=$(FSVERITY_APK_OUT)" >> $(1))
     $(call add-common-ro-flags-to-image-props,system,$(1))
 )
 $(if $(filter $(2),system_other),\
@@ -1867,14 +1909,18 @@ $(INSTALLED_FILES_FILE_RECOVERY): $(INTERNAL_RECOVERYIMAGE_FILES) $(FILESLIST) $
 recovery_sepolicy := \
     $(TARGET_RECOVERY_ROOT_OUT)/sepolicy \
     $(TARGET_RECOVERY_ROOT_OUT)/plat_file_contexts \
+    $(TARGET_RECOVERY_ROOT_OUT)/plat_service_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/plat_property_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/system_ext_file_contexts \
+    $(TARGET_RECOVERY_ROOT_OUT)/system_ext_service_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/system_ext_property_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/vendor_file_contexts \
+    $(TARGET_RECOVERY_ROOT_OUT)/vendor_service_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/vendor_property_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/odm_file_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/odm_property_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/product_file_contexts \
+    $(TARGET_RECOVERY_ROOT_OUT)/product_service_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/product_property_contexts
 
 # Passed into rsync from non-recovery root to recovery root, to avoid overwriting recovery-specific
@@ -2748,8 +2794,15 @@ endef
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
 endif
+ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
+$(BUILT_SYSTEMIMAGE): $(HOST_OUT_EXECUTABLES)/fsverity $(HOST_OUT_EXECUTABLES)/aapt2 \
+    $(FSVERITY_APK_MANIFEST_PATH) $(FSVERITY_APK_KEY_PATH).x509.pem $(FSVERITY_APK_KEY_PATH).pk8
+endif
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
 	$(call build-systemimage-target,$@)
+
+$(call declare-1p-container,$(BUILT_SYSTEMIMAGE),system/extras)
+$(call declare-container-license-deps,$(BUILT_SYSTEMIMAGE),$(FULL_SYSTEMIMAGE_DEPS),$(PRODUCT_OUT)/:)
 
 INSTALLED_SYSTEMIMAGE_TARGET := $(PRODUCT_OUT)/system.img
 SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
@@ -2792,7 +2845,13 @@ $(INSTALLED_SYSTEMIMAGE_TARGET): $(BUILT_SYSTEMIMAGE)
 	$(copy-file-to-target)
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 
+$(call declare-1p-container,$(INSTALLED_SYSTEMIMAGE_TARGET),)
+$(call declare-container-license-deps,$(INSTALLED_SYSTEMIMAGE_TARGET),$(BUILT_SYSTEMIMAGE),$(BUILT_SYSTEMIMAGE):/)
+
 systemimage: $(INSTALLED_SYSTEMIMAGE_TARGET)
+
+.PHONY: systemlicense
+systemlicense: $(call license-metadata-dir)/$(INSTALLED_SYSTEMIMAGE_TARGET).meta_lic reportmissinglicenses
 
 .PHONY: systemimage-nodeps snod
 systemimage-nodeps snod: $(filter-out systemimage-nodeps snod,$(MAKECMDGOALS)) \
@@ -4323,6 +4382,7 @@ INTERNAL_OTATOOLS_MODULES := \
   shflags \
   sign_apex \
   sign_target_files_apks \
+  sign_virt_apex \
   signapk \
   simg2img \
   sload_f2fs \
@@ -4675,6 +4735,7 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSION := $(tool_extension)
 
 ifeq ($(AB_OTA_UPDATER),true)
 updater_dep := system/update_engine/update_engine.conf
+updater_dep := external/zucchini/version_info.h
 endif
 
 # Build OTA tools if non-A/B is allowed
@@ -5148,6 +5209,7 @@ endif
 ifeq ($(AB_OTA_UPDATER),true)
 	@# When using the A/B updater, include the updater config files in the zip.
 	$(hide) cp $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
+	$(hide) cp $(TOPDIR)external/zucchini/version_info.h $(zip_root)/META/zucchini_config.txt
 	$(hide) for part in $(strip $(AB_OTA_PARTITIONS)); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
@@ -5398,6 +5460,8 @@ $(APPCOMPAT_ZIP): $(SOONG_ZIP)
 ifeq ($(BUILD_OS),linux)
 ifneq ($(DEX2OAT),)
 dexpreopt_tools_deps := $(DEXPREOPT_GEN_DEPS) $(DEXPREOPT_GEN) $(AAPT2)
+dexpreopt_tools_deps += $(HOST_OUT_EXECUTABLES)/dexdump
+dexpreopt_tools_deps += $(HOST_OUT_EXECUTABLES)/oatdump
 DEXPREOPT_TOOLS_ZIP := $(PRODUCT_OUT)/dexpreopt_tools.zip
 $(DEXPREOPT_TOOLS_ZIP): $(dexpreopt_tools_deps)
 $(DEXPREOPT_TOOLS_ZIP): PRIVATE_DEXPREOPT_TOOLS_DEPS := $(dexpreopt_tools_deps)
