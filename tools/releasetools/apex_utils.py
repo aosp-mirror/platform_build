@@ -142,6 +142,7 @@ class ApexApkSigner(object):
       has_signed_content = True
 
     if self.sign_tool:
+      logger.info('Signing payload contents in apex %s with %s', self.apex_path, self.sign_tool)
       cmd = [self.sign_tool, '--avbtool', self.avbtool, payload_key, payload_dir]
       common.RunAndCheckOutput(cmd)
       has_signed_content = True

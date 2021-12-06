@@ -61,7 +61,7 @@ else
   apex_test_module := art-check-release-apex-gen-fakebin
 endif
 
-ifeq (true,$(SOONG_CONFIG_art_module_source_build)
+ifeq (true,$(call soong_config_get,art_module,source_build))
   PRODUCT_HOST_PACKAGES += $(apex_test_module)
 endif
 
@@ -74,6 +74,14 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     hiddenapi-package-whitelist.xml \
+
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
+  # Don't depend on the framework boot image profile in unbundled builds where
+  # frameworks/base may not be present.
+  # TODO(b/179900989): We may not need this check once we stop using full
+  # platform products on the thin ART manifest branch.
+  PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION += frameworks/base/boot/boot-image-profile.txt
+endif
 
 # The dalvik.vm.dexopt.thermal-cutoff property must contain one of the values
 # listed here:

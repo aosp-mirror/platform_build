@@ -12,26 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//build/make/core:envsetup.rbc", _envsetup_init = "init")
-
 """Runtime functions."""
 
 _soong_config_namespaces_key = "$SOONG_CONFIG_NAMESPACES"
-def _global_init(version_info):
-    """Returns dict created from the runtime environment."""
-    globals = dict()
+_dist_for_goals_key = "$dist_for_goals"
+def _init_globals(input_variables_init):
+    """Initializes dictionaries of global variables.
 
-    # Environment variables
-    for k in dir(rblf_env):
-        globals[k] = getattr(rblf_env, k)
+    This function runs the given input_variables_init function,
+    passing it a globals dictionary and a handle as if it
+    were a regular product. It then returns 2 copies of
+    the globals dictionary, so that one can be kept around
+    to diff changes made to the other later.
+    """
+    globals_base = {"PRODUCT_SOONG_NAMESPACES": []}
+    input_variables_init(globals_base, __h_new())
 
-    # Variables set as var=value command line arguments
-    for k in dir(rblf_cli):
-        globals[k] = getattr(rblf_cli, k)
-
-    globals.setdefault("PRODUCT_SOONG_NAMESPACES", [])
-    globals.setdefault(_soong_config_namespaces_key, {})
-    _envsetup_init(globals, version_info)
+    # Rerun input_variables_init to produce a copy
+    # of globals_base, because starlark doesn't support
+    # deep copying objects.
+    globals = {"PRODUCT_SOONG_NAMESPACES": []}
+    input_variables_init(globals, __h_new())
 
     # Variables that should be defined.
     mandatory_vars = [
@@ -39,18 +40,18 @@ def _global_init(version_info):
         "PLATFORM_VERSION",
         "PRODUCT_SOONG_NAMESPACES",
         # TODO(asmundak): do we need TARGET_ARCH? AOSP does not reference it
-        "TARGET_BUILD_TYPE",
         "TARGET_BUILD_VARIANT",
         "TARGET_PRODUCT",
     ]
     for bv in mandatory_vars:
         if not bv in globals:
             fail(bv, " is not defined")
-    return globals
 
+    return (globals, globals_base)
 
 def __print_attr(attr, value):
-    if not value:
+    # Allow using empty strings to clear variables, but not None values
+    if value == None:
         return
     if type(value) == "list":
         if _options.rearrange:
@@ -74,28 +75,43 @@ def _printvars(state):
         __print_attr(attr, val)
     if _options.print_globals:
         print()
-        for attr, val in sorted(globals.items()):
-            if attr == _soong_config_namespaces_key:
-                __print_attr("SOONG_CONFIG_NAMESPACES", val.keys())
-                for nsname, nsvars in sorted(val.items()):
-                    # Define SOONG_CONFIG_<ns> for Make, othewise
-                    # it cannot be added to .KATI_READONLY list
-                    if _options.format == "make":
-                        print("SOONG_CONFIG_" + nsname, ":=", " ".join(nsvars.keys()))
-                    for var, val in sorted(nsvars.items()):
-                        if val:
-                            __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
-                        else:
-                            print("SOONG_CONFIG_%s_%s :=" % (nsname, var))
-            elif attr not in globals_base or globals_base[attr] != val:
-                __print_attr(attr, val)
+        _printglobals(globals, globals_base)
+
+def _printglobals(globals, globals_base):
+    for attr, val in sorted(globals.items()):
+        if attr == _soong_config_namespaces_key:
+            __print_attr("SOONG_CONFIG_NAMESPACES", val.keys())
+            for nsname, nsvars in sorted(val.items()):
+                # Define SOONG_CONFIG_<ns> for Make, othewise
+                # it cannot be added to .KATI_READONLY list
+                if _options.format == "make":
+                    print("SOONG_CONFIG_" + nsname, ":=", " ".join(nsvars.keys()))
+                for var, val in sorted(nsvars.items()):
+                    if val:
+                        __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
+                    else:
+                        print("SOONG_CONFIG_%s_%s :=" % (nsname, var))
+        elif attr == _dist_for_goals_key:
+            goals = []
+            src_dst_list = []
+            goal_dst_list = []
+            for goal_name, goal_src_dst_list in sorted(val.items()):
+                goals.append(goal_name)
+                for sd in sorted(goal_src_dst_list):
+                    src_dst_list.append(":".join(sd))
+                    goal_dst_list.append(":".join((goal_name, sd[1])))
+            print("_all_dist_goal_output_pairs:=", " ".join(goal_dst_list))
+            print("_all_dist_goals:=", " ".join(goals))
+            print("_all_dist_src_dst_pairs:=", " ".join(src_dst_list))
+        elif attr not in globals_base or globals_base[attr] != val:
+            __print_attr(attr, val)
 
 def __printvars_rearrange_list(value_list):
     """Rearrange value list: return only distinct elements, maybe sorted."""
     seen = {item: 0 for item in value_list}
     return sorted(seen.keys()) if _options.rearrange == "sort" else seen.keys()
 
-def _product_configuration(top_pcm_name, top_pcm, version_info):
+def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
     """Creates configuration."""
 
     # Product configuration is created by traversing product's inheritance
@@ -109,8 +125,7 @@ def _product_configuration(top_pcm_name, top_pcm, version_info):
     # PCM means "Product Configuration Module", i.e., a Starlark file
     # whose body consists of a single init function.
 
-    globals_base = _global_init(version_info)
-    globals = dict(**globals_base)
+    globals, globals_base = _init_globals(input_variables_init)
 
     config_postfix = []  # Configs in postfix order
 
@@ -203,6 +218,26 @@ def _product_configuration(top_pcm_name, top_pcm, version_info):
 
     return (globals, configs[top_pcm_name][1], globals_base)
 
+
+def _dictionary_difference(a, b):
+    result = {}
+    for attr, val in a.items():
+        if attr not in b or b[attr] != val:
+            result[attr] = val
+    return result
+
+def _board_configuration(board_config_init, input_variables_init):
+    globals_base = {}
+    h_base = __h_new()
+    globals = {}
+    h = __h_new()
+
+    input_variables_init(globals_base, h_base)
+    input_variables_init(globals, h)
+    board_config_init(globals, h)
+    return (globals, _dictionary_difference(h[0], h_base[0]), globals_base)
+
+
 def _substitute_inherited(configs, pcm_name, cfg):
     """Substitutes inherited values in all the attributes.
 
@@ -285,10 +320,11 @@ def _indirect(pcm_name):
 def _soong_config_namespace(g, nsname):
     """Adds given namespace if it does not exist."""
 
-    if g[_soong_config_namespaces_key].get(nsname):
+    old = g.get(_soong_config_namespaces_key, {})
+    if old.get(nsname):
         return
+
     # A value cannot be updated, so we need to create a new dictionary
-    old = g[_soong_config_namespaces_key]
     g[_soong_config_namespaces_key] = dict([(k,v) for k,v in old.items()] + [(nsname, {})])
 
 def _soong_config_set(g, nsname, var, value):
@@ -305,6 +341,11 @@ def _soong_config_append(g, nsname, var, value):
         ns[var] = value
     else:
         ns[var] += " " + value
+
+
+def _soong_config_get(g, nsname, var):
+    """Gets to the value of the variable in the namespace."""
+    return g.get(_soong_config_namespaces_key, {}).get(nsname, {}).get(var, None)
 
 
 def _abspath(path):
@@ -342,7 +383,7 @@ def _addsuffix(suffix, string_or_list):
 def __words(string_or_list):
     if type(string_or_list) == "list":
         return string_or_list
-    return string_or_list.split()
+    return _mkstrip(string_or_list).split()
 
 # Handle manipulation functions.
 # A handle passed to a PCM consists of:
@@ -466,6 +507,13 @@ def _filter(pattern, text):
             res.append(w)
     return res
 
+def _notdir(paths):
+    """Equivalent to the GNU make function $(notdir).
+
+    Returns the name of the file at the end of each path in paths.
+    """
+    return " ".join([__base(w) for w in __words(paths)])
+
 def __mk2regex(words):
     """Returns regular expression equivalent to Make pattern."""
 
@@ -487,6 +535,21 @@ def _expand_wildcard(pattern):
     """Expands shell wildcard pattern."""
     return rblf_wildcard(pattern)
 
+def _mkdist_for_goals(g, goal, src_dst_list):
+    """Implements dist-for-goals macro."""
+    goals_map = g.get(_dist_for_goals_key, {})
+    pairs = goals_map.get(goal)
+    if pairs == None:
+        pairs = []
+        g[_dist_for_goals_key] = dict([(k,v) for k,v in goals_map.items()] + [(goal, pairs)])
+    for src_dst in __words(src_dst_list):
+        pair=src_dst.split(":")
+        if len(pair) > 2:
+            fail(src_dst + " should be a :-separated pair")
+        pairs.append((pair[0],pair[1] if len(pair) == 2 and pair[1] else __base(pair[0])))
+    g[_dist_for_goals_key][goal] = pairs
+
+
 def _mkerror(file, message = ""):
     """Prints error and stops."""
     fail("%s: %s. Stop" % (file, message))
@@ -494,6 +557,18 @@ def _mkerror(file, message = ""):
 def _mkwarning(file, message = ""):
     """Prints warning."""
     rblf_log(file, "warning", message, sep = ':')
+
+def _mk2rbc_error(loc, message):
+    """Prints a message about conversion error and stops.
+
+    If RBC_MK2RBC_CONTINUE environment variable is set,
+    the execution will continue after the message is printed.
+    """
+    if _options.mk2rbc_continue:
+        rblf_log(loc, message, sep = ':')
+    else:
+        _mkerror(loc, message)
+
 
 def _mkinfo(file, message = ""):
     """Prints info."""
@@ -605,6 +680,7 @@ def __get_options():
         rearrange = "",
         trace_modules = False,
         trace_variables = [],
+        mk2rbc_continue = False,
     )
     for x in getattr(rblf_cli, "RBC_OUT", "").split(","):
         if x == "sort" or x == "unique":
@@ -622,6 +698,8 @@ def __get_options():
             settings["trace_modules"] = True
         elif x != "":
             settings["trace_variables"].append(x)
+    if getattr(rblf_cli, "RBC_MK2RBC_CONTINUE", ""):
+        settings["mk2rbc_continue"] = True
     return struct(**settings)
 
 # Settings used during debugging.
@@ -630,6 +708,7 @@ rblf = struct(
     soong_config_namespace = _soong_config_namespace,
     soong_config_append = _soong_config_append,
     soong_config_set = _soong_config_set,
+    soong_config_get = _soong_config_get,
     abspath = _abspath,
     addprefix = _addprefix,
     addsuffix = _addsuffix,
@@ -645,17 +724,21 @@ rblf = struct(
     filter = _filter,
     filter_out = _filter_out,
     find_and_copy = _find_and_copy,
-    global_init = _global_init,
     inherit = _inherit,
     indirect = _indirect,
+    mk2rbc_error = _mk2rbc_error,
+    mkdist_for_goals = _mkdist_for_goals,
     mkinfo = _mkinfo,
     mkerror = _mkerror,
     mkpatsubst = _mkpatsubst,
     mkwarning = _mkwarning,
     mkstrip = _mkstrip,
     mksubst = _mksubst,
+    notdir = _notdir,
     printvars = _printvars,
+    printglobals = _printglobals,
     product_configuration = _product_configuration,
+    board_configuration = _board_configuration,
     product_copy_files_by_pattern = _product_copy_files_by_pattern,
     require_artifacts_in_path = _require_artifacts_in_path,
     require_artifacts_in_path_relaxed = _require_artifacts_in_path_relaxed,

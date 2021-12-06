@@ -68,6 +68,9 @@ class Options(object):
     self.search_path = os.path.dirname(os.path.dirname(exec_path))
 
     self.signapk_path = "framework/signapk.jar"  # Relative to search_path
+    if not os.path.exists(os.path.join(self.search_path, self.signapk_path)):
+      if "ANDROID_HOST_OUT" in os.environ:
+        self.search_path = os.environ["ANDROID_HOST_OUT"]
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
     self.extra_signapk_args = []
     self.java_path = "java"  # Use the one on the path by default.
@@ -973,6 +976,8 @@ class PartitionBuildProps(object):
         break
       except KeyError:
         logger.warning('Failed to read %s', prop_file)
+    if data == '':
+      logger.warning("Failed to read build.prop for partition {}".format(name))
     return data
 
   @staticmethod
@@ -2105,9 +2110,11 @@ def GetKeyPasswords(keylist):
   need_passwords = []
   key_passwords = {}
   devnull = open("/dev/null", "w+b")
-  for k in sorted(keylist):
+
+  # sorted() can't compare strings to None, so convert Nones to strings
+  for k in sorted(keylist, key=lambda x: x if x is not None else ""):
     # We don't need a password for things that aren't really keys.
-    if k in SPECIAL_CERT_STRINGS:
+    if k in SPECIAL_CERT_STRINGS or k is None:
       no_passwords.append(k)
       continue
 
@@ -3953,3 +3960,10 @@ def AddCareMapForAbOta(output_file, ab_partitions, image_paths):
     OPTIONS.replace_updated_files_list.append(care_map_path)
   else:
     ZipWrite(output_file, temp_care_map, arcname=care_map_path)
+
+
+def IsSparseImage(filepath):
+  with open(filepath, 'rb') as fp:
+    # Magic for android sparse image format
+    # https://source.android.com/devices/bootloader/images
+    return fp.read(4) == b'\x3A\xFF\x26\xED'
