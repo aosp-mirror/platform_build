@@ -221,16 +221,6 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
-# Dumps all variables that match [A-Z][A-Z0-9_]* to the file at $(1)
-# It is used to print only the variables that are likely to be relevant to the
-# board configuration.
-define dump-public-variables
-$(file >$(OUT_DIR)/dump-public-variables-temp.txt,$(subst $(space),$(newline),$(.VARIABLES)))\
-$(file >$(1),\
-$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-public-variables-temp.txt | grep -vhE "^(SOONG_.*|LOCAL_PATH|TOPDIR|PRODUCT_COPY_OUT_.*)$$"),\
-$(v) := $(strip $($(v)))$(newline)))
-endef
-
 # TODO(colefaust) change this if to RBC_PRODUCT_CONFIG when
 # the board configuration is known to work on everything
 # the product config works on.
@@ -238,8 +228,7 @@ ifndef RBC_BOARD_CONFIG
 include $(board_config_mk)
 else
   $(shell mkdir -p $(OUT_DIR)/rbc)
-
-  $(call dump-public-variables, $(OUT_DIR)/rbc/make_vars_pre_board_config.mk)
+  $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_board_config.mk)
 
   $(shell $(OUT_DIR)/soong/mk2rbc \
     --mode=write -r --outdir $(OUT_DIR)/rbc \

@@ -21,7 +21,7 @@
 #  * all runtime functions (wildcard, regex, etc.) work
 
 load("//build/make/core:product_config.rbc", "rblf")
-load(":version_defaults.rbc", "version_defaults")
+load(":input_variables.rbc", input_variables_init = "init")
 load(":product.rbc", "init")
 load(":board.rbc", board_init = "init")
 load(":board_input_vars.rbc", board_input_vars_init = "init")
@@ -59,7 +59,7 @@ assert_eq("foo.c no_folder", rblf.notdir("src/foo.c no_folder"))
 assert_eq("", rblf.notdir("/"))
 assert_eq("", rblf.notdir(""))
 
-(globals, config, globals_base) = rblf.product_configuration("test/device", init, version_defaults)
+(globals, config, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
 assert_eq(
     {
       "PRODUCT_COPY_FILES": [
@@ -99,8 +99,8 @@ assert_eq(
     {k:v for k, v in sorted(ns.items()) }
 )
 
-assert_eq("S", globals["PLATFORM_VERSION"])
-assert_eq(30, globals["PLATFORM_SDK_VERSION"])
+assert_eq("Tiramisu", globals["PLATFORM_VERSION"])
+assert_eq("31", globals["PLATFORM_SDK_VERSION"])
 
 assert_eq("xyz", rblf.soong_config_get(globals, "NS2", "v3"))
 assert_eq(None, rblf.soong_config_get(globals, "NS2", "nonexistant_var"))
