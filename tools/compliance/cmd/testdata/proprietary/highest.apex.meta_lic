@@ -1,0 +1,44 @@
+package_name:  "Android"
+projects:  "highest/apex"
+license_kinds:  "SPDX-license-identifier-Apache-2.0"
+license_conditions:  "notice"
+license_texts:  "build/soong/licenses/LICENSE"
+is_container:  true
+built:  "out/target/product/fictional/obj/ETC/highest_intermediates/highest.apex"
+installed:  "out/target/product/fictional/system/apex/highest.apex"
+install_map {
+  from_path:  "out/target/product/fictional/system/lib/liba.so"
+  container_path:  "lib/liba.so"
+}
+install_map {
+  from_path:  "out/target/product/fictional/system/lib/libb.so"
+  container_path:  "lib/libb.so"
+}
+install_map {
+  from_path:  "out/target/product/fictional/system/bin/bin1"
+  container_path:  "bin/bin1"
+}
+install_map {
+  from_path:  "out/target/product/fictional/system/bin/bin2"
+  container_path:  "bin/bin2"
+}
+sources:  "out/target/product/fictional/system/lib/liba.so"
+sources:  "out/target/product/fictional/system/lib/libb.so"
+sources:  "out/target/product/fictional/system/bin/bin1"
+sources:  "out/target/product/fictional/system/bin/bin2"
+deps:  {
+  file:  "testdata/proprietary/bin/bin1.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/proprietary/bin/bin2.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/proprietary/lib/liba.so.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/proprietary/lib/libb.so.meta_lic"
+  annotations:  "static"
+}

@@ -150,6 +150,15 @@ func (cs *LicenseConditionSet) AsList() ConditionList {
 	return result
 }
 
+// Names returns a list of the names of the conditions in the set.
+func (cs *LicenseConditionSet) Names() []string {
+	result := make([]string, 0, len(cs.conditions))
+	for name := range cs.conditions {
+		result = append(result, name)
+	}
+	return result
+}
+
 // Count returns the number of conditions in the set.
 func (cs *LicenseConditionSet) Count() int {
 	size := 0
