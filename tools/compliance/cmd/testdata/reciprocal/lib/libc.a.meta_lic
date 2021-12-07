@@ -1,0 +1,6 @@
+package_name:  "External"
+projects:  "static/library"
+license_kinds:  "SPDX-license-identifier-MPL"
+license_conditions:  "reciprocal"
+is_container:  false
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/libc.a"

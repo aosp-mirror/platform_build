@@ -1,0 +1,36 @@
+package_name:  "Android"
+projects:  "container/zip"
+license_kinds:  "SPDX-license-identifier-Apache-2.0"
+license_conditions:  "notice"
+license_texts:  "build/soong/licenses/LICENSE"
+is_container:  true
+built:  "out/target/product/fictional/obj/ETC/container_intermediates/container.zip"
+installed:  "out/target/product/fictional/data/container.zip"
+install_map {
+  from_path:  "out/target/product/fictional/system/lib/"
+  container_path:  ""
+}
+install_map {
+  from_path:  "out/target/product/fictional/system/bin/"
+  container_path:  ""
+}
+sources:  "out/target/product/fictional/system/lib/liba.so"
+sources:  "out/target/product/fictional/system/lib/libb.so"
+sources:  "out/target/product/fictional/system/bin/bin1"
+sources:  "out/target/product/fictional/system/bin/bin2"
+deps:  {
+  file:  "testdata/reciprocal/bin/bin1.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/reciprocal/bin/bin2.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/reciprocal/lib/liba.so.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/reciprocal/lib/libb.so.meta_lic"
+  annotations:  "static"
+}
