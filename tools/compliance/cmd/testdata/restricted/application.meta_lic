@@ -1,0 +1,24 @@
+package_name:  "Android"
+module_classes: "EXECUTABLES"
+projects:  "distributable/application"
+license_kinds:  "SPDX-license-identifier-Apache-2.0"
+license_conditions:  "notice"
+license_texts:  "build/soong/licenses/LICENSE"
+is_container:  false
+built:  "out/target/product/fictional/obj/EXECUTABLES/application_intermediates/application"
+installed:  "out/target/product/fictional/bin/application"
+sources:  "out/target/product/fictional/system/lib/liba.a"
+sources:  "out/target/product/fictional/system/lib/libb.so"
+sources:  "out/target/product/fictional/system/bin/bin3"
+deps:  {
+  file:  "testdata/restricted/bin/bin3.meta_lic"
+  annotations:  "toolchain"
+}
+deps:  {
+  file:  "testdata/restricted/lib/liba.so.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/restricted/lib/libb.so.meta_lic"
+  annotations:  "dynamic"
+}
