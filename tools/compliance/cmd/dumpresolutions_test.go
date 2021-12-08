@@ -577,7 +577,9 @@ func Test_plaintext(t *testing.T) {
 				"testdata/restricted/highest.apex.meta_lic testdata/restricted/lib/libd.so.meta_lic testdata/restricted/lib/libb.so.meta_lic restricted",
 				"testdata/restricted/lib/liba.so.meta_lic testdata/restricted/lib/liba.so.meta_lic testdata/restricted/lib/liba.so.meta_lic restricted",
 				"testdata/restricted/lib/libb.so.meta_lic testdata/restricted/lib/libb.so.meta_lic testdata/restricted/lib/libb.so.meta_lic restricted",
+				"testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/liba.so.meta_lic restricted",
 				"testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/libc.a.meta_lic reciprocal",
+				"testdata/restricted/lib/libd.so.meta_lic testdata/restricted/lib/libd.so.meta_lic testdata/restricted/lib/libb.so.meta_lic restricted",
 				"testdata/restricted/lib/libd.so.meta_lic testdata/restricted/lib/libd.so.meta_lic testdata/restricted/lib/libd.so.meta_lic notice",
 			},
 		},
@@ -610,7 +612,9 @@ func Test_plaintext(t *testing.T) {
 				"highest.apex.meta_lic lib/libd.so.meta_lic lib/libb.so.meta_lic restricted",
 				"lib/liba.so.meta_lic lib/liba.so.meta_lic lib/liba.so.meta_lic restricted",
 				"lib/libb.so.meta_lic lib/libb.so.meta_lic lib/libb.so.meta_lic restricted",
+				"lib/libc.a.meta_lic lib/libc.a.meta_lic lib/liba.so.meta_lic restricted",
 				"lib/libc.a.meta_lic lib/libc.a.meta_lic lib/libc.a.meta_lic reciprocal",
+				"lib/libd.so.meta_lic lib/libd.so.meta_lic lib/libb.so.meta_lic restricted",
 				"lib/libd.so.meta_lic lib/libd.so.meta_lic lib/libd.so.meta_lic notice",
 			},
 		},
@@ -723,7 +727,9 @@ func Test_plaintext(t *testing.T) {
 				"highest.apex.meta_lic:notice lib/libd.so.meta_lic:notice lib/libb.so.meta_lic:restricted restricted",
 				"lib/liba.so.meta_lic:restricted lib/liba.so.meta_lic:restricted lib/liba.so.meta_lic:restricted restricted",
 				"lib/libb.so.meta_lic:restricted lib/libb.so.meta_lic:restricted lib/libb.so.meta_lic:restricted restricted",
+				"lib/libc.a.meta_lic:reciprocal lib/libc.a.meta_lic:reciprocal lib/liba.so.meta_lic:restricted restricted",
 				"lib/libc.a.meta_lic:reciprocal lib/libc.a.meta_lic:reciprocal lib/libc.a.meta_lic:reciprocal reciprocal",
+				"lib/libd.so.meta_lic:notice lib/libd.so.meta_lic:notice lib/libb.so.meta_lic:restricted restricted",
 				"lib/libd.so.meta_lic:notice lib/libd.so.meta_lic:notice lib/libd.so.meta_lic:notice notice",
 			},
 		},
@@ -755,7 +761,9 @@ func Test_plaintext(t *testing.T) {
 				"testdata/restricted/container.zip.meta_lic testdata/restricted/lib/libd.so.meta_lic testdata/restricted/lib/libb.so.meta_lic restricted",
 				"testdata/restricted/lib/liba.so.meta_lic testdata/restricted/lib/liba.so.meta_lic testdata/restricted/lib/liba.so.meta_lic restricted",
 				"testdata/restricted/lib/libb.so.meta_lic testdata/restricted/lib/libb.so.meta_lic testdata/restricted/lib/libb.so.meta_lic restricted",
+				"testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/liba.so.meta_lic restricted",
 				"testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/libc.a.meta_lic reciprocal",
+				"testdata/restricted/lib/libd.so.meta_lic testdata/restricted/lib/libd.so.meta_lic testdata/restricted/lib/libb.so.meta_lic restricted",
 				"testdata/restricted/lib/libd.so.meta_lic testdata/restricted/lib/libd.so.meta_lic testdata/restricted/lib/libd.so.meta_lic notice",
 			},
 		},
@@ -772,6 +780,7 @@ func Test_plaintext(t *testing.T) {
 				"testdata/restricted/application.meta_lic testdata/restricted/lib/libb.so.meta_lic testdata/restricted/lib/libb.so.meta_lic restricted",
 				"testdata/restricted/bin/bin3.meta_lic testdata/restricted/bin/bin3.meta_lic testdata/restricted/bin/bin3.meta_lic restricted",
 				"testdata/restricted/lib/liba.so.meta_lic testdata/restricted/lib/liba.so.meta_lic testdata/restricted/lib/liba.so.meta_lic restricted",
+				"testdata/restricted/lib/liba.so.meta_lic testdata/restricted/lib/liba.so.meta_lic testdata/restricted/lib/libb.so.meta_lic restricted",
 				"testdata/restricted/lib/libb.so.meta_lic testdata/restricted/lib/libb.so.meta_lic testdata/restricted/lib/libb.so.meta_lic restricted",
 			},
 		},
@@ -786,6 +795,7 @@ func Test_plaintext(t *testing.T) {
 				"testdata/restricted/bin/bin1.meta_lic testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/liba.so.meta_lic restricted",
 				"testdata/restricted/bin/bin1.meta_lic testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/libc.a.meta_lic reciprocal",
 				"testdata/restricted/lib/liba.so.meta_lic testdata/restricted/lib/liba.so.meta_lic testdata/restricted/lib/liba.so.meta_lic restricted",
+				"testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/liba.so.meta_lic restricted",
 				"testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/libc.a.meta_lic testdata/restricted/lib/libc.a.meta_lic reciprocal",
 			},
 		},
@@ -821,6 +831,7 @@ func Test_plaintext(t *testing.T) {
 				"testdata/proprietary/lib/liba.so.meta_lic testdata/proprietary/lib/liba.so.meta_lic testdata/proprietary/lib/liba.so.meta_lic by_exception_only:proprietary",
 				"testdata/proprietary/lib/libb.so.meta_lic testdata/proprietary/lib/libb.so.meta_lic testdata/proprietary/lib/libb.so.meta_lic restricted",
 				"testdata/proprietary/lib/libc.a.meta_lic testdata/proprietary/lib/libc.a.meta_lic testdata/proprietary/lib/libc.a.meta_lic by_exception_only:proprietary",
+				"testdata/proprietary/lib/libd.so.meta_lic testdata/proprietary/lib/libd.so.meta_lic testdata/proprietary/lib/libb.so.meta_lic restricted",
 				"testdata/proprietary/lib/libd.so.meta_lic testdata/proprietary/lib/libd.so.meta_lic testdata/proprietary/lib/libd.so.meta_lic notice",
 			},
 		},
@@ -849,6 +860,7 @@ func Test_plaintext(t *testing.T) {
 				"lib/liba.so.meta_lic lib/liba.so.meta_lic lib/liba.so.meta_lic by_exception_only:proprietary",
 				"lib/libb.so.meta_lic lib/libb.so.meta_lic lib/libb.so.meta_lic restricted",
 				"lib/libc.a.meta_lic lib/libc.a.meta_lic lib/libc.a.meta_lic by_exception_only:proprietary",
+				"lib/libd.so.meta_lic lib/libd.so.meta_lic lib/libb.so.meta_lic restricted",
 				"lib/libd.so.meta_lic lib/libd.so.meta_lic lib/libd.so.meta_lic notice",
 			},
 		},
@@ -950,6 +962,7 @@ func Test_plaintext(t *testing.T) {
 				"lib/liba.so.meta_lic:by_exception_only:proprietary lib/liba.so.meta_lic:by_exception_only:proprietary lib/liba.so.meta_lic:by_exception_only:proprietary by_exception_only:proprietary",
 				"lib/libb.so.meta_lic:restricted lib/libb.so.meta_lic:restricted lib/libb.so.meta_lic:restricted restricted",
 				"lib/libc.a.meta_lic:by_exception_only:proprietary lib/libc.a.meta_lic:by_exception_only:proprietary lib/libc.a.meta_lic:by_exception_only:proprietary by_exception_only:proprietary",
+				"lib/libd.so.meta_lic:notice lib/libd.so.meta_lic:notice lib/libb.so.meta_lic:restricted restricted",
 				"lib/libd.so.meta_lic:notice lib/libd.so.meta_lic:notice lib/libd.so.meta_lic:notice notice",
 			},
 		},
@@ -977,6 +990,7 @@ func Test_plaintext(t *testing.T) {
 				"testdata/proprietary/lib/liba.so.meta_lic testdata/proprietary/lib/liba.so.meta_lic testdata/proprietary/lib/liba.so.meta_lic by_exception_only:proprietary",
 				"testdata/proprietary/lib/libb.so.meta_lic testdata/proprietary/lib/libb.so.meta_lic testdata/proprietary/lib/libb.so.meta_lic restricted",
 				"testdata/proprietary/lib/libc.a.meta_lic testdata/proprietary/lib/libc.a.meta_lic testdata/proprietary/lib/libc.a.meta_lic by_exception_only:proprietary",
+				"testdata/proprietary/lib/libd.so.meta_lic testdata/proprietary/lib/libd.so.meta_lic testdata/proprietary/lib/libb.so.meta_lic restricted",
 				"testdata/proprietary/lib/libd.so.meta_lic testdata/proprietary/lib/libd.so.meta_lic testdata/proprietary/lib/libd.so.meta_lic notice",
 			},
 		},
@@ -992,6 +1006,7 @@ func Test_plaintext(t *testing.T) {
 				"testdata/proprietary/application.meta_lic testdata/proprietary/lib/libb.so.meta_lic testdata/proprietary/lib/libb.so.meta_lic restricted",
 				"testdata/proprietary/bin/bin3.meta_lic testdata/proprietary/bin/bin3.meta_lic testdata/proprietary/bin/bin3.meta_lic restricted",
 				"testdata/proprietary/lib/liba.so.meta_lic testdata/proprietary/lib/liba.so.meta_lic testdata/proprietary/lib/liba.so.meta_lic by_exception_only:proprietary",
+				"testdata/proprietary/lib/liba.so.meta_lic testdata/proprietary/lib/liba.so.meta_lic testdata/proprietary/lib/libb.so.meta_lic restricted",
 				"testdata/proprietary/lib/libb.so.meta_lic testdata/proprietary/lib/libb.so.meta_lic testdata/proprietary/lib/libb.so.meta_lic restricted",
 			},
 		},
@@ -2886,8 +2901,18 @@ func Test_graphviz(t *testing.T) {
 				matchResolution(
 					"testdata/restricted/lib/libc.a.meta_lic",
 					"testdata/restricted/lib/libc.a.meta_lic",
+					"testdata/restricted/lib/liba.so.meta_lic",
+					"restricted"),
+				matchResolution(
+					"testdata/restricted/lib/libc.a.meta_lic",
+					"testdata/restricted/lib/libc.a.meta_lic",
 					"testdata/restricted/lib/libc.a.meta_lic",
 					"reciprocal"),
+				matchResolution(
+					"testdata/restricted/lib/libd.so.meta_lic",
+					"testdata/restricted/lib/libd.so.meta_lic",
+					"testdata/restricted/lib/libb.so.meta_lic",
+					"restricted"),
 				matchResolution(
 					"testdata/restricted/lib/libd.so.meta_lic",
 					"testdata/restricted/lib/libd.so.meta_lic",
@@ -3026,8 +3051,18 @@ func Test_graphviz(t *testing.T) {
 				matchResolution(
 					"lib/libc.a.meta_lic",
 					"lib/libc.a.meta_lic",
+					"lib/liba.so.meta_lic",
+					"restricted"),
+				matchResolution(
+					"lib/libc.a.meta_lic",
+					"lib/libc.a.meta_lic",
 					"lib/libc.a.meta_lic",
 					"reciprocal"),
+				matchResolution(
+					"lib/libd.so.meta_lic",
+					"lib/libd.so.meta_lic",
+					"lib/libb.so.meta_lic",
+					"restricted"),
 				matchResolution(
 					"lib/libd.so.meta_lic",
 					"lib/libd.so.meta_lic",
@@ -3409,8 +3444,18 @@ func Test_graphviz(t *testing.T) {
 				matchResolution(
 					"lib/libc.a.meta_lic",
 					"lib/libc.a.meta_lic",
+					"lib/liba.so.meta_lic",
+					"restricted"),
+				matchResolution(
+					"lib/libc.a.meta_lic",
+					"lib/libc.a.meta_lic",
 					"lib/libc.a.meta_lic",
 					"reciprocal"),
+				matchResolution(
+					"lib/libd.so.meta_lic",
+					"lib/libd.so.meta_lic",
+					"lib/libb.so.meta_lic",
+					"restricted"),
 				matchResolution(
 					"lib/libd.so.meta_lic",
 					"lib/libd.so.meta_lic",
@@ -3548,8 +3593,18 @@ func Test_graphviz(t *testing.T) {
 				matchResolution(
 					"testdata/restricted/lib/libc.a.meta_lic",
 					"testdata/restricted/lib/libc.a.meta_lic",
+					"testdata/restricted/lib/liba.so.meta_lic",
+					"restricted"),
+				matchResolution(
+					"testdata/restricted/lib/libc.a.meta_lic",
+					"testdata/restricted/lib/libc.a.meta_lic",
 					"testdata/restricted/lib/libc.a.meta_lic",
 					"reciprocal"),
+				matchResolution(
+					"testdata/restricted/lib/libd.so.meta_lic",
+					"testdata/restricted/lib/libd.so.meta_lic",
+					"testdata/restricted/lib/libb.so.meta_lic",
+					"restricted"),
 				matchResolution(
 					"testdata/restricted/lib/libd.so.meta_lic",
 					"testdata/restricted/lib/libd.so.meta_lic",
@@ -3607,6 +3662,11 @@ func Test_graphviz(t *testing.T) {
 					"testdata/restricted/lib/liba.so.meta_lic",
 					"restricted"),
 				matchResolution(
+					"testdata/restricted/lib/liba.so.meta_lic",
+					"testdata/restricted/lib/liba.so.meta_lic",
+					"testdata/restricted/lib/libb.so.meta_lic",
+					"restricted"),
+				matchResolution(
 					"testdata/restricted/lib/libb.so.meta_lic",
 					"testdata/restricted/lib/libb.so.meta_lic",
 					"testdata/restricted/lib/libb.so.meta_lic",
@@ -3649,6 +3709,11 @@ func Test_graphviz(t *testing.T) {
 				matchResolution(
 					"testdata/restricted/lib/liba.so.meta_lic",
 					"testdata/restricted/lib/liba.so.meta_lic",
+					"testdata/restricted/lib/liba.so.meta_lic",
+					"restricted"),
+				matchResolution(
+					"testdata/restricted/lib/libc.a.meta_lic",
+					"testdata/restricted/lib/libc.a.meta_lic",
 					"testdata/restricted/lib/liba.so.meta_lic",
 					"restricted"),
 				matchResolution(
@@ -3789,6 +3854,11 @@ func Test_graphviz(t *testing.T) {
 				matchResolution(
 					"testdata/proprietary/lib/libd.so.meta_lic",
 					"testdata/proprietary/lib/libd.so.meta_lic",
+					"testdata/proprietary/lib/libb.so.meta_lic",
+					"restricted"),
+				matchResolution(
+					"testdata/proprietary/lib/libd.so.meta_lic",
+					"testdata/proprietary/lib/libd.so.meta_lic",
 					"testdata/proprietary/lib/libd.so.meta_lic",
 					"notice"),
 			},
@@ -3909,6 +3979,11 @@ func Test_graphviz(t *testing.T) {
 					"lib/libc.a.meta_lic",
 					"by_exception_only",
 					"proprietary"),
+				matchResolution(
+					"lib/libd.so.meta_lic",
+					"lib/libd.so.meta_lic",
+					"lib/libb.so.meta_lic",
+					"restricted"),
 				matchResolution(
 					"lib/libd.so.meta_lic",
 					"lib/libd.so.meta_lic",
@@ -4240,6 +4315,11 @@ func Test_graphviz(t *testing.T) {
 				matchResolution(
 					"lib/libd.so.meta_lic",
 					"lib/libd.so.meta_lic",
+					"lib/libb.so.meta_lic",
+					"restricted"),
+				matchResolution(
+					"lib/libd.so.meta_lic",
+					"lib/libd.so.meta_lic",
 					"lib/libd.so.meta_lic",
 					"notice"),
 			},
@@ -4362,6 +4442,11 @@ func Test_graphviz(t *testing.T) {
 				matchResolution(
 					"testdata/proprietary/lib/libd.so.meta_lic",
 					"testdata/proprietary/lib/libd.so.meta_lic",
+					"testdata/proprietary/lib/libb.so.meta_lic",
+					"restricted"),
+				matchResolution(
+					"testdata/proprietary/lib/libd.so.meta_lic",
+					"testdata/proprietary/lib/libd.so.meta_lic",
 					"testdata/proprietary/lib/libd.so.meta_lic",
 					"notice"),
 			},
@@ -4412,6 +4497,11 @@ func Test_graphviz(t *testing.T) {
 					"testdata/proprietary/lib/liba.so.meta_lic",
 					"by_exception_only",
 					"proprietary"),
+				matchResolution(
+					"testdata/proprietary/lib/liba.so.meta_lic",
+					"testdata/proprietary/lib/liba.so.meta_lic",
+					"testdata/proprietary/lib/libb.so.meta_lic",
+					"restricted"),
 				matchResolution(
 					"testdata/proprietary/lib/libb.so.meta_lic",
 					"testdata/proprietary/lib/libb.so.meta_lic",
