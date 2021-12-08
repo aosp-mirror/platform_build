@@ -1,0 +1,7 @@
+package_name:  "External"
+projects:  "static/library"
+license_kinds:  "legacy_proprietary"
+license_conditions:  "proprietary"
+license_conditions:  "by_exception_only"
+is_container:  false
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/libc.a"
