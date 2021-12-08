@@ -50,11 +50,21 @@ else
 _vndk_check_failure_message += "       Run \`update-vndk-list.sh\` to update $(LATEST_VNDK_LIB_LIST)"
 endif
 
+# The *-ndk_platform.so libraries no longer exist and are removed from the VNDK set. However, they
+# can exist if NEED_AIDL_NDK_PLATFORM_BACKEND is set to true for legacy devices. Don't be bothered
+# with the extraneous libraries.
+ifeq ($(NEED_AIDL_NDK_PLATFORM_BACKEND),true)
+	_READ_INTERNAL_VNDK_LIB_LIST := sed /ndk_platform.so/d $(INTERNAL_VNDK_LIB_LIST)
+else
+	_READ_INTERNAL_VNDK_LIB_LIST := cat $(INTERNAL_VNDK_LIB_LIST)
+endif
+
 $(check-vndk-list-timestamp): $(INTERNAL_VNDK_LIB_LIST) $(LATEST_VNDK_LIB_LIST) $(HOST_OUT_EXECUTABLES)/update-vndk-list.sh
-	$(hide) ( diff --old-line-format="Removed %L" \
+	$(hide) ($(_READ_INTERNAL_VNDK_LIB_LIST) | \
+	diff --old-line-format="Removed %L" \
 	  --new-line-format="Added %L" \
 	  --unchanged-line-format="" \
-	  $(LATEST_VNDK_LIB_LIST) $(INTERNAL_VNDK_LIB_LIST) \
+	  $(LATEST_VNDK_LIB_LIST) - \
 	  || ( echo -e $(_vndk_check_failure_message); exit 1 ))
 	$(hide) mkdir -p $(dir $@)
 	$(hide) touch $@
@@ -84,9 +94,13 @@ else
 	        echo "  echo Run lunch or choosecombo first" >> $@; \
 	        echo "  exit 1" >> $@; \
 	        echo "fi" >> $@; \
-	        echo "cd \$${ANDROID_BUILD_TOP}" >> $@; \
-	        echo "cp $(PRIVATE_INTERNAL_VNDK_LIB_LIST) $(PRIVATE_LATEST_VNDK_LIB_LIST)" >> $@; \
-	        echo "echo $(PRIVATE_LATEST_VNDK_LIB_LIST) updated." >> $@
+	        echo "cd \$${ANDROID_BUILD_TOP}" >> $@
+ifeq ($(NEED_AIDL_NDK_PLATFORM_BACKEND),true)
+	$(hide) echo "sed /ndk_platform.so/d $(PRIVATE_INTERNAL_VNDK_LIB_LIST) > $(PRIVATE_LATEST_VNDK_LIB_LIST)" >> $@
+else
+	$(hide) echo "cp $(PRIVATE_INTERNAL_VNDK_LIB_LIST) $(PRIVATE_LATEST_VNDK_LIB_LIST)" >> $@
+endif
+	$(hide) echo "echo $(PRIVATE_LATEST_VNDK_LIB_LIST) updated." >> $@
 endif
 	@chmod a+x $@
 
