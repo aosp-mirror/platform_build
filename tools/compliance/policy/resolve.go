@@ -133,16 +133,15 @@ func ResolveTopDownConditions(lg *LicenseGraph) *ResolutionSet {
 	//
 	// rmap is the resulting ResolutionSet
 	rmap := make(map[*TargetNode]actionSet)
-	for attachesTo, as := range rs.resolutions {
-		rmap[attachesTo] = as.copy()
-	}
+
+	// cmap contains the set of targets walked as pure aggregates. i.e. containers
+	cmap := make(map[*TargetNode]bool)
 
 	path := make([]*dependencyEdge, 0, 32)
 
-	var walk func(f string, cs *LicenseConditionSet, treatAsAggregate bool)
+	var walk func(fnode *TargetNode, cs *LicenseConditionSet, treatAsAggregate bool)
 
-	walk = func(f string, cs *LicenseConditionSet, treatAsAggregate bool) {
-		fnode := lg.targets[f]
+	walk = func(fnode *TargetNode, cs *LicenseConditionSet, treatAsAggregate bool) {
 		if !cs.IsEmpty() {
 			parentsAllAggregate := true
 			for _, e := range path {
@@ -163,31 +162,52 @@ func ResolveTopDownConditions(lg *LicenseGraph) *ResolutionSet {
 				rmap[fnode].add(fnode, cs)
 			}
 		}
-		// add conditions attached to `f`
+		if treatAsAggregate {
+			cmap[fnode] = true
+		}
+		// add conditions attached to `fnode`
 		cs = cs.Copy()
 		for _, fcs := range rs.resolutions[fnode] {
 			cs.AddSet(fcs)
 		}
 		// for each dependency
-		for _, edge := range lg.index[f] {
+		for _, edge := range lg.index[fnode.name] {
 			e := TargetEdge{lg, edge}
 			// dcs holds the dpendency conditions inherited from the target
 			dcs := targetConditionsApplicableToDep(e, cs, treatAsAggregate)
-			if dcs.IsEmpty() {
-				if !treatAsAggregate || (!edgeIsDerivation(e) && !edgeIsDynamicLink(e)) {
-					continue
+			if dcs.IsEmpty() && !treatAsAggregate {
+				continue
+			}
+			dnode := lg.targets[edge.dependency]
+			if as, alreadyWalked := rmap[dnode]; alreadyWalked {
+				diff := dcs.Copy()
+				diff.RemoveSet(as.conditions())
+				if diff.IsEmpty() {
+					// no new conditions
+
+					// pure aggregates never need walking a 2nd time with same conditions
+					if treatAsAggregate {
+						continue
+					}
+					// non-aggregates don't need walking as non-aggregate a 2nd time
+					if _, asAggregate := cmap[dnode]; !asAggregate {
+						continue
+					}
+					// previously walked as pure aggregate; need to re-walk as non-aggregate
+					delete(cmap, dnode)
 				}
 			}
 			path = append(path, edge)
 			// add the conditions to the dependency
-			walk(edge.dependency, dcs, treatAsAggregate && lg.targets[edge.dependency].IsContainer())
+			walk(dnode, dcs, treatAsAggregate && lg.targets[edge.dependency].IsContainer())
 			path = path[:len(path)-1]
 		}
 	}
 
 	// walk each of the roots
 	for _, r := range lg.rootFiles {
-		as, ok := rs.resolutions[lg.targets[r]]
+		rnode := lg.targets[r]
+		as, ok := rs.resolutions[rnode]
 		if !ok {
 			// no conditions in root or transitive closure of dependencies
 			continue
@@ -198,7 +218,16 @@ func ResolveTopDownConditions(lg *LicenseGraph) *ResolutionSet {
 
 		path = path[:0]
 		// add the conditions to the root and its transitive closure
-		walk(r, newLicenseConditionSet(), lg.targets[r].IsContainer())
+		walk(rnode, newLicenseConditionSet(), lg.targets[r].IsContainer())
+	}
+
+	// back-fill any bottom-up conditions on targets missed by top-down walk
+	for attachesTo, as := range rs.resolutions {
+		if _, ok := rmap[attachesTo]; !ok {
+			rmap[attachesTo] = as.copy()
+		} else {
+			rmap[attachesTo].addSet(as)
+		}
 	}
 
 	rs = &ResolutionSet{rmap}
