@@ -108,3 +108,12 @@ func (as actionSet) isEmpty() bool {
 	}
 	return true
 }
+
+// conditions returns the set of conditions resolved by the action set.
+func (as actionSet) conditions() *LicenseConditionSet {
+	result := newLicenseConditionSet()
+	for _, cs := range as {
+		result.AddSet(cs)
+	}
+	return result
+}
