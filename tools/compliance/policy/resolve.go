@@ -41,59 +41,7 @@ func ResolveBottomUpConditions(lg *LicenseGraph) *ResolutionSet {
 	// must be indexed for fast lookup
 	lg.indexForward()
 
-	rs = newResolutionSet()
-
-	// cmap contains an entry for every target that was previously walked as a pure aggregate only.
-	cmap := make(map[string]bool)
-
-	var walk func(f string, treatAsAggregate bool) actionSet
-
-	walk = func(f string, treatAsAggregate bool) actionSet {
-		target := lg.targets[f]
-		result := make(actionSet)
-		result[target] = newLicenseConditionSet()
-		result[target].add(target, target.proto.LicenseConditions...)
-		if preresolved, ok := rs.resolutions[target]; ok {
-			if treatAsAggregate {
-				result.addSet(preresolved)
-				return result
-			}
-			if _, asAggregate := cmap[f]; !asAggregate {
-				result.addSet(preresolved)
-				return result
-			}
-			// previously walked in a pure aggregate context,
-			// needs to walk again in non-aggregate context
-			delete(cmap, f)
-		}
-		if treatAsAggregate {
-			cmap[f] = true
-		}
-
-		// add all the conditions from all the dependencies
-		for _, edge := range lg.index[f] {
-			// walk dependency to get its conditions
-			as := walk(edge.dependency, treatAsAggregate && lg.targets[edge.dependency].IsContainer())
-
-			// turn those into the conditions that apply to the target
-			as = depActionsApplicableToTarget(TargetEdge{lg, edge}, as, treatAsAggregate)
-
-			// add them to the result
-			result.addSet(as)
-		}
-
-		// record these conditions as applicable to the target
-		rs.addConditions(target, result)
-		rs.addSelf(target, result.byName(ImpliesRestricted))
-
-		// return this up the tree
-		return result
-	}
-
-	// walk each of the roots
-	for _, r := range lg.rootFiles {
-		_ = walk(r, lg.targets[r].IsContainer())
-	}
+	rs = resolveBottomUp(lg, make(map[*TargetNode]actionSet) /* empty map; no prior resolves */)
 
 	// if not yet cached, save the result
 	lg.mu.Lock()
@@ -137,31 +85,13 @@ func ResolveTopDownConditions(lg *LicenseGraph) *ResolutionSet {
 	// cmap contains the set of targets walked as pure aggregates. i.e. containers
 	cmap := make(map[*TargetNode]bool)
 
-	path := make([]*dependencyEdge, 0, 32)
-
 	var walk func(fnode *TargetNode, cs *LicenseConditionSet, treatAsAggregate bool)
 
 	walk = func(fnode *TargetNode, cs *LicenseConditionSet, treatAsAggregate bool) {
-		if !cs.IsEmpty() {
-			parentsAllAggregate := true
-			for _, e := range path {
-				target := lg.targets[e.target]
-				if _, ok := rmap[target]; !ok {
-					rmap[target] = make(actionSet)
-				}
-				rmap[target].add(fnode, cs)
-				if !target.IsContainer() {
-					parentsAllAggregate = false
-					break
-				}
-			}
-			if parentsAllAggregate {
-				if _, ok := rmap[fnode]; !ok {
-					rmap[fnode] = make(actionSet)
-				}
-				rmap[fnode].add(fnode, cs)
-			}
+		if _, ok := rmap[fnode]; !ok {
+			rmap[fnode] = make(actionSet)
 		}
+		rmap[fnode].add(fnode, cs)
 		if treatAsAggregate {
 			cmap[fnode] = true
 		}
@@ -197,10 +127,8 @@ func ResolveTopDownConditions(lg *LicenseGraph) *ResolutionSet {
 					delete(cmap, dnode)
 				}
 			}
-			path = append(path, edge)
 			// add the conditions to the dependency
 			walk(dnode, dcs, treatAsAggregate && lg.targets[edge.dependency].IsContainer())
-			path = path[:len(path)-1]
 		}
 	}
 
@@ -216,7 +144,6 @@ func ResolveTopDownConditions(lg *LicenseGraph) *ResolutionSet {
 			continue
 		}
 
-		path = path[:0]
 		// add the conditions to the root and its transitive closure
 		walk(rnode, newLicenseConditionSet(), lg.targets[r].IsContainer())
 	}
@@ -230,7 +157,8 @@ func ResolveTopDownConditions(lg *LicenseGraph) *ResolutionSet {
 		}
 	}
 
-	rs = &ResolutionSet{rmap}
+	// propagate any new conditions back up the graph
+	rs = resolveBottomUp(lg, rmap)
 
 	// if not yet cached, save the result
 	lg.mu.Lock()
@@ -241,6 +169,73 @@ func ResolveTopDownConditions(lg *LicenseGraph) *ResolutionSet {
 		rs = lg.rsTD
 	}
 	lg.mu.Unlock()
+
+	return rs
+}
+
+// resolveBottomUp implements a bottom-up resolve propagating conditions both
+// from the graph, and from a `priors` map of resolutions.
+func resolveBottomUp(lg *LicenseGraph, priors map[*TargetNode]actionSet) *ResolutionSet {
+	rs := newResolutionSet()
+
+	// cmap contains an entry for every target that was previously walked as a pure aggregate only.
+	cmap := make(map[string]bool)
+
+	var walk func(f string, treatAsAggregate bool) actionSet
+
+	walk = func(f string, treatAsAggregate bool) actionSet {
+		target := lg.targets[f]
+		result := make(actionSet)
+		result[target] = newLicenseConditionSet()
+		result[target].add(target, target.proto.LicenseConditions...)
+		if pas, ok := priors[target]; ok {
+			result.addSet(pas)
+		}
+		if preresolved, ok := rs.resolutions[target]; ok {
+			if treatAsAggregate {
+				result.addSet(preresolved)
+				return result
+			}
+			if _, asAggregate := cmap[f]; !asAggregate {
+				result.addSet(preresolved)
+				return result
+			}
+			// previously walked in a pure aggregate context,
+			// needs to walk again in non-aggregate context
+			delete(cmap, f)
+		}
+		if treatAsAggregate {
+			cmap[f] = true
+		}
+
+		// add all the conditions from all the dependencies
+		for _, edge := range lg.index[f] {
+			// walk dependency to get its conditions
+			as := walk(edge.dependency, treatAsAggregate && lg.targets[edge.dependency].IsContainer())
+
+			// turn those into the conditions that apply to the target
+			as = depActionsApplicableToTarget(TargetEdge{lg, edge}, as, treatAsAggregate)
+
+			// add them to the result
+			result.addSet(as)
+		}
+
+		// record these conditions as applicable to the target
+		rs.addConditions(target, result)
+		if len(priors) == 0 {
+			// on the first bottom-up resolve, parents have their own sharing and notice needs
+			// on the later resolve, if priors is empty, there will be nothing new to add
+			rs.addSelf(target, result.byName(ImpliesRestricted))
+		}
+
+		// return this up the tree
+		return result
+	}
+
+	// walk each of the roots
+	for _, r := range lg.rootFiles {
+		_ = walk(r, lg.targets[r].IsContainer())
+	}
 
 	return rs
 }
