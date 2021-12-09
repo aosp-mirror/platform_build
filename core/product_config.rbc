@@ -533,7 +533,10 @@ def _require_artifacts_in_path_relaxed(paths, allowed_paths):
 
 def _expand_wildcard(pattern):
     """Expands shell wildcard pattern."""
-    return rblf_wildcard(pattern)
+    result = []
+    for word in __words(pattern):
+        result.extend(rblf_wildcard(word))
+    return result
 
 def _mkdist_for_goals(g, goal, src_dst_list):
     """Implements dist-for-goals macro."""
