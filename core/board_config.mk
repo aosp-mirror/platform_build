@@ -159,6 +159,7 @@ _board_strip_list += BOARD_GKI_SIGNING_ALGORITHM
 _board_strip_list += BOARD_GKI_SIGNING_KEY_PATH
 _board_strip_list += BOARD_MKBOOTIMG_ARGS
 _board_strip_list += BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE
+_board_strip_list += ODM_MANIFEST_SKUS
 
 
 _build_broken_var_list := \
