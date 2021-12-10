@@ -189,6 +189,7 @@ $(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPA
 
 $(call add_json_list, PgoAdditionalProfileDirs,          $(PGO_ADDITIONAL_PROFILE_DIRS))
 
+$(call add_json_list, BoardPlatVendorPolicy,             $(BOARD_PLAT_VENDOR_POLICY))
 $(call add_json_list, BoardReqdMaskPolicy,               $(BOARD_REQD_MASK_POLICY))
 $(call add_json_list, BoardVendorSepolicyDirs,           $(BOARD_VENDOR_SEPOLICY_DIRS) $(BOARD_SEPOLICY_DIRS))
 $(call add_json_list, BoardOdmSepolicyDirs,              $(BOARD_ODM_SEPOLICY_DIRS))
