@@ -153,6 +153,7 @@ func TestResolveNotices(t *testing.T) {
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"mitLib.meta_lic", "mitLib.meta_lic", "gplLib.meta_lic", "restricted"},
 				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
 			},
 		},
