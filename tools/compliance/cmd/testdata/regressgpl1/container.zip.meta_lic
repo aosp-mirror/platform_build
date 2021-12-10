@@ -8,11 +8,11 @@ built:  "out/target/product/fictional/obj/ETC/container_intermediates/container.
 installed:  "out/target/product/fictional/data/container.zip"
 install_map {
   from_path:  "out/target/product/fictional/system/lib/"
-  container_path:  ""
+  container_path:  "/"
 }
 install_map {
   from_path:  "out/target/product/fictional/system/bin/"
-  container_path:  ""
+  container_path:  "/"
 }
 sources:  "out/target/product/fictional/system/bin/bin1"
 sources:  "out/target/product/fictional/system/bin/bin2"
