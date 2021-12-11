@@ -59,6 +59,19 @@ assert_eq("foo.c no_folder", rblf.notdir("src/foo.c no_folder"))
 assert_eq("", rblf.notdir("/"))
 assert_eq("", rblf.notdir(""))
 
+assert_eq(
+    ["build/make/tests/board.rbc", "build/make/tests/board_input_vars.rbc"],
+    rblf.expand_wildcard("build/make/tests/board*.rbc")
+)
+assert_eq(
+    ["build/make/tests/run.rbc", "build/make/tests/product.rbc"],
+    rblf.expand_wildcard("build/make/tests/run.rbc build/make/tests/product.rbc")
+)
+assert_eq(
+    ["build/make/tests/run.rbc"],
+    rblf.expand_wildcard("build/make/tests/run.rbc build/make/tests/nonexistent.rbc")
+)
+
 (globals, config, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
 assert_eq(
     {
