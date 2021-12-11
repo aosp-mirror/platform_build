@@ -136,6 +136,11 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
   --android_jar_path <path>
       Path to the android.jar to repack the apex file.
+
+  --allow_gsi_debug_sepolicy
+      Allow the existence of the file 'userdebug_plat_sepolicy.cil' under
+      (/system/system_ext|/system_ext)/etc/selinux.
+      If not set, error out when the file exists.
 """
 
 from __future__ import print_function
@@ -189,6 +194,7 @@ OPTIONS.gki_signing_key = None
 OPTIONS.gki_signing_algorithm = None
 OPTIONS.gki_signing_extra_args = None
 OPTIONS.android_jar_path = None
+OPTIONS.allow_gsi_debug_sepolicy = False
 
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
@@ -658,7 +664,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # Updates system_other.avbpubkey in /product/etc/.
     elif filename in (
         "PRODUCT/etc/security/avb/system_other.avbpubkey",
-            "SYSTEM/product/etc/security/avb/system_other.avbpubkey"):
+        "SYSTEM/product/etc/security/avb/system_other.avbpubkey"):
       # Only update system_other's public key, if the corresponding signing
       # key is specified via --avb_system_other_key.
       signing_key = OPTIONS.avb_keys.get("system_other")
@@ -671,8 +677,18 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # Should NOT sign boot-debug.img.
     elif filename in (
         "BOOT/RAMDISK/force_debuggable",
-            "BOOT/RAMDISK/first_stage_ramdisk/force_debuggable"):
+        "BOOT/RAMDISK/first_stage_ramdisk/force_debuggable"):
       raise common.ExternalError("debuggable boot.img cannot be signed")
+
+    # Should NOT sign userdebug sepolicy file.
+    elif filename in (
+        "SYSTEM_EXT/etc/selinux/userdebug_plat_sepolicy.cil",
+        "SYSTEM/system_ext/etc/selinux/userdebug_plat_sepolicy.cil"):
+      if not OPTIONS.allow_gsi_debug_sepolicy:
+        raise common.ExternalError("debug sepolicy shouldn't be included")
+      else:
+        # Copy it verbatim if we allow the file to exist.
+        common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # A non-APK file; copy it verbatim.
     else:
@@ -1289,6 +1305,8 @@ def main(argv):
       OPTIONS.gki_signing_algorithm = a
     elif o == "--gki_signing_extra_args":
       OPTIONS.gki_signing_extra_args = a
+    elif o == "--allow_gsi_debug_sepolicy":
+      OPTIONS.allow_gsi_debug_sepolicy = True
     else:
       return False
     return True
@@ -1339,6 +1357,7 @@ def main(argv):
           "gki_signing_key=",
           "gki_signing_algorithm=",
           "gki_signing_extra_args=",
+          "allow_gsi_debug_sepolicy",
       ],
       extra_option_handler=option_handler)
 

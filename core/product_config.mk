@@ -350,6 +350,12 @@ ifneq ($(filter-out 0 1,$(words $(PRODUCT_ADB_KEYS))),)
   $(error Only one file may be in PRODUCT_ADB_KEYS: $(PRODUCT_ADB_KEYS))
 endif
 
+ifdef PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
+  ifeq (,$(filter gsi_arm gsi_arm64 gsi_x86 gsi_x86_64,$(PRODUCT_NAME)))
+    $(error Only GSI products are allowed to set PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
+  endif
+endif
+
 ifndef PRODUCT_USE_DYNAMIC_PARTITIONS
   PRODUCT_USE_DYNAMIC_PARTITIONS := $(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)
 endif
