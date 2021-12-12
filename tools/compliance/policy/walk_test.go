@@ -336,6 +336,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			expectedResolutions: []res{
 				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
 				{"gplBin.meta_lic", "apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -428,6 +429,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			expectedResolutions: []res{
 				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
