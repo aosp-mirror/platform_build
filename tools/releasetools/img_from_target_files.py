@@ -124,7 +124,7 @@ def EntriesForUserImages(input_file):
 
   for image_path in [name for name in namelist if name.startswith('IMAGES/')]:
     image = os.path.basename(image_path)
-    if OPTIONS.bootable_only and image not in('boot.img', 'recovery.img', 'bootloader'):
+    if OPTIONS.bootable_only and image not in('boot.img', 'recovery.img', 'bootloader', 'init_boot.img'):
       continue
     if not image.endswith('.img') and image != 'bootloader':
       continue
