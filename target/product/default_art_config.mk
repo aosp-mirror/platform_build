@@ -62,6 +62,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.scheduling:framework-scheduling \
     com.android.sdkext:framework-sdkextensions \
     com.android.tethering:framework-connectivity \
+    com.android.tethering:framework-connectivity-tiramisu \
     com.android.tethering:framework-tethering \
     com.android.wifi:framework-wifi
 
