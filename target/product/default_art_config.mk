@@ -64,6 +64,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.sdkext:framework-sdkextensions \
     com.android.supplementalprocess:framework-supplementalprocess \
     com.android.tethering:framework-connectivity \
+    com.android.tethering:framework-connectivity-tiramisu \
     com.android.tethering:framework-tethering \
     com.android.uwb:framework-uwb \
     com.android.wifi:framework-wifi
