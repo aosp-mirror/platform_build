@@ -1,0 +1,9 @@
+package_name:  "Device"
+projects:  "device/library"
+license_kinds:  "legacy_proprietary"
+license_conditions:  "proprietary"
+license_conditions:  "by_exception_only"
+is_container:  false
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/liba.so"
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/liba.a"
+installed:  "out/target/product/fictional/system/lib/liba.so"

@@ -1,0 +1,9 @@
+package_name:  "Android"
+projects:  "base/library"
+license_kinds:  "SPDX-license-identifier-Apache-2.0"
+license_conditions:  "notice"
+license_texts:  "build/soong/licenses/LICENSE"
+is_container:  false
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/libb.so"
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/libb.a"
+installed:  "out/target/product/fictional/system/lib/libb.so"

@@ -77,6 +77,15 @@ func (cl ConditionList) String() string {
 	return sb.String()
 }
 
+// Names returns the list of the conditions' names.
+func (cl ConditionList) Names() []string {
+	result := make([]string, 0, len(cl))
+	for _, lc := range cl {
+		result = append(result, lc.name)
+	}
+	return result
+}
+
 // HasByName returns true if the list contains any condition matching `name`.
 func (cl ConditionList) HasByName(name ConditionNames) bool {
 	for _, lc := range cl {
