@@ -831,6 +831,15 @@ endif
 sepolicy_major_vers :=
 sepolicy_minor_vers :=
 
+# BOARD_SEPOLICY_VERS must take the format "NN.m" and contain the sepolicy
+# version identifier corresponding to the sepolicy on which the non-platform
+# policy is to be based. If unspecified, this will build against the current
+# public platform policy in tree
+ifndef BOARD_SEPOLICY_VERS
+# The default platform policy version.
+BOARD_SEPOLICY_VERS := $(PLATFORM_SEPOLICY_VERSION)
+endif
+
 # A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
 PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     28.0 \
