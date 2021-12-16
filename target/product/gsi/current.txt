@@ -115,6 +115,8 @@ VNDK-core: android.hardware.radio.voice-V1-ndk.so
 VNDK-core: android.hardware.radio.voice-V1-ndk_platform.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk_platform.so
+VNDK-core: android.hardware.security.dice-V1-ndk.so
+VNDK-core: android.hardware.security.dice-V1-ndk_platform.so
 VNDK-core: android.hardware.security.keymint-V1-ndk.so
 VNDK-core: android.hardware.security.keymint-V1-ndk_platform.so
 VNDK-core: android.hardware.security.secureclock-V1-ndk.so
