@@ -476,6 +476,12 @@ def _find_and_copy(pattern, from_dir, to_dir):
     return sorted(["%s/%s:%s/%s" % (
         from_dir, f, to_dir, f) for f in rblf_find_files(from_dir, pattern, only_files=1)])
 
+def _findstring(needle, haystack):
+    """Equivalent to GNU make's $(findstring)."""
+    if haystack.find(needle) < 0:
+        return ""
+    return needle
+
 def _filter_out(pattern, text):
     """Return all the words from `text' that do not match any word in `pattern'.
 
@@ -533,7 +539,10 @@ def _require_artifacts_in_path_relaxed(paths, allowed_paths):
 
 def _expand_wildcard(pattern):
     """Expands shell wildcard pattern."""
-    return rblf_wildcard(pattern)
+    result = []
+    for word in __words(pattern):
+        result.extend(rblf_wildcard(word))
+    return result
 
 def _mkdist_for_goals(g, goal, src_dst_list):
     """Implements dist-for-goals macro."""
@@ -724,6 +733,7 @@ rblf = struct(
     filter = _filter,
     filter_out = _filter_out,
     find_and_copy = _find_and_copy,
+    findstring = _findstring,
     inherit = _inherit,
     indirect = _indirect,
     mk2rbc_error = _mk2rbc_error,
