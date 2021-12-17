@@ -103,3 +103,11 @@ endif
 # TODO(b/196084106): Remove when Java optimizations enabled by default for
 # system packages.
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
+
+# Check for SupplementalApi module.
+ifeq ($(wildcard packages/modules/SupplementalApi),)
+$(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,false)
+else
+$(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,true)
+endif
+
