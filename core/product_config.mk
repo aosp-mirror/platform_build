@@ -412,7 +412,7 @@ $(foreach c,$(PRODUCT_SANITIZER_MODULE_CONFIGS),\
 _psmc_modules :=
 
 # Reset ADB keys for non-debuggable builds
-ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
+ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)))
   PRODUCT_ADB_KEYS :=
 endif
 ifneq ($(filter-out 0 1,$(words $(PRODUCT_ADB_KEYS))),)
