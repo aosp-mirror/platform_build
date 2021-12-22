@@ -2728,6 +2728,19 @@ ifdef BOARD_USES_SYSTEM_EXTIMAGE
   INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/system_ext,/system_ext,system_ext.img)
 endif
 
+# -----------------------------------------------------------------
+# system_dlkm partition image
+
+# Create symlinks for system_dlkm on devices with a system_dlkm partition:
+# /system/lib/modules -> /system_dlkm/lib/modules
+#
+# On devices with a system_dlkm partition,
+# - /system/lib/modules is a symlink to a directory that stores system DLKMs.
+# - The system_dlkm partition is mounted at /system_dlkm at runtime.
+ifdef BOARD_USES_SYSTEM_DLKM_PARTITION
+  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/lib/modules,/system_dlkm/lib/modules,system_dlkm.img)
+endif
+
 FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
 
 # ASAN libraries in the system image - add dependency.
