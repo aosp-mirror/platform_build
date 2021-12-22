@@ -201,6 +201,7 @@ OPTIONS.allow_gsi_debug_sepolicy = False
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
     'boot': 'avb_boot_add_hash_footer_args',
+    'init_boot': 'avb_init_boot_add_hash_footer_args',
     'dtbo': 'avb_dtbo_add_hash_footer_args',
     'product': 'avb_product_add_hashtree_footer_args',
     'recovery': 'avb_recovery_add_hash_footer_args',
