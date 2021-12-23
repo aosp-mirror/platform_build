@@ -49,6 +49,7 @@ PRODUCT_BOOT_JARS += \
 
 # APEX boot jars. Keep the list sorted by module names and then library names.
 # Note: core-icu4j is moved back to PRODUCT_BOOT_JARS in product_config.mk at a later stage.
+# Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
     com.android.conscrypt:conscrypt \
@@ -70,6 +71,7 @@ PRODUCT_APEX_BOOT_JARS := \
 
 # List of system_server classpath jars delivered via apex.
 # Keep the list sorted by module names and then library names.
+# Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
     com.android.art:service-art \
@@ -84,6 +86,7 @@ PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
 
 # List of jars delivered via apex that system_server loads dynamically using separate classloaders.
 # Keep the list sorted by module names and then library names.
+# Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
     com.android.os.statsd:service-statsd \
     com.android.scheduling:service-scheduling \
