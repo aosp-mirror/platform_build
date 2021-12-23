@@ -65,6 +65,7 @@ _board_strip_readonly_list += TARGET_ARCH_SUITE
 # File system variables
 _board_strip_readonly_list += BOARD_FLASH_BLOCK_SIZE
 _board_strip_readonly_list += BOARD_BOOTIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_RECOVERYIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE
@@ -121,6 +122,9 @@ _board_strip_readonly_list += BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES
+
+# Prebuilt image variables
+_board_strip_readonly_list += BOARD_PREBUILT_INIT_BOOT_IMAGE
 
 # Defines the list of logical vendor ramdisk names to build or include in vendor_boot.
 _board_strip_readonly_list += BOARD_VENDOR_RAMDISK_FRAGMENTS
@@ -461,6 +465,25 @@ else ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),true)
 endif
 .KATI_READONLY := BUILDING_BOOT_IMAGE
 
+# Are we building an init boot image
+BUILDING_INIT_BOOT_IMAGE :=
+ifeq ($(PRODUCT_BUILD_INIT_BOOT_IMAGE),)
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    BUILDING_INIT_BOOT_IMAGE :=
+  else ifdef BOARD_PREBUILT_INIT_BOOT_IMAGE
+    BUILDING_INIT_BOOT_IMAGE :=
+  else ifdef BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE
+    BUILDING_INIT_BOOT_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_INIT_BOOT_IMAGE),true)
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    $(error PRODUCT_BUILD_INIT_BOOT_IMAGE is true, but so is BOARD_USES_RECOVERY_AS_BOOT. Use only one option.)
+  else
+    BUILDING_INIT_BOOT_IMAGE := true
+  endif
+endif
+.KATI_READONLY := BUILDING_INIT_BOOT_IMAGE
+
 # Are we building a recovery image
 BUILDING_RECOVERY_IMAGE :=
 ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),)
@@ -567,6 +590,11 @@ else ifndef BUILDING_RAMDISK_IMAGE
 else ifndef _has_boot_img_artifact
   ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
     $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we're not building a boot image. \
+      Skip building the debug boot image.)
+  endif
+else ifdef BUILDING_INIT_BOOT_IMAGE
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we don't have a ramdisk in the boot image. \
       Skip building the debug boot image.)
   endif
 else
