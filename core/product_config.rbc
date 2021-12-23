@@ -755,4 +755,5 @@ rblf = struct(
     setdefault = _setdefault,
     shell = rblf_shell,
     warning = _mkwarning,
+    words = __words,
 )
