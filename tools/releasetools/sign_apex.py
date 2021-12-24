@@ -141,7 +141,7 @@ def main(argv):
       signing_args=options.get('payload_extra_args'),
       codename_to_api_level_map=options.get(
           'codename_to_api_level_map', {}),
-      sign_tool=options['sign_tool'])
+      sign_tool=options.get('sign_tool', None))
   shutil.copyfile(signed_apex, args[1])
   logger.info("done.")
 
