@@ -27,6 +27,10 @@ $(call add_soong_config_namespace,ANDROID)
 # Add variables to the namespace below:
 
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
+$(call add_soong_config_var,ANDROID,IS_TARGET_MIXED_SEPOLICY)
+ifeq ($(IS_TARGET_MIXED_SEPOLICY),true)
+$(call add_soong_config_var_value,ANDROID,MIXED_SEPOLICY_VERSION,$(BOARD_SEPOLICY_VERS))
+endif
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
 $(call add_soong_config_var,ANDROID,BOARD_USES_RECOVERY_AS_BOOT)
 $(call add_soong_config_var,ANDROID,BOARD_BUILD_SYSTEM_ROOT_IMAGE)
@@ -88,7 +92,7 @@ else
   # This sets the default for building ART APEXes from source rather than
   # prebuilts (in packages/modules/ArtPrebuilt and prebuilt/module_sdk/art) in
   # all other platform builds.
-  SOONG_CONFIG_art_module_source_build ?= false
+  SOONG_CONFIG_art_module_source_build ?= true
 endif
 
 # Apex build mode variables

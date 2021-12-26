@@ -92,6 +92,7 @@ VNDK-core: android.hardware.radio.network-V1-ndk.so
 VNDK-core: android.hardware.radio.sim-V1-ndk.so
 VNDK-core: android.hardware.radio.voice-V1-ndk.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk.so
+VNDK-core: android.hardware.security.dice-V1-ndk.so
 VNDK-core: android.hardware.security.keymint-V1-ndk.so
 VNDK-core: android.hardware.security.secureclock-V1-ndk.so
 VNDK-core: android.hardware.security.sharedsecret-V1-ndk.so
@@ -100,6 +101,7 @@ VNDK-core: android.hardware.soundtrigger@2.0.so
 VNDK-core: android.hardware.vibrator-V2-ndk.so
 VNDK-core: android.hardware.weaver-V1-ndk.so
 VNDK-core: android.hardware.wifi.hostapd-V1-ndk.so
+VNDK-core: android.hardware.wifi.supplicant-V1-ndk.so
 VNDK-core: android.hidl.token@1.0-utils.so
 VNDK-core: android.hidl.token@1.0.so
 VNDK-core: android.system.keystore2-V1-ndk.so

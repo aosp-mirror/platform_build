@@ -62,6 +62,9 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       'avb_boot_add_hash_footer_args':
           ('--prop com.android.build.boot.os_version:R '
            '--prop com.android.build.boot.security_patch:2019-09-05'),
+      'avb_init_boot_add_hash_footer_args':
+          ('--prop com.android.build.boot.os_version:R '
+           '--prop com.android.build.boot.security_patch:2019-09-05'),
       'avb_system_add_hashtree_footer_args':
           ('--prop com.android.build.system.os_version:R '
            '--prop com.android.build.system.security_patch:2019-09-05 '
@@ -75,6 +78,9 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     }
     expected_dict = {
       'avb_boot_add_hash_footer_args':
+          ('--prop com.android.build.boot.os_version:R '
+           '--prop com.android.build.boot.security_patch:2019-09-05'),
+      'avb_init_boot_add_hash_footer_args':
           ('--prop com.android.build.boot.os_version:R '
            '--prop com.android.build.boot.security_patch:2019-09-05'),
       'avb_system_add_hashtree_footer_args':

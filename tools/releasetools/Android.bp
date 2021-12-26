@@ -553,6 +553,19 @@ python_binary_host {
     ],
 }
 
+python_binary_host {
+    name: "fsverity_metadata_generator",
+    srcs: [
+        "fsverity_metadata_generator.py",
+    ],
+    libs: [
+        "fsverity_digests_proto_python",
+    ],
+    required: [
+        "fsverity",
+    ],
+}
+
 //
 // Tests.
 //

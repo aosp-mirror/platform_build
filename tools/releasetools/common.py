@@ -111,7 +111,7 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # descriptor into vbmeta.img. When adding a new entry here, the
 # AVB_FOOTER_ARGS_BY_PARTITION in sign_target_files_apks need to be updated
 # accordingly.
-AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'pvmfw', 'recovery',
+AVB_PARTITIONS = ('boot', 'init_boot', 'dtbo', 'odm', 'product', 'pvmfw', 'recovery',
                   'system', 'system_ext', 'vendor', 'vendor_boot',
                   'vendor_dlkm', 'odm_dlkm')
 
@@ -130,7 +130,7 @@ PARTITIONS_WITH_CARE_MAP = [
 ]
 
 # Partitions with a build.prop file
-PARTITIONS_WITH_BUILD_PROP = PARTITIONS_WITH_CARE_MAP + ['boot']
+PARTITIONS_WITH_BUILD_PROP = PARTITIONS_WITH_CARE_MAP + ['boot', 'init_boot']
 
 # See sysprop.mk. If file is moved, add new search paths here; don't remove
 # existing search paths.
@@ -935,9 +935,9 @@ class PartitionBuildProps(object):
   def FromInputFile(input_file, name, placeholder_values=None, ramdisk_format=RamdiskFormat.LZ4):
     """Loads the build.prop file and builds the attributes."""
 
-    if name == "boot":
+    if name in ("boot", "init_boot"):
       data = PartitionBuildProps._ReadBootPropFile(
-          input_file, ramdisk_format=ramdisk_format)
+          input_file, name, ramdisk_format=ramdisk_format)
     else:
       data = PartitionBuildProps._ReadPartitionPropFile(input_file, name)
 
@@ -946,15 +946,16 @@ class PartitionBuildProps(object):
     return props
 
   @staticmethod
-  def _ReadBootPropFile(input_file, ramdisk_format):
+  def _ReadBootPropFile(input_file, partition_name, ramdisk_format):
     """
     Read build.prop for boot image from input_file.
     Return empty string if not found.
     """
+    image_path = 'IMAGES/' + partition_name + '.img'
     try:
-      boot_img = ExtractFromInputFile(input_file, 'IMAGES/boot.img')
+      boot_img = ExtractFromInputFile(input_file, image_path)
     except KeyError:
-      logger.warning('Failed to read IMAGES/boot.img')
+      logger.warning('Failed to read %s', image_path)
       return ''
     prop_file = GetBootImageBuildProp(boot_img, ramdisk_format=ramdisk_format)
     if prop_file is None:
@@ -1539,6 +1540,8 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
       logger.info("Excluded kernel binary from recovery image.")
     else:
       kernel = "kernel"
+  elif partition_name == "init_boot":
+    pass
   else:
     kernel = image_name.replace("boot", "kernel")
     kernel = kernel.replace(".img", "")
@@ -1593,6 +1596,8 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
       # Fall back to "mkbootimg_args" for recovery image
       # in case "recovery_mkbootimg_args" is not set.
       args = info_dict.get("mkbootimg_args")
+  elif partition_name == "init_boot":
+    args = info_dict.get("mkbootimg_init_args")
   else:
     args = info_dict.get("mkbootimg_args")
   if args and args.strip():
@@ -1752,9 +1757,11 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   logger.info("building image from target_files %s...", tree_subdir)
 
   # With system_root_image == "true", we don't pack ramdisk into the boot image.
+  # With init_boot == "true", we don't pack the ramdisk into boot.img.
   # Unless "recovery_as_boot" is specified, in which case we carry the ramdisk
   # for recovery.
-  has_ramdisk = (info_dict.get("system_root_image") != "true" or
+  has_ramdisk = ((info_dict.get("system_root_image") != "true" and
+                  info_dict.get("init_boot") != "true") or
                  prebuilt_name != "boot.img" or
                  info_dict.get("recovery_as_boot") == "true")
 
