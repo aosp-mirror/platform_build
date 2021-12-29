@@ -883,14 +883,27 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   except KeyError:
     raise common.ExternalError("can't read META/otakeys.txt from input")
 
-  extra_recovery_keys = misc_info.get("extra_recovery_keys")
-  if extra_recovery_keys:
+  extra_ota_keys_info = misc_info.get("extra_ota_keys")
+  if extra_ota_keys_info:
+    extra_ota_keys = [OPTIONS.key_map.get(k, k) + ".x509.pem"
+                      for k in extra_ota_keys_info.split()]
+    print("extra ota key(s): " + ", ".join(extra_ota_keys))
+  else:
+    extra_ota_keys = []
+  for k in extra_ota_keys:
+    if not os.path.isfile(k):
+      raise common.ExternalError(k + " does not exist or is not a file")
+
+  extra_recovery_keys_info = misc_info.get("extra_recovery_keys")
+  if extra_recovery_keys_info:
     extra_recovery_keys = [OPTIONS.key_map.get(k, k) + ".x509.pem"
-                           for k in extra_recovery_keys.split()]
-    if extra_recovery_keys:
-      print("extra recovery-only key(s): " + ", ".join(extra_recovery_keys))
+                           for k in extra_recovery_keys_info.split()]
+    print("extra recovery-only key(s): " + ", ".join(extra_recovery_keys))
   else:
     extra_recovery_keys = []
+  for k in extra_recovery_keys:
+    if not os.path.isfile(k):
+      raise common.ExternalError(k + " does not exist or is not a file")
 
   mapped_keys = []
   for k in keylist:
@@ -913,13 +926,20 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
     mapped_keys.append(mapped_devkey + ".x509.pem")
     print("META/otakeys.txt has no keys; using %s for OTA package"
           " verification." % (mapped_keys[0],))
+  for k in mapped_keys:
+    if not os.path.isfile(k):
+      raise common.ExternalError(k + " does not exist or is not a file")
 
   otacerts = [info
               for info in input_tf_zip.infolist()
               if info.filename.endswith("/otacerts.zip")]
   for info in otacerts:
-    print("Rewriting OTA key:", info.filename, mapped_keys)
-    WriteOtacerts(output_tf_zip, info.filename, mapped_keys)
+    if info.filename.startswith(("BOOT/", "RECOVERY/", "VENDOR_BOOT/")):
+      extra_keys = extra_recovery_keys
+    else:
+      extra_keys = extra_ota_keys
+    print("Rewriting OTA key:", info.filename, mapped_keys + extra_keys)
+    WriteOtacerts(output_tf_zip, info.filename, mapped_keys + extra_keys)
 
 
 def ReplaceVerityPublicKey(output_zip, filename, key_path):
