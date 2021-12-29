@@ -2309,7 +2309,7 @@ define build-recoveryimage-target
                  $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_RECOVERY_MKBOOTIMG_ARGS) \
                  --output $(1).unsigned, \
     $(MKBOOTIMG) $(if $(strip $(2)),--kernel $(strip $(2))) $(INTERNAL_RECOVERYIMAGE_ARGS) \
-                 $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(INTERNAL_MKBOOTIMG_GKI_SINGING_ARGS) \
+                 $(INTERNAL_MKBOOTIMG_VERSION_ARGS) \
                  $(BOARD_RECOVERY_MKBOOTIMG_ARGS) --output $(1))
   $(if $(filter true,$(PRODUCT_SUPPORTS_BOOT_SIGNER)),\
     $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
@@ -2337,9 +2337,6 @@ ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
 endif
 ifeq (true,$(BOARD_AVB_ENABLE))
   recoveryimage-deps += $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
-endif
-ifdef BOARD_GKI_SIGNING_KEY_PATH
-  recoveryimage-deps += $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
   ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
@@ -2504,17 +2501,17 @@ endef
 define build-debug-bootimage-target
   $(MKBOOTIMG) --kernel $(PRODUCT_OUT)/$(subst .img,,$(subst boot-debug,kernel,$(notdir $(1)))) \
     $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) \
-    $(INTERNAL_MKBOOTIMG_GKI_SINGING_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $1
+    $(BOARD_MKBOOTIMG_ARGS) --output $1
   $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$1,boot-debug))
 endef
 
 # Depends on original boot.img and ramdisk-debug.img, to build the new boot-debug.img
-$(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
+$(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) $(AVBTOOL)
 	$(call pretty,"Target boot debug image: $@")
 	$(call build-debug-bootimage-target, $@)
 
 .PHONY: bootimage_debug-nodeps
-bootimage_debug-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
+bootimage_debug-nodeps: $(MKBOOTIMG) $(AVBTOOL)
 	echo "make $@: ignoring dependencies"
 	$(foreach b,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(call build-debug-bootimage-target,$b))
 
@@ -2681,17 +2678,17 @@ endif
 define build-boot-test-harness-target
   $(MKBOOTIMG) --kernel $(PRODUCT_OUT)/$(subst .img,,$(subst boot-test-harness,kernel,$(notdir $(1)))) \
     $(INTERNAL_TEST_HARNESS_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) \
-    $(INTERNAL_MKBOOTIMG_GKI_SINGING_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
+    $(BOARD_MKBOOTIMG_ARGS) --output $@
   $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$@,boot-test-harness))
 endef
 
 # Build the new boot-test-harness.img, based on boot-debug.img and ramdisk-test-harness.img.
-$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
+$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) $(AVBTOOL)
 	$(call pretty,"Target boot test harness image: $@")
 	$(call build-boot-test-harness-target,$@)
 
 .PHONY: bootimage_test_harness-nodeps
-bootimage_test_harness-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
+bootimage_test_harness-nodeps: $(MKBOOTIMG) $(AVBTOOL)
 	echo "make $@: ignoring dependencies"
 	$(foreach b,$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET),$(call build-boot-test-harness-target,$b))
 
@@ -4630,8 +4627,6 @@ endif
 ifdef BOARD_GKI_SIGNING_KEY_PATH
 	$(hide) echo 'gki_signing_key_path=$(BOARD_GKI_SIGNING_KEY_PATH)' >> $@
 	$(hide) echo 'gki_signing_algorithm=$(BOARD_GKI_SIGNING_ALGORITHM)' >> $@
-endif
-ifdef BOARD_GKI_SIGNING_SIGNATURE_ARGS
 	$(hide) echo 'gki_signing_signature_args=$(BOARD_GKI_SIGNING_SIGNATURE_ARGS)' >> $@
 endif
 	$(hide) echo "multistage_support=1" >> $@
