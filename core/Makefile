@@ -4949,6 +4949,10 @@ endef
 # image.
 ifdef BUILDING_SYSTEM_IMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(FULL_SYSTEMIMAGE_DEPS)
+else
+  # releasetools may need the system build.prop even when building a
+  # system-image-less product.
+  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_BUILD_PROP_TARGET)
 endif
 
 ifdef BUILDING_USERDATA_IMAGE
@@ -5195,6 +5199,12 @@ ifdef BUILDING_SYSTEM_IMAGE
 	@# Contents of the system image
 	$(hide) $(call package_files-copy-root, \
 	    $(SYSTEMIMAGE_SOURCE_DIR),$(zip_root)/SYSTEM)
+else ifdef INSTALLED_BUILD_PROP_TARGET
+	@# Copy the system build.prop even if not building a system image
+	@# because add_img_to_target_files may need it to build other partition
+	@# images.
+	$(hide) mkdir -p "$(zip_root)/SYSTEM"
+	$(hide) cp "$(INSTALLED_BUILD_PROP_TARGET)" "$(patsubst $(TARGET_OUT)/%,$(zip_root)/SYSTEM/%,$(INSTALLED_BUILD_PROP_TARGET))"
 endif
 ifdef BUILDING_USERDATA_IMAGE
 	@# Contents of the data image
