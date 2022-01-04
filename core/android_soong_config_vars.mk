@@ -104,6 +104,9 @@ ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
 $(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
 endif
 
+# TODO(b/203088572): Remove when Java optimizations enabled by default for
+# SystemUI.
+$(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
 # TODO(b/196084106): Remove when Java optimizations enabled by default for
 # system packages.
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
