@@ -3546,7 +3546,10 @@ endif # BOARD_USES_PVMFWIMAGE
 # $(INSTALLED_VENDORIMAGE_TARGET)" for "system vendor".
 # (1): list of partitions like "system", "vendor" or "system product system_ext".
 define images-for-partitions
-$(strip $(foreach item,$(1),$(if $(filter $(item),system_other),$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET))))
+$(strip $(foreach item,$(1),\
+  $(if $(filter $(item),system_other),$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),\
+    $(if $(filter $(item),init_boot),$(INSTALLED_INIT_BOOT_IMAGE_TARGET),\
+      $(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET)))))
 endef
 
 # -----------------------------------------------------------------
