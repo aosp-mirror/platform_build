@@ -60,11 +60,11 @@ else
 endif
 
 $(check-vndk-list-timestamp): $(INTERNAL_VNDK_LIB_LIST) $(LATEST_VNDK_LIB_LIST) $(HOST_OUT_EXECUTABLES)/update-vndk-list.sh
-	$(hide) ($(_READ_INTERNAL_VNDK_LIB_LIST) | \
+	$(hide) ($(_READ_INTERNAL_VNDK_LIB_LIST) | sort | \
 	diff --old-line-format="Removed %L" \
 	  --new-line-format="Added %L" \
 	  --unchanged-line-format="" \
-	  $(LATEST_VNDK_LIB_LIST) - \
+	  <(cat $(LATEST_VNDK_LIB_LIST) | sort) - \
 	  || ( echo -e $(_vndk_check_failure_message); exit 1 ))
 	$(hide) mkdir -p $(dir $@)
 	$(hide) touch $@
