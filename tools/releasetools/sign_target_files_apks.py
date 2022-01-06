@@ -520,9 +520,14 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                        compressed_extension):
   # maxsize measures the maximum filename length, including the ones to be
   # skipped.
-  maxsize = max(
-      [len(os.path.basename(i.filename)) for i in input_tf_zip.infolist()
-       if GetApkFileInfo(i.filename, compressed_extension, [])[0]])
+  try:
+    maxsize = max(
+        [len(os.path.basename(i.filename)) for i in input_tf_zip.infolist()
+         if GetApkFileInfo(i.filename, compressed_extension, [])[0]])
+  except ValueError:
+    # Sets this to zero for targets without APK files, e.g., gki_arm64.
+    maxsize = 0
+
   system_root_image = misc_info.get("system_root_image") == "true"
 
   for info in input_tf_zip.infolist():
