@@ -3819,7 +3819,9 @@ ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,vendor_boot))
 endif
 
+ifdef INSTALLED_SYSTEMIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,system))
+endif
 
 ifdef INSTALLED_VENDORIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,vendor))
