@@ -4622,6 +4622,9 @@ else
 endif
 	$(hide) echo "tool_extensions=$(tool_extensions)" >> $@
 	$(hide) echo "default_system_dev_certificate=$(DEFAULT_SYSTEM_DEV_CERTIFICATE)" >> $@
+ifdef PRODUCT_EXTRA_OTA_KEYS
+	$(hide) echo "extra_ota_keys=$(PRODUCT_EXTRA_OTA_KEYS)" >> $@
+endif
 ifdef PRODUCT_EXTRA_RECOVERY_KEYS
 	$(hide) echo "extra_recovery_keys=$(PRODUCT_EXTRA_RECOVERY_KEYS)" >> $@
 endif
