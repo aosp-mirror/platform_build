@@ -299,9 +299,6 @@ ifneq ($(filter fuzzer,$(my_sanitize)),)
   my_sanitize := $(filter-out cfi,$(my_sanitize))
   my_cflags += -fno-lto
   my_ldflags += -fno-lto
-
-  # TODO(b/133876586): Disable experimental pass manager for fuzzer builds.
-  my_cflags += -fno-experimental-new-pass-manager
 endif
 
 ifneq ($(filter integer_overflow,$(my_sanitize)),)

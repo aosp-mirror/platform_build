@@ -65,6 +65,7 @@ _board_strip_readonly_list += TARGET_ARCH_SUITE
 # File system variables
 _board_strip_readonly_list += BOARD_FLASH_BLOCK_SIZE
 _board_strip_readonly_list += BOARD_BOOTIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_RECOVERYIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE
@@ -122,8 +123,48 @@ _board_strip_readonly_list += BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES
 
+# Prebuilt image variables
+_board_strip_readonly_list += BOARD_PREBUILT_INIT_BOOT_IMAGE
+
 # Defines the list of logical vendor ramdisk names to build or include in vendor_boot.
 _board_strip_readonly_list += BOARD_VENDOR_RAMDISK_FRAGMENTS
+
+# These are all variables used to build $(INSTALLED_MISC_INFO_TARGET)
+# in build/make/core/Makefile. Their values get used in command line
+# arguments, so they have to be stripped to make the ninja files stable.
+_board_strip_list :=
+_board_strip_list += BOARD_DTBOIMG_PARTITION_SIZE
+_board_strip_list += BOARD_AVB_DTBO_KEY_PATH
+_board_strip_list += BOARD_AVB_DTBO_ALGORITHM
+_board_strip_list += BOARD_AVB_DTBO_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_PVMFW_KEY_PATH
+_board_strip_list += BOARD_AVB_PVMFW_ALGORITHM
+_board_strip_list += BOARD_AVB_PVMFW_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST
+_board_strip_list += BOARD_BPT_DISK_SIZE
+_board_strip_list += BOARD_BPT_INPUT_FILES
+_board_strip_list += BOARD_BPT_MAKE_TABLE_ARGS
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR_ALGORITHM
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR_KEY_PATH
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM_ALGORITHM
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM_KEY_PATH
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM
+_board_strip_list += BOARD_AVB_RECOVERY_KEY_PATH
+_board_strip_list += BOARD_AVB_RECOVERY_ALGORITHM
+_board_strip_list += BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VENDOR_BOOT_KEY_PATH
+_board_strip_list += BOARD_AVB_VENDOR_BOOT_ALGORITHM
+_board_strip_list += BOARD_AVB_VENDOR_BOOT_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_GKI_SIGNING_SIGNATURE_ARGS
+_board_strip_list += BOARD_GKI_SIGNING_ALGORITHM
+_board_strip_list += BOARD_GKI_SIGNING_KEY_PATH
+_board_strip_list += BOARD_MKBOOTIMG_ARGS
+_board_strip_list += BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE
+_board_strip_list += ODM_MANIFEST_SKUS
+
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
@@ -185,16 +226,6 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
-# Dumps all variables that match [A-Z][A-Z0-9_]* to the file at $(1)
-# It is used to print only the variables that are likely to be relevant to the
-# board configuration.
-define dump-public-variables
-$(file >$(OUT_DIR)/dump-public-variables-temp.txt,$(subst $(space),$(newline),$(.VARIABLES)))\
-$(file >$(1),\
-$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-public-variables-temp.txt | grep -vhe "^SOONG_"),\
-$(v) := $(strip $($(v)))$(newline)))
-endef
-
 # TODO(colefaust) change this if to RBC_PRODUCT_CONFIG when
 # the board configuration is known to work on everything
 # the product config works on.
@@ -202,8 +233,7 @@ ifndef RBC_BOARD_CONFIG
 include $(board_config_mk)
 else
   $(shell mkdir -p $(OUT_DIR)/rbc)
-
-  $(call dump-public-variables, $(OUT_DIR)/rbc/make_vars_pre_board_config.mk)
+  $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_board_config.mk)
 
   $(shell $(OUT_DIR)/soong/mk2rbc \
     --mode=write -r --outdir $(OUT_DIR)/rbc \
@@ -241,6 +271,7 @@ board_config_mk :=
 
 # Clean up and verify BoardConfig variables
 $(foreach var,$(_board_strip_readonly_list),$(eval $(var) := $$(strip $$($(var)))))
+$(foreach var,$(_board_strip_list),$(eval $(var) := $$(strip $$($(var)))))
 $(foreach var,$(_board_true_false_vars), \
   $(if $(filter-out true false,$($(var))), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
@@ -434,6 +465,25 @@ else ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),true)
 endif
 .KATI_READONLY := BUILDING_BOOT_IMAGE
 
+# Are we building an init boot image
+BUILDING_INIT_BOOT_IMAGE :=
+ifeq ($(PRODUCT_BUILD_INIT_BOOT_IMAGE),)
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    BUILDING_INIT_BOOT_IMAGE :=
+  else ifdef BOARD_PREBUILT_INIT_BOOT_IMAGE
+    BUILDING_INIT_BOOT_IMAGE :=
+  else ifdef BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE
+    BUILDING_INIT_BOOT_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_INIT_BOOT_IMAGE),true)
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    $(error PRODUCT_BUILD_INIT_BOOT_IMAGE is true, but so is BOARD_USES_RECOVERY_AS_BOOT. Use only one option.)
+  else
+    BUILDING_INIT_BOOT_IMAGE := true
+  endif
+endif
+.KATI_READONLY := BUILDING_INIT_BOOT_IMAGE
+
 # Are we building a recovery image
 BUILDING_RECOVERY_IMAGE :=
 ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),)
@@ -540,6 +590,11 @@ else ifndef BUILDING_RAMDISK_IMAGE
 else ifndef _has_boot_img_artifact
   ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
     $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we're not building a boot image. \
+      Skip building the debug boot image.)
+  endif
+else ifdef BUILDING_INIT_BOOT_IMAGE
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we don't have a ramdisk in the boot image. \
       Skip building the debug boot image.)
   endif
 else

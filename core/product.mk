@@ -183,6 +183,7 @@ _product_list_vars += PRODUCT_COPY_FILES
 # signing tools can substitute them for the test key embedded by
 # default.
 _product_list_vars += PRODUCT_OTA_PUBLIC_KEYS
+_product_list_vars += PRODUCT_EXTRA_OTA_KEYS
 _product_list_vars += PRODUCT_EXTRA_RECOVERY_KEYS
 
 # Should we use the default resources or add any product specific overlays
@@ -232,9 +233,15 @@ _product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
 _product_single_value_vars += PRODUCT_SUPPORTS_VERITY
 _product_single_value_vars += PRODUCT_SUPPORTS_VERITY_FEC
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
+# List of system_server classpath jars on the platform.
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
-# List of system_server jars delivered via apex. Format = <apex name>:<jar name>.
+# List of system_server classpath jars delivered via apex. Format = <apex name>:<jar name>.
 _product_list_vars += PRODUCT_APEX_SYSTEM_SERVER_JARS
+# List of jars on the platform that system_server loads dynamically using separate classloaders.
+_product_list_vars += PRODUCT_STANDALONE_SYSTEM_SERVER_JARS
+# List of jars delivered via apex that system_server loads dynamically using separate classloaders.
+# Format = <apex name>:<jar name>
+_product_list_vars += PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS
 # If true, then suboptimal order of system server jars does not cause an error.
 _product_single_value_vars += PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS
 # If true, then system server jars defined in Android.mk are supported.
@@ -389,6 +396,7 @@ _product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_USERDATA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RECOVERY_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_INIT_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_DEBUG_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE

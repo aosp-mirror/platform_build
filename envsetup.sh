@@ -252,9 +252,7 @@ function setpaths()
     esac
 
     ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_TOOLCHAIN
-    if [ -n "$ANDROID_TOOLCHAIN_2ND_ARCH" ]; then
-        ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_TOOLCHAIN_2ND_ARCH
-    fi
+    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_TOOLCHAIN_2ND_ARCH
     ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_DEV_SCRIPTS
 
     # Append llvm binutils prebuilts path to ANDROID_BUILD_PATHS.
@@ -287,8 +285,9 @@ function setpaths()
     local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch"
     local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch"
     local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch"
-    export ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH:$AIDEGEN_PATH:$ATEST_PATH:
+    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH:$AIDEGEN_PATH:$ATEST_PATH
 
+    export ANDROID_BUILD_PATHS=$(tr -s : <<<"${ANDROID_BUILD_PATHS}:")
     export PATH=$ANDROID_BUILD_PATHS$PATH
 
     # out with the duplicate old

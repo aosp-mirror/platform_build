@@ -1,0 +1,19 @@
+package_name:  "Android"
+module_classes: "EXECUTABLES"
+projects:  "static/binary"
+license_kinds:  "SPDX-license-identifier-Apache-2.0"
+license_conditions:  "notice"
+license_texts:  "build/soong/licenses/LICENSE"
+is_container:  false
+built:  "out/target/product/fictional/obj/EXECUTABLES/bin_intermediates/bin1"
+installed:  "out/target/product/fictional/system/bin/bin1"
+sources:  "out/target/product/fictional/system/lib/liba.a"
+sources:  "out/target/product/fictional/system/lib/libc.a"
+deps:  {
+  file:  "testdata/restricted/lib/liba.so.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/restricted/lib/libc.a.meta_lic"
+  annotations:  "static"
+}

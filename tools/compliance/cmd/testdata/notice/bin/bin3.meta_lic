@@ -1,0 +1,8 @@
+package_name:  "Compiler"
+module_classes: "EXECUTABLES"
+projects:  "standalone/binary"
+license_kinds:  "SPDX-license-identifier-NCSA"
+license_conditions:  "notice"
+is_container:  false
+built:  "out/target/product/fictional/obj/EXECUTABLES/bin_intermediates/bin3"
+installed:  "out/target/product/fictional/system/bin/bin3"

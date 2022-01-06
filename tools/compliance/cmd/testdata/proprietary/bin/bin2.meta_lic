@@ -1,0 +1,19 @@
+package_name:  "Android"
+module_classes: "EXECUTABLES"
+projects:  "dynamic/binary"
+license_kinds:  "legacy_proprietary"
+license_conditions:  "proprietary"
+license_conditions:  "by_exception_only"
+is_container:  false
+built:  "out/target/product/fictional/obj/EXECUTABLES/bin_intermediates/bin1"
+installed:  "out/target/product/fictional/system/bin/bin1"
+sources:  "out/target/product/fictional/system/lib/libb.so"
+sources:  "out/target/product/fictional/system/lib/libd.so"
+deps:  {
+  file:  "testdata/proprietary/lib/libb.so.meta_lic"
+  annotations:  "dynamic"
+}
+deps:  {
+  file:  "testdata/proprietary/lib/libd.so.meta_lic"
+  annotations:  "dynamic"
+}
