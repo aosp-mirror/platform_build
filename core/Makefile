@@ -4863,14 +4863,16 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_OTA_TOOLS := $(built_ota_tools)
 tool_extension := $(wildcard $(tool_extensions)/releasetools.py)
 $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSION := $(tool_extension)
 
+updaer_dep :=
 ifeq ($(AB_OTA_UPDATER),true)
-updater_dep := system/update_engine/update_engine.conf
-updater_dep := external/zucchini/version_info.h
+updater_dep += system/update_engine/update_engine.conf
+updater_dep += external/zucchini/version_info.h
+updater_dep += $(HOST_OUT_SHARED_LIBRARIES)/liblz4.so
 endif
 
 # Build OTA tools if non-A/B is allowed
 ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
-updater_dep := $(built_ota_tools)
+updater_dep += $(built_ota_tools)
 endif
 
 $(BUILT_TARGET_FILES_PACKAGE): $(updater_dep)
@@ -5351,6 +5353,7 @@ ifeq ($(AB_OTA_UPDATER),true)
 	@# When using the A/B updater, include the updater config files in the zip.
 	$(hide) cp $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
 	$(hide) cp $(TOPDIR)external/zucchini/version_info.h $(zip_root)/META/zucchini_config.txt
+	$(hide) cp $(HOST_OUT_SHARED_LIBRARIES)/liblz4.so $(zip_root)/META/liblz4.so
 	$(hide) for part in $(strip $(AB_OTA_PARTITIONS)); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
