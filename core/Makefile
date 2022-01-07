@@ -784,6 +784,7 @@ INSTALLED_FILES_JSON_ROOT := $(INSTALLED_FILES_FILE_ROOT:.txt=.json)
 $(INSTALLED_FILES_FILE_ROOT): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_ROOT)
 $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
+	mkdir -p $(TARGET_ROOT_OUT)
 	mkdir -p $(dir $@)
 	rm -f $@
 	$(FILESLIST) $(TARGET_ROOT_OUT) > $(@:.txt=.json)
@@ -3819,7 +3820,9 @@ ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,vendor_boot))
 endif
 
+ifdef INSTALLED_SYSTEMIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,system))
+endif
 
 ifdef INSTALLED_VENDORIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,vendor))
@@ -4620,6 +4623,9 @@ else
 endif
 	$(hide) echo "tool_extensions=$(tool_extensions)" >> $@
 	$(hide) echo "default_system_dev_certificate=$(DEFAULT_SYSTEM_DEV_CERTIFICATE)" >> $@
+ifdef PRODUCT_EXTRA_OTA_KEYS
+	$(hide) echo "extra_ota_keys=$(PRODUCT_EXTRA_OTA_KEYS)" >> $@
+endif
 ifdef PRODUCT_EXTRA_RECOVERY_KEYS
 	$(hide) echo "extra_recovery_keys=$(PRODUCT_EXTRA_RECOVERY_KEYS)" >> $@
 endif
