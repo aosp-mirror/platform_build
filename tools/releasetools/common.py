@@ -73,6 +73,7 @@ class Options(object):
         self.search_path = os.environ["ANDROID_HOST_OUT"]
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
     self.extra_signapk_args = []
+    self.aapt2_path = "aapt2"
     self.java_path = "java"  # Use the one on the path by default.
     self.java_args = ["-Xmx2048m"]  # The default JVM args.
     self.android_jar_path = None
@@ -2162,8 +2163,8 @@ def GetKeyPasswords(keylist):
 def GetMinSdkVersion(apk_name):
   """Gets the minSdkVersion declared in the APK.
 
-  It calls 'aapt2' to query the embedded minSdkVersion from the given APK file.
-  This can be both a decimal number (API Level) or a codename.
+  It calls OPTIONS.aapt2_path to query the embedded minSdkVersion from the given
+  APK file. This can be both a decimal number (API Level) or a codename.
 
   Args:
     apk_name: The APK filename.
@@ -2175,7 +2176,7 @@ def GetMinSdkVersion(apk_name):
     ExternalError: On failing to obtain the min SDK version.
   """
   proc = Run(
-      ["aapt2", "dump", "badging", apk_name], stdout=subprocess.PIPE,
+      [OPTIONS.aapt2_path, "dump", "badging", apk_name], stdout=subprocess.PIPE,
       stderr=subprocess.PIPE)
   stdoutdata, stderrdata = proc.communicate()
   if proc.returncode != 0:
@@ -2451,7 +2452,7 @@ def ParseOptions(argv,
     opts, args = getopt.getopt(
         argv, "hvp:s:x:" + extra_opts,
         ["help", "verbose", "path=", "signapk_path=",
-         "signapk_shared_library_path=", "extra_signapk_args=",
+         "signapk_shared_library_path=", "extra_signapk_args=", "aapt2_path=",
          "java_path=", "java_args=", "android_jar_path=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
@@ -2475,6 +2476,8 @@ def ParseOptions(argv,
       OPTIONS.signapk_shared_library_path = a
     elif o in ("--extra_signapk_args",):
       OPTIONS.extra_signapk_args = shlex.split(a)
+    elif o in ("--aapt2_path",):
+      OPTIONS.aapt2_path = a
     elif o in ("--java_path",):
       OPTIONS.java_path = a
     elif o in ("--java_args",):
