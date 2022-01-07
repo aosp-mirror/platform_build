@@ -1699,8 +1699,8 @@ def _SignBootableImage(image_path, prebuilt_name, partition_name,
   Args:
     image_path: The full path of the image, e.g., /path/to/boot.img.
     prebuilt_name: The prebuilt image name, e.g., boot.img, boot-5.4-gz.img,
-        boot-5.10.img, recovery.img.
-    partition_name: The partition name, e.g., 'boot' or 'recovery'.
+        boot-5.10.img, recovery.img or init_boot.img.
+    partition_name: The partition name, e.g., 'boot', 'init_boot' or 'recovery'.
     info_dict: The information dict read from misc_info.txt.
   """
   if info_dict is None:
@@ -1724,6 +1724,35 @@ def _SignBootableImage(image_path, prebuilt_name, partition_name,
     RunAndCheckOutput(cmd)
 
 
+def HasRamdisk(partition_name, info_dict=None):
+  """Returns true/false to see if a bootable image should have a ramdisk.
+
+  Args:
+    partition_name: The partition name, e.g., 'boot', 'init_boot' or 'recovery'.
+    info_dict: The information dict read from misc_info.txt.
+  """
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  if partition_name != "boot":
+    return True  # init_boot.img or recovery.img has a ramdisk.
+
+  if info_dict.get("recovery_as_boot") == "true":
+    return True  # the recovery-as-boot boot.img has a RECOVERY ramdisk.
+
+  if info_dict.get("system_root_image") == "true":
+    # The ramdisk content is merged into the system.img, so there is NO
+    # ramdisk in the boot.img or boot-<kernel version>.img.
+    return False
+
+  if info_dict.get("init_boot") == "true":
+    # The ramdisk is moved to the init_boot.img, so there is NO
+    # ramdisk in the boot.img or boot-<kernel version>.img.
+    return False
+
+  return True
+
+
 def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
                      info_dict=None, two_step_image=False):
   """Return a File object with the desired bootable image.
@@ -1745,25 +1774,18 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
     logger.info("using prebuilt %s from IMAGES...", prebuilt_name)
     return File.FromLocalFile(name, prebuilt_path)
 
+  partition_name = tree_subdir.lower()
   prebuilt_path = os.path.join(unpack_dir, "PREBUILT_IMAGES", prebuilt_name)
   if os.path.exists(prebuilt_path):
     logger.info("Re-signing prebuilt %s from PREBUILT_IMAGES...", prebuilt_name)
     signed_img = MakeTempFile()
     shutil.copy(prebuilt_path, signed_img)
-    partition_name = tree_subdir.lower()
     _SignBootableImage(signed_img, prebuilt_name, partition_name, info_dict)
     return File.FromLocalFile(name, signed_img)
 
   logger.info("building image from target_files %s...", tree_subdir)
 
-  # With system_root_image == "true", we don't pack ramdisk into the boot image.
-  # With init_boot == "true", we don't pack the ramdisk into boot.img.
-  # Unless "recovery_as_boot" is specified, in which case we carry the ramdisk
-  # for recovery.
-  has_ramdisk = ((info_dict.get("system_root_image") != "true" and
-                  info_dict.get("init_boot") != "true") or
-                 prebuilt_name != "boot.img" or
-                 info_dict.get("recovery_as_boot") == "true")
+  has_ramdisk = HasRamdisk(partition_name, info_dict)
 
   fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
   data = _BuildBootableImage(prebuilt_name, os.path.join(unpack_dir, tree_subdir),
