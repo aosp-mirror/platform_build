@@ -3892,7 +3892,10 @@ def GetCareMap(which, imgname):
   disable_sparse = OPTIONS.info_dict.get(which + "_disable_sparse")
 
   image_blocks = int(image_size) // 4096 - 1
-  assert image_blocks > 0, "blocks for {} must be positive".format(which)
+  # It's OK for image_blocks to be 0, because care map ranges are inclusive.
+  # So 0-0 means "just block 0", which is valid.
+  assert image_blocks >= 0, "blocks for {} must be non-negative, image size: {}".format(
+      which, image_size)
 
   # For sparse images, we will only check the blocks that are listed in the care
   # map, i.e. the ones with meaningful data.
