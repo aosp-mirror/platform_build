@@ -178,6 +178,7 @@ class FSVerityMetadataGenerator:
           out.write(sig)
       else:
         out.write(pack('<I', SIG_TYPE_NONE))
+        out.write(pack('<I', 0))
 
       # 4. merkle tree
       with open(merkletree_file, 'rb') as f:
