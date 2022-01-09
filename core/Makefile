@@ -527,16 +527,6 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,,$(kmd)))))
 
 # -----------------------------------------------------------------
-# FSVerity metadata generation
-ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
-
-FSVERITY_APK_KEY_PATH := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
-FSVERITY_APK_OUT := system/etc/security/fsverity/BuildManifest.apk
-FSVERITY_APK_MANIFEST_PATH := system/security/fsverity/AndroidManifest.xml
-
-endif # PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
-
-# -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
 # $1 stem name of the package
@@ -784,6 +774,7 @@ INSTALLED_FILES_JSON_ROOT := $(INSTALLED_FILES_FILE_ROOT:.txt=.json)
 $(INSTALLED_FILES_FILE_ROOT): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_ROOT)
 $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
+	mkdir -p $(TARGET_ROOT_OUT)
 	mkdir -p $(dir $@)
 	rm -f $@
 	$(FILESLIST) $(TARGET_ROOT_OUT) > $(@:.txt=.json)
@@ -1743,11 +1734,6 @@ define generate-image-prop-dictionary
 $(if $(filter $(2),system),\
     $(if $(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE),$(hide) echo "system_other_size=$(INTERNAL_SYSTEM_OTHER_PARTITION_SIZE)" >> $(1))
     $(if $(PRODUCT_SYSTEM_HEADROOM),$(hide) echo "system_headroom=$(PRODUCT_SYSTEM_HEADROOM)" >> $(1))
-    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity=$(HOST_OUT_EXECUTABLES)/fsverity" >> $(1))
-    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_generate_metadata=true" >> $(1))
-    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_apk_key=$(FSVERITY_APK_KEY_PATH)" >> $(1))
-    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_apk_manifest=$(FSVERITY_APK_MANIFEST_PATH)" >> $(1))
-    $(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),$(hide) echo "fsverity_apk_out=$(FSVERITY_APK_OUT)" >> $(1))
     $(call add-common-ro-flags-to-image-props,system,$(1))
 )
 $(if $(filter $(2),system_other),\
@@ -2309,7 +2295,7 @@ define build-recoveryimage-target
                  $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_RECOVERY_MKBOOTIMG_ARGS) \
                  --output $(1).unsigned, \
     $(MKBOOTIMG) $(if $(strip $(2)),--kernel $(strip $(2))) $(INTERNAL_RECOVERYIMAGE_ARGS) \
-                 $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(INTERNAL_MKBOOTIMG_GKI_SINGING_ARGS) \
+                 $(INTERNAL_MKBOOTIMG_VERSION_ARGS) \
                  $(BOARD_RECOVERY_MKBOOTIMG_ARGS) --output $(1))
   $(if $(filter true,$(PRODUCT_SUPPORTS_BOOT_SIGNER)),\
     $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
@@ -2337,9 +2323,6 @@ ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
 endif
 ifeq (true,$(BOARD_AVB_ENABLE))
   recoveryimage-deps += $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
-endif
-ifdef BOARD_GKI_SIGNING_KEY_PATH
-  recoveryimage-deps += $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
   ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
@@ -2504,17 +2487,17 @@ endef
 define build-debug-bootimage-target
   $(MKBOOTIMG) --kernel $(PRODUCT_OUT)/$(subst .img,,$(subst boot-debug,kernel,$(notdir $(1)))) \
     $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) \
-    $(INTERNAL_MKBOOTIMG_GKI_SINGING_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $1
+    $(BOARD_MKBOOTIMG_ARGS) --output $1
   $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$1,boot-debug))
 endef
 
 # Depends on original boot.img and ramdisk-debug.img, to build the new boot-debug.img
-$(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
+$(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) $(AVBTOOL)
 	$(call pretty,"Target boot debug image: $@")
 	$(call build-debug-bootimage-target, $@)
 
 .PHONY: bootimage_debug-nodeps
-bootimage_debug-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
+bootimage_debug-nodeps: $(MKBOOTIMG) $(AVBTOOL)
 	echo "make $@: ignoring dependencies"
 	$(foreach b,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(call build-debug-bootimage-target,$b))
 
@@ -2681,17 +2664,17 @@ endif
 define build-boot-test-harness-target
   $(MKBOOTIMG) --kernel $(PRODUCT_OUT)/$(subst .img,,$(subst boot-test-harness,kernel,$(notdir $(1)))) \
     $(INTERNAL_TEST_HARNESS_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) \
-    $(INTERNAL_MKBOOTIMG_GKI_SINGING_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
+    $(BOARD_MKBOOTIMG_ARGS) --output $@
   $(if $(BOARD_AVB_BOOT_KEY_PATH),$(call test-key-sign-bootimage,$@,boot-test-harness))
 endef
 
 # Build the new boot-test-harness.img, based on boot-debug.img and ramdisk-test-harness.img.
-$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
+$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) $(AVBTOOL)
 	$(call pretty,"Target boot test harness image: $@")
 	$(call build-boot-test-harness-target,$@)
 
 .PHONY: bootimage_test_harness-nodeps
-bootimage_test_harness-nodeps: $(MKBOOTIMG) $(BOARD_GKI_SIGNING_KEY_PATH) $(AVBTOOL)
+bootimage_test_harness-nodeps: $(MKBOOTIMG) $(AVBTOOL)
 	echo "make $@: ignoring dependencies"
 	$(foreach b,$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET),$(call build-boot-test-harness-target,$b))
 
@@ -2766,6 +2749,56 @@ endef
 
 # -----------------------------------------------------------------
 # system image
+
+# FSVerity metadata generation
+# Generate fsverity metadata files (.fsv_meta) and build manifest
+# (system/etc/security/fsverity/BuildManifest.apk) BEFORE filtering systemimage files below
+ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
+
+# Generate fsv_meta
+fsverity-metadata-targets := $(sort $(filter \
+  $(TARGET_OUT)/framework/%.jar \
+  $(foreach arch,$(TARGET_ARCH) $(TARGET_2ND_ARCH),$(foreach ext,oat vdex art, \
+    $(TARGET_OUT)/framework/oat/$(arch)/%.$(ext))) \
+  $(TARGET_OUT)/etc/boot-image.prof \
+  $(TARGET_OUT)/etc/dirty-image-objects \
+  $(TARGET_OUT)/etc/updatable-bcp-packages.txt, \
+  $(ALL_GENERATED_SOURCES) $(ALL_DEFAULT_INSTALLED_MODULES)))
+
+define fsverity-generate-metadata
+$(1).fsv_meta: PRIVATE_SRC := $(1)
+$(1).fsv_meta: PRIVATE_FSVERITY := $(HOST_OUT_EXECUTABLES)/fsverity
+$(1).fsv_meta: $(HOST_OUT_EXECUTABLES)/fsverity_metadata_generator $(HOST_OUT_EXECUTABLES)/fsverity $(1)
+	$$< --fsverity-path $$(PRIVATE_FSVERITY) --signature none \
+	    --hash-alg sha256 --output $$@ $$(PRIVATE_SRC)
+endef
+
+$(foreach f,$(fsverity-metadata-targets),$(eval $(call fsverity-generate-metadata,$(f))))
+ALL_DEFAULT_INSTALLED_MODULES += $(addsuffix .fsv_meta,$(fsverity-metadata-targets))
+
+# Generate BuildManifest.apk
+FSVERITY_APK_KEY_PATH := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
+FSVERITY_APK_OUT := $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk
+FSVERITY_APK_MANIFEST_PATH := system/security/fsverity/AndroidManifest.xml
+$(FSVERITY_APK_OUT): PRIVATE_FSVERITY := $(HOST_OUT_EXECUTABLES)/fsverity
+$(FSVERITY_APK_OUT): PRIVATE_AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
+$(FSVERITY_APK_OUT): PRIVATE_APKSIGNER := $(HOST_OUT_EXECUTABLES)/apksigner
+$(FSVERITY_APK_OUT): PRIVATE_MANIFEST := $(FSVERITY_APK_MANIFEST_PATH)
+$(FSVERITY_APK_OUT): PRIVATE_KEY := $(FSVERITY_APK_KEY_PATH)
+$(FSVERITY_APK_OUT): PRIVATE_INPUTS := $(fsverity-metadata-targets)
+$(FSVERITY_APK_OUT): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
+    $(HOST_OUT_EXECUTABLES)/fsverity $(HOST_OUT_EXECUTABLES)/aapt2 \
+    $(HOST_OUT_EXECUTABLES)/apksigner $(FSVERITY_APK_MANIFEST_PATH) \
+    $(FSVERITY_APK_KEY_PATH).x509.pem $(FSVERITY_APK_KEY_PATH).pk8 \
+    $(fsverity-metadata-targets)
+	$< --fsverity-path $(PRIVATE_FSVERITY) --aapt2-path $(PRIVATE_AAPT2) \
+	    --apksigner-path $(PRIVATE_APKSIGNER) --apk-key-path $(PRIVATE_KEY) \
+	    --apk-manifest-path $(PRIVATE_MANIFEST) --output $@ \
+	    --base-dir $(PRODUCT_OUT) $(PRIVATE_INPUTS)
+
+ALL_DEFAULT_INSTALLED_MODULES += $(FSVERITY_APK_OUT)
+
+endif  # PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
 
 INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
     $(ALL_GENERATED_SOURCES) \
@@ -2865,10 +2898,6 @@ endef
 
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
-endif
-ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
-$(BUILT_SYSTEMIMAGE): $(HOST_OUT_EXECUTABLES)/fsverity $(HOST_OUT_EXECUTABLES)/aapt2 $(HOST_OUT_EXECUTABLES)/apksigner \
-    $(FSVERITY_APK_MANIFEST_PATH) $(FSVERITY_APK_KEY_PATH).x509.pem $(FSVERITY_APK_KEY_PATH).pk8
 endif
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
 	$(call build-systemimage-target,$@)
@@ -3546,7 +3575,10 @@ endif # BOARD_USES_PVMFWIMAGE
 # $(INSTALLED_VENDORIMAGE_TARGET)" for "system vendor".
 # (1): list of partitions like "system", "vendor" or "system product system_ext".
 define images-for-partitions
-$(strip $(foreach item,$(1),$(if $(filter $(item),system_other),$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET))))
+$(strip $(foreach item,$(1),\
+  $(if $(filter $(item),system_other),$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),\
+    $(if $(filter $(item),init_boot),$(INSTALLED_INIT_BOOT_IMAGE_TARGET),\
+      $(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET)))))
 endef
 
 # -----------------------------------------------------------------
@@ -3819,7 +3851,9 @@ ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,vendor_boot))
 endif
 
+ifdef INSTALLED_SYSTEMIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,system))
+endif
 
 ifdef INSTALLED_VENDORIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,vendor))
@@ -4620,6 +4654,9 @@ else
 endif
 	$(hide) echo "tool_extensions=$(tool_extensions)" >> $@
 	$(hide) echo "default_system_dev_certificate=$(DEFAULT_SYSTEM_DEV_CERTIFICATE)" >> $@
+ifdef PRODUCT_EXTRA_OTA_KEYS
+	$(hide) echo "extra_ota_keys=$(PRODUCT_EXTRA_OTA_KEYS)" >> $@
+endif
 ifdef PRODUCT_EXTRA_RECOVERY_KEYS
 	$(hide) echo "extra_recovery_keys=$(PRODUCT_EXTRA_RECOVERY_KEYS)" >> $@
 endif
@@ -4630,8 +4667,6 @@ endif
 ifdef BOARD_GKI_SIGNING_KEY_PATH
 	$(hide) echo 'gki_signing_key_path=$(BOARD_GKI_SIGNING_KEY_PATH)' >> $@
 	$(hide) echo 'gki_signing_algorithm=$(BOARD_GKI_SIGNING_ALGORITHM)' >> $@
-endif
-ifdef BOARD_GKI_SIGNING_SIGNATURE_ARGS
 	$(hide) echo 'gki_signing_signature_args=$(BOARD_GKI_SIGNING_SIGNATURE_ARGS)' >> $@
 endif
 	$(hide) echo "multistage_support=1" >> $@
@@ -4949,6 +4984,10 @@ endef
 # image.
 ifdef BUILDING_SYSTEM_IMAGE
   $(BUILT_TARGET_FILES_PACKAGE): $(FULL_SYSTEMIMAGE_DEPS)
+else
+  # releasetools may need the system build.prop even when building a
+  # system-image-less product.
+  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_BUILD_PROP_TARGET)
 endif
 
 ifdef BUILDING_USERDATA_IMAGE
@@ -5195,6 +5234,12 @@ ifdef BUILDING_SYSTEM_IMAGE
 	@# Contents of the system image
 	$(hide) $(call package_files-copy-root, \
 	    $(SYSTEMIMAGE_SOURCE_DIR),$(zip_root)/SYSTEM)
+else ifdef INSTALLED_BUILD_PROP_TARGET
+	@# Copy the system build.prop even if not building a system image
+	@# because add_img_to_target_files may need it to build other partition
+	@# images.
+	$(hide) mkdir -p "$(zip_root)/SYSTEM"
+	$(hide) cp "$(INSTALLED_BUILD_PROP_TARGET)" "$(patsubst $(TARGET_OUT)/%,$(zip_root)/SYSTEM/%,$(INSTALLED_BUILD_PROP_TARGET))"
 endif
 ifdef BUILDING_USERDATA_IMAGE
 	@# Contents of the data image
@@ -5330,11 +5375,11 @@ ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
 	$(hide) cp $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
 ifdef BOARD_PREBUILT_INIT_BOOT_IMAGE
-	$(hide) mkdir -p $(zip_root)/IMAGES
-	$(hide) cp $(INSTALLED_INIT_BOOT_IMAGE_TARGET) $(zip_root)/IMAGES/
+	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
+	$(hide) cp $(INSTALLED_INIT_BOOT_IMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 endif
 ifndef BOARD_PREBUILT_BOOTIMAGE
-ifneq (,$(INTERNAL_PREBUILT_BOOTIMAGE) $(filter true,$(BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES)))
+ifneq (,$(strip $(INTERNAL_PREBUILT_BOOTIMAGE) $(filter true,$(BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES))))
 ifdef INSTALLED_BOOTIMAGE_TARGET
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_BOOTIMAGE_TARGET) $(zip_root)/IMAGES/

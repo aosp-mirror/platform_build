@@ -97,6 +97,14 @@ LOCAL_MANIFEST_PACKAGE_NAME := $(override_manifest_name)
 endif
 
 include $(BUILD_SYSTEM)/force_aapt2.mk
+# validate that app contains a manifest file for aapt2
+ifeq (,$(strip $(LOCAL_MANIFEST_FILE)$(LOCAL_FULL_MANIFEST_FILE)))
+  ifeq (,$(wildcard $(LOCAL_PATH)/AndroidManifest.xml))
+    $(call pretty-error,App missing manifest file which is required by aapt2. \
+Provide a manifest file by either setting LOCAL_MANIFEST_FILE in Android.mk \
+or via a AndroidManifest.xml in this directory)
+  endif
+endif
 
 # Process Support Library dependencies.
 include $(BUILD_SYSTEM)/support_libraries.mk
