@@ -183,6 +183,7 @@ _product_list_vars += PRODUCT_COPY_FILES
 # signing tools can substitute them for the test key embedded by
 # default.
 _product_list_vars += PRODUCT_OTA_PUBLIC_KEYS
+_product_list_vars += PRODUCT_EXTRA_OTA_KEYS
 _product_list_vars += PRODUCT_EXTRA_RECOVERY_KEYS
 
 # Should we use the default resources or add any product specific overlays
@@ -444,7 +445,7 @@ _product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
 
 # Install a copy of the debug policy to the system_ext partition, and allow
 # init-second-stage to load debug policy from system_ext.
-# This option is only meant to be set by GSI products.
+# This option is only meant to be set by compliance GSI targets.
 _product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 
 # If set, metadata files for the following artifacts will be generated.
