@@ -51,6 +51,14 @@ if __name__ == '__main__':
       help='path to the aapt2 program',
       required=True)
   p.add_argument(
+      '--min-sdk-version',
+      help='minimum supported sdk version of the generated manifest apk',
+      required=True)
+  p.add_argument(
+      '--framework-res',
+      help='path to framework-res.apk',
+      required=True)
+  p.add_argument(
       '--apksigner-path',
       help='path to the apksigner program',
       required=True)
@@ -89,6 +97,8 @@ if __name__ == '__main__':
   common.RunAndCheckOutput([args.aapt2_path, "link",
       "-A", os.path.join(temp_dir, "assets"),
       "-o", args.output,
+      "--min-sdk-version", args.min_sdk_version,
+      "-I", args.framework_res,
       "--manifest", args.apk_manifest_path])
   common.RunAndCheckOutput([args.apksigner_path, "sign", "--in", args.output,
       "--cert", args.apk_key_path + ".x509.pem",
