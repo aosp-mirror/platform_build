@@ -28,8 +28,8 @@ func NewLicenseConditionSet(conditions ...LicenseCondition) *LicenseConditionSet
 // LicenseConditionSet describes a mutable set of immutable license conditions.
 type LicenseConditionSet struct {
 	// conditions describes the set of license conditions i.e. (condition name, origin target) pairs
-	// by mapping condition name -> origin target -> true.
-	conditions map[string]map[*TargetNode]bool
+	// by mapping condition name -> origin target -> struct{}{}.
+	conditions map[string]map[*TargetNode]struct{}
 }
 
 // Add makes all `conditions` members of the set if they were not previously.
@@ -39,9 +39,9 @@ func (cs *LicenseConditionSet) Add(conditions ...LicenseCondition) {
 	}
 	for _, lc := range conditions {
 		if _, ok := cs.conditions[lc.name]; !ok {
-			cs.conditions[lc.name] = make(map[*TargetNode]bool)
+			cs.conditions[lc.name] = make(map[*TargetNode]struct{})
 		}
-		cs.conditions[lc.name][lc.origin] = true
+		cs.conditions[lc.name][lc.origin] = struct{}{}
 	}
 }
 
@@ -55,7 +55,7 @@ func (cs *LicenseConditionSet) AddSet(other *LicenseConditionSet) {
 			continue
 		}
 		if _, ok := cs.conditions[name]; !ok {
-			cs.conditions[name] = make(map[*TargetNode]bool)
+			cs.conditions[name] = make(map[*TargetNode]struct{})
 		}
 		for origin := range origins {
 			cs.conditions[name][origin] = other.conditions[name][origin]
@@ -69,9 +69,9 @@ func (cs *LicenseConditionSet) ByName(names ...ConditionNames) *LicenseCondition
 	for _, cn := range names {
 		for _, name := range cn {
 			if origins, ok := cs.conditions[name]; ok {
-				other.conditions[name] = make(map[*TargetNode]bool)
+				other.conditions[name] = make(map[*TargetNode]struct{})
 				for origin := range origins {
-					other.conditions[name][origin] = true
+					other.conditions[name][origin] = struct{}{}
 				}
 			}
 		}
@@ -111,8 +111,8 @@ func (cs *LicenseConditionSet) ByOrigin(origin *TargetNode) *LicenseConditionSet
 	other := newLicenseConditionSet()
 	for name, origins := range cs.conditions {
 		if _, ok := origins[origin]; ok {
-			other.conditions[name] = make(map[*TargetNode]bool)
-			other.conditions[name][origin] = true
+			other.conditions[name] = make(map[*TargetNode]struct{})
+			other.conditions[name][origin] = struct{}{}
 		}
 	}
 	return other
@@ -172,7 +172,7 @@ func (cs *LicenseConditionSet) Count() int {
 func (cs *LicenseConditionSet) Copy() *LicenseConditionSet {
 	other := newLicenseConditionSet()
 	for name := range cs.conditions {
-		other.conditions[name] = make(map[*TargetNode]bool)
+		other.conditions[name] = make(map[*TargetNode]struct{})
 		for origin := range cs.conditions[name] {
 			other.conditions[name][origin] = cs.conditions[name][origin]
 		}
@@ -241,16 +241,16 @@ func (cs *LicenseConditionSet) RemoveSet(other *LicenseConditionSet) {
 
 // newLicenseConditionSet constructs a set of `conditions`.
 func newLicenseConditionSet() *LicenseConditionSet {
-	return &LicenseConditionSet{make(map[string]map[*TargetNode]bool)}
+	return &LicenseConditionSet{make(map[string]map[*TargetNode]struct{})}
 }
 
 // add changes the set to include each element of `conditions` originating at `origin`.
 func (cs *LicenseConditionSet) add(origin *TargetNode, conditions ...string) {
 	for _, name := range conditions {
 		if _, ok := cs.conditions[name]; !ok {
-			cs.conditions[name] = make(map[*TargetNode]bool)
+			cs.conditions[name] = make(map[*TargetNode]struct{})
 		}
-		cs.conditions[name][origin] = true
+		cs.conditions[name][origin] = struct{}{}
 	}
 }
 

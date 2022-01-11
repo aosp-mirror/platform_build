@@ -117,10 +117,10 @@ func (rs *ResolutionSet) AttachesTo() TargetNodeList {
 // ActsOn identifies the list of targets to act on (share, give notice etc.)
 // to resolve conditions. (unordered)
 func (rs *ResolutionSet) ActsOn() TargetNodeList {
-	tset := make(map[*TargetNode]bool)
+	tset := make(map[*TargetNode]struct{})
 	for _, as := range rs.resolutions {
 		for actsOn := range as {
-			tset[actsOn] = true
+			tset[actsOn] = struct{}{}
 		}
 	}
 	targets := make(TargetNodeList, 0, len(tset))
@@ -133,12 +133,12 @@ func (rs *ResolutionSet) ActsOn() TargetNodeList {
 // Origins identifies the list of targets originating conditions to resolve.
 // (unordered)
 func (rs *ResolutionSet) Origins() TargetNodeList {
-	tset := make(map[*TargetNode]bool)
+	tset := make(map[*TargetNode]struct{})
 	for _, as := range rs.resolutions {
 		for _, cs := range as {
 			for _, origins := range cs.conditions {
 				for origin := range origins {
-					tset[origin] = true
+					tset[origin] = struct{}{}
 				}
 			}
 		}
@@ -189,11 +189,11 @@ func (rs *ResolutionSet) ResolutionsByActsOn(actOn *TargetNode) ResolutionList {
 // AttachesToByOrigin identifies the list of targets requiring action to
 // resolve conditions originating at `origin`. (unordered)
 func (rs *ResolutionSet) AttachesToByOrigin(origin *TargetNode) TargetNodeList {
-	tset := make(map[*TargetNode]bool)
+	tset := make(map[*TargetNode]struct{})
 	for attachesTo, as := range rs.resolutions {
 		for _, cs := range as {
 			if cs.HasAnyByOrigin(origin) {
-				tset[attachesTo] = true
+				tset[attachesTo] = struct{}{}
 				break
 			}
 		}

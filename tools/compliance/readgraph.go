@@ -191,7 +191,7 @@ func addDependencies(edges *[]*dependencyEdge, target string, dependencies []*li
 			// look up a common constant annotation string from a small map
 			// instead of creating 1000's of copies of the same 3 strings.
 			if ann, ok := RecognizedAnnotations[a]; ok {
-				annotations.annotations[ann] = true
+				annotations.annotations[ann] = struct{}{}
 			}
 		}
 		*edges = append(*edges, &dependencyEdge{target, dependency, annotations})

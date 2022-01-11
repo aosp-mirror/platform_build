@@ -387,12 +387,12 @@ type InstallMap struct {
 // Annotations typically distinguish between static linkage versus dynamic
 // versus tools that are used at build time but are not linked in any way.
 type TargetEdgeAnnotations struct {
-	annotations map[string]bool
+	annotations map[string]struct{}
 }
 
 // newEdgeAnnotations creates a new instance of TargetEdgeAnnotations.
 func newEdgeAnnotations() TargetEdgeAnnotations {
-	return TargetEdgeAnnotations{make(map[string]bool)}
+	return TargetEdgeAnnotations{make(map[string]struct{})}
 }
 
 // HasAnnotation returns true if an annotation `ann` is in the set.
@@ -439,7 +439,7 @@ func (ea TargetEdgeAnnotations) AsList() []string {
 
 // TargetNodeSet describes a set of distinct nodes in a license graph.
 type TargetNodeSet struct {
-	nodes map[*TargetNode]bool
+	nodes map[*TargetNode]struct{}
 }
 
 // Contains returns true when `target` is an element of the set.
