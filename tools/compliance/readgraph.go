@@ -80,7 +80,7 @@ func ReadLicenseGraph(rootFS fs.FS, stderr io.Writer, files []string) (*LicenseG
 
 	lg := newLicenseGraph()
 	for _, f := range files {
-		if strings.HasSuffix(f, ".meta_lic") {
+		if strings.HasSuffix(f, "meta_lic") {
 			lg.rootFiles = append(lg.rootFiles, f)
 		} else {
 			lg.rootFiles = append(lg.rootFiles, f+".meta_lic")
