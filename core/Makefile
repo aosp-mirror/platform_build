@@ -1097,7 +1097,7 @@ ifdef BOARD_KERNEL_PAGESIZE
 endif
 
 ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_IMAGE_KEY_PATH)
+$(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_KEY_PATH)
 	$(call pretty,"Target init_boot image: $@")
 	$(MKBOOTIMG) $(INTERNAL_INIT_BOOT_IMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_INIT_ARGS) --output $@
 	$(call assert-max-image-size,$@,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE))
@@ -3700,6 +3700,10 @@ BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
     --prop com.android.build.boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
 
+BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.init_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
+    --prop com.android.build.init_boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+
 BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.vendor_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
 
@@ -3734,6 +3738,12 @@ BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
 ifdef BOOT_SECURITY_PATCH
 BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.security_patch:$(BOOT_SECURITY_PATCH)
+endif
+
+ifdef INIT_BOOT_SECURITY_PATCH
+BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.init_boot.security_patch:$(INIT_BOOT_SECURITY_PATCH)
+else ifdef BOOT_SECURITY_PATCH
 BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.init_boot.security_patch:$(BOOT_SECURITY_PATCH)
 endif
@@ -4707,6 +4717,12 @@ ifdef BOARD_AVB_BOOT_KEY_PATH
 	$(hide) echo "avb_boot_algorithm=$(BOARD_AVB_BOOT_ALGORITHM)" >> $@
 	$(hide) echo "avb_boot_rollback_index_location=$(BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION)" >> $@
 endif # BOARD_AVB_BOOT_KEY_PATH
+	$(hide) echo "avb_init_boot_add_hash_footer_args=$(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS)" >> $@
+ifdef BOARD_AVB_INIT_BOOT_KEY_PATH
+	$(hide) echo "avb_init_boot_key_path=$(BOARD_AVB_INIT_BOOT_KEY_PATH)" >> $@
+	$(hide) echo "avb_init_boot_algorithm=$(BOARD_AVB_INIT_BOOT_ALGORITHM)" >> $@
+	$(hide) echo "avb_init_boot_rollback_index_location=$(BOARD_AVB_INIT_BOOT_ROLLBACK_INDEX_LOCATION)" >> $@
+endif # BOARD_AVB_INIT_BOOT_KEY_PATH
 	echo "avb_vendor_boot_add_hash_footer_args=$(BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS)" >> $@
 ifdef BOARD_AVB_VENDOR_BOOT_KEY_PATH
 	echo "avb_vendor_boot_key_path=$(BOARD_AVB_VENDOR_BOOT_KEY_PATH)" >> $@
