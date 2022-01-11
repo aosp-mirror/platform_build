@@ -188,10 +188,11 @@ func addDependencies(edges *[]*dependencyEdge, target string, dependencies []*li
 		}
 		annotations := newEdgeAnnotations()
 		for _, a := range ad.Annotations {
-			if len(a) == 0 {
-				continue
+			// look up a common constant annotation string from a small map
+			// instead of creating 1000's of copies of the same 3 strings.
+			if ann, ok := RecognizedAnnotations[a]; ok {
+				annotations.annotations[ann] = true
 			}
-			annotations.annotations[a] = true
 		}
 		*edges = append(*edges, &dependencyEdge{target, dependency, annotations})
 	}
