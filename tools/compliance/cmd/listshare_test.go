@@ -357,6 +357,98 @@ func Test(t *testing.T) {
 			roots:       []string{"lib/libd.so.meta_lic"},
 			expectedOut: []projectShare{},
 		},
+		{
+			condition: "regressgpl1",
+			name:      "container",
+			roots:     []string{"container.zip.meta_lic"},
+			expectedOut: []projectShare{
+				{
+					project:    "bin/threelibraries",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "container/zip",
+					conditions: []string{"restricted"},
+				},
+			},
+		},
+		{
+			condition: "regressgpl1",
+			name:      "containerplus",
+			roots:     []string{"container.zip.meta_lic", "lib/libapache.so.meta_lic", "lib/libc++.so.meta_lic"},
+			expectedOut: []projectShare{
+				{
+					project:    "bin/threelibraries",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "container/zip",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/apache",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/c++",
+					conditions: []string{"restricted"},
+				},
+			},
+		},
+		{
+			condition: "regressgpl2",
+			name:      "container",
+			roots:     []string{"container.zip.meta_lic"},
+			expectedOut: []projectShare{
+				{
+					project:    "bin/threelibraries",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "container/zip",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/apache",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/c++",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/gpl",
+					conditions: []string{"restricted"},
+				},
+			},
+		},
+		{
+			condition: "regressgpl2",
+			name:      "containerplus",
+			roots:     []string{"container.zip.meta_lic", "lib/libapache.so.meta_lic", "lib/libc++.so.meta_lic"},
+			expectedOut: []projectShare{
+				{
+					project:    "bin/threelibraries",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "container/zip",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/apache",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/c++",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/gpl",
+					conditions: []string{"restricted"},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.condition+" "+tt.name, func(t *testing.T) {
