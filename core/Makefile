@@ -1097,7 +1097,7 @@ ifdef BOARD_KERNEL_PAGESIZE
 endif
 
 ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_IMAGE_KEY_PATH)
+$(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_KEY_PATH)
 	$(call pretty,"Target init_boot image: $@")
 	$(MKBOOTIMG) $(INTERNAL_INIT_BOOT_IMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_INIT_ARGS) --output $@
 	$(call assert-max-image-size,$@,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE))
@@ -3700,6 +3700,10 @@ BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
     --prop com.android.build.boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
 
+BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.init_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
+    --prop com.android.build.init_boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+
 BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.vendor_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
 
@@ -3734,6 +3738,12 @@ BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
 ifdef BOOT_SECURITY_PATCH
 BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.security_patch:$(BOOT_SECURITY_PATCH)
+endif
+
+ifdef INIT_BOOT_SECURITY_PATCH
+BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.init_boot.security_patch:$(INIT_BOOT_SECURITY_PATCH)
+else ifdef BOOT_SECURITY_PATCH
 BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.init_boot.security_patch:$(BOOT_SECURITY_PATCH)
 endif
@@ -4707,6 +4717,12 @@ ifdef BOARD_AVB_BOOT_KEY_PATH
 	$(hide) echo "avb_boot_algorithm=$(BOARD_AVB_BOOT_ALGORITHM)" >> $@
 	$(hide) echo "avb_boot_rollback_index_location=$(BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION)" >> $@
 endif # BOARD_AVB_BOOT_KEY_PATH
+	$(hide) echo "avb_init_boot_add_hash_footer_args=$(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS)" >> $@
+ifdef BOARD_AVB_INIT_BOOT_KEY_PATH
+	$(hide) echo "avb_init_boot_key_path=$(BOARD_AVB_INIT_BOOT_KEY_PATH)" >> $@
+	$(hide) echo "avb_init_boot_algorithm=$(BOARD_AVB_INIT_BOOT_ALGORITHM)" >> $@
+	$(hide) echo "avb_init_boot_rollback_index_location=$(BOARD_AVB_INIT_BOOT_ROLLBACK_INDEX_LOCATION)" >> $@
+endif # BOARD_AVB_INIT_BOOT_KEY_PATH
 	echo "avb_vendor_boot_add_hash_footer_args=$(BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS)" >> $@
 ifdef BOARD_AVB_VENDOR_BOOT_KEY_PATH
 	echo "avb_vendor_boot_key_path=$(BOARD_AVB_VENDOR_BOOT_KEY_PATH)" >> $@
@@ -4863,14 +4879,16 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_OTA_TOOLS := $(built_ota_tools)
 tool_extension := $(wildcard $(tool_extensions)/releasetools.py)
 $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSION := $(tool_extension)
 
+updaer_dep :=
 ifeq ($(AB_OTA_UPDATER),true)
-updater_dep := system/update_engine/update_engine.conf
-updater_dep := external/zucchini/version_info.h
+updater_dep += system/update_engine/update_engine.conf
+updater_dep += external/zucchini/version_info.h
+updater_dep += $(HOST_OUT_SHARED_LIBRARIES)/liblz4.so
 endif
 
 # Build OTA tools if non-A/B is allowed
 ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
-updater_dep := $(built_ota_tools)
+updater_dep += $(built_ota_tools)
 endif
 
 $(BUILT_TARGET_FILES_PACKAGE): $(updater_dep)
@@ -5351,6 +5369,7 @@ ifeq ($(AB_OTA_UPDATER),true)
 	@# When using the A/B updater, include the updater config files in the zip.
 	$(hide) cp $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
 	$(hide) cp $(TOPDIR)external/zucchini/version_info.h $(zip_root)/META/zucchini_config.txt
+	$(hide) cp $(HOST_OUT_SHARED_LIBRARIES)/liblz4.so $(zip_root)/META/liblz4.so
 	$(hide) for part in $(strip $(AB_OTA_PARTITIONS)); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
