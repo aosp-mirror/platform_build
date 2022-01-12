@@ -70,6 +70,7 @@ strict digraph {
 
 #### a pure aggregation `container.zip` that merely bundles files together
 
+```dot
 strict digraph {
 	rankdir=LR;
 	bin1 [label="bin/bin1.meta_lic"];
@@ -89,6 +90,7 @@ strict digraph {
 	container -> libb [label="static"];
 	{rank=same; container}
 }
+```
 
 #### an apex file (more like an apk file) with some binaries and libraries
 
