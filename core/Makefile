@@ -2117,6 +2117,9 @@ recovery_resource_deps += $(generated_recovery_text_files)
 
 ifdef TARGET_RECOVERY_FSTAB
 recovery_fstab := $(TARGET_RECOVERY_FSTAB)
+else ifdef TARGET_RECOVERY_FSTAB_GENRULE
+# Specifies a soong genrule module that generates an fstab.
+recovery_fstab := $(call intermediates-dir-for,ETC,$(TARGET_RECOVERY_FSTAB_GENRULE))/$(TARGET_RECOVERY_FSTAB_GENRULE)
 else
 recovery_fstab := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery.fstab))
 endif
