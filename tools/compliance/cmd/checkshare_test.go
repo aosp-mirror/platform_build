@@ -23,15 +23,12 @@ import (
 
 type outcome struct {
 	target           string
-	privacyOrigin    string
 	privacyCondition string
-	shareOrigin      string
 	shareCondition   string
 }
 
 func (o *outcome) String() string {
-	return fmt.Sprintf("%s %s from %s and must share from %s %s",
-		o.target, o.privacyCondition, o.privacyOrigin, o.shareCondition, o.shareOrigin)
+	return fmt.Sprintf("%s %s and must share from %s", o.target, o.privacyCondition, o.shareCondition)
 }
 
 type outcomeList []*outcome
@@ -180,9 +177,7 @@ func Test(t *testing.T) {
 			expectedOutcomes: outcomeList{
 				&outcome{
 					target:           "testdata/proprietary/bin/bin2.meta_lic",
-					privacyOrigin:    "testdata/proprietary/bin/bin2.meta_lic",
 					privacyCondition: "proprietary",
-					shareOrigin:      "testdata/proprietary/lib/libb.so.meta_lic",
 					shareCondition:   "restricted",
 				},
 			},
@@ -195,9 +190,7 @@ func Test(t *testing.T) {
 			expectedOutcomes: outcomeList{
 				&outcome{
 					target:           "testdata/proprietary/bin/bin2.meta_lic",
-					privacyOrigin:    "testdata/proprietary/bin/bin2.meta_lic",
 					privacyCondition: "proprietary",
-					shareOrigin:      "testdata/proprietary/lib/libb.so.meta_lic",
 					shareCondition:   "restricted",
 				},
 			},
@@ -210,9 +203,7 @@ func Test(t *testing.T) {
 			expectedOutcomes: outcomeList{
 				&outcome{
 					target:           "testdata/proprietary/lib/liba.so.meta_lic",
-					privacyOrigin:    "testdata/proprietary/lib/liba.so.meta_lic",
 					privacyCondition: "proprietary",
-					shareOrigin:      "testdata/proprietary/lib/libb.so.meta_lic",
 					shareCondition:   "restricted",
 				},
 			},
@@ -225,9 +216,7 @@ func Test(t *testing.T) {
 			expectedOutcomes: outcomeList{
 				&outcome{
 					target:           "testdata/proprietary/bin/bin2.meta_lic",
-					privacyOrigin:    "testdata/proprietary/bin/bin2.meta_lic",
 					privacyCondition: "proprietary",
-					shareOrigin:      "testdata/proprietary/lib/libb.so.meta_lic",
 					shareCondition:   "restricted",
 				},
 			},
@@ -277,10 +266,8 @@ func Test(t *testing.T) {
 				cFields := strings.Split(ts, " ")
 				actualOutcomes = append(actualOutcomes, &outcome{
 					target:           cFields[0],
-					privacyOrigin:    cFields[3],
 					privacyCondition: cFields[1],
-					shareOrigin:      cFields[9],
-					shareCondition:   cFields[8],
+					shareCondition:   cFields[6],
 				})
 			}
 			if len(actualOutcomes) != len(tt.expectedOutcomes) {

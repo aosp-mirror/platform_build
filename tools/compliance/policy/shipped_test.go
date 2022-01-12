@@ -17,6 +17,7 @@ package compliance
 import (
 	"bytes"
 	"sort"
+	"strings"
 	"testing"
 )
 
@@ -110,19 +111,31 @@ func TestShippedNodes(t *testing.T) {
 				t.Errorf("unexpected test data error: got %w, want no error", err)
 				return
 			}
+			t.Logf("graph:")
+			for _, edge := range lg.Edges() {
+				t.Logf("  %s", edge.String())
+			}
 			expectedNodes := append([]string{}, tt.expectedNodes...)
-			actualNodes := ShippedNodes(lg).Names()
+			nodeset := ShippedNodes(lg)
+			t.Logf("shipped node set: %s", nodeset.String())
+
+			actualNodes := nodeset.Names()
+			t.Logf("shipped nodes: [%s]", strings.Join(actualNodes, ", "))
+
 			sort.Strings(expectedNodes)
 			sort.Strings(actualNodes)
+
+			t.Logf("sorted nodes: [%s]", strings.Join(actualNodes, ", "))
+			t.Logf("expected nodes: [%s]", strings.Join(expectedNodes, ", "))
                         if len(expectedNodes) != len(actualNodes) {
-				t.Errorf("unexpected number of shipped nodes: got %v with %d nodes, want %v with %d nodes",
-					actualNodes, len(actualNodes), expectedNodes, len(expectedNodes))
+				t.Errorf("unexpected number of shipped nodes: %d nodes, want %d nodes",
+					len(actualNodes), len(expectedNodes))
 				return
 			}
 			for i := 0; i < len(actualNodes); i++ {
 				if expectedNodes[i] != actualNodes[i] {
-					t.Errorf("unexpected node at index %d: got %q in %v, want %q in %v",
-						i, actualNodes[i], actualNodes, expectedNodes[i], expectedNodes)
+					t.Errorf("unexpected node at index %d: got %q, want %q",
+						i, actualNodes[i], expectedNodes[i])
 				}
 			}
 		})

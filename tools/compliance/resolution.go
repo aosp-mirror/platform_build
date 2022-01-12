@@ -32,7 +32,7 @@ import (
 // resolve the restricted condition originating from the GPL code.
 type Resolution struct {
 	attachesTo, actsOn *TargetNode
-	cs                 *LicenseConditionSet
+	cs                 LicenseConditionSet
 }
 
 // AttachesTo returns the target node the resolution attaches to.
@@ -48,16 +48,16 @@ func (r Resolution) ActsOn() *TargetNode {
 }
 
 // Resolves returns the set of license condition the resolution satisfies.
-func (r Resolution) Resolves() *LicenseConditionSet {
-	return r.cs.Copy()
+func (r Resolution) Resolves() LicenseConditionSet {
+	return r.cs
 }
 
 // asString returns a string representation of the resolution.
 func (r Resolution) asString() string {
 	var sb strings.Builder
-	cl := r.cs.AsList()
-	sort.Sort(cl)
-	fmt.Fprintf(&sb, "%s -> %s -> %s", r.attachesTo.name, r.actsOn.name, cl.String())
+	names := r.cs.Names()
+	sort.Strings(names)
+	fmt.Fprintf(&sb, "%s -> %s{%s}", r.attachesTo.name, r.actsOn.name, strings.Join(names, ", "))
 	return sb.String()
 }
 
@@ -94,67 +94,32 @@ func (rl ResolutionList) String() string {
 
 // AllConditions returns the union of all license conditions resolved by any
 // element of the list.
-func (rl ResolutionList) AllConditions() *LicenseConditionSet {
-	result := newLicenseConditionSet()
+func (rl ResolutionList) AllConditions() LicenseConditionSet {
+	result := NewLicenseConditionSet()
 	for _, r := range rl {
-		result.AddSet(r.cs)
+		result = result.Union(r.cs)
 	}
 	return result
 }
 
 // ByName returns the sub-list of resolutions resolving conditions matching
 // `names`.
-func (rl ResolutionList) ByName(names ConditionNames) ResolutionList {
-	result := make(ResolutionList, 0, rl.CountByName(names))
+func (rl ResolutionList) Matching(conditions LicenseConditionSet) ResolutionList {
+	result := make(ResolutionList, 0, rl.CountMatching(conditions))
 	for _, r := range rl {
-		if r.Resolves().HasAnyByName(names) {
-			result = append(result, Resolution{r.attachesTo, r.actsOn, r.cs.ByName(names)})
+		if r.Resolves().MatchesAnySet(conditions) {
+			result = append(result, Resolution{r.attachesTo, r.actsOn, r.cs.MatchingAnySet(conditions)})
 		}
 	}
 	return result
 }
 
-// CountByName returns the number of resolutions resolving conditions matching
-// `names`.
-func (rl ResolutionList) CountByName(names ConditionNames) int {
+// CountMatching returns the number of resolutions resolving conditions matching
+// `conditions`.
+func (rl ResolutionList) CountMatching(conditions LicenseConditionSet) int {
 	c := 0
 	for _, r := range rl {
-		if r.Resolves().HasAnyByName(names) {
-			c++
-		}
-	}
-	return c
-}
-
-// CountConditionsByName returns a count of distinct resolution/conditions
-// pairs matching `names`.
-//
-// A single resolution might resolve multiple conditions matching `names`.
-func (rl ResolutionList) CountConditionsByName(names ConditionNames) int {
-	c := 0
-	for _, r := range rl {
-		c += r.Resolves().CountByName(names)
-	}
-	return c
-}
-
-// ByAttachesTo returns the sub-list of resolutions attached to `attachesTo`.
-func (rl ResolutionList) ByAttachesTo(attachesTo *TargetNode) ResolutionList {
-	result := make(ResolutionList, 0, rl.CountByActsOn(attachesTo))
-	for _, r := range rl {
-		if r.attachesTo == attachesTo {
-			result = append(result, r)
-		}
-	}
-	return result
-}
-
-// CountByAttachesTo returns the number of resolutions attached to
-// `attachesTo`.
-func (rl ResolutionList) CountByAttachesTo(attachesTo *TargetNode) int {
-	c := 0
-	for _, r := range rl {
-		if r.attachesTo == attachesTo {
+		if r.Resolves().MatchesAnySet(conditions) {
 			c++
 		}
 	}
@@ -177,30 +142,6 @@ func (rl ResolutionList) CountByActsOn(actsOn *TargetNode) int {
 	c := 0
 	for _, r := range rl {
 		if r.actsOn == actsOn {
-			c++
-		}
-	}
-	return c
-}
-
-// ByOrigin returns the sub-list of resolutions resolving license conditions
-// originating at `origin`.
-func (rl ResolutionList) ByOrigin(origin *TargetNode) ResolutionList {
-	result := make(ResolutionList, 0, rl.CountByOrigin(origin))
-	for _, r := range rl {
-		if r.Resolves().HasAnyByOrigin(origin) {
-			result = append(result, Resolution{r.attachesTo, r.actsOn, r.cs.ByOrigin(origin)})
-		}
-	}
-	return result
-}
-
-// CountByOrigin returns the number of resolutions resolving license conditions
-// originating at `origin`.
-func (rl ResolutionList) CountByOrigin(origin *TargetNode) int {
-	c := 0
-	for _, r := range rl {
-		if r.Resolves().HasAnyByOrigin(origin) {
 			c++
 		}
 	}

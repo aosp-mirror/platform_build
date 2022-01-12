@@ -28,57 +28,37 @@ type SourceSharePrivacyConflict struct {
 
 // Error returns a string describing the conflict.
 func (conflict SourceSharePrivacyConflict) Error() string {
-	return fmt.Sprintf("%s %s from %s and must share from %s %s\n",
-		conflict.SourceNode.name,
-		conflict.PrivacyCondition.name, conflict.PrivacyCondition.origin.name,
-		conflict.ShareCondition.name, conflict.ShareCondition.origin.name)
+	return fmt.Sprintf("%s %s and must share from %s condition\n", conflict.SourceNode.name,
+		conflict.PrivacyCondition.Name(), conflict.ShareCondition.Name())
 }
 
 // IsEqualTo returns true when `conflict` and `other` describe the same conflict.
 func (conflict SourceSharePrivacyConflict) IsEqualTo(other SourceSharePrivacyConflict) bool {
 	return conflict.SourceNode.name == other.SourceNode.name &&
-		conflict.ShareCondition.name == other.ShareCondition.name &&
-		conflict.ShareCondition.origin.name == other.ShareCondition.origin.name &&
-		conflict.PrivacyCondition.name == other.PrivacyCondition.name &&
-		conflict.PrivacyCondition.origin.name == other.PrivacyCondition.origin.name
+		conflict.ShareCondition == other.ShareCondition &&
+		conflict.PrivacyCondition == other.PrivacyCondition
 }
 
 // ConflictingSharedPrivateSource lists all of the targets where conflicting conditions to
 // share the source and to keep the source private apply to the target.
 func ConflictingSharedPrivateSource(lg *LicenseGraph) []SourceSharePrivacyConflict {
-	// shareSource is the set of all source-sharing resolutions.
-	shareSource := ResolveSourceSharing(lg)
-	if shareSource.IsEmpty() {
-		return []SourceSharePrivacyConflict{}
-	}
 
-	// privateSource is the set of all source privacy resolutions.
-	privateSource := ResolveSourcePrivacy(lg)
-	if privateSource.IsEmpty() {
-		return []SourceSharePrivacyConflict{}
-	}
-
+	ResolveTopDownConditions(lg)
 	// combined is the combination of source-sharing and source privacy.
-	combined := JoinResolutionSets(shareSource, privateSource)
+	combined := WalkActionsForCondition(lg, ImpliesShared.Union(ImpliesPrivate))
 
 	// size is the size of the result
 	size := 0
-	for _, actsOn := range combined.ActsOn() {
-		rl := combined.ResolutionsByActsOn(actsOn)
-		size += rl.CountConditionsByName(ImpliesShared) * rl.CountConditionsByName(ImpliesPrivate)
+	for _, cs := range combined {
+		size += cs.Intersection(ImpliesShared).Len() * cs.Intersection(ImpliesPrivate).Len()
 	}
 	if size == 0 {
-		return []SourceSharePrivacyConflict{}
+		return nil
 	}
 	result := make([]SourceSharePrivacyConflict, 0, size)
-	for _, actsOn := range combined.ActsOn() {
-		rl := combined.ResolutionsByActsOn(actsOn)
-		if len(rl) == 0 {
-			continue
-		}
-
-		pconditions := rl.ByName(ImpliesPrivate).AllConditions().AsList()
-		ssconditions := rl.ByName(ImpliesShared).AllConditions().AsList()
+	for actsOn, cs := range combined {
+		pconditions := cs.Intersection(ImpliesPrivate).AsList()
+		ssconditions := cs.Intersection(ImpliesShared).AsList()
 
 		// report all conflicting condition combinations
 		for _, p := range pconditions {

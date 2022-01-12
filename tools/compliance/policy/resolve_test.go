@@ -16,15 +16,16 @@ package compliance
 
 import (
 	"bytes"
+	"sort"
 	"testing"
 )
 
 func TestResolveBottomUpConditions(t *testing.T) {
 	tests := []struct {
-		name                string
-		roots               []string
-		edges               []annotated
-		expectedResolutions []res
+		name            string
+		roots           []string
+		edges           []annotated
+		expectedActions []tcond
 	}{
 		{
 			name:  "firstparty",
@@ -32,10 +33,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -44,9 +44,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"toolchain"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -56,13 +56,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
+				{"apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -72,12 +69,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
+				{"apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -86,9 +81,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -98,11 +93,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
+				{"apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -112,11 +106,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
+				{"apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -125,11 +118,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice|restricted"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -138,9 +129,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"toolchain"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -150,16 +141,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted"},
+				{"apacheBin.meta_lic", "notice|restricted"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -169,13 +154,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted"},
+				{"apacheBin.meta_lic", "notice"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -184,11 +166,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice|restricted"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -198,16 +178,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted"},
+				{"apacheBin.meta_lic", "notice|restricted"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -217,13 +191,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "gplLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted"},
+				{"apacheBin.meta_lic", "notice"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -232,11 +203,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -245,9 +214,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"toolchain"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -257,16 +226,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"apacheBin.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -276,13 +239,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -291,9 +251,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -303,11 +263,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -317,11 +276,10 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "lgplLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -330,11 +288,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice|restricted_with_classpath_exception"},
+				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
 			},
 		},
 		{
@@ -343,11 +299,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"dependentModule.meta_lic", "notice|restricted_with_classpath_exception"},
+				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
 			},
 		},
 		{
@@ -356,9 +310,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
 			},
 		},
 		{
@@ -367,11 +321,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			edges: []annotated{
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"dependentModule.meta_lic", "notice|restricted_with_classpath_exception"},
+				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
 			},
 		},
 	}
@@ -383,19 +335,37 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				t.Errorf("unexpected test data error: got %w, want no error", err)
 				return
 			}
-			expectedRs := toResolutionSet(lg, tt.expectedResolutions)
-			actualRs := ResolveBottomUpConditions(lg)
-			checkSame(actualRs, expectedRs, t)
+
+			logGraph(lg, t)
+
+			ResolveBottomUpConditions(lg)
+			actual := asActionList(lg)
+			sort.Sort(actual)
+			t.Logf("actual: %s", actual.String())
+
+			expected := toActionList(lg, tt.expectedActions)
+			sort.Sort(expected)
+			t.Logf("expected: %s", expected.String())
+
+			if len(actual) != len(expected) {
+				t.Errorf("unexpected number of actions: got %d, want %d", len(actual), len(expected))
+				return
+			}
+			for i := 0; i < len(actual); i++ {
+				if actual[i] != expected[i] {
+					t.Errorf("unexpected action at index %d: got %s, want %s", i, actual[i].String(), expected[i].String())
+				}
+			}
 		})
 	}
 }
 
 func TestResolveTopDownConditions(t *testing.T) {
 	tests := []struct {
-		name                string
-		roots               []string
-		edges               []annotated
-		expectedResolutions []res
+		name            string
+		roots           []string
+		edges           []annotated
+		expectedActions []tcond
 	}{
 		{
 			name:  "firstparty",
@@ -403,10 +373,9 @@ func TestResolveTopDownConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -415,9 +384,9 @@ func TestResolveTopDownConditions(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -427,15 +396,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice|restricted"},
+				{"mitLib.meta_lic", "notice|restricted"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -445,11 +409,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "gplBin.meta_lic", []string{"toolchain"}},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"mitLib.meta_lic", "notice"},
+				{"gplBin.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -462,27 +425,13 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "mplLib.meta_lic", []string{"static"}},
 				{"mitBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "mitBin.meta_lic", "mitBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "mplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "mplLib.meta_lic", "mplLib.meta_lic", "reciprocal"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "mplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "mplLib.meta_lic", "mplLib.meta_lic", "reciprocal"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"mitBin.meta_lic", "mitBin.meta_lic", "mitBin.meta_lic", "notice"},
-				{"mitBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"mplLib.meta_lic", "mplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"mplLib.meta_lic", "mplLib.meta_lic", "mplLib.meta_lic", "reciprocal"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted"},
+				{"apacheBin.meta_lic", "notice|restricted"},
+				{"mitBin.meta_lic", "notice"},
+				{"gplLib.meta_lic", "restricted"},
+				{"mplLib.meta_lic", "reciprocal|restricted"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -492,13 +441,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted"},
+				{"apacheBin.meta_lic", "notice"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -508,14 +454,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"dynamic"}},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice|restricted"},
+				{"gplLib.meta_lic", "restricted"},
+				{"mitLib.meta_lic", "notice|restricted"},
 			},
 		},
 		{
@@ -528,23 +470,13 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "mplLib.meta_lic", []string{"dynamic"}},
 				{"mitBin.meta_lic", "mitLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "mitBin.meta_lic", "mitBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "mplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "mplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"mitBin.meta_lic", "mitBin.meta_lic", "mitBin.meta_lic", "notice"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"mplLib.meta_lic", "mplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"mplLib.meta_lic", "mplLib.meta_lic", "mplLib.meta_lic", "reciprocal"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted"},
+				{"apacheBin.meta_lic", "notice|restricted"},
+				{"mitBin.meta_lic", "notice"},
+				{"gplLib.meta_lic", "restricted"},
+				{"mplLib.meta_lic", "reciprocal|restricted"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -554,13 +486,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "gplLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted"},
+				{"apacheBin.meta_lic", "notice"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -570,15 +499,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"mitLib.meta_lic", "notice|restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -588,11 +512,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "lgplBin.meta_lic", []string{"toolchain"}},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplBin.meta_lic", "restricted_allows_dynamic_linking"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -603,22 +526,11 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"apacheBin.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"mitLib.meta_lic", "notice|restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -628,13 +540,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -644,11 +553,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"dynamic"}},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -658,11 +566,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -672,11 +579,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "lgplLib.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+			expectedActions: []tcond{
+				{"apacheContainer.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -686,15 +592,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice|restricted_with_classpath_exception"},
+				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
+				{"mitLib.meta_lic", "notice|restricted_with_classpath_exception"},
 			},
 		},
 		{
@@ -704,15 +605,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 				{"dependentModule.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "mitLib.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"dependentModule.meta_lic", "notice|restricted_with_classpath_exception"},
+				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
+				{"mitLib.meta_lic", "notice|restricted_with_classpath_exception"},
 			},
 		},
 		{
@@ -722,11 +618,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"apacheBin.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -736,15 +631,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 				{"dependentModule.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "mitLib.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+			expectedActions: []tcond{
+				{"dependentModule.meta_lic", "notice|restricted_with_classpath_exception"},
+				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
+				{"mitLib.meta_lic", "notice|restricted_with_classpath_exception"},
 			},
 		},
 	}
@@ -756,9 +646,27 @@ func TestResolveTopDownConditions(t *testing.T) {
 				t.Errorf("unexpected test data error: got %w, want no error", err)
 				return
 			}
-			expectedRs := toResolutionSet(lg, tt.expectedResolutions)
-			actualRs := ResolveTopDownConditions(lg)
-			checkSame(actualRs, expectedRs, t)
+
+			logGraph(lg, t)
+
+			ResolveTopDownConditions(lg)
+			actual := asActionList(lg)
+			sort.Sort(actual)
+			t.Logf("actual: %s", actual.String())
+
+			expected := toActionList(lg, tt.expectedActions)
+			sort.Sort(expected)
+			t.Logf("expected: %s", expected.String())
+
+			if len(actual) != len(expected) {
+				t.Errorf("unexpected number of actions: got %d, want %d", len(actual), len(expected))
+				return
+			}
+			for i := 0; i < len(actual); i++ {
+				if actual[i] != expected[i] {
+					t.Errorf("unexpected action at index %d: got %s, want %s", i, actual[i].String(), expected[i].String())
+				}
+			}
 		})
 	}
 }
