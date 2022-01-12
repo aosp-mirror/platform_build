@@ -16,150 +16,87 @@ package compliance
 
 import (
 	"fmt"
-	"strings"
 )
 
-// LicenseCondition describes an individual license condition or requirement
-// originating at a specific target node. (immutable)
-//
-// e.g. A module licensed under GPL terms would originate a `restricted` condition.
-type LicenseCondition struct {
-	name   string
-	origin *TargetNode
-}
+// LicenseCondition identifies a recognized license condition by setting the
+// corresponding bit.
+type LicenseCondition uint16
 
-// Name returns the name of the condition. e.g. "restricted" or "notice"
+// LicenseConditionMask is a bitmask for the recognized license conditions.
+const LicenseConditionMask = LicenseCondition(0x3ff)
+
+const (
+	// UnencumberedCondition identifies public domain or public domain-
+	// like license that disclaims copyright.
+	UnencumberedCondition = LicenseCondition(0x0001)
+	// PermissiveCondition identifies a license without notice or other
+	// significant requirements.
+	PermissiveCondition = LicenseCondition(0x0002)
+	// NoticeCondition identifies a typical open-source license with only
+	// notice or attribution requirements.
+	NoticeCondition = LicenseCondition(0x0004)
+	// ReciprocalCondition identifies a license with requirement to share
+	// the module's source only.
+	ReciprocalCondition = LicenseCondition(0x0008)
+	// RestrictedCondition identifies a license with requirement to share
+	// all source code linked to the module's source.
+	RestrictedCondition = LicenseCondition(0x0010)
+	// RestrictedClasspathExceptionCondition identifies RestrictedCondition
+	// waived for dynamic linking from independent modules.
+	RestrictedClasspathExceptionCondition = LicenseCondition(0x0020)
+	// WeaklyRestrictedCondition identifies a RestrictedCondition waived
+	// for dynamic linking.
+	WeaklyRestrictedCondition = LicenseCondition(0x0040)
+	// ProprietaryCondition identifies a license with source privacy
+	// requirements.
+	ProprietaryCondition = LicenseCondition(0x0080)
+	// ByExceptionOnly identifies a license where policy requires product
+	// counsel review prior to use.
+	ByExceptionOnlyCondition = LicenseCondition(0x0100)
+	// NotAllowedCondition identifies a license with onerous conditions
+	// where policy prohibits use.
+	NotAllowedCondition = LicenseCondition(0x0200)
+)
+
+var (
+	// RecognizedConditionNames maps condition strings to LicenseCondition.
+	RecognizedConditionNames = map[string]LicenseCondition{
+		"unencumbered": UnencumberedCondition,
+		"permissive": PermissiveCondition,
+		"notice": NoticeCondition,
+		"reciprocal": ReciprocalCondition,
+		"restricted": RestrictedCondition,
+		"restricted_with_classpath_exception": RestrictedClasspathExceptionCondition,
+		"restricted_allows_dynamic_linking": WeaklyRestrictedCondition,
+		"proprietary": ProprietaryCondition,
+		"by_exception_only": ByExceptionOnlyCondition,
+		"not_allowed": NotAllowedCondition,
+	}
+)
+
+// Name returns the condition string corresponding to the LicenseCondition.
 func (lc LicenseCondition) Name() string {
-	return lc.name
-}
-
-// Origin identifies the TargetNode where the condition originates.
-func (lc LicenseCondition) Origin() *TargetNode {
-	return lc.origin
-}
-
-// asString returns a string representation of a license condition:
-// origin+separator+condition.
-func (lc LicenseCondition) asString(separator string) string {
-	return lc.origin.name + separator + lc.name
-}
-
-// ConditionList implements introspection methods to arrays of LicenseCondition.
-type ConditionList []LicenseCondition
-
-
-// ConditionList orders arrays of LicenseCondition by Origin and Name.
-
-// Len returns the length of the list.
-func (l ConditionList) Len() int      { return len(l) }
-
-// Swap rearranges 2 elements in the list so each occupies the other's former position.
-func (l ConditionList) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
-
-// Less returns true when the `i`th element is lexicographically less than tht `j`th element.
-func (l ConditionList) Less(i, j int) bool {
-	if l[i].origin.name == l[j].origin.name {
-		return l[i].name < l[j].name
+	switch lc {
+	case UnencumberedCondition:
+		return "unencumbered"
+	case PermissiveCondition:
+		return "permissive"
+	case NoticeCondition:
+		return "notice"
+	case ReciprocalCondition:
+		return "reciprocal"
+	case RestrictedCondition:
+		return "restricted"
+	case RestrictedClasspathExceptionCondition:
+		return "restricted_with_classpath_exception"
+	case WeaklyRestrictedCondition:
+		return "restricted_allows_dynamic_linking"
+	case ProprietaryCondition:
+		return "proprietary"
+	case ByExceptionOnlyCondition:
+		return "by_exception_only"
+	case NotAllowedCondition:
+		return "not_allowed"
 	}
-	return l[i].origin.name < l[j].origin.name
-}
-
-// String returns a string representation of the set.
-func (cl ConditionList) String() string {
-	var sb strings.Builder
-	fmt.Fprintf(&sb, "[")
-	sep := ""
-	for _, lc := range cl {
-		fmt.Fprintf(&sb, "%s%s:%s", sep, lc.origin.name, lc.name)
-		sep = ", "
-	}
-	fmt.Fprintf(&sb, "]")
-	return sb.String()
-}
-
-// Names returns the list of the conditions' names.
-func (cl ConditionList) Names() []string {
-	result := make([]string, 0, len(cl))
-	for _, lc := range cl {
-		result = append(result, lc.name)
-	}
-	return result
-}
-
-// HasByName returns true if the list contains any condition matching `name`.
-func (cl ConditionList) HasByName(name ConditionNames) bool {
-	for _, lc := range cl {
-		if name.Contains(lc.name) {
-			return true
-		}
-	}
-	return false
-}
-
-// ByName returns the sublist of conditions that match `name`.
-func (cl ConditionList) ByName(name ConditionNames) ConditionList {
-	result := make(ConditionList, 0, cl.CountByName(name))
-	for _, lc := range cl {
-		if name.Contains(lc.name) {
-			result = append(result, lc)
-		}
-	}
-	return result
-}
-
-// CountByName returns the size of the sublist of conditions that match `name`.
-func (cl ConditionList) CountByName(name ConditionNames) int {
-	size := 0
-	for _, lc := range cl {
-		if name.Contains(lc.name) {
-			size++
-		}
-	}
-	return size
-}
-
-// HasByOrigin returns true if the list contains any condition originating at `origin`.
-func (cl ConditionList) HasByOrigin(origin *TargetNode) bool {
-	for _, lc := range cl {
-		if lc.origin.name == origin.name {
-			return true
-		}
-	}
-	return false
-}
-
-// ByOrigin returns the sublist of conditions that originate at `origin`.
-func (cl ConditionList) ByOrigin(origin *TargetNode) ConditionList {
-	result := make(ConditionList, 0, cl.CountByOrigin(origin))
-	for _, lc := range cl {
-		if lc.origin.name == origin.name {
-			result = append(result, lc)
-		}
-	}
-	return result
-}
-
-// CountByOrigin returns the size of the sublist of conditions that originate at `origin`.
-func (cl ConditionList) CountByOrigin(origin *TargetNode) int {
-	size := 0
-	for _, lc := range cl {
-		if lc.origin.name == origin.name {
-			size++
-		}
-	}
-	return size
-}
-
-// ConditionNames implements the Contains predicate for slices of condition
-// name strings.
-type ConditionNames []string
-
-// Contains returns true if the name matches one of the ConditionNames.
-func (cn ConditionNames) Contains(name string) bool {
-	for _, cname := range cn {
-		if cname == name {
-			return true
-		}
-	}
-	return false
+	panic(fmt.Errorf("unrecognized license condition: %04x", lc))
 }
