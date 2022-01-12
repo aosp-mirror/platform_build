@@ -77,113 +77,46 @@ var (
 	proprietary = []res{}
 )
 
-func TestResolutionSet_JoinResolutionSets(t *testing.T) {
-	lg := newLicenseGraph()
-
-	rsNotice := toResolutionSet(lg, notice)
-	rsShare := toResolutionSet(lg, share)
-	rsExpected := toResolutionSet(lg, append(notice, share...))
-
-	rsActual := JoinResolutionSets(rsNotice, rsShare)
-	checkSame(rsActual, rsExpected, t)
-}
-
-func TestResolutionSet_JoinResolutionsEmpty(t *testing.T) {
-	lg := newLicenseGraph()
-
-	rsShare := toResolutionSet(lg, share)
-	rsProprietary := toResolutionSet(lg, proprietary)
-	rsExpected := toResolutionSet(lg, append(share, proprietary...))
-
-	rsActual := JoinResolutionSets(rsShare, rsProprietary)
-	checkSame(rsActual, rsExpected, t)
-}
-
-func TestResolutionSet_Origins(t *testing.T) {
+func TestResolutionSet_AttachesTo(t *testing.T) {
 	lg := newLicenseGraph()
 
 	rsShare := toResolutionSet(lg, share)
 
-	origins := make([]string, 0)
-	for _, target := range rsShare.Origins() {
-		origins = append(origins, target.Name())
-	}
-	sort.Strings(origins)
-	if len(origins) != 2 {
-		t.Errorf("unexpected number of origins: got %v with %d elements, want [\"bin1\", \"bin2\"] with 2 elements", origins, len(origins))
-	}
-	if origins[0] != "bin1" {
-		t.Errorf("unexpected origin at element 0: got %s, want \"bin1\"", origins[0])
-	}
-	if origins[1] != "bin2" {
-		t.Errorf("unexpected origin at element 0: got %s, want \"bin2\"", origins[0])
-	}
-}
+	t.Logf("checking resolution set %s", rsShare.String())
 
-func TestResolutionSet_AttachedToTarget(t *testing.T) {
-	lg := newLicenseGraph()
+	actual := rsShare.AttachesTo().Names()
+	sort.Strings(actual)
 
-	rsShare := toResolutionSet(lg, share)
+	expected := []string{"bin1", "bin2", "image"}
 
-	if rsShare.AttachesToTarget(newTestNode(lg, "binc")) {
-		t.Errorf("unexpected AttachedToTarget(\"binc\"): got true, want false")
-	}
-	if !rsShare.AttachesToTarget(newTestNode(lg, "image")) {
-		t.Errorf("unexpected AttachedToTarget(\"image\"): got false want true")
-	}
-}
+	t.Logf("actual rsShare: %v", actual)
+	t.Logf("expected rsShare: %v", expected)
 
-func TestResolutionSet_AnyByNameAttachToTarget(t *testing.T) {
-	lg := newLicenseGraph()
+	if len(actual) != len(expected) {
+		t.Errorf("rsShare: wrong number of targets: got %d, want %d", len(actual), len(expected))
+		return
+	}
+	for i := 0; i < len(actual); i++ {
+		if actual[i] != expected[i] {
+			t.Errorf("rsShare: unexpected target at index %d: got %s, want %s", i, actual[i], expected[i])
+		}
+	}
 
-	rs := toResolutionSet(lg, bottomUp)
+	rsPrivate := toResolutionSet(lg, proprietary)
+	actual = rsPrivate.AttachesTo().Names()
+	expected = []string{}
 
-	pandp := ConditionNames{"permissive", "proprietary"}
-	pandn := ConditionNames{"permissive", "notice"}
-	p := ConditionNames{"proprietary"}
-	r := ConditionNames{"restricted"}
+	t.Logf("actual rsPrivate: %v", actual)
+	t.Logf("expected rsPrivate: %v", expected)
 
-	if rs.AnyByNameAttachToTarget(newTestNode(lg, "image"), pandp, p) {
-		t.Errorf("unexpected AnyByNameAttachToTarget(\"image\", \"proprietary\", \"permissive\"): want false, got true")
+	if len(actual) != len(expected) {
+		t.Errorf("rsPrivate: wrong number of targets: got %d, want %d", len(actual), len(expected))
+		return
 	}
-	if !rs.AnyByNameAttachToTarget(newTestNode(lg, "binc"), p) {
-		t.Errorf("unexpected AnyByNameAttachToTarget(\"binc\", \"proprietary\"): want true, got false")
-	}
-	if !rs.AnyByNameAttachToTarget(newTestNode(lg, "image"), pandn) {
-		t.Errorf("unexpected AnyByNameAttachToTarget(\"image\", \"permissive\", \"notice\"): want true, got false")
-	}
-	if !rs.AnyByNameAttachToTarget(newTestNode(lg, "image"), r, pandn) {
-		t.Errorf("unexpected AnyByNameAttachToTarget(\"image\", \"restricted\", \"notice\"): want true, got false")
-	}
-	if !rs.AnyByNameAttachToTarget(newTestNode(lg, "image"), r, p) {
-		t.Errorf("unexpected AnyByNameAttachToTarget(\"image\", \"restricted\", \"proprietary\"): want true, got false")
-	}
-}
-
-func TestResolutionSet_AllByNameAttachToTarget(t *testing.T) {
-	lg := newLicenseGraph()
-
-	rs := toResolutionSet(lg, bottomUp)
-
-	pandp := ConditionNames{"permissive", "proprietary"}
-	pandn := ConditionNames{"permissive", "notice"}
-	p := ConditionNames{"proprietary"}
-	r := ConditionNames{"restricted"}
-
-	if rs.AllByNameAttachToTarget(newTestNode(lg, "image"), pandp, p) {
-		t.Errorf("unexpected AllByNameAttachToTarget(\"image\", \"proprietary\", \"permissive\"): want false, got true")
-	}
-	if !rs.AllByNameAttachToTarget(newTestNode(lg, "binc"), p) {
-		t.Errorf("unexpected AllByNameAttachToTarget(\"binc\", \"proprietary\"): want true, got false")
-	}
-	if !rs.AllByNameAttachToTarget(newTestNode(lg, "image"), pandn) {
-		t.Errorf("unexpected AllByNameAttachToTarget(\"image\", \"notice\"): want true, got false")
-	}
-	if !rs.AllByNameAttachToTarget(newTestNode(lg, "image"), r, pandn) {
-		t.Errorf("unexpected AllByNameAttachToTarget(\"image\", \"restricted\", \"notice\"): want true, got false")
-	}
-	if rs.AllByNameAttachToTarget(newTestNode(lg, "image"), r, p) {
-		t.Errorf("unexpected AllByNameAttachToTarget(\"image\", \"restricted\", \"proprietary\"): want false, got true")
+	for i := 0; i < len(actual); i++ {
+		if actual[i] != expected[i] {
+			t.Errorf("rsPrivate: unexpected target at index %d: got %s, want %s", i, actual[i], expected[i])
+		}
 	}
 }
 
@@ -192,10 +125,12 @@ func TestResolutionSet_AttachesToTarget(t *testing.T) {
 
 	rsShare := toResolutionSet(lg, share)
 
+	t.Logf("checking resolution set %s", rsShare.String())
+
 	if rsShare.AttachesToTarget(newTestNode(lg, "binc")) {
-		t.Errorf("unexpected hasTarget(\"binc\"): got true, want false")
+		t.Errorf("actual.AttachesToTarget(\"binc\"): got true, want false")
 	}
 	if !rsShare.AttachesToTarget(newTestNode(lg, "image")) {
-		t.Errorf("unexpected AttachesToTarget(\"image\"): got false want true")
+		t.Errorf("actual.AttachesToTarget(\"image\"): got false want true")
 	}
 }
