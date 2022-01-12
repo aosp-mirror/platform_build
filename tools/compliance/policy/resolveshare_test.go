@@ -291,7 +291,7 @@ func TestResolveSourceSharing(t *testing.T) {
 			}
 			expectedRs := toResolutionSet(lg, tt.expectedResolutions)
 			actualRs := ResolveSourceSharing(lg)
-			checkSame(actualRs, expectedRs, t)
+			checkResolves(actualRs, expectedRs, t)
 		})
 	}
 }
