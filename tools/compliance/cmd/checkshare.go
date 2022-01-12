@@ -30,8 +30,8 @@ func init() {
 
 Reports on stderr any targets where policy says that the source both
 must and must not be shared. The error report indicates the target, the
-license condition with origin that has a source privacy policy, and the
-license condition with origin that has a source sharing policy.
+license condition that has a source privacy policy, and the license
+condition that has a source sharing policy.
 
 Any given target may appear multiple times with different combinations
 of conflicting license conditions.

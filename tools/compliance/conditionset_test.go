@@ -15,576 +15,643 @@
 package compliance
 
 import (
-	"sort"
 	"strings"
 	"testing"
 )
 
-type byName map[string][]string
-
-func (bn byName) checkPublic(ls *LicenseConditionSet, t *testing.T) {
-	for names, expected := range bn {
-		name := ConditionNames(strings.Split(names, ":"))
-		if ls.HasAnyByName(name) {
-			if len(expected) == 0 {
-				t.Errorf("unexpected LicenseConditionSet.HasAnyByName(%q): got true, want false", name)
-			}
-		} else {
-			if len(expected) != 0 {
-				t.Errorf("unexpected LicenseConditionSet.HasAnyByName(%q): got false, want true", name)
-			}
-		}
-		if len(expected) != ls.CountByName(name) {
-			t.Errorf("unexpected LicenseConditionSet.CountByName(%q): got %d, want %d", name, ls.CountByName(name), len(expected))
-		}
-		byName := ls.ByName(name).AsList()
-		if len(expected) != len(byName) {
-			t.Errorf("unexpected LicenseConditionSet.ByName(%q): got %v, want %v", name, byName, expected)
-		} else {
-			sort.Strings(expected)
-			actual := make([]string, 0, len(byName))
-			for _, lc := range byName {
-				actual = append(actual, lc.Origin().Name())
-			}
-			sort.Strings(actual)
-			for i := 0; i < len(expected); i++ {
-				if expected[i] != actual[i] {
-					t.Errorf("unexpected LicenseConditionSet.ByName(%q) index %d in %v: got %s, want %s", name, i, actual, actual[i], expected[i])
-				}
-			}
-		}
-	}
-}
-
-type byOrigin map[string][]string
-
-func (bo byOrigin) checkPublic(lg *LicenseGraph, ls *LicenseConditionSet, t *testing.T) {
-	expectedCount := 0
-	for origin, expected := range bo {
-		expectedCount += len(expected)
-		onode := newTestNode(lg, origin)
-		if ls.HasAnyByOrigin(onode) {
-			if len(expected) == 0 {
-				t.Errorf("unexpected LicenseConditionSet.HasAnyByOrigin(%q): got true, want false", origin)
-			}
-		} else {
-			if len(expected) != 0 {
-				t.Errorf("unexpected LicenseConditionSet.HasAnyByOrigin(%q): got false, want true", origin)
-			}
-		}
-		if len(expected) != ls.CountByOrigin(onode) {
-			t.Errorf("unexpected LicenseConditionSet.CountByOrigin(%q): got %d, want %d", origin, ls.CountByOrigin(onode), len(expected))
-		}
-		byOrigin := ls.ByOrigin(onode).AsList()
-		if len(expected) != len(byOrigin) {
-			t.Errorf("unexpected LicenseConditionSet.ByOrigin(%q): got %v, want %v", origin, byOrigin, expected)
-		} else {
-			sort.Strings(expected)
-			actual := make([]string, 0, len(byOrigin))
-			for _, lc := range byOrigin {
-				actual = append(actual, lc.Name())
-			}
-			sort.Strings(actual)
-			for i := 0; i < len(expected); i++ {
-				if expected[i] != actual[i] {
-					t.Errorf("unexpected LicenseConditionSet.ByOrigin(%q) index %d in %v: got %s, want %s", origin, i, actual, actual[i], expected[i])
-				}
-			}
-		}
-	}
-	if expectedCount != ls.Count() {
-		t.Errorf("unexpected LicenseConditionSet.Count(): got %d, want %d", ls.Count(), expectedCount)
-	}
-	if ls.IsEmpty() {
-		if expectedCount != 0 {
-			t.Errorf("unexpected LicenseConditionSet.IsEmpty(): got true, want false")
-		}
-	} else {
-		if expectedCount == 0 {
-			t.Errorf("unexpected LicenseConditionSet.IsEmpty(): got false, want true")
-		}
-	}
-}
-
 func TestConditionSet(t *testing.T) {
 	tests := []struct {
-		name       string
-		conditions map[string][]string
-		add        map[string][]string
-		byName     map[string][]string
-		byOrigin   map[string][]string
+		name        string
+		conditions  []string
+		plus        *[]string
+		minus       *[]string
+		matchingAny map[string][]string
+		expected    []string
 	}{
 		{
 			name:       "empty",
-			conditions: map[string][]string{},
-			add:        map[string][]string{},
-			byName: map[string][]string{
+			conditions: []string{},
+			plus:       &[]string{},
+			matchingAny: map[string][]string{
 				"notice":     []string{},
 				"restricted": []string{},
+				"restricted|reciprocal": []string{},
 			},
-			byOrigin: map[string][]string{
-				"bin1": []string{},
-				"lib1": []string{},
-				"bin2": []string{},
-				"lib2": []string{},
+			expected:   []string{},
+		},
+		{
+			name:       "emptyminusnothing",
+			conditions: []string{},
+			minus:      &[]string{},
+			matchingAny: map[string][]string{
+				"notice":     []string{},
+				"restricted": []string{},
+				"restricted|reciprocal": []string{},
 			},
+			expected:   []string{},
+		},
+		{
+			name:       "emptyminusnotice",
+			conditions: []string{},
+			minus:      &[]string{"notice"},
+			matchingAny: map[string][]string{
+				"notice":     []string{},
+				"restricted": []string{},
+				"restricted|reciprocal": []string{},
+			},
+			expected:   []string{},
 		},
 		{
 			name: "noticeonly",
-			conditions: map[string][]string{
-				"notice": []string{"bin1", "lib1"},
-			},
-			byName: map[string][]string{
-				"notice":     []string{"bin1", "lib1"},
+			conditions: []string{"notice"},
+			matchingAny: map[string][]string{
+				"notice":     []string{"notice"},
+				"notice|proprietary":     []string{"notice"},
 				"restricted": []string{},
 			},
-			byOrigin: map[string][]string{
-				"bin1": []string{"notice"},
-				"lib1": []string{"notice"},
-				"bin2": []string{},
-				"lib2": []string{},
-			},
+			expected: []string{"notice"},
 		},
 		{
-			name: "noticeonlyadded",
-			conditions: map[string][]string{
-				"notice": []string{"bin1", "lib1"},
-			},
-			add: map[string][]string{
-				"notice": []string{"bin1", "bin2"},
-			},
-			byName: map[string][]string{
-				"notice":     []string{"bin1", "bin2", "lib1"},
+			name: "allnoticeonly",
+			conditions: []string{"notice"},
+			plus: &[]string{"notice"},
+			matchingAny: map[string][]string{
+				"notice":     []string{"notice"},
+				"notice|proprietary":     []string{"notice"},
 				"restricted": []string{},
 			},
-			byOrigin: map[string][]string{
-				"bin1": []string{"notice"},
-				"lib1": []string{"notice"},
-				"bin2": []string{"notice"},
-				"lib2": []string{},
+			expected: []string{"notice"},
+		},
+		{
+			name: "emptyplusnotice",
+			conditions: []string{},
+			plus: &[]string{"notice"},
+			matchingAny: map[string][]string{
+				"notice":     []string{"notice"},
+				"notice|proprietary":     []string{"notice"},
+				"restricted": []string{},
 			},
+			expected: []string{"notice"},
 		},
 		{
 			name: "everything",
-			conditions: map[string][]string{
-				"notice":            []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1", "lib2"},
+			conditions: []string{"unencumbered", "permissive", "notice", "reciprocal", "restricted", "proprietary"},
+			plus: &[]string{"restricted_with_classpath_exception", "restricted_allows_dynamic_linking", "by_exception_only", "not_allowed"},
+			matchingAny: map[string][]string{
+				"unencumbered": []string{"unencumbered"},
+				"permissive":       []string{"permissive"},
+				"notice":     []string{"notice"},
+				"reciprocal":     []string{"reciprocal"},
+				"restricted":     []string{"restricted"},
+				"restricted_with_classpath_exception":     []string{"restricted_with_classpath_exception"},
+				"restricted_allows_dynamic_linking":     []string{"restricted_allows_dynamic_linking"},
+				"proprietary":     []string{"proprietary"},
+				"by_exception_only":     []string{"by_exception_only"},
+				"not_allowed":     []string{"not_allowed"},
+				"notice|proprietary":     []string{"notice", "proprietary"},
 			},
-			add: map[string][]string{
-				"notice":            []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1", "lib2"},
-			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1", "lib2"},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"bin2":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"lib1":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"lib2":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"other": []string{},
-			},
-		},
-		{
-			name: "allbutoneeach",
-			conditions: map[string][]string{
-				"notice":            []string{"bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1"},
-			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1"},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"reciprocal", "restricted", "by_exception_only"},
-				"bin2":  []string{"notice", "restricted", "by_exception_only"},
-				"lib1":  []string{"notice", "reciprocal", "by_exception_only"},
-				"lib2":  []string{"notice", "reciprocal", "restricted"},
-				"other": []string{},
+			expected: []string{
+				"unencumbered",
+				"permissive",
+				"notice",
+				"reciprocal",
+				"restricted",
+				"restricted_with_classpath_exception",
+				"restricted_allows_dynamic_linking",
+				"proprietary",
+				"by_exception_only",
+				"not_allowed",
 			},
 		},
 		{
-			name: "allbutoneeachadded",
-			conditions: map[string][]string{
-				"notice":            []string{"bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1"},
+			name: "everythingplusminusnothing",
+			conditions: []string{
+				"unencumbered",
+				"permissive",
+				"notice",
+				"reciprocal",
+				"restricted",
+				"restricted_with_classpath_exception",
+				"restricted_allows_dynamic_linking",
+				"proprietary",
+				"by_exception_only",
+				"not_allowed",
 			},
-			add: map[string][]string{
-				"notice":            []string{"bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1"},
+			plus: &[]string{},
+			minus: &[]string{},
+			matchingAny: map[string][]string{
+				"unencumbered|permissive|notice": []string{"unencumbered", "permissive", "notice"},
+				"restricted|reciprocal":     []string{"reciprocal", "restricted"},
+				"proprietary|by_exception_only":     []string{"proprietary", "by_exception_only"},
+				"not_allowed":     []string{"not_allowed"},
 			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1"},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"reciprocal", "restricted", "by_exception_only"},
-				"bin2":  []string{"notice", "restricted", "by_exception_only"},
-				"lib1":  []string{"notice", "reciprocal", "by_exception_only"},
-				"lib2":  []string{"notice", "reciprocal", "restricted"},
-				"other": []string{},
-			},
-		},
-		{
-			name: "allbutoneeachfilled",
-			conditions: map[string][]string{
-				"notice":            []string{"bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1"},
-			},
-			add: map[string][]string{
-				"notice":            []string{"bin1", "bin2", "lib1"},
-				"reciprocal":        []string{"bin1", "bin2", "lib2"},
-				"restricted":        []string{"bin1", "lib1", "lib2"},
-				"by_exception_only": []string{"bin2", "lib1", "lib2"},
-			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1", "lib2"},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"bin2":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"lib1":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"lib2":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"other": []string{},
+			expected: []string{
+				"unencumbered",
+				"permissive",
+				"notice",
+				"reciprocal",
+				"restricted",
+				"restricted_with_classpath_exception",
+				"restricted_allows_dynamic_linking",
+				"proprietary",
+				"by_exception_only",
+				"not_allowed",
 			},
 		},
 		{
-			name: "oneeach",
-			conditions: map[string][]string{
-				"notice":            []string{"bin1"},
-				"reciprocal":        []string{"bin2"},
-				"restricted":        []string{"lib1"},
-				"by_exception_only": []string{"lib2"},
+			name: "allbutone",
+			conditions: []string{"unencumbered", "permissive", "notice", "reciprocal", "restricted", "proprietary"},
+			plus: &[]string{"restricted_allows_dynamic_linking", "by_exception_only", "not_allowed"},
+			matchingAny: map[string][]string{
+				"unencumbered": []string{"unencumbered"},
+				"permissive":       []string{"permissive"},
+				"notice":     []string{"notice"},
+				"reciprocal":     []string{"reciprocal"},
+				"restricted":     []string{"restricted"},
+				"restricted_with_classpath_exception":     []string{},
+				"restricted_allows_dynamic_linking":     []string{"restricted_allows_dynamic_linking"},
+				"proprietary":     []string{"proprietary"},
+				"by_exception_only":     []string{"by_exception_only"},
+				"not_allowed":     []string{"not_allowed"},
+				"notice|proprietary":     []string{"notice", "proprietary"},
 			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin1"},
-				"reciprocal":        []string{"bin2"},
-				"restricted":        []string{"lib1"},
-				"by_exception_only": []string{"lib2"},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"notice"},
-				"bin2":  []string{"reciprocal"},
-				"lib1":  []string{"restricted"},
-				"lib2":  []string{"by_exception_only"},
-				"other": []string{},
-			},
-		},
-		{
-			name: "oneeachoverlap",
-			conditions: map[string][]string{
-				"notice":            []string{"bin1"},
-				"reciprocal":        []string{"bin2"},
-				"restricted":        []string{"lib1"},
-				"by_exception_only": []string{"lib2"},
-			},
-			add: map[string][]string{
-				"notice":            []string{"lib2"},
-				"reciprocal":        []string{"lib1"},
-				"restricted":        []string{"bin2"},
-				"by_exception_only": []string{"bin1"},
-			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin1", "lib2"},
-				"reciprocal":        []string{"bin2", "lib1"},
-				"restricted":        []string{"bin2", "lib1"},
-				"by_exception_only": []string{"bin1", "lib2"},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"by_exception_only", "notice"},
-				"bin2":  []string{"reciprocal", "restricted"},
-				"lib1":  []string{"reciprocal", "restricted"},
-				"lib2":  []string{"by_exception_only", "notice"},
-				"other": []string{},
+			expected: []string{
+				"unencumbered",
+				"permissive",
+				"notice",
+				"reciprocal",
+				"restricted",
+				"restricted_allows_dynamic_linking",
+				"proprietary",
+				"by_exception_only",
+				"not_allowed",
 			},
 		},
 		{
-			name: "oneeachadded",
-			conditions: map[string][]string{
-				"notice":            []string{"bin1"},
-				"reciprocal":        []string{"bin2"},
-				"restricted":        []string{"lib1"},
-				"by_exception_only": []string{"lib2"},
+			name: "everythingminusone",
+			conditions: []string{
+				"unencumbered",
+				"permissive",
+				"notice",
+				"reciprocal",
+				"restricted",
+				"restricted_with_classpath_exception",
+				"restricted_allows_dynamic_linking",
+				"proprietary",
+				"by_exception_only",
+				"not_allowed",
 			},
-			add: map[string][]string{
-				"notice":            []string{"bin1"},
-				"reciprocal":        []string{"bin2"},
-				"restricted":        []string{"lib1"},
-				"by_exception_only": []string{"lib2"},
+			minus: &[]string{"restricted_allows_dynamic_linking"},
+			matchingAny: map[string][]string{
+				"unencumbered": []string{"unencumbered"},
+				"permissive":       []string{"permissive"},
+				"notice":     []string{"notice"},
+				"reciprocal":     []string{"reciprocal"},
+				"restricted":     []string{"restricted"},
+				"restricted_with_classpath_exception":     []string{"restricted_with_classpath_exception"},
+				"restricted_allows_dynamic_linking":     []string{},
+				"proprietary":     []string{"proprietary"},
+				"by_exception_only":     []string{"by_exception_only"},
+				"not_allowed":     []string{"not_allowed"},
+				"restricted|proprietary":     []string{"restricted", "proprietary"},
 			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin1"},
-				"reciprocal":        []string{"bin2"},
-				"restricted":        []string{"lib1"},
-				"by_exception_only": []string{"lib2"},
+			expected: []string{
+				"unencumbered",
+				"permissive",
+				"notice",
+				"reciprocal",
+				"restricted",
+				"restricted_with_classpath_exception",
+				"proprietary",
+				"by_exception_only",
+				"not_allowed",
 			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"notice"},
-				"bin2":  []string{"reciprocal"},
-				"lib1":  []string{"restricted"},
-				"lib2":  []string{"by_exception_only"},
-				"other": []string{},
+		},
+		{
+			name: "everythingminuseverything",
+			conditions: []string{
+				"unencumbered",
+				"permissive",
+				"notice",
+				"reciprocal",
+				"restricted",
+				"restricted_with_classpath_exception",
+				"restricted_allows_dynamic_linking",
+				"proprietary",
+				"by_exception_only",
+				"not_allowed",
 			},
+			minus: &[]string{
+				"unencumbered",
+				"permissive",
+				"notice",
+				"reciprocal",
+				"restricted",
+				"restricted_with_classpath_exception",
+				"restricted_allows_dynamic_linking",
+				"proprietary",
+				"by_exception_only",
+				"not_allowed",
+			},
+			matchingAny: map[string][]string{
+				"unencumbered": []string{},
+				"permissive":       []string{},
+				"notice":     []string{},
+				"reciprocal":     []string{},
+				"restricted":     []string{},
+				"restricted_with_classpath_exception":     []string{},
+				"restricted_allows_dynamic_linking":     []string{},
+				"proprietary":     []string{},
+				"by_exception_only":     []string{},
+				"not_allowed":     []string{},
+				"restricted|proprietary":     []string{},
+			},
+			expected: []string{},
+		},
+		{
+			name: "restrictedplus",
+			conditions: []string{"restricted", "restricted_with_classpath_exception", "restricted_allows_dynamic_linking"},
+			plus: &[]string{"permissive", "notice", "restricted", "proprietary"},
+			matchingAny: map[string][]string{
+				"unencumbered":     []string{},
+				"permissive":     []string{"permissive"},
+				"notice":     []string{"notice"},
+				"restricted":     []string{"restricted"},
+				"restricted_with_classpath_exception":     []string{"restricted_with_classpath_exception"},
+				"restricted_allows_dynamic_linking":     []string{"restricted_allows_dynamic_linking"},
+				"proprietary":     []string{"proprietary"},
+				"restricted|proprietary":     []string{"restricted", "proprietary"},
+				"by_exception_only": []string{},
+				"proprietary|by_exception_only":     []string{"proprietary"},
+			},
+			expected: []string{"permissive", "notice", "restricted", "restricted_with_classpath_exception", "restricted_allows_dynamic_linking", "proprietary"},
 		},
 	}
 	for _, tt := range tests {
-		testPublicInterface := func(lg *LicenseGraph, cs *LicenseConditionSet, t *testing.T) {
-			byName(tt.byName).checkPublic(cs, t)
-			byOrigin(tt.byOrigin).checkPublic(lg, cs, t)
+		toConditions := func(names []string) []LicenseCondition {
+			result := make([]LicenseCondition, 0, len(names))
+			for _, name := range names {
+				result = append(result, RecognizedConditionNames[name])
+			}
+			return result
 		}
-		t.Run(tt.name+"_public_interface", func(t *testing.T) {
-			lg := newLicenseGraph()
-			cs := NewLicenseConditionSet(toConditionList(lg, tt.conditions)...)
-			if tt.add != nil {
-				cs.Add(toConditionList(lg, tt.add)...)
+		populate := func() LicenseConditionSet {
+			testSet := NewLicenseConditionSet(toConditions(tt.conditions)...)
+			if tt.plus != nil {
+				testSet = testSet.Plus(toConditions(*tt.plus)...)
 			}
-			testPublicInterface(lg, cs, t)
-		})
-
-		t.Run("Copy() of "+tt.name+"_public_interface", func(t *testing.T) {
-			lg := newLicenseGraph()
-			cs := NewLicenseConditionSet(toConditionList(lg, tt.conditions)...)
-			if tt.add != nil {
-				cs.Add(toConditionList(lg, tt.add)...)
+			if tt.minus != nil {
+				testSet = testSet.Minus(toConditions(*tt.minus)...)
 			}
-			testPublicInterface(lg, cs.Copy(), t)
-		})
+			return testSet
+		}
+		populateSet := func() LicenseConditionSet {
+			testSet := NewLicenseConditionSet(toConditions(tt.conditions)...)
+			if tt.plus != nil {
+				testSet = testSet.Union(NewLicenseConditionSet(toConditions(*tt.plus)...))
+			}
+			if tt.minus != nil {
+				testSet = testSet.Difference(NewLicenseConditionSet(toConditions(*tt.minus)...))
+			}
+			return testSet
+		}
+		populatePlusSet := func() LicenseConditionSet {
+			testSet := NewLicenseConditionSet(toConditions(tt.conditions)...)
+			if tt.plus != nil {
+				testSet = testSet.Union(NewLicenseConditionSet(toConditions(*tt.plus)...))
+			}
+			if tt.minus != nil {
+				testSet = testSet.Minus(toConditions(*tt.minus)...)
+			}
+			return testSet
+		}
+		populateMinusSet := func() LicenseConditionSet {
+			testSet := NewLicenseConditionSet(toConditions(tt.conditions)...)
+			if tt.plus != nil {
+				testSet = testSet.Plus(toConditions(*tt.plus)...)
+			}
+			if tt.minus != nil {
+				testSet = testSet.Difference(NewLicenseConditionSet(toConditions(*tt.minus)...))
+			}
+			return testSet
+		}
+		checkMatching := func(cs LicenseConditionSet, t *testing.T) {
+			for data, expectedNames := range tt.matchingAny {
+				expectedConditions := toConditions(expectedNames)
+				expected := NewLicenseConditionSet(expectedConditions...)
+				actual := cs.MatchingAny(toConditions(strings.Split(data, "|"))...)
+				actualNames := actual.Names()
 
-		testPrivateInterface := func(lg *LicenseGraph, cs *LicenseConditionSet, t *testing.T) {
-			slist := make([]string, 0, cs.Count())
-			for origin, expected := range tt.byOrigin {
-				for _, name := range expected {
-					slist = append(slist, origin+";"+name)
+				t.Logf("MatchingAny(%s): actual set %04x %s", data, actual, actual.String())
+				t.Logf("MatchingAny(%s): expected set %04x %s", data, expected, expected.String())
+
+				if actual != expected {
+					t.Errorf("MatchingAny(%s): got %04x, want %04x", data, actual, expected)
+					continue
+				}
+				if len(actualNames) != len(expectedNames) {
+					t.Errorf("len(MatchinAny(%s).Names()): got %d, want %d",
+						data, len(actualNames), len(expectedNames))
+				} else {
+					for i := 0; i < len(actualNames); i++ {
+						if actualNames[i] != expectedNames[i] {
+							t.Errorf("MatchingAny(%s).Names()[%d]: got %s, want %s",
+								data, i, actualNames[i], expectedNames[i])
+							break
+						}
+					}
+				}
+				actualConditions := actual.AsList()
+				if len(actualConditions) != len(expectedConditions) {
+					t.Errorf("len(MatchingAny(%d).AsList()):  got %d, want %d",
+						data, len(actualNames), len(expectedNames))
+				} else {
+					for i := 0; i < len(actualNames); i++ {
+						if actualNames[i] != expectedNames[i] {
+							t.Errorf("MatchingAny(%s).AsList()[%d]: got %s, want %s",
+								data, i, actualNames[i], expectedNames[i])
+							break
+						}
+					}
 				}
 			}
-			actualSlist := cs.asStringList(";")
-			if len(slist) != len(actualSlist) {
-				t.Errorf("unexpected LicenseConditionSet.asStringList(\";\"): got %v, want %v", actualSlist, slist)
+		}
+		checkMatchingSet := func(cs LicenseConditionSet, t *testing.T) {
+			for data, expectedNames := range tt.matchingAny {
+				expected := NewLicenseConditionSet(toConditions(expectedNames)...)
+				actual := cs.MatchingAnySet(NewLicenseConditionSet(toConditions(strings.Split(data, "|"))...))
+				actualNames := actual.Names()
+
+				t.Logf("MatchingAnySet(%s): actual set %04x %s", data, actual, actual.String())
+				t.Logf("MatchingAnySet(%s): expected set %04x %s", data, expected, expected.String())
+
+				if actual != expected {
+					t.Errorf("MatchingAnySet(%s): got %04x, want %04x", data, actual, expected)
+					continue
+				}
+				if len(actualNames) != len(expectedNames) {
+					t.Errorf("len(MatchingAnySet(%s).Names()): got %d, want %d",
+						data, len(actualNames), len(expectedNames))
+				} else {
+					for i := 0; i < len(actualNames); i++ {
+						if actualNames[i] != expectedNames[i] {
+							t.Errorf("MatchingAnySet(%s).Names()[%d]: got %s, want %s",
+								data, i, actualNames[i], expectedNames[i])
+							break
+						}
+					}
+				}
+				expectedConditions := toConditions(expectedNames)
+				actualConditions := actual.AsList()
+				if len(actualConditions) != len(expectedConditions) {
+					t.Errorf("len(MatchingAnySet(%s).AsList()): got %d, want %d",
+						data, len(actualNames), len(expectedNames))
+				} else {
+					for i := 0; i < len(actualNames); i++ {
+						if actualNames[i] != expectedNames[i] {
+							t.Errorf("MatchingAnySet(%s).AsList()[%d]: got %s, want %s",
+								data, i, actualNames[i], expectedNames[i])
+							break
+						}
+					}
+				}
+			}
+		}
+
+		checkExpected := func(actual LicenseConditionSet, t *testing.T) bool {
+			t.Logf("checkExpected{%s}", strings.Join(tt.expected, ", "))
+
+			expectedConditions := toConditions(tt.expected)
+			expected := NewLicenseConditionSet(expectedConditions...)
+
+			actualNames := actual.Names()
+
+			t.Logf("actual license condition set: %04x %s", actual, actual.String())
+			t.Logf("expected license condition set: %04x %s", expected, expected.String())
+
+			if actual != expected {
+				t.Errorf("checkExpected: got %04x, want %04x", actual, expected)
+				return false
+			}
+
+			if len(actualNames) != len(tt.expected) {
+				t.Errorf("len(actual.Names()): got %d, want %d", len(actualNames), len(tt.expected))
 			} else {
-				sort.Strings(slist)
-				sort.Strings(actualSlist)
-				for i := 0; i < len(slist); i++ {
-					if slist[i] != actualSlist[i] {
-						t.Errorf("unexpected LicenseConditionSet.asStringList(\";\") index %d in %v: got %s, want %s", i, actualSlist, actualSlist[i], slist[i])
+				for i := 0; i < len(actualNames); i++ {
+					if actualNames[i] != tt.expected[i] {
+						t.Errorf("actual.Names()[%d]: got %s, want %s", i, actualNames[i], tt.expected[i])
+						break
 					}
 				}
 			}
+
+			actualConditions := actual.AsList()
+			if len(actualConditions) != len(expectedConditions) {
+				t.Errorf("len(actual.AsList()): got %d, want %d", len(actualConditions), len(expectedConditions))
+			} else {
+				for i := 0; i < len(actualConditions); i++ {
+					if actualConditions[i] != expectedConditions[i] {
+						t.Errorf("actual.AsList()[%d]: got %s, want %s",
+							i, actualConditions[i], expectedConditions[i])
+						break
+					}
+				}
+			}
+
+			if len(tt.expected) == 0 {
+				if !actual.IsEmpty() {
+					t.Errorf("actual.IsEmpty(): got false, want true")
+				}
+				if actual.HasAny(expectedConditions...) {
+					t.Errorf("actual.HasAny(): got true, want false")
+				}
+			} else {
+				if actual.IsEmpty() {
+					t.Errorf("actual.IsEmpty(): got true, want false")
+				}
+				if !actual.HasAny(expectedConditions...) {
+					t.Errorf("actual.HasAny(all expected): got false, want true")
+				}
+			}
+			if !actual.HasAll(expectedConditions...) {
+				t.Errorf("actual.Hasll(all expected): want true, got false")
+			}
+			for _, expectedCondition := range expectedConditions {
+				if !actual.HasAny(expectedCondition) {
+					t.Errorf("actual.HasAny(%q): got false, want true", expectedCondition.Name())
+				}
+				if !actual.HasAll(expectedCondition) {
+					t.Errorf("actual.HasAll(%q): got false, want true", expectedCondition.Name())
+				}
+			}
+
+			notExpected := (AllLicenseConditions &^ expected)
+			notExpectedList := notExpected.AsList()
+			t.Logf("not expected license condition set: %04x %s", notExpected, notExpected.String())
+
+			if len(tt.expected) == 0 {
+				if actual.HasAny(append(expectedConditions, notExpectedList...)...) {
+					t.Errorf("actual.HasAny(all conditions): want false, got true")
+				}
+			} else {
+				if !actual.HasAny(append(expectedConditions, notExpectedList...)...) {
+					t.Errorf("actual.HasAny(all conditions): want true, got false")
+				}
+			}
+			if len(notExpectedList) == 0 {
+				if !actual.HasAll(append(expectedConditions, notExpectedList...)...) {
+					t.Errorf("actual.HasAll(all conditions): want true, got false")
+				}
+			} else {
+				if actual.HasAll(append(expectedConditions, notExpectedList...)...) {
+					t.Errorf("actual.HasAll(all conditions): want false, got true")
+				}
+			}
+			for _, unexpectedCondition := range notExpectedList {
+				if actual.HasAny(unexpectedCondition) {
+					t.Errorf("actual.HasAny(%q): got true, want false", unexpectedCondition.Name())
+				}
+				if actual.HasAll(unexpectedCondition) {
+					t.Errorf("actual.HasAll(%q): got true, want false", unexpectedCondition.Name())
+				}
+			}
+			return true
 		}
 
-		t.Run(tt.name+"_private_list_interface", func(t *testing.T) {
-			lg := newLicenseGraph()
-			cs := newLicenseConditionSet()
-			for name, origins := range tt.conditions {
-				for _, origin := range origins {
-					cs.add(newTestNode(lg, origin), name)
-				}
-			}
-			if tt.add != nil {
-				cs.Add(toConditionList(lg, tt.add)...)
-			}
-			testPrivateInterface(lg, cs, t)
-		})
+		checkExpectedSet := func(actual LicenseConditionSet, t *testing.T) bool {
+			t.Logf("checkExpectedSet{%s}", strings.Join(tt.expected, ", "))
 
-		t.Run(tt.name+"_private_set_interface", func(t *testing.T) {
-			lg := newLicenseGraph()
-			cs := newLicenseConditionSet()
-			for name, origins := range tt.conditions {
-				for _, origin := range origins {
-					cs.add(newTestNode(lg, origin), name)
-				}
+			expectedConditions := toConditions(tt.expected)
+			expected := NewLicenseConditionSet(expectedConditions...)
+
+			actualNames := actual.Names()
+
+			t.Logf("actual license condition set: %04x %s", actual, actual.String())
+			t.Logf("expected license condition set: %04x %s", expected, expected.String())
+
+			if actual != expected {
+				t.Errorf("checkExpectedSet: got %04x, want %04x", actual, expected)
+				return false
 			}
-			if tt.add != nil {
-				other := newLicenseConditionSet()
-				for name, origins := range tt.add {
-					for _, origin := range origins {
-						other.add(newTestNode(lg, origin), name)
+
+			if len(actualNames) != len(tt.expected) {
+				t.Errorf("len(actual.Names()): got %d, want %d", len(actualNames), len(tt.expected))
+			} else {
+				for i := 0; i < len(actualNames); i++ {
+					if actualNames[i] != tt.expected[i] {
+						t.Errorf("actual.Names()[%d]: got %s, want %s", i, actualNames[i], tt.expected[i])
+						break
 					}
 				}
-				cs.AddSet(other)
 			}
-			testPrivateInterface(lg, cs, t)
-		})
-	}
-}
 
-func TestConditionSet_Removals(t *testing.T) {
-	tests := []struct {
-		name         string
-		conditions   map[string][]string
-		removeByName []ConditionNames
-		removeSet    map[string][]string
-		byName       map[string][]string
-		byOrigin     map[string][]string
-	}{
-		{
-			name:         "emptybyname",
-			conditions:   map[string][]string{},
-			removeByName: []ConditionNames{{"reciprocal", "restricted"}},
-			byName: map[string][]string{
-				"notice":     []string{},
-				"restricted": []string{},
-			},
-			byOrigin: map[string][]string{
-				"bin1": []string{},
-				"lib1": []string{},
-				"bin2": []string{},
-				"lib2": []string{},
-			},
-		},
-		{
-			name:       "emptybyset",
-			conditions: map[string][]string{},
-			removeSet: map[string][]string{
-				"notice":     []string{"bin1", "bin2"},
-				"restricted": []string{"lib1", "lib2"},
-			},
-			byName: map[string][]string{
-				"notice":     []string{},
-				"restricted": []string{},
-			},
-			byOrigin: map[string][]string{
-				"bin1": []string{},
-				"lib1": []string{},
-				"bin2": []string{},
-				"lib2": []string{},
-			},
-		},
-		{
-			name: "everythingremovenone",
-			conditions: map[string][]string{
-				"notice":            []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1", "lib2"},
-			},
-			removeByName: []ConditionNames{{"permissive", "unencumbered"}},
-			removeSet: map[string][]string{
-				"notice": []string{"apk1"},
-			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1", "lib2"},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"bin2":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"lib1":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"lib2":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"other": []string{},
-			},
-		},
-		{
-			name: "everythingremovesome",
-			conditions: map[string][]string{
-				"notice":            []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1", "lib2"},
-			},
-			removeByName: []ConditionNames{{"restricted", "by_exception_only"}},
-			removeSet: map[string][]string{
-				"notice": []string{"lib1"},
-			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin1", "bin2", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{},
-				"by_exception_only": []string{},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"notice", "reciprocal"},
-				"bin2":  []string{"notice", "reciprocal"},
-				"lib1":  []string{"reciprocal"},
-				"lib2":  []string{"notice", "reciprocal"},
-				"other": []string{},
-			},
-		},
-		{
-			name: "everythingremoveall",
-			conditions: map[string][]string{
-				"notice":            []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1", "lib2"},
-			},
-			removeByName: []ConditionNames{{"restricted", "by_exception_only"}},
-			removeSet: map[string][]string{
-				"notice":     []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal": []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted": []string{"bin1"},
-			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{},
-				"reciprocal":        []string{},
-				"restricted":        []string{},
-				"by_exception_only": []string{},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{},
-				"bin2":  []string{},
-				"lib1":  []string{},
-				"lib2":  []string{},
-				"other": []string{},
-			},
-		},
-	}
-	for _, tt := range tests {
+			actualConditions := actual.AsList()
+			if len(actualConditions) != len(expectedConditions) {
+				t.Errorf("len(actual.AsList()): got %d, want %d", len(actualConditions), len(expectedConditions))
+			} else {
+				for i := 0; i < len(actualConditions); i++ {
+					if actualConditions[i] != expectedConditions[i] {
+						t.Errorf("actual.AsList()[%d}: got %s, want %s",
+							i, actualConditions[i], expectedConditions[i])
+						break
+					}
+				}
+			}
+
+			if len(tt.expected) == 0 {
+				if !actual.IsEmpty() {
+					t.Errorf("actual.IsEmpty(): got false, want true")
+				}
+				if actual.MatchesAnySet(expected) {
+					t.Errorf("actual.MatchesAnySet({}): got true, want false")
+				}
+				if actual.MatchesEverySet(expected, expected) {
+					t.Errorf("actual.MatchesEverySet({}, {}): want false, got true")
+				}
+			} else {
+				if actual.IsEmpty() {
+					t.Errorf("actual.IsEmpty(): got true, want false")
+				}
+				if !actual.MatchesAnySet(expected) {
+					t.Errorf("actual.MatchesAnySet({all expected}): want true, got false")
+				}
+				if !actual.MatchesEverySet(expected, expected) {
+					t.Errorf("actual.MatchesEverySet({all expected}, {all expected}): want true, got false")
+				}
+			}
+
+			notExpected := (AllLicenseConditions &^ expected)
+			t.Logf("not expected license condition set: %04x %s", notExpected, notExpected.String())
+
+			if len(tt.expected) == 0 {
+				if actual.MatchesAnySet(expected, notExpected) {
+					t.Errorf("empty actual.MatchesAnySet({expected}, {not expected}): want false, got true")
+				}
+			} else {
+				if !actual.MatchesAnySet(expected, notExpected) {
+					t.Errorf("actual.MatchesAnySet({expected}, {not expected}): want true, got false")
+				}
+			}
+			if actual.MatchesAnySet(notExpected) {
+				t.Errorf("actual.MatchesAnySet({not expected}): want false, got true")
+			}
+			if actual.MatchesEverySet(notExpected) {
+				t.Errorf("actual.MatchesEverySet({not expected}): want false, got true")
+			}
+			if actual.MatchesEverySet(expected, notExpected) {
+				t.Errorf("actual.MatchesEverySet({expected}, {not expected}): want false, got true")
+			}
+
+			if !actual.Difference(expected).IsEmpty() {
+				t.Errorf("actual.Difference({expected}).IsEmpty(): want true, got false")
+			}
+			if expected != actual.Intersection(expected) {
+				t.Errorf("expected == actual.Intersection({expected}): want true, got false (%04x != %04x)", expected, actual.Intersection(expected))
+			}
+			if actual != actual.Intersection(expected) {
+				t.Errorf("actual == actual.Intersection({expected}): want true, got false (%04x != %04x)", actual, actual.Intersection(expected))
+			}
+			return true
+		}
+
 		t.Run(tt.name, func(t *testing.T) {
-			lg := newLicenseGraph()
-			cs := newLicenseConditionSet()
-			for name, origins := range tt.conditions {
-				for _, origin := range origins {
-					cs.add(newTestNode(lg, origin), name)
-				}
+			cs := populate()
+			if checkExpected(cs, t) {
+				checkMatching(cs, t)
 			}
-			if tt.removeByName != nil {
-				cs.RemoveAllByName(tt.removeByName...)
+			if checkExpectedSet(cs, t) {
+				checkMatchingSet(cs, t)
 			}
-			if tt.removeSet != nil {
-				other := newLicenseConditionSet()
-				for name, origins := range tt.removeSet {
-					for _, origin := range origins {
-						other.add(newTestNode(lg, origin), name)
-					}
-				}
-				cs.RemoveSet(other)
+		})
+
+		t.Run(tt.name+"_sets", func(t *testing.T) {
+			cs := populateSet()
+			if checkExpected(cs, t) {
+				checkMatching(cs, t)
 			}
-			byName(tt.byName).checkPublic(cs, t)
-			byOrigin(tt.byOrigin).checkPublic(lg, cs, t)
+			if checkExpectedSet(cs, t){
+				checkMatchingSet(cs, t)
+			}
+		})
+
+		t.Run(tt.name+"_plusset", func(t *testing.T) {
+			cs := populatePlusSet()
+			if checkExpected(cs, t) {
+				checkMatching(cs, t)
+			}
+			if checkExpectedSet(cs, t){
+				checkMatchingSet(cs, t)
+			}
+		})
+
+		t.Run(tt.name+"_minusset", func(t *testing.T) {
+			cs := populateMinusSet()
+			if checkExpected(cs, t) {
+				checkMatching(cs, t)
+			}
+			if checkExpectedSet(cs, t){
+				checkMatchingSet(cs, t)
+			}
 		})
 	}
 }
