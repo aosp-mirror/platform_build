@@ -33,19 +33,13 @@ func (l byConflict) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
 // Less returns true when the `i`th element is lexicographically less than
 // the `j`th element.
 func (l byConflict) Less(i, j int) bool {
-	if l[i].SourceNode.name == l[j].SourceNode.name {
-		if l[i].ShareCondition.origin.name == l[j].ShareCondition.origin.name {
-			if l[i].ShareCondition.name == l[j].ShareCondition.name {
-				if l[i].PrivacyCondition.origin.name == l[j].PrivacyCondition.origin.name {
-					return l[i].PrivacyCondition.name < l[j].PrivacyCondition.name
-				}
-				return l[i].PrivacyCondition.origin.name < l[j].PrivacyCondition.origin.name
-			}
-			return l[i].ShareCondition.name < l[j].ShareCondition.name
+	if l[i].SourceNode.Name() == l[j].SourceNode.Name() {
+		if l[i].ShareCondition.Name() == l[j].ShareCondition.Name() {
+			return l[i].PrivacyCondition.Name() < l[j].PrivacyCondition.Name()
 		}
-		return l[i].ShareCondition.origin.name < l[j].ShareCondition.origin.name
+		return l[i].ShareCondition.Name() < l[j].ShareCondition.Name()
 	}
-	return l[i].SourceNode.name < l[j].SourceNode.name
+	return l[i].SourceNode.Name() < l[j].SourceNode.Name()
 }
 
 func TestConflictingSharedPrivateSource(t *testing.T) {

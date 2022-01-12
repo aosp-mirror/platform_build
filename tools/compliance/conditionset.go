@@ -16,263 +16,174 @@ package compliance
 
 import (
 	"fmt"
+	"strings"
 )
 
-// NewLicenseConditionSet creates a new instance or variable of *LicenseConditionSet.
-func NewLicenseConditionSet(conditions ...LicenseCondition) *LicenseConditionSet {
-	cs := newLicenseConditionSet()
-	cs.Add(conditions...)
+// LicenseConditionSet identifies sets of license conditions.
+type LicenseConditionSet LicenseCondition
+
+// AllLicenseConditions is the set of all recognized license conditions.
+const AllLicenseConditions = LicenseConditionSet(LicenseConditionMask)
+
+// NewLicenseConditionSet returns a set containing exactly the elements of
+// `conditions`.
+func NewLicenseConditionSet(conditions ...LicenseCondition) LicenseConditionSet {
+	cs := LicenseConditionSet(0x00)
+	for _, lc := range conditions {
+		cs |= LicenseConditionSet(lc)
+	}
 	return cs
 }
 
-// LicenseConditionSet describes a mutable set of immutable license conditions.
-type LicenseConditionSet struct {
-	// conditions describes the set of license conditions i.e. (condition name, origin target) pairs
-	// by mapping condition name -> origin target -> true.
-	conditions map[string]map[*TargetNode]bool
-}
-
-// Add makes all `conditions` members of the set if they were not previously.
-func (cs *LicenseConditionSet) Add(conditions ...LicenseCondition) {
-	if len(conditions) == 0 {
-		return
-	}
+// Plus returns a new set containing all of the elements of `cs` and all of the
+// `conditions`.
+func (cs LicenseConditionSet) Plus(conditions ...LicenseCondition) LicenseConditionSet {
+	result := cs
 	for _, lc := range conditions {
-		if _, ok := cs.conditions[lc.name]; !ok {
-			cs.conditions[lc.name] = make(map[*TargetNode]bool)
-		}
-		cs.conditions[lc.name][lc.origin] = true
+		result |= LicenseConditionSet(lc)
 	}
+	return result
 }
 
-// AddSet makes all elements of `conditions` members of the set if they were not previously.
-func (cs *LicenseConditionSet) AddSet(other *LicenseConditionSet) {
-	if len(other.conditions) == 0 {
-		return
+// Union returns a new set containing all of the elements of `cs` and all of the
+// elements of the `other` sets.
+func (cs LicenseConditionSet) Union(other ...LicenseConditionSet) LicenseConditionSet {
+	result := cs
+	for _, ls := range other {
+		result |= ls
 	}
-	for name, origins := range other.conditions {
-		if len(origins) == 0 {
-			continue
-		}
-		if _, ok := cs.conditions[name]; !ok {
-			cs.conditions[name] = make(map[*TargetNode]bool)
-		}
-		for origin := range origins {
-			cs.conditions[name][origin] = other.conditions[name][origin]
-		}
-	}
+	return result
 }
 
-// ByName returns a list of the conditions in the set matching `names`.
-func (cs *LicenseConditionSet) ByName(names ...ConditionNames) *LicenseConditionSet {
-	other := newLicenseConditionSet()
-	for _, cn := range names {
-		for _, name := range cn {
-			if origins, ok := cs.conditions[name]; ok {
-				other.conditions[name] = make(map[*TargetNode]bool)
-				for origin := range origins {
-					other.conditions[name][origin] = true
-				}
-			}
-		}
+// MatchingAny returns the subset of `cs` equal to any of the `conditions`.
+func (cs LicenseConditionSet) MatchingAny(conditions ...LicenseCondition) LicenseConditionSet {
+	result := LicenseConditionSet(0x00)
+	for _, lc := range conditions {
+		result |= cs & LicenseConditionSet(lc)
 	}
-	return other
+	return result
 }
 
-// HasAnyByName returns true if the set contains any conditions matching `names` originating at any target.
-func (cs *LicenseConditionSet) HasAnyByName(names ...ConditionNames) bool {
-	for _, cn := range names {
-		for _, name := range cn {
-			if origins, ok := cs.conditions[name]; ok {
-				if len(origins) > 0 {
-					return true
-				}
-			}
-		}
+// MatchingAnySet returns the subset of `cs` that are members of any of the
+// `other` sets.
+func (cs LicenseConditionSet) MatchingAnySet(other ...LicenseConditionSet) LicenseConditionSet {
+	result := LicenseConditionSet(0x00)
+	for _, ls := range other {
+		result |= cs & ls
 	}
-	return false
+	return result
 }
 
-// CountByName returns the number of conditions matching `names` originating at any target.
-func (cs *LicenseConditionSet) CountByName(names ...ConditionNames) int {
-	size := 0
-	for _, cn := range names {
-		for _, name := range cn {
-			if origins, ok := cs.conditions[name]; ok {
-				size += len(origins)
-			}
-		}
-	}
-	return size
-}
-
-// ByOrigin returns all of the conditions that originate at `origin` regardless of name.
-func (cs *LicenseConditionSet) ByOrigin(origin *TargetNode) *LicenseConditionSet {
-	other := newLicenseConditionSet()
-	for name, origins := range cs.conditions {
-		if _, ok := origins[origin]; ok {
-			other.conditions[name] = make(map[*TargetNode]bool)
-			other.conditions[name][origin] = true
-		}
-	}
-	return other
-}
-
-// HasAnyByOrigin returns true if the set contains any conditions originating at `origin` regardless of condition name.
-func (cs *LicenseConditionSet) HasAnyByOrigin(origin *TargetNode) bool {
-	for _, origins := range cs.conditions {
-		if _, ok := origins[origin]; ok {
+// HasAny returns true when `cs` contains at least one of the `conditions`.
+func (cs LicenseConditionSet) HasAny(conditions ...LicenseCondition) bool {
+	for _, lc := range conditions {
+		if 0x0000 != (cs & LicenseConditionSet(lc)) {
 			return true
 		}
 	}
 	return false
 }
 
-// CountByOrigin returns the number of conditions originating at `origin` regardless of condition name.
-func (cs *LicenseConditionSet) CountByOrigin(origin *TargetNode) int {
-	size := 0
-	for _, origins := range cs.conditions {
-		if _, ok := origins[origin]; ok {
-			size++
-		}
-	}
-	return size
-}
-
-// AsList returns a list of all the conditions in the set.
-func (cs *LicenseConditionSet) AsList() ConditionList {
-	result := make(ConditionList, 0, cs.Count())
-	for name, origins := range cs.conditions {
-		for origin := range origins {
-			result = append(result, LicenseCondition{name, origin})
-		}
-	}
-	return result
-}
-
-// Names returns a list of the names of the conditions in the set.
-func (cs *LicenseConditionSet) Names() []string {
-	result := make([]string, 0, len(cs.conditions))
-	for name := range cs.conditions {
-		result = append(result, name)
-	}
-	return result
-}
-
-// Count returns the number of conditions in the set.
-func (cs *LicenseConditionSet) Count() int {
-	size := 0
-	for _, origins := range cs.conditions {
-		size += len(origins)
-	}
-	return size
-}
-
-// Copy creates a new LicenseCondition variable with the same value.
-func (cs *LicenseConditionSet) Copy() *LicenseConditionSet {
-	other := newLicenseConditionSet()
-	for name := range cs.conditions {
-		other.conditions[name] = make(map[*TargetNode]bool)
-		for origin := range cs.conditions[name] {
-			other.conditions[name][origin] = cs.conditions[name][origin]
-		}
-	}
-	return other
-}
-
-// HasCondition returns true if the set contains any condition matching both `names` and `origin`.
-func (cs *LicenseConditionSet) HasCondition(names ConditionNames, origin *TargetNode) bool {
-	for _, name := range names {
-		if origins, ok := cs.conditions[name]; ok {
-			_, isPresent := origins[origin]
-			if isPresent {
-				return true
-			}
+// MatchesAnySet returns true when `cs` has a non-empty intersection with at
+// least one of the `other` condition sets.
+func (cs LicenseConditionSet) MatchesAnySet(other ...LicenseConditionSet) bool {
+	for _, ls := range other {
+		if 0x0000 != (cs & ls) {
+			return true
 		}
 	}
 	return false
 }
 
-// IsEmpty returns true when the set of conditions contains zero elements.
-func (cs *LicenseConditionSet) IsEmpty() bool {
-	for _, origins := range cs.conditions {
-		if 0 < len(origins) {
+// HasAll returns true when `cs` contains every one of the `conditions`.
+func (cs LicenseConditionSet) HasAll(conditions ...LicenseCondition) bool {
+	for _, lc := range conditions {
+		if 0x0000 == (cs & LicenseConditionSet(lc)) {
 			return false
 		}
 	}
 	return true
 }
 
-// RemoveAllByName changes the set to delete all conditions matching `names`.
-func (cs *LicenseConditionSet) RemoveAllByName(names ...ConditionNames) {
-	for _, cn := range names {
-		for _, name := range cn {
-			delete(cs.conditions, name)
+// MatchesEverySet returns true when `cs` has a non-empty intersection with
+// each of the `other` condition sets.
+func (cs LicenseConditionSet) MatchesEverySet(other ...LicenseConditionSet) bool {
+	for _, ls := range other {
+		if 0x0000 == (cs & ls) {
+			return false
 		}
 	}
+	return true
 }
 
-// Remove changes the set to delete `conditions`.
-func (cs *LicenseConditionSet) Remove(conditions ...LicenseCondition) {
+// Intersection returns the subset of `cs` that are members of every `other`
+// set.
+func (cs LicenseConditionSet) Intersection(other ...LicenseConditionSet) LicenseConditionSet {
+	result := cs
+	for _, ls := range other {
+		result &= ls
+	}
+	return result
+}
+
+// Minus returns the subset of `cs` that are not equaal to any `conditions`.
+func (cs LicenseConditionSet) Minus(conditions ...LicenseCondition) LicenseConditionSet {
+	result := cs
 	for _, lc := range conditions {
-		if _, isPresent := cs.conditions[lc.name]; !isPresent {
-			panic(fmt.Errorf("attempt to remove non-existent condition: %q", lc.asString(":")))
-		}
-		if _, isPresent := cs.conditions[lc.name][lc.origin]; !isPresent {
-			panic(fmt.Errorf("attempt to remove non-existent origin: %q", lc.asString(":")))
-		}
-		delete(cs.conditions[lc.name], lc.origin)
+		result &^= LicenseConditionSet(lc)
 	}
+	return result
 }
 
-// removeSet changes the set to delete all conditions also present in `other`.
-func (cs *LicenseConditionSet) RemoveSet(other *LicenseConditionSet) {
-	for name, origins := range other.conditions {
-		if _, isPresent := cs.conditions[name]; !isPresent {
-			continue
-		}
-		for origin := range origins {
-			delete(cs.conditions[name], origin)
+// Difference returns the subset of `cs` that are not members of any `other`
+// set.
+func (cs LicenseConditionSet) Difference(other ...LicenseConditionSet) LicenseConditionSet {
+	result := cs
+	for _, ls := range other {
+		result &^= ls
+	}
+	return result
+}
+
+// Len returns the number of license conditions in the set.
+func (cs LicenseConditionSet) Len() int {
+	size := 0
+	for lc := LicenseConditionSet(0x01); 0x00 != (AllLicenseConditions & lc); lc <<= 1 {
+		if 0x00 != (cs & lc) {
+			size++
 		}
 	}
+	return size
 }
 
-// compliance-only LicenseConditionSet methods
-
-// newLicenseConditionSet constructs a set of `conditions`.
-func newLicenseConditionSet() *LicenseConditionSet {
-	return &LicenseConditionSet{make(map[string]map[*TargetNode]bool)}
-}
-
-// add changes the set to include each element of `conditions` originating at `origin`.
-func (cs *LicenseConditionSet) add(origin *TargetNode, conditions ...string) {
-	for _, name := range conditions {
-		if _, ok := cs.conditions[name]; !ok {
-			cs.conditions[name] = make(map[*TargetNode]bool)
-		}
-		cs.conditions[name][origin] = true
-	}
-}
-
-// asStringList returns the conditions in the set as `separator`-separated (origin, condition-name) pair strings.
-func (cs *LicenseConditionSet) asStringList(separator string) []string {
-	result := make([]string, 0, cs.Count())
-	for name, origins := range cs.conditions {
-		for origin := range origins {
-			result = append(result, origin.name+separator+name)
+// AsList returns an array of the license conditions in the set.
+func (cs LicenseConditionSet) AsList() []LicenseCondition {
+	result := make([]LicenseCondition, 0, cs.Len())
+	for lc := LicenseConditionSet(0x01); 0x00 != (AllLicenseConditions & lc); lc <<= 1 {
+		if 0x00 != (cs & lc) {
+			result = append(result, LicenseCondition(lc))
 		}
 	}
 	return result
 }
 
-// conditionNamesArray implements a `contains` predicate for arrays of ConditionNames
-type conditionNamesArray []ConditionNames
-
-func (cn conditionNamesArray) contains(name string) bool {
-	for _, names := range cn {
-		if names.Contains(name) {
-			return true
+// Names returns an array of the names of the license conditions in the set.
+func (cs LicenseConditionSet) Names() []string {
+	result := make([]string, 0, cs.Len())
+	for lc := LicenseConditionSet(0x01); 0x00 != (AllLicenseConditions & lc); lc <<= 1 {
+		if 0x00 != (cs & lc) {
+			result = append(result, LicenseCondition(lc).Name())
 		}
 	}
-	return false
+	return result
+}
+
+// IsEmpty returns true when the set contains no license conditions.
+func (cs LicenseConditionSet) IsEmpty() bool {
+	return 0x00 == (cs & AllLicenseConditions)
+}
+
+// String returns a human-readable string representation of the set.
+func (cs LicenseConditionSet) String() string {
+	return fmt.Sprintf("{%s}", strings.Join(cs.Names(), "|"))
 }
