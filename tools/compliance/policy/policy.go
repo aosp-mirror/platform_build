@@ -20,6 +20,15 @@ import (
 )
 
 var (
+	// RecognizedAnnotations identifies the set of annotations that have
+	// meaning for compliance policy.
+	RecognizedAnnotations = map[string]string{
+		// used in readgraph.go to avoid creating 1000's of copies of the below 3 strings.
+		"static":    "static",
+		"dynamic":   "dynamic",
+		"toolchain": "toolchain",
+	}
+
 	// ImpliesUnencumbered lists the condition names representing an author attempt to disclaim copyright.
 	ImpliesUnencumbered = ConditionNames{"unencumbered"}
 
