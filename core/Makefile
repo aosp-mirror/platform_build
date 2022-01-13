@@ -2760,12 +2760,10 @@ ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
 
 # Generate fsv_meta
 fsverity-metadata-targets := $(sort $(filter \
-  $(TARGET_OUT)/framework/%.jar \
-  $(foreach arch,$(TARGET_ARCH) $(TARGET_2ND_ARCH),$(foreach ext,oat vdex art, \
-    $(TARGET_OUT)/framework/oat/$(arch)/%.$(ext))) \
+  $(TARGET_OUT)/framework/% \
   $(TARGET_OUT)/etc/boot-image.prof \
   $(TARGET_OUT)/etc/dirty-image-objects \
-  $(TARGET_OUT)/etc/updatable-bcp-packages.txt, \
+  $(TARGET_OUT)/etc/classpaths/%.pb, \
   $(ALL_GENERATED_SOURCES) $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 define fsverity-generate-metadata
