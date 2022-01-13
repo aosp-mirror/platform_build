@@ -22,6 +22,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 )
 
 func init() {
@@ -83,17 +84,17 @@ func listShare(stdout, stderr io.Writer, files ...string) error {
 	shareSource := compliance.ResolveSourceSharing(licenseGraph)
 
 	// Group the resolutions by project.
-	presolution := make(map[string]*compliance.LicenseConditionSet)
+	presolution := make(map[string]compliance.LicenseConditionSet)
 	for _, target := range shareSource.AttachesTo() {
 		rl := shareSource.Resolutions(target)
 		sort.Sort(rl)
 		for _, r := range rl {
 			for _, p := range r.ActsOn().Projects() {
 				if _, ok := presolution[p]; !ok {
-					presolution[p] = r.Resolves().Copy()
+					presolution[p] = r.Resolves()
 					continue
 				}
-				presolution[p].AddSet(r.Resolves())
+				presolution[p] = presolution[p].Union(r.Resolves())
 			}
 		}
 	}
@@ -107,17 +108,11 @@ func listShare(stdout, stderr io.Writer, files ...string) error {
 
 	// Output the sorted projects and the source-sharing license conditions that each project resolves.
 	for _, p := range projects {
-		fmt.Fprintf(stdout, "%s", p)
-
-		// Sort the conditions for repeatability/stability.
-		conditions := presolution[p].AsList()
-		sort.Sort(conditions)
-
-		// Output the sorted origin:condition pairs.
-		for _, lc := range conditions {
-			fmt.Fprintf(stdout, ",%s:%s", lc.Origin().Name(), lc.Name())
+		if presolution[p].IsEmpty() {
+			fmt.Fprintf(stdout, "%s\n", p)
+		} else {
+			fmt.Fprintf(stdout, "%s,%s\n", p, strings.Join(presolution[p].Names(), ","))
 		}
-		fmt.Fprintf(stdout, "\n")
 	}
 
 	return nil

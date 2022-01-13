@@ -52,30 +52,19 @@ type LicenseGraph struct {
 	// edges lists the directed edges in the graph from target to dependency. (guarded by mu)
 	//
 	// Alternatively, the graph is the set of `edges`.
-	edges []*dependencyEdge
+	edges TargetEdgeList
 
-	// targets identifies, indexes by name, and describes the entire set of target node files.
+	// targets identifies, indexes, and describes the entire set of target node files.
 	/// (guarded by mu)
 	targets map[string]*TargetNode
 
-	// index facilitates looking up edges from targets. (creation guarded by my)
-	//
-	// This is a forward index from target to dependencies. i.e. "top-down"
-	index map[string][]*dependencyEdge
+	// wgBU becomes non-nil when the bottom-up resolve begins and reaches 0
+	// (i.e. Wait() proceeds) when the bottom-up resolve completes. (guarded by mu)
+	wgBU *sync.WaitGroup
 
-	// rsBU caches the results of a full bottom-up resolve. (creation guarded by mu)
-	//
-	// A bottom-up resolve is a prerequisite for all of the top-down resolves so caching
-	// the result is a performance win.
-	rsBU *ResolutionSet
-
-	// rsTD caches the results of a full top-down resolve. (creation guarded by mu)
-	//
-	// A top-down resolve is a prerequisite for final resolutions.
-	// e.g. a shipped node inheriting a `restricted` condition from a parent through a
-	// dynamic dependency implies a notice dependency on the parent; even though, the
-	// distribution does not happen as a result of the dynamic dependency itself.
-	rsTD *ResolutionSet
+	// wgTD becomes non-nil when the top-down resolve begins and reaches 0 (i.e. Wait()
+	// proceeds) when the top-down resolve completes. (guarded by mu)
+	wgTD *sync.WaitGroup
 
 	// shippedNodes caches the results of a full walk of nodes identifying targets
 	// distributed either directly or as derivative works. (creation guarded by mu)
@@ -85,35 +74,18 @@ type LicenseGraph struct {
 	mu sync.Mutex
 }
 
-// TargetNode returns the target node identified by `name`.
-func (lg *LicenseGraph) TargetNode(name string) *TargetNode {
-	if _, ok := lg.targets[name]; !ok {
-		panic(fmt.Errorf("target node %q missing from graph", name))
-	}
-	return lg.targets[name]
-}
-
-// HasTargetNode returns true if a target node identified by `name` appears in
-// the graph.
-func (lg *LicenseGraph) HasTargetNode(name string) bool {
-	_, isPresent := lg.targets[name]
-	return isPresent
-}
-
 // Edges returns the list of edges in the graph. (unordered)
 func (lg *LicenseGraph) Edges() TargetEdgeList {
 	edges := make(TargetEdgeList, 0, len(lg.edges))
-	for _, e := range lg.edges {
-		edges = append(edges, TargetEdge{lg, e})
-	}
+	edges = append(edges, lg.edges...)
 	return edges
 }
 
 // Targets returns the list of target nodes in the graph. (unordered)
 func (lg *LicenseGraph) Targets() TargetNodeList {
 	targets := make(TargetNodeList, 0, len(lg.targets))
-	for target := range lg.targets {
-		targets = append(targets, lg.targets[target])
+	for _, target := range lg.targets {
+		targets = append(targets, target)
 	}
 	return targets
 }
@@ -124,30 +96,7 @@ func (lg *LicenseGraph) Targets() TargetNodeList {
 func newLicenseGraph() *LicenseGraph {
 	return &LicenseGraph{
 		rootFiles: []string{},
-		edges:     make([]*dependencyEdge, 0, 1000),
 		targets:   make(map[string]*TargetNode),
-	}
-}
-
-// indexForward guarantees the `index` map is populated to look up edges by
-// `target`.
-func (lg *LicenseGraph) indexForward() {
-	lg.mu.Lock()
-	defer func() {
-		lg.mu.Unlock()
-	}()
-
-	if lg.index != nil {
-		return
-	}
-
-	lg.index = make(map[string][]*dependencyEdge)
-	for _, e := range lg.edges {
-		if _, ok := lg.index[e.target]; ok {
-			lg.index[e.target] = append(lg.index[e.target], e)
-		} else {
-			lg.index[e.target] = []*dependencyEdge{e}
-		}
 	}
 }
 
@@ -159,25 +108,25 @@ func (lg *LicenseGraph) indexForward() {
 // i.e. `Target` depends on `Dependency` in the manner described by
 // `Annotations`.
 type TargetEdge struct {
-	// lg identifies the scope, i.e. license graph, in which the edge appears.
-	lg *LicenseGraph
+	// target and dependency identify the nodes connected by the edge.
+	target, dependency *TargetNode
 
-	// e identifies describes the target, dependency, and annotations of the edge.
-	e *dependencyEdge
+	// annotations identifies the set of compliance-relevant annotations describing the edge.
+	annotations TargetEdgeAnnotations
 }
 
 // Target identifies the target that depends on the dependency.
 //
 // Target needs Dependency to build.
-func (e TargetEdge) Target() *TargetNode {
-	return e.lg.targets[e.e.target]
+func (e *TargetEdge) Target() *TargetNode {
+	return e.target
 }
 
 // Dependency identifies the target depended on by the target.
 //
 // Dependency builds without Target, but Target needs Dependency to build.
-func (e TargetEdge) Dependency() *TargetNode {
-	return e.lg.targets[e.e.dependency]
+func (e *TargetEdge) Dependency() *TargetNode {
+	return e.dependency
 }
 
 // Annotations describes the type of edge by the set of annotations attached to
@@ -186,12 +135,17 @@ func (e TargetEdge) Dependency() *TargetNode {
 // Only annotations prescribed by policy have any meaning for licensing, and
 // the meaning for licensing is likewise prescribed by policy. Other annotations
 // are preserved and ignored by policy.
-func (e TargetEdge) Annotations() TargetEdgeAnnotations {
-	return e.e.annotations
+func (e *TargetEdge) Annotations() TargetEdgeAnnotations {
+	return e.annotations
+}
+
+// String returns a human-readable string representation of the edge.
+func (e *TargetEdge) String() string {
+	return fmt.Sprintf("%s -[%s]> %s", e.target.name, strings.Join(e.annotations.AsList(), ", "), e.dependency.name)
 }
 
 // TargetEdgeList orders lists of edges by target then dependency then annotations.
-type TargetEdgeList []TargetEdge
+type TargetEdgeList []*TargetEdge
 
 // Len returns the count of the elmements in the list.
 func (l TargetEdgeList) Len() int      { return len(l) }
@@ -201,18 +155,63 @@ func (l TargetEdgeList) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
 
 // Less returns true when the `i`th element is lexicographically less than the `j`th.
 func (l TargetEdgeList) Less(i, j int) bool {
-	if l[i].e.target == l[j].e.target {
-		if l[i].e.dependency == l[j].e.dependency {
-			return l[i].e.annotations.Compare(l[j].e.annotations) < 0
-		}
-		return l[i].e.dependency < l[j].e.dependency
+	namei := l[i].target.name
+	namej := l[j].target.name
+	if namei == namej {
+		namei = l[i].dependency.name
+		namej = l[j].dependency.name
 	}
-	return l[i].e.target < l[j].e.target
+	if namei == namej {
+		return l[i].annotations.Compare(l[j].annotations) < 0
+	}
+	return namei < namej
+}
+
+// TargetEdgePathSegment describes a single arc in a TargetPath associating the
+// edge with a context `ctx` defined by whatever process is creating the path.
+type TargetEdgePathSegment struct {
+	edge *TargetEdge
+	ctx interface{}
+}
+
+// Target identifies the target that depends on the dependency.
+//
+// Target needs Dependency to build.
+func (s TargetEdgePathSegment) Target() *TargetNode {
+	return s.edge.target
+}
+
+// Dependency identifies the target depended on by the target.
+//
+// Dependency builds without Target, but Target needs Dependency to build.
+func (s TargetEdgePathSegment) Dependency() *TargetNode {
+	return s.edge.dependency
+}
+
+// Annotations describes the type of edge by the set of annotations attached to
+// it.
+//
+// Only annotations prescribed by policy have any meaning for licensing, and
+// the meaning for licensing is likewise prescribed by policy. Other annotations
+// are preserved and ignored by policy.
+func (s TargetEdgePathSegment) Annotations() TargetEdgeAnnotations {
+	return s.edge.annotations
+}
+
+// Context returns the context associated with the path segment. The type and
+// value of the context defined by the process creating the path.
+func (s TargetEdgePathSegment) Context() interface{} {
+	return s.ctx
+}
+
+// String returns a human-readable string representation of the edge.
+func (s TargetEdgePathSegment) String() string {
+	return fmt.Sprintf("%s -[%s]> %s", s.edge.target.name, strings.Join(s.edge.annotations.AsList(), ", "), s.edge.dependency.name)
 }
 
 // TargetEdgePath describes a sequence of edges starting at a root and ending
 // at some final dependency.
-type TargetEdgePath []TargetEdge
+type TargetEdgePath []TargetEdgePathSegment
 
 // NewTargetEdgePath creates a new, empty path with capacity `cap`.
 func NewTargetEdgePath(cap int) *TargetEdgePath {
@@ -222,15 +221,15 @@ func NewTargetEdgePath(cap int) *TargetEdgePath {
 
 // Push appends a new edge to the list verifying that the target of the new
 // edge is the dependency of the prior.
-func (p *TargetEdgePath) Push(edge TargetEdge) {
+func (p *TargetEdgePath) Push(edge *TargetEdge, ctx interface{}) {
 	if len(*p) == 0 {
-		*p = append(*p, edge)
+		*p = append(*p, TargetEdgePathSegment{edge, ctx})
 		return
 	}
-	if (*p)[len(*p)-1].e.dependency != edge.e.target {
-		panic(fmt.Errorf("disjoint path %s does not end at %s", p.String(), edge.e.target))
+	if (*p)[len(*p)-1].edge.dependency != edge.target {
+		panic(fmt.Errorf("disjoint path %s does not end at %s", p.String(), edge.target.name))
 	}
-	*p = append(*p, edge)
+	*p = append(*p, TargetEdgePathSegment{edge, ctx})
 }
 
 // Pop shortens the path by 1 edge.
@@ -256,10 +255,11 @@ func (p *TargetEdgePath) String() string {
 	}
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "[")
-	for _, e := range *p {
-		fmt.Fprintf(&sb, "%s -> ", e.e.target)
+	for _, s := range *p {
+		fmt.Fprintf(&sb, "%s -> ", s.edge.target.name)
 	}
-	fmt.Fprintf(&sb, "%s]", (*p)[len(*p)-1].e.dependency)
+	lastSegment := (*p)[len(*p)-1]
+	fmt.Fprintf(&sb, "%s]", lastSegment.edge.dependency.name)
 	return sb.String()
 }
 
@@ -277,6 +277,13 @@ type TargetNode targetNode
 // i.e. path to license metadata file
 func (tn *TargetNode) Name() string {
 	return tn.name
+}
+
+// Dependencies returns the list of edges to dependencies of `tn`.
+func (tn *TargetNode) Dependencies() TargetEdgeList {
+	edges := make(TargetEdgeList, 0, len(tn.edges))
+	edges = append(edges, tn.edges...)
+	return edges
 }
 
 // PackageName returns the string that identifes the package for the target.
@@ -323,10 +330,8 @@ func (tn *TargetNode) LicenseKinds() []string {
 // is a matter of policy. (unordered)
 //
 // e.g. notice or proprietary
-func (tn *TargetNode) LicenseConditions() *LicenseConditionSet {
-	result := newLicenseConditionSet()
-	result.add(tn, tn.proto.LicenseConditions...)
-	return result
+func (tn *TargetNode) LicenseConditions() LicenseConditionSet {
+	return tn.licenseConditions
 }
 
 // LicenseTexts returns the paths to the files containing the license texts for
@@ -387,12 +392,12 @@ type InstallMap struct {
 // Annotations typically distinguish between static linkage versus dynamic
 // versus tools that are used at build time but are not linked in any way.
 type TargetEdgeAnnotations struct {
-	annotations map[string]bool
+	annotations map[string]struct{}
 }
 
 // newEdgeAnnotations creates a new instance of TargetEdgeAnnotations.
 func newEdgeAnnotations() TargetEdgeAnnotations {
-	return TargetEdgeAnnotations{make(map[string]bool)}
+	return TargetEdgeAnnotations{make(map[string]struct{})}
 }
 
 // HasAnnotation returns true if an annotation `ann` is in the set.
@@ -439,7 +444,7 @@ func (ea TargetEdgeAnnotations) AsList() []string {
 
 // TargetNodeSet describes a set of distinct nodes in a license graph.
 type TargetNodeSet struct {
-	nodes map[*TargetNode]bool
+	nodes map[*TargetNode]struct{}
 }
 
 // Contains returns true when `target` is an element of the set.
@@ -464,6 +469,11 @@ func (ts *TargetNodeSet) Names() []string {
 		result = append(result, tn.name)
 	}
 	return result
+}
+
+// String returns a human-readable string representation of the set.
+func (ts *TargetNodeSet) String() string {
+	return fmt.Sprintf("{%s}", strings.Join(ts.Names(), ", "))
 }
 
 // TargetNodeList orders a list of targets by name.

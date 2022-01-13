@@ -126,6 +126,7 @@ $(OUT_DIR)/products/$(strip $(1)).txt: $(this_makefile)
 	$(hide) echo 'PRODUCT_CHARACTERISTICS=$(call get-product-var,$(1),PRODUCT_CHARACTERISTICS)' >> $$@
 	$(hide) echo 'PRODUCT_COPY_FILES=$(call get-product-var,$(1),PRODUCT_COPY_FILES)' >> $$@
 	$(hide) echo 'PRODUCT_OTA_PUBLIC_KEYS=$(call get-product-var,$(1),PRODUCT_OTA_PUBLIC_KEYS)' >> $$@
+	$(hide) echo 'PRODUCT_EXTRA_OTA_KEYS=$(call get-product-var,$(1),PRODUCT_EXTRA_OTA_KEYS)' >> $$@
 	$(hide) echo 'PRODUCT_EXTRA_RECOVERY_KEYS=$(call get-product-var,$(1),PRODUCT_EXTRA_RECOVERY_KEYS)' >> $$@
 	$(hide) echo 'PRODUCT_PACKAGE_OVERLAYS=$(call get-product-var,$(1),PRODUCT_PACKAGE_OVERLAYS)' >> $$@
 	$(hide) echo 'DEVICE_PACKAGE_OVERLAYS=$(call get-product-var,$(1),DEVICE_PACKAGE_OVERLAYS)' >> $$@

@@ -230,6 +230,9 @@ A/B OTA specific options
 
   --compressor_types
       A colon ':' separated list of compressors. Allowed values are bz2 and brotli.
+
+  --enable_zucchini
+      Whether to enable to zucchini feature. Will generate smaller OTA but uses more memory.
 """
 
 from __future__ import print_function
@@ -299,6 +302,7 @@ OPTIONS.vabc_downgrade = False
 OPTIONS.enable_vabc_xor = True
 OPTIONS.force_minor_version = None
 OPTIONS.compressor_types = None
+OPTIONS.enable_zucchini = None
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -1141,6 +1145,14 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     partition_timestamps_flags = GeneratePartitionTimestampFlags(
         metadata.postcondition.partition_state)
 
+  # Auto-check for compatibility only if --enable_zucchini omitted. Otherwise
+  # let user override zucchini settings. This is useful for testing.
+  if OPTIONS.enable_zucchini is None:
+    if not ota_utils.IsZucchiniCompatible(source_file, target_file):
+      additional_args += ["--enable_zucchini", "false"]
+  else:
+    additional_args += ["--enable_zucchini", str(OPTIONS.enable_zucchini).lower()]
+
   if OPTIONS.disable_vabc:
     additional_args += ["--disable_vabc", "true"]
   if OPTIONS.enable_vabc_xor:
@@ -1326,6 +1338,8 @@ def main(argv):
       OPTIONS.force_minor_version = a
     elif o == "--compressor_types":
       OPTIONS.compressor_types = a
+    elif o == "--enable_zucchini":
+      OPTIONS.enable_zucchini = a.lower() != "false"
     else:
       return False
     return True
@@ -1373,6 +1387,7 @@ def main(argv):
                                  "enable_vabc_xor=",
                                  "force_minor_version=",
                                  "compressor_types=",
+                                 "enable_zucchin=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
