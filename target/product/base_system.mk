@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     cmd \
     com.android.adbd \
     com.android.appsearch \
+    com.android.auxiliary \
     com.android.conscrypt \
     com.android.cronet \
     com.android.extservices \

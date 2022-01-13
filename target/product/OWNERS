@@ -2,4 +2,4 @@ per-file runtime_libart.mk = calin@google.com, mast@google.com, ngeoffray@google
 
 # GSI
 per-file gsi_release.mk = file:/target/product/gsi/OWNERS
-per-file gsi_keys.mk = file:/target/product/gsi/OWNERS
+per-file developer_gsi_keys.mk = file:/target/product/gsi/OWNERS
