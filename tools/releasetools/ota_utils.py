@@ -640,6 +640,28 @@ def ConstructOtaApexInfo(target_zip, source_file=None):
   return target_apex_proto.SerializeToString()
 
 
+def IsLz4diffCompatible(source_file: str, target_file: str):
+  """Check whether lz4diff versions in two builds are compatible
+
+  Args:
+    source_file: Path to source build's target_file.zip
+    target_file: Path to target build's target_file.zip
+
+  Returns:
+    bool true if and only if lz4diff versions are compatible
+  """
+  if source_file is None or target_file is None:
+    return False
+  # Right now we enable lz4diff as long as source build has liblz4.so.
+  # In the future we might introduce version system to lz4diff as well.
+  if zipfile.is_zipfile(source_file):
+    with zipfile.ZipFile(source_file, "r") as zfp:
+      return "META/liblz4.so" in zfp.namelist()
+  else:
+    assert os.path.isdir(source_file)
+    return os.path.exists(os.path.join(source_file, "META", "liblz4.so"))
+
+
 def IsZucchiniCompatible(source_file: str, target_file: str):
   """Check whether zucchini versions in two builds are compatible
 
