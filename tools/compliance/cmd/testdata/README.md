@@ -1,8 +1,11 @@
 ## Test data
 
-Each directory under testdata/ defines a similar build graph.
+Each non-regression directory under testdata/ defines a similar build graph.
 All have the same structure, but different versions of the graph have different
 license metadata.
+
+The regression* directories can have whatever structure is required for the
+specific test case.
 
 ### Testdata build graph structure:
 
