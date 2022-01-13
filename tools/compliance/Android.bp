@@ -48,7 +48,6 @@ blueprint_go_binary {
 bootstrap_go_package {
     name: "compliance-module",
     srcs: [
-        "actionset.go",
         "condition.go",
         "conditionset.go",
         "doc.go",
