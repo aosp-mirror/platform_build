@@ -317,11 +317,17 @@ endif
 # Dumps all variables that match [A-Z][A-Z0-9_]* (with a few exceptions)
 # to the file at $(1). It is used to print only the variables that are
 # likely to be relevant to the product or board configuration.
+# Soong config variables are dumped as $(call soong_config_set) calls
+# instead of the raw variable values, because mk2rbc can't read the
+# raw ones.
 define dump-variables-rbc
 $(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(.VARIABLES)))\
 $(file >$(1),\
 $(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt | grep -vhE "^(SOONG_.*|LOCAL_PATH|TOPDIR|PRODUCT_COPY_OUT_.*)$$"),\
-$(v) := $(strip $($(v)))$(newline)))
+$(v) := $(strip $($(v)))$(newline))\
+$(foreach ns,$(SOONG_CONFIG_NAMESPACES),\
+$(foreach v,$(SOONG_CONFIG_$(ns)),\
+$$(call soong_config_set,$(ns),$(v),$(SOONG_CONFIG_$(ns)_$(v)))$(newline))))
 endef
 
 # Read the product specs so we can get TARGET_DEVICE and other
