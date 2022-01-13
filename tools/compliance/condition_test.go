@@ -15,204 +15,53 @@
 package compliance
 
 import (
-	"sort"
-	"strings"
 	"testing"
 )
 
-func TestConditionNames(t *testing.T) {
-	impliesShare := ConditionNames([]string{"restricted", "reciprocal"})
+func TestConditionSetHas(t *testing.T) {
+	impliesShare := ImpliesShared
 
-	if impliesShare.Contains("notice") {
-		t.Errorf("impliesShare.Contains(\"notice\") got true, want false")
+	t.Logf("testing with imliesShare=%04x", impliesShare)
+
+	if impliesShare.HasAny(NoticeCondition) {
+		t.Errorf("impliesShare.HasAny(\"notice\"=%04x) got true, want false", NoticeCondition)
 	}
 
-	if !impliesShare.Contains("restricted") {
-		t.Errorf("impliesShare.Contains(\"restricted\") got false, want true")
+	if !impliesShare.HasAny(RestrictedCondition) {
+		t.Errorf("impliesShare.HasAny(\"restricted\"=%04x) got false, want true", RestrictedCondition)
 	}
 
-	if !impliesShare.Contains("reciprocal") {
-		t.Errorf("impliesShare.Contains(\"reciprocal\") got false, want true")
+	if !impliesShare.HasAny(ReciprocalCondition) {
+		t.Errorf("impliesShare.HasAny(\"reciprocal\"=%04x) got false, want true", ReciprocalCondition)
 	}
 
-	if impliesShare.Contains("") {
-		t.Errorf("impliesShare.Contains(\"\") got true, want false")
+	if impliesShare.HasAny(LicenseCondition(0x0000)) {
+		t.Errorf("impliesShare.HasAny(nil=%04x) got true, want false", LicenseCondition(0x0000))
 	}
 }
 
-func TestConditionList(t *testing.T) {
-	tests := []struct {
-		name       string
-		conditions map[string][]string
-		byName     map[string][]string
-		byOrigin   map[string][]string
-	}{
-		{
-			name: "noticeonly",
-			conditions: map[string][]string{
-				"notice": []string{"bin1", "lib1"},
-			},
-			byName: map[string][]string{
-				"notice":     []string{"bin1", "lib1"},
-				"restricted": []string{},
-			},
-			byOrigin: map[string][]string{
-				"bin1": []string{"notice"},
-				"lib1": []string{"notice"},
-				"bin2": []string{},
-				"lib2": []string{},
-			},
-		},
-		{
-			name:       "empty",
-			conditions: map[string][]string{},
-			byName: map[string][]string{
-				"notice":     []string{},
-				"restricted": []string{},
-			},
-			byOrigin: map[string][]string{
-				"bin1": []string{},
-				"lib1": []string{},
-				"bin2": []string{},
-				"lib2": []string{},
-			},
-		},
-		{
-			name: "everything",
-			conditions: map[string][]string{
-				"notice":            []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1", "lib2"},
-			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin1", "bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib1", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1", "lib2"},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"bin2":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"lib1":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"lib2":  []string{"notice", "reciprocal", "restricted", "by_exception_only"},
-				"other": []string{},
-			},
-		},
-		{
-			name: "allbutoneeach",
-			conditions: map[string][]string{
-				"notice":            []string{"bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1"},
-			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin2", "lib1", "lib2"},
-				"reciprocal":        []string{"bin1", "lib1", "lib2"},
-				"restricted":        []string{"bin1", "bin2", "lib2"},
-				"by_exception_only": []string{"bin1", "bin2", "lib1"},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"reciprocal", "restricted", "by_exception_only"},
-				"bin2":  []string{"notice", "restricted", "by_exception_only"},
-				"lib1":  []string{"notice", "reciprocal", "by_exception_only"},
-				"lib2":  []string{"notice", "reciprocal", "restricted"},
-				"other": []string{},
-			},
-		},
-		{
-			name: "oneeach",
-			conditions: map[string][]string{
-				"notice":            []string{"bin1"},
-				"reciprocal":        []string{"bin2"},
-				"restricted":        []string{"lib1"},
-				"by_exception_only": []string{"lib2"},
-			},
-			byName: map[string][]string{
-				"permissive":        []string{},
-				"notice":            []string{"bin1"},
-				"reciprocal":        []string{"bin2"},
-				"restricted":        []string{"lib1"},
-				"by_exception_only": []string{"lib2"},
-			},
-			byOrigin: map[string][]string{
-				"bin1":  []string{"notice"},
-				"bin2":  []string{"reciprocal"},
-				"lib1":  []string{"restricted"},
-				"lib2":  []string{"by_exception_only"},
-				"other": []string{},
-			},
-		},
+func TestConditionName(t *testing.T) {
+	for expected, condition := range RecognizedConditionNames {
+		actual := condition.Name()
+		if expected != actual {
+			t.Errorf("unexpected name for condition %04x: got %s, want %s", condition, actual, expected)
+		}
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			lg := newLicenseGraph()
-			cl := toConditionList(lg, tt.conditions)
-			for names, expected := range tt.byName {
-				name := ConditionNames(strings.Split(names, ":"))
-				if cl.HasByName(name) {
-					if len(expected) == 0 {
-						t.Errorf("unexpected ConditionList.HasByName(%q): got true, want false", name)
-					}
-				} else {
-					if len(expected) != 0 {
-						t.Errorf("unexpected ConditionList.HasByName(%q): got false, want true", name)
-					}
-				}
-				if len(expected) != cl.CountByName(name) {
-					t.Errorf("unexpected ConditionList.CountByName(%q): got %d, want %d", name, cl.CountByName(name), len(expected))
-				}
-				byName := cl.ByName(name)
-				if len(expected) != len(byName) {
-					t.Errorf("unexpected ConditionList.ByName(%q): got %v, want %v", name, byName, expected)
-				} else {
-					sort.Strings(expected)
-					actual := make([]string, 0, len(byName))
-					for _, lc := range byName {
-						actual = append(actual, lc.Origin().Name())
-					}
-					sort.Strings(actual)
-					for i := 0; i < len(expected); i++ {
-						if expected[i] != actual[i] {
-							t.Errorf("unexpected ConditionList.ByName(%q) index %d in %v: got %s, want %s", name, i, actual, actual[i], expected[i])
-						}
-					}
-				}
+}
+
+func TestConditionName_InvalidCondition(t *testing.T) {
+	panicked := false
+	var lc LicenseCondition
+	func() {
+		defer func() {
+			if err := recover(); err != nil {
+				panicked = true
 			}
-			for origin, expected := range tt.byOrigin {
-				onode := newTestNode(lg, origin)
-				if cl.HasByOrigin(onode) {
-					if len(expected) == 0 {
-						t.Errorf("unexpected ConditionList.HasByOrigin(%q): got true, want false", origin)
-					}
-				} else {
-					if len(expected) != 0 {
-						t.Errorf("unexpected ConditionList.HasByOrigin(%q): got false, want true", origin)
-					}
-				}
-				if len(expected) != cl.CountByOrigin(onode) {
-					t.Errorf("unexpected ConditionList.CountByOrigin(%q): got %d, want %d", origin, cl.CountByOrigin(onode), len(expected))
-				}
-				byOrigin := cl.ByOrigin(onode)
-				if len(expected) != len(byOrigin) {
-					t.Errorf("unexpected ConditionList.ByOrigin(%q): got %v, want %v", origin, byOrigin, expected)
-				} else {
-					sort.Strings(expected)
-					actual := make([]string, 0, len(byOrigin))
-					for _, lc := range byOrigin {
-						actual = append(actual, lc.Name())
-					}
-					sort.Strings(actual)
-					for i := 0; i < len(expected); i++ {
-						if expected[i] != actual[i] {
-							t.Errorf("unexpected ConditionList.ByOrigin(%q) index %d in %v: got %s, want %s", origin, i, actual, actual[i], expected[i])
-						}
-					}
-				}
-			}
-		})
+		}()
+		name := lc.Name()
+		t.Errorf("invalid condition unexpected name: got %s, wanted panic", name)
+	}()
+	if !panicked {
+		t.Errorf("no expected panic for %04x.Name(): got no panic, wanted panic", lc)
 	}
 }

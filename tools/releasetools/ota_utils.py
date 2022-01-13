@@ -638,3 +638,38 @@ def ConstructOtaApexInfo(target_zip, source_file=None):
       target_apex.source_version = source_apex_versions[name]
 
   return target_apex_proto.SerializeToString()
+
+
+def IsZucchiniCompatible(source_file: str, target_file: str):
+  """Check whether zucchini versions in two builds are compatible
+
+  Args:
+    source_file: Path to source build's target_file.zip
+    target_file: Path to target build's target_file.zip
+
+  Returns:
+    bool true if and only if zucchini versions are compatible
+  """
+  if source_file is None or target_file is None:
+    return False
+  assert os.path.exists(source_file)
+  assert os.path.exists(target_file)
+
+  assert zipfile.is_zipfile(source_file) or os.path.isdir(source_file)
+  assert zipfile.is_zipfile(target_file) or os.path.isdir(target_file)
+  _ZUCCHINI_CONFIG_ENTRY_NAME = "META/zucchini_config.txt"
+
+  def ReadEntry(path, entry):
+    # Read an entry inside a .zip file or extracted dir of .zip file
+    if zipfile.is_zipfile(path):
+      with zipfile.ZipFile(path, "r", allowZip64=True) as zfp:
+        if entry in zfp.namelist():
+          return zfp.read(entry).decode()
+    else:
+      entry_path = os.path.join(entry, path)
+      if os.path.exists(entry_path):
+        with open(entry_path, "r") as fp:
+          return fp.read()
+      else:
+        return ""
+  return ReadEntry(source_file, _ZUCCHINI_CONFIG_ENTRY_NAME) == ReadEntry(target_file, _ZUCCHINI_CONFIG_ENTRY_NAME)

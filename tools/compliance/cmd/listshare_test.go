@@ -98,12 +98,12 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "device/library",
-					conditions: []string{"lib/liba.so.meta_lic:reciprocal"},
+					conditions: []string{"reciprocal"},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
-						"lib/libc.a.meta_lic:reciprocal",
+						"reciprocal",
 					},
 				},
 			},
@@ -115,12 +115,12 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "device/library",
-					conditions: []string{"lib/liba.so.meta_lic:reciprocal"},
+					conditions: []string{"reciprocal"},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
-						"lib/libc.a.meta_lic:reciprocal",
+						"reciprocal",
 					},
 				},
 			},
@@ -132,7 +132,7 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "device/library",
-					conditions: []string{"lib/liba.so.meta_lic:reciprocal"},
+					conditions: []string{"reciprocal"},
 				},
 			},
 		},
@@ -144,13 +144,13 @@ func Test(t *testing.T) {
 				{
 					project: "device/library",
 					conditions: []string{
-						"lib/liba.so.meta_lic:reciprocal",
+						"reciprocal",
 					},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
-						"lib/libc.a.meta_lic:reciprocal",
+						"reciprocal",
 					},
 				},
 			},
@@ -168,34 +168,34 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "base/library",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 				{
 					project:    "device/library",
-					conditions: []string{"lib/liba.so.meta_lic:restricted"},
+					conditions: []string{"restricted_allows_dynamic_linking"},
 				},
 				{
 					project:    "dynamic/binary",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 				{
 					project: "highest/apex",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
-						"lib/libb.so.meta_lic:restricted",
+						"restricted",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 				{
 					project: "static/binary",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
-						"lib/libc.a.meta_lic:reciprocal",
+						"reciprocal",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 			},
@@ -207,34 +207,34 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "base/library",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 				{
 					project: "container/zip",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
-						"lib/libb.so.meta_lic:restricted",
+						"restricted",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 				{
 					project:    "device/library",
-					conditions: []string{"lib/liba.so.meta_lic:restricted"},
+					conditions: []string{"restricted_allows_dynamic_linking"},
 				},
 				{
 					project:    "dynamic/binary",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 				{
 					project: "static/binary",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
-						"lib/libc.a.meta_lic:reciprocal",
+						"reciprocal",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 			},
@@ -247,15 +247,15 @@ func Test(t *testing.T) {
 				{
 					project: "device/library",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
-						"lib/libb.so.meta_lic:restricted",
+						"restricted",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 				{
 					project: "distributable/application",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
-						"lib/libb.so.meta_lic:restricted",
+						"restricted",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 			},
@@ -268,20 +268,20 @@ func Test(t *testing.T) {
 				{
 					project: "device/library",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 				{
 					project: "static/binary",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
-						"lib/liba.so.meta_lic:restricted",
-						"lib/libc.a.meta_lic:reciprocal",
+						"reciprocal",
+						"restricted_allows_dynamic_linking",
 					},
 				},
 			},
@@ -299,15 +299,15 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "base/library",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 				{
 					project:    "dynamic/binary",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 				{
 					project:    "highest/apex",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 			},
 		},
@@ -318,15 +318,15 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "base/library",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 				{
 					project:    "container/zip",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 				{
 					project:    "dynamic/binary",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 			},
 		},
@@ -337,11 +337,11 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "device/library",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 				{
 					project:    "distributable/application",
-					conditions: []string{"lib/libb.so.meta_lic:restricted"},
+					conditions: []string{"restricted"},
 				},
 			},
 		},
@@ -357,6 +357,98 @@ func Test(t *testing.T) {
 			roots:       []string{"lib/libd.so.meta_lic"},
 			expectedOut: []projectShare{},
 		},
+		{
+			condition: "regressgpl1",
+			name:      "container",
+			roots:     []string{"container.zip.meta_lic"},
+			expectedOut: []projectShare{
+				{
+					project:    "bin/threelibraries",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "container/zip",
+					conditions: []string{"restricted"},
+				},
+			},
+		},
+		{
+			condition: "regressgpl1",
+			name:      "containerplus",
+			roots:     []string{"container.zip.meta_lic", "lib/libapache.so.meta_lic", "lib/libc++.so.meta_lic"},
+			expectedOut: []projectShare{
+				{
+					project:    "bin/threelibraries",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "container/zip",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/apache",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/c++",
+					conditions: []string{"restricted"},
+				},
+			},
+		},
+		{
+			condition: "regressgpl2",
+			name:      "container",
+			roots:     []string{"container.zip.meta_lic"},
+			expectedOut: []projectShare{
+				{
+					project:    "bin/threelibraries",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "container/zip",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/apache",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/c++",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/gpl",
+					conditions: []string{"restricted"},
+				},
+			},
+		},
+		{
+			condition: "regressgpl2",
+			name:      "containerplus",
+			roots:     []string{"container.zip.meta_lic", "lib/libapache.so.meta_lic", "lib/libc++.so.meta_lic"},
+			expectedOut: []projectShare{
+				{
+					project:    "bin/threelibraries",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "container/zip",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/apache",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/c++",
+					conditions: []string{"restricted"},
+				},
+				{
+					project:    "lib/gpl",
+					conditions: []string{"restricted"},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.condition+" "+tt.name, func(t *testing.T) {
@@ -365,9 +457,6 @@ func Test(t *testing.T) {
 				expectedOut.WriteString(p.project)
 				for _, lc := range p.conditions {
 					expectedOut.WriteString(",")
-					expectedOut.WriteString("testdata/")
-					expectedOut.WriteString(tt.condition)
-					expectedOut.WriteString("/")
 					expectedOut.WriteString(lc)
 				}
 				expectedOut.WriteString("\n")
