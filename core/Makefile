@@ -2117,6 +2117,9 @@ recovery_resource_deps += $(generated_recovery_text_files)
 
 ifdef TARGET_RECOVERY_FSTAB
 recovery_fstab := $(TARGET_RECOVERY_FSTAB)
+else ifdef TARGET_RECOVERY_FSTAB_GENRULE
+# Specifies a soong genrule module that generates an fstab.
+recovery_fstab := $(call intermediates-dir-for,ETC,$(TARGET_RECOVERY_FSTAB_GENRULE))/$(TARGET_RECOVERY_FSTAB_GENRULE)
 else
 recovery_fstab := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery.fstab))
 endif
@@ -2757,12 +2760,10 @@ ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
 
 # Generate fsv_meta
 fsverity-metadata-targets := $(sort $(filter \
-  $(TARGET_OUT)/framework/%.jar \
-  $(foreach arch,$(TARGET_ARCH) $(TARGET_2ND_ARCH),$(foreach ext,oat vdex art, \
-    $(TARGET_OUT)/framework/oat/$(arch)/%.$(ext))) \
+  $(TARGET_OUT)/framework/% \
   $(TARGET_OUT)/etc/boot-image.prof \
   $(TARGET_OUT)/etc/dirty-image-objects \
-  $(TARGET_OUT)/etc/updatable-bcp-packages.txt, \
+  $(TARGET_OUT)/etc/classpaths/%.pb, \
   $(ALL_GENERATED_SOURCES) $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 define fsverity-generate-metadata
