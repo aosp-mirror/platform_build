@@ -233,6 +233,10 @@ A/B OTA specific options
 
   --enable_zucchini
       Whether to enable to zucchini feature. Will generate smaller OTA but uses more memory.
+
+  --enable_lz4diff
+      Whether to enable lz4diff feature. Will generate smaller OTA for EROFS but
+      uses more memory.
 """
 
 from __future__ import print_function
@@ -302,7 +306,8 @@ OPTIONS.vabc_downgrade = False
 OPTIONS.enable_vabc_xor = True
 OPTIONS.force_minor_version = None
 OPTIONS.compressor_types = None
-OPTIONS.enable_zucchini = None
+OPTIONS.enable_zucchini = True
+OPTIONS.enable_lz4diff = False
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -1145,13 +1150,25 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     partition_timestamps_flags = GeneratePartitionTimestampFlags(
         metadata.postcondition.partition_state)
 
-  # Auto-check for compatibility only if --enable_zucchini omitted. Otherwise
-  # let user override zucchini settings. This is useful for testing.
-  if OPTIONS.enable_zucchini is None:
-    if not ota_utils.IsZucchiniCompatible(source_file, target_file):
-      additional_args += ["--enable_zucchini", "false"]
-  else:
-    additional_args += ["--enable_zucchini", str(OPTIONS.enable_zucchini).lower()]
+  if not ota_utils.IsZucchiniCompatible(source_file, target_file):
+    OPTIONS.enable_zucchini = False
+
+  additional_args += ["--enable_zucchini",
+                      str(OPTIONS.enable_zucchini).lower()]
+
+  if not ota_utils.IsLz4diffCompatible(source_file, target_file):
+    OPTIONS.enable_lz4diff = False
+
+  additional_args += ["--enable_lz4diff",
+                      str(OPTIONS.enable_lz4diff).lower()]
+
+  if source_file and OPTIONS.enable_lz4diff:
+    input_tmp = common.UnzipTemp(source_file, ["META/liblz4.so"])
+    liblz4_path = os.path.join(input_tmp, "META", "liblz4.so")
+    assert os.path.exists(
+        liblz4_path), "liblz4.so not found in META/ dir of target file {}".format(liblz4_path)
+    logger.info("Enabling lz4diff %s", liblz4_path)
+    additional_args += ["--liblz4_path", liblz4_path]
 
   if OPTIONS.disable_vabc:
     additional_args += ["--disable_vabc", "true"]
@@ -1333,13 +1350,18 @@ def main(argv):
     elif o == "--vabc_downgrade":
       OPTIONS.vabc_downgrade = True
     elif o == "--enable_vabc_xor":
+      assert a.lower() in ["true", "false"]
       OPTIONS.enable_vabc_xor = a.lower() != "false"
     elif o == "--force_minor_version":
       OPTIONS.force_minor_version = a
     elif o == "--compressor_types":
       OPTIONS.compressor_types = a
     elif o == "--enable_zucchini":
+      assert a.lower() in ["true", "false"]
       OPTIONS.enable_zucchini = a.lower() != "false"
+    elif o == "--enable_lz4diff":
+      assert a.lower() in ["true", "false"]
+      OPTIONS.enable_lz4diff = a.lower() != "false"
     else:
       return False
     return True
@@ -1388,6 +1410,7 @@ def main(argv):
                                  "force_minor_version=",
                                  "compressor_types=",
                                  "enable_zucchin=",
+                                 "enable_lz4diff=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
