@@ -78,6 +78,7 @@ VNDK-core: android.hardware.graphics.bufferqueue@2.0.so
 VNDK-core: android.hardware.health-V1-ndk.so
 VNDK-core: android.hardware.health.storage-V1-ndk.so
 VNDK-core: android.hardware.identity-V3-ndk.so
+VNDK-core: android.hardware.ir-V1-ndk.so
 VNDK-core: android.hardware.keymaster-V3-ndk.so
 VNDK-core: android.hardware.light-V1-ndk.so
 VNDK-core: android.hardware.media.bufferpool@2.0.so
