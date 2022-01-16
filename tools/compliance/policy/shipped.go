@@ -24,18 +24,18 @@ func ShippedNodes(lg *LicenseGraph) *TargetNodeSet {
 		return shipped
 	}
 
-	tset := make(map[*TargetNode]bool)
+	tset := make(map[*TargetNode]struct{})
 
-	WalkTopDown(lg, func(lg *LicenseGraph, tn *TargetNode, path TargetEdgePath) bool {
+	WalkTopDown(NoEdgeContext{}, lg, func(lg *LicenseGraph, tn *TargetNode, path TargetEdgePath) bool {
 		if _, alreadyWalked := tset[tn]; alreadyWalked {
 			return false
 		}
 		if len(path) > 0 {
-			if !edgeIsDerivation(path[len(path)-1]) {
+			if !edgeIsDerivation(path[len(path)-1].edge) {
 				return false
 			}
 		}
-		tset[tn] = true
+		tset[tn] = struct{}{}
 		return true
 	})
 

@@ -81,7 +81,7 @@ func TestResolveSourcePrivacy(t *testing.T) {
 			}
 			expectedRs := toResolutionSet(lg, tt.expectedResolutions)
 			actualRs := ResolveSourcePrivacy(lg)
-			checkSame(actualRs, expectedRs, t)
+			checkResolves(actualRs, expectedRs, t)
 		})
 	}
 }

@@ -813,7 +813,7 @@ $(INSTALLED_FILES_FILE_RAMDISK) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST) $(FILES
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
 ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_RAMDISK))
+$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE_RAMDISK))
 endif
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
@@ -1097,7 +1097,7 @@ ifdef BOARD_KERNEL_PAGESIZE
 endif
 
 ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_IMAGE_KEY_PATH)
+$(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_KEY_PATH)
 	$(call pretty,"Target init_boot image: $@")
 	$(MKBOOTIMG) $(INTERNAL_INIT_BOOT_IMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_INIT_ARGS) --output $@
 	$(call assert-max-image-size,$@,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE))
@@ -2117,6 +2117,9 @@ recovery_resource_deps += $(generated_recovery_text_files)
 
 ifdef TARGET_RECOVERY_FSTAB
 recovery_fstab := $(TARGET_RECOVERY_FSTAB)
+else ifdef TARGET_RECOVERY_FSTAB_GENRULE
+# Specifies a soong genrule module that generates an fstab.
+recovery_fstab := $(call intermediates-dir-for,ETC,$(TARGET_RECOVERY_FSTAB_GENRULE))/$(TARGET_RECOVERY_FSTAB_GENRULE)
 else
 recovery_fstab := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery.fstab))
 endif
@@ -2757,12 +2760,10 @@ ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
 
 # Generate fsv_meta
 fsverity-metadata-targets := $(sort $(filter \
-  $(TARGET_OUT)/framework/%.jar \
-  $(foreach arch,$(TARGET_ARCH) $(TARGET_2ND_ARCH),$(foreach ext,oat vdex art, \
-    $(TARGET_OUT)/framework/oat/$(arch)/%.$(ext))) \
+  $(TARGET_OUT)/framework/% \
   $(TARGET_OUT)/etc/boot-image.prof \
   $(TARGET_OUT)/etc/dirty-image-objects \
-  $(TARGET_OUT)/etc/updatable-bcp-packages.txt, \
+  $(TARGET_OUT)/etc/classpaths/%.pb, \
   $(ALL_GENERATED_SOURCES) $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 define fsverity-generate-metadata
@@ -2782,18 +2783,23 @@ FSVERITY_APK_OUT := $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk
 FSVERITY_APK_MANIFEST_PATH := system/security/fsverity/AndroidManifest.xml
 $(FSVERITY_APK_OUT): PRIVATE_FSVERITY := $(HOST_OUT_EXECUTABLES)/fsverity
 $(FSVERITY_APK_OUT): PRIVATE_AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
+$(FSVERITY_APK_OUT): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
 $(FSVERITY_APK_OUT): PRIVATE_APKSIGNER := $(HOST_OUT_EXECUTABLES)/apksigner
 $(FSVERITY_APK_OUT): PRIVATE_MANIFEST := $(FSVERITY_APK_MANIFEST_PATH)
+$(FSVERITY_APK_OUT): PRIVATE_FRAMEWORK_RES := $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
 $(FSVERITY_APK_OUT): PRIVATE_KEY := $(FSVERITY_APK_KEY_PATH)
 $(FSVERITY_APK_OUT): PRIVATE_INPUTS := $(fsverity-metadata-targets)
 $(FSVERITY_APK_OUT): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
     $(HOST_OUT_EXECUTABLES)/fsverity $(HOST_OUT_EXECUTABLES)/aapt2 \
     $(HOST_OUT_EXECUTABLES)/apksigner $(FSVERITY_APK_MANIFEST_PATH) \
     $(FSVERITY_APK_KEY_PATH).x509.pem $(FSVERITY_APK_KEY_PATH).pk8 \
+    $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk \
     $(fsverity-metadata-targets)
 	$< --fsverity-path $(PRIVATE_FSVERITY) --aapt2-path $(PRIVATE_AAPT2) \
+	    --min-sdk-version $(PRIVATE_MIN_SDK_VERSION) \
 	    --apksigner-path $(PRIVATE_APKSIGNER) --apk-key-path $(PRIVATE_KEY) \
-	    --apk-manifest-path $(PRIVATE_MANIFEST) --output $@ \
+	    --apk-manifest-path $(PRIVATE_MANIFEST) --framework-res $(PRIVATE_FRAMEWORK_RES) \
+	    --output $@ \
 	    --base-dir $(PRODUCT_OUT) $(PRIVATE_INPUTS)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FSVERITY_APK_OUT)
@@ -3695,6 +3701,10 @@ BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
     --prop com.android.build.boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
 
+BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.init_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
+    --prop com.android.build.init_boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+
 BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.vendor_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
 
@@ -3729,6 +3739,12 @@ BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
 ifdef BOOT_SECURITY_PATCH
 BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.security_patch:$(BOOT_SECURITY_PATCH)
+endif
+
+ifdef INIT_BOOT_SECURITY_PATCH
+BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.init_boot.security_patch:$(INIT_BOOT_SECURITY_PATCH)
+else ifdef BOOT_SECURITY_PATCH
 BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.init_boot.security_patch:$(BOOT_SECURITY_PATCH)
 endif
@@ -4702,6 +4718,12 @@ ifdef BOARD_AVB_BOOT_KEY_PATH
 	$(hide) echo "avb_boot_algorithm=$(BOARD_AVB_BOOT_ALGORITHM)" >> $@
 	$(hide) echo "avb_boot_rollback_index_location=$(BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION)" >> $@
 endif # BOARD_AVB_BOOT_KEY_PATH
+	$(hide) echo "avb_init_boot_add_hash_footer_args=$(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS)" >> $@
+ifdef BOARD_AVB_INIT_BOOT_KEY_PATH
+	$(hide) echo "avb_init_boot_key_path=$(BOARD_AVB_INIT_BOOT_KEY_PATH)" >> $@
+	$(hide) echo "avb_init_boot_algorithm=$(BOARD_AVB_INIT_BOOT_ALGORITHM)" >> $@
+	$(hide) echo "avb_init_boot_rollback_index_location=$(BOARD_AVB_INIT_BOOT_ROLLBACK_INDEX_LOCATION)" >> $@
+endif # BOARD_AVB_INIT_BOOT_KEY_PATH
 	echo "avb_vendor_boot_add_hash_footer_args=$(BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS)" >> $@
 ifdef BOARD_AVB_VENDOR_BOOT_KEY_PATH
 	echo "avb_vendor_boot_key_path=$(BOARD_AVB_VENDOR_BOOT_KEY_PATH)" >> $@
@@ -4858,14 +4880,16 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_OTA_TOOLS := $(built_ota_tools)
 tool_extension := $(wildcard $(tool_extensions)/releasetools.py)
 $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSION := $(tool_extension)
 
+updaer_dep :=
 ifeq ($(AB_OTA_UPDATER),true)
-updater_dep := system/update_engine/update_engine.conf
-updater_dep := external/zucchini/version_info.h
+updater_dep += system/update_engine/update_engine.conf
+updater_dep += external/zucchini/version_info.h
+updater_dep += $(HOST_OUT_SHARED_LIBRARIES)/liblz4.so
 endif
 
 # Build OTA tools if non-A/B is allowed
 ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
-updater_dep := $(built_ota_tools)
+updater_dep += $(built_ota_tools)
 endif
 
 $(BUILT_TARGET_FILES_PACKAGE): $(updater_dep)
@@ -5346,6 +5370,7 @@ ifeq ($(AB_OTA_UPDATER),true)
 	@# When using the A/B updater, include the updater config files in the zip.
 	$(hide) cp $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
 	$(hide) cp $(TOPDIR)external/zucchini/version_info.h $(zip_root)/META/zucchini_config.txt
+	$(hide) cp $(HOST_OUT_SHARED_LIBRARIES)/liblz4.so $(zip_root)/META/liblz4.so
 	$(hide) for part in $(strip $(AB_OTA_PARTITIONS)); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
@@ -6267,6 +6292,10 @@ FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INS
 .PHONY: haiku
 haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
 $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
+
+.PHONY: haiku-java
+haiku-java: $(SOONG_JAVA_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_TARGETS)
+$(call dist-for-goals,haiku-java,$(SOONG_JAVA_FUZZ_PACKAGING_ARCH_MODULES))
 
 .PHONY: haiku-rust
 haiku-rust: $(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_RUST_FUZZ_TARGETS)

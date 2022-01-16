@@ -1,8 +1,11 @@
 ## Test data
 
-Each directory under testdata/ defines a similar build graph.
+Each non-regression directory under testdata/ defines a similar build graph.
 All have the same structure, but different versions of the graph have different
 license metadata.
+
+The regression* directories can have whatever structure is required for the
+specific test case.
 
 ### Testdata build graph structure:
 
@@ -70,6 +73,7 @@ strict digraph {
 
 #### a pure aggregation `container.zip` that merely bundles files together
 
+```dot
 strict digraph {
 	rankdir=LR;
 	bin1 [label="bin/bin1.meta_lic"];
@@ -89,6 +93,7 @@ strict digraph {
 	container -> libb [label="static"];
 	{rank=same; container}
 }
+```
 
 #### an apex file (more like an apk file) with some binaries and libraries
 

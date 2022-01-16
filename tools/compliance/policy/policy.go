@@ -20,32 +20,43 @@ import (
 )
 
 var (
+	// RecognizedAnnotations identifies the set of annotations that have
+	// meaning for compliance policy.
+	RecognizedAnnotations = map[string]string{
+		// used in readgraph.go to avoid creating 1000's of copies of the below 3 strings.
+		"static":    "static",
+		"dynamic":   "dynamic",
+		"toolchain": "toolchain",
+	}
+
 	// ImpliesUnencumbered lists the condition names representing an author attempt to disclaim copyright.
-	ImpliesUnencumbered = ConditionNames{"unencumbered"}
+	ImpliesUnencumbered = LicenseConditionSet(UnencumberedCondition)
 
 	// ImpliesPermissive lists the condition names representing copyrighted but "licensed without policy requirements".
-	ImpliesPermissive = ConditionNames{"permissive"}
+	ImpliesPermissive = LicenseConditionSet(PermissiveCondition)
 
 	// ImpliesNotice lists the condition names implying a notice or attribution policy.
-	ImpliesNotice = ConditionNames{"unencumbered", "permissive", "notice", "reciprocal", "restricted", "proprietary", "by_exception_only"}
+	ImpliesNotice = LicenseConditionSet(UnencumberedCondition | PermissiveCondition | NoticeCondition | ReciprocalCondition |
+			RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition |
+			ProprietaryCondition | ByExceptionOnlyCondition)
 
 	// ImpliesReciprocal lists the condition names implying a local source-sharing policy.
-	ImpliesReciprocal = ConditionNames{"reciprocal"}
+	ImpliesReciprocal = LicenseConditionSet(ReciprocalCondition)
 
 	// Restricted lists the condition names implying an infectious source-sharing policy.
-	ImpliesRestricted = ConditionNames{"restricted"}
+	ImpliesRestricted = LicenseConditionSet(RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition)
 
 	// ImpliesProprietary lists the condition names implying a confidentiality policy.
-	ImpliesProprietary = ConditionNames{"proprietary"}
+	ImpliesProprietary = LicenseConditionSet(ProprietaryCondition)
 
 	// ImpliesByExceptionOnly lists the condition names implying a policy for "license review and approval before use".
-	ImpliesByExceptionOnly = ConditionNames{"proprietary", "by_exception_only"}
+	ImpliesByExceptionOnly = LicenseConditionSet(ProprietaryCondition | ByExceptionOnlyCondition)
 
 	// ImpliesPrivate lists the condition names implying a source-code privacy policy.
-	ImpliesPrivate = ConditionNames{"proprietary"}
+	ImpliesPrivate = LicenseConditionSet(ProprietaryCondition)
 
 	// ImpliesShared lists the condition names implying a source-code sharing policy.
-	ImpliesShared = ConditionNames{"reciprocal", "restricted"}
+	ImpliesShared = LicenseConditionSet(ReciprocalCondition | RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition)
 )
 
 var (
@@ -55,100 +66,117 @@ var (
 	ccBySa       = regexp.MustCompile(`^SPDX-license-identifier-CC-BY.*-SA.*`)
 )
 
-// Resolution happens in two passes:
+
+// LicenseConditionSetFromNames returns a set containing the recognized `names` and
+// silently ignoring or discarding the unrecognized `names`.
+func LicenseConditionSetFromNames(tn *TargetNode, names ...string) LicenseConditionSet {
+	cs := NewLicenseConditionSet()
+	for _, name := range names {
+		if name == "restricted" {
+			if 0 == len(tn.LicenseKinds()) {
+				cs = cs.Plus(RestrictedCondition)
+				continue
+			}
+			hasLgpl := false
+			hasClasspath := false
+			hasGeneric := false
+			for _, kind := range tn.LicenseKinds() {
+				if strings.HasSuffix(kind, "-with-classpath-exception") {
+					cs = cs.Plus(RestrictedClasspathExceptionCondition)
+					hasClasspath = true
+				} else if anyLgpl.MatchString(kind) {
+					cs = cs.Plus(WeaklyRestrictedCondition)
+					hasLgpl = true
+				} else if versionedGpl.MatchString(kind) {
+					cs = cs.Plus(RestrictedCondition)
+				} else if genericGpl.MatchString(kind) {
+					hasGeneric = true
+				} else if kind == "legacy_restricted" || ccBySa.MatchString(kind) {
+					cs = cs.Plus(RestrictedCondition)
+				} else {
+					cs = cs.Plus(RestrictedCondition)
+				}
+			}
+			if hasGeneric && !hasLgpl && !hasClasspath {
+				cs = cs.Plus(RestrictedCondition)
+			}
+			continue
+		}
+		if lc, ok := RecognizedConditionNames[name]; ok {
+			cs |= LicenseConditionSet(lc)
+		}
+	}
+	return cs
+}
+
+
+// Resolution happens in three phases:
 //
-// 1. A bottom-up traversal propagates license conditions up to targets from
-// dendencies as needed.
+// 1. A bottom-up traversal propagates (restricted) license conditions up to
+// targets from dendencies as needed.
 //
-// 2. For each condition of interest, a top-down traversal adjusts the attached
-// conditions pushing restricted down from targets into linked dependencies.
+// 2. For each condition of interest, a top-down traversal propagates
+// (restricted) conditions down from targets into linked dependencies.
 //
-// The behavior of the 2 passes gets controlled by the 2 functions below.
+// 3. Finally, a walk of the shipped target nodes attaches resolutions to the
+// ancestor nodes from the root down to and including the first non-container.
 //
-// The first function controls what happens during the bottom-up traversal. In
-// general conditions flow up through static links but not other dependencies;
-// except, restricted sometimes flows up through dynamic links.
+// e.g. If a disk image contains a binary bin1 that links a library liba, the
+// notice requirement for liba gets attached to the disk image and to bin1.
+// Because liba doesn't actually get shipped as a separate artifact, but only
+// as bits in bin1, it has no actions 'attached' to it. The actions attached
+// to the image and to bin1 'act on' liba by providing notice.
 //
-// In general, too, the originating target gets acted on to resolve the
-// condition (e.g. providing notice), but again restricted is special in that
-// it requires acting on (i.e. sharing source of) both the originating module
-// and the target using the module.
+// The behavior of the 3 phases gets controlled by the 3 functions below.
 //
-// The latter function controls what happens during the top-down traversal. In
-// general, only restricted conditions flow down at all, and only through
-// static links.
+// The first function controls what happens during the bottom-up propagation.
+// Restricted conditions propagate up all non-toolchain dependencies; except,
+// some do not propagate up dynamic links, which may depend on whether the
+// modules are independent.
+//
+// The second function controls what happens during the top-down propagation.
+// Restricted conditions propagate down as above with the added caveat that
+// inherited restricted conditions do not propagate from pure aggregates to
+// their dependencies.
+//
+// The final function controls which conditions apply/get attached to ancestors
+// depending on the types of dependencies involved. All conditions apply across
+// normal derivation dependencies. No conditions apply across toolchain
+// dependencies. Some restricted conditions apply across dynamic link
+// dependencies.
 //
 // Not all restricted licenses are create equal. Some have special rules or
 // exceptions. e.g. LGPL or "with classpath excption".
 
-// depActionsApplicableToTarget returns the actions which propagate up an
+
+// depConditionsPropagatingToTarget returns the conditions which propagate up an
 // edge from dependency to target.
 //
-// This function sets the policy for the bottom-up traversal and how conditions
+// This function sets the policy for the bottom-up propagation and how conditions
 // flow up the graph from dependencies to targets.
 //
 // If a pure aggregation is built into a derivative work that is not a pure
 // aggregation, per policy it ceases to be a pure aggregation in the context of
 // that derivative work. The `treatAsAggregate` parameter will be false for
 // non-aggregates and for aggregates in non-aggregate contexts.
-func depActionsApplicableToTarget(e TargetEdge, depActions actionSet, treatAsAggregate bool) actionSet {
-	result := make(actionSet)
+func depConditionsPropagatingToTarget(lg *LicenseGraph, e *TargetEdge, depConditions LicenseConditionSet, treatAsAggregate bool) LicenseConditionSet {
+	result := LicenseConditionSet(0x0000)
 	if edgeIsDerivation(e) {
-		result.addSet(depActions)
-		for _, cs := range depActions.byName(ImpliesRestricted) {
-			result.add(e.Target(), cs)
-		}
+		result |= depConditions & ImpliesRestricted
 		return result
 	}
 	if !edgeIsDynamicLink(e) {
 		return result
 	}
 
-	restricted := depActions.byName(ImpliesRestricted)
-	for actsOn, cs := range restricted {
-		for _, lc := range cs.AsList() {
-			hasGpl := false
-			hasLgpl := false
-			hasClasspath := false
-			hasGeneric := false
-			hasOther := false
-			for _, kind := range lc.origin.LicenseKinds() {
-				if strings.HasSuffix(kind, "-with-classpath-exception") {
-					hasClasspath = true
-				} else if anyLgpl.MatchString(kind) {
-					hasLgpl = true
-				} else if versionedGpl.MatchString(kind) {
-					hasGpl = true
-				} else if genericGpl.MatchString(kind) {
-					hasGeneric = true
-				} else if kind == "legacy_restricted" || ccBySa.MatchString(kind) {
-					hasOther = true
-				}
-			}
-			if hasOther || hasGpl {
-				result.addCondition(actsOn, lc)
-				result.addCondition(e.Target(), lc)
-				continue
-			}
-			if hasClasspath && !edgeNodesAreIndependentModules(e) {
-				result.addCondition(actsOn, lc)
-				result.addCondition(e.Target(), lc)
-				continue
-			}
-			if hasLgpl || hasClasspath {
-				continue
-			}
-			if !hasGeneric {
-				continue
-			}
-			result.addCondition(actsOn, lc)
-			result.addCondition(e.Target(), lc)
-		}
+	result |= depConditions & LicenseConditionSet(RestrictedCondition)
+	if 0 != (depConditions & LicenseConditionSet(RestrictedClasspathExceptionCondition)) && !edgeNodesAreIndependentModules(e) {
+		result |= LicenseConditionSet(RestrictedClasspathExceptionCondition)
 	}
 	return result
 }
 
-// targetConditionsApplicableToDep returns the conditions which propagate down
+// targetConditionsPropagatingToDep returns the conditions which propagate down
 // an edge from target to dependency.
 //
 // This function sets the policy for the top-down traversal and how conditions
@@ -158,81 +186,73 @@ func depActionsApplicableToTarget(e TargetEdge, depActions actionSet, treatAsAgg
 // aggregation, per policy it ceases to be a pure aggregation in the context of
 // that derivative work. The `treatAsAggregate` parameter will be false for
 // non-aggregates and for aggregates in non-aggregate contexts.
-func targetConditionsApplicableToDep(e TargetEdge, targetConditions *LicenseConditionSet, treatAsAggregate bool) *LicenseConditionSet {
-	result := targetConditions.Copy()
+func targetConditionsPropagatingToDep(lg *LicenseGraph, e *TargetEdge, targetConditions LicenseConditionSet, treatAsAggregate bool) LicenseConditionSet {
+	result := targetConditions
 
 	// reverse direction -- none of these apply to things depended-on, only to targets depending-on.
-	result.RemoveAllByName(ConditionNames{"unencumbered", "permissive", "notice", "reciprocal", "proprietary", "by_exception_only"})
+	result = result.Minus(UnencumberedCondition, PermissiveCondition, NoticeCondition, ReciprocalCondition, ProprietaryCondition, ByExceptionOnlyCondition)
 
 	if !edgeIsDerivation(e) && !edgeIsDynamicLink(e) {
 		// target is not a derivative work of dependency and is not linked to dependency
-		result.RemoveAllByName(ImpliesRestricted)
+		result = result.Difference(ImpliesRestricted)
 		return result
 	}
 	if treatAsAggregate {
 		// If the author of a pure aggregate licenses it restricted, apply restricted to immediate dependencies.
 		// Otherwise, restricted does not propagate back down to dependencies.
-		restricted := result.ByName(ImpliesRestricted).AsList()
-		for _, lc := range restricted {
-			if lc.origin.name != e.e.target {
-				result.Remove(lc)
-			}
+		if !LicenseConditionSetFromNames(e.target, e.target.proto.LicenseConditions...).MatchesAnySet(ImpliesRestricted) {
+			result = result.Difference(ImpliesRestricted)
 		}
 		return result
 	}
 	if edgeIsDerivation(e) {
 		return result
 	}
-	restricted := result.ByName(ImpliesRestricted).AsList()
-	for _, lc := range restricted {
-		hasGpl := false
-		hasLgpl := false
-		hasClasspath := false
-		hasGeneric := false
-		hasOther := false
-		for _, kind := range lc.origin.LicenseKinds() {
-			if strings.HasSuffix(kind, "-with-classpath-exception") {
-				hasClasspath = true
-			} else if anyLgpl.MatchString(kind) {
-				hasLgpl = true
-			} else if versionedGpl.MatchString(kind) {
-				hasGpl = true
-			} else if genericGpl.MatchString(kind) {
-				hasGeneric = true
-			} else if kind == "legacy_restricted" || ccBySa.MatchString(kind) {
-				hasOther = true
-			}
-		}
-		if hasOther || hasGpl {
-			continue
-		}
-		if hasClasspath && !edgeNodesAreIndependentModules(e) {
-			continue
-		}
-		if hasGeneric && !hasLgpl && !hasClasspath {
-			continue
-		}
-		result.Remove(lc)
+	result = result.Minus(WeaklyRestrictedCondition)
+	if edgeNodesAreIndependentModules(e) {
+		result = result.Minus(RestrictedClasspathExceptionCondition)
 	}
 	return result
 }
 
+// conditionsAttachingAcrossEdge returns the subset of conditions in `universe`
+// that apply across edge `e`.
+//
+// This function sets the policy for attaching actions to ancestor nodes in the
+// final resolution walk.
+func conditionsAttachingAcrossEdge(lg *LicenseGraph, e *TargetEdge, universe LicenseConditionSet) LicenseConditionSet {
+	result := universe
+	if edgeIsDerivation(e) {
+		return result
+	}
+	if !edgeIsDynamicLink(e) {
+		return NewLicenseConditionSet()
+	}
+
+	result &= LicenseConditionSet(RestrictedCondition | RestrictedClasspathExceptionCondition)
+	if 0 != (result & LicenseConditionSet(RestrictedClasspathExceptionCondition)) && edgeNodesAreIndependentModules(e) {
+		result &= LicenseConditionSet(RestrictedCondition)
+	}
+	return result
+}
+
+
 // edgeIsDynamicLink returns true for edges representing shared libraries
 // linked dynamically at runtime.
-func edgeIsDynamicLink(e TargetEdge) bool {
-	return e.e.annotations.HasAnnotation("dynamic")
+func edgeIsDynamicLink(e *TargetEdge) bool {
+	return e.annotations.HasAnnotation("dynamic")
 }
 
 // edgeIsDerivation returns true for edges where the target is a derivative
 // work of dependency.
-func edgeIsDerivation(e TargetEdge) bool {
-	isDynamic := e.e.annotations.HasAnnotation("dynamic")
-	isToolchain := e.e.annotations.HasAnnotation("toolchain")
+func edgeIsDerivation(e *TargetEdge) bool {
+	isDynamic := e.annotations.HasAnnotation("dynamic")
+	isToolchain := e.annotations.HasAnnotation("toolchain")
 	return !isDynamic && !isToolchain
 }
 
 // edgeNodesAreIndependentModules returns true for edges where the target and
 // dependency are independent modules.
-func edgeNodesAreIndependentModules(e TargetEdge) bool {
-	return e.Target().PackageName() != e.Dependency().PackageName()
+func edgeNodesAreIndependentModules(e *TargetEdge) bool {
+	return e.target.PackageName() != e.dependency.PackageName()
 }

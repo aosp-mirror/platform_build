@@ -34,21 +34,21 @@ func TestPolicy_edgeConditions(t *testing.T) {
 		{
 			name:                     "firstparty",
 			edge:                     annotated{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
-			expectedDepActions:       []string{"apacheLib.meta_lic:apacheLib.meta_lic:notice"},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{},
 		},
 		{
 			name:                     "notice",
 			edge:                     annotated{"mitBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
-			expectedDepActions:       []string{"mitLib.meta_lic:mitLib.meta_lic:notice"},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{},
 		},
 		{
 			name: "fponlgpl",
 			edge: annotated{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			expectedDepActions: []string{
-				"apacheBin.meta_lic:lgplLib.meta_lic:restricted",
-				"lgplLib.meta_lic:lgplLib.meta_lic:restricted",
+				"apacheBin.meta_lic:lgplLib.meta_lic:restricted_allows_dynamic_linking",
+				"lgplLib.meta_lic:lgplLib.meta_lic:restricted_allows_dynamic_linking",
 			},
 			expectedTargetConditions: []string{},
 		},
@@ -86,8 +86,8 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			name: "independentmodulestatic",
 			edge: annotated{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			expectedDepActions: []string{
-				"apacheBin.meta_lic:gplWithClasspathException.meta_lic:restricted",
-				"gplWithClasspathException.meta_lic:gplWithClasspathException.meta_lic:restricted",
+				"apacheBin.meta_lic:gplWithClasspathException.meta_lic:restricted_with_classpath_exception",
+				"gplWithClasspathException.meta_lic:gplWithClasspathException.meta_lic:restricted_with_classpath_exception",
 			},
 			expectedTargetConditions: []string{},
 		},
@@ -95,8 +95,8 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			name: "dependentmodule",
 			edge: annotated{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			expectedDepActions: []string{
-				"dependentModule.meta_lic:gplWithClasspathException.meta_lic:restricted",
-				"gplWithClasspathException.meta_lic:gplWithClasspathException.meta_lic:restricted",
+				"dependentModule.meta_lic:gplWithClasspathException.meta_lic:restricted_with_classpath_exception",
+				"gplWithClasspathException.meta_lic:gplWithClasspathException.meta_lic:restricted_with_classpath_exception",
 			},
 			expectedTargetConditions: []string{},
 		},
@@ -104,8 +104,8 @@ func TestPolicy_edgeConditions(t *testing.T) {
 		{
 			name:                     "lgplonfp",
 			edge:                     annotated{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
-			expectedDepActions:       []string{"apacheLib.meta_lic:apacheLib.meta_lic:notice"},
-			expectedTargetConditions: []string{"lgplBin.meta_lic:restricted"},
+			expectedDepActions:       []string{},
+			expectedTargetConditions: []string{"lgplBin.meta_lic:restricted_allows_dynamic_linking"},
 		},
 		{
 			name:                     "lgplonfpdynamic",
@@ -116,14 +116,14 @@ func TestPolicy_edgeConditions(t *testing.T) {
 		{
 			name:                     "gplonfp",
 			edge:                     annotated{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
-			expectedDepActions:       []string{"apacheLib.meta_lic:apacheLib.meta_lic:notice"},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{"gplBin.meta_lic:restricted"},
 		},
 		{
 			name:                     "gplcontainer",
 			edge:                     annotated{"gplContainer.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			treatAsAggregate:         true,
-			expectedDepActions:       []string{"apacheLib.meta_lic:apacheLib.meta_lic:notice"},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{"gplContainer.meta_lic:restricted"},
 		},
 		{
@@ -133,7 +133,6 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			otherCondition:   "gplLib.meta_lic:restricted",
 			expectedDepActions: []string{
 				"apacheContainer.meta_lic:gplLib.meta_lic:restricted",
-				"apacheLib.meta_lic:apacheLib.meta_lic:notice",
 				"apacheLib.meta_lic:gplLib.meta_lic:restricted",
 				"gplLib.meta_lic:gplLib.meta_lic:restricted",
 			},
@@ -146,7 +145,6 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			otherCondition:   "gplLib.meta_lic:restricted",
 			expectedDepActions: []string{
 				"apacheBin.meta_lic:gplLib.meta_lic:restricted",
-				"apacheLib.meta_lic:apacheLib.meta_lic:notice",
 				"apacheLib.meta_lic:gplLib.meta_lic:restricted",
 				"gplLib.meta_lic:gplLib.meta_lic:restricted",
 			},
@@ -167,14 +165,14 @@ func TestPolicy_edgeConditions(t *testing.T) {
 		{
 			name:                     "independentmodulereversestatic",
 			edge:                     annotated{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
-			expectedDepActions:       []string{"apacheBin.meta_lic:apacheBin.meta_lic:notice"},
-			expectedTargetConditions: []string{"gplWithClasspathException.meta_lic:restricted"},
+			expectedDepActions:       []string{},
+			expectedTargetConditions: []string{"gplWithClasspathException.meta_lic:restricted_with_classpath_exception"},
 		},
 		{
 			name:                     "dependentmodulereverse",
 			edge:                     annotated{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			expectedDepActions:       []string{},
-			expectedTargetConditions: []string{"gplWithClasspathException.meta_lic:restricted"},
+			expectedTargetConditions: []string{"gplWithClasspathException.meta_lic:restricted_with_classpath_exception"},
 		},
 		{
 			name: "ponr",
@@ -188,31 +186,31 @@ func TestPolicy_edgeConditions(t *testing.T) {
 		{
 			name:                     "ronp",
 			edge:                     annotated{"gplBin.meta_lic", "proprietary.meta_lic", []string{"static"}},
-			expectedDepActions:       []string{"proprietary.meta_lic:proprietary.meta_lic:proprietary"},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{"gplBin.meta_lic:restricted"},
 		},
 		{
 			name:                     "noticeonb_e_o",
 			edge:                     annotated{"mitBin.meta_lic", "by_exception.meta_lic", []string{"static"}},
-			expectedDepActions:       []string{"by_exception.meta_lic:by_exception.meta_lic:by_exception_only"},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{},
 		},
 		{
 			name:                     "b_e_oonnotice",
 			edge:                     annotated{"by_exception.meta_lic", "mitLib.meta_lic", []string{"static"}},
-			expectedDepActions:       []string{"mitLib.meta_lic:mitLib.meta_lic:notice"},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{},
 		},
 		{
 			name:                     "noticeonrecip",
 			edge:                     annotated{"mitBin.meta_lic", "mplLib.meta_lic", []string{"static"}},
-			expectedDepActions:       []string{"mplLib.meta_lic:mplLib.meta_lic:reciprocal"},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{},
 		},
 		{
 			name:                     "reciponnotice",
 			edge:                     annotated{"mplBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
-			expectedDepActions:       []string{"mitLib.meta_lic:mitLib.meta_lic:notice"},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{},
 		},
 	}
@@ -231,69 +229,80 @@ func TestPolicy_edgeConditions(t *testing.T) {
 				t.Errorf("unexpected error reading graph: %w", err)
 				return
 			}
+			edge := lg.Edges()[0]
 			// simulate a condition inherited from another edge/dependency.
 			otherTarget := ""
 			otherCondition := ""
+			var otn *TargetNode
 			if len(tt.otherCondition) > 0 {
 				fields := strings.Split(tt.otherCondition, ":")
 				otherTarget = fields[0]
 				otherCondition = fields[1]
+				otn = &TargetNode{name: otherTarget}
 				// other target must exist in graph
-				lg.targets[otherTarget] = &TargetNode{name: otherTarget}
-				lg.targets[otherTarget].proto.LicenseConditions = append(lg.targets[otherTarget].proto.LicenseConditions, otherCondition)
+				lg.targets[otherTarget] = otn
+				otn.licenseConditions = LicenseConditionSet(RecognizedConditionNames[otherCondition])
+			}
+			targets := make(map[string]*TargetNode)
+			targets[edge.target.name] = edge.target
+			targets[edge.dependency.name] = edge.dependency
+			if otn != nil {
+				targets[otn.name] = otn
 			}
 			if tt.expectedDepActions != nil {
-				depActions := make(actionSet)
-				depActions[lg.targets[tt.edge.dep]] = lg.targets[tt.edge.dep].LicenseConditions()
-				if otherTarget != "" {
-					// simulate a sub-dependency's condition having already propagated up to dep and about to go to target
-					otherCs := lg.targets[otherTarget].LicenseConditions()
-					depActions[lg.targets[tt.edge.dep]].AddSet(otherCs)
-					depActions[lg.targets[otherTarget]] = otherCs
-				}
-				asActual := depActionsApplicableToTarget(lg.Edges()[0], depActions, tt.treatAsAggregate)
-				asExpected := make(actionSet)
-				for _, triple := range tt.expectedDepActions {
-					fields := strings.Split(triple, ":")
-					actsOn := lg.targets[fields[0]]
-					origin := lg.targets[fields[1]]
-					expectedConditions := newLicenseConditionSet()
-					expectedConditions.add(origin, fields[2:]...)
-					if _, ok := asExpected[actsOn]; ok {
-						asExpected[actsOn].AddSet(expectedConditions)
-					} else {
-						asExpected[actsOn] = expectedConditions
+				t.Run("depConditionsPropagatingToTarget", func(t *testing.T) {
+					depConditions := edge.dependency.LicenseConditions()
+					if otherTarget != "" {
+						// simulate a sub-dependency's condition having already propagated up to dep and about to go to target
+						otherCs := otn.LicenseConditions()
+						depConditions |= otherCs
 					}
-				}
-
-				checkSameActions(lg, asActual, asExpected, t)
+					t.Logf("calculate target actions for edge=%s, dep conditions=%04x, treatAsAggregate=%v", edge.String(), depConditions, tt.treatAsAggregate)
+					csActual := depConditionsPropagatingToTarget(lg, edge, depConditions, tt.treatAsAggregate)
+					t.Logf("calculated target conditions as %04x{%s}", csActual, strings.Join(csActual.Names(), ", "))
+					csExpected := NewLicenseConditionSet()
+					for _, triple := range tt.expectedDepActions {
+						fields := strings.Split(triple, ":")
+						expectedConditions := NewLicenseConditionSet()
+						for _, cname := range fields[2:] {
+							expectedConditions = expectedConditions.Plus(RecognizedConditionNames[cname])
+						}
+						csExpected |= expectedConditions
+					}
+					t.Logf("expected target conditions as %04x{%s}", csExpected, strings.Join(csExpected.Names(), ", "))
+					if csActual != csExpected {
+						t.Errorf("unexpected license conditions: got %04x, want %04x", csActual, csExpected)
+					}
+				})
 			}
 			if tt.expectedTargetConditions != nil {
-				targetConditions := lg.TargetNode(tt.edge.target).LicenseConditions()
-				if otherTarget != "" {
-					targetConditions.add(lg.targets[otherTarget], otherCondition)
-				}
-				cs := targetConditionsApplicableToDep(
-					lg.Edges()[0],
-					targetConditions,
-					tt.treatAsAggregate)
-				actual := make([]string, 0, cs.Count())
-				for _, lc := range cs.AsList() {
-					actual = append(actual, lc.asString(":"))
-				}
-				sort.Strings(actual)
-				sort.Strings(tt.expectedTargetConditions)
-				if len(actual) != len(tt.expectedTargetConditions) {
-					t.Errorf("unexpected number of target conditions: got %v with %d conditions, want %v with %d conditions",
-						actual, len(actual), tt.expectedTargetConditions, len(tt.expectedTargetConditions))
-				} else {
-					for i := 0; i < len(actual); i++ {
-						if actual[i] != tt.expectedTargetConditions[i] {
-							t.Errorf("unexpected target condition at element %d: got %q, want %q",
-								i, actual[i], tt.expectedTargetConditions[i])
+				t.Run("targetConditionsPropagatingToDep", func(t *testing.T) {
+					targetConditions := edge.target.LicenseConditions()
+					if otherTarget != "" {
+						targetConditions = targetConditions.Union(otn.licenseConditions)
+					}
+					t.Logf("calculate dep conditions for edge=%s, target conditions=%v, treatAsAggregate=%v", edge.String(), targetConditions.Names(), tt.treatAsAggregate)
+					cs := targetConditionsPropagatingToDep(lg, edge, targetConditions, tt.treatAsAggregate)
+					t.Logf("calculated dep conditions as %v", cs.Names())
+					actual := cs.Names()
+					sort.Strings(actual)
+					expected := make([]string, 0)
+					for _, expectedDepCondition := range tt.expectedTargetConditions {
+						expected = append(expected, strings.Split(expectedDepCondition, ":")[1])
+					}
+					sort.Strings(expected)
+					if len(actual) != len(expected) {
+						t.Errorf("unexpected number of target conditions: got %v with %d conditions, want %v with %d conditions",
+							actual, len(actual), expected, len(expected))
+					} else {
+						for i := 0; i < len(actual); i++ {
+							if actual[i] != expected[i] {
+								t.Errorf("unexpected target condition at element %d: got %q, want %q",
+									i, actual[i], expected[i])
+							}
 						}
 					}
-				}
+				})
 			}
 		})
 	}
