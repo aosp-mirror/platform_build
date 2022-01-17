@@ -1877,6 +1877,10 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     )
   endif
 
+  ifeq ($(PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST),true)
+    $(call dist-for-goals, droidcore-unbundled, $(INSTALLED_BOOTIMAGE_TARGET))
+  endif
+
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
     $(call dist-for-goals, droidcore-unbundled, \
       $(recovery_ramdisk) \
