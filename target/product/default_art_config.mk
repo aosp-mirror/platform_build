@@ -78,6 +78,7 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.art:service-art \
     com.android.media:service-media-s \
     com.android.permission:service-permission \
+    com.android.supplementalprocess:service-supplementalprocess \
 
 PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION += art/build/boot/boot-image-profile.txt
 
@@ -91,7 +92,6 @@ PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
 PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
     com.android.os.statsd:service-statsd \
     com.android.scheduling:service-scheduling \
-    com.android.supplementalprocess:service-supplementalprocess \
     com.android.tethering:service-connectivity \
     com.android.uwb:service-uwb \
     com.android.wifi:service-wifi \
