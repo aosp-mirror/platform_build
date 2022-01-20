@@ -77,6 +77,8 @@ _board_strip_readonly_list += BOARD_VENDORIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 _board_strip_readonly_list += BOARD_PRODUCTIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_SYSTEM_DLKM_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_SYSTEM_DLKM_FILE_SYSTEM_TYPE
 _board_strip_readonly_list += BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE
 _board_strip_readonly_list += BOARD_ODMIMAGE_PARTITION_SIZE
@@ -125,6 +127,7 @@ _board_strip_readonly_list += BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES
 
 # Prebuilt image variables
 _board_strip_readonly_list += BOARD_PREBUILT_INIT_BOOT_IMAGE
+_board_strip_readonly_list += BOARD_PREBUILT_SYSTEM_DLKM_IMAGE
 
 # Defines the list of logical vendor ramdisk names to build or include in vendor_boot.
 _board_strip_readonly_list += BOARD_VENDOR_RAMDISK_FRAGMENTS
@@ -501,6 +504,35 @@ else ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),true)
   BUILDING_RECOVERY_IMAGE := true
 endif
 .KATI_READONLY := BUILDING_RECOVERY_IMAGE
+
+# Are we building a system_dlkm image for system_dlkm partition ?
+#
+# Two choices:
+# 1. Use kernel prebuilt system_dlkm.img BOARD_PREBUILT_SYSTEM_DLKM_IMAGE to point image
+# 2. Build from kernel prebuilt system_dlkm_staging set PRODUCT_BUILD_SYSTEM_DLKM_IMAGE
+#
+# Both requires: BOARD_SYSTEM_DLKM_PARTITION_SIZE and must be 64MB or higher (vts).
+#
+BUILDING_SYSTEM_DLKM_IMAGE :=
+ifeq ($(PRODUCT_BUILD_SYSTEM_DLKM_IMAGE),)
+  ifdef BOARD_USES_SYSTEM_DLKM_PARTITION
+    BUILDING_SYSTEM_DLKM_IMAGE := true
+  endif
+endif
+ifeq ($(PRODUCT_BUILD_SYSTEM_DLKM_IMAGE),true)
+  BUILDING_SYSTEM_DLKM_IMAGE := true
+endif
+.KATI_READONLY := BUILDING_SYSTEM_DLKM_IMAGE
+TARGET_SYSTEM_DLKM_SRC :=
+ifeq ($(BUILDING_SYSTEM_DLKM_IMAGE),true)
+  # Make sure we know the partition size; or warn for default to 64MB
+  ifndef BOARD_SYSTEM_DLKM_PARTITION_SIZE
+    $(error BOARD_SYSTEM_DLKM_PARTITION_SIZE is not defined; must be defined as 64MB or higher.)
+  endif
+  # Point to the source for signed module by kernel; if we are building system_dlkm
+  TARGET_SYSTEM_DLKM_SRC := kernel/prebuilts/$(TARGET_KERNEL_USE)/$(TARGET_ARCH)/system_dlkm_staging
+endif
+.KATI_READONLY := TARGET_SYSTEM_DLKM_SRC
 
 # Are we building a vendor boot image
 BUILDING_VENDOR_BOOT_IMAGE :=
