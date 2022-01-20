@@ -331,22 +331,6 @@ else
 JAVA_TMPDIR_ARG :=
 endif
 
-# http://b/210012154 Set BIONIC_COVERAGE if coverage is enabled for bionic.  This
-# disable continuous coverage and removes '%c' from init.environ.rc:LLVM_PROFILE_FILE
-ifeq ($(NATIVE_COVERAGE_PATHS),*)
-  ifeq ($(filter bionic%,$(NATIVE_COVERAGE_EXCLUDE_PATHS)),)
-	BIONIC_COVERAGE := true
-  else
-	BIONIC_COVERAGE := false
-  endif
-else
-  ifeq ($(filter bionic%,$(NATIVE_COVERAGE_PATHS)),)
-	BIONIC_COVERAGE := false
-  else
-	BIONIC_COVERAGE := true
-  endif
-endif
-
 # ###############################################################
 # Include sub-configuration files
 # ###############################################################
@@ -593,6 +577,7 @@ VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
 LZ4 := $(HOST_OUT_EXECUTABLES)/lz4$(HOST_EXECUTABLE_SUFFIX)
+GENERATE_GKI_CERTIFICATE := $(HOST_OUT_EXECUTABLES)/generate_gki_certificate$(HOST_EXECUTABLE_SUFFIX)
 ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
