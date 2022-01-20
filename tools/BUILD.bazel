@@ -8,7 +8,7 @@ py_binary(
     srcs=["java-event-log-tags.py"],
     deps=[":event_log_tags"],
     visibility = ["//visibility:public"],
-    python_version = "PY2",
+    python_version = "PY3",
 )
 
 py_binary(
@@ -16,5 +16,5 @@ py_binary(
     srcs=["merge-event-log-tags.py"],
     deps=[":event_log_tags"],
     visibility = ["//visibility:public"],
-    python_version = "PY2",
+    python_version = "PY3",
 )
