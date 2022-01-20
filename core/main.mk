@@ -1604,7 +1604,7 @@ superimage_empty: $(INSTALLED_SUPERIMAGE_EMPTY_TARGET)
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
 .PHONY: initbootimage
-bootimage: $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
+initbootimage: $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
 
 ifeq (true,$(PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST))
 $(call dist-for-goals, bootimage, $(INSTALLED_BOOTIMAGE_TARGET))
