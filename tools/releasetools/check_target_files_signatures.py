@@ -408,8 +408,8 @@ class TargetFiles(object):
       for i in range(1, len(apks)):
         pkgname, apk = apks[i]
         if pkgname == apks[i-1][0]:
-          print("Both {} and {} have same package name {}",
-                apk.filename, apks[i-1][1].filename, pkgname)
+          print("Both {} and {} have same package name {}".format(
+              apk.filename, apks[i-1][1].filename, pkgname))
       for _, apk in apks:
         if apk.shared_uid:
           print("  %-*s  %-*s  [%s]" % (self.max_fn_len, apk.filename,
