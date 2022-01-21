@@ -65,9 +65,12 @@ logger = logging.getLogger(__name__)
 # extra field anyway).
 # Issue #14315: https://bugs.python.org/issue14315, fixed in Python 2.7.8 and
 # Python 3.5.0 alpha 1.
+
+
 class MyZipInfo(zipfile.ZipInfo):
   def _decodeExtra(self):
     pass
+
 
 zipfile.ZipInfo = MyZipInfo
 
@@ -83,6 +86,7 @@ PROBLEM_PREFIX = []
 
 
 def AddProblem(msg):
+  logger.error(msg)
   PROBLEMS.append(" ".join(PROBLEM_PREFIX) + " " + msg)
 
 
@@ -204,7 +208,7 @@ class APK(object):
       for info in apk.infolist():
         filename = info.filename
         if (filename.startswith("META-INF/") and
-            info.filename.endswith((".DSA", ".RSA"))):
+                info.filename.endswith((".DSA", ".RSA"))):
           pkcs7 = apk.read(filename)
           cert = CertFromPKCS7(pkcs7, filename)
           if not cert:
@@ -266,7 +270,7 @@ class APK(object):
                    stdout=subprocess.PIPE)
     manifest, err = p.communicate()
     if err:
-      AddProblem("failed to read manifest")
+      AddProblem("failed to read manifest " + full_filename)
       return
 
     self.shared_uid = None
@@ -279,15 +283,15 @@ class APK(object):
         name = m.group(1)
         if name == "android:sharedUserId":
           if self.shared_uid is not None:
-            AddProblem("multiple sharedUserId declarations")
+            AddProblem("multiple sharedUserId declarations " + full_filename)
           self.shared_uid = m.group(2)
         elif name == "package":
           if self.package is not None:
-            AddProblem("multiple package declarations")
+            AddProblem("multiple package declarations " + full_filename)
           self.package = m.group(2)
 
     if self.package is None:
-      AddProblem("no package declaration")
+      AddProblem("no package declaration " + full_filename)
 
 
 class TargetFiles(object):
@@ -400,7 +404,12 @@ class TargetFiles(object):
     for _, digest in order:
       print("%s:" % (ALL_CERTS.Get(digest),))
       apks = by_digest[digest]
-      apks.sort()
+      apks.sort(key=lambda x: x[0])
+      for i in range(1, len(apks)):
+        pkgname, apk = apks[i]
+        if pkgname == apks[i-1][0]:
+          print("Both {} and {} have same package name {}".format(
+              apk.filename, apks[i-1][1].filename, pkgname))
       for _, apk in apks:
         if apk.shared_uid:
           print("  %-*s  %-*s  [%s]" % (self.max_fn_len, apk.filename,
@@ -527,8 +536,5 @@ if __name__ == '__main__':
   try:
     r = main(sys.argv[1:])
     sys.exit(r)
-  except common.ExternalError as e:
-    print("\n   ERROR: %s\n" % (e,))
-    sys.exit(1)
   finally:
     common.Cleanup()
