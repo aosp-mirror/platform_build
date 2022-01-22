@@ -106,6 +106,7 @@ VNDK-core: android.hardware.sensors-V1-ndk.so
 VNDK-core: android.hardware.soundtrigger3-V1-ndk.so
 VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
+VNDK-core: android.hardware.usb-V1-ndk.so
 VNDK-core: android.hardware.uwb-V1-ndk.so
 VNDK-core: android.hardware.vibrator-V2-ndk.so
 VNDK-core: android.hardware.weaver-V1-ndk.so
