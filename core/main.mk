@@ -1606,6 +1606,9 @@ bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 .PHONY: initbootimage
 bootimage: $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
 
+.PHONY: system_dlkm_image
+system_dlkm_image: $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET)
+
 ifeq (true,$(PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST))
 $(call dist-for-goals, bootimage, $(INSTALLED_BOOTIMAGE_TARGET))
 endif
@@ -1630,6 +1633,7 @@ vbmetavendorimage: $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
 .PHONY: droidcore-unbundled
 droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_SYSTEMIMAGE_TARGET) \
+    $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_BOOTIMAGE_TARGET) \
     $(INSTALLED_INIT_BOOT_IMAGE_TARGET) \

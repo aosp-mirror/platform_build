@@ -1179,6 +1179,49 @@ INSTALLED_INIT_BOOT_IMAGE_TARGET :=
 endif # BOARD_PREBUILT_INIT_BOOT_IMAGE
 
 endif # BUILDING_INIT_BOOT_IMAGE is not true
+
+# -----------------------------------------------------------------
+#  system dlkm image
+ifeq ($(BUILDING_SYSTEM_DLKM_IMAGE),true)
+
+INSTALLED_SYSTEM_DLKM_IMAGE_TARGET := $(PRODUCT_OUT)/system_dlkm.img
+
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET): $(TARGET_SYSTEM_DLKM_SRC) $(MKEROFS) $(AVBTOOL)
+	$(call pretty,"Target system_dlkm image: $@")
+	rsync -rupE $(TARGET_SYSTEM_DLKM_SRC)/ $(TARGET_SYSTEM_DLKM_OUT)
+	$(MKEROFS) "-zlz4hc" $@ $(TARGET_SYSTEM_DLKM_OUT)
+	$(call assert-max-image-size,$@,$(BOARD_SYSTEM_DLKM_PARTITION_SIZE))
+	$(AVBTOOL) add_hash_footer \
+	    --partition_name system_dlkm \
+	    --partition_size $(BOARD_SYSTEM_DLKM_PARTITION_SIZE) \
+	    --image $@
+else
+$(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET): $(TARGET_SYSTEM_DLKM_SRC) $(MKFSEROFS)
+	$(call pretty,"Target system_dlkm image: $@")
+	rsync -rupE $(TARGET_SYSTEM_DLKM_SRC)/ $(TARGET_SYSTEM_DLKM_OUT)
+	$(MKEROFS) "-zlz4hc" $@ $(TARGET_SYSTEM_DLKM_OUT)
+	$(call assert-max-image-size,$@,$(BOARD_SYSTEM_DLKM_PARTITION_SIZE))
+endif # BOARD_AVB_ENABLE
+
+else # BUILDING_SYSTEM_DLKM_IMAGE is not true
+
+ifdef BOARD_PREBUILT_SYSTEM_DLKM_IMAGE
+
+INTERNAL_PREBUILT_SYSTEM_DLKM_IMAGE := $(BOARD_PREBUILT_SYSTEM_DLKM_IMAGE)
+INSTALLED_SYSTEM_DLKM_IMAGE_TARGET := $(PRODUCT_OUT)/system_dlkm.img
+$(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET): $(INTERNAL_PREBUILT_SYSTEM_DLKM_IMAGE)
+	$(call pretty,"Using prebuilt system_dlkm image: $@")
+	cp $(INTERNAL_PREBUILT_SYSTEM_DLKM_IMAGE) $@
+
+else # BOARD_PREBUILT_SYSTEM_DLKM_IMAGE not defined
+
+INSTALLED_SYSTEM_DLKM_IMAGE_TARGET :=
+
+endif # BOARD_PREBUILT_SYSTEM_DLKM_IMAGE
+
+endif # BUILDING_SYSTEM_DLKM_IMAGE is not true
+
 # -----------------------------------------------------------------
 # vendor boot image
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
