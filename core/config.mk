@@ -331,22 +331,6 @@ else
 JAVA_TMPDIR_ARG :=
 endif
 
-# http://b/210012154 Set BIONIC_COVERAGE if coverage is enabled for bionic.  This
-# disable continuous coverage and removes '%c' from init.environ.rc:LLVM_PROFILE_FILE
-ifeq ($(NATIVE_COVERAGE_PATHS),*)
-  ifeq ($(filter bionic%,$(NATIVE_COVERAGE_EXCLUDE_PATHS)),)
-	BIONIC_COVERAGE := true
-  else
-	BIONIC_COVERAGE := false
-  endif
-else
-  ifeq ($(filter bionic%,$(NATIVE_COVERAGE_PATHS)),)
-	BIONIC_COVERAGE := false
-  else
-	BIONIC_COVERAGE := true
-  endif
-endif
-
 # ###############################################################
 # Include sub-configuration files
 # ###############################################################
@@ -613,6 +597,7 @@ APICHECK := $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX)
 FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs
 MKE2FS_CONF := system/extras/ext4_utils/mke2fs.conf
+MKEROFS := $(HOST_OUT_EXECUTABLES)/mkfs.erofs
 MKEROFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkerofsimage.sh
 MKSQUASHFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh
 MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
