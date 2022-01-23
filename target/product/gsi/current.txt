@@ -86,6 +86,7 @@ VNDK-core: android.hardware.media.omx@1.0.so
 VNDK-core: android.hardware.media@1.0.so
 VNDK-core: android.hardware.memtrack-V1-ndk.so
 VNDK-core: android.hardware.memtrack@1.0.so
+VNDK-core: android.hardware.nfc-V1-ndk.so
 VNDK-core: android.hardware.oemlock-V1-ndk.so
 VNDK-core: android.hardware.power-V2-ndk.so
 VNDK-core: android.hardware.power.stats-V1-ndk.so
@@ -106,6 +107,7 @@ VNDK-core: android.hardware.sensors-V1-ndk.so
 VNDK-core: android.hardware.soundtrigger3-V1-ndk.so
 VNDK-core: android.hardware.soundtrigger@2.0-core.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
+VNDK-core: android.hardware.usb-V1-ndk.so
 VNDK-core: android.hardware.uwb-V1-ndk.so
 VNDK-core: android.hardware.vibrator-V2-ndk.so
 VNDK-core: android.hardware.weaver-V1-ndk.so
