@@ -1157,6 +1157,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
                       str(OPTIONS.enable_zucchini).lower()]
 
   if not ota_utils.IsLz4diffCompatible(source_file, target_file):
+    logger.warn(
+        "Source build doesn't support lz4diff, or source/target don't have compatible lz4diff versions. Disabling lz4diff.")
     OPTIONS.enable_lz4diff = False
 
   additional_args += ["--enable_lz4diff",
@@ -1169,6 +1171,10 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         liblz4_path), "liblz4.so not found in META/ dir of target file {}".format(liblz4_path)
     logger.info("Enabling lz4diff %s", liblz4_path)
     additional_args += ["--liblz4_path", liblz4_path]
+    erofs_compression_param = OPTIONS.target_info_dict.get(
+        "erofs_default_compressor")
+    assert erofs_compression_param is not None, "'erofs_default_compressor' not found in META/misc_info.txt of target build. This is required to enable lz4diff."
+    additional_args += ["--erofs_compression_param", erofs_compression_param]
 
   if OPTIONS.disable_vabc:
     additional_args += ["--disable_vabc", "true"]
