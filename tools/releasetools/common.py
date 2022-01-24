@@ -1835,6 +1835,23 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
     return File(name, data)
   return None
 
+def GetSystemDlkmImage(name, prebuilt_name, unpack_dir, tree_subdir,
+                       info_dict=None):
+  """Return a File object with the desired system dlkm image.
+  Look for it under 'unpack_dir'/IMAGES or 'unpack_dir'/PREBUILT_IMAGES.
+  """
+
+  prebuilt_path = os.path.join(unpack_dir, "IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    logger.info("Using prebuilt %s from IMAGES...", prebuilt_name)
+    return File.FromLocalFile(name, prebuilt_path)
+
+  prebuilt_path = os.path.join(unpack_dir, "PREBUILT_IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    logger.info("Using prebuilt %s from PREBUILT_IMAGES...", prebuilt_name)
+    return File.FromLocalFile(name, prebuilt_path)
+
+  return None
 
 def _BuildVendorBootImage(sourcedir, info_dict=None):
   """Build a vendor boot image from the specified sourcedir.

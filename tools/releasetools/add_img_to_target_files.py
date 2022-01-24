@@ -761,6 +761,7 @@ def AddImagesToTargetFiles(filename):
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
   has_init_boot = OPTIONS.info_dict.get("init_boot") == "true"
   has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
+  has_system_dlkm = OPTIONS.info_dict.get("system_dlkm") == "true"
 
   # {vendor,odm,product,system_ext,vendor_dlkm,odm_dlkm, system, system_other}.img
   # can be built from source, or  dropped into target_files.zip as a prebuilt blob.
@@ -830,6 +831,19 @@ def AddImagesToTargetFiles(filename):
         init_boot_image.WriteToDir(OPTIONS.input_tmp)
         if output_zip:
           init_boot_image.AddToZip(output_zip)
+
+  if has_system_dlkm:
+    banner("system_dlkm")
+    system_dlkm_image = common.GetSystemDlkmImage(
+        "IMAGES/system_dlkm.img", "system_dlkm.img", OPTIONS.input_tmp, "SYSTEM_DLKM")
+    if system_dlkm_image:
+      partitions['system_dlkm'] = os.path.join(OPTIONS.input_tmp, "IMAGES", "system_dlkm.img")
+      if not os.path.exists(partitions['system_dlkm']):
+        system_dlkm_image.WriteToDir(OPTIONS.input_tmp)
+        if output_zip:
+          system_dlkm_image.AddToZip(output_zip)
+    else:
+      logger.error("Couldn't locate system_dlkm.img; skipping...")
 
   if has_vendor_boot:
     banner("vendor_boot")
