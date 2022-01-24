@@ -1604,7 +1604,7 @@ superimage_empty: $(INSTALLED_SUPERIMAGE_EMPTY_TARGET)
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
 .PHONY: initbootimage
-bootimage: $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
+initbootimage: $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
 
 .PHONY: system_dlkm_image
 system_dlkm_image: $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET)
