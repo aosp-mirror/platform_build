@@ -384,6 +384,7 @@ _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
 
 # Controls for whether different partitions are built for the current product.
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_SYSTEM_DLKM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_OTHER_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_PRODUCT_IMAGE
