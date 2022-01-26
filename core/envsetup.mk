@@ -323,7 +323,7 @@ endif
 define dump-variables-rbc
 $(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(.VARIABLES)))\
 $(file >$(1),\
-$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt | grep -vhE "^(SOONG_.*|LOCAL_PATH|TOPDIR|PRODUCT_COPY_OUT_.*)$$"),\
+$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt | grep -vhE "^(SOONG_.*|LOCAL_PATH|TOPDIR|PRODUCT_COPY_OUT_.*|TRACE_BEGIN_SOONG)$$"),\
 $(v) := $(strip $($(v)))$(newline))\
 $(foreach ns,$(SOONG_CONFIG_NAMESPACES),\
 $(foreach v,$(SOONG_CONFIG_$(ns)),\
