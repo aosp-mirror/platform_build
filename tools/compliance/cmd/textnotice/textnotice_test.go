@@ -18,7 +18,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"html"
 	"os"
 	"regexp"
 	"strings"
@@ -26,27 +25,25 @@ import (
 )
 
 var (
-	horizontalRule = regexp.MustCompile(`^\s*<hr>\s*$`)
-	bodyTag        = regexp.MustCompile(`^\s*<body>\s*$`)
-	boilerPlate    = regexp.MustCompile(`^\s*(?:<ul class="file-list">|<ul>|</.*)\s*$`)
-	tocTag         = regexp.MustCompile(`^\s*<ul class="toc">\s*$`)
-	libraryName    = regexp.MustCompile(`^\s*<strong>(.*)</strong>\s\s*used\s\s*by\s*:\s*$`)
-	licenseText    = regexp.MustCompile(`^\s*<a id="[^"]{32}"/><pre class="license-text">(.*)$`)
-	titleTag       = regexp.MustCompile(`^\s*<title>(.*)</title>\s*$`)
-	h1Tag          = regexp.MustCompile(`^\s*<h1>(.*)</h1>\s*$`)
-	usedByTarget   = regexp.MustCompile(`^\s*<li>(?:<a href="#id[0-9]+">)?((?:out/(?:[^/<]*/)+)[^/<]*)(?:</a>)?\s*$`)
-	installTarget  = regexp.MustCompile(`^\s*<li id="id[0-9]+"><strong>(.*)</strong>\s*$`)
-	libReference   = regexp.MustCompile(`^\s*<li><a href="#[^"]{32}">(.*)</a>\s*$`)
+	horizontalRule = regexp.MustCompile("^===[=]*===$")
 )
+
+func TestMain(m *testing.M) {
+	// Change into the parent directory before running the tests
+	// so they can find the testdata directory.
+	if err := os.Chdir(".."); err != nil {
+		fmt.Printf("failed to change to testdata directory: %s\n", err)
+		os.Exit(1)
+	}
+	os.Exit(m.Run())
+}
 
 func Test(t *testing.T) {
 	tests := []struct {
 		condition   string
 		name        string
 		roots       []string
-		includeTOC  bool
 		stripPrefix string
-		title       string
 		expectedOut []matcher
 	}{
 		{
@@ -54,79 +51,6 @@ func Test(t *testing.T) {
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/bin/bin2"},
-				usedBy{"highest.apex/lib/liba.so"},
-				usedBy{"highest.apex/lib/libb.so"},
-				firstParty{},
-			},
-		},
-		{
-			condition:  "firstparty",
-			name:       "apex+toc",
-			roots:      []string{"highest.apex.meta_lic"},
-			includeTOC: true,
-			expectedOut: []matcher{
-				toc{},
-				target{"highest.apex"},
-				uses{"Android"},
-				target{"highest.apex/bin/bin1"},
-				uses{"Android"},
-				target{"highest.apex/bin/bin2"},
-				uses{"Android"},
-				target{"highest.apex/lib/liba.so"},
-				uses{"Android"},
-				target{"highest.apex/lib/libb.so"},
-				uses{"Android"},
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/bin/bin2"},
-				usedBy{"highest.apex/lib/liba.so"},
-				usedBy{"highest.apex/lib/libb.so"},
-				firstParty{},
-			},
-		},
-		{
-			condition: "firstparty",
-			name:      "apex-with-title",
-			roots:     []string{"highest.apex.meta_lic"},
-			title:     "Emperor",
-			expectedOut: []matcher{
-				pageTitle{"Emperor"},
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/bin/bin2"},
-				usedBy{"highest.apex/lib/liba.so"},
-				usedBy{"highest.apex/lib/libb.so"},
-				firstParty{},
-			},
-		},
-		{
-			condition:  "firstparty",
-			name:       "apex-with-title+toc",
-			roots:      []string{"highest.apex.meta_lic"},
-			includeTOC: true,
-			title:      "Emperor",
-			expectedOut: []matcher{
-				pageTitle{"Emperor"},
-				toc{},
-				target{"highest.apex"},
-				uses{"Android"},
-				target{"highest.apex/bin/bin1"},
-				uses{"Android"},
-				target{"highest.apex/bin/bin2"},
-				uses{"Android"},
-				target{"highest.apex/lib/liba.so"},
-				uses{"Android"},
-				target{"highest.apex/lib/libb.so"},
-				uses{"Android"},
 				hr{},
 				library{"Android"},
 				usedBy{"highest.apex"},
@@ -556,15 +480,15 @@ func Test(t *testing.T) {
 				rootFiles = append(rootFiles, "testdata/"+tt.condition+"/"+r)
 			}
 
-			ctx := context{stdout, stderr, os.DirFS("."), tt.includeTOC, tt.stripPrefix, tt.title}
+			ctx := context{stdout, stderr, os.DirFS("."), tt.stripPrefix}
 
-			err := htmlNotice(&ctx, rootFiles...)
+			err := textNotice(&ctx, rootFiles...)
 			if err != nil {
-				t.Fatalf("htmlnotice: error = %v, stderr = %v", err, stderr)
+				t.Fatalf("textnotice: error = %v, stderr = %v", err, stderr)
 				return
 			}
 			if stderr.Len() > 0 {
-				t.Errorf("htmlnotice: gotStderr = %v, want none", stderr)
+				t.Errorf("textnotice: gotStderr = %v, want none", stderr)
 			}
 
 			t.Logf("got stdout: %s", stdout.String())
@@ -573,121 +497,28 @@ func Test(t *testing.T) {
 
 			out := bufio.NewScanner(stdout)
 			lineno := 0
-			inBody := false
-			hasTitle := false
-			ttle, expectTitle := tt.expectedOut[0].(pageTitle)
 			for out.Scan() {
 				line := out.Text()
 				if strings.TrimLeft(line, " ") == "" {
 					continue
 				}
-				if !inBody {
-					if expectTitle {
-						if tl := checkTitle(line); 0 < len(tl) {
-							if tl != ttle.t {
-								t.Errorf("htmlnotice: unexpected title: got %q, want %q", tl, ttle.t)
-							}
-							hasTitle = true
-						}
-					}
-					if bodyTag.MatchString(line) {
-						inBody = true
-						if expectTitle && !hasTitle {
-							t.Errorf("htmlnotice: missing title: got no <title> tag, want <title>%s</title>", ttle.t)
-						}
-					}
-					continue
-				}
-				if boilerPlate.MatchString(line) {
-					continue
-				}
 				if len(tt.expectedOut) <= lineno {
-					t.Errorf("htmlnotice: unexpected output at line %d: got %q, want nothing (wanted %d lines)", lineno+1, line, len(tt.expectedOut))
+					t.Errorf("unexpected output at line %d: got %q, want nothing (wanted %d lines)", lineno+1, line, len(tt.expectedOut))
 				} else if !tt.expectedOut[lineno].isMatch(line) {
-					t.Errorf("htmlnotice: unexpected output at line %d: got %q, want %q", lineno+1, line, tt.expectedOut[lineno].String())
+					t.Errorf("unexpected output at line %d: got %q, want %q", lineno+1, line, tt.expectedOut[lineno].String())
 				}
 				lineno++
 			}
-			if !inBody {
-				t.Errorf("htmlnotice: missing body: got no <body> tag, want <body> tag followed by %s", matcherList(tt.expectedOut).String())
-				return
-			}
 			for ; lineno < len(tt.expectedOut); lineno++ {
-				t.Errorf("htmlnotice: missing output line %d: ended early, want %q", lineno+1, tt.expectedOut[lineno].String())
+				t.Errorf("textnotice: missing output line %d: ended early, want %q", lineno+1, tt.expectedOut[lineno].String())
 			}
 		})
 	}
 }
 
-func checkTitle(line string) string {
-	groups := titleTag.FindStringSubmatch(line)
-	if len(groups) != 2 {
-		return ""
-	}
-	return groups[1]
-}
-
 type matcher interface {
 	isMatch(line string) bool
 	String() string
-}
-
-type pageTitle struct {
-	t string
-}
-
-func (m pageTitle) isMatch(line string) bool {
-	groups := h1Tag.FindStringSubmatch(line)
-	if len(groups) != 2 {
-		return false
-	}
-	return groups[1] == html.EscapeString(m.t)
-}
-
-func (m pageTitle) String() string {
-	return "  <h1>" + html.EscapeString(m.t) + "</h1>"
-}
-
-type toc struct{}
-
-func (m toc) isMatch(line string) bool {
-	return tocTag.MatchString(line)
-}
-
-func (m toc) String() string {
-	return `  <ul class="toc">`
-}
-
-type target struct {
-	name string
-}
-
-func (m target) isMatch(line string) bool {
-	groups := installTarget.FindStringSubmatch(line)
-	if len(groups) != 2 {
-		return false
-	}
-	return strings.HasPrefix(groups[1], "out/") && strings.HasSuffix(groups[1], "/"+html.EscapeString(m.name))
-}
-
-func (m target) String() string {
-	return `  <li id="id#"><strong>` + html.EscapeString(m.name) + `</strong>`
-}
-
-type uses struct {
-	name string
-}
-
-func (m uses) isMatch(line string) bool {
-	groups := libReference.FindStringSubmatch(line)
-	if len(groups) != 2 {
-		return false
-	}
-	return groups[1] == html.EscapeString(m.name)
-}
-
-func (m uses) String() string {
-	return `  <li><a href="#hash">` + html.EscapeString(m.name) + `</a>`
 }
 
 type hr struct{}
@@ -697,7 +528,7 @@ func (m hr) isMatch(line string) bool {
 }
 
 func (m hr) String() string {
-	return "  <hr>"
+	return " ================================================== "
 }
 
 type library struct {
@@ -705,15 +536,11 @@ type library struct {
 }
 
 func (m library) isMatch(line string) bool {
-	groups := libraryName.FindStringSubmatch(line)
-	if len(groups) != 2 {
-		return false
-	}
-	return groups[1] == html.EscapeString(m.name)
+	return strings.HasPrefix(line, m.name+" ")
 }
 
 func (m library) String() string {
-	return "  <strong>" + html.EscapeString(m.name) + "</strong> used by:"
+	return m.name + " used by:"
 }
 
 type usedBy struct {
@@ -721,77 +548,61 @@ type usedBy struct {
 }
 
 func (m usedBy) isMatch(line string) bool {
-	groups := usedByTarget.FindStringSubmatch(line)
-	if len(groups) != 2 {
-		return false
-	}
-	return strings.HasPrefix(groups[1], "out/") && strings.HasSuffix(groups[1], "/"+html.EscapeString(m.name))
+	return len(line) > 0 && line[0] == ' ' && strings.HasPrefix(strings.TrimLeft(line, " "), "out/") && strings.HasSuffix(line, "/"+m.name)
 }
 
 func (m usedBy) String() string {
-	return "  <li>out/.../" + html.EscapeString(m.name)
-}
-
-func matchesText(line, text string) bool {
-	groups := licenseText.FindStringSubmatch(line)
-	if len(groups) != 2 {
-		return false
-	}
-	return groups[1] == html.EscapeString(text)
-}
-
-func expectedText(text string) string {
-	return `  <a href="#hash"/><pre class="license-text">` + html.EscapeString(text)
+	return "  out/.../" + m.name
 }
 
 type firstParty struct{}
 
 func (m firstParty) isMatch(line string) bool {
-	return matchesText(line, "&&&First Party License&&&")
+	return strings.HasPrefix(strings.TrimLeft(line, " "), "&&&First Party License&&&")
 }
 
 func (m firstParty) String() string {
-	return expectedText("&&&First Party License&&&")
+	return "&&&First Party License&&&"
 }
 
 type notice struct{}
 
 func (m notice) isMatch(line string) bool {
-	return matchesText(line, "%%%Notice License%%%")
+	return strings.HasPrefix(strings.TrimLeft(line, " "), "%%%Notice License%%%")
 }
 
 func (m notice) String() string {
-	return expectedText("%%%Notice License%%%")
+	return "%%%Notice License%%%"
 }
 
 type reciprocal struct{}
 
 func (m reciprocal) isMatch(line string) bool {
-	return matchesText(line, "$$$Reciprocal License$$$")
+	return strings.HasPrefix(strings.TrimLeft(line, " "), "$$$Reciprocal License$$$")
 }
 
 func (m reciprocal) String() string {
-	return expectedText("$$$Reciprocal License$$$")
+	return "$$$Reciprocal License$$$"
 }
 
 type restricted struct{}
 
 func (m restricted) isMatch(line string) bool {
-	return matchesText(line, "###Restricted License###")
+	return strings.HasPrefix(strings.TrimLeft(line, " "), "###Restricted License###")
 }
 
 func (m restricted) String() string {
-	return expectedText("###Restricted License###")
+	return "###Restricted License###"
 }
 
 type proprietary struct{}
 
 func (m proprietary) isMatch(line string) bool {
-	return matchesText(line, "@@@Proprietary License@@@")
+	return strings.HasPrefix(strings.TrimLeft(line, " "), "@@@Proprietary License@@@")
 }
 
 func (m proprietary) String() string {
-	return expectedText("@@@Proprietary License@@@")
+	return "@@@Proprietary License@@@"
 }
 
 type matcherList []matcher

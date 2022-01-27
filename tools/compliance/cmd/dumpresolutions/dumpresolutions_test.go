@@ -17,11 +17,22 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
 	"android/soong/tools/compliance"
 )
+
+func TestMain(m *testing.M) {
+	// Change into the parent directory before running the tests
+	// so they can find the testdata directory.
+	if err := os.Chdir(".."); err != nil {
+		fmt.Printf("failed to change to testdata directory: %s\n", err)
+		os.Exit(1)
+	}
+	os.Exit(m.Run())
+}
 
 func Test_plaintext(t *testing.T) {
 	tests := []struct {
