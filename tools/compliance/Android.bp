@@ -18,6 +18,13 @@ package {
 }
 
 blueprint_go_binary {
+    name: "bom",
+    srcs: ["cmd/bom.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/bom_test.go"],
+}
+
+blueprint_go_binary {
     name: "checkshare",
     srcs: ["cmd/checkshare.go"],
     deps: ["compliance-module"],
