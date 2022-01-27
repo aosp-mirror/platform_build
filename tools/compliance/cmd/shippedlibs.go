@@ -16,13 +16,14 @@ package main
 
 import (
 	"bytes"
-	"compliance"
 	"flag"
 	"fmt"
 	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	"android/soong/tools/compliance"
 )
 
 var (

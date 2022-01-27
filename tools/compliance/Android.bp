@@ -113,5 +113,5 @@ bootstrap_go_package {
         "golang-protobuf-encoding-prototext",
         "license_metadata_proto",
     ],
-    pkgPath: "compliance",
+    pkgPath: "android/soong/tools/compliance",
 }

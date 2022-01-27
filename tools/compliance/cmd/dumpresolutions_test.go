@@ -16,10 +16,11 @@ package main
 
 import (
 	"bytes"
-	"compliance"
 	"fmt"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance"
 )
 
 func Test_plaintext(t *testing.T) {

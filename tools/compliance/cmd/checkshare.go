@@ -15,13 +15,14 @@
 package main
 
 import (
-	"compliance"
 	"flag"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"sort"
+
+	"android/soong/tools/compliance"
 )
 
 func init() {

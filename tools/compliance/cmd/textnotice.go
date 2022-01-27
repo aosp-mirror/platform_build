@@ -16,7 +16,6 @@ package main
 
 import (
 	"bytes"
-	"compliance"
 	"flag"
 	"fmt"
 	"io"
@@ -24,6 +23,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"android/soong/tools/compliance"
 )
 
 var (
