@@ -1618,8 +1618,9 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   if not output_target_files:
     return
 
-  # Create the merged META/care_map.bp
-  generate_care_map(partition_map.keys(), output_target_files_temp_dir)
+  # Create the merged META/care_map.pb if A/B update
+  if 'ab_update' in framework_misc_info_keys:
+    generate_care_map(partition_map.keys(), output_target_files_temp_dir)
 
   output_zip = create_target_files_archive(output_target_files,
                                            output_target_files_temp_dir,
