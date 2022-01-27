@@ -69,12 +69,12 @@ func main() {
 	} else {
 		dir, err := filepath.Abs(filepath.Dir(*outputFile))
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "cannot determine path to %q: %w\n", *outputFile, err)
+			fmt.Fprintf(os.Stderr, "cannot determine path to %q: %s\n", *outputFile, err)
 			os.Exit(1)
 		}
 		fi, err := os.Stat(dir)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "cannot read directory %q of %q: %w\n", dir, *outputFile, err)
+			fmt.Fprintf(os.Stderr, "cannot read directory %q of %q: %s\n", dir, *outputFile, err)
 			os.Exit(1)
 		}
 		if !fi.IsDir() {
@@ -102,7 +102,7 @@ func main() {
 	if *outputFile != "-" {
 		err := os.WriteFile(*outputFile, ofile.(*bytes.Buffer).Bytes(), 0666)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "could not write output to %q: %w\n", *outputFile, err)
+			fmt.Fprintf(os.Stderr, "could not write output to %q: %s\n", *outputFile, err)
 			os.Exit(1)
 		}
 	}

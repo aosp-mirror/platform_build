@@ -363,7 +363,7 @@ func TestConditionSet(t *testing.T) {
 				}
 				actualConditions := actual.AsList()
 				if len(actualConditions) != len(expectedConditions) {
-					t.Errorf("len(MatchingAny(%d).AsList()):  got %d, want %d",
+					t.Errorf("len(MatchingAny(%s).AsList()):  got %d, want %d",
 						data, len(actualNames), len(expectedNames))
 				} else {
 					for i := 0; i < len(actualNames); i++ {
@@ -452,7 +452,7 @@ func TestConditionSet(t *testing.T) {
 				for i := 0; i < len(actualConditions); i++ {
 					if actualConditions[i] != expectedConditions[i] {
 						t.Errorf("actual.AsList()[%d]: got %s, want %s",
-							i, actualConditions[i], expectedConditions[i])
+							i, actualConditions[i].Name(), expectedConditions[i].Name())
 						break
 					}
 				}
@@ -552,7 +552,7 @@ func TestConditionSet(t *testing.T) {
 				for i := 0; i < len(actualConditions); i++ {
 					if actualConditions[i] != expectedConditions[i] {
 						t.Errorf("actual.AsList()[%d}: got %s, want %s",
-							i, actualConditions[i], expectedConditions[i])
+							i, actualConditions[i].Name(), expectedConditions[i].Name())
 						break
 					}
 				}

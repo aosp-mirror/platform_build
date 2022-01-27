@@ -194,7 +194,7 @@ func Test(t *testing.T) {
 
 			err := shippedLibs(&ctx, rootFiles...)
 			if err != nil {
-				t.Fatalf("shippedLibs: error = %w, stderr = %v", err, stderr)
+				t.Fatalf("shippedLibs: error = %v, stderr = %v", err, stderr)
 				return
 			}
 			if stderr.Len() > 0 {

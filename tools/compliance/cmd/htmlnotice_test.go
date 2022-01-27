@@ -560,7 +560,7 @@ func Test(t *testing.T) {
 
 			err := htmlNotice(&ctx, rootFiles...)
 			if err != nil {
-				t.Fatalf("htmlnotice: error = %w, stderr = %v", err, stderr)
+				t.Fatalf("htmlnotice: error = %v, stderr = %v", err, stderr)
 				return
 			}
 			if stderr.Len() > 0 {

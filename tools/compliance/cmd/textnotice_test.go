@@ -474,7 +474,7 @@ func Test(t *testing.T) {
 
 			err := textNotice(&ctx, rootFiles...)
 			if err != nil {
-				t.Fatalf("textnotice: error = %w, stderr = %v", err, stderr)
+				t.Fatalf("textnotice: error = %v, stderr = %v", err, stderr)
 				return
 			}
 			if stderr.Len() > 0 {

@@ -275,7 +275,7 @@ func Test(t *testing.T) {
 
 			err := billOfMaterials(&ctx, rootFiles...)
 			if err != nil {
-				t.Fatalf("bom: error = %w, stderr = %v", err, stderr)
+				t.Fatalf("bom: error = %v, stderr = %v", err, stderr)
 				return
 			}
 			if stderr.Len() > 0 {

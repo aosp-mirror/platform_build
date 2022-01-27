@@ -108,7 +108,7 @@ func TestShippedNodes(t *testing.T) {
 			stderr := &bytes.Buffer{}
 			lg, err := toGraph(stderr, tt.roots, tt.edges)
 			if err != nil {
-				t.Errorf("unexpected test data error: got %w, want no error", err)
+				t.Errorf("unexpected test data error: got %s, want no error", err)
 				return
 			}
 			t.Logf("graph:")
