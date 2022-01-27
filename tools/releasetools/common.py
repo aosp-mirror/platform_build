@@ -114,7 +114,7 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # accordingly.
 AVB_PARTITIONS = ('boot', 'init_boot', 'dtbo', 'odm', 'product', 'pvmfw', 'recovery',
                   'system', 'system_ext', 'vendor', 'vendor_boot',
-                  'vendor_dlkm', 'odm_dlkm')
+                  'vendor_dlkm', 'odm_dlkm', 'system_dlkm')
 
 # Chained VBMeta partitions.
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
@@ -128,6 +128,7 @@ PARTITIONS_WITH_CARE_MAP = [
     'odm',
     'vendor_dlkm',
     'odm_dlkm',
+    'system_dlkm',
 ]
 
 # Partitions with a build.prop file
@@ -801,7 +802,7 @@ def LoadInfoDict(input_file, repacking=False):
 
     # Redirect {partition}_base_fs_file for each of the named partitions.
     for part_name in ["system", "vendor", "system_ext", "product", "odm",
-                      "vendor_dlkm", "odm_dlkm"]:
+                      "vendor_dlkm", "odm_dlkm", "system_dlkm"]:
       key_name = part_name + "_base_fs_file"
       if key_name not in d:
         continue
@@ -1245,6 +1246,7 @@ def PartitionMapFromTargetFiles(target_files_dir):
           "VENDOR_DLKM", "VENDOR/vendor_dlkm", "SYSTEM/vendor/vendor_dlkm"
       ],
       "odm_dlkm": ["ODM_DLKM", "VENDOR/odm_dlkm", "SYSTEM/vendor/odm_dlkm"],
+      "system_dlkm": ["SYSTEM_DLKM", "SYSTEM/system_dlkm"],
   }
   partition_map = {}
   for partition, subdirs in possible_subdirs.items():
@@ -1835,23 +1837,6 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
     return File(name, data)
   return None
 
-def GetSystemDlkmImage(name, prebuilt_name, unpack_dir, tree_subdir,
-                       info_dict=None):
-  """Return a File object with the desired system dlkm image.
-  Look for it under 'unpack_dir'/IMAGES or 'unpack_dir'/PREBUILT_IMAGES.
-  """
-
-  prebuilt_path = os.path.join(unpack_dir, "IMAGES", prebuilt_name)
-  if os.path.exists(prebuilt_path):
-    logger.info("Using prebuilt %s from IMAGES...", prebuilt_name)
-    return File.FromLocalFile(name, prebuilt_path)
-
-  prebuilt_path = os.path.join(unpack_dir, "PREBUILT_IMAGES", prebuilt_name)
-  if os.path.exists(prebuilt_path):
-    logger.info("Using prebuilt %s from PREBUILT_IMAGES...", prebuilt_name)
-    return File.FromLocalFile(name, prebuilt_path)
-
-  return None
 
 def _BuildVendorBootImage(sourcedir, info_dict=None):
   """Build a vendor boot image from the specified sourcedir.
