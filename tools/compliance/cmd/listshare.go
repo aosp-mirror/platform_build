@@ -41,7 +41,7 @@ restricted (e.g. GPL) or reciprocal (e.g. MPL).
 
 var (
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
-	failNoLicenses = fmt.Errorf("No licenses found")
+	failNoLicenses    = fmt.Errorf("No licenses found")
 )
 
 func main() {

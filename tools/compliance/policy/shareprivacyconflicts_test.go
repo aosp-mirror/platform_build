@@ -24,7 +24,7 @@ import (
 type byConflict []SourceSharePrivacyConflict
 
 // Len returns the count of elements in the slice.
-func (l byConflict) Len() int      { return len(l) }
+func (l byConflict) Len() int { return len(l) }
 
 // Swap rearranged 2 elements so that each occupies the other's former
 // position.

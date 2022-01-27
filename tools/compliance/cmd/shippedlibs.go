@@ -26,16 +26,16 @@ import (
 )
 
 var (
-	outputFile  = flag.String("o", "-", "Where to write the library list. (default stdout)")
+	outputFile = flag.String("o", "-", "Where to write the library list. (default stdout)")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoLicenses    = fmt.Errorf("No licenses found")
 )
 
 type context struct {
-	stdout      io.Writer
-	stderr      io.Writer
-	rootFS      fs.FS
+	stdout io.Writer
+	stderr io.Writer
+	rootFS fs.FS
 }
 
 func init() {

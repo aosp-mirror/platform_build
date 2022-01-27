@@ -46,11 +46,10 @@ outputs "FAIL" to stdout and exits with status 1.
 }
 
 var (
-	failConflicts = fmt.Errorf("conflicts")
+	failConflicts     = fmt.Errorf("conflicts")
 	failNoneRequested = fmt.Errorf("\nNo metadata files requested")
-	failNoLicenses = fmt.Errorf("No licenses")
+	failNoLicenses    = fmt.Errorf("No licenses")
 )
-
 
 // byError orders conflicts by error string
 type byError []compliance.SourceSharePrivacyConflict
