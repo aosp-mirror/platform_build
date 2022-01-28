@@ -46,6 +46,13 @@ blueprint_go_binary {
 }
 
 blueprint_go_binary {
+    name: "htmlnotice",
+    srcs: ["cmd/htmlnotice.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/htmlnotice_test.go"],
+}
+
+blueprint_go_binary {
     name: "textnotice",
     srcs: ["cmd/textnotice.go"],
     deps: ["compliance-module"],
