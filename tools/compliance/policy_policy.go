@@ -33,21 +33,21 @@ var (
 	// proprietary or confidential pathnames to whether to strip the prefix
 	// from the path when used as the library name for notices.
 	SafePathPrefixes = map[string]bool{
-		"external/": true,
-		"art/": false,
-		"build/": false,
-		"cts/": false,
-		"dalvik/": false,
-		"developers/": false,
+		"external/":    true,
+		"art/":         false,
+		"build/":       false,
+		"cts/":         false,
+		"dalvik/":      false,
+		"developers/":  false,
 		"development/": false,
-		"frameworks/": false,
-		"packages/": true,
-		"prebuilts/": false,
-		"sdk/": false,
-		"system/": false,
-		"test/": false,
-		"toolchain/": false,
-		"tools/": false,
+		"frameworks/":  false,
+		"packages/":    true,
+		"prebuilts/":   false,
+		"sdk/":         false,
+		"system/":      false,
+		"test/":        false,
+		"toolchain/":   false,
+		"tools/":       false,
 	}
 
 	// SafePrebuiltPrefixes maps the regular expression to match a prebuilt
@@ -62,8 +62,8 @@ var (
 
 	// ImpliesNotice lists the condition names implying a notice or attribution policy.
 	ImpliesNotice = LicenseConditionSet(UnencumberedCondition | PermissiveCondition | NoticeCondition | ReciprocalCondition |
-			RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition |
-			ProprietaryCondition | ByExceptionOnlyCondition)
+		RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition |
+		ProprietaryCondition | ByExceptionOnlyCondition)
 
 	// ImpliesReciprocal lists the condition names implying a local source-sharing policy.
 	ImpliesReciprocal = LicenseConditionSet(ReciprocalCondition)
@@ -143,7 +143,6 @@ func LicenseConditionSetFromNames(tn *TargetNode, names ...string) LicenseCondit
 	return cs
 }
 
-
 // Resolution happens in three phases:
 //
 // 1. A bottom-up traversal propagates (restricted) license conditions up to
@@ -182,7 +181,6 @@ func LicenseConditionSetFromNames(tn *TargetNode, names ...string) LicenseCondit
 // Not all restricted licenses are create equal. Some have special rules or
 // exceptions. e.g. LGPL or "with classpath excption".
 
-
 // depConditionsPropagatingToTarget returns the conditions which propagate up an
 // edge from dependency to target.
 //
@@ -204,7 +202,7 @@ func depConditionsPropagatingToTarget(lg *LicenseGraph, e *TargetEdge, depCondit
 	}
 
 	result |= depConditions & LicenseConditionSet(RestrictedCondition)
-	if 0 != (depConditions & LicenseConditionSet(RestrictedClasspathExceptionCondition)) && !edgeNodesAreIndependentModules(e) {
+	if 0 != (depConditions&LicenseConditionSet(RestrictedClasspathExceptionCondition)) && !edgeNodesAreIndependentModules(e) {
 		result |= LicenseConditionSet(RestrictedClasspathExceptionCondition)
 	}
 	return result
@@ -264,12 +262,11 @@ func conditionsAttachingAcrossEdge(lg *LicenseGraph, e *TargetEdge, universe Lic
 	}
 
 	result &= LicenseConditionSet(RestrictedCondition | RestrictedClasspathExceptionCondition)
-	if 0 != (result & LicenseConditionSet(RestrictedClasspathExceptionCondition)) && edgeNodesAreIndependentModules(e) {
+	if 0 != (result&LicenseConditionSet(RestrictedClasspathExceptionCondition)) && edgeNodesAreIndependentModules(e) {
 		result &= LicenseConditionSet(RestrictedCondition)
 	}
 	return result
 }
-
 
 // edgeIsDynamicLink returns true for edges representing shared libraries
 // linked dynamically at runtime.

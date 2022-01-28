@@ -16,7 +16,6 @@ package main
 
 import (
 	"bytes"
-	"compliance"
 	"flag"
 	"fmt"
 	"html"
@@ -25,6 +24,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"android/soong/tools/compliance"
 )
 
 var (
@@ -74,12 +75,12 @@ func main() {
 	} else {
 		dir, err := filepath.Abs(filepath.Dir(*outputFile))
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "cannot determine path to %q: %w\n", *outputFile, err)
+			fmt.Fprintf(os.Stderr, "cannot determine path to %q: %s\n", *outputFile, err)
 			os.Exit(1)
 		}
 		fi, err := os.Stat(dir)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "cannot read directory %q of %q: %w\n", dir, *outputFile, err)
+			fmt.Fprintf(os.Stderr, "cannot read directory %q of %q: %s\n", dir, *outputFile, err)
 			os.Exit(1)
 		}
 		if !fi.IsDir() {
@@ -107,7 +108,7 @@ func main() {
 	if *outputFile != "-" {
 		err := os.WriteFile(*outputFile, ofile.(*bytes.Buffer).Bytes(), 0666)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "could not write output to %q: %w\n", *outputFile, err)
+			fmt.Fprintf(os.Stderr, "could not write output to %q: %s\n", *outputFile, err)
 			os.Exit(1)
 		}
 	}
@@ -139,13 +140,13 @@ func htmlNotice(ctx *context, files ...string) error {
 	}
 
 	fmt.Fprintln(ctx.stdout, "<!DOCTYPE html>")
-	fmt.Fprintln(ctx.stdout, "<html><head>\n")
+	fmt.Fprintln(ctx.stdout, "<html><head>")
 	fmt.Fprintln(ctx.stdout, "<style type=\"text/css\">")
 	fmt.Fprintln(ctx.stdout, "body { padding: 2px; margin: 0; }")
 	fmt.Fprintln(ctx.stdout, "ul { list-style-type: none; margin: 0; padding: 0; }")
 	fmt.Fprintln(ctx.stdout, "li { padding-left: 1em; }")
 	fmt.Fprintln(ctx.stdout, ".file-list { margin-left: 1em; }")
-	fmt.Fprintln(ctx.stdout, "</style>\n")
+	fmt.Fprintln(ctx.stdout, "</style>")
 	if 0 < len(ctx.title) {
 		fmt.Fprintf(ctx.stdout, "<title>%s</title>\n", html.EscapeString(ctx.title))
 	}
