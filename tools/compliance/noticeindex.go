@@ -270,6 +270,23 @@ func (ni *NoticeIndex) InstallHashLibs(installPath string, h hash) []string {
 	return result
 }
 
+// Libraries returns the ordered channel of indexed library names.
+func (ni *NoticeIndex) Libraries() chan string {
+	c := make(chan string)
+	go func() {
+		libs := make([]string, 0, len(ni.libHash))
+		for lib := range ni.libHash {
+			libs = append(libs, lib)
+		}
+		sort.Strings(libs)
+		for _, lib := range libs {
+			c <- lib
+		}
+		close(c)
+	}()
+	return c
+}
+
 // HashText returns the file content of the license text hashed as `h`.
 func (ni *NoticeIndex) HashText(h hash) []byte {
 	return ni.text[h]
