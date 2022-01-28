@@ -2,6 +2,6 @@ package_name:  "Android"
 projects:  "static/library"
 license_kinds:  "SPDX-license-identifier-Apache-2.0"
 license_conditions:  "notice"
-license_texts:  "build/soong/licenses/LICENSE"
+license_texts:  "testdata/firstparty/FIRST_PARTY_LICENSE"
 is_container:  false
 built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/libc.a"
