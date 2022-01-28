@@ -17,10 +17,21 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	// Change into the parent directory before running the tests
+	// so they can find the testdata directory.
+	if err := os.Chdir(".."); err != nil {
+		fmt.Printf("failed to change to testdata directory: %s\n", err)
+		os.Exit(1)
+	}
+	os.Exit(m.Run())
+}
 
 func Test(t *testing.T) {
 	tests := []struct {
@@ -30,153 +41,153 @@ func Test(t *testing.T) {
 		expectedOut []string
 	}{
 		{
-			condition: "firstparty",
-			name:      "apex",
-			roots:     []string{"highest.apex.meta_lic"},
+			condition:   "firstparty",
+			name:        "apex",
+			roots:       []string{"highest.apex.meta_lic"},
 			expectedOut: []string{"Android"},
 		},
 		{
-			condition: "firstparty",
-			name:      "container",
-			roots:     []string{"container.zip.meta_lic"},
+			condition:   "firstparty",
+			name:        "container",
+			roots:       []string{"container.zip.meta_lic"},
 			expectedOut: []string{"Android"},
 		},
 		{
-			condition: "firstparty",
-			name:      "application",
-			roots:     []string{"application.meta_lic"},
+			condition:   "firstparty",
+			name:        "application",
+			roots:       []string{"application.meta_lic"},
 			expectedOut: []string{"Android"},
 		},
 		{
-			condition: "firstparty",
-			name:      "binary",
-			roots:     []string{"bin/bin1.meta_lic"},
+			condition:   "firstparty",
+			name:        "binary",
+			roots:       []string{"bin/bin1.meta_lic"},
 			expectedOut: []string{"Android"},
 		},
 		{
-			condition: "firstparty",
-			name:      "library",
-			roots:     []string{"lib/libd.so.meta_lic"},
+			condition:   "firstparty",
+			name:        "library",
+			roots:       []string{"lib/libd.so.meta_lic"},
 			expectedOut: []string{"Android"},
 		},
 		{
-			condition: "notice",
-			name:      "apex",
-			roots:     []string{"highest.apex.meta_lic"},
+			condition:   "notice",
+			name:        "apex",
+			roots:       []string{"highest.apex.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "notice",
-			name:      "container",
-			roots:     []string{"container.zip.meta_lic"},
+			condition:   "notice",
+			name:        "container",
+			roots:       []string{"container.zip.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "notice",
-			name:      "application",
-			roots:     []string{"application.meta_lic"},
+			condition:   "notice",
+			name:        "application",
+			roots:       []string{"application.meta_lic"},
 			expectedOut: []string{"Android", "Device"},
 		},
 		{
-			condition: "notice",
-			name:      "binary",
-			roots:     []string{"bin/bin1.meta_lic"},
+			condition:   "notice",
+			name:        "binary",
+			roots:       []string{"bin/bin1.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "notice",
-			name:      "library",
-			roots:     []string{"lib/libd.so.meta_lic"},
+			condition:   "notice",
+			name:        "library",
+			roots:       []string{"lib/libd.so.meta_lic"},
 			expectedOut: []string{"External"},
 		},
 		{
-			condition: "reciprocal",
-			name:      "apex",
-			roots:     []string{"highest.apex.meta_lic"},
+			condition:   "reciprocal",
+			name:        "apex",
+			roots:       []string{"highest.apex.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "reciprocal",
-			name:      "container",
-			roots:     []string{"container.zip.meta_lic"},
+			condition:   "reciprocal",
+			name:        "container",
+			roots:       []string{"container.zip.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "reciprocal",
-			name:      "application",
-			roots:     []string{"application.meta_lic"},
+			condition:   "reciprocal",
+			name:        "application",
+			roots:       []string{"application.meta_lic"},
 			expectedOut: []string{"Android", "Device"},
 		},
 		{
-			condition: "reciprocal",
-			name:      "binary",
-			roots:     []string{"bin/bin1.meta_lic"},
+			condition:   "reciprocal",
+			name:        "binary",
+			roots:       []string{"bin/bin1.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "reciprocal",
-			name:      "library",
-			roots:     []string{"lib/libd.so.meta_lic"},
+			condition:   "reciprocal",
+			name:        "library",
+			roots:       []string{"lib/libd.so.meta_lic"},
 			expectedOut: []string{"External"},
 		},
 		{
-			condition: "restricted",
-			name:      "apex",
-			roots:     []string{"highest.apex.meta_lic"},
+			condition:   "restricted",
+			name:        "apex",
+			roots:       []string{"highest.apex.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "restricted",
-			name:      "container",
-			roots:     []string{"container.zip.meta_lic"},
+			condition:   "restricted",
+			name:        "container",
+			roots:       []string{"container.zip.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "restricted",
-			name:      "application",
-			roots:     []string{"application.meta_lic"},
+			condition:   "restricted",
+			name:        "application",
+			roots:       []string{"application.meta_lic"},
 			expectedOut: []string{"Android", "Device"},
 		},
 		{
-			condition: "restricted",
-			name:      "binary",
-			roots:     []string{"bin/bin1.meta_lic"},
+			condition:   "restricted",
+			name:        "binary",
+			roots:       []string{"bin/bin1.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "restricted",
-			name:      "library",
-			roots:     []string{"lib/libd.so.meta_lic"},
+			condition:   "restricted",
+			name:        "library",
+			roots:       []string{"lib/libd.so.meta_lic"},
 			expectedOut: []string{"External"},
 		},
 		{
-			condition: "proprietary",
-			name:      "apex",
-			roots:     []string{"highest.apex.meta_lic"},
+			condition:   "proprietary",
+			name:        "apex",
+			roots:       []string{"highest.apex.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "proprietary",
-			name:      "container",
-			roots:     []string{"container.zip.meta_lic"},
+			condition:   "proprietary",
+			name:        "container",
+			roots:       []string{"container.zip.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "proprietary",
-			name:      "application",
-			roots:     []string{"application.meta_lic"},
+			condition:   "proprietary",
+			name:        "application",
+			roots:       []string{"application.meta_lic"},
 			expectedOut: []string{"Android", "Device"},
 		},
 		{
-			condition: "proprietary",
-			name:      "binary",
-			roots:     []string{"bin/bin1.meta_lic"},
+			condition:   "proprietary",
+			name:        "binary",
+			roots:       []string{"bin/bin1.meta_lic"},
 			expectedOut: []string{"Android", "Device", "External"},
 		},
 		{
-			condition: "proprietary",
-			name:      "library",
-			roots:     []string{"lib/libd.so.meta_lic"},
+			condition:   "proprietary",
+			name:        "library",
+			roots:       []string{"lib/libd.so.meta_lic"},
 			expectedOut: []string{"External"},
 		},
 	}
@@ -194,7 +205,7 @@ func Test(t *testing.T) {
 
 			err := shippedLibs(&ctx, rootFiles...)
 			if err != nil {
-				t.Fatalf("shippedLibs: error = %w, stderr = %v", err, stderr)
+				t.Fatalf("shippedLibs: error = %v, stderr = %v", err, stderr)
 				return
 			}
 			if stderr.Len() > 0 {

@@ -16,7 +16,6 @@ package main
 
 import (
 	"bytes"
-	"compliance"
 	"flag"
 	"fmt"
 	"io"
@@ -24,10 +23,12 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"android/soong/tools/compliance"
 )
 
 var (
-	outputFile  = flag.String("o", "-", "Where to write the NOTICE text file. (default stdout)")
+	outputFile  = flag.String("o", "-", "Where to write the bill of materials. (default stdout)")
 	stripPrefix = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
@@ -45,7 +46,7 @@ func init() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage: %s {options} file.meta_lic {file.meta_lic...}
 
-Outputs a text NOTICE file.
+Outputs a bill of materials. i.e. the list of installed paths.
 
 Options:
 `, filepath.Base(os.Args[0]))
@@ -69,12 +70,12 @@ func main() {
 	} else {
 		dir, err := filepath.Abs(filepath.Dir(*outputFile))
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "cannot determine path to %q: %w\n", *outputFile, err)
+			fmt.Fprintf(os.Stderr, "cannot determine path to %q: %s\n", *outputFile, err)
 			os.Exit(1)
 		}
 		fi, err := os.Stat(dir)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "cannot read directory %q of %q: %w\n", dir, *outputFile, err)
+			fmt.Fprintf(os.Stderr, "cannot read directory %q of %q: %s\n", dir, *outputFile, err)
 			os.Exit(1)
 		}
 		if !fi.IsDir() {
@@ -91,7 +92,7 @@ func main() {
 
 	ctx := &context{ofile, os.Stderr, os.DirFS("."), *stripPrefix}
 
-	err := textNotice(ctx, flag.Args()...)
+	err := billOfMaterials(ctx, flag.Args()...)
 	if err != nil {
 		if err == failNoneRequested {
 			flag.Usage()
@@ -102,15 +103,15 @@ func main() {
 	if *outputFile != "-" {
 		err := os.WriteFile(*outputFile, ofile.(*bytes.Buffer).Bytes(), 0666)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "could not write output to %q: %w\n", *outputFile, err)
+			fmt.Fprintf(os.Stderr, "could not write output to %q: %s\n", *outputFile, err)
 			os.Exit(1)
 		}
 	}
 	os.Exit(0)
 }
 
-// textNotice implements the textNotice utility.
-func textNotice(ctx *context, files ...string) error {
+// billOfMaterials implements the bom utility.
+func billOfMaterials(ctx *context, files ...string) error {
 	// Must be at least one root file.
 	if len(files) < 1 {
 		return failNoneRequested
@@ -133,21 +134,12 @@ func textNotice(ctx *context, files ...string) error {
 		return fmt.Errorf("Unable to read license text file(s) for %q: %v\n", files, err)
 	}
 
-	for h := range ni.Hashes() {
-		fmt.Fprintln(ctx.stdout, "==============================================================================")
-		for _, libName := range ni.HashLibs(h) {
-			fmt.Fprintf(ctx.stdout, "%s used by:\n", libName)
-			for _, installPath := range ni.HashLibInstalls(h, libName) {
-				if 0 < len(ctx.stripPrefix) && strings.HasPrefix(installPath, ctx.stripPrefix) {
-					fmt.Fprintf(ctx.stdout, "  %s\n", installPath[len(ctx.stripPrefix):])
-				} else {
-					fmt.Fprintf(ctx.stdout, "  %s\n", installPath)
-				}
-			}
-			fmt.Fprintln(ctx.stdout)
+	for path := range ni.InstallPaths() {
+		if 0 < len(ctx.stripPrefix) && strings.HasPrefix(path, ctx.stripPrefix) {
+			fmt.Fprintln(ctx.stdout, path[len(ctx.stripPrefix):])
+		} else {
+			fmt.Fprintln(ctx.stdout, path)
 		}
-		ctx.stdout.Write(ni.HashText(h))
-		fmt.Fprintln(ctx.stdout)
 	}
 	return nil
 }

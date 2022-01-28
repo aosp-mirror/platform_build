@@ -17,10 +17,21 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	// Change into the parent directory before running the tests
+	// so they can find the testdata directory.
+	if err := os.Chdir(".."); err != nil {
+		fmt.Printf("failed to change to testdata directory: %s\n", err)
+		os.Exit(1)
+	}
+	os.Exit(m.Run())
+}
 
 func Test(t *testing.T) {
 	tests := []struct {
@@ -31,9 +42,9 @@ func Test(t *testing.T) {
 		expectedOut []string
 	}{
 		{
-			condition: "firstparty",
-			name:      "apex",
-			roots:     []string{"highest.apex.meta_lic"},
+			condition:   "firstparty",
+			name:        "apex",
+			roots:       []string{"highest.apex.meta_lic"},
 			stripPrefix: "out/target/product/fictional",
 			expectedOut: []string{
 				"/system/apex/highest.apex",
@@ -44,9 +55,9 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition: "firstparty",
-			name:      "container",
-			roots:     []string{"container.zip.meta_lic"},
+			condition:   "firstparty",
+			name:        "container",
+			roots:       []string{"container.zip.meta_lic"},
 			stripPrefix: "out/target/product/fictional/data/",
 			expectedOut: []string{
 				"container.zip",
@@ -57,23 +68,23 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition: "firstparty",
-			name:      "application",
-			roots:     []string{"application.meta_lic"},
+			condition:   "firstparty",
+			name:        "application",
+			roots:       []string{"application.meta_lic"},
 			stripPrefix: "out/target/product/fictional/bin/",
 			expectedOut: []string{"application"},
 		},
 		{
-			condition: "firstparty",
-			name:      "binary",
-			roots:     []string{"bin/bin1.meta_lic"},
+			condition:   "firstparty",
+			name:        "binary",
+			roots:       []string{"bin/bin1.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/",
 			expectedOut: []string{"bin/bin1"},
 		},
 		{
-			condition: "firstparty",
-			name:      "library",
-			roots:     []string{"lib/libd.so.meta_lic"},
+			condition:   "firstparty",
+			name:        "library",
+			roots:       []string{"lib/libd.so.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/",
 			expectedOut: []string{"lib/libd.so"},
 		},
@@ -102,27 +113,27 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition: "notice",
-			name:      "application",
-			roots:     []string{"application.meta_lic"},
+			condition:   "notice",
+			name:        "application",
+			roots:       []string{"application.meta_lic"},
 			expectedOut: []string{"out/target/product/fictional/bin/application"},
 		},
 		{
-			condition: "notice",
-			name:      "binary",
-			roots:     []string{"bin/bin1.meta_lic"},
+			condition:   "notice",
+			name:        "binary",
+			roots:       []string{"bin/bin1.meta_lic"},
 			expectedOut: []string{"out/target/product/fictional/system/bin/bin1"},
 		},
 		{
-			condition: "notice",
-			name:      "library",
-			roots:     []string{"lib/libd.so.meta_lic"},
+			condition:   "notice",
+			name:        "library",
+			roots:       []string{"lib/libd.so.meta_lic"},
 			expectedOut: []string{"out/target/product/fictional/system/lib/libd.so"},
 		},
 		{
-			condition: "reciprocal",
-			name:      "apex",
-			roots:     []string{"highest.apex.meta_lic"},
+			condition:   "reciprocal",
+			name:        "apex",
+			roots:       []string{"highest.apex.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/apex/",
 			expectedOut: []string{
 				"highest.apex",
@@ -133,9 +144,9 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition: "reciprocal",
-			name:      "container",
-			roots:     []string{"container.zip.meta_lic"},
+			condition:   "reciprocal",
+			name:        "container",
+			roots:       []string{"container.zip.meta_lic"},
 			stripPrefix: "out/target/product/fictional/data/",
 			expectedOut: []string{
 				"container.zip",
@@ -146,30 +157,30 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition: "reciprocal",
-			name:      "application",
-			roots:     []string{"application.meta_lic"},
+			condition:   "reciprocal",
+			name:        "application",
+			roots:       []string{"application.meta_lic"},
 			stripPrefix: "out/target/product/fictional/bin/",
 			expectedOut: []string{"application"},
 		},
 		{
-			condition: "reciprocal",
-			name:      "binary",
-			roots:     []string{"bin/bin1.meta_lic"},
+			condition:   "reciprocal",
+			name:        "binary",
+			roots:       []string{"bin/bin1.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/",
 			expectedOut: []string{"bin/bin1"},
 		},
 		{
-			condition: "reciprocal",
-			name:      "library",
-			roots:     []string{"lib/libd.so.meta_lic"},
+			condition:   "reciprocal",
+			name:        "library",
+			roots:       []string{"lib/libd.so.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/",
 			expectedOut: []string{"lib/libd.so"},
 		},
 		{
-			condition: "restricted",
-			name:      "apex",
-			roots:     []string{"highest.apex.meta_lic"},
+			condition:   "restricted",
+			name:        "apex",
+			roots:       []string{"highest.apex.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/apex/",
 			expectedOut: []string{
 				"highest.apex",
@@ -180,9 +191,9 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition: "restricted",
-			name:      "container",
-			roots:     []string{"container.zip.meta_lic"},
+			condition:   "restricted",
+			name:        "container",
+			roots:       []string{"container.zip.meta_lic"},
 			stripPrefix: "out/target/product/fictional/data/",
 			expectedOut: []string{
 				"container.zip",
@@ -193,30 +204,30 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition: "restricted",
-			name:      "application",
-			roots:     []string{"application.meta_lic"},
+			condition:   "restricted",
+			name:        "application",
+			roots:       []string{"application.meta_lic"},
 			stripPrefix: "out/target/product/fictional/bin/",
 			expectedOut: []string{"application"},
 		},
 		{
-			condition: "restricted",
-			name:      "binary",
-			roots:     []string{"bin/bin1.meta_lic"},
+			condition:   "restricted",
+			name:        "binary",
+			roots:       []string{"bin/bin1.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/",
 			expectedOut: []string{"bin/bin1"},
 		},
 		{
-			condition: "restricted",
-			name:      "library",
-			roots:     []string{"lib/libd.so.meta_lic"},
+			condition:   "restricted",
+			name:        "library",
+			roots:       []string{"lib/libd.so.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/",
 			expectedOut: []string{"lib/libd.so"},
 		},
 		{
-			condition: "proprietary",
-			name:      "apex",
-			roots:     []string{"highest.apex.meta_lic"},
+			condition:   "proprietary",
+			name:        "apex",
+			roots:       []string{"highest.apex.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/apex/",
 			expectedOut: []string{
 				"highest.apex",
@@ -227,9 +238,9 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition: "proprietary",
-			name:      "container",
-			roots:     []string{"container.zip.meta_lic"},
+			condition:   "proprietary",
+			name:        "container",
+			roots:       []string{"container.zip.meta_lic"},
 			stripPrefix: "out/target/product/fictional/data/",
 			expectedOut: []string{
 				"container.zip",
@@ -240,23 +251,23 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition: "proprietary",
-			name:      "application",
-			roots:     []string{"application.meta_lic"},
+			condition:   "proprietary",
+			name:        "application",
+			roots:       []string{"application.meta_lic"},
 			stripPrefix: "out/target/product/fictional/bin/",
 			expectedOut: []string{"application"},
 		},
 		{
-			condition: "proprietary",
-			name:      "binary",
-			roots:     []string{"bin/bin1.meta_lic"},
+			condition:   "proprietary",
+			name:        "binary",
+			roots:       []string{"bin/bin1.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/",
 			expectedOut: []string{"bin/bin1"},
 		},
 		{
-			condition: "proprietary",
-			name:      "library",
-			roots:     []string{"lib/libd.so.meta_lic"},
+			condition:   "proprietary",
+			name:        "library",
+			roots:       []string{"lib/libd.so.meta_lic"},
 			stripPrefix: "out/target/product/fictional/system/",
 			expectedOut: []string{"lib/libd.so"},
 		},
@@ -275,7 +286,7 @@ func Test(t *testing.T) {
 
 			err := billOfMaterials(&ctx, rootFiles...)
 			if err != nil {
-				t.Fatalf("bom: error = %w, stderr = %v", err, stderr)
+				t.Fatalf("bom: error = %v, stderr = %v", err, stderr)
 				return
 			}
 			if stderr.Len() > 0 {

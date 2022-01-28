@@ -28,6 +28,16 @@ var (
 	horizontalRule = regexp.MustCompile("^===[=]*===$")
 )
 
+func TestMain(m *testing.M) {
+	// Change into the parent directory before running the tests
+	// so they can find the testdata directory.
+	if err := os.Chdir(".."); err != nil {
+		fmt.Printf("failed to change to testdata directory: %s\n", err)
+		os.Exit(1)
+	}
+	os.Exit(m.Run())
+}
+
 func Test(t *testing.T) {
 	tests := []struct {
 		condition   string
@@ -474,7 +484,7 @@ func Test(t *testing.T) {
 
 			err := textNotice(&ctx, rootFiles...)
 			if err != nil {
-				t.Fatalf("textnotice: error = %w, stderr = %v", err, stderr)
+				t.Fatalf("textnotice: error = %v, stderr = %v", err, stderr)
 				return
 			}
 			if stderr.Len() > 0 {

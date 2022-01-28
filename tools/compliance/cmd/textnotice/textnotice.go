@@ -16,17 +16,20 @@ package main
 
 import (
 	"bytes"
-	"compliance"
 	"flag"
 	"fmt"
 	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
+
+	"android/soong/tools/compliance"
 )
 
 var (
-	outputFile  = flag.String("o", "-", "Where to write the library list. (default stdout)")
+	outputFile  = flag.String("o", "-", "Where to write the NOTICE text file. (default stdout)")
+	stripPrefix = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoLicenses    = fmt.Errorf("No licenses found")
@@ -36,13 +39,14 @@ type context struct {
 	stdout      io.Writer
 	stderr      io.Writer
 	rootFS      fs.FS
+	stripPrefix string
 }
 
 func init() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage: %s {options} file.meta_lic {file.meta_lic...}
 
-Outputs a list of libraries used in the shipped images.
+Outputs a text NOTICE file.
 
 Options:
 `, filepath.Base(os.Args[0]))
@@ -66,12 +70,12 @@ func main() {
 	} else {
 		dir, err := filepath.Abs(filepath.Dir(*outputFile))
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "cannot determine path to %q: %w\n", *outputFile, err)
+			fmt.Fprintf(os.Stderr, "cannot determine path to %q: %s\n", *outputFile, err)
 			os.Exit(1)
 		}
 		fi, err := os.Stat(dir)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "cannot read directory %q of %q: %w\n", dir, *outputFile, err)
+			fmt.Fprintf(os.Stderr, "cannot read directory %q of %q: %s\n", dir, *outputFile, err)
 			os.Exit(1)
 		}
 		if !fi.IsDir() {
@@ -86,9 +90,9 @@ func main() {
 		ofile = &bytes.Buffer{}
 	}
 
-	ctx := &context{ofile, os.Stderr, os.DirFS(".")}
+	ctx := &context{ofile, os.Stderr, os.DirFS("."), *stripPrefix}
 
-	err := shippedLibs(ctx, flag.Args()...)
+	err := textNotice(ctx, flag.Args()...)
 	if err != nil {
 		if err == failNoneRequested {
 			flag.Usage()
@@ -99,15 +103,15 @@ func main() {
 	if *outputFile != "-" {
 		err := os.WriteFile(*outputFile, ofile.(*bytes.Buffer).Bytes(), 0666)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "could not write output to %q: %w\n", *outputFile, err)
+			fmt.Fprintf(os.Stderr, "could not write output to %q: %s\n", *outputFile, err)
 			os.Exit(1)
 		}
 	}
 	os.Exit(0)
 }
 
-// shippedLibs implements the shippedlibs utility.
-func shippedLibs(ctx *context, files ...string) error {
+// textNotice implements the textNotice utility.
+func textNotice(ctx *context, files ...string) error {
 	// Must be at least one root file.
 	if len(files) < 1 {
 		return failNoneRequested
@@ -130,8 +134,21 @@ func shippedLibs(ctx *context, files ...string) error {
 		return fmt.Errorf("Unable to read license text file(s) for %q: %v\n", files, err)
 	}
 
-	for lib := range ni.Libraries() {
-		fmt.Fprintln(ctx.stdout, lib)
+	for h := range ni.Hashes() {
+		fmt.Fprintln(ctx.stdout, "==============================================================================")
+		for _, libName := range ni.HashLibs(h) {
+			fmt.Fprintf(ctx.stdout, "%s used by:\n", libName)
+			for _, installPath := range ni.HashLibInstalls(h, libName) {
+				if 0 < len(ctx.stripPrefix) && strings.HasPrefix(installPath, ctx.stripPrefix) {
+					fmt.Fprintf(ctx.stdout, "  %s\n", installPath[len(ctx.stripPrefix):])
+				} else {
+					fmt.Fprintf(ctx.stdout, "  %s\n", installPath)
+				}
+			}
+			fmt.Fprintln(ctx.stdout)
+		}
+		ctx.stdout.Write(ni.HashText(h))
+		fmt.Fprintln(ctx.stdout)
 	}
 	return nil
 }

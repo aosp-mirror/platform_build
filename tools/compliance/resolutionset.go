@@ -65,14 +65,12 @@ func (rs ResolutionSet) AttachesTo() TargetNodeList {
 	return result
 }
 
-
 // AttachesToTarget returns true if the set contains conditions that
 // are `attachedTo`.
 func (rs ResolutionSet) AttachesToTarget(target *TargetNode) bool {
 	_, isPresent := rs[target]
 	return isPresent
 }
-
 
 // Resolutions returns the list of resolutions that `attachedTo`
 // target must resolve. Returns empty list if no conditions apply.
