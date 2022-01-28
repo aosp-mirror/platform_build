@@ -245,6 +245,15 @@ func (p *TargetEdgePath) Clear() {
 	*p = (*p)[:0]
 }
 
+// Copy makes a new path with the same value.
+func (p *TargetEdgePath) Copy() *TargetEdgePath {
+	result := make(TargetEdgePath, 0, len(*p))
+	for _, e := range *p {
+		result = append(result, e)
+	}
+	return &result
+}
+
 // String returns a string representation of the path: [n1 -> n2 -> ... -> nn].
 func (p *TargetEdgePath) String() string {
 	if p == nil {
@@ -355,6 +364,12 @@ func (tn *TargetNode) Built() []string {
 // (unordered)
 func (tn *TargetNode) Installed() []string {
 	return append([]string{}, tn.proto.Installed...)
+}
+
+// TargetFiles returns the list of files built or installed by the module or
+// target. (unordered)
+func (tn *TargetNode) TargetFiles() []string {
+	return append(tn.proto.Built, tn.proto.Installed...)
 }
 
 // InstallMap returns the list of path name transformations to make to move
