@@ -18,6 +18,13 @@ package {
 }
 
 blueprint_go_binary {
+    name: "bom",
+    srcs: ["cmd/bom.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/bom_test.go"],
+}
+
+blueprint_go_binary {
     name: "checkshare",
     srcs: ["cmd/checkshare.go"],
     deps: ["compliance-module"],
@@ -50,6 +57,13 @@ blueprint_go_binary {
     srcs: ["cmd/htmlnotice.go"],
     deps: ["compliance-module"],
     testSrcs: ["cmd/htmlnotice_test.go"],
+}
+
+blueprint_go_binary {
+    name: "shippedlibs",
+    srcs: ["cmd/shippedlibs.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/shippedlibs_test.go"],
 }
 
 blueprint_go_binary {
