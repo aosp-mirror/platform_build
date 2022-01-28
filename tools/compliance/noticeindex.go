@@ -54,8 +54,8 @@ type NoticeIndex struct {
 	text map[hash][]byte
 	// hashLibInstall maps hashes to libraries to install paths.
 	hashLibInstall map[hash]map[string]map[string]struct{}
-	// installLibHash maps install paths to libraries to hashes.
-	installLibHash map[string]map[string]map[hash]struct{}
+	// installHashLib maps install paths to libraries to hashes.
+	installHashLib map[string]map[hash]map[string]struct{}
 	// libHash maps libraries to hashes.
 	libHash map[string]map[hash]struct{}
 	// targetHash maps target nodes to hashes.
@@ -75,7 +75,7 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 		make(map[string]hash),
 		make(map[hash][]byte),
 		make(map[hash]map[string]map[string]struct{}),
-		make(map[string]map[string]map[hash]struct{}),
+		make(map[string]map[hash]map[string]struct{}),
 		make(map[string]map[hash]struct{}),
 		make(map[*TargetNode]map[hash]struct{}),
 		make(map[string]string),
@@ -115,15 +115,15 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 				ni.libHash[libName][h] = struct{}{}
 			}
 			for _, installPath := range installPaths {
-				if _, ok := ni.installLibHash[installPath]; !ok {
-					ni.installLibHash[installPath] = make(map[string]map[hash]struct{})
-					ni.installLibHash[installPath][libName] = make(map[hash]struct{})
-					ni.installLibHash[installPath][libName][h] = struct{}{}
-				} else if _, ok = ni.installLibHash[installPath][libName]; !ok {
-					ni.installLibHash[installPath][libName] = make(map[hash]struct{})
-					ni.installLibHash[installPath][libName][h] = struct{}{}
-				} else if _, ok = ni.installLibHash[installPath][libName][h]; !ok {
-					ni.installLibHash[installPath][libName][h] = struct{}{}
+				if _, ok := ni.installHashLib[installPath]; !ok {
+					ni.installHashLib[installPath] = make(map[hash]map[string]struct{})
+					ni.installHashLib[installPath][h] = make(map[string]struct{})
+					ni.installHashLib[installPath][h][libName] = struct{}{}
+				} else if _, ok = ni.installHashLib[installPath][h]; !ok {
+					ni.installHashLib[installPath][h] = make(map[string]struct{})
+					ni.installHashLib[installPath][h][libName] = struct{}{}
+				} else if _, ok = ni.installHashLib[installPath][h][libName]; !ok {
+					ni.installHashLib[installPath][h][libName] = struct{}{}
 				}
 				if _, ok := ni.hashLibInstall[h]; !ok {
 					ni.hashLibInstall[h] = make(map[string]map[string]struct{})
@@ -197,7 +197,7 @@ func (ni *NoticeIndex) Hashes() chan hash {
 				hl = append(hl, h)
 			}
 			if len(hl) > 0 {
-				sort.Sort(hashList{ni, libName, &hl})
+				sort.Sort(hashList{ni, libName, "", &hl})
 				for _, h := range hl {
 					c <- h
 				}
@@ -228,6 +228,46 @@ func (ni *NoticeIndex) HashLibInstalls(h hash, libName string) []string {
 	}
 	sort.Strings(installs)
 	return installs
+}
+
+// InstallPaths returns the ordered channel of indexed install paths.
+func (ni *NoticeIndex) InstallPaths() chan string {
+	c := make(chan string)
+	go func() {
+		paths := make([]string, 0, len(ni.installHashLib))
+		for path := range ni.installHashLib {
+			paths = append(paths, path)
+		}
+		sort.Strings(paths)
+		for _, installPath := range paths {
+			c <- installPath
+		}
+		close(c)
+	}()
+	return c
+}
+
+// InstallHashes returns the ordered array of hashes attached to `installPath`.
+func (ni *NoticeIndex) InstallHashes(installPath string) []hash {
+	result := make([]hash, 0, len(ni.installHashLib[installPath]))
+	for h := range ni.installHashLib[installPath] {
+		result = append(result, h)
+	}
+	if len(result) > 0 {
+		sort.Sort(hashList{ni, "", installPath, &result})
+	}
+	return result
+}
+
+// InstallHashLibs returns the ordered array of library names attached to
+// `installPath` as hash `h`.
+func (ni *NoticeIndex) InstallHashLibs(installPath string, h hash) []string {
+	result := make([]string, 0, len(ni.installHashLib[installPath][h]))
+	for libName := range ni.installHashLib[installPath][h] {
+		result = append(result, libName)
+	}
+	sort.Strings(result)
+	return result
 }
 
 // HashText returns the file content of the license text hashed as `h`.
@@ -492,9 +532,10 @@ func (h hash) String() string {
 
 // hashList orders an array of hashes
 type hashList struct {
-	ni      *NoticeIndex
-	libName string
-	hashes  *[]hash
+	ni          *NoticeIndex
+	libName     string
+	installPath string
+	hashes      *[]hash
 }
 
 // Len returns the count of elements in the slice.
@@ -511,6 +552,14 @@ func (l hashList) Less(i, j int) bool {
 	if 0 < len(l.libName) {
 		insti = len(l.ni.hashLibInstall[(*l.hashes)[i]][l.libName])
 		instj = len(l.ni.hashLibInstall[(*l.hashes)[j]][l.libName])
+	} else {
+		libsi := l.ni.InstallHashLibs(l.installPath, (*l.hashes)[i])
+		libsj := l.ni.InstallHashLibs(l.installPath, (*l.hashes)[j])
+		libsis := strings.Join(libsi, " ")
+		libsjs := strings.Join(libsj, " ")
+		if libsis != libsjs {
+			return libsis < libsjs
+		}
 	}
 	if insti == instj {
 		leni := len(l.ni.text[(*l.hashes)[i]])
