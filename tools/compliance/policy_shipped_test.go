@@ -29,30 +29,30 @@ func TestShippedNodes(t *testing.T) {
 		expectedNodes []string
 	}{
 		{
-			name:      "singleton",
-			roots:     []string{"apacheLib.meta_lic"},
-			edges: []annotated{},
+			name:          "singleton",
+			roots:         []string{"apacheLib.meta_lic"},
+			edges:         []annotated{},
 			expectedNodes: []string{"apacheLib.meta_lic"},
 		},
 		{
-			name:      "simplebinary",
-			roots:     []string{"apacheBin.meta_lic"},
+			name:  "simplebinary",
+			roots: []string{"apacheBin.meta_lic"},
 			edges: []annotated{
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedNodes: []string{"apacheBin.meta_lic", "apacheLib.meta_lic"},
 		},
 		{
-			name:      "simpledynamic",
-			roots:     []string{"apacheBin.meta_lic"},
+			name:  "simpledynamic",
+			roots: []string{"apacheBin.meta_lic"},
 			edges: []annotated{
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedNodes: []string{"apacheBin.meta_lic"},
 		},
 		{
-			name:      "container",
-			roots:     []string{"apacheContainer.meta_lic"},
+			name:  "container",
+			roots: []string{"apacheContainer.meta_lic"},
 			edges: []annotated{
 				{"apacheContainer.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 				{"apacheContainer.meta_lic", "gplLib.meta_lic", []string{"static"}},
@@ -64,8 +64,8 @@ func TestShippedNodes(t *testing.T) {
 			},
 		},
 		{
-			name:      "binary",
-			roots:     []string{"apacheBin.meta_lic"},
+			name:  "binary",
+			roots: []string{"apacheBin.meta_lic"},
 			edges: []annotated{
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"static"}},
@@ -77,8 +77,8 @@ func TestShippedNodes(t *testing.T) {
 			},
 		},
 		{
-			name:      "binarydynamic",
-			roots:     []string{"apacheBin.meta_lic"},
+			name:  "binarydynamic",
+			roots: []string{"apacheBin.meta_lic"},
 			edges: []annotated{
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"dynamic"}},
@@ -89,8 +89,8 @@ func TestShippedNodes(t *testing.T) {
 			},
 		},
 		{
-			name:      "containerdeep",
-			roots:     []string{"apacheContainer.meta_lic"},
+			name:  "containerdeep",
+			roots: []string{"apacheContainer.meta_lic"},
 			edges: []annotated{
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
@@ -108,7 +108,7 @@ func TestShippedNodes(t *testing.T) {
 			stderr := &bytes.Buffer{}
 			lg, err := toGraph(stderr, tt.roots, tt.edges)
 			if err != nil {
-				t.Errorf("unexpected test data error: got %w, want no error", err)
+				t.Errorf("unexpected test data error: got %s, want no error", err)
 				return
 			}
 			t.Logf("graph:")
@@ -127,7 +127,7 @@ func TestShippedNodes(t *testing.T) {
 
 			t.Logf("sorted nodes: [%s]", strings.Join(actualNodes, ", "))
 			t.Logf("expected nodes: [%s]", strings.Join(expectedNodes, ", "))
-                        if len(expectedNodes) != len(actualNodes) {
+			if len(expectedNodes) != len(actualNodes) {
 				t.Errorf("unexpected number of shipped nodes: %d nodes, want %d nodes",
 					len(actualNodes), len(expectedNodes))
 				return

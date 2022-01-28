@@ -17,9 +17,20 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	// Change into the parent directory before running the tests
+	// so they can find the testdata directory.
+	if err := os.Chdir(".."); err != nil {
+		fmt.Printf("failed to change to testdata directory: %s\n", err)
+		os.Exit(1)
+	}
+	os.Exit(m.Run())
+}
 
 func Test_plaintext(t *testing.T) {
 	tests := []struct {
@@ -1217,7 +1228,7 @@ func Test_graphviz(t *testing.T) {
 			outList := strings.Split(stdout.String(), "\n")
 			outLine := 0
 			if outList[outLine] != "strict digraph {" {
-				t.Errorf("dumpgraph: got 1st line %v, want strict digraph {")
+				t.Errorf("dumpgraph: got 1st line %v, want strict digraph {", outList[outLine])
 			}
 			outLine++
 			if strings.HasPrefix(strings.TrimLeft(outList[outLine], " \t"), "rankdir") {
