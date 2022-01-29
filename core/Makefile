@@ -2869,6 +2869,8 @@ FSVERITY_APK_MANIFEST_PATH := system/security/fsverity/AndroidManifest.xml
 $(FSVERITY_APK_OUT): PRIVATE_FSVERITY := $(HOST_OUT_EXECUTABLES)/fsverity
 $(FSVERITY_APK_OUT): PRIVATE_AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
 $(FSVERITY_APK_OUT): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
+$(FSVERITY_APK_OUT): PRIVATE_VERSION_CODE := $(PLATFORM_SDK_VERSION)
+$(FSVERITY_APK_OUT): PRIVATE_VERSION_NAME := $(APPS_DEFAULT_VERSION_NAME)
 $(FSVERITY_APK_OUT): PRIVATE_APKSIGNER := $(HOST_OUT_EXECUTABLES)/apksigner
 $(FSVERITY_APK_OUT): PRIVATE_MANIFEST := $(FSVERITY_APK_MANIFEST_PATH)
 $(FSVERITY_APK_OUT): PRIVATE_FRAMEWORK_RES := $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
@@ -2882,6 +2884,8 @@ $(FSVERITY_APK_OUT): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
     $(fsverity-metadata-targets)
 	$< --fsverity-path $(PRIVATE_FSVERITY) --aapt2-path $(PRIVATE_AAPT2) \
 	    --min-sdk-version $(PRIVATE_MIN_SDK_VERSION) \
+	    --version-code $(PRIVATE_VERSION_CODE) \
+	    --version-name $(PRIVATE_VERSION_NAME) \
 	    --apksigner-path $(PRIVATE_APKSIGNER) --apk-key-path $(PRIVATE_KEY) \
 	    --apk-manifest-path $(PRIVATE_MANIFEST) --framework-res $(PRIVATE_FRAMEWORK_RES) \
 	    --output $@ \

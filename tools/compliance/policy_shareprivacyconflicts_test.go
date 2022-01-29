@@ -24,7 +24,7 @@ import (
 type byConflict []SourceSharePrivacyConflict
 
 // Len returns the count of elements in the slice.
-func (l byConflict) Len() int      { return len(l) }
+func (l byConflict) Len() int { return len(l) }
 
 // Swap rearranged 2 elements so that each occupies the other's former
 // position.
@@ -99,7 +99,7 @@ func TestConflictingSharedPrivateSource(t *testing.T) {
 			stderr := &bytes.Buffer{}
 			lg, err := toGraph(stderr, tt.roots, tt.edges)
 			if err != nil {
-				t.Errorf("unexpected test data error: got %w, want no error", err)
+				t.Errorf("unexpected test data error: got %s, want no error", err)
 				return
 			}
 			expectedConflicts := toConflictList(lg, tt.expectedConflicts)

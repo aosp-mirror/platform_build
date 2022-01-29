@@ -15,7 +15,6 @@
 package main
 
 import (
-	"compliance"
 	"flag"
 	"fmt"
 	"io"
@@ -23,6 +22,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"android/soong/tools/compliance"
 )
 
 var (
@@ -32,7 +33,7 @@ var (
 	stripPrefix     = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
-	failNoLicenses = fmt.Errorf("No licenses found")
+	failNoLicenses    = fmt.Errorf("No licenses found")
 )
 
 type context struct {

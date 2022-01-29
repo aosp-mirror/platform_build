@@ -33,82 +33,82 @@ func TestConditionSet(t *testing.T) {
 			conditions: []string{},
 			plus:       &[]string{},
 			matchingAny: map[string][]string{
-				"notice":     []string{},
-				"restricted": []string{},
+				"notice":                []string{},
+				"restricted":            []string{},
 				"restricted|reciprocal": []string{},
 			},
-			expected:   []string{},
+			expected: []string{},
 		},
 		{
 			name:       "emptyminusnothing",
 			conditions: []string{},
 			minus:      &[]string{},
 			matchingAny: map[string][]string{
-				"notice":     []string{},
-				"restricted": []string{},
+				"notice":                []string{},
+				"restricted":            []string{},
 				"restricted|reciprocal": []string{},
 			},
-			expected:   []string{},
+			expected: []string{},
 		},
 		{
 			name:       "emptyminusnotice",
 			conditions: []string{},
 			minus:      &[]string{"notice"},
 			matchingAny: map[string][]string{
-				"notice":     []string{},
-				"restricted": []string{},
+				"notice":                []string{},
+				"restricted":            []string{},
 				"restricted|reciprocal": []string{},
 			},
-			expected:   []string{},
+			expected: []string{},
 		},
 		{
-			name: "noticeonly",
+			name:       "noticeonly",
 			conditions: []string{"notice"},
 			matchingAny: map[string][]string{
-				"notice":     []string{"notice"},
-				"notice|proprietary":     []string{"notice"},
-				"restricted": []string{},
+				"notice":             []string{"notice"},
+				"notice|proprietary": []string{"notice"},
+				"restricted":         []string{},
 			},
 			expected: []string{"notice"},
 		},
 		{
-			name: "allnoticeonly",
+			name:       "allnoticeonly",
 			conditions: []string{"notice"},
-			plus: &[]string{"notice"},
+			plus:       &[]string{"notice"},
 			matchingAny: map[string][]string{
-				"notice":     []string{"notice"},
-				"notice|proprietary":     []string{"notice"},
-				"restricted": []string{},
+				"notice":             []string{"notice"},
+				"notice|proprietary": []string{"notice"},
+				"restricted":         []string{},
 			},
 			expected: []string{"notice"},
 		},
 		{
-			name: "emptyplusnotice",
+			name:       "emptyplusnotice",
 			conditions: []string{},
-			plus: &[]string{"notice"},
+			plus:       &[]string{"notice"},
 			matchingAny: map[string][]string{
-				"notice":     []string{"notice"},
-				"notice|proprietary":     []string{"notice"},
-				"restricted": []string{},
+				"notice":             []string{"notice"},
+				"notice|proprietary": []string{"notice"},
+				"restricted":         []string{},
 			},
 			expected: []string{"notice"},
 		},
 		{
-			name: "everything",
+			name:       "everything",
 			conditions: []string{"unencumbered", "permissive", "notice", "reciprocal", "restricted", "proprietary"},
-			plus: &[]string{"restricted_with_classpath_exception", "restricted_allows_dynamic_linking", "by_exception_only", "not_allowed"},
+			plus:       &[]string{"restricted_with_classpath_exception", "restricted_allows_dynamic_linking", "by_exception_only", "not_allowed"},
 			matchingAny: map[string][]string{
-				"unencumbered": []string{"unencumbered"},
-				"permissive":       []string{"permissive"},
-				"notice":     []string{"notice"},
-				"reciprocal":     []string{"reciprocal"},
-				"restricted":     []string{"restricted"},
-				"restricted_with_classpath_exception":     []string{"restricted_with_classpath_exception"},
-				"restricted_allows_dynamic_linking":     []string{"restricted_allows_dynamic_linking"},
-				"proprietary":     []string{"proprietary"},
-				"by_exception_only":     []string{"by_exception_only"},
-				"not_allowed":     []string{"not_allowed"},
-				"notice|proprietary":     []string{"notice", "proprietary"},
+				"unencumbered":                        []string{"unencumbered"},
+				"permissive":                          []string{"permissive"},
+				"notice":                              []string{"notice"},
+				"reciprocal":                          []string{"reciprocal"},
+				"restricted":                          []string{"restricted"},
+				"restricted_with_classpath_exception": []string{"restricted_with_classpath_exception"},
+				"restricted_allows_dynamic_linking":   []string{"restricted_allows_dynamic_linking"},
+				"proprietary":                         []string{"proprietary"},
+				"by_exception_only":                   []string{"by_exception_only"},
+				"not_allowed":                         []string{"not_allowed"},
+				"notice|proprietary":                  []string{"notice", "proprietary"},
 			},
 			expected: []string{
 				"unencumbered",
@@ -137,13 +137,13 @@ func TestConditionSet(t *testing.T) {
 				"by_exception_only",
 				"not_allowed",
 			},
-			plus: &[]string{},
+			plus:  &[]string{},
 			minus: &[]string{},
 			matchingAny: map[string][]string{
 				"unencumbered|permissive|notice": []string{"unencumbered", "permissive", "notice"},
-				"restricted|reciprocal":     []string{"reciprocal", "restricted"},
-				"proprietary|by_exception_only":     []string{"proprietary", "by_exception_only"},
-				"not_allowed":     []string{"not_allowed"},
+				"restricted|reciprocal":          []string{"reciprocal", "restricted"},
+				"proprietary|by_exception_only":  []string{"proprietary", "by_exception_only"},
+				"not_allowed":                    []string{"not_allowed"},
 			},
 			expected: []string{
 				"unencumbered",
@@ -159,21 +159,21 @@ func TestConditionSet(t *testing.T) {
 			},
 		},
 		{
-			name: "allbutone",
+			name:       "allbutone",
 			conditions: []string{"unencumbered", "permissive", "notice", "reciprocal", "restricted", "proprietary"},
-			plus: &[]string{"restricted_allows_dynamic_linking", "by_exception_only", "not_allowed"},
+			plus:       &[]string{"restricted_allows_dynamic_linking", "by_exception_only", "not_allowed"},
 			matchingAny: map[string][]string{
-				"unencumbered": []string{"unencumbered"},
-				"permissive":       []string{"permissive"},
-				"notice":     []string{"notice"},
-				"reciprocal":     []string{"reciprocal"},
-				"restricted":     []string{"restricted"},
-				"restricted_with_classpath_exception":     []string{},
-				"restricted_allows_dynamic_linking":     []string{"restricted_allows_dynamic_linking"},
-				"proprietary":     []string{"proprietary"},
-				"by_exception_only":     []string{"by_exception_only"},
-				"not_allowed":     []string{"not_allowed"},
-				"notice|proprietary":     []string{"notice", "proprietary"},
+				"unencumbered":                        []string{"unencumbered"},
+				"permissive":                          []string{"permissive"},
+				"notice":                              []string{"notice"},
+				"reciprocal":                          []string{"reciprocal"},
+				"restricted":                          []string{"restricted"},
+				"restricted_with_classpath_exception": []string{},
+				"restricted_allows_dynamic_linking":   []string{"restricted_allows_dynamic_linking"},
+				"proprietary":                         []string{"proprietary"},
+				"by_exception_only":                   []string{"by_exception_only"},
+				"not_allowed":                         []string{"not_allowed"},
+				"notice|proprietary":                  []string{"notice", "proprietary"},
 			},
 			expected: []string{
 				"unencumbered",
@@ -203,17 +203,17 @@ func TestConditionSet(t *testing.T) {
 			},
 			minus: &[]string{"restricted_allows_dynamic_linking"},
 			matchingAny: map[string][]string{
-				"unencumbered": []string{"unencumbered"},
-				"permissive":       []string{"permissive"},
-				"notice":     []string{"notice"},
-				"reciprocal":     []string{"reciprocal"},
-				"restricted":     []string{"restricted"},
-				"restricted_with_classpath_exception":     []string{"restricted_with_classpath_exception"},
-				"restricted_allows_dynamic_linking":     []string{},
-				"proprietary":     []string{"proprietary"},
-				"by_exception_only":     []string{"by_exception_only"},
-				"not_allowed":     []string{"not_allowed"},
-				"restricted|proprietary":     []string{"restricted", "proprietary"},
+				"unencumbered":                        []string{"unencumbered"},
+				"permissive":                          []string{"permissive"},
+				"notice":                              []string{"notice"},
+				"reciprocal":                          []string{"reciprocal"},
+				"restricted":                          []string{"restricted"},
+				"restricted_with_classpath_exception": []string{"restricted_with_classpath_exception"},
+				"restricted_allows_dynamic_linking":   []string{},
+				"proprietary":                         []string{"proprietary"},
+				"by_exception_only":                   []string{"by_exception_only"},
+				"not_allowed":                         []string{"not_allowed"},
+				"restricted|proprietary":              []string{"restricted", "proprietary"},
 			},
 			expected: []string{
 				"unencumbered",
@@ -254,35 +254,35 @@ func TestConditionSet(t *testing.T) {
 				"not_allowed",
 			},
 			matchingAny: map[string][]string{
-				"unencumbered": []string{},
-				"permissive":       []string{},
-				"notice":     []string{},
-				"reciprocal":     []string{},
-				"restricted":     []string{},
-				"restricted_with_classpath_exception":     []string{},
-				"restricted_allows_dynamic_linking":     []string{},
-				"proprietary":     []string{},
-				"by_exception_only":     []string{},
-				"not_allowed":     []string{},
-				"restricted|proprietary":     []string{},
+				"unencumbered":                        []string{},
+				"permissive":                          []string{},
+				"notice":                              []string{},
+				"reciprocal":                          []string{},
+				"restricted":                          []string{},
+				"restricted_with_classpath_exception": []string{},
+				"restricted_allows_dynamic_linking":   []string{},
+				"proprietary":                         []string{},
+				"by_exception_only":                   []string{},
+				"not_allowed":                         []string{},
+				"restricted|proprietary":              []string{},
 			},
 			expected: []string{},
 		},
 		{
-			name: "restrictedplus",
+			name:       "restrictedplus",
 			conditions: []string{"restricted", "restricted_with_classpath_exception", "restricted_allows_dynamic_linking"},
-			plus: &[]string{"permissive", "notice", "restricted", "proprietary"},
+			plus:       &[]string{"permissive", "notice", "restricted", "proprietary"},
 			matchingAny: map[string][]string{
-				"unencumbered":     []string{},
-				"permissive":     []string{"permissive"},
-				"notice":     []string{"notice"},
-				"restricted":     []string{"restricted"},
-				"restricted_with_classpath_exception":     []string{"restricted_with_classpath_exception"},
-				"restricted_allows_dynamic_linking":     []string{"restricted_allows_dynamic_linking"},
-				"proprietary":     []string{"proprietary"},
-				"restricted|proprietary":     []string{"restricted", "proprietary"},
-				"by_exception_only": []string{},
-				"proprietary|by_exception_only":     []string{"proprietary"},
+				"unencumbered":                        []string{},
+				"permissive":                          []string{"permissive"},
+				"notice":                              []string{"notice"},
+				"restricted":                          []string{"restricted"},
+				"restricted_with_classpath_exception": []string{"restricted_with_classpath_exception"},
+				"restricted_allows_dynamic_linking":   []string{"restricted_allows_dynamic_linking"},
+				"proprietary":                         []string{"proprietary"},
+				"restricted|proprietary":              []string{"restricted", "proprietary"},
+				"by_exception_only":                   []string{},
+				"proprietary|by_exception_only":       []string{"proprietary"},
 			},
 			expected: []string{"permissive", "notice", "restricted", "restricted_with_classpath_exception", "restricted_allows_dynamic_linking", "proprietary"},
 		},
@@ -363,7 +363,7 @@ func TestConditionSet(t *testing.T) {
 				}
 				actualConditions := actual.AsList()
 				if len(actualConditions) != len(expectedConditions) {
-					t.Errorf("len(MatchingAny(%d).AsList()):  got %d, want %d",
+					t.Errorf("len(MatchingAny(%s).AsList()):  got %d, want %d",
 						data, len(actualNames), len(expectedNames))
 				} else {
 					for i := 0; i < len(actualNames); i++ {
@@ -452,7 +452,7 @@ func TestConditionSet(t *testing.T) {
 				for i := 0; i < len(actualConditions); i++ {
 					if actualConditions[i] != expectedConditions[i] {
 						t.Errorf("actual.AsList()[%d]: got %s, want %s",
-							i, actualConditions[i], expectedConditions[i])
+							i, actualConditions[i].Name(), expectedConditions[i].Name())
 						break
 					}
 				}
@@ -552,7 +552,7 @@ func TestConditionSet(t *testing.T) {
 				for i := 0; i < len(actualConditions); i++ {
 					if actualConditions[i] != expectedConditions[i] {
 						t.Errorf("actual.AsList()[%d}: got %s, want %s",
-							i, actualConditions[i], expectedConditions[i])
+							i, actualConditions[i].Name(), expectedConditions[i].Name())
 						break
 					}
 				}
@@ -629,7 +629,7 @@ func TestConditionSet(t *testing.T) {
 			if checkExpected(cs, t) {
 				checkMatching(cs, t)
 			}
-			if checkExpectedSet(cs, t){
+			if checkExpectedSet(cs, t) {
 				checkMatchingSet(cs, t)
 			}
 		})
@@ -639,7 +639,7 @@ func TestConditionSet(t *testing.T) {
 			if checkExpected(cs, t) {
 				checkMatching(cs, t)
 			}
-			if checkExpectedSet(cs, t){
+			if checkExpectedSet(cs, t) {
 				checkMatchingSet(cs, t)
 			}
 		})
@@ -649,7 +649,7 @@ func TestConditionSet(t *testing.T) {
 			if checkExpected(cs, t) {
 				checkMatching(cs, t)
 			}
-			if checkExpectedSet(cs, t){
+			if checkExpectedSet(cs, t) {
 				checkMatchingSet(cs, t)
 			}
 		})

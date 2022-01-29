@@ -1105,7 +1105,12 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   if target_info.vendor_suppressed_vabc:
     logger.info("Vendor suppressed VABC. Disabling")
     OPTIONS.disable_vabc = True
-  if not target_info.is_vabc_xor or OPTIONS.disable_vabc:
+
+  # Both source and target build need to support VABC XOR for us to use it.
+  # Source build's update_engine must be able to write XOR ops, and target
+  # build's snapuserd must be able to interpret XOR ops.
+  if not target_info.is_vabc_xor or OPTIONS.disable_vabc or \
+      (source_info is not None and not source_info.is_vabc_xor):
     logger.info("VABC XOR Not supported, disabling")
     OPTIONS.enable_vabc_xor = False
   additional_args = []
