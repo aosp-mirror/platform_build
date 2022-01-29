@@ -226,7 +226,7 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			fs[tt.edge.dep] = []byte(meta[tt.edge.dep])
 			lg, err := ReadLicenseGraph(&fs, stderr, []string{tt.edge.target})
 			if err != nil {
-				t.Errorf("unexpected error reading graph: %w", err)
+				t.Errorf("unexpected error reading graph: %s", err)
 				return
 			}
 			edge := lg.Edges()[0]

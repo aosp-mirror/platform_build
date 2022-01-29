@@ -83,7 +83,7 @@ func WalkTopDown(ctx EdgeContextProvider, lg *LicenseGraph, visit VisitNode) {
 // specific set of conditions.
 type resolutionKey struct {
 	target *TargetNode
-	cs LicenseConditionSet
+	cs     LicenseConditionSet
 }
 
 // WalkResolutionsForCondition performs a top-down walk of the LicenseGraph
