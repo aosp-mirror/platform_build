@@ -158,7 +158,7 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
 
         # Run this one, obtaining its configuration and child PCMs.
         if _options.trace_modules:
-            print("%d:" % n)
+            print("#%d: %s" % (n, name))
 
         # Run PCM.
         handle = __h_new()
@@ -167,7 +167,7 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         # Now we know everything about this PCM, record it in 'configs'.
         children = __h_inherited_modules(handle)
         if _options.trace_modules:
-            print("   ", "    ".join(children.keys()))
+            print("#   ", "    ".join(children.keys()))
         configs[name] = (pcm, __h_cfg(handle), children.keys(), False)
         pcm_count = pcm_count + 1
 
@@ -191,9 +191,9 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         fail("Ran %d modules but postfix tree has only %d entries" % (pcm_count, len(config_postfix)))
 
     if _options.trace_modules:
-        print("\n---Postfix---")
+        print("\n#---Postfix---")
         for x in config_postfix:
-            print("   ", x)
+            print("#   ", x)
 
     # Traverse the tree from the bottom, evaluating inherited values
     for pcm_name in config_postfix:
