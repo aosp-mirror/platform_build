@@ -33,56 +33,56 @@ license_conditions: "notice"
 
 	// GPL starts a test metadata file for GPL 2.0 licensing.
 	GPL = `` +
-`package_name: "Free Software"
+		`package_name: "Free Software"
 license_kinds: "SPDX-license-identifier-GPL-2.0"
 license_conditions: "restricted"
 `
 
 	// Classpath starts a test metadata file for GPL 2.0 with classpath exception licensing.
 	Classpath = `` +
-`package_name: "Free Software"
+		`package_name: "Free Software"
 license_kinds: "SPDX-license-identifier-GPL-2.0-with-classpath-exception"
 license_conditions: "restricted"
 `
 
 	// DependentModule starts a test metadata file for a module in the same package as `Classpath`.
 	DependentModule = `` +
-`package_name: "Free Software"
+		`package_name: "Free Software"
 license_kinds: "SPDX-license-identifier-MIT"
 license_conditions: "notice"
 `
 
 	// LGPL starts a test metadata file for a module with LGPL 2.0 licensing.
 	LGPL = `` +
-`package_name: "Free Library"
+		`package_name: "Free Library"
 license_kinds: "SPDX-license-identifier-LGPL-2.0"
 license_conditions: "restricted"
 `
 
 	// MPL starts a test metadata file for a module with MPL 2.0 reciprical licensing.
 	MPL = `` +
-`package_name: "Reciprocal"
+		`package_name: "Reciprocal"
 license_kinds: "SPDX-license-identifier-MPL-2.0"
 license_conditions: "reciprocal"
 `
 
 	// MIT starts a test metadata file for a module with generic notice (MIT) licensing.
 	MIT = `` +
-`package_name: "Android"
+		`package_name: "Android"
 license_kinds: "SPDX-license-identifier-MIT"
 license_conditions: "notice"
 `
 
 	// Proprietary starts a test metadata file for a module with proprietary licensing.
 	Proprietary = `` +
-`package_name: "Android"
+		`package_name: "Android"
 license_kinds: "legacy_proprietary"
 license_conditions: "proprietary"
 `
 
 	// ByException starts a test metadata file for a module with by_exception_only licensing.
 	ByException = `` +
-`package_name: "Special"
+		`package_name: "Special"
 license_kinds: "legacy_by_exception_only"
 license_conditions: "by_exception_only"
 `
@@ -91,22 +91,22 @@ license_conditions: "by_exception_only"
 var (
 	// meta maps test file names to metadata file content without dependencies.
 	meta = map[string]string{
-		"apacheBin.meta_lic": AOSP,
-		"apacheLib.meta_lic": AOSP,
-		"apacheContainer.meta_lic": AOSP + "is_container: true\n",
-		"dependentModule.meta_lic": DependentModule,
+		"apacheBin.meta_lic":                 AOSP,
+		"apacheLib.meta_lic":                 AOSP,
+		"apacheContainer.meta_lic":           AOSP + "is_container: true\n",
+		"dependentModule.meta_lic":           DependentModule,
 		"gplWithClasspathException.meta_lic": Classpath,
-		"gplBin.meta_lic": GPL,
-		"gplLib.meta_lic": GPL,
-		"gplContainer.meta_lic": GPL + "is_container: true\n",
-		"lgplBin.meta_lic": LGPL,
-		"lgplLib.meta_lic": LGPL,
-		"mitBin.meta_lic": MIT,
-		"mitLib.meta_lic": MIT,
-		"mplBin.meta_lic": MPL,
-		"mplLib.meta_lic": MPL,
-		"proprietary.meta_lic": Proprietary,
-		"by_exception.meta_lic": ByException,
+		"gplBin.meta_lic":                    GPL,
+		"gplLib.meta_lic":                    GPL,
+		"gplContainer.meta_lic":              GPL + "is_container: true\n",
+		"lgplBin.meta_lic":                   LGPL,
+		"lgplLib.meta_lic":                   LGPL,
+		"mitBin.meta_lic":                    MIT,
+		"mitLib.meta_lic":                    MIT,
+		"mplBin.meta_lic":                    MPL,
+		"mplLib.meta_lic":                    MPL,
+		"proprietary.meta_lic":               Proprietary,
+		"by_exception.meta_lic":              ByException,
 	}
 )
 
@@ -204,7 +204,7 @@ func (e edge) String() string {
 type byEdge []edge
 
 // Len returns the count of elements in the slice.
-func (l byEdge) Len() int      { return len(l) }
+func (l byEdge) Len() int { return len(l) }
 
 // Swap rearranges 2 elements of the slice so that each occupies the other's
 // former position.
@@ -218,7 +218,6 @@ func (l byEdge) Less(i, j int) bool {
 	}
 	return l[i].target < l[j].target
 }
-
 
 // annotated describes annotated test data edges to define test graphs.
 type annotated struct {
@@ -240,7 +239,7 @@ func (e annotated) IsEqualTo(other annotated) bool {
 	if e.dep != other.dep {
 		return false
 	}
-        if len(e.annotations) != len(other.annotations) {
+	if len(e.annotations) != len(other.annotations) {
 		return false
 	}
 	a1 := append([]string{}, e.annotations...)
@@ -401,7 +400,7 @@ func (l actionList) String() string {
 }
 
 // Len returns the count of elements in the slice.
-func (l actionList) Len() int      { return len(l) }
+func (l actionList) Len() int { return len(l) }
 
 // Swap rearranges 2 elements of the slice so that each occupies the other's
 // former position.
@@ -467,10 +466,10 @@ func toConflictList(lg *LicenseGraph, data []confl) []SourceSharePrivacyConflict
 		oprivacy := fields[0]
 		cprivacy := fields[1]
 		result = append(result, SourceSharePrivacyConflict{
-				newTestNode(lg, c.sourceNode),
-				newTestCondition(lg, oshare, cshare),
-				newTestCondition(lg, oprivacy, cprivacy),
-			})
+			newTestNode(lg, c.sourceNode),
+			newTestCondition(lg, oshare, cshare),
+			newTestCondition(lg, oprivacy, cprivacy),
+		})
 	}
 	return result
 }

@@ -1211,7 +1211,7 @@ ifdef BOARD_PREBUILT_SYSTEM_DLKM_IMAGE
 INTERNAL_PREBUILT_SYSTEM_DLKM_IMAGE := $(BOARD_PREBUILT_SYSTEM_DLKM_IMAGE)
 INSTALLED_SYSTEM_DLKM_IMAGE_TARGET := $(PRODUCT_OUT)/system_dlkm.img
 $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET): $(INTERNAL_PREBUILT_SYSTEM_DLKM_IMAGE)
-	$(call pretty,"Using prebuilt system_dlkm image: $@")
+	$(call pretty,"Using prebuilt from: $(INTERNAL_PREBUILT_SYSTEM_DLKM_IMAGE)")
 	cp $(INTERNAL_PREBUILT_SYSTEM_DLKM_IMAGE) $@
 
 else # BOARD_PREBUILT_SYSTEM_DLKM_IMAGE not defined
@@ -2869,6 +2869,8 @@ FSVERITY_APK_MANIFEST_PATH := system/security/fsverity/AndroidManifest.xml
 $(FSVERITY_APK_OUT): PRIVATE_FSVERITY := $(HOST_OUT_EXECUTABLES)/fsverity
 $(FSVERITY_APK_OUT): PRIVATE_AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
 $(FSVERITY_APK_OUT): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
+$(FSVERITY_APK_OUT): PRIVATE_VERSION_CODE := $(PLATFORM_SDK_VERSION)
+$(FSVERITY_APK_OUT): PRIVATE_VERSION_NAME := $(APPS_DEFAULT_VERSION_NAME)
 $(FSVERITY_APK_OUT): PRIVATE_APKSIGNER := $(HOST_OUT_EXECUTABLES)/apksigner
 $(FSVERITY_APK_OUT): PRIVATE_MANIFEST := $(FSVERITY_APK_MANIFEST_PATH)
 $(FSVERITY_APK_OUT): PRIVATE_FRAMEWORK_RES := $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
@@ -2882,6 +2884,8 @@ $(FSVERITY_APK_OUT): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
     $(fsverity-metadata-targets)
 	$< --fsverity-path $(PRIVATE_FSVERITY) --aapt2-path $(PRIVATE_AAPT2) \
 	    --min-sdk-version $(PRIVATE_MIN_SDK_VERSION) \
+	    --version-code $(PRIVATE_VERSION_CODE) \
+	    --version-name $(PRIVATE_VERSION_NAME) \
 	    --apksigner-path $(PRIVATE_APKSIGNER) --apk-key-path $(PRIVATE_KEY) \
 	    --apk-manifest-path $(PRIVATE_MANIFEST) --framework-res $(PRIVATE_FRAMEWORK_RES) \
 	    --output $@ \
@@ -3669,7 +3673,8 @@ define images-for-partitions
 $(strip $(foreach item,$(1),\
   $(if $(filter $(item),system_other),$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),\
     $(if $(filter $(item),init_boot),$(INSTALLED_INIT_BOOT_IMAGE_TARGET),\
-      $(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET)))))
+      $(if $(filter $(item),system_dlkm),$(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET),\
+        $(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET))))))
 endef
 
 # -----------------------------------------------------------------
@@ -4736,6 +4741,10 @@ ifneq ($(INSTALLED_INIT_BOOT_IMAGE_TARGET),)
 	$(hide) echo "init_boot=true" >> $@
 	$(hide) echo "init_boot_size=$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE)" >> $@
 endif
+ifneq ($(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET),)
+	$(hide) echo "system_dlkm=true" >> $@
+	$(hide) echo "system_dlkm_size=$(BOARD_SYSTEM_DLKM_PARTITION_SIZE)" >> $@
+endif
 ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
 	echo "lz4_ramdisks=true" >> $@
 endif
@@ -5496,6 +5505,16 @@ ifdef BOARD_PREBUILT_INIT_BOOT_IMAGE
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_INIT_BOOT_IMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 endif
+ifdef BOARD_PREBUILT_SYSTEM_DLKM_IMAGE
+	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
+	$(hide) cp $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES
+else # BOARD_PREBUILT_SYSTEM_DLKM_IMAGE is not define
+ifdef INSTALLED_SYSTEM_DLKM_IMAGE_TARGET
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET) $(zip_root)/IMAGES/
+endif # INSTALLED_SYSTEM_DLKM_IMAGE_TARGET
+endif # BOARD_PREBUILT_SYSTEM_DLKM_IMAGE
+
 ifndef BOARD_PREBUILT_BOOTIMAGE
 ifneq (,$(strip $(INTERNAL_PREBUILT_BOOTIMAGE) $(filter true,$(BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES))))
 ifdef INSTALLED_BOOTIMAGE_TARGET
@@ -5580,6 +5599,9 @@ ifdef BOARD_KERNEL_PAGESIZE
 	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/INIT_BOOT/pagesize
 endif # BOARD_KERNEL_PAGESIZE
 endif # BUILDING_INIT_BOOT_IMAGE
+ifdef BUILDING_SYSTEM_DLKM_IMAGE
+	$(hide) $(call package_files-copy-root, $(TARGET_SYSTEM_DLKM_OUT),$(zip_root)/SYSTEM_DLKM)
+endif
 ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	$(call fs_config,$(zip_root)/VENDOR_BOOT/RAMDISK,) > $(zip_root)/META/vendor_boot_filesystem_config.txt
 endif
@@ -5894,6 +5916,7 @@ $(PROGUARD_USAGE_ZIP): \
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_BOOTIMAGE_TARGET) \
     $(INSTALLED_INIT_BOOT_IMAGE_TARGET) \
+    $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET) \
     $(INSTALLED_USERDATAIMAGE_TARGET) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \

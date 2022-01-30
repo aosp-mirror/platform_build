@@ -61,16 +61,16 @@ const (
 var (
 	// RecognizedConditionNames maps condition strings to LicenseCondition.
 	RecognizedConditionNames = map[string]LicenseCondition{
-		"unencumbered": UnencumberedCondition,
-		"permissive": PermissiveCondition,
-		"notice": NoticeCondition,
-		"reciprocal": ReciprocalCondition,
-		"restricted": RestrictedCondition,
+		"unencumbered":                        UnencumberedCondition,
+		"permissive":                          PermissiveCondition,
+		"notice":                              NoticeCondition,
+		"reciprocal":                          ReciprocalCondition,
+		"restricted":                          RestrictedCondition,
 		"restricted_with_classpath_exception": RestrictedClasspathExceptionCondition,
-		"restricted_allows_dynamic_linking": WeaklyRestrictedCondition,
-		"proprietary": ProprietaryCondition,
-		"by_exception_only": ByExceptionOnlyCondition,
-		"not_allowed": NotAllowedCondition,
+		"restricted_allows_dynamic_linking":   WeaklyRestrictedCondition,
+		"proprietary":                         ProprietaryCondition,
+		"by_exception_only":                   ByExceptionOnlyCondition,
+		"not_allowed":                         NotAllowedCondition,
 	}
 )
 
