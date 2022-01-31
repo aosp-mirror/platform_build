@@ -18,6 +18,16 @@ import (
 	"sync"
 )
 
+var (
+	// AllResolutions is a TraceConditions function that resolves all
+	// unfiltered license conditions.
+	AllResolutions = TraceConditions(func(tn *TargetNode) LicenseConditionSet { return tn.licenseConditions })
+)
+
+// TraceConditions is a function that returns the conditions to trace for each
+// target node `tn`.
+type TraceConditions func(tn *TargetNode) LicenseConditionSet
+
 // ResolveBottomUpConditions performs a bottom-up walk of the LicenseGraph
 // propagating conditions up the graph as necessary according to the properties
 // of each edge and according to each license condition in question.
@@ -29,6 +39,14 @@ import (
 // not resolve the library and its transitive closure, but the later top-down
 // walk will.
 func ResolveBottomUpConditions(lg *LicenseGraph) {
+	TraceBottomUpConditions(lg, AllResolutions)
+}
+
+// TraceBottomUpConditions performs a bottom-up walk of the LicenseGraph
+// propagating trace conditions from `conditionsFn` up the graph as necessary
+// according to the properties of each edge and according to each license
+// condition in question.
+func TraceBottomUpConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 
 	// short-cut if already walked and cached
 	lg.mu.Lock()
@@ -70,7 +88,7 @@ func ResolveBottomUpConditions(lg *LicenseGraph) {
 				// needs to walk again in non-aggregate context
 				delete(cmap, target)
 			} else {
-				target.resolution |= target.licenseConditions
+				target.resolution |= conditionsFn(target)
 				amap[target] = struct{}{}
 			}
 			if treatAsAggregate {
@@ -123,6 +141,13 @@ func ResolveBottomUpConditions(lg *LicenseGraph) {
 // dependency except restricted. For restricted, the policy is to share the
 // source of any libraries linked to restricted code and to provide notice.
 func ResolveTopDownConditions(lg *LicenseGraph) {
+	TraceTopDownConditions(lg, AllResolutions)
+}
+
+// TraceTopDownCondtions performs a top-down walk of the LicenseGraph
+// propagating trace conditions returned by `conditionsFn` from target to
+// dependency.
+func TraceTopDownConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 
 	// short-cut if already walked and cached
 	lg.mu.Lock()
@@ -139,7 +164,7 @@ func ResolveTopDownConditions(lg *LicenseGraph) {
 	lg.mu.Unlock()
 
 	// start with the conditions propagated up the graph
-	ResolveBottomUpConditions(lg)
+	TraceBottomUpConditions(lg, conditionsFn)
 
 	// amap contains the set of targets already walked. (guarded by mu)
 	amap := make(map[*TargetNode]struct{})
@@ -156,7 +181,7 @@ func ResolveTopDownConditions(lg *LicenseGraph) {
 	walk = func(fnode *TargetNode, cs LicenseConditionSet, treatAsAggregate bool) {
 		defer wg.Done()
 		mu.Lock()
-		fnode.resolution |= fnode.licenseConditions
+		fnode.resolution |= conditionsFn(fnode)
 		fnode.resolution |= cs
 		amap[fnode] = struct{}{}
 		if treatAsAggregate {
@@ -168,7 +193,7 @@ func ResolveTopDownConditions(lg *LicenseGraph) {
 		for _, edge := range fnode.edges {
 			func(edge *TargetEdge) {
 				// dcs holds the dpendency conditions inherited from the target
-				dcs := targetConditionsPropagatingToDep(lg, edge, cs, treatAsAggregate)
+				dcs := targetConditionsPropagatingToDep(lg, edge, cs, treatAsAggregate, conditionsFn)
 				dnode := edge.dependency
 				mu.Lock()
 				defer mu.Unlock()
