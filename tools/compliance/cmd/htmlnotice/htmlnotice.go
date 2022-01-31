@@ -26,10 +26,13 @@ import (
 	"strings"
 
 	"android/soong/tools/compliance"
+
+	"github.com/google/blueprint/deptools"
 )
 
 var (
 	outputFile  = flag.String("o", "-", "Where to write the NOTICE text file. (default stdout)")
+	depsFile    = flag.String("d", "", "Where to write the deps file")
 	includeTOC  = flag.Bool("toc", true, "Whether to include a table of contents.")
 	stripPrefix = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
 	title       = flag.String("title", "", "The title of the notice file.")
@@ -45,6 +48,7 @@ type context struct {
 	includeTOC  bool
 	stripPrefix string
 	title       string
+	deps        *[]string
 }
 
 func init() {
@@ -95,7 +99,9 @@ func main() {
 		ofile = &bytes.Buffer{}
 	}
 
-	ctx := &context{ofile, os.Stderr, os.DirFS("."), *includeTOC, *stripPrefix, *title}
+	var deps []string
+
+	ctx := &context{ofile, os.Stderr, os.DirFS("."), *includeTOC, *stripPrefix, *title, &deps}
 
 	err := htmlNotice(ctx, flag.Args()...)
 	if err != nil {
@@ -109,6 +115,13 @@ func main() {
 		err := os.WriteFile(*outputFile, ofile.(*bytes.Buffer).Bytes(), 0666)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "could not write output to %q: %s\n", *outputFile, err)
+			os.Exit(1)
+		}
+	}
+	if *depsFile != "" {
+		err := deptools.WriteDepFile(*depsFile, *outputFile, deps)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "could not write deps to %q: %s\n", *depsFile, err)
 			os.Exit(1)
 		}
 	}
@@ -212,6 +225,8 @@ func htmlNotice(ctx *context, files ...string) error {
 		fmt.Fprintln(ctx.stdout, "  </pre><!-- license-text -->")
 	}
 	fmt.Fprintln(ctx.stdout, "</body></html>")
+
+	*ctx.deps = ni.InputNoticeFiles()
 
 	return nil
 }

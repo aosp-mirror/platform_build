@@ -25,10 +25,13 @@ import (
 	"strings"
 
 	"android/soong/tools/compliance"
+
+	"github.com/google/blueprint/deptools"
 )
 
 var (
 	outputFile  = flag.String("o", "-", "Where to write the NOTICE text file. (default stdout)")
+	depsFile    = flag.String("d", "", "Where to write the deps file")
 	stripPrefix = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
@@ -40,6 +43,7 @@ type context struct {
 	stderr      io.Writer
 	rootFS      fs.FS
 	stripPrefix string
+	deps        *[]string
 }
 
 func init() {
@@ -90,7 +94,9 @@ func main() {
 		ofile = &bytes.Buffer{}
 	}
 
-	ctx := &context{ofile, os.Stderr, os.DirFS("."), *stripPrefix}
+	var deps []string
+
+	ctx := &context{ofile, os.Stderr, os.DirFS("."), *stripPrefix, &deps}
 
 	err := textNotice(ctx, flag.Args()...)
 	if err != nil {
@@ -104,6 +110,13 @@ func main() {
 		err := os.WriteFile(*outputFile, ofile.(*bytes.Buffer).Bytes(), 0666)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "could not write output to %q: %s\n", *outputFile, err)
+			os.Exit(1)
+		}
+	}
+	if *depsFile != "" {
+		err := deptools.WriteDepFile(*depsFile, *outputFile, deps)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "could not write deps to %q: %s\n", *depsFile, err)
 			os.Exit(1)
 		}
 	}
@@ -150,5 +163,8 @@ func textNotice(ctx *context, files ...string) error {
 		ctx.stdout.Write(ni.HashText(h))
 		fmt.Fprintln(ctx.stdout)
 	}
+
+	*ctx.deps = ni.InputNoticeFiles()
+
 	return nil
 }
