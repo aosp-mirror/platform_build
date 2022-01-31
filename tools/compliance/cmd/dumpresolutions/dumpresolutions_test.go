@@ -919,7 +919,7 @@ func Test_plaintext(t *testing.T) {
 				for len(outList) > startLine && len(expectedList) > startLine && outList[startLine] == expectedList[startLine] {
 					startLine++
 				}
-				t.Errorf("listshare: gotStdout = %v, want %v, somewhere near line %d Stdout = %v, want %v",
+				t.Errorf("dumpresoliutions: gotStdout = %v, want %v, somewhere near line %d Stdout = %v, want %v",
 					out, expected, startLine+1, outList[startLine], expectedList[startLine])
 			}
 		})
