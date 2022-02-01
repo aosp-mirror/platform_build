@@ -19,6 +19,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -40,11 +41,12 @@ func TestMain(m *testing.M) {
 
 func Test(t *testing.T) {
 	tests := []struct {
-		condition   string
-		name        string
-		roots       []string
-		stripPrefix string
-		expectedOut []matcher
+		condition    string
+		name         string
+		roots        []string
+		stripPrefix  string
+		expectedOut  []matcher
+		expectedDeps []string
 	}{
 		{
 			condition: "firstparty",
@@ -60,6 +62,7 @@ func Test(t *testing.T) {
 				usedBy{"highest.apex/lib/libb.so"},
 				firstParty{},
 			},
+			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
 		},
 		{
 			condition: "firstparty",
@@ -75,6 +78,7 @@ func Test(t *testing.T) {
 				usedBy{"container.zip/libb.so"},
 				firstParty{},
 			},
+			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
 		},
 		{
 			condition: "firstparty",
@@ -86,6 +90,7 @@ func Test(t *testing.T) {
 				usedBy{"application"},
 				firstParty{},
 			},
+			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
 		},
 		{
 			condition: "firstparty",
@@ -97,6 +102,7 @@ func Test(t *testing.T) {
 				usedBy{"bin/bin1"},
 				firstParty{},
 			},
+			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
 		},
 		{
 			condition: "firstparty",
@@ -108,6 +114,7 @@ func Test(t *testing.T) {
 				usedBy{"lib/libd.so"},
 				firstParty{},
 			},
+			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
 		},
 		{
 			condition: "notice",
@@ -129,6 +136,10 @@ func Test(t *testing.T) {
 				usedBy{"highest.apex/bin/bin1"},
 				notice{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/notice/NOTICE_LICENSE",
+			},
 		},
 		{
 			condition: "notice",
@@ -150,6 +161,10 @@ func Test(t *testing.T) {
 				usedBy{"container.zip/bin1"},
 				notice{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/notice/NOTICE_LICENSE",
+			},
 		},
 		{
 			condition: "notice",
@@ -164,6 +179,10 @@ func Test(t *testing.T) {
 				library{"Device"},
 				usedBy{"application"},
 				notice{},
+			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/notice/NOTICE_LICENSE",
 			},
 		},
 		{
@@ -182,6 +201,10 @@ func Test(t *testing.T) {
 				usedBy{"bin/bin1"},
 				notice{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/notice/NOTICE_LICENSE",
+			},
 		},
 		{
 			condition: "notice",
@@ -193,6 +216,7 @@ func Test(t *testing.T) {
 				usedBy{"lib/libd.so"},
 				notice{},
 			},
+			expectedDeps: []string{"testdata/notice/NOTICE_LICENSE"},
 		},
 		{
 			condition: "reciprocal",
@@ -214,6 +238,10 @@ func Test(t *testing.T) {
 				usedBy{"highest.apex/bin/bin1"},
 				reciprocal{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/reciprocal/RECIPROCAL_LICENSE",
+			},
 		},
 		{
 			condition: "reciprocal",
@@ -235,6 +263,10 @@ func Test(t *testing.T) {
 				usedBy{"container.zip/bin1"},
 				reciprocal{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/reciprocal/RECIPROCAL_LICENSE",
+			},
 		},
 		{
 			condition: "reciprocal",
@@ -249,6 +281,10 @@ func Test(t *testing.T) {
 				library{"Device"},
 				usedBy{"application"},
 				reciprocal{},
+			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/reciprocal/RECIPROCAL_LICENSE",
 			},
 		},
 		{
@@ -267,6 +303,10 @@ func Test(t *testing.T) {
 				usedBy{"bin/bin1"},
 				reciprocal{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/reciprocal/RECIPROCAL_LICENSE",
+			},
 		},
 		{
 			condition: "reciprocal",
@@ -277,6 +317,9 @@ func Test(t *testing.T) {
 				library{"External"},
 				usedBy{"lib/libd.so"},
 				notice{},
+			},
+			expectedDeps: []string{
+				"testdata/notice/NOTICE_LICENSE",
 			},
 		},
 		{
@@ -303,6 +346,11 @@ func Test(t *testing.T) {
 				usedBy{"highest.apex/bin/bin1"},
 				reciprocal{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/reciprocal/RECIPROCAL_LICENSE",
+				"testdata/restricted/RESTRICTED_LICENSE",
+			},
 		},
 		{
 			condition: "restricted",
@@ -328,6 +376,11 @@ func Test(t *testing.T) {
 				usedBy{"container.zip/bin1"},
 				reciprocal{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/reciprocal/RECIPROCAL_LICENSE",
+				"testdata/restricted/RESTRICTED_LICENSE",
+			},
 		},
 		{
 			condition: "restricted",
@@ -342,6 +395,10 @@ func Test(t *testing.T) {
 				library{"Device"},
 				usedBy{"application"},
 				restricted{},
+			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/restricted/RESTRICTED_LICENSE",
 			},
 		},
 		{
@@ -362,6 +419,11 @@ func Test(t *testing.T) {
 				usedBy{"bin/bin1"},
 				reciprocal{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/reciprocal/RECIPROCAL_LICENSE",
+				"testdata/restricted/RESTRICTED_LICENSE",
+			},
 		},
 		{
 			condition: "restricted",
@@ -373,6 +435,7 @@ func Test(t *testing.T) {
 				usedBy{"lib/libd.so"},
 				notice{},
 			},
+			expectedDeps: []string{"testdata/notice/NOTICE_LICENSE"},
 		},
 		{
 			condition: "proprietary",
@@ -399,6 +462,11 @@ func Test(t *testing.T) {
 				usedBy{"highest.apex/bin/bin1"},
 				proprietary{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/proprietary/PROPRIETARY_LICENSE",
+				"testdata/restricted/RESTRICTED_LICENSE",
+			},
 		},
 		{
 			condition: "proprietary",
@@ -425,6 +493,11 @@ func Test(t *testing.T) {
 				usedBy{"container.zip/bin1"},
 				proprietary{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/proprietary/PROPRIETARY_LICENSE",
+				"testdata/restricted/RESTRICTED_LICENSE",
+			},
 		},
 		{
 			condition: "proprietary",
@@ -439,6 +512,10 @@ func Test(t *testing.T) {
 				library{"Device"},
 				usedBy{"application"},
 				proprietary{},
+			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/proprietary/PROPRIETARY_LICENSE",
 			},
 		},
 		{
@@ -457,6 +534,10 @@ func Test(t *testing.T) {
 				usedBy{"bin/bin1"},
 				proprietary{},
 			},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/proprietary/PROPRIETARY_LICENSE",
+			},
 		},
 		{
 			condition: "proprietary",
@@ -468,6 +549,7 @@ func Test(t *testing.T) {
 				usedBy{"lib/libd.so"},
 				notice{},
 			},
+			expectedDeps: []string{"testdata/notice/NOTICE_LICENSE"},
 		},
 	}
 	for _, tt := range tests {
@@ -480,7 +562,9 @@ func Test(t *testing.T) {
 				rootFiles = append(rootFiles, "testdata/"+tt.condition+"/"+r)
 			}
 
-			ctx := context{stdout, stderr, os.DirFS("."), tt.stripPrefix}
+			var deps []string
+
+			ctx := context{stdout, stderr, os.DirFS("."), tt.stripPrefix, &deps}
 
 			err := textNotice(&ctx, rootFiles...)
 			if err != nil {
@@ -511,6 +595,15 @@ func Test(t *testing.T) {
 			}
 			for ; lineno < len(tt.expectedOut); lineno++ {
 				t.Errorf("textnotice: missing output line %d: ended early, want %q", lineno+1, tt.expectedOut[lineno].String())
+			}
+
+			t.Logf("got deps: %q", deps)
+
+			t.Logf("want deps: %q", tt.expectedDeps)
+
+			if g, w := deps, tt.expectedDeps; !reflect.DeepEqual(g, w) {
+				t.Errorf("unexpected deps, wanted:\n%s\ngot:\n%s\n",
+					strings.Join(w, "\n"), strings.Join(g, "\n"))
 			}
 		})
 	}

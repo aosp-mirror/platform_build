@@ -62,6 +62,8 @@ type NoticeIndex struct {
 	targetHashes map[*TargetNode]map[hash]struct{}
 	// projectName maps project directory names to project name text.
 	projectName map[string]string
+	// files lists all the files accessed during indexing
+	files []string
 }
 
 // IndexLicenseTexts creates a hashed index of license texts for `lg` and `rs`
@@ -71,14 +73,17 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 		rs = ResolveNotices(lg)
 	}
 	ni := &NoticeIndex{
-		lg, rs, ShippedNodes(lg), rootFS,
-		make(map[string]hash),
-		make(map[hash][]byte),
-		make(map[hash]map[string]map[string]struct{}),
-		make(map[string]map[hash]map[string]struct{}),
-		make(map[string]map[hash]struct{}),
-		make(map[*TargetNode]map[hash]struct{}),
-		make(map[string]string),
+		lg:             lg,
+		rs:             rs,
+		shipped:        ShippedNodes(lg),
+		rootFS:         rootFS,
+		hash:           make(map[string]hash),
+		text:           make(map[hash][]byte),
+		hashLibInstall: make(map[hash]map[string]map[string]struct{}),
+		installHashLib: make(map[string]map[hash]map[string]struct{}),
+		libHash:        make(map[string]map[hash]struct{}),
+		targetHashes:   make(map[*TargetNode]map[hash]struct{}),
+		projectName:    make(map[string]string),
 	}
 
 	// index adds all license texts for `tn` to the index.
@@ -206,6 +211,13 @@ func (ni *NoticeIndex) Hashes() chan hash {
 		close(c)
 	}()
 	return c
+}
+
+// InputNoticeFiles returns the list of files that were hashed during IndexLicenseTexts.
+func (ni *NoticeIndex) InputNoticeFiles() []string {
+	files := append([]string(nil), ni.files...)
+	sort.Strings(files)
+	return files
 }
 
 // HashLibs returns the ordered array of library names using the license text
@@ -448,6 +460,8 @@ func (ni *NoticeIndex) addText(file string) error {
 	if _, alreadyPresent := ni.text[hash]; !alreadyPresent {
 		ni.text[hash] = text
 	}
+
+	ni.files = append(ni.files, file)
 
 	return nil
 }
