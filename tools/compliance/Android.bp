@@ -63,6 +63,13 @@ blueprint_go_binary {
 }
 
 blueprint_go_binary {
+    name: "rtrace",
+    srcs: ["cmd/rtrace/rtrace.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/rtrace/rtrace_test.go"],
+}
+
+blueprint_go_binary {
     name: "shippedlibs",
     srcs: ["cmd/shippedlibs/shippedlibs.go"],
     deps: ["compliance-module"],

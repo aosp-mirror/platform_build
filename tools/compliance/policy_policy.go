@@ -218,7 +218,7 @@ func depConditionsPropagatingToTarget(lg *LicenseGraph, e *TargetEdge, depCondit
 // aggregation, per policy it ceases to be a pure aggregation in the context of
 // that derivative work. The `treatAsAggregate` parameter will be false for
 // non-aggregates and for aggregates in non-aggregate contexts.
-func targetConditionsPropagatingToDep(lg *LicenseGraph, e *TargetEdge, targetConditions LicenseConditionSet, treatAsAggregate bool) LicenseConditionSet {
+func targetConditionsPropagatingToDep(lg *LicenseGraph, e *TargetEdge, targetConditions LicenseConditionSet, treatAsAggregate bool, conditionsFn TraceConditions) LicenseConditionSet {
 	result := targetConditions
 
 	// reverse direction -- none of these apply to things depended-on, only to targets depending-on.
@@ -232,7 +232,7 @@ func targetConditionsPropagatingToDep(lg *LicenseGraph, e *TargetEdge, targetCon
 	if treatAsAggregate {
 		// If the author of a pure aggregate licenses it restricted, apply restricted to immediate dependencies.
 		// Otherwise, restricted does not propagate back down to dependencies.
-		if !LicenseConditionSetFromNames(e.target, e.target.proto.LicenseConditions...).MatchesAnySet(ImpliesRestricted) {
+		if !conditionsFn(e.target).MatchesAnySet(ImpliesRestricted) {
 			result = result.Difference(ImpliesRestricted)
 		}
 		return result

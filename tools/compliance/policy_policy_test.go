@@ -282,7 +282,7 @@ func TestPolicy_edgeConditions(t *testing.T) {
 						targetConditions = targetConditions.Union(otn.licenseConditions)
 					}
 					t.Logf("calculate dep conditions for edge=%s, target conditions=%v, treatAsAggregate=%v", edge.String(), targetConditions.Names(), tt.treatAsAggregate)
-					cs := targetConditionsPropagatingToDep(lg, edge, targetConditions, tt.treatAsAggregate)
+					cs := targetConditionsPropagatingToDep(lg, edge, targetConditions, tt.treatAsAggregate, AllResolutions)
 					t.Logf("calculated dep conditions as %v", cs.Names())
 					actual := cs.Names()
 					sort.Strings(actual)
