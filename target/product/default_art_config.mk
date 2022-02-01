@@ -58,7 +58,6 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
-    com.android.nearby:framework-nearby \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
     com.android.permission:framework-permission-s \
