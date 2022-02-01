@@ -86,6 +86,16 @@ blueprint_go_binary {
     testSrcs: ["cmd/textnotice/textnotice_test.go"],
 }
 
+blueprint_go_binary {
+    name: "xmlnotice",
+    srcs: ["cmd/xmlnotice/xmlnotice.go"],
+    deps: [
+        "compliance-module",
+        "blueprint-deptools",
+    ],
+    testSrcs: ["cmd/xmlnotice/xmlnotice_test.go"],
+}
+
 bootstrap_go_package {
     name: "compliance-module",
     srcs: [
