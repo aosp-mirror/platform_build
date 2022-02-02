@@ -30,7 +30,7 @@ var (
 	conditions      = newMultiString("c", "License condition to resolve. (may be given multiple times)")
 	graphViz        = flag.Bool("dot", false, "Whether to output graphviz (i.e. dot) format.")
 	labelConditions = flag.Bool("label_conditions", false, "Whether to label target nodes with conditions.")
-	stripPrefix     = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
+	stripPrefix     = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoLicenses    = fmt.Errorf("No licenses found")
@@ -40,7 +40,20 @@ type context struct {
 	conditions      []compliance.LicenseCondition
 	graphViz        bool
 	labelConditions bool
-	stripPrefix     string
+	stripPrefix     []string
+}
+
+func (ctx context) strip(installPath string) string {
+	for _, prefix := range ctx.stripPrefix {
+		if strings.HasPrefix(installPath, prefix) {
+			p := strings.TrimPrefix(installPath, prefix)
+			if 0 == len(p) {
+				continue
+			}
+			return p
+		}
+	}
+	return installPath
 }
 
 func init() {
@@ -140,7 +153,7 @@ func dumpResolutions(ctx *context, stdout, stderr io.Writer, files ...string) (*
 
 	// targetOut calculates the string to output for `target` adding `sep`-separated conditions as needed.
 	targetOut := func(target *compliance.TargetNode, sep string) string {
-		tOut := strings.TrimPrefix(target.Name(), ctx.stripPrefix)
+		tOut := ctx.strip(target.Name())
 		if ctx.labelConditions {
 			conditions := target.LicenseConditions().Names()
 			if len(conditions) > 0 {

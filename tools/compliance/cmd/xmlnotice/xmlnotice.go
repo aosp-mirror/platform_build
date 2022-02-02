@@ -34,7 +34,8 @@ import (
 var (
 	outputFile  = flag.String("o", "-", "Where to write the NOTICE xml or xml.gz file. (default stdout)")
 	depsFile    = flag.String("d", "", "Where to write the deps file")
-	stripPrefix = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
+	stripPrefix = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
+	title       = flag.String("title", "", "The title of the notice file.")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoLicenses    = fmt.Errorf("No licenses found")
@@ -44,8 +45,25 @@ type context struct {
 	stdout      io.Writer
 	stderr      io.Writer
 	rootFS      fs.FS
-	stripPrefix string
+	stripPrefix []string
+	title       string
 	deps        *[]string
+}
+
+func (ctx context) strip(installPath string) string {
+	for _, prefix := range ctx.stripPrefix {
+		if strings.HasPrefix(installPath, prefix) {
+			p := strings.TrimPrefix(installPath, prefix)
+			if 0 == len(p) {
+				p = ctx.title
+			}
+			if 0 == len(p) {
+				continue
+			}
+			return p
+		}
+	}
+	return installPath
 }
 
 func init() {
@@ -60,6 +78,19 @@ Options:
 		flag.PrintDefaults()
 	}
 }
+
+// newMultiString creates a flag that allows multiple values in an array.
+func newMultiString(name, usage string) *multiString {
+	var f multiString
+	flag.Var(&f, name, usage)
+	return &f
+}
+
+// multiString implements the flag `Value` interface for multiple strings.
+type multiString []string
+
+func (ms *multiString) String() string     { return strings.Join(*ms, ", ") }
+func (ms *multiString) Set(s string) error { *ms = append(*ms, s); return nil }
 
 func main() {
 	flag.Parse()
@@ -106,7 +137,7 @@ func main() {
 
 	var deps []string
 
-	ctx := &context{ofile, os.Stderr, os.DirFS("."), *stripPrefix, &deps}
+	ctx := &context{ofile, os.Stderr, os.DirFS("."), *stripPrefix, *title, &deps}
 
 	err := xmlNotice(ctx, flag.Args()...)
 	if err != nil {
@@ -165,15 +196,7 @@ func xmlNotice(ctx *context, files ...string) error {
 	fmt.Fprintln(ctx.stdout, "<licenses>")
 
 	for installPath := range ni.InstallPaths() {
-		var p string
-		if 0 < len(ctx.stripPrefix) && strings.HasPrefix(installPath, ctx.stripPrefix) {
-			p = installPath[len(ctx.stripPrefix):]
-			if 0 == len(p) {
-				p = "root"
-			}
-		} else {
-			p = installPath
-		}
+		p := ctx.strip(installPath)
 		for _, h := range ni.InstallHashes(installPath) {
 			for _, lib := range ni.InstallHashLibs(installPath, h) {
 				fmt.Fprintf(ctx.stdout, "<file-name contentId=\"%s\" lib=\"", h.String())
