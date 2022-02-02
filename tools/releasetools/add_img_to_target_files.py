@@ -275,6 +275,21 @@ def AddOdmDlkm(output_zip):
       block_list=block_list)
   return img.name
 
+def AddSystemDlkm(output_zip):
+  """Turn the contents of SystemDlkm into an system_dlkm image and store it in output_zip."""
+
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system_dlkm.img")
+  if os.path.exists(img.name):
+    logger.info("system_dlkm.img already exists; no need to rebuild...")
+    return img.name
+
+  block_list = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "system_dlkm.map")
+  CreateImage(
+      OPTIONS.input_tmp, OPTIONS.info_dict, "system_dlkm", img,
+      block_list=block_list)
+  return img.name
+
 
 def AddDtbo(output_zip):
   """Adds the DTBO image.
@@ -761,14 +776,14 @@ def AddImagesToTargetFiles(filename):
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
   has_init_boot = OPTIONS.info_dict.get("init_boot") == "true"
   has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
-  has_system_dlkm = OPTIONS.info_dict.get("system_dlkm") == "true"
 
-  # {vendor,odm,product,system_ext,vendor_dlkm,odm_dlkm, system, system_other}.img
+  # {vendor,odm,product,system_ext,vendor_dlkm,odm_dlkm, system_dlkm, system, system_other}.img
   # can be built from source, or  dropped into target_files.zip as a prebuilt blob.
   has_vendor = HasPartition("vendor")
   has_odm = HasPartition("odm")
   has_vendor_dlkm = HasPartition("vendor_dlkm")
   has_odm_dlkm = HasPartition("odm_dlkm")
+  has_system_dlkm = HasPartition("system_dlkm")
   has_product = HasPartition("product")
   has_system_ext = HasPartition("system_ext")
   has_system = HasPartition("system")
@@ -832,19 +847,6 @@ def AddImagesToTargetFiles(filename):
         if output_zip:
           init_boot_image.AddToZip(output_zip)
 
-  if has_system_dlkm:
-    banner("system_dlkm")
-    system_dlkm_image = common.GetSystemDlkmImage(
-        "IMAGES/system_dlkm.img", "system_dlkm.img", OPTIONS.input_tmp, "SYSTEM_DLKM")
-    if system_dlkm_image:
-      partitions['system_dlkm'] = os.path.join(OPTIONS.input_tmp, "IMAGES", "system_dlkm.img")
-      if not os.path.exists(partitions['system_dlkm']):
-        system_dlkm_image.WriteToDir(OPTIONS.input_tmp)
-        if output_zip:
-          system_dlkm_image.AddToZip(output_zip)
-    else:
-      logger.error("Couldn't locate system_dlkm.img; skipping...")
-
   if has_vendor_boot:
     banner("vendor_boot")
     vendor_boot_image = common.GetVendorBootImage(
@@ -897,6 +899,7 @@ def AddImagesToTargetFiles(filename):
       ("odm", has_odm, AddOdm, []),
       ("vendor_dlkm", has_vendor_dlkm, AddVendorDlkm, []),
       ("odm_dlkm", has_odm_dlkm, AddOdmDlkm, []),
+      ("system_dlkm", has_system_dlkm, AddSystemDlkm, []),
       ("system_other", has_system_other, AddSystemOther, []),
   )
   for call in add_partition_calls:
