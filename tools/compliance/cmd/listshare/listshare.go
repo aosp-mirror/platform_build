@@ -15,7 +15,6 @@
 package main
 
 import (
-	"compliance"
 	"flag"
 	"fmt"
 	"io"
@@ -23,6 +22,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"android/soong/tools/compliance"
 )
 
 func init() {
@@ -41,7 +42,7 @@ restricted (e.g. GPL) or reciprocal (e.g. MPL).
 
 var (
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
-	failNoLicenses = fmt.Errorf("No licenses found")
+	failNoLicenses    = fmt.Errorf("No licenses found")
 )
 
 func main() {
