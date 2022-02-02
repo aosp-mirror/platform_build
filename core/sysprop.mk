@@ -464,6 +464,20 @@ $(eval $(call build-properties,\
     $(empty),\
     $(empty)))
 
+# ----------------------------------------------------------------
+# system_dlkm/build.prop
+#
+
+INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_DLKM)/etc/build.prop
+$(eval $(call build-properties,\
+    system_dlkm,\
+    $(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET),\
+    $(empty),\
+    $(empty),\
+    $(empty),\
+    $(empty),\
+    $(empty)))
+
 # -----------------------------------------------------------------
 # system_ext/etc/build.prop
 #
