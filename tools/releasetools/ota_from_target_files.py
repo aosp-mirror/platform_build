@@ -316,15 +316,15 @@ AB_PARTITIONS = 'META/ab_partitions.txt'
 # Files to be unzipped for target diffing purpose.
 TARGET_DIFFING_UNZIP_PATTERN = ['BOOT', 'RECOVERY', 'SYSTEM/*', 'VENDOR/*',
                                 'PRODUCT/*', 'SYSTEM_EXT/*', 'ODM/*',
-                                'VENDOR_DLKM/*', 'ODM_DLKM/*']
+                                'VENDOR_DLKM/*', 'ODM_DLKM/*', 'SYSTEM_DLKM/*']
 RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 
 # Images to be excluded from secondary payload. We essentially only keep
 # 'system_other' and bootloader partitions.
 SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
     'boot', 'dtbo', 'modem', 'odm', 'odm_dlkm', 'product', 'radio', 'recovery',
-    'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor',
-    'vendor_boot']
+    'system_dlkm', 'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor',
+    'vendor', 'vendor_boot']
 
 
 class PayloadSigner(object):

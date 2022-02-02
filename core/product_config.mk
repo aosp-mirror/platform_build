@@ -566,6 +566,7 @@ $(foreach image, \
     ODM \
     VENDOR_DLKM \
     ODM_DLKM \
+    SYSTEM_DLKM \
     CACHE \
     RAMDISK \
     USERDATA \

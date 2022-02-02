@@ -206,6 +206,7 @@ AVB_FOOTER_ARGS_BY_PARTITION = {
     'product': 'avb_product_add_hashtree_footer_args',
     'recovery': 'avb_recovery_add_hash_footer_args',
     'system': 'avb_system_add_hashtree_footer_args',
+    'system_dlkm': "avb_system_dlkm_add_hashtree_footer_args",
     'system_ext': 'avb_system_ext_add_hashtree_footer_args',
     'system_other': 'avb_system_other_add_hashtree_footer_args',
     'odm': 'avb_odm_add_hashtree_footer_args',

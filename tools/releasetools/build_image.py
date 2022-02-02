@@ -651,6 +651,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "oem",
       "product",
       "system",
+      "system_dlkm",
       "system_ext",
       "system_other",
       "vendor",
@@ -773,6 +774,8 @@ def GlobalDictFromImageProp(image_prop, mount_point):
     copy_prop("partition_size", "vendor_dlkm_size")
   elif mount_point == "odm_dlkm":
     copy_prop("partition_size", "odm_dlkm_size")
+  elif mount_point == "system_dlkm":
+    copy_prop("partition_size", "system_dlkm_size")
   elif mount_point == "product":
     copy_prop("partition_size", "product_size")
   elif mount_point == "system_ext":
@@ -816,6 +819,8 @@ def main(argv):
       mount_point = "vendor_dlkm"
     elif image_filename == "odm_dlkm.img":
       mount_point = "odm_dlkm"
+    elif image_filename == "system_dlkm.img":
+      mount_point = "system_dlkm"
     elif image_filename == "oem.img":
       mount_point = "oem"
     elif image_filename == "product.img":
