@@ -16,11 +16,23 @@ package main
 
 import (
 	"bytes"
-	"compliance"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance"
 )
+
+func TestMain(m *testing.M) {
+	// Change into the parent directory before running the tests
+	// so they can find the testdata directory.
+	if err := os.Chdir(".."); err != nil {
+		fmt.Printf("failed to change to testdata directory: %s\n", err)
+		os.Exit(1)
+	}
+	os.Exit(m.Run())
+}
 
 func Test_plaintext(t *testing.T) {
 	tests := []struct {
@@ -97,7 +109,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_share",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: compliance.ImpliesShared.AsList(),
+				conditions:  compliance.ImpliesShared.AsList(),
 				stripPrefix: "testdata/firstparty/",
 			},
 			expectedOut: []string{},
@@ -107,7 +119,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_private",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: compliance.ImpliesPrivate.AsList(),
+				conditions:  compliance.ImpliesPrivate.AsList(),
 				stripPrefix: "testdata/firstparty/",
 			},
 			expectedOut: []string{},
@@ -117,7 +129,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_share_private",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions:  append(compliance.ImpliesPrivate.AsList(),compliance.ImpliesShared.AsList()...),
+				conditions:  append(compliance.ImpliesPrivate.AsList(), compliance.ImpliesShared.AsList()...),
 				stripPrefix: "testdata/firstparty/",
 			},
 			expectedOut: []string{},
@@ -255,7 +267,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_share",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: compliance.ImpliesShared.AsList(),
+				conditions:  compliance.ImpliesShared.AsList(),
 				stripPrefix: "testdata/notice/",
 			},
 			expectedOut: []string{},
@@ -265,7 +277,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_private",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: compliance.ImpliesPrivate.AsList(),
+				conditions:  compliance.ImpliesPrivate.AsList(),
 				stripPrefix: "testdata/notice/",
 			},
 			expectedOut: []string{},
@@ -275,7 +287,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_share_private",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions:  append(compliance.ImpliesShared.AsList(),compliance.ImpliesPrivate.AsList()...),
+				conditions:  append(compliance.ImpliesShared.AsList(), compliance.ImpliesPrivate.AsList()...),
 				stripPrefix: "testdata/notice/",
 			},
 			expectedOut: []string{},
@@ -408,7 +420,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_share",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: compliance.ImpliesShared.AsList(),
+				conditions:  compliance.ImpliesShared.AsList(),
 				stripPrefix: "testdata/reciprocal/",
 			},
 			expectedOut: []string{
@@ -424,7 +436,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_private",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: compliance.ImpliesPrivate.AsList(),
+				conditions:  compliance.ImpliesPrivate.AsList(),
 				stripPrefix: "testdata/reciprocal/",
 			},
 			expectedOut: []string{},
@@ -434,7 +446,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_share_private",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: append(compliance.ImpliesShared.AsList(),compliance.ImpliesPrivate.AsList()...),
+				conditions:  append(compliance.ImpliesShared.AsList(), compliance.ImpliesPrivate.AsList()...),
 				stripPrefix: "testdata/reciprocal/",
 			},
 			expectedOut: []string{
@@ -573,7 +585,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_share",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: compliance.ImpliesShared.AsList(),
+				conditions:  compliance.ImpliesShared.AsList(),
 				stripPrefix: "testdata/restricted/",
 			},
 			expectedOut: []string{
@@ -597,7 +609,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_private",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: compliance.ImpliesPrivate.AsList(),
+				conditions:  compliance.ImpliesPrivate.AsList(),
 				stripPrefix: "testdata/restricted/",
 			},
 			expectedOut: []string{},
@@ -607,7 +619,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_share_private",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions:  append(compliance.ImpliesShared.AsList(),compliance.ImpliesPrivate.AsList()...),
+				conditions:  append(compliance.ImpliesShared.AsList(), compliance.ImpliesPrivate.AsList()...),
 				stripPrefix: "testdata/restricted/",
 			},
 			expectedOut: []string{
@@ -754,7 +766,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_share",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: compliance.ImpliesShared.AsList(),
+				conditions:  compliance.ImpliesShared.AsList(),
 				stripPrefix: "testdata/proprietary/",
 			},
 			expectedOut: []string{
@@ -771,7 +783,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_private",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions: compliance.ImpliesPrivate.AsList(),
+				conditions:  compliance.ImpliesPrivate.AsList(),
 				stripPrefix: "testdata/proprietary/",
 			},
 			expectedOut: []string{
@@ -789,7 +801,7 @@ func Test_plaintext(t *testing.T) {
 			name:      "apex_trimmed_share_private",
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
-				conditions:  append(compliance.ImpliesShared.AsList(),compliance.ImpliesPrivate.AsList()...),
+				conditions:  append(compliance.ImpliesShared.AsList(), compliance.ImpliesPrivate.AsList()...),
 				stripPrefix: "testdata/proprietary/",
 			},
 			expectedOut: []string{
@@ -907,7 +919,7 @@ func Test_plaintext(t *testing.T) {
 				for len(outList) > startLine && len(expectedList) > startLine && outList[startLine] == expectedList[startLine] {
 					startLine++
 				}
-				t.Errorf("listshare: gotStdout = %v, want %v, somewhere near line %d Stdout = %v, want %v",
+				t.Errorf("dumpresoliutions: gotStdout = %v, want %v, somewhere near line %d Stdout = %v, want %v",
 					out, expected, startLine+1, outList[startLine], expectedList[startLine])
 			}
 		})
@@ -930,7 +942,7 @@ type targetMatcher struct {
 }
 
 // newTestCondition constructs a test license condition in the license graph.
-func newTestCondition(lg *compliance.LicenseGraph, conditionName... string) compliance.LicenseConditionSet {
+func newTestCondition(lg *compliance.LicenseGraph, conditionName ...string) compliance.LicenseConditionSet {
 	cs := compliance.NewLicenseConditionSet()
 	for _, name := range conditionName {
 		cs = cs.Plus(compliance.RecognizedConditionNames[name])
@@ -3305,7 +3317,7 @@ func Test_graphviz(t *testing.T) {
 			outList := strings.Split(stdout.String(), "\n")
 			outLine := 0
 			if outList[outLine] != "strict digraph {" {
-				t.Errorf("dumpresolutions: got 1st line %v, want strict digraph {")
+				t.Errorf("dumpresolutions: got 1st line %v, want strict digraph {", outList[outLine])
 			}
 			outLine++
 			if strings.HasPrefix(strings.TrimLeft(outList[outLine], " \t"), "rankdir") {
