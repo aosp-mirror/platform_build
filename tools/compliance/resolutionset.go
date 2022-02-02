@@ -86,6 +86,22 @@ func (rs ResolutionSet) Resolutions(attachesTo *TargetNode) ResolutionList {
 	return result
 }
 
+// AllActions returns the set of actions required to resolve the set omitting
+// the attachment.
+func (rs ResolutionSet) AllActions() ActionSet {
+	result := make(ActionSet)
+	for _, as := range rs {
+		for actsOn, cs := range as {
+			if _, ok := result[actsOn]; ok {
+				result[actsOn] = cs.Union(result[actsOn])
+			} else {
+				result[actsOn] = cs
+			}
+		}
+	}
+	return result
+}
+
 // String returns a human-readable string representation of the set.
 func (rs ResolutionSet) String() string {
 	var sb strings.Builder
