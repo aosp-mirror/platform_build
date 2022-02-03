@@ -1209,7 +1209,8 @@ define resolve-product-relative-paths
         $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),\
           $(subst $(_vendor_dlkm_path_placeholder),$(TARGET_COPY_OUT_VENDOR_DLKM),\
             $(subst $(_odm_dlkm_path_placeholder),$(TARGET_COPY_OUT_ODM_DLKM),\
-              $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))))
+              $(subst $(_system_dlkm_path_placeholder),$(TARGET_COPY_OUT_SYSTEM_DLKM),\
+                $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2))))))))))
 endef
 
 # Returns modules included automatically as a result of certain BoardConfig
@@ -1594,6 +1595,9 @@ vendor_dlkmimage: $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
 .PHONY: odm_dlkmimage
 odm_dlkmimage: $(INSTALLED_ODM_DLKMIMAGE_TARGET)
 
+.PHONY: system_dlkmimage
+system_dlkmimage: $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
+
 .PHONY: systemotherimage
 systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 
@@ -1605,9 +1609,6 @@ bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
 .PHONY: initbootimage
 initbootimage: $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
-
-.PHONY: system_dlkm_image
-system_dlkm_image: $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET)
 
 ifeq (true,$(PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST))
 $(call dist-for-goals, bootimage, $(INSTALLED_BOOTIMAGE_TARGET))
@@ -1633,7 +1634,6 @@ vbmetavendorimage: $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
 .PHONY: droidcore-unbundled
 droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_SYSTEMIMAGE_TARGET) \
-    $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_BOOTIMAGE_TARGET) \
     $(INSTALLED_INIT_BOOT_IMAGE_TARGET) \
@@ -1657,6 +1657,7 @@ droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_ODMIMAGE_TARGET) \
     $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) \
     $(INSTALLED_ODM_DLKMIMAGE_TARGET) \
+    $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET) \
     $(INSTALLED_SUPERIMAGE_EMPTY_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
     $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
@@ -1672,6 +1673,8 @@ droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_VENDOR_DLKM) \
     $(INSTALLED_FILES_FILE_ODM_DLKM) \
     $(INSTALLED_FILES_JSON_ODM_DLKM) \
+    $(INSTALLED_FILES_FILE_SYSTEM_DLKM) \
+    $(INSTALLED_FILES_JSON_SYSTEM_DLKM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
     $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
@@ -1822,6 +1825,8 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(INSTALLED_FILES_JSON_VENDOR_DLKM) \
     $(INSTALLED_FILES_FILE_ODM_DLKM) \
     $(INSTALLED_FILES_JSON_ODM_DLKM) \
+    $(INSTALLED_FILES_FILE_SYSTEM_DLKM) \
+    $(INSTALLED_FILES_JSON_SYSTEM_DLKM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
     $(INSTALLED_FILES_FILE_SYSTEM_EXT) \

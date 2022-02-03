@@ -16,6 +16,7 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"flag"
 	"fmt"
 	"html"
@@ -55,7 +56,8 @@ func init() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage: %s {options} file.meta_lic {file.meta_lic...}
 
-Outputs an html NOTICE.html file.
+Outputs an html NOTICE.html or gzipped NOTICE.html.gz file if the -o filename
+ends with ".gz".
 
 Options:
 `, filepath.Base(os.Args[0]))
@@ -94,9 +96,16 @@ func main() {
 	}
 
 	var ofile io.Writer
+	var closer io.Closer
 	ofile = os.Stdout
+	var obuf *bytes.Buffer
 	if *outputFile != "-" {
-		ofile = &bytes.Buffer{}
+		obuf = &bytes.Buffer{}
+		ofile = obuf
+	}
+	if strings.HasSuffix(*outputFile, ".gz") {
+		ofile, _ = gzip.NewWriterLevel(obuf, gzip.BestCompression)
+		closer = ofile.(io.Closer)
 	}
 
 	var deps []string
@@ -111,8 +120,12 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
 		os.Exit(1)
 	}
+	if closer != nil {
+		closer.Close()
+	}
+
 	if *outputFile != "-" {
-		err := os.WriteFile(*outputFile, ofile.(*bytes.Buffer).Bytes(), 0666)
+		err := os.WriteFile(*outputFile, obuf.Bytes(), 0666)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "could not write output to %q: %s\n", *outputFile, err)
 			os.Exit(1)
