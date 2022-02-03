@@ -255,6 +255,7 @@ SINGLE_BUILD_PARTITIONS = (
     'VENDOR/',
     'VENDOR_DLKM/',
     'ODM_DLKM/',
+    'SYSTEM_DLKM/',
 )
 
 
