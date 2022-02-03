@@ -52,7 +52,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				sources:     []string{"testdata/firstparty/bin/bin1.meta_lic"},
-				stripPrefix: "testdata/firstparty/",
+				stripPrefix: []string{"testdata/firstparty/"},
 			},
 			expectedOut: []string{},
 		},
@@ -92,7 +92,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				sources:     []string{"testdata/notice/bin/bin1.meta_lic"},
-				stripPrefix: "testdata/notice/",
+				stripPrefix: []string{"testdata/notice/"},
 			},
 			expectedOut: []string{},
 		},
@@ -132,7 +132,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				sources:     []string{"testdata/reciprocal/bin/bin1.meta_lic"},
-				stripPrefix: "testdata/reciprocal/",
+				stripPrefix: []string{"testdata/reciprocal/"},
 			},
 			expectedOut: []string{},
 		},
@@ -175,7 +175,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				sources:     []string{"testdata/restricted/bin/bin1.meta_lic"},
-				stripPrefix: "testdata/restricted/",
+				stripPrefix: []string{"testdata/restricted/"},
 			},
 			expectedOut: []string{"lib/liba.so.meta_lic restricted_allows_dynamic_linking"},
 		},
@@ -185,7 +185,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				sources:     []string{"testdata/restricted/bin/bin2.meta_lic"},
-				stripPrefix: "testdata/restricted/",
+				stripPrefix: []string{"testdata/restricted/"},
 			},
 			expectedOut: []string{"lib/libb.so.meta_lic restricted"},
 		},
@@ -228,7 +228,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				sources:     []string{"testdata/proprietary/bin/bin1.meta_lic"},
-				stripPrefix: "testdata/proprietary/",
+				stripPrefix: []string{"testdata/proprietary/"},
 			},
 			expectedOut: []string{},
 		},
@@ -238,7 +238,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				sources:     []string{"testdata/proprietary/bin/bin2.meta_lic"},
-				stripPrefix: "testdata/proprietary/",
+				stripPrefix: []string{"testdata/proprietary/"},
 			},
 			expectedOut: []string{"lib/libb.so.meta_lic restricted"},
 		},
