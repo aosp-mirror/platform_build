@@ -282,7 +282,7 @@ func Test(t *testing.T) {
 				rootFiles = append(rootFiles, "testdata/"+tt.condition+"/"+r)
 			}
 
-			ctx := context{stdout, stderr, os.DirFS("."), tt.stripPrefix}
+			ctx := context{stdout, stderr, os.DirFS("."), []string{tt.stripPrefix}}
 
 			err := billOfMaterials(&ctx, rootFiles...)
 			if err != nil {

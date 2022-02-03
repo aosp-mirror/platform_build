@@ -651,7 +651,7 @@ func Test(t *testing.T) {
 
 			var deps []string
 
-			ctx := context{stdout, stderr, os.DirFS("."), tt.includeTOC, tt.stripPrefix, tt.title, &deps}
+			ctx := context{stdout, stderr, os.DirFS("."), tt.includeTOC, []string{tt.stripPrefix}, tt.title, &deps}
 
 			err := htmlNotice(&ctx, rootFiles...)
 			if err != nil {
