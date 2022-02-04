@@ -275,6 +275,21 @@ def AddOdmDlkm(output_zip):
       block_list=block_list)
   return img.name
 
+def AddSystemDlkm(output_zip):
+  """Turn the contents of SystemDlkm into an system_dlkm image and store it in output_zip."""
+
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system_dlkm.img")
+  if os.path.exists(img.name):
+    logger.info("system_dlkm.img already exists; no need to rebuild...")
+    return img.name
+
+  block_list = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "system_dlkm.map")
+  CreateImage(
+      OPTIONS.input_tmp, OPTIONS.info_dict, "system_dlkm", img,
+      block_list=block_list)
+  return img.name
+
 
 def AddDtbo(output_zip):
   """Adds the DTBO image.
@@ -759,14 +774,16 @@ def AddImagesToTargetFiles(filename):
 
   has_recovery = OPTIONS.info_dict.get("no_recovery") != "true"
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
+  has_init_boot = OPTIONS.info_dict.get("init_boot") == "true"
   has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
 
-  # {vendor,odm,product,system_ext,vendor_dlkm,odm_dlkm, system, system_other}.img
+  # {vendor,odm,product,system_ext,vendor_dlkm,odm_dlkm, system_dlkm, system, system_other}.img
   # can be built from source, or  dropped into target_files.zip as a prebuilt blob.
   has_vendor = HasPartition("vendor")
   has_odm = HasPartition("odm")
   has_vendor_dlkm = HasPartition("vendor_dlkm")
   has_odm_dlkm = HasPartition("odm_dlkm")
+  has_system_dlkm = HasPartition("system_dlkm")
   has_product = HasPartition("product")
   has_system_ext = HasPartition("system_ext")
   has_system = HasPartition("system")
@@ -818,6 +835,17 @@ def AddImagesToTargetFiles(filename):
           boot_image.WriteToDir(OPTIONS.input_tmp)
           if output_zip:
             boot_image.AddToZip(output_zip)
+
+  if has_init_boot:
+    banner("init_boot")
+    init_boot_image = common.GetBootableImage(
+        "IMAGES/init_boot.img", "init_boot.img", OPTIONS.input_tmp, "INIT_BOOT")
+    if init_boot_image:
+      partitions['init_boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES", "init_boot.img")
+      if not os.path.exists(partitions['init_boot']):
+        init_boot_image.WriteToDir(OPTIONS.input_tmp)
+        if output_zip:
+          init_boot_image.AddToZip(output_zip)
 
   if has_vendor_boot:
     banner("vendor_boot")
@@ -871,6 +899,7 @@ def AddImagesToTargetFiles(filename):
       ("odm", has_odm, AddOdm, []),
       ("vendor_dlkm", has_vendor_dlkm, AddVendorDlkm, []),
       ("odm_dlkm", has_odm_dlkm, AddOdmDlkm, []),
+      ("system_dlkm", has_system_dlkm, AddSystemDlkm, []),
       ("system_other", has_system_other, AddSystemOther, []),
   )
   for call in add_partition_calls:

@@ -42,13 +42,14 @@ ifeq (,$(wildcard $(vendor_capability_header)))
 vendor_capability_header := $(system_capability_header)
 endif
 
-# List of supported vendor, oem, odm, vendor_dlkm and odm_dlkm Partitions
+# List of supported vendor, oem, odm, vendor_dlkm, odm_dlkm, and system_dlkm Partitions
 fs_config_generate_extra_partition_list := $(strip \
   $(if $(BOARD_USES_VENDORIMAGE)$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),vendor) \
   $(if $(BOARD_USES_OEMIMAGE)$(BOARD_OEMIMAGE_FILE_SYSTEM_TYPE),oem) \
   $(if $(BOARD_USES_ODMIMAGE)$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),odm) \
   $(if $(BOARD_USES_VENDOR_DLKMIMAGE)$(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE),vendor_dlkm) \
   $(if $(BOARD_USES_ODM_DLKMIMAGE)$(BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE),odm_dlkm) \
+  $(if $(BOARD_USES_SYSTEM_DLKMIMAGE)$(BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE),system_dlkm) \
 )
 
 ##################################
@@ -57,8 +58,9 @@ fs_config_generate_extra_partition_list := $(strip \
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := \
   fs_config_dirs_system \
   fs_config_dirs_system_ext \
@@ -72,8 +74,9 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := \
   fs_config_files_system \
   fs_config_files_system_ext \
@@ -88,8 +91,9 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs_system_ext
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),_fs_config_dirs_system_ext)
 include $(BUILD_PHONY_PACKAGE)
 
@@ -100,8 +104,9 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files_system_ext
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),_fs_config_files_system_ext)
 include $(BUILD_PHONY_PACKAGE)
 
@@ -112,8 +117,9 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs_product
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),_fs_config_dirs_product)
 include $(BUILD_PHONY_PACKAGE)
 
@@ -124,8 +130,9 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files_product
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),_fs_config_files_product)
 include $(BUILD_PHONY_PACKAGE)
 
@@ -136,8 +143,9 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs_nonsystem
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),_fs_config_dirs_$(t))
 include $(BUILD_PHONY_PACKAGE)
 
@@ -148,8 +156,9 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files_nonsystem
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),_fs_config_files_$(t))
 include $(BUILD_PHONY_PACKAGE)
 
@@ -160,8 +169,9 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs_system
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -187,8 +197,9 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files_system
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -215,8 +226,9 @@ ifneq ($(filter vendor,$(fs_config_generate_extra_partition_list)),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_vendor
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
@@ -241,8 +253,9 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_vendor
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
@@ -270,8 +283,9 @@ ifneq ($(filter oem,$(fs_config_generate_extra_partition_list)),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_oem
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_OEM)/etc
@@ -296,8 +310,9 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_oem
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_OEM)/etc
@@ -325,8 +340,9 @@ ifneq ($(filter odm,$(fs_config_generate_extra_partition_list)),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_odm
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
@@ -351,8 +367,9 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_odm
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
@@ -380,8 +397,9 @@ ifneq ($(filter vendor_dlkm,$(fs_config_generate_extra_partition_list)),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_vendor_dlkm
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_DLKM)/etc
@@ -406,8 +424,9 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_vendor_dlkm
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_DLKM)/etc
@@ -435,8 +454,9 @@ ifneq ($(filter odm_dlkm,$(fs_config_generate_extra_partition_list)),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_odm_dlkm
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM_DLKM)/etc
@@ -461,8 +481,9 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_odm_dlkm
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM_DLKM)/etc
@@ -482,6 +503,63 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 
 endif
 
+ifneq ($(filter system_dlkm,$(fs_config_generate_extra_partition_list)),)
+##################################
+# Generate the system_dlkm/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_nonsystem to PRODUCT_PACKAGES
+# in the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := _fs_config_dirs_system_dlkm
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
+LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_DLKM)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
+	@mkdir -p $(dir $@)
+	$< fsconfig \
+	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
+	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
+	   --partition system_dlkm \
+	   --dirs \
+	   --out_file $@ \
+	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
+
+##################################
+# Generate the system_dlkm/etc/fs_config_files binary file for the target
+# Add fs_config_files or fs_config_files_nonsystem to PRODUCT_PACKAGES
+# in the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := _fs_config_files_system_dlkm
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_files
+LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_DLKM)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
+	@mkdir -p $(dir $@)
+	$< fsconfig \
+	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
+	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
+	   --partition system_dlkm \
+	   --files \
+	   --out_file $@ \
+	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
+
+endif
+
 ifneq ($(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),)
 ##################################
 # Generate the product/etc/fs_config_dirs binary file for the target
@@ -490,8 +568,9 @@ ifneq ($(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_product
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT)/etc
@@ -516,8 +595,9 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_product
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT)/etc
@@ -544,8 +624,9 @@ ifneq ($(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_dirs_system_ext
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_EXT)/etc
@@ -570,8 +651,9 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := _fs_config_files_system_ext
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_EXT)/etc

@@ -183,6 +183,7 @@ _product_list_vars += PRODUCT_COPY_FILES
 # signing tools can substitute them for the test key embedded by
 # default.
 _product_list_vars += PRODUCT_OTA_PUBLIC_KEYS
+_product_list_vars += PRODUCT_EXTRA_OTA_KEYS
 _product_list_vars += PRODUCT_EXTRA_RECOVERY_KEYS
 
 # Should we use the default resources or add any product specific overlays
@@ -267,6 +268,7 @@ _product_single_value_vars += PRODUCT_SYSTEM_EXT_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_ODM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_VENDOR_DLKM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_ODM_DLKM_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_SYSTEM_DLKM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_SYSTEM_SERVER_DEBUG_INFO
 _product_single_value_vars += PRODUCT_OTHER_JAVA_DEBUG_INFO
 
@@ -297,6 +299,7 @@ _product_single_value_vars += PRODUCT_SYSTEM_EXT_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_ODM_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_VENDOR_DLKM_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_ODM_DLKM_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_SYSTEM_DLKM_BASE_FS_PATH
 
 # The first API level this product shipped with
 _product_single_value_vars += PRODUCT_SHIPPING_API_LEVEL
@@ -390,11 +393,13 @@ _product_single_value_vars += PRODUCT_BUILD_SYSTEM_EXT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_ODM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_DLKM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_ODM_DLKM_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_SYSTEM_DLKM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_CACHE_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_USERDATA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RECOVERY_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_INIT_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_DEBUG_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE
@@ -443,7 +448,7 @@ _product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
 
 # Install a copy of the debug policy to the system_ext partition, and allow
 # init-second-stage to load debug policy from system_ext.
-# This option is only meant to be set by GSI products.
+# This option is only meant to be set by compliance GSI targets.
 _product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 
 # If set, metadata files for the following artifacts will be generated.
