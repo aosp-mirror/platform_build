@@ -14,41 +14,17 @@
 
 package {
     // See: http://go/android-license-faq
-    // A large-scale-change added 'default_applicable_licenses' to import
-    // all of the 'license_kinds' from "build_make_license"
-    // to get the below license kinds:
-    //   SPDX-license-identifier-Apache-2.0
-    //   SPDX-license-identifier-BSD
-    //   SPDX-license-identifier-CC-BY
-    //   SPDX-license-identifier-GPL
-    //   SPDX-license-identifier-MIT
-    default_applicable_licenses: ["build_make_license"],
+    default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
 python_binary_host {
   name: "generate-self-extracting-archive",
   srcs: ["generate-self-extracting-archive.py"],
-  version: {
-    py2: {
-      enabled: true,
-    },
-    py3: {
-      enabled: false,
-    },
-  },
 }
 
 python_binary_host {
   name: "post_process_props",
   srcs: ["post_process_props.py"],
-  version: {
-    py2: {
-      enabled: false,
-    },
-    py3: {
-      enabled: true,
-    },
-  },
 }
 
 python_test_host {
@@ -58,14 +34,6 @@ python_test_host {
     "post_process_props.py",
     "test_post_process_props.py",
   ],
-  version: {
-    py2: {
-      enabled: false,
-    },
-    py3: {
-      enabled: true,
-    },
-  },
   test_config: "post_process_props_unittest.xml",
   test_suites: ["general-tests"],
 }
@@ -73,14 +41,6 @@ python_test_host {
 python_binary_host {
   name: "extract_kernel",
   srcs: ["extract_kernel.py"],
-  version: {
-    py2: {
-      enabled: false,
-    },
-    py3: {
-      enabled: true,
-    },
-  },
 }
 
 genrule_defaults {

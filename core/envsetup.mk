@@ -259,6 +259,7 @@ HOST_PREBUILT_TAG := $(BUILD_OS)-$(HOST_PREBUILT_ARCH)
 # TARGET_COPY_OUT_* are all relative to the staging directory, ie PRODUCT_OUT.
 # Define them here so they can be used in product config files.
 TARGET_COPY_OUT_SYSTEM := system
+TARGET_COPY_OUT_SYSTEM_DLKM := system_dlkm
 TARGET_COPY_OUT_SYSTEM_OTHER := system_other
 TARGET_COPY_OUT_DATA := data
 TARGET_COPY_OUT_ASAN := $(TARGET_COPY_OUT_DATA)/asan
@@ -278,6 +279,7 @@ _system_ext_path_placeholder := ||SYSTEM_EXT-PATH-PH||
 _odm_path_placeholder := ||ODM-PATH-PH||
 _vendor_dlkm_path_placeholder := ||VENDOR_DLKM-PATH-PH||
 _odm_dlkm_path_placeholder := ||ODM_DLKM-PATH-PH||
+_system_dlkm_path_placeholder := ||SYSTEM_DLKM-PATH-PH||
 TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
 TARGET_COPY_OUT_VENDOR_RAMDISK := vendor_ramdisk
 TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
@@ -288,6 +290,7 @@ TARGET_COPY_OUT_SYSTEM_EXT := $(_system_ext_path_placeholder)
 TARGET_COPY_OUT_ODM := $(_odm_path_placeholder)
 TARGET_COPY_OUT_VENDOR_DLKM := $(_vendor_dlkm_path_placeholder)
 TARGET_COPY_OUT_ODM_DLKM := $(_odm_dlkm_path_placeholder)
+TARGET_COPY_OUT_SYSTEM_DLKM := $(_system_dlkm_path_placeholder)
 
 # Returns the non-sanitized version of the path provided in $1.
 define get_non_asan_path
@@ -317,11 +320,17 @@ endif
 # Dumps all variables that match [A-Z][A-Z0-9_]* (with a few exceptions)
 # to the file at $(1). It is used to print only the variables that are
 # likely to be relevant to the product or board configuration.
+# Soong config variables are dumped as $(call soong_config_set) calls
+# instead of the raw variable values, because mk2rbc can't read the
+# raw ones.
 define dump-variables-rbc
 $(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(.VARIABLES)))\
 $(file >$(1),\
-$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt | grep -vhE "^(SOONG_.*|LOCAL_PATH|TOPDIR|PRODUCT_COPY_OUT_.*)$$"),\
-$(v) := $(strip $($(v)))$(newline)))
+$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt | grep -vhE "^(SOONG_.*|LOCAL_PATH|TOPDIR|PRODUCT_COPY_OUT_.*|TRACE_BEGIN_SOONG)$$"),\
+$(v) := $(strip $($(v)))$(newline))\
+$(foreach ns,$(SOONG_CONFIG_NAMESPACES),\
+$(foreach v,$(SOONG_CONFIG_$(ns)),\
+$$(call soong_config_set,$(ns),$(v),$(SOONG_CONFIG_$(ns)_$(v)))$(newline))))
 endef
 
 # Read the product specs so we can get TARGET_DEVICE and other
@@ -833,6 +842,36 @@ $(KATI_obsolete_var \
     $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_DLKM_APPS_PRIVILEGED \
     , odm_dlkm should not contain any executables, libraries, or apps)
 
+TARGET_OUT_SYSTEM_DLKM := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_SYSTEM_DLKM)
+
+# Unlike other partitions, system_dlkm should only contain kernel modules.
+TARGET_OUT_SYSTEM_DLKM_EXECUTABLES :=
+TARGET_OUT_SYSTEM_DLKM_OPTIONAL_EXECUTABLES :=
+TARGET_OUT_SYSTEM_DLKM_SHARED_LIBRARIES :=
+TARGET_OUT_SYSTEM_DLKM_RENDERSCRIPT_BITCODE :=
+TARGET_OUT_SYSTEM_DLKM_JAVA_LIBRARIES :=
+TARGET_OUT_SYSTEM_DLKM_APPS :=
+TARGET_OUT_SYSTEM_DLKM_APPS_PRIVILEGED :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_DLKM_EXECUTABLES :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_DLKM_SHARED_LIBRARIES :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_DLKM_RENDERSCRIPT_BITCODE :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_DLKM_APPS :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_DLKM_APPS_PRIVILEGED :=
+$(KATI_obsolete_var \
+    TARGET_OUT_SYSTEM_DLKM_EXECUTABLES \
+    TARGET_OUT_SYSTEM_DLKM_OPTIONAL_EXECUTABLES \
+    TARGET_OUT_SYSTEM_DLKM_SHARED_LIBRARIES \
+    TARGET_OUT_SYSTEM_DLKM_RENDERSCRIPT_BITCODE \
+    TARGET_OUT_SYSTEM_DLKM_JAVA_LIBRARIES \
+    TARGET_OUT_SYSTEM_DLKM_APPS \
+    TARGET_OUT_SYSTEM_DLKM_APPS_PRIVILEGED \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_DLKM_EXECUTABLES \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_DLKM_SHARED_LIBRARIES \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_DLKM_RENDERSCRIPT_BITCODE \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_DLKM_APPS \
+    $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_DLKM_APPS_PRIVILEGED \
+    , system_dlkm should not contain any executables, libraries, or apps)
+
 TARGET_OUT_PRODUCT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT)
 TARGET_OUT_PRODUCT_EXECUTABLES := $(TARGET_OUT_PRODUCT)/bin
 .KATI_READONLY := TARGET_OUT_PRODUCT
@@ -944,6 +983,9 @@ TARGET_RAMDISK_OUT_UNSTRIPPED := $(TARGET_OUT_UNSTRIPPED)
 TARGET_DEBUG_RAMDISK_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_DEBUG_RAMDISK)
 TARGET_VENDOR_DEBUG_RAMDISK_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR_DEBUG_RAMDISK)
 TARGET_TEST_HARNESS_RAMDISK_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_TEST_HARNESS_RAMDISK)
+
+TARGET_SYSTEM_DLKM_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_SYSTEM_DLKM)
+.KATI_READONLY := TARGET_SYSTEM_DLKM_OUT
 
 TARGET_VENDOR_RAMDISK_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR_RAMDISK)
 

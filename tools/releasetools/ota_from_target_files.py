@@ -230,6 +230,13 @@ A/B OTA specific options
 
   --compressor_types
       A colon ':' separated list of compressors. Allowed values are bz2 and brotli.
+
+  --enable_zucchini
+      Whether to enable to zucchini feature. Will generate smaller OTA but uses more memory.
+
+  --enable_lz4diff
+      Whether to enable lz4diff feature. Will generate smaller OTA for EROFS but
+      uses more memory.
 """
 
 from __future__ import print_function
@@ -299,6 +306,8 @@ OPTIONS.vabc_downgrade = False
 OPTIONS.enable_vabc_xor = True
 OPTIONS.force_minor_version = None
 OPTIONS.compressor_types = None
+OPTIONS.enable_zucchini = True
+OPTIONS.enable_lz4diff = False
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -307,15 +316,15 @@ AB_PARTITIONS = 'META/ab_partitions.txt'
 # Files to be unzipped for target diffing purpose.
 TARGET_DIFFING_UNZIP_PATTERN = ['BOOT', 'RECOVERY', 'SYSTEM/*', 'VENDOR/*',
                                 'PRODUCT/*', 'SYSTEM_EXT/*', 'ODM/*',
-                                'VENDOR_DLKM/*', 'ODM_DLKM/*']
+                                'VENDOR_DLKM/*', 'ODM_DLKM/*', 'SYSTEM_DLKM/*']
 RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 
 # Images to be excluded from secondary payload. We essentially only keep
 # 'system_other' and bootloader partitions.
 SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
     'boot', 'dtbo', 'modem', 'odm', 'odm_dlkm', 'product', 'radio', 'recovery',
-    'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor', 'vendor',
-    'vendor_boot']
+    'system_dlkm', 'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor',
+    'vendor', 'vendor_boot']
 
 
 class PayloadSigner(object):
@@ -1096,7 +1105,12 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   if target_info.vendor_suppressed_vabc:
     logger.info("Vendor suppressed VABC. Disabling")
     OPTIONS.disable_vabc = True
-  if not target_info.is_vabc_xor or OPTIONS.disable_vabc:
+
+  # Both source and target build need to support VABC XOR for us to use it.
+  # Source build's update_engine must be able to write XOR ops, and target
+  # build's snapuserd must be able to interpret XOR ops.
+  if not target_info.is_vabc_xor or OPTIONS.disable_vabc or \
+      (source_info is not None and not source_info.is_vabc_xor):
     logger.info("VABC XOR Not supported, disabling")
     OPTIONS.enable_vabc_xor = False
   additional_args = []
@@ -1140,6 +1154,32 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     max_timestamp = str(metadata.postcondition.timestamp)
     partition_timestamps_flags = GeneratePartitionTimestampFlags(
         metadata.postcondition.partition_state)
+
+  if not ota_utils.IsZucchiniCompatible(source_file, target_file):
+    OPTIONS.enable_zucchini = False
+
+  additional_args += ["--enable_zucchini",
+                      str(OPTIONS.enable_zucchini).lower()]
+
+  if not ota_utils.IsLz4diffCompatible(source_file, target_file):
+    logger.warn(
+        "Source build doesn't support lz4diff, or source/target don't have compatible lz4diff versions. Disabling lz4diff.")
+    OPTIONS.enable_lz4diff = False
+
+  additional_args += ["--enable_lz4diff",
+                      str(OPTIONS.enable_lz4diff).lower()]
+
+  if source_file and OPTIONS.enable_lz4diff:
+    input_tmp = common.UnzipTemp(source_file, ["META/liblz4.so"])
+    liblz4_path = os.path.join(input_tmp, "META", "liblz4.so")
+    assert os.path.exists(
+        liblz4_path), "liblz4.so not found in META/ dir of target file {}".format(liblz4_path)
+    logger.info("Enabling lz4diff %s", liblz4_path)
+    additional_args += ["--liblz4_path", liblz4_path]
+    erofs_compression_param = OPTIONS.target_info_dict.get(
+        "erofs_default_compressor")
+    assert erofs_compression_param is not None, "'erofs_default_compressor' not found in META/misc_info.txt of target build. This is required to enable lz4diff."
+    additional_args += ["--erofs_compression_param", erofs_compression_param]
 
   if OPTIONS.disable_vabc:
     additional_args += ["--disable_vabc", "true"]
@@ -1321,11 +1361,18 @@ def main(argv):
     elif o == "--vabc_downgrade":
       OPTIONS.vabc_downgrade = True
     elif o == "--enable_vabc_xor":
+      assert a.lower() in ["true", "false"]
       OPTIONS.enable_vabc_xor = a.lower() != "false"
     elif o == "--force_minor_version":
       OPTIONS.force_minor_version = a
     elif o == "--compressor_types":
       OPTIONS.compressor_types = a
+    elif o == "--enable_zucchini":
+      assert a.lower() in ["true", "false"]
+      OPTIONS.enable_zucchini = a.lower() != "false"
+    elif o == "--enable_lz4diff":
+      assert a.lower() in ["true", "false"]
+      OPTIONS.enable_lz4diff = a.lower() != "false"
     else:
       return False
     return True
@@ -1373,6 +1420,8 @@ def main(argv):
                                  "enable_vabc_xor=",
                                  "force_minor_version=",
                                  "compressor_types=",
+                                 "enable_zucchin=",
+                                 "enable_lz4diff=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:

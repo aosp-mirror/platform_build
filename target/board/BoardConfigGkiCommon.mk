@@ -16,11 +16,7 @@
 # Enable GKI 2.0 signing.
 BOARD_GKI_SIGNING_KEY_PATH := build/make/target/product/gsi/testkey_rsa2048.pem
 BOARD_GKI_SIGNING_ALGORITHM := SHA256_RSA2048
-
-# The following is needed to allow release signing process appends more extra
-# args, e.g., passing --signing_helper_with_files from mkbootimg to avbtool.
-# See b/178559811 for more details.
-BOARD_GKI_SIGNING_SIGNATURE_ARGS := --prop foo:bar
+BOARD_GKI_SIGNING_SIGNATURE_ARGS :=
 
 # Sets boot SPL.
 BOOT_SECURITY_PATCH = $(PLATFORM_SECURITY_PATCH)

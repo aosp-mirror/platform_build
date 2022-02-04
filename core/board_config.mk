@@ -65,6 +65,7 @@ _board_strip_readonly_list += TARGET_ARCH_SUITE
 # File system variables
 _board_strip_readonly_list += BOARD_FLASH_BLOCK_SIZE
 _board_strip_readonly_list += BOARD_BOOTIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_RECOVERYIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE
@@ -84,6 +85,8 @@ _board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE
 _board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_SYSTEM_DLKMIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE
 _board_strip_readonly_list += BOARD_PVMFWIMAGE_PARTITION_SIZE
 
 # Logical partitions related variables.
@@ -92,6 +95,7 @@ _board_strip_readonly_list += BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_PARTITION_RESERVED_SIZE
+_board_strip_readonly_list += BOARD_SYSTEM_DLKMIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_SUPER_PARTITION_SIZE
@@ -121,6 +125,9 @@ _board_strip_readonly_list += BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES
+
+# Prebuilt image variables
+_board_strip_readonly_list += BOARD_PREBUILT_INIT_BOOT_IMAGE
 
 # Defines the list of logical vendor ramdisk names to build or include in vendor_boot.
 _board_strip_readonly_list += BOARD_VENDOR_RAMDISK_FRAGMENTS
@@ -461,6 +468,25 @@ else ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),true)
 endif
 .KATI_READONLY := BUILDING_BOOT_IMAGE
 
+# Are we building an init boot image
+BUILDING_INIT_BOOT_IMAGE :=
+ifeq ($(PRODUCT_BUILD_INIT_BOOT_IMAGE),)
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    BUILDING_INIT_BOOT_IMAGE :=
+  else ifdef BOARD_PREBUILT_INIT_BOOT_IMAGE
+    BUILDING_INIT_BOOT_IMAGE :=
+  else ifdef BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE
+    BUILDING_INIT_BOOT_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_INIT_BOOT_IMAGE),true)
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    $(error PRODUCT_BUILD_INIT_BOOT_IMAGE is true, but so is BOARD_USES_RECOVERY_AS_BOOT. Use only one option.)
+  else
+    BUILDING_INIT_BOOT_IMAGE := true
+  endif
+endif
+.KATI_READONLY := BUILDING_INIT_BOOT_IMAGE
+
 # Are we building a recovery image
 BUILDING_RECOVERY_IMAGE :=
 ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),)
@@ -567,6 +593,11 @@ else ifndef BUILDING_RAMDISK_IMAGE
 else ifndef _has_boot_img_artifact
   ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
     $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we're not building a boot image. \
+      Skip building the debug boot image.)
+  endif
+else ifdef BUILDING_INIT_BOOT_IMAGE
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we don't have a ramdisk in the boot image. \
       Skip building the debug boot image.)
   endif
 else
@@ -838,6 +869,40 @@ ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
   BUILDING_ODM_DLKM_IMAGE :=
 endif
 .KATI_READONLY := BUILDING_ODM_DLKM_IMAGE
+
+###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_SYSTEM_DLKM
+ifeq ($(TARGET_COPY_OUT_SYSTEM_DLKM),$(_system_dlkm_path_placeholder))
+  TARGET_COPY_OUT_SYSTEM_DLKM := $(TARGET_COPY_OUT_SYSTEM)/system_dlkm
+else ifeq ($(filter system_dlkm system/system_dlkm,$(TARGET_COPY_OUT_SYSTEM_DLKM)),)
+  $(error TARGET_COPY_OUT_SYSTEM_DLKM must be either 'system_dlkm' or 'system/system_dlkm', seeing '$(TARGET_COPY_OUT_ODM_DLKM)'.)
+endif
+PRODUCT_COPY_FILES := $(subst $(_system_dlkm_path_placeholder),$(TARGET_COPY_OUT_SYSTEM_DLKM),$(PRODUCT_COPY_FILES))
+
+BOARD_USES_SYSTEM_DLKMIMAGE :=
+ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
+  BOARD_USES_SYSTEM_DLKMIMAGE := true
+endif
+ifdef BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE
+  BOARD_USES_SYSTEM_DLKMIMAGE := true
+endif
+$(call check_image_config,system_dlkm)
+
+BUILDING_SYSTEM_DLKM_IMAGE :=
+ifeq ($(PRODUCT_BUILD_SYSTEM_DLKM_IMAGE),)
+  ifdef BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_SYSTEM_DLKM_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_SYSTEM_DLKM_IMAGE),true)
+  BUILDING_SYSTEM_DLKM_IMAGE := true
+  ifndef BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_SYSTEM_DLKM_IMAGE set to true, but BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
+  BUILDING_SYSTEM_DLKM_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_SYSTEM_DLKM_IMAGE
 
 BOARD_USES_PVMFWIMAGE :=
 ifdef BOARD_PREBUILT_PVMFWIMAGE
