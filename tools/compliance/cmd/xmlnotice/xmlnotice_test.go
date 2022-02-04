@@ -17,6 +17,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/xml"
 	"fmt"
 	"os"
 	"reflect"
@@ -26,7 +27,8 @@ import (
 )
 
 var (
-	horizontalRule = regexp.MustCompile("^===[=]*===$")
+	installTarget = regexp.MustCompile(`^<file-name contentId="[^"]{32}" lib="([^"]*)">([^<]+)</file-name>`)
+	licenseText = regexp.MustCompile(`^<file-content contentId="[^"]{32}"><![[]CDATA[[]([^]]*)[]][]]></file-content>`)
 )
 
 func TestMain(m *testing.M) {
@@ -53,13 +55,11 @@ func Test(t *testing.T) {
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/bin/bin2"},
-				usedBy{"highest.apex/lib/liba.so"},
-				usedBy{"highest.apex/lib/libb.so"},
+				target{"highest.apex", "Android"},
+				target{"highest.apex/bin/bin1", "Android"},
+				target{"highest.apex/bin/bin2", "Android"},
+				target{"highest.apex/lib/liba.so", "Android"},
+				target{"highest.apex/lib/libb.so", "Android"},
 				firstParty{},
 			},
 			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
@@ -69,13 +69,11 @@ func Test(t *testing.T) {
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"container.zip"},
-				usedBy{"container.zip/bin1"},
-				usedBy{"container.zip/bin2"},
-				usedBy{"container.zip/liba.so"},
-				usedBy{"container.zip/libb.so"},
+				target{"container.zip", "Android"},
+				target{"container.zip/bin1", "Android"},
+				target{"container.zip/bin2", "Android"},
+				target{"container.zip/liba.so", "Android"},
+				target{"container.zip/libb.so", "Android"},
 				firstParty{},
 			},
 			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
@@ -85,9 +83,7 @@ func Test(t *testing.T) {
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"application"},
+				target{"application", "Android"},
 				firstParty{},
 			},
 			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
@@ -97,9 +93,7 @@ func Test(t *testing.T) {
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"bin/bin1"},
+				target{"bin/bin1", "Android"},
 				firstParty{},
 			},
 			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
@@ -109,9 +103,7 @@ func Test(t *testing.T) {
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"lib/libd.so"},
+				target{"lib/libd.so", "Android"},
 				firstParty{},
 			},
 			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
@@ -121,19 +113,14 @@ func Test(t *testing.T) {
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/bin/bin2"},
-				usedBy{"highest.apex/lib/libb.so"},
+				target{"highest.apex", "Android"},
+				target{"highest.apex/bin/bin1", "Android"},
+				target{"highest.apex/bin/bin1", "Device"},
+				target{"highest.apex/bin/bin1", "External"},
+				target{"highest.apex/bin/bin2", "Android"},
+				target{"highest.apex/lib/liba.so", "Device"},
+				target{"highest.apex/lib/libb.so", "Android"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/lib/liba.so"},
-				library{"External"},
-				usedBy{"highest.apex/bin/bin1"},
 				notice{},
 			},
 			expectedDeps: []string{
@@ -146,19 +133,14 @@ func Test(t *testing.T) {
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"container.zip"},
-				usedBy{"container.zip/bin1"},
-				usedBy{"container.zip/bin2"},
-				usedBy{"container.zip/libb.so"},
+				target{"container.zip", "Android"},
+				target{"container.zip/bin1", "Android"},
+				target{"container.zip/bin1", "Device"},
+				target{"container.zip/bin1", "External"},
+				target{"container.zip/bin2", "Android"},
+				target{"container.zip/liba.so", "Device"},
+				target{"container.zip/libb.so", "Android"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"container.zip/bin1"},
-				usedBy{"container.zip/liba.so"},
-				library{"External"},
-				usedBy{"container.zip/bin1"},
 				notice{},
 			},
 			expectedDeps: []string{
@@ -171,13 +153,9 @@ func Test(t *testing.T) {
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"application"},
+				target{"application", "Android"},
+				target{"application", "Device"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"application"},
 				notice{},
 			},
 			expectedDeps: []string{
@@ -190,15 +168,10 @@ func Test(t *testing.T) {
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"bin/bin1"},
+				target{"bin/bin1", "Android"},
+				target{"bin/bin1", "Device"},
+				target{"bin/bin1", "External"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"bin/bin1"},
-				library{"External"},
-				usedBy{"bin/bin1"},
 				notice{},
 			},
 			expectedDeps: []string{
@@ -211,9 +184,7 @@ func Test(t *testing.T) {
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"External"},
-				usedBy{"lib/libd.so"},
+				target{"lib/libd.so", "External"},
 				notice{},
 			},
 			expectedDeps: []string{"testdata/notice/NOTICE_LICENSE"},
@@ -223,19 +194,14 @@ func Test(t *testing.T) {
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/bin/bin2"},
-				usedBy{"highest.apex/lib/libb.so"},
+				target{"highest.apex", "Android"},
+				target{"highest.apex/bin/bin1", "Android"},
+				target{"highest.apex/bin/bin1", "Device"},
+				target{"highest.apex/bin/bin1", "External"},
+				target{"highest.apex/bin/bin2", "Android"},
+				target{"highest.apex/lib/liba.so", "Device"},
+				target{"highest.apex/lib/libb.so", "Android"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/lib/liba.so"},
-				library{"External"},
-				usedBy{"highest.apex/bin/bin1"},
 				reciprocal{},
 			},
 			expectedDeps: []string{
@@ -248,19 +214,14 @@ func Test(t *testing.T) {
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"container.zip"},
-				usedBy{"container.zip/bin1"},
-				usedBy{"container.zip/bin2"},
-				usedBy{"container.zip/libb.so"},
+				target{"container.zip", "Android"},
+				target{"container.zip/bin1", "Android"},
+				target{"container.zip/bin1", "Device"},
+				target{"container.zip/bin1", "External"},
+				target{"container.zip/bin2", "Android"},
+				target{"container.zip/liba.so", "Device"},
+				target{"container.zip/libb.so", "Android"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"container.zip/bin1"},
-				usedBy{"container.zip/liba.so"},
-				library{"External"},
-				usedBy{"container.zip/bin1"},
 				reciprocal{},
 			},
 			expectedDeps: []string{
@@ -273,13 +234,9 @@ func Test(t *testing.T) {
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"application"},
+				target{"application", "Android"},
+				target{"application", "Device"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"application"},
 				reciprocal{},
 			},
 			expectedDeps: []string{
@@ -292,15 +249,10 @@ func Test(t *testing.T) {
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"bin/bin1"},
+				target{"bin/bin1", "Android"},
+				target{"bin/bin1", "Device"},
+				target{"bin/bin1", "External"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"bin/bin1"},
-				library{"External"},
-				usedBy{"bin/bin1"},
 				reciprocal{},
 			},
 			expectedDeps: []string{
@@ -313,37 +265,26 @@ func Test(t *testing.T) {
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"External"},
-				usedBy{"lib/libd.so"},
+				target{"lib/libd.so", "External"},
 				notice{},
 			},
-			expectedDeps: []string{
-				"testdata/notice/NOTICE_LICENSE",
-			},
+			expectedDeps: []string{"testdata/notice/NOTICE_LICENSE"},
 		},
 		{
 			condition: "restricted",
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/bin/bin2"},
+				target{"highest.apex", "Android"},
+				target{"highest.apex/bin/bin1", "Android"},
+				target{"highest.apex/bin/bin1", "Device"},
+				target{"highest.apex/bin/bin1", "External"},
+				target{"highest.apex/bin/bin2", "Android"},
+				target{"highest.apex/bin/bin2", "Android"},
+				target{"highest.apex/lib/liba.so", "Device"},
+				target{"highest.apex/lib/libb.so", "Android"},
 				firstParty{},
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex/bin/bin2"},
-				usedBy{"highest.apex/lib/libb.so"},
-				library{"Device"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/lib/liba.so"},
 				restricted{},
-				hr{},
-				library{"External"},
-				usedBy{"highest.apex/bin/bin1"},
 				reciprocal{},
 			},
 			expectedDeps: []string{
@@ -357,23 +298,16 @@ func Test(t *testing.T) {
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"container.zip"},
-				usedBy{"container.zip/bin1"},
-				usedBy{"container.zip/bin2"},
+				target{"container.zip", "Android"},
+				target{"container.zip/bin1", "Android"},
+				target{"container.zip/bin1", "Device"},
+				target{"container.zip/bin1", "External"},
+				target{"container.zip/bin2", "Android"},
+				target{"container.zip/bin2", "Android"},
+				target{"container.zip/liba.so", "Device"},
+				target{"container.zip/libb.so", "Android"},
 				firstParty{},
-				hr{},
-				library{"Android"},
-				usedBy{"container.zip/bin2"},
-				usedBy{"container.zip/libb.so"},
-				library{"Device"},
-				usedBy{"container.zip/bin1"},
-				usedBy{"container.zip/liba.so"},
 				restricted{},
-				hr{},
-				library{"External"},
-				usedBy{"container.zip/bin1"},
 				reciprocal{},
 			},
 			expectedDeps: []string{
@@ -387,13 +321,9 @@ func Test(t *testing.T) {
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"application"},
+				target{"application", "Android"},
+				target{"application", "Device"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"application"},
 				restricted{},
 			},
 			expectedDeps: []string{
@@ -406,17 +336,11 @@ func Test(t *testing.T) {
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"bin/bin1"},
+				target{"bin/bin1", "Android"},
+				target{"bin/bin1", "Device"},
+				target{"bin/bin1", "External"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"bin/bin1"},
 				restricted{},
-				hr{},
-				library{"External"},
-				usedBy{"bin/bin1"},
 				reciprocal{},
 			},
 			expectedDeps: []string{
@@ -430,9 +354,7 @@ func Test(t *testing.T) {
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"External"},
-				usedBy{"lib/libd.so"},
+				target{"lib/libd.so", "External"},
 				notice{},
 			},
 			expectedDeps: []string{"testdata/notice/NOTICE_LICENSE"},
@@ -442,24 +364,16 @@ func Test(t *testing.T) {
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex/bin/bin2"},
-				usedBy{"highest.apex/lib/libb.so"},
+				target{"highest.apex", "Android"},
+				target{"highest.apex/bin/bin1", "Android"},
+				target{"highest.apex/bin/bin1", "Device"},
+				target{"highest.apex/bin/bin1", "External"},
+				target{"highest.apex/bin/bin2", "Android"},
+				target{"highest.apex/bin/bin2", "Android"},
+				target{"highest.apex/lib/liba.so", "Device"},
+				target{"highest.apex/lib/libb.so", "Android"},
 				restricted{},
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex"},
-				usedBy{"highest.apex/bin/bin1"},
 				firstParty{},
-				hr{},
-				library{"Android"},
-				usedBy{"highest.apex/bin/bin2"},
-				library{"Device"},
-				usedBy{"highest.apex/bin/bin1"},
-				usedBy{"highest.apex/lib/liba.so"},
-				library{"External"},
-				usedBy{"highest.apex/bin/bin1"},
 				proprietary{},
 			},
 			expectedDeps: []string{
@@ -473,24 +387,16 @@ func Test(t *testing.T) {
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"container.zip/bin2"},
-				usedBy{"container.zip/libb.so"},
+				target{"container.zip", "Android"},
+				target{"container.zip/bin1", "Android"},
+				target{"container.zip/bin1", "Device"},
+				target{"container.zip/bin1", "External"},
+				target{"container.zip/bin2", "Android"},
+				target{"container.zip/bin2", "Android"},
+				target{"container.zip/liba.so", "Device"},
+				target{"container.zip/libb.so", "Android"},
 				restricted{},
-				hr{},
-				library{"Android"},
-				usedBy{"container.zip"},
-				usedBy{"container.zip/bin1"},
 				firstParty{},
-				hr{},
-				library{"Android"},
-				usedBy{"container.zip/bin2"},
-				library{"Device"},
-				usedBy{"container.zip/bin1"},
-				usedBy{"container.zip/liba.so"},
-				library{"External"},
-				usedBy{"container.zip/bin1"},
 				proprietary{},
 			},
 			expectedDeps: []string{
@@ -504,13 +410,9 @@ func Test(t *testing.T) {
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"application"},
+				target{"application", "Android"},
+				target{"application", "Device"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"application"},
 				proprietary{},
 			},
 			expectedDeps: []string{
@@ -523,15 +425,10 @@ func Test(t *testing.T) {
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"Android"},
-				usedBy{"bin/bin1"},
+				target{"bin/bin1", "Android"},
+				target{"bin/bin1", "Device"},
+				target{"bin/bin1", "External"},
 				firstParty{},
-				hr{},
-				library{"Device"},
-				usedBy{"bin/bin1"},
-				library{"External"},
-				usedBy{"bin/bin1"},
 				proprietary{},
 			},
 			expectedDeps: []string{
@@ -544,9 +441,7 @@ func Test(t *testing.T) {
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
 			expectedOut: []matcher{
-				hr{},
-				library{"External"},
-				usedBy{"lib/libd.so"},
+				target{"lib/libd.so", "External"},
 				notice{},
 			},
 			expectedDeps: []string{"testdata/notice/NOTICE_LICENSE"},
@@ -566,13 +461,13 @@ func Test(t *testing.T) {
 
 			ctx := context{stdout, stderr, os.DirFS("."), []string{tt.stripPrefix}, "", &deps}
 
-			err := textNotice(&ctx, rootFiles...)
+			err := xmlNotice(&ctx, rootFiles...)
 			if err != nil {
-				t.Fatalf("textnotice: error = %v, stderr = %v", err, stderr)
+				t.Fatalf("xmlnotice: error = %v, stderr = %v", err, stderr)
 				return
 			}
 			if stderr.Len() > 0 {
-				t.Errorf("textnotice: gotStderr = %v, want none", stderr)
+				t.Errorf("xmlnotice: gotStderr = %v, want none", stderr)
 			}
 
 			t.Logf("got stdout: %s", stdout.String())
@@ -581,20 +476,42 @@ func Test(t *testing.T) {
 
 			out := bufio.NewScanner(stdout)
 			lineno := 0
+			inBody := false
+			outOfBody := true
 			for out.Scan() {
 				line := out.Text()
 				if strings.TrimLeft(line, " ") == "" {
 					continue
 				}
+				if lineno == 0 && !inBody && `<?xml version="1.0" encoding="utf-8"?>` == line {
+					continue
+				}
+				if !inBody {
+					if "<licenses>" == line {
+						inBody = true
+						outOfBody = false
+					}
+					continue
+				} else if "</licenses>" == line {
+					outOfBody = true
+					continue
+				}
+
 				if len(tt.expectedOut) <= lineno {
-					t.Errorf("unexpected output at line %d: got %q, want nothing (wanted %d lines)", lineno+1, line, len(tt.expectedOut))
+					t.Errorf("xmlnotice: unexpected output at line %d: got %q, want nothing (wanted %d lines)", lineno+1, line, len(tt.expectedOut))
 				} else if !tt.expectedOut[lineno].isMatch(line) {
-					t.Errorf("unexpected output at line %d: got %q, want %q", lineno+1, line, tt.expectedOut[lineno].String())
+					t.Errorf("xmlnotice: unexpected output at line %d: got %q, want %q", lineno+1, line, tt.expectedOut[lineno].String())
 				}
 				lineno++
 			}
+			if !inBody {
+				t.Errorf("xmlnotice: missing <licenses> tag: got no <licenses> tag, want <licenses> tag on 2nd line")
+			}
+			if !outOfBody {
+				t.Errorf("xmlnotice: missing </licenses> tag: got no </licenses> tag, want </licenses> tag on last line")
+			}
 			for ; lineno < len(tt.expectedOut); lineno++ {
-				t.Errorf("textnotice: missing output line %d: ended early, want %q", lineno+1, tt.expectedOut[lineno].String())
+				t.Errorf("xmlnotice: missing output line %d: ended early, want %q", lineno+1, tt.expectedOut[lineno].String())
 			}
 
 			t.Logf("got deps: %q", deps)
@@ -609,108 +526,109 @@ func Test(t *testing.T) {
 	}
 }
 
+func escape(s string) string {
+	b := &bytes.Buffer{}
+	xml.EscapeText(b, []byte(s))
+	return b.String()
+}
+
 type matcher interface {
 	isMatch(line string) bool
 	String() string
 }
 
-type hr struct{}
-
-func (m hr) isMatch(line string) bool {
-	return horizontalRule.MatchString(line)
-}
-
-func (m hr) String() string {
-	return " ================================================== "
-}
-
-type library struct {
+type target struct {
 	name string
+	lib string
 }
 
-func (m library) isMatch(line string) bool {
-	return strings.HasPrefix(line, m.name+" ")
+func (m target) isMatch(line string) bool {
+	groups := installTarget.FindStringSubmatch(line)
+	if len(groups) != 3 {
+		return false
+	}
+	return groups[1] == escape(m.lib) && strings.HasPrefix(groups[2], "out/") && strings.HasSuffix(groups[2], "/"+escape(m.name))
 }
 
-func (m library) String() string {
-	return m.name + " used by:"
+func (m target) String() string {
+	return `<file-name contentId="hash" lib="` + escape(m.lib) + `">` + escape(m.name) + `</file-name>`
 }
 
-type usedBy struct {
-	name string
+func matchesText(line, text string) bool {
+	groups := licenseText.FindStringSubmatch(line)
+	if len(groups) != 2 {
+		return false
+	}
+	return groups[1] == escape(text + "\n")
 }
 
-func (m usedBy) isMatch(line string) bool {
-	return len(line) > 0 && line[0] == ' ' && strings.HasPrefix(strings.TrimLeft(line, " "), "out/") && strings.HasSuffix(line, "/"+m.name)
-}
-
-func (m usedBy) String() string {
-	return "  out/.../" + m.name
+func expectedText(text string) string {
+	return `<file-content contentId="hash"><![CDATA[` + escape(text + "\n") + `]]></file-content>`
 }
 
 type firstParty struct{}
 
 func (m firstParty) isMatch(line string) bool {
-	return strings.HasPrefix(strings.TrimLeft(line, " "), "&&&First Party License&&&")
+	return matchesText(line, "&&&First Party License&&&")
 }
 
 func (m firstParty) String() string {
-	return "&&&First Party License&&&"
+	return expectedText("&&&First Party License&&&")
 }
 
 type notice struct{}
 
 func (m notice) isMatch(line string) bool {
-	return strings.HasPrefix(strings.TrimLeft(line, " "), "%%%Notice License%%%")
+	return matchesText(line, "%%%Notice License%%%")
 }
 
 func (m notice) String() string {
-	return "%%%Notice License%%%"
+	return expectedText("%%%Notice License%%%")
 }
 
 type reciprocal struct{}
 
 func (m reciprocal) isMatch(line string) bool {
-	return strings.HasPrefix(strings.TrimLeft(line, " "), "$$$Reciprocal License$$$")
+	return matchesText(line, "$$$Reciprocal License$$$")
 }
 
 func (m reciprocal) String() string {
-	return "$$$Reciprocal License$$$"
+	return expectedText("$$$Reciprocal License$$$")
 }
 
 type restricted struct{}
 
 func (m restricted) isMatch(line string) bool {
-	return strings.HasPrefix(strings.TrimLeft(line, " "), "###Restricted License###")
+	return matchesText(line, "###Restricted License###")
 }
 
 func (m restricted) String() string {
-	return "###Restricted License###"
+	return expectedText("###Restricted License###")
 }
 
 type proprietary struct{}
 
 func (m proprietary) isMatch(line string) bool {
-	return strings.HasPrefix(strings.TrimLeft(line, " "), "@@@Proprietary License@@@")
+	return matchesText(line, "@@@Proprietary License@@@")
 }
 
 func (m proprietary) String() string {
-	return "@@@Proprietary License@@@"
+	return expectedText("@@@Proprietary License@@@")
 }
 
 type matcherList []matcher
 
 func (l matcherList) String() string {
 	var sb strings.Builder
+	fmt.Fprintln(&sb, `<?xml version="1.0" encoding="utf-8"?>`)
+	fmt.Fprintln(&sb, `<licenses>`)
 	for _, m := range l {
 		s := m.String()
-		if s[:3] == s[len(s)-3:] {
-			fmt.Fprintln(&sb)
-		}
-		fmt.Fprintf(&sb, "%s\n", s)
-		if s[:3] == s[len(s)-3:] {
+		fmt.Fprintln(&sb, s)
+		if _, ok := m.(target); !ok {
 			fmt.Fprintln(&sb)
 		}
 	}
+	fmt.Fprintln(&sb, `/<licenses>`)
 	return sb.String()
 }

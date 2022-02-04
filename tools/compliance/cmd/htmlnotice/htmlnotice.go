@@ -35,7 +35,7 @@ var (
 	outputFile  = flag.String("o", "-", "Where to write the NOTICE text file. (default stdout)")
 	depsFile    = flag.String("d", "", "Where to write the deps file")
 	includeTOC  = flag.Bool("toc", true, "Whether to include a table of contents.")
-	stripPrefix = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
+	stripPrefix = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
 	title       = flag.String("title", "", "The title of the notice file.")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
@@ -47,9 +47,25 @@ type context struct {
 	stderr      io.Writer
 	rootFS      fs.FS
 	includeTOC  bool
-	stripPrefix string
+	stripPrefix []string
 	title       string
 	deps        *[]string
+}
+
+func (ctx context) strip(installPath string) string {
+	for _, prefix := range ctx.stripPrefix {
+		if strings.HasPrefix(installPath, prefix) {
+			p := strings.TrimPrefix(installPath, prefix)
+			if 0 == len(p) {
+				p = ctx.title
+			}
+			if 0 == len(p) {
+				continue
+			}
+			return p
+		}
+	}
+	return installPath
 }
 
 func init() {
@@ -64,6 +80,19 @@ Options:
 		flag.PrintDefaults()
 	}
 }
+
+// newMultiString creates a flag that allows multiple values in an array.
+func newMultiString(name, usage string) *multiString {
+	var f multiString
+	flag.Var(&f, name, usage)
+	return &f
+}
+
+// multiString implements the flag `Value` interface for multiple strings.
+type multiString []string
+
+func (ms *multiString) String() string     { return strings.Join(*ms, ", ") }
+func (ms *multiString) Set(s string) error { *ms = append(*ms, s); return nil }
 
 func main() {
 	flag.Parse()
@@ -190,20 +219,7 @@ func htmlNotice(ctx *context, files ...string) error {
 			id := fmt.Sprintf("id%d", i)
 			i++
 			ids[installPath] = id
-			var p string
-			if 0 < len(ctx.stripPrefix) && strings.HasPrefix(installPath, ctx.stripPrefix) {
-				p = installPath[len(ctx.stripPrefix):]
-				if 0 == len(p) {
-					if 0 < len(ctx.title) {
-						p = ctx.title
-					} else {
-						p = "root"
-					}
-				}
-			} else {
-				p = installPath
-			}
-			fmt.Fprintf(ctx.stdout, "    <li id=\"%s\"><strong>%s</strong>\n      <ul>\n", id, html.EscapeString(p))
+			fmt.Fprintf(ctx.stdout, "    <li id=\"%s\"><strong>%s</strong>\n      <ul>\n", id, html.EscapeString(ctx.strip(installPath)))
 			for _, h := range ni.InstallHashes(installPath) {
 				libs := ni.InstallHashLibs(installPath, h)
 				fmt.Fprintf(ctx.stdout, "        <li><a href=\"#%s\">%s</a>\n", h.String(), html.EscapeString(strings.Join(libs, ", ")))
@@ -218,17 +234,9 @@ func htmlNotice(ctx *context, files ...string) error {
 			fmt.Fprintf(ctx.stdout, "  <strong>%s</strong> used by:\n    <ul class=\"file-list\">\n", html.EscapeString(libName))
 			for _, installPath := range ni.HashLibInstalls(h, libName) {
 				if id, ok := ids[installPath]; ok {
-					if 0 < len(ctx.stripPrefix) && strings.HasPrefix(installPath, ctx.stripPrefix) {
-						fmt.Fprintf(ctx.stdout, "      <li><a href=\"#%s\">%s</a>\n", id, html.EscapeString(installPath[len(ctx.stripPrefix):]))
-					} else {
-						fmt.Fprintf(ctx.stdout, "      <li><a href=\"#%s\">%s</a>\n", id, html.EscapeString(installPath))
-					}
+					fmt.Fprintf(ctx.stdout, "      <li><a href=\"#%s\">%s</a>\n", id, html.EscapeString(ctx.strip(installPath)))
 				} else {
-					if 0 < len(ctx.stripPrefix) && strings.HasPrefix(installPath, ctx.stripPrefix) {
-						fmt.Fprintf(ctx.stdout, "      <li>%s\n", html.EscapeString(installPath[len(ctx.stripPrefix):]))
-					} else {
-						fmt.Fprintf(ctx.stdout, "      <li>%s\n", html.EscapeString(installPath))
-					}
+					fmt.Fprintf(ctx.stdout, "      <li>%s\n", html.EscapeString(ctx.strip(installPath)))
 				}
 			}
 			fmt.Fprintf(ctx.stdout, "    </ul>\n")

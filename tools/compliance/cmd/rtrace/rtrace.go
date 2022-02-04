@@ -28,7 +28,7 @@ import (
 
 var (
 	sources         = newMultiString("rtrace", "Projects or metadata files to trace back from. (required; multiple allowed)")
-	stripPrefix     = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
+	stripPrefix     = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoSources     = fmt.Errorf("\nNo projects or metadata files to trace back from")
@@ -37,7 +37,20 @@ var (
 
 type context struct {
 	sources         []string
-	stripPrefix     string
+	stripPrefix     []string
+}
+
+func (ctx context) strip(installPath string) string {
+	for _, prefix := range ctx.stripPrefix {
+		if strings.HasPrefix(installPath, prefix) {
+			p := strings.TrimPrefix(installPath, prefix)
+			if 0 == len(p) {
+				continue
+			}
+			return p
+		}
+	}
+	return installPath
 }
 
 func init() {
@@ -143,7 +156,7 @@ func traceRestricted(ctx *context, stdout, stderr io.Writer, files ...string) (*
 
 	// targetOut calculates the string to output for `target` adding `sep`-separated conditions as needed.
 	targetOut := func(target *compliance.TargetNode, sep string) string {
-		tOut := strings.TrimPrefix(target.Name(), ctx.stripPrefix)
+		tOut := ctx.strip(target.Name())
 		return tOut
 	}
 
