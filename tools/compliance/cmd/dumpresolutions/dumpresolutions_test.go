@@ -65,7 +65,7 @@ func Test_plaintext(t *testing.T) {
 			condition: "firstparty",
 			name:      "apex_trimmed",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/firstparty/"},
+			ctx:       context{stripPrefix: []string{"testdata/firstparty/"}},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic notice",
 				"bin/bin1.meta_lic lib/liba.so.meta_lic notice",
@@ -87,7 +87,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  []compliance.LicenseCondition{compliance.NoticeCondition},
-				stripPrefix: "testdata/firstparty/",
+				stripPrefix: []string{"testdata/firstparty/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic notice",
@@ -110,7 +110,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.AsList(),
-				stripPrefix: "testdata/firstparty/",
+				stripPrefix: []string{"testdata/firstparty/"},
 			},
 			expectedOut: []string{},
 		},
@@ -120,7 +120,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesPrivate.AsList(),
-				stripPrefix: "testdata/firstparty/",
+				stripPrefix: []string{"testdata/firstparty/"},
 			},
 			expectedOut: []string{},
 		},
@@ -130,7 +130,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  append(compliance.ImpliesPrivate.AsList(), compliance.ImpliesShared.AsList()...),
-				stripPrefix: "testdata/firstparty/",
+				stripPrefix: []string{"testdata/firstparty/"},
 			},
 			expectedOut: []string{},
 		},
@@ -138,7 +138,7 @@ func Test_plaintext(t *testing.T) {
 			condition: "firstparty",
 			name:      "apex_trimmed_labelled",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/firstparty/", labelConditions: true},
+			ctx:       context{stripPrefix: []string{"testdata/firstparty/"}, labelConditions: true},
 			expectedOut: []string{
 				"bin/bin1.meta_lic:notice bin/bin1.meta_lic:notice notice",
 				"bin/bin1.meta_lic:notice lib/liba.so.meta_lic:notice notice",
@@ -223,7 +223,7 @@ func Test_plaintext(t *testing.T) {
 			condition: "notice",
 			name:      "apex_trimmed",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/notice/"},
+			ctx:       context{stripPrefix: []string{"testdata/notice/"}},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic notice",
 				"bin/bin1.meta_lic lib/liba.so.meta_lic notice",
@@ -245,7 +245,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  []compliance.LicenseCondition{compliance.NoticeCondition},
-				stripPrefix: "testdata/notice/",
+				stripPrefix: []string{"testdata/notice/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic notice",
@@ -268,7 +268,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.AsList(),
-				stripPrefix: "testdata/notice/",
+				stripPrefix: []string{"testdata/notice/"},
 			},
 			expectedOut: []string{},
 		},
@@ -278,7 +278,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesPrivate.AsList(),
-				stripPrefix: "testdata/notice/",
+				stripPrefix: []string{"testdata/notice/"},
 			},
 			expectedOut: []string{},
 		},
@@ -288,7 +288,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  append(compliance.ImpliesShared.AsList(), compliance.ImpliesPrivate.AsList()...),
-				stripPrefix: "testdata/notice/",
+				stripPrefix: []string{"testdata/notice/"},
 			},
 			expectedOut: []string{},
 		},
@@ -296,7 +296,7 @@ func Test_plaintext(t *testing.T) {
 			condition: "notice",
 			name:      "apex_trimmed_labelled",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/notice/", labelConditions: true},
+			ctx:       context{stripPrefix: []string{"testdata/notice/"}, labelConditions: true},
 			expectedOut: []string{
 				"bin/bin1.meta_lic:notice bin/bin1.meta_lic:notice notice",
 				"bin/bin1.meta_lic:notice lib/liba.so.meta_lic:notice notice",
@@ -381,7 +381,7 @@ func Test_plaintext(t *testing.T) {
 			condition: "reciprocal",
 			name:      "apex_trimmed",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/reciprocal/"},
+			ctx:       context{stripPrefix: []string{"testdata/reciprocal/"}},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic notice",
 				"bin/bin1.meta_lic lib/liba.so.meta_lic reciprocal",
@@ -403,7 +403,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  []compliance.LicenseCondition{compliance.NoticeCondition},
-				stripPrefix: "testdata/reciprocal/",
+				stripPrefix: []string{"testdata/reciprocal/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic notice",
@@ -421,7 +421,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.AsList(),
-				stripPrefix: "testdata/reciprocal/",
+				stripPrefix: []string{"testdata/reciprocal/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic lib/liba.so.meta_lic reciprocal",
@@ -437,7 +437,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesPrivate.AsList(),
-				stripPrefix: "testdata/reciprocal/",
+				stripPrefix: []string{"testdata/reciprocal/"},
 			},
 			expectedOut: []string{},
 		},
@@ -447,7 +447,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  append(compliance.ImpliesShared.AsList(), compliance.ImpliesPrivate.AsList()...),
-				stripPrefix: "testdata/reciprocal/",
+				stripPrefix: []string{"testdata/reciprocal/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic lib/liba.so.meta_lic reciprocal",
@@ -461,7 +461,7 @@ func Test_plaintext(t *testing.T) {
 			condition: "reciprocal",
 			name:      "apex_trimmed_labelled",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/reciprocal/", labelConditions: true},
+			ctx:       context{stripPrefix: []string{"testdata/reciprocal/"}, labelConditions: true},
 			expectedOut: []string{
 				"bin/bin1.meta_lic:notice bin/bin1.meta_lic:notice notice",
 				"bin/bin1.meta_lic:notice lib/liba.so.meta_lic:reciprocal reciprocal",
@@ -547,7 +547,7 @@ func Test_plaintext(t *testing.T) {
 			condition: "restricted",
 			name:      "apex_trimmed",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/restricted/"},
+			ctx:       context{stripPrefix: []string{"testdata/restricted/"}},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic notice:restricted_allows_dynamic_linking",
 				"bin/bin1.meta_lic lib/liba.so.meta_lic restricted_allows_dynamic_linking",
@@ -570,7 +570,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  []compliance.LicenseCondition{compliance.NoticeCondition},
-				stripPrefix: "testdata/restricted/",
+				stripPrefix: []string{"testdata/restricted/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic notice",
@@ -586,7 +586,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.AsList(),
-				stripPrefix: "testdata/restricted/",
+				stripPrefix: []string{"testdata/restricted/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic restricted_allows_dynamic_linking",
@@ -610,7 +610,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesPrivate.AsList(),
-				stripPrefix: "testdata/restricted/",
+				stripPrefix: []string{"testdata/restricted/"},
 			},
 			expectedOut: []string{},
 		},
@@ -620,7 +620,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  append(compliance.ImpliesShared.AsList(), compliance.ImpliesPrivate.AsList()...),
-				stripPrefix: "testdata/restricted/",
+				stripPrefix: []string{"testdata/restricted/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic restricted_allows_dynamic_linking",
@@ -642,7 +642,7 @@ func Test_plaintext(t *testing.T) {
 			condition: "restricted",
 			name:      "apex_trimmed_labelled",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/restricted/", labelConditions: true},
+			ctx:       context{stripPrefix: []string{"testdata/restricted/"}, labelConditions: true},
 			expectedOut: []string{
 				"bin/bin1.meta_lic:notice bin/bin1.meta_lic:notice notice:restricted_allows_dynamic_linking",
 				"bin/bin1.meta_lic:notice lib/liba.so.meta_lic:restricted_allows_dynamic_linking restricted_allows_dynamic_linking",
@@ -730,7 +730,7 @@ func Test_plaintext(t *testing.T) {
 			condition: "proprietary",
 			name:      "apex_trimmed",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/proprietary/"},
+			ctx:       context{stripPrefix: []string{"testdata/proprietary/"}},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic notice",
 				"bin/bin1.meta_lic lib/liba.so.meta_lic proprietary:by_exception_only",
@@ -753,7 +753,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  []compliance.LicenseCondition{compliance.NoticeCondition},
-				stripPrefix: "testdata/proprietary/",
+				stripPrefix: []string{"testdata/proprietary/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic bin/bin1.meta_lic notice",
@@ -767,7 +767,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.AsList(),
-				stripPrefix: "testdata/proprietary/",
+				stripPrefix: []string{"testdata/proprietary/"},
 			},
 			expectedOut: []string{
 				"bin/bin2.meta_lic bin/bin2.meta_lic restricted",
@@ -784,7 +784,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesPrivate.AsList(),
-				stripPrefix: "testdata/proprietary/",
+				stripPrefix: []string{"testdata/proprietary/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic lib/liba.so.meta_lic proprietary",
@@ -802,7 +802,7 @@ func Test_plaintext(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  append(compliance.ImpliesShared.AsList(), compliance.ImpliesPrivate.AsList()...),
-				stripPrefix: "testdata/proprietary/",
+				stripPrefix: []string{"testdata/proprietary/"},
 			},
 			expectedOut: []string{
 				"bin/bin1.meta_lic lib/liba.so.meta_lic proprietary",
@@ -822,7 +822,7 @@ func Test_plaintext(t *testing.T) {
 			condition: "proprietary",
 			name:      "apex_trimmed_labelled",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/proprietary/", labelConditions: true},
+			ctx:       context{stripPrefix: []string{"testdata/proprietary/"}, labelConditions: true},
 			expectedOut: []string{
 				"bin/bin1.meta_lic:notice bin/bin1.meta_lic:notice notice",
 				"bin/bin1.meta_lic:notice lib/liba.so.meta_lic:proprietary:by_exception_only proprietary:by_exception_only",
@@ -919,7 +919,7 @@ func Test_plaintext(t *testing.T) {
 				for len(outList) > startLine && len(expectedList) > startLine && outList[startLine] == expectedList[startLine] {
 					startLine++
 				}
-				t.Errorf("listshare: gotStdout = %v, want %v, somewhere near line %d Stdout = %v, want %v",
+				t.Errorf("dumpresoliutions: gotStdout = %v, want %v, somewhere near line %d Stdout = %v, want %v",
 					out, expected, startLine+1, outList[startLine], expectedList[startLine])
 			}
 		})
@@ -1080,7 +1080,7 @@ func Test_graphviz(t *testing.T) {
 			condition: "firstparty",
 			name:      "apex_trimmed",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/firstparty/"},
+			ctx:       context{stripPrefix: []string{"testdata/firstparty/"}},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
 				matchTarget("lib/liba.so.meta_lic"),
@@ -1144,7 +1144,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  []compliance.LicenseCondition{compliance.NoticeCondition},
-				stripPrefix: "testdata/firstparty/",
+				stripPrefix: []string{"testdata/firstparty/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -1209,7 +1209,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.AsList(),
-				stripPrefix: "testdata/firstparty/",
+				stripPrefix: []string{"testdata/firstparty/"},
 			},
 			expectedOut: []getMatcher{},
 		},
@@ -1219,7 +1219,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesPrivate.AsList(),
-				stripPrefix: "testdata/firstparty/",
+				stripPrefix: []string{"testdata/firstparty/"},
 			},
 			expectedOut: []getMatcher{},
 		},
@@ -1229,7 +1229,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.Union(compliance.ImpliesPrivate).AsList(),
-				stripPrefix: "testdata/firstparty/",
+				stripPrefix: []string{"testdata/firstparty/"},
 			},
 			expectedOut: []getMatcher{},
 		},
@@ -1237,7 +1237,7 @@ func Test_graphviz(t *testing.T) {
 			condition: "firstparty",
 			name:      "apex_trimmed_labelled",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/firstparty/", labelConditions: true},
+			ctx:       context{stripPrefix: []string{"testdata/firstparty/"}, labelConditions: true},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic", "notice"),
 				matchTarget("lib/liba.so.meta_lic", "notice"),
@@ -1472,7 +1472,7 @@ func Test_graphviz(t *testing.T) {
 			condition: "notice",
 			name:      "apex_trimmed",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/notice/"},
+			ctx:       context{stripPrefix: []string{"testdata/notice/"}},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
 				matchTarget("lib/liba.so.meta_lic"),
@@ -1536,7 +1536,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  []compliance.LicenseCondition{compliance.NoticeCondition},
-				stripPrefix: "testdata/notice/",
+				stripPrefix: []string{"testdata/notice/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -1601,7 +1601,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.AsList(),
-				stripPrefix: "testdata/notice/",
+				stripPrefix: []string{"testdata/notice/"},
 			},
 			expectedOut: []getMatcher{},
 		},
@@ -1611,7 +1611,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesPrivate.AsList(),
-				stripPrefix: "testdata/notice/",
+				stripPrefix: []string{"testdata/notice/"},
 			},
 			expectedOut: []getMatcher{},
 		},
@@ -1621,7 +1621,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.Union(compliance.ImpliesPrivate).AsList(),
-				stripPrefix: "testdata/notice/",
+				stripPrefix: []string{"testdata/notice/"},
 			},
 			expectedOut: []getMatcher{},
 		},
@@ -1629,7 +1629,7 @@ func Test_graphviz(t *testing.T) {
 			condition: "notice",
 			name:      "apex_trimmed_labelled",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/notice/", labelConditions: true},
+			ctx:       context{stripPrefix: []string{"testdata/notice/"}, labelConditions: true},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic", "notice"),
 				matchTarget("lib/liba.so.meta_lic", "notice"),
@@ -1864,7 +1864,7 @@ func Test_graphviz(t *testing.T) {
 			condition: "reciprocal",
 			name:      "apex_trimmed",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/reciprocal/"},
+			ctx:       context{stripPrefix: []string{"testdata/reciprocal/"}},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
 				matchTarget("lib/liba.so.meta_lic"),
@@ -1928,7 +1928,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  []compliance.LicenseCondition{compliance.NoticeCondition},
-				stripPrefix: "testdata/reciprocal/",
+				stripPrefix: []string{"testdata/reciprocal/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -1971,7 +1971,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.AsList(),
-				stripPrefix: "testdata/reciprocal/",
+				stripPrefix: []string{"testdata/reciprocal/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -2006,7 +2006,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesPrivate.AsList(),
-				stripPrefix: "testdata/reciprocal/",
+				stripPrefix: []string{"testdata/reciprocal/"},
 			},
 			expectedOut: []getMatcher{},
 		},
@@ -2016,7 +2016,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.Union(compliance.ImpliesPrivate).AsList(),
-				stripPrefix: "testdata/reciprocal/",
+				stripPrefix: []string{"testdata/reciprocal/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -2049,7 +2049,7 @@ func Test_graphviz(t *testing.T) {
 			condition: "reciprocal",
 			name:      "apex_trimmed_labelled",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/reciprocal/", labelConditions: true},
+			ctx:       context{stripPrefix: []string{"testdata/reciprocal/"}, labelConditions: true},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic", "notice"),
 				matchTarget("lib/liba.so.meta_lic", "reciprocal"),
@@ -2296,7 +2296,7 @@ func Test_graphviz(t *testing.T) {
 			condition: "restricted",
 			name:      "apex_trimmed",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/restricted/"},
+			ctx:       context{stripPrefix: []string{"testdata/restricted/"}},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
 				matchTarget("lib/liba.so.meta_lic"),
@@ -2372,7 +2372,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  []compliance.LicenseCondition{compliance.NoticeCondition},
-				stripPrefix: "testdata/restricted/",
+				stripPrefix: []string{"testdata/restricted/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -2406,7 +2406,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.AsList(),
-				stripPrefix: "testdata/restricted/",
+				stripPrefix: []string{"testdata/restricted/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -2478,7 +2478,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesPrivate.AsList(),
-				stripPrefix: "testdata/restricted/",
+				stripPrefix: []string{"testdata/restricted/"},
 			},
 			expectedOut: []getMatcher{},
 		},
@@ -2488,7 +2488,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.Union(compliance.ImpliesPrivate).AsList(),
-				stripPrefix: "testdata/restricted/",
+				stripPrefix: []string{"testdata/restricted/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -2558,7 +2558,7 @@ func Test_graphviz(t *testing.T) {
 			condition: "restricted",
 			name:      "apex_trimmed_labelled",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/restricted/", labelConditions: true},
+			ctx:       context{stripPrefix: []string{"testdata/restricted/"}, labelConditions: true},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic", "notice"),
 				matchTarget("lib/liba.so.meta_lic", "restricted_allows_dynamic_linking"),
@@ -2836,7 +2836,7 @@ func Test_graphviz(t *testing.T) {
 			condition: "proprietary",
 			name:      "apex_trimmed",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/proprietary/"},
+			ctx:       context{stripPrefix: []string{"testdata/proprietary/"}},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
 				matchTarget("lib/liba.so.meta_lic"),
@@ -2914,7 +2914,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  []compliance.LicenseCondition{compliance.NoticeCondition},
-				stripPrefix: "testdata/proprietary/",
+				stripPrefix: []string{"testdata/proprietary/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -2939,7 +2939,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.AsList(),
-				stripPrefix: "testdata/proprietary/",
+				stripPrefix: []string{"testdata/proprietary/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin2.meta_lic"),
@@ -2977,7 +2977,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesPrivate.AsList(),
-				stripPrefix: "testdata/proprietary/",
+				stripPrefix: []string{"testdata/proprietary/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -3021,7 +3021,7 @@ func Test_graphviz(t *testing.T) {
 			roots:     []string{"highest.apex.meta_lic"},
 			ctx: context{
 				conditions:  compliance.ImpliesShared.Union(compliance.ImpliesPrivate).AsList(),
-				stripPrefix: "testdata/proprietary/",
+				stripPrefix: []string{"testdata/proprietary/"},
 			},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic"),
@@ -3082,7 +3082,7 @@ func Test_graphviz(t *testing.T) {
 			condition: "proprietary",
 			name:      "apex_trimmed_labelled",
 			roots:     []string{"highest.apex.meta_lic"},
-			ctx:       context{stripPrefix: "testdata/proprietary/", labelConditions: true},
+			ctx:       context{stripPrefix: []string{"testdata/proprietary/"}, labelConditions: true},
 			expectedOut: []getMatcher{
 				matchTarget("bin/bin1.meta_lic", "notice"),
 				matchTarget("lib/liba.so.meta_lic", "by_exception_only", "proprietary"),

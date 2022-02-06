@@ -17,6 +17,7 @@ package main
 import (
 	"bytes"
 	"compress/gzip"
+	"encoding/xml"
 	"flag"
 	"fmt"
 	"io"
@@ -31,7 +32,7 @@ import (
 )
 
 var (
-	outputFile  = flag.String("o", "-", "Where to write the NOTICE text file. (default stdout)")
+	outputFile  = flag.String("o", "-", "Where to write the NOTICE xml or xml.gz file. (default stdout)")
 	depsFile    = flag.String("d", "", "Where to write the deps file")
 	stripPrefix = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
 	title       = flag.String("title", "", "The title of the notice file.")
@@ -69,7 +70,8 @@ func init() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage: %s {options} file.meta_lic {file.meta_lic...}
 
-Outputs a text NOTICE file.
+Outputs an xml NOTICE.xml or gzipped NOTICE.xml.gz file if the -o filename ends
+with ".gz".
 
 Options:
 `, filepath.Base(os.Args[0]))
@@ -137,7 +139,7 @@ func main() {
 
 	ctx := &context{ofile, os.Stderr, os.DirFS("."), *stripPrefix, *title, &deps}
 
-	err := textNotice(ctx, flag.Args()...)
+	err := xmlNotice(ctx, flag.Args()...)
 	if err != nil {
 		if err == failNoneRequested {
 			flag.Usage()
@@ -166,8 +168,8 @@ func main() {
 	os.Exit(0)
 }
 
-// textNotice implements the textNotice utility.
-func textNotice(ctx *context, files ...string) error {
+// xmlNotice implements the xmlnotice utility.
+func xmlNotice(ctx *context, files ...string) error {
 	// Must be at least one root file.
 	if len(files) < 1 {
 		return failNoneRequested
@@ -190,18 +192,27 @@ func textNotice(ctx *context, files ...string) error {
 		return fmt.Errorf("Unable to read license text file(s) for %q: %v\n", files, err)
 	}
 
-	for h := range ni.Hashes() {
-		fmt.Fprintln(ctx.stdout, "==============================================================================")
-		for _, libName := range ni.HashLibs(h) {
-			fmt.Fprintf(ctx.stdout, "%s used by:\n", libName)
-			for _, installPath := range ni.HashLibInstalls(h, libName) {
-				fmt.Fprintf(ctx.stdout, "  %s\n", ctx.strip(installPath))
+	fmt.Fprintln(ctx.stdout, "<?xml version=\"1.0\" encoding=\"utf-8\"?>")
+	fmt.Fprintln(ctx.stdout, "<licenses>")
+
+	for installPath := range ni.InstallPaths() {
+		p := ctx.strip(installPath)
+		for _, h := range ni.InstallHashes(installPath) {
+			for _, lib := range ni.InstallHashLibs(installPath, h) {
+				fmt.Fprintf(ctx.stdout, "<file-name contentId=\"%s\" lib=\"", h.String())
+				xml.EscapeText(ctx.stdout, []byte(lib))
+				fmt.Fprintf(ctx.stdout, "\">")
+				xml.EscapeText(ctx.stdout, []byte(p))
+				fmt.Fprintln(ctx.stdout, "</file-name>")
 			}
-			fmt.Fprintln(ctx.stdout)
 		}
-		ctx.stdout.Write(ni.HashText(h))
-		fmt.Fprintln(ctx.stdout)
 	}
+	for h := range ni.Hashes() {
+		fmt.Fprintf(ctx.stdout, "<file-content contentId=\"%s\"><![CDATA[", h)
+		xml.EscapeText(ctx.stdout, ni.HashText(h))
+		fmt.Fprintf(ctx.stdout, "]]></file-content>\n\n")
+	}
+	fmt.Fprintln(ctx.stdout, "</licenses>")
 
 	*ctx.deps = ni.InputNoticeFiles()
 
