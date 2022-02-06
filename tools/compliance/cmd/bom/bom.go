@@ -29,7 +29,7 @@ import (
 
 var (
 	outputFile  = flag.String("o", "-", "Where to write the bill of materials. (default stdout)")
-	stripPrefix = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
+	stripPrefix = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoLicenses    = fmt.Errorf("No licenses found")
@@ -39,7 +39,20 @@ type context struct {
 	stdout      io.Writer
 	stderr      io.Writer
 	rootFS      fs.FS
-	stripPrefix string
+	stripPrefix []string
+}
+
+func (ctx context) strip(installPath string) string {
+	for _, prefix := range ctx.stripPrefix {
+		if strings.HasPrefix(installPath, prefix) {
+			p := strings.TrimPrefix(installPath, prefix)
+			if 0 == len(p) {
+				continue
+			}
+			return p
+		}
+	}
+	return installPath
 }
 
 func init() {
@@ -53,6 +66,19 @@ Options:
 		flag.PrintDefaults()
 	}
 }
+
+// newMultiString creates a flag that allows multiple values in an array.
+func newMultiString(name, usage string) *multiString {
+	var f multiString
+	flag.Var(&f, name, usage)
+	return &f
+}
+
+// multiString implements the flag `Value` interface for multiple strings.
+type multiString []string
+
+func (ms *multiString) String() string     { return strings.Join(*ms, ", ") }
+func (ms *multiString) Set(s string) error { *ms = append(*ms, s); return nil }
 
 func main() {
 	flag.Parse()
@@ -135,11 +161,7 @@ func billOfMaterials(ctx *context, files ...string) error {
 	}
 
 	for path := range ni.InstallPaths() {
-		if 0 < len(ctx.stripPrefix) && strings.HasPrefix(path, ctx.stripPrefix) {
-			fmt.Fprintln(ctx.stdout, path[len(ctx.stripPrefix):])
-		} else {
-			fmt.Fprintln(ctx.stdout, path)
-		}
+		fmt.Fprintln(ctx.stdout, ctx.strip(path))
 	}
 	return nil
 }

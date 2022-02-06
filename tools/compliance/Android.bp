@@ -55,8 +55,18 @@ blueprint_go_binary {
 blueprint_go_binary {
     name: "htmlnotice",
     srcs: ["cmd/htmlnotice/htmlnotice.go"],
-    deps: ["compliance-module"],
+    deps: [
+        "compliance-module",
+        "blueprint-deptools",
+    ],
     testSrcs: ["cmd/htmlnotice/htmlnotice_test.go"],
+}
+
+blueprint_go_binary {
+    name: "rtrace",
+    srcs: ["cmd/rtrace/rtrace.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/rtrace/rtrace_test.go"],
 }
 
 blueprint_go_binary {
@@ -69,8 +79,21 @@ blueprint_go_binary {
 blueprint_go_binary {
     name: "textnotice",
     srcs: ["cmd/textnotice/textnotice.go"],
-    deps: ["compliance-module"],
+    deps: [
+        "compliance-module",
+        "blueprint-deptools",
+    ],
     testSrcs: ["cmd/textnotice/textnotice_test.go"],
+}
+
+blueprint_go_binary {
+    name: "xmlnotice",
+    srcs: ["cmd/xmlnotice/xmlnotice.go"],
+    deps: [
+        "compliance-module",
+        "blueprint-deptools",
+    ],
+    testSrcs: ["cmd/xmlnotice/xmlnotice_test.go"],
 }
 
 bootstrap_go_package {
