@@ -54,6 +54,7 @@ import shutil
 import stat
 import sys
 import uuid
+import tempfile
 import zipfile
 
 import build_image
@@ -104,9 +105,10 @@ class OutputFile(object):
     if self._output_zip:
       self._zip_name = os.path.join(*args)
 
-  def Write(self):
+  def Write(self, compress_type=None):
     if self._output_zip:
-      common.ZipWrite(self._output_zip, self.name, self._zip_name)
+      common.ZipWrite(self._output_zip, self.name,
+                      self._zip_name, compress_type=compress_type)
 
 
 def AddSystem(output_zip, recovery_img=None, boot_img=None):
@@ -134,12 +136,13 @@ def AddSystem(output_zip, recovery_img=None, boot_img=None):
       "board_uses_vendorimage") == "true"
 
   if (OPTIONS.rebuild_recovery and not board_uses_vendorimage and
-      recovery_img is not None and boot_img is not None):
+          recovery_img is not None and boot_img is not None):
     logger.info("Building new recovery patch on system at system/vendor")
     common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink, recovery_img,
                              boot_img, info_dict=OPTIONS.info_dict)
 
-  block_list = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system.map")
+  block_list = OutputFile(output_zip, OPTIONS.input_tmp,
+                          "IMAGES", "system.map")
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "system", img,
               block_list=block_list)
   return img.name
@@ -182,12 +185,13 @@ def AddVendor(output_zip, recovery_img=None, boot_img=None):
       "board_uses_vendorimage") == "true"
 
   if (OPTIONS.rebuild_recovery and board_uses_vendorimage and
-      recovery_img is not None and boot_img is not None):
+          recovery_img is not None and boot_img is not None):
     logger.info("Building new recovery patch on vendor")
     common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink, recovery_img,
                              boot_img, info_dict=OPTIONS.info_dict)
 
-  block_list = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vendor.map")
+  block_list = OutputFile(output_zip, OPTIONS.input_tmp,
+                          "IMAGES", "vendor.map")
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "vendor", img,
               block_list=block_list)
   return img.name
@@ -389,15 +393,16 @@ def AddCustomImages(output_zip, partition_name):
       key_path, algorithm, extra_args)
 
   for img_name in OPTIONS.info_dict.get(
-      "avb_{}_image_list".format(partition_name)).split():
-    custom_image = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", img_name)
+          "avb_{}_image_list".format(partition_name)).split():
+    custom_image = OutputFile(
+        output_zip, OPTIONS.input_tmp, "IMAGES", img_name)
     if os.path.exists(custom_image.name):
       continue
 
     custom_image_prebuilt_path = os.path.join(
         OPTIONS.input_tmp, "PREBUILT_IMAGES", img_name)
     assert os.path.exists(custom_image_prebuilt_path), \
-      "Failed to find %s at %s" % (img_name, custom_image_prebuilt_path)
+        "Failed to find %s at %s" % (img_name, custom_image_prebuilt_path)
 
     shutil.copy(custom_image_prebuilt_path, custom_image.name)
 
@@ -499,7 +504,9 @@ def AddUserdata(output_zip):
   build_image.BuildImage(user_dir, image_props, img.name)
 
   common.CheckSize(img.name, "userdata.img", OPTIONS.info_dict)
-  img.Write()
+  # Always use compression for useradata image.
+  # As it's likely huge and consist of lots of 0s.
+  img.Write(zipfile.ZIP_DEFLATED)
 
 
 def AddVBMeta(output_zip, partitions, name, needed_partitions):
@@ -696,11 +703,11 @@ def HasPartition(partition_name):
 
   return ((os.path.isdir(
       os.path.join(OPTIONS.input_tmp, partition_name.upper())) and
-           OPTIONS.info_dict.get(
-               "building_{}_image".format(partition_name)) == "true") or
-          os.path.exists(
-              os.path.join(OPTIONS.input_tmp, "IMAGES",
-                           "{}.img".format(partition_name))))
+      OPTIONS.info_dict.get(
+      "building_{}_image".format(partition_name)) == "true") or
+      os.path.exists(
+      os.path.join(OPTIONS.input_tmp, "IMAGES",
+                   "{}.img".format(partition_name))))
 
 
 def AddApexInfo(output_zip):
@@ -732,7 +739,7 @@ def AddVbmetaDigest(output_zip):
   boot_container = boot_images and (
       len(boot_images.split()) >= 2 or boot_images.split()[0] != 'boot.img')
   if (OPTIONS.info_dict.get("avb_enable") == "true" and not boot_container and
-      OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true"):
+          OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true"):
     avbtool = OPTIONS.info_dict["avb_avbtool"]
     digest = verity_utils.CalculateVbmetaDigest(OPTIONS.input_tmp, avbtool)
     vbmeta_digest_txt = os.path.join(OPTIONS.input_tmp, "META",
@@ -820,7 +827,7 @@ def AddImagesToTargetFiles(filename):
     boot_images = OPTIONS.info_dict.get("boot_images")
     if boot_images is None:
       boot_images = "boot.img"
-    for index,b in enumerate(boot_images.split()):
+    for index, b in enumerate(boot_images.split()):
       # common.GetBootableImage() returns the image directly if present.
       boot_image = common.GetBootableImage(
           "IMAGES/" + b, b, OPTIONS.input_tmp, "BOOT")
@@ -841,7 +848,8 @@ def AddImagesToTargetFiles(filename):
     init_boot_image = common.GetBootableImage(
         "IMAGES/init_boot.img", "init_boot.img", OPTIONS.input_tmp, "INIT_BOOT")
     if init_boot_image:
-      partitions['init_boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES", "init_boot.img")
+      partitions['init_boot'] = os.path.join(
+          OPTIONS.input_tmp, "IMAGES", "init_boot.img")
       if not os.path.exists(partitions['init_boot']):
         init_boot_image.WriteToDir(OPTIONS.input_tmp)
         if output_zip:
@@ -968,7 +976,7 @@ def AddImagesToTargetFiles(filename):
 
   if OPTIONS.info_dict.get("build_super_partition") == "true":
     if OPTIONS.info_dict.get(
-        "build_retrofit_dynamic_partitions_ota_package") == "true":
+            "build_retrofit_dynamic_partitions_ota_package") == "true":
       banner("super split images")
       AddSuperSplit(output_zip)
 
@@ -1005,6 +1013,35 @@ def AddImagesToTargetFiles(filename):
                           OPTIONS.replace_updated_files_list)
 
 
+def OptimizeCompressedEntries(zipfile_path):
+  """Convert files that do not compress well to uncompressed storage
+
+  EROFS images tend to be compressed already, so compressing them again
+  yields little space savings. Leaving them uncompressed will make
+  downstream tooling's job easier, and save compute time.
+  """
+  if not zipfile.is_zipfile(zipfile_path):
+    return
+  entries_to_store = []
+  with tempfile.TemporaryDirectory() as tmpdir:
+    with zipfile.ZipFile(zipfile_path, "r", allowZip64=True) as zfp:
+      for zinfo in zfp.filelist:
+        if not zinfo.filename.startswith("IMAGES/") and not zinfo.filename.startswith("META"):
+          pass
+        # Don't try to store userdata.img uncompressed, it's usually huge.
+        if zinfo.filename.endswith("userdata.img"):
+          pass
+        if zinfo.compress_size > zinfo.file_size * 0.80 and zinfo.compress_type != zipfile.ZIP_STORED:
+          entries_to_store.append(zinfo)
+          zfp.extract(zinfo, tmpdir)
+    # Remove these entries, then re-add them as ZIP_STORED
+    common.RunAndCheckOutput(
+        ["zip", "-d", zipfile_path] + [entry.filename for entry in entries_to_store])
+    with zipfile.ZipFile(zipfile_path, "a", allowZip64=True) as zfp:
+      for entry in entries_to_store:
+        zfp.write(os.path.join(tmpdir, entry.filename), entry.filename, compress_type=zipfile.ZIP_STORED)
+
+
 def main(argv):
   def option_handler(o, a):
     if o in ("-a", "--add_missing"):
@@ -1036,7 +1073,9 @@ def main(argv):
   common.InitLogging()
 
   AddImagesToTargetFiles(args[0])
+  OptimizeCompressedEntries(args[0])
   logger.info("done.")
+
 
 if __name__ == '__main__':
   try:
