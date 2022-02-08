@@ -981,6 +981,9 @@ ALL_MODULES.$(my_register_name).SHARED_LIBS := \
 ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS := \
     $(ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS) $(LOCAL_SYSTEM_SHARED_LIBRARIES)
 
+ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES := \
+    $(ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES) $(LOCAL_RUNTIME_LIBRARIES)
+
 ifdef LOCAL_TEST_DATA
   # Export the list of targets that are handled as data inputs and required
   # by tests at runtime. The LOCAL_TEST_DATA format is generated from below
