@@ -1027,10 +1027,10 @@ def OptimizeCompressedEntries(zipfile_path):
     with zipfile.ZipFile(zipfile_path, "r", allowZip64=True) as zfp:
       for zinfo in zfp.filelist:
         if not zinfo.filename.startswith("IMAGES/") and not zinfo.filename.startswith("META"):
-          pass
+          continue
         # Don't try to store userdata.img uncompressed, it's usually huge.
         if zinfo.filename.endswith("userdata.img"):
-          pass
+          continue
         if zinfo.compress_size > zinfo.file_size * 0.80 and zinfo.compress_type != zipfile.ZIP_STORED:
           entries_to_store.append(zinfo)
           zfp.extract(zinfo, tmpdir)
