@@ -459,7 +459,7 @@ func Test(t *testing.T) {
 
 			var deps []string
 
-			ctx := context{stdout, stderr, os.DirFS("."), []string{tt.stripPrefix}, "", &deps}
+			ctx := context{stdout, stderr, os.DirFS("."), "", []string{tt.stripPrefix}, "", &deps}
 
 			err := xmlNotice(&ctx, rootFiles...)
 			if err != nil {
