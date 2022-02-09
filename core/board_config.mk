@@ -242,6 +242,7 @@ else
     --mode=write -r --outdir $(OUT_DIR)/rbc \
     --boardlauncher=$(OUT_DIR)/rbc/boardlauncher.rbc \
     --input_variables=$(OUT_DIR)/rbc/make_vars_pre_board_config.mk \
+    --makefile_list=$(OUT_DIR)/.module_paths/configuration.list \
     $(board_config_mk))
   ifneq ($(.SHELLSTATUS),0)
     $(error board configuration converter failed: $(.SHELLSTATUS))
