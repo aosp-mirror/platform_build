@@ -237,9 +237,11 @@ class APK(object):
     # Signer #1 certificate DN: ...
     # Signer #1 certificate SHA-256 digest: ...
     # Signer #1 certificate SHA-1 digest: ...
+    # Signer (minSdkVersion=24, maxSdkVersion=32) certificate SHA-256 digest: 56be132b780656fe2444cd34326eb5d7aac91d2096abf0fe673a99270622ec87
+    # Signer (minSdkVersion=24, maxSdkVersion=32) certificate SHA-1 digest: 19da94896ce4078c38ca695701f1dec741ec6d67
     # ...
     certs_info = {}
-    certificate_regex = re.compile(r"(Signer #[0-9]+) (certificate .*):(.*)")
+    certificate_regex = re.compile(r"(Signer (?:#[0-9]+|\(.*\))) (certificate .*):(.*)")
     for line in output.splitlines():
       m = certificate_regex.match(line)
       if not m:
@@ -342,8 +344,8 @@ class TargetFiles(object):
           apk = APK(fullname, displayname)
           self.apks[apk.filename] = apk
           self.apks_by_basename[os.path.basename(apk.filename)] = apk
-
-          self.max_pkg_len = max(self.max_pkg_len, len(apk.package))
+          if apk.package:
+            self.max_pkg_len = max(self.max_pkg_len, len(apk.package))
           self.max_fn_len = max(self.max_fn_len, len(apk.filename))
 
   def CheckSharedUids(self):
@@ -396,7 +398,8 @@ class TargetFiles(object):
     by_digest = {}
     for apk in self.apks.values():
       for digest in apk.cert_digests:
-        by_digest.setdefault(digest, []).append((apk.package, apk))
+        if apk.package:
+          by_digest.setdefault(digest, []).append((apk.package, apk))
 
     order = [(-len(v), k) for (k, v) in by_digest.items()]
     order.sort()
