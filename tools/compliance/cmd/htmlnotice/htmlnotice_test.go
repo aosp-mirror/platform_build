@@ -678,7 +678,7 @@ func Test(t *testing.T) {
 				}
 				if !inBody {
 					if expectTitle {
-						if tl := checkTitle(line); 0 < len(tl) {
+						if tl := checkTitle(line); len(tl) > 0 {
 							if tl != ttle.t {
 								t.Errorf("htmlnotice: unexpected title: got %q, want %q", tl, ttle.t)
 							}
