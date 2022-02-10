@@ -337,14 +337,14 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode) string {
 					}
 					// remove LICENSE or NOTICE or other filename
 					li := strings.LastIndex(match, "/")
-					if 0 < li {
+					if li > 0 {
 						match = match[:li]
 					}
 					// remove *licenses/ path segment and subdirectory if in path
-					if offsets := licensesPathRegexp.FindAllStringIndex(match, -1); offsets != nil && 0 < offsets[len(offsets)-1][0] {
+					if offsets := licensesPathRegexp.FindAllStringIndex(match, -1); offsets != nil && offsets[len(offsets)-1][0] > 0 {
 						match = match[:offsets[len(offsets)-1][0]]
 						li = strings.LastIndex(match, "/")
-						if 0 < li {
+						if li > 0 {
 							match = match[:li]
 						}
 					}
@@ -366,7 +366,7 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode) string {
 	// strip off [./]meta_lic from license metadata path and extract base name
 	n := noticeFor.name[:len(noticeFor.name)-9]
 	li := strings.LastIndex(n, "/")
-	if 0 < li {
+	if li > 0 {
 		n = n[li+1:]
 	}
 	return n
@@ -580,7 +580,7 @@ func (l hashList) Swap(i, j int) { (*l.hashes)[i], (*l.hashes)[j] = (*l.hashes)[
 // the `j`th element.
 func (l hashList) Less(i, j int) bool {
 	var insti, instj int
-	if 0 < len(l.libName) {
+	if len(l.libName) > 0 {
 		insti = len(l.ni.hashLibInstall[(*l.hashes)[i]][l.libName])
 		instj = len(l.ni.hashLibInstall[(*l.hashes)[j]][l.libName])
 	} else {

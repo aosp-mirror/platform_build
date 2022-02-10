@@ -204,17 +204,17 @@ func htmlNotice(ctx *context, files ...string) error {
 	fmt.Fprintln(ctx.stdout, "li { padding-left: 1em; }")
 	fmt.Fprintln(ctx.stdout, ".file-list { margin-left: 1em; }")
 	fmt.Fprintln(ctx.stdout, "</style>")
-	if 0 < len(ctx.title) {
+	if len(ctx.title) > 0 {
 		fmt.Fprintf(ctx.stdout, "<title>%s</title>\n", html.EscapeString(ctx.title))
-	} else if 0 < len(ctx.product) {
+	} else if len(ctx.product) > 0 {
 		fmt.Fprintf(ctx.stdout, "<title>%s</title>\n", html.EscapeString(ctx.product))
 	}
 	fmt.Fprintln(ctx.stdout, "</head>")
 	fmt.Fprintln(ctx.stdout, "<body>")
 
-	if 0 < len(ctx.title) {
+	if len(ctx.title) > 0 {
 		fmt.Fprintf(ctx.stdout, "  <h1>%s</h1>\n", html.EscapeString(ctx.title))
-	} else if 0 < len(ctx.product) {
+	} else if len(ctx.product) > 0 {
 		fmt.Fprintf(ctx.stdout, "  <h1>%s</h1>\n", html.EscapeString(ctx.product))
 	}
 	ids := make(map[string]string)
