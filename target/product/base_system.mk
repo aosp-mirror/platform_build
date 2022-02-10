@@ -78,6 +78,7 @@ PRODUCT_PACKAGES += \
     device_config \
     dmctl \
     dnsmasq \
+    dmesgd \
     DownloadProvider \
     dpm \
     dump.erofs \
