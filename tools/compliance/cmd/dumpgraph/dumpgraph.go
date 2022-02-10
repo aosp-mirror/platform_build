@@ -29,7 +29,7 @@ import (
 var (
 	graphViz        = flag.Bool("dot", false, "Whether to output graphviz (i.e. dot) format.")
 	labelConditions = flag.Bool("label_conditions", false, "Whether to label target nodes with conditions.")
-	stripPrefix     = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
+	stripPrefix     = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoLicenses    = fmt.Errorf("No licenses found")
@@ -38,7 +38,20 @@ var (
 type context struct {
 	graphViz        bool
 	labelConditions bool
-	stripPrefix     string
+	stripPrefix     []string
+}
+
+func (ctx context) strip(installPath string) string {
+	for _, prefix := range ctx.stripPrefix {
+		if strings.HasPrefix(installPath, prefix) {
+			p := strings.TrimPrefix(installPath, prefix)
+			if 0 == len(p) {
+				continue
+			}
+			return p
+		}
+	}
+	return installPath
 }
 
 func init() {
@@ -59,6 +72,19 @@ Options:
 		flag.PrintDefaults()
 	}
 }
+
+// newMultiString creates a flag that allows multiple values in an array.
+func newMultiString(name, usage string) *multiString {
+	var f multiString
+	flag.Var(&f, name, usage)
+	return &f
+}
+
+// multiString implements the flag `Value` interface for multiple strings.
+type multiString []string
+
+func (ms *multiString) String() string     { return strings.Join(*ms, ", ") }
+func (ms *multiString) Set(s string) error { *ms = append(*ms, s); return nil }
 
 func main() {
 	flag.Parse()
@@ -107,7 +133,7 @@ func dumpGraph(ctx *context, stdout, stderr io.Writer, files ...string) error {
 
 	// targetOut calculates the string to output for `target` separating conditions as needed using `sep`.
 	targetOut := func(target *compliance.TargetNode, sep string) string {
-		tOut := strings.TrimPrefix(target.Name(), ctx.stripPrefix)
+		tOut := ctx.strip(target.Name())
 		if ctx.labelConditions {
 			conditions := target.LicenseConditions().Names()
 			sort.Strings(conditions)
