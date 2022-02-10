@@ -192,7 +192,7 @@ func textNotice(ctx *context, files ...string) error {
 		return fmt.Errorf("Unable to read license text file(s) for %q: %v\n", files, err)
 	}
 
-	if 0 < len(ctx.title) {
+	if len(ctx.title) > 0 {
 		fmt.Fprintf(ctx.stdout, "%s\n\n", ctx.title)
 	}
 	for h := range ni.Hashes() {
