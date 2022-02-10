@@ -259,7 +259,7 @@ func Test(t *testing.T) {
 				if len(ts) < 1 {
 					continue
 				}
-				if 0 < len(actualStdout) {
+				if len(actualStdout) > 0 {
 					t.Errorf("checkshare: unexpected multiple output lines %q, want %q", actualStdout+"\n"+ts, tt.expectedStdout)
 				}
 				actualStdout = ts
