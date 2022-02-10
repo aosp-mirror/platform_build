@@ -17,9 +17,9 @@ package main
 import (
 	"bytes"
 	"compress/gzip"
+	"encoding/xml"
 	"flag"
 	"fmt"
-	"html"
 	"io"
 	"io/fs"
 	"os"
@@ -32,9 +32,8 @@ import (
 )
 
 var (
-	outputFile  = flag.String("o", "-", "Where to write the NOTICE text file. (default stdout)")
+	outputFile  = flag.String("o", "-", "Where to write the NOTICE xml or xml.gz file. (default stdout)")
 	depsFile    = flag.String("d", "", "Where to write the deps file")
-	includeTOC  = flag.Bool("toc", true, "Whether to include a table of contents.")
 	product     = flag.String("product", "", "The name of the product for which the notice is generated.")
 	stripPrefix = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
 	title       = flag.String("title", "", "The title of the notice file.")
@@ -47,7 +46,6 @@ type context struct {
 	stdout      io.Writer
 	stderr      io.Writer
 	rootFS      fs.FS
-	includeTOC  bool
 	product     string
 	stripPrefix []string
 	title       string
@@ -74,8 +72,8 @@ func init() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage: %s {options} file.meta_lic {file.meta_lic...}
 
-Outputs an html NOTICE.html or gzipped NOTICE.html.gz file if the -o filename
-ends with ".gz".
+Outputs an xml NOTICE.xml or gzipped NOTICE.xml.gz file if the -o filename ends
+with ".gz".
 
 Options:
 `, filepath.Base(os.Args[0]))
@@ -141,9 +139,9 @@ func main() {
 
 	var deps []string
 
-	ctx := &context{ofile, os.Stderr, os.DirFS("."), *includeTOC, *product, *stripPrefix, *title, &deps}
+	ctx := &context{ofile, os.Stderr, os.DirFS("."), *product, *stripPrefix, *title, &deps}
 
-	err := htmlNotice(ctx, flag.Args()...)
+	err := xmlNotice(ctx, flag.Args()...)
 	if err != nil {
 		if err == failNoneRequested {
 			flag.Usage()
@@ -172,8 +170,8 @@ func main() {
 	os.Exit(0)
 }
 
-// htmlNotice implements the htmlnotice utility.
-func htmlNotice(ctx *context, files ...string) error {
+// xmlNotice implements the xmlnotice utility.
+func xmlNotice(ctx *context, files ...string) error {
 	// Must be at least one root file.
 	if len(files) < 1 {
 		return failNoneRequested
@@ -196,62 +194,27 @@ func htmlNotice(ctx *context, files ...string) error {
 		return fmt.Errorf("Unable to read license text file(s) for %q: %v\n", files, err)
 	}
 
-	fmt.Fprintln(ctx.stdout, "<!DOCTYPE html>")
-	fmt.Fprintln(ctx.stdout, "<html><head>")
-	fmt.Fprintln(ctx.stdout, "<style type=\"text/css\">")
-	fmt.Fprintln(ctx.stdout, "body { padding: 2px; margin: 0; }")
-	fmt.Fprintln(ctx.stdout, "ul { list-style-type: none; margin: 0; padding: 0; }")
-	fmt.Fprintln(ctx.stdout, "li { padding-left: 1em; }")
-	fmt.Fprintln(ctx.stdout, ".file-list { margin-left: 1em; }")
-	fmt.Fprintln(ctx.stdout, "</style>")
-	if 0 < len(ctx.title) {
-		fmt.Fprintf(ctx.stdout, "<title>%s</title>\n", html.EscapeString(ctx.title))
-	} else if 0 < len(ctx.product) {
-		fmt.Fprintf(ctx.stdout, "<title>%s</title>\n", html.EscapeString(ctx.product))
-	}
-	fmt.Fprintln(ctx.stdout, "</head>")
-	fmt.Fprintln(ctx.stdout, "<body>")
+	fmt.Fprintln(ctx.stdout, "<?xml version=\"1.0\" encoding=\"utf-8\"?>")
+	fmt.Fprintln(ctx.stdout, "<licenses>")
 
-	if 0 < len(ctx.title) {
-		fmt.Fprintf(ctx.stdout, "  <h1>%s</h1>\n", html.EscapeString(ctx.title))
-	} else if 0 < len(ctx.product) {
-		fmt.Fprintf(ctx.stdout, "  <h1>%s</h1>\n", html.EscapeString(ctx.product))
-	}
-	ids := make(map[string]string)
-	if ctx.includeTOC {
-		fmt.Fprintln(ctx.stdout, "  <ul class=\"toc\">")
-		i := 0
-		for installPath := range ni.InstallPaths() {
-			id := fmt.Sprintf("id%d", i)
-			i++
-			ids[installPath] = id
-			fmt.Fprintf(ctx.stdout, "    <li id=\"%s\"><strong>%s</strong>\n      <ul>\n", id, html.EscapeString(ctx.strip(installPath)))
-			for _, h := range ni.InstallHashes(installPath) {
-				libs := ni.InstallHashLibs(installPath, h)
-				fmt.Fprintf(ctx.stdout, "        <li><a href=\"#%s\">%s</a>\n", h.String(), html.EscapeString(strings.Join(libs, ", ")))
+	for installPath := range ni.InstallPaths() {
+		p := ctx.strip(installPath)
+		for _, h := range ni.InstallHashes(installPath) {
+			for _, lib := range ni.InstallHashLibs(installPath, h) {
+				fmt.Fprintf(ctx.stdout, "<file-name contentId=\"%s\" lib=\"", h.String())
+				xml.EscapeText(ctx.stdout, []byte(lib))
+				fmt.Fprintf(ctx.stdout, "\">")
+				xml.EscapeText(ctx.stdout, []byte(p))
+				fmt.Fprintln(ctx.stdout, "</file-name>")
 			}
-			fmt.Fprintln(ctx.stdout, "      </ul>")
 		}
-		fmt.Fprintln(ctx.stdout, "  </ul><!-- toc -->")
 	}
 	for h := range ni.Hashes() {
-		fmt.Fprintln(ctx.stdout, "  <hr>")
-		for _, libName := range ni.HashLibs(h) {
-			fmt.Fprintf(ctx.stdout, "  <strong>%s</strong> used by:\n    <ul class=\"file-list\">\n", html.EscapeString(libName))
-			for _, installPath := range ni.HashLibInstalls(h, libName) {
-				if id, ok := ids[installPath]; ok {
-					fmt.Fprintf(ctx.stdout, "      <li><a href=\"#%s\">%s</a>\n", id, html.EscapeString(ctx.strip(installPath)))
-				} else {
-					fmt.Fprintf(ctx.stdout, "      <li>%s\n", html.EscapeString(ctx.strip(installPath)))
-				}
-			}
-			fmt.Fprintf(ctx.stdout, "    </ul>\n")
-		}
-		fmt.Fprintf(ctx.stdout, "  </ul>\n  <a id=\"%s\"/><pre class=\"license-text\">", h.String())
-		fmt.Fprintln(ctx.stdout, html.EscapeString(string(ni.HashText(h))))
-		fmt.Fprintln(ctx.stdout, "  </pre><!-- license-text -->")
+		fmt.Fprintf(ctx.stdout, "<file-content contentId=\"%s\"><![CDATA[", h)
+		xml.EscapeText(ctx.stdout, ni.HashText(h))
+		fmt.Fprintf(ctx.stdout, "]]></file-content>\n\n")
 	}
-	fmt.Fprintln(ctx.stdout, "</body></html>")
+	fmt.Fprintln(ctx.stdout, "</licenses>")
 
 	*ctx.deps = ni.InputNoticeFiles()
 

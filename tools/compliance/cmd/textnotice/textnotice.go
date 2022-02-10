@@ -16,6 +16,7 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"flag"
 	"fmt"
 	"io"
@@ -32,7 +33,9 @@ import (
 var (
 	outputFile  = flag.String("o", "-", "Where to write the NOTICE text file. (default stdout)")
 	depsFile    = flag.String("d", "", "Where to write the deps file")
-	stripPrefix = flag.String("strip_prefix", "", "Prefix to remove from paths. i.e. path to root")
+	product     = flag.String("product", "", "The name of the product for which the notice is generated.")
+	stripPrefix = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
+	title       = flag.String("title", "", "The title of the notice file.")
 
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoLicenses    = fmt.Errorf("No licenses found")
@@ -42,8 +45,26 @@ type context struct {
 	stdout      io.Writer
 	stderr      io.Writer
 	rootFS      fs.FS
-	stripPrefix string
+	product     string
+	stripPrefix []string
+	title       string
 	deps        *[]string
+}
+
+func (ctx context) strip(installPath string) string {
+	for _, prefix := range ctx.stripPrefix {
+		if strings.HasPrefix(installPath, prefix) {
+			p := strings.TrimPrefix(installPath, prefix)
+			if 0 == len(p) {
+				p = ctx.product
+			}
+			if 0 == len(p) {
+				continue
+			}
+			return p
+		}
+	}
+	return installPath
 }
 
 func init() {
@@ -57,6 +78,19 @@ Options:
 		flag.PrintDefaults()
 	}
 }
+
+// newMultiString creates a flag that allows multiple values in an array.
+func newMultiString(name, usage string) *multiString {
+	var f multiString
+	flag.Var(&f, name, usage)
+	return &f
+}
+
+// multiString implements the flag `Value` interface for multiple strings.
+type multiString []string
+
+func (ms *multiString) String() string     { return strings.Join(*ms, ", ") }
+func (ms *multiString) Set(s string) error { *ms = append(*ms, s); return nil }
 
 func main() {
 	flag.Parse()
@@ -89,14 +123,21 @@ func main() {
 	}
 
 	var ofile io.Writer
+	var closer io.Closer
 	ofile = os.Stdout
+	var obuf *bytes.Buffer
 	if *outputFile != "-" {
-		ofile = &bytes.Buffer{}
+		obuf = &bytes.Buffer{}
+		ofile = obuf
+	}
+	if strings.HasSuffix(*outputFile, ".gz") {
+		ofile, _ = gzip.NewWriterLevel(obuf, gzip.BestCompression)
+		closer = ofile.(io.Closer)
 	}
 
 	var deps []string
 
-	ctx := &context{ofile, os.Stderr, os.DirFS("."), *stripPrefix, &deps}
+	ctx := &context{ofile, os.Stderr, os.DirFS("."), *product, *stripPrefix, *title, &deps}
 
 	err := textNotice(ctx, flag.Args()...)
 	if err != nil {
@@ -106,8 +147,12 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
 		os.Exit(1)
 	}
+	if closer != nil {
+		closer.Close()
+	}
+
 	if *outputFile != "-" {
-		err := os.WriteFile(*outputFile, ofile.(*bytes.Buffer).Bytes(), 0666)
+		err := os.WriteFile(*outputFile, obuf.Bytes(), 0666)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "could not write output to %q: %s\n", *outputFile, err)
 			os.Exit(1)
@@ -147,16 +192,15 @@ func textNotice(ctx *context, files ...string) error {
 		return fmt.Errorf("Unable to read license text file(s) for %q: %v\n", files, err)
 	}
 
+	if 0 < len(ctx.title) {
+		fmt.Fprintf(ctx.stdout, "%s\n\n", ctx.title)
+	}
 	for h := range ni.Hashes() {
 		fmt.Fprintln(ctx.stdout, "==============================================================================")
 		for _, libName := range ni.HashLibs(h) {
 			fmt.Fprintf(ctx.stdout, "%s used by:\n", libName)
 			for _, installPath := range ni.HashLibInstalls(h, libName) {
-				if 0 < len(ctx.stripPrefix) && strings.HasPrefix(installPath, ctx.stripPrefix) {
-					fmt.Fprintf(ctx.stdout, "  %s\n", installPath[len(ctx.stripPrefix):])
-				} else {
-					fmt.Fprintf(ctx.stdout, "  %s\n", installPath)
-				}
+				fmt.Fprintf(ctx.stdout, "  %s\n", ctx.strip(installPath))
 			}
 			fmt.Fprintln(ctx.stdout)
 		}
