@@ -2818,6 +2818,9 @@ def ZipDelete(zip_filename, entries):
   """
   if isinstance(entries, str):
     entries = [entries]
+  # If list is empty, nothing to do
+  if not entries:
+    return
   cmd = ["zip", "-d", zip_filename] + entries
   RunAndCheckOutput(cmd)
 
