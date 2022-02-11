@@ -5170,6 +5170,11 @@ define dump-dynamic-partitions-info
     echo "virtual_ab=true" >> $(1))
   $(if $(filter true,$(PRODUCT_VIRTUAL_AB_COMPRESSION)), \
     echo "virtual_ab_compression=true" >> $(1))
+# This value controls the compression algorithm used for VABC
+# valid options are defined in system/core/fs_mgr/libsnapshot/cow_writer.cpp
+# e.g. "none", "gz", "brotli"
+  $(if $(PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD), \
+    echo "virtual_ab_compression_method=$(PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD)" >> $(1))
   $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA_RETROFIT)), \
     echo "virtual_ab_retrofit=true" >> $(1))
 endef
