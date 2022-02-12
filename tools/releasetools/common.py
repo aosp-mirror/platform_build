@@ -2244,8 +2244,8 @@ def GetMinSdkVersion(apk_name):
   stdoutdata, stderrdata = proc.communicate()
   if proc.returncode != 0:
     raise ExternalError(
-        "Failed to obtain minSdkVersion: aapt2 return code {}:\n{}\n{}".format(
-            proc.returncode, stdoutdata, stderrdata))
+        "Failed to obtain minSdkVersion for {}: aapt2 return code {}:\n{}\n{}".format(
+            apk_name, proc.returncode, stdoutdata, stderrdata))
 
   for line in stdoutdata.split("\n"):
     # Looking for lines such as sdkVersion:'23' or sdkVersion:'M'.
