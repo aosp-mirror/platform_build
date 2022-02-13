@@ -651,7 +651,7 @@ func Test(t *testing.T) {
 
 			var deps []string
 
-			ctx := context{stdout, stderr, os.DirFS("."), tt.includeTOC, []string{tt.stripPrefix}, tt.title, &deps}
+			ctx := context{stdout, stderr, os.DirFS("."), tt.includeTOC, "", []string{tt.stripPrefix}, tt.title, &deps}
 
 			err := htmlNotice(&ctx, rootFiles...)
 			if err != nil {
@@ -678,7 +678,7 @@ func Test(t *testing.T) {
 				}
 				if !inBody {
 					if expectTitle {
-						if tl := checkTitle(line); 0 < len(tl) {
+						if tl := checkTitle(line); len(tl) > 0 {
 							if tl != ttle.t {
 								t.Errorf("htmlnotice: unexpected title: got %q, want %q", tl, ttle.t)
 							}
