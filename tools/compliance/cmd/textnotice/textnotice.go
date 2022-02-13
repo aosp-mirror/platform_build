@@ -33,6 +33,7 @@ import (
 var (
 	outputFile  = flag.String("o", "-", "Where to write the NOTICE text file. (default stdout)")
 	depsFile    = flag.String("d", "", "Where to write the deps file")
+	product     = flag.String("product", "", "The name of the product for which the notice is generated.")
 	stripPrefix = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
 	title       = flag.String("title", "", "The title of the notice file.")
 
@@ -44,6 +45,7 @@ type context struct {
 	stdout      io.Writer
 	stderr      io.Writer
 	rootFS      fs.FS
+	product     string
 	stripPrefix []string
 	title       string
 	deps        *[]string
@@ -54,7 +56,7 @@ func (ctx context) strip(installPath string) string {
 		if strings.HasPrefix(installPath, prefix) {
 			p := strings.TrimPrefix(installPath, prefix)
 			if 0 == len(p) {
-				p = ctx.title
+				p = ctx.product
 			}
 			if 0 == len(p) {
 				continue
@@ -135,7 +137,7 @@ func main() {
 
 	var deps []string
 
-	ctx := &context{ofile, os.Stderr, os.DirFS("."), *stripPrefix, *title, &deps}
+	ctx := &context{ofile, os.Stderr, os.DirFS("."), *product, *stripPrefix, *title, &deps}
 
 	err := textNotice(ctx, flag.Args()...)
 	if err != nil {
@@ -190,6 +192,9 @@ func textNotice(ctx *context, files ...string) error {
 		return fmt.Errorf("Unable to read license text file(s) for %q: %v\n", files, err)
 	}
 
+	if len(ctx.title) > 0 {
+		fmt.Fprintf(ctx.stdout, "%s\n\n", ctx.title)
+	}
 	for h := range ni.Hashes() {
 		fmt.Fprintln(ctx.stdout, "==============================================================================")
 		for _, libName := range ni.HashLibs(h) {

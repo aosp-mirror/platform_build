@@ -1521,8 +1521,5 @@ def main(argv):
 if __name__ == '__main__':
   try:
     main(sys.argv[1:])
-  except common.ExternalError as e:
-    print("\n   ERROR: %s\n" % (e,))
-    raise
   finally:
     common.Cleanup()

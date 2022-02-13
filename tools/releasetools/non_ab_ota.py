@@ -74,7 +74,7 @@ def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
 
   block_diff_dict = collections.OrderedDict()
   partition_names = ["system", "vendor", "product", "odm", "system_ext",
-                     "vendor_dlkm", "odm_dlkm"]
+                     "vendor_dlkm", "odm_dlkm", "system_dlkm"]
   for partition in partition_names:
     if not HasPartition(target_zip, partition):
       continue

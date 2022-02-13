@@ -35,6 +35,7 @@ var (
 	outputFile  = flag.String("o", "-", "Where to write the NOTICE text file. (default stdout)")
 	depsFile    = flag.String("d", "", "Where to write the deps file")
 	includeTOC  = flag.Bool("toc", true, "Whether to include a table of contents.")
+	product     = flag.String("product", "", "The name of the product for which the notice is generated.")
 	stripPrefix = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
 	title       = flag.String("title", "", "The title of the notice file.")
 
@@ -47,6 +48,7 @@ type context struct {
 	stderr      io.Writer
 	rootFS      fs.FS
 	includeTOC  bool
+	product     string
 	stripPrefix []string
 	title       string
 	deps        *[]string
@@ -57,7 +59,7 @@ func (ctx context) strip(installPath string) string {
 		if strings.HasPrefix(installPath, prefix) {
 			p := strings.TrimPrefix(installPath, prefix)
 			if 0 == len(p) {
-				p = ctx.title
+				p = ctx.product
 			}
 			if 0 == len(p) {
 				continue
@@ -139,7 +141,7 @@ func main() {
 
 	var deps []string
 
-	ctx := &context{ofile, os.Stderr, os.DirFS("."), *includeTOC, *stripPrefix, *title, &deps}
+	ctx := &context{ofile, os.Stderr, os.DirFS("."), *includeTOC, *product, *stripPrefix, *title, &deps}
 
 	err := htmlNotice(ctx, flag.Args()...)
 	if err != nil {
@@ -202,14 +204,18 @@ func htmlNotice(ctx *context, files ...string) error {
 	fmt.Fprintln(ctx.stdout, "li { padding-left: 1em; }")
 	fmt.Fprintln(ctx.stdout, ".file-list { margin-left: 1em; }")
 	fmt.Fprintln(ctx.stdout, "</style>")
-	if 0 < len(ctx.title) {
+	if len(ctx.title) > 0 {
 		fmt.Fprintf(ctx.stdout, "<title>%s</title>\n", html.EscapeString(ctx.title))
+	} else if len(ctx.product) > 0 {
+		fmt.Fprintf(ctx.stdout, "<title>%s</title>\n", html.EscapeString(ctx.product))
 	}
 	fmt.Fprintln(ctx.stdout, "</head>")
 	fmt.Fprintln(ctx.stdout, "<body>")
 
-	if 0 < len(ctx.title) {
+	if len(ctx.title) > 0 {
 		fmt.Fprintf(ctx.stdout, "  <h1>%s</h1>\n", html.EscapeString(ctx.title))
+	} else if len(ctx.product) > 0 {
+		fmt.Fprintf(ctx.stdout, "  <h1>%s</h1>\n", html.EscapeString(ctx.product))
 	}
 	ids := make(map[string]string)
 	if ctx.includeTOC {
