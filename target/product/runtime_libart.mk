@@ -148,17 +148,6 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.minidebuginfo=true \
     dalvik.vm.dex2oat-minidebuginfo=true
 
-# Two other device configs are added to IORap besides "ro.iorapd.enable".
-# IORap by default is off and starts when
-# (https://source.corp.google.com/android/system/iorap/iorapd.rc?q=iorapd.rc)
-#
-# * "ro.iorapd.enable" is true excluding unset
-# * One of the device configs is true.
-#
-# "ro.iorapd.enable" has to be set to true, so that iorap can be started.
-PRODUCT_SYSTEM_PROPERTIES += \
-    ro.iorapd.enable?=true
-
 # Enable Madvising of the whole art, odex and vdex files to MADV_WILLNEED.
 # The size specified here is the size limit of how much of the file
 # (in bytes) is madvised.
