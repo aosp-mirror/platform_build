@@ -122,7 +122,6 @@ PRODUCT_PACKAGES += \
     input \
     installd \
     IntentResolver \
-    iorapd \
     ip \
     iptables \
     ip-up-vpn \
