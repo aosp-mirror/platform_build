@@ -204,26 +204,23 @@ class SignApk {
      * If a console doesn't exist, reads the password from stdin
      * If a console exists, reads the password from console and returns it as a string.
      *
-     * @param keyFile The file containing the private key.  Used to prompt the user.
+     * @param keyFileName Name of the file containing the private key.  Used to prompt the user.
      */
-    private static String readPassword(File keyFile) {
+    private static char[] readPassword(String keyFileName) {
         Console console;
-        char[] pwd;
         if ((console = System.console()) == null) {
-            System.out.print("Enter password for " + keyFile + " (password will not be hidden): ");
+            System.out.print(
+                "Enter password for " + keyFileName + " (password will not be hidden): ");
             System.out.flush();
             BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
             try {
-                return stdin.readLine();
+                String result = stdin.readLine();
+                return result == null ? null : result.toCharArray();
             } catch (IOException ex) {
                 return null;
             }
         } else {
-            if ((pwd = console.readPassword("[%s]", "Enter password for " + keyFile)) != null) {
-                return String.valueOf(pwd);
-            } else {
-                return null;
-            }
+            return console.readPassword("[%s]", "Enter password for " + keyFileName);
         }
     }
 
@@ -246,11 +243,8 @@ class SignApk {
             return null;
         }
 
-        char[] password = readPassword(keyFile).toCharArray();
-
         SecretKeyFactory skFactory = SecretKeyFactory.getInstance(epkInfo.getAlgName());
-        Key key = skFactory.generateSecret(new PBEKeySpec(password));
-
+        Key key = skFactory.generateSecret(new PBEKeySpec(readPassword(keyFile.getPath())));
         Cipher cipher = Cipher.getInstance(epkInfo.getAlgName());
         cipher.init(Cipher.DECRYPT_MODE, key, epkInfo.getAlgParameters());
 
@@ -305,10 +299,10 @@ class SignApk {
 
     /** Get a PKCS#11 private key from keyStore */
     private static PrivateKey loadPrivateKeyFromKeyStore(
-            final KeyStore keyStore, final String keyName, final String password)
+            final KeyStore keyStore, final String keyName)
             throws CertificateException, KeyStoreException, NoSuchAlgorithmException,
                     UnrecoverableKeyException, UnrecoverableEntryException {
-        final Key key = keyStore.getKey(keyName, password == null ? null : password.toCharArray());
+        final Key key = keyStore.getKey(keyName, readPassword(keyName));
         final PrivateKeyEntry privateKeyEntry = (PrivateKeyEntry) keyStore.getEntry(keyName, null);
         if (privateKeyEntry == null) {
         throw new Error(
@@ -1211,10 +1205,8 @@ class SignApk {
                 if (keyStore == null) {
                     privateKey[i] = readPrivateKey(new File(args[argNum]));
                 } else {
-                    String[] splits = args[argNum].split(":", 2);
-                    final String keyAlias = splits[0];
-                    final String password = splits.length > 1 ? splits[1] : null;
-                    privateKey[i] = loadPrivateKeyFromKeyStore(keyStore, keyAlias, password);
+                    final String keyAlias = args[argNum];
+                    privateKey[i] = loadPrivateKeyFromKeyStore(keyStore, keyAlias);
                 }
             }
             inputJar = new JarFile(new File(inputFilename), false);  // Don't verify.

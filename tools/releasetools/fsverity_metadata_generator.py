@@ -55,6 +55,9 @@ class FSVerityMetadataGenerator:
     self.set_hash_alg("sha256")
     self.set_signature('none')
 
+  def set_key_format(self, key_format):
+    self._key_format = key_format
+
   def set_key(self, key):
     self._key = key
 
@@ -130,14 +133,17 @@ class FSVerityMetadataGenerator:
       cmd.append(input_file)
       cmd.append(sig_file)
 
-      # convert DER private key to PEM
-      pem_key = os.path.join(work_dir, 'key.pem')
-      key_cmd = ['openssl', 'pkcs8']
-      key_cmd.extend(['-inform', 'DER'])
-      key_cmd.extend(['-in', self._key])
-      key_cmd.extend(['-nocrypt'])
-      key_cmd.extend(['-out', pem_key])
-      subprocess.check_call(key_cmd)
+      # If key is DER, convert DER private key to PEM
+      if self._key_format == 'der':
+        pem_key = os.path.join(work_dir, 'key.pem')
+        key_cmd = ['openssl', 'pkcs8']
+        key_cmd.extend(['-inform', 'DER'])
+        key_cmd.extend(['-in', self._key])
+        key_cmd.extend(['-nocrypt'])
+        key_cmd.extend(['-out', pem_key])
+        subprocess.check_call(key_cmd)
+      else:
+        pem_key = self._key
 
       cmd.extend(['--key', pem_key])
       cmd.extend(['--cert', self._cert])
@@ -172,6 +178,7 @@ class FSVerityMetadataGenerator:
           out.write(sig)
       else:
         out.write(pack('<I', SIG_TYPE_NONE))
+        out.write(pack('<I', 0))
 
       # 4. merkle tree
       with open(merkletree_file, 'rb') as f:
@@ -196,8 +203,13 @@ if __name__ == '__main__':
       'input',
       help='input file to be signed')
   p.add_argument(
+      '--key-format',
+      choices=['pem', 'der'],
+      default='der',
+      help='format of the input key. Default is der')
+  p.add_argument(
       '--key',
-      help='PKCS#8 private key file in DER format')
+      help='PKCS#8 private key file')
   p.add_argument(
       '--cert',
       help='x509 certificate file in PEM format')
@@ -227,5 +239,6 @@ if __name__ == '__main__':
       raise ValueError("To generate signature, key and cert must be set")
     generator.set_key(args.key)
     generator.set_cert(args.cert)
+  generator.set_key_format(args.key_format)
   generator.set_hash_alg(args.hash_alg)
   generator.generate(args.input, args.output)

@@ -79,13 +79,20 @@ PLATFORM_SDK_EXTENSION_VERSION := 1
 PLATFORM_BASE_SDK_EXTENSION_VERSION := 1
 .KATI_READONLY := PLATFORM_BASE_SDK_EXTENSION_VERSION
 
+# This is are all known codenames starting from Q.
+PLATFORM_VERSION_KNOWN_CODENAMES := Q R S Sv2 Tiramisu
+# Convert from space separated list to comma separated
+PLATFORM_VERSION_KNOWN_CODENAMES := \
+  $(call normalize-comma-list,$(PLATFORM_VERSION_KNOWN_CODENAMES))
+.KATI_READONLY := PLATFORM_VERSION_KNOWN_CODENAMES
+
 ifndef PLATFORM_SECURITY_PATCH
     #  Used to indicate the security patch that has been applied to the device.
     #  It must signify that the build includes all security patches issued up through the designated Android Public Security Bulletin.
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-    PLATFORM_SECURITY_PATCH := 2022-01-05
+    PLATFORM_SECURITY_PATCH := 2022-04-05
 endif
 
 include $(BUILD_SYSTEM)/version_util.mk

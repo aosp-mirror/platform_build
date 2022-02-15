@@ -88,13 +88,13 @@ func TestReadLicenseGraph(t *testing.T) {
 			lg, err := ReadLicenseGraph(tt.fs, stderr, tt.roots)
 			if err != nil {
 				if len(tt.expectedError) == 0 {
-					t.Errorf("unexpected error: got %w, want no error", err)
+					t.Errorf("unexpected error: got %s, want no error", err)
 				} else if !strings.Contains(err.Error(), tt.expectedError) {
-					t.Errorf("unexpected error: got %w, want %q", err, tt.expectedError)
+					t.Errorf("unexpected error: got %s, want %q", err, tt.expectedError)
 				}
 				return
 			}
-			if 0 < len(tt.expectedError) {
+			if len(tt.expectedError) > 0 {
 				t.Errorf("unexpected success: got no error, want %q err", tt.expectedError)
 				return
 			}
@@ -108,29 +108,40 @@ func TestReadLicenseGraph(t *testing.T) {
 			}
 			sort.Sort(byEdge(tt.expectedEdges))
 			sort.Sort(byEdge(actualEdges))
+			t.Logf("actualEdges:")
+			for _, edge := range actualEdges {
+				t.Logf("  %s", edge.String())
+			}
+			t.Logf("expectedEdges:")
+			for _, edge := range actualEdges {
+				t.Logf("  %s", edge.String())
+			}
 			if len(tt.expectedEdges) != len(actualEdges) {
-				t.Errorf("unexpected number of edges: got %v with %d elements, want %v with %d elements",
-					actualEdges, len(actualEdges), tt.expectedEdges, len(tt.expectedEdges))
+				t.Errorf("len(actualEdges): got %d, want %d", len(actualEdges), len(tt.expectedEdges))
 			} else {
 				for i := 0; i < len(actualEdges); i++ {
 					if tt.expectedEdges[i] != actualEdges[i] {
-						t.Errorf("unexpected edge at element %d: got %s, want %s", i, actualEdges[i], tt.expectedEdges[i])
+						t.Errorf("actualEdges[%d]: got %s, want %s", i, actualEdges[i], tt.expectedEdges[i])
 					}
 				}
 			}
+
 			actualTargets := make([]string, 0)
 			for _, t := range lg.Targets() {
 				actualTargets = append(actualTargets, t.Name())
 			}
 			sort.Strings(tt.expectedTargets)
 			sort.Strings(actualTargets)
+
+			t.Logf("actualTargets: %v", actualTargets)
+			t.Logf("expectedTargets: %v", tt.expectedTargets)
+
 			if len(tt.expectedTargets) != len(actualTargets) {
-				t.Errorf("unexpected number of targets: got %v with %d elements, want %v with %d elements",
-					actualTargets, len(actualTargets), tt.expectedTargets, len(tt.expectedTargets))
+				t.Errorf("len(actualTargets): got %d, want %d", len(actualTargets), len(tt.expectedTargets))
 			} else {
 				for i := 0; i < len(actualTargets); i++ {
 					if tt.expectedTargets[i] != actualTargets[i] {
-						t.Errorf("unexpected target at element %d: got %s, want %s", i, actualTargets[i], tt.expectedTargets[i])
+						t.Errorf("actualTargets[%d]: got %s, want %s", i, actualTargets[i], tt.expectedTargets[i])
 					}
 				}
 			}

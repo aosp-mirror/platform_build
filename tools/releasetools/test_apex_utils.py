@@ -198,8 +198,9 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
 
     # pass `false` as a sign_tool to see the invocation error
     with self.assertRaises(common.ExternalError) as cm:
-        signer = apex_utils.ApexApkSigner(apex_path, None, None, sign_tool='false')
-        signer.ProcessApexFile(apk_keys, self.payload_key)
+      signer = apex_utils.ApexApkSigner(
+          apex_path, None, None, sign_tool='false')
+      signer.ProcessApexFile(apk_keys, self.payload_key)
 
     the_exception = cm.exception
-    self.assertIn('Failed to run command \'[\'false\'', the_exception.message)
+    self.assertIn('Failed to run command \'[\'false\'', str(the_exception))

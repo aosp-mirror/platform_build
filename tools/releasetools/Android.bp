@@ -162,6 +162,7 @@ python_defaults {
     required: [
         "brillo_update_payload",
         "checkvintf",
+        "generate_gki_certificate",
         "minigzip",
         "lz4",
         "toybox",
@@ -236,6 +237,7 @@ python_library_host {
         "boot_signer",
         "brotli",
         "bsdiff",
+        "generate_gki_certificate",
         "imgdiff",
         "minigzip",
         "lz4",
@@ -301,6 +303,7 @@ python_defaults {
         "brotli",
         "bsdiff",
         "deapexer",
+        "generate_gki_certificate",
         "imgdiff",
         "minigzip",
         "lz4",
@@ -550,6 +553,32 @@ python_binary_host {
         "build_verity_metadata",
         "build_verity_tree",
         "fec",
+    ],
+}
+
+python_binary_host {
+    name: "fsverity_manifest_generator",
+    srcs: [
+        "fsverity_manifest_generator.py",
+    ],
+    libs: [
+        "fsverity_digests_proto_python",
+        "releasetools_common",
+    ],
+    required: [
+        "aapt2",
+        "apksigner",
+        "fsverity",
+    ],
+}
+
+python_binary_host {
+    name: "fsverity_metadata_generator",
+    srcs: [
+        "fsverity_metadata_generator.py",
+    ],
+    required: [
+        "fsverity",
     ],
 }
 

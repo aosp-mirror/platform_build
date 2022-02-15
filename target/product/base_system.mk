@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     cmd \
     com.android.adbd \
     com.android.appsearch \
+    com.android.auxiliary \
     com.android.conscrypt \
     com.android.cronet \
     com.android.extservices \
@@ -60,13 +61,14 @@ PRODUCT_PACKAGES += \
     com.android.media \
     com.android.media.swcodec \
     com.android.mediaprovider \
-    com.android.nearby \
+    com.android.ondevicepersonalization \
     com.android.os.statsd \
     com.android.permission \
     com.android.resolv \
     com.android.neuralnetworks \
     com.android.scheduling \
     com.android.sdkext \
+    com.android.sepolicy \
     com.android.supplementalprocess \
     com.android.tethering \
     com.android.tzdata \
@@ -80,6 +82,7 @@ PRODUCT_PACKAGES += \
     device_config \
     dmctl \
     dnsmasq \
+    dmesgd \
     DownloadProvider \
     dpm \
     dump.erofs \
@@ -371,6 +374,7 @@ PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
+    com.android.sepolicy.cert-debug.der \
     dmuserd \
     idlcli \
     init-debug.rc \
