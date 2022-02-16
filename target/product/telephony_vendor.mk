@@ -20,3 +20,5 @@
 # /vendor packages
 PRODUCT_PACKAGES := \
     rild \
+
+PRODUCT_COPY_FILES := \
