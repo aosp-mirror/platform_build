@@ -52,9 +52,9 @@ class ApexSigningError(Exception):
 
 
 class ApexApkSigner(object):
-  """Class to sign the apk files and other files in an apex payload image and repack the apex"""
+  """Class to sign the apk files in a apex payload image and repack the apex"""
 
-  def __init__(self, apex_path, key_passwords, codename_to_api_level_map, avbtool=None, sign_tool=None):
+  def __init__(self, apex_path, key_passwords, codename_to_api_level_map):
     self.apex_path = apex_path
     if not key_passwords:
       self.key_passwords = dict()
@@ -63,11 +63,9 @@ class ApexApkSigner(object):
     self.codename_to_api_level_map = codename_to_api_level_map
     self.debugfs_path = os.path.join(
         OPTIONS.search_path, "bin", "debugfs_static")
-    self.avbtool = avbtool if avbtool else "avbtool"
-    self.sign_tool = sign_tool
 
   def ProcessApexFile(self, apk_keys, payload_key, signing_args=None):
-    """Scans and signs the payload files and repack the apex
+    """Scans and signs the apk files and repack the apex
 
     Args:
       apk_keys: A dict that holds the signing keys for apk files.
@@ -86,7 +84,7 @@ class ApexApkSigner(object):
     apk_entries = [name for name in entries_names if name.endswith('.apk')]
 
     # No need to sign and repack, return the original apex path.
-    if not apk_entries and self.sign_tool is None:
+    if not apk_entries:
       logger.info('No apk file to sign in %s', self.apex_path)
       return self.apex_path
 
@@ -101,15 +99,15 @@ class ApexApkSigner(object):
         logger.warning('Apk path does not contain the intended directory name:'
                        ' %s', entry)
 
-    payload_dir, has_signed_content = self.ExtractApexPayloadAndSignContents(
-        apk_entries, apk_keys, payload_key, signing_args)
-    if not has_signed_content:
-      logger.info('No contents has been signed in %s', self.apex_path)
+    payload_dir, has_signed_apk = self.ExtractApexPayloadAndSignApks(
+        apk_entries, apk_keys)
+    if not has_signed_apk:
+      logger.info('No apk file has been signed in %s', self.apex_path)
       return self.apex_path
 
     return self.RepackApexPayload(payload_dir, payload_key, signing_args)
 
-  def ExtractApexPayloadAndSignContents(self, apk_entries, apk_keys, payload_key, signing_args):
+  def ExtractApexPayloadAndSignApks(self, apk_entries, apk_keys):
     """Extracts the payload image and signs the containing apk files."""
     if not os.path.exists(self.debugfs_path):
       raise ApexSigningError(
@@ -121,7 +119,7 @@ class ApexApkSigner(object):
                    self.debugfs_path, 'extract', self.apex_path, payload_dir]
     common.RunAndCheckOutput(extract_cmd)
 
-    has_signed_content = False
+    has_signed_apk = False
     for entry in apk_entries:
       apk_path = os.path.join(payload_dir, entry)
       assert os.path.exists(self.apex_path)
@@ -139,20 +137,8 @@ class ApexApkSigner(object):
       common.SignFile(
           unsigned_apk, apk_path, key_name, self.key_passwords.get(key_name),
           codename_to_api_level_map=self.codename_to_api_level_map)
-      has_signed_content = True
-
-    if self.sign_tool:
-      logger.info('Signing payload contents in apex %s with %s', self.apex_path, self.sign_tool)
-      # Pass avbtool to the custom signing tool
-      cmd = [self.sign_tool, '--avbtool', self.avbtool]
-      # Pass signing_args verbatim which will be forwarded to avbtool (e.g. --signing_helper=...)
-      if signing_args:
-        cmd.extend(['--signing_args', '"{}"'.format(signing_args)])
-      cmd.extend([payload_key, payload_dir])
-      common.RunAndCheckOutput(cmd)
-      has_signed_content = True
-
-    return payload_dir, has_signed_content
+      has_signed_apk = True
+    return payload_dir, has_signed_apk
 
   def RepackApexPayload(self, payload_dir, payload_key, signing_args=None):
     """Rebuilds the apex file with the updated payload directory."""
@@ -324,7 +310,7 @@ def ParseApexPayloadInfo(avbtool, payload_path):
 
 def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
                          container_pw, apk_keys, codename_to_api_level_map,
-                         no_hashtree, signing_args=None, sign_tool=None):
+                         no_hashtree, signing_args=None):
   """Signs the current uncompressed APEX with the given payload/container keys.
 
   Args:
@@ -336,16 +322,14 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
     codename_to_api_level_map: A dict that maps from codename to API level.
     no_hashtree: Don't include hashtree in the signed APEX.
     signing_args: Additional args to be passed to the payload signer.
-    sign_tool: A tool to sign the contents of the APEX.
 
   Returns:
     The path to the signed APEX file.
   """
-  # 1. Extract the apex payload image and sign the files (e.g. APKs). Repack
+  # 1. Extract the apex payload image and sign the containing apk files. Repack
   # the apex file after signing.
   apk_signer = ApexApkSigner(apex_file, container_pw,
-                             codename_to_api_level_map,
-                             avbtool, sign_tool)
+                             codename_to_api_level_map)
   apex_file = apk_signer.ProcessApexFile(apk_keys, payload_key, signing_args)
 
   # 2a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
@@ -379,16 +363,20 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
   common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
   common.ZipClose(apex_zip)
 
-  # 3. Sign the APEX container with container_key.
+  # 3. Align the files at page boundary (same as in apexer).
+  aligned_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
+  common.RunAndCheckOutput(['zipalign', '-f', '4096', apex_file, aligned_apex])
+
+  # 4. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
 
   # Specify the 4K alignment when calling SignApk.
   extra_signapk_args = OPTIONS.extra_signapk_args[:]
-  extra_signapk_args.extend(['-a', '4096', '--align-file-size'])
+  extra_signapk_args.extend(['-a', '4096'])
 
   password = container_pw.get(container_key) if container_pw else None
   common.SignFile(
-      apex_file,
+      aligned_apex,
       signed_apex,
       container_key,
       password,
@@ -400,7 +388,7 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
 
 def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
                        container_pw, apk_keys, codename_to_api_level_map,
-                       no_hashtree, signing_args=None, sign_tool=None):
+                       no_hashtree, signing_args=None):
   """Signs the current compressed APEX with the given payload/container keys.
 
   Args:
@@ -437,8 +425,7 @@ def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
       apk_keys,
       codename_to_api_level_map,
       no_hashtree,
-      signing_args,
-      sign_tool)
+      signing_args)
 
   # 3. Compress signed original apex.
   compressed_apex_file = common.MakeTempFile(prefix='apex-container-',
@@ -449,24 +436,33 @@ def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
                             '--input', signed_original_apex_file,
                             '--output', compressed_apex_file])
 
-  # 4. Sign the APEX container with container_key.
+  # 4. Align apex
+  aligned_apex = common.MakeTempFile(prefix='apex-container-', suffix='.capex')
+  common.RunAndCheckOutput(['zipalign', '-f', '4096', compressed_apex_file,
+                            aligned_apex])
+
+  # 5. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.capex')
+
+  # Specify the 4K alignment when calling SignApk.
+  extra_signapk_args = OPTIONS.extra_signapk_args[:]
+  extra_signapk_args.extend(['-a', '4096'])
 
   password = container_pw.get(container_key) if container_pw else None
   common.SignFile(
-      compressed_apex_file,
+      aligned_apex,
       signed_apex,
       container_key,
       password,
       codename_to_api_level_map=codename_to_api_level_map,
-      extra_signapk_args=OPTIONS.extra_signapk_args)
+      extra_signapk_args=extra_signapk_args)
 
   return signed_apex
 
 
 def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
              apk_keys, codename_to_api_level_map,
-             no_hashtree, signing_args=None, sign_tool=None):
+             no_hashtree, signing_args=None):
   """Signs the current APEX with the given payload/container keys.
 
   Args:
@@ -502,8 +498,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
           codename_to_api_level_map=codename_to_api_level_map,
           no_hashtree=no_hashtree,
           apk_keys=apk_keys,
-          signing_args=signing_args,
-          sign_tool=sign_tool)
+          signing_args=signing_args)
     elif apex_type == 'COMPRESSED':
       return SignCompressedApex(
           avbtool,
@@ -514,8 +509,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
           codename_to_api_level_map=codename_to_api_level_map,
           no_hashtree=no_hashtree,
           apk_keys=apk_keys,
-          signing_args=signing_args,
-          sign_tool=sign_tool)
+          signing_args=signing_args)
     else:
       # TODO(b/172912232): support signing compressed apex
       raise ApexInfoError('Unsupported apex type {}'.format(apex_type))
