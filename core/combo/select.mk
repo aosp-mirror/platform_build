@@ -35,7 +35,7 @@ $(KATI_obsolete_var \
   ,HOST_CROSS builds are not supported in Make)
 else
 
-$(combo_var_prefix)GLOBAL_ARFLAGS := crsPD -format=gnu
+$(combo_var_prefix)GLOBAL_ARFLAGS := crsPD --format=gnu
 
 $(combo_var_prefix)STATIC_LIB_SUFFIX := .a
 
