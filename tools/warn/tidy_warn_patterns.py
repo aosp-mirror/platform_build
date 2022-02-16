@@ -23,17 +23,13 @@ from .cpp_warn_patterns import compile_patterns
 from .severity import Severity
 
 
-def tidy_warn(description, patterns):
+def tidy_warn_pattern(description, pattern):
   return {
       'category': 'C/C++',
       'severity': Severity.TIDY,
       'description': 'clang-tidy ' + description,
-      'patterns': patterns,
+      'patterns': [r'.*: .+\[' + pattern + r'\]$']
   }
-
-
-def tidy_warn_pattern(description, pattern):
-  return tidy_warn(description, [r'.*: .+\[' + pattern + r'\]$'])
 
 
 def simple_tidy_warn_pattern(description):
@@ -81,7 +77,6 @@ def analyzer_group_check(check):
 warn_patterns = [
     # pylint does not recognize g-inconsistent-quotes
     # pylint:disable=line-too-long,bad-option-value,g-inconsistent-quotes
-    group_tidy_warn_pattern('altera'),
     group_tidy_warn_pattern('android'),
     simple_tidy_warn_pattern('abseil-string-find-startswith'),
     simple_tidy_warn_pattern('bugprone-argument-comment'),
@@ -128,9 +123,8 @@ warn_patterns = [
     simple_tidy_warn_pattern('cert-oop54-cpp'),
     group_tidy_warn_pattern('cert'),
     group_tidy_warn_pattern('clang-diagnostic'),
-    group_tidy_warn_pattern('concurrency'),
     group_tidy_warn_pattern('cppcoreguidelines'),
-    group_tidy_warn_pattern('fuchsia'),
+    group_tidy_warn_pattern('llvm'),
     simple_tidy_warn_pattern('google-default-arguments'),
     simple_tidy_warn_pattern('google-runtime-int'),
     simple_tidy_warn_pattern('google-runtime-operator'),
@@ -154,10 +148,8 @@ warn_patterns = [
     simple_tidy_warn_pattern('hicpp-noexcept-move'),
     simple_tidy_warn_pattern('hicpp-use-override'),
     group_tidy_warn_pattern('hicpp'),
-    group_tidy_warn_pattern('llvm'),
-    group_tidy_warn_pattern('llvmlibc'),
-    group_tidy_warn_pattern('misc'),
     group_tidy_warn_pattern('modernize'),
+    group_tidy_warn_pattern('misc'),
     simple_tidy_warn_pattern('performance-faster-string-find'),
     simple_tidy_warn_pattern('performance-for-range-copy'),
     simple_tidy_warn_pattern('performance-implicit-cast-in-loop'),
@@ -175,9 +167,6 @@ warn_patterns = [
     group_tidy_warn_pattern('abseil'),
     simple_tidy_warn_pattern('portability-simd-intrinsics'),
     group_tidy_warn_pattern('portability'),
-
-    tidy_warn('TIMEOUT', [r".*: warning: clang-tidy aborted "]),
-    tidy_warn('Long Runs', [r".*: warning: clang-tidy used "]),
 
     # warnings from clang-tidy's clang-analyzer checks
     analyzer_high('clang-analyzer-core, null pointer',
@@ -224,9 +213,6 @@ warn_patterns = [
     analyzer_warn_check('clang-analyzer-valist.Unterminated'),
     analyzer_group_check('clang-analyzer-core.uninitialized'),
     analyzer_group_check('clang-analyzer-deadcode'),
-    analyzer_warn_check('clang-analyzer-security.insecureAPI.bcmp'),
-    analyzer_warn_check('clang-analyzer-security.insecureAPI.bcopy'),
-    analyzer_warn_check('clang-analyzer-security.insecureAPI.bzero'),
     analyzer_warn_check('clang-analyzer-security.insecureAPI.strcpy'),
     analyzer_group_high('clang-analyzer-security.insecureAPI'),
     analyzer_group_high('clang-analyzer-security'),
