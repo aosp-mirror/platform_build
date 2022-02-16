@@ -39,9 +39,6 @@ Usage:  sign_apex [flags] input_apex_file output_apex_file
   --codename_to_api_level_map Q:29,R:30,...
       A Mapping of codename to api level.  This is useful to provide sdk targeting
       information to APK Signer.
-
-  --sign_tool <sign_tool>
-      Optional flag that specifies a custom signing tool for the contents of the apex.
 """
 
 import logging
@@ -55,7 +52,7 @@ logger = logging.getLogger(__name__)
 
 
 def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
-                 apk_keys=None, signing_args=None, codename_to_api_level_map=None, sign_tool=None):
+                 apk_keys=None, signing_args=None, codename_to_api_level_map=None):
   """Signs the given apex file."""
   with open(apex_file, 'rb') as input_fp:
     apex_data = input_fp.read()
@@ -69,8 +66,7 @@ def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
       codename_to_api_level_map=codename_to_api_level_map,
       no_hashtree=no_hashtree,
       apk_keys=apk_keys,
-      signing_args=signing_args,
-      sign_tool=sign_tool)
+      signing_args=signing_args)
 
 
 def main(argv):
@@ -104,8 +100,6 @@ def main(argv):
         if 'extra_apks' not in options:
           options['extra_apks'] = {}
         options['extra_apks'].update({n: key})
-    elif o == '--sign_tool':
-      options['sign_tool'] = a
     else:
       return False
     return True
@@ -120,7 +114,6 @@ def main(argv):
           'payload_extra_args=',
           'payload_key=',
           'extra_apks=',
-          'sign_tool=',
       ],
       extra_option_handler=option_handler)
 
@@ -140,8 +133,7 @@ def main(argv):
       apk_keys=options.get('extra_apks', {}),
       signing_args=options.get('payload_extra_args'),
       codename_to_api_level_map=options.get(
-          'codename_to_api_level_map', {}),
-      sign_tool=options.get('sign_tool', None))
+          'codename_to_api_level_map', {}))
   shutil.copyfile(signed_apex, args[1])
   logger.info("done.")
 

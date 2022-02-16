@@ -183,7 +183,6 @@ _product_list_vars += PRODUCT_COPY_FILES
 # signing tools can substitute them for the test key embedded by
 # default.
 _product_list_vars += PRODUCT_OTA_PUBLIC_KEYS
-_product_list_vars += PRODUCT_EXTRA_OTA_KEYS
 _product_list_vars += PRODUCT_EXTRA_RECOVERY_KEYS
 
 # Should we use the default resources or add any product specific overlays
@@ -214,18 +213,12 @@ _product_list_vars += PRODUCT_RESTRICT_VENDOR_FILES
 # The list of product-specific kernel header dirs
 _product_list_vars += PRODUCT_VENDOR_KERNEL_HEADERS
 
-# A list of module names in BOOTCLASSPATH (jar files). Each module may be
-# prefixed with "<apex>:", which identifies the APEX that provides it. APEXes
-# are identified by their "variant" names, i.e. their `apex_name` values in
-# Soong, which default to the `name` values. The prefix can also be "platform:"
-# or "system_ext:", and defaults to "platform:" if left out. See the long
-# comment in build/soong/java/dexprepopt_bootjars.go for details.
+# A list of module names of BOOTCLASSPATH (jar files)
 _product_list_vars += PRODUCT_BOOT_JARS
 
-# A list of extra BOOTCLASSPATH jars (to be appended after common jars),
-# following the same format as PRODUCT_BOOT_JARS. Products that include
-# device-specific makefiles before AOSP makefiles should use this instead of
-# PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
+# A list of extra BOOTCLASSPATH jars (to be appended after common jars).
+# Products that include device-specific makefiles before AOSP makefiles should use this
+# instead of PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
 _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 
 _product_single_value_vars += PRODUCT_SUPPORTS_BOOT_SIGNER
@@ -233,19 +226,11 @@ _product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
 _product_single_value_vars += PRODUCT_SUPPORTS_VERITY
 _product_single_value_vars += PRODUCT_SUPPORTS_VERITY_FEC
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
-# List of system_server classpath jars on the platform.
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
-# List of system_server classpath jars delivered via apex. Format = <apex name>:<jar name>.
+# List of system_server jars delivered via apex. Format = <apex name>:<jar name>.
 _product_list_vars += PRODUCT_APEX_SYSTEM_SERVER_JARS
-# List of jars on the platform that system_server loads dynamically using separate classloaders.
-_product_list_vars += PRODUCT_STANDALONE_SYSTEM_SERVER_JARS
-# List of jars delivered via apex that system_server loads dynamically using separate classloaders.
-# Format = <apex name>:<jar name>
-_product_list_vars += PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS
 # If true, then suboptimal order of system server jars does not cause an error.
 _product_single_value_vars += PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS
-# If true, then system server jars defined in Android.mk are supported.
-_product_single_value_vars += PRODUCT_BROKEN_DEPRECATED_MK_SYSTEM_SERVER_JARS
 
 # Additional system server jars to be appended at the end of the common list.
 # This is necessary to avoid jars reordering due to makefile inheritance order.
@@ -268,7 +253,6 @@ _product_single_value_vars += PRODUCT_SYSTEM_EXT_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_ODM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_VENDOR_DLKM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_ODM_DLKM_VERITY_PARTITION
-_product_single_value_vars += PRODUCT_SYSTEM_DLKM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_SYSTEM_SERVER_DEBUG_INFO
 _product_single_value_vars += PRODUCT_OTHER_JAVA_DEBUG_INFO
 
@@ -283,10 +267,9 @@ _product_single_value_vars += PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING
 _product_single_value_vars += PRODUCT_DEX_PREOPT_RESOLVE_STARTUP_STRINGS
 
 # Boot image options.
-_product_list_vars += PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION
 _product_single_value_vars += \
-    PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST \
     PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE \
+    PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
     PRODUCT_USES_DEFAULT_ART_CONFIG \
 
 _product_single_value_vars += PRODUCT_SYSTEM_SERVER_COMPILER_FILTER
@@ -299,7 +282,6 @@ _product_single_value_vars += PRODUCT_SYSTEM_EXT_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_ODM_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_VENDOR_DLKM_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_ODM_DLKM_BASE_FS_PATH
-_product_single_value_vars += PRODUCT_SYSTEM_DLKM_BASE_FS_PATH
 
 # The first API level this product shipped with
 _product_single_value_vars += PRODUCT_SHIPPING_API_LEVEL
@@ -384,6 +366,11 @@ _product_list_vars += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
 
+# A list of <overridden-apex>:<override-apex> pairs that specifies APEX module
+# overrides to be applied to the APEX names in the boot jar variables
+# (PRODUCT_BOOT_JARS, PRODUCT_APEX_BOOT_JARS etc).
+_product_list_vars += PRODUCT_BOOT_JAR_MODULE_OVERRIDES
+
 # Controls for whether different partitions are built for the current product.
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_OTHER_IMAGE
@@ -393,19 +380,14 @@ _product_single_value_vars += PRODUCT_BUILD_SYSTEM_EXT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_ODM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_DLKM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_ODM_DLKM_IMAGE
-_product_single_value_vars += PRODUCT_BUILD_SYSTEM_DLKM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_CACHE_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_USERDATA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RECOVERY_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
-_product_single_value_vars += PRODUCT_BUILD_INIT_BOOT_IMAGE
-_product_single_value_vars += PRODUCT_BUILD_DEBUG_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_BOOT_IMAGE
-_product_single_value_vars += PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SUPER_EMPTY_IMAGE
-_product_single_value_vars += PRODUCT_BUILD_PVMFW_IMAGE
 
 # List of boot jars delivered via updatable APEXes, following the same format as
 # PRODUCT_BOOT_JARS.
@@ -445,21 +427,6 @@ _product_single_value_vars += PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY
 _product_list_vars += PRODUCT_INTER_PARTITION_JAVA_LIBRARY_ALLOWLIST
 
 _product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
-
-# Install a copy of the debug policy to the system_ext partition, and allow
-# init-second-stage to load debug policy from system_ext.
-# This option is only meant to be set by compliance GSI targets.
-_product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
-
-# If set, metadata files for the following artifacts will be generated.
-# - system/framework/*.jar
-# - system/framework/oat/<arch>/*.{oat,vdex,art}
-# - system/etc/boot-image.prof
-# - system/etc/dirty-image-objects
-# One fsverity metadata container file per one input file will be generated in
-# system.img, with a suffix ".fsv_meta". e.g. a container file for
-# "/system/framework/foo.jar" will be "system/framework/foo.jar.fsv_meta".
-_product_single_value_vars += PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
