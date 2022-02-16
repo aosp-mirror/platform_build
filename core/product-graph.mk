@@ -81,7 +81,6 @@ $(products_graph): PRIVATE_PRODUCTS := $(all_products)
 $(products_graph): PRIVATE_PRODUCTS_FILTER := $(products_list)
 
 $(products_graph): $(this_makefile)
-ifeq (,$(RBC_PRODUCT_CONFIG)$(RBC_NO_PRODUCT_GRAPH)$(RBC_BOARD_CONFIG))
 	@echo Product graph DOT: $@ for $(PRIVATE_PRODUCTS_FILTER)
 	$(hide) echo 'digraph {' > $@.in
 	$(hide) echo 'graph [ ratio=.5 ];' >> $@.in
@@ -90,10 +89,6 @@ ifeq (,$(RBC_PRODUCT_CONFIG)$(RBC_NO_PRODUCT_GRAPH)$(RBC_BOARD_CONFIG))
 	$(foreach p,$(PRIVATE_PRODUCTS),$(call emit-product-node-props,$(p),$@.in))
 	$(hide) echo '}' >> $@.in
 	$(hide) build/make/tools/filter-product-graph.py $(PRIVATE_PRODUCTS_FILTER) < $@.in > $@
-else
-	@echo RBC_PRODUCT_CONFIG and RBC_NO_PRODUCT_GRAPH should be unset to generate product graph
-	false
-endif
 
 # Evaluates to the name of the product file
 # $(1) product file
@@ -126,7 +121,6 @@ $(OUT_DIR)/products/$(strip $(1)).txt: $(this_makefile)
 	$(hide) echo 'PRODUCT_CHARACTERISTICS=$(call get-product-var,$(1),PRODUCT_CHARACTERISTICS)' >> $$@
 	$(hide) echo 'PRODUCT_COPY_FILES=$(call get-product-var,$(1),PRODUCT_COPY_FILES)' >> $$@
 	$(hide) echo 'PRODUCT_OTA_PUBLIC_KEYS=$(call get-product-var,$(1),PRODUCT_OTA_PUBLIC_KEYS)' >> $$@
-	$(hide) echo 'PRODUCT_EXTRA_OTA_KEYS=$(call get-product-var,$(1),PRODUCT_EXTRA_OTA_KEYS)' >> $$@
 	$(hide) echo 'PRODUCT_EXTRA_RECOVERY_KEYS=$(call get-product-var,$(1),PRODUCT_EXTRA_RECOVERY_KEYS)' >> $$@
 	$(hide) echo 'PRODUCT_PACKAGE_OVERLAYS=$(call get-product-var,$(1),PRODUCT_PACKAGE_OVERLAYS)' >> $$@
 	$(hide) echo 'DEVICE_PACKAGE_OVERLAYS=$(call get-product-var,$(1),DEVICE_PACKAGE_OVERLAYS)' >> $$@
@@ -149,7 +143,6 @@ $(call product-debug-filename, $(p)): \
 	$(hide) cat $$< | build/make/tools/product_debug.py > $$@
 endef
 
-ifeq (,$(RBC_PRODUCT_CONFIG)$(RBC_NO_PRODUCT_GRAPH)$(RBC_BOARD_CONFIG))
 product_debug_files:=
 $(foreach p,$(all_products), \
 			$(eval $(call transform-product-debug, $(p))) \
@@ -161,8 +154,3 @@ product-graph: $(products_graph)
 	@echo Product graph .dot file: $(products_graph)
 	@echo Command to convert to pdf: dot -Tpdf -Nshape=box -o $(OUT_DIR)/products.pdf $(products_graph)
 	@echo Command to convert to svg: dot -Tsvg -Nshape=box -o $(OUT_DIR)/products.svg $(products_graph)
-else
-.PHONY: product-graph
-	@echo RBC_PRODUCT_CONFIG and RBC_NO_PRODUCT_GRAPH should be unset to generate product graph
-	false
-endif
