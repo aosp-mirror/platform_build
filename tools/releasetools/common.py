@@ -1025,7 +1025,8 @@ class PartitionBuildProps(object):
 
     import_path = tokens[1]
     if not re.match(r'^/{}/.*\.prop$'.format(self.partition), import_path):
-      raise ValueError('Unrecognized import path {}'.format(line))
+      logger.warn('Unrecognized import path {}'.format(line))
+      return {}
 
     # We only recognize a subset of import statement that the init process
     # supports. And we can loose the restriction based on how the dynamic
