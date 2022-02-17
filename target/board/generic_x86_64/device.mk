@@ -15,15 +15,12 @@
 #
 
 PRODUCT_COPY_FILES += \
-    kernel/prebuilts/5.4/x86_64/kernel-5.4:kernel-5.4 \
     kernel/prebuilts/5.10/x86_64/kernel-5.10:kernel-5.10 \
 
-$(call dist-for-goals, dist_files, kernel/prebuilts/5.4/x86_64/prebuilt-info.txt:kernel/5.4/prebuilt-info.txt)
 $(call dist-for-goals, dist_files, kernel/prebuilts/5.10/x86_64/prebuilt-info.txt:kernel/5.10/prebuilt-info.txt)
 
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 PRODUCT_COPY_FILES += \
-    kernel/prebuilts/5.4/x86_64/kernel-5.4-allsyms:kernel-5.4-allsyms \
     kernel/prebuilts/5.10/x86_64/kernel-5.10-allsyms:kernel-5.10-allsyms \
 
 endif
