@@ -127,7 +127,7 @@ import ota_from_target_files
 import sparse_img
 import verity_utils
 
-from common import AddCareMapForAbOta, ExternalError, PARTITIONS_WITH_CARE_MAP
+from common import ExternalError
 
 logger = logging.getLogger(__name__)
 
@@ -825,10 +825,6 @@ def generate_care_map(partitions, output_target_files_dir):
             image_props)
         image_size = verity_image_builder.CalculateMaxImageSize(partition_size)
         OPTIONS.info_dict[image_size_prop] = image_size
-
-  AddCareMapForAbOta(
-      os.path.join(output_target_files_dir, 'META', 'care_map.pb'),
-      PARTITIONS_WITH_CARE_MAP, partition_image_map)
 
 
 def process_special_cases(temp_dir, framework_meta, vendor_meta,
