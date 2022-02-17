@@ -68,6 +68,11 @@ will have the value of `rblf_cli.FOO` be `"bar"`
 
 Returns `True`  if *file* exists
 
+#### rblf_find_files(*top*, *file-pattern*, only_files = 0)
+
+Returns all the paths under *top* whose basename matches *pattern* (which is a shell's glob pattern). If *only_files* is
+not zero, only the paths to the regular files are returned. The returned paths are relative to *top*.
+
 #### rblf_wildcard(*glob*, *top* = None)
 
 Expands *glob*. If *top* is supplied, expands "*top*/*glob*", then removes
@@ -82,3 +87,7 @@ Returns *True* if *text* matches *pattern*.
 Runs `sh -c "`*command*`"`, reads its output, converts all newlines into spaces, chops trailing newline returns this
 string. This is equivalent to Make's
 `shell` builtin function. *This function will be eventually removed*.
+
+#### rblf_log(*arg*,..., sep=' ')
+
+Same as `print` builtin but writes to stderr.
