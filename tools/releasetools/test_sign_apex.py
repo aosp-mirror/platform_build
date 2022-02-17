@@ -69,5 +69,5 @@ class SignApexTest(test_utils.ReleaseToolsTestCase):
         payload_key,
         container_key,
         False,
-        codename_to_api_level_map={'S': 31})
+        codename_to_api_level_map={'S': 31, 'Tiramisu' : 32})
     self.assertTrue(os.path.exists(signed_apex))

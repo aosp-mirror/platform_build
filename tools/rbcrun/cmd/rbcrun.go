@@ -93,6 +93,6 @@ func main() {
 }
 
 func quit(format string, s ...interface{}) {
-	fmt.Fprintln(os.Stderr, format, s)
+	fmt.Fprintf(os.Stderr, format, s...)
 	os.Exit(2)
 }

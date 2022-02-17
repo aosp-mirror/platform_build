@@ -35,6 +35,10 @@ $(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE_SUFFIX)
 endif
 LOCAL_MODULE_SUFFIX := $(COMMON_ANDROID_PACKAGE_SUFFIX)
 
+ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)),)
+$(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE_STEM or LOCAL_BUILT_MODULE_STEM)
+endif
+
 ifneq ($(strip $(LOCAL_MODULE)),)
 $(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE)
 endif
@@ -93,6 +97,14 @@ LOCAL_MANIFEST_PACKAGE_NAME := $(override_manifest_name)
 endif
 
 include $(BUILD_SYSTEM)/force_aapt2.mk
+# validate that app contains a manifest file for aapt2
+ifeq (,$(strip $(LOCAL_MANIFEST_FILE)$(LOCAL_FULL_MANIFEST_FILE)))
+  ifeq (,$(wildcard $(LOCAL_PATH)/AndroidManifest.xml))
+    $(call pretty-error,App missing manifest file which is required by aapt2. \
+Provide a manifest file by either setting LOCAL_MANIFEST_FILE in Android.mk \
+or via a AndroidManifest.xml in this directory)
+  endif
+endif
 
 # Process Support Library dependencies.
 include $(BUILD_SYSTEM)/support_libraries.mk
@@ -468,6 +480,8 @@ $(LOCAL_BUILT_MODULE): PRIVATE_ADDITIONAL_CERTIFICATES := $(additional_certifica
 
 $(LOCAL_BUILT_MODULE): $(LOCAL_CERTIFICATE_LINEAGE)
 $(LOCAL_BUILT_MODULE): PRIVATE_CERTIFICATE_LINEAGE := $(LOCAL_CERTIFICATE_LINEAGE)
+
+$(LOCAL_BUILT_MODULE): PRIVATE_ROTATION_MIN_SDK_VERSION := $(LOCAL_ROTATION_MIN_SDK_VERSION)
 
 # Set a actual_partition_tag (calculated in base_rules.mk) for the package.
 PACKAGES.$(LOCAL_PACKAGE_NAME).PARTITION := $(actual_partition_tag)

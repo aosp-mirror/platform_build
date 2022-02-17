@@ -208,7 +208,7 @@ define _import-node
 
   $(eval $(1).$(2).inherited := \
       $(call get-inherited-nodes,$(1).$(2),$(3)))
-  $(call _import-nodes-inner,$(1),$($(1).$(2).inherited),$(3))
+  $(call _import-nodes-inner,$(1),$($(1).$(2).inherited),$(3),$(4))
 
   $(call _expand-inherited-values,$(1),$(2),$(3),$(4))
 
