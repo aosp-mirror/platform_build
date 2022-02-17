@@ -16,11 +16,7 @@
 # Enable GKI 2.0 signing.
 BOARD_GKI_SIGNING_KEY_PATH := build/make/target/product/gsi/testkey_rsa2048.pem
 BOARD_GKI_SIGNING_ALGORITHM := SHA256_RSA2048
-
-# The following is needed to allow release signing process appends more extra
-# args, e.g., passing --signing_helper_with_files from mkbootimg to avbtool.
-# See b/178559811 for more details.
-BOARD_GKI_SIGNING_SIGNATURE_ARGS := --prop foo:bar
+BOARD_GKI_SIGNING_SIGNATURE_ARGS :=
 
 # Sets boot SPL.
 BOOT_SECURITY_PATCH = $(PLATFORM_SECURITY_PATCH)
@@ -32,9 +28,6 @@ BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_USES_RECOVERY_AS_BOOT :=
 TARGET_NO_KERNEL := false
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
-BOARD_KERNEL_MODULE_INTERFACE_VERSIONS := \
-    5.4-android12-unstable \
-    5.10-android12-unstable \
 
 # Copy boot image in $OUT to target files. This is defined for targets where
 # the installed GKI APEXes are built from source.
