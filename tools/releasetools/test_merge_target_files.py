@@ -265,10 +265,10 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'system': 'system',
         'product': 'product',
         'vendor': 'vendor',
-    }, os.path.join(product_out_dir, 'policy'))
+    })
     self.assertEqual(' '.join(cmd),
                      ('secilc -m -M true -G -N -c 30 '
-                      '-o {OTP}/policy -f /dev/null '
+                      '-o {OTP}/META/combined_sepolicy -f /dev/null '
                       '{OTP}/system/etc/selinux/plat_sepolicy.cil '
                       '{OTP}/system/etc/selinux/mapping/30.0.cil '
                       '{OTP}/vendor/etc/selinux/vendor_sepolicy.cil '

@@ -1,0 +1,11 @@
+version_defaults = struct(
+    codenames = { "SP1A" : "S" },
+    default_platform_version = "SP1A",
+    max_platform_version = "SP1A",
+    min_platform_version = "SP1A",
+    platform_base_sdk_extension_version = 0,
+    platform_sdk_extension_version = 1,
+    platform_sdk_version = 30,
+    platform_security_patch = "2021-08-05",
+    platform_version_last_stable = 11,
+)
