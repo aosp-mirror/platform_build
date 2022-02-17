@@ -77,6 +77,46 @@ define find-copy-subdir-files
 $(sort $(shell find $(2) -name "$(1)" -type f | $(SED_EXTENDED) "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g"))
 endef
 
+#
+# Convert file file to the PRODUCT_COPY_FILES/PRODUCT_SDK_ADDON_COPY_FILES
+# format: for each file F return $(F):$(PREFIX)/$(notdir $(F))
+# $(1): files list
+# $(2): prefix
+
+define copy-files
+$(foreach f,$(1),$(f):$(2)/$(notdir $(f)))
+endef
+
+#
+# Convert the list of file names to the list of PRODUCT_COPY_FILES items
+# $(1): from pattern
+# $(2): to pattern
+# $(3): file names
+# E.g., calling product-copy-files-by-pattern with
+#   (from/%, to/%, a b)
+# returns
+#   from/a:to/a from/b:to/b
+define product-copy-files-by-pattern
+$(join $(patsubst %,$(1),$(3)),$(patsubst %,:$(2),$(3)))
+endef
+
+# Return empty unless the board matches
+define is-board-platform2
+$(filter $(1), $(TARGET_BOARD_PLATFORM))
+endef
+
+# Return empty unless the board is in the list
+define is-board-platform-in-list2
+$(filter $(1),$(TARGET_BOARD_PLATFORM))
+endef
+
+# Return empty unless the board is QCOM
+define is-vendor-board-qcom
+$(if $(strip $(TARGET_BOARD_PLATFORM) $(QCOM_BOARD_PLATFORMS)),\
+  $(filter $(TARGET_BOARD_PLATFORM),$(QCOM_BOARD_PLATFORMS)),\
+  $(error both TARGET_BOARD_PLATFORM=$(TARGET_BOARD_PLATFORM) and QCOM_BOARD_PLATFORMS=$(QCOM_BOARD_PLATFORMS)))
+endef
+
 # ---------------------------------------------------------------
 # Check for obsolete PRODUCT- and APP- goals
 ifeq ($(CALLED_FROM_SETUP),true)
@@ -162,11 +202,30 @@ endif
 ifneq (1,$(words $(current_product_makefile)))
 $(error Product "$(TARGET_PRODUCT)" ambiguous: matches $(current_product_makefile))
 endif
+
+ifndef RBC_PRODUCT_CONFIG
 $(call import-products, $(current_product_makefile))
+else
+  $(shell mkdir -p $(OUT_DIR)/rbc)
+  $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
+
+  $(shell build/soong/scripts/update_out \
+    $(OUT_DIR)/rbc/rbc_product_config_results.mk \
+    build/soong/scripts/rbc-run \
+    $(current_product_makefile) \
+    $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
+  ifneq ($(.SHELLSTATUS),0)
+    $(error product configuration converter failed: $(.SHELLSTATUS))
+  endif
+  include $(OUT_DIR)/rbc/rbc_product_config_results.mk
+  PRODUCTS += $(current_product_makefile)
+endif
 endif  # Import all or just the current product makefile
 
+ifndef RBC_PRODUCT_CONFIG
 # Quick check
 $(check-all-products)
+endif
 
 ifeq ($(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
 # Import all the products that have made artifact path requirements, so that we can verify
@@ -186,6 +245,7 @@ ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
 $(dump-products)
 endif
 
+ifndef RBC_PRODUCT_CONFIG
 # Convert a short name like "sooner" into the path to the product
 # file defining that product.
 #
@@ -198,6 +258,9 @@ endif
 ############################################################################
 # Strip and assign the PRODUCT_ variables.
 $(call strip-product-vars)
+else
+INTERNAL_PRODUCT := $(current_product_makefile)
+endif
 
 current_product_makefile :=
 all_product_makefiles :=
@@ -258,23 +321,20 @@ PRODUCT_APEX_BOOT_JARS := $(filter-out com.android.i18n:core-icu4j,$(PRODUCT_APE
 # All APEX jars come after /system and /system_ext jars, so adding core-icu4j at the end of the list
 PRODUCT_BOOT_JARS += com.android.i18n:core-icu4j
 
-# Replaces references to overridden boot jar modules in a boot jars variable.
-# $(1): Name of a boot jars variable with <apex>:<jar> pairs.
-define replace-boot-jar-module-overrides
-  $(foreach pair,$(PRODUCT_BOOT_JAR_MODULE_OVERRIDES),\
-    $(eval _rbjmo_from := $(call word-colon,1,$(pair)))\
-    $(eval _rbjmo_to := $(call word-colon,2,$(pair)))\
-    $(eval $(1) := $(patsubst $(_rbjmo_from):%,$(_rbjmo_to):%,$($(1)))))
-endef
-
-$(call replace-boot-jar-module-overrides,PRODUCT_BOOT_JARS)
-$(call replace-boot-jar-module-overrides,PRODUCT_APEX_BOOT_JARS)
-$(call replace-boot-jar-module-overrides,ART_APEX_JARS)
-
 # The extra system server jars must be appended at the end after common system server jars.
 PRODUCT_SYSTEM_SERVER_JARS += $(PRODUCT_SYSTEM_SERVER_JARS_EXTRA)
 
 PRODUCT_SYSTEM_SERVER_JARS := $(call qualify-platform-jars,$(PRODUCT_SYSTEM_SERVER_JARS))
+
+# Sort APEX boot and system server jars. We use deterministic alphabetical order
+# when constructing BOOTCLASSPATH and SYSTEMSERVERCLASSPATH definition on device
+# after an update. Enforce it in the build system as well to avoid recompiling
+# everything after an update due a change in the order.
+PRODUCT_APEX_BOOT_JARS := $(sort $(PRODUCT_APEX_BOOT_JARS))
+PRODUCT_APEX_SYSTEM_SERVER_JARS := $(sort $(PRODUCT_APEX_SYSTEM_SERVER_JARS))
+
+PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
+  $(call qualify-platform-jars,$(PRODUCT_STANDALONE_SYSTEM_SERVER_JARS))
 
 ifndef PRODUCT_SYSTEM_NAME
   PRODUCT_SYSTEM_NAME := $(PRODUCT_NAME)
@@ -321,6 +381,7 @@ ENFORCE_SYSTEM_CERTIFICATE := $(PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQU
 ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST := $(PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST)
 
 PRODUCT_OTA_PUBLIC_KEYS := $(sort $(PRODUCT_OTA_PUBLIC_KEYS))
+PRODUCT_EXTRA_OTA_KEYS := $(sort $(PRODUCT_EXTRA_OTA_KEYS))
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort $(PRODUCT_EXTRA_RECOVERY_KEYS))
 
 # Resolve and setup per-module dex-preopt configs.
@@ -352,11 +413,23 @@ $(foreach c,$(PRODUCT_SANITIZER_MODULE_CONFIGS),\
 _psmc_modules :=
 
 # Reset ADB keys for non-debuggable builds
-ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
+ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)))
   PRODUCT_ADB_KEYS :=
 endif
 ifneq ($(filter-out 0 1,$(words $(PRODUCT_ADB_KEYS))),)
   $(error Only one file may be in PRODUCT_ADB_KEYS: $(PRODUCT_ADB_KEYS))
+endif
+
+# Show a warning wall of text if non-compliance-GSI products set this option.
+ifdef PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
+  ifeq (,$(filter gsi_arm gsi_arm64 gsi_x86 gsi_x86_64 gsi_car_arm64 gsi_car_x86_64,$(PRODUCT_NAME)))
+    $(warning PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT is set but \
+      PRODUCT_NAME ($(PRODUCT_NAME)) doesn't look like a GSI for compliance \
+      testing. This is a special configuration for compliance GSI, so do make \
+      sure you understand the security implications before setting this \
+      option. If you don't know what this option does, then you probably \
+      shouldn't set this.)
+  endif
 endif
 
 ifndef PRODUCT_USE_DYNAMIC_PARTITIONS
@@ -484,6 +557,7 @@ endef
 
 # Copy and check the value of each PRODUCT_BUILD_*_IMAGE variable
 $(foreach image, \
+    PVMFW \
     SYSTEM \
     SYSTEM_OTHER \
     VENDOR \
@@ -492,6 +566,7 @@ $(foreach image, \
     ODM \
     VENDOR_DLKM \
     ODM_DLKM \
+    SYSTEM_DLKM \
     CACHE \
     RAMDISK \
     USERDATA \

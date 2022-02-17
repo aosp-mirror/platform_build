@@ -128,6 +128,9 @@ else
     LOCAL_CERTIFICATE := $(dir $(DEFAULT_SYSTEM_DEV_CERTIFICATE))$(LOCAL_CERTIFICATE)
   endif
 
+  # NOTE(ruperts): Consider moving the logic below out of a conditional,
+  # to avoid the possibility of silently ignoring user settings.
+
   PACKAGES.$(LOCAL_MODULE).PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
   PACKAGES.$(LOCAL_MODULE).CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
   PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
@@ -142,6 +145,8 @@ else
 
   $(built_module): $(LOCAL_CERTIFICATE_LINEAGE)
   $(built_module): PRIVATE_CERTIFICATE_LINEAGE := $(LOCAL_CERTIFICATE_LINEAGE)
+
+  $(built_module): PRIVATE_ROTATION_MIN_SDK_VERSION := $(LOCAL_ROTATION_MIN_SDK_VERSION)
 endif
 
 ifneq ($(LOCAL_MODULE_STEM),)
