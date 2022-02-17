@@ -236,7 +236,11 @@ def find_android_root(buildlog):
   warning_pattern = re.compile('^/[^ ]*/[^ ]*: warning: .*')
   count = 0
   for line in buildlog:
-    if warning_pattern.match(line):
+    # We want to find android_root of a local build machine.
+    # Do not use RBE warning lines, which has '/b/f/w/' path prefix.
+    # Do not use /tmp/ file warnings.
+    if warning_pattern.match(line) and (
+        '/b/f/w' not in line and not line.startswith('/tmp/')):
       warning_lines.append(line)
       count += 1
       if count > 9999:
@@ -300,6 +304,7 @@ def parse_input_file_chrome(infile, flags):
   architecture = 'unknown'
 
   # only handle warning lines of format 'file_path:line_no:col_no: warning: ...'
+  # Bug: http://198657613, This might need change to handle RBE output.
   chrome_warning_pattern = r'^[^ ]*/[^ ]*:[0-9]+:[0-9]+: warning: .*'
 
   warning_pattern = re.compile(chrome_warning_pattern)
@@ -347,6 +352,8 @@ def parse_input_file_android(infile, flags):
   platform_version = 'unknown'
   target_product = 'unknown'
   target_variant = 'unknown'
+  build_id = 'unknown'
+  use_rbe = False
   android_root = find_android_root(infile)
   infile.seek(0)
 
@@ -362,6 +369,14 @@ def parse_input_file_android(infile, flags):
   warning_pattern = re.compile('(^[^ ]*/[^ ]*: warning: .*)|(^warning: .*)')
   warning_without_file = re.compile('^warning: .*')
   rustc_file_position = re.compile('^[ ]+--> [^ ]*/[^ ]*:[0-9]+:[0-9]+')
+
+  # If RBE was used, try to reclaim some warning lines mixed with some
+  # leading chars from other concurrent job's stderr output .
+  # The leading characters can be any character, including digits and spaces.
+  # It's impossible to correctly identify the starting point of the source
+  # file path without the file directory name knowledge.
+  # Here we can only be sure to recover lines containing "/b/f/w/".
+  rbe_warning_pattern = re.compile('.*/b/f/w/[^ ]*: warning: .*')
 
    # Collect all unique warning lines
   # Remove the duplicated warnings save ~8% of time when parsing
@@ -384,6 +399,12 @@ def parse_input_file_android(infile, flags):
           prev_warning, flags, android_root, unique_warnings)
       prev_warning = ''
 
+    if use_rbe and rbe_warning_pattern.match(line):
+      cleaned_up_line = re.sub('.*/b/f/w/', '', line)
+      unique_warnings = add_normalized_line_to_warnings(
+          cleaned_up_line, flags, android_root, unique_warnings)
+      continue
+
     if warning_pattern.match(line):
       if warning_without_file.match(line):
         # save this line and combine it with the next line
@@ -399,15 +420,26 @@ def parse_input_file_android(infile, flags):
       result = re.search('(?<=^PLATFORM_VERSION=).*', line)
       if result is not None:
         platform_version = result.group(0)
+        continue
       result = re.search('(?<=^TARGET_PRODUCT=).*', line)
       if result is not None:
         target_product = result.group(0)
+        continue
       result = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
       if result is not None:
         target_variant = result.group(0)
+        continue
+      result = re.search('(?<=^BUILD_ID=).*', line)
+      if result is not None:
+        build_id = result.group(0)
+        continue
       result = re.search('(?<=^TOP=).*', line)
       if result is not None:
         android_root = result.group(1)
+        continue
+      if re.search('USE_RBE=', line) is not None:
+        use_rbe = True
+        continue
 
   if android_root:
     new_unique_warnings = dict()
@@ -418,8 +450,8 @@ def parse_input_file_android(infile, flags):
           warning_line, flags, android_root)
     unique_warnings = new_unique_warnings
 
-  header_str = '%s - %s - %s' % (platform_version, target_product,
-                                 target_variant)
+  header_str = '%s - %s - %s (%s)' % (
+      platform_version, target_product, target_variant, build_id)
   return unique_warnings, header_str
 
 
