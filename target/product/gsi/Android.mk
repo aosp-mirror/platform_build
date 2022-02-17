@@ -50,11 +50,21 @@ else
 _vndk_check_failure_message += "       Run \`update-vndk-list.sh\` to update $(LATEST_VNDK_LIB_LIST)"
 endif
 
+# The *-ndk_platform.so libraries no longer exist and are removed from the VNDK set. However, they
+# can exist if NEED_AIDL_NDK_PLATFORM_BACKEND is set to true for legacy devices. Don't be bothered
+# with the extraneous libraries.
+ifeq ($(NEED_AIDL_NDK_PLATFORM_BACKEND),true)
+	_READ_INTERNAL_VNDK_LIB_LIST := sed /ndk_platform.so/d $(INTERNAL_VNDK_LIB_LIST)
+else
+	_READ_INTERNAL_VNDK_LIB_LIST := cat $(INTERNAL_VNDK_LIB_LIST)
+endif
+
 $(check-vndk-list-timestamp): $(INTERNAL_VNDK_LIB_LIST) $(LATEST_VNDK_LIB_LIST) $(HOST_OUT_EXECUTABLES)/update-vndk-list.sh
-	$(hide) ( diff --old-line-format="Removed %L" \
+	$(hide) ($(_READ_INTERNAL_VNDK_LIB_LIST) | sort | \
+	diff --old-line-format="Removed %L" \
 	  --new-line-format="Added %L" \
 	  --unchanged-line-format="" \
-	  $(LATEST_VNDK_LIB_LIST) $(INTERNAL_VNDK_LIB_LIST) \
+	  <(cat $(LATEST_VNDK_LIB_LIST) | sort) - \
 	  || ( echo -e $(_vndk_check_failure_message); exit 1 ))
 	$(hide) mkdir -p $(dir $@)
 	$(hide) touch $@
@@ -63,8 +73,9 @@ $(check-vndk-list-timestamp): $(INTERNAL_VNDK_LIB_LIST) $(LATEST_VNDK_LIB_LIST) 
 # Script to update the latest VNDK lib list
 include $(CLEAR_VARS)
 LOCAL_MODULE := update-vndk-list.sh
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := EXECUTABLES
 LOCAL_MODULE_STEM := $(LOCAL_MODULE)
 LOCAL_IS_HOST_MODULE := true
@@ -84,9 +95,13 @@ else
 	        echo "  echo Run lunch or choosecombo first" >> $@; \
 	        echo "  exit 1" >> $@; \
 	        echo "fi" >> $@; \
-	        echo "cd \$${ANDROID_BUILD_TOP}" >> $@; \
-	        echo "cp $(PRIVATE_INTERNAL_VNDK_LIB_LIST) $(PRIVATE_LATEST_VNDK_LIB_LIST)" >> $@; \
-	        echo "echo $(PRIVATE_LATEST_VNDK_LIB_LIST) updated." >> $@
+	        echo "cd \$${ANDROID_BUILD_TOP}" >> $@
+ifeq ($(NEED_AIDL_NDK_PLATFORM_BACKEND),true)
+	$(hide) echo "sed /ndk_platform.so/d $(PRIVATE_INTERNAL_VNDK_LIB_LIST) > $(PRIVATE_LATEST_VNDK_LIB_LIST)" >> $@
+else
+	$(hide) echo "cp $(PRIVATE_INTERNAL_VNDK_LIB_LIST) $(PRIVATE_LATEST_VNDK_LIB_LIST)" >> $@
+endif
+	$(hide) echo "echo $(PRIVATE_LATEST_VNDK_LIB_LIST) updated." >> $@
 endif
 	@chmod a+x $@
 
@@ -156,8 +171,9 @@ ifneq ($(BOARD_VNDK_VERSION),)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_package
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 # Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
 LOCAL_REQUIRED_MODULES := \
     $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES))
@@ -181,8 +197,9 @@ ifneq ($(BOARD_VNDK_VERSION),current)
 	_vndk_versions += $(BOARD_VNDK_VERSION)
 endif
 LOCAL_MODULE := vndk_apex_snapshot_package
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(_vndk_versions),com.android.vndk.v$(vndk_ver))
 include $(BUILD_PHONY_PACKAGE)
 
@@ -195,8 +212,9 @@ endif # BOARD_VNDK_VERSION is set
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := gsi_skip_mount.cfg
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_STEM := skip_mount.cfg
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 LOCAL_MODULE_CLASS := ETC
@@ -220,8 +238,9 @@ include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := init.gsi.rc
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SYSTEM_EXT_MODULE := true
@@ -232,11 +251,12 @@ include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := init.vndk-nodef.rc
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SYSTEM_EXT_MODULE := true
-LOCAL_MODULE_RELATIVE_PATH := init
+LOCAL_MODULE_RELATIVE_PATH := gsi
 
 include $(BUILD_PREBUILT)
