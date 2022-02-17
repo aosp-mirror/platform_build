@@ -27,9 +27,21 @@ $(call add_soong_config_namespace,ANDROID)
 # Add variables to the namespace below:
 
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
+$(call add_soong_config_var,ANDROID,IS_TARGET_MIXED_SEPOLICY)
+ifeq ($(IS_TARGET_MIXED_SEPOLICY),true)
+$(call add_soong_config_var_value,ANDROID,MIXED_SEPOLICY_VERSION,$(BOARD_SEPOLICY_VERS))
+endif
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
+$(call add_soong_config_var,ANDROID,BOARD_USES_RECOVERY_AS_BOOT)
+$(call add_soong_config_var,ANDROID,BOARD_BUILD_SYSTEM_ROOT_IMAGE)
+$(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
 
-ifeq (,$(filter com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
+ifneq (,$(filter sdk win_sdk sdk_addon,$(MAKECMDGOALS)))
+  # The artifacts in the SDK zip are OK to build with prebuilt stubs enabled,
+  # even if prebuilt apexes are not enabled, because the system images in the
+  # SDK stub are not currently used (and will be removed: b/205008975).
+  MODULE_BUILD_FROM_SOURCE ?= false
+else ifeq (,$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
   # Prebuilt module SDKs require prebuilt modules to work, and currently
   # prebuilt modules are only provided for com.google.android.xxx. If we can't
   # find one of them in PRODUCT_PACKAGES then assume com.android.xxx are in use,
@@ -42,14 +54,16 @@ ifeq (,$(filter art_module,$(SOONG_CONFIG_NAMESPACES)))
   $(call add_soong_config_namespace,art_module)
   SOONG_CONFIG_art_module += source_build
 endif
-ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
+ifneq (,$(SOONG_CONFIG_art_module_source_build))
+  # Keep an explicit setting.
+else ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
   # Build ART modules from source if they are listed in TARGET_BUILD_APPS.
   SOONG_CONFIG_art_module_source_build := true
 else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
   # Always build from source for the module targets. This ought to be covered by
   # the TARGET_BUILD_APPS check above, but there are test builds that don't set it.
   SOONG_CONFIG_art_module_source_build := true
-else ifdef MODULE_BUILD_FROM_SOURCE
+else ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
   # Build from source if other Mainline modules are.
   SOONG_CONFIG_art_module_source_build := true
 else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
@@ -61,10 +75,6 @@ else ifneq (,$(SANITIZE_TARGET)$(SANITIZE_HOST))
   # Prebuilts aren't built with sanitizers either.
   SOONG_CONFIG_art_module_source_build := true
   MODULE_BUILD_FROM_SOURCE := true
-else ifneq (,$(PRODUCT_FUCHSIA))
-  # Fuchsia picks out ART internal packages that aren't available in the
-  # prebuilt.
-  SOONG_CONFIG_art_module_source_build := true
 else ifeq (,$(filter x86 x86_64,$(HOST_CROSS_ARCH)))
   # We currently only provide prebuilts for x86 on host. This skips prebuilts in
   # cuttlefish builds for ARM servers.
@@ -72,7 +82,7 @@ else ifeq (,$(filter x86 x86_64,$(HOST_CROSS_ARCH)))
 else ifneq (,$(filter dex2oatds dex2oats,$(PRODUCT_HOST_PACKAGES)))
   # Some products depend on host tools that aren't available as prebuilts.
   SOONG_CONFIG_art_module_source_build := true
-else ifeq (,$(filter com.google.android.art,$(PRODUCT_PACKAGES)))
+else ifeq (,$(findstring com.google.android.art,$(PRODUCT_PACKAGES)))
   # TODO(b/192006406): There is currently no good way to control which prebuilt
   # APEX (com.google.android.art or com.android.art) gets picked for deapexing
   # to provide dex jars for hiddenapi and dexpreopting. Instead the AOSP APEX is
@@ -82,7 +92,7 @@ else
   # This sets the default for building ART APEXes from source rather than
   # prebuilts (in packages/modules/ArtPrebuilt and prebuilt/module_sdk/art) in
   # all other platform builds.
-  SOONG_CONFIG_art_module_source_build ?= false
+  SOONG_CONFIG_art_module_source_build ?= true
 endif
 
 # Apex build mode variables
@@ -90,6 +100,21 @@ ifdef APEX_BUILD_FOR_PRE_S_DEVICES
 $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
 endif
 
-ifdef MODULE_BUILD_FROM_SOURCE
+ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
 $(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
 endif
+
+# TODO(b/203088572): Remove when Java optimizations enabled by default for
+# SystemUI.
+$(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
+# TODO(b/196084106): Remove when Java optimizations enabled by default for
+# system packages.
+$(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
+
+# Check for SupplementalApi module.
+ifeq ($(wildcard packages/modules/SupplementalApi),)
+$(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,false)
+else
+$(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,true)
+endif
+
