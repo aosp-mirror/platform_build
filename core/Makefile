@@ -892,7 +892,12 @@ endif
 # $1: boot image file name
 # $2: boot image variant (boot, boot-debug, boot-test-harness)
 define get-bootimage-partition-size
-  $(BOARD_$(call to-upper,$(subst .img,,$(subst $(2),kernel,$(notdir $(1)))))_BOOTIMAGE_PARTITION_SIZE)
+$(BOARD_$(call to-upper,$(subst .img,,$(subst $(2),kernel,$(notdir $(1)))))_BOOTIMAGE_PARTITION_SIZE)
+endef
+
+# $1: partition size
+define get-partition-size-argument
+  $(if $(1),--partition_size $(1),--dynamic_partition_size)
 endef
 
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
@@ -1024,7 +1029,7 @@ define build_boot_board_avb_enabled
   $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot)))
   $(AVBTOOL) add_hash_footer \
           --image $(1) \
-          --partition_size $(call get-bootimage-partition-size,$(1),boot) \
+          $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) \
           --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
           $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
 endef
@@ -1107,7 +1112,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_BOOTIMAGE) $(AVBTOOL) $(BOARD
 	cp $(INTERNAL_PREBUILT_BOOTIMAGE) $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
-	    --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
+	    $(call get-partition-size-argument,$(BOARD_BOOTIMAGE_PARTITION_SIZE)) \
 	    --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
 	    $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
 else
@@ -1145,7 +1150,7 @@ $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_KEY_PATH)
 	$(call assert-max-image-size,$@,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE))
 	$(AVBTOOL) add_hash_footer \
            --image $@ \
-	   --partition_size $(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE) \
+	   $(call get-partition-size-argument,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE)) \
 	   --partition_name init_boot $(INTERNAL_AVB_INIT_BOOT_SIGNING_ARGS) \
 	   $(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS)
 else
@@ -1166,7 +1171,7 @@ $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(INTERNAL_PREBUILT_INIT_BOOT_IMAGE) $(AVBT
 	cp $(INTERNAL_PREBUILT_INIT_BOOT_IMAGE) $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
-	    --partition_size $(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE) \
+	    $(call get-partition-size-argument,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE)) \
 	    --partition_name boot $(INTERNAL_AVB_INIT_BOOT_SIGNING_ARGS) \
 	    $(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS)
 else
@@ -1294,7 +1299,7 @@ $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOTIMAGE_KE
 	$(call assert-max-image-size,$@,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
 	$(AVBTOOL) add_hash_footer \
            --image $@ \
-	   --partition_size $(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE) \
+	   $(call get-partition-size-argument,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE)) \
 	   --partition_name vendor_boot $(INTERNAL_AVB_VENDOR_BOOT_SIGNING_ARGS) \
 	   $(BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS)
 else
@@ -2395,8 +2400,8 @@ define build-recoveryimage-target
     $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))))
   $(if $(filter true,$(BOARD_AVB_ENABLE)), \
     $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)), \
-      $(AVBTOOL) add_hash_footer --image $(1) --partition_size $(call get-bootimage-partition-size,$(1),boot) --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS),\
-      $(AVBTOOL) add_hash_footer --image $(1) --partition_size $(BOARD_RECOVERYIMAGE_PARTITION_SIZE) --partition_name recovery $(INTERNAL_AVB_RECOVERY_SIGNING_ARGS) $(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)))
+      $(AVBTOOL) add_hash_footer --image $(1) $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS),\
+      $(AVBTOOL) add_hash_footer --image $(1) $(call get-partition-size-argument,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE)) --partition_name recovery $(INTERNAL_AVB_RECOVERY_SIGNING_ARGS) $(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)))
 endef
 
 recoveryimage-deps := $(MKBOOTIMG) $(recovery_ramdisk) $(recovery_kernel)
@@ -2562,7 +2567,7 @@ define test-key-sign-bootimage
 $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),$(2))))
 $(AVBTOOL) add_hash_footer \
   --image $(1) \
-  --partition_size $(call get-bootimage-partition-size,$(1),$(2))\
+  $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),$(2)))\
   --partition_name boot $(INTERNAL_AVB_BOOT_TEST_SIGNING_ARGS) \
   $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
 $(call assert-max-image-size,$(1),$(call get-bootimage-partition-size,$(1),$(2)))
@@ -2650,7 +2655,7 @@ define test-key-sign-vendor-bootimage
 $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE)))
 $(AVBTOOL) add_hash_footer \
   --image $(1) \
-  --partition_size $(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE) \
+  $(call get-partition-size-argument,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE)) \
   --partition_name vendor_boot $(INTERNAL_AVB_VENDOR_BOOT_TEST_SIGNING_ARGS) \
   $(BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS)
 $(call assert-max-image-size,$(1),$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
@@ -3680,7 +3685,7 @@ $(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE) $(AVBTOOL) $(BOARD_AV
 	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
-	    --partition_size $(BOARD_DTBOIMG_PARTITION_SIZE) \
+	    $(call get-partition-size-argument,$(BOARD_DTBOIMG_PARTITION_SIZE)) \
 	    --partition_name dtbo $(INTERNAL_AVB_DTBO_SIGNING_ARGS) \
 	    $(BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS)
 else
@@ -3707,7 +3712,7 @@ $(INSTALLED_PVMFWIMAGE_TARGET): $(PREBUILT_PVMFWIMAGE_TARGET) $(AVBTOOL) $(BOARD
 	cp $< $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
-	    --partition_size $(BOARD_PVMFWIMAGE_PARTITION_SIZE) \
+	    $(call get-partition-size-argument,$(BOARD_PVMFWIMAGE_PARTITION_SIZE)) \
 	    --partition_name pvmfw $(INTERNAL_AVB_PVMFW_SIGNING_ARGS) \
 	    $(BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS)
 else
@@ -3749,7 +3754,7 @@ ifeq ($(BOARD_AVB_ENABLE),true)
           --image $(3) \
           --key $(BOARD_AVB_$(call to-upper,$(2))_KEY_PATH) \
           --algorithm $(BOARD_AVB_$(call to-upper,$(2))_ALGORITHM) \
-          --partition_size $(BOARD_AVB_$(call to-upper,$(2))_PARTITION_SIZE) \
+          $(call get-partition-size-argument,$(BOARD_AVB_$(call to-upper,$(2))_PARTITION_SIZE)) \
           --partition_name $(2) \
           $(INTERNAL_AVB_CUSTOMIMAGES_SIGNING_ARGS) \
           $(BOARD_AVB_$(call to-upper,$(2))_ADD_HASHTREE_FOOTER_ARGS)
