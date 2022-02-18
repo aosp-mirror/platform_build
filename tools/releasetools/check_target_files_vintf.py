@@ -164,7 +164,7 @@ def GetVintfFileList():
   """
   def PathToPatterns(path):
     if path[-1] == '/':
-      path += '*'
+      path += '**'
 
     # Loop over all the entries in DIR_SEARCH_PATHS and find one where the key
     # is a prefix of path. In order to get find the correct prefix, sort the
