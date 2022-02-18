@@ -5563,7 +5563,7 @@ ifeq ($(AB_OTA_UPDATER),true)
 	$(hide) cp $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
 	$(hide) cp $(TOPDIR)external/zucchini/version_info.h $(zip_root)/META/zucchini_config.txt
 	$(hide) cp $(HOST_OUT_SHARED_LIBRARIES)/liblz4.so $(zip_root)/META/liblz4.so
-	$(hide) for part in $(strip $(AB_OTA_PARTITIONS)); do \
+	$(hide) for part in $(sort $(AB_OTA_PARTITIONS)); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
 	$(hide) for conf in $(strip $(AB_OTA_POSTINSTALL_CONFIG)); do \
