@@ -72,7 +72,8 @@ Usage: merge_target_files [args]
       files package and saves it at this path.
 
   --rebuild_recovery
-      Deprecated; does nothing.
+      Copy the recovery image used by non-A/B devices, used when
+      regenerating vendor images with --rebuild-sepolicy.
 
   --allow-duplicate-apkapex-keys
       If provided, duplicate APK/APEX keys are ignored and the value from the
@@ -145,7 +146,6 @@ OPTIONS.output_item_list = None
 OPTIONS.output_ota = None
 OPTIONS.output_img = None
 OPTIONS.output_super_empty = None
-# TODO(b/132730255): Remove this option.
 OPTIONS.rebuild_recovery = False
 # TODO(b/150582573): Remove this option.
 OPTIONS.allow_duplicate_apkapex_keys = False
@@ -1217,9 +1217,8 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
 
 def create_merged_package(temp_dir, framework_target_files, framework_item_list,
                           vendor_target_files, vendor_item_list,
-                          framework_misc_info_keys, rebuild_recovery,
-                          framework_dexpreopt_tools, framework_dexpreopt_config,
-                          vendor_dexpreopt_config):
+                          framework_misc_info_keys, framework_dexpreopt_tools,
+                          framework_dexpreopt_config, vendor_dexpreopt_config):
   """Merges two target files packages into one target files structure.
 
   Args:
@@ -1241,8 +1240,6 @@ def create_merged_package(temp_dir, framework_target_files, framework_item_list,
     framework_misc_info_keys: A list of keys to obtain from the framework
       instance of META/misc_info.txt. The remaining keys should come from the
       vendor instance.
-    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
-      devices and write it to the system image.
   Args used if dexpreopt is applied:
     framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
     framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
@@ -1302,7 +1299,7 @@ def generate_images(target_files_dir, rebuild_recovery):
   Args:
     target_files_dir: Path to merged temp directory.
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
-      devices and write it to the system image.
+      devices and write it to the vendor image.
   """
 
   # Regenerate IMAGES in the target directory.
@@ -1311,7 +1308,6 @@ def generate_images(target_files_dir, rebuild_recovery):
       '--verbose',
       '--add_missing',
   ]
-  # TODO(b/132730255): Remove this if statement.
   if rebuild_recovery:
     add_img_args.append('--rebuild_recovery')
   add_img_args.append(target_files_dir)
@@ -1320,6 +1316,7 @@ def generate_images(target_files_dir, rebuild_recovery):
 
 
 def rebuild_image_with_sepolicy(target_files_dir,
+                                rebuild_recovery,
                                 vendor_otatools=None,
                                 vendor_target_files=None):
   """Rebuilds odm.img or vendor.img to include merged sepolicy files.
@@ -1328,6 +1325,8 @@ def rebuild_image_with_sepolicy(target_files_dir,
 
   Args:
     target_files_dir: Path to the extracted merged target-files package.
+    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
+      devices and use it when regenerating the vendor images.
     vendor_otatools: If not None, path to an otatools.zip from the vendor build
       that is used when recompiling the image.
     vendor_target_files: Expected if vendor_otatools is not None. Path to the
@@ -1338,6 +1337,7 @@ def rebuild_image_with_sepolicy(target_files_dir,
       os.path.join(target_files_dir, 'IMAGES/odm.img')):
     partition = 'odm'
   partition_img = '{}.img'.format(partition)
+  partition_map = '{}.map'.format(partition)
 
   logger.info('Recompiling %s using the merged sepolicy files.', partition_img)
 
@@ -1401,8 +1401,10 @@ def rebuild_image_with_sepolicy(target_files_dir,
         os.path.join(vendor_otatools_dir, 'bin', 'add_img_to_target_files'),
         '--verbose',
         '--add_missing',
-        vendor_target_files_dir,
     ]
+    if rebuild_recovery:
+      rebuild_partition_command.append('--rebuild_recovery')
+    rebuild_partition_command.append(vendor_target_files_dir)
     logger.info('Recompiling %s: %s', partition_img,
                 ' '.join(rebuild_partition_command))
     common.RunAndCheckOutput(rebuild_partition_command, verbose=True)
@@ -1413,6 +1415,23 @@ def rebuild_image_with_sepolicy(target_files_dir,
     shutil.move(
         os.path.join(vendor_target_files_dir, 'IMAGES', partition_img),
         os.path.join(target_files_dir, 'IMAGES', partition_img))
+    shutil.move(
+        os.path.join(vendor_target_files_dir, 'IMAGES', partition_map),
+        os.path.join(target_files_dir, 'IMAGES', partition_map))
+
+    def copy_recovery_file(filename):
+      for subdir in ('VENDOR', 'SYSTEM/vendor'):
+        source = os.path.join(vendor_target_files_dir, subdir, filename)
+        if os.path.exists(source):
+          dest = os.path.join(target_files_dir, subdir, filename)
+          shutil.copy(source, dest)
+          return
+      logger.info('Skipping copy_recovery_file for %s, file not found',
+                  filename)
+
+    if rebuild_recovery:
+      copy_recovery_file('etc/recovery.img')
+      copy_recovery_file('bin/install-recovery.sh')
 
 
 def generate_super_empty_image(target_dir, output_super_empty):
@@ -1536,7 +1555,7 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
     output_super_empty: If provided, creates a super_empty.img file from the
       merged target files package and saves it at this path.
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
-      devices and write it to the system image.
+      devices and use it when regenerating the vendor images.
     vendor_otatools: Path to an otatools zip used for recompiling vendor images.
     rebuild_sepolicy: If true, rebuild odm.img (if target uses ODM) or
       vendor.img using a merged precompiled_sepolicy file.
@@ -1552,7 +1571,7 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   output_target_files_temp_dir = create_merged_package(
       temp_dir, framework_target_files, framework_item_list,
       vendor_target_files, vendor_item_list, framework_misc_info_keys,
-      rebuild_recovery, framework_dexpreopt_tools, framework_dexpreopt_config,
+      framework_dexpreopt_tools, framework_dexpreopt_config,
       vendor_dexpreopt_config)
 
   if not check_target_files_vintf.CheckVintf(output_target_files_temp_dir):
@@ -1603,8 +1622,8 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   common.RunAndCheckOutput(split_sepolicy_cmd)
   # Include the compiled policy in an image if requested.
   if rebuild_sepolicy:
-    rebuild_image_with_sepolicy(output_target_files_temp_dir, vendor_otatools,
-                                vendor_target_files)
+    rebuild_image_with_sepolicy(output_target_files_temp_dir, rebuild_recovery,
+                                vendor_otatools, vendor_target_files)
 
   # Run validation checks on the pre-installed APEX files.
   validate_merged_apex_info(output_target_files_temp_dir, partition_map.keys())
@@ -1718,7 +1737,7 @@ def main():
       OPTIONS.output_img = a
     elif o == '--output-super-empty':
       OPTIONS.output_super_empty = a
-    elif o == '--rebuild_recovery':  # TODO(b/132730255): Warn
+    elif o == '--rebuild_recovery':
       OPTIONS.rebuild_recovery = True
     elif o == '--allow-duplicate-apkapex-keys':
       OPTIONS.allow_duplicate_apkapex_keys = True
@@ -1773,7 +1792,8 @@ def main():
   if (args or OPTIONS.framework_target_files is None or
       OPTIONS.vendor_target_files is None or
       (OPTIONS.output_target_files is None and OPTIONS.output_dir is None) or
-      (OPTIONS.output_dir is not None and OPTIONS.output_item_list is None)):
+      (OPTIONS.output_dir is not None and OPTIONS.output_item_list is None) or
+      (OPTIONS.rebuild_recovery and not OPTIONS.rebuild_sepolicy)):
     common.Usage(__doc__)
     sys.exit(1)
 
