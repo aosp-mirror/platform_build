@@ -142,11 +142,6 @@ $(KATI_obsolete_var ADDITIONAL_BUILD_PROPERTIES, Please use ADDITIONAL_SYSTEM_PR
 #
 # -----------------------------------------------------------------
 # Add the product-defined properties to the build properties.
-ifdef PRODUCT_SHIPPING_API_LEVEL
-ADDITIONAL_SYSTEM_PROPERTIES += \
-  ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
-endif
-
 ifneq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
   ADDITIONAL_SYSTEM_PROPERTIES += $(PRODUCT_PROPERTY_OVERRIDES)
 else
