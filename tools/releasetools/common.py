@@ -1026,7 +1026,8 @@ class PartitionBuildProps(object):
 
     import_path = tokens[1]
     if not re.match(r'^/{}/.*\.prop$'.format(self.partition), import_path):
-      raise ValueError('Unrecognized import path {}'.format(line))
+      logger.warn('Unrecognized import path {}'.format(line))
+      return {}
 
     # We only recognize a subset of import statement that the init process
     # supports. And we can loose the restriction based on how the dynamic
@@ -2245,8 +2246,8 @@ def GetMinSdkVersion(apk_name):
   stdoutdata, stderrdata = proc.communicate()
   if proc.returncode != 0:
     raise ExternalError(
-        "Failed to obtain minSdkVersion: aapt2 return code {}:\n{}\n{}".format(
-            proc.returncode, stdoutdata, stderrdata))
+        "Failed to obtain minSdkVersion for {}: aapt2 return code {}:\n{}\n{}".format(
+            apk_name, proc.returncode, stdoutdata, stderrdata))
 
   for line in stdoutdata.split("\n"):
     # Looking for lines such as sdkVersion:'23' or sdkVersion:'M'.

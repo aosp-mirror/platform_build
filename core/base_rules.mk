@@ -996,6 +996,11 @@ ifdef LOCAL_TEST_DATA
         $(call word-colon,2,$(f))))
 endif
 
+ifdef LOCAL_TEST_DATA_BINS
+  ALL_MODULES.$(my_register_name).TEST_DATA_BINS := \
+    $(ALL_MODULES.$(my_register_name).TEST_DATA_BINS) $(LOCAL_TEST_DATA_BINS)
+endif
+
 ##########################################################################
 ## When compiling against the VNDK, add the .vendor or .product suffix to
 ## required modules.
