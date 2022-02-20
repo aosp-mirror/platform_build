@@ -705,7 +705,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       if mount_point not in allowed_partitions:
           continue
 
-    if mount_point == "system_other":
+    if (mount_point == "system_other") and (dest_prop != "partition_size"):
       # Propagate system properties to system_other. They'll get overridden
       # after as needed.
       copy_prop(src_prop.format("system"), dest_prop)
