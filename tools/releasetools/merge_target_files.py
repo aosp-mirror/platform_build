@@ -72,7 +72,8 @@ Usage: merge_target_files [args]
       files package and saves it at this path.
 
   --rebuild_recovery
-      Deprecated; does nothing.
+      Copy the recovery image used by non-A/B devices, used when
+      regenerating vendor images with --rebuild-sepolicy.
 
   --allow-duplicate-apkapex-keys
       If provided, duplicate APK/APEX keys are ignored and the value from the
@@ -127,7 +128,7 @@ import ota_from_target_files
 import sparse_img
 import verity_utils
 
-from common import AddCareMapForAbOta, ExternalError, PARTITIONS_WITH_CARE_MAP
+from common import ExternalError
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +146,6 @@ OPTIONS.output_item_list = None
 OPTIONS.output_ota = None
 OPTIONS.output_img = None
 OPTIONS.output_super_empty = None
-# TODO(b/132730255): Remove this option.
 OPTIONS.rebuild_recovery = False
 # TODO(b/150582573): Remove this option.
 OPTIONS.allow_duplicate_apkapex_keys = False
@@ -826,10 +826,6 @@ def generate_care_map(partitions, output_target_files_dir):
         image_size = verity_image_builder.CalculateMaxImageSize(partition_size)
         OPTIONS.info_dict[image_size_prop] = image_size
 
-  AddCareMapForAbOta(
-      os.path.join(output_target_files_dir, 'META', 'care_map.pb'),
-      PARTITIONS_WITH_CARE_MAP, partition_image_map)
-
 
 def process_special_cases(temp_dir, framework_meta, vendor_meta,
                           output_target_files_temp_dir,
@@ -843,11 +839,12 @@ def process_special_cases(temp_dir, framework_meta, vendor_meta,
 
   Args:
     temp_dir: Location containing an 'output' directory where target files have
-      been extracted, e.g. <temp_dir>/output/SYSTEM, <temp_dir>/output/IMAGES, etc.
+      been extracted, e.g. <temp_dir>/output/SYSTEM, <temp_dir>/output/IMAGES,
+      etc.
     framework_meta: The name of a directory containing the special items
       extracted from the framework target files package.
-    vendor_meta: The name of a directory containing the special items
-      extracted from the vendor target files package.
+    vendor_meta: The name of a directory containing the special items extracted
+      from the vendor target files package.
     output_target_files_temp_dir: The name of a directory that will be used to
       create the output target files package after all the special cases are
       processed.
@@ -858,9 +855,7 @@ def process_special_cases(temp_dir, framework_meta, vendor_meta,
       partitions. Used to filter apexkeys.txt and apkcerts.txt.
     vendor_partition_set: Partitions that are considered vendor partitions. Used
       to filter apexkeys.txt and apkcerts.txt.
-
-    The following are only used if dexpreopt is applied:
-
+  Args used if dexpreopt is applied:
     framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
     framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
     vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
@@ -915,14 +910,14 @@ def process_special_cases(temp_dir, framework_meta, vendor_meta,
 
 
 def process_dexopt(temp_dir, framework_meta, vendor_meta,
-                   output_target_files_temp_dir,
-                   framework_dexpreopt_tools, framework_dexpreopt_config,
-                   vendor_dexpreopt_config):
+                   output_target_files_temp_dir, framework_dexpreopt_tools,
+                   framework_dexpreopt_config, vendor_dexpreopt_config):
   """If needed, generates dexopt files for vendor apps.
 
   Args:
     temp_dir: Location containing an 'output' directory where target files have
-      been extracted, e.g. <temp_dir>/output/SYSTEM, <temp_dir>/output/IMAGES, etc.
+      been extracted, e.g. <temp_dir>/output/SYSTEM, <temp_dir>/output/IMAGES,
+      etc.
     framework_meta: The name of a directory containing the special items
       extracted from the framework target files package.
     vendor_meta: The name of a directory containing the special items extracted
@@ -940,8 +935,7 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
       os.path.join(vendor_meta, *misc_info_path))
 
   if (vendor_misc_info_dict.get('building_with_vsdk') != 'true' or
-      framework_dexpreopt_tools is None or
-      framework_dexpreopt_config is None or
+      framework_dexpreopt_tools is None or framework_dexpreopt_config is None or
       vendor_dexpreopt_config is None):
     return
 
@@ -984,8 +978,10 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
   #                 package.vdex
   #                 package.odex
   dexpreopt_tools_files_temp_dir = os.path.join(temp_dir, 'tools')
-  dexpreopt_framework_config_files_temp_dir = os.path.join(temp_dir, 'system_config')
-  dexpreopt_vendor_config_files_temp_dir = os.path.join(temp_dir, 'vendor_config')
+  dexpreopt_framework_config_files_temp_dir = os.path.join(
+      temp_dir, 'system_config')
+  dexpreopt_vendor_config_files_temp_dir = os.path.join(temp_dir,
+                                                        'vendor_config')
 
   extract_items(
       target_files=OPTIONS.framework_dexpreopt_tools,
@@ -1000,10 +996,12 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
       target_files_temp_dir=dexpreopt_vendor_config_files_temp_dir,
       extract_item_list=('*',))
 
-  os.symlink(os.path.join(output_target_files_temp_dir, "SYSTEM"),
-             os.path.join(temp_dir, "system"))
-  os.symlink(os.path.join(output_target_files_temp_dir, "VENDOR"),
-             os.path.join(temp_dir, "vendor"))
+  os.symlink(
+      os.path.join(output_target_files_temp_dir, 'SYSTEM'),
+      os.path.join(temp_dir, 'system'))
+  os.symlink(
+      os.path.join(output_target_files_temp_dir, 'VENDOR'),
+      os.path.join(temp_dir, 'vendor'))
 
   # The directory structure for flatteded APEXes is:
   #
@@ -1026,7 +1024,7 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
   #         com.android.appsearch.apex
   #         com.android.art.apex
   #         ...
-  apex_root = os.path.join(output_target_files_temp_dir, "SYSTEM", "apex")
+  apex_root = os.path.join(output_target_files_temp_dir, 'SYSTEM', 'apex')
   framework_misc_info_dict = common.LoadDictionaryFromFile(
       os.path.join(framework_meta, *misc_info_path))
 
@@ -1094,13 +1092,14 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
     dex_img = 'VENDOR'
     # Open vendor_filesystem_config to append the items generated by dexopt.
     vendor_file_system_config = open(
-        os.path.join(temp_dir, 'output', 'META', 'vendor_filesystem_config.txt'),
-        'a')
+        os.path.join(temp_dir, 'output', 'META',
+                     'vendor_filesystem_config.txt'), 'a')
 
   # Dexpreopt vendor apps.
   dexpreopt_config_suffix = '_dexpreopt.config'
-  for config in glob.glob(os.path.join(
-      dexpreopt_vendor_config_files_temp_dir, '*' + dexpreopt_config_suffix)):
+  for config in glob.glob(
+      os.path.join(dexpreopt_vendor_config_files_temp_dir,
+                   '*' + dexpreopt_config_suffix)):
     app = os.path.basename(config)[:-len(dexpreopt_config_suffix)]
     logging.info('dexpreopt config: %s %s', config, app)
 
@@ -1110,8 +1109,9 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
       apk_dir = 'priv-app'
       apk_path = os.path.join(temp_dir, 'vendor', apk_dir, app, app + '.apk')
       if not os.path.exists(apk_path):
-        logging.warning('skipping dexpreopt for %s, no apk found in vendor/app '
-                        'or vendor/priv-app', app)
+        logging.warning(
+            'skipping dexpreopt for %s, no apk found in vendor/app '
+            'or vendor/priv-app', app)
         continue
 
     # Generate dexpreopting script. Note 'out_dir' is not the output directory
@@ -1121,10 +1121,11 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
     command = [
         os.path.join(dexpreopt_tools_files_temp_dir, 'dexpreopt_gen'),
         '-global',
-        os.path.join(dexpreopt_framework_config_files_temp_dir, 'dexpreopt.config'),
+        os.path.join(dexpreopt_framework_config_files_temp_dir,
+                     'dexpreopt.config'),
         '-global_soong',
-        os.path.join(
-            dexpreopt_framework_config_files_temp_dir, 'dexpreopt_soong.config'),
+        os.path.join(dexpreopt_framework_config_files_temp_dir,
+                     'dexpreopt_soong.config'),
         '-module',
         config,
         '-dexpreopt_script',
@@ -1137,13 +1138,13 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
     ]
 
     # Run the command from temp_dir so all tool paths are its descendants.
-    logging.info("running %s", command)
-    subprocess.check_call(command, cwd = temp_dir)
+    logging.info('running %s', command)
+    subprocess.check_call(command, cwd=temp_dir)
 
     # Call the generated script.
     command = ['sh', 'dexpreopt_app.sh', apk_path]
-    logging.info("running %s", command)
-    subprocess.check_call(command, cwd = temp_dir)
+    logging.info('running %s', command)
+    subprocess.check_call(command, cwd=temp_dir)
 
     # Output files are in:
     #
@@ -1171,14 +1172,17 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
     # TODO(b/188179859): Support for other architectures.
     arch = 'arm64'
 
-    dex_destination = os.path.join(temp_dir, 'output', dex_img, apk_dir, app, 'oat', arch)
+    dex_destination = os.path.join(temp_dir, 'output', dex_img, apk_dir, app,
+                                   'oat', arch)
     os.makedirs(dex_destination)
-    dex2oat_path = os.path.join(
-        temp_dir, 'out', 'dex2oat_result', 'vendor', apk_dir, app, 'oat', arch)
-    shutil.copy(os.path.join(dex2oat_path, 'package.vdex'),
-                os.path.join(dex_destination, app + '.vdex'))
-    shutil.copy(os.path.join(dex2oat_path, 'package.odex'),
-                os.path.join(dex_destination, app + '.odex'))
+    dex2oat_path = os.path.join(temp_dir, 'out', 'dex2oat_result', 'vendor',
+                                apk_dir, app, 'oat', arch)
+    shutil.copy(
+        os.path.join(dex2oat_path, 'package.vdex'),
+        os.path.join(dex_destination, app + '.vdex'))
+    shutil.copy(
+        os.path.join(dex2oat_path, 'package.odex'),
+        os.path.join(dex_destination, app + '.odex'))
 
     # Append entries to vendor_file_system_config.txt, such as:
     #
@@ -1192,8 +1196,10 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
       vendor_file_system_config.writelines([
           vendor_app_prefix + ' 0 2000 755 ' + selabel + '\n',
           vendor_app_prefix + '/' + arch + ' 0 2000 755 ' + selabel + '\n',
-          vendor_app_prefix + '/' + arch + '/' + app + '.odex 0 0 644 ' + selabel + '\n',
-          vendor_app_prefix + '/' + arch + '/' + app + '.vdex 0 0 644 ' + selabel + '\n',
+          vendor_app_prefix + '/' + arch + '/' + app + '.odex 0 0 644 ' +
+          selabel + '\n',
+          vendor_app_prefix + '/' + arch + '/' + app + '.vdex 0 0 644 ' +
+          selabel + '\n',
       ])
 
   if not use_system_other_odex:
@@ -1202,7 +1208,8 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
     # TODO(b/188179859): Rebuilding a vendor image in GRF mode (e.g., T(framework)
     #                    and S(vendor) may require logic similar to that in
     #                    rebuild_image_with_sepolicy.
-    vendor_img = os.path.join(output_target_files_temp_dir, 'IMAGES', 'vendor.img')
+    vendor_img = os.path.join(output_target_files_temp_dir, 'IMAGES',
+                              'vendor.img')
     if os.path.exists(vendor_img):
       logging.info('Deleting %s', vendor_img)
       os.remove(vendor_img)
@@ -1210,9 +1217,8 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
 
 def create_merged_package(temp_dir, framework_target_files, framework_item_list,
                           vendor_target_files, vendor_item_list,
-                          framework_misc_info_keys, rebuild_recovery,
-                          framework_dexpreopt_tools, framework_dexpreopt_config,
-                          vendor_dexpreopt_config):
+                          framework_misc_info_keys, framework_dexpreopt_tools,
+                          framework_dexpreopt_config, vendor_dexpreopt_config):
   """Merges two target files packages into one target files structure.
 
   Args:
@@ -1234,11 +1240,7 @@ def create_merged_package(temp_dir, framework_target_files, framework_item_list,
     framework_misc_info_keys: A list of keys to obtain from the framework
       instance of META/misc_info.txt. The remaining keys should come from the
       vendor instance.
-    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
-      devices and write it to the system image.
-
-    The following are only used if dexpreopt is applied:
-
+  Args used if dexpreopt is applied:
     framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
     framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
     vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
@@ -1297,7 +1299,7 @@ def generate_images(target_files_dir, rebuild_recovery):
   Args:
     target_files_dir: Path to merged temp directory.
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
-      devices and write it to the system image.
+      devices and write it to the vendor image.
   """
 
   # Regenerate IMAGES in the target directory.
@@ -1306,7 +1308,6 @@ def generate_images(target_files_dir, rebuild_recovery):
       '--verbose',
       '--add_missing',
   ]
-  # TODO(b/132730255): Remove this if statement.
   if rebuild_recovery:
     add_img_args.append('--rebuild_recovery')
   add_img_args.append(target_files_dir)
@@ -1315,6 +1316,7 @@ def generate_images(target_files_dir, rebuild_recovery):
 
 
 def rebuild_image_with_sepolicy(target_files_dir,
+                                rebuild_recovery,
                                 vendor_otatools=None,
                                 vendor_target_files=None):
   """Rebuilds odm.img or vendor.img to include merged sepolicy files.
@@ -1323,6 +1325,8 @@ def rebuild_image_with_sepolicy(target_files_dir,
 
   Args:
     target_files_dir: Path to the extracted merged target-files package.
+    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
+      devices and use it when regenerating the vendor images.
     vendor_otatools: If not None, path to an otatools.zip from the vendor build
       that is used when recompiling the image.
     vendor_target_files: Expected if vendor_otatools is not None. Path to the
@@ -1333,6 +1337,7 @@ def rebuild_image_with_sepolicy(target_files_dir,
       os.path.join(target_files_dir, 'IMAGES/odm.img')):
     partition = 'odm'
   partition_img = '{}.img'.format(partition)
+  partition_map = '{}.map'.format(partition)
 
   logger.info('Recompiling %s using the merged sepolicy files.', partition_img)
 
@@ -1396,8 +1401,10 @@ def rebuild_image_with_sepolicy(target_files_dir,
         os.path.join(vendor_otatools_dir, 'bin', 'add_img_to_target_files'),
         '--verbose',
         '--add_missing',
-        vendor_target_files_dir,
     ]
+    if rebuild_recovery:
+      rebuild_partition_command.append('--rebuild_recovery')
+    rebuild_partition_command.append(vendor_target_files_dir)
     logger.info('Recompiling %s: %s', partition_img,
                 ' '.join(rebuild_partition_command))
     common.RunAndCheckOutput(rebuild_partition_command, verbose=True)
@@ -1408,6 +1415,23 @@ def rebuild_image_with_sepolicy(target_files_dir,
     shutil.move(
         os.path.join(vendor_target_files_dir, 'IMAGES', partition_img),
         os.path.join(target_files_dir, 'IMAGES', partition_img))
+    shutil.move(
+        os.path.join(vendor_target_files_dir, 'IMAGES', partition_map),
+        os.path.join(target_files_dir, 'IMAGES', partition_map))
+
+    def copy_recovery_file(filename):
+      for subdir in ('VENDOR', 'SYSTEM/vendor'):
+        source = os.path.join(vendor_target_files_dir, subdir, filename)
+        if os.path.exists(source):
+          dest = os.path.join(target_files_dir, subdir, filename)
+          shutil.copy(source, dest)
+          return
+      logger.info('Skipping copy_recovery_file for %s, file not found',
+                  filename)
+
+    if rebuild_recovery:
+      copy_recovery_file('etc/recovery.img')
+      copy_recovery_file('bin/install-recovery.sh')
 
 
 def generate_super_empty_image(target_dir, output_super_empty):
@@ -1531,13 +1555,11 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
     output_super_empty: If provided, creates a super_empty.img file from the
       merged target files package and saves it at this path.
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
-      devices and write it to the system image.
+      devices and use it when regenerating the vendor images.
     vendor_otatools: Path to an otatools zip used for recompiling vendor images.
     rebuild_sepolicy: If true, rebuild odm.img (if target uses ODM) or
       vendor.img using a merged precompiled_sepolicy file.
-
-    The following are only used if dexpreopt is applied:
-
+  Args used if dexpreopt is applied:
     framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
     framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
     vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
@@ -1549,7 +1571,7 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   output_target_files_temp_dir = create_merged_package(
       temp_dir, framework_target_files, framework_item_list,
       vendor_target_files, vendor_item_list, framework_misc_info_keys,
-      rebuild_recovery, framework_dexpreopt_tools, framework_dexpreopt_config,
+      framework_dexpreopt_tools, framework_dexpreopt_config,
       vendor_dexpreopt_config)
 
   if not check_target_files_vintf.CheckVintf(output_target_files_temp_dir):
@@ -1600,8 +1622,8 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   common.RunAndCheckOutput(split_sepolicy_cmd)
   # Include the compiled policy in an image if requested.
   if rebuild_sepolicy:
-    rebuild_image_with_sepolicy(output_target_files_temp_dir, vendor_otatools,
-                                vendor_target_files)
+    rebuild_image_with_sepolicy(output_target_files_temp_dir, rebuild_recovery,
+                                vendor_otatools, vendor_target_files)
 
   # Run validation checks on the pre-installed APEX files.
   validate_merged_apex_info(output_target_files_temp_dir, partition_map.keys())
@@ -1715,7 +1737,7 @@ def main():
       OPTIONS.output_img = a
     elif o == '--output-super-empty':
       OPTIONS.output_super_empty = a
-    elif o == '--rebuild_recovery':  # TODO(b/132730255): Warn
+    elif o == '--rebuild_recovery':
       OPTIONS.rebuild_recovery = True
     elif o == '--allow-duplicate-apkapex-keys':
       OPTIONS.allow_duplicate_apkapex_keys = True
@@ -1770,7 +1792,8 @@ def main():
   if (args or OPTIONS.framework_target_files is None or
       OPTIONS.vendor_target_files is None or
       (OPTIONS.output_target_files is None and OPTIONS.output_dir is None) or
-      (OPTIONS.output_dir is not None and OPTIONS.output_item_list is None)):
+      (OPTIONS.output_dir is not None and OPTIONS.output_item_list is None) or
+      (OPTIONS.rebuild_recovery and not OPTIONS.rebuild_sepolicy)):
     common.Usage(__doc__)
     sys.exit(1)
 
@@ -1820,7 +1843,8 @@ def main():
           rebuild_sepolicy=OPTIONS.rebuild_sepolicy,
           framework_dexpreopt_tools=OPTIONS.framework_dexpreopt_tools,
           framework_dexpreopt_config=OPTIONS.framework_dexpreopt_config,
-          vendor_dexpreopt_config=OPTIONS.vendor_dexpreopt_config), OPTIONS.keep_tmp)
+          vendor_dexpreopt_config=OPTIONS.vendor_dexpreopt_config),
+      OPTIONS.keep_tmp)
 
 
 if __name__ == '__main__':
