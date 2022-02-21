@@ -50,6 +50,7 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.adbd \
+    com.android.adservices \
     com.android.appsearch \
     com.android.auxiliary \
     com.android.conscrypt \
