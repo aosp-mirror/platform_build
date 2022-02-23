@@ -64,7 +64,7 @@ import verity_utils
 import ota_metadata_pb2
 
 from apex_utils import GetApexInfoFromTargetFiles
-from common import AddCareMapForAbOta
+from common import AddCareMapForAbOta, ZipDelete
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -170,16 +170,16 @@ def AddVendor(output_zip, recovery_img=None, boot_img=None):
     return img.name
 
   def output_sink(fn, data):
-    ofile = open(os.path.join(OPTIONS.input_tmp, "VENDOR", fn), "w")
-    ofile.write(data)
-    ofile.close()
+    output_file = os.path.join(OPTIONS.input_tmp, "VENDOR", fn)
+    with open(output_file, "wb") as ofile:
+      ofile.write(data)
 
     if output_zip:
       arc_name = "VENDOR/" + fn
       if arc_name in output_zip.namelist():
         OPTIONS.replace_updated_files_list.append(arc_name)
       else:
-        common.ZipWrite(output_zip, ofile.name, arc_name)
+        common.ZipWrite(output_zip, output_file, arc_name)
 
   board_uses_vendorimage = OPTIONS.info_dict.get(
       "board_uses_vendorimage") == "true"
@@ -1034,9 +1034,10 @@ def OptimizeCompressedEntries(zipfile_path):
         if zinfo.compress_size > zinfo.file_size * 0.80 and zinfo.compress_type != zipfile.ZIP_STORED:
           entries_to_store.append(zinfo)
           zfp.extract(zinfo, tmpdir)
+    if len(entries_to_store) == 0:
+      return
     # Remove these entries, then re-add them as ZIP_STORED
-    common.RunAndCheckOutput(
-        ["zip", "-d", zipfile_path] + [entry.filename for entry in entries_to_store])
+    ZipDelete(zipfile_path, [entry.filename for entry in entries_to_store])
     with zipfile.ZipFile(zipfile_path, "a", allowZip64=True) as zfp:
       for entry in entries_to_store:
         zfp.write(os.path.join(tmpdir, entry.filename), entry.filename, compress_type=zipfile.ZIP_STORED)

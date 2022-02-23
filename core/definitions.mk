@@ -577,6 +577,15 @@ $(call generated-sources-dir-for,META,lic,)
 endef
 
 ###########################################################
+# License metadata targets corresponding to targets in $(1)
+###########################################################
+define corresponding-license-metadata
+$(strip $(eval _dir := $(call license-metadata-dir)) \
+$(foreach target, $(sort $(1)), $(_dir)/$(target).meta_lic) \
+)
+endef
+
+###########################################################
 ## License metadata build rule for my_register_name $(1)
 ###########################################################
 define license-metadata-rule
@@ -728,6 +737,22 @@ $(strip \
 endef
 
 ###########################################################
+## Declare that non-module targets copied from project $(1) and
+## optionally ending in $(2) have the following license
+## metadata:
+##
+## $(3) -- license kinds e.g. SPDX-license-identifier-Apache-2.0
+## $(4) -- license conditions e.g. notice by_exception_only
+## $(5) -- license text filenames (notices)
+## $(6) -- package name
+###########################################################
+define declare-copy-files-license-metadata
+$(strip \
+  $(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(eval $(call declare-license-metadata,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair)),$(3),$(4),$(5),$(6),$(1)))) \
+)
+endef
+
+###########################################################
 ## Declare the license metadata for non-module container-type target $(1).
 ##
 ## Container-type targets are targets like .zip files that
@@ -765,6 +790,18 @@ $(strip \
 endef
 
 ###########################################################
+## Declare that non-module targets copied from project $(1) and
+## optionally ending in $(2) are non-copyrightable files.
+##
+## e.g. an information-only file merely listing other files.
+###########################################################
+define declare-0p-copy-files
+$(strip \
+  $(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(eval $(call declare-0p-target,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair))))) \
+)
+endef
+
+###########################################################
 ## Declare non-module target $(1) to have a first-party license
 ## (Android Apache 2.0)
 ##
@@ -772,6 +809,15 @@ endef
 ###########################################################
 define declare-1p-target
 $(call declare-license-metadata,$(1),SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,Android,$(2))
+endef
+
+###########################################################
+## Declare that non-module targets copied from project $(1) and
+## optionally ending in $(2) are first-party licensed
+## (Android Apache 2.0)
+###########################################################
+define declare-1p-copy-files
+$(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(call declare-1p-target,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair)),$(1)))
 endef
 
 ###########################################################
