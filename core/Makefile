@@ -3843,8 +3843,7 @@ BOARD_AVB_SYSTEM_EXT_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.system_ext.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
-    --prop com.android.build.boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+    --prop com.android.build.boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
 BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.init_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
@@ -3885,6 +3884,14 @@ BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
 # The following vendor- and odm-specific images needs explicit SPL set per board.
 # TODO(b/210875415) Is this security_patch property used? Should it be removed from
 # boot.img when there is no platform ramdisk included in it?
+ifdef BOOT_OS_VERSION
+BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.boot.os_version:$(BOOT_OS_VERSION)
+else
+BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+endif
+
 ifdef BOOT_SECURITY_PATCH
 BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.security_patch:$(BOOT_SECURITY_PATCH)
