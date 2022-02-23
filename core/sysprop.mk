@@ -307,10 +307,6 @@ _prop_vars_ += \
     PRODUCT_VENDOR_PROPERTIES
 endif
 
-_blacklist_names_ := \
-    $(PRODUCT_SYSTEM_PROPERTY_BLACKLIST) \
-    ro.product.first_api_level
-
 INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
 
 $(eval $(call build-properties,\
@@ -318,7 +314,7 @@ $(eval $(call build-properties,\
     $(INSTALLED_BUILD_PROP_TARGET),\
     $(_prop_files_),\
     $(_prop_vars_),\
-    $(_blacklist_names_),\
+    $(PRODUCT_SYSTEM_PROPERTY_BLACKLIST),\
     $(empty),\
     $(empty)))
 
