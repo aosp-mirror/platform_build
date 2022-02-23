@@ -94,7 +94,7 @@ func TestReadLicenseGraph(t *testing.T) {
 				}
 				return
 			}
-			if 0 < len(tt.expectedError) {
+			if len(tt.expectedError) > 0 {
 				t.Errorf("unexpected success: got no error, want %q err", tt.expectedError)
 				return
 			}

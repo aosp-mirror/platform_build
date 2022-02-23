@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"net/url"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -93,13 +94,14 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 		}
 		hashes := make(map[hash]struct{})
 		for _, text := range tn.LicenseTexts() {
-			if _, ok := ni.hash[text]; !ok {
-				err := ni.addText(text)
+			fname := strings.SplitN(text, ":", 2)[0]
+			if _, ok := ni.hash[fname]; !ok {
+				err := ni.addText(fname)
 				if err != nil {
 					return nil, err
 				}
 			}
-			hash := ni.hash[text]
+			hash := ni.hash[fname]
 			if _, ok := hashes[hash]; !ok {
 				hashes[hash] = struct{}{}
 			}
@@ -108,11 +110,12 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 		return hashes, nil
 	}
 
-	link := func(libName string, hashes map[hash]struct{}, installPaths []string) {
-		if _, ok := ni.libHash[libName]; !ok {
-			ni.libHash[libName] = make(map[hash]struct{})
-		}
+	link := func(tn *TargetNode, hashes map[hash]struct{}, installPaths []string) {
 		for h := range hashes {
+			libName := ni.getLibName(tn, h)
+			if _, ok := ni.libHash[libName]; !ok {
+				ni.libHash[libName] = make(map[hash]struct{})
+			}
 			if _, ok := ni.hashLibInstall[h]; !ok {
 				ni.hashLibInstall[h] = make(map[string]map[string]struct{})
 			}
@@ -160,7 +163,7 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 		if err != nil {
 			return false
 		}
-		link(ni.getLibName(tn), hashes, installPaths)
+		link(tn, hashes, installPaths)
 		if tn.IsContainer() {
 			return true
 		}
@@ -170,7 +173,7 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 			if err != nil {
 				return false
 			}
-			link(ni.getLibName(r.actsOn), hashes, installPaths)
+			link(r.actsOn, hashes, installPaths)
 		}
 		return false
 	})
@@ -305,7 +308,24 @@ func (ni *NoticeIndex) HashText(h hash) []byte {
 }
 
 // getLibName returns the name of the library associated with `noticeFor`.
-func (ni *NoticeIndex) getLibName(noticeFor *TargetNode) string {
+func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) string {
+	for _, text := range noticeFor.LicenseTexts() {
+		if !strings.Contains(text, ":") {
+			continue
+		}
+
+		fields := strings.SplitN(text, ":", 2)
+		fname, pname := fields[0], fields[1]
+		if ni.hash[fname].key != h.key {
+			continue
+		}
+
+		ln, err := url.QueryUnescape(pname)
+		if err != nil {
+			continue
+		}
+		return ln
+	}
 	// use name from METADATA if available
 	ln := ni.checkMetadata(noticeFor)
 	if len(ln) > 0 {
@@ -337,14 +357,14 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode) string {
 					}
 					// remove LICENSE or NOTICE or other filename
 					li := strings.LastIndex(match, "/")
-					if 0 < li {
+					if li > 0 {
 						match = match[:li]
 					}
 					// remove *licenses/ path segment and subdirectory if in path
-					if offsets := licensesPathRegexp.FindAllStringIndex(match, -1); offsets != nil && 0 < offsets[len(offsets)-1][0] {
+					if offsets := licensesPathRegexp.FindAllStringIndex(match, -1); offsets != nil && offsets[len(offsets)-1][0] > 0 {
 						match = match[:offsets[len(offsets)-1][0]]
 						li = strings.LastIndex(match, "/")
-						if 0 < li {
+						if li > 0 {
 							match = match[:li]
 						}
 					}
@@ -366,7 +386,7 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode) string {
 	// strip off [./]meta_lic from license metadata path and extract base name
 	n := noticeFor.name[:len(noticeFor.name)-9]
 	li := strings.LastIndex(n, "/")
-	if 0 < li {
+	if li > 0 {
 		n = n[li+1:]
 	}
 	return n
@@ -580,7 +600,7 @@ func (l hashList) Swap(i, j int) { (*l.hashes)[i], (*l.hashes)[j] = (*l.hashes)[
 // the `j`th element.
 func (l hashList) Less(i, j int) bool {
 	var insti, instj int
-	if 0 < len(l.libName) {
+	if len(l.libName) > 0 {
 		insti = len(l.ni.hashLibInstall[(*l.hashes)[i]][l.libName])
 		instj = len(l.ni.hashLibInstall[(*l.hashes)[j]][l.libName])
 	} else {

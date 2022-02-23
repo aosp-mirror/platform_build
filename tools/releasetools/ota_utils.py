@@ -569,7 +569,8 @@ class PropertyFiles(object):
       tokens.append('metadata.pb:' + ' ' * 15)
     else:
       tokens.append(ComputeEntryOffsetSize(METADATA_NAME))
-      tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
+      if METADATA_PROTO_NAME in zip_file.namelist():
+          tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
 
     return ','.join(tokens)
 
