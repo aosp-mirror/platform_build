@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2022 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=TD1A.220224.001
+# This device is suitable for soong-only build that builds for all the architectures
+# needed for the ndk. It is not going to work for normal `lunch <foo> && m` workflows.
+
+PRODUCT_NAME := ndk
+PRODUCT_BRAND := Android
+PRODUCT_DEVICE := ndk
