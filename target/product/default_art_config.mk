@@ -51,6 +51,7 @@ PRODUCT_BOOT_JARS += \
 # Note: core-icu4j is moved back to PRODUCT_BOOT_JARS in product_config.mk at a later stage.
 # Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_BOOT_JARS := \
+    com.android.adservices:framework-adservices \
     com.android.appsearch:framework-appsearch \
     com.android.auxiliary:framework-auxiliary \
     com.android.conscrypt:conscrypt \
@@ -82,6 +83,7 @@ endif
 # Note: For modules available in Q, DO NOT add new entries here.
 # TODO(b/218568223): Add supplementalapi to system server jars.
 PRODUCT_APEX_SYSTEM_SERVER_JARS := \
+    com.android.adservices:service-adservices \
     com.android.appsearch:service-appsearch \
     com.android.art:service-art \
     com.android.media:service-media-s \
