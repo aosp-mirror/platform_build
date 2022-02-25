@@ -181,8 +181,5 @@ def main():
 if __name__ == '__main__':
   try:
     main()
-  except AssertionError as err:
-    print('\n    ERROR: %s\n' % (err,))
-    sys.exit(1)
   finally:
     common.Cleanup()
