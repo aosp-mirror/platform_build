@@ -688,6 +688,39 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         print("    Rewriting AVB public key of system_other in /product")
         common.ZipWrite(output_tf_zip, public_key, filename)
 
+    # Updates pvmfw embedded public key with the virt APEX payload key.
+    elif filename == "PREBUILT_IMAGES/pvmfw.img":
+      # Find the name of the virt APEX in the target files.
+      namelist = input_tf_zip.namelist()
+      apex_gen = (GetApexFilename(f) for f in namelist if IsApexFile(f))
+      virt_apex_re = re.compile("^com\.([^\.]+\.)?android\.virt\.apex$")
+      virt_apex = next((a for a in apex_gen if virt_apex_re.match(a)), None)
+      if not virt_apex:
+        print("Removing %s from ramdisk: virt APEX not found" % filename)
+      else:
+        print("Replacing %s embedded key with %s key" % (filename, virt_apex))
+        # Get the current and new embedded keys.
+        payload_key, container_key, sign_tool = apex_keys[virt_apex]
+        new_pubkey_path = common.ExtractAvbPublicKey(
+            misc_info['avb_avbtool'], payload_key)
+        with open(new_pubkey_path, 'rb') as f:
+          new_pubkey = f.read()
+        pubkey_info = copy.copy(
+            input_tf_zip.getinfo("PREBUILT_IMAGES/pvmfw_embedded.avbpubkey"))
+        old_pubkey = input_tf_zip.read(pubkey_info.filename)
+        # Validate the keys and image.
+        if len(old_pubkey) != len(new_pubkey):
+          raise common.ExternalError("pvmfw embedded public key size mismatch")
+        pos = data.find(old_pubkey)
+        if pos == -1:
+          raise common.ExternalError("pvmfw embedded public key not found")
+        # Replace the key and copy new files.
+        new_data = data[:pos] + new_pubkey + data[pos+len(old_pubkey):]
+        common.ZipWriteStr(output_tf_zip, out_info, new_data)
+        common.ZipWriteStr(output_tf_zip, pubkey_info, new_pubkey)
+    elif filename == "PREBUILT_IMAGES/pvmfw_embedded.avbpubkey":
+      pass
+
     # Should NOT sign boot-debug.img.
     elif filename in (
         "BOOT/RAMDISK/force_debuggable",
