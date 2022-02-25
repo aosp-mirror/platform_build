@@ -18,18 +18,26 @@ import os.path
 import shutil
 
 import common
+import merge_target_files
 import test_utils
 from merge_target_files import (
     validate_config_lists, DEFAULT_FRAMEWORK_ITEM_LIST,
     DEFAULT_VENDOR_ITEM_LIST, DEFAULT_FRAMEWORK_MISC_INFO_KEYS, copy_items,
-    item_list_to_partition_set, process_apex_keys_apk_certs_common,
-    compile_split_sepolicy, validate_merged_apex_info)
+    item_list_to_partition_set, merge_package_keys_txt, compile_split_sepolicy,
+    validate_merged_apex_info)
 
 
 class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
+    self.OPTIONS = merge_target_files.OPTIONS
+    self.OPTIONS.framework_item_list = DEFAULT_FRAMEWORK_ITEM_LIST
+    self.OPTIONS.framework_misc_info_keys = DEFAULT_FRAMEWORK_MISC_INFO_KEYS
+    self.OPTIONS.vendor_item_list = DEFAULT_VENDOR_ITEM_LIST
+    self.OPTIONS.framework_partition_set = set(
+        ['product', 'system', 'system_ext'])
+    self.OPTIONS.vendor_partition_set = set(['odm', 'vendor'])
 
   def test_copy_items_CopiesItemsMatchingPatterns(self):
 
@@ -84,76 +92,55 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
         os.readlink(os.path.join(output_dir, 'a_link.cpp')), 'a.cpp')
 
   def test_validate_config_lists_ReturnsFalseIfMissingDefaultItem(self):
-    framework_item_list = list(DEFAULT_FRAMEWORK_ITEM_LIST)
-    framework_item_list.remove('SYSTEM/*')
-    self.assertFalse(
-        validate_config_lists(framework_item_list,
-                              DEFAULT_FRAMEWORK_MISC_INFO_KEYS,
-                              DEFAULT_VENDOR_ITEM_LIST))
+    self.OPTIONS.framework_item_list = list(DEFAULT_FRAMEWORK_ITEM_LIST)
+    self.OPTIONS.framework_item_list.remove('SYSTEM/*')
+    self.assertFalse(validate_config_lists())
 
   def test_validate_config_lists_ReturnsTrueIfDefaultItemInDifferentList(self):
-    framework_item_list = list(DEFAULT_FRAMEWORK_ITEM_LIST)
-    framework_item_list.remove('ROOT/*')
-    vendor_item_list = list(DEFAULT_VENDOR_ITEM_LIST)
-    vendor_item_list.append('ROOT/*')
-    self.assertTrue(
-        validate_config_lists(framework_item_list,
-                              DEFAULT_FRAMEWORK_MISC_INFO_KEYS,
-                              vendor_item_list))
+    self.OPTIONS.framework_item_list = list(DEFAULT_FRAMEWORK_ITEM_LIST)
+    self.OPTIONS.framework_item_list.remove('ROOT/*')
+    self.OPTIONS.vendor_item_list = list(DEFAULT_VENDOR_ITEM_LIST)
+    self.OPTIONS.vendor_item_list.append('ROOT/*')
+    self.assertTrue(validate_config_lists())
 
   def test_validate_config_lists_ReturnsTrueIfExtraItem(self):
-    framework_item_list = list(DEFAULT_FRAMEWORK_ITEM_LIST)
-    framework_item_list.append('MY_NEW_PARTITION/*')
-    self.assertTrue(
-        validate_config_lists(framework_item_list,
-                              DEFAULT_FRAMEWORK_MISC_INFO_KEYS,
-                              DEFAULT_VENDOR_ITEM_LIST))
+    self.OPTIONS.framework_item_list = list(DEFAULT_FRAMEWORK_ITEM_LIST)
+    self.OPTIONS.framework_item_list.append('MY_NEW_PARTITION/*')
+    self.assertTrue(validate_config_lists())
 
   def test_validate_config_lists_ReturnsFalseIfSharedExtractedPartition(self):
-    vendor_item_list = list(DEFAULT_VENDOR_ITEM_LIST)
-    vendor_item_list.append('SYSTEM/my_system_file')
-    self.assertFalse(
-        validate_config_lists(DEFAULT_FRAMEWORK_ITEM_LIST,
-                              DEFAULT_FRAMEWORK_MISC_INFO_KEYS,
-                              vendor_item_list))
+    self.OPTIONS.vendor_item_list = list(DEFAULT_VENDOR_ITEM_LIST)
+    self.OPTIONS.vendor_item_list.append('SYSTEM/my_system_file')
+    self.assertFalse(validate_config_lists())
 
   def test_validate_config_lists_ReturnsFalseIfSharedExtractedPartitionImage(
       self):
-    vendor_item_list = list(DEFAULT_VENDOR_ITEM_LIST)
-    vendor_item_list.append('IMAGES/system.img')
-    self.assertFalse(
-        validate_config_lists(DEFAULT_FRAMEWORK_ITEM_LIST,
-                              DEFAULT_FRAMEWORK_MISC_INFO_KEYS,
-                              vendor_item_list))
+    self.OPTIONS.vendor_item_list = list(DEFAULT_VENDOR_ITEM_LIST)
+    self.OPTIONS.vendor_item_list.append('IMAGES/system.img')
+    self.assertFalse(validate_config_lists())
 
   def test_validate_config_lists_ReturnsFalseIfBadSystemMiscInfoKeys(self):
     for bad_key in ['dynamic_partition_list', 'super_partition_groups']:
-      framework_misc_info_keys = list(DEFAULT_FRAMEWORK_MISC_INFO_KEYS)
-      framework_misc_info_keys.append(bad_key)
-      self.assertFalse(
-          validate_config_lists(DEFAULT_FRAMEWORK_ITEM_LIST,
-                                framework_misc_info_keys,
-                                DEFAULT_VENDOR_ITEM_LIST))
+      self.OPTIONS.framework_misc_info_keys = list(
+          DEFAULT_FRAMEWORK_MISC_INFO_KEYS)
+      self.OPTIONS.framework_misc_info_keys.append(bad_key)
+      self.assertFalse(validate_config_lists())
 
-  def test_process_apex_keys_apk_certs_ReturnsTrueIfNoConflicts(self):
-    output_dir = common.MakeTempDir()
-    os.makedirs(os.path.join(output_dir, 'META'))
+  def test_merge_package_keys_txt_ReturnsTrueIfNoConflicts(self):
+    output_meta_dir = common.MakeTempDir()
 
-    framework_dir = common.MakeTempDir()
-    os.makedirs(os.path.join(framework_dir, 'META'))
+    framework_meta_dir = common.MakeTempDir()
     os.symlink(
         os.path.join(self.testdata_dir, 'apexkeys_framework.txt'),
-        os.path.join(framework_dir, 'META', 'apexkeys.txt'))
+        os.path.join(framework_meta_dir, 'apexkeys.txt'))
 
-    vendor_dir = common.MakeTempDir()
-    os.makedirs(os.path.join(vendor_dir, 'META'))
+    vendor_meta_dir = common.MakeTempDir()
     os.symlink(
         os.path.join(self.testdata_dir, 'apexkeys_vendor.txt'),
-        os.path.join(vendor_dir, 'META', 'apexkeys.txt'))
+        os.path.join(vendor_meta_dir, 'apexkeys.txt'))
 
-    process_apex_keys_apk_certs_common(framework_dir, vendor_dir, output_dir,
-                                       set(['product', 'system', 'system_ext']),
-                                       set(['odm', 'vendor']), 'apexkeys.txt')
+    merge_package_keys_txt(framework_meta_dir, vendor_meta_dir, output_meta_dir,
+                           'apexkeys.txt')
 
     merged_entries = []
     merged_path = os.path.join(self.testdata_dir, 'apexkeys_merge.txt')
@@ -162,7 +149,7 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
       merged_entries = f.read().split('\n')
 
     output_entries = []
-    output_path = os.path.join(output_dir, 'META', 'apexkeys.txt')
+    output_path = os.path.join(output_meta_dir, 'apexkeys.txt')
 
     with open(output_path) as f:
       output_entries = f.read().split('\n')
@@ -170,45 +157,36 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
     return self.assertEqual(merged_entries, output_entries)
 
   def test_process_apex_keys_apk_certs_ReturnsFalseIfConflictsPresent(self):
-    output_dir = common.MakeTempDir()
-    os.makedirs(os.path.join(output_dir, 'META'))
+    output_meta_dir = common.MakeTempDir()
 
-    framework_dir = common.MakeTempDir()
-    os.makedirs(os.path.join(framework_dir, 'META'))
+    framework_meta_dir = common.MakeTempDir()
     os.symlink(
         os.path.join(self.testdata_dir, 'apexkeys_framework.txt'),
-        os.path.join(framework_dir, 'META', 'apexkeys.txt'))
+        os.path.join(framework_meta_dir, 'apexkeys.txt'))
 
-    conflict_dir = common.MakeTempDir()
-    os.makedirs(os.path.join(conflict_dir, 'META'))
+    conflict_meta_dir = common.MakeTempDir()
     os.symlink(
         os.path.join(self.testdata_dir, 'apexkeys_framework_conflict.txt'),
-        os.path.join(conflict_dir, 'META', 'apexkeys.txt'))
+        os.path.join(conflict_meta_dir, 'apexkeys.txt'))
 
-    self.assertRaises(ValueError, process_apex_keys_apk_certs_common,
-                      framework_dir, conflict_dir, output_dir,
-                      set(['product', 'system', 'system_ext']),
-                      set(['odm', 'vendor']), 'apexkeys.txt')
+    self.assertRaises(ValueError, merge_package_keys_txt, framework_meta_dir,
+                      conflict_meta_dir, output_meta_dir, 'apexkeys.txt')
 
   def test_process_apex_keys_apk_certs_HandlesApkCertsSyntax(self):
-    output_dir = common.MakeTempDir()
-    os.makedirs(os.path.join(output_dir, 'META'))
+    output_meta_dir = common.MakeTempDir()
 
-    framework_dir = common.MakeTempDir()
-    os.makedirs(os.path.join(framework_dir, 'META'))
+    framework_meta_dir = common.MakeTempDir()
     os.symlink(
         os.path.join(self.testdata_dir, 'apkcerts_framework.txt'),
-        os.path.join(framework_dir, 'META', 'apkcerts.txt'))
+        os.path.join(framework_meta_dir, 'apkcerts.txt'))
 
-    vendor_dir = common.MakeTempDir()
-    os.makedirs(os.path.join(vendor_dir, 'META'))
+    vendor_meta_dir = common.MakeTempDir()
     os.symlink(
         os.path.join(self.testdata_dir, 'apkcerts_vendor.txt'),
-        os.path.join(vendor_dir, 'META', 'apkcerts.txt'))
+        os.path.join(vendor_meta_dir, 'apkcerts.txt'))
 
-    process_apex_keys_apk_certs_common(framework_dir, vendor_dir, output_dir,
-                                       set(['product', 'system', 'system_ext']),
-                                       set(['odm', 'vendor']), 'apkcerts.txt')
+    merge_package_keys_txt(framework_meta_dir, vendor_meta_dir, output_meta_dir,
+                           'apkcerts.txt')
 
     merged_entries = []
     merged_path = os.path.join(self.testdata_dir, 'apkcerts_merge.txt')
@@ -217,7 +195,7 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
       merged_entries = f.read().split('\n')
 
     output_entries = []
-    output_path = os.path.join(output_dir, 'META', 'apkcerts.txt')
+    output_path = os.path.join(output_meta_dir, 'apkcerts.txt')
 
     with open(output_path) as f:
       output_entries = f.read().split('\n')
