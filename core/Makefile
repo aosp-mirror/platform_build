@@ -1374,8 +1374,6 @@ ifndef TARGET_BUILD_APPS
 # TARGET_OUT_NOTICE_FILES now that the notice files are gathered from
 # the src subdirectory.
 target_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE.txt
-tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
-tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
 kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
 winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
 
@@ -1640,15 +1638,6 @@ ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_dlkm_notice_xml_gz)
 endif # PRODUCT_NOTICE_SPLIT
 
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
-
-$(eval $(call combine-notice-files, html, \
-	        $(tools_notice_file_txt), \
-	        $(tools_notice_file_html), \
-	        "Notices for files contained in the tools directory:", \
-	        $(HOST_OUT_NOTICE_FILES), \
-	        $(ALL_DEFAULT_INSTALLED_MODULES) \
-	        $(winpthreads_notice_file), \
-	        $(exclude_target_dirs)))
 
 endif  # TARGET_BUILD_APPS
 
@@ -6380,7 +6369,6 @@ include $(BUILD_SYSTEM)/sdk_font.mk
 
 deps := \
 	$(target_notice_file_txt) \
-	$(tools_notice_file_txt) \
 	$(OUT_DOCS)/offline-sdk-timestamp \
 	$(SDK_METADATA_FILES) \
 	$(SYMBOLS_ZIP) \
