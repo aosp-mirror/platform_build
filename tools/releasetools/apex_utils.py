@@ -214,7 +214,7 @@ class ApexApkSigner(object):
       if os.path.isfile(path):
         os.remove(path)
       elif os.path.isdir(path):
-        shutil.rmtree(path)
+        shutil.rmtree(path, ignore_errors=True)
 
     # TODO(xunchang) the signing process can be improved by using
     # '--unsigned_payload_only'. But we need to parse the vbmeta earlier for
