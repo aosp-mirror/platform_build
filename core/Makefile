@@ -1374,8 +1374,6 @@ ifndef TARGET_BUILD_APPS
 # TARGET_OUT_NOTICE_FILES now that the notice files are gathered from
 # the src subdirectory.
 target_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE.txt
-tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
-tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
 kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
 winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
 
@@ -1640,15 +1638,6 @@ ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_dlkm_notice_xml_gz)
 endif # PRODUCT_NOTICE_SPLIT
 
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
-
-$(eval $(call combine-notice-files, html, \
-	        $(tools_notice_file_txt), \
-	        $(tools_notice_file_html), \
-	        "Notices for files contained in the tools directory:", \
-	        $(HOST_OUT_NOTICE_FILES), \
-	        $(ALL_DEFAULT_INSTALLED_MODULES) \
-	        $(winpthreads_notice_file), \
-	        $(exclude_target_dirs)))
 
 endif  # TARGET_BUILD_APPS
 
@@ -3699,7 +3688,9 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 # Protected VM firmware image
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 INSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img
+INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET := $(PRODUCT_OUT)/pvmfw_embedded.avbpubkey
 INTERNAL_PREBUILT_PVMFWIMAGE := packages/modules/Virtualization/pvmfw/pvmfw.img
+INTERNAL_PVMFW_EMBEDDED_AVBKEY := external/avb/test/data/testkey_rsa4096_pub.bin
 
 ifdef BOARD_PREBUILT_PVMFWIMAGE
 PREBUILT_PVMFWIMAGE_TARGET := $(BOARD_PREBUILT_PVMFWIMAGE)
@@ -3718,6 +3709,10 @@ $(INSTALLED_PVMFWIMAGE_TARGET): $(PREBUILT_PVMFWIMAGE_TARGET) $(AVBTOOL) $(BOARD
 else
 $(eval $(call copy-one-file,$(PREBUILT_PVMFWIMAGE_TARGET),$(INSTALLED_PVMFWIMAGE_TARGET)))
 endif
+
+$(INSTALLED_PVMFWIMAGE_TARGET): $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET)
+
+$(eval $(call copy-one-file,$(INTERNAL_PVMFW_EMBEDDED_AVBKEY),$(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET)))
 
 endif # BOARD_USES_PVMFWIMAGE
 
@@ -5305,6 +5300,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INSTALLED_CACHEIMAGE_TARGET) \
 	    $(INSTALLED_DTBOIMAGE_TARGET) \
 	    $(INSTALLED_PVMFWIMAGE_TARGET) \
+	    $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET) \
 	    $(INSTALLED_CUSTOMIMAGES_TARGET) \
 	    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 	    $(INSTALLED_KERNEL_TARGET) \
@@ -5642,6 +5638,7 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_PVMFWIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
+	$(hide) cp $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET) $(zip_root)/PREBUILT_IMAGES/
 endif
 ifdef BOARD_PREBUILT_BOOTLOADER
 	$(hide) mkdir -p $(zip_root)/IMAGES
@@ -6370,7 +6367,6 @@ endif
 
 deps := \
 	$(target_notice_file_txt) \
-	$(tools_notice_file_txt) \
 	$(OUT_DOCS)/offline-sdk-timestamp \
 	$(SDK_METADATA_FILES) \
 	$(SYMBOLS_ZIP) \
