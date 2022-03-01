@@ -14,13 +14,10 @@
 # limitations under the License.
 #
 
-# the foreach and the if remove the single space entries that creep in because of the evals
+# the sort also acts as a strip to remove the single space entries that creep in because of the evals
 define gather-all-products
-$(sort $(foreach p, \
-	$(eval _all_products_visited := )
-  $(call all-products-inner, $(PARENT_PRODUCT_FILES)) \
-	, $(if $(strip $(p)),$(strip $(p)),)) \
-)
+$(eval _all_products_visited := )\
+$(sort $(call all-products-inner, $(PARENT_PRODUCT_FILES)))
 endef
 
 define all-products-inner
@@ -72,7 +69,7 @@ define emit-product-node-props
 $(hide) echo \"$(1)\" [ \
 label=\"$(dir $(1))\\n$(notdir $(1))\\n\\n$(subst $(close_parenthesis),,$(subst $(open_parethesis),,$(call get-product-var,$(1),PRODUCT_MODEL)))\\n$(call get-product-var,$(1),PRODUCT_DEVICE)\" \
 style=\"filled\" fillcolor=\"$(strip $(call node-color,$(1)))\" \
-colorscheme=\"svg\" fontcolor=\"darkblue\" href=\"products/$(1).html\" \
+colorscheme=\"svg\" fontcolor=\"darkblue\" \
 ] >> $(2)
 
 endef
@@ -95,66 +92,7 @@ else
 	false
 endif
 
-# Evaluates to the name of the product file
-# $(1) product file
-define product-debug-filename
-$(OUT_DIR)/products/$(strip $(1)).html
-endef
-
-# Makes a rule for the product debug info
-# $(1) product file
-define transform-product-debug
-$(OUT_DIR)/products/$(strip $(1)).txt: $(this_makefile)
-	@echo Product debug info file: $$@
-	$(hide) rm -f $$@
-	$(hide) mkdir -p $$(dir $$@)
-	$(hide) echo 'FILE=$(strip $(1))' >> $$@
-	$(hide) echo 'PRODUCT_NAME=$(call get-product-var,$(1),PRODUCT_NAME)' >> $$@
-	$(hide) echo 'PRODUCT_MODEL=$(call get-product-var,$(1),PRODUCT_MODEL)' >> $$@
-	$(hide) echo 'PRODUCT_LOCALES=$(call get-product-var,$(1),PRODUCT_LOCALES)' >> $$@
-	$(hide) echo 'PRODUCT_AAPT_CONFIG=$(call get-product-var,$(1),PRODUCT_AAPT_CONFIG)' >> $$@
-	$(hide) echo 'PRODUCT_AAPT_PREF_CONFIG=$(call get-product-var,$(1),PRODUCT_AAPT_PREF_CONFIG)' >> $$@
-	$(hide) echo 'PRODUCT_PACKAGES=$(call get-product-var,$(1),PRODUCT_PACKAGES)' >> $$@
-	$(hide) echo 'PRODUCT_DEVICE=$(call get-product-var,$(1),PRODUCT_DEVICE)' >> $$@
-	$(hide) echo 'PRODUCT_MANUFACTURER=$(call get-product-var,$(1),PRODUCT_MANUFACTURER)' >> $$@
-	$(hide) echo 'PRODUCT_PROPERTY_OVERRIDES=$(call get-product-var,$(1),PRODUCT_PROPERTY_OVERRIDES)' >> $$@
-	$(hide) echo 'PRODUCT_DEFAULT_PROPERTY_OVERRIDES=$(call get-product-var,$(1),PRODUCT_DEFAULT_PROPERTY_OVERRIDES)' >> $$@
-	$(hide) echo 'PRODUCT_SYSTEM_DEFAULT_PROPERTIES=$(call get-product-var,$(1),PRODUCT_SYSTEM_DEFAULT_PROPERTIES)' >> $$@
-	$(hide) echo 'PRODUCT_PRODUCT_PROPERTIES=$(call get-product-var,$(1),PRODUCT_PRODUCT_PROPERTIES)' >> $$@
-	$(hide) echo 'PRODUCT_SYSTEM_EXT_PROPERTIES=$(call get-product-var,$(1),PRODUCT_SYSTEM_EXT_PROPERTIES)' >> $$@
-	$(hide) echo 'PRODUCT_ODM_PROPERTIES=$(call get-product-var,$(1),PRODUCT_ODM_PROPERTIES)' >> $$@
-	$(hide) echo 'PRODUCT_CHARACTERISTICS=$(call get-product-var,$(1),PRODUCT_CHARACTERISTICS)' >> $$@
-	$(hide) echo 'PRODUCT_COPY_FILES=$(call get-product-var,$(1),PRODUCT_COPY_FILES)' >> $$@
-	$(hide) echo 'PRODUCT_OTA_PUBLIC_KEYS=$(call get-product-var,$(1),PRODUCT_OTA_PUBLIC_KEYS)' >> $$@
-	$(hide) echo 'PRODUCT_EXTRA_OTA_KEYS=$(call get-product-var,$(1),PRODUCT_EXTRA_OTA_KEYS)' >> $$@
-	$(hide) echo 'PRODUCT_EXTRA_RECOVERY_KEYS=$(call get-product-var,$(1),PRODUCT_EXTRA_RECOVERY_KEYS)' >> $$@
-	$(hide) echo 'PRODUCT_PACKAGE_OVERLAYS=$(call get-product-var,$(1),PRODUCT_PACKAGE_OVERLAYS)' >> $$@
-	$(hide) echo 'DEVICE_PACKAGE_OVERLAYS=$(call get-product-var,$(1),DEVICE_PACKAGE_OVERLAYS)' >> $$@
-	$(hide) echo 'PRODUCT_SDK_ADDON_NAME=$(call get-product-var,$(1),PRODUCT_SDK_ADDON_NAME)' >> $$@
-	$(hide) echo 'PRODUCT_SDK_ADDON_COPY_FILES=$(call get-product-var,$(1),PRODUCT_SDK_ADDON_COPY_FILES)' >> $$@
-	$(hide) echo 'PRODUCT_SDK_ADDON_COPY_MODULES=$(call get-product-var,$(1),PRODUCT_SDK_ADDON_COPY_MODULES)' >> $$@
-	$(hide) echo 'PRODUCT_SDK_ADDON_DOC_MODULES=$(call get-product-var,$(1),PRODUCT_SDK_ADDON_DOC_MODULES)' >> $$@
-	$(hide) echo 'PRODUCT_DEFAULT_WIFI_CHANNELS=$(call get-product-var,$(1),PRODUCT_DEFAULT_WIFI_CHANNELS)' >> $$@
-	$(hide) echo 'PRODUCT_DEFAULT_DEV_CERTIFICATE=$(call get-product-var,$(1),PRODUCT_DEFAULT_DEV_CERTIFICATE)' >> $$@
-	$(hide) echo 'PRODUCT_MAINLINE_SEPOLICY_DEV_CERTIFICATES=$(call get-product-var,$(1),PRODUCT_MAINLINE_SEPOLICY_DEV_CERTIFICATES)' >> $$@
-	$(hide) echo 'PRODUCT_RESTRICT_VENDOR_FILES=$(call get-product-var,$(1),PRODUCT_RESTRICT_VENDOR_FILES)' >> $$@
-	$(hide) echo 'PRODUCT_VENDOR_KERNEL_HEADERS=$(call get-product-var,$(1),PRODUCT_VENDOR_KERNEL_HEADERS)' >> $$@
-
-$(call product-debug-filename, $(p)): \
-			$(OUT_DIR)/products/$(strip $(1)).txt \
-			build/make/tools/product_debug.py \
-			$(this_makefile)
-	@echo Product debug html file: $$@
-	$(hide) mkdir -p $$(dir $$@)
-	$(hide) cat $$< | build/make/tools/product_debug.py > $$@
-endef
-
 ifeq (,$(RBC_PRODUCT_CONFIG)$(RBC_NO_PRODUCT_GRAPH)$(RBC_BOARD_CONFIG))
-product_debug_files:=
-$(foreach p,$(all_products), \
-			$(eval $(call transform-product-debug, $(p))) \
-			$(eval product_debug_files += $(call product-debug-filename, $(p))) \
-   )
 
 .PHONY: product-graph
 product-graph: $(products_graph)
