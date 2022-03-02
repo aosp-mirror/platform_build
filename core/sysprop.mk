@@ -262,6 +262,7 @@ $(gen_from_buildinfo_sh): $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) | $(B
 	        BOARD_BUILD_SYSTEM_ROOT_IMAGE="$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)" \
 	        BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT="$(BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT)" \
 	        PLATFORM_VERSION="$(PLATFORM_VERSION)" \
+	        PLATFORM_DISPLAY_VERSION="$(PLATFORM_DISPLAY_VERSION)" \
 	        PLATFORM_VERSION_LAST_STABLE="$(PLATFORM_VERSION_LAST_STABLE)" \
 	        PLATFORM_SECURITY_PATCH="$(PLATFORM_SECURITY_PATCH)" \
 	        PLATFORM_BASE_OS="$(PLATFORM_BASE_OS)" \
@@ -307,10 +308,6 @@ _prop_vars_ += \
     PRODUCT_VENDOR_PROPERTIES
 endif
 
-_blacklist_names_ := \
-    $(PRODUCT_SYSTEM_PROPERTY_BLACKLIST) \
-    ro.product.first_api_level
-
 INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
 
 $(eval $(call build-properties,\
@@ -318,7 +315,7 @@ $(eval $(call build-properties,\
     $(INSTALLED_BUILD_PROP_TARGET),\
     $(_prop_files_),\
     $(_prop_vars_),\
-    $(_blacklist_names_),\
+    $(PRODUCT_SYSTEM_PROPERTY_BLACKLIST),\
     $(empty),\
     $(empty)))
 

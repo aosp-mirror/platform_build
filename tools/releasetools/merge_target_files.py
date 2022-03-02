@@ -1432,6 +1432,7 @@ def rebuild_image_with_sepolicy(target_files_dir,
     if rebuild_recovery:
       copy_recovery_file('etc/recovery.img')
       copy_recovery_file('bin/install-recovery.sh')
+      copy_recovery_file('recovery-from-boot.p')
 
 
 def generate_super_empty_image(target_dir, output_super_empty):
