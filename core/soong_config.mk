@@ -270,6 +270,7 @@ $(call add_json_str,  ShippingApiLevel, $(PRODUCT_SHIPPING_API_LEVEL))
 $(call add_json_bool, BuildBrokenEnforceSyspropOwner,     $(filter true,$(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER)))
 $(call add_json_bool, BuildBrokenTrebleSyspropNeverallow, $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
 $(call add_json_bool, BuildBrokenVendorPropertyNamespace, $(filter true,$(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE)))
+$(call add_json_list, BuildBrokenInputDirModules, $(BUILD_BROKEN_INPUT_DIR_MODULES))
 
 $(call add_json_bool, BuildDebugfsRestrictionsEnabled, $(filter true,$(PRODUCT_SET_DEBUGFS_RESTRICTIONS)))
 

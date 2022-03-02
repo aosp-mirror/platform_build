@@ -906,11 +906,9 @@ INTERNAL_BOOTIMAGE_ARGS := \
 
 INTERNAL_INIT_BOOT_IMAGE_ARGS :=
 
-INTERNAL_BOOT_HAS_RAMDISK :=
 ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
   ifneq ($(BUILDING_INIT_BOOT_IMAGE),true)
     INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
-    INTERNAL_BOOT_HAS_RAMDISK := true
   else
     INTERNAL_INIT_BOOT_IMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
   endif
@@ -973,7 +971,6 @@ endef
 
 INTERNAL_GKI_CERTIFICATE_ARGS :=
 INTERNAL_GKI_CERTIFICATE_DEPS :=
-INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE :=
 ifdef BOARD_GKI_SIGNING_KEY_PATH
   ifndef BOARD_GKI_SIGNING_ALGORITHM
     $(error BOARD_GKI_SIGNING_ALGORITHM should be defined with BOARD_GKI_SIGNING_KEY_PATH)
@@ -994,13 +991,6 @@ ifdef BOARD_GKI_SIGNING_KEY_PATH
     $(BOARD_GKI_SIGNING_KEY_PATH) \
     $(AVBTOOL)
 
-  ifdef INSTALLED_RAMDISK_TARGET
-    INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE := \
-      $(call intermediates-dir-for,PACKAGING,generic_ramdisk)/boot_signature
-
-    $(INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE): $(INSTALLED_RAMDISK_TARGET) $(INTERNAL_GKI_CERTIFICATE_DEPS)
-	$(call generate_generic_boot_image_certificate,$(INSTALLED_RAMDISK_TARGET),$@,generic_ramdisk,$(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS))
-  endif
 endif
 
 # Define these only if we are building boot
@@ -1018,14 +1008,16 @@ ifeq (true,$(BOARD_AVB_ENABLE))
 # $1: boot image target
 define build_boot_board_avb_enabled
   $(eval kernel := $(call bootimage-to-kernel,$(1)))
+  $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
   $(if $(BOARD_GKI_SIGNING_KEY_PATH), \
+    $(eval boot_signature := $(call intermediates-dir-for,PACKAGING,generic_boot)/$(notdir $(1)).boot_signature) \
     $(eval kernel_signature := $(call intermediates-dir-for,PACKAGING,generic_kernel)/$(notdir $(kernel)).boot_signature) \
+    $(call generate_generic_boot_image_certificate,$(1),$(boot_signature),boot,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
     $(call generate_generic_boot_image_certificate,$(kernel),$(kernel_signature),generic_kernel,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
-    $(if $(INTERNAL_BOOT_HAS_RAMDISK), \
-      cat $(INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE) >> $(kernel_signature) $(newline)))
-  $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) \
-    $(if $(BOARD_GKI_SIGNING_KEY_PATH),--boot_signature "$(kernel_signature)",$(INTERNAL_MKBOOTIMG_VERSION_ARGS)) \
-    $(BOARD_MKBOOTIMG_ARGS) --output $(1)
+    cat $(kernel_signature) >> $(boot_signature) $(newline) \
+    $(call assert-max-image-size,$(boot_signature),16 << 10) $(newline) \
+    truncate -s $$(( 16 << 10 )) $(boot_signature) $(newline) \
+    cat "$(boot_signature)" >> $(1))
   $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot)))
   $(AVBTOOL) add_hash_footer \
           --image $(1) \
@@ -1034,9 +1026,6 @@ define build_boot_board_avb_enabled
           $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
 endef
 
-ifdef INTERNAL_BOOT_HAS_RAMDISK
-$(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE)
-endif
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)
 	$(call pretty,"Target boot image: $@")
 	$(call build_boot_board_avb_enabled,$@)
@@ -1141,12 +1130,9 @@ ifdef BOARD_KERNEL_PAGESIZE
 endif
 
 ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE)
 $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_KEY_PATH)
 	$(call pretty,"Target init_boot image: $@")
-	$(MKBOOTIMG) $(INTERNAL_INIT_BOOT_IMAGE_ARGS) \
-	  $(if $(BOARD_GKI_SIGNING_KEY_PATH),--boot_signature "$(INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE)",$(INTERNAL_MKBOOTIMG_VERSION_ARGS)) \
-	  $(BOARD_MKBOOTIMG_INIT_ARGS) --output "$@"
+	$(MKBOOTIMG) $(INTERNAL_INIT_BOOT_IMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_INIT_ARGS) --output "$@"
 	$(call assert-max-image-size,$@,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE))
 	$(AVBTOOL) add_hash_footer \
            --image $@ \
@@ -1374,8 +1360,6 @@ ifndef TARGET_BUILD_APPS
 # TARGET_OUT_NOTICE_FILES now that the notice files are gathered from
 # the src subdirectory.
 target_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE.txt
-tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
-tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
 kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
 winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
 
@@ -1640,15 +1624,6 @@ ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_dlkm_notice_xml_gz)
 endif # PRODUCT_NOTICE_SPLIT
 
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
-
-$(eval $(call combine-notice-files, html, \
-	        $(tools_notice_file_txt), \
-	        $(tools_notice_file_html), \
-	        "Notices for files contained in the tools directory:", \
-	        $(HOST_OUT_NOTICE_FILES), \
-	        $(ALL_DEFAULT_INSTALLED_MODULES) \
-	        $(winpthreads_notice_file), \
-	        $(exclude_target_dirs)))
 
 endif  # TARGET_BUILD_APPS
 
@@ -3699,7 +3674,9 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 # Protected VM firmware image
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 INSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img
+INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET := $(PRODUCT_OUT)/pvmfw_embedded.avbpubkey
 INTERNAL_PREBUILT_PVMFWIMAGE := packages/modules/Virtualization/pvmfw/pvmfw.img
+INTERNAL_PVMFW_EMBEDDED_AVBKEY := external/avb/test/data/testkey_rsa4096_pub.bin
 
 ifdef BOARD_PREBUILT_PVMFWIMAGE
 PREBUILT_PVMFWIMAGE_TARGET := $(BOARD_PREBUILT_PVMFWIMAGE)
@@ -3718,6 +3695,10 @@ $(INSTALLED_PVMFWIMAGE_TARGET): $(PREBUILT_PVMFWIMAGE_TARGET) $(AVBTOOL) $(BOARD
 else
 $(eval $(call copy-one-file,$(PREBUILT_PVMFWIMAGE_TARGET),$(INSTALLED_PVMFWIMAGE_TARGET)))
 endif
+
+$(INSTALLED_PVMFWIMAGE_TARGET): $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET)
+
+$(eval $(call copy-one-file,$(INTERNAL_PVMFW_EMBEDDED_AVBKEY),$(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET)))
 
 endif # BOARD_USES_PVMFWIMAGE
 
@@ -3933,13 +3914,6 @@ endif
 ifdef PVMFW_SECURITY_PATCH
 BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.pvmfw.security_patch:$(PVMFW_SECURITY_PATCH)
-endif
-
-# For upgrading devices without a init_boot partition, the init_boot footer args
-# should fallback to boot partition footer.
-ifndef INSTALLED_INIT_BOOT_IMAGE_TARGET
-BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
-    $(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS)
 endif
 
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
@@ -5305,6 +5279,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INSTALLED_CACHEIMAGE_TARGET) \
 	    $(INSTALLED_DTBOIMAGE_TARGET) \
 	    $(INSTALLED_PVMFWIMAGE_TARGET) \
+	    $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET) \
 	    $(INSTALLED_CUSTOMIMAGES_TARGET) \
 	    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 	    $(INSTALLED_KERNEL_TARGET) \
@@ -5642,6 +5617,7 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_PVMFWIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
+	$(hide) cp $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET) $(zip_root)/PREBUILT_IMAGES/
 endif
 ifdef BOARD_PREBUILT_BOOTLOADER
 	$(hide) mkdir -p $(zip_root)/IMAGES
@@ -6372,7 +6348,6 @@ include $(BUILD_SYSTEM)/sdk_font.mk
 
 deps := \
 	$(target_notice_file_txt) \
-	$(tools_notice_file_txt) \
 	$(OUT_DOCS)/offline-sdk-timestamp \
 	$(SDK_METADATA_FILES) \
 	$(SYMBOLS_ZIP) \
