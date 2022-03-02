@@ -142,7 +142,8 @@ def MergeMiscInfo(framework_meta_dir, vendor_meta_dir, merged_meta_dir):
 
   merged_dict = OPTIONS.vendor_misc_info
   for key in OPTIONS.framework_misc_info_keys:
-    merged_dict[key] = OPTIONS.framework_misc_info[key]
+    if key in OPTIONS.framework_misc_info:
+      merged_dict[key] = OPTIONS.framework_misc_info[key]
 
   # If AVB is enabled then ensure that we build vbmeta.img.
   # Partial builds with AVB enabled may set PRODUCT_BUILD_VBMETA_IMAGE=false to

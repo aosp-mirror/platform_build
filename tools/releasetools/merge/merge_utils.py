@@ -91,29 +91,6 @@ def WriteSortedData(data, path):
       output.write(out_str)
 
 
-# The merge config lists should not attempt to extract items from both
-# builds for any of the following partitions. The partitions in
-# SINGLE_BUILD_PARTITIONS should come entirely from a single build (either
-# framework or vendor, but not both).
-
-_SINGLE_BUILD_PARTITIONS = (
-    'BOOT/',
-    'DATA/',
-    'ODM/',
-    'PRODUCT/',
-    'SYSTEM_EXT/',
-    'RADIO/',
-    'RECOVERY/',
-    'ROOT/',
-    'SYSTEM/',
-    'SYSTEM_OTHER/',
-    'VENDOR/',
-    'VENDOR_DLKM/',
-    'ODM_DLKM/',
-    'SYSTEM_DLKM/',
-)
-
-
 def ValidateConfigLists():
   """Performs validations on the merge config lists.
 
@@ -123,7 +100,7 @@ def ValidateConfigLists():
   has_error = False
 
   # Check that partitions only come from one input.
-  for partition in _SINGLE_BUILD_PARTITIONS:
+  for partition in _FRAMEWORK_PARTITIONS.union(_VENDOR_PARTITIONS):
     image_path = 'IMAGES/{}.img'.format(partition.lower().replace('/', ''))
     in_framework = (
         any(item.startswith(partition) for item in OPTIONS.framework_item_list)
@@ -185,3 +162,76 @@ def ItemListToPartitionSet(item_list):
       partition_set.add(partition_tag)
 
   return partition_set
+
+
+# Partitions that are grabbed from the framework partial build by default.
+_FRAMEWORK_PARTITIONS = {
+    'system', 'product', 'system_ext', 'system_other', 'root', 'system_dlkm'
+}
+# Partitions that are grabbed from the vendor partial build by default.
+_VENDOR_PARTITIONS = {
+    'vendor', 'odm', 'oem', 'boot', 'vendor_boot', 'recovery',
+    'prebuilt_images', 'radio', 'data', 'vendor_dlkm', 'odm_dlkm'
+}
+
+
+def InferItemList(input_namelist, framework):
+  item_list = []
+
+  # Some META items are grabbed from partial builds directly.
+  # Others are combined in merge_meta.py.
+  if framework:
+    item_list.extend([
+        'META/liblz4.so',
+        'META/postinstall_config.txt',
+        'META/update_engine_config.txt',
+        'META/zucchini_config.txt',
+    ])
+  else:  # vendor
+    item_list.extend([
+        'META/kernel_configs.txt',
+        'META/kernel_version.txt',
+        'META/otakeys.txt',
+        'META/releasetools.py',
+        'OTA/android-info.txt',
+    ])
+
+  # Grab a set of items for the expected partitions in the partial build.
+  for partition in (_FRAMEWORK_PARTITIONS if framework else _VENDOR_PARTITIONS):
+    for namelist in input_namelist:
+      if namelist.startswith('%s/' % partition.upper()):
+        fs_config_prefix = '' if partition == 'system' else '%s_' % partition
+        item_list.extend([
+            '%s/*' % partition.upper(),
+            'IMAGES/%s.img' % partition,
+            'IMAGES/%s.map' % partition,
+            'META/%sfilesystem_config.txt' % fs_config_prefix,
+        ])
+        break
+
+  return sorted(item_list)
+
+
+def InferFrameworkMiscInfoKeys(input_namelist):
+  keys = [
+      'ab_update',
+      'avb_vbmeta_system',
+      'avb_vbmeta_system_algorithm',
+      'avb_vbmeta_system_key_path',
+      'avb_vbmeta_system_rollback_index_location',
+      'default_system_dev_certificate',
+  ]
+
+  for partition in _FRAMEWORK_PARTITIONS:
+    for namelist in input_namelist:
+      if namelist.startswith('%s/' % partition.upper()):
+        fs_type_prefix = '' if partition == 'system' else '%s_' % partition
+        keys.extend([
+            'avb_%s_hashtree_enable' % partition,
+            'avb_%s_add_hashtree_footer_args' % partition,
+            '%s_disable_sparse' % partition,
+            'building_%s_image' % partition,
+            '%sfs_type' % fs_type_prefix,
+        ])
+
+  return sorted(keys)

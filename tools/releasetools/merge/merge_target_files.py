@@ -31,20 +31,20 @@ Usage: merge_target_files [args]
       archive.
 
   --framework-item-list framework-item-list-file
-      The optional path to a newline-separated config file that replaces the
-      contents of DEFAULT_FRAMEWORK_ITEM_LIST if provided.
+      The optional path to a newline-separated config file of items that
+      are extracted as-is from the framework target files package.
 
   --framework-misc-info-keys framework-misc-info-keys-file
-      The optional path to a newline-separated config file that replaces the
-      contents of DEFAULT_FRAMEWORK_MISC_INFO_KEYS if provided.
+      The optional path to a newline-separated config file of keys to
+      extract from the framework META/misc_info.txt file.
 
   --vendor-target-files vendor-target-files-zip-archive
       The input target files package containing vendor bits. This is a zip
       archive.
 
   --vendor-item-list vendor-item-list-file
-      The optional path to a newline-separated config file that replaces the
-      contents of DEFAULT_VENDOR_ITEM_LIST if provided.
+      The optional path to a newline-separated config file of items that
+      are extracted as-is from the vendor target files package.
 
   --output-target-files output-target-files-package
       If provided, the output merged target files package. Also a zip archive.
@@ -107,6 +107,7 @@ import os
 import shutil
 import subprocess
 import sys
+import zipfile
 
 import add_img_to_target_files
 import build_image
@@ -127,13 +128,13 @@ OPTIONS = common.OPTIONS
 # Always turn on verbose logging.
 OPTIONS.verbose = True
 OPTIONS.framework_target_files = None
-OPTIONS.framework_item_list = None
-OPTIONS.framework_misc_info_keys = None
+OPTIONS.framework_item_list = []
+OPTIONS.framework_misc_info_keys = []
 OPTIONS.vendor_target_files = None
-OPTIONS.vendor_item_list = None
+OPTIONS.vendor_item_list = []
 OPTIONS.output_target_files = None
 OPTIONS.output_dir = None
-OPTIONS.output_item_list = None
+OPTIONS.output_item_list = []
 OPTIONS.output_ota = None
 OPTIONS.output_img = None
 OPTIONS.output_super_empty = None
@@ -146,64 +147,6 @@ OPTIONS.keep_tmp = False
 OPTIONS.framework_dexpreopt_config = None
 OPTIONS.framework_dexpreopt_tools = None
 OPTIONS.vendor_dexpreopt_config = None
-
-# DEFAULT_FRAMEWORK_ITEM_LIST is a list of items to extract from the partial
-# framework target files package as is, meaning these items will land in the
-# output target files package exactly as they appear in the input partial
-# framework target files package.
-
-DEFAULT_FRAMEWORK_ITEM_LIST = (
-    'META/apkcerts.txt',
-    'META/filesystem_config.txt',
-    'META/root_filesystem_config.txt',
-    'META/update_engine_config.txt',
-    'PRODUCT/*',
-    'ROOT/*',
-    'SYSTEM/*',
-)
-
-# DEFAULT_FRAMEWORK_MISC_INFO_KEYS is a list of keys to obtain from the
-# framework instance of META/misc_info.txt. The remaining keys should come
-# from the vendor instance.
-
-DEFAULT_FRAMEWORK_MISC_INFO_KEYS = (
-    'avb_system_hashtree_enable',
-    'avb_system_add_hashtree_footer_args',
-    'avb_system_key_path',
-    'avb_system_algorithm',
-    'avb_system_rollback_index_location',
-    'avb_product_hashtree_enable',
-    'avb_product_add_hashtree_footer_args',
-    'avb_system_ext_hashtree_enable',
-    'avb_system_ext_add_hashtree_footer_args',
-    'system_root_image',
-    'root_dir',
-    'ab_update',
-    'default_system_dev_certificate',
-    'system_size',
-    'building_system_image',
-    'building_system_ext_image',
-    'building_product_image',
-)
-
-# DEFAULT_VENDOR_ITEM_LIST is a list of items to extract from the partial
-# vendor target files package as is, meaning these items will land in the output
-# target files package exactly as they appear in the input partial vendor target
-# files package.
-
-DEFAULT_VENDOR_ITEM_LIST = (
-    'META/boot_filesystem_config.txt',
-    'META/otakeys.txt',
-    'META/releasetools.py',
-    'META/vendor_filesystem_config.txt',
-    'BOOT/*',
-    'DATA/*',
-    'ODM/*',
-    'OTA/android-info.txt',
-    'PREBUILT_IMAGES/*',
-    'RADIO/*',
-    'VENDOR/*',
-)
 
 
 def create_merged_package(temp_dir):
@@ -614,16 +557,22 @@ def main():
   if (args or OPTIONS.framework_target_files is None or
       OPTIONS.vendor_target_files is None or
       (OPTIONS.output_target_files is None and OPTIONS.output_dir is None) or
-      (OPTIONS.output_dir is not None and OPTIONS.output_item_list is None) or
+      (OPTIONS.output_dir is not None and not OPTIONS.output_item_list) or
       (OPTIONS.rebuild_recovery and not OPTIONS.rebuild_sepolicy)):
     common.Usage(__doc__)
     sys.exit(1)
+
+  with zipfile.ZipFile(OPTIONS.framework_target_files, allowZip64=True) as fz:
+    framework_namelist = fz.namelist()
+  with zipfile.ZipFile(OPTIONS.vendor_target_files, allowZip64=True) as vz:
+    vendor_namelist = vz.namelist()
 
   if OPTIONS.framework_item_list:
     OPTIONS.framework_item_list = common.LoadListFromFile(
         OPTIONS.framework_item_list)
   else:
-    OPTIONS.framework_item_list = DEFAULT_FRAMEWORK_ITEM_LIST
+    OPTIONS.framework_item_list = merge_utils.InferItemList(
+        input_namelist=framework_namelist, framework=True)
   OPTIONS.framework_partition_set = merge_utils.ItemListToPartitionSet(
       OPTIONS.framework_item_list)
 
@@ -631,19 +580,19 @@ def main():
     OPTIONS.framework_misc_info_keys = common.LoadListFromFile(
         OPTIONS.framework_misc_info_keys)
   else:
-    OPTIONS.framework_misc_info_keys = DEFAULT_FRAMEWORK_MISC_INFO_KEYS
+    OPTIONS.framework_misc_info_keys = merge_utils.InferFrameworkMiscInfoKeys(
+        input_namelist=framework_namelist)
 
   if OPTIONS.vendor_item_list:
     OPTIONS.vendor_item_list = common.LoadListFromFile(OPTIONS.vendor_item_list)
   else:
-    OPTIONS.vendor_item_list = DEFAULT_VENDOR_ITEM_LIST
+    OPTIONS.vendor_item_list = merge_utils.InferItemList(
+        input_namelist=vendor_namelist, framework=False)
   OPTIONS.vendor_partition_set = merge_utils.ItemListToPartitionSet(
       OPTIONS.vendor_item_list)
 
   if OPTIONS.output_item_list:
     OPTIONS.output_item_list = common.LoadListFromFile(OPTIONS.output_item_list)
-  else:
-    OPTIONS.output_item_list = None
 
   if not merge_utils.ValidateConfigLists():
     sys.exit(1)
