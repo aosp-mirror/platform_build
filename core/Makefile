@@ -906,11 +906,9 @@ INTERNAL_BOOTIMAGE_ARGS := \
 
 INTERNAL_INIT_BOOT_IMAGE_ARGS :=
 
-INTERNAL_BOOT_HAS_RAMDISK :=
 ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
   ifneq ($(BUILDING_INIT_BOOT_IMAGE),true)
     INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
-    INTERNAL_BOOT_HAS_RAMDISK := true
   else
     INTERNAL_INIT_BOOT_IMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
   endif
@@ -973,7 +971,6 @@ endef
 
 INTERNAL_GKI_CERTIFICATE_ARGS :=
 INTERNAL_GKI_CERTIFICATE_DEPS :=
-INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE :=
 ifdef BOARD_GKI_SIGNING_KEY_PATH
   ifndef BOARD_GKI_SIGNING_ALGORITHM
     $(error BOARD_GKI_SIGNING_ALGORITHM should be defined with BOARD_GKI_SIGNING_KEY_PATH)
@@ -994,13 +991,6 @@ ifdef BOARD_GKI_SIGNING_KEY_PATH
     $(BOARD_GKI_SIGNING_KEY_PATH) \
     $(AVBTOOL)
 
-  ifdef INSTALLED_RAMDISK_TARGET
-    INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE := \
-      $(call intermediates-dir-for,PACKAGING,generic_ramdisk)/boot_signature
-
-    $(INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE): $(INSTALLED_RAMDISK_TARGET) $(INTERNAL_GKI_CERTIFICATE_DEPS)
-	$(call generate_generic_boot_image_certificate,$(INSTALLED_RAMDISK_TARGET),$@,generic_ramdisk,$(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS))
-  endif
 endif
 
 # Define these only if we are building boot
@@ -1018,14 +1008,16 @@ ifeq (true,$(BOARD_AVB_ENABLE))
 # $1: boot image target
 define build_boot_board_avb_enabled
   $(eval kernel := $(call bootimage-to-kernel,$(1)))
+  $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
   $(if $(BOARD_GKI_SIGNING_KEY_PATH), \
+    $(eval boot_signature := $(call intermediates-dir-for,PACKAGING,generic_boot)/$(notdir $(1)).boot_signature) \
     $(eval kernel_signature := $(call intermediates-dir-for,PACKAGING,generic_kernel)/$(notdir $(kernel)).boot_signature) \
+    $(call generate_generic_boot_image_certificate,$(1),$(boot_signature),boot,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
     $(call generate_generic_boot_image_certificate,$(kernel),$(kernel_signature),generic_kernel,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
-    $(if $(INTERNAL_BOOT_HAS_RAMDISK), \
-      cat $(INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE) >> $(kernel_signature) $(newline)))
-  $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) \
-    $(if $(BOARD_GKI_SIGNING_KEY_PATH),--boot_signature "$(kernel_signature)",$(INTERNAL_MKBOOTIMG_VERSION_ARGS)) \
-    $(BOARD_MKBOOTIMG_ARGS) --output $(1)
+    cat $(kernel_signature) >> $(boot_signature) $(newline) \
+    $(call assert-max-image-size,$(boot_signature),16 << 10) $(newline) \
+    truncate -s $$(( 16 << 10 )) $(boot_signature) $(newline) \
+    cat "$(boot_signature)" >> $(1))
   $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot)))
   $(AVBTOOL) add_hash_footer \
           --image $(1) \
@@ -1034,9 +1026,6 @@ define build_boot_board_avb_enabled
           $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
 endef
 
-ifdef INTERNAL_BOOT_HAS_RAMDISK
-$(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE)
-endif
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)
 	$(call pretty,"Target boot image: $@")
 	$(call build_boot_board_avb_enabled,$@)
@@ -1141,12 +1130,9 @@ ifdef BOARD_KERNEL_PAGESIZE
 endif
 
 ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE)
 $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_KEY_PATH)
 	$(call pretty,"Target init_boot image: $@")
-	$(MKBOOTIMG) $(INTERNAL_INIT_BOOT_IMAGE_ARGS) \
-	  $(if $(BOARD_GKI_SIGNING_KEY_PATH),--boot_signature "$(INTERNAL_GENERIC_RAMDISK_BOOT_SIGNATURE)",$(INTERNAL_MKBOOTIMG_VERSION_ARGS)) \
-	  $(BOARD_MKBOOTIMG_INIT_ARGS) --output "$@"
+	$(MKBOOTIMG) $(INTERNAL_INIT_BOOT_IMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_INIT_ARGS) --output "$@"
 	$(call assert-max-image-size,$@,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE))
 	$(AVBTOOL) add_hash_footer \
            --image $@ \
@@ -3928,13 +3914,6 @@ endif
 ifdef PVMFW_SECURITY_PATCH
 BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.pvmfw.security_patch:$(PVMFW_SECURITY_PATCH)
-endif
-
-# For upgrading devices without a init_boot partition, the init_boot footer args
-# should fallback to boot partition footer.
-ifndef INSTALLED_INIT_BOOT_IMAGE_TARGET
-BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
-    $(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS)
 endif
 
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
