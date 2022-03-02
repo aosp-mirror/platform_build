@@ -293,6 +293,12 @@ ifneq ($(filter fuzzer,$(my_sanitize)),)
   # information, not to link against the fuzzer main().
   my_sanitize := $(filter-out fuzzer,$(my_sanitize))
   my_sanitize += fuzzer-no-link
+
+  # TODO(b/131771163): Disable LTO for fuzzer builds. Note that Cfi causes
+  # dependency on LTO.
+  my_sanitize := $(filter-out cfi,$(my_sanitize))
+  my_cflags += -fno-lto
+  my_ldflags += -fno-lto
 endif
 
 ifneq ($(filter integer_overflow,$(my_sanitize)),)
