@@ -2,5 +2,5 @@ elsk@google.com
 nhdo@google.com
 zhangkelvin@google.com
 
-per-file *_merge_*.py = danielnorman@google.com, jgalmes@google.com, rseymour@google.com
+per-file *merge_*.py = danielnorman@google.com, jgalmes@google.com, rseymour@google.com
 
