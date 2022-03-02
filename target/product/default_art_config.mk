@@ -66,7 +66,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.permission:framework-permission-s \
     com.android.scheduling:framework-scheduling \
     com.android.sdkext:framework-sdkextensions \
-    com.android.supplementalprocess:framework-supplementalprocess \
+    com.android.supplementalprocess:framework-sdksandbox \
     com.android.tethering:framework-connectivity \
     com.android.tethering:framework-connectivity-t \
     com.android.tethering:framework-tethering \
@@ -89,7 +89,7 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.art:service-art \
     com.android.media:service-media-s \
     com.android.permission:service-permission \
-    com.android.supplementalprocess:service-supplementalprocess \
+    com.android.supplementalprocess:service-sdksandbox \
 
 PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION += art/build/boot/boot-image-profile.txt
 
