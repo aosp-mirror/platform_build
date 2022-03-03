@@ -438,46 +438,6 @@ python_binary_host {
 }
 
 python_binary_host {
-    name: "merge_builds",
-    defaults: ["releasetools_binary_defaults"],
-    srcs: [
-        "merge_builds.py",
-    ],
-    libs: [
-        "releasetools_build_super_image",
-        "releasetools_common",
-    ],
-}
-
-python_binary_host {
-    name: "merge_target_files",
-    defaults: ["releasetools_binary_defaults"],
-    srcs: [
-        "merge_target_files.py",
-    ],
-    libs: [
-        "releasetools_add_img_to_target_files",
-        "releasetools_build_super_image",
-        "releasetools_check_target_files_vintf",
-        "releasetools_common",
-        "releasetools_find_shareduid_violation",
-        "releasetools_img_from_target_files",
-        "releasetools_ota_from_target_files",
-    ],
-    required: [
-        "checkvintf",
-        "host_init_verifier",
-        "secilc",
-    ],
-    target: {
-        darwin: {
-            // libs dep "releasetools_ota_from_target_files" is disabled on darwin
-            enabled: false,
-        },
-    },
-}
-
-python_binary_host {
     name: "ota_from_target_files",
     defaults: [
         "releasetools_binary_defaults",
@@ -595,11 +555,12 @@ python_defaults {
         "check_partition_sizes.py",
         "check_target_files_signatures.py",
         "make_recovery_patch.py",
-        "merge_target_files.py",
         "ota_package_parser.py",
         "sign_apex.py",
         "sign_target_files_apks.py",
         "validate_target_files.py",
+        ":releasetools_merge_sources",
+        ":releasetools_merge_tests",
 
         "test_*.py",
     ],
