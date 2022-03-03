@@ -237,6 +237,10 @@ A/B OTA specific options
   --enable_lz4diff
       Whether to enable lz4diff feature. Will generate smaller OTA for EROFS but
       uses more memory.
+
+  --spl_downgrade
+      Force generate an SPL downgrade OTA. Only needed if target build has an
+      older SPL.
 """
 
 from __future__ import print_function
