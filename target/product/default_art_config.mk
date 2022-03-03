@@ -53,7 +53,6 @@ PRODUCT_BOOT_JARS += \
 PRODUCT_APEX_BOOT_JARS := \
     com.android.adservices:framework-adservices \
     com.android.appsearch:framework-appsearch \
-    com.android.auxiliary:framework-auxiliary \
     com.android.bluetooth:framework-bluetooth \
     com.android.conscrypt:conscrypt \
     com.android.i18n:core-icu4j \
