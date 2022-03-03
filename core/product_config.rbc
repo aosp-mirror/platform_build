@@ -466,6 +466,13 @@ def _enforce_product_packages_exist(pkg_string_or_list):
     #TODO(asmundak)
     pass
 
+def _add_product_dex_preopt_module_config(handle, modules, config):
+    """Equivalent to add-product-dex-preopt-module-config from build/make/core/product.mk."""
+    modules = __words(modules)
+    config = _mkstrip(config).replace(" ", "|@SP@|")
+    _setdefault(handle, "PRODUCT_DEX_PREOPT_MODULE_CONFIGS")
+    handle.cfg["PRODUCT_DEX_PREOPT_MODULE_CONFIGS"] += [m + "=" + config for m in modules]
+
 def _file_wildcard_exists(file_pattern):
     """Return True if there are files matching given bash pattern."""
     return len(rblf_wildcard(file_pattern)) > 0
@@ -718,6 +725,7 @@ rblf = struct(
     soong_config_set = _soong_config_set,
     soong_config_get = _soong_config_get,
     abspath = _abspath,
+    add_product_dex_preopt_module_config = _add_product_dex_preopt_module_config,
     addprefix = _addprefix,
     addsuffix = _addsuffix,
     board_platform_in = _board_platform_in,

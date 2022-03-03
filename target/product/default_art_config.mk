@@ -73,16 +73,9 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.uwb:framework-uwb \
     com.android.wifi:framework-wifi \
 
-# TODO(b/210903289): Remove filters after merge.
-ifneq ($(wildcard packages/modules/SupplementalApi),)
-PRODUCT_APEX_BOOT_JARS += \
-    com.android.supplementalprocess:framework-supplementalapi
-endif
-
 # List of system_server classpath jars delivered via apex.
 # Keep the list sorted by module names and then library names.
 # Note: For modules available in Q, DO NOT add new entries here.
-# TODO(b/218568223): Add supplementalapi to system server jars.
 PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.adservices:service-adservices \
     com.android.appsearch:service-appsearch \
