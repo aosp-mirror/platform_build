@@ -1321,8 +1321,12 @@ def BuildVendorPartitions(output_zip_path):
     os.remove(os.path.join(vendor_tempdir, "META/pack_radioimages.txt"))
 
   # Build vendor images using vendor otatools.
-  vendor_otatools_dir = common.MakeTempDir(prefix="vendor_otatools_")
-  common.UnzipToDir(OPTIONS.vendor_otatools, vendor_otatools_dir)
+  # Accept either a zip file or extracted directory.
+  if os.path.isfile(OPTIONS.vendor_otatools):
+    vendor_otatools_dir = common.MakeTempDir(prefix="vendor_otatools_")
+    common.UnzipToDir(OPTIONS.vendor_otatools, vendor_otatools_dir)
+  else:
+    vendor_otatools_dir = OPTIONS.vendor_otatools
   cmd = [
       os.path.join(vendor_otatools_dir, "bin", "add_img_to_target_files"),
       "--is_signing",
