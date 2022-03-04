@@ -18,17 +18,27 @@ package {
 }
 
 blueprint_go_binary {
-    name: "bom",
+    name: "checkshare",
+    srcs: ["cmd/checkshare/checkshare.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/checkshare/checkshare_test.go"],
+}
+
+blueprint_go_binary {
+    name: "compliancenotice_bom",
     srcs: ["cmd/bom/bom.go"],
     deps: ["compliance-module"],
     testSrcs: ["cmd/bom/bom_test.go"],
 }
 
 blueprint_go_binary {
-    name: "checkshare",
-    srcs: ["cmd/checkshare/checkshare.go"],
-    deps: ["compliance-module"],
-    testSrcs: ["cmd/checkshare/checkshare_test.go"],
+    name: "compliancenotice_shippedlibs",
+    srcs: ["cmd/shippedlibs/shippedlibs.go"],
+    deps: [
+        "compliance-module",
+        "soong-response",
+    ],
+    testSrcs: ["cmd/shippedlibs/shippedlibs_test.go"],
 }
 
 blueprint_go_binary {
@@ -67,13 +77,6 @@ blueprint_go_binary {
     srcs: ["cmd/rtrace/rtrace.go"],
     deps: ["compliance-module"],
     testSrcs: ["cmd/rtrace/rtrace_test.go"],
-}
-
-blueprint_go_binary {
-    name: "shippedlibs",
-    srcs: ["cmd/shippedlibs/shippedlibs.go"],
-    deps: ["compliance-module"],
-    testSrcs: ["cmd/shippedlibs/shippedlibs_test.go"],
 }
 
 blueprint_go_binary {
