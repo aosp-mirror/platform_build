@@ -64,7 +64,7 @@ import verity_utils
 import ota_metadata_pb2
 
 from apex_utils import GetApexInfoFromTargetFiles
-from common import AddCareMapForAbOta
+from common import AddCareMapForAbOta, ZipDelete
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -1034,9 +1034,10 @@ def OptimizeCompressedEntries(zipfile_path):
         if zinfo.compress_size > zinfo.file_size * 0.80 and zinfo.compress_type != zipfile.ZIP_STORED:
           entries_to_store.append(zinfo)
           zfp.extract(zinfo, tmpdir)
+    if len(entries_to_store) == 0:
+      return
     # Remove these entries, then re-add them as ZIP_STORED
-    common.RunAndCheckOutput(
-        ["zip", "-d", zipfile_path] + [entry.filename for entry in entries_to_store])
+    ZipDelete(zipfile_path, [entry.filename for entry in entries_to_store])
     with zipfile.ZipFile(zipfile_path, "a", allowZip64=True) as zfp:
       for entry in entries_to_store:
         zfp.write(os.path.join(tmpdir, entry.filename), entry.filename, compress_type=zipfile.ZIP_STORED)
