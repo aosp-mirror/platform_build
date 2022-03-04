@@ -71,7 +71,6 @@ PRODUCT_PACKAGES += \
     com.android.scheduling \
     com.android.sdkext \
     com.android.sepolicy \
-    com.android.supplementalprocess \
     com.android.tethering \
     com.android.tzdata \
     com.android.uwb \
@@ -125,7 +124,6 @@ PRODUCT_PACKAGES += \
     input \
     installd \
     IntentResolver \
-    iorapd \
     ip \
     iptables \
     ip-up-vpn \
