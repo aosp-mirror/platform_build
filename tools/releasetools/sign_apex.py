@@ -42,6 +42,15 @@ Usage:  sign_apex [flags] input_apex_file output_apex_file
 
   --sign_tool <sign_tool>
       Optional flag that specifies a custom signing tool for the contents of the apex.
+
+  --sepolicy_key <key>
+      Optional flag that specifies the sepolicy signing key, defaults to payload_key.
+
+  --sepolicy_cert <cert>
+      Optional flag that specifies the sepolicy signing cert.
+
+  --fsverity_tool <path>
+      Optional flag that specifies the path to fsverity tool to sign SEPolicy, defaults to fsverity.
 """
 
 import logging
@@ -55,7 +64,8 @@ logger = logging.getLogger(__name__)
 
 
 def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
-                 apk_keys=None, signing_args=None, codename_to_api_level_map=None, sign_tool=None):
+                 apk_keys=None, signing_args=None, codename_to_api_level_map=None, sign_tool=None,
+                 sepolicy_key=None, sepolicy_cert=None, fsverity_tool=None):
   """Signs the given apex file."""
   with open(apex_file, 'rb') as input_fp:
     apex_data = input_fp.read()
@@ -70,7 +80,11 @@ def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
       no_hashtree=no_hashtree,
       apk_keys=apk_keys,
       signing_args=signing_args,
-      sign_tool=sign_tool)
+      sign_tool=sign_tool,
+      is_sepolicy=apex_file.endswith("sepolicy.apex"),
+      sepolicy_key=sepolicy_key,
+      sepolicy_cert=sepolicy_cert,
+      fsverity_tool=fsverity_tool)
 
 
 def main(argv):
@@ -106,6 +120,12 @@ def main(argv):
         options['extra_apks'].update({n: key})
     elif o == '--sign_tool':
       options['sign_tool'] = a
+    elif o == '--sepolicy_key':
+      options['sepolicy_key'] = a
+    elif o == '--sepolicy_cert':
+      options['sepolicy_cert'] = a
+    elif o == '--fsverity_tool':
+      options['fsverity_tool'] = a
     else:
       return False
     return True
@@ -121,6 +141,9 @@ def main(argv):
           'payload_key=',
           'extra_apks=',
           'sign_tool=',
+          'sepolicy_key=',
+          'sepolicy_cert=',
+          'fsverity_tool='
       ],
       extra_option_handler=option_handler)
 
@@ -141,7 +164,10 @@ def main(argv):
       signing_args=options.get('payload_extra_args'),
       codename_to_api_level_map=options.get(
           'codename_to_api_level_map', {}),
-      sign_tool=options.get('sign_tool', None))
+      sign_tool=options.get('sign_tool', None),
+      sepolicy_key=options.get('sepolicy_key', None),
+      sepolicy_cert=options.get('sepolicy_cert', None),
+      fsverity_tool=options.get('fsverity_tool', None))
   shutil.copyfile(signed_apex, args[1])
   logger.info("done.")
 
@@ -149,8 +175,5 @@ def main(argv):
 if __name__ == '__main__':
   try:
     main(sys.argv[1:])
-  except common.ExternalError:
-    logger.exception("\n   ERROR:\n")
-    sys.exit(1)
   finally:
     common.Cleanup()
