@@ -157,6 +157,8 @@ android_products_makefiles := $(file <$(OUT_DIR)/.module_paths/AndroidProducts.m
 #     is either a <product>:path/to/file.mk, or just path/to/<product.mk>
 #   COMMON_LUNCH_CHOICES specifies <product>-<variant> values to be shown
 #     in the `lunch` menu
+#   STARLARK_OPT_IN_PRODUCTS specifies products to use Starlark-based
+#     product configuration by default
 
 # Builds a list of first/second elements of each pair:
 #   $(call _first,a:A b:B,:) returns 'a b'
@@ -173,29 +175,36 @@ _product-spec=$(strip $(if $(findstring :,$(1)),$(1),$(basename $(notdir $(1))):
 # Reads given AndroidProduct.mk file and sets the following variables:
 #  ap_product_paths -- the list of <product>:<path> pairs
 #  ap_common_lunch_choices -- the list of <product>-<build variant> items
-# In addition, validates COMMON_LUNCH_CHOICES values
+#  ap_products_using_starlark_config -- the list of products using starlark config
+# In addition, validates COMMON_LUNCH_CHOICES and STARLARK_OPT_IN_PRODUCTS values
 define _read-ap-file
   $(eval PRODUCT_MAKEFILES :=) \
   $(eval COMMON_LUNCH_CHOICES :=) \
+  $(eval STARLARK_OPT_IN_PRODUCTS := ) \
   $(eval ap_product_paths :=) \
   $(eval LOCAL_DIR := $(patsubst %/,%,$(dir $(f)))) \
   $(eval include $(f)) \
   $(foreach p, $(PRODUCT_MAKEFILES),$(eval ap_product_paths += $(call _product-spec,$(p)))) \
   $(eval ap_common_lunch_choices  := $(COMMON_LUNCH_CHOICES)) \
+  $(eval ap_products_using_starlark_config := $(STARLARK_OPT_IN_PRODUCTS)) \
   $(eval _products := $(call _first,$(ap_product_paths),:)) \
   $(eval _bad := $(filter-out $(_products),$(call _first,$(ap_common_lunch_choices),-))) \
   $(if $(_bad),$(error COMMON_LUNCH_CHOICES contains products(s) not defined in this file: $(_bad))) \
   $(eval _bad := $(filter-out %-eng %-userdebug %-user,$(ap_common_lunch_choices))) \
   $(if $(_bad),$(error invalid variant in COMMON_LUNCH_CHOICES: $(_bad)))
+  $(eval _bad := $(filter-out $(_products),$(ap_products_using_starlark_config))) \
+  $(if $(_bad),$(error STARLARK_OPT_IN_PRODUCTS contains product(s) not defined in this file: $(_bad)))
 endef
 
-# Build cumulative lists of all product specs/lunch choices
+# Build cumulative lists of all product specs/lunch choices/Starlark-based products.
 product_paths :=
 common_lunch_choices :=
+products_using_starlark_config :=
 $(foreach f,$(android_products_makefiles), \
     $(call _read-ap-file,$(f)) \
     $(eval product_paths += $(ap_product_paths)) \
     $(eval common_lunch_choices += $(ap_common_lunch_choices)) \
+    $(eval products_using_starlark_config += $(ap_products_using_starlark_config)) \
 )
 
 # Dedup, extract product names, etc.
@@ -228,6 +237,11 @@ $(call import-products, $(all_product_makefiles))
 else
 # Import just the current product.
 $(if $(current_product_makefile),,$(error Can not locate config makefile for product "$(TARGET_PRODUCT)"))
+ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
+  RBC_PRODUCT_CONFIG := true
+  RBC_BOARD_CONFIG := true
+endif
+
 ifndef RBC_PRODUCT_CONFIG
 $(call import-products, $(current_product_makefile))
 else
