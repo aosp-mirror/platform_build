@@ -22,13 +22,13 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"android/soong/response"
 	"android/soong/tools/compliance"
 )
 
 var (
-	outputFile = flag.String("o", "-", "Where to write the library list. (default stdout)")
-
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoLicenses    = fmt.Errorf("No licenses found")
 )
@@ -40,28 +40,58 @@ type context struct {
 }
 
 func init() {
-	flag.Usage = func() {
+}
+
+func main() {
+	var expandedArgs []string
+	for _, arg := range os.Args[1:] {
+		if strings.HasPrefix(arg, "@") {
+			f, err := os.Open(strings.TrimPrefix(arg, "@"))
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err.Error())
+				os.Exit(1)
+			}
+
+			respArgs, err := response.ReadRspFile(f)
+			f.Close()
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err.Error())
+				os.Exit(1)
+			}
+			expandedArgs = append(expandedArgs, respArgs...)
+		} else {
+			expandedArgs = append(expandedArgs, arg)
+		}
+	}
+
+	flags := flag.NewFlagSet("flags", flag.ExitOnError)
+
+	outputFile := flags.String("o", "-", "Where to write the library list. (default stdout)")
+
+	flags.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage: %s {options} file.meta_lic {file.meta_lic...}
 
 Outputs a list of libraries used in the shipped images.
 
 Options:
 `, filepath.Base(os.Args[0]))
-		flag.PrintDefaults()
+		flags.PrintDefaults()
 	}
-}
 
-func main() {
-	flag.Parse()
+	err := flags.Parse(expandedArgs)
+	if err != nil {
+		flags.Usage()
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+	}
 
 	// Must specify at least one root target.
-	if flag.NArg() == 0 {
-		flag.Usage()
+	if flags.NArg() == 0 {
+		flags.Usage()
 		os.Exit(2)
 	}
 
 	if len(*outputFile) == 0 {
-		flag.Usage()
+		flags.Usage()
 		fmt.Fprintf(os.Stderr, "must specify file for -o; use - for stdout\n")
 		os.Exit(2)
 	} else {
@@ -89,10 +119,10 @@ func main() {
 
 	ctx := &context{ofile, os.Stderr, os.DirFS(".")}
 
-	err := shippedLibs(ctx, flag.Args()...)
+	err = shippedLibs(ctx, flags.Args()...)
 	if err != nil {
 		if err == failNoneRequested {
-			flag.Usage()
+			flags.Usage()
 		}
 		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
 		os.Exit(1)
