@@ -726,13 +726,13 @@ def merge_meta_files(temp_dir, merged_dir):
       vendor_meta_dir=vendor_meta_dir,
       merged_meta_dir=merged_meta_dir)
 
-  if OPTIONS.merged_misc_info['use_dynamic_partitions'] == 'true':
+  if OPTIONS.merged_misc_info.get('use_dynamic_partitions') == 'true':
     merge_dynamic_partitions_info_txt(
         framework_meta_dir=framework_meta_dir,
         vendor_meta_dir=vendor_meta_dir,
         merged_meta_dir=merged_meta_dir)
 
-  if OPTIONS.merged_misc_info['ab_update'] == 'true':
+  if OPTIONS.merged_misc_info.get('ab_update') == 'true':
     merge_ab_partitions_txt(
         framework_meta_dir=framework_meta_dir,
         vendor_meta_dir=vendor_meta_dir,
@@ -1363,7 +1363,7 @@ def merge_target_files(temp_dir):
     return
 
   # Create the merged META/care_map.pb if the device uses A/B updates.
-  if OPTIONS.merged_misc_info['ab_update'] == 'true':
+  if OPTIONS.merged_misc_info.get('ab_update') == 'true':
     generate_care_map(partition_map.keys(), output_target_files_temp_dir)
 
   create_target_files_archive(OPTIONS.output_target_files,
