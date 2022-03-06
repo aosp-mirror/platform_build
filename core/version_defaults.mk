@@ -19,6 +19,7 @@
 #
 # Guarantees that the following are defined:
 #     PLATFORM_VERSION
+#     PLATFORM_DISPLAY_VERSION
 #     PLATFORM_SDK_VERSION
 #     PLATFORM_VERSION_CODENAME
 #     DEFAULT_APP_TARGET_SDK
@@ -53,6 +54,11 @@ PLATFORM_VERSION_LAST_STABLE := 12
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
 PLATFORM_VERSION_CODENAME.TP1A := Tiramisu
+
+# This is the user-visible version.  In a final release build it should
+# be empty to use PLATFORM_VERSION as the user-visible version.  For
+# a preview release it can be set to a user-friendly value like `12 Preview 1`
+PLATFORM_DISPLAY_VERSION :=
 
 ifndef PLATFORM_SDK_VERSION
   # This is the canonical definition of the SDK version, which defines
