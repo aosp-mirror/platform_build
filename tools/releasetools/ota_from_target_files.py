@@ -1475,7 +1475,7 @@ def main(argv):
                                  "enable_vabc_xor=",
                                  "force_minor_version=",
                                  "compressor_types=",
-                                 "enable_zucchin=",
+                                 "enable_zucchini=",
                                  "enable_lz4diff=",
                                  "vabc_compression_param=",
                              ], extra_option_handler=option_handler)
