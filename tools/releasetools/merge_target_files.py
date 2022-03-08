@@ -664,36 +664,24 @@ def validate_merged_apex_info(target_files_dir, partitions):
     apex_packages.update(partition_apex_packages)
 
 
-def generate_care_map(partitions, target_files_dir):
-  """Generates a merged META/care_map.pb file in the target files dir.
+def update_care_map_image_size_props(images_dir):
+  """Sets <partition>_image_size props in misc_info.
 
-  Depends on the info dict from META/misc_info.txt, as well as built images
-  within IMAGES/.
+  add_images_to_target_files uses these props to generate META/care_map.pb.
+  Regenerated images will have this property set during regeneration.
 
-  Args:
-    partitions: A list of partitions to potentially include in the care map.
-    target_files_dir: Extracted directory of target_files, containing partition
-      directories.
+  However, images copied directly from input partial target files packages
+  need this value calculated here.
   """
-  OPTIONS.info_dict = common.LoadInfoDict(target_files_dir)
-  partition_image_map = {}
-  for partition in partitions:
-    image_path = os.path.join(target_files_dir, 'IMAGES',
-                              '{}.img'.format(partition))
+  for partition in common.PARTITIONS_WITH_CARE_MAP:
+    image_path = os.path.join(images_dir, '{}.img'.format(partition))
     if os.path.exists(image_path):
-      partition_image_map[partition] = image_path
-      # Regenerated images should have their image_size property already set.
-      image_size_prop = '{}_image_size'.format(partition)
-      if image_size_prop not in OPTIONS.info_dict:
-        # Images copied directly from input target files packages will need
-        # their image sizes calculated.
-        partition_size = sparse_img.GetImagePartitionSize(image_path)
-        image_props = build_image.ImagePropFromGlobalDict(
-            OPTIONS.info_dict, partition)
-        verity_image_builder = verity_utils.CreateVerityImageBuilder(
-            image_props)
-        image_size = verity_image_builder.CalculateMaxImageSize(partition_size)
-        OPTIONS.info_dict[image_size_prop] = image_size
+      partition_size = sparse_img.GetImagePartitionSize(image_path)
+      image_props = build_image.ImagePropFromGlobalDict(
+          OPTIONS.merged_misc_info, partition)
+      verity_image_builder = verity_utils.CreateVerityImageBuilder(image_props)
+      image_size = verity_image_builder.CalculateMaxImageSize(partition_size)
+      OPTIONS.merged_misc_info['{}_image_size'.format(partition)] = image_size
 
 
 def merge_meta_files(temp_dir, merged_dir):
@@ -737,6 +725,7 @@ def merge_meta_files(temp_dir, merged_dir):
         framework_meta_dir=framework_meta_dir,
         vendor_meta_dir=vendor_meta_dir,
         merged_meta_dir=merged_meta_dir)
+    update_care_map_image_size_props(images_dir=os.path.join(merged_dir, 'IMAGES'))
 
   for file_name in ('apkcerts.txt', 'apexkeys.txt'):
     merge_package_keys_txt(
@@ -1361,10 +1350,6 @@ def merge_target_files(temp_dir):
 
   if not OPTIONS.output_target_files:
     return
-
-  # Create the merged META/care_map.pb if the device uses A/B updates.
-  if OPTIONS.merged_misc_info.get('ab_update') == 'true':
-    generate_care_map(partition_map.keys(), output_target_files_temp_dir)
 
   create_target_files_archive(OPTIONS.output_target_files,
                               output_target_files_temp_dir, temp_dir)
