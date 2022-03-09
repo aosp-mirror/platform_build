@@ -11,10 +11,6 @@ endif
 
 ifneq (,$(strip $(LOCAL_LICENSE_PACKAGE_NAME)))
 license_package_name:=$(strip $(LOCAL_LICENSE_PACKAGE_NAME))
-else ifdef my_register_name
-license_package_name:=$(my_register_name)
-else
-license_package_name:=$(strip $(LOCAL_MODULE))
 endif
 
 ifneq (,$(strip $(LOCAL_LICENSE_INSTALL_MAP)))

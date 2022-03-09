@@ -53,7 +53,6 @@ PRODUCT_PACKAGES += \
     com.android.adservices \
     com.android.appsearch \
     com.android.bluetooth \
-    com.android.auxiliary \
     com.android.conscrypt \
     com.android.cronet \
     com.android.extservices \
@@ -71,7 +70,6 @@ PRODUCT_PACKAGES += \
     com.android.scheduling \
     com.android.sdkext \
     com.android.sepolicy \
-    com.android.supplementalprocess \
     com.android.tethering \
     com.android.tzdata \
     com.android.uwb \
@@ -125,7 +123,6 @@ PRODUCT_PACKAGES += \
     input \
     installd \
     IntentResolver \
-    iorapd \
     ip \
     iptables \
     ip-up-vpn \
