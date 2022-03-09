@@ -56,7 +56,9 @@ python_defaults {
     required: [
         "blk_alloc_to_base_fs",
         "e2fsck",
-        "mkerofsimage.sh",
+        "fsck.erofs",
+        "img2simg",
+        "mkfs.erofs",
         "mkuserimg_mke2fs",
         "simg2img",
         "tune2fs",
