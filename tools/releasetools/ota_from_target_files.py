@@ -543,8 +543,7 @@ def _LoadOemDicts(oem_source):
 
   oem_dicts = []
   for oem_file in oem_source:
-    with open(oem_file) as fp:
-      oem_dicts.append(common.LoadDictionaryFromLines(fp.readlines()))
+    oem_dicts.append(common.LoadDictionaryFromFile(oem_file))
   return oem_dicts
 
 
