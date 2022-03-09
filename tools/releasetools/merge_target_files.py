@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2019 The Android Open Source Project
+# Copyright (C) 2022 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -101,8 +101,6 @@ Usage: merge_target_files [args]
   --vendor-dexpreopt-config
       If provided, the location of vendor's dexpreopt_config.zip.
 """
-
-from __future__ import print_function
 
 import fnmatch
 import glob
@@ -277,40 +275,26 @@ def write_sorted_data(data, path):
       output.write(out_str)
 
 
-def extract_items(target_files, target_files_temp_dir, extract_item_list):
-  """Extracts items from target files to temporary directory.
+def extract_items(input_zip, output_dir, extract_item_list):
+  """Extracts items in extra_item_list from a zip to a dir."""
 
-  This function extracts from the specified target files zip archive into the
-  specified temporary directory, the items specified in the extract item list.
-
-  Args:
-    target_files: The target files zip archive from which to extract items.
-    target_files_temp_dir: The temporary directory where the extracted items
-      will land.
-    extract_item_list: A list of items to extract.
-  """
-
-  logger.info('extracting from %s', target_files)
+  logger.info('extracting from %s', input_zip)
 
   # Filter the extract_item_list to remove any items that do not exist in the
   # zip file. Otherwise, the extraction step will fail.
 
-  with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zipfile:
-    target_files_namelist = target_files_zipfile.namelist()
+  with zipfile.ZipFile(input_zip, allowZip64=True) as input_zipfile:
+    input_namelist = input_zipfile.namelist()
 
   filtered_extract_item_list = []
   for pattern in extract_item_list:
-    matching_namelist = fnmatch.filter(target_files_namelist, pattern)
+    matching_namelist = fnmatch.filter(input_namelist, pattern)
     if not matching_namelist:
       logger.warning('no match for %s', pattern)
     else:
       filtered_extract_item_list.append(pattern)
 
-  # Extract from target_files into target_files_temp_dir the
-  # filtered_extract_item_list.
-
-  common.UnzipToDir(target_files, target_files_temp_dir,
-                    filtered_extract_item_list)
+  common.UnzipToDir(input_zip, output_dir, filtered_extract_item_list)
 
 
 def copy_items(from_dir, to_dir, patterns):
@@ -337,18 +321,8 @@ def copy_items(from_dir, to_dir, patterns):
       shutil.copyfile(original_file_path, copied_file_path)
 
 
-def validate_config_lists(framework_item_list, framework_misc_info_keys,
-                          vendor_item_list):
+def validate_config_lists():
   """Performs validations on the merge config lists.
-
-  Args:
-    framework_item_list: The list of items to extract from the partial framework
-      target files package as is.
-    framework_misc_info_keys: A list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys should come from the
-      vendor instance.
-    vendor_item_list: The list of items to extract from the partial vendor
-      target files package as is.
 
   Returns:
     False if a validation fails, otherwise true.
@@ -358,8 +332,8 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
   default_combined_item_set = set(DEFAULT_FRAMEWORK_ITEM_LIST)
   default_combined_item_set.update(DEFAULT_VENDOR_ITEM_LIST)
 
-  combined_item_set = set(framework_item_list)
-  combined_item_set.update(vendor_item_list)
+  combined_item_set = set(OPTIONS.framework_item_list)
+  combined_item_set.update(OPTIONS.vendor_item_list)
 
   # Check that the merge config lists are not missing any item specified
   # by the default config lists.
@@ -375,11 +349,11 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
   for partition in SINGLE_BUILD_PARTITIONS:
     image_path = 'IMAGES/{}.img'.format(partition.lower().replace('/', ''))
     in_framework = (
-        any(item.startswith(partition) for item in framework_item_list) or
-        image_path in framework_item_list)
+        any(item.startswith(partition) for item in OPTIONS.framework_item_list)
+        or image_path in OPTIONS.framework_item_list)
     in_vendor = (
-        any(item.startswith(partition) for item in vendor_item_list) or
-        image_path in vendor_item_list)
+        any(item.startswith(partition) for item in OPTIONS.vendor_item_list) or
+        image_path in OPTIONS.vendor_item_list)
     if in_framework and in_vendor:
       logger.error(
           'Cannot extract items from %s for both the framework and vendor'
@@ -387,9 +361,8 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
           ' includes %s.', partition, partition)
       has_error = True
 
-  if ('dynamic_partition_list'
-      in framework_misc_info_keys) or ('super_partition_groups'
-                                       in framework_misc_info_keys):
+  if ('dynamic_partition_list' in OPTIONS.framework_misc_info_keys) or (
+      'super_partition_groups' in OPTIONS.framework_misc_info_keys):
     logger.error('Dynamic partition misc info keys should come from '
                  'the vendor instance of META/misc_info.txt.')
     has_error = True
@@ -397,98 +370,42 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
   return not has_error
 
 
-def process_ab_partitions_txt(framework_target_files_temp_dir,
-                              vendor_target_files_temp_dir,
-                              output_target_files_temp_dir):
-  """Performs special processing for META/ab_partitions.txt.
+def merge_ab_partitions_txt(framework_meta_dir, vendor_meta_dir,
+                            merged_meta_dir):
+  """Merges META/ab_partitions.txt.
 
-  This function merges the contents of the META/ab_partitions.txt files from the
-  framework directory and the vendor directory, placing the merged result in the
-  output directory. The precondition in that the files are already extracted.
-  The post condition is that the output META/ab_partitions.txt contains the
-  merged content. The format for each ab_partitions.txt is one partition name
-  per line. The output file contains the union of the partition names.
-
-  Args:
-    framework_target_files_temp_dir: The name of a directory containing the
-      special items extracted from the framework target files package.
-    vendor_target_files_temp_dir: The name of a directory containing the special
-      items extracted from the vendor target files package.
-    output_target_files_temp_dir: The name of a directory that will be used to
-      create the output target files package after all the special cases are
-      processed.
+  The output contains the union of the partition names.
   """
-
-  framework_ab_partitions_txt = os.path.join(framework_target_files_temp_dir,
-                                             'META', 'ab_partitions.txt')
-
-  vendor_ab_partitions_txt = os.path.join(vendor_target_files_temp_dir, 'META',
-                                          'ab_partitions.txt')
-
-  with open(framework_ab_partitions_txt) as f:
+  with open(os.path.join(framework_meta_dir, 'ab_partitions.txt')) as f:
     framework_ab_partitions = f.read().splitlines()
 
-  with open(vendor_ab_partitions_txt) as f:
+  with open(os.path.join(vendor_meta_dir, 'ab_partitions.txt')) as f:
     vendor_ab_partitions = f.read().splitlines()
 
-  output_ab_partitions = set(framework_ab_partitions + vendor_ab_partitions)
-
-  output_ab_partitions_txt = os.path.join(output_target_files_temp_dir, 'META',
-                                          'ab_partitions.txt')
-
-  write_sorted_data(data=output_ab_partitions, path=output_ab_partitions_txt)
+  write_sorted_data(
+      data=set(framework_ab_partitions + vendor_ab_partitions),
+      path=os.path.join(merged_meta_dir, 'ab_partitions.txt'))
 
 
-def process_misc_info_txt(framework_target_files_temp_dir,
-                          vendor_target_files_temp_dir,
-                          output_target_files_temp_dir,
-                          framework_misc_info_keys):
-  """Performs special processing for META/misc_info.txt.
+def merge_misc_info_txt(framework_meta_dir, vendor_meta_dir, merged_meta_dir):
+  """Merges META/misc_info.txt.
 
-  This function merges the contents of the META/misc_info.txt files from the
-  framework directory and the vendor directory, placing the merged result in the
-  output directory. The precondition in that the files are already extracted.
-  The post condition is that the output META/misc_info.txt contains the merged
-  content.
-
-  Args:
-    framework_target_files_temp_dir: The name of a directory containing the
-      special items extracted from the framework target files package.
-    vendor_target_files_temp_dir: The name of a directory containing the special
-      items extracted from the vendor target files package.
-    output_target_files_temp_dir: The name of a directory that will be used to
-      create the output target files package after all the special cases are
-      processed.
-    framework_misc_info_keys: A list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys should come from the
-      vendor instance.
+  The output contains a combination of key=value pairs from both inputs.
+  Most pairs are taken from the vendor input, while some are taken from
+  the framework input.
   """
 
-  misc_info_path = ['META', 'misc_info.txt']
-  framework_dict = common.LoadDictionaryFromFile(
-      os.path.join(framework_target_files_temp_dir, *misc_info_path))
+  OPTIONS.framework_misc_info = common.LoadDictionaryFromFile(
+      os.path.join(framework_meta_dir, 'misc_info.txt'))
+  OPTIONS.vendor_misc_info = common.LoadDictionaryFromFile(
+      os.path.join(vendor_meta_dir, 'misc_info.txt'))
 
-  # We take most of the misc info from the vendor target files.
+  # Merged misc info is a combination of vendor misc info plus certain values
+  # from the framework misc info.
 
-  merged_dict = common.LoadDictionaryFromFile(
-      os.path.join(vendor_target_files_temp_dir, *misc_info_path))
-
-  # Replace certain values in merged_dict with values from
-  # framework_dict.
-
-  for key in framework_misc_info_keys:
-    merged_dict[key] = framework_dict[key]
-
-  # Merge misc info keys used for Dynamic Partitions.
-  if (merged_dict.get('use_dynamic_partitions')
-      == 'true') and (framework_dict.get('use_dynamic_partitions') == 'true'):
-    merged_dynamic_partitions_dict = common.MergeDynamicPartitionInfoDicts(
-        framework_dict=framework_dict, vendor_dict=merged_dict)
-    merged_dict.update(merged_dynamic_partitions_dict)
-    # Ensure that add_img_to_target_files rebuilds super split images for
-    # devices that retrofit dynamic partitions. This flag may have been set to
-    # false in the partial builds to prevent duplicate building of super.img.
-    merged_dict['build_super_partition'] = 'true'
+  merged_dict = OPTIONS.vendor_misc_info
+  for key in OPTIONS.framework_misc_info_keys:
+    merged_dict[key] = OPTIONS.framework_misc_info[key]
 
   # If AVB is enabled then ensure that we build vbmeta.img.
   # Partial builds with AVB enabled may set PRODUCT_BUILD_VBMETA_IMAGE=false to
@@ -496,65 +413,31 @@ def process_misc_info_txt(framework_target_files_temp_dir,
   if merged_dict.get('avb_enable') == 'true':
     merged_dict['avb_building_vbmeta_image'] = 'true'
 
-  # Replace <image>_selinux_fc values with framework or vendor file_contexts.bin
-  # depending on which dictionary the key came from.
-  # Only the file basename is required because all selinux_fc properties are
-  # replaced with the full path to the file under META/ when misc_info.txt is
-  # loaded from target files for repacking. See common.py LoadInfoDict().
-  for key in merged_dict:
-    if key.endswith('_selinux_fc'):
-      merged_dict[key] = 'vendor_file_contexts.bin'
-  for key in framework_dict:
-    if key.endswith('_selinux_fc'):
-      merged_dict[key] = 'framework_file_contexts.bin'
-
-  output_misc_info_txt = os.path.join(output_target_files_temp_dir, 'META',
-                                      'misc_info.txt')
-  write_sorted_data(data=merged_dict, path=output_misc_info_txt)
+  return merged_dict
 
 
-def process_dynamic_partitions_info_txt(framework_target_files_dir,
-                                        vendor_target_files_dir,
-                                        output_target_files_dir):
-  """Performs special processing for META/dynamic_partitions_info.txt.
-
-  This function merges the contents of the META/dynamic_partitions_info.txt
-  files from the framework directory and the vendor directory, placing the
-  merged result in the output directory.
-
-  This function does nothing if META/dynamic_partitions_info.txt from the vendor
-  directory does not exist.
-
-  Args:
-    framework_target_files_dir: The name of a directory containing the special
-      items extracted from the framework target files package.
-    vendor_target_files_dir: The name of a directory containing the special
-      items extracted from the vendor target files package.
-    output_target_files_dir: The name of a directory that will be used to create
-      the output target files package after all the special cases are processed.
-  """
-
-  if not os.path.exists(
-      os.path.join(vendor_target_files_dir, 'META',
-                   'dynamic_partitions_info.txt')):
-    return
-
-  dynamic_partitions_info_path = ['META', 'dynamic_partitions_info.txt']
-
+def merge_dynamic_partitions_info_txt(framework_meta_dir, vendor_meta_dir,
+                                      merged_meta_dir):
+  """Merge META/dynamic_partitions_info.txt."""
   framework_dynamic_partitions_dict = common.LoadDictionaryFromFile(
-      os.path.join(framework_target_files_dir, *dynamic_partitions_info_path))
+      os.path.join(framework_meta_dir, 'dynamic_partitions_info.txt'))
   vendor_dynamic_partitions_dict = common.LoadDictionaryFromFile(
-      os.path.join(vendor_target_files_dir, *dynamic_partitions_info_path))
+      os.path.join(vendor_meta_dir, 'dynamic_partitions_info.txt'))
 
   merged_dynamic_partitions_dict = common.MergeDynamicPartitionInfoDicts(
       framework_dict=framework_dynamic_partitions_dict,
       vendor_dict=vendor_dynamic_partitions_dict)
 
-  output_dynamic_partitions_info_txt = os.path.join(
-      output_target_files_dir, 'META', 'dynamic_partitions_info.txt')
   write_sorted_data(
       data=merged_dynamic_partitions_dict,
-      path=output_dynamic_partitions_info_txt)
+      path=os.path.join(merged_meta_dir, 'dynamic_partitions_info.txt'))
+
+  # Merge misc info keys used for Dynamic Partitions.
+  OPTIONS.merged_misc_info.update(merged_dynamic_partitions_dict)
+  # Ensure that add_img_to_target_files rebuilds super split images for
+  # devices that retrofit dynamic partitions. This flag may have been set to
+  # false in the partial builds to prevent duplicate building of super.img.
+  OPTIONS.merged_misc_info['build_super_partition'] = 'true'
 
 
 def item_list_to_partition_set(item_list):
@@ -586,57 +469,37 @@ def item_list_to_partition_set(item_list):
   return partition_set
 
 
-def process_apex_keys_apk_certs_common(framework_target_files_dir,
-                                       vendor_target_files_dir,
-                                       output_target_files_dir,
-                                       framework_partition_set,
-                                       vendor_partition_set, file_name):
-  """Performs special processing for META/apexkeys.txt or META/apkcerts.txt.
+def merge_package_keys_txt(framework_meta_dir, vendor_meta_dir, merged_meta_dir,
+                           file_name):
+  """Merges APK/APEX key list files."""
 
-  This function merges the contents of the META/apexkeys.txt or
-  META/apkcerts.txt files from the framework directory and the vendor directory,
-  placing the merged result in the output directory. The precondition in that
-  the files are already extracted. The post condition is that the output
-  META/apexkeys.txt or META/apkcerts.txt contains the merged content.
-
-  Args:
-    framework_target_files_dir: The name of a directory containing the special
-      items extracted from the framework target files package.
-    vendor_target_files_dir: The name of a directory containing the special
-      items extracted from the vendor target files package.
-    output_target_files_dir: The name of a directory that will be used to create
-      the output target files package after all the special cases are processed.
-    framework_partition_set: Partitions that are considered framework
-      partitions. Used to filter apexkeys.txt and apkcerts.txt.
-    vendor_partition_set: Partitions that are considered vendor partitions. Used
-      to filter apexkeys.txt and apkcerts.txt.
-    file_name: The name of the file to merge. One of apkcerts.txt or
-      apexkeys.txt.
-  """
+  if file_name not in ('apkcerts.txt', 'apexkeys.txt'):
+    raise ExternalError(
+        'Unexpected file_name provided to merge_package_keys_txt: %s',
+        file_name)
 
   def read_helper(d):
     temp = {}
-    file_path = os.path.join(d, 'META', file_name)
-    with open(file_path) as f:
-      for line in f:
-        if line.strip():
-          name = line.split()[0]
-          match = MODULE_KEY_PATTERN.search(name)
-          temp[match.group(1)] = line.strip()
+    with open(os.path.join(d, file_name)) as f:
+      for line in f.read().splitlines():
+        line = line.strip()
+        if line:
+          name_search = MODULE_KEY_PATTERN.search(line.split()[0])
+          temp[name_search.group(1)] = line
     return temp
 
-  framework_dict = read_helper(framework_target_files_dir)
-  vendor_dict = read_helper(vendor_target_files_dir)
+  framework_dict = read_helper(framework_meta_dir)
+  vendor_dict = read_helper(vendor_meta_dir)
   merged_dict = {}
 
   def filter_into_merged_dict(item_dict, partition_set):
     for key, value in item_dict.items():
-      match = PARTITION_TAG_PATTERN.search(value)
+      tag_search = PARTITION_TAG_PATTERN.search(value)
 
-      if match is None:
+      if tag_search is None:
         raise ValueError('Entry missing partition tag: %s' % value)
 
-      partition_tag = match.group(1)
+      partition_tag = tag_search.group(1)
 
       if partition_tag in partition_set:
         if key in merged_dict:
@@ -649,57 +512,63 @@ def process_apex_keys_apk_certs_common(framework_target_files_dir,
 
         merged_dict[key] = value
 
-  filter_into_merged_dict(framework_dict, framework_partition_set)
-  filter_into_merged_dict(vendor_dict, vendor_partition_set)
-
-  output_file = os.path.join(output_target_files_dir, 'META', file_name)
+  # Prioritize framework keys first.
+  # Duplicate keys from vendor are an error, or ignored.
+  filter_into_merged_dict(framework_dict, OPTIONS.framework_partition_set)
+  filter_into_merged_dict(vendor_dict, OPTIONS.vendor_partition_set)
 
   # The following code is similar to write_sorted_data, but different enough
   # that we couldn't use that function. We need the output to be sorted by the
   # basename of the apex/apk (without the ".apex" or ".apk" suffix). This
   # allows the sort to be consistent with the framework/vendor input data and
   # eases comparison of input data with merged data.
-  with open(output_file, 'w') as output:
-    for key in sorted(merged_dict.keys()):
-      out_str = merged_dict[key] + '\n'
-      output.write(out_str)
+  with open(os.path.join(merged_meta_dir, file_name), 'w') as output:
+    for key, value in sorted(merged_dict.items()):
+      output.write(value + '\n')
 
 
-def copy_file_contexts(framework_target_files_dir, vendor_target_files_dir,
-                       output_target_files_dir):
-  """Creates named copies of each build's file_contexts.bin in output META/."""
-  framework_fc_path = os.path.join(framework_target_files_dir, 'META',
-                                   'framework_file_contexts.bin')
-  if not os.path.exists(framework_fc_path):
-    framework_fc_path = os.path.join(framework_target_files_dir, 'META',
-                                     'file_contexts.bin')
-    if not os.path.exists(framework_fc_path):
-      raise ValueError('Missing framework file_contexts.bin.')
-  shutil.copyfile(
-      framework_fc_path,
-      os.path.join(output_target_files_dir, 'META',
-                   'framework_file_contexts.bin'))
+def create_file_contexts_copies(framework_meta_dir, vendor_meta_dir,
+                                merged_meta_dir):
+  """Creates named copies of each partial build's file_contexts.bin.
 
-  vendor_fc_path = os.path.join(vendor_target_files_dir, 'META',
-                                'vendor_file_contexts.bin')
-  if not os.path.exists(vendor_fc_path):
-    vendor_fc_path = os.path.join(vendor_target_files_dir, 'META',
-                                  'file_contexts.bin')
-    if not os.path.exists(vendor_fc_path):
-      raise ValueError('Missing vendor file_contexts.bin.')
-  shutil.copyfile(
-      vendor_fc_path,
-      os.path.join(output_target_files_dir, 'META', 'vendor_file_contexts.bin'))
+  Used when regenerating images from the partial build.
+  """
+
+  def copy_fc_file(source_dir, file_name):
+    for name in (file_name, 'file_contexts.bin'):
+      fc_path = os.path.join(source_dir, name)
+      if os.path.exists(fc_path):
+        shutil.copyfile(fc_path, os.path.join(merged_meta_dir, file_name))
+        return
+    raise ValueError('Missing file_contexts file from %s: %s', source_dir,
+                     file_name)
+
+  copy_fc_file(framework_meta_dir, 'framework_file_contexts.bin')
+  copy_fc_file(vendor_meta_dir, 'vendor_file_contexts.bin')
+
+  # Replace <image>_selinux_fc values with framework or vendor file_contexts.bin
+  # depending on which dictionary the key came from.
+  # Only the file basename is required because all selinux_fc properties are
+  # replaced with the full path to the file under META/ when misc_info.txt is
+  # loaded from target files for repacking. See common.py LoadInfoDict().
+  for key in OPTIONS.vendor_misc_info:
+    if key.endswith('_selinux_fc'):
+      OPTIONS.merged_misc_info[key] = 'vendor_file_contexts.bin'
+  for key in OPTIONS.framework_misc_info:
+    if key.endswith('_selinux_fc'):
+      OPTIONS.merged_misc_info[key] = 'framework_file_contexts.bin'
 
 
-def compile_split_sepolicy(product_out, partition_map):
+def compile_split_sepolicy(target_files_dir, partition_map):
   """Uses secilc to compile a split sepolicy file.
 
   Depends on various */etc/selinux/* and */etc/vintf/* files within partitions.
 
   Args:
-    product_out: PRODUCT_OUT directory, containing partition directories.
-    partition_map: A map of partition name -> relative path within product_out.
+    target_files_dir: Extracted directory of target_files, containing partition
+      directories.
+    partition_map: A map of partition name -> relative path within
+      target_files_dir.
 
   Returns:
     A command list that can be executed to create the compiled sepolicy.
@@ -710,7 +579,7 @@ def compile_split_sepolicy(product_out, partition_map):
       logger.warning('Cannot load SEPolicy files for missing partition %s',
                      partition)
       return None
-    return os.path.join(product_out, partition_map[partition], path)
+    return os.path.join(target_files_dir, partition_map[partition], path)
 
   # Load the kernel sepolicy version from the FCM. This is normally provided
   # directly to selinux.cpp as a build flag, but is also available in this file.
@@ -734,7 +603,7 @@ def compile_split_sepolicy(product_out, partition_map):
   # Use the same flags and arguments as selinux.cpp OpenSplitPolicy().
   cmd = ['secilc', '-m', '-M', 'true', '-G', '-N']
   cmd.extend(['-c', kernel_sepolicy_version])
-  cmd.extend(['-o', os.path.join(product_out, 'META/combined_sepolicy')])
+  cmd.extend(['-o', os.path.join(target_files_dir, 'META/combined_sepolicy')])
   cmd.extend(['-f', '/dev/null'])
 
   required_policy_files = (
@@ -765,14 +634,14 @@ def compile_split_sepolicy(product_out, partition_map):
   return cmd
 
 
-def validate_merged_apex_info(output_target_files_dir, partitions):
+def validate_merged_apex_info(target_files_dir, partitions):
   """Validates the APEX files in the merged target files directory.
 
   Checks the APEX files in all possible preinstalled APEX directories.
   Depends on the <partition>/apex/* APEX files within partitions.
 
   Args:
-    output_target_files_dir: Output directory containing merged partition
+    target_files_dir: Extracted directory of target_files, containing partition
       directories.
     partitions: A list of all the partitions in the output directory.
 
@@ -782,10 +651,10 @@ def validate_merged_apex_info(output_target_files_dir, partitions):
   """
   apex_packages = set()
 
-  apex_partitions = ('system', 'system_ext', 'product', 'vendor')
+  apex_partitions = ('system', 'system_ext', 'product', 'vendor', 'odm')
   for partition in filter(lambda p: p in apex_partitions, partitions):
     apex_info = apex_utils.GetApexInfoFromTargetFiles(
-        output_target_files_dir, partition, compressed_only=False)
+        target_files_dir, partition, compressed_only=False)
     partition_apex_packages = set([info.package_name for info in apex_info])
     duplicates = apex_packages.intersection(partition_apex_packages)
     if duplicates:
@@ -795,148 +664,97 @@ def validate_merged_apex_info(output_target_files_dir, partitions):
     apex_packages.update(partition_apex_packages)
 
 
-def generate_care_map(partitions, output_target_files_dir):
-  """Generates a merged META/care_map.pb file in the output target files dir.
+def update_care_map_image_size_props(images_dir):
+  """Sets <partition>_image_size props in misc_info.
 
-  Depends on the info dict from META/misc_info.txt, as well as built images
-  within IMAGES/.
+  add_images_to_target_files uses these props to generate META/care_map.pb.
+  Regenerated images will have this property set during regeneration.
 
-  Args:
-    partitions: A list of partitions to potentially include in the care map.
-    output_target_files_dir: The name of a directory that will be used to create
-      the output target files package after all the special cases are processed.
+  However, images copied directly from input partial target files packages
+  need this value calculated here.
   """
-  OPTIONS.info_dict = common.LoadInfoDict(output_target_files_dir)
-  partition_image_map = {}
-  for partition in partitions:
-    image_path = os.path.join(output_target_files_dir, 'IMAGES',
-                              '{}.img'.format(partition))
+  for partition in common.PARTITIONS_WITH_CARE_MAP:
+    image_path = os.path.join(images_dir, '{}.img'.format(partition))
     if os.path.exists(image_path):
-      partition_image_map[partition] = image_path
-      # Regenerated images should have their image_size property already set.
-      image_size_prop = '{}_image_size'.format(partition)
-      if image_size_prop not in OPTIONS.info_dict:
-        # Images copied directly from input target files packages will need
-        # their image sizes calculated.
-        partition_size = sparse_img.GetImagePartitionSize(image_path)
-        image_props = build_image.ImagePropFromGlobalDict(
-            OPTIONS.info_dict, partition)
-        verity_image_builder = verity_utils.CreateVerityImageBuilder(
-            image_props)
-        image_size = verity_image_builder.CalculateMaxImageSize(partition_size)
-        OPTIONS.info_dict[image_size_prop] = image_size
+      partition_size = sparse_img.GetImagePartitionSize(image_path)
+      image_props = build_image.ImagePropFromGlobalDict(
+          OPTIONS.merged_misc_info, partition)
+      verity_image_builder = verity_utils.CreateVerityImageBuilder(image_props)
+      image_size = verity_image_builder.CalculateMaxImageSize(partition_size)
+      OPTIONS.merged_misc_info['{}_image_size'.format(partition)] = image_size
 
 
-def process_special_cases(temp_dir, framework_meta, vendor_meta,
-                          output_target_files_temp_dir,
-                          framework_misc_info_keys, framework_partition_set,
-                          vendor_partition_set, framework_dexpreopt_tools,
-                          framework_dexpreopt_config, vendor_dexpreopt_config):
-  """Performs special-case processing for certain target files items.
+def merge_meta_files(temp_dir, merged_dir):
+  """Merges various files in META/*."""
 
-  Certain files in the output target files package require special-case
-  processing. This function performs all that special-case processing.
+  framework_meta_dir = os.path.join(temp_dir, 'framework_meta', 'META')
+  extract_items(
+      input_zip=OPTIONS.framework_target_files,
+      output_dir=os.path.dirname(framework_meta_dir),
+      extract_item_list=('META/*',))
 
-  Args:
-    temp_dir: Location containing an 'output' directory where target files have
-      been extracted, e.g. <temp_dir>/output/SYSTEM, <temp_dir>/output/IMAGES,
-      etc.
-    framework_meta: The name of a directory containing the special items
-      extracted from the framework target files package.
-    vendor_meta: The name of a directory containing the special items extracted
-      from the vendor target files package.
-    output_target_files_temp_dir: The name of a directory that will be used to
-      create the output target files package after all the special cases are
-      processed.
-    framework_misc_info_keys: A list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys should come from the
-      vendor instance.
-    framework_partition_set: Partitions that are considered framework
-      partitions. Used to filter apexkeys.txt and apkcerts.txt.
-    vendor_partition_set: Partitions that are considered vendor partitions. Used
-      to filter apexkeys.txt and apkcerts.txt.
-  Args used if dexpreopt is applied:
-    framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
-    framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
-    vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
-  """
+  vendor_meta_dir = os.path.join(temp_dir, 'vendor_meta', 'META')
+  extract_items(
+      input_zip=OPTIONS.vendor_target_files,
+      output_dir=os.path.dirname(vendor_meta_dir),
+      extract_item_list=('META/*',))
 
-  if 'ab_update' in framework_misc_info_keys:
-    process_ab_partitions_txt(
-        framework_target_files_temp_dir=framework_meta,
-        vendor_target_files_temp_dir=vendor_meta,
-        output_target_files_temp_dir=output_target_files_temp_dir)
+  merged_meta_dir = os.path.join(merged_dir, 'META')
 
-  copy_file_contexts(
-      framework_target_files_dir=framework_meta,
-      vendor_target_files_dir=vendor_meta,
-      output_target_files_dir=output_target_files_temp_dir)
+  # Merge META/misc_info.txt into OPTIONS.merged_misc_info,
+  # but do not write it yet. The following functions may further
+  # modify this dict.
+  OPTIONS.merged_misc_info = merge_misc_info_txt(
+      framework_meta_dir=framework_meta_dir,
+      vendor_meta_dir=vendor_meta_dir,
+      merged_meta_dir=merged_meta_dir)
 
-  process_misc_info_txt(
-      framework_target_files_temp_dir=framework_meta,
-      vendor_target_files_temp_dir=vendor_meta,
-      output_target_files_temp_dir=output_target_files_temp_dir,
-      framework_misc_info_keys=framework_misc_info_keys)
+  create_file_contexts_copies(
+      framework_meta_dir=framework_meta_dir,
+      vendor_meta_dir=vendor_meta_dir,
+      merged_meta_dir=merged_meta_dir)
 
-  process_dynamic_partitions_info_txt(
-      framework_target_files_dir=framework_meta,
-      vendor_target_files_dir=vendor_meta,
-      output_target_files_dir=output_target_files_temp_dir)
+  if OPTIONS.merged_misc_info.get('use_dynamic_partitions') == 'true':
+    merge_dynamic_partitions_info_txt(
+        framework_meta_dir=framework_meta_dir,
+        vendor_meta_dir=vendor_meta_dir,
+        merged_meta_dir=merged_meta_dir)
 
-  process_apex_keys_apk_certs_common(
-      framework_target_files_dir=framework_meta,
-      vendor_target_files_dir=vendor_meta,
-      output_target_files_dir=output_target_files_temp_dir,
-      framework_partition_set=framework_partition_set,
-      vendor_partition_set=vendor_partition_set,
-      file_name='apkcerts.txt')
+  if OPTIONS.merged_misc_info.get('ab_update') == 'true':
+    merge_ab_partitions_txt(
+        framework_meta_dir=framework_meta_dir,
+        vendor_meta_dir=vendor_meta_dir,
+        merged_meta_dir=merged_meta_dir)
+    update_care_map_image_size_props(images_dir=os.path.join(merged_dir, 'IMAGES'))
 
-  process_apex_keys_apk_certs_common(
-      framework_target_files_dir=framework_meta,
-      vendor_target_files_dir=vendor_meta,
-      output_target_files_dir=output_target_files_temp_dir,
-      framework_partition_set=framework_partition_set,
-      vendor_partition_set=vendor_partition_set,
-      file_name='apexkeys.txt')
+  for file_name in ('apkcerts.txt', 'apexkeys.txt'):
+    merge_package_keys_txt(
+        framework_meta_dir=framework_meta_dir,
+        vendor_meta_dir=vendor_meta_dir,
+        merged_meta_dir=merged_meta_dir,
+        file_name=file_name)
 
-  process_dexopt(
-      temp_dir=temp_dir,
-      framework_meta=framework_meta,
-      vendor_meta=vendor_meta,
-      output_target_files_temp_dir=output_target_files_temp_dir,
-      framework_dexpreopt_tools=framework_dexpreopt_tools,
-      framework_dexpreopt_config=framework_dexpreopt_config,
-      vendor_dexpreopt_config=vendor_dexpreopt_config)
+  # Write the now-finalized OPTIONS.merged_misc_info.
+  write_sorted_data(
+      data=OPTIONS.merged_misc_info,
+      path=os.path.join(merged_meta_dir, 'misc_info.txt'))
 
 
-def process_dexopt(temp_dir, framework_meta, vendor_meta,
-                   output_target_files_temp_dir, framework_dexpreopt_tools,
-                   framework_dexpreopt_config, vendor_dexpreopt_config):
+def process_dexopt(temp_dir, output_target_files_dir):
   """If needed, generates dexopt files for vendor apps.
 
   Args:
     temp_dir: Location containing an 'output' directory where target files have
       been extracted, e.g. <temp_dir>/output/SYSTEM, <temp_dir>/output/IMAGES,
       etc.
-    framework_meta: The name of a directory containing the special items
-      extracted from the framework target files package.
-    vendor_meta: The name of a directory containing the special items extracted
-      from the vendor target files package.
-    output_target_files_temp_dir: The name of a directory that will be used to
-      create the output target files package after all the special cases are
-      processed.
-    framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
-    framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
-    vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
+    output_target_files_dir: The name of a directory that will be used to create
+      the output target files package after all the special cases are processed.
   """
   # Load vendor and framework META/misc_info.txt.
-  misc_info_path = ['META', 'misc_info.txt']
-  vendor_misc_info_dict = common.LoadDictionaryFromFile(
-      os.path.join(vendor_meta, *misc_info_path))
-
-  if (vendor_misc_info_dict.get('building_with_vsdk') != 'true' or
-      framework_dexpreopt_tools is None or framework_dexpreopt_config is None or
-      vendor_dexpreopt_config is None):
+  if (OPTIONS.vendor_misc_info.get('building_with_vsdk') != 'true' or
+      OPTIONS.framework_dexpreopt_tools is None or
+      OPTIONS.framework_dexpreopt_config is None or
+      OPTIONS.vendor_dexpreopt_config is None):
     return
 
   logger.info('applying dexpreopt')
@@ -984,23 +802,23 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
                                                         'vendor_config')
 
   extract_items(
-      target_files=OPTIONS.framework_dexpreopt_tools,
-      target_files_temp_dir=dexpreopt_tools_files_temp_dir,
+      input_zip=OPTIONS.framework_dexpreopt_tools,
+      output_dir=dexpreopt_tools_files_temp_dir,
       extract_item_list=('*',))
   extract_items(
-      target_files=OPTIONS.framework_dexpreopt_config,
-      target_files_temp_dir=dexpreopt_framework_config_files_temp_dir,
+      input_zip=OPTIONS.framework_dexpreopt_config,
+      output_dir=dexpreopt_framework_config_files_temp_dir,
       extract_item_list=('*',))
   extract_items(
-      target_files=OPTIONS.vendor_dexpreopt_config,
-      target_files_temp_dir=dexpreopt_vendor_config_files_temp_dir,
+      input_zip=OPTIONS.vendor_dexpreopt_config,
+      output_dir=dexpreopt_vendor_config_files_temp_dir,
       extract_item_list=('*',))
 
   os.symlink(
-      os.path.join(output_target_files_temp_dir, 'SYSTEM'),
+      os.path.join(output_target_files_dir, 'SYSTEM'),
       os.path.join(temp_dir, 'system'))
   os.symlink(
-      os.path.join(output_target_files_temp_dir, 'VENDOR'),
+      os.path.join(output_target_files_dir, 'VENDOR'),
       os.path.join(temp_dir, 'vendor'))
 
   # The directory structure for flatteded APEXes is:
@@ -1024,12 +842,10 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
   #         com.android.appsearch.apex
   #         com.android.art.apex
   #         ...
-  apex_root = os.path.join(output_target_files_temp_dir, 'SYSTEM', 'apex')
-  framework_misc_info_dict = common.LoadDictionaryFromFile(
-      os.path.join(framework_meta, *misc_info_path))
+  apex_root = os.path.join(output_target_files_dir, 'SYSTEM', 'apex')
 
   # Check for flattended versus updatable APEX.
-  if framework_misc_info_dict.get('target_flatten_apex') == 'false':
+  if OPTIONS.framework_misc_info.get('target_flatten_apex') == 'false':
     # Extract APEX.
     logging.info('extracting APEX')
 
@@ -1208,42 +1024,14 @@ def process_dexopt(temp_dir, framework_meta, vendor_meta,
     # TODO(b/188179859): Rebuilding a vendor image in GRF mode (e.g., T(framework)
     #                    and S(vendor) may require logic similar to that in
     #                    rebuild_image_with_sepolicy.
-    vendor_img = os.path.join(output_target_files_temp_dir, 'IMAGES',
-                              'vendor.img')
+    vendor_img = os.path.join(output_target_files_dir, 'IMAGES', 'vendor.img')
     if os.path.exists(vendor_img):
       logging.info('Deleting %s', vendor_img)
       os.remove(vendor_img)
 
 
-def create_merged_package(temp_dir, framework_target_files, framework_item_list,
-                          vendor_target_files, vendor_item_list,
-                          framework_misc_info_keys, framework_dexpreopt_tools,
-                          framework_dexpreopt_config, vendor_dexpreopt_config):
+def create_merged_package(temp_dir):
   """Merges two target files packages into one target files structure.
-
-  Args:
-    temp_dir: The name of a directory we use when we extract items from the
-      input target files packages, and also a scratch directory that we use for
-      temporary files.
-    framework_target_files: The name of the zip archive containing the framework
-      partial target files package.
-    framework_item_list: The list of items to extract from the partial framework
-      target files package as is, meaning these items will land in the output
-      target files package exactly as they appear in the input partial framework
-      target files package.
-    vendor_target_files: The name of the zip archive containing the vendor
-      partial target files package.
-    vendor_item_list: The list of items to extract from the partial vendor
-      target files package as is, meaning these items will land in the output
-      target files package exactly as they appear in the input partial vendor
-      target files package.
-    framework_misc_info_keys: A list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys should come from the
-      vendor instance.
-  Args used if dexpreopt is applied:
-    framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
-    framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
-    vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
 
   Returns:
     Path to merged package under temp directory.
@@ -1254,53 +1042,27 @@ def create_merged_package(temp_dir, framework_target_files, framework_item_list,
 
   output_target_files_temp_dir = os.path.join(temp_dir, 'output')
   extract_items(
-      target_files=framework_target_files,
-      target_files_temp_dir=output_target_files_temp_dir,
-      extract_item_list=framework_item_list)
+      input_zip=OPTIONS.framework_target_files,
+      output_dir=output_target_files_temp_dir,
+      extract_item_list=OPTIONS.framework_item_list)
   extract_items(
-      target_files=vendor_target_files,
-      target_files_temp_dir=output_target_files_temp_dir,
-      extract_item_list=vendor_item_list)
+      input_zip=OPTIONS.vendor_target_files,
+      output_dir=output_target_files_temp_dir,
+      extract_item_list=OPTIONS.vendor_item_list)
 
   # Perform special case processing on META/* items.
   # After this function completes successfully, all the files we need to create
   # the output target files package are in place.
-  framework_meta = os.path.join(temp_dir, 'framework_meta')
-  vendor_meta = os.path.join(temp_dir, 'vendor_meta')
-  extract_items(
-      target_files=framework_target_files,
-      target_files_temp_dir=framework_meta,
-      extract_item_list=('META/*',))
-  extract_items(
-      target_files=vendor_target_files,
-      target_files_temp_dir=vendor_meta,
-      extract_item_list=('META/*',))
-  process_special_cases(
-      temp_dir=temp_dir,
-      framework_meta=framework_meta,
-      vendor_meta=vendor_meta,
-      output_target_files_temp_dir=output_target_files_temp_dir,
-      framework_misc_info_keys=framework_misc_info_keys,
-      framework_partition_set=item_list_to_partition_set(framework_item_list),
-      vendor_partition_set=item_list_to_partition_set(vendor_item_list),
-      framework_dexpreopt_tools=framework_dexpreopt_tools,
-      framework_dexpreopt_config=framework_dexpreopt_config,
-      vendor_dexpreopt_config=vendor_dexpreopt_config)
+  merge_meta_files(temp_dir=temp_dir, merged_dir=output_target_files_temp_dir)
+
+  process_dexopt(
+      temp_dir=temp_dir, output_target_files_dir=output_target_files_temp_dir)
 
   return output_target_files_temp_dir
 
 
-def generate_images(target_files_dir, rebuild_recovery):
-  """Generate images from target files.
-
-  This function takes merged output temporary directory and create images
-  from it.
-
-  Args:
-    target_files_dir: Path to merged temp directory.
-    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
-      devices and write it to the vendor image.
-  """
+def generate_missing_images(target_files_dir):
+  """Generate any missing images from target files."""
 
   # Regenerate IMAGES in the target directory.
 
@@ -1308,29 +1070,17 @@ def generate_images(target_files_dir, rebuild_recovery):
       '--verbose',
       '--add_missing',
   ]
-  if rebuild_recovery:
+  if OPTIONS.rebuild_recovery:
     add_img_args.append('--rebuild_recovery')
   add_img_args.append(target_files_dir)
 
   add_img_to_target_files.main(add_img_args)
 
 
-def rebuild_image_with_sepolicy(target_files_dir,
-                                rebuild_recovery,
-                                vendor_otatools=None,
-                                vendor_target_files=None):
+def rebuild_image_with_sepolicy(target_files_dir):
   """Rebuilds odm.img or vendor.img to include merged sepolicy files.
 
   If odm is present then odm is preferred -- otherwise vendor is used.
-
-  Args:
-    target_files_dir: Path to the extracted merged target-files package.
-    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
-      devices and use it when regenerating the vendor images.
-    vendor_otatools: If not None, path to an otatools.zip from the vendor build
-      that is used when recompiling the image.
-    vendor_target_files: Expected if vendor_otatools is not None. Path to the
-      vendor target-files zip.
   """
   partition = 'vendor'
   if os.path.exists(os.path.join(target_files_dir, 'ODM')) or os.path.exists(
@@ -1365,74 +1115,74 @@ def rebuild_image_with_sepolicy(target_files_dir,
   copy_selinux_file('PRODUCT/etc/selinux/product_sepolicy_and_mapping.sha256',
                     'precompiled_sepolicy.product_sepolicy_and_mapping.sha256')
 
-  if not vendor_otatools:
+  if not OPTIONS.vendor_otatools:
     # Remove the partition from the merged target-files archive. It will be
-    # rebuilt later automatically by generate_images().
+    # rebuilt later automatically by generate_missing_images().
     os.remove(os.path.join(target_files_dir, 'IMAGES', partition_img))
-  else:
-    # TODO(b/192253131): Remove the need for vendor_otatools by fixing
-    # backwards-compatibility issues when compiling images on R from S+.
-    if not vendor_target_files:
-      raise ValueError(
-          'Expected vendor_target_files if vendor_otatools is not None.')
-    logger.info(
-        '%s recompilation will be performed using the vendor otatools.zip',
-        partition_img)
+    return
 
-    # Unzip the vendor build's otatools.zip and target-files archive.
-    vendor_otatools_dir = common.MakeTempDir(
-        prefix='merge_target_files_vendor_otatools_')
-    vendor_target_files_dir = common.MakeTempDir(
-        prefix='merge_target_files_vendor_target_files_')
-    common.UnzipToDir(vendor_otatools, vendor_otatools_dir)
-    common.UnzipToDir(vendor_target_files, vendor_target_files_dir)
+  # TODO(b/192253131): Remove the need for vendor_otatools by fixing
+  # backwards-compatibility issues when compiling images across releases.
+  if not OPTIONS.vendor_target_files:
+    raise ValueError(
+        'Expected vendor_target_files if vendor_otatools is not None.')
+  logger.info(
+      '%s recompilation will be performed using the vendor otatools.zip',
+      partition_img)
 
-    # Copy the partition contents from the merged target-files archive to the
-    # vendor target-files archive.
-    shutil.rmtree(os.path.join(vendor_target_files_dir, partition.upper()))
-    shutil.copytree(
-        os.path.join(target_files_dir, partition.upper()),
-        os.path.join(vendor_target_files_dir, partition.upper()),
-        symlinks=True)
+  # Unzip the vendor build's otatools.zip and target-files archive.
+  vendor_otatools_dir = common.MakeTempDir(
+      prefix='merge_target_files_vendor_otatools_')
+  vendor_target_files_dir = common.MakeTempDir(
+      prefix='merge_target_files_vendor_target_files_')
+  common.UnzipToDir(OPTIONS.vendor_otatools, vendor_otatools_dir)
+  common.UnzipToDir(OPTIONS.vendor_target_files, vendor_target_files_dir)
 
-    # Delete then rebuild the partition.
-    os.remove(os.path.join(vendor_target_files_dir, 'IMAGES', partition_img))
-    rebuild_partition_command = [
-        os.path.join(vendor_otatools_dir, 'bin', 'add_img_to_target_files'),
-        '--verbose',
-        '--add_missing',
-    ]
-    if rebuild_recovery:
-      rebuild_partition_command.append('--rebuild_recovery')
-    rebuild_partition_command.append(vendor_target_files_dir)
-    logger.info('Recompiling %s: %s', partition_img,
-                ' '.join(rebuild_partition_command))
-    common.RunAndCheckOutput(rebuild_partition_command, verbose=True)
+  # Copy the partition contents from the merged target-files archive to the
+  # vendor target-files archive.
+  shutil.rmtree(os.path.join(vendor_target_files_dir, partition.upper()))
+  shutil.copytree(
+      os.path.join(target_files_dir, partition.upper()),
+      os.path.join(vendor_target_files_dir, partition.upper()),
+      symlinks=True)
 
-    # Move the newly-created image to the merged target files dir.
-    if not os.path.exists(os.path.join(target_files_dir, 'IMAGES')):
-      os.makedirs(os.path.join(target_files_dir, 'IMAGES'))
-    shutil.move(
-        os.path.join(vendor_target_files_dir, 'IMAGES', partition_img),
-        os.path.join(target_files_dir, 'IMAGES', partition_img))
-    shutil.move(
-        os.path.join(vendor_target_files_dir, 'IMAGES', partition_map),
-        os.path.join(target_files_dir, 'IMAGES', partition_map))
+  # Delete then rebuild the partition.
+  os.remove(os.path.join(vendor_target_files_dir, 'IMAGES', partition_img))
+  rebuild_partition_command = [
+      os.path.join(vendor_otatools_dir, 'bin', 'add_img_to_target_files'),
+      '--verbose',
+      '--add_missing',
+  ]
+  if OPTIONS.rebuild_recovery:
+    rebuild_partition_command.append('--rebuild_recovery')
+  rebuild_partition_command.append(vendor_target_files_dir)
+  logger.info('Recompiling %s: %s', partition_img,
+              ' '.join(rebuild_partition_command))
+  common.RunAndCheckOutput(rebuild_partition_command, verbose=True)
 
-    def copy_recovery_file(filename):
-      for subdir in ('VENDOR', 'SYSTEM/vendor'):
-        source = os.path.join(vendor_target_files_dir, subdir, filename)
-        if os.path.exists(source):
-          dest = os.path.join(target_files_dir, subdir, filename)
-          shutil.copy(source, dest)
-          return
-      logger.info('Skipping copy_recovery_file for %s, file not found',
-                  filename)
+  # Move the newly-created image to the merged target files dir.
+  if not os.path.exists(os.path.join(target_files_dir, 'IMAGES')):
+    os.makedirs(os.path.join(target_files_dir, 'IMAGES'))
+  shutil.move(
+      os.path.join(vendor_target_files_dir, 'IMAGES', partition_img),
+      os.path.join(target_files_dir, 'IMAGES', partition_img))
+  shutil.move(
+      os.path.join(vendor_target_files_dir, 'IMAGES', partition_map),
+      os.path.join(target_files_dir, 'IMAGES', partition_map))
 
-    if rebuild_recovery:
-      copy_recovery_file('etc/recovery.img')
-      copy_recovery_file('bin/install-recovery.sh')
-      copy_recovery_file('recovery-from-boot.p')
+  def copy_recovery_file(filename):
+    for subdir in ('VENDOR', 'SYSTEM/vendor'):
+      source = os.path.join(vendor_target_files_dir, subdir, filename)
+      if os.path.exists(source):
+        dest = os.path.join(target_files_dir, subdir, filename)
+        shutil.copy(source, dest)
+        return
+    logger.info('Skipping copy_recovery_file for %s, file not found', filename)
+
+  if OPTIONS.rebuild_recovery:
+    copy_recovery_file('etc/recovery.img')
+    copy_recovery_file('bin/install-recovery.sh')
+    copy_recovery_file('recovery-from-boot.p')
 
 
 def generate_super_empty_image(target_dir, output_super_empty):
@@ -1467,16 +1217,15 @@ def generate_super_empty_image(target_dir, output_super_empty):
       shutil.copyfile(super_empty_img, output_super_empty)
 
 
-def create_target_files_archive(output_file, source_dir, temp_dir):
-  """Creates archive from target package.
+def create_target_files_archive(output_zip, source_dir, temp_dir):
+  """Creates a target_files zip archive from the input source dir.
 
   Args:
-    output_file: The name of the zip archive target files package.
+    output_zip: The name of the zip archive target files package.
     source_dir: The target directory contains package to be archived.
     temp_dir: Path to temporary directory for any intermediate files.
   """
   output_target_files_list = os.path.join(temp_dir, 'output.list')
-  output_zip = os.path.abspath(output_file)
   output_target_files_meta_dir = os.path.join(source_dir, 'META')
 
   def files_from_path(target_path, extra_args=None):
@@ -1488,6 +1237,9 @@ def create_target_files_archive(output_file, source_dir, temp_dir):
                                     stdin=find_process.stdout,
                                     verbose=False)
 
+  # META content appears first in the zip. This is done by the
+  # standard build system for optimized extraction of those files,
+  # so we do the same step for merged target_files.zips here too.
   meta_content = files_from_path(output_target_files_meta_dir)
   other_content = files_from_path(
       source_dir,
@@ -1501,30 +1253,22 @@ def create_target_files_archive(output_file, source_dir, temp_dir):
       'soong_zip',
       '-d',
       '-o',
-      output_zip,
+      os.path.abspath(output_zip),
       '-C',
       source_dir,
       '-r',
       output_target_files_list,
   ]
 
-  logger.info('creating %s', output_file)
+  logger.info('creating %s', output_zip)
   common.RunAndCheckOutput(command, verbose=True)
-  logger.info('finished creating %s', output_file)
-
-  return output_zip
+  logger.info('finished creating %s', output_zip)
 
 
-def merge_target_files(temp_dir, framework_target_files, framework_item_list,
-                       framework_misc_info_keys, vendor_target_files,
-                       vendor_item_list, output_target_files, output_dir,
-                       output_item_list, output_ota, output_img,
-                       output_super_empty, rebuild_recovery, vendor_otatools,
-                       rebuild_sepolicy, framework_dexpreopt_tools,
-                       framework_dexpreopt_config, vendor_dexpreopt_config):
+def merge_target_files(temp_dir):
   """Merges two target files packages together.
 
-  This function takes framework and vendor target files packages as input,
+  This function uses framework and vendor target files packages as input,
   performs various file extractions, special case processing, and finally
   creates a merged zip archive as output.
 
@@ -1532,48 +1276,13 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
     temp_dir: The name of a directory we use when we extract items from the
       input target files packages, and also a scratch directory that we use for
       temporary files.
-    framework_target_files: The name of the zip archive containing the framework
-      partial target files package.
-    framework_item_list: The list of items to extract from the partial framework
-      target files package as is, meaning these items will land in the output
-      target files package exactly as they appear in the input partial framework
-      target files package.
-    framework_misc_info_keys: A list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys should come from the
-      vendor instance.
-    vendor_target_files: The name of the zip archive containing the vendor
-      partial target files package.
-    vendor_item_list: The list of items to extract from the partial vendor
-      target files package as is, meaning these items will land in the output
-      target files package exactly as they appear in the input partial vendor
-      target files package.
-    output_target_files: The name of the output zip archive target files package
-      created by merging framework and vendor.
-    output_dir: The destination directory for saving merged files.
-    output_item_list: The list of items to copy into the output_dir.
-    output_ota: The name of the output zip archive ota package.
-    output_img: The name of the output zip archive img package.
-    output_super_empty: If provided, creates a super_empty.img file from the
-      merged target files package and saves it at this path.
-    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
-      devices and use it when regenerating the vendor images.
-    vendor_otatools: Path to an otatools zip used for recompiling vendor images.
-    rebuild_sepolicy: If true, rebuild odm.img (if target uses ODM) or
-      vendor.img using a merged precompiled_sepolicy file.
-  Args used if dexpreopt is applied:
-    framework_dexpreopt_tools: Location of dexpreopt_tools.zip.
-    framework_dexpreopt_config: Location of framework's dexpreopt_config.zip.
-    vendor_dexpreopt_config: Location of vendor's dexpreopt_config.zip.
   """
 
   logger.info('starting: merge framework %s and vendor %s into output %s',
-              framework_target_files, vendor_target_files, output_target_files)
+              OPTIONS.framework_target_files, OPTIONS.vendor_target_files,
+              OPTIONS.output_target_files)
 
-  output_target_files_temp_dir = create_merged_package(
-      temp_dir, framework_target_files, framework_item_list,
-      vendor_target_files, vendor_item_list, framework_misc_info_keys,
-      framework_dexpreopt_tools, framework_dexpreopt_config,
-      vendor_dexpreopt_config)
+  output_target_files_temp_dir = create_merged_package(temp_dir)
 
   if not check_target_files_vintf.CheckVintf(output_target_files_temp_dir):
     raise RuntimeError('Incompatible VINTF metadata')
@@ -1594,10 +1303,9 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
     f.write(violation)
 
     # Check for violations across the input builds' partition groups.
-    framework_partitions = item_list_to_partition_set(framework_item_list)
-    vendor_partitions = item_list_to_partition_set(vendor_item_list)
     shareduid_errors = common.SharedUidPartitionViolations(
-        json.loads(violation), [framework_partitions, vendor_partitions])
+        json.loads(violation),
+        [OPTIONS.framework_partition_set, OPTIONS.vendor_partition_set])
     if shareduid_errors:
       for error in shareduid_errors:
         logger.error(error)
@@ -1622,42 +1330,40 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   logger.info('Compiling split sepolicy: %s', ' '.join(split_sepolicy_cmd))
   common.RunAndCheckOutput(split_sepolicy_cmd)
   # Include the compiled policy in an image if requested.
-  if rebuild_sepolicy:
-    rebuild_image_with_sepolicy(output_target_files_temp_dir, rebuild_recovery,
-                                vendor_otatools, vendor_target_files)
+  if OPTIONS.rebuild_sepolicy:
+    rebuild_image_with_sepolicy(output_target_files_temp_dir)
 
   # Run validation checks on the pre-installed APEX files.
   validate_merged_apex_info(output_target_files_temp_dir, partition_map.keys())
 
-  generate_images(output_target_files_temp_dir, rebuild_recovery)
+  generate_missing_images(output_target_files_temp_dir)
 
-  generate_super_empty_image(output_target_files_temp_dir, output_super_empty)
+  generate_super_empty_image(output_target_files_temp_dir,
+                             OPTIONS.output_super_empty)
 
   # Finally, create the output target files zip archive and/or copy the
   # output items to the output target files directory.
 
-  if output_dir:
-    copy_items(output_target_files_temp_dir, output_dir, output_item_list)
+  if OPTIONS.output_dir:
+    copy_items(output_target_files_temp_dir, OPTIONS.output_dir,
+               OPTIONS.output_item_list)
 
-  if not output_target_files:
+  if not OPTIONS.output_target_files:
     return
 
-  # Create the merged META/care_map.pb if A/B update
-  if 'ab_update' in framework_misc_info_keys:
-    generate_care_map(partition_map.keys(), output_target_files_temp_dir)
-
-  output_zip = create_target_files_archive(output_target_files,
-                                           output_target_files_temp_dir,
-                                           temp_dir)
+  create_target_files_archive(OPTIONS.output_target_files,
+                              output_target_files_temp_dir, temp_dir)
 
   # Create the IMG package from the merged target files package.
-  if output_img:
-    img_from_target_files.main([output_zip, output_img])
+  if OPTIONS.output_img:
+    img_from_target_files.main(
+        [OPTIONS.output_target_files, OPTIONS.output_img])
 
   # Create the OTA package from the merged target files package.
 
-  if output_ota:
-    ota_from_target_files.main([output_zip, output_ota])
+  if OPTIONS.output_ota:
+    ota_from_target_files.main(
+        [OPTIONS.output_target_files, OPTIONS.output_ota])
 
 
 def call_func_with_temp_dir(func, keep_tmp):
@@ -1799,53 +1505,36 @@ def main():
     sys.exit(1)
 
   if OPTIONS.framework_item_list:
-    framework_item_list = common.LoadListFromFile(OPTIONS.framework_item_list)
+    OPTIONS.framework_item_list = common.LoadListFromFile(
+        OPTIONS.framework_item_list)
   else:
-    framework_item_list = DEFAULT_FRAMEWORK_ITEM_LIST
+    OPTIONS.framework_item_list = DEFAULT_FRAMEWORK_ITEM_LIST
+  OPTIONS.framework_partition_set = item_list_to_partition_set(
+      OPTIONS.framework_item_list)
 
   if OPTIONS.framework_misc_info_keys:
-    framework_misc_info_keys = common.LoadListFromFile(
+    OPTIONS.framework_misc_info_keys = common.LoadListFromFile(
         OPTIONS.framework_misc_info_keys)
   else:
-    framework_misc_info_keys = DEFAULT_FRAMEWORK_MISC_INFO_KEYS
+    OPTIONS.framework_misc_info_keys = DEFAULT_FRAMEWORK_MISC_INFO_KEYS
 
   if OPTIONS.vendor_item_list:
-    vendor_item_list = common.LoadListFromFile(OPTIONS.vendor_item_list)
+    OPTIONS.vendor_item_list = common.LoadListFromFile(OPTIONS.vendor_item_list)
   else:
-    vendor_item_list = DEFAULT_VENDOR_ITEM_LIST
+    OPTIONS.vendor_item_list = DEFAULT_VENDOR_ITEM_LIST
+  OPTIONS.vendor_partition_set = item_list_to_partition_set(
+      OPTIONS.vendor_item_list)
 
   if OPTIONS.output_item_list:
-    output_item_list = common.LoadListFromFile(OPTIONS.output_item_list)
+    OPTIONS.output_item_list = common.LoadListFromFile(OPTIONS.output_item_list)
   else:
-    output_item_list = None
+    OPTIONS.output_item_list = None
 
-  if not validate_config_lists(
-      framework_item_list=framework_item_list,
-      framework_misc_info_keys=framework_misc_info_keys,
-      vendor_item_list=vendor_item_list):
+  if not validate_config_lists():
     sys.exit(1)
 
-  call_func_with_temp_dir(
-      lambda temp_dir: merge_target_files(
-          temp_dir=temp_dir,
-          framework_target_files=OPTIONS.framework_target_files,
-          framework_item_list=framework_item_list,
-          framework_misc_info_keys=framework_misc_info_keys,
-          vendor_target_files=OPTIONS.vendor_target_files,
-          vendor_item_list=vendor_item_list,
-          output_target_files=OPTIONS.output_target_files,
-          output_dir=OPTIONS.output_dir,
-          output_item_list=output_item_list,
-          output_ota=OPTIONS.output_ota,
-          output_img=OPTIONS.output_img,
-          output_super_empty=OPTIONS.output_super_empty,
-          rebuild_recovery=OPTIONS.rebuild_recovery,
-          vendor_otatools=OPTIONS.vendor_otatools,
-          rebuild_sepolicy=OPTIONS.rebuild_sepolicy,
-          framework_dexpreopt_tools=OPTIONS.framework_dexpreopt_tools,
-          framework_dexpreopt_config=OPTIONS.framework_dexpreopt_config,
-          vendor_dexpreopt_config=OPTIONS.vendor_dexpreopt_config),
-      OPTIONS.keep_tmp)
+  call_func_with_temp_dir(lambda temp_dir: merge_target_files(temp_dir),
+                          OPTIONS.keep_tmp)
 
 
 if __name__ == '__main__':
