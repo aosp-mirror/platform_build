@@ -268,18 +268,19 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   """
   build_command = []
   fs_type = prop_dict.get("fs_type", "")
-  run_e2fsck = False
+  run_fsck = None
   needs_projid = prop_dict.get("needs_projid", 0)
   needs_casefold = prop_dict.get("needs_casefold", 0)
   needs_compress = prop_dict.get("needs_compress", 0)
 
   disable_sparse = "disable_sparse" in prop_dict
+  manual_sparse = False
 
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
     if "extfs_sparse_flag" in prop_dict and not disable_sparse:
       build_command.append(prop_dict["extfs_sparse_flag"])
-      run_e2fsck = True
+      run_e2fsck = RunE2fsck
     build_command.extend([in_dir, out_file, fs_type,
                           prop_dict["mount_point"]])
     build_command.append(prop_dict["image_size"])
@@ -320,17 +321,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("erofs"):
-    build_command = ["mkerofsimage.sh"]
-    build_command.extend([in_dir, out_file])
-    if "erofs_sparse_flag" in prop_dict and not disable_sparse:
-      build_command.extend([prop_dict["erofs_sparse_flag"]])
-    build_command.extend(["-m", prop_dict["mount_point"]])
-    if target_out:
-      build_command.extend(["-d", target_out])
-    if fs_config:
-      build_command.extend(["-C", fs_config])
-    if "selinux_fc" in prop_dict:
-      build_command.extend(["-c", prop_dict["selinux_fc"]])
+    build_command = ["mkfs.erofs"]
+
     compressor = None
     if "erofs_default_compressor" in prop_dict:
       compressor = prop_dict["erofs_default_compressor"]
@@ -338,16 +330,30 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       compressor = prop_dict["erofs_compressor"]
     if compressor:
       build_command.extend(["-z", compressor])
+
+    build_command.extend(["--mount-point", prop_dict["mount_point"]])
+    if target_out:
+      build_command.extend(["--product-out", target_out])
+    if fs_config:
+      build_command.extend(["--fs-config-file", fs_config])
+    if "selinux_fc" in prop_dict:
+      build_command.extend(["--file-contexts", prop_dict["selinux_fc"]])
     if "timestamp" in prop_dict:
       build_command.extend(["-T", str(prop_dict["timestamp"])])
     if "uuid" in prop_dict:
       build_command.extend(["-U", prop_dict["uuid"]])
     if "block_list" in prop_dict:
-      build_command.extend(["-B", prop_dict["block_list"]])
+      build_command.extend(["--block-list-file", prop_dict["block_list"]])
     if "erofs_pcluster_size" in prop_dict:
-      build_command.extend(["-P", prop_dict["erofs_pcluster_size"]])
+      build_command.extend(["-C", prop_dict["erofs_pcluster_size"]])
     if "erofs_share_dup_blocks" in prop_dict:
-      build_command.extend(["-k", "4096"])
+      build_command.extend(["--chunksize", "4096"])
+
+    build_command.extend([out_file, in_dir])
+    if "erofs_sparse_flag" in prop_dict and not disable_sparse:
+      manual_sparse = True
+
+    run_fsck = RunErofsFsck
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
@@ -436,17 +442,37 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
               int(prop_dict["partition_size"]) // BYTES_IN_MB))
     raise
 
-  if run_e2fsck and prop_dict.get("skip_fsck") != "true":
-    unsparse_image = UnsparseImage(out_file, replace=False)
+  if run_fsck and prop_dict.get("skip_fsck") != "true":
+    run_fsck(out_file)
 
-    # Run e2fsck on the inflated image file
-    e2fsck_command = ["e2fsck", "-f", "-n", unsparse_image]
-    try:
-      common.RunAndCheckOutput(e2fsck_command)
-    finally:
-      os.remove(unsparse_image)
+  if manual_sparse:
+    temp_file = out_file + ".sparse"
+    img2simg_argv = ["img2simg", out_file, temp_file]
+    common.RunAndCheckOutput(img2simg_argv)
+    os.rename(temp_file, out_file)
 
   return mkfs_output
+
+
+def RunE2fsck(out_file):
+  unsparse_image = UnsparseImage(out_file, replace=False)
+
+  # Run e2fsck on the inflated image file
+  e2fsck_command = ["e2fsck", "-f", "-n", unsparse_image]
+  try:
+    common.RunAndCheckOutput(e2fsck_command)
+  finally:
+    os.remove(unsparse_image)
+
+
+def RunErofsFsck(out_file):
+  fsck_command = ["fsck.erofs", "--extract", out_file]
+  try:
+    common.RunAndCheckOutput(fsck_command)
+  except:
+    print("Check failed for EROFS image {}".format(out_file))
+    raise
+
 
 def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   """Builds an image for the files under in_dir and writes it to out_file.
