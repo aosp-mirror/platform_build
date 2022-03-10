@@ -729,6 +729,8 @@ $(event_log_tags_file): $(event_log_tags_src) $(all_event_log_tags_file) $(MERGE
 	$(hide) mkdir -p $(dir $@)
 	$(hide) $(MERGETAGS) -o $@ -m $(PRIVATE_MERGED_FILE) $(PRIVATE_SRC_FILES)
 
+$(eval $(call declare-0p-target,$(event_log_tags_file)))
+
 event-log-tags: $(event_log_tags_file)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
@@ -1677,6 +1679,8 @@ INTERNAL_USERIMAGES_DEPS := \
     $(MKE2FS_CONF) \
     $(MKEXTUSERIMG)
 
+$(call declare-1p-target,$(MKE2FS_CONF),system/extras)
+
 ifeq ($(TARGET_USERIMAGES_USE_F2FS),true)
 INTERNAL_USERIMAGES_DEPS += $(MKF2FSUSERIMG)
 endif
@@ -1691,7 +1695,7 @@ ifneq ($(filter \
     $(BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE) \
     $(BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE) \
   ,erofs),)
-INTERNAL_USERIMAGES_DEPS += $(MKEROFSUSERIMG)
+INTERNAL_USERIMAGES_DEPS += $(MKEROFS)
 BOARD_EROFS_COMPRESSOR ?= "lz4hc,9"
 endif
 
@@ -2669,6 +2673,8 @@ endif
 	$(hide) $(foreach line,$(ADDITIONAL_TEST_HARNESS_PROPERTIES), \
 	          echo "$(line)" >> $@;)
 
+$(call declare-1p-target,$(INTERNAL_TEST_HARNESS_RAMDISK_ADB_DEBUG_PROP_TARGET))
+
 INTERNAL_TEST_HARNESS_RAMDISK_FILES := $(filter $(TARGET_TEST_HARNESS_RAMDISK_OUT)/%, \
     $(INTERNAL_TEST_HARNESS_RAMDISK_ADB_DEBUG_PROP_TARGET) \
     $(ALL_GENERATED_SOURCES) \
@@ -2926,6 +2932,9 @@ $(SYSTEM_LINKER_CONFIG) : $(INTERNAL_SYSTEMIMAGE_FILES) $(LINKER_CONFIG_PATH_sys
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $(LINKER_CONFIG_PATH_system_linker_config)\
 	  --output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
 
+$(call declare-1p-target,$(SYSTEM_LINKER_CONFIG),)
+$(call declare-license-deps,$(SYSTEM_LINKER_CONFIG),$(INTERNAL_SYSTEMIMAGE_FILES) $(LINKER_CONFIG_PATH_system_linker_config))
+
 FULL_SYSTEMIMAGE_DEPS += $(SYSTEM_LINKER_CONFIG)
 
 # installed file list
@@ -3179,6 +3188,8 @@ INSTALLED_SYSTEM_OTHER_ODEX_MARKER := $(TARGET_OUT_SYSTEM_OTHER)/system-other-od
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_SYSTEM_OTHER_ODEX_MARKER)
 $(INSTALLED_SYSTEM_OTHER_ODEX_MARKER):
 	$(hide) touch $@
+
+$(call declare-0p-target,$(INSTALLED_SYSTEM_OTHER_ODEX_MARKER))
 endif
 
 INTERNAL_SYSTEMOTHERIMAGE_FILES := \
@@ -4657,7 +4668,6 @@ INTERNAL_OTATOOLS_MODULES := \
   mke2fs \
   mke2fs.conf \
   mkfs.erofs \
-  mkerofsimage.sh \
   mkf2fsuserimg.sh \
   mksquashfs \
   mksquashfsimage.sh \
