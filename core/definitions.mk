@@ -903,6 +903,18 @@ reportallnoticelibrarynames: $(_all)
 endef
 
 ###########################################################
+# Declares the rule to build all license metadata.
+###########################################################
+define build-all-license-metadata-rule
+$(strip $(eval _all := $(call all-license-metadata)))
+
+.PHONY: alllicensemetadata
+alllicensemetadata: $(_all)
+	@echo Building all $(words $(_all)) license metadata files
+endef
+
+
+###########################################################
 ## Declares a license metadata build rule for ALL_MODULES
 ###########################################################
 define build-license-metadata
@@ -917,7 +929,8 @@ $(strip \
   $(foreach t,$(sort $(ALL_NON_MODULES)),$(eval $(call non-module-license-metadata-rule,$(t)))) \
   $(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m)))) \
   $(eval $(call report-missing-licenses-rule)) \
-  $(eval $(call report-all-notice-library-names-rule)))
+  $(eval $(call report-all-notice-library-names-rule)) \
+  $(eval $(call build-all-license-metadata-rule)))
 endef
 
 ###########################################################
@@ -3061,6 +3074,8 @@ endef
 # $(3): full path to destination
 define symlink-file
 $(eval $(_symlink-file))
+$(eval $(call declare-license-metadata,$(3),,,,,,))
+$(eval $(call declare-license-deps,$(3),$(1)))
 endef
 
 define _symlink-file
