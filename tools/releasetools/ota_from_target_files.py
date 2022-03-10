@@ -543,8 +543,7 @@ def _LoadOemDicts(oem_source):
 
   oem_dicts = []
   for oem_file in oem_source:
-    with open(oem_file) as fp:
-      oem_dicts.append(common.LoadDictionaryFromLines(fp.readlines()))
+    oem_dicts.append(common.LoadDictionaryFromFile(oem_file))
   return oem_dicts
 
 
@@ -1475,7 +1474,7 @@ def main(argv):
                                  "enable_vabc_xor=",
                                  "force_minor_version=",
                                  "compressor_types=",
-                                 "enable_zucchin=",
+                                 "enable_zucchini=",
                                  "enable_lz4diff=",
                                  "vabc_compression_param=",
                              ], extra_option_handler=option_handler)

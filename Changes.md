@@ -26,6 +26,7 @@ genrule: {
     cmd: "cp $(in) $(gendir)",
     ...
 }
+```
 
 `BUILD_BROKEN_INPUT_DIR_MODULES` can be used to allowlist specific directories
 with genrules that have input directories.
