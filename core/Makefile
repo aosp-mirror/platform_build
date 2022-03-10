@@ -782,6 +782,8 @@ $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_U
 	$(FILESLIST) $(TARGET_ROOT_OUT) > $(@:.txt=.json)
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
 
+$(call declare-0p-target,$(INSTALLED_FILES_FILE_ROOT))
+
 ifeq ($(HOST_OS),linux)
 $(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
 endif
