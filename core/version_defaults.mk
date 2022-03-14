@@ -73,7 +73,7 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 31
+  PLATFORM_SDK_VERSION := 32
 endif
 .KATI_READONLY := PLATFORM_SDK_VERSION
 
@@ -98,7 +98,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2022-02-05
+    PLATFORM_SECURITY_PATCH := 2022-03-05
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH
 
