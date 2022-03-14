@@ -955,9 +955,15 @@ else ifndef BUILDING_VENDOR_BOOT_IMAGE # && BOARD_USES_GENERIC_KERNEL_IMAGE != t
   endif
 endif # BUILDING_VENDOR_BOOT_IMAGE == "" && BOARD_USES_GENERIC_KERNEL_IMAGE != true
 
-INTERNAL_MKBOOTIMG_VERSION_ARGS := \
+ifdef BOARD_GKI_SIGNING_KEY_PATH
+  # GKI boot images will not set system version & SPL value in the header.
+  # They can be set by the device manufacturer in the AVB properties instead.
+  INTERNAL_MKBOOTIMG_VERSION_ARGS :=
+else
+  INTERNAL_MKBOOTIMG_VERSION_ARGS := \
     --os_version $(PLATFORM_VERSION_LAST_STABLE) \
     --os_patch_level $(PLATFORM_SECURITY_PATCH)
+endif # BOARD_GKI_SIGNING_KEY_PATH
 
 # $(1): image target to certify
 # $(2): out certificate target
