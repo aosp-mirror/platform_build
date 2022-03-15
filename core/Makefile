@@ -4672,6 +4672,7 @@ INTERNAL_OTATOOLS_MODULES := \
   mksquashfs \
   mksquashfsimage.sh \
   mkuserimg_mke2fs \
+  ota_extractor \
   ota_from_target_files \
   repack_bootimg \
   secilc \
