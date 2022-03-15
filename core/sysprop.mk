@@ -501,10 +501,11 @@ $(eval $(call build-properties,\
 # ramdisk/boot/etc/build.prop
 #
 
+RAMDISK_PARTITION_NAME := $(if $(BUILDING_INIT_BOOT_IMAGE),init_boot,bootimage)
 RAMDISK_BUILD_PROP_REL_PATH := system/etc/ramdisk/build.prop
 INSTALLED_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RAMDISK_OUT)/$(RAMDISK_BUILD_PROP_REL_PATH)
 $(eval $(call build-properties,\
-    bootimage,\
+    $(RAMDISK_PARTITION_NAME),\
     $(INSTALLED_RAMDISK_BUILD_PROP_TARGET),\
     $(empty),\
     $(empty),\
