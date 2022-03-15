@@ -27,6 +27,7 @@ import shutil
 import subprocess
 
 import common
+import merge_utils
 
 logger = logging.getLogger(__name__)
 OPTIONS = common.OPTIONS
@@ -93,15 +94,15 @@ def MergeDexopt(temp_dir, output_target_files_dir):
   dexpreopt_vendor_config_files_temp_dir = os.path.join(temp_dir,
                                                         'vendor_config')
 
-  extract_items(
+  merge_utils.ExtractItems(
       input_zip=OPTIONS.framework_dexpreopt_tools,
       output_dir=dexpreopt_tools_files_temp_dir,
       extract_item_list=('*',))
-  extract_items(
+  merge_utils.ExtractItems(
       input_zip=OPTIONS.framework_dexpreopt_config,
       output_dir=dexpreopt_framework_config_files_temp_dir,
       extract_item_list=('*',))
-  extract_items(
+  merge_utils.ExtractItems(
       input_zip=OPTIONS.vendor_dexpreopt_config,
       output_dir=dexpreopt_vendor_config_files_temp_dir,
       extract_item_list=('*',))
