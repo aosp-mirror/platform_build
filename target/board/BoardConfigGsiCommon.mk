@@ -57,12 +57,6 @@ endif
 #     This flag is set by mainline but isn't desired for GSI
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR :=
 
-# Enable chain partition for boot, mainly for GKI images.
-BOARD_AVB_BOOT_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_BOOT_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_BOOT_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION := 2
-
 # GSI specific System Properties
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 TARGET_SYSTEM_EXT_PROP := build/make/target/board/gsi_system_ext.prop
