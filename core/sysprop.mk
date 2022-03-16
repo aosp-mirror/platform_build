@@ -128,6 +128,8 @@ endif
 	        cat $(file) >> $$@;\
 	    fi;)
 	$(hide) echo "# end of file" >> $$@
+
+$(call declare-0p-target,$(2))
 endef
 
 # -----------------------------------------------------------------
