@@ -165,10 +165,10 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         pcm(globals, handle)
 
         # Now we know everything about this PCM, record it in 'configs'.
-        children = __h_inherited_modules(handle)
+        children = handle.inherited_modules
         if _options.trace_modules:
             print("#   ", "    ".join(children.keys()))
-        configs[name] = (pcm, __h_cfg(handle), children.keys(), False)
+        configs[name] = (pcm, handle.cfg, children.keys(), False)
         pcm_count = pcm_count + 1
 
         if len(children) == 0:
@@ -235,7 +235,7 @@ def _board_configuration(board_config_init, input_variables_init):
     input_variables_init(globals_base, h_base)
     input_variables_init(globals, h)
     board_config_init(globals, h)
-    return (globals, _dictionary_difference(h[0], h_base[0]), globals_base)
+    return (globals, _dictionary_difference(h.cfg, h_base.cfg), globals_base)
 
 
 def _substitute_inherited(configs, pcm_name, cfg):
@@ -392,11 +392,11 @@ def __words(string_or_list):
 #   default value list (initially empty, modified by inheriting)
 def __h_new():
     """Constructs a handle which is passed to PCM."""
-    return (dict(), dict(), list())
-
-def __h_inherited_modules(handle):
-    """Returns PCM's inherited modules dict."""
-    return handle[1]
+    return struct(
+        cfg = dict(),
+        inherited_modules = dict(),
+        default_list_value = list()
+    )
 
 def __h_cfg(handle):
     """Returns PCM's product configuration attributes dict.
@@ -404,7 +404,7 @@ def __h_cfg(handle):
     This function is also exported as rblf.cfg, and every PCM
     calls it at the beginning.
     """
-    return handle[0]
+    return handle.cfg
 
 def _setdefault(handle, attr):
     """If attribute has not been set, assigns default value to it.
@@ -413,9 +413,9 @@ def _setdefault(handle, attr):
     Only list attributes are initialized this way. The default
     value is kept in the PCM's handle. Calling inherit() updates it.
     """
-    cfg = handle[0]
+    cfg = handle.cfg
     if cfg.get(attr) == None:
-        cfg[attr] = list(handle[2])
+        cfg[attr] = list(handle.default_list_value)
     return cfg[attr]
 
 def _inherit(handle, pcm_name, pcm):
@@ -424,12 +424,11 @@ def _inherit(handle, pcm_name, pcm):
     This function is exported as rblf.inherit, PCM calls it when
     a module is inherited.
     """
-    cfg, inherited, default_lv = handle
-    inherited[pcm_name] = pcm
-    default_lv.append(_indirect(pcm_name))
+    handle.inherited_modules[pcm_name] = pcm
+    handle.default_list_value.append(_indirect(pcm_name))
 
     # Add inherited module reference to all configuration values
-    for attr, val in cfg.items():
+    for attr, val in handle.cfg.items():
         if type(val) == "list":
             val.append(_indirect(pcm_name))
 
@@ -467,14 +466,21 @@ def _enforce_product_packages_exist(pkg_string_or_list):
     #TODO(asmundak)
     pass
 
+def _add_product_dex_preopt_module_config(handle, modules, config):
+    """Equivalent to add-product-dex-preopt-module-config from build/make/core/product.mk."""
+    modules = __words(modules)
+    config = _mkstrip(config).replace(" ", "|@SP@|")
+    _setdefault(handle, "PRODUCT_DEX_PREOPT_MODULE_CONFIGS")
+    handle.cfg["PRODUCT_DEX_PREOPT_MODULE_CONFIGS"] += [m + "=" + config for m in modules]
+
 def _file_wildcard_exists(file_pattern):
     """Return True if there are files matching given bash pattern."""
     return len(rblf_wildcard(file_pattern)) > 0
 
 def _find_and_copy(pattern, from_dir, to_dir):
     """Return a copy list for the files matching the pattern."""
-    return sorted(["%s/%s:%s/%s" % (
-        from_dir, f, to_dir, f) for f in rblf_find_files(from_dir, pattern, only_files=1)])
+    return sorted([("%s/%s:%s/%s" % (from_dir, f, to_dir, f))
+        .replace("//", "/") for f in rblf_find_files(from_dir, pattern, only_files=1)])
 
 def _findstring(needle, haystack):
     """Equivalent to GNU make's $(findstring)."""
@@ -719,6 +725,7 @@ rblf = struct(
     soong_config_set = _soong_config_set,
     soong_config_get = _soong_config_get,
     abspath = _abspath,
+    add_product_dex_preopt_module_config = _add_product_dex_preopt_module_config,
     addprefix = _addprefix,
     addsuffix = _addsuffix,
     board_platform_in = _board_platform_in,
