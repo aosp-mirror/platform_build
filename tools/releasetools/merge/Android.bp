@@ -19,14 +19,20 @@ package {
 filegroup {
     name: "releasetools_merge_sources",
     srcs: [
+        "merge_compatibility_checks.py",
+        "merge_dexopt.py",
+        "merge_meta.py",
         "merge_target_files.py",
+        "merge_utils.py",
     ],
 }
 
 filegroup {
     name: "releasetools_merge_tests",
     srcs: [
-        "test_merge_target_files.py",
+        "test_merge_compatibility_checks.py",
+        "test_merge_meta.py",
+        "test_merge_utils.py",
     ],
 }
 
