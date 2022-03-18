@@ -1,3 +1,5 @@
+ifeq ($(TARGET_BUILD_APPS),)
+
 .PHONY: systemlicense
 systemlicense: $(call corresponding-license-metadata, $(SYSTEM_NOTICE_DEPS)) reportmissinglicenses
 
@@ -169,3 +171,5 @@ $(call declare-0p-target,$(target_system_dlkm_notice_file_xml_gz))
 $(call declare-0p-target,$(installed_sysetm_dlkm_notice_xml_gz))
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_dlkm_notice_xml_gz)
 endif
+
+endif # not TARGET_BUILD_APPS
