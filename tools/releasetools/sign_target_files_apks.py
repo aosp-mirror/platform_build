@@ -1341,8 +1341,10 @@ def BuildVendorPartitions(output_zip_path):
       output_zip_path, "a", compression=zipfile.ZIP_DEFLATED,
       allowZip64=True) as output_zip:
     for p in OPTIONS.vendor_partitions:
-      path = "IMAGES/{}.img".format(p)
-      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, path), path)
+      img_file_path = "IMAGES/{}.img".format(p)
+      map_file_path = "IMAGES/{}.map".format(p)
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, img_file_path), img_file_path)
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, map_file_path), map_file_path)
 
 
 def main(argv):
