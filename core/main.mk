@@ -1771,7 +1771,7 @@ $(eval $(call html-notice-rule,$(target_notice_file_html_or_xml),"Apps","Notices
 $(eval $(call text-notice-rule,$(target_notice_file_txt),"Apps","Notices for files for apps:",$(unbundled_build_modules),$(PRODUCT_OUT)/ $(HOST_OUT)/))
 
 $(call declare-0p-target,$(target_notice_file_txt))
-$(call declare-0p-target,$(target_notice_html_or_xml_gz))
+$(call declare-0p-target,$(target_notice_html_or_xml))
 
 
 else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
