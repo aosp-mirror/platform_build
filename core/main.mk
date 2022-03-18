@@ -1765,13 +1765,13 @@ apps_only: $(unbundled_build_modules)
 
 droid_targets: apps_only
 
-# Combine the NOTICE files for a apps_only build
-$(eval $(call combine-notice-files, html, \
-    $(target_notice_file_txt), \
-    $(target_notice_file_html_or_xml), \
-    "Notices for files for apps:", \
-    $(TARGET_OUT_NOTICE_FILES), \
-    $(apps_only_installed_files)))
+# NOTICE files for a apps_only build
+$(eval $(call html-notice-rule,$(target_notice_file_html_or_xml),"Apps","Notices for files for apps:",$(unbundled_build_modules),$(PRODUCT_OUT)/ $(HOST_OUT)/))
+
+$(eval $(call text-notice-rule,$(target_notice_file_txt),"Apps","Notices for files for apps:",$(unbundled_build_modules),$(PRODUCT_OUT)/ $(HOST_OUT)/))
+
+$(call declare-0p-target,$(target_notice_file_txt))
+$(call declare-0p-target,$(target_notice_html_or_xml_gz))
 
 
 else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
