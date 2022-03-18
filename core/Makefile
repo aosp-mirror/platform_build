@@ -2874,6 +2874,7 @@ fsverity-metadata-targets := $(sort $(filter \
   $(TARGET_OUT)/framework/% \
   $(TARGET_OUT)/etc/boot-image.prof \
   $(TARGET_OUT)/etc/dirty-image-objects \
+  $(TARGET_OUT)/etc/preloaded-classes \
   $(TARGET_OUT)/etc/classpaths/%.pb, \
   $(ALL_GENERATED_SOURCES) $(ALL_DEFAULT_INSTALLED_MODULES)))
 
