@@ -6047,6 +6047,11 @@ $(COVERAGE_ZIP): $(SOONG_ZIP)
 	$(hide) find $(TARGET_OUT_COVERAGE) | sort >$(PRIVATE_LIST_FILE)
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(TARGET_OUT_COVERAGE) -l $(PRIVATE_LIST_FILE)
 
+$(call declare-1p-container,$(COVERAGE_ZIP),)
+$(call declare-container-license-deps,$(COVERAGE_ZIP),$(INTERNAL_ALLIMAGE_FILES),$(PRODUCT_OUT)/:/)
+
+SYSTEM_NOTICE_DEPS += $(COVERAGE_ZIP)
+
 #------------------------------------------------------------------
 # Export the LLVM profile data tool and dependencies for Clang coverage processing
 #
