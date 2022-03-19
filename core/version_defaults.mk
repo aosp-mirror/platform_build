@@ -58,7 +58,7 @@ PLATFORM_VERSION_CODENAME.TP1A := Tiramisu
 # This is the user-visible version.  In a final release build it should
 # be empty to use PLATFORM_VERSION as the user-visible version.  For
 # a preview release it can be set to a user-friendly value like `12 Preview 1`
-PLATFORM_DISPLAY_VERSION :=
+PLATFORM_DISPLAY_VERSION := 13
 
 ifndef PLATFORM_SDK_VERSION
   # This is the canonical definition of the SDK version, which defines
