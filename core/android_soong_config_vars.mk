@@ -59,12 +59,6 @@ else
   MODULE_BUILD_FROM_SOURCE := $(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE)
 endif
 
-# TODO(b/220940864): Remove when build scripts have been changed to use
-# ART_MODULE_BUILD_FROM_SOURCE instead of SOONG_CONFIG_art_module_source_build
-ifneq (,$(SOONG_CONFIG_art_module_source_build))
-  ART_MODULE_BUILD_FROM_SOURCE := $(SOONG_CONFIG_art_module_source_build)
-endif
-
 ifneq (,$(ART_MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
 else ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
