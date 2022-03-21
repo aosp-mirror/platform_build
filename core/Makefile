@@ -779,7 +779,6 @@ endif
 # -----------------------------------------------------------------
 # the root dir
 INTERNAL_ROOT_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
-	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
 INSTALLED_FILES_FILE_ROOT := $(PRODUCT_OUT)/installed-files-root.txt
@@ -813,7 +812,6 @@ endif
 # the ramdisk
 ifdef BUILDING_RAMDISK_IMAGE
 INTERNAL_RAMDISK_FILES := $(filter $(TARGET_RAMDISK_OUT)/%, \
-	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
 INSTALLED_FILES_FILE_RAMDISK := $(PRODUCT_OUT)/installed-files-ramdisk.txt
@@ -1247,7 +1245,6 @@ ifeq ($(PRODUCT_SUPPORTS_VERITY),true)
 endif
 
 INTERNAL_VENDOR_RAMDISK_FILES := $(filter $(TARGET_VENDOR_RAMDISK_OUT)/%, \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INTERNAL_VENDOR_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_boot)/vendor_ramdisk.cpio$(RAMDISK_EXT)
@@ -2451,7 +2448,6 @@ endif
 ifneq ($(BUILDING_DEBUG_BOOT_IMAGE)$(BUILDING_DEBUG_VENDOR_BOOT_IMAGE),)
 
 INTERNAL_DEBUG_RAMDISK_FILES := $(filter $(TARGET_DEBUG_RAMDISK_OUT)/%, \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 # Directories to be picked into the debug ramdisk.
@@ -2589,7 +2585,6 @@ endif # BUILDING_DEBUG_BOOT_IMAGE
 ifdef BUILDING_DEBUG_VENDOR_BOOT_IMAGE
 
 INTERNAL_VENDOR_DEBUG_RAMDISK_FILES := $(filter $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/%, \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 # The debug vendor ramdisk combines vendor ramdisk and debug ramdisk.
@@ -2700,7 +2695,6 @@ $(call declare-1p-target,$(INTERNAL_TEST_HARNESS_RAMDISK_ADB_DEBUG_PROP_TARGET))
 
 INTERNAL_TEST_HARNESS_RAMDISK_FILES := $(filter $(TARGET_TEST_HARNESS_RAMDISK_OUT)/%, \
     $(INTERNAL_TEST_HARNESS_RAMDISK_ADB_DEBUG_PROP_TARGET) \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 # The order is important here. The test harness ramdisk staging directory has to
@@ -2875,7 +2869,7 @@ fsverity-metadata-targets := $(sort $(filter \
   $(TARGET_OUT)/etc/boot-image.prof \
   $(TARGET_OUT)/etc/dirty-image-objects \
   $(TARGET_OUT)/etc/classpaths/%.pb, \
-  $(ALL_GENERATED_SOURCES) $(ALL_DEFAULT_INSTALLED_MODULES)))
+  $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 define fsverity-generate-metadata
 $(1).fsv_meta: PRIVATE_SRC := $(1)
@@ -2922,7 +2916,6 @@ ALL_DEFAULT_INSTALLED_MODULES += $(FSVERITY_APK_OUT)
 endif  # PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
 
 INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 # Create symlink /system/vendor to /vendor if necessary.
