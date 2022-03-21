@@ -157,6 +157,13 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         handle = __h_new()
         pcm(globals, handle)
 
+        if handle.artifact_path_requirements:
+            globals["PRODUCTS."+name+".mk.ARTIFACT_PATH_REQUIREMENTS"] = handle.artifact_path_requirements
+            globals["PRODUCTS."+name+".mk.ARTIFACT_PATH_ALLOWED_LIST"] = handle.artifact_path_allowed_list
+            globals["PRODUCTS."+name+".mk.ARTIFACT_PATH_REQUIREMENT_IS_RELAXED"] = "true" if handle.artifact_path_requirement_is_relaxed[0] else ""
+            globals.setdefault("ARTIFACT_PATH_REQUIREMENT_PRODUCTS", [])
+            globals["ARTIFACT_PATH_REQUIREMENT_PRODUCTS"] += [name+".mk"]
+
         # Now we know everything about this PCM, record it in 'configs'.
         children = handle.inherited_modules
         if _options.trace_modules:
@@ -210,6 +217,10 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         _substitute_inherited(configs, pcm_name, cfg)
         _percolate_inherited(configs, pcm_name, cfg, children_names)
         configs[pcm_name] = pcm, cfg, children_names, True
+
+        if (pcm_name + ".mk") in globals.get("ARTIFACT_PATH_REQUIREMENT_PRODUCTS", []):
+            for var, val in cfg.items():
+                globals["PRODUCTS."+pcm_name+".mk."+var] = val
 
     # Copy product config variables from the cfg dictionary to the
     # PRODUCTS.<top_level_makefile_name>.<var_name> global variables.
@@ -419,7 +430,10 @@ def __h_new():
     return struct(
         cfg = dict(),
         inherited_modules = dict(),
-        default_list_value = list()
+        default_list_value = list(),
+        artifact_path_requirements = list(),
+        artifact_path_allowed_list = list(),
+        artifact_path_requirement_is_relaxed = [False], # as a list so that we can reassign it
     )
 
 def __h_cfg(handle):
@@ -564,13 +578,17 @@ def _notdir(paths):
     """
     return " ".join([__base(w) for w in __words(paths)])
 
-def _require_artifacts_in_path(paths, allowed_paths):
-    """TODO."""
-    pass
+def _require_artifacts_in_path(handle, paths, allowed_paths):
+    """Equivalent to require-artifacts-in-path in Make."""
+    handle.artifact_path_requirements.clear()
+    handle.artifact_path_requirements.extend(__words(paths))
+    handle.artifact_path_allowed_list.clear()
+    handle.artifact_path_allowed_list.extend(__words(allowed_paths))
 
-def _require_artifacts_in_path_relaxed(paths, allowed_paths):
-    """TODO."""
-    pass
+def _require_artifacts_in_path_relaxed(handle, paths, allowed_paths):
+    """Equivalent to require-artifacts-in-path-relaxed in Make."""
+    _require_artifacts_in_path(handle, paths, allowed_paths)
+    handle.artifact_path_requirement_is_relaxed[0] = True
 
 def _expand_wildcard(pattern):
     """Expands shell wildcard pattern."""
