@@ -518,6 +518,12 @@ else
   VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR :=
 endif
 
+ifneq ($(BOARD_DO_NOT_STRIP_VENDOR_KERNEL_RAMDISK_MODULES),true)
+  VENDOR_KERNEL_RAMDISK_STRIPPED_MODULE_STAGING_DIR := $(call intermediates-dir-for,PACKAGING,depmod_vendor_kernel_ramdisk_stripped)
+else
+  VENDOR_KERNEL_RAMDISK_STRIPPED_MODULE_STAGING_DIR :=
+endif
+
 BOARD_KERNEL_MODULE_DIRS += top
 $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,RECOVERY,$(TARGET_RECOVERY_ROOT_OUT),,modules.load.recovery,$(RECOVERY_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
@@ -529,6 +535,7 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
     $(eval output_dir := $(TARGET_VENDOR_RAMDISK_OUT)) \
     $(eval result_var := ALL_DEFAULT_INSTALLED_MODULES)) \
   $(eval $(result_var) += $(call build-image-kernel-modules-dir,VENDOR_RAMDISK,$(output_dir),,modules.load,$(VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR_KERNEL_RAMDISK,$(TARGET_VENDOR_KERNEL_RAMDISK_OUT),,modules.load,$(VENDOR_KERNEL_RAMDISK_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-ramdisk-recovery-load,$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR,$(if $(filter true,$(BOARD_USES_VENDOR_DLKMIMAGE)),$(TARGET_OUT_VENDOR_DLKM),$(TARGET_OUT_VENDOR)),vendor,modules.load,$(VENDOR_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-charger-load,$(kmd))) \
@@ -1288,7 +1295,11 @@ $(INSTALLED_FILES_FILE_VENDOR_RAMDISK): $(INTERNAL_VENDOR_RAMDISK_FILES) $(FILES
 $(eval $(call declare-0p-target,$(INSTALLED_FILES_FILE_VENDOR_RAMDISK)))
 
 ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
-  INTERNAL_VENDOR_BOOTIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
+  ifneq ($(BUILDING_VENDOR_KERNEL_BOOT_IMAGE),true)
+    # If we have vendor_kernel_boot partition, we migrate dtb image to that image
+    # and allow dtb in vendor_boot to be empty.
+    INTERNAL_VENDOR_BOOTIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
+  endif
 endif
 ifdef BOARD_KERNEL_BASE
   INTERNAL_VENDOR_BOOTIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
@@ -1373,6 +1384,66 @@ $(call declare-1p-container,$(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_VENDOR_BOOTIMAGE_TARGET),$(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_DTB_IMAGE_TARGET) $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS) $(INTERNAL_VENDOR_BOOTCONDIG_TARGET),$(PRODUCT_OUT)/:/)
 VENDOR_NOTICE_DEPS += $(INSTALLED_VENDOR_BOOTIMAGE_TARGET)
 endif # BUILDING_VENDOR_BOOT_IMAGE
+
+# -----------------------------------------------------------------
+# vendor kernel boot image
+ifeq ($(BUILDING_VENDOR_KERNEL_BOOT_IMAGE),true)
+
+INTERNAL_VENDOR_KERNEL_RAMDISK_FILES := $(filter $(TARGET_VENDOR_KERNEL_RAMDISK_OUT)/%, \
+    $(ALL_GENERATED_SOURCES) \
+    $(ALL_DEFAULT_INSTALLED_MODULES))
+
+INTERNAL_VENDOR_KERNEL_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_kernel_boot)/vendor_kernel_ramdisk.cpio$(RAMDISK_EXT)
+
+$(INTERNAL_VENDOR_KERNEL_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_VENDOR_KERNEL_RAMDISK_FILES) | $(COMPRESSION_COMMAND_DEPS)
+	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_VENDOR_KERNEL_RAMDISK_OUT) | $(COMPRESSION_COMMAND) > $@
+
+INSTALLED_VENDOR_KERNEL_RAMDISK_TARGET := $(PRODUCT_OUT)/vendor_kernel_ramdisk.img
+$(INSTALLED_VENDOR_KERNEL_RAMDISK_TARGET): $(INTERNAL_VENDOR_KERNEL_RAMDISK_TARGET)
+	@echo "Target vendor kernel ramdisk: $@"
+	$(copy-file-to-target)
+
+INSTALLED_FILES_FILE_VENDOR_KERNEL_RAMDISK := $(PRODUCT_OUT)/installed-files-vendor-kernel-ramdisk.txt
+INSTALLED_FILES_JSON_VENDOR_KERNEL_RAMDISK := $(INSTALLED_FILES_FILE_VENDOR_KERNEL_RAMDISK:.txt=.json)
+$(INSTALLED_FILES_FILE_VENDOR_KERNEL_RAMDISK): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR_KERNEL_RAMDISK)
+$(INSTALLED_FILES_FILE_VENDOR_KERNEL_RAMDISK): $(INTERNAL_VENDOR_KERNEL_RAMDISK_TARGET)
+$(INSTALLED_FILES_FILE_VENDOR_KERNEL_RAMDISK): $(INTERNAL_VENDOR_KERNEL_RAMDISK_FILES) $(FILESLIST) $(FILESLIST_UTIL)
+	@echo Installed file list: $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(TARGET_VENDOR_KERNEL_RAMDISK_OUT) > $(@:.txt=.json)
+	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
+
+INTERNAL_VENDOR_KERNEL_BOOTIMAGE_ARGS := --vendor_ramdisk $(INTERNAL_VENDOR_KERNEL_RAMDISK_TARGET)
+INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/vendor_kernel_boot.img
+$(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_VENDOR_KERNEL_RAMDISK_TARGET)
+
+ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
+  INTERNAL_VENDOR_KERNEL_BOOTIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
+  $(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET): $(INSTALLED_DTBIMAGE_TARGET)
+endif
+ifdef BOARD_KERNEL_PAGESIZE
+  INTERNAL_VENDOR_KERNEL_BOOTIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+endif
+
+
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_KERNEL_BOOTIMAGE_KEY_PATH)
+	$(call pretty,"Target vendor_kernel_boot image: $@")
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_KERNEL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_boot $@
+	$(call assert-max-image-size,$@,$(BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE))
+	$(AVBTOOL) add_hash_footer \
+	    --image $@ \
+	   $(call get-partition-size-argument,$(BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE)) \
+	   --partition_name vendor_kernel_boot $(INTERNAL_AVB_VENDOR_KERNEL_BOOT_SIGNING_ARGS) \
+	   $(BOARD_AVB_VENDOR_KERNEL_BOOT_ADD_HASH_FOOTER_ARGS)
+else
+$(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET):
+	$(call pretty,"Target vendor_kernel_boot image: $@")
+	$(MKBOOTIMG) $(INTERNAL_VENDOR_KERNEL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --vendor_boot $@
+	$(call assert-max-image-size,$@,$(BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE))
+endif
+endif # BUILDING_VENDOR_KERNEL_BOOT_IMAGE
 
 # -----------------------------------------------------------------
 # NOTICE files
@@ -3969,6 +4040,9 @@ BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
 BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.vendor_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
 
+BOARD_AVB_VENDOR_KERNEL_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.vendor_kernel_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
+
 BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.recovery.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
@@ -4055,6 +4129,7 @@ endif
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
 INIT_BOOT_FOOTER_ARGS := BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS
 VENDOR_BOOT_FOOTER_ARGS := BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS
+VENDOR_KERNEL_BOOT_FOOTER_ARGS := BOARD_AVB_VENDOR_KERNEL_BOOT_ADD_HASH_FOOTER_ARGS
 DTBO_FOOTER_ARGS := BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS
 PVMFW_FOOTER_ARGS := BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS
 SYSTEM_FOOTER_ARGS := BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS
@@ -4144,6 +4219,10 @@ endif
 
 ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,vendor_boot))
+endif
+
+ifdef INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET
+$(eval $(call check-and-set-avb-args,vendor_kernel_boot))
 endif
 
 ifdef INSTALLED_SYSTEMIMAGE_TARGET
@@ -4250,6 +4329,9 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_VENDOR_BOOT_KEY_PATH),\
     $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VENDOR_BOOT_KEY_PATH) \
       --output $(1)/vendor_boot.avbpubkey)
+  $(if $(BOARD_AVB_VENDOR_KERNEL_BOOT_KEY_PATH),\
+    $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VENDOR_KERNEL_BOOT_KEY_PATH) \
+      --output $(1)/vendor_kernel_boot.avbpubkey)
   $(if $(BOARD_AVB_SYSTEM_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_SYSTEM_KEY_PATH) \
       --output $(1)/system.avbpubkey)
@@ -4363,6 +4445,7 @@ $(INSTALLED_VBMETAIMAGE_TARGET): \
 	    $(INSTALLED_BOOTIMAGE_TARGET) \
 	    $(INSTALLED_INIT_BOOT_IMAGE_TARGET) \
 	    $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
+	    $(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET) \
 	    $(INSTALLED_SYSTEMIMAGE_TARGET) \
 	    $(INSTALLED_VENDORIMAGE_TARGET) \
 	    $(INSTALLED_PRODUCTIMAGE_TARGET) \
@@ -4951,6 +5034,10 @@ ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	echo "vendor_boot=true" >> $@
 	echo "vendor_boot_size=$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE)" >> $@
 endif
+ifneq ($(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET),)
+	echo "vendor_kernel_boot=true" >> $@
+	echo "vendor_kernel_boot_size=$(BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE)" >> $@
+endif
 ifeq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) echo "no_recovery=true" >> $@
 endif
@@ -5031,6 +5118,12 @@ ifdef BOARD_AVB_VENDOR_BOOT_KEY_PATH
 	echo "avb_vendor_boot_algorithm=$(BOARD_AVB_VENDOR_BOOT_ALGORITHM)" >> $@
 	echo "avb_vendor_boot_rollback_index_location=$(BOARD_AVB_VENDOR_BOOT_ROLLBACK_INDEX_LOCATION)" >> $@
 endif # BOARD_AVB_VENDOR_BOOT_KEY_PATH
+	echo "avb_vendor_kernel_boot_add_hash_footer_args=$(BOARD_AVB_VENDOR_KERNEL_BOOT_ADD_HASH_FOOTER_ARGS)" >> $@
+ifdef BOARD_AVB_VENDOR_KERNEL_BOOT_KEY_PATH
+	echo "avb_vendor_kernel_boot_key_path=$(BOARD_AVB_VENDOR_KERNEL_BOOT_KEY_PATH)" >> $@
+	echo "avb_vendor_kernel_boot_algorithm=$(BOARD_AVB_VENDOR_KERNEL_BOOT_ALGORITHM)" >> $@
+	echo "avb_vendor_kernel_boot_rollback_index_location=$(BOARD_AVB_VENDOR_KERNEL_BOOT_ROLLBACK_INDEX_LOCATION)" >> $@
+endif # BOARD_AVB_VENDOR_KERNEL_BOOT_KEY_PATH
 	$(hide) echo "avb_recovery_add_hash_footer_args=$(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)" >> $@
 ifdef BOARD_AVB_RECOVERY_KEY_PATH
 	$(hide) echo "avb_recovery_key_path=$(BOARD_AVB_RECOVERY_KEY_PATH)" >> $@
@@ -5548,8 +5641,10 @@ ifdef INSTALLED_VENDOR_BOOTIMAGE_TARGET
 	$(call package_files-copy-root, \
 	    $(TARGET_VENDOR_RAMDISK_OUT),$(zip_root)/VENDOR_BOOT/RAMDISK)
 ifdef INSTALLED_DTBIMAGE_TARGET
+ifneq ($(BUILDING_VENDOR_KERNEL_BOOT_IMAGE),true)
 	cp $(INSTALLED_DTBIMAGE_TARGET) $(zip_root)/VENDOR_BOOT/dtb
 endif
+endif # end of INSTALLED_DTBIMAGE_TARGET
 ifdef INTERNAL_VENDOR_BOOTCONFIG_TARGET
 	cp $(INTERNAL_VENDOR_BOOTCONFIG_TARGET) $(zip_root)/VENDOR_BOOT/vendor_bootconfig
 endif
@@ -5573,6 +5668,17 @@ ifdef INTERNAL_VENDOR_RAMDISK_FRAGMENTS
 	      $(zip_root)/VENDOR_BOOT/RAMDISK_FRAGMENTS/$(vendor_ramdisk_fragment)/RAMDISK); \
 	  ))
 endif # INTERNAL_VENDOR_RAMDISK_FRAGMENTS != ""
+endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET
+ifdef INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET
+	mkdir -p $(zip_root)/VENDOR_KERNEL_BOOT
+	$(call package_files-copy-root, \
+	    $(TARGET_VENDOR_KERNEL_RAMDISK_OUT),$(zip_root)/VENDOR_KERNEL_BOOT/RAMDISK)
+ifdef INSTALLED_DTBIMAGE_TARGET
+	cp $(INSTALLED_DTBIMAGE_TARGET) $(zip_root)/VENDOR_KERNEL_BOOT/dtb
+endif
+ifdef BOARD_KERNEL_PAGESIZE
+	echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/VENDOR_KERNEL_BOOT/pagesize
+endif
 endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET
 ifdef BUILDING_SYSTEM_IMAGE
 	@# Contents of the system image
