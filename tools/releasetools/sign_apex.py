@@ -61,6 +61,7 @@ import apex_utils
 import common
 
 logger = logging.getLogger(__name__)
+OPTIONS = common.OPTIONS
 
 
 def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
@@ -81,7 +82,7 @@ def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
       apk_keys=apk_keys,
       signing_args=signing_args,
       sign_tool=sign_tool,
-      is_sepolicy=apex_file.endswith("sepolicy.apex"),
+      is_sepolicy=apex_file.endswith(OPTIONS.sepolicy_name),
       sepolicy_key=sepolicy_key,
       sepolicy_cert=sepolicy_cert,
       fsverity_tool=fsverity_tool)
