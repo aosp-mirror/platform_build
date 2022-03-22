@@ -118,7 +118,6 @@ PRODUCT_PACKAGES += \
     init_system \
     input \
     installd \
-    iorapd \
     ip \
     iptables \
     ip-up-vpn \
