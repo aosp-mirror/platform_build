@@ -1278,6 +1278,9 @@ def BuildVendorPartitions(output_zip_path):
   vendor_tempdir = common.UnzipTemp(output_zip_path, [
       "META/*",
       "SYSTEM/build.prop",
+      "RECOVERY/*",
+      "BOOT/*",
+      "OTA/",
   ] + ["{}/*".format(p.upper()) for p in OPTIONS.vendor_partitions])
 
   # Disable various partitions that build based on misc_info fields.
@@ -1286,9 +1289,12 @@ def BuildVendorPartitions(output_zip_path):
   # otatools if necessary.
   vendor_misc_info_path = os.path.join(vendor_tempdir, "META/misc_info.txt")
   vendor_misc_info = common.LoadDictionaryFromFile(vendor_misc_info_path)
-  vendor_misc_info["no_boot"] = "true"  # boot
-  vendor_misc_info["vendor_boot"] = "false"  # vendor_boot
-  vendor_misc_info["no_recovery"] = "true"  # recovery
+  # Ignore if not rebuilding recovery
+  if not OPTIONS.rebuild_recovery:
+    vendor_misc_info["no_boot"] = "true"  # boot
+    vendor_misc_info["vendor_boot"] = "false"  # vendor_boot
+    vendor_misc_info["no_recovery"] = "true"  # recovery
+
   vendor_misc_info["board_bpt_enable"] = "false"  # partition-table
   vendor_misc_info["has_dtbo"] = "false"  # dtbo
   vendor_misc_info["has_pvmfw"] = "false"  # pvmfw
@@ -1334,6 +1340,9 @@ def BuildVendorPartitions(output_zip_path):
       "--verbose",
       vendor_tempdir,
   ]
+  if OPTIONS.rebuild_recovery:
+    cmd.insert(4, "--rebuild_recovery")
+
   common.RunAndCheckOutput(cmd, verbose=True)
 
   logger.info("Writing vendor partitions to output archive.")
@@ -1345,6 +1354,12 @@ def BuildVendorPartitions(output_zip_path):
       map_file_path = "IMAGES/{}.map".format(p)
       common.ZipWrite(output_zip, os.path.join(vendor_tempdir, img_file_path), img_file_path)
       common.ZipWrite(output_zip, os.path.join(vendor_tempdir, map_file_path), map_file_path)
+    # copy recovery patch & install.sh
+    if OPTIONS.rebuild_recovery:
+      recovery_patch_path = "VENDOR/recovery-from-boot.p"
+      recovery_sh_path = "VENDOR/bin/install-recovery.sh"
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, recovery_patch_path), recovery_patch_path)
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, recovery_sh_path), recovery_sh_path)
 
 
 def main(argv):
