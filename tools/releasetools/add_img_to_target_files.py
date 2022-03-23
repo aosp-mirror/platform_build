@@ -783,6 +783,7 @@ def AddImagesToTargetFiles(filename):
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
   has_init_boot = OPTIONS.info_dict.get("init_boot") == "true"
   has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
+  has_vendor_kernel_boot = OPTIONS.info_dict.get("vendor_kernel_boot") == "true"
 
   # {vendor,odm,product,system_ext,vendor_dlkm,odm_dlkm, system_dlkm, system, system_other}.img
   # can be built from source, or  dropped into target_files.zip as a prebuilt blob.
@@ -867,6 +868,19 @@ def AddImagesToTargetFiles(filename):
         vendor_boot_image.WriteToDir(OPTIONS.input_tmp)
         if output_zip:
           vendor_boot_image.AddToZip(output_zip)
+
+  if has_vendor_kernel_boot:
+    banner("vendor_kernel_boot")
+    vendor_kernel_boot_image = common.GetVendorBootImage(
+        "IMAGES/vendor_kernel_boot.img", "vendor_kernel_boot.img", OPTIONS.input_tmp,
+        "VENDOR_KERNEL_BOOT")
+    if vendor_kernel_boot_image:
+      partitions['vendor_kernel_boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                               "vendor_kernel_boot.img")
+      if not os.path.exists(partitions['vendor_kernel_boot']):
+        vendor_kernel_boot_image.WriteToDir(OPTIONS.input_tmp)
+        if output_zip:
+          vendor_kernel_boot_image.AddToZip(output_zip)
 
   recovery_image = None
   if has_recovery:

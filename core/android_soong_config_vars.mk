@@ -59,12 +59,6 @@ else
   MODULE_BUILD_FROM_SOURCE := $(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE)
 endif
 
-# TODO(b/220940864): Remove when build scripts have been changed to use
-# ART_MODULE_BUILD_FROM_SOURCE instead of SOONG_CONFIG_art_module_source_build
-ifneq (,$(SOONG_CONFIG_art_module_source_build))
-  ART_MODULE_BUILD_FROM_SOURCE := $(SOONG_CONFIG_art_module_source_build)
-endif
-
 ifneq (,$(ART_MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
 else ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
@@ -88,6 +82,11 @@ endif
 
 ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
 $(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
+endif
+
+# Messaging app vars
+ifeq (eng,$(TARGET_BUILD_VARIANT))
+$(call soong_config_set,messaging,build_variant_eng,true)
 endif
 
 # TODO(b/203088572): Remove when Java optimizations enabled by default for
