@@ -20,7 +20,6 @@
 
 #include "ZipAlign.h"
 
-#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -61,53 +60,69 @@ int main(int argc, char* const argv[])
     int alignment;
     char* endp;
 
-    int opt;
-    while ((opt = getopt(argc, argv, "fcpvz")) != -1) {
-        switch (opt) {
-        case 'c':
-            check = true;
-            break;
-        case 'f':
-            force = true;
-            break;
-        case 'v':
-            verbose = true;
-            break;
-        case 'z':
-            zopfli = true;
-            break;
-        case 'p':
-            pageAlignSharedLibs = true;
-            break;
-        default:
-            fprintf(stderr, "ERROR: unknown flag -%c\n", opt);
-            wantUsage = true;
-            goto bail;
-        }
-    }
-
-    if (!((check && (argc - optind) == 2) || (!check && (argc - optind) == 3))) {
+    if (argc < 4) {
         wantUsage = true;
         goto bail;
     }
 
-    alignment = strtol(argv[optind], &endp, 10);
+    argc--;
+    argv++;
+
+    while (argc && argv[0][0] == '-') {
+        const char* cp = argv[0] +1;
+
+        while (*cp != '\0') {
+            switch (*cp) {
+            case 'c':
+                check = true;
+                break;
+            case 'f':
+                force = true;
+                break;
+            case 'v':
+                verbose = true;
+                break;
+            case 'z':
+                zopfli = true;
+                break;
+            case 'p':
+                pageAlignSharedLibs = true;
+                break;
+            default:
+                fprintf(stderr, "ERROR: unknown flag -%c\n", *cp);
+                wantUsage = true;
+                goto bail;
+            }
+
+            cp++;
+        }
+
+        argc--;
+        argv++;
+    }
+
+    if (!((check && argc == 2) || (!check && argc == 3))) {
+        wantUsage = true;
+        goto bail;
+    }
+
+    alignment = strtol(argv[0], &endp, 10);
     if (*endp != '\0' || alignment <= 0) {
-        fprintf(stderr, "Invalid value for alignment: %s\n", argv[optind]);
+        fprintf(stderr, "Invalid value for alignment: %s\n", argv[0]);
         wantUsage = true;
         goto bail;
     }
 
     if (check) {
         /* check existing archive for correct alignment */
-        result = verify(argv[optind + 1], alignment, verbose, pageAlignSharedLibs);
+        result = verify(argv[1], alignment, verbose, pageAlignSharedLibs);
     } else {
         /* create the new archive */
-        result = process(argv[optind + 1], argv[optind + 2], alignment, force, zopfli, pageAlignSharedLibs);
+        result = process(argv[1], argv[2], alignment, force, zopfli, pageAlignSharedLibs);
 
         /* trust, but verify */
         if (result == 0) {
-            result = verify(argv[optind + 2], alignment, verbose, pageAlignSharedLibs);
+            result = verify(argv[2], alignment, verbose, pageAlignSharedLibs);
         }
     }
 

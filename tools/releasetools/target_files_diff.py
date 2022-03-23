@@ -82,7 +82,7 @@ def rewrite_build_property(original, new):
         skip = True
         break
     if not skip:
-      new.write(line.encode())
+      new.write(line)
 
 
 def trim_install_recovery(original, new):
@@ -91,7 +91,7 @@ def trim_install_recovery(original, new):
   partition.
   """
   for line in original:
-    new.write(re.sub(r'[0-9a-f]{40}', '0'*40, line).encode())
+    new.write(re.sub(r'[0-9a-f]{40}', '0'*40, line))
 
 def sort_file(original, new):
   """
@@ -101,7 +101,7 @@ def sort_file(original, new):
   lines = original.readlines()
   lines.sort()
   for line in lines:
-    new.write(line.encode())
+    new.write(line)
 
 # Map files to the functions that will modify them for diffing
 REWRITE_RULES = {
@@ -148,7 +148,7 @@ def diff(name, file1, file2, out_file):
       if stdout == 'Binary files %s and %s differ' % (f1, f2):
         print("%s: Binary files differ" % name, file=out_file)
       else:
-        for line in stdout.strip().split(b'\n'):
+        for line in stdout.strip().split('\n'):
           print("%s: %s" % (name, line), file=out_file)
 
 def recursiveDiff(prefix, dir1, dir2, out_file):

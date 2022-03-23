@@ -1,0 +1,207 @@
+# Copyright 2021 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load(":build_id.rbc|init", _build_id_init = "init")
+
+def _all_versions():
+    """Returns all known versions."""
+    versions = ["OPR1", "OPD1", "OPD2", "OPM1", "OPM2", "PPR1", "PPD1", "PPD2", "PPM1", "PPM2", "QPR1"]
+    for v in ("Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"):
+        for e in ("P1A", "P1B", "P2A", "P2B", "D1A", "D1B", "D2A", "D2B", "Q1A", "Q1B", "Q2A", "Q2B", "Q3A", "Q3B"):
+            versions.append(v + e)
+    return versions
+
+def _allowed_versions(all_versions, min_version, max_version, default_version):
+    """Checks that version range and default versions is valid, returns all versions in range."""
+    for v in (min_version, max_version, default_version):
+        if v not in all_versions:
+            fail("% is invalid" % v)
+
+    min_i = all_versions.index(min_version)
+    max_i = all_versions.index(max_version)
+    def_i = all_versions.index(default_version)
+    if min_i > max_i:
+        fail("%s should come before %s in the version list" % (min_version, max_version))
+    if def_i < min_i or def_i > max_i:
+        fail("%s should come between % and %s" % (default_version, min_version, max_version))
+    return all_versions[min_i:max_i + 1]
+
+# This function is a manual conversion of the version_defaults.mk
+def _versions_default(g, all_versions):
+    """Handle various build version information.
+
+    Guarantees that the following are defined:
+     PLATFORM_VERSION
+     PLATFORM_SDK_VERSION
+     PLATFORM_VERSION_CODENAME
+     DEFAULT_APP_TARGET_SDK
+     BUILD_ID
+     BUILD_NUMBER
+     PLATFORM_SECURITY_PATCH
+     PLATFORM_VNDK_VERSION
+     PLATFORM_SYSTEMSDK_VERSIONS
+    """
+
+    # If build_id.rbc exists, it may override some of the defaults.
+    # Note that build.prop target also wants INTERNAL_BUILD_ID_MAKEFILE to be set if the file exists.
+    if _build_id_init != None:
+        _build_id_init(g)
+        g["INTERNAL_BUILD_ID_MAKEFILE"] = "build/make/core/build_id"
+
+    allowed_versions = _allowed_versions(all_versions, v_min, v_max, v_default)
+    g.setdefault("TARGET_PLATFORM_VERSION", v_default)
+    if g["TARGET_PLATFORM_VERSION"] not in allowed_versions:
+        fail("% is not valid, must be one of %s" % (g["TARGET_PLATFORM_VERSION"], allowed_versions))
+
+    g["DEFAULT_PLATFORM_VERSION"] = v_default
+    g["PLATFORM_VERSION_LAST_STABLE"] = 11
+    g.setdefault("PLATFORM_VERSION_CODENAME", g["TARGET_PLATFORM_VERSION"])
+    # TODO(asmundak): set PLATFORM_VERSION_ALL_CODENAMES
+
+    g.setdefault("PLATFORM_SDK_VERSION", 30)
+    version_codename = g["PLATFORM_VERSION_CODENAME"]
+    if version_codename == "REL":
+        g.setdefault("PLATFORM_VERSION", g["PLATFORM_VERSION_LAST_STABLE"])
+        g["PLATFORM_PREVIEW_SDK_VERSION"] = 0
+        g.setdefault("DEFAULT_APP_TARGET_SDK", g["PLATFORM_SDK_VERSION"])
+        g.setdefault("PLATFORM_VNDK_VERSION", g["PLATFORM_SDK_VERSION"])
+    else:
+        g.setdefault("PLATFORM_VERSION", version_codename)
+        g.setdefault("PLATFORM_PREVIEW_SDK_VERSION", 1)
+        g.setdefault("DEFAULT_APP_TARGET_SDK", version_codename)
+        g.setdefault("PLATFORM_VNDK_VERSION", version_codename)
+
+    g.setdefault("PLATFORM_SYSTEMSDK_MIN_VERSION", 28)
+    versions = [str(i) for i in range(g["PLATFORM_SYSTEMSDK_MIN_VERSION"], g["PLATFORM_SDK_VERSION"] + 1)]
+    versions.append(version_codename)
+    g["PLATFORM_SYSTEMSDK_VERSIONS"] = sorted(versions)
+
+    #  Used to indicate the security patch that has been applied to the device.
+    #  It must signify that the build includes all security patches issued up through the designated Android Public Security Bulletin.
+    #  It must be of the form "YYYY-MM-DD" on production devices.
+    #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
+    #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
+    g.setdefault("PLATFORM_SECURITY_PATCH", "2021-03-05")
+    dt = 'TZ="GMT" %s' % g["PLATFORM_SECURITY_PATCH"]
+    g.setdefault("PLATFORM_SECURITY_PATCH_TIMESTAMP", rblf_shell("date -d '%s' +%%s" % dt))
+
+    # Used to indicate the base os applied to the device. Can be an arbitrary string, but must be a single word.
+    # If there is no $PLATFORM_BASE_OS set, keep it empty.
+    g.setdefault("PLATFORM_BASE_OS", "")
+
+    # Used to signify special builds.  E.g., branches and/or releases, like "M5-RC7".  Can be an arbitrary string, but
+    # must be a single word and a valid file name. If there is no BUILD_ID set, make it obvious.
+    g.setdefault("BUILD_ID", "UNKNOWN")
+
+    # BUILD_NUMBER should be set to the source control value that represents the current state of the source code.
+    # E.g., a perforce changelist number or a git hash.  Can be an arbitrary string (to allow for source control that
+    # uses something other than numbers), but must be a single word and a valid file name.
+    #
+    # If no BUILD_NUMBER is set, create a useful "I am an engineering build from this date/time" value.  Make it start
+    # with a non-digit so that anyone trying to parse it as an integer will probably get "0".
+    g.setdefault("BUILD_NUMBER", "eng.%s.%s" % (g["USER"], "TIMESTAMP"))
+
+    # Used to set minimum supported target sdk version. Apps targeting SDK version lower than the set value will result
+    # in a warning being shown when any activity from the app is started.
+    g.setdefault("PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION", 23)
+
+def init(g):
+    """Initializes globals.
+
+    The code is the Starlark counterpart of the contents of the
+    envsetup.mk file.
+    Args:
+        g: globals dictionary
+    """
+    all_versions = _all_versions()
+    _versions_default(g, all_versions)
+    for v in all_versions:
+        g["IS_AT_LEAST" + v] = True
+        if v == g["TARGET_PLATFORM_VERSION"]:
+            break
+
+    # ---------------------------------------------------------------
+    # If you update the build system such that the environment setup or buildspec.mk need to be updated,
+    # increment this number, and people who haven't re-run those will have to do so before they can build.
+    # Make sure to also update the corresponding value in buildspec.mk.default and envsetup.sh.
+    g["CORRECT_BUILD_ENV_SEQUENCE_NUMBER"] = 13
+
+    g.setdefault("TARGET_PRODUCT", "aosp_arm")
+    g.setdefault("TARGET_BUILD_VARIANT", "eng")
+
+    g.setdefault("TARGET_BUILD_APPS", [])
+    g["TARGET_BUILD_UNBUNDLED"] = (g["TARGET_BUILD_APPS"] != []) or (getattr(g, "TARGET_BUILD_UNBUNDLED_IMAGE", "") != "")
+
+    # ---------------------------------------------------------------
+    # Set up configuration for host machine.  We don't do cross-compiles except for arm, so the HOST
+    # is whatever we are running on.
+    host = rblf_shell("uname -sm")
+    if host.find("Linux") >= 0:
+        g["HOST_OS"] = "linux"
+    elif host.find("Darwin") >= 0:
+        g["HOST_OS"] = "darwin"
+    else:
+        fail("Cannot run on %s OS" % host)
+
+    # TODO(asmundak): set g.HOST_OS_EXTRA
+
+    g["BUILD_OS"] = g["HOST_OS"]
+
+    # TODO(asmundak): check cross-OS build
+
+    if host.find("x86_64") >= 0:
+        g["HOST_ARCH"] = "x86_64"
+        g["HOST_2ND_ARCH"] = "x86"
+        g["HOST_IS_64_BIT"] = True
+    elif host.find("i686") >= 0 or host.find("x86") >= 0:
+        fail("Building on a 32-bit x86 host is not supported: %s" % host)
+    elif g["HOST_OS"] == "darwin":
+        g["HOST_2ND_ARCH"] = ""
+
+    g["HOST_2ND_ARCH_VAR_PREFIX"] = "2ND_"
+    g["HOST_2ND_ARCH_MODULE_SUFFIX"] = "_32"
+    g["HOST_CROSS_2ND_ARCH_VAR_PREFIX"] = "2ND_"
+    g["HOST_CROSS_2ND_ARCH_MODULE_SUFFIX"] = "_64"
+    g["TARGET_2ND_ARCH_VAR_PREFIX"] = "2ND_"
+
+    # TODO(asmundak): envsetup.mk lines 216-226:
+    # convert combo-related stuff from combo/select.mk
+
+    # on windows, the tools have .exe at the end, and we depend on the
+    # host config stuff being done first
+    g["BUILD_ARCH"] = g["HOST_ARCH"]
+    g["BUILD_2ND_ARCH"] = g["HOST_2ND_ARCH"]
+
+    # the host build defaults to release, and it must be release or debug
+    g.setdefault("HOST_BUILD_TYPE", "release")
+    if g["HOST_BUILD_TYPE"] not in ["release", "debug"]:
+        fail("HOST_BUILD_TYPE must be either release or debug, not '%s'" % g["HOST_BUILD_TYPE"])
+
+    # TODO(asmundak): there is more stuff in envsetup.mk lines 249-292, but
+    # it does not seem to affect product configuration. Revisit this.
+
+    g["ART_APEX_JARS"] = [
+        "com.android.art:core-oj",
+        "com.android.art:core-libart",
+        "com.android.art:okhttp",
+        "com.android.art:bouncycastle",
+        "com.android.art:apache-xml",
+    ]
+
+    if g.get("TARGET_BUILD_TYPE", "") != "debug":
+        g["TARGET_BUILD_TYPE"] = "release"
+
+v_default = "SP1A"
+v_min = "SP1A"
+v_max = "SP1A"
