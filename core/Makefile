@@ -4884,6 +4884,7 @@ INTERNAL_OTATOOLS_MODULES := \
   e2fsdroid \
   fc_sort \
   fec \
+  fsck.erofs \
   fsck.f2fs \
   fs_config \
   generate_gki_certificate \
