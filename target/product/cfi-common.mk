@@ -30,7 +30,7 @@ PRODUCT_CFI_INCLUDE_PATHS :=  \
     hardware/qcom/wlan/qcwcn/wpa_supplicant_8_lib \
     hardware/interfaces/keymaster \
     hardware/interfaces/security \
-    packages/modules/Bluetooth/system \
+    system/bt \
     system/chre \
     system/core/libnetutils \
     system/libziparchive \
