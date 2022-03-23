@@ -19,30 +19,84 @@ package {
 
 blueprint_go_binary {
     name: "checkshare",
-    srcs: ["cmd/checkshare.go"],
+    srcs: ["cmd/checkshare/checkshare.go"],
     deps: ["compliance-module"],
-    testSrcs: ["cmd/checkshare_test.go"],
+    testSrcs: ["cmd/checkshare/checkshare_test.go"],
+}
+
+blueprint_go_binary {
+    name: "compliancenotice_bom",
+    srcs: ["cmd/bom/bom.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/bom/bom_test.go"],
+}
+
+blueprint_go_binary {
+    name: "compliancenotice_shippedlibs",
+    srcs: ["cmd/shippedlibs/shippedlibs.go"],
+    deps: [
+        "compliance-module",
+        "soong-response",
+    ],
+    testSrcs: ["cmd/shippedlibs/shippedlibs_test.go"],
 }
 
 blueprint_go_binary {
     name: "listshare",
-    srcs: ["cmd/listshare.go"],
+    srcs: ["cmd/listshare/listshare.go"],
     deps: ["compliance-module"],
-    testSrcs: ["cmd/listshare_test.go"],
+    testSrcs: ["cmd/listshare/listshare_test.go"],
 }
 
 blueprint_go_binary {
     name: "dumpgraph",
-    srcs: ["cmd/dumpgraph.go"],
+    srcs: ["cmd/dumpgraph/dumpgraph.go"],
     deps: ["compliance-module"],
-    testSrcs: ["cmd/dumpgraph_test.go"],
+    testSrcs: ["cmd/dumpgraph/dumpgraph_test.go"],
 }
 
 blueprint_go_binary {
     name: "dumpresolutions",
-    srcs: ["cmd/dumpresolutions.go"],
+    srcs: ["cmd/dumpresolutions/dumpresolutions.go"],
     deps: ["compliance-module"],
-    testSrcs: ["cmd/dumpresolutions_test.go"],
+    testSrcs: ["cmd/dumpresolutions/dumpresolutions_test.go"],
+}
+
+blueprint_go_binary {
+    name: "htmlnotice",
+    srcs: ["cmd/htmlnotice/htmlnotice.go"],
+    deps: [
+        "compliance-module",
+        "blueprint-deptools",
+    ],
+    testSrcs: ["cmd/htmlnotice/htmlnotice_test.go"],
+}
+
+blueprint_go_binary {
+    name: "rtrace",
+    srcs: ["cmd/rtrace/rtrace.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/rtrace/rtrace_test.go"],
+}
+
+blueprint_go_binary {
+    name: "textnotice",
+    srcs: ["cmd/textnotice/textnotice.go"],
+    deps: [
+        "compliance-module",
+        "blueprint-deptools",
+    ],
+    testSrcs: ["cmd/textnotice/textnotice_test.go"],
+}
+
+blueprint_go_binary {
+    name: "xmlnotice",
+    srcs: ["cmd/xmlnotice/xmlnotice.go"],
+    deps: [
+        "compliance-module",
+        "blueprint-deptools",
+    ],
+    testSrcs: ["cmd/xmlnotice/xmlnotice_test.go"],
 }
 
 bootstrap_go_package {
@@ -52,14 +106,15 @@ bootstrap_go_package {
         "conditionset.go",
         "doc.go",
         "graph.go",
-        "policy/policy.go",
-        "policy/resolve.go",
-        "policy/resolvenotices.go",
-        "policy/resolveshare.go",
-        "policy/resolveprivacy.go",
-        "policy/shareprivacyconflicts.go",
-        "policy/shipped.go",
-        "policy/walk.go",
+        "noticeindex.go",
+        "policy_policy.go",
+        "policy_resolve.go",
+        "policy_resolvenotices.go",
+        "policy_resolveshare.go",
+        "policy_resolveprivacy.go",
+        "policy_shareprivacyconflicts.go",
+        "policy_shipped.go",
+        "policy_walk.go",
         "readgraph.go",
         "resolution.go",
         "resolutionset.go",
@@ -68,14 +123,14 @@ bootstrap_go_package {
         "condition_test.go",
         "conditionset_test.go",
         "readgraph_test.go",
-        "policy/policy_test.go",
-        "policy/resolve_test.go",
-        "policy/resolvenotices_test.go",
-        "policy/resolveshare_test.go",
-        "policy/resolveprivacy_test.go",
-        "policy/shareprivacyconflicts_test.go",
-        "policy/shipped_test.go",
-        "policy/walk_test.go",
+        "policy_policy_test.go",
+        "policy_resolve_test.go",
+        "policy_resolvenotices_test.go",
+        "policy_resolveshare_test.go",
+        "policy_resolveprivacy_test.go",
+        "policy_shareprivacyconflicts_test.go",
+        "policy_shipped_test.go",
+        "policy_walk_test.go",
         "resolutionset_test.go",
         "test_util.go",
     ],
@@ -84,5 +139,5 @@ bootstrap_go_package {
         "golang-protobuf-encoding-prototext",
         "license_metadata_proto",
     ],
-    pkgPath: "compliance",
+    pkgPath: "android/soong/tools/compliance",
 }

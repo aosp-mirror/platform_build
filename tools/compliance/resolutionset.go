@@ -65,14 +65,12 @@ func (rs ResolutionSet) AttachesTo() TargetNodeList {
 	return result
 }
 
-
 // AttachesToTarget returns true if the set contains conditions that
 // are `attachedTo`.
 func (rs ResolutionSet) AttachesToTarget(target *TargetNode) bool {
 	_, isPresent := rs[target]
 	return isPresent
 }
-
 
 // Resolutions returns the list of resolutions that `attachedTo`
 // target must resolve. Returns empty list if no conditions apply.
@@ -84,6 +82,22 @@ func (rs ResolutionSet) Resolutions(attachesTo *TargetNode) ResolutionList {
 	result := make(ResolutionList, 0, len(as))
 	for actsOn, cs := range as {
 		result = append(result, Resolution{attachesTo, actsOn, cs})
+	}
+	return result
+}
+
+// AllActions returns the set of actions required to resolve the set omitting
+// the attachment.
+func (rs ResolutionSet) AllActions() ActionSet {
+	result := make(ActionSet)
+	for _, as := range rs {
+		for actsOn, cs := range as {
+			if _, ok := result[actsOn]; ok {
+				result[actsOn] = cs.Union(result[actsOn])
+			} else {
+				result[actsOn] = cs
+			}
+		}
 	}
 	return result
 }

@@ -66,7 +66,7 @@ func (r Resolution) asString() string {
 type ResolutionList []Resolution
 
 // Len returns the count of elements in the list.
-func (l ResolutionList) Len() int      { return len(l) }
+func (l ResolutionList) Len() int { return len(l) }
 
 // Swap rearranges 2 elements so that each occupies the other's former position.
 func (l ResolutionList) Swap(i, j int) { l[i], l[j] = l[j], l[i] }

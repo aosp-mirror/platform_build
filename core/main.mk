@@ -142,11 +142,6 @@ $(KATI_obsolete_var ADDITIONAL_BUILD_PROPERTIES, Please use ADDITIONAL_SYSTEM_PR
 #
 # -----------------------------------------------------------------
 # Add the product-defined properties to the build properties.
-ifdef PRODUCT_SHIPPING_API_LEVEL
-ADDITIONAL_SYSTEM_PROPERTIES += \
-  ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
-endif
-
 ifneq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
   ADDITIONAL_SYSTEM_PROPERTIES += $(PRODUCT_PROPERTY_OVERRIDES)
 else
@@ -348,7 +343,7 @@ endif
 ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)
 
 ifeq ($(AB_OTA_UPDATER),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(strip $(AB_OTA_PARTITIONS)))
+ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(sort $(AB_OTA_PARTITIONS)))
 endif
 
 # -----------------------------------------------------------------
@@ -1209,7 +1204,8 @@ define resolve-product-relative-paths
         $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),\
           $(subst $(_vendor_dlkm_path_placeholder),$(TARGET_COPY_OUT_VENDOR_DLKM),\
             $(subst $(_odm_dlkm_path_placeholder),$(TARGET_COPY_OUT_ODM_DLKM),\
-              $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))))
+              $(subst $(_system_dlkm_path_placeholder),$(TARGET_COPY_OUT_SYSTEM_DLKM),\
+                $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2))))))))))
 endef
 
 # Returns modules included automatically as a result of certain BoardConfig
@@ -1564,6 +1560,9 @@ vendorimage: $(INSTALLED_VENDORIMAGE_TARGET)
 .PHONY: vendorbootimage
 vendorbootimage: $(INSTALLED_VENDOR_BOOTIMAGE_TARGET)
 
+.PHONY: vendorkernelbootimage
+vendorkernelbootimage: $(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET)
+
 .PHONY: vendorbootimage_debug
 vendorbootimage_debug: $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET)
 
@@ -1572,6 +1571,9 @@ vendorbootimage_test_harness: $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET)
 
 .PHONY: vendorramdisk
 vendorramdisk: $(INSTALLED_VENDOR_RAMDISK_TARGET)
+
+.PHONY: vendorkernelramdisk
+vendorkernelramdisk: $(INSTALLED_VENDOR_KERNEL_RAMDISK_TARGET)
 
 .PHONY: vendorramdisk_debug
 vendorramdisk_debug: $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET)
@@ -1594,6 +1596,9 @@ vendor_dlkmimage: $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
 .PHONY: odm_dlkmimage
 odm_dlkmimage: $(INSTALLED_ODM_DLKMIMAGE_TARGET)
 
+.PHONY: system_dlkmimage
+system_dlkmimage: $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
+
 .PHONY: systemotherimage
 systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 
@@ -1605,9 +1610,6 @@ bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
 .PHONY: initbootimage
 initbootimage: $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
-
-.PHONY: system_dlkm_image
-system_dlkm_image: $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET)
 
 ifeq (true,$(PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST))
 $(call dist-for-goals, bootimage, $(INSTALLED_BOOTIMAGE_TARGET))
@@ -1632,8 +1634,8 @@ vbmetavendorimage: $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
 # perform a full system build (either unbundled or not).
 .PHONY: droidcore-unbundled
 droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
+    $(INSTALLED_FILES_OUTSIDE_IMAGES) \
     $(INSTALLED_SYSTEMIMAGE_TARGET) \
-    $(INSTALLED_SYSTEM_DLKM_IMAGE_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_BOOTIMAGE_TARGET) \
     $(INSTALLED_INIT_BOOT_IMAGE_TARGET) \
@@ -1649,14 +1651,17 @@ droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_BPTIMAGE_TARGET) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_TEST_HARNESS_RAMDISK_TARGET) \
     $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
     $(INSTALLED_VENDOR_RAMDISK_TARGET) \
+    $(INSTALLED_VENDOR_KERNEL_RAMDISK_TARGET) \
     $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
     $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) \
     $(INSTALLED_ODM_DLKMIMAGE_TARGET) \
+    $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET) \
     $(INSTALLED_SUPERIMAGE_EMPTY_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
     $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
@@ -1672,6 +1677,8 @@ droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_VENDOR_DLKM) \
     $(INSTALLED_FILES_FILE_ODM_DLKM) \
     $(INSTALLED_FILES_JSON_ODM_DLKM) \
+    $(INSTALLED_FILES_FILE_SYSTEM_DLKM) \
+    $(INSTALLED_FILES_JSON_SYSTEM_DLKM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
     $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
@@ -1686,6 +1693,8 @@ droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_VENDOR_RAMDISK) \
     $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK) \
     $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK) \
+    $(INSTALLED_FILES_FILE_VENDOR_KERNEL_RAMDISK) \
+    $(INSTALLED_FILES_JSON_VENDOR_KERNEL_RAMDISK) \
     $(INSTALLED_FILES_FILE_ROOT) \
     $(INSTALLED_FILES_JSON_ROOT) \
     $(INSTALLED_FILES_FILE_RECOVERY) \
@@ -1767,13 +1776,13 @@ apps_only: $(unbundled_build_modules)
 
 droid_targets: apps_only
 
-# Combine the NOTICE files for a apps_only build
-$(eval $(call combine-notice-files, html, \
-    $(target_notice_file_txt), \
-    $(target_notice_file_html_or_xml), \
-    "Notices for files for apps:", \
-    $(TARGET_OUT_NOTICE_FILES), \
-    $(apps_only_installed_files)))
+# NOTICE files for a apps_only build
+$(eval $(call html-notice-rule,$(target_notice_file_html_or_xml),"Apps","Notices for files for apps:",$(unbundled_build_modules),$(PRODUCT_OUT)/ $(HOST_OUT)/))
+
+$(eval $(call text-notice-rule,$(target_notice_file_txt),"Apps","Notices for files for apps:",$(unbundled_build_modules),$(PRODUCT_OUT)/ $(HOST_OUT)/))
+
+$(call declare-0p-target,$(target_notice_file_txt))
+$(call declare-0p-target,$(target_notice_html_or_xml))
 
 
 else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
@@ -1822,6 +1831,8 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(INSTALLED_FILES_JSON_VENDOR_DLKM) \
     $(INSTALLED_FILES_FILE_ODM_DLKM) \
     $(INSTALLED_FILES_JSON_ODM_DLKM) \
+    $(INSTALLED_FILES_FILE_SYSTEM_DLKM) \
+    $(INSTALLED_FILES_JSON_SYSTEM_DLKM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
     $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
@@ -1867,6 +1878,8 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
       $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
       $(INSTALLED_FILES_FILE_VENDOR_RAMDISK) \
       $(INSTALLED_FILES_JSON_VENDOR_RAMDISK) \
+      $(INSTALLED_FILES_FILE_VENDOR_KERNEL_RAMDISK) \
+      $(INSTALLED_FILES_JSON_VENDOR_KERNEL_RAMDISK) \
       $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK) \
       $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK) \
       $(INSTALLED_DEBUG_RAMDISK_TARGET) \
@@ -1878,6 +1891,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
       $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
       $(INSTALLED_VENDOR_RAMDISK_TARGET) \
       $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
+      $(INSTALLED_VENDOR_KERNEL_RAMDISK_TARGET) \
     )
   endif
 

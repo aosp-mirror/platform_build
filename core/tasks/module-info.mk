@@ -1,4 +1,5 @@
 # Print a list of the modules that could be built
+# Currently runtime_dependencies only include the runtime libs information for cc binaries.
 
 MODULE_INFO_JSON := $(PRODUCT_OUT)/module-info.json
 
@@ -24,6 +25,9 @@ $(MODULE_INFO_JSON):
 			'"test_mainline_modules": [$(foreach w,$(sort $(ALL_MODULES.$(m).TEST_MAINLINE_MODULES)),"$(w)", )], ' \
 			'"is_unit_test": "$(ALL_MODULES.$(m).IS_UNIT_TEST)", ' \
 			'"data": [$(foreach w,$(sort $(ALL_MODULES.$(m).TEST_DATA)),"$(w)", )], ' \
+			'"runtime_dependencies": [$(foreach w,$(sort $(ALL_MODULES.$(m).LOCAL_RUNTIME_LIBRARIES)),"$(w)", )], ' \
+			'"data_dependencies": [$(foreach w,$(sort $(ALL_MODULES.$(m).TEST_DATA_BINS)),"$(w)", )], ' \
+			'"supported_variants": [$(foreach w,$(sort $(ALL_MODULES.$(m).SUPPORTED_VARIANTS)),"$(w)", )], ' \
 			'},\n' \
 	 ) | sed -e 's/, *\]/]/g' -e 's/, *\}/ }/g' -e '$$s/,$$//' >> $@
 	$(hide) echo '}' >> $@

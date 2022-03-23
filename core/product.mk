@@ -14,98 +14,6 @@
 # limitations under the License.
 #
 
-#
-# Functions for including AndroidProducts.mk files
-# PRODUCT_MAKEFILES is set up in AndroidProducts.mks.
-# Format of PRODUCT_MAKEFILES:
-# <product_name>:<path_to_the_product_makefile>
-# If the <product_name> is the same as the base file name (without dir
-# and the .mk suffix) of the product makefile, "<product_name>:" can be
-# omitted.
-
-#
-# Returns the list of all AndroidProducts.mk files.
-# $(call ) isn't necessary.
-#
-define _find-android-products-files
-$(file <$(OUT_DIR)/.module_paths/AndroidProducts.mk.list) \
-  $(SRC_TARGET_DIR)/product/AndroidProducts.mk
-endef
-
-#
-# For entries returned by get-product-makefiles, decode an entry to a short
-# product name. These either may be in the form of <name>:path/to/file.mk or
-# path/to/<name>.mk
-# $(1): The entry to decode
-#
-# Returns two words:
-#   <name> <file>
-#
-define _decode-product-name
-$(strip \
-  $(eval _cpm_words := $(subst :,$(space),$(1))) \
-  $(if $(word 2,$(_cpm_words)), \
-    $(wordlist 1,2,$(_cpm_words)), \
-    $(basename $(notdir $(1))) $(1)))
-endef
-
-#
-# Validates the new common lunch choices -- ensures that they're in an
-# appropriate form, and are paired with definitions of their products.
-# $(1): The new list of COMMON_LUNCH_CHOICES
-# $(2): The new list of PRODUCT_MAKEFILES
-#
-define _validate-common-lunch-choices
-$(strip $(foreach choice,$(1),\
-  $(eval _parts := $(subst -,$(space),$(choice))) \
-  $(if $(call math_lt,$(words $(_parts)),2), \
-    $(error $(LOCAL_DIR): $(choice): Invalid lunch choice)) \
-  $(if $(call math_gt_or_eq,$(words $(_parts)),4), \
-    $(error $(LOCAL_DIR): $(choice): Invalid lunch choice)) \
-  $(if $(filter-out eng userdebug user,$(word 2,$(_parts))), \
-    $(error $(LOCAL_DIR): $(choice): Invalid variant: $(word 2,$(_parts)))) \
-  $(if $(filter-out $(foreach p,$(2),$(call _decode-product-name,$(p))),$(word 1,$(_parts))), \
-    $(error $(LOCAL_DIR): $(word 1,$(_parts)): Product not defined in this file)) \
-  ))
-endef
-
-#
-# Returns the sorted concatenation of PRODUCT_MAKEFILES
-# variables set in the given AndroidProducts.mk files.
-# $(1): the list of AndroidProducts.mk files.
-#
-# As a side-effect, COMMON_LUNCH_CHOICES will be set to a
-# union of all of the COMMON_LUNCH_CHOICES definitions within
-# each AndroidProducts.mk file.
-#
-define get-product-makefiles
-$(sort \
-  $(eval _COMMON_LUNCH_CHOICES :=) \
-  $(foreach f,$(1), \
-    $(eval PRODUCT_MAKEFILES :=) \
-    $(eval COMMON_LUNCH_CHOICES :=) \
-    $(eval LOCAL_DIR := $(patsubst %/,%,$(dir $(f)))) \
-    $(eval include $(f)) \
-    $(call _validate-common-lunch-choices,$(COMMON_LUNCH_CHOICES),$(PRODUCT_MAKEFILES)) \
-    $(eval _COMMON_LUNCH_CHOICES += $(COMMON_LUNCH_CHOICES)) \
-    $(PRODUCT_MAKEFILES) \
-   ) \
-  $(eval PRODUCT_MAKEFILES :=) \
-  $(eval LOCAL_DIR :=) \
-  $(eval COMMON_LUNCH_CHOICES := $(sort $(_COMMON_LUNCH_CHOICES))) \
-  $(eval _COMMON_LUNCH_CHOICES :=) \
- )
-endef
-
-#
-# Returns the sorted concatenation of all PRODUCT_MAKEFILES
-# variables set in all AndroidProducts.mk files.
-# $(call ) isn't necessary.
-#
-define get-all-product-makefiles
-$(call get-product-makefiles,$(_find-android-products-files))
-endef
-
 # Variables that are meant to hold only a single value.
 # - The value set in the current makefile takes precedence over inherited values
 # - If multiple inherited makefiles set the var, the first-inherited value wins
@@ -268,6 +176,7 @@ _product_single_value_vars += PRODUCT_SYSTEM_EXT_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_ODM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_VENDOR_DLKM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_ODM_DLKM_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_SYSTEM_DLKM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_SYSTEM_SERVER_DEBUG_INFO
 _product_single_value_vars += PRODUCT_OTHER_JAVA_DEBUG_INFO
 
@@ -298,6 +207,7 @@ _product_single_value_vars += PRODUCT_SYSTEM_EXT_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_ODM_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_VENDOR_DLKM_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_ODM_DLKM_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_SYSTEM_DLKM_BASE_FS_PATH
 
 # The first API level this product shipped with
 _product_single_value_vars += PRODUCT_SHIPPING_API_LEVEL
@@ -384,7 +294,6 @@ _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
 
 # Controls for whether different partitions are built for the current product.
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_IMAGE
-_product_single_value_vars += PRODUCT_BUILD_SYSTEM_DLKM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_OTHER_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_PRODUCT_IMAGE
@@ -392,6 +301,7 @@ _product_single_value_vars += PRODUCT_BUILD_SYSTEM_EXT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_ODM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_DLKM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_ODM_DLKM_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_SYSTEM_DLKM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_CACHE_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_USERDATA_IMAGE
@@ -400,6 +310,7 @@ _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_INIT_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_DEBUG_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_BOOT_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_VENDOR_KERNEL_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SUPER_EMPTY_IMAGE
@@ -490,17 +401,20 @@ endef
 # See e.g. product-graph.mk for an example of this.
 #
 define inherit-product
-  $(if $(findstring ../,$(1)),\
-    $(eval np := $(call normalize-paths,$(1))),\
-    $(eval np := $(strip $(1))))\
-  $(foreach v,$(_product_var_list), \
-      $(eval $(v) := $($(v)) $(INHERIT_TAG)$(np))) \
-  $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
-  $(eval inherit_var := PRODUCTS.$(current_mk).INHERITS_FROM) \
-  $(eval $(inherit_var) := $(sort $($(inherit_var)) $(np))) \
-  $(eval PARENT_PRODUCT_FILES := $(sort $(PARENT_PRODUCT_FILES) $(current_mk))) \
-  $(call dump-inherit,$(strip $(word 1,$(_include_stack))),$(1)) \
-  $(call dump-config-vals,$(current_mk),inherit)
+  $(eval _inherit_product_wildcard := $(wildcard $(1)))\
+  $(if $(_inherit_product_wildcard),,$(error $(1) does not exist.))\
+  $(foreach part,$(_inherit_product_wildcard),\
+    $(if $(findstring ../,$(part)),\
+      $(eval np := $(call normalize-paths,$(part))),\
+      $(eval np := $(strip $(part))))\
+    $(foreach v,$(_product_var_list), \
+        $(eval $(v) := $($(v)) $(INHERIT_TAG)$(np))) \
+    $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
+    $(eval inherit_var := PRODUCTS.$(current_mk).INHERITS_FROM) \
+    $(eval $(inherit_var) := $(sort $($(inherit_var)) $(np))) \
+    $(eval PARENT_PRODUCT_FILES := $(sort $(PARENT_PRODUCT_FILES) $(current_mk))) \
+    $(call dump-inherit,$(strip $(word 1,$(_include_stack))),$(1)) \
+    $(call dump-config-vals,$(current_mk),inherit))
 endef
 
 # Specifies a number of path prefixes, relative to PRODUCT_OUT, where the

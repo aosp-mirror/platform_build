@@ -875,6 +875,16 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
 endif  # LOCAL_UNINSTALLABLE_MODULE
 endif  # LOCAL_COMPATIBILITY_SUITE
 
+my_supported_variant :=
+ifeq ($(my_host_cross),true)
+  my_supported_variant := HOST_CROSS
+else
+  ifdef LOCAL_IS_HOST_MODULE
+    my_supported_variant := HOST
+  else
+    my_supported_variant := DEVICE
+  endif
+endif
 ###########################################################
 ## Add test module to ALL_DISABLED_PRESUBMIT_TESTS if LOCAL_PRESUBMIT_DISABLED is set to true.
 ###########################################################
@@ -981,6 +991,9 @@ ALL_MODULES.$(my_register_name).SHARED_LIBS := \
 ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS := \
     $(ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS) $(LOCAL_SYSTEM_SHARED_LIBRARIES)
 
+ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES := \
+    $(ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES) $(LOCAL_RUNTIME_LIBRARIES)
+
 ifdef LOCAL_TEST_DATA
   # Export the list of targets that are handled as data inputs and required
   # by tests at runtime. The LOCAL_TEST_DATA format is generated from below
@@ -992,6 +1005,15 @@ ifdef LOCAL_TEST_DATA
       $(foreach f, $(LOCAL_TEST_DATA),\
         $(call word-colon,2,$(f))))
 endif
+
+ifdef LOCAL_TEST_DATA_BINS
+  ALL_MODULES.$(my_register_name).TEST_DATA_BINS := \
+    $(ALL_MODULES.$(my_register_name).TEST_DATA_BINS) $(LOCAL_TEST_DATA_BINS)
+endif
+
+ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
+  $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS) \
+  $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
 
 ##########################################################################
 ## When compiling against the VNDK, add the .vendor or .product suffix to

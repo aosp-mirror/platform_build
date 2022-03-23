@@ -59,15 +59,9 @@ ALL_MODULE_TAGS:=
 # its sub-variables.)
 ALL_MODULE_NAME_TAGS:=
 
-# Full path to all files that are made by some tool
-ALL_GENERATED_SOURCES:=
-
 # Full path to all asm, C, C++, lex and yacc generated C files.
 # These all have an order-only dependency on the copied headers
 ALL_C_CPP_ETC_OBJECTS:=
-
-# The list of dynamic binaries that haven't been stripped/compressed/etc.
-ALL_ORIGINAL_DYNAMIC_BINARIES:=
 
 # These files go into the SDK
 ALL_SDK_FILES:=
@@ -577,6 +571,18 @@ $(call generated-sources-dir-for,META,lic,)
 endef
 
 ###########################################################
+# License metadata targets corresponding to targets in $(1)
+###########################################################
+define corresponding-license-metadata
+$(strip $(foreach target, $(sort $(1)), \
+  $(if $(strip $(ALL_MODULES.$(target).META_LIC)), \
+    $(ALL_MODULES.$(target).META_LIC), \
+    $(if $(strip $(ALL_TARGETS.$(target).META_LIC)), \
+      $(ALL_TARGETS.$(target).META_LIC), \
+      $(call license-metadata-dir)/$(target).meta_lic))))
+endef
+
+###########################################################
 ## License metadata build rule for my_register_name $(1)
 ###########################################################
 define license-metadata-rule
@@ -728,6 +734,22 @@ $(strip \
 endef
 
 ###########################################################
+## Declare that non-module targets copied from project $(1) and
+## optionally ending in $(2) have the following license
+## metadata:
+##
+## $(3) -- license kinds e.g. SPDX-license-identifier-Apache-2.0
+## $(4) -- license conditions e.g. notice by_exception_only
+## $(5) -- license text filenames (notices)
+## $(6) -- package name
+###########################################################
+define declare-copy-files-license-metadata
+$(strip \
+  $(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(eval $(call declare-license-metadata,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair)),$(3),$(4),$(5),$(6),$(1)))) \
+)
+endef
+
+###########################################################
 ## Declare the license metadata for non-module container-type target $(1).
 ##
 ## Container-type targets are targets like .zip files that
@@ -765,6 +787,18 @@ $(strip \
 endef
 
 ###########################################################
+## Declare that non-module targets copied from project $(1) and
+## optionally ending in $(2) are non-copyrightable files.
+##
+## e.g. an information-only file merely listing other files.
+###########################################################
+define declare-0p-copy-files
+$(strip \
+  $(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(eval $(call declare-0p-target,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair))))) \
+)
+endef
+
+###########################################################
 ## Declare non-module target $(1) to have a first-party license
 ## (Android Apache 2.0)
 ##
@@ -772,6 +806,15 @@ endef
 ###########################################################
 define declare-1p-target
 $(call declare-license-metadata,$(1),SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,Android,$(2))
+endef
+
+###########################################################
+## Declare that non-module targets copied from project $(1) and
+## optionally ending in $(2) are first-party licensed
+## (Android Apache 2.0)
+###########################################################
+define declare-1p-copy-files
+$(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(call declare-1p-target,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair)),$(1)))
 endef
 
 ###########################################################
@@ -822,11 +865,53 @@ endef
 define report-missing-licenses-rule
 .PHONY: reportmissinglicenses
 reportmissinglicenses: PRIVATE_NON_MODULES:=$(sort $(NON_MODULES_WITHOUT_LICENSE_METADATA))
+reportmissinglicenses: PRIVATE_COPIED_FILES:=$(sort $(filter $(NON_MODULES_WITHOUT_LICENSE_METADATA),$(foreach _pair,$(PRODUCT_COPY_FILES), $(PRODUCT_OUT)/$(call word-colon,2,$(_pair)))))
 reportmissinglicenses:
 	@echo Reporting $$(words $$(PRIVATE_NON_MODULES)) targets without license metadata
 	$$(foreach t,$$(PRIVATE_NON_MODULES),if ! [ -h $$(t) ]; then echo No license metadata for $$(t) >&2; fi;)
+	$$(foreach t,$$(PRIVATE_COPIED_FILES),if ! [ -h $$(t) ]; then echo No license metadata for copied file $$(t) >&2; fi;)
 
 endef
+
+
+###########################################################
+# Returns the unique list of built license metadata files.
+###########################################################
+define all-license-metadata
+$(sort \
+  $(foreach t,$(ALL_NON_MODULES),$(if $(filter 0p,$(ALL_TARGETS.$(t).META_LIC)),, $(ALL_TARGETS.$(t).META_LIC))) \
+  $(foreach m,$(ALL_MODULES), $(ALL_MODULES.$(m).META_LIC)) \
+)
+endef
+
+###########################################################
+# Declares the rule to report all library names used in any notice files.
+###########################################################
+define report-all-notice-library-names-rule
+$(strip $(eval _all := $(call all-license-metadata)))
+
+.PHONY: reportallnoticelibrarynames
+reportallnoticelibrarynames: PRIVATE_LIST_FILE := $(call license-metadata-dir)/filelist
+reportallnoticelibrarynames: | $(COMPLIANCENOTICE_SHIPPEDLIBS)
+reportallnoticelibrarynames: $(_all)
+	@echo Reporting notice library names for at least $$(words $(_all)) license metadata files
+	$(hide) rm -f $$(PRIVATE_LIST_FILE)
+	$(hide) mkdir -p $$(dir $$(PRIVATE_LIST_FILE))
+	$(hide) find out -name '*meta_lic' -type f -printf '"%p"\n' >$$(PRIVATE_LIST_FILE)
+	$(COMPLIANCENOTICE_SHIPPEDLIBS) @$$(PRIVATE_LIST_FILE)
+endef
+
+###########################################################
+# Declares the rule to build all license metadata.
+###########################################################
+define build-all-license-metadata-rule
+$(strip $(eval _all := $(call all-license-metadata)))
+
+.PHONY: alllicensemetadata
+alllicensemetadata: $(_all)
+	@echo Building all $(words $(_all)) license metadata files
+endef
+
 
 ###########################################################
 ## Declares a license metadata build rule for ALL_MODULES
@@ -842,7 +927,9 @@ $(strip \
   ) \
   $(foreach t,$(sort $(ALL_NON_MODULES)),$(eval $(call non-module-license-metadata-rule,$(t)))) \
   $(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m)))) \
-  $(eval $(call report-missing-licenses-rule)))
+  $(eval $(call report-missing-licenses-rule)) \
+  $(eval $(call report-all-notice-library-names-rule)) \
+  $(eval $(call build-all-license-metadata-rule)))
 endef
 
 ###########################################################
@@ -2986,6 +3073,8 @@ endef
 # $(3): full path to destination
 define symlink-file
 $(eval $(_symlink-file))
+$(eval $(call declare-license-metadata,$(3),,,,,,))
+$(eval $(call declare-license-deps,$(3),$(1)))
 endef
 
 define _symlink-file

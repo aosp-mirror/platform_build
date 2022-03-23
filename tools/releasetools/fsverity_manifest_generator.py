@@ -55,6 +55,14 @@ if __name__ == '__main__':
       help='minimum supported sdk version of the generated manifest apk',
       required=True)
   p.add_argument(
+      '--version-code',
+      help='version code for the generated manifest apk',
+      required=True)
+  p.add_argument(
+      '--version-name',
+      help='version name for the generated manifest apk',
+      required=True)
+  p.add_argument(
       '--framework-res',
       help='path to framework-res.apk',
       required=True)
@@ -98,6 +106,8 @@ if __name__ == '__main__':
       "-A", os.path.join(temp_dir, "assets"),
       "-o", args.output,
       "--min-sdk-version", args.min_sdk_version,
+      "--version-code", args.version_code,
+      "--version-name", args.version_name,
       "-I", args.framework_res,
       "--manifest", args.apk_manifest_path])
   common.RunAndCheckOutput([args.apksigner_path, "sign", "--in", args.output,
