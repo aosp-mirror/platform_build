@@ -88,13 +88,13 @@ func TestReadLicenseGraph(t *testing.T) {
 			lg, err := ReadLicenseGraph(tt.fs, stderr, tt.roots)
 			if err != nil {
 				if len(tt.expectedError) == 0 {
-					t.Errorf("unexpected error: got %w, want no error", err)
+					t.Errorf("unexpected error: got %s, want no error", err)
 				} else if !strings.Contains(err.Error(), tt.expectedError) {
-					t.Errorf("unexpected error: got %w, want %q", err, tt.expectedError)
+					t.Errorf("unexpected error: got %s, want %q", err, tt.expectedError)
 				}
 				return
 			}
-			if 0 < len(tt.expectedError) {
+			if len(tt.expectedError) > 0 {
 				t.Errorf("unexpected success: got no error, want %q err", tt.expectedError)
 				return
 			}

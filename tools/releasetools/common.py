@@ -97,6 +97,7 @@ class Options(object):
     self.stash_threshold = 0.8
     self.logfile = None
     self.host_tools = {}
+    self.sepolicy_name = 'sepolicy.apex'
 
 
 OPTIONS = Options()
@@ -114,7 +115,7 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # accordingly.
 AVB_PARTITIONS = ('boot', 'init_boot', 'dtbo', 'odm', 'product', 'pvmfw', 'recovery',
                   'system', 'system_ext', 'vendor', 'vendor_boot',
-                  'vendor_dlkm', 'odm_dlkm')
+                  'vendor_dlkm', 'odm_dlkm', 'system_dlkm')
 
 # Chained VBMeta partitions.
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
@@ -128,6 +129,7 @@ PARTITIONS_WITH_CARE_MAP = [
     'odm',
     'vendor_dlkm',
     'odm_dlkm',
+    'system_dlkm',
 ]
 
 # Partitions with a build.prop file
@@ -470,10 +472,6 @@ class BuildInfo(object):
   def oem_props(self):
     return self._oem_props
 
-  @property
-  def avb_enabled(self):
-    return self.get("avb_enable") == "true"
-
   def __getitem__(self, key):
     return self.info_dict[key]
 
@@ -498,6 +496,7 @@ class BuildInfo(object):
     """Returns the inquired build property for the provided partition."""
 
     # Boot image uses ro.[product.]bootimage instead of boot.
+    # This comes from the generic ramdisk
     prop_partition = "bootimage" if partition == "boot" else partition
 
     # If provided a partition for this property, only look within that
@@ -801,7 +800,7 @@ def LoadInfoDict(input_file, repacking=False):
 
     # Redirect {partition}_base_fs_file for each of the named partitions.
     for part_name in ["system", "vendor", "system_ext", "product", "odm",
-                      "vendor_dlkm", "odm_dlkm"]:
+                      "vendor_dlkm", "odm_dlkm", "system_dlkm"]:
       key_name = part_name + "_base_fs_file"
       if key_name not in d:
         continue
@@ -1024,7 +1023,8 @@ class PartitionBuildProps(object):
 
     import_path = tokens[1]
     if not re.match(r'^/{}/.*\.prop$'.format(self.partition), import_path):
-      raise ValueError('Unrecognized import path {}'.format(line))
+      logger.warn('Unrecognized import path {}'.format(line))
+      return {}
 
     # We only recognize a subset of import statement that the init process
     # supports. And we can loose the restriction based on how the dynamic
@@ -1245,6 +1245,7 @@ def PartitionMapFromTargetFiles(target_files_dir):
           "VENDOR_DLKM", "VENDOR/vendor_dlkm", "SYSTEM/vendor/vendor_dlkm"
       ],
       "odm_dlkm": ["ODM_DLKM", "VENDOR/odm_dlkm", "SYSTEM/vendor/odm_dlkm"],
+      "system_dlkm": ["SYSTEM_DLKM", "SYSTEM/system_dlkm"],
   }
   partition_map = {}
   for partition, subdirs in possible_subdirs.items():
@@ -1401,7 +1402,7 @@ def _HasGkiCertificationArgs():
           "gki_signing_algorithm" in OPTIONS.info_dict)
 
 
-def _GenerateGkiCertificate(image, image_name, partition_name):
+def _GenerateGkiCertificate(image, image_name):
   key_path = OPTIONS.info_dict.get("gki_signing_key_path")
   algorithm = OPTIONS.info_dict.get("gki_signing_algorithm")
 
@@ -1430,8 +1431,7 @@ def _GenerateGkiCertificate(image, image_name, partition_name):
   if signature_args:
     cmd.extend(["--additional_avb_args", signature_args])
 
-  args = OPTIONS.info_dict.get(
-      "avb_" + partition_name + "_add_hash_footer_args", "")
+  args = OPTIONS.info_dict.get("avb_boot_add_hash_footer_args", "")
   args = args.strip()
   if args:
     cmd.extend(["--additional_avb_args", args])
@@ -1624,27 +1624,9 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   if args and args.strip():
     cmd.extend(shlex.split(args))
 
-  boot_signature = None
-  if _HasGkiCertificationArgs():
-    # Certify GKI images.
-    boot_signature_bytes = b''
-    if kernel_path is not None:
-      boot_signature_bytes += _GenerateGkiCertificate(
-          kernel_path, "generic_kernel", "boot")
-    if has_ramdisk:
-      boot_signature_bytes += _GenerateGkiCertificate(
-          ramdisk_img.name, "generic_ramdisk", "init_boot")
-
-    if len(boot_signature_bytes) > 0:
-      boot_signature = tempfile.NamedTemporaryFile()
-      boot_signature.write(boot_signature_bytes)
-      boot_signature.flush()
-      cmd.extend(["--boot_signature", boot_signature.name])
-  else:
-    # Certified GKI boot/init_boot image mustn't set 'mkbootimg_version_args'.
-    args = info_dict.get("mkbootimg_version_args")
-    if args and args.strip():
-      cmd.extend(shlex.split(args))
+  args = info_dict.get("mkbootimg_version_args")
+  if args and args.strip():
+    cmd.extend(shlex.split(args))
 
   if has_ramdisk:
     cmd.extend(["--ramdisk", ramdisk_img.name])
@@ -1665,6 +1647,29 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
       cmd.extend(["--recovery_acpio", fn])
 
   RunAndCheckOutput(cmd)
+
+  if _HasGkiCertificationArgs():
+    if not os.path.exists(img.name):
+      raise ValueError("Cannot find GKI boot.img")
+    if kernel_path is None or not os.path.exists(kernel_path):
+      raise ValueError("Cannot find GKI kernel.img")
+
+    # Certify GKI images.
+    boot_signature_bytes = b''
+    boot_signature_bytes += _GenerateGkiCertificate(img.name, "boot")
+    boot_signature_bytes += _GenerateGkiCertificate(
+        kernel_path, "generic_kernel")
+
+    BOOT_SIGNATURE_SIZE = 16 * 1024
+    if len(boot_signature_bytes) > BOOT_SIGNATURE_SIZE:
+      raise ValueError(
+          f"GKI boot_signature size must be <= {BOOT_SIGNATURE_SIZE}")
+    boot_signature_bytes += (
+        b'\0' * (BOOT_SIGNATURE_SIZE - len(boot_signature_bytes)))
+    assert len(boot_signature_bytes) == BOOT_SIGNATURE_SIZE
+
+    with open(img.name, 'ab') as f:
+      f.write(boot_signature_bytes)
 
   if (info_dict.get("boot_signer") == "true" and
           info_dict.get("verity_key")):
@@ -1725,9 +1730,6 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   if has_ramdisk:
     ramdisk_img.close()
   img.close()
-
-  if boot_signature is not None:
-    boot_signature.close()
 
   return data
 
@@ -1835,23 +1837,6 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
     return File(name, data)
   return None
 
-def GetSystemDlkmImage(name, prebuilt_name, unpack_dir, tree_subdir,
-                       info_dict=None):
-  """Return a File object with the desired system dlkm image.
-  Look for it under 'unpack_dir'/IMAGES or 'unpack_dir'/PREBUILT_IMAGES.
-  """
-
-  prebuilt_path = os.path.join(unpack_dir, "IMAGES", prebuilt_name)
-  if os.path.exists(prebuilt_path):
-    logger.info("Using prebuilt %s from IMAGES...", prebuilt_name)
-    return File.FromLocalFile(name, prebuilt_path)
-
-  prebuilt_path = os.path.join(unpack_dir, "PREBUILT_IMAGES", prebuilt_name)
-  if os.path.exists(prebuilt_path):
-    logger.info("Using prebuilt %s from PREBUILT_IMAGES...", prebuilt_name)
-    return File.FromLocalFile(name, prebuilt_path)
-
-  return None
 
 def _BuildVendorBootImage(sourcedir, info_dict=None):
   """Build a vendor boot image from the specified sourcedir.
@@ -2259,8 +2244,8 @@ def GetMinSdkVersion(apk_name):
   stdoutdata, stderrdata = proc.communicate()
   if proc.returncode != 0:
     raise ExternalError(
-        "Failed to obtain minSdkVersion: aapt2 return code {}:\n{}\n{}".format(
-            proc.returncode, stdoutdata, stderrdata))
+        "Failed to obtain minSdkVersion for {}: aapt2 return code {}:\n{}\n{}".format(
+            apk_name, proc.returncode, stdoutdata, stderrdata))
 
   for line in stdoutdata.split("\n"):
     # Looking for lines such as sdkVersion:'23' or sdkVersion:'M'.
@@ -2833,6 +2818,9 @@ def ZipDelete(zip_filename, entries):
   """
   if isinstance(entries, str):
     entries = [entries]
+  # If list is empty, nothing to do
+  if not entries:
+    return
   cmd = ["zip", "-d", zip_filename] + entries
   RunAndCheckOutput(cmd)
 

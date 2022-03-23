@@ -185,7 +185,7 @@ type targetNode struct {
 
 // addDependencies converts the proto AnnotatedDependencies into `edges`
 func addDependencies(lg *LicenseGraph, tn *TargetNode) error {
-	tn.edges = make(TargetEdgeList, 0,len(tn.proto.Deps))
+	tn.edges = make(TargetEdgeList, 0, len(tn.proto.Deps))
 	for _, ad := range tn.proto.Deps {
 		dependency := ad.GetFile()
 		if len(dependency) == 0 {

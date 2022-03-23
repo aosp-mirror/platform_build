@@ -148,7 +148,7 @@ func (e *TargetEdge) String() string {
 type TargetEdgeList []*TargetEdge
 
 // Len returns the count of the elmements in the list.
-func (l TargetEdgeList) Len() int      { return len(l) }
+func (l TargetEdgeList) Len() int { return len(l) }
 
 // Swap rearranges 2 elements so that each occupies the other's former position.
 func (l TargetEdgeList) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
@@ -171,7 +171,7 @@ func (l TargetEdgeList) Less(i, j int) bool {
 // edge with a context `ctx` defined by whatever process is creating the path.
 type TargetEdgePathSegment struct {
 	edge *TargetEdge
-	ctx interface{}
+	ctx  interface{}
 }
 
 // Target identifies the target that depends on the dependency.
@@ -243,6 +243,15 @@ func (p *TargetEdgePath) Pop() {
 // Clear makes the path length 0.
 func (p *TargetEdgePath) Clear() {
 	*p = (*p)[:0]
+}
+
+// Copy makes a new path with the same value.
+func (p *TargetEdgePath) Copy() *TargetEdgePath {
+	result := make(TargetEdgePath, 0, len(*p))
+	for _, e := range *p {
+		result = append(result, e)
+	}
+	return &result
 }
 
 // String returns a string representation of the path: [n1 -> n2 -> ... -> nn].
@@ -355,6 +364,12 @@ func (tn *TargetNode) Built() []string {
 // (unordered)
 func (tn *TargetNode) Installed() []string {
 	return append([]string{}, tn.proto.Installed...)
+}
+
+// TargetFiles returns the list of files built or installed by the module or
+// target. (unordered)
+func (tn *TargetNode) TargetFiles() []string {
+	return append(tn.proto.Built, tn.proto.Installed...)
 }
 
 // InstallMap returns the list of path name transformations to make to move
@@ -480,7 +495,7 @@ func (ts *TargetNodeSet) String() string {
 type TargetNodeList []*TargetNode
 
 // Len returns the count of elements in the list.
-func (l TargetNodeList) Len() int      { return len(l) }
+func (l TargetNodeList) Len() int { return len(l) }
 
 // Swap rearranges 2 elements so that each occupies the other's former position.
 func (l TargetNodeList) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
