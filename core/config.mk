@@ -252,10 +252,6 @@ endef
 # Initialize SOONG_CONFIG_NAMESPACES so that it isn't recursive.
 SOONG_CONFIG_NAMESPACES :=
 
-# TODO(asmundak): remove add_soong_config_namespace, add_soong_config_var,
-# and add_soong_config_var_value once all their usages are replaced with
-# soong_config_set/soong_config_append.
-
 # The add_soong_config_namespace function adds a namespace and initializes it
 # to be empty.
 # $1 is the namespace.
@@ -263,7 +259,7 @@ SOONG_CONFIG_NAMESPACES :=
 
 define add_soong_config_namespace
 $(eval SOONG_CONFIG_NAMESPACES += $1) \
-$(eval SOONG_CONFIG_$(strip $1) :=)
+$(eval SOONG_CONFIG_$1 :=)
 endef
 
 # The add_soong_config_var function adds a a list of soong config variables to
@@ -272,8 +268,8 @@ endef
 # $1 is the namespace. $2 is the list of variables.
 # Ex: $(call add_soong_config_var,acme,COOL_FEATURE_A COOL_FEATURE_B)
 define add_soong_config_var
-$(eval SOONG_CONFIG_$(strip $1) += $2) \
-$(foreach v,$(strip $2),$(eval SOONG_CONFIG_$(strip $1)_$v := $($v)))
+$(eval SOONG_CONFIG_$1 += $2) \
+$(foreach v,$2,$(eval SOONG_CONFIG_$1_$v := $($v)))
 endef
 
 # The add_soong_config_var_value function defines a make variable and also adds
@@ -284,40 +280,6 @@ endef
 define add_soong_config_var_value
 $(eval $2 := $3) \
 $(call add_soong_config_var,$1,$2)
-endef
-
-# Soong config namespace variables manipulation.
-#
-# internal utility to define a namespace and a variable in it.
-define soong_config_define_internal
-$(if $(filter $1,$(SOONG_CONFIG_NAMESPACES)),,$(eval SOONG_CONFIG_NAMESPACES:=$(SOONG_CONFIG_NAMESPACES) $1)) \
-$(if $(filter $2,$(SOONG_CONFIG_$(strip $1))),,$(eval SOONG_CONFIG_$(strip $1):=$(SOONG_CONFIG_$(strip $1)) $2))
-endef
-
-# soong_config_set defines the variable in the given Soong config namespace
-# and sets its value. If the namespace does not exist, it will be defined.
-# $1 is the namespace. $2 is the variable name. $3 is the variable value.
-# Ex: $(call soong_config_set,acme,COOL_FEATURE,true)
-define soong_config_set
-$(call soong_config_define_internal,$1,$2) \
-$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$3)
-endef
-
-# soong_config_append appends to the value of the variable in the given Soong
-# config namespace. If the variable does not exist, it will be defined. If the
-# namespace does not  exist, it will be defined.
-# $1 is the namespace, $2 is the variable name, $3 is the value
-define soong_config_append
-$(call soong_config_define_internal,$1,$2) \
-$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $3)
-endef
-
-# soong_config_append gets to the value of the variable in the given Soong
-# config namespace. If the namespace or variables does not exist, an
-# empty string will be returned.
-# $1 is the namespace, $2 is the variable name
-define soong_config_get
-$(SOONG_CONFIG_$(strip $1)_$(strip $2))
 endef
 
 # Set the extensions used for various packages
@@ -483,11 +445,6 @@ endif
 ifneq ($(filter true,$(SOONG_ALLOW_MISSING_DEPENDENCIES)),)
 ALLOW_MISSING_DEPENDENCIES := true
 endif
-# Mac builds default to ALLOW_MISSING_DEPENDENCIES, at least until the host
-# tools aren't enabled by default for Mac.
-ifeq ($(HOST_OS),darwin)
-  ALLOW_MISSING_DEPENDENCIES := true
-endif
 .KATI_READONLY := ALLOW_MISSING_DEPENDENCIES
 
 TARGET_BUILD_USE_PREBUILT_SDKS :=
@@ -528,8 +485,11 @@ USE_D8 := true
 #
 ifeq (,$(TARGET_BUILD_USE_PREBUILT_SDKS))
   AAPT := $(HOST_OUT_EXECUTABLES)/aapt
+  MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
+
 else # TARGET_BUILD_USE_PREBUILT_SDKS
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
+  MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
 endif # TARGET_BUILD_USE_PREBUILT_SDKS
 
 ifeq (,$(TARGET_BUILD_USE_PREBUILT_SDKS))
@@ -547,14 +507,14 @@ prebuilt_sdk_tools_bin :=
 ACP := $(prebuilt_build_tools_bin)/acp
 CKATI := $(prebuilt_build_tools_bin)/ckati
 DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
-FILESLIST := $(HOST_OUT_EXECUTABLES)/fileslist
+FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
 FILESLIST_UTIL :=$= build/make/tools/fileslist_util.py
 HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
-XMLLINT := $(HOST_OUT_EXECUTABLES)/xmllint
+XMLLINT := $(SOONG_HOST_OUT_EXECUTABLES)/xmllint
 
 # SOONG_ZIP is exported by Soong, but needs to be defined early for
 # $OUT/dexpreopt.global.  It will be verified against the Soong version.
-SOONG_ZIP := $(HOST_OUT_EXECUTABLES)/soong_zip
+SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
 
 # ---------------------------------------------------------------
 # Generic tools.
@@ -577,7 +537,6 @@ VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
 LZ4 := $(HOST_OUT_EXECUTABLES)/lz4$(HOST_EXECUTABLE_SUFFIX)
-GENERATE_GKI_CERTIFICATE := $(HOST_OUT_EXECUTABLES)/generate_gki_certificate$(HOST_EXECUTABLE_SUFFIX)
 ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
@@ -597,7 +556,7 @@ APICHECK := $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX)
 FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs
 MKE2FS_CONF := system/extras/ext4_utils/mke2fs.conf
-MKEROFS := $(HOST_OUT_EXECUTABLES)/mkfs.erofs
+MKEROFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkerofsimage.sh
 MKSQUASHFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh
 MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
 SIMG2IMG := $(HOST_OUT_EXECUTABLES)/simg2img$(HOST_EXECUTABLE_SUFFIX)
@@ -644,7 +603,7 @@ EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 # Path to tools.jar
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 
-APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner
+APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner --compatible-output=no
 
 # Boolean variable determining if the allow list for compatible properties is enabled
 PRODUCT_COMPATIBLE_PROPERTY := true
@@ -763,14 +722,8 @@ endif
 .KATI_READONLY := BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES
 
 ifdef PRODUCT_SHIPPING_API_LEVEL
-  board_api_level := $(firstword $(BOARD_API_LEVEL) $(BOARD_SHIPPING_API_LEVEL))
-  ifneq (,$(board_api_level))
-    min_systemsdk_version := $(call math_min,$(board_api_level),$(PRODUCT_SHIPPING_API_LEVEL))
-  else
-    min_systemsdk_version := $(PRODUCT_SHIPPING_API_LEVEL)
-  endif
-  ifneq ($(call numbers_less_than,$(min_systemsdk_version),$(BOARD_SYSTEMSDK_VERSIONS)),)
-    $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to BOARD_API_LEVEL, BOARD_SHIPPING_API_LEVEL or PRODUCT_SHIPPING_API_LEVEL ($(min_systemsdk_version)))
+  ifneq ($(call numbers_less_than,$(PRODUCT_SHIPPING_API_LEVEL),$(BOARD_SYSTEMSDK_VERSIONS)),)
+    $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to PRODUCT_SHIPPING_API_LEVEL ($(PRODUCT_SHIPPING_API_LEVEL)))
   endif
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),28),)
     ifneq ($(TARGET_IS_64_BIT), true)
@@ -816,7 +769,7 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 # is made which breaks compatibility with the previous platform sepolicy version,
 # not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
 # be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 32
+sepolicy_major_vers := 31
 sepolicy_minor_vers := 0
 
 ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
@@ -832,30 +785,13 @@ endif
 sepolicy_major_vers :=
 sepolicy_minor_vers :=
 
-# BOARD_SEPOLICY_VERS must take the format "NN.m" and contain the sepolicy
-# version identifier corresponding to the sepolicy on which the non-platform
-# policy is to be based. If unspecified, this will build against the current
-# public platform policy in tree
-ifndef BOARD_SEPOLICY_VERS
-# The default platform policy version.
-BOARD_SEPOLICY_VERS := $(PLATFORM_SEPOLICY_VERSION)
-endif
-
-ifeq ($(BOARD_SEPOLICY_VERS),$(PLATFORM_SEPOLICY_VERSION))
-IS_TARGET_MIXED_SEPOLICY :=
-else
-IS_TARGET_MIXED_SEPOLICY := true
-endif
-
-.KATI_READONLY := IS_TARGET_MIXED_SEPOLICY
-
 # A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
 PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
+    26.0 \
+    27.0 \
     28.0 \
     29.0 \
     30.0 \
-    31.0 \
-    32.0 \
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
@@ -928,13 +864,6 @@ $(error Should not define BOARD_ODM_DLKMIMAGE_PARTITION_SIZE and \
 endif
 endif
 
-ifneq ($(BOARD_SYSTEM_DLKMIMAGE_PARTITION_SIZE),)
-ifneq ($(BOARD_SYSTEM_DLKMIMAGE_PARTITION_RESERVED_SIZE),)
-$(error Should not define BOARD_SYSTEM_DLKMIMAGE_PARTITION_SIZE and \
-    BOARD_SYSTEM_DLKMIMAGE_PARTITION_RESERVED_SIZE together)
-endif
-endif
-
 ifneq ($(BOARD_PRODUCTIMAGE_PARTITION_SIZE),)
 ifneq ($(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE),)
 $(error Should not define BOARD_PRODUCTIMAGE_PARTITION_SIZE and \
@@ -970,7 +899,7 @@ $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
 )
 
 # BOARD_*_PARTITION_LIST: a list of the following tokens
-valid_super_partition_list := system vendor product system_ext odm vendor_dlkm odm_dlkm system_dlkm
+valid_super_partition_list := system vendor product system_ext odm vendor_dlkm odm_dlkm
 $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
     $(if $(filter-out $(valid_super_partition_list),$(BOARD_$(group)_PARTITION_LIST)), \
         $(error BOARD_$(group)_PARTITION_LIST contains invalid partition name \
@@ -1068,14 +997,6 @@ endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 # hiddenapi-index.csv.
 BOARD_PREBUILT_HIDDENAPI_DIR ?=
 .KATI_READONLY := BOARD_PREBUILT_HIDDENAPI_DIR
-
-ifdef USE_HOST_MUSL
-  ifneq (,$(or $(BUILD_BROKEN_USES_BUILD_HOST_EXECUTABLE),\
-               $(BUILD_BROKEN_USES_BUILD_HOST_SHARED_LIBRARY),\
-               $(BUILD_BROKEN_USES_BUILD_HOST_STATIC_LIBRARY)))
-    $(error USE_HOST_MUSL can't be set when native host builds are enabled in Make with BUILD_BROKEN_USES_BUILD_HOST_*)
-  endif
-endif
 
 # ###############################################################
 # Set up final options.
@@ -1246,5 +1167,8 @@ endif
 -include external/ltp/android/ltp_package_list.mk
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
+
+# Make RECORD_ALL_DEPS readonly.
+RECORD_ALL_DEPS :=$= $(filter true,$(RECORD_ALL_DEPS))
 
 include $(BUILD_SYSTEM)/dumpvar.mk
