@@ -97,6 +97,7 @@ class Options(object):
     self.stash_threshold = 0.8
     self.logfile = None
     self.host_tools = {}
+    self.sepolicy_name = 'sepolicy.apex'
 
 
 OPTIONS = Options()
@@ -494,9 +495,9 @@ class BuildInfo(object):
   def GetPartitionBuildProp(self, prop, partition):
     """Returns the inquired build property for the provided partition."""
 
-    # Boot image and init_boot image uses ro.[product.]bootimage instead of boot.
+    # Boot image uses ro.[product.]bootimage instead of boot.
     # This comes from the generic ramdisk
-    prop_partition = "bootimage" if partition == "boot" or partition == "init_boot" else partition
+    prop_partition = "bootimage" if partition == "boot" else partition
 
     # If provided a partition for this property, only look within that
     # partition's build.prop.
