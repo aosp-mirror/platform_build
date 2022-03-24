@@ -18,6 +18,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -68,7 +69,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	err := checkShare(os.Stdout, os.Stderr, flag.Args()...)
+	err := checkShare(os.Stdout, os.Stderr, compliance.FS, flag.Args()...)
 	if err != nil {
 		if err != failConflicts {
 			if err == failNoneRequested {
@@ -82,14 +83,14 @@ func main() {
 }
 
 // checkShare implements the checkshare utility.
-func checkShare(stdout, stderr io.Writer, files ...string) error {
+func checkShare(stdout, stderr io.Writer, rootFS fs.FS, files ...string) error {
 
 	if len(files) < 1 {
 		return failNoneRequested
 	}
 
 	// Read the license graph from the license metadata files (*.meta_lic).
-	licenseGraph, err := compliance.ReadLicenseGraph(os.DirFS("."), stderr, files)
+	licenseGraph, err := compliance.ReadLicenseGraph(rootFS, stderr, files)
 	if err != nil {
 		return fmt.Errorf("Unable to read license metadata file(s) %q: %w\n", files, err)
 	}
