@@ -116,7 +116,7 @@ func main() {
 		ofile = &bytes.Buffer{}
 	}
 
-	ctx := &context{ofile, os.Stderr, os.DirFS("."), *stripPrefix}
+	ctx := &context{ofile, os.Stderr, compliance.FS, *stripPrefix}
 
 	err := billOfMaterials(ctx, flag.Args()...)
 	if err != nil {
