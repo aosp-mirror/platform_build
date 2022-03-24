@@ -1634,6 +1634,7 @@ vbmetavendorimage: $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
 # perform a full system build (either unbundled or not).
 .PHONY: droidcore-unbundled
 droidcore-unbundled: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
+    $(INSTALLED_FILES_OUTSIDE_IMAGES) \
     $(INSTALLED_SYSTEMIMAGE_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_BOOTIMAGE_TARGET) \
