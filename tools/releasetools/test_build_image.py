@@ -196,7 +196,7 @@ class BuildImageTest(test_utils.ReleaseToolsTestCase):
     p.communicate()
     self.assertEqual(0, p.returncode)
 
-    fs_dict = GetFilesystemCharacteristics(output_file)
+    fs_dict = GetFilesystemCharacteristics('ext4', output_file)
     self.assertEqual(int(fs_dict['Block size']), 4096)
     self.assertGreaterEqual(int(fs_dict['Free blocks']), 0) # expect ~88
     self.assertGreater(int(fs_dict['Inode count']), 0)      # expect ~64
