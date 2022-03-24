@@ -1514,48 +1514,7 @@ $(1): $(call corresponding-license-metadata,$(4)) $(HTMLNOTICE) $(BUILD_SYSTEM)/
 notice_files: $(1)
 endef
 
-# Create the rule to combine the files into text and html/xml forms
-# $(1) - xml_excluded_system_product_odm_vendor_dlkm_odm_dlkm|
-#        xml_excluded_vendor_product_odm_vendor_dlkm_odm_dlkm|
-#        xml_product|xml_odm|xml_system_ext|xml_system|xml_vendor_dlkm|
-#        xml_odm_dlkm|html
-# $(2) - Plain text output file
-# $(3) - HTML/XML output file
-# $(4) - File title
-# $(5) - Directory to use.  Notice files are all $(5)/src.  Other
-#		 directories in there will be used for scratch
-# $(6) - Dependencies for the output files
-# $(7) - Directories to exclude
-#
-# The algorithm here is that we go collect a hash for each of the notice
-# files and write the names of the files that match that hash.  Then
-# to generate the real files, we go print out all of the files and their
-# hashes.
-#
-# These rules are fairly complex, so they depend on this makefile so if
-# it changes, they'll run again.
-#
-# TODO: We could clean this up so that we just record the locations of the
-# original notice files instead of making rules to copy them somwehere.
-# Then we could traverse that without quite as much bash drama.
-define combine-notice-files
-$(2): PRIVATE_MESSAGE := $(4)
-$(2): PRIVATE_DIR := $(5)
-$(2): .KATI_IMPLICIT_OUTPUTS := $(3)
-$(2): $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
-	build/make/tools/generate-notice-files.py --text-output $(2) $(foreach xdir, $(7), -e $(xdir) )\
-	    $(if $(filter $(1),xml_excluded_vendor_product_odm_vendor_dlkm_odm_dlkm),-e vendor -e product -e system_ext -e odm -e vendor_dlkm -e odm_dlkm --xml-output, \
-	      $(if $(filter $(1),xml_excluded_system_product_odm_vendor_dlkm_odm_dlkm),-e system -e product -e system_ext -e odm -e vendor_dlkm -e odm_dlkm --xml-output, \
-	        $(if $(filter $(1),xml_product),-i product --xml-output, \
-	          $(if $(filter $(1),xml_system_ext),-i system_ext --xml-output, \
-	            $(if $(filter $(1),xml_system),-i system --xml-output, \
-	              $(if $(filter $(1),xml_odm),-i odm --xml-output, \
-	                $(if $(filter $(1),xml_vendor_dlkm),-i vendor_dlkm --xml-output, \
-	                  $(if $(filter $(1),xml_odm_dlkm),-i odm_dlkm --xml-output, \
-	                    --html-output)))))))) $(3) \
-	    -t $$(PRIVATE_MESSAGE) $$(foreach dir,$$(sort $$(PRIVATE_DIR)), -s $$(dir)/src)
-notice_files: $(2) $(3)
-endef
+$(KATI_obsolete_var combine-notice-files, To create notice files use xml-notice-rule, html-notice-rule, or text-notice-rule.)
 
 # Notice file logic isn't relevant for TARGET_BUILD_APPS
 ifndef TARGET_BUILD_APPS
