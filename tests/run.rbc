@@ -25,6 +25,7 @@ load(":input_variables.rbc", input_variables_init = "init")
 load(":product.rbc", "init")
 load(":board.rbc", board_init = "init")
 load(":board_input_vars.rbc", board_input_vars_init = "init")
+load("//build/make/tests/single_value_inheritance:test.rbc", test_single_value_inheritance = "test")
 
 def assert_eq(expected, actual):
     if expected != actual:
@@ -129,3 +130,5 @@ assert_eq(
 (board_globals, board_config, board_globals_base) = rblf.board_configuration(board_init, board_input_vars_init)
 assert_eq({"A_LIST_VARIABLE": ["foo", "bar"]}, board_globals)
 assert_eq({"A_LIST_VARIABLE": ["foo"]}, board_globals_base)
+
+test_single_value_inheritance()
