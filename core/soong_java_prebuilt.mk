@@ -25,6 +25,15 @@ ifdef LOCAL_SOONG_AAR
   LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_AAR)
 endif
 
+# Use the Soong output as the checkbuild target instead of LOCAL_BUILT_MODULE
+# to avoid checkbuilds making an extra copy of every module.
+LOCAL_CHECKED_MODULE := $(LOCAL_PREBUILT_MODULE_FILE)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_HEADER_JAR)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_FULL_MANIFEST_FILE)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_DEXPREOPT_CONFIG)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_DEX_JAR)
+
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
@@ -145,13 +154,7 @@ else  # LOCAL_SOONG_DEX_JAR
   endif
 endif  # LOCAL_SOONG_DEX_JAR
 
-my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
-  $(call word-colon,1,$(f)):$(PRODUCT_OUT)$(call word-colon,2,$(f)))
-my_installed := $(call copy-many-files, $(my_built_installed))
-ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed)
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_installed)
 ALL_MODULES.$(my_register_name).CLASSES_JAR := $(full_classes_jar)
-$(my_register_name): $(my_installed)
 
 ifdef LOCAL_SOONG_AAR
   ALL_MODULES.$(my_register_name).AAR := $(LOCAL_SOONG_AAR)
