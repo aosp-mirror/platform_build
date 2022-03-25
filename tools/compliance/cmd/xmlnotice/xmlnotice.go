@@ -139,7 +139,7 @@ func main() {
 
 	var deps []string
 
-	ctx := &context{ofile, os.Stderr, os.DirFS("."), *product, *stripPrefix, *title, &deps}
+	ctx := &context{ofile, os.Stderr, compliance.FS, *product, *stripPrefix, *title, &deps}
 
 	err := xmlNotice(ctx, flag.Args()...)
 	if err != nil {
