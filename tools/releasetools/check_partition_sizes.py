@@ -300,8 +300,5 @@ if __name__ == "__main__":
   try:
     common.CloseInheritedPipes()
     main(sys.argv[1:])
-  except common.ExternalError:
-    logger.exception("\n   ERROR:\n")
-    sys.exit(1)
   finally:
     common.Cleanup()
