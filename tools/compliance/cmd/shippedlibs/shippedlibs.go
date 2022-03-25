@@ -117,7 +117,7 @@ Options:
 		ofile = &bytes.Buffer{}
 	}
 
-	ctx := &context{ofile, os.Stderr, os.DirFS(".")}
+	ctx := &context{ofile, os.Stderr, compliance.FS}
 
 	err = shippedLibs(ctx, flags.Args()...)
 	if err != nil {
