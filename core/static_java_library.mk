@@ -101,6 +101,13 @@ all_res_assets := $(all_resources)
 include $(BUILD_SYSTEM)/java_renderscript.mk
 
 ifeq (true,$(need_compile_res))
+# work around missing manifests by creating a default one
+ifeq (,$(strip $(LOCAL_MANIFEST_FILE)$(LOCAL_FULL_MANIFEST_FILE)))
+  ifeq (,$(wildcard $(LOCAL_PATH)/AndroidManifest.xml))
+    LOCAL_FULL_MANIFEST_FILE := $(call local-intermediates-dir,COMMON)/DefaultManifest.xml
+    $(call create-default-manifest-file,$(LOCAL_FULL_MANIFEST_FILE),$(call module-min-sdk-version))
+  endif
+endif
 include $(BUILD_SYSTEM)/android_manifest.mk
 
 LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
