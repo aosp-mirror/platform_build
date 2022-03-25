@@ -291,7 +291,10 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
         child_cfg = configs[child_name][1]
         for attr, value in child_cfg.items():
             if type(value) != "list":
-                if attr in percolated_attrs or not attr in cfg:
+                # Single value variables take the first value available from the leftmost
+                # branch of the tree. If we also had "or attr in percolated_attrs" in this
+                # if statement, it would take the value from the rightmost branch.
+                if cfg.get(attr, "") == "":
                     cfg[attr] = value
                     percolated_attrs[attr] = True
                 continue
