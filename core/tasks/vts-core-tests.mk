@@ -44,7 +44,7 @@ include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 $(compatibility_zip): $(copy_kernel_tests)
 
 .PHONY: vts
-vts: $(compatibility_zip)
-$(call dist-for-goals, vts, $(compatibility_zip))
+vts: $(compatibility_zip) $(compatibility_tests_list_zip)
+$(call dist-for-goals, vts, $(compatibility_zip) $(compatibility_tests_list_zip))
 
 tests: vts
