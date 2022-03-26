@@ -757,6 +757,7 @@ ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
 # files installed in images will be filtered out later.
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out \
   $(PRODUCT_OUT)/apex/% \
+  $(PRODUCT_OUT)/fake_packages/% \
   $(PRODUCT_OUT)/testcases/%, \
   $(filter $(PRODUCT_OUT)/%,$(ALL_DEFAULT_INSTALLED_MODULES)))
 
