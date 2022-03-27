@@ -495,9 +495,9 @@ class BuildInfo(object):
   def GetPartitionBuildProp(self, prop, partition):
     """Returns the inquired build property for the provided partition."""
 
-    # Boot image uses ro.[product.]bootimage instead of boot.
+    # Boot image and init_boot image uses ro.[product.]bootimage instead of boot.
     # This comes from the generic ramdisk
-    prop_partition = "bootimage" if partition == "boot" else partition
+    prop_partition = "bootimage" if partition == "boot" or partition == "init_boot" else partition
 
     # If provided a partition for this property, only look within that
     # partition's build.prop.

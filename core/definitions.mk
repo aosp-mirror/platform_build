@@ -59,15 +59,9 @@ ALL_MODULE_TAGS:=
 # its sub-variables.)
 ALL_MODULE_NAME_TAGS:=
 
-# Full path to all files that are made by some tool
-ALL_GENERATED_SOURCES:=
-
 # Full path to all asm, C, C++, lex and yacc generated C files.
 # These all have an order-only dependency on the copied headers
 ALL_C_CPP_ETC_OBJECTS:=
-
-# The list of dynamic binaries that haven't been stripped/compressed/etc.
-ALL_ORIGINAL_DYNAMIC_BINARIES:=
 
 # These files go into the SDK
 ALL_SDK_FILES:=
@@ -585,14 +579,14 @@ $(strip $(foreach target, $(sort $(1)), \
     $(ALL_MODULES.$(target).META_LIC), \
     $(if $(strip $(ALL_TARGETS.$(target).META_LIC)), \
       $(ALL_TARGETS.$(target).META_LIC), \
-      $(call license-metadata-dir)/$(target).meta_lic))))
+      $(call append-path,$(call license-metadata-dir),$(patsubst $(OUT_DIR)%,out%,$(target).meta_lic))))))
 endef
 
 ###########################################################
 ## License metadata build rule for my_register_name $(1)
 ###########################################################
 define license-metadata-rule
-$(foreach meta_lic, $(ALL_MODULES.$(1).DELAYED_META_LIC),$(call _license-metadata-rule,$(1),$(meta_lic)))
+$(foreach meta_lic, $(subst //,/,$(ALL_MODULES.$(1).DELAYED_META_LIC)),$(call _license-metadata-rule,$(1),$(meta_lic)))
 $(call notice-rule,$(1))
 endef
 
@@ -632,7 +626,7 @@ $(2): $(BUILD_LICENSE_METADATA)
 $(2) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
 	rm -f $$@
 	mkdir -p $$(dir $$@)
-	$(BUILD_LICENSE_METADATA) \
+	OUT_DIR=$(OUT_DIR) $(BUILD_LICENSE_METADATA) \
 	  $$(addprefix -mt ,$$(PRIVATE_MODULE_TYPE)) \
 	  $$(addprefix -mc ,$$(PRIVATE_MODULE_CLASS)) \
 	  $$(addprefix -k ,$$(PRIVATE_KINDS)) \
@@ -676,33 +670,34 @@ endef
 define non-module-license-metadata-rule
 $(strip $(eval _dir := $(call license-metadata-dir)))
 $(strip $(eval _tgt := $(strip $(1))))
+$(strip $(eval _meta := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(_tgt).meta_lic))))
 $(strip $(eval _deps := $(sort $(filter-out 0p: :,$(foreach d,$(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)),$(ALL_TARGETS.$(call word-colon,1,$(d)).META_LIC):$(call wordlist-colon,2,9999,$(d)))))))
 $(strip $(eval _notices := $(sort $(ALL_NON_MODULES.$(_tgt).NOTICES))))
 $(strip $(eval _path := $(sort $(ALL_NON_MODULES.$(_tgt).PATH))))
 $(strip $(eval _install_map := $(ALL_NON_MODULES.$(_tgt).ROOT_MAPPINGS)))
-$(strip \
-  $(foreach d,$(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)), \
-    $(if $(strip $(ALL_TARGETS.$(d).META_LIC)), \
+$(strip $(eval \
+  $$(foreach d,$(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)), \
+    $$(if $$(strip $$(ALL_TARGETS.$$(d).META_LIC)), \
       , \
-      $(eval NON_MODULES_WITHOUT_LICENSE_METADATA += $(d))) \
-  ) \
+      $$(eval NON_MODULES_WITHOUT_LICENSE_METADATA += $$(d))) \
+  )) \
 )
 
-$(_dir)/$(_tgt).meta_lic: PRIVATE_KINDS := $(sort $(ALL_NON_MODULES.$(_tgt).LICENSE_KINDS))
-$(_dir)/$(_tgt).meta_lic: PRIVATE_CONDITIONS := $(sort $(ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS))
-$(_dir)/$(_tgt).meta_lic: PRIVATE_NOTICES := $(_notices)
-$(_dir)/$(_tgt).meta_lic: PRIVATE_NOTICE_DEPS := $(_deps)
-$(_dir)/$(_tgt).meta_lic: PRIVATE_SOURCES := $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)
-$(_dir)/$(_tgt).meta_lic: PRIVATE_TARGETS := $(_tgt)
-$(_dir)/$(_tgt).meta_lic: PRIVATE_PATH := $(_path)
-$(_dir)/$(_tgt).meta_lic: PRIVATE_IS_CONTAINER := $(ALL_NON_MODULES.$(_tgt).IS_CONTAINER)
-$(_dir)/$(_tgt).meta_lic: PRIVATE_PACKAGE_NAME := $(strip $(ALL_NON_MODULES.$(_tgt).LICENSE_PACKAGE_NAME))
-$(_dir)/$(_tgt).meta_lic: PRIVATE_INSTALL_MAP := $(strip $(_install_map))
-$(_dir)/$(_tgt).meta_lic: $(BUILD_LICENSE_METADATA)
-$(_dir)/$(_tgt).meta_lic : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
+$(_meta): PRIVATE_KINDS := $(sort $(ALL_NON_MODULES.$(_tgt).LICENSE_KINDS))
+$(_meta): PRIVATE_CONDITIONS := $(sort $(ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS))
+$(_meta): PRIVATE_NOTICES := $(_notices)
+$(_meta): PRIVATE_NOTICE_DEPS := $(_deps)
+$(_meta): PRIVATE_SOURCES := $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)
+$(_meta): PRIVATE_TARGETS := $(_tgt)
+$(_meta): PRIVATE_PATH := $(_path)
+$(_meta): PRIVATE_IS_CONTAINER := $(ALL_NON_MODULES.$(_tgt).IS_CONTAINER)
+$(_meta): PRIVATE_PACKAGE_NAME := $(strip $(ALL_NON_MODULES.$(_tgt).LICENSE_PACKAGE_NAME))
+$(_meta): PRIVATE_INSTALL_MAP := $(strip $(_install_map))
+$(_meta): $(BUILD_LICENSE_METADATA)
+$(_meta) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
 	rm -f $$@
 	mkdir -p $$(dir $$@)
-	$(BUILD_LICENSE_METADATA) \
+	OUT_DIR=$(OUT_DIR) $(BUILD_LICENSE_METADATA) \
           -mt raw -mc unknown \
 	  $$(addprefix -k ,$$(PRIVATE_KINDS)) \
 	  $$(addprefix -c ,$$(PRIVATE_CONDITIONS)) \
@@ -729,7 +724,7 @@ endef
 ###########################################################
 define declare-license-metadata
 $(strip \
-  $(eval _tgt := $(strip $(1))) \
+  $(eval _tgt := $(subst //,/,$(strip $(1)))) \
   $(eval ALL_NON_MODULES += $(_tgt)) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_KINDS := $(strip $(2))) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS := $(strip $(3))) \
@@ -769,7 +764,7 @@ endef
 ###########################################################
 define declare-container-license-metadata
 $(strip \
-  $(eval _tgt := $(strip $(1))) \
+  $(eval _tgt := $(subst //,/,$(strip $(1)))) \
   $(eval ALL_NON_MODULES += $(_tgt)) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_KINDS := $(strip $(2))) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS := $(strip $(3))) \
@@ -787,7 +782,7 @@ endef
 ###########################################################
 define declare-0p-target
 $(strip \
-  $(eval _tgt := $(strip $(1))) \
+  $(eval _tgt := $(subst //,/,$(strip $(1)))) \
   $(eval ALL_0P_TARGETS += $(_tgt)) \
 )
 endef
@@ -904,7 +899,7 @@ reportallnoticelibrarynames: $(_all)
 	$(hide) rm -f $$(PRIVATE_LIST_FILE)
 	$(hide) mkdir -p $$(dir $$(PRIVATE_LIST_FILE))
 	$(hide) find out -name '*meta_lic' -type f -printf '"%p"\n' >$$(PRIVATE_LIST_FILE)
-	$(COMPLIANCENOTICE_SHIPPEDLIBS) @$$(PRIVATE_LIST_FILE)
+	OUT_DIR=$(OUT_DIR) $(COMPLIANCENOTICE_SHIPPEDLIBS) @$$(PRIVATE_LIST_FILE)
 endef
 
 ###########################################################
@@ -929,7 +924,7 @@ $(strip \
     $(eval ALL_TARGETS.$(t).META_LIC := 0p) \
   ) \
   $(foreach t,$(sort $(ALL_NON_MODULES)), \
-    $(eval ALL_TARGETS.$(t).META_LIC := $(_dir)/$(t).meta_lic) \
+    $(eval ALL_TARGETS.$(t).META_LIC := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(t).meta_lic))) \
   ) \
   $(foreach t,$(sort $(ALL_NON_MODULES)),$(eval $(call non-module-license-metadata-rule,$(t)))) \
   $(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m)))) \
@@ -3322,6 +3317,14 @@ endef
 #    and use my_compat_dist_$(suite) to define the others.
 define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(eval $(if $(strip $(module_license_metadata)),\
+    $$(foreach f,$$(my_compat_dist_$(suite)),$$(eval ALL_TARGETS.$$(call word-colon,2,$$(f)).META_LIC := $(module_license_metadata))),\
+    $$(eval my_test_data += $$(foreach f,$$(my_compat_dist_$(suite)), $$(call word-colon,2,$$(f)))) \
+  )) \
+  $(eval $(if $(strip $(module_license_metadata)),\
+    $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(eval ALL_TARGETS.$$(call word-colon,2,$$(f)).META_LIC := $(module_license_metadata))),\
+    $$(eval my_test_config += $$(foreach f,$$(my_compat_dist_config_$(suite)), $$(call word-colon,2,$$(f)))) \
+  )) \
   $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,\
     $(eval ALL_COMPATIBILITY_SUITES += $(suite)) \
     $(eval COMPATIBILITY.$(suite).FILES :=) \
