@@ -757,6 +757,7 @@ ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
 # files installed in images will be filtered out later.
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out \
   $(PRODUCT_OUT)/apex/% \
+  $(PRODUCT_OUT)/fake_packages/% \
   $(PRODUCT_OUT)/testcases/%, \
   $(filter $(PRODUCT_OUT)/%,$(ALL_DEFAULT_INSTALLED_MODULES)))
 
@@ -1477,7 +1478,7 @@ define xml-notice-rule
 $(1): PRIVATE_PRODUCT := $(2)
 $(1): PRIVATE_MESSAGE := $(3)
 $(1): $(call corresponding-license-metadata,$(4)) $(XMLNOTICE) $(BUILD_SYSTEM)/Makefile
-	$(XMLNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
+	OUT_DIR=$(OUT_DIR) $(XMLNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
 
 notice_files: $(1)
 endef
@@ -1493,7 +1494,7 @@ define text-notice-rule
 $(1): PRIVATE_PRODUCT := $(2)
 $(1): PRIVATE_MESSAGE := $(3)
 $(1): $(call corresponding-license-metadata,$(4)) $(TEXTNOTICE) $(BUILD_SYSTEM)/Makefile
-	$(TEXTNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
+	OUT_DIR=$(OUT_DIR) $(TEXTNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
 
 notice_files: $(1)
 endef
@@ -1509,7 +1510,7 @@ define html-notice-rule
 $(1): PRIVATE_PRODUCT := $(2)
 $(1): PRIVATE_MESSAGE := $(3)
 $(1): $(call corresponding-license-metadata,$(4)) $(HTMLNOTICE) $(BUILD_SYSTEM)/Makefile
-	$(HTMLNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
+	OUT_DIR=$(OUT_DIR) $(HTMLNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
 
 notice_files: $(1)
 endef
