@@ -753,6 +753,13 @@ event-log-tags: $(event_log_tags_file)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
 
+# Initialize INSTALLED_FILES_OUTSIDE_IMAGES with the list of all device files,
+# files installed in images will be filtered out later.
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out \
+  $(PRODUCT_OUT)/apex/% \
+  $(PRODUCT_OUT)/fake_packages/% \
+  $(PRODUCT_OUT)/testcases/%, \
+  $(filter $(PRODUCT_OUT)/%,$(ALL_DEFAULT_INSTALLED_MODULES)))
 
 # #################################################################
 # Targets for boot/OS images
@@ -785,9 +792,10 @@ endif
 
 # -----------------------------------------------------------------
 # the root dir
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_ROOT_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 INTERNAL_ROOT_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
-	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
+
 
 INSTALLED_FILES_FILE_ROOT := $(PRODUCT_OUT)/installed-files-root.txt
 INSTALLED_FILES_JSON_ROOT := $(INSTALLED_FILES_FILE_ROOT:.txt=.json)
@@ -818,9 +826,9 @@ endif
 
 # -----------------------------------------------------------------
 # the ramdisk
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_RAMDISK_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_RAMDISK_IMAGE
 INTERNAL_RAMDISK_FILES := $(filter $(TARGET_RAMDISK_OUT)/%, \
-	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
 INSTALLED_FILES_FILE_RAMDISK := $(PRODUCT_OUT)/installed-files-ramdisk.txt
@@ -1247,6 +1255,7 @@ endif # BUILDING_INIT_BOOT_IMAGE is not true
 
 # -----------------------------------------------------------------
 # vendor boot image
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_VENDOR_RAMDISK_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
 
 ifeq ($(PRODUCT_SUPPORTS_VERITY),true)
@@ -1254,7 +1263,6 @@ ifeq ($(PRODUCT_SUPPORTS_VERITY),true)
 endif
 
 INTERNAL_VENDOR_RAMDISK_FILES := $(filter $(TARGET_VENDOR_RAMDISK_OUT)/%, \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INTERNAL_VENDOR_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_boot)/vendor_ramdisk.cpio$(RAMDISK_EXT)
@@ -1470,7 +1478,7 @@ define xml-notice-rule
 $(1): PRIVATE_PRODUCT := $(2)
 $(1): PRIVATE_MESSAGE := $(3)
 $(1): $(call corresponding-license-metadata,$(4)) $(XMLNOTICE) $(BUILD_SYSTEM)/Makefile
-	$(XMLNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
+	OUT_DIR=$(OUT_DIR) $(XMLNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
 
 notice_files: $(1)
 endef
@@ -1486,7 +1494,7 @@ define text-notice-rule
 $(1): PRIVATE_PRODUCT := $(2)
 $(1): PRIVATE_MESSAGE := $(3)
 $(1): $(call corresponding-license-metadata,$(4)) $(TEXTNOTICE) $(BUILD_SYSTEM)/Makefile
-	$(TEXTNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
+	OUT_DIR=$(OUT_DIR) $(TEXTNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
 
 notice_files: $(1)
 endef
@@ -1502,7 +1510,7 @@ define html-notice-rule
 $(1): PRIVATE_PRODUCT := $(2)
 $(1): PRIVATE_MESSAGE := $(3)
 $(1): $(call corresponding-license-metadata,$(4)) $(HTMLNOTICE) $(BUILD_SYSTEM)/Makefile
-	$(HTMLNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
+	OUT_DIR=$(OUT_DIR) $(HTMLNOTICE) -o $$@ -product=$$(PRIVATE_PRODUCT) -title=$$(PRIVATE_MESSAGE) $(foreach prefix, $(5), -strip_prefix=$(prefix)) $(call corresponding-license-metadata,$(4))
 
 notice_files: $(1)
 endef
@@ -2048,6 +2056,7 @@ endef
 # Recovery image
 
 # Recovery image exists if we are building recovery, or building recovery as boot.
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_RECOVERY_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_RECOVERY_IMAGE
 
 INTERNAL_RECOVERYIMAGE_FILES := $(filter $(TARGET_RECOVERY_OUT)/%, \
@@ -2519,10 +2528,10 @@ endif
 
 # -----------------------------------------------------------------
 # Build debug ramdisk and debug boot image.
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_DEBUG_RAMDISK_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifneq ($(BUILDING_DEBUG_BOOT_IMAGE)$(BUILDING_DEBUG_VENDOR_BOOT_IMAGE),)
 
 INTERNAL_DEBUG_RAMDISK_FILES := $(filter $(TARGET_DEBUG_RAMDISK_OUT)/%, \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 # Directories to be picked into the debug ramdisk.
@@ -2657,10 +2666,10 @@ endif # BUILDING_DEBUG_BOOT_IMAGE
 # -----------------------------------------------------------------
 # vendor debug ramdisk
 # Combines vendor ramdisk files and debug ramdisk files to build the vendor debug ramdisk.
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_DEBUG_VENDOR_BOOT_IMAGE
 
 INTERNAL_VENDOR_DEBUG_RAMDISK_FILES := $(filter $(TARGET_VENDOR_DEBUG_RAMDISK_OUT)/%, \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 # The debug vendor ramdisk combines vendor ramdisk and debug ramdisk.
@@ -2769,9 +2778,9 @@ endif
 
 $(call declare-1p-target,$(INTERNAL_TEST_HARNESS_RAMDISK_ADB_DEBUG_PROP_TARGET))
 
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_TEST_HARNESS_RAMDISK_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 INTERNAL_TEST_HARNESS_RAMDISK_FILES := $(filter $(TARGET_TEST_HARNESS_RAMDISK_OUT)/%, \
     $(INTERNAL_TEST_HARNESS_RAMDISK_ADB_DEBUG_PROP_TARGET) \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 # The order is important here. The test harness ramdisk staging directory has to
@@ -2947,7 +2956,7 @@ fsverity-metadata-targets := $(sort $(filter \
   $(TARGET_OUT)/etc/dirty-image-objects \
   $(TARGET_OUT)/etc/preloaded-classes \
   $(TARGET_OUT)/etc/classpaths/%.pb, \
-  $(ALL_GENERATED_SOURCES) $(ALL_DEFAULT_INSTALLED_MODULES)))
+  $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 define fsverity-generate-metadata
 $(1).fsv_meta: PRIVATE_SRC := $(1)
@@ -2993,8 +3002,8 @@ ALL_DEFAULT_INSTALLED_MODULES += $(FSVERITY_APK_OUT)
 
 endif  # PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
 
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 # Create symlink /system/vendor to /vendor if necessary.
@@ -3180,6 +3189,7 @@ platform-java:
 
 # -----------------------------------------------------------------
 # data partition image
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_DATA)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 INTERNAL_USERDATAIMAGE_FILES := \
     $(filter $(TARGET_OUT_DATA)/%,$(ALL_DEFAULT_INSTALLED_MODULES))
 
@@ -3273,6 +3283,7 @@ endif # BOARD_BPT_INPUT_FILES
 
 # -----------------------------------------------------------------
 # cache partition image
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_CACHE)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_CACHE_IMAGE
 INTERNAL_CACHEIMAGE_FILES := \
     $(filter $(TARGET_OUT_CACHE)/%,$(ALL_DEFAULT_INSTALLED_MODULES))
@@ -3314,6 +3325,7 @@ endif # BUILDING_CACHE_IMAGE
 
 # -----------------------------------------------------------------
 # system_other partition image
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_SYSTEM_OTHER)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_SYSTEM_OTHER_IMAGE
 ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
 # Marker file to identify that odex files are installed
@@ -3394,6 +3406,7 @@ endif # BUILDING_SYSTEM_OTHER_IMAGE
 
 # -----------------------------------------------------------------
 # vendor partition image
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_VENDOR)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_VENDOR_IMAGE
 INTERNAL_VENDORIMAGE_FILES := \
     $(filter $(TARGET_OUT_VENDOR)/%,\
@@ -3477,6 +3490,7 @@ endif
 
 # -----------------------------------------------------------------
 # product partition image
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_PRODUCT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_PRODUCT_IMAGE
 INTERNAL_PRODUCTIMAGE_FILES := \
     $(filter $(TARGET_OUT_PRODUCT)/%,\
@@ -3535,6 +3549,7 @@ endif
 
 # -----------------------------------------------------------------
 # system_ext partition image
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_SYSTEM_EXT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_SYSTEM_EXT_IMAGE
 INTERNAL_SYSTEM_EXTIMAGE_FILES := \
     $(filter $(TARGET_OUT_SYSTEM_EXT)/%,\
@@ -3595,6 +3610,7 @@ endif
 
 # -----------------------------------------------------------------
 # odm partition image
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_ODM)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_ODM_IMAGE
 INTERNAL_ODMIMAGE_FILES := \
     $(filter $(TARGET_OUT_ODM)/%,\
@@ -3672,6 +3688,7 @@ endif
 
 # -----------------------------------------------------------------
 # vendor_dlkm partition image
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_VENDOR_DLKM)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_VENDOR_DLKM_IMAGE
 INTERNAL_VENDOR_DLKMIMAGE_FILES := \
     $(filter $(TARGET_OUT_VENDOR_DLKM)/%,\
@@ -3731,6 +3748,7 @@ endif
 
 # -----------------------------------------------------------------
 # odm_dlkm partition image
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_ODM_DLKM)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_ODM_DLKM_IMAGE
 INTERNAL_ODM_DLKMIMAGE_FILES := \
     $(filter $(TARGET_OUT_ODM_DLKM)/%,\
@@ -3791,6 +3809,7 @@ endif
 # -----------------------------------------------------------------
 # system_dlkm partition image
 
+INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_SYSTEM_DLKM)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_SYSTEM_DLKM_IMAGE
 
 INTERNAL_SYSTEM_DLKMIMAGE_FILES := \
@@ -4866,6 +4885,7 @@ INTERNAL_OTATOOLS_MODULES := \
   e2fsdroid \
   fc_sort \
   fec \
+  fsck.erofs \
   fsck.f2fs \
   fs_config \
   generate_gki_certificate \
@@ -6540,7 +6560,6 @@ endif
 ifeq ($(BUILD_EMULATOR),true)
 INTERNAL_EMULATOR_PACKAGE_FILES += \
         $(HOST_OUT_EXECUTABLES)/emulator$(HOST_EXECUTABLE_SUFFIX) \
-        prebuilts/qemu-kernel/$(TARGET_ARCH)/kernel-qemu \
         $(INSTALLED_RAMDISK_TARGET) \
         $(INSTALLED_SYSTEMIMAGE_TARGET) \
         $(INSTALLED_USERDATAIMAGE_TARGET)
