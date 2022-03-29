@@ -439,6 +439,10 @@ def __base(path):
     """Returns basename."""
     return path.rsplit("/",1)[-1]
 
+def __dir(path):
+    """Returns dirname."""
+    return path.rsplit("/",1)[0]
+
 def _board_platform_in(g, string_or_list):
     """Returns true if board is in the list."""
     board = g.get("TARGET_BOARD_PLATFORM","")
@@ -736,6 +740,7 @@ rblf = struct(
     copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
+    dir = __dir,
     enforce_product_packages_exist = _enforce_product_packages_exist,
     expand_wildcard = _expand_wildcard,
     file_exists = rblf_file_exists,
