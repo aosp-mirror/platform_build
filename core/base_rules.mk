@@ -33,6 +33,9 @@ ifeq ($(LOCAL_MODULE),)
 endif
 $(call verify-module-name)
 
+my_test_data :=
+my_test_config :=
+
 LOCAL_IS_HOST_MODULE := $(strip $(LOCAL_IS_HOST_MODULE))
 ifdef LOCAL_IS_HOST_MODULE
   ifneq ($(LOCAL_IS_HOST_MODULE),true)
