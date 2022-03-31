@@ -310,6 +310,7 @@ _product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_INIT_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_DEBUG_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_BOOT_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_VENDOR_KERNEL_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SUPER_EMPTY_IMAGE
@@ -369,6 +370,10 @@ _product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 # "/system/framework/foo.jar" will be "system/framework/foo.jar.fsv_meta".
 _product_single_value_vars += PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
 
+# If true, sets the default for MODULE_BUILD_FROM_SOURCE. This overrides
+# BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE but not an explicitly set value.
+_product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
@@ -400,17 +405,20 @@ endef
 # See e.g. product-graph.mk for an example of this.
 #
 define inherit-product
-  $(if $(findstring ../,$(1)),\
-    $(eval np := $(call normalize-paths,$(1))),\
-    $(eval np := $(strip $(1))))\
-  $(foreach v,$(_product_var_list), \
-      $(eval $(v) := $($(v)) $(INHERIT_TAG)$(np))) \
-  $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
-  $(eval inherit_var := PRODUCTS.$(current_mk).INHERITS_FROM) \
-  $(eval $(inherit_var) := $(sort $($(inherit_var)) $(np))) \
-  $(eval PARENT_PRODUCT_FILES := $(sort $(PARENT_PRODUCT_FILES) $(current_mk))) \
-  $(call dump-inherit,$(strip $(word 1,$(_include_stack))),$(1)) \
-  $(call dump-config-vals,$(current_mk),inherit)
+  $(eval _inherit_product_wildcard := $(wildcard $(1)))\
+  $(if $(_inherit_product_wildcard),,$(error $(1) does not exist.))\
+  $(foreach part,$(_inherit_product_wildcard),\
+    $(if $(findstring ../,$(part)),\
+      $(eval np := $(call normalize-paths,$(part))),\
+      $(eval np := $(strip $(part))))\
+    $(foreach v,$(_product_var_list), \
+        $(eval $(v) := $($(v)) $(INHERIT_TAG)$(np))) \
+    $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
+    $(eval inherit_var := PRODUCTS.$(current_mk).INHERITS_FROM) \
+    $(eval $(inherit_var) := $(sort $($(inherit_var)) $(np))) \
+    $(eval PARENT_PRODUCT_FILES := $(sort $(PARENT_PRODUCT_FILES) $(current_mk))) \
+    $(call dump-inherit,$(strip $(word 1,$(_include_stack))),$(1)) \
+    $(call dump-config-vals,$(current_mk),inherit))
 endef
 
 # Specifies a number of path prefixes, relative to PRODUCT_OUT, where the

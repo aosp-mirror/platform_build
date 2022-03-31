@@ -52,59 +52,21 @@ else ifeq (,$(filter sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.goog
   # However, sdk/win_sdk/sdk_addon builds might not include com.google.android.xxx
   # packages, so for those we respect the default behavior.
   MODULE_BUILD_FROM_SOURCE := true
-else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
-  # Always build from source in unbundled builds using the module targets.
-  MODULE_BUILD_FROM_SOURCE := true
+else ifneq (,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
+  # Let products override the branch default.
+  MODULE_BUILD_FROM_SOURCE := $(PRODUCT_MODULE_BUILD_FROM_SOURCE)
 else
   MODULE_BUILD_FROM_SOURCE := $(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE)
 endif
 
-# TODO(b/220940864): Remove when build scripts have been changed to use
-# ART_MODULE_BUILD_FROM_SOURCE instead of SOONG_CONFIG_art_module_source_build
-ifneq (,$(SOONG_CONFIG_art_module_source_build))
-  ART_MODULE_BUILD_FROM_SOURCE := $(SOONG_CONFIG_art_module_source_build)
-endif
-
-# TODO(b/172480615): Remove when platform uses ART Module prebuilts by default.
 ifneq (,$(ART_MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
 else ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
   # Build ART modules from source if they are listed in TARGET_BUILD_APPS.
   ART_MODULE_BUILD_FROM_SOURCE := true
-else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
-  # Always build from source for the module targets. This ought to be covered by
-  # the TARGET_BUILD_APPS check above, but there are test builds that don't set it.
-  ART_MODULE_BUILD_FROM_SOURCE := true
-else ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
-  # Build from source if other Mainline modules are.
-  ART_MODULE_BUILD_FROM_SOURCE := true
-else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
-  # Always build ART APEXes from source in coverage builds since the prebuilts
-  # aren't built with instrumentation.
-  # TODO(b/172480617): Find another solution for this.
-  ART_MODULE_BUILD_FROM_SOURCE := true
-else ifneq (,$(SANITIZE_TARGET)$(SANITIZE_HOST))
-  # Prebuilts aren't built with sanitizers either.
-  ART_MODULE_BUILD_FROM_SOURCE := true
-  MODULE_BUILD_FROM_SOURCE := true
-else ifeq (,$(filter x86 x86_64,$(HOST_CROSS_ARCH)))
-  # We currently only provide prebuilts for x86 on host. This skips prebuilts in
-  # cuttlefish builds for ARM servers.
-  ART_MODULE_BUILD_FROM_SOURCE := true
-else ifneq (,$(filter dex2oatds dex2oats,$(PRODUCT_HOST_PACKAGES)))
-  # Some products depend on host tools that aren't available as prebuilts.
-  ART_MODULE_BUILD_FROM_SOURCE := true
-else ifeq (,$(findstring com.google.android.art,$(PRODUCT_PACKAGES)))
-  # TODO(b/192006406): There is currently no good way to control which prebuilt
-  # APEX (com.google.android.art or com.android.art) gets picked for deapexing
-  # to provide dex jars for hiddenapi and dexpreopting. Instead the AOSP APEX is
-  # completely disabled, and we build from source for AOSP products.
-  ART_MODULE_BUILD_FROM_SOURCE := true
 else
-  # This sets the default for building ART APEXes from source rather than
-  # prebuilts (in packages/modules/ArtPrebuilt and prebuilt/module_sdk/art) in
-  # all other platform builds.
-  ART_MODULE_BUILD_FROM_SOURCE := true
+  # Do the same as other modules by default.
+  ART_MODULE_BUILD_FROM_SOURCE := $(MODULE_BUILD_FROM_SOURCE)
 endif
 
 $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
@@ -116,6 +78,11 @@ endif
 
 ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
 $(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
+endif
+
+# Messaging app vars
+ifeq (eng,$(TARGET_BUILD_VARIANT))
+$(call soong_config_set,messaging,build_variant_eng,true)
 endif
 
 # TODO(b/203088572): Remove when Java optimizations enabled by default for

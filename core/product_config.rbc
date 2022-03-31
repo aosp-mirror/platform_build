@@ -291,7 +291,10 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
         child_cfg = configs[child_name][1]
         for attr, value in child_cfg.items():
             if type(value) != "list":
-                if attr in percolated_attrs or not attr in cfg:
+                # Single value variables take the first value available from the leftmost
+                # branch of the tree. If we also had "or attr in percolated_attrs" in this
+                # if statement, it would take the value from the rightmost branch.
+                if cfg.get(attr, "") == "":
                     cfg[attr] = value
                     percolated_attrs[attr] = True
                 continue
@@ -436,6 +439,10 @@ def __base(path):
     """Returns basename."""
     return path.rsplit("/",1)[-1]
 
+def __dir(path):
+    """Returns dirname."""
+    return path.rsplit("/",1)[0]
+
 def _board_platform_in(g, string_or_list):
     """Returns true if board is in the list."""
     board = g.get("TARGET_BOARD_PLATFORM","")
@@ -479,8 +486,8 @@ def _file_wildcard_exists(file_pattern):
 
 def _find_and_copy(pattern, from_dir, to_dir):
     """Return a copy list for the files matching the pattern."""
-    return sorted(["%s/%s:%s/%s" % (
-        from_dir, f, to_dir, f) for f in rblf_find_files(from_dir, pattern, only_files=1)])
+    return sorted([("%s/%s:%s/%s" % (from_dir, f, to_dir, f))
+        .replace("//", "/") for f in rblf_find_files(from_dir, pattern, only_files=1)])
 
 def _findstring(needle, haystack):
     """Equivalent to GNU make's $(findstring)."""
@@ -733,6 +740,7 @@ rblf = struct(
     copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
+    dir = __dir,
     enforce_product_packages_exist = _enforce_product_packages_exist,
     expand_wildcard = _expand_wildcard,
     file_exists = rblf_file_exists,
