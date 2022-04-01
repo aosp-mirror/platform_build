@@ -167,8 +167,8 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         # Now we know everything about this PCM, record it in 'configs'.
         children = handle.inherited_modules
         if _options.trace_modules:
-            print("#   ", "    ".join(children.keys()))
-        configs[name] = (pcm, handle.cfg, children.keys(), False)
+            print("#   ", "    ".join(sorted(children.keys())))
+        configs[name] = (pcm, handle.cfg, sorted(children.keys()), False)
         pcm_count = pcm_count + 1
 
         if len(children) == 0:
