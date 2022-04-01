@@ -11,8 +11,11 @@ TARGET_NO_KERNEL := true
 # This flag is set by mainline but isn't desired for GSI.
 BOARD_USES_SYSTEM_OTHER_ODEX :=
 
-# system.img is always ext4 and non-sparsed.
+# system.img is ext4/erofs and non-sparsed.
+GSI_FILE_SYSTEM_TYPE ?= ext4
+BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := $(GSI_FILE_SYSTEM_TYPE)
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+TARGET_USERIMAGES_SPARSE_EROFS_DISABLED := true
 
 # GSI also includes make_f2fs to support userdata parition in f2fs
 # for some devices
