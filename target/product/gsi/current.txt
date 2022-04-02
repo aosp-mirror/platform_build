@@ -31,10 +31,10 @@ VNDK-SP: android.hardware.graphics.mapper@2.1.so
 VNDK-SP: android.hardware.graphics.mapper@3.0.so
 VNDK-SP: android.hardware.graphics.mapper@4.0.so
 VNDK-SP: android.hardware.renderscript@1.0.so
-VNDK-SP: android.hidl.safe_union@1.0.so
 VNDK-SP: android.hidl.memory.token@1.0.so
 VNDK-SP: android.hidl.memory@1.0-impl.so
 VNDK-SP: android.hidl.memory@1.0.so
+VNDK-SP: android.hidl.safe_union@1.0.so
 VNDK-SP: libRSCpuRef.so
 VNDK-SP: libRSDriver.so
 VNDK-SP: libRS_internal.so
@@ -73,7 +73,7 @@ VNDK-core: android.hardware.configstore@1.1.so
 VNDK-core: android.hardware.confirmationui-support-lib.so
 VNDK-core: android.hardware.drm-V1-ndk.so
 VNDK-core: android.hardware.dumpstate-V1-ndk.so
-VNDK-core: android.hardware.gnss-V1-ndk.so
+VNDK-core: android.hardware.gnss-V2-ndk.so
 VNDK-core: android.hardware.graphics.allocator@2.0.so
 VNDK-core: android.hardware.graphics.allocator@3.0.so
 VNDK-core: android.hardware.graphics.allocator@4.0.so
@@ -81,7 +81,7 @@ VNDK-core: android.hardware.graphics.bufferqueue@1.0.so
 VNDK-core: android.hardware.graphics.bufferqueue@2.0.so
 VNDK-core: android.hardware.health-V1-ndk.so
 VNDK-core: android.hardware.health.storage-V1-ndk.so
-VNDK-core: android.hardware.identity-V3-ndk.so
+VNDK-core: android.hardware.identity-V4-ndk.so
 VNDK-core: android.hardware.ir-V1-ndk.so
 VNDK-core: android.hardware.keymaster-V3-ndk.so
 VNDK-core: android.hardware.light-V1-ndk.so
@@ -104,7 +104,7 @@ VNDK-core: android.hardware.radio.sim-V1-ndk.so
 VNDK-core: android.hardware.radio.voice-V1-ndk.so
 VNDK-core: android.hardware.rebootescrow-V1-ndk.so
 VNDK-core: android.hardware.security.dice-V1-ndk.so
-VNDK-core: android.hardware.security.keymint-V1-ndk.so
+VNDK-core: android.hardware.security.keymint-V2-ndk.so
 VNDK-core: android.hardware.security.secureclock-V1-ndk.so
 VNDK-core: android.hardware.security.sharedsecret-V1-ndk.so
 VNDK-core: android.hardware.sensors-V1-ndk.so
@@ -121,7 +121,7 @@ VNDK-core: android.hidl.token@1.0-utils.so
 VNDK-core: android.hidl.token@1.0.so
 VNDK-core: android.media.audio.common.types-V1-ndk.so
 VNDK-core: android.media.soundtrigger.types-V1-ndk.so
-VNDK-core: android.system.keystore2-V1-ndk.so
+VNDK-core: android.system.keystore2-V2-ndk.so
 VNDK-core: android.system.suspend-V1-ndk.so
 VNDK-core: android.system.suspend@1.0.so
 VNDK-core: libaudioroute.so
