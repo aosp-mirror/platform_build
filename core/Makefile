@@ -1398,7 +1398,6 @@ endif # BUILDING_VENDOR_BOOT_IMAGE
 ifeq ($(BUILDING_VENDOR_KERNEL_BOOT_IMAGE),true)
 
 INTERNAL_VENDOR_KERNEL_RAMDISK_FILES := $(filter $(TARGET_VENDOR_KERNEL_RAMDISK_OUT)/%, \
-    $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INTERNAL_VENDOR_KERNEL_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_kernel_boot)/vendor_kernel_ramdisk.cpio$(RAMDISK_EXT)
@@ -4032,29 +4031,65 @@ $(if $(BOARD_AVB_RECOVERY_KEY_PATH),,\
 endif
 endif
 
-# Appends os version and security patch level as a AVB property descriptor
+# Appends os version as a AVB property descriptor.
+SYSTEM_OS_VERSION ?= $(PLATFORM_VERSION_LAST_STABLE)
+BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.system.os_version:$(SYSTEM_OS_VERSION)
 
+PRODUCT_OS_VERSION ?= $(PLATFORM_VERSION_LAST_STABLE)
+BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.product.os_version:$(PRODUCT_OS_VERSION)
+
+SYSTEM_EXT_OS_VERSION ?= $(PLATFORM_VERSION_LAST_STABLE)
+BOARD_AVB_SYSTEM_EXT_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.system_ext.os_version:$(SYSTEM_EXT_OS_VERSION)
+
+INIT_BOOT_OS_VERSION ?= $(PLATFORM_VERSION_LAST_STABLE)
+BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.init_boot.os_version:$(INIT_BOOT_OS_VERSION)
+
+BOOT_OS_VERSION ?= $(PLATFORM_VERSION_LAST_STABLE)
+BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.boot.os_version:$(BOOT_OS_VERSION)
+
+VENDOR_OS_VERSION ?= $(PLATFORM_VERSION_LAST_STABLE)
+BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.vendor.os_version:$(VENDOR_OS_VERSION)
+
+ODM_OS_VERSION ?= $(PLATFORM_VERSION_LAST_STABLE)
+BOARD_AVB_ODM_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.odm.os_version:$(ODM_OS_VERSION)
+
+VENDOR_DLKM_OS_VERSION ?= $(PLATFORM_VERSION_LAST_STABLE)
+BOARD_AVB_VENDOR_DLKM_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.vendor_dlkm.os_version:$(VENDOR_DLKM_OS_VERSION)
+
+ODM_DLKM_OS_VERSION ?= $(PLATFORM_VERSION_LAST_STABLE)
+BOARD_AVB_ODM_DLKM_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.odm_dlkm.os_version:$(ODM_DLKM_OS_VERSION)
+
+SYSTEM_DLKM_OS_VERSION ?= $(PLATFORM_VERSION_LAST_STABLE)
+BOARD_AVB_SYSTEM_DLKM_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.system_dlkm.os_version:$(SYSTEM_DLKM_OS_VERSION)
+
+# Appends fingerprint and security patch level as a AVB property descriptor.
 BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.system.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.system.os_version:$(PLATFORM_VERSION_LAST_STABLE) \
     --prop com.android.build.system.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.product.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.product.os_version:$(PLATFORM_VERSION_LAST_STABLE) \
     --prop com.android.build.product.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 BOARD_AVB_SYSTEM_EXT_ADD_HASHTREE_FOOTER_ARGS += \
     --prop com.android.build.system_ext.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.system_ext.os_version:$(PLATFORM_VERSION_LAST_STABLE) \
     --prop com.android.build.system_ext.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
 BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS += \
-    --prop com.android.build.init_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.init_boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+    --prop com.android.build.init_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
 BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.vendor_boot.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
@@ -4066,24 +4101,19 @@ BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.recovery.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
 BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS += \
-    --prop com.android.build.vendor.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.vendor.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+    --prop com.android.build.vendor.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
 BOARD_AVB_ODM_ADD_HASHTREE_FOOTER_ARGS += \
-    --prop com.android.build.odm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.odm.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+    --prop com.android.build.odm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
 BOARD_AVB_VENDOR_DLKM_ADD_HASHTREE_FOOTER_ARGS += \
-    --prop com.android.build.vendor_dlkm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.vendor_dlkm.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+    --prop com.android.build.vendor_dlkm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
 BOARD_AVB_ODM_DLKM_ADD_HASHTREE_FOOTER_ARGS += \
-    --prop com.android.build.odm_dlkm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.odm_dlkm.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+    --prop com.android.build.odm_dlkm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
 BOARD_AVB_SYSTEM_DLKM_ADD_HASHTREE_FOOTER_ARGS += \
-    --prop com.android.build.system_dlkm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE) \
-    --prop com.android.build.system_dlkm.os_version:$(PLATFORM_VERSION_LAST_STABLE)
+    --prop com.android.build.system_dlkm.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
 
 BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.dtbo.fingerprint:$(BUILD_FINGERPRINT_FROM_FILE)
@@ -4094,14 +4124,6 @@ BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
 # The following vendor- and odm-specific images needs explicit SPL set per board.
 # TODO(b/210875415) Is this security_patch property used? Should it be removed from
 # boot.img when there is no platform ramdisk included in it?
-ifdef BOOT_OS_VERSION
-BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
-    --prop com.android.build.boot.os_version:$(BOOT_OS_VERSION)
-else
-BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
-    --prop com.android.build.boot.os_version:$(PLATFORM_VERSION_LAST_STABLE)
-endif
-
 ifdef BOOT_SECURITY_PATCH
 BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.security_patch:$(BOOT_SECURITY_PATCH)

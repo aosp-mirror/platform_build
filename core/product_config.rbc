@@ -167,8 +167,8 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         # Now we know everything about this PCM, record it in 'configs'.
         children = handle.inherited_modules
         if _options.trace_modules:
-            print("#   ", "    ".join(children.keys()))
-        configs[name] = (pcm, handle.cfg, children.keys(), False)
+            print("#   ", "    ".join(sorted(children.keys())))
+        configs[name] = (pcm, handle.cfg, sorted(children.keys()), False)
         pcm_count = pcm_count + 1
 
         if len(children) == 0:
@@ -438,6 +438,10 @@ def _inherit(handle, pcm_name, pcm):
 def __base(path):
     """Returns basename."""
     return path.rsplit("/",1)[-1]
+
+def __dir(path):
+    """Returns dirname."""
+    return path.rsplit("/",1)[0]
 
 def _board_platform_in(g, string_or_list):
     """Returns true if board is in the list."""
@@ -736,6 +740,7 @@ rblf = struct(
     copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
+    dir = __dir,
     enforce_product_packages_exist = _enforce_product_packages_exist,
     expand_wildcard = _expand_wildcard,
     file_exists = rblf_file_exists,

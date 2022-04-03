@@ -370,6 +370,10 @@ _product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 # "/system/framework/foo.jar" will be "system/framework/foo.jar.fsv_meta".
 _product_single_value_vars += PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
 
+# If true, sets the default for MODULE_BUILD_FROM_SOURCE. This overrides
+# BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE but not an explicitly set value.
+_product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 

@@ -243,7 +243,7 @@ else
   $(shell mkdir -p $(OUT_DIR)/rbc)
   $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_board_config.mk)
 
-  $(shell $(OUT_DIR)/soong/mk2rbc \
+  $(shell $(OUT_DIR)/mk2rbc \
     --mode=write -r --outdir $(OUT_DIR)/rbc \
     --boardlauncher=$(OUT_DIR)/rbc/boardlauncher.rbc \
     --input_variables=$(OUT_DIR)/rbc/make_vars_pre_board_config.mk \
@@ -254,7 +254,7 @@ else
   endif
 
   $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_board_config_results.mk \
-    $(OUT_DIR)/soong/rbcrun RBC_OUT="make,global" $(OUT_DIR)/rbc/boardlauncher.rbc)
+    $(OUT_DIR)/rbcrun RBC_OUT="make,global" $(OUT_DIR)/rbc/boardlauncher.rbc)
   ifneq ($(.SHELLSTATUS),0)
     $(error board configuration runner failed: $(.SHELLSTATUS))
   endif
