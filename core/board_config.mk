@@ -161,11 +161,15 @@ _board_strip_list += BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION
 _board_strip_list += BOARD_AVB_VENDOR_BOOT_KEY_PATH
 _board_strip_list += BOARD_AVB_VENDOR_BOOT_ALGORITHM
 _board_strip_list += BOARD_AVB_VENDOR_BOOT_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VENDOR_KERNEL_BOOT_KEY_PATH
+_board_strip_list += BOARD_AVB_VENDOR_KERNEL_BOOT_ALGORITHM
+_board_strip_list += BOARD_AVB_VENDOR_KERNEL_BOOT_ROLLBACK_INDEX_LOCATION
 _board_strip_list += BOARD_GKI_SIGNING_SIGNATURE_ARGS
 _board_strip_list += BOARD_GKI_SIGNING_ALGORITHM
 _board_strip_list += BOARD_GKI_SIGNING_KEY_PATH
 _board_strip_list += BOARD_MKBOOTIMG_ARGS
 _board_strip_list += BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE
+_board_strip_list += BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE
 _board_strip_list += ODM_MANIFEST_SKUS
 
 
@@ -239,7 +243,7 @@ else
   $(shell mkdir -p $(OUT_DIR)/rbc)
   $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_board_config.mk)
 
-  $(shell $(OUT_DIR)/soong/mk2rbc \
+  $(shell $(OUT_DIR)/mk2rbc \
     --mode=write -r --outdir $(OUT_DIR)/rbc \
     --boardlauncher=$(OUT_DIR)/rbc/boardlauncher.rbc \
     --input_variables=$(OUT_DIR)/rbc/make_vars_pre_board_config.mk \
@@ -250,7 +254,7 @@ else
   endif
 
   $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_board_config_results.mk \
-    $(OUT_DIR)/soong/rbcrun RBC_OUT="make,global" $(OUT_DIR)/rbc/boardlauncher.rbc)
+    $(OUT_DIR)/rbcrun RBC_OUT="make,global" $(OUT_DIR)/rbc/boardlauncher.rbc)
   ifneq ($(.SHELLSTATUS),0)
     $(error board configuration runner failed: $(.SHELLSTATUS))
   endif
@@ -519,6 +523,25 @@ ifdef BOARD_BOOT_HEADER_VERSION
   endif
 endif
 .KATI_READONLY := BUILDING_VENDOR_BOOT_IMAGE
+
+# Are we building a vendor kernel boot image
+BUILDING_VENDOR_KERNEL_BOOT_IMAGE :=
+ifeq ($(PRODUCT_BUILD_VENDOR_KERNEL_BOOT_IMAGE),true)
+  ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+    $(error BUILDING_VENDOR_BOOT_IMAGE is required, but BUILDING_VENDOR_BOOT_IMAGE is not true)
+  endif
+  ifndef BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE
+    $(error BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE is required when PRODUCT_BUILD_VENDOR_KERNEL_BOOT_IMAGE is true)
+  endif
+  BUILDING_VENDOR_KERNEL_BOOT_IMAGE := true
+else ifeq ($(PRODUCT_BUILD_VENDOR_KERNEL),)
+  ifdef BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE
+    ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+      BUILDING_VENDOR_KERNEL_BOOT_IMAGE := true
+    endif
+  endif
+endif # end of PRODUCT_BUILD_VENDOR_KERNEL_BOOT_IMAGE
+.KATI_READONLY := BUILDING_VENDOR_KERNEL_BOOT_IMAGE
 
 # Are we building a ramdisk image
 BUILDING_RAMDISK_IMAGE := true

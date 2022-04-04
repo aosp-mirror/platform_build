@@ -37,5 +37,16 @@ PRODUCT_VIRTUAL_AB_COMPRESSION := true
 PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD ?= none
 PRODUCT_PACKAGES += \
     snapuserd \
-    snapuserd.recovery \
+
+# For dedicated recovery partitions, we need to include snapuserd
+# For GKI devices, BOARD_USES_RECOVERY_AS_BOOT is empty, but
+# so is BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT.
+ifdef BUILDING_RECOVERY_IMAGE
+ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+ifneq ($(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT),true)
+PRODUCT_PACKAGES += \
+    snapuserd.recovery
+endif
+endif
+endif
 

@@ -58,7 +58,7 @@ PLATFORM_VERSION_CODENAME.TP1A := Tiramisu
 # This is the user-visible version.  In a final release build it should
 # be empty to use PLATFORM_VERSION as the user-visible version.  For
 # a preview release it can be set to a user-friendly value like `12 Preview 1`
-PLATFORM_DISPLAY_VERSION :=
+PLATFORM_DISPLAY_VERSION := 13
 
 ifndef PLATFORM_SDK_VERSION
   # This is the canonical definition of the SDK version, which defines
@@ -85,8 +85,13 @@ PLATFORM_SDK_EXTENSION_VERSION := 2
 PLATFORM_BASE_SDK_EXTENSION_VERSION := 2
 .KATI_READONLY := PLATFORM_BASE_SDK_EXTENSION_VERSION
 
-# This is are all known codenames starting from Q.
-PLATFORM_VERSION_KNOWN_CODENAMES := Q R S Sv2 Tiramisu
+# This are all known codenames.
+PLATFORM_VERSION_KNOWN_CODENAMES := \
+Base Base11 Cupcake Donut Eclair Eclair01 EclairMr1 Froyo Gingerbread GingerbreadMr1 \
+Honeycomb HoneycombMr1 HoneycombMr2 IceCreamSandwich IceCreamSandwichMr1 \
+JellyBean JellyBeanMr1 JellyBeanMr2 Kitkat KitkatWatch Lollipop LollipopMr1 M N NMr1 O OMr1 P \
+Q R S Sv2 Tiramisu
+
 # Convert from space separated list to comma separated
 PLATFORM_VERSION_KNOWN_CODENAMES := \
   $(call normalize-comma-list,$(PLATFORM_VERSION_KNOWN_CODENAMES))
