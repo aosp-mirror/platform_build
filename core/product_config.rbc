@@ -168,6 +168,8 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         children = handle.inherited_modules
         if _options.trace_modules:
             print("#   ", "    ".join(children.keys()))
+        # Starlark dictionaries are guaranteed to iterate through in insertion order,
+        # so children.keys() will be ordered by the inherit() calls
         configs[name] = (pcm, handle.cfg, children.keys(), False)
         pcm_count = pcm_count + 1
 
@@ -291,12 +293,6 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
         child_cfg = configs[child_name][1]
         for attr, value in child_cfg.items():
             if type(value) != "list":
-                # Single value variables take the first value available from the leftmost
-                # branch of the tree. If we also had "or attr in percolated_attrs" in this
-                # if statement, it would take the value from the rightmost branch.
-                if cfg.get(attr, "") == "":
-                    cfg[attr] = value
-                    percolated_attrs[attr] = True
                 continue
             if attr in percolated_attrs:
                 # We already are percolating this one, just add this list
@@ -305,6 +301,19 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
                 percolated_attrs[attr] = True
                 cfg[attr] = []
                 __move_items(cfg[attr], child_cfg, attr)
+
+    # single value variables need to be inherited in alphabetical order,
+    # not in the order of inherit() calls.
+    for child_name in sorted(children_names):
+        child_cfg = configs[child_name][1]
+        for attr, value in child_cfg.items():
+            if type(value) != "list":
+                # Single value variables take the first value available from the leftmost
+                # branch of the tree. If we also had "or attr in percolated_attrs" in this
+                # if statement, it would take the value from the rightmost branch.
+                if cfg.get(attr, "") == "":
+                    cfg[attr] = value
+                    percolated_attrs[attr] = True
 
     for attr in _options.trace_variables:
         if attr in percolated_attrs:
