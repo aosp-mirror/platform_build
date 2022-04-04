@@ -162,7 +162,7 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
             globals["PRODUCTS."+name+".mk.ARTIFACT_PATH_ALLOWED_LIST"] = handle.artifact_path_allowed_list
             globals["PRODUCTS."+name+".mk.ARTIFACT_PATH_REQUIREMENT_IS_RELAXED"] = "true" if handle.artifact_path_requirement_is_relaxed[0] else ""
             globals.setdefault("ARTIFACT_PATH_REQUIREMENT_PRODUCTS", [])
-            globals["ARTIFACT_PATH_REQUIREMENT_PRODUCTS"] += [name+".mk"]
+            globals["ARTIFACT_PATH_REQUIREMENT_PRODUCTS"] = sorted(globals["ARTIFACT_PATH_REQUIREMENT_PRODUCTS"] + [name+".mk"])
 
         # Now we know everything about this PCM, record it in 'configs'.
         children = handle.inherited_modules
