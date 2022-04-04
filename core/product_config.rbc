@@ -385,7 +385,7 @@ def _addsuffix(suffix, string_or_list):
 
 def __words(string_or_list):
     if type(string_or_list) == "list":
-        return string_or_list
+        string_or_list = " ".join(string_or_list)
     return _mkstrip(string_or_list).split()
 
 # Handle manipulation functions.
@@ -504,10 +504,15 @@ def _filter_out(pattern, text):
     Return:
         list of words
     """
-    rex = __mk2regex(__words(pattern))
+    patterns = [__mkparse_pattern(x) for x in __words(pattern)]
     res = []
     for w in __words(text):
-        if not _regex_match(rex, w):
+        match = False
+        for p in patterns:
+            if __mkpattern_matches(p, w):
+                match = True
+                break
+        if not match:
             res.append(w)
     return res
 
@@ -519,11 +524,13 @@ def _filter(pattern, text):
          which stands for any sequence of characters.
         text: string or list of words.
     """
-    rex = __mk2regex(__words(pattern))
+    patterns = [__mkparse_pattern(x) for x in __words(pattern)]
     res = []
     for w in __words(text):
-        if _regex_match(rex, w):
-            res.append(w)
+        for p in patterns:
+            if __mkpattern_matches(p, w):
+                res.append(w)
+                break
     return res
 
 def _notdir(paths):
@@ -532,15 +539,6 @@ def _notdir(paths):
     Returns the name of the file at the end of each path in paths.
     """
     return " ".join([__base(w) for w in __words(paths)])
-
-def __mk2regex(words):
-    """Returns regular expression equivalent to Make pattern."""
-
-    # TODO(asmundak): this will mishandle '\%'
-    return "^(" + "|".join([w.replace("%", ".*", 1) for w in words if w]) + ")$"
-
-def _regex_match(regex, w):
-    return rblf_regex(regex, w)
 
 def _require_artifacts_in_path(paths, allowed_paths):
     """TODO."""
@@ -598,7 +596,11 @@ def _mkinfo(file, message = ""):
 
 
 def __mkparse_pattern(pattern):
-    """Parses Make's patsubst pattern."""
+    """Parses Make's patsubst pattern.
+
+    This is equivalent to pattern.split('%', 1), except it
+    also takes into account escaping the % symbols.
+    """
     in_escape = False
     res = []
     acc = ""
@@ -618,6 +620,21 @@ def __mkparse_pattern(pattern):
     res.append(acc)
     return res
 
+def __mkpattern_matches(pattern, word):
+    """Returns if a pattern matches a given word.
+
+    The pattern must be a list of strings of length at most 2.
+    This checks if word is either equal to the pattern or
+    starts/ends with the two parts of the pattern.
+    """
+    if len(pattern) > 2:
+        fail("Pattern can have at most 2 components")
+    elif len(pattern) == 1:
+        return pattern[0]==word
+    else:
+        return ((len(word) >= len(pattern[0])+len(pattern[1]))
+            and word.startswith(pattern[0])
+            and word.endswith(pattern[1]))
 
 def __mkpatsubst_word(parsed_pattern,parsed_subst, word):
     (before, after) = parsed_pattern
@@ -639,12 +656,11 @@ def _mkpatsubst(pattern, replacement, s):
     $1 in regex terms).
     """
     parsed_pattern = __mkparse_pattern(pattern)
-    words = s if type(s) == "list" else _mkstrip(s).split(" ")
     if len(parsed_pattern) == 1:
-        out_words = [ replacement if x == pattern else x for x in words]
+        out_words = [ replacement if x == pattern else x for x in __words(s)]
     else:
         parsed_replacement = __mkparse_pattern(replacement)
-        out_words = [__mkpatsubst_word(parsed_pattern, parsed_replacement, x) for x in words]
+        out_words = [__mkpatsubst_word(parsed_pattern, parsed_replacement, x) for x in __words(s)]
     return out_words if type(s) == "list" else " ".join(out_words)
 
 
