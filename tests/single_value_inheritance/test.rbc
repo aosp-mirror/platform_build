@@ -25,3 +25,4 @@ def test():
     (globals, config, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
     assert_eq("tablet", config["PRODUCT_CHARACTERISTICS"])
     assert_eq("vendor/myvendor/certs/devkeys/devkey", config["PRODUCT_DEFAULT_DEV_CERTIFICATE"])
+    assert_eq(["foo", "bar"], config["PRODUCT_PACKAGES"])
