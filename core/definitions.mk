@@ -3111,50 +3111,6 @@ done \
 fi
 endef
 
-# Copy an unstripped binary to the symbols directory while also extracting
-# a hash mapping to the mapping directory.
-# $(1): unstripped intermediates file
-# $(2): path in symbols directory
-define copy-unstripped-elf-file-with-mapping
-$(call _copy-symbols-file-with-mapping,$(1),$(2),\
-  elf,$(patsubst $(TARGET_OUT_UNSTRIPPED)/%,$(call intermediates-dir-for,PACKAGING,elf_symbol_mapping)/%,$(2).textproto))
-endef
-
-# Copy an R8 dictionary to the packaging directory while also extracting
-# a hash mapping to the mapping directory.
-# $(1): unstripped intermediates file
-# $(2): path in packaging directory
-# $(3): path in mappings packaging directory
-define copy-r8-dictionary-file-with-mapping
-$(call _copy-symbols-file-with-mapping,$(1),$(2),r8,$(3))
-endef
-
-# Copy an unstripped binary or R8 dictionary to the symbols directory
-# while also extracting a hash mapping to the mapping directory.
-# $(1): unstripped intermediates file
-# $(2): path in symbols directory
-# $(3): file type (elf or r8)
-# $(4): path in the mappings directory
-define _copy-symbols-file-with-mapping
-$(2): .KATI_IMPLICIT_OUTPUTS := $(4)
-$(2): $(SYMBOLS_MAP)
-$(2): $(1)
-	@echo "Copy symbols with mapping: $$@"
-	$$(copy-file-to-target)
-	$(SYMBOLS_MAP) -$(strip $(3)) $(2) -write_if_changed $(4)
-.KATI_RESTAT: $(2)
-endef
-
-# Returns the directory to copy proguard dictionaries into
-define local-proguard-dictionary-directory
-$(call intermediates-dir-for,PACKAGING,proguard_dictionary)/out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
-endef
-
-# Returns the directory to copy proguard dictionary mappings into
-define local-proguard-dictionary-mapping-directory
-$(call intermediates-dir-for,PACKAGING,proguard_dictionary_mapping)/out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
-endef
-
 
 ###########################################################
 ## Commands to call R8
