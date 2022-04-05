@@ -198,6 +198,13 @@ $(call dist-for-goals, cts-api-coverage, $(cts-verifier-coverage-report):cts-ver
 $(call dist-for-goals, cts-api-coverage, $(cts-combined-coverage-report):cts-combined-coverage-report.html)
 $(call dist-for-goals, cts-api-coverage, $(cts-combined-xml-coverage-report):cts-combined-coverage-report.xml)
 
+ALL_TARGETS.$(cts-test-coverage-report).META_LIC:=$(module_license_metadata)
+ALL_TARGETS.$(cts-system-api-coverage-report).META_LIC:=$(module_license_metadata)
+ALL_TARGETS.$(cts-system-api-xml-coverage-report).META_LIC:=$(module_license_metadata)
+ALL_TARGETS.$(cts-verifier-coverage-report).META_LIC:=$(module_license_metadata)
+ALL_TARGETS.$(cts-combined-coverage-report).META_LIC:=$(module_license_metadata)
+ALL_TARGETS.$(cts-combined-xml-coverage-report).META_LIC:=$(module_license_metadata)
+
 # Arguments;
 #  1 - Name of the report printed out on the screen
 #  2 - List of apk files that will be scanned to generate the report
