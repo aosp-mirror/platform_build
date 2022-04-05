@@ -439,10 +439,6 @@ def __base(path):
     """Returns basename."""
     return path.rsplit("/",1)[-1]
 
-def __dir(path):
-    """Returns dirname."""
-    return path.rsplit("/",1)[0]
-
 def _board_platform_in(g, string_or_list):
     """Returns true if board is in the list."""
     board = g.get("TARGET_BOARD_PLATFORM","")
@@ -532,6 +528,13 @@ def _filter(pattern, text):
                 res.append(w)
                 break
     return res
+
+def _dir(paths):
+    """Equivalent to the GNU make function $(dir).
+
+    Returns the folder of the file for each path in paths.
+    """
+    return " ".join([w.rsplit("/",1)[0] for w in __words(paths)])
 
 def _notdir(paths):
     """Equivalent to the GNU make function $(notdir).
@@ -756,7 +759,7 @@ rblf = struct(
     copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
-    dir = __dir,
+    dir = _dir,
     enforce_product_packages_exist = _enforce_product_packages_exist,
     expand_wildcard = _expand_wildcard,
     file_exists = rblf_file_exists,
