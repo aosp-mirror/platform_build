@@ -622,24 +622,29 @@ $(2): PRIVATE_INSTALL_MAP := $(_map)
 $(2): PRIVATE_MODULE_TYPE := $(ALL_MODULES.$(1).MODULE_TYPE)
 $(2): PRIVATE_MODULE_CLASS := $(ALL_MODULES.$(1).MODULE_CLASS)
 $(2): PRIVATE_INSTALL_MAP := $(_map)
+$(2): PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,PACKAGING,notice)/$(2)/arguments
 $(2): $(BUILD_LICENSE_METADATA)
 $(2) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
 	rm -f $$@
 	mkdir -p $$(dir $$@)
+	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
+	$$(call dump-words-to-file,\
+	    $$(addprefix -mt ,$$(PRIVATE_MODULE_TYPE))\
+	    $$(addprefix -mc ,$$(PRIVATE_MODULE_CLASS))\
+	    $$(addprefix -k ,$$(PRIVATE_KINDS))\
+	    $$(addprefix -c ,$$(PRIVATE_CONDITIONS))\
+	    $$(addprefix -n ,$$(PRIVATE_NOTICES))\
+	    $$(addprefix -d ,$$(PRIVATE_NOTICE_DEPS))\
+	    $$(addprefix -s ,$$(PRIVATE_SOURCES))\
+	    $$(addprefix -m ,$$(PRIVATE_INSTALL_MAP))\
+	    $$(addprefix -t ,$$(PRIVATE_TARGETS))\
+	    $$(addprefix -i ,$$(PRIVATE_INSTALLED))\
+	    $$(addprefix -r ,$$(PRIVATE_PATH)),\
+	    $$(PRIVATE_ARGUMENT_FILE))
 	OUT_DIR=$(OUT_DIR) $(BUILD_LICENSE_METADATA) \
-	  $$(addprefix -mt ,$$(PRIVATE_MODULE_TYPE)) \
-	  $$(addprefix -mc ,$$(PRIVATE_MODULE_CLASS)) \
-	  $$(addprefix -k ,$$(PRIVATE_KINDS)) \
-	  $$(addprefix -c ,$$(PRIVATE_CONDITIONS)) \
-	  $$(addprefix -n ,$$(PRIVATE_NOTICES)) \
-	  $$(addprefix -d ,$$(PRIVATE_NOTICE_DEPS)) \
-	  $$(addprefix -s ,$$(PRIVATE_SOURCES)) \
-	  $$(addprefix -m ,$$(PRIVATE_INSTALL_MAP)) \
-	  $$(addprefix -t ,$$(PRIVATE_TARGETS)) \
-	  $$(addprefix -i ,$$(PRIVATE_INSTALLED)) \
 	  $$(if $$(PRIVATE_IS_CONTAINER),-is_container) \
 	  -p '$$(PRIVATE_PACKAGE_NAME)' \
-	  $$(addprefix -r ,$$(PRIVATE_PATH)) \
+	  @$$(PRIVATE_ARGUMENT_FILE) \
 	  -o $$@
 endef
 
@@ -693,22 +698,27 @@ $(_meta): PRIVATE_PATH := $(_path)
 $(_meta): PRIVATE_IS_CONTAINER := $(ALL_NON_MODULES.$(_tgt).IS_CONTAINER)
 $(_meta): PRIVATE_PACKAGE_NAME := $(strip $(ALL_NON_MODULES.$(_tgt).LICENSE_PACKAGE_NAME))
 $(_meta): PRIVATE_INSTALL_MAP := $(strip $(_install_map))
+$(_meta): PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,PACKAGING,notice)/$(_meta)/arguments
 $(_meta): $(BUILD_LICENSE_METADATA)
 $(_meta) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
 	rm -f $$@
 	mkdir -p $$(dir $$@)
+	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
+	$$(call dump-words-to-file,\
+	    $$(addprefix -k ,$$(PRIVATE_KINDS))\
+	    $$(addprefix -c ,$$(PRIVATE_CONDITIONS))\
+	    $$(addprefix -n ,$$(PRIVATE_NOTICES))\
+	    $$(addprefix -d ,$$(PRIVATE_NOTICE_DEPS))\
+	    $$(addprefix -s ,$$(PRIVATE_SOURCES))\
+	    $$(addprefix -m ,$$(PRIVATE_INSTALL_MAP))\
+	    $$(addprefix -t ,$$(PRIVATE_TARGETS))\
+	    $$(addprefix -r ,$$(PRIVATE_PATH)),\
+	    $$(PRIVATE_ARGUMENT_FILE))
 	OUT_DIR=$(OUT_DIR) $(BUILD_LICENSE_METADATA) \
           -mt raw -mc unknown \
-	  $$(addprefix -k ,$$(PRIVATE_KINDS)) \
-	  $$(addprefix -c ,$$(PRIVATE_CONDITIONS)) \
-	  $$(addprefix -n ,$$(PRIVATE_NOTICES)) \
-	  $$(addprefix -d ,$$(PRIVATE_NOTICE_DEPS)) \
-	  $$(addprefix -s ,$$(PRIVATE_SOURCES)) \
-	  $$(addprefix -m ,$$(PRIVATE_INSTALL_MAP)) \
-	  $$(addprefix -t ,$$(PRIVATE_TARGETS)) \
 	  $$(if $$(PRIVATE_IS_CONTAINER),-is_container) \
-	  -p '$$(PRIVATE_PACKAGE_NAME)' \
 	  $$(addprefix -r ,$$(PRIVATE_PATH)) \
+	  @$$(PRIVATE_ARGUMENT_FILE) \
 	  -o $$@
 
 endef
@@ -2368,7 +2378,59 @@ define dump-words-to-file
         @$(call emit-line,$(wordlist 12001,12500,$(1)),$(2))
         @$(call emit-line,$(wordlist 12501,13000,$(1)),$(2))
         @$(call emit-line,$(wordlist 13001,13500,$(1)),$(2))
-        @$(if $(wordlist 13501,13502,$(1)),$(error Too many words ($(words $(1)))))
+        @$(call emit-line,$(wordlist 13501,14000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 14001,14500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 14501,15000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 15001,15500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 15501,16000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 16001,16500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 16501,17000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 17001,17500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 17501,18000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 18001,18500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 18501,19000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 19001,19500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 19501,20000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 20001,20500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 20501,21000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 21001,21500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 21501,22000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 22001,22500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 22501,23000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 23001,23500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 23501,24000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 24001,24500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 24501,25000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 25001,25500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 25501,26000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 26001,26500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 26501,27000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 27001,27500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 27501,28000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 28001,28500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 28501,29000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 29001,29500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 29501,30000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 30001,30500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 30501,31000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 31001,31500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 31501,32000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 32001,32500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 32501,33000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 33001,33500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 33501,34000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 34001,34500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 34501,35000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 35001,35500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 35501,36000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 36001,36500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 36501,37000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 37001,37500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 37501,38000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 38001,38500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 38501,39000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 39001,39500,$(1)),$(2))
+        @$(if $(wordlist 39501,39502,$(1)),$(error Too many words ($(words $(1)))))
 endef
 # Return jar arguments to compress files in a given directory
 # $(1): directory
