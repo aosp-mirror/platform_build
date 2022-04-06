@@ -33,6 +33,9 @@ ifeq ($(LOCAL_MODULE),)
 endif
 $(call verify-module-name)
 
+my_test_data :=
+my_test_config :=
+
 LOCAL_IS_HOST_MODULE := $(strip $(LOCAL_IS_HOST_MODULE))
 ifdef LOCAL_IS_HOST_MODULE
   ifneq ($(LOCAL_IS_HOST_MODULE),true)
@@ -710,6 +713,10 @@ ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
 endif
 ifdef LOCAL_MULTILIB
   multi_arch := true
+else ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+    multi_arch := true
+  endif
 endif
 
 ifdef multi_arch

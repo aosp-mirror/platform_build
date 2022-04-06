@@ -97,6 +97,7 @@ class Options(object):
     self.stash_threshold = 0.8
     self.logfile = None
     self.host_tools = {}
+    self.sepolicy_name = 'sepolicy.apex'
 
 
 OPTIONS = Options()
@@ -470,10 +471,6 @@ class BuildInfo(object):
   @property
   def oem_props(self):
     return self._oem_props
-
-  @property
-  def avb_enabled(self):
-    return self.get("avb_enable") == "true"
 
   def __getitem__(self, key):
     return self.info_dict[key]
