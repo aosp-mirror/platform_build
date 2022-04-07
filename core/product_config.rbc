@@ -676,6 +676,20 @@ def _mkpatsubst(pattern, replacement, s):
     return out_words if type(s) == "list" else " ".join(out_words)
 
 
+def _mksort(input):
+    """Emulate Make's sort.
+
+    This is unique from a regular sort in that it also strips
+    the input, and removes duplicate words from the input.
+    """
+    input = sorted(__words(input))
+    result = []
+    for w in input:
+        if len(result) == 0 or result[-1] != w:
+            result.append(w)
+    return result
+
+
 def _mkstrip(s):
     """Emulates Make's strip.
 
@@ -785,6 +799,7 @@ rblf = struct(
     mkerror = _mkerror,
     mkpatsubst = _mkpatsubst,
     mkwarning = _mkwarning,
+    mksort = _mksort,
     mkstrip = _mkstrip,
     mksubst = _mksubst,
     notdir = _notdir,
