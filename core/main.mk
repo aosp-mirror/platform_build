@@ -1761,13 +1761,13 @@ else ifneq ($(TARGET_BUILD_APPS),)
   endif
 
   $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(PROGUARD_DICT_ZIP))
+  $(call dist-for-goals,apps_only, $(PROGUARD_DICT_ZIP) $(PROGUARD_DICT_MAPPING))
 
   $(PROGUARD_USAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(PROGUARD_USAGE_ZIP))
 
   $(SYMBOLS_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(SYMBOLS_ZIP))
+  $(call dist-for-goals,apps_only, $(SYMBOLS_ZIP) $(SYMBOLS_MAPPING))
 
   $(COVERAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(COVERAGE_ZIP))
@@ -1818,7 +1818,9 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(INTERNAL_OTA_PARTIAL_PACKAGE_TARGET) \
     $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET) \
     $(SYMBOLS_ZIP) \
+    $(SYMBOLS_MAPPING) \
     $(PROGUARD_DICT_ZIP) \
+    $(PROGUARD_DICT_MAPPING) \
     $(PROGUARD_USAGE_ZIP) \
     $(COVERAGE_ZIP) \
     $(INSTALLED_FILES_FILE) \
@@ -1962,6 +1964,7 @@ sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals,sdk, \
     $(ALL_SDK_TARGETS) \
     $(SYMBOLS_ZIP) \
+    $(SYMBOLS_MAPPING) \
     $(COVERAGE_ZIP) \
     $(APPCOMPAT_ZIP) \
     $(INSTALLED_BUILD_PROP_TARGET) \
