@@ -19,3 +19,5 @@ def init(g, handle):
 
   cfg["PRODUCT_CHARACTERISTICS"] = "tablet"
   cfg["PRODUCT_DEFAULT_DEV_CERTIFICATE"] = "vendor/myvendor/certs/devkeys/devkey"
+  cfg.setdefault("PRODUCT_PACKAGES", [])
+  cfg["PRODUCT_PACKAGES"] += ["bar"]
