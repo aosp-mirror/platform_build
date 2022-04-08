@@ -70,14 +70,7 @@ def __print_attr(attr, value):
 
 def _printvars(state):
     """Prints configuration and global variables."""
-    (globals, cfg, globals_base) = state
-    for attr, val in sorted(cfg.items()):
-        __print_attr(attr, val)
-    if _options.print_globals:
-        print()
-        _printglobals(globals, globals_base)
-
-def _printglobals(globals, globals_base):
+    (globals, globals_base) = state
     for attr, val in sorted(globals.items()):
         if attr == _soong_config_namespaces_key:
             __print_attr("SOONG_CONFIG_NAMESPACES", val.keys())
@@ -218,7 +211,19 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         _percolate_inherited(configs, pcm_name, cfg, children_names)
         configs[pcm_name] = pcm, cfg, children_names, True
 
-    return (globals, configs[top_pcm_name][1], globals_base)
+    # Copy product config variables from the cfg dictionary to the
+    # PRODUCTS.<top_level_makefile_name>.<var_name> global variables.
+    for var, val in configs[top_pcm_name][1].items():
+        globals["PRODUCTS."+top_pcm_name+".mk."+var] = val
+
+    # Record inheritance hierarchy in PRODUCTS.<file>.INHERITS_FROM variables.
+    # This is required for m product-graph.
+    for config in configs:
+        if len(configs[config][2]) > 0:
+            globals["PRODUCTS."+config+".mk.INHERITS_FROM"] = sorted([x + ".mk" for x in configs[config][2]])
+    globals["PRODUCTS"] = __words(globals.get("PRODUCTS", [])) + [top_pcm_name + ".mk"]
+
+    return (globals, globals_base)
 
 
 def _dictionary_difference(a, b):
@@ -237,7 +242,14 @@ def _board_configuration(board_config_init, input_variables_init):
     input_variables_init(globals_base, h_base)
     input_variables_init(globals, h)
     board_config_init(globals, h)
-    return (globals, _dictionary_difference(h.cfg, h_base.cfg), globals_base)
+
+    # Board configuration files aren't really supposed to change
+    # product configuration variables, but some do. You lose the
+    # inheritance features of the product config variables if you do.
+    for var, value in _dictionary_difference(h.cfg, h_base.cfg).items():
+        globals[var] = value
+
+    return (globals, globals_base)
 
 
 def _substitute_inherited(configs, pcm_name, cfg):
@@ -740,7 +752,6 @@ def __get_options():
     """Returns struct containing runtime global settings."""
     settings = dict(
         format = "pretty",
-        print_globals = False,
         rearrange = "",
         trace_modules = False,
         trace_variables = [],
@@ -754,7 +765,8 @@ def __get_options():
         elif x == "pretty" or x == "make":
             settings["format"] = x
         elif x == "global":
-            settings["print_globals"] = True
+            # TODO: Remove this, kept for backwards compatibility
+            pass
         elif x != "":
             fail("RBC_OUT: got %s, should be one of: [pretty|make] [sort|unique]" % x)
     for x in getattr(rblf_cli, "RBC_DEBUG", "").split(","):
@@ -804,7 +816,6 @@ rblf = struct(
     mksubst = _mksubst,
     notdir = _notdir,
     printvars = _printvars,
-    printglobals = _printglobals,
     product_configuration = _product_configuration,
     board_configuration = _board_configuration,
     product_copy_files_by_pattern = _product_copy_files_by_pattern,
