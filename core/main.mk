@@ -1234,33 +1234,9 @@ endef
 #   See the select-bitness-of-required-modules definition.
 # $(1): product makefile
 
-# TODO(asmundak):
-# `product-installed-files` and `host-installed-files` macros below used to
-# call `get-product-var` directly to obtain per-file configuration variable
-# values (the value of variable FOO is fetched from PRODUCT.<product-makefile>.FOO).
-# Starlark-based configuration does not maintain per-file variable variable
-# values. To work around this problem, we utilize the fact that
-# `product-installed-files` and `host-installed-files` are called only in
-# two places:
-# 1. For the top-level product makefile (in this file). In this case
-#    $(call get-product-var <product>, FOO) is the same as $(FOO) as the
-#    product configuration has been run already. Therefore we define
-#    _product-var macro to pick the values directly from product config
-#    variables when using Starlark-based configuration.
-# 2. To check the path requirements (in artifact_path_requirements.mk).
-#    Starlark-based configuration does not perform this check at the moment.
-# In the longer run most of the logic of this file will be moved to the
-# Starlark.
-
-ifndef RBC_PRODUCT_CONFIG
 define _product-var
   $(call get-product-var,$(1),$(2))
 endef
-else
-define _product-var
-  $(call $(2))
-endef
-endif
 
 define product-installed-files
   $(eval _pif_modules := \
