@@ -334,8 +334,9 @@ $(eval _dump_variables_rbc_excluded := \
   USER \
   SOONG_% \
   PRODUCT_COPY_OUT_%)\
+$(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(filter-out $(_dump_variables_rbc_excluded),$(.VARIABLES))))
 $(file >$(1),\
-$(foreach v, $(shell echo $(filter-out $(_dump_variables_rbc_excluded),$(.VARIABLES)) | tr ' ' '\n' | grep -he "^[A-Z][A-Z0-9_]*$$"),\
+$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt),\
 $(v) := $(strip $($(v)))$(newline))\
 $(foreach ns,$(SOONG_CONFIG_NAMESPACES),\
 $(foreach v,$(SOONG_CONFIG_$(ns)),\
