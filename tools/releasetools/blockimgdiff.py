@@ -521,7 +521,7 @@ class BlockImageDiff(object):
         stashed_blocks -= free_size
 
       if common.OPTIONS.cache_size is not None:
-        # Validation check: abort if we're going to need more stash space than
+        # Sanity check: abort if we're going to need more stash space than
         # the allowed size (cache_size * threshold). There are two purposes
         # of having a threshold here. a) Part of the cache may have been
         # occupied by some recovery logs. b) It will buy us some time to deal

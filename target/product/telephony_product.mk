@@ -20,4 +20,3 @@
 # /product packages
 PRODUCT_PACKAGES += \
     Dialer \
-    ImsServiceEntitlement \

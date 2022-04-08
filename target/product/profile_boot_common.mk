@@ -23,7 +23,7 @@ PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION := build/make/target/product/empt
 DEX_PREOPT_DEFAULT := nostripping
 
 # Boot image property overrides.
-PRODUCT_VENDOR_PROPERTIES += \
+PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.profilesystemserver=true \
     dalvik.vm.profilebootclasspath=true
 

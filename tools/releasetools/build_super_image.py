@@ -194,8 +194,10 @@ def BuildSuperImage(inp, out):
       return BuildSuperImageFromTargetFiles(inp, out)
 
     if os.path.isfile(inp):
+      with open(inp) as f:
+        lines = f.read()
       logger.info("Building super image from info dict...")
-      return BuildSuperImageFromDict(common.LoadDictionaryFromFile(inp), out)
+      return BuildSuperImageFromDict(common.LoadDictionaryFromLines(lines.split("\n")), out)
 
   raise ValueError("{} is not a dictionary or a valid path".format(inp))
 

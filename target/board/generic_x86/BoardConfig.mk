@@ -18,9 +18,9 @@ TARGET_CPU_ABI := x86
 TARGET_ARCH := x86
 TARGET_ARCH_VARIANT := x86
 
-include build/make/target/board/BoardConfigGsiCommon.mk
+TARGET_PRELINK_MODULE := false
 
-ifndef BUILDING_GSI
+include build/make/target/board/BoardConfigGsiCommon.mk
 include build/make/target/board/BoardConfigEmuCommon.mk
 
 # Resize to 4G to accomodate ASAN and CTS
@@ -38,4 +38,3 @@ WPA_SUPPLICANT_VERSION      := VER_0_8_X
 WIFI_DRIVER_FW_PATH_PARAM   := "/dev/null"
 WIFI_DRIVER_FW_PATH_STA     := "/dev/null"
 WIFI_DRIVER_FW_PATH_AP      := "/dev/null"
-endif

@@ -4,7 +4,6 @@
 #include <unistd.h>
 
 #include <private/android_filesystem_config.h>
-#include <private/fs_config.h>
 
 #define DO_DEBUG 1
 

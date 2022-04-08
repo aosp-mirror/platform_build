@@ -26,11 +26,10 @@
 # Output variables:
 #   compatibility_zip: the path to the output zip file.
 
-test_suite_subdir := android-$(test_suite_name)
-out_dir := $(HOST_OUT)/$(test_suite_name)/$(test_suite_subdir)
+out_dir := $(HOST_OUT)/$(test_suite_name)/android-$(test_suite_name)
 test_artifacts := $(COMPATIBILITY.$(test_suite_name).FILES)
-test_tools := $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/tradefed-no-fwk.jar \
+test_tools := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/tradefed-test-framework.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/loganalysis.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util.jar \
@@ -42,29 +41,11 @@ test_tools := $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
 
 test_tools += $(test_suite_tools)
 
-# The JDK to package into the test suite zip file.  Always package the linux JDK.
-test_suite_jdk_dir := $(ANDROID_JAVA_HOME)/../linux-x86
-test_suite_jdk := $(call intermediates-dir-for,PACKAGING,$(test_suite_name)_jdk,HOST)/jdk.zip
-$(test_suite_jdk): PRIVATE_JDK_DIR := $(test_suite_jdk_dir)
-$(test_suite_jdk): PRIVATE_SUBDIR := $(test_suite_subdir)
-$(test_suite_jdk): $(shell find $(test_suite_jdk_dir) -type f | sort)
-$(test_suite_jdk): $(SOONG_ZIP)
-	$(SOONG_ZIP) -o $@ -P $(PRIVATE_SUBDIR)/jdk -C $(PRIVATE_JDK_DIR) -D $(PRIVATE_JDK_DIR)
-
 # Include host shared libraries
 host_shared_libs := $(call copy-many-files, $(COMPATIBILITY.$(test_suite_name).HOST_SHARED_LIBRARY.FILES))
 
-compatibility_zip_deps := \
-  $(test_artifacts) \
-  $(test_tools) \
-  $(test_suite_prebuilt_tools) \
-  $(test_suite_dynamic_config) \
-  $(test_suite_jdk) \
-  $(MERGE_ZIPS) \
-  $(SOONG_ZIP) \
-  $(host_shared_libs) \
-
-compatibility_zip_resources := $(out_dir)/tools $(out_dir)/testcases $(out_dir)/lib $(out_dir)/lib64
+compatibility_zip_deps := $(test_artifacts) $(test_tools) $(test_suite_prebuilt_tools) $(test_suite_dynamic_config) $(SOONG_ZIP) $(host_shared_libs)
+compatibility_zip_resources := $(out_dir)/tools $(out_dir)/testcases
 
 # Test Suite NOTICE files
 test_suite_notice_txt := $(out_dir)/NOTICE.txt
@@ -77,28 +58,27 @@ $(eval $(call combine-notice-files, html, \
          $(HOST_OUT_NOTICE_FILES) $(TARGET_OUT_NOTICE_FILES), \
          $(compatibility_zip_deps)))
 
-compatibility_zip_deps += $(test_suite_notice_txt)
-compatibility_zip_resources += $(test_suite_notice_txt)
+ifeq ($(include_test_suite_notice),true)
+  compatibility_zip_deps += $(test_suite_notice_txt)
+  compatibility_zip_resources += $(test_suite_notice_txt)
+endif
 
 compatibility_zip := $(out_dir).zip
+$(compatibility_zip): PRIVATE_NAME := android-$(test_suite_name)
 $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
 $(compatibility_zip): PRIVATE_TOOLS := $(test_tools) $(test_suite_prebuilt_tools)
 $(compatibility_zip): PRIVATE_SUITE_NAME := $(test_suite_name)
 $(compatibility_zip): PRIVATE_DYNAMIC_CONFIG := $(test_suite_dynamic_config)
 $(compatibility_zip): PRIVATE_RESOURCES := $(compatibility_zip_resources)
-$(compatibility_zip): PRIVATE_JDK := $(test_suite_jdk)
 $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 # Make dir structure
-	mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases
-	rm -f $@ $@.tmp $@.jdk
-	echo $(BUILD_NUMBER_FROM_FILE) > $(PRIVATE_OUT_DIR)/tools/version.txt
+	$(hide) mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases
+	$(hide) echo $(BUILD_NUMBER_FROM_FILE) > $(PRIVATE_OUT_DIR)/tools/version.txt
 # Copy tools
-	cp $(PRIVATE_TOOLS) $(PRIVATE_OUT_DIR)/tools
+	$(hide) cp $(PRIVATE_TOOLS) $(PRIVATE_OUT_DIR)/tools
 	$(if $(PRIVATE_DYNAMIC_CONFIG),$(hide) cp $(PRIVATE_DYNAMIC_CONFIG) $(PRIVATE_OUT_DIR)/testcases/$(PRIVATE_SUITE_NAME).dynamic)
-	find $(PRIVATE_RESOURCES) | sort >$@.list
-	$(SOONG_ZIP) -d -o $@.tmp -C $(dir $@) -l $@.list
-	$(MERGE_ZIPS) $@ $@.tmp $(PRIVATE_JDK)
-	rm -f $@.tmp
+	$(hide) find $(PRIVATE_RESOURCES) | sort >$@.list
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(dir $@) -l $@.list
 
 # Reset all input variables
 test_suite_name :=
@@ -107,6 +87,5 @@ test_suite_dynamic_config :=
 test_suite_readme :=
 test_suite_prebuilt_tools :=
 test_suite_tools :=
-test_suite_jdk :=
-test_suite_jdk_dir :=
+include_test_suite_notice :=
 host_shared_libs :=

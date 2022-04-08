@@ -40,7 +40,8 @@ ifdef eclipse_project_goals
   endif
 
   source_paths := $(foreach m,$(eclipse_project_modules),$(ALL_MODULES.$(m).PATH)) \
-              $(foreach m,$(eclipse_project_modules),$(ALL_MODULES.$(m).INTERMEDIATE_SOURCE_DIR))
+              $(foreach m,$(eclipse_project_modules),$(ALL_MODULES.$(m).INTERMEDIATE_SOURCE_DIR)) \
+              $(INTERNAL_SDK_SOURCE_DIRS)
   source_paths := $(sort $(source_paths))
 
 .classpath: PRIVATE_MODULES := $(eclipse_project_modules)

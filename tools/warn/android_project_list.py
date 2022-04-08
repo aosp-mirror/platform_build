@@ -17,7 +17,6 @@
 
 
 def create_pattern(name, pattern=None):
-  """Return a tuple of name and warn patten."""
   if pattern is not None:
     return [name, '(^|.*/)' + pattern + '/.*: warning:']
   return [name, '(^|.*/)' + name + '/.*: warning:']
@@ -110,7 +109,7 @@ project_list = [
     create_pattern('system/bt'),
     create_pattern('system/connectivity'),
     create_pattern('system/core/adb'),
-    create_pattern('system/libbase'),
+    create_pattern('system/core/base'),
     create_pattern('system/core/debuggerd'),
     create_pattern('system/core/fastboot'),
     create_pattern('system/core/fingerprintd'),
@@ -119,8 +118,8 @@ project_list = [
     create_pattern('system/core/healthd'),
     create_pattern('system/core/include'),
     create_pattern('system/core/init'),
-    create_pattern('system/unwinding/libbacktrace'),
-    create_pattern('system/logging/liblog'),
+    create_pattern('system/core/libbacktrace'),
+    create_pattern('system/core/liblog'),
     create_pattern('system/core/libpixelflinger'),
     create_pattern('system/core/libprocessgroup'),
     create_pattern('system/core/libsysutils'),

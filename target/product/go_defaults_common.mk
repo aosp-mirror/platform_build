@@ -18,7 +18,7 @@
 
 
 # Set lowram options and enable traced by default
-PRODUCT_VENDOR_PROPERTIES += \
+PRODUCT_PROPERTY_OVERRIDES += \
      ro.config.low_ram=true \
 
 # Speed profile services and wifi-service to reduce RAM and storage.

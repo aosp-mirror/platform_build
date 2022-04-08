@@ -301,7 +301,7 @@ class EdifyGenerator(object):
             len(patchpairs) == 2), \
         "Failed to handle unknown format. Use PatchPartition() instead."
 
-    # Also validity check the args.
+    # Also sanity check the args.
     assert tokens[3] == patchpairs[0], \
         "Found mismatching values for source SHA-1: {} vs {}".format(
             tokens[3], patchpairs[0])

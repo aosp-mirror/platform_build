@@ -17,8 +17,8 @@
 # This is a set of common components to enable CFI for (across
 # compatible product configs)
 PRODUCT_CFI_INCLUDE_PATHS :=  \
-    device/generic/goldfish/wifi/wpa_supplicant_8_lib \
     device/google/cuttlefish/guest/libs/wpa_supplicant_8_lib \
+    device/google/wahoo/wifi_offload \
     external/tinyxml2 \
     external/wpa_supplicant_8 \
     frameworks/av/camera \
@@ -28,12 +28,11 @@ PRODUCT_CFI_INCLUDE_PATHS :=  \
     hardware/broadcom/wlan/bcmdhd/wpa_supplicant_8_lib \
     hardware/interfaces/nfc \
     hardware/qcom/wlan/qcwcn/wpa_supplicant_8_lib \
-    hardware/interfaces/keymaster \
-    hardware/interfaces/security \
+    harware/interfaces/keymaster \
     system/bt \
     system/chre \
     system/core/libnetutils \
-    system/libziparchive \
+    system/core/libziparchive \
     system/gatekeeper \
     system/keymaster \
     system/nfc \

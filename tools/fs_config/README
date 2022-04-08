@@ -1,0 +1,137 @@
+ _____  _____  _____  _____  __  __  _____
+/  _  \/   __\/  _  \|  _  \/  \/  \/   __\
+|  _  <|   __||  _  ||  |  ||  \/  ||   __|
+\__|\_/\_____/\__|__/|_____/\__ \__/\_____/
+
+The fs_config_generator.py tool uses the platform android_filesystem_config.h and the
+TARGET_FS_CONFIG_GEN files to generate the fs_config_dirs and fs_config_files files for each
+partition, as well as passwd and group files, and the generated_oem_aid.h header.
+
+The fs_config_dirs and fs_config_files binary files are interpreted by the libcutils fs_config()
+function, along with the built-in defaults, to serve as overrides to complete the results. The
+Target files are used by filesystem and adb tools to ensure that the file and directory properties
+are preserved during runtime operations. The host files in the ${OUT} directory are used in the
+final stages when building the filesystem images to set the file and directory properties.
+
+See ./fs_config_generator.py fsconfig --help for how these files are generated.
+
+The passwd and group files are formatted as documented in man pages passwd(5) and group(5) and used
+by bionic for implementing getpwnam() and related functions.
+
+See ./fs_config_generator.py passwd --help and ./fs_config_generator.py group --help for how these
+files are generated.
+
+The generated_oem_aid.h creates identifiers for non-platform AIDs for developers wishing to use them
+in their native code.  To do so, include the oemaids_headers header library in the corresponding
+makefile and #include "generated_oem_aid.h" in the code wishing to use these identifiers.
+
+See ./fs_config_generator.py oemaid --help for how this file is generated.
+
+The parsing of the TARGET_FS_CONFIG_GEN files follows the Python ConfigParser specification, with
+the sections and fields as defined below. There are two types of sections, both sections require all
+options to be specified. The first section type is the "caps" section.
+
+The "caps" section follows the following syntax:
+
+[path]
+mode: Octal file mode
+user: AID_<user>
+group: AID_<group>
+caps: cap*
+
+Where:
+
+[path]
+  The filesystem path to configure. A path ending in / is considered a dir,
+  else its a file.
+
+mode:
+  A valid octal file mode of at least 3 digits. If 3 is specified, it is
+  prefixed with a 0, else mode is used as is.
+
+user:
+  Either the C define for a valid AID or the friendly name. For instance both
+  AID_RADIO and radio are acceptable. Note custom AIDs can be defined in the
+  AID section documented below.
+
+group:
+  Same as user.
+
+caps:
+  The name as declared in
+  system/core/include/private/android_filesystem_capability.h without the
+  leading CAP_. Mixed case is allowed. Caps can also be the raw:
+   * binary (0b0101)
+   * octal (0455)
+   * int (42)
+   * hex (0xFF)
+  For multiple caps, just separate by whitespace.
+
+It is an error to specify multiple sections with the same [path] in different
+files. Note that the same file may contain sections that override the previous
+section in Python versions <= 3.2. In Python 3.2 it's set to strict mode.
+
+
+The next section type is the "AID" section, for specifying OEM specific AIDS.
+
+The AID section follows the following syntax:
+
+[AID_<name>]
+value: <number>
+
+Where:
+
+[AID_<name>]
+  The <name> can contain characters in the set uppercase, numbers
+  and underscores.
+
+value:
+  A valid C style number string. Hex, octal, binary and decimal are supported.
+  See "caps" above for more details on number formatting.
+
+It is an error to specify multiple sections with the same [AID_<name>]. With
+the same constraints as [path] described above. It is also an error to specify
+multiple sections with the same value option. It is also an error to specify a
+value that is outside of the inclusive OEM ranges:
+ * AID_OEM_RESERVED_START(2900) - AID_OEM_RESERVED_END(2999)
+ * AID_OEM_RESERVED_2_START(5000) - AID_OEM_RESERVED_2_END(5999)
+
+as defined by system/core/include/private/android_filesystem_config.h.
+
+Ordering within the TARGET_FS_CONFIG_GEN files is not relevant. The paths for files are sorted
+like so within their respective array definition:
+ * specified path before prefix match
+ ** ie foo before f*
+ * lexicographical less than before other
+ ** ie boo before foo
+
+Given these paths:
+
+paths=['ac', 'a', 'acd', 'an', 'a*', 'aa', 'ac*']
+
+The sort order would be:
+paths=['a', 'aa', 'ac', 'acd', 'an', 'ac*', 'a*']
+
+Thus the fs_config tools will match on specified paths before attempting prefix, and match on the
+longest matching prefix.
+
+The declared AIDS are sorted in ascending numerical order based on the option "value". The string
+representation of value is preserved. Both choices were made for maximum readability of the generated
+file and to line up files. Sync lines are placed with the source file as comments in the generated
+header file.
+
+Unit Tests:
+
+From within the fs_config directory, unit tests can be executed like so:
+$ python -m unittest test_fs_config_generator.Tests
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.004s
+
+OK
+
+One could also use nose if they would like:
+$ nose2
+
+To add new tests, simply add a test_<xxx> method to the test class. It will automatically
+get picked up and added to the test suite.

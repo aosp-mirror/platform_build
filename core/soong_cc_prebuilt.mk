@@ -91,7 +91,6 @@ endif
 ifdef LOCAL_INSTALLED_MODULE
   ifneq ($(LOCAL_CHECK_ELF_FILES),)
     my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
-    my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
     include $(BUILD_SYSTEM)/check_elf_file.mk
   endif
 endif
@@ -113,12 +112,7 @@ endif
 my_check_same_vndk_variants :=
 ifeq ($(LOCAL_CHECK_SAME_VNDK_VARIANTS),true)
   ifeq ($(filter hwaddress address, $(SANITIZE_TARGET)),)
-    ifneq ($(CLANG_COVERAGE),true)
-        # Do not compare VNDK variant for special cases e.g. coverage builds.
-        ifneq ($(SKIP_VNDK_VARIANTS_CHECK),true)
-            my_check_same_vndk_variants := true
-        endif
-    endif
+    my_check_same_vndk_variants := true
   endif
 endif
 
@@ -143,21 +137,10 @@ ifeq ($(my_check_same_vndk_variants),true)
   $(LOCAL_BUILT_MODULE): $(same_vndk_variants_stamp)
 endif
 
-# Use copy-or-link-prebuilt-to-target for host executables and shared libraries,
-# to preserve symlinks to the source trees. They can then run directly from the
-# prebuilt directories where the linker can load their dependencies using
-# relative RUNPATHs.
 $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
-ifeq ($(LOCAL_IS_HOST_MODULE) $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),true,),true true)
-	$(copy-or-link-prebuilt-to-target)
-  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-	[ -x $@ ] || ( $(call echo-error,$@,Target of symlink is not executable); false )
-  endif
-else
 	$(transform-prebuilt-to-target)
-  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
 	$(hide) chmod +x $@
-  endif
 endif
 
 ifndef LOCAL_IS_HOST_MODULE

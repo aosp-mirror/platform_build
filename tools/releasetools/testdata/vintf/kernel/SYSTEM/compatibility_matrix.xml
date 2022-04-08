@@ -1,0 +1,7 @@
+<compatibility-matrix version="1.0" type="framework">
+    <kernel version="4.14.1" />
+    <sepolicy>
+        <sepolicy-version>0.0</sepolicy-version>
+        <kernel-sepolicy-version>0</kernel-sepolicy-version>
+    </sepolicy>
+</compatibility-matrix>
