@@ -27,7 +27,11 @@ PRODUCT_COPY_FILES += system/core/rootdir/init.zygote64_32.rc:system/etc/init/hw
 
 # Set the zygote property to select the 64-bit primary, 32-bit secondary script
 # This line must be parsed before the one in core_minimal.mk
+ifeq ($(ZYGOTE_FORCE_64),true)
+PRODUCT_VENDOR_PROPERTIES += ro.zygote=zygote64
+else
 PRODUCT_VENDOR_PROPERTIES += ro.zygote=zygote64_32
+endif
 
 TARGET_SUPPORTS_32_BIT_APPS := true
 TARGET_SUPPORTS_64_BIT_APPS := true
