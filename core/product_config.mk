@@ -263,7 +263,10 @@ endif  # Import all or just the current product makefile
 # Quick check
 $(check-all-products)
 
-ifeq ($(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
+# This step was already handled in the RBC product configuration.
+# Since the equivalent starlark code will not add the partial products to
+# the PRODUCTS variable, it's ok for them to be set before check-all-products
+ifeq ($(RBC_PRODUCT_CONFIG)$(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
 # Import all the products that have made artifact path requirements, so that we can verify
 # the artifacts they produce.
 # These are imported after check-all-products because some of them might not be real products.
