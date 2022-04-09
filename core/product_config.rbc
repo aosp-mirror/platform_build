@@ -120,34 +120,25 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
 
     globals, globals_base = _init_globals(input_variables_init)
 
-    config_postfix = []  # Configs in postfix order
-
     # Each PCM is represented by a quadruple of function, config, children names
     # and readyness (that is, the configurations from inherited PCMs have been
     # substituted).
     configs = {top_pcm_name: (top_pcm, None, [], False)}  # All known PCMs
 
-    stash = []  # Configs to push once their descendants are done
-
-    # Stack containing PCMs to be processed. An item in the stack
-    # is a pair of PCMs name and its height in the product inheritance tree.
-    pcm_stack = [(top_pcm_name, 0)]
-    pcm_count = 0
+    # Stack containing PCMs to be processed
+    pcm_stack = [top_pcm_name]
 
     # Run it until pcm_stack is exhausted, but no more than N times
     for n in range(1000):
         if not pcm_stack:
             break
-        (name, height) = pcm_stack.pop()
+        name = pcm_stack.pop()
         pcm, cfg, c, _ = configs[name]
 
         # cfg is set only after PCM has been called, leverage this
         # to prevent calling the same PCM twice
         if cfg != None:
             continue
-
-        # Push ancestors until we reach this node's height
-        config_postfix.extend([stash.pop() for i in range(len(stash) - height)])
 
         # Run this one, obtaining its configuration and child PCMs.
         if _options.trace_modules:
@@ -171,34 +162,75 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         # Starlark dictionaries are guaranteed to iterate through in insertion order,
         # so children.keys() will be ordered by the inherit() calls
         configs[name] = (pcm, handle.cfg, children.keys(), False)
-        pcm_count = pcm_count + 1
 
-        if len(children) == 0:
-            # Leaf PCM goes straight to the config_postfix
-            config_postfix.append(name)
-            continue
-
-        # Stash this PCM, process children in the sorted order
-        stash.append(name)
         for child_name in sorted(children, reverse = True):
             if child_name not in configs:
                 configs[child_name] = (children[child_name], None, [], False)
-            pcm_stack.append((child_name, len(stash)))
+            pcm_stack.append(child_name)
     if pcm_stack:
         fail("Inheritance processing took too many iterations")
 
-    # Flush the stash
-    config_postfix.extend([stash.pop() for i in range(len(stash))])
-    if len(config_postfix) != pcm_count:
-        fail("Ran %d modules but postfix tree has only %d entries" % (pcm_count, len(config_postfix)))
+    for pcm_name in globals.get("ARTIFACT_PATH_REQUIREMENT_PRODUCTS", []):
+        for var, val in evaluate_finalized_product_variables(configs, pcm_name[:-3]).items():
+            globals["PRODUCTS."+pcm_name+"."+var] = val
 
-    if _options.trace_modules:
+    # Copy product config variables from the cfg dictionary to the
+    # PRODUCTS.<top_level_makefile_name>.<var_name> global variables.
+    for var, val in evaluate_finalized_product_variables(configs, top_pcm_name, _options.trace_modules).items():
+        globals["PRODUCTS."+top_pcm_name+".mk."+var] = val
+
+    # Record inheritance hierarchy in PRODUCTS.<file>.INHERITS_FROM variables.
+    # This is required for m product-graph.
+    for config in configs:
+        if len(configs[config][2]) > 0:
+            globals["PRODUCTS."+config+".mk.INHERITS_FROM"] = sorted([x + ".mk" for x in configs[config][2]])
+    globals["PRODUCTS"] = __words(globals.get("PRODUCTS", [])) + [top_pcm_name + ".mk"]
+
+    return (globals, globals_base)
+
+def evaluate_finalized_product_variables(configs, top_level_pcm_name, trace=False):
+    configs_postfix = []
+    pcm_stack = [(top_level_pcm_name, True)]
+    for i in range(1000):
+        if not pcm_stack:
+            break
+
+        pcm_name, before = pcm_stack.pop()
+        if before:
+            pcm_stack.append((pcm_name, False))
+            for child in sorted(configs[pcm_name][2], reverse = True):
+                pcm_stack.append((child, True))
+        else:
+            configs_postfix.append(pcm_name)
+    if pcm_stack:
+        fail("Inheritance processing took too many iterations")
+
+    # clone the configs, because in the process of evaluating the
+    # final cfg dictionary we will remove values from the intermediate
+    # cfg dictionaries. We need to be able to call evaluate_finalized_product_variables()
+    # multiple times, so we can't change the origional configs object.
+    cloned_configs = {}
+    for pcm_name in configs:
+        # skip unneeded pcms
+        if pcm_name not in configs_postfix:
+            continue
+        pcm, cfg, children_names, ready = configs[pcm_name]
+        cloned_cfg = {}
+        for var, val in cfg.items():
+            if type(val) == 'list':
+                cloned_cfg[var] = list(val)
+            else:
+                cloned_cfg[var] = val
+        cloned_configs[pcm_name] = (pcm, cloned_cfg, children_names, ready)
+    configs = cloned_configs
+
+    if trace:
         print("\n#---Postfix---")
-        for x in config_postfix:
+        for x in configs_postfix:
             print("#   ", x)
 
     # Traverse the tree from the bottom, evaluating inherited values
-    for pcm_name in config_postfix:
+    for pcm_name in configs_postfix:
         pcm, cfg, children_names, ready = configs[pcm_name]
 
         # Should run
@@ -217,25 +249,7 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         _substitute_inherited(configs, pcm_name, cfg)
         _percolate_inherited(configs, pcm_name, cfg, children_names)
         configs[pcm_name] = pcm, cfg, children_names, True
-
-        if (pcm_name + ".mk") in globals.get("ARTIFACT_PATH_REQUIREMENT_PRODUCTS", []):
-            for var, val in cfg.items():
-                globals["PRODUCTS."+pcm_name+".mk."+var] = val
-
-    # Copy product config variables from the cfg dictionary to the
-    # PRODUCTS.<top_level_makefile_name>.<var_name> global variables.
-    for var, val in configs[top_pcm_name][1].items():
-        globals["PRODUCTS."+top_pcm_name+".mk."+var] = val
-
-    # Record inheritance hierarchy in PRODUCTS.<file>.INHERITS_FROM variables.
-    # This is required for m product-graph.
-    for config in configs:
-        if len(configs[config][2]) > 0:
-            globals["PRODUCTS."+config+".mk.INHERITS_FROM"] = sorted([x + ".mk" for x in configs[config][2]])
-    globals["PRODUCTS"] = __words(globals.get("PRODUCTS", [])) + [top_pcm_name + ".mk"]
-
-    return (globals, globals_base)
-
+    return configs[top_level_pcm_name][1]
 
 def _dictionary_difference(a, b):
     result = {}
