@@ -31,3 +31,5 @@ $(owners_zip) : $(owners) $(SOONG_ZIP)
 owners : $(owners_zip)
 
 $(call dist-for-goals, general-tests, $(owners_zip))
+
+$(call declare-0p-target,$(owners_zip))
