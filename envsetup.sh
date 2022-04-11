@@ -1782,17 +1782,15 @@ function _trigger_build()
 # Convenience entry point (like m) to use Bazel in AOSP.
 function b()
 (
-    local skip_tests=$(echo "$@" | grep -ow -- "--skip-soong-tests")
-    local bazel_args=(${@/--skip-soong-tests/})
     # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
-    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= $skip_tests || return 1
+    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
-    if [[ -z "$bazel_args" ]]; then
+    if [[ -z "$@" ]]; then
         # If there are no args, show help.
         bazel help
     else
         # Else, always run with the bp2build configuration, which sets Bazel's package path to the synthetic workspace.
-        bazel $bazel_args --config=bp2build
+        bazel "$@" --config=bp2build
     fi
 )
 
