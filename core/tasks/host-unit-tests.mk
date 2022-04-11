@@ -47,4 +47,7 @@ $(host_unit_tests_zip) : $(COMPATIBILITY.host-unit-tests.FILES) $(my_host_shared
 host-unit-tests: $(host_unit_tests_zip)
 $(call dist-for-goals, host-unit-tests, $(host_unit_tests_zip))
 
+$(call declare-1p-container,$(host_unit_tests_zip),)
+$(call declare-container-license-deps,$(host_unit_tests_zip),$(COMPATIBILITY.host-unit-tests.FILES) $(my_host_shared_lib_for_host_unit_tests),$(PRODUCT_OUT)/:/)
+
 tests: host-unit-tests
