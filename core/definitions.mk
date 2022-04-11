@@ -586,9 +586,10 @@ endef
 ## License metadata build rule for my_register_name $(1)
 ###########################################################
 define license-metadata-rule
-$(foreach meta_lic, $(subst //,/,$(ALL_MODULES.$(1).DELAYED_META_LIC)),$(call _license-metadata-rule,$(1),$(meta_lic)))
-$(call notice-rule,$(1))
+$(foreach meta_lic, $(ALL_MODULES.$(1).DELAYED_META_LIC),$(call _license-metadata-rule,$(1),$(meta_lic)))
 endef
+
+$(KATI_obsolete_var notice-rule, This function has been removed)
 
 define _license-metadata-rule
 $(strip $(eval _srcs := $(strip $(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS),$(if $(strip $(ALL_MODULES.$(call word-colon,1,$(d)).INSTALLED)), $(ALL_MODULES.$(call word-colon,1,$(d)).INSTALLED),$(if $(strip $(ALL_MODULES.$(call word-colon,1,$(d)).BUILT)), $(ALL_MODULES.$(call word-colon,1,$(d)).BUILT), $(call word-colon,1,$d)))))))
@@ -648,26 +649,6 @@ $(2) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$
 	  -o $$@
 endef
 
-define notice-rule
-$(strip $(eval _mifs := $(sort $(ALL_MODULES.$(1).MODULE_INSTALLED_FILENAMES))))
-$(strip $(eval _infs := $(sort $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE))))
-
-# Emit each installed notice file rule if it references the current module
-$(if $(_infs),$(foreach inf,$(_infs),
-$(if $(strip $(filter $(1),$(INSTALLED_NOTICE_FILES.$(inf).MODULE))),
-$(strip $(eval _mif := $(firstword $(foreach m,$(_mifs),$(if $(filter %/src/$(m).txt,$(inf)),$(m))))))
-
-$(inf): PRIVATE_INSTALLED_MODULE := $(_mif)
-$(inf) : PRIVATE_NOTICES := $(sort $(foreach n,$(_notices),$(call word-colon,1,$(n) )))
-
-$(inf): $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
-	@echo Notice file: $$< -- $$@
-	mkdir -p $$(dir $$@)
-	awk 'FNR==1 && NR > 1 {print "\n"} {print}' $$(PRIVATE_NOTICES) > $$@
-
-)))
-
-endef
 
 ###########################################################
 ## License metadata build rule for non-module target $(1)
