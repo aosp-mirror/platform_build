@@ -257,16 +257,16 @@ else
     $(error product configuration converter failed: $(.SHELLSTATUS))
   endif
   include $(OUT_DIR)/rbc/rbc_product_config_results.mk
-  PRODUCTS += $(current_product_makefile)
 endif
 endif  # Import all or just the current product makefile
 
-ifndef RBC_PRODUCT_CONFIG
 # Quick check
 $(check-all-products)
-endif
 
-ifeq ($(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
+# This step was already handled in the RBC product configuration.
+# Since the equivalent starlark code will not add the partial products to
+# the PRODUCTS variable, it's ok for them to be set before check-all-products
+ifeq ($(RBC_PRODUCT_CONFIG)$(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
 # Import all the products that have made artifact path requirements, so that we can verify
 # the artifacts they produce.
 # These are imported after check-all-products because some of them might not be real products.
@@ -284,7 +284,6 @@ ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
 $(dump-products)
 endif
 
-ifndef RBC_PRODUCT_CONFIG
 # Convert a short name like "sooner" into the path to the product
 # file defining that product.
 #
@@ -297,9 +296,6 @@ endif
 ############################################################################
 # Strip and assign the PRODUCT_ variables.
 $(call strip-product-vars)
-else
-INTERNAL_PRODUCT := $(current_product_makefile)
-endif
 
 current_product_makefile :=
 all_product_makefiles :=

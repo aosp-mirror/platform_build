@@ -1234,33 +1234,9 @@ endef
 #   See the select-bitness-of-required-modules definition.
 # $(1): product makefile
 
-# TODO(asmundak):
-# `product-installed-files` and `host-installed-files` macros below used to
-# call `get-product-var` directly to obtain per-file configuration variable
-# values (the value of variable FOO is fetched from PRODUCT.<product-makefile>.FOO).
-# Starlark-based configuration does not maintain per-file variable variable
-# values. To work around this problem, we utilize the fact that
-# `product-installed-files` and `host-installed-files` are called only in
-# two places:
-# 1. For the top-level product makefile (in this file). In this case
-#    $(call get-product-var <product>, FOO) is the same as $(FOO) as the
-#    product configuration has been run already. Therefore we define
-#    _product-var macro to pick the values directly from product config
-#    variables when using Starlark-based configuration.
-# 2. To check the path requirements (in artifact_path_requirements.mk).
-#    Starlark-based configuration does not perform this check at the moment.
-# In the longer run most of the logic of this file will be moved to the
-# Starlark.
-
-ifndef RBC_PRODUCT_CONFIG
 define _product-var
   $(call get-product-var,$(1),$(2))
 endef
-else
-define _product-var
-  $(call $(2))
-endef
-endif
 
 define product-installed-files
   $(eval _pif_modules := \
@@ -1375,7 +1351,7 @@ else ifdef FULL_BUILD
 
   # Verify the artifact path requirements made by included products.
   is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
-  ifeq (,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS),$(RBC_PRODUCT_CONFIG),$(RBC_BOARD_CONFIG)))
+  ifeq (,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS)))
     include $(BUILD_SYSTEM)/artifact_path_requirements.mk
   endif
 else
@@ -1761,13 +1737,13 @@ else ifneq ($(TARGET_BUILD_APPS),)
   endif
 
   $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(PROGUARD_DICT_ZIP))
+  $(call dist-for-goals,apps_only, $(PROGUARD_DICT_ZIP) $(PROGUARD_DICT_MAPPING))
 
   $(PROGUARD_USAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(PROGUARD_USAGE_ZIP))
 
   $(SYMBOLS_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(SYMBOLS_ZIP))
+  $(call dist-for-goals,apps_only, $(SYMBOLS_ZIP) $(SYMBOLS_MAPPING))
 
   $(COVERAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(COVERAGE_ZIP))
@@ -1818,7 +1794,9 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(INTERNAL_OTA_PARTIAL_PACKAGE_TARGET) \
     $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET) \
     $(SYMBOLS_ZIP) \
+    $(SYMBOLS_MAPPING) \
     $(PROGUARD_DICT_ZIP) \
+    $(PROGUARD_DICT_MAPPING) \
     $(PROGUARD_USAGE_ZIP) \
     $(COVERAGE_ZIP) \
     $(INSTALLED_FILES_FILE) \
@@ -1962,6 +1940,7 @@ sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals,sdk, \
     $(ALL_SDK_TARGETS) \
     $(SYMBOLS_ZIP) \
+    $(SYMBOLS_MAPPING) \
     $(COVERAGE_ZIP) \
     $(APPCOMPAT_ZIP) \
     $(INSTALLED_BUILD_PROP_TARGET) \

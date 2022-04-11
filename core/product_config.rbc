@@ -70,14 +70,7 @@ def __print_attr(attr, value):
 
 def _printvars(state):
     """Prints configuration and global variables."""
-    (globals, cfg, globals_base) = state
-    for attr, val in sorted(cfg.items()):
-        __print_attr(attr, val)
-    if _options.print_globals:
-        print()
-        _printglobals(globals, globals_base)
-
-def _printglobals(globals, globals_base):
+    (globals, globals_base) = state
     for attr, val in sorted(globals.items()):
         if attr == _soong_config_namespaces_key:
             __print_attr("SOONG_CONFIG_NAMESPACES", val.keys())
@@ -164,11 +157,20 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         handle = __h_new()
         pcm(globals, handle)
 
+        if handle.artifact_path_requirements:
+            globals["PRODUCTS."+name+".mk.ARTIFACT_PATH_REQUIREMENTS"] = handle.artifact_path_requirements
+            globals["PRODUCTS."+name+".mk.ARTIFACT_PATH_ALLOWED_LIST"] = handle.artifact_path_allowed_list
+            globals["PRODUCTS."+name+".mk.ARTIFACT_PATH_REQUIREMENT_IS_RELAXED"] = "true" if handle.artifact_path_requirement_is_relaxed[0] else ""
+            globals.setdefault("ARTIFACT_PATH_REQUIREMENT_PRODUCTS", [])
+            globals["ARTIFACT_PATH_REQUIREMENT_PRODUCTS"] += [name+".mk"]
+
         # Now we know everything about this PCM, record it in 'configs'.
         children = handle.inherited_modules
         if _options.trace_modules:
-            print("#   ", "    ".join(sorted(children.keys())))
-        configs[name] = (pcm, handle.cfg, sorted(children.keys()), False)
+            print("#   ", "    ".join(children.keys()))
+        # Starlark dictionaries are guaranteed to iterate through in insertion order,
+        # so children.keys() will be ordered by the inherit() calls
+        configs[name] = (pcm, handle.cfg, children.keys(), False)
         pcm_count = pcm_count + 1
 
         if len(children) == 0:
@@ -216,7 +218,23 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         _percolate_inherited(configs, pcm_name, cfg, children_names)
         configs[pcm_name] = pcm, cfg, children_names, True
 
-    return (globals, configs[top_pcm_name][1], globals_base)
+        if (pcm_name + ".mk") in globals.get("ARTIFACT_PATH_REQUIREMENT_PRODUCTS", []):
+            for var, val in cfg.items():
+                globals["PRODUCTS."+pcm_name+".mk."+var] = val
+
+    # Copy product config variables from the cfg dictionary to the
+    # PRODUCTS.<top_level_makefile_name>.<var_name> global variables.
+    for var, val in configs[top_pcm_name][1].items():
+        globals["PRODUCTS."+top_pcm_name+".mk."+var] = val
+
+    # Record inheritance hierarchy in PRODUCTS.<file>.INHERITS_FROM variables.
+    # This is required for m product-graph.
+    for config in configs:
+        if len(configs[config][2]) > 0:
+            globals["PRODUCTS."+config+".mk.INHERITS_FROM"] = sorted([x + ".mk" for x in configs[config][2]])
+    globals["PRODUCTS"] = __words(globals.get("PRODUCTS", [])) + [top_pcm_name + ".mk"]
+
+    return (globals, globals_base)
 
 
 def _dictionary_difference(a, b):
@@ -235,7 +253,14 @@ def _board_configuration(board_config_init, input_variables_init):
     input_variables_init(globals_base, h_base)
     input_variables_init(globals, h)
     board_config_init(globals, h)
-    return (globals, _dictionary_difference(h.cfg, h_base.cfg), globals_base)
+
+    # Board configuration files aren't really supposed to change
+    # product configuration variables, but some do. You lose the
+    # inheritance features of the product config variables if you do.
+    for var, value in _dictionary_difference(h.cfg, h_base.cfg).items():
+        globals[var] = value
+
+    return (globals, globals_base)
 
 
 def _substitute_inherited(configs, pcm_name, cfg):
@@ -291,12 +316,6 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
         child_cfg = configs[child_name][1]
         for attr, value in child_cfg.items():
             if type(value) != "list":
-                # Single value variables take the first value available from the leftmost
-                # branch of the tree. If we also had "or attr in percolated_attrs" in this
-                # if statement, it would take the value from the rightmost branch.
-                if cfg.get(attr, "") == "":
-                    cfg[attr] = value
-                    percolated_attrs[attr] = True
                 continue
             if attr in percolated_attrs:
                 # We already are percolating this one, just add this list
@@ -305,6 +324,19 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
                 percolated_attrs[attr] = True
                 cfg[attr] = []
                 __move_items(cfg[attr], child_cfg, attr)
+
+    # single value variables need to be inherited in alphabetical order,
+    # not in the order of inherit() calls.
+    for child_name in sorted(children_names):
+        child_cfg = configs[child_name][1]
+        for attr, value in child_cfg.items():
+            if type(value) != "list":
+                # Single value variables take the first value available from the leftmost
+                # branch of the tree. If we also had "or attr in percolated_attrs" in this
+                # if statement, it would take the value from the rightmost branch.
+                if cfg.get(attr, "") == "":
+                    cfg[attr] = value
+                    percolated_attrs[attr] = True
 
     for attr in _options.trace_variables:
         if attr in percolated_attrs:
@@ -385,7 +417,7 @@ def _addsuffix(suffix, string_or_list):
 
 def __words(string_or_list):
     if type(string_or_list) == "list":
-        return string_or_list
+        string_or_list = " ".join(string_or_list)
     return _mkstrip(string_or_list).split()
 
 # Handle manipulation functions.
@@ -398,7 +430,10 @@ def __h_new():
     return struct(
         cfg = dict(),
         inherited_modules = dict(),
-        default_list_value = list()
+        default_list_value = list(),
+        artifact_path_requirements = list(),
+        artifact_path_allowed_list = list(),
+        artifact_path_requirement_is_relaxed = [False], # as a list so that we can reassign it
     )
 
 def __h_cfg(handle):
@@ -438,10 +473,6 @@ def _inherit(handle, pcm_name, pcm):
 def __base(path):
     """Returns basename."""
     return path.rsplit("/",1)[-1]
-
-def __dir(path):
-    """Returns dirname."""
-    return path.rsplit("/",1)[0]
 
 def _board_platform_in(g, string_or_list):
     """Returns true if board is in the list."""
@@ -504,10 +535,15 @@ def _filter_out(pattern, text):
     Return:
         list of words
     """
-    rex = __mk2regex(__words(pattern))
+    patterns = [__mkparse_pattern(x) for x in __words(pattern)]
     res = []
     for w in __words(text):
-        if not _regex_match(rex, w):
+        match = False
+        for p in patterns:
+            if __mkpattern_matches(p, w):
+                match = True
+                break
+        if not match:
             res.append(w)
     return res
 
@@ -519,12 +555,21 @@ def _filter(pattern, text):
          which stands for any sequence of characters.
         text: string or list of words.
     """
-    rex = __mk2regex(__words(pattern))
+    patterns = [__mkparse_pattern(x) for x in __words(pattern)]
     res = []
     for w in __words(text):
-        if _regex_match(rex, w):
-            res.append(w)
+        for p in patterns:
+            if __mkpattern_matches(p, w):
+                res.append(w)
+                break
     return res
+
+def _dir(paths):
+    """Equivalent to the GNU make function $(dir).
+
+    Returns the folder of the file for each path in paths.
+    """
+    return " ".join([w.rsplit("/",1)[0] for w in __words(paths)])
 
 def _notdir(paths):
     """Equivalent to the GNU make function $(notdir).
@@ -533,22 +578,17 @@ def _notdir(paths):
     """
     return " ".join([__base(w) for w in __words(paths)])
 
-def __mk2regex(words):
-    """Returns regular expression equivalent to Make pattern."""
+def _require_artifacts_in_path(handle, paths, allowed_paths):
+    """Equivalent to require-artifacts-in-path in Make."""
+    handle.artifact_path_requirements.clear()
+    handle.artifact_path_requirements.extend(__words(paths))
+    handle.artifact_path_allowed_list.clear()
+    handle.artifact_path_allowed_list.extend(__words(allowed_paths))
 
-    # TODO(asmundak): this will mishandle '\%'
-    return "^(" + "|".join([w.replace("%", ".*", 1) for w in words if w]) + ")$"
-
-def _regex_match(regex, w):
-    return rblf_regex(regex, w)
-
-def _require_artifacts_in_path(paths, allowed_paths):
-    """TODO."""
-    pass
-
-def _require_artifacts_in_path_relaxed(paths, allowed_paths):
-    """TODO."""
-    pass
+def _require_artifacts_in_path_relaxed(handle, paths, allowed_paths):
+    """Equivalent to require-artifacts-in-path-relaxed in Make."""
+    _require_artifacts_in_path(handle, paths, allowed_paths)
+    handle.artifact_path_requirement_is_relaxed[0] = True
 
 def _expand_wildcard(pattern):
     """Expands shell wildcard pattern."""
@@ -598,7 +638,11 @@ def _mkinfo(file, message = ""):
 
 
 def __mkparse_pattern(pattern):
-    """Parses Make's patsubst pattern."""
+    """Parses Make's patsubst pattern.
+
+    This is equivalent to pattern.split('%', 1), except it
+    also takes into account escaping the % symbols.
+    """
     in_escape = False
     res = []
     acc = ""
@@ -618,6 +662,21 @@ def __mkparse_pattern(pattern):
     res.append(acc)
     return res
 
+def __mkpattern_matches(pattern, word):
+    """Returns if a pattern matches a given word.
+
+    The pattern must be a list of strings of length at most 2.
+    This checks if word is either equal to the pattern or
+    starts/ends with the two parts of the pattern.
+    """
+    if len(pattern) > 2:
+        fail("Pattern can have at most 2 components")
+    elif len(pattern) == 1:
+        return pattern[0]==word
+    else:
+        return ((len(word) >= len(pattern[0])+len(pattern[1]))
+            and word.startswith(pattern[0])
+            and word.endswith(pattern[1]))
 
 def __mkpatsubst_word(parsed_pattern,parsed_subst, word):
     (before, after) = parsed_pattern
@@ -639,13 +698,26 @@ def _mkpatsubst(pattern, replacement, s):
     $1 in regex terms).
     """
     parsed_pattern = __mkparse_pattern(pattern)
-    words = s if type(s) == "list" else _mkstrip(s).split(" ")
     if len(parsed_pattern) == 1:
-        out_words = [ replacement if x == pattern else x for x in words]
+        out_words = [ replacement if x == pattern else x for x in __words(s)]
     else:
         parsed_replacement = __mkparse_pattern(replacement)
-        out_words = [__mkpatsubst_word(parsed_pattern, parsed_replacement, x) for x in words]
+        out_words = [__mkpatsubst_word(parsed_pattern, parsed_replacement, x) for x in __words(s)]
     return out_words if type(s) == "list" else " ".join(out_words)
+
+
+def _mksort(input):
+    """Emulate Make's sort.
+
+    This is unique from a regular sort in that it also strips
+    the input, and removes duplicate words from the input.
+    """
+    input = sorted(__words(input))
+    result = []
+    for w in input:
+        if len(result) == 0 or result[-1] != w:
+            result.append(w)
+    return result
 
 
 def _mkstrip(s):
@@ -698,7 +770,6 @@ def __get_options():
     """Returns struct containing runtime global settings."""
     settings = dict(
         format = "pretty",
-        print_globals = False,
         rearrange = "",
         trace_modules = False,
         trace_variables = [],
@@ -712,7 +783,8 @@ def __get_options():
         elif x == "pretty" or x == "make":
             settings["format"] = x
         elif x == "global":
-            settings["print_globals"] = True
+            # TODO: Remove this, kept for backwards compatibility
+            pass
         elif x != "":
             fail("RBC_OUT: got %s, should be one of: [pretty|make] [sort|unique]" % x)
     for x in getattr(rblf_cli, "RBC_DEBUG", "").split(","):
@@ -740,7 +812,7 @@ rblf = struct(
     copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
-    dir = __dir,
+    dir = _dir,
     enforce_product_packages_exist = _enforce_product_packages_exist,
     expand_wildcard = _expand_wildcard,
     file_exists = rblf_file_exists,
@@ -757,11 +829,11 @@ rblf = struct(
     mkerror = _mkerror,
     mkpatsubst = _mkpatsubst,
     mkwarning = _mkwarning,
+    mksort = _mksort,
     mkstrip = _mkstrip,
     mksubst = _mksubst,
     notdir = _notdir,
     printvars = _printvars,
-    printglobals = _printglobals,
     product_configuration = _product_configuration,
     board_configuration = _board_configuration,
     product_copy_files_by_pattern = _product_copy_files_by_pattern,

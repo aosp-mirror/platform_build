@@ -35,13 +35,13 @@ kernel_test_copy_pairs := \
 
 copy_kernel_tests := $(call copy-many-files,$(kernel_test_copy_pairs))
 
+test_suite_extra_deps := $(copy_kernel_tests)
+
 # PHONY target to be used to build and test `vts_kernel_tests` without building full vts
 .PHONY: vts_kernel_tests
 vts_kernel_tests: $(copy_kernel_tests)
 
 include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
-
-$(compatibility_zip): $(copy_kernel_tests)
 
 .PHONY: vts
 vts: $(compatibility_zip) $(compatibility_tests_list_zip)
