@@ -80,6 +80,7 @@ compatibility_zip_deps := \
   $(MERGE_ZIPS) \
   $(SOONG_ZIP) \
   $(host_shared_libs) \
+  $(test_suite_extra_deps) \
 
 compatibility_zip_resources := $(out_dir)/tools $(out_dir)/testcases $(out_dir)/lib $(out_dir)/lib64
 
@@ -121,7 +122,7 @@ $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 	rm -f $(PRIVATE_tests_list)
 
 $(call declare-1p-container,$(compatibility_zip),)
-$(call declare-container-license-deps,$(compatibility_zip),$(compatibility_zip_deps) $(test_suite_jdk),$(out_dir)/:/)
+$(call declare-container-license-deps,$(compatibility_zip),$(compatibility_zip_deps) $(test_suite_jdk), $(out_dir)/:/)
 
 $(eval $(call html-notice-rule,$(test_suite_notice_html),"Test suites","Notices for files contained in the test suites filesystem image:",$(compatibility_zip),$(compatibility_zip)))
 $(eval $(call text-notice-rule,$(test_suite_notice_txt),"Test suites","Notices for files contained in the test suites filesystem image:",$(compatibility_zip),$(compatibility_zip)))
@@ -139,3 +140,4 @@ test_suite_tools :=
 test_suite_jdk :=
 test_suite_jdk_dir :=
 host_shared_libs :=
+test_suite_extra_deps :=

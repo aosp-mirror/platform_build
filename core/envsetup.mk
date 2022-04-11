@@ -325,9 +325,18 @@ endif
 # instead of the raw variable values, because mk2rbc can't read the
 # raw ones.
 define dump-variables-rbc
-$(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(.VARIABLES)))\
+$(eval _dump_variables_rbc_excluded := \
+  LOCAL_PATH \
+  TOPDIR \
+  TRACE_BEGIN_SOONG \
+  BOARD_PLAT_PUBLIC_SEPOLICY_DIR \
+  BOARD_PLAT_PRIVATE_SEPOLICY_DIR \
+  USER \
+  SOONG_% \
+  PRODUCT_COPY_OUT_%)\
+$(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(filter-out $(_dump_variables_rbc_excluded),$(.VARIABLES))))
 $(file >$(1),\
-$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt | grep -vhE "^(SOONG_.*|LOCAL_PATH|TOPDIR|PRODUCT_COPY_OUT_.*|TRACE_BEGIN_SOONG)$$"),\
+$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt),\
 $(v) := $(strip $($(v)))$(newline))\
 $(foreach ns,$(SOONG_CONFIG_NAMESPACES),\
 $(foreach v,$(SOONG_CONFIG_$(ns)),\
