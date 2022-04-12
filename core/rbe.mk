@@ -14,6 +14,10 @@
 # limitations under the License.
 #
 
+JAVAC_NINJA_POOL :=
+R8_NINJA_POOL :=
+D8_NINJA_POOL :=
+
 # Notice: this works only with Google's RBE service.
 ifneq ($(filter-out false,$(USE_RBE)),)
   ifdef RBE_DIR
@@ -84,16 +88,20 @@ ifneq ($(filter-out false,$(USE_RBE)),)
 
   ifdef RBE_JAVAC
     JAVAC_WRAPPER := $(strip $(JAVAC_WRAPPER) $(RBE_WRAPPER) --labels=type=compile,lang=java,compiler=javac --exec_strategy=$(javac_exec_strategy) --platform=$(java_r8_d8_platform))
+    JAVAC_NINJA_POOL := $(RBE_POOL)
   endif
 
   ifdef RBE_R8
     R8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=r8 --exec_strategy=$(r8_exec_strategy) --platform=$(java_r8_d8_platform) --inputs=out/soong/host/linux-x86/framework/r8-compat-proguard.jar,build/make/core/proguard_basic_keeps.flags --toolchain_inputs=prebuilts/jdk/jdk11/linux-x86/bin/java)
+    R8_NINJA_POOL := $(RBE_POOL)
   endif
 
   ifdef RBE_D8
     D8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=d8 --exec_strategy=$(d8_exec_strategy) --platform=$(java_r8_d8_platform) --inputs=out/soong/host/linux-x86/framework/d8.jar --toolchain_inputs=prebuilts/jdk/jdk11/linux-x86/bin/java)
+    D8_NINJA_POOL := $(RBE_POOL)
   endif
 
   rbe_dir :=
 endif
 
+.KATI_READONLY := JAVAC_NINJA_POOL R8_NINJA_POOL D8_NINJA_POOL
