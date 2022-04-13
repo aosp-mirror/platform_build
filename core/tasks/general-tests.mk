@@ -78,6 +78,9 @@ $(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(general_tests_tool
 general-tests: $(general_tests_zip)
 $(call dist-for-goals, general-tests, $(general_tests_zip) $(general_tests_list_zip) $(general_tests_configs_zip) $(general_tests_host_shared_libs_zip))
 
+$(call declare-1p-container,$(general_tests_zip),)
+$(call declare-container-license-deps,$(general_tests_zip),$(COMPATIBILITY.general-tests.FILES) $(general_tests_tools) $(my_host_shared_lib_for_general_tests),$(PRODUCT_OUT)/:/)
+
 intermediates_dir :=
 general_tests_tools :=
 general_tests_zip :=
