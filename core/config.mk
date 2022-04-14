@@ -1235,8 +1235,7 @@ endef
 
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.
-dont_bother_goals := out \
-    product-graph dump-products
+dont_bother_goals := out product-graph
 
 # Make ANDROID Soong config variables visible to Android.mk files, for
 # consistency with those defined in BoardConfig.mk files.
