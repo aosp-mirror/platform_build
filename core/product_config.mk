@@ -208,35 +208,26 @@ $(foreach f,$(android_products_makefiles), \
 )
 
 # Dedup, extract product names, etc.
-product_paths :=$(sort $(product_paths))
-all_named_products := $(call _first,$(product_paths),:)
-all_product_makefiles := $(call _second,$(product_paths),:)
+product_paths := $(sort $(product_paths))
+all_named_products := $(sort $(call _first,$(product_paths),:))
+all_product_makefiles := $(sort $(call _second,$(product_paths),:))
 current_product_makefile := $(call _second,$(filter $(TARGET_PRODUCT):%,$(product_paths)),:)
 COMMON_LUNCH_CHOICES := $(sort $(common_lunch_choices))
 
-load_all_product_makefiles :=
-ifneq (,$(filter product-graph, $(MAKECMDGOALS)))
-ifeq ($(ANDROID_PRODUCT_GRAPH),--all)
-load_all_product_makefiles := true
-endif
-endif
-ifneq (,$(filter dump-products,$(MAKECMDGOALS)))
-ifeq ($(ANDROID_DUMP_PRODUCTS),all)
-load_all_product_makefiles := true
-endif
-endif
+# Check that there are no duplicate product names
+$(foreach p,$(all_named_products), \
+  $(if $(filter 1,$(words $(filter $(p):%,$(product_paths)))),, \
+    $(error Product name must be unique, "$(p)" used by $(call _second,$(filter $(p):%,$(product_paths)),:))))
 
 ifneq ($(ALLOW_RULES_IN_PRODUCT_CONFIG),)
 _product_config_saved_KATI_ALLOW_RULES := $(.KATI_ALLOW_RULES)
 .KATI_ALLOW_RULES := $(ALLOW_RULES_IN_PRODUCT_CONFIG)
 endif
 
-ifeq ($(load_all_product_makefiles),true)
-# Import all product makefiles.
-$(call import-products, $(all_product_makefiles))
-else
-# Import just the current product.
-$(if $(current_product_makefile),,$(error Can not locate config makefile for product "$(TARGET_PRODUCT)"))
+ifeq (,$(current_product_makefile))
+  $(error Can not locate config makefile for product "$(TARGET_PRODUCT)")
+endif
+
 ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
   RBC_PRODUCT_CONFIG := true
   RBC_BOARD_CONFIG := true
@@ -258,44 +249,29 @@ else
   endif
   include $(OUT_DIR)/rbc/rbc_product_config_results.mk
 endif
-endif  # Import all or just the current product makefile
-
-# Quick check
-$(check-all-products)
 
 # This step was already handled in the RBC product configuration.
-# Since the equivalent starlark code will not add the partial products to
-# the PRODUCTS variable, it's ok for them to be set before check-all-products
 ifeq ($(RBC_PRODUCT_CONFIG)$(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
 # Import all the products that have made artifact path requirements, so that we can verify
-# the artifacts they produce.
-# These are imported after check-all-products because some of them might not be real products.
+# the artifacts they produce. They might be intermediate makefiles instead of real products.
 $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(if $(filter-out $(makefile),$(PRODUCTS)),$(eval $(call import-products,$(makefile))))\
 )
 endif
+
+INTERNAL_PRODUCT := $(current_product_makefile)
+# Strip and assign the PRODUCT_ variables.
+$(call strip-product-vars)
+
+# Quick check
+$(check-current-product)
 
 ifneq ($(ALLOW_RULES_IN_PRODUCT_CONFIG),)
 .KATI_ALLOW_RULES := $(_saved_KATI_ALLOW_RULES)
 _product_config_saved_KATI_ALLOW_RULES :=
 endif
 
-ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
-$(dump-products)
-endif
-
-# Convert a short name like "sooner" into the path to the product
-# file defining that product.
-#
-INTERNAL_PRODUCT := $(call resolve-short-product-name, $(TARGET_PRODUCT))
-ifneq ($(current_product_makefile),$(INTERNAL_PRODUCT))
-$(error PRODUCT_NAME inconsistent in $(current_product_makefile) and $(INTERNAL_PRODUCT))
-endif
-
-
 ############################################################################
-# Strip and assign the PRODUCT_ variables.
-$(call strip-product-vars)
 
 current_product_makefile :=
 all_product_makefiles :=
