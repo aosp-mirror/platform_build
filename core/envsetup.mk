@@ -326,20 +326,26 @@ endif
 # raw ones.
 define dump-variables-rbc
 $(eval _dump_variables_rbc_excluded := \
+  BOARD_PLAT_PRIVATE_SEPOLICY_DIR \
+  BOARD_PLAT_PUBLIC_SEPOLICY_DIR \
+  BUILD_NUMBER \
+  DATE \
   LOCAL_PATH \
+  MAKEFILE_LIST \
+  PRODUCTS \
+  PRODUCT_COPY_OUT_% \
+  RBC_PRODUCT_CONFIG \
+  RBC_BOARD_CONFIG \
+  SOONG_% \
   TOPDIR \
   TRACE_BEGIN_SOONG \
-  BOARD_PLAT_PUBLIC_SEPOLICY_DIR \
-  BOARD_PLAT_PRIVATE_SEPOLICY_DIR \
-  USER \
-  SOONG_% \
-  PRODUCT_COPY_OUT_%)\
-$(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(filter-out $(_dump_variables_rbc_excluded),$(.VARIABLES))))
+  USER)
+$(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(sort $(filter-out $(_dump_variables_rbc_excluded),$(.VARIABLES)))))
 $(file >$(1),\
 $(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt),\
 $(v) := $(strip $($(v)))$(newline))\
-$(foreach ns,$(SOONG_CONFIG_NAMESPACES),\
-$(foreach v,$(SOONG_CONFIG_$(ns)),\
+$(foreach ns,$(sort $(SOONG_CONFIG_NAMESPACES)),\
+$(foreach v,$(sort $(SOONG_CONFIG_$(ns))),\
 $$(call soong_config_set,$(ns),$(v),$(SOONG_CONFIG_$(ns)_$(v)))$(newline))))
 endef
 

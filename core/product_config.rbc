@@ -162,7 +162,11 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
             globals["PRODUCTS."+name+".mk.ARTIFACT_PATH_ALLOWED_LIST"] = handle.artifact_path_allowed_list
             globals["PRODUCTS."+name+".mk.ARTIFACT_PATH_REQUIREMENT_IS_RELAXED"] = "true" if handle.artifact_path_requirement_is_relaxed[0] else ""
             globals.setdefault("ARTIFACT_PATH_REQUIREMENT_PRODUCTS", [])
-            globals["ARTIFACT_PATH_REQUIREMENT_PRODUCTS"] += [name+".mk"]
+            globals["ARTIFACT_PATH_REQUIREMENT_PRODUCTS"] = sorted(globals["ARTIFACT_PATH_REQUIREMENT_PRODUCTS"] + [name+".mk"])
+
+        if handle.product_enforce_packages_exist[0]:
+            globals["PRODUCTS."+name+".mk.PRODUCT_ENFORCE_PACKAGES_EXIST"] = "true"
+            globals["PRODUCTS."+name+".mk.PRODUCT_ENFORCE_PACKAGES_EXIST_ALLOW_LIST"] = handle.product_enforce_packages_exist_allow_list
 
         # Now we know everything about this PCM, record it in 'configs'.
         children = handle.inherited_modules
@@ -434,6 +438,8 @@ def __h_new():
         artifact_path_requirements = list(),
         artifact_path_allowed_list = list(),
         artifact_path_requirement_is_relaxed = [False], # as a list so that we can reassign it
+        product_enforce_packages_exist = [False],
+        product_enforce_packages_exist_allow_list = [],
     )
 
 def __h_cfg(handle):
@@ -498,11 +504,11 @@ def _copy_if_exists(path_pair):
     # Check that l[0] exists
     return [":".join(value)] if rblf_file_exists(value[0]) else []
 
-def _enforce_product_packages_exist(pkg_string_or_list):
+def _enforce_product_packages_exist(handle, pkg_string_or_list=[]):
     """Makes including non-existent modules in PRODUCT_PACKAGES an error."""
-
-    #TODO(asmundak)
-    pass
+    handle.product_enforce_packages_exist[0] = True
+    handle.product_enforce_packages_exist_allow_list.clear()
+    handle.product_enforce_packages_exist_allow_list.extend(__words(pkg_string_or_list))
 
 def _add_product_dex_preopt_module_config(handle, modules, config):
     """Equivalent to add-product-dex-preopt-module-config from build/make/core/product.mk."""
