@@ -1235,18 +1235,14 @@ endef
 #   See the select-bitness-of-required-modules definition.
 # $(1): product makefile
 
-define _product-var
-  $(call get-product-var,$(1),$(2))
-endef
-
 define product-installed-files
   $(eval _pif_modules := \
-    $(call _product-var,$(1),PRODUCT_PACKAGES) \
-    $(if $(filter eng,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_ENG)) \
-    $(if $(filter debug,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG)) \
-    $(if $(filter tests,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
-    $(if $(filter asan,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
-    $(if $(filter java_coverage,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
+    $(call get-product-var,$(1),PRODUCT_PACKAGES) \
+    $(if $(filter eng,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ENG)) \
+    $(if $(filter debug,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG)) \
+    $(if $(filter tests,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
+    $(if $(filter asan,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
+    $(if $(filter java_coverage,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
@@ -1257,13 +1253,13 @@ define product-installed-files
   $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \
   $(filter-out $(HOST_OUT_ROOT)/%,$(call module-installed-files, $(_pif_modules))) \
   $(call resolve-product-relative-paths,\
-    $(foreach cf,$(call _product-var,$(1),PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
+    $(foreach cf,$(call get-product-var,$(1),PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
 endef
 
 # Similar to product-installed-files above, but handles PRODUCT_HOST_PACKAGES instead
 # This does support the :32 / :64 syntax, but does not support module overrides.
 define host-installed-files
-  $(eval _hif_modules := $(call _product-var,$(1),PRODUCT_HOST_PACKAGES)) \
+  $(eval _hif_modules := $(call get-product-var,$(1),PRODUCT_HOST_PACKAGES)) \
   $(eval ### Split host vs host cross modules) \
   $(eval _hcif_modules := $(filter host_cross_%,$(_hif_modules))) \
   $(eval _hif_modules := $(filter-out host_cross_%,$(_hif_modules))) \
