@@ -26,10 +26,15 @@ load(":product.rbc", "init")
 load(":board.rbc", board_init = "init")
 load(":board_input_vars.rbc", board_input_vars_init = "init")
 load("//build/make/tests/single_value_inheritance:test.rbc", test_single_value_inheritance = "test")
+load("//build/make/tests/artifact_path_requirements:test.rbc", test_artifact_path_requirements = "test")
 
 def assert_eq(expected, actual):
     if expected != actual:
         fail("Expected '%s', got '%s'" % (expected, actual))
+
+def assert_dict_subset(expected, actual):
+    for key, val in expected.items():
+        assert_eq(val, actual[key])
 
 # Unit tests for non-trivial runtime functions
 assert_eq(["a", "b", "c"], rblf.mksort("b a    c c"))
@@ -80,31 +85,28 @@ assert_eq(
     rblf.expand_wildcard("build/make/tests/run.rbc build/make/tests/nonexistent.rbc")
 )
 
-(globals, config, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
-assert_eq(
-    {
-      "PRODUCT_COPY_FILES": [
-          "part_from:part_to",
-          "device_from:device_to",
-          "device/google/redfin/audio/audio_platform_info_noextcodec_snd.xml:||VENDOR-PATH-PH||/etc/audio/audio_platform_info_noextcodec_snd.xml",
-          "xyz:/etc/xyz",
-          "x.xml:/etc/x.xml",
-          "y.xml:/etc/y.xml",
-          "from/sub/x:to/x",
-          "from/sub/y:to/y",
-      ],
-      "PRODUCT_HOST_PACKAGES": ["host"],
-      "PRODUCT_PACKAGES": [
-          "dev",
-          "inc",
-          "dev_after",
-          "board1_in",
-          "board1_is",
-      ],
-      "PRODUCT_PRODUCT_PROPERTIES": ["part_properties"]
-    },
-    { k:v for k, v in sorted(config.items()) }
-)
+(globals, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
+assert_dict_subset({
+    "PRODUCTS.test/device.mk.PRODUCT_COPY_FILES": [
+        "part_from:part_to",
+        "device_from:device_to",
+        "device/google/redfin/audio/audio_platform_info_noextcodec_snd.xml:||VENDOR-PATH-PH||/etc/audio/audio_platform_info_noextcodec_snd.xml",
+        "xyz:/etc/xyz",
+        "x.xml:/etc/x.xml",
+        "y.xml:/etc/y.xml",
+        "from/sub/x:to/x",
+        "from/sub/y:to/y",
+    ],
+    "PRODUCTS.test/device.mk.PRODUCT_HOST_PACKAGES": ["host"],
+    "PRODUCTS.test/device.mk.PRODUCT_PACKAGES": [
+        "dev",
+        "inc",
+        "dev_after",
+        "board1_in",
+        "board1_is",
+    ],
+    "PRODUCTS.test/device.mk.PRODUCT_PRODUCT_PROPERTIES": ["part_properties"]
+}, globals)
 
 ns = globals["$SOONG_CONFIG_NAMESPACES"]
 assert_eq(
@@ -134,8 +136,9 @@ assert_eq(
     { k:v for k,v in sorted(goals.items()) }
 )
 
-(board_globals, board_config, board_globals_base) = rblf.board_configuration(board_init, board_input_vars_init)
+(board_globals, board_globals_base) = rblf.board_configuration(board_init, board_input_vars_init)
 assert_eq({"A_LIST_VARIABLE": ["foo", "bar"]}, board_globals)
 assert_eq({"A_LIST_VARIABLE": ["foo"]}, board_globals_base)
 
 test_single_value_inheritance()
+test_artifact_path_requirements()
