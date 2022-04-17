@@ -39,7 +39,7 @@ $(host_unit_tests_zip) : $(COMPATIBILITY.host-unit-tests.FILES) $(my_host_shared
 	  echo $$shared_lib >> $@-host-libs.list; \
 	done
 	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true
-	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list \
+	$(hide) $(SOONG_ZIP) -L 0 -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list \
 	  -P target -C $(PRODUCT_OUT) -l $@-target.list \
 	  -P host/testcases -C $(HOST_OUT) -l $@-host-libs.list
 	rm -f $@.list $@-host.list $@-target.list $@-host-libs.list
