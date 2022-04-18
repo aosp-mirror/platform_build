@@ -121,6 +121,8 @@ $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 	$(SOONG_ZIP) -d -o $(PRIVATE_tests_list_zip) -j -f $(PRIVATE_tests_list)
 	rm -f $(PRIVATE_tests_list)
 
+$(call declare-0p-target,$(compatibility_tests_list_zip),)
+
 $(call declare-1p-container,$(compatibility_zip),)
 $(call declare-container-license-deps,$(compatibility_zip),$(compatibility_zip_deps) $(test_suite_jdk), $(out_dir)/:/)
 

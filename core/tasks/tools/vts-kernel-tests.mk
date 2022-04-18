@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2022 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,10 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=AAQ4.220418.001
+-include external/linux-kselftest/android/kselftest_test_list.mk
+-include external/ltp/android/ltp_package_list.mk
+
+include $(BUILD_SYSTEM)/tasks/tools/vts_package_utils.mk
+
+# Copy kernel test modules to testcases directories
+kernel_test_host_out := $(HOST_OUT_TESTCASES)/vts_kernel_tests
+kernel_test_vts_out := $(HOST_OUT)/$(test_suite_name)/android-$(test_suite_name)/testcases/vts_kernel_tests
+kernel_test_modules := \
+    $(kselftest_modules) \
+    ltp \
+    $(ltp_packages)
