@@ -348,6 +348,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.extend(["-C", prop_dict["erofs_pcluster_size"]])
     if "erofs_share_dup_blocks" in prop_dict:
       build_command.extend(["--chunksize", "4096"])
+    if "erofs_use_legacy_compression" in prop_dict:
+      build_command.extend(["-E", "legacy-compress"])
 
     build_command.extend([out_file, in_dir])
     if "erofs_sparse_flag" in prop_dict and not disable_sparse:
@@ -653,6 +655,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "erofs_pcluster_size",
       "erofs_share_dup_blocks",
       "erofs_sparse_flag",
+      "erofs_use_legacy_compression",
       "squashfs_sparse_flag",
       "system_f2fs_compress",
       "system_f2fs_sldc_flags",
@@ -698,6 +701,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       (True, "avb_{}_hashtree_enable", "avb_hashtree_enable"),
       (True, "avb_{}_key_path", "avb_key_path"),
       (True, "avb_{}_salt", "avb_salt"),
+      (True, "erofs_use_legacy_compression", "erofs_use_legacy_compression"),
       (True, "ext4_share_dup_blocks", "ext4_share_dup_blocks"),
       (True, "{}_base_fs_file", "base_fs_file"),
       (True, "{}_disable_sparse", "disable_sparse"),
