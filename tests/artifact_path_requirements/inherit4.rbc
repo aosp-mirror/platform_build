@@ -13,16 +13,9 @@
 # limitations under the License.
 
 load("//build/make/core:product_config.rbc", "rblf")
-load("//build/make/tests/input_variables.rbc", input_variables_init = "init")
-load(":product.rbc", "init")
 
+def init(g, handle):
+  cfg = rblf.cfg(handle)
 
-def assert_eq(expected, actual):
-    if expected != actual:
-        fail("Expected '%s', got '%s'" % (expected, actual))
-
-def test():
-    (globals, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
-    assert_eq("tablet", globals["PRODUCTS.test/device.mk.PRODUCT_CHARACTERISTICS"])
-    assert_eq("vendor/myvendor/certs/devkeys/devkey", globals["PRODUCTS.test/device.mk.PRODUCT_DEFAULT_DEV_CERTIFICATE"])
-    assert_eq(["foo", "bar"], globals["PRODUCTS.test/device.mk.PRODUCT_PACKAGES"])
+  rblf.setdefault(handle, "PRODUCT_COPY_FILES")
+  cfg["PRODUCT_COPY_FILES"] += ["foo/bar/baz.txt:vendor/etc/baz.txt"]

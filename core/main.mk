@@ -935,6 +935,7 @@ $(foreach suite,general-tests device-tests vts tvts art-host-tests host-unit-tes
           $(eval my_testcases := $(HOST_OUT_TESTCASES)),\
           $(eval my_testcases := $$(COMPATIBILITY_TESTCASES_OUT_$(suite))))\
         $(eval target := $(my_testcases)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(if $(strip $(ALL_TARGETS.$(target).META_LIC)),,$(eval ALL_TARGETS.$(target).META_LIC:=$(module_license_metadata)))\
         $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
           $$(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES) $(f):$(target))\
         $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
@@ -1234,18 +1235,14 @@ endef
 #   See the select-bitness-of-required-modules definition.
 # $(1): product makefile
 
-define _product-var
-  $(call get-product-var,$(1),$(2))
-endef
-
 define product-installed-files
   $(eval _pif_modules := \
-    $(call _product-var,$(1),PRODUCT_PACKAGES) \
-    $(if $(filter eng,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_ENG)) \
-    $(if $(filter debug,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG)) \
-    $(if $(filter tests,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
-    $(if $(filter asan,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
-    $(if $(filter java_coverage,$(tags_to_install)),$(call _product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
+    $(call get-product-var,$(1),PRODUCT_PACKAGES) \
+    $(if $(filter eng,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ENG)) \
+    $(if $(filter debug,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG)) \
+    $(if $(filter tests,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
+    $(if $(filter asan,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
+    $(if $(filter java_coverage,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
@@ -1256,13 +1253,13 @@ define product-installed-files
   $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \
   $(filter-out $(HOST_OUT_ROOT)/%,$(call module-installed-files, $(_pif_modules))) \
   $(call resolve-product-relative-paths,\
-    $(foreach cf,$(call _product-var,$(1),PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
+    $(foreach cf,$(call get-product-var,$(1),PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
 endef
 
 # Similar to product-installed-files above, but handles PRODUCT_HOST_PACKAGES instead
 # This does support the :32 / :64 syntax, but does not support module overrides.
 define host-installed-files
-  $(eval _hif_modules := $(call _product-var,$(1),PRODUCT_HOST_PACKAGES)) \
+  $(eval _hif_modules := $(call get-product-var,$(1),PRODUCT_HOST_PACKAGES)) \
   $(eval ### Split host vs host cross modules) \
   $(eval _hcif_modules := $(filter host_cross_%,$(_hif_modules))) \
   $(eval _hif_modules := $(filter-out host_cross_%,$(_hif_modules))) \
@@ -1458,12 +1455,6 @@ ALL_DEFAULT_INSTALLED_MODULES :=
 # only the variants with them get built.
 # fix-notice-deps replaces those unadorned module names with every built variant.
 $(call fix-notice-deps)
-
-# Create a license metadata rule per module. Could happen in base_rules.mk or
-# notice_files.mk; except, it has to happen after fix-notice-deps to avoid
-# missing dependency errors.
-$(call build-license-metadata)
-
 
 # These are additional goals that we build, in order to make sure that there
 # is as little code as possible in the tree that doesn't build.
@@ -1738,15 +1729,19 @@ else ifneq ($(TARGET_BUILD_APPS),)
 
   $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(PROGUARD_DICT_ZIP) $(PROGUARD_DICT_MAPPING))
+  $(call declare-container-license-deps,$(PROGUARD_DICT_ZIP),$(apps_only_installed_files),$(PRODUCT_OUT)/:/)
 
   $(PROGUARD_USAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(PROGUARD_USAGE_ZIP))
+  $(call declare-container-license-deps,$(PROGUARD_USAGE_ZIP),$(apps_only_installed_files),$(PRODUCT_OUT)/:/)
 
   $(SYMBOLS_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(SYMBOLS_ZIP) $(SYMBOLS_MAPPING))
+  $(call declare-container-license-deps,$(SYMBOLS_ZIP),$(apps_only_installed_files),$(PRODUCT_OUT)/:/)
 
   $(COVERAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(COVERAGE_ZIP))
+  $(call declare-container-license-deps,$(COVERAGE_ZIP),$(apps_only_installed_files),$(PRODUCT_OUT)/:/)
 
 apps_only: $(unbundled_build_modules)
 
@@ -1900,6 +1895,8 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
 	$(hide) mkdir -p $(dir $@)
 	$(hide) $(APICHECK_COMMAND) --input-api-jar $< --api-xml $@
 
+  $(foreach xml,$(sort $(api_xmls)),$(call declare-1p-target,$(xml),))
+
   $(call dist-for-goals, dist_files, $(api_xmls))
   api_xmls :=
 
@@ -2011,6 +2008,11 @@ ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 ifneq ($(UNSAFE_DISABLE_APEX_ALLOWED_DEPS_CHECK),true)
   droidcore: ${APEX_ALLOWED_DEPS_CHECK}
 endif
+
+# Create a license metadata rule per module. Could happen in base_rules.mk or
+# notice_files.mk; except, it has to happen after fix-notice-deps to avoid
+# missing dependency errors.
+$(call build-license-metadata)
 
 $(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)
 
