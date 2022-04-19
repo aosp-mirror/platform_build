@@ -403,7 +403,9 @@ def _soong_config_get(g, nsname, var):
 
 def _abspath(path):
     """Provided for compatibility, to be removed later."""
-    return path
+    if type(path) == "list":
+        path = " ".join(path)
+    return rblf_shell("realpath "+path)
 
 
 def _addprefix(prefix, string_or_list):
