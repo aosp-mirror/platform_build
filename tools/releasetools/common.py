@@ -1782,6 +1782,9 @@ def HasRamdisk(partition_name, info_dict=None):
   if info_dict.get("recovery_as_boot") == "true":
     return True  # the recovery-as-boot boot.img has a RECOVERY ramdisk.
 
+  if info_dict.get("gki_boot_image_without_ramdisk") == "true":
+    return False  # A GKI boot.img has no ramdisk since Android-13.
+
   if info_dict.get("system_root_image") == "true":
     # The ramdisk content is merged into the system.img, so there is NO
     # ramdisk in the boot.img or boot-<kernel version>.img.
