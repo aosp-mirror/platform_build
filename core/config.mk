@@ -620,6 +620,7 @@ MAKE_RECOVERY_PATCH := $(HOST_OUT_EXECUTABLES)/make_recovery_patch$(HOST_EXECUTA
 OTA_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/ota_from_target_files$(HOST_EXECUTABLE_SUFFIX)
 SPARSE_IMG := $(HOST_OUT_EXECUTABLES)/sparse_img$(HOST_EXECUTABLE_SUFFIX)
 CHECK_PARTITION_SIZES := $(HOST_OUT_EXECUTABLES)/check_partition_sizes$(HOST_EXECUTABLE_SUFFIX)
+SYMBOLS_MAP := $(HOST_OUT_EXECUTABLES)/symbols_map
 
 PROGUARD_HOME := external/proguard
 PROGUARD := $(PROGUARD_HOME)/bin/proguard.sh
@@ -1232,10 +1233,27 @@ else ifneq (,$(filter-out false,$(USE_RBE)))
 endif
 .KATI_READONLY := GOMA_POOL RBE_POOL GOMA_OR_RBE_POOL
 
+JAVAC_NINJA_POOL :=
+R8_NINJA_POOL :=
+D8_NINJA_POOL :=
+
+ifneq ($(filter-out false,$(USE_RBE)),)
+  ifdef RBE_JAVAC
+    JAVAC_NINJA_POOL := $(RBE_POOL)
+  endif
+  ifdef RBE_R8
+    R8_NINJA_POOL := $(RBE_POOL)
+  endif
+  ifdef RBE_D8
+    D8_NINJA_POOL := $(RBE_POOL)
+  endif
+endif
+
+.KATI_READONLY := JAVAC_NINJA_POOL R8_NINJA_POOL D8_NINJA_POOL
+
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.
-dont_bother_goals := out \
-    product-graph dump-products
+dont_bother_goals := out product-graph
 
 # Make ANDROID Soong config variables visible to Android.mk files, for
 # consistency with those defined in BoardConfig.mk files.
