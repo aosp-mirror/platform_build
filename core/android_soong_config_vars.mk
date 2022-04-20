@@ -52,9 +52,9 @@ else ifeq (,$(filter sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.goog
   # However, sdk/win_sdk/sdk_addon builds might not include com.google.android.xxx
   # packages, so for those we respect the default behavior.
   MODULE_BUILD_FROM_SOURCE := true
-else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
-  # Always build from source in unbundled builds using the module targets.
-  MODULE_BUILD_FROM_SOURCE := true
+else ifneq (,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
+  # Let products override the branch default.
+  MODULE_BUILD_FROM_SOURCE := $(PRODUCT_MODULE_BUILD_FROM_SOURCE)
 else
   MODULE_BUILD_FROM_SOURCE := $(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE)
 endif
@@ -63,10 +63,6 @@ ifneq (,$(ART_MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
 else ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
   # Build ART modules from source if they are listed in TARGET_BUILD_APPS.
-  ART_MODULE_BUILD_FROM_SOURCE := true
-else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
-  # Always build from source for the module targets. This ought to be covered by
-  # the TARGET_BUILD_APPS check above, but there are test builds that don't set it.
   ART_MODULE_BUILD_FROM_SOURCE := true
 else
   # Do the same as other modules by default.
