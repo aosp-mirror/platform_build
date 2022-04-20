@@ -713,6 +713,7 @@ ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
 endif
 ifdef LOCAL_MULTILIB
   multi_arch := true
+# These conditionals allow this functionality to be mimicked in Soong
 else ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
     multi_arch := true
