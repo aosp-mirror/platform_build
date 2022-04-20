@@ -405,12 +405,26 @@ def _soong_config_get(g, nsname, var):
     """Gets to the value of the variable in the namespace."""
     return g.get(_soong_config_namespaces_key, {}).get(nsname, {}).get(var, None)
 
-
-def _abspath(path):
+def _abspath(paths):
     """Provided for compatibility, to be removed later."""
-    if type(path) == "list":
-        path = " ".join(path)
-    return rblf_shell("realpath "+path)
+    cwd = rblf_shell('pwd')
+    results = []
+    for path in __words(paths):
+        if path[0] != "/":
+            path = cwd + "/" + path
+
+        resultparts = []
+        for part in path.split('/'):
+            if part == "." or part == "":
+                continue
+            elif part == "..":
+                if resultparts:
+                    resultparts.pop()
+            else:
+                resultparts.append(part)
+        results.append("/" + "/".join(resultparts))
+
+    return " ".join(results)
 
 
 def _addprefix(prefix, string_or_list):
