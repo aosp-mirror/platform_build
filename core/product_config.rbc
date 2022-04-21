@@ -104,6 +104,11 @@ def __printvars_rearrange_list(value_list):
     seen = {item: 0 for item in value_list}
     return sorted(seen.keys()) if _options.rearrange == "sort" else seen.keys()
 
+def __sort_pcm_names(pcm_names):
+    # We have to add an extension back onto the pcm names when sorting,
+    # or else the sort order could be wrong when one is a prefix of another.
+    return [x[:-3] for x in sorted([y + ".mk" for y in pcm_names], reverse=True)]
+
 def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
     """Creates configuration."""
 
@@ -167,7 +172,7 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         # so children.keys() will be ordered by the inherit() calls
         configs[name] = (pcm, handle.cfg, children.keys(), False)
 
-        for child_name in sorted(children, reverse = True):
+        for child_name in __sort_pcm_names(children.keys()):
             if child_name not in configs:
                 configs[child_name] = (children[child_name], None, [], False)
             pcm_stack.append(child_name)
@@ -202,7 +207,7 @@ def evaluate_finalized_product_variables(configs, top_level_pcm_name, trace=Fals
         pcm_name, before = pcm_stack.pop()
         if before:
             pcm_stack.append((pcm_name, False))
-            for child in sorted(configs[pcm_name][2], reverse = True):
+            for child in __sort_pcm_names(configs[pcm_name][2]):
                 pcm_stack.append((child, True))
         else:
             configs_postfix.append(pcm_name)
@@ -400,12 +405,26 @@ def _soong_config_get(g, nsname, var):
     """Gets to the value of the variable in the namespace."""
     return g.get(_soong_config_namespaces_key, {}).get(nsname, {}).get(var, None)
 
-
-def _abspath(path):
+def _abspath(paths):
     """Provided for compatibility, to be removed later."""
-    if type(path) == "list":
-        path = " ".join(path)
-    return rblf_shell("realpath "+path)
+    cwd = rblf_shell('pwd')
+    results = []
+    for path in __words(paths):
+        if path[0] != "/":
+            path = cwd + "/" + path
+
+        resultparts = []
+        for part in path.split('/'):
+            if part == "." or part == "":
+                continue
+            elif part == "..":
+                if resultparts:
+                    resultparts.pop()
+            else:
+                resultparts.append(part)
+        results.append("/" + "/".join(resultparts))
+
+    return " ".join(results)
 
 
 def _addprefix(prefix, string_or_list):
