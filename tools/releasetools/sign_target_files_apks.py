@@ -226,6 +226,7 @@ AVB_FOOTER_ARGS_BY_PARTITION = {
     'pvmfw': 'avb_pvmfw_add_hash_footer_args',
     'vendor': 'avb_vendor_add_hashtree_footer_args',
     'vendor_boot': 'avb_vendor_boot_add_hash_footer_args',
+    'vendor_kernel_boot': 'avb_vendor_kernel_boot_add_hash_footer_args',
     'vendor_dlkm': "avb_vendor_dlkm_add_hashtree_footer_args",
     'vbmeta': 'avb_vbmeta_args',
     'vbmeta_system': 'avb_vbmeta_system_args',
