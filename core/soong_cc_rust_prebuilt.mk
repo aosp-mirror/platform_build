@@ -260,6 +260,9 @@ installed_static_library_notice_file_targets := \
 installed_static_library_notice_file_targets += \
     $(foreach lib,$(LOCAL_RLIB_LIBRARIES), \
       NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-RLIB_LIBRARIES-$(lib))
+installed_static_library_notice_file_targets += \
+    $(foreach lib,$(LOCAL_PROC_MACRO_LIBRARIES), \
+      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-PROC_MACRO_LIBRARIES-$(lib))
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)
