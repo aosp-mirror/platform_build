@@ -2,7 +2,7 @@
 
 set -e
 
-source ../envsetup.sh
+source "$(dirname "$0")"/envsetup.sh
 
 # default target to modify tree and build SDK
 lunch aosp_arm64-userdebug
