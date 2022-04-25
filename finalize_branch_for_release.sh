@@ -19,6 +19,8 @@ set -x
 
 AIDL_TRANSITIVE_FREEZE=true m aidl-freeze-api
 
+m check-vndk-list || update-vndk-list.sh # for new versions of AIDL interfaces
+
 # TODO(b/229413853): test while simulating 'rel' for more requirements AIDL_FROZEN_REL=true
 m # test build
 
