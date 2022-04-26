@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2020 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=UP1A.220426.001
+# This "device" is only intended to be used for host Bionic build targets, so
+# (device) target architectures are irrelevant. However, the build system isn't
+# prepared to handle no target architectures at all, so pick something
+# arbitrarily.
+TARGET_ARCH_SUITE := ndk
+
+HOST_CROSS_OS := linux_bionic
+HOST_CROSS_ARCH := x86_64
+HOST_CROSS_2ND_ARCH :=
