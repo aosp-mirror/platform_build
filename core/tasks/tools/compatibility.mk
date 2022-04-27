@@ -132,6 +132,9 @@ $(eval $(call text-notice-rule,$(test_suite_notice_txt),"Test suites","Notices f
 $(call declare-0p-target,$(test_suite_notice_html))
 $(call declare-0p-target,$(test_suite_notice_txt))
 
+$(call declare-1p-copy-files,$(test_suite_dynamic_config),)
+$(call declare-1p-copy-files,$(test_suite_prebuilt_tools),)
+
 # Reset all input variables
 test_suite_name :=
 test_suite_tradefed :=

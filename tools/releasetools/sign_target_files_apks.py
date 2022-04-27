@@ -226,6 +226,7 @@ AVB_FOOTER_ARGS_BY_PARTITION = {
     'pvmfw': 'avb_pvmfw_add_hash_footer_args',
     'vendor': 'avb_vendor_add_hashtree_footer_args',
     'vendor_boot': 'avb_vendor_boot_add_hash_footer_args',
+    'vendor_kernel_boot': 'avb_vendor_kernel_boot_add_hash_footer_args',
     'vendor_dlkm': "avb_vendor_dlkm_add_hashtree_footer_args",
     'vbmeta': 'avb_vbmeta_args',
     'vbmeta_system': 'avb_vbmeta_system_args',
@@ -1354,12 +1355,13 @@ def BuildVendorPartitions(output_zip_path):
     vendor_misc_info["no_boot"] = "true"  # boot
     vendor_misc_info["vendor_boot"] = "false"  # vendor_boot
     vendor_misc_info["no_recovery"] = "true"  # recovery
+    vendor_misc_info["avb_enable"] = "false"  # vbmeta
 
   vendor_misc_info["board_bpt_enable"] = "false"  # partition-table
   vendor_misc_info["has_dtbo"] = "false"  # dtbo
   vendor_misc_info["has_pvmfw"] = "false"  # pvmfw
   vendor_misc_info["avb_custom_images_partition_list"] = ""  # custom images
-  vendor_misc_info["avb_enable"] = "false"  # vbmeta
+  vendor_misc_info["avb_building_vbmeta_image"] = "false" # skip building vbmeta
   vendor_misc_info["use_dynamic_partitions"] = "false"  # super_empty
   vendor_misc_info["build_super_partition"] = "false"  # super split
   with open(vendor_misc_info_path, "w") as output:
@@ -1414,8 +1416,12 @@ def BuildVendorPartitions(output_zip_path):
       map_file_path = "IMAGES/{}.map".format(p)
       common.ZipWrite(output_zip, os.path.join(vendor_tempdir, img_file_path), img_file_path)
       common.ZipWrite(output_zip, os.path.join(vendor_tempdir, map_file_path), map_file_path)
-    # copy recovery patch & install.sh
+    # copy recovery.img, boot.img, recovery patch & install.sh
     if OPTIONS.rebuild_recovery:
+      recovery_img = "IMAGES/recovery.img"
+      boot_img = "IMAGES/boot.img"
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, recovery_img), recovery_img)
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, boot_img), boot_img)
       recovery_patch_path = "VENDOR/recovery-from-boot.p"
       recovery_sh_path = "VENDOR/bin/install-recovery.sh"
       common.ZipWrite(output_zip, os.path.join(vendor_tempdir, recovery_patch_path), recovery_patch_path)
