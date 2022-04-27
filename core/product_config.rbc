@@ -767,8 +767,11 @@ def _mkstrip(s):
     That is, removes string's leading and trailing whitespace characters and
     replaces any sequence of whitespace characters with with a single space.
     """
-    if type(s) != "string":
-        return s
+    t = type(s)
+    if t == "list":
+        s = " ".join(s)
+    elif t != "string":
+        fail("Argument to mkstrip must be a string or list.")
     result = ""
     was_space = False
     for ch in s.strip().elems():
