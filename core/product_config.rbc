@@ -147,7 +147,7 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
 
         # Run this one, obtaining its configuration and child PCMs.
         if _options.trace_modules:
-            print("#%d: %s" % (n, name))
+            rblf_log("%d: %s" % (n, name))
 
         # Run PCM.
         handle = __h_new()
@@ -167,7 +167,7 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         # Now we know everything about this PCM, record it in 'configs'.
         children = handle.inherited_modules
         if _options.trace_modules:
-            print("#   ", "    ".join(children.keys()))
+            rblf_log("   ", "    ".join(children.keys()))
         # Starlark dictionaries are guaranteed to iterate through in insertion order,
         # so children.keys() will be ordered by the inherit() calls
         configs[name] = (pcm, handle.cfg, children.keys(), False)
@@ -234,9 +234,9 @@ def evaluate_finalized_product_variables(configs, top_level_pcm_name, trace=Fals
     configs = cloned_configs
 
     if trace:
-        print("\n#---Postfix---")
+        rblf_log("\n---Postfix---")
         for x in configs_postfix:
-            print("#   ", x)
+            rblf_log("   ", x)
 
     # Traverse the tree from the bottom, evaluating inherited values
     for pcm_name in configs_postfix:
@@ -309,7 +309,7 @@ def _substitute_inherited(configs, pcm_name, cfg):
             old_val = val
             new_val = _value_expand(configs, attr, val)
             if new_val != old_val:
-                print("%s(i): %s=%s (was %s)" % (pcm_name, attr, new_val, old_val))
+                rblf_log("%s(i): %s=%s (was %s)" % (pcm_name, attr, new_val, old_val))
             cfg[attr] = new_val
 
 def _value_expand(configs, attr, values_list):
@@ -363,7 +363,7 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
 
     for attr in _options.trace_variables:
         if attr in percolated_attrs:
-            print("%s: %s^=%s" % (cfg_name, attr, cfg[attr]))
+            rblf_log("%s: %s^=%s" % (cfg_name, attr, cfg[attr]))
 
 def __move_items(to_list, from_cfg, attr):
     value = from_cfg.get(attr, [])
