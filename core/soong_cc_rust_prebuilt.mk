@@ -184,7 +184,7 @@ ifndef LOCAL_IS_HOST_MODULE
       # drop /root as /root is mounted as /
       my_unstripped_path := $(patsubst $(TARGET_OUT_UNSTRIPPED)/root/%,$(TARGET_OUT_UNSTRIPPED)/%, $(my_unstripped_path))
       symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
-      $(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))
+      $(eval $(call copy-unstripped-elf-file-with-mapping,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))
       $(LOCAL_BUILT_MODULE): | $(symbolic_output)
 
       ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
@@ -260,6 +260,9 @@ installed_static_library_notice_file_targets := \
 installed_static_library_notice_file_targets += \
     $(foreach lib,$(LOCAL_RLIB_LIBRARIES), \
       NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-RLIB_LIBRARIES-$(lib))
+installed_static_library_notice_file_targets += \
+    $(foreach lib,$(LOCAL_PROC_MACRO_LIBRARIES), \
+      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-PROC_MACRO_LIBRARIES-$(lib))
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)

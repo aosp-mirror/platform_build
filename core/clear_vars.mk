@@ -318,6 +318,7 @@ LOCAL_SYSTEM_SHARED_LIBRARIES:=none
 LOCAL_TARGET_REQUIRED_MODULES:=
 LOCAL_TEST_CONFIG:=
 LOCAL_TEST_DATA:=
+LOCAL_TEST_DATA_BINS:=
 LOCAL_TEST_MAINLINE_MODULES:=
 LOCAL_TEST_MODULE_TO_PROGUARD_WITH:=
 LOCAL_TIDY:=
@@ -508,6 +509,8 @@ LOCAL_TEST_PACKAGE :=
 
 full_android_manifest :=
 non_system_module :=
+
+module_license_metadata :=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
