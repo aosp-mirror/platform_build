@@ -11,8 +11,11 @@ TARGET_NO_KERNEL := true
 # This flag is set by mainline but isn't desired for GSI.
 BOARD_USES_SYSTEM_OTHER_ODEX :=
 
-# system.img is always ext4 and non-sparsed.
+# system.img is ext4/erofs and non-sparsed.
+GSI_FILE_SYSTEM_TYPE ?= ext4
+BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := $(GSI_FILE_SYSTEM_TYPE)
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+TARGET_USERIMAGES_SPARSE_EROFS_DISABLED := true
 
 # GSI also includes make_f2fs to support userdata parition in f2fs
 # for some devices
@@ -35,6 +38,12 @@ BOARD_USES_METADATA_PARTITION := true
 #   updating the last seen rollback index in the tamper-evident storage.
 BOARD_AVB_ROLLBACK_INDEX := 0
 
+# The chained vbmeta settings for boot images.
+BOARD_AVB_BOOT_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
+BOARD_AVB_BOOT_ALGORITHM := SHA256_RSA4096
+BOARD_AVB_BOOT_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION := 2
+
 # Enable AVB chained partition for system.
 # https://android.googlesource.com/platform/external/avb/+/master/README.md
 BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
@@ -56,12 +65,6 @@ endif
 # TODO(b/123695868, b/146149698):
 #     This flag is set by mainline but isn't desired for GSI
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR :=
-
-# Enable chain partition for boot, mainly for GKI images.
-BOARD_AVB_BOOT_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_BOOT_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_BOOT_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION := 2
 
 # GSI specific System Properties
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
