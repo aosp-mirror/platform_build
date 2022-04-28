@@ -5,8 +5,8 @@
 import argparse
 import re
 import sys
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 
 parser = argparse.ArgumentParser(description='Check OWNERS file syntax')
 parser.add_argument('-v', '--verbose', dest='verbose',
@@ -25,15 +25,15 @@ checked_addresses = {}
 
 def echo(msg):
   if args.verbose:
-    print msg
+    print(msg)
 
 
 def find_address(address):
   if address not in checked_addresses:
     request = (gerrit_server + '/accounts/?n=1&q=email:'
-               + urllib.quote(address))
+               + urllib.parse.quote(address))
     echo('Checking email address: ' + address)
-    result = urllib2.urlopen(request).read()
+    result = urllib.request.urlopen(request).read()
     checked_addresses[address] = result.find('"_account_id":') >= 0
     if checked_addresses[address]:
       echo('Found email address: ' + address)
@@ -43,7 +43,7 @@ def find_address(address):
 def check_address(fname, num, address):
   if find_address(address):
     return 0
-  print '%s:%d: ERROR: unknown email address: %s' % (fname, num, address)
+  print('%s:%d: ERROR: unknown email address: %s' % (fname, num, address))
   return 1
 
 
@@ -72,7 +72,7 @@ def main():
       stripped_line = re.sub('#.*$', '', line).strip()
       if not patterns.match(stripped_line):
         error += 1
-        print '%s:%d: ERROR: unknown line [%s]' % (fname, num, line.strip())
+        print('%s:%d: ERROR: unknown line [%s]' % (fname, num, line.strip()))
       elif args.check_address:
         if perfile_pattern.match(stripped_line):
           for addr in perfile_pattern.match(stripped_line).group(1).split(','):
