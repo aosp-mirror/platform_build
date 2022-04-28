@@ -68,6 +68,7 @@ PRODUCT_EXTRA_VNDK_VERSIONS := \
     29 \
     30 \
     31 \
+    32 \
 
 # Do not build non-GSI partition images.
 PRODUCT_BUILD_CACHE_IMAGE := false
