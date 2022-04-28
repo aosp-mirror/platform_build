@@ -536,8 +536,11 @@ def _copy_if_exists(path_pair):
     """If from file exists, returns [from:to] pair."""
     value = path_pair.split(":", 2)
 
+    if value[0].find('*') != -1:
+        fail("copy_if_exists: input file cannot contain *")
+
     # Check that l[0] exists
-    return [":".join(value)] if rblf_file_exists(value[0]) else []
+    return [":".join(value)] if rblf_wildcard(value[0]) else []
 
 def _enforce_product_packages_exist(handle, pkg_string_or_list=[]):
     """Makes including non-existent modules in PRODUCT_PACKAGES an error."""
@@ -551,10 +554,6 @@ def _add_product_dex_preopt_module_config(handle, modules, config):
     config = _mkstrip(config).replace(" ", "|@SP@|")
     _setdefault(handle, "PRODUCT_DEX_PREOPT_MODULE_CONFIGS")
     handle.cfg["PRODUCT_DEX_PREOPT_MODULE_CONFIGS"] += [m + "=" + config for m in modules]
-
-def _file_wildcard_exists(file_pattern):
-    """Return True if there are files matching given bash pattern."""
-    return len(rblf_wildcard(file_pattern)) > 0
 
 def _find_and_copy(pattern, from_dir, to_dir):
     """Return a copy list for the files matching the pattern."""
@@ -859,8 +858,6 @@ rblf = struct(
     dir = _dir,
     enforce_product_packages_exist = _enforce_product_packages_exist,
     expand_wildcard = _expand_wildcard,
-    file_exists = rblf_file_exists,
-    file_wildcard_exists = _file_wildcard_exists,
     filter = _filter,
     filter_out = _filter_out,
     find_and_copy = _find_and_copy,
