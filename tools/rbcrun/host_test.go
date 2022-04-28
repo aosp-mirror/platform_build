@@ -147,10 +147,6 @@ func TestLoad(t *testing.T) {
 	}
 }
 
-func TestRegex(t *testing.T) {
-	exerciseStarlarkTestFile(t, "testdata/regex.star")
-}
-
 func TestShell(t *testing.T) {
 	if err := os.Setenv("TEST_DATA_DIR", dataDir()); err != nil {
 		t.Fatal(err)

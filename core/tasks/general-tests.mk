@@ -40,6 +40,18 @@ general_tests_configs_zip := $(PRODUCT_OUT)/general-tests_configs.zip
 # Create an artifact to include all shared librariy files in general-tests.
 general_tests_host_shared_libs_zip := $(PRODUCT_OUT)/general-tests_host-shared-libs.zip
 
+# Copy kernel test modules to testcases directories
+include $(BUILD_SYSTEM)/tasks/tools/vts-kernel-tests.mk
+kernel_test_copy_pairs := \
+  $(call target-native-copy-pairs,$(kernel_test_modules),$(kernel_test_host_out))
+copy_kernel_tests := $(call copy-many-files,$(kernel_test_copy_pairs))
+
+# PHONY target to be used to build and test `vts_kernel_tests` without building full vts
+.PHONY: vts_kernel_tests
+vts_kernel_tests: $(copy_kernel_tests)
+
+$(general_tests_zip) : $(copy_kernel_tests)
+$(general_tests_zip) : PRIVATE_KERNEL_TEST_HOST_OUT := $(kernel_test_host_out)
 $(general_tests_zip) : PRIVATE_general_tests_list_zip := $(general_tests_list_zip)
 $(general_tests_zip) : .KATI_IMPLICIT_OUTPUTS := $(general_tests_list_zip) $(general_tests_configs_zip) $(general_tests_host_shared_libs_zip)
 $(general_tests_zip) : PRIVATE_TOOLS := $(general_tests_tools)
@@ -52,6 +64,7 @@ $(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(general_tests_tool
 	rm -f $@ $(PRIVATE_general_tests_list_zip)
 	mkdir -p $(PRIVATE_INTERMEDIATES_DIR) $(PRIVATE_INTERMEDIATES_DIR)/tools
 	echo $(sort $(COMPATIBILITY.general-tests.FILES)) | tr " " "\n" > $(PRIVATE_INTERMEDIATES_DIR)/list
+	find $(PRIVATE_KERNEL_TEST_HOST_OUT) >> $(PRIVATE_INTERMEDIATES_DIR)/list
 	grep $(HOST_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/host.list || true
 	grep $(TARGET_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/target.list || true
 	grep -e .*\\.config$$ $(PRIVATE_INTERMEDIATES_DIR)/host.list > $(PRIVATE_INTERMEDIATES_DIR)/host-test-configs.list || true
@@ -77,6 +90,9 @@ $(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(general_tests_tool
 
 general-tests: $(general_tests_zip)
 $(call dist-for-goals, general-tests, $(general_tests_zip) $(general_tests_list_zip) $(general_tests_configs_zip) $(general_tests_host_shared_libs_zip))
+
+$(call declare-1p-container,$(general_tests_zip),)
+$(call declare-container-license-deps,$(general_tests_zip),$(COMPATIBILITY.general-tests.FILES) $(general_tests_tools) $(my_host_shared_lib_for_general_tests),$(PRODUCT_OUT)/:/)
 
 intermediates_dir :=
 general_tests_tools :=
