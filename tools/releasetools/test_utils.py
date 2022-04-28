@@ -33,6 +33,8 @@ import common
 # Some test runner doesn't like outputs from stderr.
 logging.basicConfig(stream=sys.stdout)
 
+ALLOWED_TEST_SUBDIRS = ('merge',)
+
 # Use ANDROID_BUILD_TOP as an indicator to tell if the needed tools (e.g.
 # avbtool, mke2fs) are available while running the tests, unless
 # FORCE_RUN_RELEASETOOLS is set to '1'. Not having the required vars means we
@@ -244,9 +246,12 @@ if __name__ == '__main__':
   # os walk and load them manually.
   test_modules = []
   base_path = os.path.dirname(os.path.realpath(__file__))
+  test_dirs = [base_path] + [
+      os.path.join(base_path, subdir) for subdir in ALLOWED_TEST_SUBDIRS
+  ]
   for dirpath, _, files in os.walk(base_path):
     for fn in files:
-      if dirpath == base_path and re.match('test_.*\\.py$', fn):
+      if dirpath in test_dirs and re.match('test_.*\\.py$', fn):
         test_modules.append(fn[:-3])
 
   test_suite = unittest.TestLoader().loadTestsFromNames(test_modules)

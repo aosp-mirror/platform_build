@@ -50,6 +50,7 @@ $(my_unzipped_timestamp_path): $(LOCAL_FULL_CLASSES_PRE_JACOCO_JAR)
 	unzip -qDD $(PRIVATE_FULL_CLASSES_PRE_JACOCO_JAR) \
 	  -d $(PRIVATE_UNZIPPED_PATH) \
 	  $(PRIVATE_INCLUDE_ARGS)
+	chmod -R =rwX $(PRIVATE_UNZIPPED_PATH)
 	(cd $(PRIVATE_UNZIPPED_PATH) && rm -rf $(PRIVATE_EXCLUDE_ARGS))
 	(cd $(PRIVATE_UNZIPPED_PATH) && find -not -name "*.class" -type f -exec rm {} \;)
 	touch $(PRIVATE_UNZIPPED_TIMESTAMP_PATH)

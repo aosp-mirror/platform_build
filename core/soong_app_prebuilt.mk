@@ -100,18 +100,24 @@ ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_DICT
+  my_proguard_dictionary_directory := $(local-proguard-dictionary-directory)
+  my_proguard_dictionary_mapping_directory := $(local-proguard-dictionary-mapping-directory)
   $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
     $(intermediates.COMMON)/proguard_dictionary))
-  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
-    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary))
+  $(eval $(call copy-r8-dictionary-file-with-mapping,\
+    $(LOCAL_SOONG_PROGUARD_DICT),\
+    $(my_proguard_dictionary_directory)/proguard_dictionary,\
+    $(my_proguard_dictionary_mapping_directory)/proguard_dictionary.textproto))
   $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),\
-    $(call local-packaging-dir,proguard_dictionary)/classes.jar))
+    $(my_proguard_dictionary_directory)/classes.jar))
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
     $(intermediates.COMMON)/proguard_dictionary)
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary)
+    $(my_proguard_dictionary_directory)/proguard_dictionary)
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(call local-packaging-dir,proguard_dictionary)/classes.jar)
+    $(my_proguard_dictionary_mapping_directory)/proguard_dictionary.textproto)
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(my_proguard_dictionary_directory)/classes.jar)
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_USAGE_ZIP
