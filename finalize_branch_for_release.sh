@@ -21,8 +21,9 @@ AIDL_TRANSITIVE_FREEZE=true m aidl-freeze-api
 
 m check-vndk-list || update-vndk-list.sh # for new versions of AIDL interfaces
 
-# TODO(b/229413853): test while simulating 'rel' for more requirements AIDL_FROZEN_REL=true
-m # test build
+# for now, we simulate the release state for AIDL, but in the future, we would want
+# to actually turn the branch into the REL state and test with that
+AIDL_FROZEN_REL=true m # test build
 
 # Build SDK (TODO)
 # lunch sdk...
