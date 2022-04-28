@@ -18,6 +18,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -97,7 +98,7 @@ func main() {
 
 	ctx := &context{*graphViz, *labelConditions, *stripPrefix}
 
-	err := dumpGraph(ctx, os.Stdout, os.Stderr, flag.Args()...)
+	err := dumpGraph(ctx, os.Stdout, os.Stderr, compliance.FS, flag.Args()...)
 	if err != nil {
 		if err == failNoneRequested {
 			flag.Usage()
@@ -109,13 +110,13 @@ func main() {
 }
 
 // dumpGraph implements the dumpgraph utility.
-func dumpGraph(ctx *context, stdout, stderr io.Writer, files ...string) error {
+func dumpGraph(ctx *context, stdout, stderr io.Writer, rootFS fs.FS, files ...string) error {
 	if len(files) < 1 {
 		return failNoneRequested
 	}
 
 	// Read the license graph from the license metadata files (*.meta_lic).
-	licenseGraph, err := compliance.ReadLicenseGraph(os.DirFS("."), stderr, files)
+	licenseGraph, err := compliance.ReadLicenseGraph(rootFS, stderr, files)
 	if err != nil {
 		return fmt.Errorf("Unable to read license metadata file(s) %q: %w\n", files, err)
 	}
