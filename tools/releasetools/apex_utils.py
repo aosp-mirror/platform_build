@@ -102,14 +102,14 @@ class ApexApkSigner(object):
                        ' %s', entry)
 
     payload_dir, has_signed_content = self.ExtractApexPayloadAndSignContents(
-        apk_entries, apk_keys, payload_key)
+        apk_entries, apk_keys, payload_key, signing_args)
     if not has_signed_content:
       logger.info('No contents has been signed in %s', self.apex_path)
       return self.apex_path
 
     return self.RepackApexPayload(payload_dir, payload_key, signing_args)
 
-  def ExtractApexPayloadAndSignContents(self, apk_entries, apk_keys, payload_key):
+  def ExtractApexPayloadAndSignContents(self, apk_entries, apk_keys, payload_key, signing_args):
     """Extracts the payload image and signs the containing apk files."""
     if not os.path.exists(self.debugfs_path):
       raise ApexSigningError(
@@ -143,7 +143,12 @@ class ApexApkSigner(object):
 
     if self.sign_tool:
       logger.info('Signing payload contents in apex %s with %s', self.apex_path, self.sign_tool)
-      cmd = [self.sign_tool, '--avbtool', self.avbtool, payload_key, payload_dir]
+      # Pass avbtool to the custom signing tool
+      cmd = [self.sign_tool, '--avbtool', self.avbtool]
+      # Pass signing_args verbatim which will be forwarded to avbtool (e.g. --signing_helper=...)
+      if signing_args:
+        cmd.extend(['--signing_args', '"{}"'.format(signing_args)])
+      cmd.extend([payload_key, payload_dir])
       common.RunAndCheckOutput(cmd)
       has_signed_content = True
 
@@ -168,7 +173,7 @@ class ApexApkSigner(object):
       if os.path.isfile(path):
         os.remove(path)
       elif os.path.isdir(path):
-        shutil.rmtree(path)
+        shutil.rmtree(path, ignore_errors=True)
 
     # TODO(xunchang) the signing process can be improved by using
     # '--unsigned_payload_only'. But we need to parse the vbmeta earlier for

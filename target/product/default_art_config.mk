@@ -51,34 +51,37 @@ PRODUCT_BOOT_JARS += \
 # Note: core-icu4j is moved back to PRODUCT_BOOT_JARS in product_config.mk at a later stage.
 # Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_BOOT_JARS := \
+    com.android.adservices:framework-adservices \
+    com.android.adservices:framework-sdksandbox \
     com.android.appsearch:framework-appsearch \
-    com.android.auxiliary:framework-auxiliary \
+    com.android.bluetooth:framework-bluetooth \
     com.android.conscrypt:conscrypt \
     com.android.i18n:core-icu4j \
     com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
+    com.android.ondevicepersonalization:framework-ondevicepersonalization \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
     com.android.permission:framework-permission-s \
     com.android.scheduling:framework-scheduling \
     com.android.sdkext:framework-sdkextensions \
-    com.android.supplementalprocess:framework-supplementalprocess \
     com.android.tethering:framework-connectivity \
-    com.android.tethering:framework-connectivity-tiramisu \
+    com.android.tethering:framework-connectivity-t \
     com.android.tethering:framework-tethering \
     com.android.uwb:framework-uwb \
-    com.android.wifi:framework-wifi
+    com.android.wifi:framework-wifi \
 
 # List of system_server classpath jars delivered via apex.
 # Keep the list sorted by module names and then library names.
 # Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_SYSTEM_SERVER_JARS := \
+    com.android.adservices:service-adservices \
+    com.android.adservices:service-sdksandbox \
     com.android.appsearch:service-appsearch \
     com.android.art:service-art \
     com.android.media:service-media-s \
     com.android.permission:service-permission \
-    com.android.supplementalprocess:service-supplementalprocess \
 
 PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION += art/build/boot/boot-image-profile.txt
 
@@ -90,6 +93,7 @@ PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
 # Keep the list sorted by module names and then library names.
 # Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
+    com.android.bluetooth:service-bluetooth \
     com.android.os.statsd:service-statsd \
     com.android.scheduling:service-scheduling \
     com.android.tethering:service-connectivity \

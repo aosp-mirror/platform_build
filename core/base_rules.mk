@@ -33,6 +33,9 @@ ifeq ($(LOCAL_MODULE),)
 endif
 $(call verify-module-name)
 
+my_test_data :=
+my_test_config :=
+
 LOCAL_IS_HOST_MODULE := $(strip $(LOCAL_IS_HOST_MODULE))
 ifdef LOCAL_IS_HOST_MODULE
   ifneq ($(LOCAL_IS_HOST_MODULE),true)
@@ -587,10 +590,18 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
       my_init_rc := $(foreach rc,$(LOCAL_INIT_RC_$(my_32_64_bit_suffix)) $(LOCAL_INIT_RC),$(LOCAL_PATH)/$(rc))
     endif
     ifneq ($(strip $(my_init_rc)),)
-      # Make doesn't support recovery as an output partition, but some Soong modules installed in recovery
-      # have init.rc files that need to be installed alongside them. Manually handle the case where the
-      # output file is in the recovery partition.
-      my_init_rc_path := $(if $(filter $(TARGET_RECOVERY_ROOT_OUT)/%,$(my_module_path)),$(TARGET_RECOVERY_ROOT_OUT)/system/etc,$(TARGET_OUT$(partition_tag)_ETC))
+      # Make doesn't support recovery or ramdisk as an output partition,
+      # but some Soong modules installed in recovery or ramdisk
+      # have init.rc files that need to be installed alongside them.
+      # Manually handle the case where the
+      # output file is in the recovery or ramdisk partition.
+      ifneq (,$(filter $(TARGET_RECOVERY_ROOT_OUT)/%,$(my_module_path)))
+        my_init_rc_path := $(TARGET_RECOVERY_ROOT_OUT)/system/etc
+      else ifneq (,$(filter $(TARGET_RAMDISK_OUT)/%,$(my_module_path)))
+        my_init_rc_path := $(TARGET_RAMDISK_OUT)/system/etc
+      else
+        my_init_rc_path := $(TARGET_OUT$(partition_tag)_ETC)
+      endif
       my_init_rc_pairs := $(foreach rc,$(my_init_rc),$(rc):$(my_init_rc_path)/init/$(notdir $(rc)))
       my_init_rc_installed := $(foreach rc,$(my_init_rc_pairs),$(call word-colon,2,$(rc)))
 
@@ -710,6 +721,11 @@ ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
 endif
 ifdef LOCAL_MULTILIB
   multi_arch := true
+# These conditionals allow this functionality to be mimicked in Soong
+else ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+    multi_arch := true
+  endif
 endif
 
 ifdef multi_arch
@@ -875,6 +891,16 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
 endif  # LOCAL_UNINSTALLABLE_MODULE
 endif  # LOCAL_COMPATIBILITY_SUITE
 
+my_supported_variant :=
+ifeq ($(my_host_cross),true)
+  my_supported_variant := HOST_CROSS
+else
+  ifdef LOCAL_IS_HOST_MODULE
+    my_supported_variant := HOST
+  else
+    my_supported_variant := DEVICE
+  endif
+endif
 ###########################################################
 ## Add test module to ALL_DISABLED_PRESUBMIT_TESTS if LOCAL_PRESUBMIT_DISABLED is set to true.
 ###########################################################
@@ -981,6 +1007,9 @@ ALL_MODULES.$(my_register_name).SHARED_LIBS := \
 ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS := \
     $(ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS) $(LOCAL_SYSTEM_SHARED_LIBRARIES)
 
+ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES := \
+    $(ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES) $(LOCAL_RUNTIME_LIBRARIES)
+
 ifdef LOCAL_TEST_DATA
   # Export the list of targets that are handled as data inputs and required
   # by tests at runtime. The LOCAL_TEST_DATA format is generated from below
@@ -992,6 +1021,15 @@ ifdef LOCAL_TEST_DATA
       $(foreach f, $(LOCAL_TEST_DATA),\
         $(call word-colon,2,$(f))))
 endif
+
+ifdef LOCAL_TEST_DATA_BINS
+  ALL_MODULES.$(my_register_name).TEST_DATA_BINS := \
+    $(ALL_MODULES.$(my_register_name).TEST_DATA_BINS) $(LOCAL_TEST_DATA_BINS)
+endif
+
+ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
+  $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS) \
+  $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
 
 ##########################################################################
 ## When compiling against the VNDK, add the .vendor or .product suffix to

@@ -64,7 +64,7 @@ import verity_utils
 import ota_metadata_pb2
 
 from apex_utils import GetApexInfoFromTargetFiles
-from common import AddCareMapForAbOta
+from common import AddCareMapForAbOta, ZipDelete
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -170,16 +170,16 @@ def AddVendor(output_zip, recovery_img=None, boot_img=None):
     return img.name
 
   def output_sink(fn, data):
-    ofile = open(os.path.join(OPTIONS.input_tmp, "VENDOR", fn), "w")
-    ofile.write(data)
-    ofile.close()
+    output_file = os.path.join(OPTIONS.input_tmp, "VENDOR", fn)
+    with open(output_file, "wb") as ofile:
+      ofile.write(data)
 
     if output_zip:
       arc_name = "VENDOR/" + fn
       if arc_name in output_zip.namelist():
         OPTIONS.replace_updated_files_list.append(arc_name)
       else:
-        common.ZipWrite(output_zip, ofile.name, arc_name)
+        common.ZipWrite(output_zip, output_file, arc_name)
 
   board_uses_vendorimage = OPTIONS.info_dict.get(
       "board_uses_vendorimage") == "true"
@@ -783,6 +783,7 @@ def AddImagesToTargetFiles(filename):
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
   has_init_boot = OPTIONS.info_dict.get("init_boot") == "true"
   has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
+  has_vendor_kernel_boot = OPTIONS.info_dict.get("vendor_kernel_boot") == "true"
 
   # {vendor,odm,product,system_ext,vendor_dlkm,odm_dlkm, system_dlkm, system, system_other}.img
   # can be built from source, or  dropped into target_files.zip as a prebuilt blob.
@@ -867,6 +868,19 @@ def AddImagesToTargetFiles(filename):
         vendor_boot_image.WriteToDir(OPTIONS.input_tmp)
         if output_zip:
           vendor_boot_image.AddToZip(output_zip)
+
+  if has_vendor_kernel_boot:
+    banner("vendor_kernel_boot")
+    vendor_kernel_boot_image = common.GetVendorKernelBootImage(
+        "IMAGES/vendor_kernel_boot.img", "vendor_kernel_boot.img", OPTIONS.input_tmp,
+        "VENDOR_KERNEL_BOOT")
+    if vendor_kernel_boot_image:
+      partitions['vendor_kernel_boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                               "vendor_kernel_boot.img")
+      if not os.path.exists(partitions['vendor_kernel_boot']):
+        vendor_kernel_boot_image.WriteToDir(OPTIONS.input_tmp)
+        if output_zip:
+          vendor_kernel_boot_image.AddToZip(output_zip)
 
   recovery_image = None
   if has_recovery:
@@ -1027,16 +1041,17 @@ def OptimizeCompressedEntries(zipfile_path):
     with zipfile.ZipFile(zipfile_path, "r", allowZip64=True) as zfp:
       for zinfo in zfp.filelist:
         if not zinfo.filename.startswith("IMAGES/") and not zinfo.filename.startswith("META"):
-          pass
+          continue
         # Don't try to store userdata.img uncompressed, it's usually huge.
         if zinfo.filename.endswith("userdata.img"):
-          pass
+          continue
         if zinfo.compress_size > zinfo.file_size * 0.80 and zinfo.compress_type != zipfile.ZIP_STORED:
           entries_to_store.append(zinfo)
           zfp.extract(zinfo, tmpdir)
+    if len(entries_to_store) == 0:
+      return
     # Remove these entries, then re-add them as ZIP_STORED
-    common.RunAndCheckOutput(
-        ["zip", "-d", zipfile_path] + [entry.filename for entry in entries_to_store])
+    ZipDelete(zipfile_path, [entry.filename for entry in entries_to_store])
     with zipfile.ZipFile(zipfile_path, "a", allowZip64=True) as zfp:
       for entry in entries_to_store:
         zfp.write(os.path.join(tmpdir, entry.filename), entry.filename, compress_type=zipfile.ZIP_STORED)

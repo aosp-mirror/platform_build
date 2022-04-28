@@ -40,6 +40,8 @@ test_tools := $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
   $(HOST_OUT_EXECUTABLES)/$(test_suite_tradefed) \
   $(test_suite_readme)
 
+$(foreach f,$(test_suite_readme),$(if $(strip $(ALL_TARGETS.$(f).META_LIC)),,$(eval ALL_TARGETS.$(f).META_LIC := $(module_license_metadata))))
+
 test_tools += $(test_suite_tools)
 
 # The JDK to package into the test suite zip file.  Always package the linux JDK.
@@ -51,8 +53,23 @@ $(test_suite_jdk): $(shell find $(test_suite_jdk_dir) -type f | sort)
 $(test_suite_jdk): $(SOONG_ZIP)
 	$(SOONG_ZIP) -o $@ -P $(PRIVATE_SUBDIR)/jdk -C $(PRIVATE_JDK_DIR) -D $(PRIVATE_JDK_DIR)
 
+$(call declare-license-metadata,$(test_suite_jdk),SPDX-license-identifier-GPL-2.0-with-classpath-exception,restricted,\
+  $(test_suite_jdk_dir)/legal/java.base/LICENSE,JDK,prebuilts/jdk/$(notdir $(patsubst %/,%,$(dir $(test_suite_jdk_dir)))))
+
+
 # Include host shared libraries
 host_shared_libs := $(call copy-many-files, $(COMPATIBILITY.$(test_suite_name).HOST_SHARED_LIBRARY.FILES))
+
+$(if $(strip $(host_shared_libs)),\
+  $(foreach p,$(COMPATIBILITY.$(test_suite_name).HOST_SHARED_LIBRARY.FILES),\
+    $(eval _src := $(call word-colon,1,$(p)))\
+    $(eval _dst := $(call word-colon,2,$(p)))\
+    $(if $(strip $(ALL_TARGETS.$(_src).META_LIC)),\
+      $(eval ALL_TARGETS.$(_dst).META_LIC := $(ALL_TARGETS.$(_src).META_LIC)),\
+      $(warning $(_src) has no license metadata for $(_dst))\
+    )\
+  )\
+)
 
 compatibility_zip_deps := \
   $(test_artifacts) \
@@ -63,19 +80,13 @@ compatibility_zip_deps := \
   $(MERGE_ZIPS) \
   $(SOONG_ZIP) \
   $(host_shared_libs) \
+  $(test_suite_extra_deps) \
 
 compatibility_zip_resources := $(out_dir)/tools $(out_dir)/testcases $(out_dir)/lib $(out_dir)/lib64
 
 # Test Suite NOTICE files
 test_suite_notice_txt := $(out_dir)/NOTICE.txt
 test_suite_notice_html := $(out_dir)/NOTICE.html
-
-$(eval $(call combine-notice-files, html, \
-         $(test_suite_notice_txt), \
-         $(test_suite_notice_html), \
-         "Notices for files contained in the test suites filesystem image in this directory:", \
-         $(HOST_OUT_NOTICE_FILES) $(TARGET_OUT_NOTICE_FILES), \
-         $(compatibility_zip_deps)))
 
 compatibility_zip_deps += $(test_suite_notice_txt)
 compatibility_zip_resources += $(test_suite_notice_txt)
@@ -110,6 +121,20 @@ $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 	$(SOONG_ZIP) -d -o $(PRIVATE_tests_list_zip) -j -f $(PRIVATE_tests_list)
 	rm -f $(PRIVATE_tests_list)
 
+$(call declare-0p-target,$(compatibility_tests_list_zip),)
+
+$(call declare-1p-container,$(compatibility_zip),)
+$(call declare-container-license-deps,$(compatibility_zip),$(compatibility_zip_deps) $(test_suite_jdk), $(out_dir)/:/)
+
+$(eval $(call html-notice-rule,$(test_suite_notice_html),"Test suites","Notices for files contained in the test suites filesystem image:",$(compatibility_zip),$(compatibility_zip)))
+$(eval $(call text-notice-rule,$(test_suite_notice_txt),"Test suites","Notices for files contained in the test suites filesystem image:",$(compatibility_zip),$(compatibility_zip)))
+
+$(call declare-0p-target,$(test_suite_notice_html))
+$(call declare-0p-target,$(test_suite_notice_txt))
+
+$(call declare-1p-copy-files,$(test_suite_dynamic_config),)
+$(call declare-1p-copy-files,$(test_suite_prebuilt_tools),)
+
 # Reset all input variables
 test_suite_name :=
 test_suite_tradefed :=
@@ -120,3 +145,4 @@ test_suite_tools :=
 test_suite_jdk :=
 test_suite_jdk_dir :=
 host_shared_libs :=
+test_suite_extra_deps :=

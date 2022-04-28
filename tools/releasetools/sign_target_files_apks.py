@@ -214,6 +214,7 @@ AVB_FOOTER_ARGS_BY_PARTITION = {
     'pvmfw': 'avb_pvmfw_add_hash_footer_args',
     'vendor': 'avb_vendor_add_hashtree_footer_args',
     'vendor_boot': 'avb_vendor_boot_add_hash_footer_args',
+    'vendor_kernel_boot': 'avb_vendor_kernel_boot_add_hash_footer_args',
     'vendor_dlkm': "avb_vendor_dlkm_add_hashtree_footer_args",
     'vbmeta': 'avb_vbmeta_args',
     'vbmeta_system': 'avb_vbmeta_system_args',
@@ -687,6 +688,39 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             misc_info['avb_avbtool'], signing_key)
         print("    Rewriting AVB public key of system_other in /product")
         common.ZipWrite(output_tf_zip, public_key, filename)
+
+    # Updates pvmfw embedded public key with the virt APEX payload key.
+    elif filename == "PREBUILT_IMAGES/pvmfw.img":
+      # Find the name of the virt APEX in the target files.
+      namelist = input_tf_zip.namelist()
+      apex_gen = (GetApexFilename(f) for f in namelist if IsApexFile(f))
+      virt_apex_re = re.compile("^com\.([^\.]+\.)?android\.virt\.apex$")
+      virt_apex = next((a for a in apex_gen if virt_apex_re.match(a)), None)
+      if not virt_apex:
+        print("Removing %s from ramdisk: virt APEX not found" % filename)
+      else:
+        print("Replacing %s embedded key with %s key" % (filename, virt_apex))
+        # Get the current and new embedded keys.
+        payload_key, container_key, sign_tool = apex_keys[virt_apex]
+        new_pubkey_path = common.ExtractAvbPublicKey(
+            misc_info['avb_avbtool'], payload_key)
+        with open(new_pubkey_path, 'rb') as f:
+          new_pubkey = f.read()
+        pubkey_info = copy.copy(
+            input_tf_zip.getinfo("PREBUILT_IMAGES/pvmfw_embedded.avbpubkey"))
+        old_pubkey = input_tf_zip.read(pubkey_info.filename)
+        # Validate the keys and image.
+        if len(old_pubkey) != len(new_pubkey):
+          raise common.ExternalError("pvmfw embedded public key size mismatch")
+        pos = data.find(old_pubkey)
+        if pos == -1:
+          raise common.ExternalError("pvmfw embedded public key not found")
+        # Replace the key and copy new files.
+        new_data = data[:pos] + new_pubkey + data[pos+len(old_pubkey):]
+        common.ZipWriteStr(output_tf_zip, out_info, new_data)
+        common.ZipWriteStr(output_tf_zip, pubkey_info, new_pubkey)
+    elif filename == "PREBUILT_IMAGES/pvmfw_embedded.avbpubkey":
+      pass
 
     # Should NOT sign boot-debug.img.
     elif filename in (
@@ -1244,6 +1278,10 @@ def BuildVendorPartitions(output_zip_path):
   logger.info("Building vendor partitions using vendor otatools.")
   vendor_tempdir = common.UnzipTemp(output_zip_path, [
       "META/*",
+      "SYSTEM/build.prop",
+      "RECOVERY/*",
+      "BOOT/*",
+      "OTA/",
   ] + ["{}/*".format(p.upper()) for p in OPTIONS.vendor_partitions])
 
   # Disable various partitions that build based on misc_info fields.
@@ -1252,33 +1290,61 @@ def BuildVendorPartitions(output_zip_path):
   # otatools if necessary.
   vendor_misc_info_path = os.path.join(vendor_tempdir, "META/misc_info.txt")
   vendor_misc_info = common.LoadDictionaryFromFile(vendor_misc_info_path)
-  vendor_misc_info["no_boot"] = "true"  # boot
-  vendor_misc_info["vendor_boot"] = "false"  # vendor_boot
-  vendor_misc_info["no_recovery"] = "true"  # recovery
+  # Ignore if not rebuilding recovery
+  if not OPTIONS.rebuild_recovery:
+    vendor_misc_info["no_boot"] = "true"  # boot
+    vendor_misc_info["vendor_boot"] = "false"  # vendor_boot
+    vendor_misc_info["no_recovery"] = "true"  # recovery
+    vendor_misc_info["avb_enable"] = "false"  # vbmeta
+
   vendor_misc_info["board_bpt_enable"] = "false"  # partition-table
   vendor_misc_info["has_dtbo"] = "false"  # dtbo
   vendor_misc_info["has_pvmfw"] = "false"  # pvmfw
   vendor_misc_info["avb_custom_images_partition_list"] = ""  # custom images
-  vendor_misc_info["avb_enable"] = "false"  # vbmeta
+  vendor_misc_info["avb_building_vbmeta_image"] = "false" # skip building vbmeta
   vendor_misc_info["use_dynamic_partitions"] = "false"  # super_empty
   vendor_misc_info["build_super_partition"] = "false"  # super split
   with open(vendor_misc_info_path, "w") as output:
     for key in sorted(vendor_misc_info):
       output.write("{}={}\n".format(key, vendor_misc_info[key]))
 
+  # Disable system partition by a placeholder of IMAGES/system.img,
+  # instead of removing SYSTEM folder.
+  # Because SYSTEM/build.prop is still needed for:
+  #   add_img_to_target_files.CreateImage ->
+  #   common.BuildInfo ->
+  #   common.BuildInfo.CalculateFingerprint
+  vendor_images_path = os.path.join(vendor_tempdir, "IMAGES")
+  if not os.path.exists(vendor_images_path):
+    os.makedirs(vendor_images_path)
+  with open(os.path.join(vendor_images_path, "system.img"), "w") as output:
+    pass
+
   # Disable care_map.pb as not all ab_partitions are available when
   # vendor otatools regenerates vendor images.
-  os.remove(os.path.join(vendor_tempdir, "META/ab_partitions.txt"))
+  if os.path.exists(os.path.join(vendor_tempdir, "META/ab_partitions.txt")):
+    os.remove(os.path.join(vendor_tempdir, "META/ab_partitions.txt"))
+  # Disable RADIO images
+  if os.path.exists(os.path.join(vendor_tempdir, "META/pack_radioimages.txt")):
+    os.remove(os.path.join(vendor_tempdir, "META/pack_radioimages.txt"))
 
   # Build vendor images using vendor otatools.
-  vendor_otatools_dir = common.MakeTempDir(prefix="vendor_otatools_")
-  common.UnzipToDir(OPTIONS.vendor_otatools, vendor_otatools_dir)
+  # Accept either a zip file or extracted directory.
+  if os.path.isfile(OPTIONS.vendor_otatools):
+    vendor_otatools_dir = common.MakeTempDir(prefix="vendor_otatools_")
+    common.UnzipToDir(OPTIONS.vendor_otatools, vendor_otatools_dir)
+  else:
+    vendor_otatools_dir = OPTIONS.vendor_otatools
   cmd = [
       os.path.join(vendor_otatools_dir, "bin", "add_img_to_target_files"),
       "--is_signing",
+      "--add_missing",
       "--verbose",
       vendor_tempdir,
   ]
+  if OPTIONS.rebuild_recovery:
+    cmd.insert(4, "--rebuild_recovery")
+
   common.RunAndCheckOutput(cmd, verbose=True)
 
   logger.info("Writing vendor partitions to output archive.")
@@ -1286,8 +1352,20 @@ def BuildVendorPartitions(output_zip_path):
       output_zip_path, "a", compression=zipfile.ZIP_DEFLATED,
       allowZip64=True) as output_zip:
     for p in OPTIONS.vendor_partitions:
-      path = "IMAGES/{}.img".format(p)
-      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, path), path)
+      img_file_path = "IMAGES/{}.img".format(p)
+      map_file_path = "IMAGES/{}.map".format(p)
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, img_file_path), img_file_path)
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, map_file_path), map_file_path)
+    # copy recovery.img, boot.img, recovery patch & install.sh
+    if OPTIONS.rebuild_recovery:
+      recovery_img = "IMAGES/recovery.img"
+      boot_img = "IMAGES/boot.img"
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, recovery_img), recovery_img)
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, boot_img), boot_img)
+      recovery_patch_path = "VENDOR/recovery-from-boot.p"
+      recovery_sh_path = "VENDOR/bin/install-recovery.sh"
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, recovery_patch_path), recovery_patch_path)
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, recovery_sh_path), recovery_sh_path)
 
 
 def main(argv):
@@ -1530,8 +1608,5 @@ def main(argv):
 if __name__ == '__main__':
   try:
     main(sys.argv[1:])
-  except common.ExternalError as e:
-    print("\n   ERROR: %s\n" % (e,))
-    raise
   finally:
     common.Cleanup()
