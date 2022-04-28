@@ -18,6 +18,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -107,7 +108,7 @@ func main() {
 		sources:         *sources,
 		stripPrefix:     *stripPrefix,
 	}
-	_, err := traceRestricted(ctx, os.Stdout, os.Stderr, flag.Args()...)
+	_, err := traceRestricted(ctx, os.Stdout, os.Stderr, compliance.FS, flag.Args()...)
 	if err != nil {
 		if err == failNoneRequested {
 			flag.Usage()
@@ -119,7 +120,7 @@ func main() {
 }
 
 // traceRestricted implements the rtrace utility.
-func traceRestricted(ctx *context, stdout, stderr io.Writer, files ...string) (*compliance.LicenseGraph, error) {
+func traceRestricted(ctx *context, stdout, stderr io.Writer, rootFS fs.FS, files ...string) (*compliance.LicenseGraph, error) {
 	if len(files) < 1 {
 		return nil, failNoneRequested
 	}
@@ -129,7 +130,7 @@ func traceRestricted(ctx *context, stdout, stderr io.Writer, files ...string) (*
 	}
 
 	// Read the license graph from the license metadata files (*.meta_lic).
-	licenseGraph, err := compliance.ReadLicenseGraph(os.DirFS("."), stderr, files)
+	licenseGraph, err := compliance.ReadLicenseGraph(rootFS, stderr, files)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to read license metadata file(s) %q: %v\n", files, err)
 	}

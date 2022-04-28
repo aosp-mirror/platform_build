@@ -128,6 +128,8 @@ endif
 	        cat $(file) >> $$@;\
 	    fi;)
 	$(hide) echo "# end of file" >> $$@
+
+$(call declare-0p-target,$(2))
 endef
 
 # -----------------------------------------------------------------
@@ -262,6 +264,7 @@ $(gen_from_buildinfo_sh): $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) | $(B
 	        BOARD_BUILD_SYSTEM_ROOT_IMAGE="$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)" \
 	        BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT="$(BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT)" \
 	        PLATFORM_VERSION="$(PLATFORM_VERSION)" \
+	        PLATFORM_DISPLAY_VERSION="$(PLATFORM_DISPLAY_VERSION)" \
 	        PLATFORM_VERSION_LAST_STABLE="$(PLATFORM_VERSION_LAST_STABLE)" \
 	        PLATFORM_SECURITY_PATCH="$(PLATFORM_SECURITY_PATCH)" \
 	        PLATFORM_BASE_OS="$(PLATFORM_BASE_OS)" \
@@ -307,10 +310,6 @@ _prop_vars_ += \
     PRODUCT_VENDOR_PROPERTIES
 endif
 
-_blacklist_names_ := \
-    $(PRODUCT_SYSTEM_PROPERTY_BLACKLIST) \
-    ro.product.first_api_level
-
 INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
 
 $(eval $(call build-properties,\
@@ -318,9 +317,11 @@ $(eval $(call build-properties,\
     $(INSTALLED_BUILD_PROP_TARGET),\
     $(_prop_files_),\
     $(_prop_vars_),\
-    $(_blacklist_names_),\
+    $(PRODUCT_SYSTEM_PROPERTY_BLACKLIST),\
     $(empty),\
     $(empty)))
+
+$(eval $(call declare-1p-target,$(INSTALLED_BUILD_PROP_TARGET)))
 
 # -----------------------------------------------------------------
 # vendor/build.prop
@@ -359,6 +360,8 @@ $(eval $(call build-properties,\
     $(PRODUCT_VENDOR_PROPERTY_BLACKLIST),\
     $(empty),\
     $(empty)))
+
+$(eval $(call declare-1p-target,$(INSTALLED_VENDOR_BUILD_PROP_TARGET)))
 
 # -----------------------------------------------------------------
 # product/etc/build.prop
@@ -412,6 +415,8 @@ $(eval $(call build-properties,\
     $(_footers_),\
     $(_skip_common_properties)))
 
+$(eval $(call declare-1p-target,$(INSTALLED_PRODUCT_BUILD_PROP_TARGET)))
+
 _skip_common_properties :=
 
 # ----------------------------------------------------------------
@@ -437,6 +442,8 @@ $(eval $(call build-properties,\
     $(empty),\
     $(empty)))
 
+$(eval $(call declare-1p-target,$(INSTALLED_ODM_BUILD_PROP_TARGET)))
+
 # ----------------------------------------------------------------
 # vendor_dlkm/etc/build.prop
 #
@@ -450,6 +457,8 @@ $(eval $(call build-properties,\
     $(empty),\
     $(empty),\
     $(empty)))
+
+$(eval $(call declare-1p-target,$(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET)))
 
 # ----------------------------------------------------------------
 # odm_dlkm/etc/build.prop
@@ -465,6 +474,8 @@ $(eval $(call build-properties,\
     $(empty),\
     $(empty)))
 
+$(eval $(call declare-1p-target,$(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET)))
+
 # ----------------------------------------------------------------
 # system_dlkm/build.prop
 #
@@ -478,6 +489,8 @@ $(eval $(call build-properties,\
     $(empty),\
     $(empty),\
     $(empty)))
+
+$(eval $(call declare-1p-target,$(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET)))
 
 # -----------------------------------------------------------------
 # system_ext/etc/build.prop
@@ -500,6 +513,8 @@ $(eval $(call build-properties,\
     $(empty),\
     $(empty)))
 
+$(eval $(call declare-1p-target,$(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET)))
+
 # ----------------------------------------------------------------
 # ramdisk/boot/etc/build.prop
 #
@@ -514,3 +529,5 @@ $(eval $(call build-properties,\
     $(empty),\
     $(empty),\
     $(empty)))
+
+$(eval $(call declare-1p-target,$(INSTALLED_RAMDISK_BUILD_PROP_TARGET)))
