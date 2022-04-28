@@ -1,7 +1,6 @@
 """Event log tags generation rule"""
 
 load("@bazel_skylib//lib:paths.bzl", "paths")
-load("@rules_android//rules:rules.bzl", "android_library")
 
 def _event_log_tags_impl(ctx):
     out_files = []
@@ -22,7 +21,7 @@ def _event_log_tags_impl(ctx):
         )
     return [DefaultInfo(files = depset(out_files))]
 
-_event_log_tags = rule(
+event_log_tags = rule(
     implementation = _event_log_tags_impl,
     attrs = {
         "srcs": attr.label_list(allow_files = [".logtags"], mandatory = True),
@@ -34,14 +33,3 @@ _event_log_tags = rule(
         ),
     },
 )
-
-def event_log_tags(name, srcs):
-    _event_log_tags(
-        name = name + "_gen_logtags",
-        srcs = srcs,
-    )
-
-    android_library(
-        name = name,
-        srcs = [name + "_gen_logtags"],
-    )

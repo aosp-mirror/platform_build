@@ -141,7 +141,7 @@ func main() {
 
 	var deps []string
 
-	ctx := &context{ofile, os.Stderr, os.DirFS("."), *includeTOC, *product, *stripPrefix, *title, &deps}
+	ctx := &context{ofile, os.Stderr, compliance.FS, *includeTOC, *product, *stripPrefix, *title, &deps}
 
 	err := htmlNotice(ctx, flag.Args()...)
 	if err != nil {
