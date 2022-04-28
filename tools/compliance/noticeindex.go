@@ -311,6 +311,13 @@ func (ni *NoticeIndex) HashText(h hash) []byte {
 func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) string {
 	for _, text := range noticeFor.LicenseTexts() {
 		if !strings.Contains(text, ":") {
+			if ni.hash[text].key != h.key {
+				continue
+			}
+			ln := ni.checkMetadataForLicenseText(noticeFor, text)
+			if len(ln) > 0 {
+				return ln
+			}
 			continue
 		}
 
@@ -341,6 +348,17 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) string {
 			for _, licenseText := range noticeFor.LicenseTexts() {
 				if !strings.HasPrefix(licenseText, "prebuilts/") {
 					continue
+				}
+				if !strings.Contains(licenseText, ":") {
+					if ni.hash[licenseText].key != h.key {
+						continue
+					}
+				} else {
+					fields := strings.SplitN(licenseText, ":", 2)
+					fname := fields[0]
+					if ni.hash[fname].key != h.key {
+						continue
+					}
 				}
 				for r, prefix := range SafePrebuiltPrefixes {
 					match := r.FindString(licenseText)
@@ -389,6 +407,10 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) string {
 	if li > 0 {
 		n = n[li+1:]
 	}
+	fi := strings.Index(n, "@")
+	if fi > 0 {
+		n = n[:fi]
+	}
 	return n
 }
 
@@ -401,65 +423,113 @@ func (ni *NoticeIndex) checkMetadata(noticeFor *TargetNode) string {
 			}
 			return name
 		}
-		f, err := ni.rootFS.Open(filepath.Join(p, "METADATA"))
+		name, err := ni.checkMetadataFile(filepath.Join(p, "METADATA"))
 		if err != nil {
 			ni.projectName[p] = noProjectName
 			continue
 		}
-		name := ""
-		description := ""
-		version := ""
-		s := bufio.NewScanner(f)
-		for s.Scan() {
-			line := s.Text()
-			m := nameRegexp.FindStringSubmatch(line)
-			if m != nil {
-				if 1 < len(m) && m[1] != "" {
-					name = m[1]
-				}
-				if version != "" {
-					break
-				}
-				continue
-			}
-			m = versionRegexp.FindStringSubmatch(line)
-			if m != nil {
-				if 1 < len(m) && m[1] != "" {
-					version = m[1]
-				}
-				if name != "" {
-					break
-				}
-				continue
-			}
-			m = descRegexp.FindStringSubmatch(line)
-			if m != nil {
-				if 1 < len(m) && m[1] != "" {
-					description = m[1]
-				}
-			}
+		if len(name) == 0 {
+			ni.projectName[p] = noProjectName
+			continue
 		}
-		_ = s.Err()
-		_ = f.Close()
-		if name != "" {
-			if version != "" {
-				if version[0] == 'v' || version[0] == 'V' {
-					ni.projectName[p] = name + "_" + version
-				} else {
-					ni.projectName[p] = name + "_v_" + version
-				}
-			} else {
-				ni.projectName[p] = name
-			}
-			return ni.projectName[p]
-		}
-		if description != "" {
-			ni.projectName[p] = description
-			return ni.projectName[p]
-		}
-		ni.projectName[p] = noProjectName
+		ni.projectName[p] = name
+		return name
 	}
 	return ""
+}
+
+// checkMetadataForLicenseText
+func (ni *NoticeIndex) checkMetadataForLicenseText(noticeFor *TargetNode, licenseText string) string {
+	p := ""
+	for _, proj := range noticeFor.Projects() {
+		if strings.HasPrefix(licenseText, proj) {
+			p = proj
+		}
+	}
+	if len(p) == 0 {
+		p = filepath.Dir(licenseText)
+		for {
+			fi, err := fs.Stat(ni.rootFS, filepath.Join(p, ".git"))
+			if err == nil && fi.IsDir() {
+				break
+			}
+			if strings.Contains(p, "/") && p != "/" {
+				p = filepath.Dir(p)
+				continue
+			}
+			return ""
+		}
+	}
+	if name, ok := ni.projectName[p]; ok {
+		if name == noProjectName {
+			return ""
+		}
+		return name
+	}
+	name, err := ni.checkMetadataFile(filepath.Join(p, "METADATA"))
+	if err == nil && len(name) > 0 {
+		ni.projectName[p] = name
+		return name
+	}
+	ni.projectName[p] = noProjectName
+	return ""
+}
+
+// checkMetadataFile tries to look up a library name from a METADATA file at `path`.
+func (ni *NoticeIndex) checkMetadataFile(path string) (string, error) {
+	f, err := ni.rootFS.Open(path)
+	if err != nil {
+		return "", err
+	}
+	name := ""
+	description := ""
+	version := ""
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		line := s.Text()
+		m := nameRegexp.FindStringSubmatch(line)
+		if m != nil {
+			if 1 < len(m) && m[1] != "" {
+				name = m[1]
+			}
+			if version != "" {
+				break
+			}
+			continue
+		}
+		m = versionRegexp.FindStringSubmatch(line)
+		if m != nil {
+			if 1 < len(m) && m[1] != "" {
+				version = m[1]
+			}
+			if name != "" {
+				break
+			}
+			continue
+		}
+		m = descRegexp.FindStringSubmatch(line)
+		if m != nil {
+			if 1 < len(m) && m[1] != "" {
+				description = m[1]
+			}
+		}
+	}
+	_ = s.Err()
+	_ = f.Close()
+	if name != "" {
+		if version != "" {
+			if version[0] == 'v' || version[0] == 'V' {
+				return name + "_" + version, nil
+			} else {
+				return name + "_v_" + version, nil
+			}
+		}
+		return name, nil
+	}
+	if description != "" {
+		return description, nil
+	}
+	return "", nil
 }
 
 // addText reads and indexes the content of a license text file.
