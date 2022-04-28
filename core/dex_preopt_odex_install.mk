@@ -272,11 +272,13 @@ my_dexpreopt_images :=
 my_dexpreopt_images_deps :=
 my_dexpreopt_image_locations_on_host :=
 my_dexpreopt_image_locations_on_device :=
+# Infix can be 'boot' or 'art'. Soong creates a set of variables for Make, one
+# for each boot image (primary and the framework extension). The only reason why
+# the primary image is exposed to Make is testing (art gtests) and benchmarking
+# (art golem benchmarks). Install rules that use those variables are in
+# dex_preopt_libart.mk. Here for dexpreopt purposes the infix is always 'boot'.
 my_dexpreopt_infix := boot
 my_create_dexpreopt_config :=
-ifeq (true, $(DEXPREOPT_USE_ART_IMAGE))
-  my_dexpreopt_infix := art
-endif
 
 ifdef LOCAL_DEX_PREOPT
   ifeq (,$(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
