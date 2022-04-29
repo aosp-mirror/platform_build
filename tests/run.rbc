@@ -81,6 +81,15 @@ assert_eq("/foo/baz", rblf.abspath("/foo/bar/../baz"))
 assert_eq(cwd+"/foo/bar "+cwd+"/foo/baz", rblf.abspath("foo/bar foo/baz"))
 assert_eq("/baz", rblf.abspath("/../../../../../../../../../../../../../../../../baz"))
 
+assert_eq("foo", rblf.first_word("foo bar"))
+assert_eq("foo", rblf.first_word(["foo", "bar"]))
+assert_eq("", rblf.first_word(""))
+assert_eq("", rblf.first_word([]))
+assert_eq("bar", rblf.last_word("foo bar"))
+assert_eq("bar", rblf.last_word(["foo", "bar"]))
+assert_eq("", rblf.last_word(""))
+assert_eq("", rblf.last_word([]))
+
 assert_eq(
     ["build/make/tests/board.rbc", "build/make/tests/board_input_vars.rbc"],
     rblf.expand_wildcard("build/make/tests/board*.rbc")
