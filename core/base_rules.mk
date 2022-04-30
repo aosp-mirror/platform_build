@@ -20,7 +20,11 @@ $(call record-module-type,base_rules)
 # Users can define base-rules-hook in their buildspec.mk to perform
 # arbitrary operations as each module is included.
 ifdef base-rules-hook
-$(if $(base-rules-hook),)
+  ifndef _has_warned_about_base_rules_hook
+    $(warning base-rules-hook is deprecated, please remove usages of it and/or convert to Soong.)
+    _has_warned_about_base_rules_hook := true
+  endif
+  $(if $(base-rules-hook),)
 endif
 
 ###########################################################
