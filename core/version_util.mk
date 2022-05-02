@@ -56,36 +56,34 @@ MAX_PLATFORM_VERSION :=
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
 
+PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
 ifndef PLATFORM_VERSION_CODENAME
-  PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
-  ifndef PLATFORM_VERSION_CODENAME
-    # PLATFORM_VERSION_CODENAME falls back to TARGET_PLATFORM_VERSION
-    PLATFORM_VERSION_CODENAME := $(TARGET_PLATFORM_VERSION)
-  endif
-
-  # This is all of the *active* development codenames.
-  # This confusing name is needed because
-  # all_codenames has been baked into build.prop for ages.
-  #
-  # Should be either the same as PLATFORM_VERSION_CODENAME or a comma-separated
-  # list of additional codenames after PLATFORM_VERSION_CODENAME.
-  PLATFORM_VERSION_ALL_CODENAMES :=
-
-  # Build a list of all active code names. Avoid duplicates, and stop when we
-  # reach a codename that matches PLATFORM_VERSION_CODENAME (anything beyond
-  # that is not included in our build).
-  _versions_in_target := \
-    $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
-  $(foreach version,$(_versions_in_target),\
-    $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
-    $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
-      $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
-
-  # And convert from space separated to comma separated.
-  PLATFORM_VERSION_ALL_CODENAMES := \
-    $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_CODENAMES)))
-
+  # PLATFORM_VERSION_CODENAME falls back to TARGET_PLATFORM_VERSION
+  PLATFORM_VERSION_CODENAME := $(TARGET_PLATFORM_VERSION)
 endif
+
+# This is all of the *active* development codenames.
+# This confusing name is needed because
+# all_codenames has been baked into build.prop for ages.
+#
+# Should be either the same as PLATFORM_VERSION_CODENAME or a comma-separated
+# list of additional codenames after PLATFORM_VERSION_CODENAME.
+PLATFORM_VERSION_ALL_CODENAMES :=
+
+# Build a list of all active code names. Avoid duplicates, and stop when we
+# reach a codename that matches PLATFORM_VERSION_CODENAME (anything beyond
+# that is not included in our build).
+_versions_in_target := \
+  $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
+$(foreach version,$(_versions_in_target),\
+  $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
+  $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
+    $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
+
+# And convert from space separated to comma separated.
+PLATFORM_VERSION_ALL_CODENAMES := \
+  $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_CODENAMES)))
+
 .KATI_READONLY := \
   PLATFORM_VERSION_CODENAME \
   PLATFORM_VERSION_ALL_CODENAMES
