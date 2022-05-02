@@ -25,7 +25,6 @@ PARSE_TIME_MAKE_GOALS := \
 	cts \
 	custom_images \
 	dicttool_aosp \
-	dump-products \
 	eng \
 	oem_image \
 	online-system-api-sdk-docs \

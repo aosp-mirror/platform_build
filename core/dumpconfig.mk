@@ -117,7 +117,6 @@ DUMPCONFIG_SKIP_VARS := \
 	9 \
 	LOCAL_PATH \
 	MAKEFILE_LIST \
-	PARENT_PRODUCT_FILES \
 	current_mk \
 	_eiv_ev \
 	_eiv_i \
