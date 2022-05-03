@@ -230,7 +230,6 @@ endif
 
 ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
   RBC_PRODUCT_CONFIG := true
-  RBC_BOARD_CONFIG := true
 endif
 
 ifndef RBC_PRODUCT_CONFIG
