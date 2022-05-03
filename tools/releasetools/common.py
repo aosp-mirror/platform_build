@@ -1188,10 +1188,14 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
     return " ".join(sorted(combined))
 
   if (framework_dict.get("use_dynamic_partitions") !=
-          "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
+        "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
     raise ValueError("Both dictionaries must have use_dynamic_partitions=true")
 
   merged_dict = {"use_dynamic_partitions": "true"}
+  # For keys-value pairs that are the same, copy to merged dict
+  for key in vendor_dict.keys():
+    if key in framework_dict and framework_dict[key] == vendor_dict[key]:
+      merged_dict[key] = vendor_dict[key]
 
   merged_dict["dynamic_partition_list"] = uniq_concat(
       framework_dict.get("dynamic_partition_list", ""),
