@@ -693,6 +693,7 @@ def IsZucchiniCompatible(source_file: str, target_file: str):
       if os.path.exists(entry_path):
         with open(entry_path, "r") as fp:
           return fp.read()
-      else:
-        return ""
-  return ReadEntry(source_file, _ZUCCHINI_CONFIG_ENTRY_NAME) == ReadEntry(target_file, _ZUCCHINI_CONFIG_ENTRY_NAME)
+    return False
+  sourceEntry = ReadEntry(source_file, _ZUCCHINI_CONFIG_ENTRY_NAME)
+  targetEntry = ReadEntry(target_file, _ZUCCHINI_CONFIG_ENTRY_NAME)
+  return sourceEntry and targetEntry and sourceEntry == targetEntry
