@@ -1208,6 +1208,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         metadata.postcondition.partition_state)
 
   if not ota_utils.IsZucchiniCompatible(source_file, target_file):
+    logger.warning(
+        "Builds doesn't support zucchini, or source/target don't have compatible zucchini versions. Disabling zucchini.")
     OPTIONS.enable_zucchini = False
 
   additional_args += ["--enable_zucchini",
