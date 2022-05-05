@@ -395,7 +395,7 @@ function addcompletions()
     fi
 
     local completion_files=(
-      system/core/adb/adb.bash
+      packages/modules/adb/adb.bash
       system/core/fastboot/fastboot.bash
       tools/asuite/asuite.sh
     )
@@ -404,7 +404,9 @@ function addcompletions()
     # ENVSETUP_NO_COMPLETION=adb # -> disable adb completion
     # ENVSETUP_NO_COMPLETION=adb:bit # -> disable adb and bit completion
     for f in ${completion_files[*]}; do
-        if [ -f "$f" ] && should_add_completion "$f"; then
+        if [ ! -f "$f" ]; then
+          echo "Warning: completion file $f not found"
+        elif should_add_completion "$f"; then
             . $f
         fi
     done
