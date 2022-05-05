@@ -234,10 +234,7 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
-# TODO(colefaust) change this if to RBC_PRODUCT_CONFIG when
-# the board configuration is known to work on everything
-# the product config works on.
-ifndef RBC_BOARD_CONFIG
+ifndef RBC_PRODUCT_CONFIG
 include $(board_config_mk)
 else
   $(shell mkdir -p $(OUT_DIR)/rbc)

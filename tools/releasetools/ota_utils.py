@@ -22,7 +22,8 @@ import zipfile
 import ota_metadata_pb2
 from common import (ZipDelete, ZipClose, OPTIONS, MakeTempFile,
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
-                    SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps)
+                    SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps,
+                    GetRamdiskFormat)
 
 logger = logging.getLogger(__name__)
 
@@ -371,15 +372,18 @@ def ComputeRuntimeBuildInfos(default_build_info, boot_variable_values):
     for partition in PARTITIONS_WITH_BUILD_PROP:
       partition_prop_key = "{}.build.prop".format(partition)
       input_file = info_dict[partition_prop_key].input_file
+      ramdisk = GetRamdiskFormat(info_dict)
       if isinstance(input_file, zipfile.ZipFile):
         with zipfile.ZipFile(input_file.filename, allowZip64=True) as input_zip:
           info_dict[partition_prop_key] = \
               PartitionBuildProps.FromInputFile(input_zip, partition,
-                                                placeholder_values)
+                                                placeholder_values,
+                                                ramdisk)
       else:
         info_dict[partition_prop_key] = \
             PartitionBuildProps.FromInputFile(input_file, partition,
-                                              placeholder_values)
+                                              placeholder_values,
+                                              ramdisk)
     info_dict["build.prop"] = info_dict["system.build.prop"]
     build_info_set.add(BuildInfo(info_dict, default_build_info.oem_dicts))
 
@@ -693,6 +697,7 @@ def IsZucchiniCompatible(source_file: str, target_file: str):
       if os.path.exists(entry_path):
         with open(entry_path, "r") as fp:
           return fp.read()
-      else:
-        return ""
-  return ReadEntry(source_file, _ZUCCHINI_CONFIG_ENTRY_NAME) == ReadEntry(target_file, _ZUCCHINI_CONFIG_ENTRY_NAME)
+    return False
+  sourceEntry = ReadEntry(source_file, _ZUCCHINI_CONFIG_ENTRY_NAME)
+  targetEntry = ReadEntry(target_file, _ZUCCHINI_CONFIG_ENTRY_NAME)
+  return sourceEntry and targetEntry and sourceEntry == targetEntry
