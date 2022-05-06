@@ -1145,6 +1145,14 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
       logger.info("Either source or target does not support VABC, disabling.")
       OPTIONS.disable_vabc = True
 
+    # Virtual AB Compression was introduced in Androd S.
+    # Later, we backported VABC to Android R. But verity support was not
+    # backported, so if VABC is used and we are on Android R, disable
+    # verity computation.
+    if not OPTIONS.disable_vabc and source_info.is_android_r:
+      OPTIONS.disable_verity_computation = True
+      OPTIONS.disable_fec_computation = True
+
   else:
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
