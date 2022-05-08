@@ -33,6 +33,7 @@ $(call add_json_csv,  Platform_version_active_codenames, $(PLATFORM_VERSION_ALL_
 $(call add_json_str,  Platform_security_patch,           $(PLATFORM_SECURITY_PATCH))
 $(call add_json_str,  Platform_preview_sdk_version,      $(PLATFORM_PREVIEW_SDK_VERSION))
 $(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
+$(call add_json_str,  Platform_version_last_stable,      $(PLATFORM_VERSION_LAST_STABLE))
 
 $(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION))
 
@@ -46,6 +47,7 @@ $(call add_json_bool, Debuggable,                        $(filter userdebug eng,
 $(call add_json_bool, Eng,                               $(filter eng,$(TARGET_BUILD_VARIANT)))
 
 $(call add_json_str,  DeviceName,                        $(TARGET_DEVICE))
+$(call add_json_str,  DeviceProduct,                     $(TARGET_PRODUCT))
 $(call add_json_str,  DeviceArch,                        $(TARGET_ARCH))
 $(call add_json_str,  DeviceArchVariant,                 $(TARGET_ARCH_VARIANT))
 $(call add_json_str,  DeviceCpuVariant,                  $(TARGET_CPU_VARIANT))
@@ -119,6 +121,7 @@ $(call add_json_list, JavaCoverageExcludePaths,          $(JAVA_COVERAGE_EXCLUDE
 
 $(call add_json_bool, GcovCoverage,                      $(filter true,$(NATIVE_COVERAGE)))
 $(call add_json_bool, ClangCoverage,                     $(filter true,$(CLANG_COVERAGE)))
+$(call add_json_bool, ClangCoverageContinuousMode,       $(filter true,$(CLANG_COVERAGE_CONTINUOUS_MODE)))
 $(call add_json_list, NativeCoveragePaths,               $(NATIVE_COVERAGE_PATHS))
 $(call add_json_list, NativeCoverageExcludePaths,        $(NATIVE_COVERAGE_EXCLUDE_PATHS))
 
@@ -166,6 +169,8 @@ $(call add_json_list, VendorSnapshotDirsExcluded,        $(VENDOR_SNAPSHOT_DIRS_
 $(call add_json_list, RecoverySnapshotDirsIncluded,      $(RECOVERY_SNAPSHOT_DIRS_INCLUDED))
 $(call add_json_list, RecoverySnapshotDirsExcluded,      $(RECOVERY_SNAPSHOT_DIRS_EXCLUDED))
 $(call add_json_bool, HostFakeSnapshotEnabled,           $(HOST_FAKE_SNAPSHOT_ENABLE))
+
+$(call add_json_bool, MultitreeUpdateMeta,               $(filter true,$(TARGET_MULTITREE_UPDATE_META)))
 
 $(call add_json_bool, Treble_linker_namespaces,          $(filter true,$(PRODUCT_TREBLE_LINKER_NAMESPACES)))
 $(call add_json_bool, Enforce_vintf_manifest,            $(filter true,$(PRODUCT_ENFORCE_VINTF_MANIFEST)))
@@ -224,6 +229,8 @@ $(call add_json_bool, WithDexpreopt,                     $(filter true,$(WITH_DE
 $(call add_json_list, ManifestPackageNameOverrides,      $(PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES))
 $(call add_json_list, PackageNameOverrides,              $(PRODUCT_PACKAGE_NAME_OVERRIDES))
 $(call add_json_list, CertificateOverrides,              $(PRODUCT_CERTIFICATE_OVERRIDES))
+
+$(call add_json_str, ApexGlobalMinSdkVersionOverride,    $(APEX_GLOBAL_MIN_SDK_VERSION_OVERRIDE))
 
 $(call add_json_bool, EnforceSystemCertificate,          $(filter true,$(ENFORCE_SYSTEM_CERTIFICATE)))
 $(call add_json_list, EnforceSystemCertificateAllowList, $(ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST))

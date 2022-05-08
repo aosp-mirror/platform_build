@@ -42,4 +42,7 @@ $(art_host_tests_zip) : $(COMPATIBILITY.art-host-tests.FILES) $(my_host_shared_l
 art-host-tests: $(art_host_tests_zip)
 $(call dist-for-goals, art-host-tests, $(art_host_tests_zip))
 
+$(call declare-1p-container,$(art_host_tests_zip),)
+$(call declare-container-license-deps,$(art_host_tests_zip),$(COMPATIBILITY.art-host-tests.FILES) $(my_host_shared_lib_for_art_host_tests),$(PRODUCT_OUT)/:/)
+
 tests: art-host-tests
