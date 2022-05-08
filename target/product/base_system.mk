@@ -118,7 +118,6 @@ PRODUCT_PACKAGES += \
     init_system \
     input \
     installd \
-    iorapd \
     ip \
     iptables \
     ip-up-vpn \
@@ -295,7 +294,7 @@ PRODUCT_PACKAGES += \
 # HWASAN runtime for SANITIZE_TARGET=hwaddress builds
 ifneq (,$(filter hwaddress,$(SANITIZE_TARGET)))
   PRODUCT_PACKAGES += \
-   libclang_rt.hwasan-aarch64-android.bootstrap
+   libclang_rt.hwasan.bootstrap
 endif
 
 # Jacoco agent JARS to be built and installed, if any.

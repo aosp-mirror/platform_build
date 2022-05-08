@@ -266,6 +266,7 @@ endif # TURBINE_ENABLED != false
 
 # TODO(b/143658984): goma can't handle the --system argument to javac.
 #$(full_classes_compiled_jar): .KATI_NINJA_POOL := $(GOMA_POOL)
+$(full_classes_compiled_jar): .KATI_NINJA_POOL := $(JAVAC_NINJA_POOL)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
@@ -489,15 +490,17 @@ ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 
 ifdef LOCAL_PROGUARD_ENABLED
+  $(built_dex_intermediate): .KATI_NINJA_POOL := $(R8_NINJA_POOL)
   $(built_dex_intermediate): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
   $(built_dex_intermediate): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
   $(built_dex_intermediate): PRIVATE_PROGUARD_DICTIONARY := $(proguard_dictionary)
-  $(built_dex_intermediate) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD) $(LOCAL_PROGUARD_FLAGS_DEPS)
+  $(built_dex_intermediate) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(legacy_proguard_lib_deps) $(R8) $(LOCAL_PROGUARD_FLAGS_DEPS)
 	$(transform-jar-to-dex-r8)
 else # !LOCAL_PROGUARD_ENABLED
+  $(built_dex_intermediate): .KATI_NINJA_POOL := $(D8_NINJA_POOL)
   $(built_dex_intermediate): PRIVATE_D8_LIBS := $(full_java_bootclasspath_libs) $(full_shared_java_header_libs)
   $(built_dex_intermediate): $(full_java_bootclasspath_libs) $(full_shared_java_header_libs)
-  $(built_dex_intermediate): $(full_classes_pre_proguard_jar) $(DX) $(ZIP2ZIP)
+  $(built_dex_intermediate): $(full_classes_pre_proguard_jar) $(D8) $(ZIP2ZIP)
 	$(transform-classes.jar-to-dex)
 endif
 
