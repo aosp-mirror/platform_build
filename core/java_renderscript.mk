@@ -107,7 +107,7 @@ renderscript_intermediate := $(intermediates)/renderscript
 # Prevent these from showing up on the device
 # One exception is librsjni.so, which is needed for
 # both native path and compat path.
-rs_jni_lib := $(call intermediates-dir-for,SHARED_LIBRARIES,librsjni.so)/librsjni.so
+rs_jni_lib := $(call intermediates-dir-for,SHARED_LIBRARIES,librsjni)/librsjni.so
 LOCAL_JNI_SHARED_LIBRARIES += librsjni
 
 ifneq (,$(TARGET_BUILD_USE_PREBUILT_SDKS)$(FORCE_BUILD_RS_COMPAT))

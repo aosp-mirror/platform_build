@@ -1,0 +1,9 @@
+package_name:  "Device"
+projects:  "device/library"
+license_kinds:  "SPDX-license-identifier-LGPL-2.0"
+license_conditions:  "restricted"
+license_texts:  "testdata/restricted/RESTRICTED_LICENSE"
+is_container:  false
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/liba.so"
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/liba.a"
+installed:  "out/target/product/fictional/system/lib/liba.so"

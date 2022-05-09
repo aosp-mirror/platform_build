@@ -35,6 +35,9 @@ warn_patterns = [
     {'category': 'make', 'severity': Severity.HIGH,
      'description': 'System module linking to a vendor module',
      'patterns': [r".*: warning: .+ \(.+\) should not link to .+ \(partition:.+\)"]},
+    {'category': 'make', 'severity': Severity.HIGH,
+     'description': 'make: lstat file does not exist',
+     'patterns': [r".*: warning: lstat .+: file does not exist"]},
     {'category': 'make', 'severity': Severity.MEDIUM,
      'description': 'Invalid SDK/NDK linking',
      'patterns': [r".*: warning: .+ \(.+\) should not link to .+ \(.+\)"]},
@@ -56,6 +59,9 @@ warn_patterns = [
     {'category': 'make', 'severity': Severity.MEDIUM,
      'description': 'make: deprecated macros',
      'patterns': [r".*\.mk:.* warning:.* [A-Z_]+ (is|has been) deprecated."]},
+    {'category': 'make', 'severity': Severity.MEDIUM,
+     'description': 'make: other Android.mk warnings',
+     'patterns': [r".*/Android.mk:.*: warning: .+"]},
 ]
 
 
