@@ -20,6 +20,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance"
 )
 
 func TestMain(m *testing.M) {
@@ -56,6 +58,7 @@ func Test(t *testing.T) {
 	tests := []struct {
 		condition        string
 		name             string
+		outDir           string
 		roots            []string
 		expectedStdout   string
 		expectedOutcomes outcomeList
@@ -248,7 +251,7 @@ func Test(t *testing.T) {
 			for _, r := range tt.roots {
 				rootFiles = append(rootFiles, "testdata/"+tt.condition+"/"+r)
 			}
-			err := checkShare(stdout, stderr, rootFiles...)
+			err := checkShare(stdout, stderr, compliance.GetFS(tt.outDir), rootFiles...)
 			if err != nil && err != failConflicts {
 				t.Fatalf("checkshare: error = %v, stderr = %v", err, stderr)
 				return

@@ -18,35 +18,45 @@ package {
 }
 
 blueprint_go_binary {
-    name: "bom",
-    srcs: ["cmd/bom/bom.go"],
-    deps: ["compliance-module"],
-    testSrcs: ["cmd/bom/bom_test.go"],
-}
-
-blueprint_go_binary {
-    name: "checkshare",
+    name: "compliance_checkshare",
     srcs: ["cmd/checkshare/checkshare.go"],
     deps: ["compliance-module"],
     testSrcs: ["cmd/checkshare/checkshare_test.go"],
 }
 
 blueprint_go_binary {
-    name: "listshare",
+    name: "compliancenotice_bom",
+    srcs: ["cmd/bom/bom.go"],
+    deps: ["compliance-module"],
+    testSrcs: ["cmd/bom/bom_test.go"],
+}
+
+blueprint_go_binary {
+    name: "compliancenotice_shippedlibs",
+    srcs: ["cmd/shippedlibs/shippedlibs.go"],
+    deps: [
+        "compliance-module",
+        "soong-response",
+    ],
+    testSrcs: ["cmd/shippedlibs/shippedlibs_test.go"],
+}
+
+blueprint_go_binary {
+    name: "compliance_listshare",
     srcs: ["cmd/listshare/listshare.go"],
     deps: ["compliance-module"],
     testSrcs: ["cmd/listshare/listshare_test.go"],
 }
 
 blueprint_go_binary {
-    name: "dumpgraph",
+    name: "compliance_dumpgraph",
     srcs: ["cmd/dumpgraph/dumpgraph.go"],
     deps: ["compliance-module"],
     testSrcs: ["cmd/dumpgraph/dumpgraph_test.go"],
 }
 
 blueprint_go_binary {
-    name: "dumpresolutions",
+    name: "compliance_dumpresolutions",
     srcs: ["cmd/dumpresolutions/dumpresolutions.go"],
     deps: ["compliance-module"],
     testSrcs: ["cmd/dumpresolutions/dumpresolutions_test.go"],
@@ -63,17 +73,10 @@ blueprint_go_binary {
 }
 
 blueprint_go_binary {
-    name: "rtrace",
+    name: "compliance_rtrace",
     srcs: ["cmd/rtrace/rtrace.go"],
     deps: ["compliance-module"],
     testSrcs: ["cmd/rtrace/rtrace_test.go"],
-}
-
-blueprint_go_binary {
-    name: "shippedlibs",
-    srcs: ["cmd/shippedlibs/shippedlibs.go"],
-    deps: ["compliance-module"],
-    testSrcs: ["cmd/shippedlibs/shippedlibs_test.go"],
 }
 
 blueprint_go_binary {
