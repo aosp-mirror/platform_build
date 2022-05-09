@@ -1642,7 +1642,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     }
     test_file = tempfile.NamedTemporaryFile()
     self.assertRaises(common.ExternalError, common._GenerateGkiCertificate,
-                      test_file.name, 'generic_kernel', 'boot')
+                      test_file.name, 'generic_kernel')
 
   def test_GenerateGkiCertificate_SearchKeyPathNotFound(self):
     pubkey = 'no_testkey_gki.pem'
@@ -1662,7 +1662,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     }
     test_file = tempfile.NamedTemporaryFile()
     self.assertRaises(common.ExternalError, common._GenerateGkiCertificate,
-                      test_file.name, 'generic_kernel', 'boot')
+                      test_file.name, 'generic_kernel')
 
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   """Checks the format of install-recovery.sh.

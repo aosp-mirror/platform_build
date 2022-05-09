@@ -38,6 +38,7 @@ func Test_plaintext(t *testing.T) {
 	tests := []struct {
 		condition   string
 		name        string
+		outDir      string
 		roots       []string
 		ctx         context
 		expectedOut []string
@@ -902,7 +903,7 @@ func Test_plaintext(t *testing.T) {
 			for _, r := range tt.roots {
 				rootFiles = append(rootFiles, "testdata/"+tt.condition+"/"+r)
 			}
-			_, err := dumpResolutions(&tt.ctx, stdout, stderr, rootFiles...)
+			_, err := dumpResolutions(&tt.ctx, stdout, stderr, compliance.GetFS(tt.outDir), rootFiles...)
 			if err != nil {
 				t.Fatalf("dumpresolutions: error = %v, stderr = %v", err, stderr)
 				return
@@ -1011,6 +1012,7 @@ func Test_graphviz(t *testing.T) {
 	tests := []struct {
 		condition   string
 		name        string
+		outDir      string
 		roots       []string
 		ctx         context
 		expectedOut []getMatcher
@@ -3298,7 +3300,7 @@ func Test_graphviz(t *testing.T) {
 				rootFiles = append(rootFiles, "testdata/"+tt.condition+"/"+r)
 			}
 			tt.ctx.graphViz = true
-			lg, err := dumpResolutions(&tt.ctx, stdout, stderr, rootFiles...)
+			lg, err := dumpResolutions(&tt.ctx, stdout, stderr, compliance.GetFS(tt.outDir), rootFiles...)
 			if err != nil {
 				t.Fatalf("dumpresolutions: error = %v, stderr = %v", err, stderr)
 				return
