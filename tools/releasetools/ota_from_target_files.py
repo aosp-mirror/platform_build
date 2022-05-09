@@ -237,6 +237,13 @@ A/B OTA specific options
   --enable_lz4diff
       Whether to enable lz4diff feature. Will generate smaller OTA for EROFS but
       uses more memory.
+
+  --spl_downgrade
+      Force generate an SPL downgrade OTA. Only needed if target build has an
+      older SPL.
+
+  --vabc_compression_param
+      Compression algorithm to be used for VABC. Available options: gz, brotli, none
 """
 
 from __future__ import print_function
@@ -308,6 +315,7 @@ OPTIONS.force_minor_version = None
 OPTIONS.compressor_types = None
 OPTIONS.enable_zucchini = True
 OPTIONS.enable_lz4diff = False
+OPTIONS.vabc_compression_param = None
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -535,8 +543,7 @@ def _LoadOemDicts(oem_source):
 
   oem_dicts = []
   for oem_file in oem_source:
-    with open(oem_file) as fp:
-      oem_dicts.append(common.LoadDictionaryFromLines(fp.readlines()))
+    oem_dicts.append(common.LoadDictionaryFromFile(oem_file))
   return oem_dicts
 
 
@@ -645,6 +652,24 @@ class AbOtaPropertyFiles(StreamingPropertyFiles):
     assert metadata_total < payload_size
 
     return (payload_offset, metadata_total)
+
+
+def ModifyVABCCompressionParam(content, algo):
+  """ Update update VABC Compression Param in dynamic_partitions_info.txt
+  Args:
+    content: The string content of dynamic_partitions_info.txt
+    algo: The compression algorithm should be used for VABC. See
+          https://cs.android.com/android/platform/superproject/+/master:system/core/fs_mgr/libsnapshot/cow_writer.cpp;l=127;bpv=1;bpt=1?q=CowWriter::ParseOptions&sq=
+  Returns:
+    Updated content of dynamic_partitions_info.txt , with custom compression algo
+  """
+  output_list = []
+  for line in content.splitlines():
+    if line.startswith("virtual_ab_compression_method="):
+      continue
+    output_list.append(line)
+  output_list.append("virtual_ab_compression_method="+algo)
+  return "\n".join(output_list)
 
 
 def UpdatesInfoForSpecialUpdates(content, partitions_filter,
@@ -801,6 +826,27 @@ def ParseInfoDict(target_file_path):
     return common.LoadInfoDict(zfp)
 
 
+def GetTargetFilesZipForCustomVABCCompression(input_file, vabc_compression_param):
+  """Returns a target-files.zip with a custom VABC compression param.
+  Args:
+    input_file: The input target-files.zip path
+    vabc_compression_param: Custom Virtual AB Compression algorithm
+
+  Returns:
+    The path to modified target-files.zip
+  """
+  target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
+  shutil.copyfile(input_file, target_file)
+  common.ZipDelete(target_file, DYNAMIC_PARTITION_INFO)
+  with zipfile.ZipFile(input_file, 'r', allowZip64=True) as zfp:
+    dynamic_partition_info = zfp.read(DYNAMIC_PARTITION_INFO).decode()
+    dynamic_partition_info = ModifyVABCCompressionParam(
+        dynamic_partition_info, vabc_compression_param)
+    with zipfile.ZipFile(target_file, "a", allowZip64=True) as output_zip:
+      output_zip.writestr(DYNAMIC_PARTITION_INFO, dynamic_partition_info)
+  return target_file
+
+
 def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
   """Returns a target-files.zip for partial ota update package generation.
 
@@ -875,6 +921,9 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
       content = input_zip.read(info_file).decode()
       modified_info = UpdatesInfoForSpecialUpdates(
           content, lambda p: p in ab_partitions)
+      if OPTIONS.vabc_compression_param and info_file == DYNAMIC_PARTITION_INFO:
+        modified_info = ModifyVABCCompressionParam(
+            modified_info, OPTIONS.vabc_compression_param)
       common.ZipWriteStr(partial_target_zip, info_file, modified_info)
 
     # TODO(xunchang) handle META/postinstall_config.txt'
@@ -1110,7 +1159,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # Source build's update_engine must be able to write XOR ops, and target
   # build's snapuserd must be able to interpret XOR ops.
   if not target_info.is_vabc_xor or OPTIONS.disable_vabc or \
-      (source_info is not None and not source_info.is_vabc_xor):
+          (source_info is not None and not source_info.is_vabc_xor):
     logger.info("VABC XOR Not supported, disabling")
     OPTIONS.enable_vabc_xor = False
   additional_args = []
@@ -1128,6 +1177,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     target_file = GetTargetFilesZipForPartialUpdates(target_file,
                                                      OPTIONS.partial)
     additional_args += ["--is_partial_update", "true"]
+  elif OPTIONS.vabc_compression_param:
+    target_file = GetTargetFilesZipForCustomVABCCompression(
+        target_file, OPTIONS.vabc_compression_param)
   elif OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
   # Target_file may have been modified, reparse ab_partitions
@@ -1162,7 +1214,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
                       str(OPTIONS.enable_zucchini).lower()]
 
   if not ota_utils.IsLz4diffCompatible(source_file, target_file):
-    logger.warn(
+    logger.warning(
         "Source build doesn't support lz4diff, or source/target don't have compatible lz4diff versions. Disabling lz4diff.")
     OPTIONS.enable_lz4diff = False
 
@@ -1373,6 +1425,8 @@ def main(argv):
     elif o == "--enable_lz4diff":
       assert a.lower() in ["true", "false"]
       OPTIONS.enable_lz4diff = a.lower() != "false"
+    elif o == "--vabc_compression_param":
+      OPTIONS.vabc_compression_param = a.lower()
     else:
       return False
     return True
@@ -1420,8 +1474,9 @@ def main(argv):
                                  "enable_vabc_xor=",
                                  "force_minor_version=",
                                  "compressor_types=",
-                                 "enable_zucchin=",
+                                 "enable_zucchini=",
                                  "enable_lz4diff=",
+                                 "vabc_compression_param=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
