@@ -72,6 +72,8 @@ message ApexInfo {
   int64 version = 2;
   bool is_compressed = 3;
   int64 decompressed_size = 4;
+  // Used in OTA
+  int64 source_version = 5;
 }
 
 // Just a container to hold repeated apex_info, so that we can easily serialize
