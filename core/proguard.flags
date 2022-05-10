@@ -15,35 +15,24 @@
 @**.VisibleForTesting *;
 }
 
-# Understand the @Keep support annotation.
--keep class android.support.annotation.Keep
--keep class androidx.annotation.Keep
+# Understand the common @Keep annotation from various Android packages:
+#  * android.support.annotation
+#  * androidx.annotation
+#  * com.android.internal.annotations
+-keep class **android**.annotation*.Keep
 
--keep @android.support.annotation.Keep class * {*;}
--keep @androidx.annotation.Keep class * {*;}
+-keep @**android**.annotation*.Keep class * { *; }
 
 -keepclasseswithmembers class * {
-    @android.support.annotation.Keep <methods>;
+    @**android**.annotation*.Keep <methods>;
 }
 
 -keepclasseswithmembers class * {
-    @androidx.annotation.Keep <methods>;
+    @**android**.annotation*.Keep <fields>;
 }
 
 -keepclasseswithmembers class * {
-    @android.support.annotation.Keep <fields>;
-}
-
--keepclasseswithmembers class * {
-    @androidx.annotation.Keep <fields>;
-}
-
--keepclasseswithmembers class * {
-    @android.support.annotation.Keep <init>(...);
-}
-
--keepclasseswithmembers class * {
-    @androidx.annotation.Keep <init>(...);
+    @**android**.annotation*.Keep <init>(...);
 }
 
 -include proguard_basic_keeps.flags

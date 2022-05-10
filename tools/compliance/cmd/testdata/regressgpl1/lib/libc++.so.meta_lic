@@ -1,0 +1,8 @@
+package_name:  "Device"
+projects:  "lib/c++"
+license_kinds:  "SPDX-license-identifier-BSD"
+license_conditions:  "notice"
+is_container:  false
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/libc++.so"
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/libc++.a"
+installed:  "out/target/product/fictional/system/lib/libc++.so"
