@@ -37,6 +37,10 @@ ALL_DOCS:=
 # sub-variables.
 ALL_MODULES:=
 
+# The relative paths of the non-module targets in the system.
+ALL_NON_MODULES:=
+NON_MODULES_WITHOUT_LICENSE_METADATA:=
+
 # Full paths to targets that should be added to the "make droid"
 # set of installed targets.
 ALL_DEFAULT_INSTALLED_MODULES:=
@@ -55,15 +59,9 @@ ALL_MODULE_TAGS:=
 # its sub-variables.)
 ALL_MODULE_NAME_TAGS:=
 
-# Full path to all files that are made by some tool
-ALL_GENERATED_SOURCES:=
-
 # Full path to all asm, C, C++, lex and yacc generated C files.
 # These all have an order-only dependency on the copied headers
 ALL_C_CPP_ETC_OBJECTS:=
-
-# The list of dynamic binaries that haven't been stripped/compressed/etc.
-ALL_ORIGINAL_DYNAMIC_BINARIES:=
 
 # These files go into the SDK
 ALL_SDK_FILES:=
@@ -539,7 +537,7 @@ $(strip \
   $(eval _all_module_refs := \
     $(sort \
       $(foreach m,$(sort $(ALL_MODULES)), \
-        $(ALL_MODULES.$(m).NOTICE_DEPS) \
+        $(call word-colon,1,$(ALL_MODULES.$(m).NOTICE_DEPS)) \
       ) \
     ) \
   ) \
@@ -557,7 +555,7 @@ $(strip \
     $(eval ALL_MODULES.$(m).NOTICE_DEPS := \
       $(sort \
          $(foreach d,$(sort $(ALL_MODULES.$(m).NOTICE_DEPS)), \
-           $(_lookup.$(d)) \
+           $(foreach n,$(_lookup.$(call word-colon,1,$(d))),$(n):$(call wordlist-colon,2,9999,$(d))) \
         ) \
       ) \
     ) \
@@ -573,62 +571,357 @@ $(call generated-sources-dir-for,META,lic,)
 endef
 
 ###########################################################
-## License metadata build rule for my_register_name $1
+# License metadata targets corresponding to targets in $(1)
+###########################################################
+define corresponding-license-metadata
+$(strip $(foreach target, $(sort $(1)), \
+  $(if $(strip $(ALL_MODULES.$(target).META_LIC)), \
+    $(ALL_MODULES.$(target).META_LIC), \
+    $(if $(strip $(ALL_TARGETS.$(target).META_LIC)), \
+      $(ALL_TARGETS.$(target).META_LIC), \
+      $(call append-path,$(call license-metadata-dir),$(patsubst $(OUT_DIR)%,out%,$(target).meta_lic))))))
+endef
+
+###########################################################
+## License metadata build rule for my_register_name $(1)
 ###########################################################
 define license-metadata-rule
-$(strip $(eval _dir := $(call license-metadata-dir)))
-$(strip $(eval _deps := $(sort $(filter-out $(_dir)/$(1).meta_lic,$(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS), $(_dir)/$(d).meta_lic)))))
-$(strip $(eval _notices := $(sort $(ALL_MODULES.$(1).NOTICES))))
-$(strip $(eval _tgts := $(sort $(ALL_MODULES.$(1).BUILT) $(ALL_MODULES.$(1).INSTALLED))))
-$(foreach b,$(_tgts),
-$(_dir)/$(b).meta_module ::
-	mkdir -p $$(dir $$@)
-	echo $(_dir)/$(1).meta_lic >> $$@
-	sort -u $$@ -o $$@
+$(foreach meta_lic, $(ALL_MODULES.$(1).DELAYED_META_LIC),$(call _license-metadata-rule,$(1),$(meta_lic)))
+endef
 
-)
-$(_dir)/$(1).meta_lic: PRIVATE_KINDS := $(sort $(ALL_MODULES.$(1).LICENSE_KINDS))
-$(_dir)/$(1).meta_lic: PRIVATE_CONDITIONS := $(sort $(ALL_MODULES.$(1).LICENSE_CONDITIONS))
-$(_dir)/$(1).meta_lic: PRIVATE_NOTICES := $(_notices)
-$(_dir)/$(1).meta_lic: PRIVATE_NOTICE_DEPS := $(_deps)
-$(_dir)/$(1).meta_lic: PRIVATE_TARGETS := $(_tgts)
-$(_dir)/$(1).meta_lic: PRIVATE_IS_CONTAINER := $(ALL_MODULES.$(1).IS_CONTAINER)
-$(_dir)/$(1).meta_lic: PRIVATE_PACKAGE_NAME := $(strip $(ALL_MODULES.$(1).LICENSE_PACKAGE_NAME))
-$(_dir)/$(1).meta_lic: PRIVATE_INSTALL_MAP := $(sort $(ALL_MODULES.$(1).LICENSE_INSTALL_MAP))
-$(_dir)/$(1).meta_lic : $(_deps) $(_notices) $(foreach b,$(_tgts), $(_dir)/$(b).meta_module) build/make/tools/build-license-metadata.sh
+$(KATI_obsolete_var notice-rule, This function has been removed)
+
+define _license-metadata-rule
+$(strip $(eval _srcs := $(strip $(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS),$(if $(strip $(ALL_MODULES.$(call word-colon,1,$(d)).INSTALLED)), $(ALL_MODULES.$(call word-colon,1,$(d)).INSTALLED),$(if $(strip $(ALL_MODULES.$(call word-colon,1,$(d)).BUILT)), $(ALL_MODULES.$(call word-colon,1,$(d)).BUILT), $(call word-colon,1,$d)))))))
+$(strip $(eval _deps := $(sort $(filter-out $(2)%,\
+   $(foreach d,$(ALL_MODULES.$(1).NOTICE_DEPS),\
+     $(addsuffix :$(call wordlist-colon,2,9999,$(d)), \
+       $(foreach dt,$(ALL_MODULES.$(d).BUILT) $(ALL_MODULES.$(d).INSTALLED),\
+         $(ALL_TARGETS.$(dt).META_LIC))))))))
+$(strip $(eval _notices := $(sort $(ALL_MODULES.$(1).NOTICES))))
+$(strip $(eval _tgts := $(sort $(ALL_MODULES.$(1).BUILT))))
+$(strip $(eval _inst := $(sort $(ALL_MODULES.$(1).INSTALLED))))
+$(strip $(eval _path := $(sort $(ALL_MODULES.$(1).PATH))))
+$(strip $(eval _map := $(strip $(foreach _m,$(sort $(ALL_MODULES.$(1).LICENSE_INSTALL_MAP)), \
+  $(eval _s := $(call word-colon,1,$(_m))) \
+  $(eval _d := $(call word-colon,2,$(_m))) \
+  $(eval _ns := $(if $(strip $(ALL_MODULES.$(_s).INSTALLED)),$(ALL_MODULES.$(_s).INSTALLED),$(if $(strip $(ALL_MODULES.$(_s).BUILT)),$(ALL_MODULES.$(_s).BUILT),$(_s)))) \
+  $(foreach ns,$(_ns),$(ns):$(_d) ) \
+))))
+
+$(2): PRIVATE_KINDS := $(sort $(ALL_MODULES.$(1).LICENSE_KINDS))
+$(2): PRIVATE_CONDITIONS := $(sort $(ALL_MODULES.$(1).LICENSE_CONDITIONS))
+$(2): PRIVATE_NOTICES := $(_notices)
+$(2): PRIVATE_NOTICE_DEPS := $(_deps)
+$(2): PRIVATE_SOURCES := $(_srcs)
+$(2): PRIVATE_TARGETS := $(_tgts)
+$(2): PRIVATE_INSTALLED := $(_inst)
+$(2): PRIVATE_PATH := $(_path)
+$(2): PRIVATE_IS_CONTAINER := $(ALL_MODULES.$(1).IS_CONTAINER)
+$(2): PRIVATE_PACKAGE_NAME := $(strip $(ALL_MODULES.$(1).LICENSE_PACKAGE_NAME))
+$(2): PRIVATE_INSTALL_MAP := $(_map)
+$(2): PRIVATE_MODULE_TYPE := $(ALL_MODULES.$(1).MODULE_TYPE)
+$(2): PRIVATE_MODULE_CLASS := $(ALL_MODULES.$(1).MODULE_CLASS)
+$(2): PRIVATE_INSTALL_MAP := $(_map)
+$(2): PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,PACKAGING,notice)/$(2)/arguments
+$(2): $(BUILD_LICENSE_METADATA)
+$(2) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
 	rm -f $$@
 	mkdir -p $$(dir $$@)
-	build/make/tools/build-license-metadata.sh -k $$(PRIVATE_KINDS) -c $$(PRIVATE_CONDITIONS) -n $$(PRIVATE_NOTICES) -d $$(PRIVATE_NOTICE_DEPS) -m $$(PRIVATE_INSTALL_MAP) -t $$(PRIVATE_TARGETS) $$(if $$(PRIVATE_IS_CONTAINER),-is_container) -p $$(PRIVATE_PACKAGE_NAME) -o $$@
+	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
+	$$(call dump-words-to-file,\
+	    $$(addprefix -mt ,$$(PRIVATE_MODULE_TYPE))\
+	    $$(addprefix -mc ,$$(PRIVATE_MODULE_CLASS))\
+	    $$(addprefix -k ,$$(PRIVATE_KINDS))\
+	    $$(addprefix -c ,$$(PRIVATE_CONDITIONS))\
+	    $$(addprefix -n ,$$(PRIVATE_NOTICES))\
+	    $$(addprefix -d ,$$(PRIVATE_NOTICE_DEPS))\
+	    $$(addprefix -s ,$$(PRIVATE_SOURCES))\
+	    $$(addprefix -m ,$$(PRIVATE_INSTALL_MAP))\
+	    $$(addprefix -t ,$$(PRIVATE_TARGETS))\
+	    $$(addprefix -i ,$$(PRIVATE_INSTALLED))\
+	    $$(addprefix -r ,$$(PRIVATE_PATH)),\
+	    $$(PRIVATE_ARGUMENT_FILE))
+	OUT_DIR=$(OUT_DIR) $(BUILD_LICENSE_METADATA) \
+	  $$(if $$(PRIVATE_IS_CONTAINER),-is_container) \
+	  -p '$$(PRIVATE_PACKAGE_NAME)' \
+	  @$$(PRIVATE_ARGUMENT_FILE) \
+	  -o $$@
+endef
 
-.PHONY: $(1).meta_lic
-$(1).meta_lic : $(_dir)/$(1).meta_lic
 
-$(strip $(eval _mifs := $(sort $(ALL_MODULES.$(1).MODULE_INSTALLED_FILENAMES))))
-$(strip $(eval _infs := $(sort $(ALL_MODULES.$(1).INSTALLED_NOTICE_FILE))))
+###########################################################
+## License metadata build rule for non-module target $(1)
+###########################################################
+define non-module-license-metadata-rule
+$(strip $(eval _dir := $(call license-metadata-dir)))
+$(strip $(eval _tgt := $(strip $(1))))
+$(strip $(eval _meta := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(_tgt).meta_lic))))
+$(strip $(eval _deps := $(sort $(filter-out 0p: :,$(foreach d,$(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)),$(ALL_TARGETS.$(call word-colon,1,$(d)).META_LIC):$(call wordlist-colon,2,9999,$(d)))))))
+$(strip $(eval _notices := $(sort $(ALL_NON_MODULES.$(_tgt).NOTICES))))
+$(strip $(eval _path := $(sort $(ALL_NON_MODULES.$(_tgt).PATH))))
+$(strip $(eval _install_map := $(ALL_NON_MODULES.$(_tgt).ROOT_MAPPINGS)))
+$(strip $(eval \
+  $$(foreach d,$(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)), \
+    $$(if $$(strip $$(ALL_TARGETS.$$(d).META_LIC)), \
+      , \
+      $$(eval NON_MODULES_WITHOUT_LICENSE_METADATA += $$(d))) \
+  )) \
+)
 
-# Emit each installed notice file rule if it references the current module
-$(if $(_infs),$(foreach inf,$(_infs),
-$(if $(strip $(filter $(1),$(INSTALLED_NOTICE_FILES.$(inf).MODULE))),
-$(strip $(eval _mif := $(firstword $(foreach m,$(_mifs),$(if $(filter %/src/$(m).txt,$(inf)),$(m))))))
-
-$(inf) : $(_dir)/$(1).meta_lic
-$(inf): PRIVATE_INSTALLED_MODULE := $(_mif)
-$(inf) : PRIVATE_NOTICES := $(_notices)
-
-$(inf): $(_notices)
-	@echo Notice file: $$< -- $$@
+$(_meta): PRIVATE_KINDS := $(sort $(ALL_NON_MODULES.$(_tgt).LICENSE_KINDS))
+$(_meta): PRIVATE_CONDITIONS := $(sort $(ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS))
+$(_meta): PRIVATE_NOTICES := $(_notices)
+$(_meta): PRIVATE_NOTICE_DEPS := $(_deps)
+$(_meta): PRIVATE_SOURCES := $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)
+$(_meta): PRIVATE_TARGETS := $(_tgt)
+$(_meta): PRIVATE_PATH := $(_path)
+$(_meta): PRIVATE_IS_CONTAINER := $(ALL_NON_MODULES.$(_tgt).IS_CONTAINER)
+$(_meta): PRIVATE_PACKAGE_NAME := $(strip $(ALL_NON_MODULES.$(_tgt).LICENSE_PACKAGE_NAME))
+$(_meta): PRIVATE_INSTALL_MAP := $(strip $(_install_map))
+$(_meta): PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,PACKAGING,notice)/$(_meta)/arguments
+$(_meta): $(BUILD_LICENSE_METADATA)
+$(_meta) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$(call word-colon,1,$(n)) )
+	rm -f $$@
 	mkdir -p $$(dir $$@)
-	awk 'FNR==1 && NR > 1 {print "\n"} {print}' $$(PRIVATE_NOTICES) > $$@
-
-)))
+	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
+	$$(call dump-words-to-file,\
+	    $$(addprefix -k ,$$(PRIVATE_KINDS))\
+	    $$(addprefix -c ,$$(PRIVATE_CONDITIONS))\
+	    $$(addprefix -n ,$$(PRIVATE_NOTICES))\
+	    $$(addprefix -d ,$$(PRIVATE_NOTICE_DEPS))\
+	    $$(addprefix -s ,$$(PRIVATE_SOURCES))\
+	    $$(addprefix -m ,$$(PRIVATE_INSTALL_MAP))\
+	    $$(addprefix -t ,$$(PRIVATE_TARGETS))\
+	    $$(addprefix -r ,$$(PRIVATE_PATH)),\
+	    $$(PRIVATE_ARGUMENT_FILE))
+	OUT_DIR=$(OUT_DIR) $(BUILD_LICENSE_METADATA) \
+          -mt raw -mc unknown \
+	  $$(if $$(PRIVATE_IS_CONTAINER),-is_container) \
+	  $$(addprefix -r ,$$(PRIVATE_PATH)) \
+	  @$$(PRIVATE_ARGUMENT_FILE) \
+	  -o $$@
 
 endef
+
+###########################################################
+## Declare the license metadata for non-module target $(1).
+##
+## $(2) -- license kinds e.g. SPDX-license-identifier-Apache-2.0
+## $(3) -- license conditions e.g. notice by_exception_only
+## $(4) -- license text filenames (notices)
+## $(5) -- package name
+## $(6) -- project path
+###########################################################
+define declare-license-metadata
+$(strip \
+  $(eval _tgt := $(subst //,/,$(strip $(1)))) \
+  $(eval ALL_NON_MODULES += $(_tgt)) \
+  $(eval ALL_NON_MODULES.$(_tgt).LICENSE_KINDS := $(strip $(2))) \
+  $(eval ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS := $(strip $(3))) \
+  $(eval ALL_NON_MODULES.$(_tgt).NOTICES := $(strip $(4))) \
+  $(eval ALL_NON_MODULES.$(_tgt).LICENSE_PACKAGE_NAME := $(strip $(5))) \
+  $(eval ALL_NON_MODULES.$(_tgt).PATH := $(strip $(6))) \
+)
+endef
+
+###########################################################
+## Declare that non-module targets copied from project $(1) and
+## optionally ending in $(2) have the following license
+## metadata:
+##
+## $(3) -- license kinds e.g. SPDX-license-identifier-Apache-2.0
+## $(4) -- license conditions e.g. notice by_exception_only
+## $(5) -- license text filenames (notices)
+## $(6) -- package name
+###########################################################
+define declare-copy-files-license-metadata
+$(strip \
+  $(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(eval $(call declare-license-metadata,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair)),$(3),$(4),$(5),$(6),$(1)))) \
+)
+endef
+
+###########################################################
+## Declare the license metadata for non-module container-type target $(1).
+##
+## Container-type targets are targets like .zip files that
+## merely aggregate other files.
+##
+## $(2) -- license kinds e.g. SPDX-license-identifier-Apache-2.0
+## $(3) -- license conditions e.g. notice by_exception_only
+## $(4) -- license text filenames (notices)
+## $(5) -- package name
+## $(6) -- project path
+###########################################################
+define declare-container-license-metadata
+$(strip \
+  $(eval _tgt := $(subst //,/,$(strip $(1)))) \
+  $(eval ALL_NON_MODULES += $(_tgt)) \
+  $(eval ALL_NON_MODULES.$(_tgt).LICENSE_KINDS := $(strip $(2))) \
+  $(eval ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS := $(strip $(3))) \
+  $(eval ALL_NON_MODULES.$(_tgt).NOTICES := $(strip $(4))) \
+  $(eval ALL_NON_MODULES.$(_tgt).LICENSE_PACKAGE_NAME := $(strip $(5))) \
+  $(eval ALL_NON_MODULES.$(_tgt).PATH := $(strip $(6))) \
+  $(eval ALL_NON_MODULES.$(_tgt).IS_CONTAINER := true) \
+)
+endef
+
+###########################################################
+## Declare that non-module target $(1) is a non-copyrightable file.
+##
+## e.g. an information-only file merely listing other files.
+###########################################################
+define declare-0p-target
+$(strip \
+  $(eval _tgt := $(subst //,/,$(strip $(1)))) \
+  $(eval ALL_0P_TARGETS += $(_tgt)) \
+)
+endef
+
+###########################################################
+## Declare that non-module targets copied from project $(1) and
+## optionally ending in $(2) are non-copyrightable files.
+##
+## e.g. an information-only file merely listing other files.
+###########################################################
+define declare-0p-copy-files
+$(strip \
+  $(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(eval $(call declare-0p-target,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair))))) \
+)
+endef
+
+###########################################################
+## Declare non-module target $(1) to have a first-party license
+## (Android Apache 2.0)
+##
+## $(2) -- project path
+###########################################################
+define declare-1p-target
+$(call declare-license-metadata,$(1),SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,Android,$(2))
+endef
+
+###########################################################
+## Declare that non-module targets copied from project $(1) and
+## optionally ending in $(2) are first-party licensed
+## (Android Apache 2.0)
+###########################################################
+define declare-1p-copy-files
+$(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(call declare-1p-target,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair)),$(1)))
+endef
+
+###########################################################
+## Declare non-module container-type target $(1) to have a
+## first-party license (Android Apache 2.0).
+##
+## Container-type targets are targets like .zip files that
+## merely aggregate other files.
+##
+## $92) -- project path
+###########################################################
+define declare-1p-container
+$(call declare-container-license-metadata,$(1),SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,Android,$(2))
+endef
+
+###########################################################
+## Declare license dependencies $(2) for non-module target $(1)
+###########################################################
+define declare-license-deps
+$(strip \
+  $(eval _tgt := $(strip $(1))) \
+  $(eval ALL_NON_MODULES += $(_tgt)) \
+  $(eval ALL_NON_MODULES.$(_tgt).DEPENDENCIES := $(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES) $(2))) \
+)
+endef
+
+###########################################################
+## Declare license dependencies $(2) for non-module container-type target $(1)
+##
+## Container-type targets are targets like .zip files that
+## merely aggregate other files.
+##
+## $(3) -- root mappings space-separated source:target
+###########################################################
+define declare-container-license-deps
+$(strip \
+  $(eval _tgt := $(strip $(1))) \
+  $(eval ALL_NON_MODULES += $(_tgt)) \
+  $(eval ALL_NON_MODULES.$(_tgt).DEPENDENCIES := $(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES) $(2))) \
+  $(eval ALL_NON_MODULES.$(_tgt).IS_CONTAINER := true) \
+  $(eval ALL_NON_MODULES.$(_tgt).ROOT_MAPPINGS := $(strip $(ALL_NON_MODULES.$(_tgt).ROOT_MAPPINGS) $(3))) \
+)
+endef
+
+###########################################################
+## Declares the rule to report targets with no license metadata.
+###########################################################
+define report-missing-licenses-rule
+.PHONY: reportmissinglicenses
+reportmissinglicenses: PRIVATE_NON_MODULES:=$(sort $(NON_MODULES_WITHOUT_LICENSE_METADATA))
+reportmissinglicenses: PRIVATE_COPIED_FILES:=$(sort $(filter $(NON_MODULES_WITHOUT_LICENSE_METADATA),$(foreach _pair,$(PRODUCT_COPY_FILES), $(PRODUCT_OUT)/$(call word-colon,2,$(_pair)))))
+reportmissinglicenses:
+	@echo Reporting $$(words $$(PRIVATE_NON_MODULES)) targets without license metadata
+	$$(foreach t,$$(PRIVATE_NON_MODULES),if ! [ -h $$(t) ]; then echo No license metadata for $$(t) >&2; fi;)
+	$$(foreach t,$$(PRIVATE_COPIED_FILES),if ! [ -h $$(t) ]; then echo No license metadata for copied file $$(t) >&2; fi;)
+
+endef
+
+
+###########################################################
+# Returns the unique list of built license metadata files.
+###########################################################
+define all-license-metadata
+$(sort \
+  $(foreach t,$(ALL_NON_MODULES),$(if $(filter 0p,$(ALL_TARGETS.$(t).META_LIC)),, $(ALL_TARGETS.$(t).META_LIC))) \
+  $(foreach m,$(ALL_MODULES), $(ALL_MODULES.$(m).META_LIC)) \
+)
+endef
+
+###########################################################
+# Declares the rule to report all library names used in any notice files.
+###########################################################
+define report-all-notice-library-names-rule
+$(strip $(eval _all := $(call all-license-metadata)))
+
+.PHONY: reportallnoticelibrarynames
+reportallnoticelibrarynames: PRIVATE_LIST_FILE := $(call license-metadata-dir)/filelist
+reportallnoticelibrarynames: | $(COMPLIANCENOTICE_SHIPPEDLIBS)
+reportallnoticelibrarynames: $(_all)
+	@echo Reporting notice library names for at least $$(words $(_all)) license metadata files
+	$(hide) rm -f $$(PRIVATE_LIST_FILE)
+	$(hide) mkdir -p $$(dir $$(PRIVATE_LIST_FILE))
+	$(hide) find out -name '*meta_lic' -type f -printf '"%p"\n' >$$(PRIVATE_LIST_FILE)
+	OUT_DIR=$(OUT_DIR) $(COMPLIANCENOTICE_SHIPPEDLIBS) @$$(PRIVATE_LIST_FILE)
+endef
+
+###########################################################
+# Declares the rule to build all license metadata.
+###########################################################
+define build-all-license-metadata-rule
+$(strip $(eval _all := $(call all-license-metadata)))
+
+.PHONY: alllicensemetadata
+alllicensemetadata: $(_all)
+	@echo Building all $(words $(_all)) license metadata files
+endef
+
 
 ###########################################################
 ## Declares a license metadata build rule for ALL_MODULES
 ###########################################################
 define build-license-metadata
-$(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m))))
+$(strip \
+  $(strip $(eval _dir := $(call license-metadata-dir))) \
+  $(foreach t,$(sort $(ALL_0P_TARGETS)), \
+    $(eval ALL_TARGETS.$(t).META_LIC := 0p) \
+  ) \
+  $(foreach t,$(sort $(ALL_NON_MODULES)), \
+    $(eval ALL_TARGETS.$(t).META_LIC := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(t).meta_lic))) \
+  ) \
+  $(foreach t,$(sort $(ALL_NON_MODULES)),$(eval $(call non-module-license-metadata-rule,$(t)))) \
+  $(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m)))) \
+  $(eval $(call report-missing-licenses-rule)) \
+  $(eval $(call report-all-notice-library-names-rule)) \
+  $(eval $(call build-all-license-metadata-rule)))
 endef
 
 ###########################################################
@@ -1106,11 +1399,11 @@ define transform-bc-to-so
 $(hide) mkdir -p $(dir $@)
 $(hide) $(BCC_COMPAT) -O3 -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
   -rt-path $(RS_PREBUILT_CLCORE) -mtriple $(RS_COMPAT_TRIPLE) $<
-$(hide) $(PRIVATE_CXX_LINK) -shared -Wl,-soname,$(notdir $@) -nostdlib \
+$(hide) $(PRIVATE_CXX_LINK) -fuse-ld=lld -target $(CLANG_TARGET_TRIPLE) -shared -Wl,-soname,$(notdir $@) -nostdlib \
   -Wl,-rpath,\$$ORIGIN/../lib \
   $(dir $@)/$(notdir $(<:.bc=.o)) \
   $(RS_PREBUILT_COMPILER_RT) \
-  -o $@ $(CLANG_TARGET_GLOBAL_LDFLAGS) -Wl,--hash-style=sysv \
+  -o $@ $(CLANG_TARGET_GLOBAL_LLDFLAGS) -Wl,--hash-style=sysv \
   -L $(SOONG_OUT_DIR)/ndk/platforms/android-$(PRIVATE_SDK_VERSION)/arch-$(TARGET_ARCH)/usr/lib64 \
   -L $(SOONG_OUT_DIR)/ndk/platforms/android-$(PRIVATE_SDK_VERSION)/arch-$(TARGET_ARCH)/usr/lib \
   $(call intermediates-dir-for,SHARED_LIBRARIES,libRSSupport)/libRSSupport.so \
@@ -1928,21 +2221,10 @@ endef
 # b/37750224
 AAPT_ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=0
 
-# Search for generated R.java/Manifest.java in $1, copy the found R.java as $2.
-# Also copy them to a central 'R' directory to make it easier to add the files to an IDE.
+# Search for generated R.java in $1, copy the found R.java as $2.
 define find-generated-R.java
-$(hide) for GENERATED_MANIFEST_FILE in `find $(1) \
-  -name Manifest.java 2> /dev/null`; do \
-    dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_MANIFEST_FILE`; \
-    mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
-    cp $$GENERATED_MANIFEST_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
-  done;
 $(hide) for GENERATED_R_FILE in `find $(1) \
   -name R.java 2> /dev/null`; do \
-    dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_R_FILE`; \
-    mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
-    cp $$GENERATED_R_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir \
-      || exit 31; \
     cp $$GENERATED_R_FILE $(2) || exit 32; \
   done;
 @# Ensure that the target file is always created, i.e. also in case we did not
@@ -2077,7 +2359,59 @@ define dump-words-to-file
         @$(call emit-line,$(wordlist 12001,12500,$(1)),$(2))
         @$(call emit-line,$(wordlist 12501,13000,$(1)),$(2))
         @$(call emit-line,$(wordlist 13001,13500,$(1)),$(2))
-        @$(if $(wordlist 13501,13502,$(1)),$(error Too many words ($(words $(1)))))
+        @$(call emit-line,$(wordlist 13501,14000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 14001,14500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 14501,15000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 15001,15500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 15501,16000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 16001,16500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 16501,17000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 17001,17500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 17501,18000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 18001,18500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 18501,19000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 19001,19500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 19501,20000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 20001,20500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 20501,21000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 21001,21500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 21501,22000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 22001,22500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 22501,23000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 23001,23500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 23501,24000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 24001,24500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 24501,25000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 25001,25500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 25501,26000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 26001,26500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 26501,27000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 27001,27500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 27501,28000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 28001,28500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 28501,29000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 29001,29500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 29501,30000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 30001,30500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 30501,31000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 31001,31500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 31501,32000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 32001,32500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 32501,33000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 33001,33500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 33501,34000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 34001,34500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 34501,35000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 35001,35500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 35501,36000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 36001,36500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 36501,37000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 37001,37500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 37501,38000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 38001,38500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 38501,39000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 39001,39500,$(1)),$(2))
+        @$(if $(wordlist 39501,39502,$(1)),$(error Too many words ($(words $(1)))))
 endef
 # Return jar arguments to compress files in a given directory
 # $(1): directory
@@ -2340,6 +2674,7 @@ endef
 define add-jar-resources-to-package
   rm -rf $(3)
   mkdir -p $(3)
+  zipinfo -1 $(2) > /dev/null
   unzip -qo $(2) -d $(3) $$(zipinfo -1 $(2) | grep -v -E "\.class$$")
   $(JAR) uf $(1) $(call jar-args-sorted-files-in-directory,$(3))
 endef
@@ -2361,6 +2696,7 @@ define sign-package-arg
 $(hide) mv $(1) $(1).unsigned
 $(hide) $(JAVA) -Djava.library.path=$$(dirname $(SIGNAPK_JNI_LIBRARY_PATH)) -jar $(SIGNAPK_JAR) \
     $(if $(strip $(PRIVATE_CERTIFICATE_LINEAGE)), --lineage $(PRIVATE_CERTIFICATE_LINEAGE)) \
+    $(if $(strip $(PRIVATE_ROTATION_MIN_SDK_VERSION)), --rotation-min-sdk-version $(PRIVATE_ROTATION_MIN_SDK_VERSION)) \
     $(PRIVATE_CERTIFICATE) $(PRIVATE_PRIVATE_KEY) \
     $(PRIVATE_ADDITIONAL_CERTIFICATES) $(1).unsigned $(1).signed
 $(hide) mv $(1).signed $(1)
@@ -2782,6 +3118,8 @@ endef
 # $(3): full path to destination
 define symlink-file
 $(eval $(_symlink-file))
+$(eval $(call declare-license-metadata,$(3),,,,,,))
+$(eval $(call declare-license-deps,$(3),$(1)))
 endef
 
 define _symlink-file
@@ -2815,6 +3153,50 @@ while zip --quiet --delete $(1) classes$${dex_index}.dex > /dev/null; do \
   let dex_index=dex_index+1; \
 done \
 fi
+endef
+
+# Copy an unstripped binary to the symbols directory while also extracting
+# a hash mapping to the mapping directory.
+# $(1): unstripped intermediates file
+# $(2): path in symbols directory
+define copy-unstripped-elf-file-with-mapping
+$(call _copy-symbols-file-with-mapping,$(1),$(2),\
+  elf,$(patsubst $(TARGET_OUT_UNSTRIPPED)/%,$(call intermediates-dir-for,PACKAGING,elf_symbol_mapping)/%,$(2).textproto))
+endef
+
+# Copy an R8 dictionary to the packaging directory while also extracting
+# a hash mapping to the mapping directory.
+# $(1): unstripped intermediates file
+# $(2): path in packaging directory
+# $(3): path in mappings packaging directory
+define copy-r8-dictionary-file-with-mapping
+$(call _copy-symbols-file-with-mapping,$(1),$(2),r8,$(3))
+endef
+
+# Copy an unstripped binary or R8 dictionary to the symbols directory
+# while also extracting a hash mapping to the mapping directory.
+# $(1): unstripped intermediates file
+# $(2): path in symbols directory
+# $(3): file type (elf or r8)
+# $(4): path in the mappings directory
+define _copy-symbols-file-with-mapping
+$(2): .KATI_IMPLICIT_OUTPUTS := $(4)
+$(2): $(SYMBOLS_MAP)
+$(2): $(1)
+	@echo "Copy symbols with mapping: $$@"
+	$$(copy-file-to-target)
+	$(SYMBOLS_MAP) -$(strip $(3)) $(2) -write_if_changed $(4)
+.KATI_RESTAT: $(2)
+endef
+
+# Returns the directory to copy proguard dictionaries into
+define local-proguard-dictionary-directory
+$(call intermediates-dir-for,PACKAGING,proguard_dictionary)/out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
+endef
+
+# Returns the directory to copy proguard dictionary mappings into
+define local-proguard-dictionary-mapping-directory
+$(call intermediates-dir-for,PACKAGING,proguard_dictionary_mapping)/out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
 endef
 
 
@@ -3004,9 +3386,10 @@ endef
 # Can be passed a subdirectory to use for the common testcase directory.
 define compatibility_suite_dirs
   $(strip \
-    $(if $(COMPATIBILITY_TESTCASES_OUT_INCLUDE_MODULE_FOLDER_$(1)),\
-      $(COMPATIBILITY_TESTCASES_OUT_$(1))/$(LOCAL_MODULE)$(2),\
-      $(COMPATIBILITY_TESTCASES_OUT_$(1))) \
+    $(if $(COMPATIBILITY_TESTCASES_OUT_$(1)), \
+      $(if $(COMPATIBILITY_TESTCASES_OUT_INCLUDE_MODULE_FOLDER_$(1))$(LOCAL_COMPATIBILITY_PER_TESTCASE_DIRECTORY),\
+        $(COMPATIBILITY_TESTCASES_OUT_$(1))/$(LOCAL_MODULE)$(2),\
+        $(COMPATIBILITY_TESTCASES_OUT_$(1)))) \
     $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)$(2))
 endef
 
@@ -3021,6 +3404,14 @@ endef
 #    and use my_compat_dist_$(suite) to define the others.
 define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(eval $(if $(strip $(module_license_metadata)),\
+    $$(foreach f,$$(my_compat_dist_$(suite)),$$(eval ALL_TARGETS.$$(call word-colon,2,$$(f)).META_LIC := $(module_license_metadata))),\
+    $$(eval my_test_data += $$(foreach f,$$(my_compat_dist_$(suite)), $$(call word-colon,2,$$(f)))) \
+  )) \
+  $(eval $(if $(strip $(module_license_metadata)),\
+    $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(eval ALL_TARGETS.$$(call word-colon,2,$$(f)).META_LIC := $(module_license_metadata))),\
+    $$(eval my_test_config += $$(foreach f,$$(my_compat_dist_config_$(suite)), $$(call word-colon,2,$$(f)))) \
+  )) \
   $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,\
     $(eval ALL_COMPATIBILITY_SUITES += $(suite)) \
     $(eval COMPATIBILITY.$(suite).FILES :=) \
