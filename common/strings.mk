@@ -88,6 +88,24 @@ $(word $(1),$(subst :,$(space),$(2)))
 endef
 
 ###########################################################
+## Read a colon-separated sublist out of a colon-separated
+## list of words.
+## This has similar behavior to the built-in function
+## $(wordlist s,e,str) except both the input and output
+## word lists are colon-separated.
+##
+## The individual words may not contain spaces.
+##
+## $(1): 1 based index start
+## $(2): 1 based index end (can be 0)
+## $(3): value of the form a:b:c...
+###########################################################
+
+define wordlist-colon
+$(subst $(space),:,$(wordlist $(1),$(2),$(subst :,$(space),$(3))))
+endef
+
+###########################################################
 ## Convert "a=b c= d e = f = g h=" into "a=b c=d e= f=g h="
 ##
 ## $(1): list to collapse
