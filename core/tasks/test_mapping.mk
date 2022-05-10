@@ -36,3 +36,5 @@ $(test_mappings_zip) : $(test_mappings) $(SOONG_ZIP)
 test_mapping : $(test_mappings_zip)
 
 $(call dist-for-goals, dist_files test_mapping,$(test_mappings_zip))
+
+$(call declare-1p-target,$(test_mappings_zip),)
