@@ -62,6 +62,9 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       'avb_boot_add_hash_footer_args':
           ('--prop com.android.build.boot.os_version:R '
            '--prop com.android.build.boot.security_patch:2019-09-05'),
+      'avb_init_boot_add_hash_footer_args':
+          ('--prop com.android.build.boot.os_version:R '
+           '--prop com.android.build.boot.security_patch:2019-09-05'),
       'avb_system_add_hashtree_footer_args':
           ('--prop com.android.build.system.os_version:R '
            '--prop com.android.build.system.security_patch:2019-09-05 '
@@ -75,6 +78,9 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     }
     expected_dict = {
       'avb_boot_add_hash_footer_args':
+          ('--prop com.android.build.boot.os_version:R '
+           '--prop com.android.build.boot.security_patch:2019-09-05'),
+      'avb_init_boot_add_hash_footer_args':
           ('--prop com.android.build.boot.os_version:R '
            '--prop com.android.build.boot.security_patch:2019-09-05'),
       'avb_system_add_hashtree_footer_args':
@@ -328,23 +334,23 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         'Apex3.apex' : 'key3',
     }
     apex_keys = {
-        'Apex1.apex' : ('payload-key1', 'container-key1'),
-        'Apex2.apex' : ('payload-key2', 'container-key2'),
+        'Apex1.apex' : ('payload-key1', 'container-key1', None),
+        'Apex2.apex' : ('payload-key2', 'container-key2', None),
     }
     with zipfile.ZipFile(input_file) as input_zip:
       CheckApkAndApexKeysAvailable(input_zip, apk_key_map, None, apex_keys)
 
       # Fine to have both keys as PRESIGNED.
-      apex_keys['Apex2.apex'] = ('PRESIGNED', 'PRESIGNED')
+      apex_keys['Apex2.apex'] = ('PRESIGNED', 'PRESIGNED', None)
       CheckApkAndApexKeysAvailable(input_zip, apk_key_map, None, apex_keys)
 
       # Having only one of them as PRESIGNED is not allowed.
-      apex_keys['Apex2.apex'] = ('payload-key2', 'PRESIGNED')
+      apex_keys['Apex2.apex'] = ('payload-key2', 'PRESIGNED', None)
       self.assertRaises(
           AssertionError, CheckApkAndApexKeysAvailable, input_zip, apk_key_map,
           None, apex_keys)
 
-      apex_keys['Apex2.apex'] = ('PRESIGNED', 'container-key1')
+      apex_keys['Apex2.apex'] = ('PRESIGNED', 'container-key1', None)
       self.assertRaises(
           AssertionError, CheckApkAndApexKeysAvailable, input_zip, apk_key_map,
           None, apex_keys)
@@ -475,10 +481,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     self.assertEqual({
         'apex.apexd_test.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
-            'build/make/target/product/security/testkey'),
+            'build/make/target/product/security/testkey', None),
         'apex.apexd_test_different_app.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/make/target/product/security/testkey'),
+            'build/make/target/product/security/testkey', None),
         }, keys_info)
 
   def test_ReadApexKeysInfo_mismatchingContainerKeys(self):
@@ -514,10 +520,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     self.assertEqual({
         'apex.apexd_test.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
-            'build/make/target/product/security/testkey'),
+            'build/make/target/product/security/testkey', None),
         'apex.apexd_test_different_app.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/make/target/product/security/testkey'),
+            'build/make/target/product/security/testkey', None),
         }, keys_info)
 
   def test_ReadApexKeysInfo_missingPayloadPublicKey(self):
@@ -537,10 +543,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     self.assertEqual({
         'apex.apexd_test.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
-            'build/make/target/product/security/testkey'),
+            'build/make/target/product/security/testkey', None),
         'apex.apexd_test_different_app.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/make/target/product/security/testkey'),
+            'build/make/target/product/security/testkey', None),
         }, keys_info)
 
   def test_ReadApexKeysInfo_presignedKeys(self):
@@ -560,10 +566,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     self.assertEqual({
         'apex.apexd_test.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
-            'build/make/target/product/security/testkey'),
+            'build/make/target/product/security/testkey', None),
         'apex.apexd_test_different_app.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/make/target/product/security/testkey'),
+            'build/make/target/product/security/testkey', None),
         }, keys_info)
 
   def test_ReadApexKeysInfo_presignedKeys(self):
@@ -583,10 +589,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     self.assertEqual({
         'apex.apexd_test.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
-            'build/make/target/product/security/testkey'),
+            'build/make/target/product/security/testkey', None),
         'apex.apexd_test_different_app.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/make/target/product/security/testkey'),
+            'build/make/target/product/security/testkey', None),
         }, keys_info)
 
   def test_ReplaceGkiSigningKey(self):

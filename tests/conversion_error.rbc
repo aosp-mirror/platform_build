@@ -1,0 +1,27 @@
+# Copyright 2021 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# Run test configuration and verify its result.
+# The main configuration file is device.rbc.
+# It inherits part1.rbc and also includes include1.rbc
+# TODO(asmundak): more tests are needed to verify that:
+#  * multi-level inheritance works as expected
+#  * all runtime functions (wildcard, regex, etc.) work
+
+load("//build/make/core:product_config.rbc", "rblf")
+load(":version_defaults.rbc", "version_defaults")
+load(":device.rbc", "init")
+
+rblf.mk2rbc_error("file.mk:123", "cannot convert")

@@ -35,3 +35,7 @@ dump-many-vars :
 	  printf "'\n";)
 
 endif # CALLED_FROM_SETUP
+
+ifneq (,$(RBC_DUMP_CONFIG_FILE))
+$(call dump-variables-rbc,$(RBC_DUMP_CONFIG_FILE))
+endif

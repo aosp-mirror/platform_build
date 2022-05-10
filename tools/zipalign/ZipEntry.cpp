@@ -87,7 +87,7 @@ status_t ZipEntry::initFromCDE(FILE* fp)
     }
 
     /*
-     * Sanity-check the LFH.  Note that this will fail if the "kUsesDataDescr"
+     * Check the LFH.  Note that this will fail if the "kUsesDataDescr"
      * flag is set, because the LFH is incomplete.  (Not a problem, since we
      * prefer the CDE values.)
      */
