@@ -34,7 +34,7 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
 # GSI should always support up-to-date platform features.
 # Keep this value at the latest API level to ensure latest build system
 # default configs are applied.
-PRODUCT_SHIPPING_API_LEVEL := 30
+PRODUCT_SHIPPING_API_LEVEL := 31
 
 # Enable dynamic partitions to facilitate mixing onto Cuttlefish
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
@@ -62,12 +62,27 @@ PRODUCT_PACKAGES += \
     init.gsi.rc \
     init.vndk-nodef.rc \
 
-# Support additional P, Q and R VNDK packages
-PRODUCT_EXTRA_VNDK_VERSIONS := 28 29 30
+# Support additional VNDK snapshots
+PRODUCT_EXTRA_VNDK_VERSIONS := \
+    28 \
+    29 \
+    30 \
+    31 \
+    32 \
 
 # Do not build non-GSI partition images.
 PRODUCT_BUILD_CACHE_IMAGE := false
+PRODUCT_BUILD_DEBUG_BOOT_IMAGE := false
+PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE := false
 PRODUCT_BUILD_USERDATA_IMAGE := false
 PRODUCT_BUILD_VENDOR_IMAGE := false
 PRODUCT_BUILD_SUPER_PARTITION := false
 PRODUCT_BUILD_SUPER_EMPTY_IMAGE := false
+PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST := true
+
+# Always build modules from source
+MODULE_BUILD_FROM_SOURCE := true
+
+# Additional settings used in all GSI builds
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.crypto.metadata_init_delete_all_keys.enabled=false \

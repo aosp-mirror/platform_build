@@ -15,6 +15,7 @@
 test_suite_name := catbox
 test_suite_tradefed := catbox-tradefed
 test_suite_readme := test/catbox/tools/catbox-tradefed/README
+test_suite_tools := $(HOST_OUT_JAVA_LIBRARIES)/catbox-report-lib.jar
 
 include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 

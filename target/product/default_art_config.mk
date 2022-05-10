@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+# This file contains product config for the ART module that is common for
+# platform and unbundled builds.
+
 ifeq ($(ART_APEX_JARS),)
   $(error ART_APEX_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
 endif
@@ -25,9 +28,8 @@ endif
 # 4. Non-updatable APEX jars
 # 5. Updatable APEX jars
 #
-# ART APEX jars (1) are defined in ART_APEX_JARS. System, system_ext, and non updatable boot jars
-# are defined below in PRODUCT_BOOT_JARS. All updatable APEX boot jars are part of
-# PRODUCT_UPDATABLE_BOOT_JARS.
+# ART APEX jars (1) are defined in ART_APEX_JARS. System and system_ext boot jars are defined below
+# in PRODUCT_BOOT_JARS. All other non-art APEX boot jars are part of the PRODUCT_APEX_BOOT_JARS.
 #
 # The actual runtime ordering matching above is determined by derive_classpath service at runtime.
 # See packages/modules/SdkExtensions/README.md for more details.
@@ -45,31 +47,58 @@ PRODUCT_BOOT_JARS += \
     voip-common \
     ims-common
 
-# Non-updatable APEX jars. Keep the list sorted.
-PRODUCT_BOOT_JARS += \
-    com.android.i18n:core-icu4j
-
-# Updatable APEX boot jars. Keep the list sorted by module names and then library names.
-PRODUCT_UPDATABLE_BOOT_JARS := \
+# APEX boot jars. Keep the list sorted by module names and then library names.
+# Note: core-icu4j is moved back to PRODUCT_BOOT_JARS in product_config.mk at a later stage.
+# Note: For modules available in Q, DO NOT add new entries here.
+PRODUCT_APEX_BOOT_JARS := \
+    com.android.adservices:framework-adservices \
+    com.android.adservices:framework-sdksandbox \
     com.android.appsearch:framework-appsearch \
+    com.android.bluetooth:framework-bluetooth \
     com.android.conscrypt:conscrypt \
+    com.android.i18n:core-icu4j \
     com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
+    com.android.ondevicepersonalization:framework-ondevicepersonalization \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
     com.android.permission:framework-permission-s \
     com.android.scheduling:framework-scheduling \
     com.android.sdkext:framework-sdkextensions \
     com.android.tethering:framework-connectivity \
+    com.android.tethering:framework-connectivity-t \
     com.android.tethering:framework-tethering \
-    com.android.wifi:framework-wifi
+    com.android.uwb:framework-uwb \
+    com.android.wifi:framework-wifi \
 
-# Updatable APEX system server jars. Keep the list sorted by module names and then library names.
-PRODUCT_UPDATABLE_SYSTEM_SERVER_JARS := \
+# List of system_server classpath jars delivered via apex.
+# Keep the list sorted by module names and then library names.
+# Note: For modules available in Q, DO NOT add new entries here.
+PRODUCT_APEX_SYSTEM_SERVER_JARS := \
+    com.android.adservices:service-adservices \
+    com.android.adservices:service-sdksandbox \
     com.android.appsearch:service-appsearch \
+    com.android.art:service-art \
     com.android.media:service-media-s \
     com.android.permission:service-permission \
+
+PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION += art/build/boot/boot-image-profile.txt
+
+# List of jars on the platform that system_server loads dynamically using separate classloaders.
+# Keep the list sorted library names.
+PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
+
+# List of jars delivered via apex that system_server loads dynamically using separate classloaders.
+# Keep the list sorted by module names and then library names.
+# Note: For modules available in Q, DO NOT add new entries here.
+PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
+    com.android.bluetooth:service-bluetooth \
+    com.android.os.statsd:service-statsd \
+    com.android.scheduling:service-scheduling \
+    com.android.tethering:service-connectivity \
+    com.android.uwb:service-uwb \
+    com.android.wifi:service-wifi \
 
 # Minimal configuration for running dex2oat (default argument values).
 # PRODUCT_USES_DEFAULT_ART_CONFIG must be true to enable boot image compilation.

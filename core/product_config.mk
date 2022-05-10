@@ -77,6 +77,45 @@ define find-copy-subdir-files
 $(sort $(shell find $(2) -name "$(1)" -type f | $(SED_EXTENDED) "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g"))
 endef
 
+#
+# Convert file file to the PRODUCT_COPY_FILES/PRODUCT_SDK_ADDON_COPY_FILES
+# format: for each file F return $(F):$(PREFIX)/$(notdir $(F))
+# $(1): files list
+# $(2): prefix
+
+define copy-files
+$(foreach f,$(1),$(f):$(2)/$(notdir $(f)))
+endef
+
+#
+# Convert the list of file names to the list of PRODUCT_COPY_FILES items
+# $(1): from pattern
+# $(2): to pattern
+# $(3): file names
+# E.g., calling product-copy-files-by-pattern with
+#   (from/%, to/%, a b)
+# returns
+#   from/a:to/a from/b:to/b
+define product-copy-files-by-pattern
+$(join $(patsubst %,$(1),$(3)),$(patsubst %,:$(2),$(3)))
+endef
+
+# Return empty unless the board matches
+define is-board-platform2
+$(filter $(1), $(TARGET_BOARD_PLATFORM))
+endef
+
+# Return empty unless the board is in the list
+define is-board-platform-in-list2
+$(filter $(1),$(TARGET_BOARD_PLATFORM))
+endef
+
+# Return empty unless the board is QCOM
+define is-vendor-board-qcom
+$(if $(strip $(TARGET_BOARD_PLATFORM) $(QCOM_BOARD_PLATFORMS)),$(filter $(TARGET_BOARD_PLATFORM),$(QCOM_BOARD_PLATFORMS)),\
+  $(error both TARGET_BOARD_PLATFORM=$(TARGET_BOARD_PLATFORM) and QCOM_BOARD_PLATFORMS=$(QCOM_BOARD_PLATFORMS)))
+endef
+
 # ---------------------------------------------------------------
 # Check for obsolete PRODUCT- and APP- goals
 ifeq ($(CALLED_FROM_SETUP),true)
@@ -107,97 +146,132 @@ include $(BUILD_SYSTEM)/node_fns.mk
 include $(BUILD_SYSTEM)/product.mk
 include $(BUILD_SYSTEM)/device.mk
 
-# Read in all of the product definitions specified by the AndroidProducts.mk
-# files in the tree.
-all_product_configs := $(get-all-product-makefiles)
+# Read all product definitions.
+#
+# Products are defined in AndroidProducts.mk files:
+android_products_makefiles := $(file <$(OUT_DIR)/.module_paths/AndroidProducts.mk.list) \
+  $(SRC_TARGET_DIR)/product/AndroidProducts.mk
 
-all_named_products :=
+# An AndroidProduct.mk file sets the following variables:
+#   PRODUCT_MAKEFILES specifies product makefiles. Each item in this list
+#     is either a <product>:path/to/file.mk, or just path/to/<product.mk>
+#   COMMON_LUNCH_CHOICES specifies <product>-<variant> values to be shown
+#     in the `lunch` menu
+#   STARLARK_OPT_IN_PRODUCTS specifies products to use Starlark-based
+#     product configuration by default
 
-# Find the product config makefile for the current product.
-# all_product_configs consists items like:
-# <product_name>:<path_to_the_product_makefile>
-# or just <path_to_the_product_makefile> in case the product name is the
-# same as the base filename of the product config makefile.
-current_product_makefile :=
-all_product_makefiles :=
-$(foreach f, $(all_product_configs),\
-    $(eval _cpm_words := $(call _decode-product-name,$(f)))\
-    $(eval _cpm_word1 := $(word 1,$(_cpm_words)))\
-    $(eval _cpm_word2 := $(word 2,$(_cpm_words)))\
-    $(eval all_product_makefiles += $(_cpm_word2))\
-    $(eval all_named_products += $(_cpm_word1))\
-    $(if $(filter $(TARGET_PRODUCT),$(_cpm_word1)),\
-        $(eval current_product_makefile += $(_cpm_word2)),))
-_cpm_words :=
-_cpm_word1 :=
-_cpm_word2 :=
-current_product_makefile := $(strip $(current_product_makefile))
-all_product_makefiles := $(strip $(all_product_makefiles))
+# Builds a list of first/second elements of each pair:
+#   $(call _first,a:A b:B,:) returns 'a b'
+#   $(call _second,a-A b-B,-) returns 'A B'
+_first=$(filter-out $(2)%,$(subst $(2),$(space)$(2),$(1)))
+_second=$(filter-out %$(2),$(subst $(2),$(2)$(space),$(1)))
 
-load_all_product_makefiles :=
-ifneq (,$(filter product-graph, $(MAKECMDGOALS)))
-ifeq ($(ANDROID_PRODUCT_GRAPH),--all)
-load_all_product_makefiles := true
-endif
-endif
-ifneq (,$(filter dump-products,$(MAKECMDGOALS)))
-ifeq ($(ANDROID_DUMP_PRODUCTS),all)
-load_all_product_makefiles := true
-endif
-endif
+# Returns <product>:<path> pair from a PRODUCT_MAKEFILE item.
+# If an item is <product>:path/to/file.mk, return it as is,
+# otherwise assume that an item is path/to/<product>.mk and
+# return <product>:path/to/<product>.mk
+_product-spec=$(strip $(if $(findstring :,$(1)),$(1),$(basename $(notdir $(1))):$(1)))
+
+# Reads given AndroidProduct.mk file and sets the following variables:
+#  ap_product_paths -- the list of <product>:<path> pairs
+#  ap_common_lunch_choices -- the list of <product>-<build variant> items
+#  ap_products_using_starlark_config -- the list of products using starlark config
+# In addition, validates COMMON_LUNCH_CHOICES and STARLARK_OPT_IN_PRODUCTS values
+define _read-ap-file
+  $(eval PRODUCT_MAKEFILES :=) \
+  $(eval COMMON_LUNCH_CHOICES :=) \
+  $(eval STARLARK_OPT_IN_PRODUCTS := ) \
+  $(eval ap_product_paths :=) \
+  $(eval LOCAL_DIR := $(patsubst %/,%,$(dir $(f)))) \
+  $(eval include $(f)) \
+  $(foreach p, $(PRODUCT_MAKEFILES),$(eval ap_product_paths += $(call _product-spec,$(p)))) \
+  $(eval ap_common_lunch_choices  := $(COMMON_LUNCH_CHOICES)) \
+  $(eval ap_products_using_starlark_config := $(STARLARK_OPT_IN_PRODUCTS)) \
+  $(eval _products := $(call _first,$(ap_product_paths),:)) \
+  $(eval _bad := $(filter-out $(_products),$(call _first,$(ap_common_lunch_choices),-))) \
+  $(if $(_bad),$(error COMMON_LUNCH_CHOICES contains products(s) not defined in this file: $(_bad))) \
+  $(eval _bad := $(filter-out %-eng %-userdebug %-user,$(ap_common_lunch_choices))) \
+  $(if $(_bad),$(error invalid variant in COMMON_LUNCH_CHOICES: $(_bad)))
+  $(eval _bad := $(filter-out $(_products),$(ap_products_using_starlark_config))) \
+  $(if $(_bad),$(error STARLARK_OPT_IN_PRODUCTS contains product(s) not defined in this file: $(_bad)))
+endef
+
+# Build cumulative lists of all product specs/lunch choices/Starlark-based products.
+product_paths :=
+common_lunch_choices :=
+products_using_starlark_config :=
+$(foreach f,$(android_products_makefiles), \
+    $(call _read-ap-file,$(f)) \
+    $(eval product_paths += $(ap_product_paths)) \
+    $(eval common_lunch_choices += $(ap_common_lunch_choices)) \
+    $(eval products_using_starlark_config += $(ap_products_using_starlark_config)) \
+)
+
+# Dedup, extract product names, etc.
+product_paths := $(sort $(product_paths))
+all_named_products := $(sort $(call _first,$(product_paths),:))
+all_product_makefiles := $(sort $(call _second,$(product_paths),:))
+current_product_makefile := $(call _second,$(filter $(TARGET_PRODUCT):%,$(product_paths)),:)
+COMMON_LUNCH_CHOICES := $(sort $(common_lunch_choices))
+
+# Check that there are no duplicate product names
+$(foreach p,$(all_named_products), \
+  $(if $(filter 1,$(words $(filter $(p):%,$(product_paths)))),, \
+    $(error Product name must be unique, "$(p)" used by $(call _second,$(filter $(p):%,$(product_paths)),:))))
 
 ifneq ($(ALLOW_RULES_IN_PRODUCT_CONFIG),)
 _product_config_saved_KATI_ALLOW_RULES := $(.KATI_ALLOW_RULES)
 .KATI_ALLOW_RULES := $(ALLOW_RULES_IN_PRODUCT_CONFIG)
 endif
 
-ifeq ($(load_all_product_makefiles),true)
-# Import all product makefiles.
-$(call import-products, $(all_product_makefiles))
-else
-# Import just the current product.
-ifndef current_product_makefile
-$(error Can not locate config makefile for product "$(TARGET_PRODUCT)")
+ifeq (,$(current_product_makefile))
+  $(error Can not locate config makefile for product "$(TARGET_PRODUCT)")
 endif
-ifneq (1,$(words $(current_product_makefile)))
-$(error Product "$(TARGET_PRODUCT)" ambiguous: matches $(current_product_makefile))
+
+ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
+  RBC_PRODUCT_CONFIG := true
+  RBC_BOARD_CONFIG := true
 endif
+
+ifndef RBC_PRODUCT_CONFIG
 $(call import-products, $(current_product_makefile))
-endif  # Import all or just the current product makefile
+else
+  $(shell mkdir -p $(OUT_DIR)/rbc)
+  $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
 
-# Quick check
-$(check-all-products)
+  $(shell build/soong/scripts/update_out \
+    $(OUT_DIR)/rbc/rbc_product_config_results.mk \
+    build/soong/scripts/rbc-run \
+    $(current_product_makefile) \
+    $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
+  ifneq ($(.SHELLSTATUS),0)
+    $(error product configuration converter failed: $(.SHELLSTATUS))
+  endif
+  include $(OUT_DIR)/rbc/rbc_product_config_results.mk
+endif
 
-ifeq ($(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
+# This step was already handled in the RBC product configuration.
+ifeq ($(RBC_PRODUCT_CONFIG)$(SKIP_ARTIFACT_PATH_REQUIREMENT_PRODUCTS_CHECK),)
 # Import all the products that have made artifact path requirements, so that we can verify
-# the artifacts they produce.
-# These are imported after check-all-products because some of them might not be real products.
+# the artifacts they produce. They might be intermediate makefiles instead of real products.
 $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(if $(filter-out $(makefile),$(PRODUCTS)),$(eval $(call import-products,$(makefile))))\
 )
 endif
+
+INTERNAL_PRODUCT := $(current_product_makefile)
+# Strip and assign the PRODUCT_ variables.
+$(call strip-product-vars)
+
+# Quick check
+$(check-current-product)
 
 ifneq ($(ALLOW_RULES_IN_PRODUCT_CONFIG),)
 .KATI_ALLOW_RULES := $(_saved_KATI_ALLOW_RULES)
 _product_config_saved_KATI_ALLOW_RULES :=
 endif
 
-ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
-$(dump-products)
-endif
-
-# Convert a short name like "sooner" into the path to the product
-# file defining that product.
-#
-INTERNAL_PRODUCT := $(call resolve-short-product-name, $(TARGET_PRODUCT))
-ifneq ($(current_product_makefile),$(INTERNAL_PRODUCT))
-$(error PRODUCT_NAME inconsistent in $(current_product_makefile) and $(INTERNAL_PRODUCT))
-endif
-
-
 ############################################################################
-# Strip and assign the PRODUCT_ variables.
-$(call strip-product-vars)
 
 current_product_makefile :=
 all_product_makefiles :=
@@ -249,23 +323,29 @@ PRODUCT_BOOT_JARS += $(PRODUCT_BOOT_JARS_EXTRA)
 
 PRODUCT_BOOT_JARS := $(call qualify-platform-jars,$(PRODUCT_BOOT_JARS))
 
-# Replaces references to overridden boot jar modules in a boot jars variable.
-# $(1): Name of a boot jars variable with <apex>:<jar> pairs.
-define replace-boot-jar-module-overrides
-  $(foreach pair,$(PRODUCT_BOOT_JAR_MODULE_OVERRIDES),\
-    $(eval _rbjmo_from := $(call word-colon,1,$(pair)))\
-    $(eval _rbjmo_to := $(call word-colon,2,$(pair)))\
-    $(eval $(1) := $(patsubst $(_rbjmo_from):%,$(_rbjmo_to):%,$($(1)))))
-endef
-
-$(call replace-boot-jar-module-overrides,PRODUCT_BOOT_JARS)
-$(call replace-boot-jar-module-overrides,PRODUCT_UPDATABLE_BOOT_JARS)
-$(call replace-boot-jar-module-overrides,ART_APEX_JARS)
+# b/191127295: force core-icu4j onto boot image. It comes from a non-updatable APEX jar, but has
+# historically been part of the boot image; even though APEX jars are not meant to be part of the
+# boot image.
+# TODO(b/191686720): remove PRODUCT_APEX_BOOT_JARS to avoid a special handling of core-icu4j
+# in make rules.
+PRODUCT_APEX_BOOT_JARS := $(filter-out com.android.i18n:core-icu4j,$(PRODUCT_APEX_BOOT_JARS))
+# All APEX jars come after /system and /system_ext jars, so adding core-icu4j at the end of the list
+PRODUCT_BOOT_JARS += com.android.i18n:core-icu4j
 
 # The extra system server jars must be appended at the end after common system server jars.
 PRODUCT_SYSTEM_SERVER_JARS += $(PRODUCT_SYSTEM_SERVER_JARS_EXTRA)
 
 PRODUCT_SYSTEM_SERVER_JARS := $(call qualify-platform-jars,$(PRODUCT_SYSTEM_SERVER_JARS))
+
+# Sort APEX boot and system server jars. We use deterministic alphabetical order
+# when constructing BOOTCLASSPATH and SYSTEMSERVERCLASSPATH definition on device
+# after an update. Enforce it in the build system as well to avoid recompiling
+# everything after an update due a change in the order.
+PRODUCT_APEX_BOOT_JARS := $(sort $(PRODUCT_APEX_BOOT_JARS))
+PRODUCT_APEX_SYSTEM_SERVER_JARS := $(sort $(PRODUCT_APEX_SYSTEM_SERVER_JARS))
+
+PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
+  $(call qualify-platform-jars,$(PRODUCT_STANDALONE_SYSTEM_SERVER_JARS))
 
 ifndef PRODUCT_SYSTEM_NAME
   PRODUCT_SYSTEM_NAME := $(PRODUCT_NAME)
@@ -303,15 +383,16 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
   endif
 endif
 
-$(foreach pair,$(PRODUCT_UPDATABLE_BOOT_JARS), \
+$(foreach pair,$(PRODUCT_APEX_BOOT_JARS), \
   $(eval jar := $(call word-colon,2,$(pair))) \
   $(if $(findstring $(jar), $(PRODUCT_BOOT_JARS)), \
-    $(error A jar in PRODUCT_UPDATABLE_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(jar) is)))
+    $(error A jar in PRODUCT_APEX_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(jar) is)))
 
 ENFORCE_SYSTEM_CERTIFICATE := $(PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT)
 ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST := $(PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST)
 
 PRODUCT_OTA_PUBLIC_KEYS := $(sort $(PRODUCT_OTA_PUBLIC_KEYS))
+PRODUCT_EXTRA_OTA_KEYS := $(sort $(PRODUCT_EXTRA_OTA_KEYS))
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort $(PRODUCT_EXTRA_RECOVERY_KEYS))
 
 # Resolve and setup per-module dex-preopt configs.
@@ -343,11 +424,23 @@ $(foreach c,$(PRODUCT_SANITIZER_MODULE_CONFIGS),\
 _psmc_modules :=
 
 # Reset ADB keys for non-debuggable builds
-ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
+ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)))
   PRODUCT_ADB_KEYS :=
 endif
 ifneq ($(filter-out 0 1,$(words $(PRODUCT_ADB_KEYS))),)
   $(error Only one file may be in PRODUCT_ADB_KEYS: $(PRODUCT_ADB_KEYS))
+endif
+
+# Show a warning wall of text if non-compliance-GSI products set this option.
+ifdef PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
+  ifeq (,$(filter gsi_arm gsi_arm64 gsi_x86 gsi_x86_64 gsi_car_arm64 gsi_car_x86_64 gsi_tv_arm gsi_tv_arm64,$(PRODUCT_NAME)))
+    $(warning PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT is set but \
+      PRODUCT_NAME ($(PRODUCT_NAME)) doesn't look like a GSI for compliance \
+      testing. This is a special configuration for compliance GSI, so do make \
+      sure you understand the security implications before setting this \
+      option. If you don't know what this option does, then you probably \
+      shouldn't set this.)
+  endif
 endif
 
 ifndef PRODUCT_USE_DYNAMIC_PARTITIONS
@@ -475,6 +568,7 @@ endef
 
 # Copy and check the value of each PRODUCT_BUILD_*_IMAGE variable
 $(foreach image, \
+    PVMFW \
     SYSTEM \
     SYSTEM_OTHER \
     VENDOR \
@@ -483,6 +577,7 @@ $(foreach image, \
     ODM \
     VENDOR_DLKM \
     ODM_DLKM \
+    SYSTEM_DLKM \
     CACHE \
     RAMDISK \
     USERDATA \

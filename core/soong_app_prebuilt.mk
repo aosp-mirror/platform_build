@@ -28,6 +28,17 @@ full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 
+
+# Use the Soong output as the checkbuild target instead of LOCAL_BUILT_MODULE
+# to avoid checkbuilds making an extra copy of every module.
+LOCAL_CHECKED_MODULE := $(LOCAL_PREBUILT_MODULE_FILE)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_CLASSES_JAR)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_HEADER_JAR)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_FULL_MANIFEST_FILE)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_DEXPREOPT_CONFIG)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE)
+LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_DEX_JAR)
+
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
@@ -89,18 +100,24 @@ ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_DICT
+  my_proguard_dictionary_directory := $(local-proguard-dictionary-directory)
+  my_proguard_dictionary_mapping_directory := $(local-proguard-dictionary-mapping-directory)
   $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
     $(intermediates.COMMON)/proguard_dictionary))
-  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
-    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary))
+  $(eval $(call copy-r8-dictionary-file-with-mapping,\
+    $(LOCAL_SOONG_PROGUARD_DICT),\
+    $(my_proguard_dictionary_directory)/proguard_dictionary,\
+    $(my_proguard_dictionary_mapping_directory)/proguard_dictionary.textproto))
   $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),\
-    $(call local-packaging-dir,proguard_dictionary)/classes.jar))
+    $(my_proguard_dictionary_directory)/classes.jar))
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
     $(intermediates.COMMON)/proguard_dictionary)
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(call local-packaging-dir,proguard_dictionary)/proguard_dictionary)
+    $(my_proguard_dictionary_directory)/proguard_dictionary)
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(call local-packaging-dir,proguard_dictionary)/classes.jar)
+    $(my_proguard_dictionary_mapping_directory)/proguard_dictionary.textproto)
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(my_proguard_dictionary_directory)/classes.jar)
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_USAGE_ZIP
@@ -126,13 +143,6 @@ endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
 java-dex: $(LOCAL_SOONG_DEX_JAR)
 
-
-my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
-  $(call word-colon,1,$(f)):$(PRODUCT_OUT)$(call word-colon,2,$(f)))
-my_installed := $(call copy-many-files, $(my_built_installed))
-ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed)
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_installed)
-$(my_all_targets): $(my_installed)
 
 # Copy test suite files.
 ifdef LOCAL_COMPATIBILITY_SUITE
