@@ -455,6 +455,11 @@ class BuildInfo(object):
     return vabc_enabled
 
   @property
+  def is_android_r(self):
+    system_prop = self.info_dict.get("system.build.prop")
+    return system_prop and system_prop.GetProp("ro.build.version.release") == "11"
+
+  @property
   def is_vabc_xor(self):
     vendor_prop = self.info_dict.get("vendor.build.prop")
     vabc_xor_enabled = vendor_prop and \
@@ -725,7 +730,7 @@ class RamdiskFormat(object):
   GZ = 2
 
 
-def _GetRamdiskFormat(info_dict):
+def GetRamdiskFormat(info_dict):
   if info_dict.get('lz4_ramdisks') == 'true':
     ramdisk_format = RamdiskFormat.LZ4
   else:
@@ -834,7 +839,7 @@ def LoadInfoDict(input_file, repacking=False):
 
   # Load recovery fstab if applicable.
   d["fstab"] = _FindAndLoadRecoveryFstab(d, input_file, read_helper)
-  ramdisk_format = _GetRamdiskFormat(d)
+  ramdisk_format = GetRamdiskFormat(d)
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
@@ -1188,10 +1193,14 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
     return " ".join(sorted(combined))
 
   if (framework_dict.get("use_dynamic_partitions") !=
-          "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
+        "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
     raise ValueError("Both dictionaries must have use_dynamic_partitions=true")
 
   merged_dict = {"use_dynamic_partitions": "true"}
+  # For keys-value pairs that are the same, copy to merged dict
+  for key in vendor_dict.keys():
+    if key in framework_dict and framework_dict[key] == vendor_dict[key]:
+      merged_dict[key] = vendor_dict[key]
 
   merged_dict["dynamic_partition_list"] = uniq_concat(
       framework_dict.get("dynamic_partition_list", ""),
@@ -1575,7 +1584,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   img = tempfile.NamedTemporaryFile()
 
   if has_ramdisk:
-    ramdisk_format = _GetRamdiskFormat(info_dict)
+    ramdisk_format = GetRamdiskFormat(info_dict)
     ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file,
                                ramdisk_format=ramdisk_format)
 
@@ -1856,7 +1865,7 @@ def _BuildVendorBootImage(sourcedir, partition_name, info_dict=None):
 
   img = tempfile.NamedTemporaryFile()
 
-  ramdisk_format = _GetRamdiskFormat(info_dict)
+  ramdisk_format = GetRamdiskFormat(info_dict)
   ramdisk_img = _MakeRamdisk(sourcedir, ramdisk_format=ramdisk_format)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
