@@ -444,8 +444,12 @@ LOCAL_GENERATED_SOURCES += $(GEN)
 <p>Unbundled build has several meanings by the context.
 Let me explain the meaning by the flags related to "unbundled build"</p>
 <h4>TARGET_BUILD_UNBUNDLED</h4>
-<p>The source tree might not have the full platform sources. It is always set if
-<code>TARGET_BUILD_APPS</code> or <code>TARGET_BUILD_UNBUNDLED_IMAGE</code> is set.</p>
+<p>
+    The source tree might not have the full platform sources. It turns on
+    <code>TARGET_BUILD_USE_PREBUILT_SDKS</code>, unless
+    <code>UNBUNDLED_BUILD_SDKS_FROM_SOURCE</code> is set. It is always set if
+    <code>TARGET_BUILD_APPS</code> or <code>TARGET_BUILD_UNBUNDLED_IMAGE</code> is set.
+</p>
 <h4>TARGET_BUILD_USE_PREBUILT_SDKS</h4>
 <p>It is an internal flag. If it is set, prebuilt SDKs are used, even if a module's
 <code>LOCAL_SDK_VERSION</code> is <code>current</code> (including <code>system_current</code>,
