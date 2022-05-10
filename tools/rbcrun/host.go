@@ -16,10 +16,10 @@ package rbcrun
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"go.starlark.net/starlark"
@@ -118,27 +118,10 @@ func fileExists(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
 	if err := starlark.UnpackPositionalArgs(b.Name(), args, kwargs, 1, &path); err != nil {
 		return starlark.None, err
 	}
-	if stat, err := os.Stat(path); err != nil || stat.IsDir() {
+	if _, err := os.Stat(path); err != nil {
 		return starlark.False, nil
 	}
 	return starlark.True, nil
-}
-
-// regexMatch(pattern, s) returns True if s matches pattern (a regex)
-func regexMatch(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
-	kwargs []starlark.Tuple) (starlark.Value, error) {
-	var pattern, s string
-	if err := starlark.UnpackPositionalArgs(b.Name(), args, kwargs, 2, &pattern, &s); err != nil {
-		return starlark.None, err
-	}
-	match, err := regexp.MatchString(pattern, s)
-	if err != nil {
-		return starlark.None, err
-	}
-	if match {
-		return starlark.True, nil
-	}
-	return starlark.False, nil
 }
 
 // wildcard(pattern, top=None) expands shell's glob pattern. If 'top' is present,
@@ -168,6 +151,46 @@ func wildcard(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
 		}
 	}
 	return makeStringList(files), nil
+}
+
+// find(top, pattern, only_files = 0) returns all the paths under 'top'
+// whose basename matches 'pattern' (which is a shell's glob pattern).
+// If 'only_files' is non-zero, only the paths to the regular files are
+// returned. The returned paths are relative to 'top'.
+func find(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
+	kwargs []starlark.Tuple) (starlark.Value, error) {
+	var top, pattern string
+	var onlyFiles int
+	if err := starlark.UnpackArgs(b.Name(), args, kwargs,
+		"top", &top, "pattern", &pattern, "only_files?", &onlyFiles); err != nil {
+		return starlark.None, err
+	}
+	top = filepath.Clean(top)
+	pattern = filepath.Clean(pattern)
+	// Go's filepath.Walk is slow, consider using OS's find
+	var res []string
+	err := filepath.WalkDir(top, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			if d != nil && d.IsDir() {
+				return fs.SkipDir
+			} else {
+				return nil
+			}
+		}
+		relPath := strings.TrimPrefix(path, top)
+		if len(relPath) > 0 && relPath[0] == os.PathSeparator {
+			relPath = relPath[1:]
+		}
+		// Do not return top-level dir
+		if len(relPath) == 0 {
+			return nil
+		}
+		if matched, err := filepath.Match(pattern, d.Name()); err == nil && matched && (onlyFiles == 0 || d.Type().IsRegular()) {
+			res = append(res, relPath)
+		}
+		return nil
+	})
+	return makeStringList(res), err
 }
 
 // shell(command) runs OS shell with given command and returns back
@@ -218,6 +241,28 @@ func structFromEnv(env []string) *starlarkstruct.Struct {
 	return starlarkstruct.FromStringDict(starlarkstruct.Default, sd)
 }
 
+func log(thread *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+	sep := " "
+	if err := starlark.UnpackArgs("print", nil, kwargs, "sep?", &sep); err != nil {
+		return nil, err
+	}
+	for i, v := range args {
+		if i > 0 {
+			fmt.Fprint(os.Stderr, sep)
+		}
+		if s, ok := starlark.AsString(v); ok {
+			fmt.Fprint(os.Stderr, s)
+		} else if b, ok := v.(starlark.Bytes); ok {
+			fmt.Fprint(os.Stderr, string(b))
+		} else {
+			fmt.Fprintf(os.Stderr, "%s", v)
+		}
+	}
+
+	fmt.Fprintln(os.Stderr)
+	return starlark.None, nil
+}
+
 func setup(env []string) {
 	// Create the symbols that aid makefile conversion. See README.md
 	builtins = starlark.StringDict{
@@ -226,10 +271,12 @@ func setup(env []string) {
 		"rblf_env": structFromEnv(os.Environ()),
 		// To convert makefile's $(wildcard foo)
 		"rblf_file_exists": starlark.NewBuiltin("rblf_file_exists", fileExists),
-		// To convert makefile's $(filter ...)/$(filter-out)
-		"rblf_regex": starlark.NewBuiltin("rblf_regex", regexMatch),
+		// To convert find-copy-subdir and product-copy-files-by pattern
+		"rblf_find_files": starlark.NewBuiltin("rblf_find_files", find),
 		// To convert makefile's $(shell cmd)
 		"rblf_shell": starlark.NewBuiltin("rblf_shell", shell),
+		// Output to stderr
+		"rblf_log": starlark.NewBuiltin("rblf_log", log),
 		// To convert makefile's $(wildcard foo*)
 		"rblf_wildcard": starlark.NewBuiltin("rblf_wildcard", wildcard),
 	}

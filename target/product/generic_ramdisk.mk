@@ -22,9 +22,14 @@
 # Ramdisk
 PRODUCT_PACKAGES += \
     init_first_stage \
+    e2fsck.ramdisk \
+    fsck.f2fs.ramdisk \
+    tune2fs.ramdisk \
+    snapuserd.ramdisk \
 
 # Debug ramdisk
 PRODUCT_PACKAGES += \
+    adb_debug.prop \
     userdebug_plat_sepolicy.cil \
 
 _my_paths := \

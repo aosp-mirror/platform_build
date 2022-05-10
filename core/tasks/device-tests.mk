@@ -55,4 +55,7 @@ $(device-tests-zip) : $(COMPATIBILITY.device-tests.FILES) $(my_host_shared_lib_f
 device-tests: $(device-tests-zip)
 $(call dist-for-goals, device-tests, $(device-tests-zip) $(device-tests-list-zip) $(device-tests-configs-zip) $(device_tests_host_shared_libs_zip))
 
+$(call declare-1p-container,$(device-tests-zip),)
+$(call declare-container-license-deps,$(device-tests-zip),$(COMPATIBILITY.device-tests.FILES) $(my_host_shared_lib_for_device_tests),$(PRODUCT_OUT)/:/)
+
 tests: device-tests
