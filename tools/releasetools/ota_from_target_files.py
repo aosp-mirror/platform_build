@@ -1068,10 +1068,11 @@ def GeneratePartitionTimestampFlagsDowngrade(
         pre_partition_state, post_partition_state):
   assert pre_partition_state is not None
   partition_timestamps = {}
-  for part in pre_partition_state:
-    partition_timestamps[part.partition_name] = part.version
   for part in post_partition_state:
-    partition_timestamps[part.partition_name] = \
+    partition_timestamps[part.partition_name] = part.version
+  for part in pre_partition_state:
+    if part.partition_name in partition_timestamps:
+      partition_timestamps[part.partition_name] = \
         max(part.version, partition_timestamps[part.partition_name])
   return [
       "--partition_timestamps",
@@ -1145,6 +1146,14 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
       logger.info("Either source or target does not support VABC, disabling.")
       OPTIONS.disable_vabc = True
 
+    # Virtual AB Compression was introduced in Androd S.
+    # Later, we backported VABC to Android R. But verity support was not
+    # backported, so if VABC is used and we are on Android R, disable
+    # verity computation.
+    if not OPTIONS.disable_vabc and source_info.is_android_r:
+      OPTIONS.disable_verity_computation = True
+      OPTIONS.disable_fec_computation = True
+
   else:
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
@@ -1208,6 +1217,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         metadata.postcondition.partition_state)
 
   if not ota_utils.IsZucchiniCompatible(source_file, target_file):
+    logger.warning(
+        "Builds doesn't support zucchini, or source/target don't have compatible zucchini versions. Disabling zucchini.")
     OPTIONS.enable_zucchini = False
 
   additional_args += ["--enable_zucchini",
