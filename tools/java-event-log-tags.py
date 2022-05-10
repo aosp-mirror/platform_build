@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2009 The Android Open Source Project
 #
@@ -23,7 +23,7 @@ tags in the given input file.
 -h to display this usage message and exit.
 """
 
-import cStringIO
+from io import StringIO
 import getopt
 import os
 import os.path
@@ -36,24 +36,24 @@ output_file = None
 
 try:
   opts, args = getopt.getopt(sys.argv[1:], "ho:")
-except getopt.GetoptError, err:
-  print str(err)
-  print __doc__
+except getopt.GetoptError as err:
+  print(str(err))
+  print(__doc__)
   sys.exit(2)
 
 for o, a in opts:
   if o == "-h":
-    print __doc__
+    print(__doc__)
     sys.exit(2)
   elif o == "-o":
     output_file = a
   else:
-    print >> sys.stderr, "unhandled option %s" % (o,)
+    print("unhandled option %s" % (o,), file=sys.stderr)
     sys.exit(1)
 
 if len(args) != 1 and len(args) != 2:
-  print "need one or two input files, not %d" % (len(args),)
-  print __doc__
+  print("need one or two input files, not %d" % (len(args),))
+  print(__doc__)
   sys.exit(1)
 
 fn = args[0]
@@ -92,10 +92,10 @@ if "javadoc_hide" in tagfile.options:
 
 if tagfile.errors:
   for fn, ln, msg in tagfile.errors:
-    print >> sys.stderr, "%s:%d: error: %s" % (fn, ln, msg)
+    print("%s:%d: error: %s" % (fn, ln, msg), file=sys.stderr)
   sys.exit(1)
 
-buffer = cStringIO.StringIO()
+buffer = StringIO()
 buffer.write("/* This file is auto-generated.  DO NOT MODIFY.\n"
              " * Source file: %s\n"
              " */\n\n" % (fn,))
