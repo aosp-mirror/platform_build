@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2019 The Android Open Source Project
 #
@@ -120,7 +120,7 @@ def _generate_extract_command(start, size, extract_name):
 
 def main(argv):
   if len(argv) != 5:
-    print 'generate-self-extracting-archive.py expects exactly 4 arguments'
+    print('generate-self-extracting-archive.py expects exactly 4 arguments')
     sys.exit(1)
 
   output_filename = argv[1]
@@ -134,11 +134,11 @@ def main(argv):
     license = license_file.read()
 
   if not license:
-    print 'License file was empty'
+    print('License file was empty')
     sys.exit(1)
 
   if 'SOFTWARE LICENSE AGREEMENT' not in license:
-    print 'License does not look like a license'
+    print('License does not look like a license')
     sys.exit(1)
 
   comment_line = '# %s\n' % comment
