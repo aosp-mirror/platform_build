@@ -1,0 +1,8 @@
+package_name:  "External"
+projects:  "dynamic/library"
+license_kinds:  "SPDX-license-identifier-MIT"
+license_conditions:  "notice"
+license_texts:  "testdata/notice/NOTICE_LICENSE"
+is_container:  false
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/libd.so"
+installed:  "out/target/product/fictional/system/lib/libd.so"

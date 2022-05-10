@@ -24,9 +24,13 @@ $(INSTALLED_ANDROID_INFO_TXT_TARGET): $(board_info_txt) build/make/tools/check_r
 	$(call pretty,"Generated: ($@)")
 ifdef board_info_txt
 	$(hide) grep -v '#' $< > $@
-else
+else ifdef TARGET_BOOTLOADER_BOARD_NAME
 	$(hide) echo "board=$(TARGET_BOOTLOADER_BOARD_NAME)" > $@
+else
+	$(hide) echo "" > $@
 endif
+
+$(call declare-0p-target,$(INSTALLED_ANDROID_INFO_TXT_TARGET))
 
 # Copy compatibility metadata to the device.
 
