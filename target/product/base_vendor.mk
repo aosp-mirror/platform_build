@@ -25,6 +25,7 @@ PRODUCT_PACKAGES += \
     linker.recovery \
     otacerts.recovery \
     recovery \
+    servicemanager.recovery \
     shell_and_utilities_recovery \
     watchdogd.recovery \
 
@@ -78,7 +79,8 @@ PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29 += \
 PRODUCT_PACKAGES += \
     vendor_compatibility_matrix.xml \
 
-# Packages to update the recovery partition, which will be installed on
-# /vendor. TODO(b/141648565): Don't install these unless they're needed.
+# Base modules and settings for the debug ramdisk, which is then packed
+# into a boot-debug.img and a vendor_boot-debug.img.
 PRODUCT_PACKAGES += \
-    applypatch
+    adb_debug.prop \
+    userdebug_plat_sepolicy.cil
