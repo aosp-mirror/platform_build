@@ -65,6 +65,7 @@ _board_strip_readonly_list += TARGET_ARCH_SUITE
 # File system variables
 _board_strip_readonly_list += BOARD_FLASH_BLOCK_SIZE
 _board_strip_readonly_list += BOARD_BOOTIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_RECOVERYIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE
@@ -84,6 +85,9 @@ _board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE
 _board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_PARTITION_SIZE
 _board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_SYSTEM_DLKMIMAGE_PARTITION_SIZE
+_board_strip_readonly_list += BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE
+_board_strip_readonly_list += BOARD_PVMFWIMAGE_PARTITION_SIZE
 
 # Logical partitions related variables.
 _board_strip_readonly_list += BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE
@@ -91,6 +95,7 @@ _board_strip_readonly_list += BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_VENDOR_DLKMIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_ODM_DLKMIMAGE_PARTITION_RESERVED_SIZE
+_board_strip_readonly_list += BOARD_SYSTEM_DLKMIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE
 _board_strip_readonly_list += BOARD_SUPER_PARTITION_SIZE
@@ -121,14 +126,59 @@ _board_strip_readonly_list += BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT
 _board_strip_readonly_list += BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES
 
+# Prebuilt image variables
+_board_strip_readonly_list += BOARD_PREBUILT_INIT_BOOT_IMAGE
+
 # Defines the list of logical vendor ramdisk names to build or include in vendor_boot.
 _board_strip_readonly_list += BOARD_VENDOR_RAMDISK_FRAGMENTS
+
+# These are all variables used to build $(INSTALLED_MISC_INFO_TARGET)
+# in build/make/core/Makefile. Their values get used in command line
+# arguments, so they have to be stripped to make the ninja files stable.
+_board_strip_list :=
+_board_strip_list += BOARD_DTBOIMG_PARTITION_SIZE
+_board_strip_list += BOARD_AVB_DTBO_KEY_PATH
+_board_strip_list += BOARD_AVB_DTBO_ALGORITHM
+_board_strip_list += BOARD_AVB_DTBO_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_PVMFW_KEY_PATH
+_board_strip_list += BOARD_AVB_PVMFW_ALGORITHM
+_board_strip_list += BOARD_AVB_PVMFW_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST
+_board_strip_list += BOARD_BPT_DISK_SIZE
+_board_strip_list += BOARD_BPT_INPUT_FILES
+_board_strip_list += BOARD_BPT_MAKE_TABLE_ARGS
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR_ALGORITHM
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR_KEY_PATH
+_board_strip_list += BOARD_AVB_VBMETA_VENDOR
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM_ALGORITHM
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM_KEY_PATH
+_board_strip_list += BOARD_AVB_VBMETA_SYSTEM
+_board_strip_list += BOARD_AVB_RECOVERY_KEY_PATH
+_board_strip_list += BOARD_AVB_RECOVERY_ALGORITHM
+_board_strip_list += BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VENDOR_BOOT_KEY_PATH
+_board_strip_list += BOARD_AVB_VENDOR_BOOT_ALGORITHM
+_board_strip_list += BOARD_AVB_VENDOR_BOOT_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_AVB_VENDOR_KERNEL_BOOT_KEY_PATH
+_board_strip_list += BOARD_AVB_VENDOR_KERNEL_BOOT_ALGORITHM
+_board_strip_list += BOARD_AVB_VENDOR_KERNEL_BOOT_ROLLBACK_INDEX_LOCATION
+_board_strip_list += BOARD_GKI_SIGNING_SIGNATURE_ARGS
+_board_strip_list += BOARD_GKI_SIGNING_ALGORITHM
+_board_strip_list += BOARD_GKI_SIGNING_KEY_PATH
+_board_strip_list += BOARD_MKBOOTIMG_ARGS
+_board_strip_list += BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE
+_board_strip_list += BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE
+_board_strip_list += ODM_MANIFEST_SKUS
+
 
 _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_DUP_SYSPROP \
   BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES \
   BUILD_BROKEN_ENFORCE_SYSPROP_OWNER \
+  BUILD_BROKEN_INPUT_DIR_MODULES \
   BUILD_BROKEN_MISSING_REQUIRED_MODULES \
   BUILD_BROKEN_OUTSIDE_INCLUDE_DIRS \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
@@ -184,7 +234,33 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
+# TODO(colefaust) change this if to RBC_PRODUCT_CONFIG when
+# the board configuration is known to work on everything
+# the product config works on.
+ifndef RBC_BOARD_CONFIG
 include $(board_config_mk)
+else
+  $(shell mkdir -p $(OUT_DIR)/rbc)
+  $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_board_config.mk)
+
+  $(shell $(OUT_DIR)/mk2rbc \
+    --mode=write -r --outdir $(OUT_DIR)/rbc \
+    --boardlauncher=$(OUT_DIR)/rbc/boardlauncher.rbc \
+    --input_variables=$(OUT_DIR)/rbc/make_vars_pre_board_config.mk \
+    --makefile_list=$(OUT_DIR)/.module_paths/configuration.list \
+    $(board_config_mk))
+  ifneq ($(.SHELLSTATUS),0)
+    $(error board configuration converter failed: $(.SHELLSTATUS))
+  endif
+
+  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_board_config_results.mk \
+    $(OUT_DIR)/rbcrun RBC_OUT="make" $(OUT_DIR)/rbc/boardlauncher.rbc)
+  ifneq ($(.SHELLSTATUS),0)
+    $(error board configuration runner failed: $(.SHELLSTATUS))
+  endif
+
+  include $(OUT_DIR)/rbc/rbc_board_config_results.mk
+endif
 
 ifneq (,$(and $(TARGET_ARCH),$(TARGET_ARCH_SUITE)))
   $(error $(board_config_mk) erroneously sets both TARGET_ARCH and TARGET_ARCH_SUITE)
@@ -204,6 +280,7 @@ board_config_mk :=
 
 # Clean up and verify BoardConfig variables
 $(foreach var,$(_board_strip_readonly_list),$(eval $(var) := $$(strip $$($(var)))))
+$(foreach var,$(_board_strip_list),$(eval $(var) := $$(strip $$($(var)))))
 $(foreach var,$(_board_true_false_vars), \
   $(if $(filter-out true false,$($(var))), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
@@ -397,6 +474,25 @@ else ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),true)
 endif
 .KATI_READONLY := BUILDING_BOOT_IMAGE
 
+# Are we building an init boot image
+BUILDING_INIT_BOOT_IMAGE :=
+ifeq ($(PRODUCT_BUILD_INIT_BOOT_IMAGE),)
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    BUILDING_INIT_BOOT_IMAGE :=
+  else ifdef BOARD_PREBUILT_INIT_BOOT_IMAGE
+    BUILDING_INIT_BOOT_IMAGE :=
+  else ifdef BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE
+    BUILDING_INIT_BOOT_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_INIT_BOOT_IMAGE),true)
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+    $(error PRODUCT_BUILD_INIT_BOOT_IMAGE is true, but so is BOARD_USES_RECOVERY_AS_BOOT. Use only one option.)
+  else
+    BUILDING_INIT_BOOT_IMAGE := true
+  endif
+endif
+.KATI_READONLY := BUILDING_INIT_BOOT_IMAGE
+
 # Are we building a recovery image
 BUILDING_RECOVERY_IMAGE :=
 ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),)
@@ -428,6 +524,25 @@ ifdef BOARD_BOOT_HEADER_VERSION
 endif
 .KATI_READONLY := BUILDING_VENDOR_BOOT_IMAGE
 
+# Are we building a vendor kernel boot image
+BUILDING_VENDOR_KERNEL_BOOT_IMAGE :=
+ifeq ($(PRODUCT_BUILD_VENDOR_KERNEL_BOOT_IMAGE),true)
+  ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+    $(error BUILDING_VENDOR_BOOT_IMAGE is required, but BUILDING_VENDOR_BOOT_IMAGE is not true)
+  endif
+  ifndef BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE
+    $(error BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE is required when PRODUCT_BUILD_VENDOR_KERNEL_BOOT_IMAGE is true)
+  endif
+  BUILDING_VENDOR_KERNEL_BOOT_IMAGE := true
+else ifeq ($(PRODUCT_BUILD_VENDOR_KERNEL),)
+  ifdef BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE
+    ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+      BUILDING_VENDOR_KERNEL_BOOT_IMAGE := true
+    endif
+  endif
+endif # end of PRODUCT_BUILD_VENDOR_KERNEL_BOOT_IMAGE
+.KATI_READONLY := BUILDING_VENDOR_KERNEL_BOOT_IMAGE
+
 # Are we building a ramdisk image
 BUILDING_RAMDISK_IMAGE := true
 ifeq ($(PRODUCT_BUILD_RAMDISK_IMAGE),)
@@ -438,6 +553,91 @@ else ifeq ($(PRODUCT_BUILD_RAMDISK_IMAGE),false)
   BUILDING_RAMDISK_IMAGE :=
 endif
 .KATI_READONLY := BUILDING_RAMDISK_IMAGE
+
+# Are we building a debug vendor_boot image
+BUILDING_DEBUG_VENDOR_BOOT_IMAGE :=
+# Can't build vendor_boot-debug.img if BOARD_BUILD_SYSTEM_ROOT_IMAGE is true,
+# because building debug vendor_boot image requires a ramdisk.
+ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+  ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE is true, but so is BOARD_BUILD_SYSTEM_ROOT_IMAGE. \
+      Skip building the debug vendor_boot image.)
+  endif
+# Can't build vendor_boot-debug.img if we're not building a ramdisk.
+else ifndef BUILDING_RAMDISK_IMAGE
+  ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE is true, but we're not building a ramdisk image. \
+      Skip building the debug vendor_boot image.)
+  endif
+# Can't build vendor_boot-debug.img if we're not building a vendor_boot.img.
+else ifndef BUILDING_VENDOR_BOOT_IMAGE
+  ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE is true, but we're not building a vendor_boot image. \
+      Skip building the debug vendor_boot image.)
+  endif
+else
+  ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),)
+    BUILDING_DEBUG_VENDOR_BOOT_IMAGE := true
+  else ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),true)
+    BUILDING_DEBUG_VENDOR_BOOT_IMAGE := true
+  endif
+endif
+.KATI_READONLY := BUILDING_DEBUG_VENDOR_BOOT_IMAGE
+
+_has_boot_img_artifact :=
+ifneq ($(strip $(TARGET_NO_KERNEL)),true)
+  ifdef BUILDING_BOOT_IMAGE
+    _has_boot_img_artifact := true
+  endif
+  # BUILDING_RECOVERY_IMAGE && BOARD_USES_RECOVERY_AS_BOOT implies that
+  # recovery is being built with the file name *boot.img*, which still counts
+  # as "building boot.img".
+  ifdef BUILDING_RECOVERY_IMAGE
+    ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+      _has_boot_img_artifact := true
+    endif
+  endif
+endif
+
+# Are we building a debug boot image
+BUILDING_DEBUG_BOOT_IMAGE :=
+# Can't build boot-debug.img if BOARD_BUILD_SYSTEM_ROOT_IMAGE is true,
+# because building debug boot image requires a ramdisk.
+ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but so is BOARD_BUILD_SYSTEM_ROOT_IMAGE. \
+      Skip building the debug boot image.)
+  endif
+# Can't build boot-debug.img if we're not building a ramdisk.
+else ifndef BUILDING_RAMDISK_IMAGE
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we're not building a ramdisk image. \
+      Skip building the debug boot image.)
+  endif
+# Can't build boot-debug.img if we're not building a boot.img.
+else ifndef _has_boot_img_artifact
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we're not building a boot image. \
+      Skip building the debug boot image.)
+  endif
+else ifdef BUILDING_INIT_BOOT_IMAGE
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we don't have a ramdisk in the boot image. \
+      Skip building the debug boot image.)
+  endif
+else
+  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),)
+    BUILDING_DEBUG_BOOT_IMAGE := true
+    # Don't build boot-debug.img if we're already building vendor_boot-debug.img.
+    ifdef BUILDING_DEBUG_VENDOR_BOOT_IMAGE
+      BUILDING_DEBUG_BOOT_IMAGE :=
+    endif
+  else ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
+    BUILDING_DEBUG_BOOT_IMAGE := true
+  endif
+endif
+.KATI_READONLY := BUILDING_DEBUG_BOOT_IMAGE
+_has_boot_img_artifact :=
 
 # Are we building a userdata image
 BUILDING_USERDATA_IMAGE :=
@@ -696,6 +896,58 @@ endif
 .KATI_READONLY := BUILDING_ODM_DLKM_IMAGE
 
 ###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_SYSTEM_DLKM
+ifeq ($(TARGET_COPY_OUT_SYSTEM_DLKM),$(_system_dlkm_path_placeholder))
+  TARGET_COPY_OUT_SYSTEM_DLKM := $(TARGET_COPY_OUT_SYSTEM)/system_dlkm
+else ifeq ($(filter system_dlkm system/system_dlkm,$(TARGET_COPY_OUT_SYSTEM_DLKM)),)
+  $(error TARGET_COPY_OUT_SYSTEM_DLKM must be either 'system_dlkm' or 'system/system_dlkm', seeing '$(TARGET_COPY_OUT_ODM_DLKM)'.)
+endif
+PRODUCT_COPY_FILES := $(subst $(_system_dlkm_path_placeholder),$(TARGET_COPY_OUT_SYSTEM_DLKM),$(PRODUCT_COPY_FILES))
+
+BOARD_USES_SYSTEM_DLKMIMAGE :=
+ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
+  BOARD_USES_SYSTEM_DLKMIMAGE := true
+endif
+ifdef BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE
+  BOARD_USES_SYSTEM_DLKMIMAGE := true
+endif
+$(call check_image_config,system_dlkm)
+
+BUILDING_SYSTEM_DLKM_IMAGE :=
+ifeq ($(PRODUCT_BUILD_SYSTEM_DLKM_IMAGE),)
+  ifdef BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_SYSTEM_DLKM_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_SYSTEM_DLKM_IMAGE),true)
+  BUILDING_SYSTEM_DLKM_IMAGE := true
+  ifndef BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_SYSTEM_DLKM_IMAGE set to true, but BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
+  BUILDING_SYSTEM_DLKM_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_SYSTEM_DLKM_IMAGE
+
+BOARD_USES_PVMFWIMAGE :=
+ifdef BOARD_PREBUILT_PVMFWIMAGE
+  BOARD_USES_PVMFWIMAGE := true
+endif
+ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
+  BOARD_USES_PVMFWIMAGE := true
+endif
+.KATI_READONLY := BOARD_USES_PVMFWIMAGE
+
+BUILDING_PVMFW_IMAGE :=
+ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
+  BUILDING_PVMFW_IMAGE := true
+endif
+ifdef BOARD_PREBUILT_PVMFWIMAGE
+  BUILDING_PVMFW_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_PVMFW_IMAGE
+
+###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
 TARGET_RECOVERY_UPDATER_LIBS ?=
 AB_OTA_UPDATER ?=
@@ -745,7 +997,7 @@ endef
 
 ifdef BOARD_VNDK_VERSION
   ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
-    $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current))
+    $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current)
   endif
   ifneq ($(BOARD_VNDK_VERSION),current)
     $(call check_vndk_version,$(BOARD_VNDK_VERSION))
@@ -766,8 +1018,8 @@ ifeq ($(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY),true)
 endif
 
 ###########################################
-# APEXes are by default flattened, i.e. non-updatable.
-# It can be unflattened (and updatable) by inheriting from
+# APEXes are by default flattened, i.e. non-updatable, if not building unbundled
+# apps. It can be unflattened (and updatable) by inheriting from
 # updatable_apex.mk
 #
 # APEX flattening can also be forcibly enabled (resp. disabled) by
@@ -776,7 +1028,7 @@ endif
 ifdef OVERRIDE_TARGET_FLATTEN_APEX
   TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
 else
-  ifeq (,$(TARGET_FLATTEN_APEX))
+  ifeq (,$(TARGET_BUILD_APPS)$(TARGET_FLATTEN_APEX))
     TARGET_FLATTEN_APEX := true
   endif
 endif
@@ -803,8 +1055,8 @@ $(foreach m,$(DEFAULT_WARNING_BUILD_MODULE_TYPES),\
     $(KATI_deprecated_var $(m),Please convert to Soong)))
 
 $(if $(filter true,$(BUILD_BROKEN_USES_BUILD_COPY_HEADERS)),\
-  $(KATI_deprecated_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers),\
-  $(KATI_obsolete_var BUILD_COPY_HEADERS,See $(CHANGES_URL)#copy_headers))
+  $(KATI_deprecated_var BUILD_COPY_HEADERS,See $(CHANGES_URL)\#copy_headers),\
+  $(KATI_obsolete_var BUILD_COPY_HEADERS,See $(CHANGES_URL)\#copy_headers))
 
 $(foreach m,$(filter-out BUILD_COPY_HEADERS,$(DEFAULT_ERROR_BUILD_MODULE_TYPES)),\
   $(if $(filter true,$(BUILD_BROKEN_USES_$(m))),\

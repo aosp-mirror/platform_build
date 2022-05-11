@@ -6,7 +6,7 @@ SCRIPT_DIR="${PWD}"
 cd ../..
 TOP="${PWD}"
 
-message='usage: tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
+message='usage: tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user] [devkeys]
 
 tapas selects individual apps to be built by the Android build system. Unlike
 "lunch", "tapas" does not request the building of images for a device.
