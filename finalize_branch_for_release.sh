@@ -17,8 +17,7 @@ set -x
 # Update references in the codebase to new API version (TODO)
 # ...
 
-# Adding -j1 option because of file(Android.bp) race condition.
-AIDL_TRANSITIVE_FREEZE=true m aidl-freeze-api -j1
+AIDL_TRANSITIVE_FREEZE=true m aidl-freeze-api
 
 m check-vndk-list || update-vndk-list.sh # for new versions of AIDL interfaces
 
