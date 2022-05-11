@@ -64,12 +64,19 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.security.Key;
 import java.security.KeyFactory;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.KeyStore.PrivateKeyEntry;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Security;
+import java.security.UnrecoverableEntryException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
@@ -197,26 +204,23 @@ class SignApk {
      * If a console doesn't exist, reads the password from stdin
      * If a console exists, reads the password from console and returns it as a string.
      *
-     * @param keyFile The file containing the private key.  Used to prompt the user.
+     * @param keyFileName Name of the file containing the private key.  Used to prompt the user.
      */
-    private static String readPassword(File keyFile) {
+    private static char[] readPassword(String keyFileName) {
         Console console;
-        char[] pwd;
         if ((console = System.console()) == null) {
-            System.out.print("Enter password for " + keyFile + " (password will not be hidden): ");
+            System.out.print(
+                "Enter password for " + keyFileName + " (password will not be hidden): ");
             System.out.flush();
             BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
             try {
-                return stdin.readLine();
+                String result = stdin.readLine();
+                return result == null ? null : result.toCharArray();
             } catch (IOException ex) {
                 return null;
             }
         } else {
-            if ((pwd = console.readPassword("[%s]", "Enter password for " + keyFile)) != null) {
-                return String.valueOf(pwd);
-            } else {
-                return null;
-            }
+            return console.readPassword("[%s]", "Enter password for " + keyFileName);
         }
     }
 
@@ -239,11 +243,8 @@ class SignApk {
             return null;
         }
 
-        char[] password = readPassword(keyFile).toCharArray();
-
         SecretKeyFactory skFactory = SecretKeyFactory.getInstance(epkInfo.getAlgName());
-        Key key = skFactory.generateSecret(new PBEKeySpec(password));
-
+        Key key = skFactory.generateSecret(new PBEKeySpec(readPassword(keyFile.getPath())));
         Cipher cipher = Cipher.getInstance(epkInfo.getAlgName());
         cipher.init(Cipher.DECRYPT_MODE, key, epkInfo.getAlgParameters());
 
@@ -284,6 +285,32 @@ class SignApk {
         } finally {
             input.close();
         }
+    }
+
+    private static KeyStore createKeyStore(String keyStoreName, String keyStorePin) throws
+            CertificateException,
+            IOException,
+            KeyStoreException,
+            NoSuchAlgorithmException {
+        KeyStore keyStore = KeyStore.getInstance(keyStoreName);
+        keyStore.load(null, keyStorePin == null ? null : keyStorePin.toCharArray());
+        return keyStore;
+    }
+
+    /** Get a PKCS#11 private key from keyStore */
+    private static PrivateKey loadPrivateKeyFromKeyStore(
+            final KeyStore keyStore, final String keyName)
+            throws CertificateException, KeyStoreException, NoSuchAlgorithmException,
+                    UnrecoverableKeyException, UnrecoverableEntryException {
+        final Key key = keyStore.getKey(keyName, readPassword(keyName));
+        final PrivateKeyEntry privateKeyEntry = (PrivateKeyEntry) keyStore.getEntry(keyName, null);
+        if (privateKeyEntry == null) {
+        throw new Error(
+            "Key "
+                + keyName
+                + " not found in the token provided by PKCS11 library!");
+        }
+        return privateKeyEntry.getPrivateKey();
     }
 
     /**
@@ -1020,7 +1047,10 @@ class SignApk {
     private static void usage() {
         System.err.println("Usage: signapk [-w] " +
                            "[-a <alignment>] " +
+                           "[--align-file-size] " +
                            "[-providerClass <className>] " +
+                           "[-loadPrivateKeysFromKeyStore <keyStoreName>]" +
+                           "[-keyStorePin <pin>]" +
                            "[--min-sdk-version <n>] " +
                            "[--disable-v2] " +
                            "[--enable-v4] " +
@@ -1043,11 +1073,15 @@ class SignApk {
 
         boolean signWholeFile = false;
         String providerClass = null;
+        String keyStoreName = null;
+        String keyStorePin = null;
         int alignment = 4;
+        boolean alignFileSize = false;
         Integer minSdkVersionOverride = null;
         boolean signUsingApkSignatureSchemeV2 = true;
         boolean signUsingApkSignatureSchemeV4 = false;
         SigningCertificateLineage certLineage = null;
+        Integer rotationMinSdkVersion = null;
 
         int argstart = 0;
         while (argstart < args.length && args[argstart].startsWith("-")) {
@@ -1060,8 +1094,23 @@ class SignApk {
                 }
                 providerClass = args[++argstart];
                 ++argstart;
+            } else if ("-loadPrivateKeysFromKeyStore".equals(args[argstart])) {
+                if (argstart + 1 >= args.length) {
+                    usage();
+                }
+                keyStoreName = args[++argstart];
+                ++argstart;
+            } else if ("-keyStorePin".equals(args[argstart])) {
+                if (argstart + 1 >= args.length) {
+                    usage();
+                }
+                keyStorePin = args[++argstart];
+                ++argstart;
             } else if ("-a".equals(args[argstart])) {
                 alignment = Integer.parseInt(args[++argstart]);
+                ++argstart;
+            } else if ("--align-file-size".equals(args[argstart])) {
+                alignFileSize = true;
                 ++argstart;
             } else if ("--min-sdk-version".equals(args[argstart])) {
                 String minSdkVersionString = args[++argstart];
@@ -1085,6 +1134,15 @@ class SignApk {
                 } catch (Exception e) {
                     throw new IllegalArgumentException(
                             "Error reading lineage file: " + e.getMessage());
+                }
+                ++argstart;
+            } else if ("--rotation-min-sdk-version".equals(args[argstart])) {
+                String rotationMinSdkVersionString = args[++argstart];
+                try {
+                    rotationMinSdkVersion = Integer.parseInt(rotationMinSdkVersionString);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException(
+                            "--rotation-min-sdk-version must be a decimal number: " + rotationMinSdkVersionString);
                 }
                 ++argstart;
             } else {
@@ -1137,11 +1195,19 @@ class SignApk {
             // timestamp using the current timezone. We thus adjust the milliseconds since epoch
             // value to end up with MS-DOS timestamp of Jan 1 2009 00:00:00.
             timestamp -= TimeZone.getDefault().getOffset(timestamp);
-
+            KeyStore keyStore = null;
+            if (keyStoreName != null) {
+                keyStore = createKeyStore(keyStoreName, keyStorePin);
+            }
             PrivateKey[] privateKey = new PrivateKey[numKeys];
             for (int i = 0; i < numKeys; ++i) {
                 int argNum = argstart + i*2 + 1;
-                privateKey[i] = readPrivateKey(new File(args[argNum]));
+                if (keyStore == null) {
+                    privateKey[i] = readPrivateKey(new File(args[argNum]));
+                } else {
+                    final String keyAlias = args[argNum];
+                    privateKey[i] = loadPrivateKeyFromKeyStore(keyStore, keyAlias);
+                }
             }
             inputJar = new JarFile(new File(inputFilename), false);  // Don't verify.
 
@@ -1170,15 +1236,22 @@ class SignApk {
                     }
                 }
 
-                try (ApkSignerEngine apkSigner =
-                        new DefaultApkSignerEngine.Builder(
-                                createSignerConfigs(privateKey, publicKey), minSdkVersion)
-                                .setV1SigningEnabled(true)
-                                .setV2SigningEnabled(signUsingApkSignatureSchemeV2)
-                                .setOtherSignersSignaturesPreserved(false)
-                                .setCreatedBy("1.0 (Android SignApk)")
-                                .setSigningCertificateLineage(certLineage)
-                                .build()) {
+                DefaultApkSignerEngine.Builder builder = new DefaultApkSignerEngine.Builder(
+                    createSignerConfigs(privateKey, publicKey), minSdkVersion)
+                    .setV1SigningEnabled(true)
+                    .setV2SigningEnabled(signUsingApkSignatureSchemeV2)
+                    .setOtherSignersSignaturesPreserved(false)
+                    .setCreatedBy("1.0 (Android SignApk)");
+
+                if (certLineage != null) {
+                   builder = builder.setSigningCertificateLineage(certLineage);
+                }
+
+                if (rotationMinSdkVersion != null) {
+                   builder = builder.setMinSdkVersionForRotation(rotationMinSdkVersion);
+                }
+
+                try (ApkSignerEngine apkSigner = builder.build()) {
                     // We don't preserve the input APK's APK Signing Block (which contains v2
                     // signatures)
                     apkSigner.inputApkSigningBlock(null);
@@ -1206,12 +1279,22 @@ class SignApk {
                     ByteBuffer[] outputChunks = new ByteBuffer[] {v1SignedApk};
 
                     ZipSections zipSections = findMainZipSections(v1SignedApk);
-                    ApkSignerEngine.OutputApkSigningBlockRequest2 addV2SignatureRequest =
-                            apkSigner.outputZipSections2(
-                                    DataSources.asDataSource(zipSections.beforeCentralDir),
-                                    DataSources.asDataSource(zipSections.centralDir),
-                                    DataSources.asDataSource(zipSections.eocd));
-                    if (addV2SignatureRequest != null) {
+
+                    ByteBuffer eocd = ByteBuffer.allocate(zipSections.eocd.remaining());
+                    eocd.put(zipSections.eocd);
+                    eocd.flip();
+                    eocd.order(ByteOrder.LITTLE_ENDIAN);
+                    // This loop is supposed to be iterated twice at most.
+                    // The second pass is to align the file size after amending EOCD comments
+                    // with assumption that re-generated signing block would be the same size.
+                    while (true) {
+                        ApkSignerEngine.OutputApkSigningBlockRequest2 addV2SignatureRequest =
+                                apkSigner.outputZipSections2(
+                                        DataSources.asDataSource(zipSections.beforeCentralDir),
+                                        DataSources.asDataSource(zipSections.centralDir),
+                                        DataSources.asDataSource(eocd));
+                        if (addV2SignatureRequest == null) break;
+
                         // Need to insert the returned APK Signing Block before ZIP Central
                         // Directory.
                         int padding = addV2SignatureRequest.getPaddingSizeBeforeApkSigningBlock();
@@ -1219,8 +1302,8 @@ class SignApk {
                         // Because the APK Signing Block is inserted before the Central Directory,
                         // we need to adjust accordingly the offset of Central Directory inside the
                         // ZIP End of Central Directory (EoCD) record.
-                        ByteBuffer modifiedEocd = ByteBuffer.allocate(zipSections.eocd.remaining());
-                        modifiedEocd.put(zipSections.eocd);
+                        ByteBuffer modifiedEocd = ByteBuffer.allocate(eocd.remaining());
+                        modifiedEocd.put(eocd);
                         modifiedEocd.flip();
                         modifiedEocd.order(ByteOrder.LITTLE_ENDIAN);
                         ApkUtils.setZipEocdCentralDirectoryOffset(
@@ -1235,6 +1318,32 @@ class SignApk {
                                         zipSections.centralDir,
                                         modifiedEocd};
                         addV2SignatureRequest.done();
+
+                        // Exit the loop if we don't need to align the file size
+                        if (!alignFileSize || alignment < 2) {
+                            break;
+                        }
+
+                        // Calculate the file size
+                        eocd = modifiedEocd;
+                        int fileSize = 0;
+                        for (ByteBuffer buf : outputChunks) {
+                            fileSize += buf.remaining();
+                        }
+                        // Exit the loop because the file size is aligned.
+                        if (fileSize % alignment == 0) {
+                            break;
+                        }
+                        // Pad EOCD comment to align the file size.
+                        int commentLen = alignment - fileSize % alignment;
+                        modifiedEocd = ByteBuffer.allocate(eocd.remaining() + commentLen);
+                        modifiedEocd.put(eocd);
+                        modifiedEocd.rewind();
+                        modifiedEocd.order(ByteOrder.LITTLE_ENDIAN);
+                        ApkUtils.updateZipEocdCommentLen(modifiedEocd);
+                        // Since V2 signing block should cover modified EOCD,
+                        // re-iterate the loop with modified EOCD.
+                        eocd = modifiedEocd;
                     }
 
                     // This assumes outputChunks are array-backed. To avoid this assumption, the
