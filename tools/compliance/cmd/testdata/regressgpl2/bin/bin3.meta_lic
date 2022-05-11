@@ -1,0 +1,23 @@
+package_name:  "Compiler"
+module_classes: "EXECUTABLES"
+projects:  "bin/threelibraries"
+license_kinds:  "SPDX-license-identifier-NCSA"
+license_conditions:  "notice"
+is_container:  false
+built:  "out/target/product/fictional/obj/EXECUTABLES/bin_intermediates/bin3"
+installed:  "out/target/product/fictional/system/bin/bin3"
+sources:  "out/target/product/fictional/system/lib/libc++.so"
+sources:  "out/target/product/fictional/system/lib/libapache.so"
+sources:  "out/target/product/fictional/system/lib/libgpl.so"
+deps:  {
+  file:  "testdata/regressgpl2/lib/libc++.so.meta_lic"
+  annotations:  "dynamic"
+}
+deps:  {
+  file:  "testdata/regressgpl2/lib/libapache.so.meta_lic"
+  annotations:  "dynamic"
+}
+deps:  {
+  file:  "testdata/regressgpl2/lib/libgpl.so.meta_lic"
+  annotations:  "dynamic"
+}

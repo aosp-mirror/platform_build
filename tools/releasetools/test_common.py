@@ -1631,148 +1631,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual('3', chained_partition_args[1])
     self.assertTrue(os.path.exists(chained_partition_args[2]))
 
-  def test_BuildVBMeta_appendAftlCommandSyntax(self):
-    testdata_dir = test_utils.get_testdata_dir()
-    common.OPTIONS.info_dict = {
-        'ab_update': 'true',
-        'avb_avbtool': 'avbtool',
-        'build.prop': common.PartitionBuildProps.FromDictionary(
-            'system', {
-                'ro.build.version.incremental': '6285659',
-                'ro.product.device': 'coral',
-                'ro.build.fingerprint':
-                'google/coral/coral:R/RP1A.200311.002/'
-                '6285659:userdebug/dev-keys'}
-        ),
-    }
-    common.OPTIONS.aftl_tool_path = 'aftltool'
-    common.OPTIONS.aftl_server = 'log.endpoints.aftl-dev.cloud.goog:9000'
-    common.OPTIONS.aftl_key_path = os.path.join(testdata_dir,
-                                                'test_transparency_key.pub')
-    common.OPTIONS.aftl_manufacturer_key_path = os.path.join(
-        testdata_dir, 'test_aftl_rsa4096.pem')
-
-    vbmeta_image = tempfile.NamedTemporaryFile(delete=False)
-    cmd = common.ConstructAftlMakeImageCommands(vbmeta_image.name)
-    expected_cmd = [
-        'aftltool', 'make_icp_from_vbmeta',
-        '--vbmeta_image_path', 'place_holder',
-        '--output', vbmeta_image.name,
-        '--version_incremental', '6285659',
-        '--transparency_log_servers',
-        'log.endpoints.aftl-dev.cloud.goog:9000,{}'.format(
-            common.OPTIONS.aftl_key_path),
-        '--manufacturer_key', common.OPTIONS.aftl_manufacturer_key_path,
-        '--algorithm', 'SHA256_RSA4096',
-        '--padding', '4096']
-
-    # ignore the place holder, i.e. path to a temp file
-    self.assertEqual(cmd[:3], expected_cmd[:3])
-    self.assertEqual(cmd[4:], expected_cmd[4:])
-
-  @unittest.skip("enable after we have a server for public")
-  def test_BuildVBMeta_appendAftlContactServer(self):
-    testdata_dir = test_utils.get_testdata_dir()
-    common.OPTIONS.info_dict = {
-        'ab_update': 'true',
-        'avb_avbtool': 'avbtool',
-        'build.prop': common.PartitionBuildProps.FromDictionary(
-            'system', {
-                'ro.build.version.incremental': '6285659',
-                'ro.product.device': 'coral',
-                'ro.build.fingerprint':
-                'google/coral/coral:R/RP1A.200311.002/'
-                '6285659:userdebug/dev-keys'}
-        )
-    }
-    common.OPTIONS.aftl_tool_path = "aftltool"
-    common.OPTIONS.aftl_server = "log.endpoints.aftl-dev.cloud.goog:9000"
-    common.OPTIONS.aftl_key_path = os.path.join(testdata_dir,
-                                                'test_transparency_key.pub')
-    common.OPTIONS.aftl_manufacturer_key_path = os.path.join(
-        testdata_dir, 'test_aftl_rsa4096.pem')
-
-    input_dir = common.MakeTempDir()
-    system_image = common.MakeTempFile()
-    build_image_cmd = ['mkuserimg_mke2fs', input_dir, system_image, 'ext4',
-                       '/system', str(4096 * 100), '-j', '0', '-s']
-    common.RunAndCheckOutput(build_image_cmd)
-
-    add_footer_cmd = ['avbtool', 'add_hashtree_footer',
-                      '--partition_size', str(4096 * 150),
-                      '--partition_name', 'system',
-                      '--image', system_image]
-    common.RunAndCheckOutput(add_footer_cmd)
-
-    vbmeta_image = common.MakeTempFile()
-    common.BuildVBMeta(vbmeta_image, {'system': system_image}, 'vbmeta',
-                       ['system'])
-
-    verify_cmd = ['aftltool', 'verify_image_icp', '--vbmeta_image_path',
-                  vbmeta_image, '--transparency_log_pub_keys',
-                  common.OPTIONS.aftl_key_path]
-    common.RunAndCheckOutput(verify_cmd)
-
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_AppendGkiSigningArgs_NoSigningKeyPath(self):
-    # A non-GKI boot.img has no gki_signing_key_path.
-    common.OPTIONS.info_dict = {
-        # 'gki_signing_key_path': pubkey,
-        'gki_signing_algorithm': 'SHA256_RSA4096',
-        'gki_signing_signature_args': '--prop foo:bar',
-    }
-
-    # Tests no --gki_signing_* args are appended if there is no
-    # gki_signing_key_path.
-    cmd = ['mkbootimg', '--header_version', '4']
-    expected_cmd = ['mkbootimg', '--header_version', '4']
-    common.AppendGkiSigningArgs(cmd)
-    self.assertEqual(cmd, expected_cmd)
-
-  def test_AppendGkiSigningArgs_NoSigningAlgorithm(self):
-    pubkey = os.path.join(self.testdata_dir, 'testkey_gki.pem')
-    with open(pubkey, 'wb') as f:
-      f.write(b'\x00' * 100)
-    self.assertTrue(os.path.exists(pubkey))
-
-    # Tests no --gki_signing_* args are appended if there is no
-    # gki_signing_algorithm.
-    common.OPTIONS.info_dict = {
-        'gki_signing_key_path': pubkey,
-        # 'gki_signing_algorithm': 'SHA256_RSA4096',
-        'gki_signing_signature_args': '--prop foo:bar',
-    }
-
-    cmd = ['mkbootimg', '--header_version', '4']
-    expected_cmd = ['mkbootimg', '--header_version', '4']
-    common.AppendGkiSigningArgs(cmd)
-    self.assertEqual(cmd, expected_cmd)
-
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_AppendGkiSigningArgs(self):
-    pubkey = os.path.join(self.testdata_dir, 'testkey_gki.pem')
-    with open(pubkey, 'wb') as f:
-      f.write(b'\x00' * 100)
-    self.assertTrue(os.path.exists(pubkey))
-
-    common.OPTIONS.info_dict = {
-        'gki_signing_key_path': pubkey,
-        'gki_signing_algorithm': 'SHA256_RSA4096',
-        'gki_signing_signature_args': '--prop foo:bar',
-    }
-    cmd = ['mkbootimg', '--header_version', '4']
-    common.AppendGkiSigningArgs(cmd)
-
-    expected_cmd = [
-      'mkbootimg', '--header_version', '4',
-      '--gki_signing_key', pubkey,
-      '--gki_signing_algorithm', 'SHA256_RSA4096',
-      '--gki_signing_signature_args', '--prop foo:bar'
-    ]
-    self.assertEqual(cmd, expected_cmd)
-
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_AppendGkiSigningArgs_KeyPathNotFound(self):
+  def test_GenerateGkiCertificate_KeyPathNotFound(self):
     pubkey = os.path.join(self.testdata_dir, 'no_testkey_gki.pem')
     self.assertFalse(os.path.exists(pubkey))
 
@@ -1781,41 +1640,11 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'gki_signing_algorithm': 'SHA256_RSA4096',
         'gki_signing_signature_args': '--prop foo:bar',
     }
-    cmd = ['mkbootimg', '--header_version', '4']
-    self.assertRaises(common.ExternalError, common.AppendGkiSigningArgs, cmd)
+    test_file = tempfile.NamedTemporaryFile()
+    self.assertRaises(common.ExternalError, common._GenerateGkiCertificate,
+                      test_file.name, 'generic_kernel')
 
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_AppendGkiSigningArgs_SearchKeyPath(self):
-    pubkey = 'testkey_gki.pem'
-    self.assertFalse(os.path.exists(pubkey))
-
-    # Tests it should replace the pubkey with an existed key under
-    # OPTIONS.search_path, i.e., os.path.join(OPTIONS.search_path, pubkey).
-    search_path_dir = common.MakeTempDir()
-    search_pubkey = os.path.join(search_path_dir, pubkey)
-    with open(search_pubkey, 'wb') as f:
-      f.write(b'\x00' * 100)
-    self.assertTrue(os.path.exists(search_pubkey))
-
-    common.OPTIONS.search_path = search_path_dir
-    common.OPTIONS.info_dict = {
-        'gki_signing_key_path': pubkey,
-        'gki_signing_algorithm': 'SHA256_RSA4096',
-        'gki_signing_signature_args': '--prop foo:bar',
-    }
-    cmd = ['mkbootimg', '--header_version', '4']
-    common.AppendGkiSigningArgs(cmd)
-
-    expected_cmd = [
-      'mkbootimg', '--header_version', '4',
-      '--gki_signing_key', search_pubkey,
-      '--gki_signing_algorithm', 'SHA256_RSA4096',
-      '--gki_signing_signature_args', '--prop foo:bar'
-    ]
-    self.assertEqual(cmd, expected_cmd)
-
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_AppendGkiSigningArgs_SearchKeyPathNotFound(self):
+  def test_GenerateGkiCertificate_SearchKeyPathNotFound(self):
     pubkey = 'no_testkey_gki.pem'
     self.assertFalse(os.path.exists(pubkey))
 
@@ -1831,9 +1660,9 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'gki_signing_algorithm': 'SHA256_RSA4096',
         'gki_signing_signature_args': '--prop foo:bar',
     }
-    cmd = ['mkbootimg', '--header_version', '4']
-    self.assertRaises(common.ExternalError, common.AppendGkiSigningArgs, cmd)
-
+    test_file = tempfile.NamedTemporaryFile()
+    self.assertRaises(common.ExternalError, common._GenerateGkiCertificate,
+                      test_file.name, 'generic_kernel')
 
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   """Checks the format of install-recovery.sh.

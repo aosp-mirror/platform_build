@@ -35,4 +35,5 @@ $(shareduid_violation_modules_filename): $(AAPT2)
 		--copy_out_system_ext $(TARGET_COPY_OUT_SYSTEM_EXT) \
 		> $@
 
+$(call declare-0p-target,$(shareduid_violation_modules_filename))
 $(call dist-for-goals,droidcore,$(shareduid_violation_modules_filename))

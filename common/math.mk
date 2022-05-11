@@ -121,14 +121,26 @@ $(strip $(call _math_check_valid,$(1)) $(call _math_check_valid,$(2)) \
   $(lastword $(filter $(1) $(2),$(__MATH_NUMBERS))))
 endef
 
+# Returns the lesser of $1 or $2.
+define math_min
+$(strip $(call _math_check_valid,$(1)) $(call _math_check_valid,$(2)) \
+  $(firstword $(filter $(1) $(2),$(__MATH_NUMBERS))))
+endef
+
 $(call math-expect-error,(call math_max),Argument missing)
 $(call math-expect-error,(call math_max,1),Argument missing)
 $(call math-expect-error,(call math_max,1 2,3),Multiple words in a single argument: 1 2)
+$(call math-expect-error,(call math_min,1,2 3),Multiple words in a single argument: 2 3)
 $(call math-expect,(call math_max,0,1),1)
 $(call math-expect,(call math_max,1,0),1)
 $(call math-expect,(call math_max,1,1),1)
 $(call math-expect,(call math_max,5,42),42)
 $(call math-expect,(call math_max,42,5),42)
+$(call math-expect,(call math_min,0,1),0)
+$(call math-expect,(call math_min,1,0),0)
+$(call math-expect,(call math_min,1,1),1)
+$(call math-expect,(call math_min,7,32),7)
+$(call math-expect,(call math_min,32,7),7)
 
 define math_gt_or_eq
 $(if $(filter $(1),$(call math_max,$(1),$(2))),true)

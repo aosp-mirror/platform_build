@@ -49,10 +49,6 @@ $(call inherit-product-if-exists, device/generic/goldfish/arm32-vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/emulator_arm/device.mk)
 
-# Define the host tools and libs that are parts of the SDK.
-$(call inherit-product, sdk/build/product_sdk.mk)
-$(call inherit-product, development/build/product_sdk.mk)
-
 # keep this apk for sdk targets for now
 PRODUCT_PACKAGES += \
     EmulatorSmokeTests
