@@ -33,6 +33,9 @@ ifeq ($(LOCAL_MODULE),)
 endif
 $(call verify-module-name)
 
+my_test_data :=
+my_test_config :=
+
 LOCAL_IS_HOST_MODULE := $(strip $(LOCAL_IS_HOST_MODULE))
 ifdef LOCAL_IS_HOST_MODULE
   ifneq ($(LOCAL_IS_HOST_MODULE),true)
@@ -373,7 +376,13 @@ include $(BUILD_SYSTEM)/configure_module_stem.mk
 
 LOCAL_BUILT_MODULE := $(intermediates)/$(my_built_module_stem)
 
-ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    $(call pretty-error, LOCAL_SOONG_INSTALLED_MODULE can only be used from $(SOONG_ANDROID_MK))
+  endif
+  # Use the install path requested by Soong.
+  LOCAL_INSTALLED_MODULE := $(LOCAL_SOONG_INSTALLED_MODULE)
+else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Apk and its attachments reside in its own subdir.
   ifeq ($(LOCAL_MODULE_CLASS),APPS)
     # framework-res.apk doesn't like the additional layer.
@@ -507,91 +516,106 @@ my_path_comp :=
 ## Module installation rule
 ###########################################################
 
-my_init_rc_installed :=
-my_init_rc_path :=
-my_init_rc_pairs :=
 my_installed_symlinks :=
-my_default_test_module :=
-ifeq ($(use_testcase_folder),true)
-arch_dir := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-my_default_test_module := $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)/$(arch_dir)/$(my_installed_module_stem)
-arch_dir :=
-endif
 
-ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
-$(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
-$(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
+ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
+  # Soong already generated the copy rule, but make the installed location depend on the Make
+  # copy of the intermediates for now, as some rules that collect intermediates may expect
+  # them to exist.
+  $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
+
+  $(foreach symlink, $(LOCAL_SOONG_INSTALL_SYMLINKS), \
+    $(call declare-0p-target,$(symlink)))
+  $(my_all_targets) : | $(LOCAL_SOONG_INSTALL_SYMLINKS)
+else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+  $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
+  $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@"
-ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 	$(copy-file-or-link-to-new-target)
-else
+  else
 	$(copy-file-to-new-target)
-endif
+  endif
 	$(PRIVATE_POST_INSTALL_CMD)
-endif
 
-ifndef LOCAL_IS_HOST_MODULE
-# Rule to install the module's companion init.rc.
-ifneq ($(strip $(LOCAL_FULL_INIT_RC)),)
-my_init_rc := $(LOCAL_FULL_INIT_RC)
-else
-my_init_rc := $(foreach rc,$(LOCAL_INIT_RC_$(my_32_64_bit_suffix)) $(LOCAL_INIT_RC),$(LOCAL_PATH)/$(rc))
-endif
-ifneq ($(strip $(my_init_rc)),)
-# Make doesn't support recovery as an output partition, but some Soong modules installed in recovery
-# have init.rc files that need to be installed alongside them. Manually handle the case where the
-# output file is in the recovery partition.
-my_init_rc_path := $(if $(filter $(TARGET_RECOVERY_ROOT_OUT)/%,$(my_module_path)),$(TARGET_RECOVERY_ROOT_OUT)/system/etc,$(TARGET_OUT$(partition_tag)_ETC))
-my_init_rc_pairs := $(foreach rc,$(my_init_rc),$(rc):$(my_init_rc_path)/init/$(notdir $(rc)))
-my_init_rc_installed := $(foreach rc,$(my_init_rc_pairs),$(call word-colon,2,$(rc)))
+  # Rule to install the module's companion symlinks
+  my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS) $(LOCAL_MODULE_SYMLINKS_$(my_32_64_bit_suffix)))
+  $(foreach symlink,$(my_installed_symlinks),\
+      $(call symlink-file,$(LOCAL_INSTALLED_MODULE),$(my_installed_module_stem),$(symlink))\
+      $(call declare-0p-target,$(symlink)))
 
-# Make sure we only set up the copy rules once, even if another arch variant
-# shares a common LOCAL_INIT_RC.
-my_init_rc_new_pairs := $(filter-out $(ALL_INIT_RC_INSTALLED_PAIRS),$(my_init_rc_pairs))
-my_init_rc_new_installed := $(call copy-many-init-script-files-checked,$(my_init_rc_new_pairs))
-ALL_INIT_RC_INSTALLED_PAIRS += $(my_init_rc_new_pairs)
-
-$(my_all_targets) : $(my_init_rc_installed)
-endif # my_init_rc
-endif # !LOCAL_IS_HOST_MODULE
-
-# Rule to install the module's companion symlinks
-my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS) $(LOCAL_MODULE_SYMLINKS_$(my_32_64_bit_suffix)))
-$(foreach symlink,$(my_installed_symlinks),\
-    $(call symlink-file,$(LOCAL_INSTALLED_MODULE),$(my_installed_module_stem),$(symlink)))
-
-$(my_all_targets) : | $(my_installed_symlinks)
+  $(my_all_targets) : | $(my_installed_symlinks)
 
 endif # !LOCAL_UNINSTALLABLE_MODULE
 
 ###########################################################
-## VINTF manifest fragment goals
+## VINTF manifest fragment and init.rc goals
 ###########################################################
 
 my_vintf_installed:=
+my_vintf_path:=
 my_vintf_pairs:=
+my_init_rc_installed :=
+my_init_rc_path :=
+my_init_rc_pairs :=
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-ifndef LOCAL_IS_HOST_MODULE
-ifneq ($(strip $(LOCAL_FULL_VINTF_FRAGMENTS)),)
-my_vintf_fragments := $(LOCAL_FULL_VINTF_FRAGMENTS)
-else
-my_vintf_fragments := $(foreach xml,$(LOCAL_VINTF_FRAGMENTS),$(LOCAL_PATH)/$(xml))
-endif
-ifneq ($(strip $(my_vintf_fragments)),)
+  ifndef LOCAL_IS_HOST_MODULE
+    # Rule to install the module's companion vintf fragments.
+    ifneq ($(strip $(LOCAL_FULL_VINTF_FRAGMENTS)),)
+      my_vintf_fragments := $(LOCAL_FULL_VINTF_FRAGMENTS)
+    else
+      my_vintf_fragments := $(foreach xml,$(LOCAL_VINTF_FRAGMENTS),$(LOCAL_PATH)/$(xml))
+    endif
+    ifneq ($(strip $(my_vintf_fragments)),)
+      # Make doesn't support recovery as an output partition, but some Soong modules installed in recovery
+      # have init.rc files that need to be installed alongside them. Manually handle the case where the
+      # output file is in the recovery partition.
+      my_vintf_path := $(if $(filter $(TARGET_RECOVERY_ROOT_OUT)/%,$(my_module_path)),$(TARGET_RECOVERY_ROOT_OUT)/system/etc,$(TARGET_OUT$(partition_tag)_ETC))
+      my_vintf_pairs := $(foreach xml,$(my_vintf_fragments),$(xml):$(my_vintf_path)/vintf/manifest/$(notdir $(xml)))
+      my_vintf_installed := $(foreach xml,$(my_vintf_pairs),$(call word-colon,2,$(xml)))
 
-my_vintf_pairs := $(foreach xml,$(my_vintf_fragments),$(xml):$(TARGET_OUT$(partition_tag)_ETC)/vintf/manifest/$(notdir $(xml)))
-my_vintf_installed := $(foreach xml,$(my_vintf_pairs),$(call word-colon,2,$(xml)))
+      # Only set up copy rules once, even if another arch variant shares it
+      my_vintf_new_pairs := $(filter-out $(ALL_VINTF_MANIFEST_FRAGMENTS_LIST),$(my_vintf_pairs))
+      my_vintf_new_installed := $(call copy-many-vintf-manifest-files-checked,$(my_vintf_new_pairs))
 
-# Only set up copy rules once, even if another arch variant shares it
-my_vintf_new_pairs := $(filter-out $(ALL_VINTF_MANIFEST_FRAGMENTS_LIST),$(my_vintf_pairs))
-my_vintf_new_installed := $(call copy-many-vintf-manifest-files-checked,$(my_vintf_new_pairs))
+      ALL_VINTF_MANIFEST_FRAGMENTS_LIST += $(my_vintf_new_pairs)
 
-ALL_VINTF_MANIFEST_FRAGMENTS_LIST += $(my_vintf_new_pairs)
+      $(my_all_targets) : $(my_vintf_new_installed)
+    endif # my_vintf_fragments
 
-$(my_all_targets) : $(my_vintf_new_installed)
-endif # LOCAL_VINTF_FRAGMENTS
-endif # !LOCAL_IS_HOST_MODULE
+    # Rule to install the module's companion init.rc.
+    ifneq ($(strip $(LOCAL_FULL_INIT_RC)),)
+      my_init_rc := $(LOCAL_FULL_INIT_RC)
+    else
+      my_init_rc := $(foreach rc,$(LOCAL_INIT_RC_$(my_32_64_bit_suffix)) $(LOCAL_INIT_RC),$(LOCAL_PATH)/$(rc))
+    endif
+    ifneq ($(strip $(my_init_rc)),)
+      # Make doesn't support recovery or ramdisk as an output partition,
+      # but some Soong modules installed in recovery or ramdisk
+      # have init.rc files that need to be installed alongside them.
+      # Manually handle the case where the
+      # output file is in the recovery or ramdisk partition.
+      ifneq (,$(filter $(TARGET_RECOVERY_ROOT_OUT)/%,$(my_module_path)))
+        my_init_rc_path := $(TARGET_RECOVERY_ROOT_OUT)/system/etc
+      else ifneq (,$(filter $(TARGET_RAMDISK_OUT)/%,$(my_module_path)))
+        my_init_rc_path := $(TARGET_RAMDISK_OUT)/system/etc
+      else
+        my_init_rc_path := $(TARGET_OUT$(partition_tag)_ETC)
+      endif
+      my_init_rc_pairs := $(foreach rc,$(my_init_rc),$(rc):$(my_init_rc_path)/init/$(notdir $(rc)))
+      my_init_rc_installed := $(foreach rc,$(my_init_rc_pairs),$(call word-colon,2,$(rc)))
+
+      # Make sure we only set up the copy rules once, even if another arch variant
+      # shares a common LOCAL_INIT_RC.
+      my_init_rc_new_pairs := $(filter-out $(ALL_INIT_RC_INSTALLED_PAIRS),$(my_init_rc_pairs))
+      my_init_rc_new_installed := $(call copy-many-init-script-files-checked,$(my_init_rc_new_pairs))
+
+      ALL_INIT_RC_INSTALLED_PAIRS += $(my_init_rc_new_pairs)
+
+      $(my_all_targets) : $(my_init_rc_installed)
+    endif # my_init_rc
+
+  endif # !LOCAL_IS_HOST_MODULE
 endif # !LOCAL_UNINSTALLABLE_MODULE
 
 ###########################################################
@@ -697,6 +721,11 @@ ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
 endif
 ifdef LOCAL_MULTILIB
   multi_arch := true
+# These conditionals allow this functionality to be mimicked in Soong
+else ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+    multi_arch := true
+  endif
 endif
 
 ifdef multi_arch
@@ -718,8 +747,9 @@ endif
 
 # The module itself.
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-    $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem))) \
+  $(eval my_compat_dist_$(suite) := $(patsubst %:$(LOCAL_INSTALLED_MODULE),$(LOCAL_INSTALLED_MODULE):$(LOCAL_INSTALLED_MODULE),\
+    $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
+      $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem)))) \
   $(eval my_compat_dist_config_$(suite) := ))
 
 
@@ -861,6 +891,16 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
 endif  # LOCAL_UNINSTALLABLE_MODULE
 endif  # LOCAL_COMPATIBILITY_SUITE
 
+my_supported_variant :=
+ifeq ($(my_host_cross),true)
+  my_supported_variant := HOST_CROSS
+else
+  ifdef LOCAL_IS_HOST_MODULE
+    my_supported_variant := HOST
+  else
+    my_supported_variant := DEVICE
+  endif
+endif
 ###########################################################
 ## Add test module to ALL_DISABLED_PRESUBMIT_TESTS if LOCAL_PRESUBMIT_DISABLED is set to true.
 ###########################################################
@@ -902,12 +942,38 @@ ifndef LOCAL_IS_HOST_MODULE
 ALL_MODULES.$(my_register_name).TARGET_BUILT := \
     $(ALL_MODULES.$(my_register_name).TARGET_BUILT) $(LOCAL_BUILT_MODULE)
 endif
-ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-ALL_MODULES.$(my_register_name).INSTALLED := \
+ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
+  # Store the list of paths to installed locations of files provided by this
+  # module.  Used as dependencies of the image packaging rules when the module
+  # is installed by the current product.
+  ALL_MODULES.$(my_register_name).INSTALLED := \
+    $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) \
+      $(foreach f, $(LOCAL_SOONG_INSTALL_PAIRS),\
+        $(word 2,$(subst :,$(space),$(f)))) \
+      $(LOCAL_SOONG_INSTALL_SYMLINKS) \
+      $(my_init_rc_installed) \
+      $(my_installed_test_data) \
+      $(my_vintf_installed))
+  # Store the list of colon-separated pairs of the built and installed locations
+  # of files provided by this module.  Used by custom packaging rules like
+  # package-modules.mk that need to copy the built files to a custom install
+  # location during packaging.
+  #
+  # Translate copies from $(LOCAL_PREBUILT_MODULE_FILE) to $(LOCAL_BUILT_MODULE)
+  # so that package-modules.mk gets any transtive dependencies added to
+  # $(LOCAL_BUILT_MODULE), for example unstripped symbols files.
+  ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
+    $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
+      $(patsubst $(LOCAL_PREBUILT_MODULE_FILE):%,$(LOCAL_BUILT_MODULE):%,$(LOCAL_SOONG_INSTALL_PAIRS)) \
+      $(my_init_rc_pairs) \
+      $(my_test_data_pairs) \
+      $(my_vintf_pairs))
+else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+  ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) \
     $(LOCAL_INSTALLED_MODULE) $(my_init_rc_installed) $(my_installed_symlinks) \
     $(my_installed_test_data) $(my_vintf_installed))
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
+  ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
     $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE) \
     $(my_init_rc_pairs) $(my_test_data_pairs) $(my_vintf_pairs))
@@ -934,6 +1000,36 @@ my_required_modules := $(LOCAL_REQUIRED_MODULES) \
 ifdef LOCAL_IS_HOST_MODULE
 my_required_modules += $(LOCAL_REQUIRED_MODULES_$($(my_prefix)OS))
 endif
+
+ALL_MODULES.$(my_register_name).SHARED_LIBS := \
+    $(ALL_MODULES.$(my_register_name).SHARED_LIBS) $(LOCAL_SHARED_LIBRARIES)
+
+ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS := \
+    $(ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS) $(LOCAL_SYSTEM_SHARED_LIBRARIES)
+
+ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES := \
+    $(ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES) $(LOCAL_RUNTIME_LIBRARIES)
+
+ifdef LOCAL_TEST_DATA
+  # Export the list of targets that are handled as data inputs and required
+  # by tests at runtime. The LOCAL_TEST_DATA format is generated from below
+  # https://cs.android.com/android/platform/superproject/+/master:build/soong/android/androidmk.go;l=925-944;drc=master
+  # which format is like $(path):$(relative_file) but for module-info, only
+  # the string after ":" is needed.
+  ALL_MODULES.$(my_register_name).TEST_DATA := \
+    $(strip $(ALL_MODULES.$(my_register_name).TEST_DATA) \
+      $(foreach f, $(LOCAL_TEST_DATA),\
+        $(call word-colon,2,$(f))))
+endif
+
+ifdef LOCAL_TEST_DATA_BINS
+  ALL_MODULES.$(my_register_name).TEST_DATA_BINS := \
+    $(ALL_MODULES.$(my_register_name).TEST_DATA_BINS) $(LOCAL_TEST_DATA_BINS)
+endif
+
+ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
+  $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS) \
+  $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
 
 ##########################################################################
 ## When compiling against the VNDK, add the .vendor or .product suffix to
@@ -1009,7 +1105,9 @@ ALL_MODULES.$(my_register_name).FOR_2ND_ARCH := true
 endif
 ALL_MODULES.$(my_register_name).FOR_HOST_CROSS := $(my_host_cross)
 ALL_MODULES.$(my_register_name).MODULE_NAME := $(LOCAL_MODULE)
-ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES := $(LOCAL_COMPATIBILITY_SUITE)
+ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES := \
+  $(ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES) \
+  $(filter-out $(ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES),$(LOCAL_COMPATIBILITY_SUITE))
 ALL_MODULES.$(my_register_name).TEST_CONFIG := $(test_config)
 ALL_MODULES.$(my_register_name).EXTRA_TEST_CONFIGS := $(LOCAL_EXTRA_FULL_TEST_CONFIGS)
 ALL_MODULES.$(my_register_name).TEST_MAINLINE_MODULES := $(LOCAL_TEST_MAINLINE_MODULES)
@@ -1026,7 +1124,7 @@ INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 ##########################################################
 # Track module-level dependencies.
 # Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
-ifdef RECORD_ALL_DEPS
+# (b/204397180) Unlock RECORD_ALL_DEPS was acknowledged reasonable for better Atest performance.
 ALL_DEPS.MODULES += $(LOCAL_MODULE)
 ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) \
@@ -1043,7 +1141,6 @@ ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
 
 license_files := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*)
 ALL_DEPS.$(LOCAL_MODULE).LICENSE := $(sort $(ALL_DEPS.$(LOCAL_MODULE).LICENSE) $(license_files))
-endif
 
 ###########################################################
 ## Take care of my_module_tags

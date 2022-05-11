@@ -240,7 +240,7 @@ function setpaths()
         export ANDROID_TOOLCHAIN_2ND_ARCH=$gccprebuiltdir/$toolchaindir2
     fi
 
-    export ANDROID_DEV_SCRIPTS=$T/development/scripts:$T/prebuilts/devtools/tools:$T/external/selinux/prebuilts/bin
+    export ANDROID_DEV_SCRIPTS=$T/development/scripts:$T/prebuilts/devtools/tools
 
     # add kernel specific binaries
     case $(uname -s) in
@@ -252,9 +252,7 @@ function setpaths()
     esac
 
     ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_TOOLCHAIN
-    if [ -n "$ANDROID_TOOLCHAIN_2ND_ARCH" ]; then
-        ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_TOOLCHAIN_2ND_ARCH
-    fi
+    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_TOOLCHAIN_2ND_ARCH
     ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_DEV_SCRIPTS
 
     # Append llvm binutils prebuilts path to ANDROID_BUILD_PATHS.
@@ -287,8 +285,9 @@ function setpaths()
     local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch"
     local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch"
     local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch"
-    export ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH:$AIDEGEN_PATH:$ATEST_PATH:
+    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH:$AIDEGEN_PATH:$ATEST_PATH
 
+    export ANDROID_BUILD_PATHS=$(tr -s : <<<"${ANDROID_BUILD_PATHS}:")
     export PATH=$ANDROID_BUILD_PATHS$PATH
 
     # out with the duplicate old
@@ -331,15 +330,15 @@ function setpaths()
 
 function bazel()
 {
-    local T="$(gettop)"
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP."
-        return
+    if which bazel &>/dev/null; then
+        >&2 echo "NOTE: bazel() function sourced from Android's envsetup.sh is being used instead of $(which bazel)"
+        >&2 echo
     fi
 
-    if which bazel &>/dev/null; then
-        >&2 echo "NOTE: bazel() function sourced from envsetup.sh is being used instead of $(which bazel)"
-        >&2 echo
+    local T="$(gettop)"
+    if [ ! "$T" ]; then
+        >&2 echo "Couldn't locate the top of the Android tree. Try setting TOP. This bazel() function cannot be used outside of the AOSP directory."
+        return
     fi
 
     "$T/tools/bazel" "$@"
@@ -424,6 +423,61 @@ function addcompletions()
     complete -F _complete_android_module_names outmod
     complete -F _complete_android_module_names installmod
     complete -F _complete_android_module_names m
+}
+
+function multitree_lunch_help()
+{
+    echo "usage: lunch PRODUCT-VARIANT" 1>&2
+    echo "    Set up android build environment based on a product short name and variant" 1>&2
+    echo 1>&2
+    echo "lunch COMBO_FILE VARIANT" 1>&2
+    echo "    Set up android build environment based on a specific lunch combo file" 1>&2
+    echo "    and variant." 1>&2
+    echo 1>&2
+    echo "lunch --print [CONFIG]" 1>&2
+    echo "    Print the contents of a configuration.  If CONFIG is supplied, that config" 1>&2
+    echo "    will be flattened and printed.  If CONFIG is not supplied, the currently" 1>&2
+    echo "    selected config will be printed.  Returns 0 on success or nonzero on error." 1>&2
+    echo 1>&2
+    echo "lunch --list" 1>&2
+    echo "    List all possible combo files available in the current tree" 1>&2
+    echo 1>&2
+    echo "lunch --help" 1>&2
+    echo "lunch -h" 1>&2
+    echo "    Prints this message." 1>&2
+}
+
+function multitree_lunch()
+{
+    local code
+    local results
+    if $(echo "$1" | grep -q '^-') ; then
+        # Calls starting with a -- argument are passed directly and the function
+        # returns with the lunch.py exit code.
+        build/make/orchestrator/core/lunch.py "$@"
+        code=$?
+        if [[ $code -eq 2 ]] ; then
+          echo 1>&2
+          multitree_lunch_help
+          return $code
+        elif [[ $code -ne 0 ]] ; then
+          return $code
+        fi
+    else
+        # All other calls go through the --lunch variant of lunch.py
+        results=($(build/make/orchestrator/core/lunch.py --lunch "$@"))
+        code=$?
+        if [[ $code -eq 2 ]] ; then
+          echo 1>&2
+          multitree_lunch_help
+          return $code
+        elif [[ $code -ne 0 ]] ; then
+          return $code
+        fi
+
+        export TARGET_BUILD_COMBO=${results[0]}
+        export TARGET_BUILD_VARIANT=${results[1]}
+    fi
 }
 
 function choosetype()
@@ -626,7 +680,7 @@ function print_lunch_menu()
         return
     fi
 
-    echo "Lunch menu... pick a combo:"
+    echo "Lunch menu .. Here are the common combinations:"
 
     local i=1
     local choice
@@ -648,12 +702,16 @@ function lunch()
         return 1
     fi
 
+    local used_lunch_menu=0
+
     if [ "$1" ]; then
         answer=$1
     else
         print_lunch_menu
-        echo -n "Which would you like? [aosp_arm-eng] "
+        echo "Which would you like? [aosp_arm-eng]"
+        echo -n "Pick from common choices above (e.g. 13) or specify your own (e.g. aosp_barbet-eng): "
         read answer
+        used_lunch_menu=1
     fi
 
     local selection=
@@ -703,6 +761,10 @@ function lunch()
     build_build_var_cache
     if [ $? -ne 0 ]
     then
+        if [[ "$product" =~ .*_(eng|user|userdebug) ]]
+        then
+            echo "Did you mean -${product/*_/}? (dash instead of underscore)"
+        fi
         return 1
     fi
     export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
@@ -714,11 +776,20 @@ function lunch()
     fi
     export TARGET_BUILD_TYPE=release
 
+    if [ $used_lunch_menu -eq 1 ]; then
+      echo
+      echo "Hint: next time you can simply run 'lunch $selection'"
+    fi
+
     [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || echo
 
     set_stuff_for_environment
     [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || printconfig
     destroy_build_var_cache
+
+    if [[ -n "${CHECK_MU_CONFIG:-}" ]]; then
+      check_mu_config
+    fi
 }
 
 unset COMMON_LUNCH_CHOICES_CACHE
@@ -746,7 +817,9 @@ function tapas()
     local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|arm64|x86_64)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
     local density="$(echo $* | xargs -n 1 echo | \grep -E '^(ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
-    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|arm64|x86_64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
+    local keys="$(echo $* | xargs -n 1 echo | \grep -E '^(devkeys)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|arm64|x86_64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi|devkeys)$' | xargs)"
+
 
     if [ "$showHelp" != "" ]; then
       $(gettop)/build/make/tapasHelp.sh
@@ -765,6 +838,10 @@ function tapas()
         echo "tapas: Error: Multiple densities supplied: $density"
         return
     fi
+    if [ $(echo $keys | wc -w) -gt 1 ]; then
+        echo "tapas: Error: Multiple keys supplied: $keys"
+        return
+    fi
 
     local product=aosp_arm
     case $arch in
@@ -772,6 +849,10 @@ function tapas()
       arm64)  product=aosp_arm64;;
       x86_64) product=aosp_x86_64;;
     esac
+    if [ -n "$keys" ]; then
+        product=${product/aosp_/aosp_${keys}_}
+    fi;
+
     if [ -z "$variant" ]; then
         variant=eng
     fi
@@ -1455,7 +1536,7 @@ function refreshmod() {
         > $ANDROID_PRODUCT_OUT/module-info.json.build.log 2>&1
 }
 
-# Verifies that module-info.txt exists, creating it if it doesn't.
+# Verifies that module-info.txt exists, returning nonzero if it doesn't.
 function verifymodinfo() {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
         if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
@@ -1466,7 +1547,7 @@ function verifymodinfo() {
 
     if [ ! -f "$ANDROID_PRODUCT_OUT/module-info.json" ]; then
         if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
-            echo "Could not find module-info.json. It will only be built once, and it can be updated with 'refreshmod'" >&2
+            echo "Could not find module-info.json. Please run 'refreshmod' first." >&2
         fi
         return 1
     fi
@@ -1585,6 +1666,10 @@ for output in module_info[module]['installed']:
 function installmod() {
     if [[ $# -eq 0 ]]; then
         echo "usage: installmod [adb install arguments] <module>" >&2
+        echo "" >&2
+        echo "Only flags to be passed after the \"install\" in adb install are supported," >&2
+        echo "with the exception of -s. If -s is passed it will be placed before the \"install\"." >&2
+        echo "-s must be the first flag passed if it exists." >&2
         return 1
     fi
 
@@ -1599,9 +1684,18 @@ function installmod() {
         echo "Module '$1' does not produce a file ending with .apk (try 'refreshmod' if there have been build changes?)" >&2
         return 1
     fi
+    local serial_device=""
+    if [[ "$1" == "-s" ]]; then
+        if [[ $# -le 2 ]]; then
+            echo "-s requires an argument" >&2
+            return 1
+        fi
+        serial_device="-s $2"
+        shift 2
+    fi
     local length=$(( $# - 1 ))
-    echo adb install ${@:1:$length} $_path
-    adb install ${@:1:$length} $_path
+    echo adb $serial_device install ${@:1:$length} $_path
+    adb $serial_device install ${@:1:$length} $_path
 }
 
 function _complete_android_module_names() {
@@ -1657,12 +1751,19 @@ function _wrap_build()
     if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
         color_failed=$'\E'"[0;31m"
         color_success=$'\E'"[0;32m"
+        color_warning=$'\E'"[0;33m"
         color_reset=$'\E'"[00m"
     else
         color_failed=""
         color_success=""
         color_reset=""
     fi
+
+    if [[ "x${USE_RBE}" == "x" && $mins -gt 15 && "${ANDROID_BUILD_ENVIRONMENT_CONFIG}" == "googler" ]]; then
+        echo
+        echo "${color_warning}Start using RBE (http://go/build-fast) to get faster builds!${color_reset}"
+    fi
+
     echo
     if [ $ret -eq 0 ] ; then
         echo -n "${color_success}#### build completed successfully "
@@ -1687,7 +1788,23 @@ function _trigger_build()
     if T="$(gettop)"; then
       _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
     else
-      echo "Couldn't locate the top of the tree. Try setting TOP."
+      >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
+      return 1
+    fi
+)
+
+# Convenience entry point (like m) to use Bazel in AOSP.
+function b()
+(
+    # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
+    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= || return 1
+    # Then, run Bazel using the synthetic workspace as the --package_path.
+    if [[ -z "$@" ]]; then
+        # If there are no args, show help.
+        bazel help
+    else
+        # Else, always run with the bp2build configuration, which sets Bazel's package path to the synthetic workspace.
+        bazel "$@" --config=bp2build
     fi
 )
 

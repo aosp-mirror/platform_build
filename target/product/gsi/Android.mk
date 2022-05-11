@@ -50,11 +50,21 @@ else
 _vndk_check_failure_message += "       Run \`update-vndk-list.sh\` to update $(LATEST_VNDK_LIB_LIST)"
 endif
 
+# The *-ndk_platform.so libraries no longer exist and are removed from the VNDK set. However, they
+# can exist if NEED_AIDL_NDK_PLATFORM_BACKEND is set to true for legacy devices. Don't be bothered
+# with the extraneous libraries.
+ifeq ($(NEED_AIDL_NDK_PLATFORM_BACKEND),true)
+	_READ_INTERNAL_VNDK_LIB_LIST := sed /ndk_platform.so/d $(INTERNAL_VNDK_LIB_LIST)
+else
+	_READ_INTERNAL_VNDK_LIB_LIST := cat $(INTERNAL_VNDK_LIB_LIST)
+endif
+
 $(check-vndk-list-timestamp): $(INTERNAL_VNDK_LIB_LIST) $(LATEST_VNDK_LIB_LIST) $(HOST_OUT_EXECUTABLES)/update-vndk-list.sh
-	$(hide) ( diff --old-line-format="Removed %L" \
+	$(hide) ($(_READ_INTERNAL_VNDK_LIB_LIST) | sort | \
+	diff --old-line-format="Removed %L" \
 	  --new-line-format="Added %L" \
 	  --unchanged-line-format="" \
-	  $(LATEST_VNDK_LIB_LIST) $(INTERNAL_VNDK_LIB_LIST) \
+	  <(cat $(LATEST_VNDK_LIB_LIST) | sort) - \
 	  || ( echo -e $(_vndk_check_failure_message); exit 1 ))
 	$(hide) mkdir -p $(dir $@)
 	$(hide) touch $@
@@ -63,8 +73,9 @@ $(check-vndk-list-timestamp): $(INTERNAL_VNDK_LIB_LIST) $(LATEST_VNDK_LIB_LIST) 
 # Script to update the latest VNDK lib list
 include $(CLEAR_VARS)
 LOCAL_MODULE := update-vndk-list.sh
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := EXECUTABLES
 LOCAL_MODULE_STEM := $(LOCAL_MODULE)
 LOCAL_IS_HOST_MODULE := true
@@ -84,9 +95,13 @@ else
 	        echo "  echo Run lunch or choosecombo first" >> $@; \
 	        echo "  exit 1" >> $@; \
 	        echo "fi" >> $@; \
-	        echo "cd \$${ANDROID_BUILD_TOP}" >> $@; \
-	        echo "cp $(PRIVATE_INTERNAL_VNDK_LIB_LIST) $(PRIVATE_LATEST_VNDK_LIB_LIST)" >> $@; \
-	        echo "echo $(PRIVATE_LATEST_VNDK_LIB_LIST) updated." >> $@
+	        echo "cd \$${ANDROID_BUILD_TOP}" >> $@
+ifeq ($(NEED_AIDL_NDK_PLATFORM_BACKEND),true)
+	$(hide) echo "sed /ndk_platform.so/d $(PRIVATE_INTERNAL_VNDK_LIB_LIST) > $(PRIVATE_LATEST_VNDK_LIB_LIST)" >> $@
+else
+	$(hide) echo "cp $(PRIVATE_INTERNAL_VNDK_LIB_LIST) $(PRIVATE_LATEST_VNDK_LIB_LIST)" >> $@
+endif
+	$(hide) echo "echo $(PRIVATE_LATEST_VNDK_LIB_LIST) updated." >> $@
 endif
 	@chmod a+x $@
 
@@ -117,7 +132,13 @@ VNDK_ABI_DUMPS := $(call find-abi-dump-paths,$(VNDK_ABI_DUMP_DIR))
 NDK_ABI_DUMPS := $(call find-abi-dump-paths,$(NDK_ABI_DUMP_DIR))
 PLATFORM_ABI_DUMPS := $(call find-abi-dump-paths,$(PLATFORM_ABI_DUMP_DIR))
 
+# Check for superfluous lsdump files. Since LSDUMP_PATHS only covers the
+# libraries that can be built from source in the current build, and prebuilts of
+# Mainline modules may be in use, we also allow the libs in STUB_LIBRARIES for
+# NDK and platform ABIs.
+
 $(check-vndk-abi-dump-list-timestamp): PRIVATE_LSDUMP_PATHS := $(LSDUMP_PATHS)
+$(check-vndk-abi-dump-list-timestamp): PRIVATE_STUB_LIBRARIES := $(STUB_LIBRARIES)
 $(check-vndk-abi-dump-list-timestamp):
 	$(eval added_vndk_abi_dumps := $(strip $(sort $(filter-out \
 	  $(call filter-abi-dump-paths,LLNDK VNDK-SP VNDK-core,$(PRIVATE_LSDUMP_PATHS)), \
@@ -126,13 +147,15 @@ $(check-vndk-abi-dump-list-timestamp):
 	  echo -e "Found unexpected ABI reference dump files under $(VNDK_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(VNDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_vndk_abi_dumps)) ')' -delete\` to delete the dump files.")
 
 	$(eval added_ndk_abi_dumps := $(strip $(sort $(filter-out \
-	  $(call filter-abi-dump-paths,NDK,$(PRIVATE_LSDUMP_PATHS)), \
+	  $(call filter-abi-dump-paths,NDK,$(PRIVATE_LSDUMP_PATHS)) \
+	  $(addsuffix .lsdump,$(PRIVATE_STUB_LIBRARIES)), \
 	  $(notdir $(NDK_ABI_DUMPS))))))
 	$(if $(added_ndk_abi_dumps), \
 	  echo -e "Found unexpected ABI reference dump files under $(NDK_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(NDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_ndk_abi_dumps)) ')' -delete\` to delete the dump files.")
 
 	$(eval added_platform_abi_dumps := $(strip $(sort $(filter-out \
-	  $(call filter-abi-dump-paths,PLATFORM,$(PRIVATE_LSDUMP_PATHS)), \
+	  $(call filter-abi-dump-paths,PLATFORM,$(PRIVATE_LSDUMP_PATHS)) \
+	  $(addsuffix .lsdump,$(PRIVATE_STUB_LIBRARIES)), \
 	  $(notdir $(PLATFORM_ABI_DUMPS))))))
 	$(if $(added_platform_abi_dumps), \
 	  echo -e "Found unexpected ABI reference dump files under $(PLATFORM_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(PLATFORM_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_platform_abi_dumps)) ')' -delete\` to delete the dump files.")
@@ -148,8 +171,9 @@ ifneq ($(BOARD_VNDK_VERSION),)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_package
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 # Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
 LOCAL_REQUIRED_MODULES := \
     $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES))
@@ -173,8 +197,9 @@ ifneq ($(BOARD_VNDK_VERSION),current)
 	_vndk_versions += $(BOARD_VNDK_VERSION)
 endif
 LOCAL_MODULE := vndk_apex_snapshot_package
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(_vndk_versions),com.android.vndk.v$(vndk_ver))
 include $(BUILD_PHONY_PACKAGE)
 
@@ -187,8 +212,9 @@ endif # BOARD_VNDK_VERSION is set
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := gsi_skip_mount.cfg
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_STEM := skip_mount.cfg
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 LOCAL_MODULE_CLASS := ETC
@@ -212,8 +238,9 @@ include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := init.gsi.rc
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SYSTEM_EXT_MODULE := true
@@ -224,11 +251,12 @@ include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := init.vndk-nodef.rc
-LOCAL_LICENSE_KINDS := legacy_restricted
-LOCAL_LICENSE_CONDITIONS := restricted
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SYSTEM_EXT_MODULE := true
-LOCAL_MODULE_RELATIVE_PATH := init
+LOCAL_MODULE_RELATIVE_PATH := gsi
 
 include $(BUILD_PREBUILT)
