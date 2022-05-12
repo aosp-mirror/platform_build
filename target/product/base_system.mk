@@ -225,7 +225,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NetworkStackNext \
+    NetworkStack \
     odsign \
     org.apache.http.legacy \
     otacerts \
