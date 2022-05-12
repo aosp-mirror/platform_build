@@ -456,7 +456,7 @@ function multitree_lunch()
     if $(echo "$1" | grep -q '^-') ; then
         # Calls starting with a -- argument are passed directly and the function
         # returns with the lunch.py exit code.
-        build/make/orchestrator/core/lunch.py "$@"
+        build/build/make/orchestrator/core/lunch.py "$@"
         code=$?
         if [[ $code -eq 2 ]] ; then
           echo 1>&2
@@ -467,7 +467,7 @@ function multitree_lunch()
         fi
     else
         # All other calls go through the --lunch variant of lunch.py
-        results=($(build/make/orchestrator/core/lunch.py --lunch "$@"))
+        results=($(build/build/make/orchestrator/core/lunch.py --lunch "$@"))
         code=$?
         if [[ $code -eq 2 ]] ; then
           echo 1>&2
@@ -930,6 +930,34 @@ function banchan()
 function gettop
 {
     local TOPFILE=build/make/core/envsetup.mk
+    if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
+        # The following circumlocution ensures we remove symlinks from TOP.
+        (cd "$TOP"; PWD= /bin/pwd)
+    else
+        if [ -f $TOPFILE ] ; then
+            # The following circumlocution (repeated below as well) ensures
+            # that we record the true directory name and not one that is
+            # faked up with symlink names.
+            PWD= /bin/pwd
+        else
+            local HERE=$PWD
+            local T=
+            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
+                \cd ..
+                T=`PWD= /bin/pwd -P`
+            done
+            \cd "$HERE"
+            if [ -f "$T/$TOPFILE" ]; then
+                echo "$T"
+            fi
+        fi
+    fi
+}
+
+# TODO: Merge into gettop as part of launching multitree
+function multitree_gettop
+{
+    local TOPFILE=build/build/make/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
         # The following circumlocution ensures we remove symlinks from TOP.
         (cd "$TOP"; PWD= /bin/pwd)
@@ -1834,6 +1862,21 @@ function mmma()
 function make()
 {
     _wrap_build $(get_make_command "$@") "$@"
+}
+
+function _multitree_lunch_error()
+{
+      >&2 echo "Couldn't locate the top of the tree. Please run \'source build/envsetup.sh\' and multitree_lunch from the root of your workspace."
+}
+
+function multitree_build()
+{
+    if T="$(multitree_gettop)"; then
+      "$T/build/build/orchestrator/core/orchestrator.py" "$@"
+    else
+      _multitree_lunch_error
+      return 1
+    fi
 }
 
 function provision()
