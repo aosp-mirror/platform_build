@@ -1936,10 +1936,6 @@ ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals,sdk, \
     $(ALL_SDK_TARGETS) \
-    $(SYMBOLS_ZIP) \
-    $(SYMBOLS_MAPPING) \
-    $(COVERAGE_ZIP) \
-    $(APPCOMPAT_ZIP) \
     $(INSTALLED_BUILD_PROP_TARGET) \
 )
 endif
