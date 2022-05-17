@@ -871,7 +871,7 @@ def AddImagesToTargetFiles(filename):
 
   if has_vendor_kernel_boot:
     banner("vendor_kernel_boot")
-    vendor_kernel_boot_image = common.GetVendorBootImage(
+    vendor_kernel_boot_image = common.GetVendorKernelBootImage(
         "IMAGES/vendor_kernel_boot.img", "vendor_kernel_boot.img", OPTIONS.input_tmp,
         "VENDOR_KERNEL_BOOT")
     if vendor_kernel_boot_image:

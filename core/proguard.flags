@@ -15,6 +15,12 @@
 @**.VisibleForTesting *;
 }
 
+# Keep rule for members that are needed solely to keep alive downstream weak
+# references, and could otherwise be removed after tree shaking optimizations.
+-keepclassmembers,allowaccessmodification,allowobfuscation,allowshrinking class * {
+  @com.android.internal.annotations.KeepForWeakReference <fields>;
+}
+
 # Understand the common @Keep annotation from various Android packages:
 #  * android.support.annotation
 #  * androidx.annotation

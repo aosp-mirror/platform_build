@@ -931,7 +931,7 @@ $(foreach suite,general-tests device-tests vts tvts art-host-tests host-unit-tes
     $(eval my_deps := $(call get-all-shared-libs-deps,$(m)))\
     $(foreach dep,$(my_deps),\
       $(foreach f,$(ALL_MODULES.$(dep).HOST_SHARED_LIBRARY_FILES),\
-        $(if $(filter $(suite),device-tests general-tests),\
+        $(if $(filter $(suite),device-tests general-tests art-host-tests host-unit-tests),\
           $(eval my_testcases := $(HOST_OUT_TESTCASES)),\
           $(eval my_testcases := $$(COMPATIBILITY_TESTCASES_OUT_$(suite))))\
         $(eval target := $(my_testcases)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
@@ -1936,10 +1936,6 @@ ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals,sdk, \
     $(ALL_SDK_TARGETS) \
-    $(SYMBOLS_ZIP) \
-    $(SYMBOLS_MAPPING) \
-    $(COVERAGE_ZIP) \
-    $(APPCOMPAT_ZIP) \
     $(INSTALLED_BUILD_PROP_TARGET) \
 )
 endif

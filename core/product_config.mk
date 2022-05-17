@@ -210,7 +210,6 @@ $(foreach f,$(android_products_makefiles), \
 # Dedup, extract product names, etc.
 product_paths := $(sort $(product_paths))
 all_named_products := $(sort $(call _first,$(product_paths),:))
-all_product_makefiles := $(sort $(call _second,$(product_paths),:))
 current_product_makefile := $(call _second,$(filter $(TARGET_PRODUCT):%,$(product_paths)),:)
 COMMON_LUNCH_CHOICES := $(sort $(common_lunch_choices))
 
@@ -230,7 +229,6 @@ endif
 
 ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
   RBC_PRODUCT_CONFIG := true
-  RBC_BOARD_CONFIG := true
 endif
 
 ifndef RBC_PRODUCT_CONFIG
@@ -274,8 +272,6 @@ endif
 ############################################################################
 
 current_product_makefile :=
-all_product_makefiles :=
-all_product_configs :=
 
 #############################################################################
 # Quick check and assign default values
