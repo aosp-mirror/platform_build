@@ -1,0 +1,19 @@
+package_name:  "Android"
+module_classes: "EXECUTABLES"
+projects:  "bin/twolibraries"
+license_kinds:  "SPDX-license-identifier-Apache-2.0"
+license_conditions:  "notice"
+license_texts:  "build/soong/licenses/LICENSE"
+is_container:  false
+built:  "out/target/product/fictional/obj/EXECUTABLES/bin_intermediates/bin2"
+installed:  "out/target/product/fictional/system/bin/bin2"
+sources:  "out/target/product/fictional/system/lib/libc++.so"
+sources:  "out/target/product/fictional/system/lib/libapache.so"
+deps:  {
+  file:  "testdata/regressgpl1/lib/libc++.so.meta_lic"
+  annotations:  "dynamic"
+}
+deps:  {
+  file:  "testdata/regressgpl1/lib/libapache.so.meta_lic"
+  annotations:  "dynamic"
+}
