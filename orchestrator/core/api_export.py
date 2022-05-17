@@ -1,5 +1,6 @@
+#!/usr/bin/python3
 #
-# Copyright (C) 2013 The Android Open Source Project
+# Copyright (C) 2022 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,17 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-$(call record-module-type,HOST_DALVIK_STATIC_JAVA_LIBRARY)
 
-#
-# Rules for building a host dalvik static java library.
-# These libraries will be compiled against libcore and not the host
-# JRE.
-#
-LOCAL_UNINSTALLABLE_MODULE := true
-LOCAL_IS_STATIC_JAVA_LIBRARY := true
+def export_apis_from_tree(tree_key, inner_tree, cookie):
+    inner_tree.invoke(["export_api_contributions"])
 
-include $(BUILD_SYSTEM)/host_dalvik_java_library.mk
 
-LOCAL_IS_STATIC_JAVA_LIBRARY :=

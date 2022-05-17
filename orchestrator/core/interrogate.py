@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2022 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,10 +12,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=RBT1.220517.001
+import json
+import os
+
+def interrogate_tree(tree_key, inner_tree, cookie):
+    inner_tree.invoke(["describe"])
+
+    info_json_filename = inner_tree.out.tree_info_file()
+
+    # TODO: Error handling
+    with open(info_json_filename) as f:
+        info_json = json.load(f)
+
+    # TODO: Check orchestrator protocol
+
