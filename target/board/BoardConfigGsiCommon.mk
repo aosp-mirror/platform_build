@@ -38,6 +38,12 @@ BOARD_USES_METADATA_PARTITION := true
 #   updating the last seen rollback index in the tamper-evident storage.
 BOARD_AVB_ROLLBACK_INDEX := 0
 
+# The chained vbmeta settings for boot images.
+BOARD_AVB_BOOT_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
+BOARD_AVB_BOOT_ALGORITHM := SHA256_RSA4096
+BOARD_AVB_BOOT_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION := 2
+
 # Enable AVB chained partition for system.
 # https://android.googlesource.com/platform/external/avb/+/master/README.md
 BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem

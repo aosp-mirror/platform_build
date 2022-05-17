@@ -114,7 +114,7 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # AVB_FOOTER_ARGS_BY_PARTITION in sign_target_files_apks need to be updated
 # accordingly.
 AVB_PARTITIONS = ('boot', 'init_boot', 'dtbo', 'odm', 'product', 'pvmfw', 'recovery',
-                  'system', 'system_ext', 'vendor', 'vendor_boot',
+                  'system', 'system_ext', 'vendor', 'vendor_boot', 'vendor_kernel_boot',
                   'vendor_dlkm', 'odm_dlkm', 'system_dlkm')
 
 # Chained VBMeta partitions.
@@ -455,6 +455,11 @@ class BuildInfo(object):
     return vabc_enabled
 
   @property
+  def is_android_r(self):
+    system_prop = self.info_dict.get("system.build.prop")
+    return system_prop and system_prop.GetProp("ro.build.version.release") == "11"
+
+  @property
   def is_vabc_xor(self):
     vendor_prop = self.info_dict.get("vendor.build.prop")
     vabc_xor_enabled = vendor_prop and \
@@ -725,7 +730,7 @@ class RamdiskFormat(object):
   GZ = 2
 
 
-def _GetRamdiskFormat(info_dict):
+def GetRamdiskFormat(info_dict):
   if info_dict.get('lz4_ramdisks') == 'true':
     ramdisk_format = RamdiskFormat.LZ4
   else:
@@ -834,7 +839,7 @@ def LoadInfoDict(input_file, repacking=False):
 
   # Load recovery fstab if applicable.
   d["fstab"] = _FindAndLoadRecoveryFstab(d, input_file, read_helper)
-  ramdisk_format = _GetRamdiskFormat(d)
+  ramdisk_format = GetRamdiskFormat(d)
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
@@ -1188,10 +1193,14 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
     return " ".join(sorted(combined))
 
   if (framework_dict.get("use_dynamic_partitions") !=
-          "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
+        "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
     raise ValueError("Both dictionaries must have use_dynamic_partitions=true")
 
   merged_dict = {"use_dynamic_partitions": "true"}
+  # For keys-value pairs that are the same, copy to merged dict
+  for key in vendor_dict.keys():
+    if key in framework_dict and framework_dict[key] == vendor_dict[key]:
+      merged_dict[key] = vendor_dict[key]
 
   merged_dict["dynamic_partition_list"] = uniq_concat(
       framework_dict.get("dynamic_partition_list", ""),
@@ -1575,7 +1584,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   img = tempfile.NamedTemporaryFile()
 
   if has_ramdisk:
-    ramdisk_format = _GetRamdiskFormat(info_dict)
+    ramdisk_format = GetRamdiskFormat(info_dict)
     ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file,
                                ramdisk_format=ramdisk_format)
 
@@ -1782,6 +1791,9 @@ def HasRamdisk(partition_name, info_dict=None):
   if info_dict.get("recovery_as_boot") == "true":
     return True  # the recovery-as-boot boot.img has a RECOVERY ramdisk.
 
+  if info_dict.get("gki_boot_image_without_ramdisk") == "true":
+    return False  # A GKI boot.img has no ramdisk since Android-13.
+
   if info_dict.get("system_root_image") == "true":
     # The ramdisk content is merged into the system.img, so there is NO
     # ramdisk in the boot.img or boot-<kernel version>.img.
@@ -1838,7 +1850,7 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   return None
 
 
-def _BuildVendorBootImage(sourcedir, info_dict=None):
+def _BuildVendorBootImage(sourcedir, partition_name, info_dict=None):
   """Build a vendor boot image from the specified sourcedir.
 
   Take a ramdisk, dtb, and vendor_cmdline from the input (in 'sourcedir'), and
@@ -1853,7 +1865,7 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
 
   img = tempfile.NamedTemporaryFile()
 
-  ramdisk_format = _GetRamdiskFormat(info_dict)
+  ramdisk_format = GetRamdiskFormat(info_dict)
   ramdisk_img = _MakeRamdisk(sourcedir, ramdisk_format=ramdisk_format)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
@@ -1863,8 +1875,13 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
 
   fn = os.path.join(sourcedir, "dtb")
   if os.access(fn, os.F_OK):
-    cmd.append("--dtb")
-    cmd.append(fn)
+    has_vendor_kernel_boot = (info_dict.get("vendor_kernel_boot", "").lower() == "true")
+
+    # Pack dtb into vendor_kernel_boot if building vendor_kernel_boot.
+    # Otherwise pack dtb into vendor_boot.
+    if not has_vendor_kernel_boot or partition_name == "vendor_kernel_boot":
+      cmd.append("--dtb")
+      cmd.append(fn)
 
   fn = os.path.join(sourcedir, "vendor_cmdline")
   if os.access(fn, os.F_OK):
@@ -1924,11 +1941,11 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
   # AVB: if enabled, calculate and add hash.
   if info_dict.get("avb_enable") == "true":
     avbtool = info_dict["avb_avbtool"]
-    part_size = info_dict["vendor_boot_size"]
+    part_size = info_dict[f'{partition_name}_size']
     cmd = [avbtool, "add_hash_footer", "--image", img.name,
-           "--partition_size", str(part_size), "--partition_name", "vendor_boot"]
-    AppendAVBSigningArgs(cmd, "vendor_boot")
-    args = info_dict.get("avb_vendor_boot_add_hash_footer_args")
+           "--partition_size", str(part_size), "--partition_name", partition_name]
+    AppendAVBSigningArgs(cmd, partition_name)
+    args = info_dict.get(f'avb_{partition_name}_add_hash_footer_args')
     if args and args.strip():
       cmd.extend(shlex.split(args))
     RunAndCheckOutput(cmd)
@@ -1962,7 +1979,31 @@ def GetVendorBootImage(name, prebuilt_name, unpack_dir, tree_subdir,
     info_dict = OPTIONS.info_dict
 
   data = _BuildVendorBootImage(
-      os.path.join(unpack_dir, tree_subdir), info_dict)
+      os.path.join(unpack_dir, tree_subdir), "vendor_boot", info_dict)
+  if data:
+    return File(name, data)
+  return None
+
+
+def GetVendorKernelBootImage(name, prebuilt_name, unpack_dir, tree_subdir,
+                       info_dict=None):
+  """Return a File object with the desired vendor kernel boot image.
+
+  Look for it under 'unpack_dir'/IMAGES, otherwise construct it from
+  the source files in 'unpack_dir'/'tree_subdir'."""
+
+  prebuilt_path = os.path.join(unpack_dir, "IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    logger.info("using prebuilt %s from IMAGES...", prebuilt_name)
+    return File.FromLocalFile(name, prebuilt_path)
+
+  logger.info("building image from target_files %s...", tree_subdir)
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  data = _BuildVendorBootImage(
+      os.path.join(unpack_dir, tree_subdir), "vendor_kernel_boot", info_dict)
   if data:
     return File(name, data)
   return None

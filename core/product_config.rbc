@@ -104,6 +104,11 @@ def __printvars_rearrange_list(value_list):
     seen = {item: 0 for item in value_list}
     return sorted(seen.keys()) if _options.rearrange == "sort" else seen.keys()
 
+def __sort_pcm_names(pcm_names):
+    # We have to add an extension back onto the pcm names when sorting,
+    # or else the sort order could be wrong when one is a prefix of another.
+    return [x[:-3] for x in sorted([y + ".mk" for y in pcm_names], reverse=True)]
+
 def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
     """Creates configuration."""
 
@@ -142,7 +147,7 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
 
         # Run this one, obtaining its configuration and child PCMs.
         if _options.trace_modules:
-            print("#%d: %s" % (n, name))
+            rblf_log("%d: %s" % (n, name))
 
         # Run PCM.
         handle = __h_new()
@@ -162,12 +167,12 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         # Now we know everything about this PCM, record it in 'configs'.
         children = handle.inherited_modules
         if _options.trace_modules:
-            print("#   ", "    ".join(children.keys()))
+            rblf_log("   ", "    ".join(children.keys()))
         # Starlark dictionaries are guaranteed to iterate through in insertion order,
         # so children.keys() will be ordered by the inherit() calls
         configs[name] = (pcm, handle.cfg, children.keys(), False)
 
-        for child_name in sorted(children, reverse = True):
+        for child_name in __sort_pcm_names(children.keys()):
             if child_name not in configs:
                 configs[child_name] = (children[child_name], None, [], False)
             pcm_stack.append(child_name)
@@ -202,7 +207,7 @@ def evaluate_finalized_product_variables(configs, top_level_pcm_name, trace=Fals
         pcm_name, before = pcm_stack.pop()
         if before:
             pcm_stack.append((pcm_name, False))
-            for child in sorted(configs[pcm_name][2], reverse = True):
+            for child in __sort_pcm_names(configs[pcm_name][2]):
                 pcm_stack.append((child, True))
         else:
             configs_postfix.append(pcm_name)
@@ -229,9 +234,9 @@ def evaluate_finalized_product_variables(configs, top_level_pcm_name, trace=Fals
     configs = cloned_configs
 
     if trace:
-        print("\n#---Postfix---")
+        rblf_log("\n---Postfix---")
         for x in configs_postfix:
-            print("#   ", x)
+            rblf_log("   ", x)
 
     # Traverse the tree from the bottom, evaluating inherited values
     for pcm_name in configs_postfix:
@@ -304,7 +309,7 @@ def _substitute_inherited(configs, pcm_name, cfg):
             old_val = val
             new_val = _value_expand(configs, attr, val)
             if new_val != old_val:
-                print("%s(i): %s=%s (was %s)" % (pcm_name, attr, new_val, old_val))
+                rblf_log("%s(i): %s=%s (was %s)" % (pcm_name, attr, new_val, old_val))
             cfg[attr] = new_val
 
 def _value_expand(configs, attr, values_list):
@@ -358,7 +363,7 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
 
     for attr in _options.trace_variables:
         if attr in percolated_attrs:
-            print("%s: %s^=%s" % (cfg_name, attr, cfg[attr]))
+            rblf_log("%s: %s^=%s" % (cfg_name, attr, cfg[attr]))
 
 def __move_items(to_list, from_cfg, attr):
     value = from_cfg.get(attr, [])
@@ -400,12 +405,26 @@ def _soong_config_get(g, nsname, var):
     """Gets to the value of the variable in the namespace."""
     return g.get(_soong_config_namespaces_key, {}).get(nsname, {}).get(var, None)
 
-
-def _abspath(path):
+def _abspath(paths):
     """Provided for compatibility, to be removed later."""
-    if type(path) == "list":
-        path = " ".join(path)
-    return rblf_shell("realpath "+path)
+    cwd = rblf_shell('pwd')
+    results = []
+    for path in __words(paths):
+        if path[0] != "/":
+            path = cwd + "/" + path
+
+        resultparts = []
+        for part in path.split('/'):
+            if part == "." or part == "":
+                continue
+            elif part == "..":
+                if resultparts:
+                    resultparts.pop()
+            else:
+                resultparts.append(part)
+        results.append("/" + "/".join(resultparts))
+
+    return " ".join(results)
 
 
 def _addprefix(prefix, string_or_list):
@@ -517,8 +536,11 @@ def _copy_if_exists(path_pair):
     """If from file exists, returns [from:to] pair."""
     value = path_pair.split(":", 2)
 
+    if value[0].find('*') != -1:
+        fail("copy_if_exists: input file cannot contain *")
+
     # Check that l[0] exists
-    return [":".join(value)] if rblf_file_exists(value[0]) else []
+    return [":".join(value)] if rblf_wildcard(value[0]) else []
 
 def _enforce_product_packages_exist(handle, pkg_string_or_list=[]):
     """Makes including non-existent modules in PRODUCT_PACKAGES an error."""
@@ -532,10 +554,6 @@ def _add_product_dex_preopt_module_config(handle, modules, config):
     config = _mkstrip(config).replace(" ", "|@SP@|")
     _setdefault(handle, "PRODUCT_DEX_PREOPT_MODULE_CONFIGS")
     handle.cfg["PRODUCT_DEX_PREOPT_MODULE_CONFIGS"] += [m + "=" + config for m in modules]
-
-def _file_wildcard_exists(file_pattern):
-    """Return True if there are files matching given bash pattern."""
-    return len(rblf_wildcard(file_pattern)) > 0
 
 def _find_and_copy(pattern, from_dir, to_dir):
     """Return a copy list for the files matching the pattern."""
@@ -585,6 +603,27 @@ def _filter(pattern, text):
                 res.append(w)
                 break
     return res
+
+def _first_word(input):
+    """Equivalent to the GNU make function $(firstword)."""
+    input = __words(input)
+    if len(input) == 0:
+        return ""
+    return input[0]
+
+def _last_word(input):
+    """Equivalent to the GNU make function $(lastword)."""
+    input = __words(input)
+    l = len(input)
+    if l == 0:
+        return ""
+    return input[l-1]
+
+def _flatten_2d_list(list):
+    result = []
+    for x in list:
+        result += x
+    return result
 
 def _dir(paths):
     """Equivalent to the GNU make function $(dir).
@@ -748,8 +787,11 @@ def _mkstrip(s):
     That is, removes string's leading and trailing whitespace characters and
     replaces any sequence of whitespace characters with with a single space.
     """
-    if type(s) != "string":
-        return s
+    t = type(s)
+    if t == "list":
+        s = " ".join(s)
+    elif t != "string":
+        fail("Argument to mkstrip must be a string or list, got: "+t)
     result = ""
     was_space = False
     for ch in s.strip().elems():
@@ -837,12 +879,13 @@ rblf = struct(
     dir = _dir,
     enforce_product_packages_exist = _enforce_product_packages_exist,
     expand_wildcard = _expand_wildcard,
-    file_exists = rblf_file_exists,
-    file_wildcard_exists = _file_wildcard_exists,
     filter = _filter,
     filter_out = _filter_out,
     find_and_copy = _find_and_copy,
     findstring = _findstring,
+    first_word = _first_word,
+    last_word = _last_word,
+    flatten_2d_list = _flatten_2d_list,
     inherit = _inherit,
     indirect = _indirect,
     mk2rbc_error = _mk2rbc_error,

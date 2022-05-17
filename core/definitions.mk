@@ -2609,7 +2609,7 @@ define transform-classes.jar-to-dex
 @mkdir -p $(dir $@)tmp
 $(hide) rm -f $(dir $@)classes*.dex $(dir $@)d8_input.jar
 $(hide) $(ZIP2ZIP) -j -i $< -o $(dir $@)d8_input.jar "**/*.class"
-$(hide) $(D8_WRAPPER) $(DX_COMMAND) $(DEX_FLAGS) \
+$(hide) $(D8_WRAPPER) $(D8_COMMAND) \
     --output $(dir $@)tmp \
     $(addprefix --lib ,$(PRIVATE_D8_LIBS)) \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
@@ -3213,7 +3213,7 @@ endif
 define transform-jar-to-dex-r8
 @echo R8: $@
 $(hide) rm -f $(PRIVATE_PROGUARD_DICTIONARY)
-$(hide) $(R8_WRAPPER) $(R8_COMPAT_PROGUARD) $(DEX_FLAGS) \
+$(hide) $(R8_WRAPPER) $(R8_COMMAND) \
     -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --no-data-resources \
@@ -3360,8 +3360,6 @@ STATS.MODULE_TYPE := \
   STATIC_TEST_LIBRARY \
   HOST_STATIC_TEST_LIBRARY \
   NOTICE_FILE \
-  HOST_DALVIK_JAVA_LIBRARY \
-  HOST_DALVIK_STATIC_JAVA_LIBRARY \
   base_rules \
   HEADER_LIBRARY \
   HOST_TEST_CONFIG \

@@ -842,10 +842,6 @@ $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_U
 $(call declare-0p-target,$(INSTALLED_FILES_FILE_ROOT))
 $(call declare-0p-target,$(INSTALLED_FILES_JSON_ROOT))
 
-ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
-endif
-
 #------------------------------------------------------------------
 # dtb
 ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
@@ -877,9 +873,6 @@ $(INSTALLED_FILES_FILE_RAMDISK) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST) $(FILES
 $(eval $(call declare-0p-target,$(INSTALLED_FILES_FILE_RAMDISK)))
 $(eval $(call declare-0p-target,$(INSTALLED_FILES_JSON_RAMDISK)))
 
-ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE_RAMDISK))
-endif
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
 ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
@@ -976,11 +969,14 @@ INTERNAL_BOOTIMAGE_ARGS := \
 
 INTERNAL_INIT_BOOT_IMAGE_ARGS :=
 
-ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-  ifneq ($(BUILDING_INIT_BOOT_IMAGE),true)
-    INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
-  else
-    INTERNAL_INIT_BOOT_IMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
+# TODO(b/229701033): clean up BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK.
+ifneq ($(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK),true)
+  ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+    ifneq ($(BUILDING_INIT_BOOT_IMAGE),true)
+      INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
+    else
+      INTERNAL_INIT_BOOT_IMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
+    endif
   endif
 endif
 
@@ -1568,7 +1564,6 @@ ifndef TARGET_BUILD_APPS
 # TODO These intermediate NOTICE.txt/NOTICE.html files should go into
 # TARGET_OUT_NOTICE_FILES now that the notice files are gathered from
 # the src subdirectory.
-target_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE.txt
 kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
 winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
 
@@ -2009,6 +2004,8 @@ $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
 $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
     $(hide) echo "system_root_image=true" >> $(1))
+$(if $(filter true,$(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK)),\
+    $(hide) echo "gki_boot_image_without_ramdisk=true" >> $(1))
 $(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1)
 $(if $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITION_SIZE)),\
     $(hide) echo "use_dynamic_partition_size=true" >> $(1))
@@ -3103,10 +3100,6 @@ $(eval $(call declare-0p-target,$(INSTALLED_FILES_JSON)))
 
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
-
-ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE))
-endif
 
 systemimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,systemimage)
@@ -5370,7 +5363,7 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_OTA_TOOLS := $(built_ota_tools)
 tool_extension := $(wildcard $(tool_extensions)/releasetools.py)
 $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSION := $(tool_extension)
 
-updaer_dep :=
+updater_dep :=
 ifeq ($(AB_OTA_UPDATER),true)
 updater_dep += system/update_engine/update_engine.conf
 $(call declare-1p-target,system/update_engine/update_engine.conf,system/update_engine)
@@ -6794,8 +6787,6 @@ ATREE_FILES :=
 # if we don't have a real list, then use "everything"
 ifeq ($(strip $(ATREE_FILES)),)
 ATREE_FILES := \
-	$(ALL_DEFAULT_INSTALLED_MODULES) \
-	$(INSTALLED_RAMDISK_TARGET) \
 	$(ALL_DOCS) \
 	$(ALL_SDK_FILES)
 endif
@@ -6822,21 +6813,9 @@ endif
 include $(BUILD_SYSTEM)/sdk_font.mk
 
 deps := \
-	$(target_notice_file_txt) \
 	$(OUT_DOCS)/offline-sdk-timestamp \
 	$(SDK_METADATA_FILES) \
-	$(SYMBOLS_ZIP) \
-	$(COVERAGE_ZIP) \
-	$(APPCOMPAT_ZIP) \
-	$(INSTALLED_SYSTEMIMAGE_TARGET) \
-	$(INSTALLED_QEMU_SYSTEMIMAGE) \
-	$(INSTALLED_QEMU_RAMDISKIMAGE) \
-	$(INSTALLED_QEMU_VENDORIMAGE) \
-	$(QEMU_VERIFIED_BOOT_PARAMS) \
-	$(INSTALLED_USERDATAIMAGE_TARGET) \
-	$(INSTALLED_RAMDISK_TARGET) \
-	$(INSTALLED_SDK_BUILD_PROP_TARGET) \
-	$(INSTALLED_BUILD_PROP_TARGET) \
+  $(INSTALLED_SDK_BUILD_PROP_TARGET) \
 	$(ATREE_FILES) \
 	$(sdk_atree_files) \
 	$(HOST_OUT_EXECUTABLES)/atree \
@@ -6882,8 +6861,6 @@ $(INTERNAL_SDK_TARGET): $(deps)
 	        -v "DLL_EXTENSION=$(HOST_SHLIB_SUFFIX)" \
 	        -v "FONT_OUT=$(SDK_FONT_TEMP)" \
 	        -o $(PRIVATE_DIR) && \
-	    cp -f $(target_notice_file_txt) \
-	            $(PRIVATE_DIR)/system-images/android-$(PLATFORM_VERSION)/$(TARGET_CPU_ABI)/NOTICE.txt && \
 	    HOST_OUT_EXECUTABLES=$(HOST_OUT_EXECUTABLES) HOST_OS=$(HOST_OS) \
 	        development/build/tools/sdk_clean.sh $(PRIVATE_DIR) && \
 	    chmod -R ug+rwX $(PRIVATE_DIR) && \

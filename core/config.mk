@@ -226,8 +226,6 @@ BUILD_NATIVE_TEST :=$= $(BUILD_SYSTEM)/native_test.mk
 BUILD_FUZZ_TEST :=$= $(BUILD_SYSTEM)/fuzz_test.mk
 
 BUILD_NOTICE_FILE :=$= $(BUILD_SYSTEM)/notice_files.mk
-BUILD_HOST_DALVIK_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_java_library.mk
-BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
 
 include $(BUILD_SYSTEM)/deprecation.mk
 
@@ -426,21 +424,6 @@ define _gen_toc_command_for_macho
 $(hide) $(HOST_OTOOL) -l $(1) | grep LC_ID_DYLIB -A 5 > $(2)
 $(hide) $(HOST_NM) -gP $(1) | cut -f1-2 -d" " | (grep -v U$$ >> $(2) || true)
 endef
-
-GOMA_POOL :=
-RBE_POOL :=
-GOMA_OR_RBE_POOL :=
-# When goma or RBE are enabled, kati will be passed --default_pool=local_pool to put
-# most rules into the local pool.  Explicitly set the pool to "none" for rules that
-# should be run outside the local pool, i.e. with -j500.
-ifneq (,$(filter-out false,$(USE_GOMA)))
-  GOMA_POOL := none
-  GOMA_OR_RBE_POOL := none
-else ifneq (,$(filter-out false,$(USE_RBE)))
-  RBE_POOL := none
-  GOMA_OR_RBE_POOL := none
-endif
-.KATI_READONLY := GOMA_POOL RBE_POOL GOMA_OR_RBE_POOL
 
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
@@ -876,6 +859,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     30.0 \
     31.0 \
     32.0 \
+    33.0 \
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
@@ -1232,6 +1216,39 @@ endif
 define find_warning_allowed_projects
     $(filter $(ANDROID_WARNING_ALLOWED_PROJECTS),$(1)/)
 endef
+
+GOMA_POOL :=
+RBE_POOL :=
+GOMA_OR_RBE_POOL :=
+# When goma or RBE are enabled, kati will be passed --default_pool=local_pool to put
+# most rules into the local pool.  Explicitly set the pool to "none" for rules that
+# should be run outside the local pool, i.e. with -j500.
+ifneq (,$(filter-out false,$(USE_GOMA)))
+  GOMA_POOL := none
+  GOMA_OR_RBE_POOL := none
+else ifneq (,$(filter-out false,$(USE_RBE)))
+  RBE_POOL := none
+  GOMA_OR_RBE_POOL := none
+endif
+.KATI_READONLY := GOMA_POOL RBE_POOL GOMA_OR_RBE_POOL
+
+JAVAC_NINJA_POOL :=
+R8_NINJA_POOL :=
+D8_NINJA_POOL :=
+
+ifneq ($(filter-out false,$(USE_RBE)),)
+  ifdef RBE_JAVAC
+    JAVAC_NINJA_POOL := $(RBE_POOL)
+  endif
+  ifdef RBE_R8
+    R8_NINJA_POOL := $(RBE_POOL)
+  endif
+  ifdef RBE_D8
+    D8_NINJA_POOL := $(RBE_POOL)
+  endif
+endif
+
+.KATI_READONLY := JAVAC_NINJA_POOL R8_NINJA_POOL D8_NINJA_POOL
 
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.
