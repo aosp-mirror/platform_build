@@ -64,6 +64,10 @@ from . import other_warn_patterns as other_patterns
 from . import tidy_warn_patterns as tidy_patterns
 
 
+# Location of this file is used to guess the root of Android source tree.
+THIS_FILE_PATH = 'build/make/tools/warn/warn_common.py'
+
+
 def parse_args(use_google3):
   """Define and parse the args. Return the parse_args() result."""
   parser = argparse.ArgumentParser(
@@ -217,20 +221,22 @@ def generate_chrome_cs_link(warning_line, flags):
   return link
 
 
-def find_warn_py_and_android_root(path):
-  """Return android source root path if warn.py is found."""
+def find_this_file_and_android_root(path):
+  """Return android source root path if this file is found."""
   parts = path.split('/')
   for idx in reversed(range(2, len(parts))):
     root_path = '/'.join(parts[:idx])
     # Android root directory should contain this script.
-    if os.path.exists(root_path + '/build/make/tools/warn.py'):
+    if os.path.exists(root_path + '/' + THIS_FILE_PATH):
       return root_path
   return ''
 
 
 def find_android_root_top_dirs(root_dir):
   """Return a list of directories under the root_dir, if it exists."""
-  if not os.path.isdir(root_dir):
+  # Root directory should contain at least build/make and build/soong.
+  if (not os.path.isdir(root_dir + '/build/make') or
+      not os.path.isdir(root_dir + '/build/soong')):
     return None
   return list(filter(lambda d: os.path.isdir(root_dir + '/' + d),
                      os.listdir(root_dir)))
@@ -257,7 +263,7 @@ def find_android_root(buildlog):
       # the source tree root.
       if count < 100:
         path = os.path.normpath(re.sub(':.*$', '', line))
-        android_root = find_warn_py_and_android_root(path)
+        android_root = find_this_file_and_android_root(path)
         if android_root:
           return android_root, find_android_root_top_dirs(android_root)
   # Do not use common prefix of a small number of paths.
@@ -272,10 +278,11 @@ def find_android_root(buildlog):
     return android_root, find_android_root_top_dirs(android_root)
   # When the build.log file is moved to a different machine where
   # android_root is not found, use the location of this script
-  # to find the android source tree root and its sub directories.
-  # This __file__ is /..../build/make/tools/warn/warn_common.py
-  script_root = __file__.replace('/build/make/tools/warn/warn_common.py', '')
-  return android_root, find_android_root_top_dirs(script_root)
+  # to find the android source tree sub directories.
+  if __file__.endswith('/' + THIS_FILE_PATH):
+    script_root = __file__.replace('/' + THIS_FILE_PATH, '')
+    return android_root, find_android_root_top_dirs(script_root)
+  return android_root, None
 
 
 def remove_android_root_prefix(path, android_root):
@@ -367,7 +374,6 @@ def parse_input_file_android(infile, flags):
   target_product = 'unknown'
   target_variant = 'unknown'
   build_id = 'unknown'
-  use_rbe = False
   android_root, root_top_dirs = find_android_root(infile)
   infile.seek(0)
 
@@ -443,14 +449,13 @@ def parse_input_file_android(infile, flags):
       continue
     checked_warning_lines[line] = True
 
-    # Clean up extra prefix if RBE is used.
-    if use_rbe:
-      if '/b/f/w/' in line:
-        result = bfw_warning_pattern.search(line)
-      else:
-        result = extra_warning_pattern.search(line)
-      if result is not None:
-        line = result.group(1)
+    # Clean up extra prefix that could be introduced when RBE was used.
+    if '/b/f/w/' in line:
+      result = bfw_warning_pattern.search(line)
+    else:
+      result = extra_warning_pattern.search(line)
+    if result is not None:
+      line = result.group(1)
 
     if warning_pattern.match(line):
       if line.startswith('warning: '):
@@ -478,13 +483,6 @@ def parse_input_file_android(infile, flags):
       result = re.search('(?<=^BUILD_ID=).*', line)
       if result is not None:
         build_id = result.group(0)
-        continue
-      result = re.search('(?<=^TOP=).*', line)
-      if result is not None:
-        android_root = result.group(1)
-        continue
-      if re.search('USE_RBE=', line) is not None:
-        use_rbe = True
         continue
 
   if android_root:
