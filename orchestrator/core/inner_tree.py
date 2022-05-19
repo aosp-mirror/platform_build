@@ -56,13 +56,13 @@ class InnerTreeKey(object):
 
 
 class InnerTree(object):
-    def __init__(self, root, product):
+    def __init__(self, context, root, product):
         """Initialize with the inner tree root (relative to the workspace root)"""
         self.root = root
         self.product = product
         self.domains = {}
         # TODO: Base directory on OUT_DIR
-        self.out = OutDirLayout(os.path.join("out", "trees", root))
+        self.out = OutDirLayout(context.out.inner_tree_dir(root))
 
     def __str__(self):
         return "InnerTree(root=%s product=%s domains=[%s])" % (enquote(self.root),
@@ -134,7 +134,14 @@ class InnerTrees(object):
         return result
 
 
+    def get(self, tree_key):
+        """Get an inner tree for tree_key"""
+        return self.trees.get(tree_key)
+
 class OutDirLayout(object):
+    """Encapsulates the logic about the layout of the inner tree out directories.
+    See also context.OutDir for outer tree out dir contents."""
+
     def __init__(self, root):
         "Initialize with the root of the OUT_DIR for the inner tree."
         self._root = root
