@@ -22,9 +22,12 @@ sys.dont_write_bytecode = True
 import api_assembly
 import api_domain
 import api_export
+import final_packaging
 import inner_tree
 import interrogate
 import lunch
+import ninja_runner
+import utils
 
 EXIT_STATUS_OK = 0
 EXIT_STATUS_ERROR = 1
@@ -33,14 +36,14 @@ API_DOMAIN_SYSTEM = "system"
 API_DOMAIN_VENDOR = "vendor"
 API_DOMAIN_MODULE = "module"
 
-def process_config(lunch_config):
+def process_config(context, lunch_config):
     """Returns a InnerTrees object based on the configuration requested in the lunch config."""
     def add(domain_name, tree_root, product):
         tree_key = inner_tree.InnerTreeKey(tree_root, product)
         if tree_key in trees:
             tree = trees[tree_key]
         else:
-            tree = inner_tree.InnerTree(tree_root, product)
+            tree = inner_tree.InnerTree(context, tree_root, product)
             trees[tree_key] = tree
         domain = api_domain.ApiDomain(domain_name, tree, product)
         domains[domain_name] = domain
@@ -68,6 +71,9 @@ def build():
     # Load lunch combo
     #
 
+    # Choose the out directory, set up error handling, etc.
+    context = utils.Context(utils.choose_out_dir(), utils.Errors(sys.stderr))
+
     # Read the config file
     try:
         config_file, config, variant = lunch.load_current_config()
@@ -77,7 +83,7 @@ def build():
     sys.stdout.write(lunch.make_config_header(config_file, config, variant))
 
     # Construct the trees and domains dicts
-    inner_trees = process_config(config)
+    inner_trees = process_config(context, config)
 
     #
     # 1. Interrogate the trees
@@ -93,7 +99,7 @@ def build():
     #
     # 2b. API Surface Assembly
     #
-    api_assembly.assemble_apis(inner_trees)
+    api_assembly.assemble_apis(context, inner_trees)
 
     #
     # 3a. API Domain Analysis
@@ -102,11 +108,17 @@ def build():
     #
     # 3b. Final Packaging Rules
     #
+    final_packaging.final_packaging(context)
 
     #
     # 4. Build Execution
     #
-
+    # TODO: Decide what we want the UX for selecting targets to be across
+    # branches... since there are very likely to be conflicting soong short
+    # names.
+    print("Running ninja...")
+    targets = ["public_api-1-libhwui", "public_api-1-libc"]
+    ninja_runner.run_ninja(context, targets)
 
     #
     # Success!
