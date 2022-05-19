@@ -159,7 +159,7 @@ class Subninja(Node):
     self.chDir = chDir
 
   # TODO(spandandas): Update the syntax when aosp/2064612 lands
-  def stream() -> Iterator[str]:
+  def stream(self) -> Iterator[str]:
     yield f"subninja {self.subninja}"
 
 class Line(Node):
