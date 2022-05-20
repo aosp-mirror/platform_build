@@ -1506,7 +1506,7 @@ ifneq (HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS))
         ifeq (,$(strip $(call find_warning_allowed_projects,$(LOCAL_PATH))))
           my_cflags := -Wall -Werror $(my_cflags)
         else
-          $(eval MODULES_ADDED_WALL := $(MODULES_ADDED_WALL) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
+          $(eval MODULES_WARNINGS_ALLOWED := $(MODULES_USING_WNO_ERROR) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
           my_cflags := -Wall $(my_cflags)
         endif
       endif
