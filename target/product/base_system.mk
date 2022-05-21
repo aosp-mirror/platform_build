@@ -54,7 +54,6 @@ PRODUCT_PACKAGES += \
     com.android.appsearch \
     com.android.bluetooth \
     com.android.conscrypt \
-    com.android.cronet \
     com.android.extservices \
     com.android.i18n \
     com.android.ipsec \
@@ -69,7 +68,6 @@ PRODUCT_PACKAGES += \
     com.android.neuralnetworks \
     com.android.scheduling \
     com.android.sdkext \
-    com.android.sepolicy \
     com.android.tethering \
     com.android.tzdata \
     com.android.uwb \
@@ -226,7 +224,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NetworkStackNext \
+    NetworkStack \
     odsign \
     org.apache.http.legacy \
     otacerts \
@@ -373,7 +371,6 @@ PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
-    com.android.sepolicy.cert-debug.der \
     dmuserd \
     idlcli \
     init-debug.rc \
