@@ -39,7 +39,14 @@ $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
 # Default behavior for the tree wrt building modules or using prebuilts. This
 # can always be overridden by setting the environment variable
 # MODULE_BUILD_FROM_SOURCE.
-BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+ifneq ($(SANITIZE_TARGET)$(EMMA_INSTRUMENT_FRAMEWORK),)
+  # Always use sources when building the framework with Java coverage or
+  # sanitized builds as they both require purpose built prebuilts which we do
+  # not provide.
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+else
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := false
+endif
 
 ifneq (,$(MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
