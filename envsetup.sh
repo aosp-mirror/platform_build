@@ -403,7 +403,9 @@ function addcompletions()
     # e.g.
     # ENVSETUP_NO_COMPLETION=adb # -> disable adb completion
     # ENVSETUP_NO_COMPLETION=adb:bit # -> disable adb and bit completion
+    local T=$(gettop)
     for f in ${completion_files[*]}; do
+        f="$T/$f"
         if [ ! -f "$f" ]; then
           echo "Warning: completion file $f not found"
         elif should_add_completion "$f"; then
