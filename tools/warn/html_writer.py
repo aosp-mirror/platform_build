@@ -56,6 +56,7 @@
 
 from __future__ import print_function
 import csv
+import datetime
 import html
 import sys
 
@@ -258,7 +259,7 @@ def emit_stats_by_project(writer, warn_patterns, project_names):
 
 
 def dump_stats(writer, warn_patterns):
-  """Dump some stats about total number of warnings and such."""
+  """Dump some stats about total number of warnings and date."""
 
   known = 0
   skipped = 0
@@ -279,6 +280,8 @@ def dump_stats(writer, warn_patterns):
   if total < 1000:
     extra_msg = ' (low count may indicate incremental build)'
   writer('Total number of warnings: <b>' + str(total) + '</b>' + extra_msg)
+  date_time_str = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+  writer('<p>(generated on ' + date_time_str + ')')
 
 
 # New base table of warnings, [severity, warn_id, project, warning_message]
