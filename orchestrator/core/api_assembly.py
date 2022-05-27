@@ -34,7 +34,7 @@ def assemble_apis(context, inner_trees):
     contributions = []
     for tree_key, filenames in contribution_files_dict.items():
         for filename in filenames:
-            json_data = load_contribution_file(filename)
+            json_data = load_contribution_file(context, filename)
             if not json_data:
                 continue
             # TODO: Validate the configs, especially that the domains match what we asked for
@@ -76,13 +76,14 @@ def api_contribution_files_for_inner_tree(tree_key, inner_tree, cookie):
     return result
 
 
-def load_contribution_file(filename):
+def load_contribution_file(context, filename):
     "Load and return the API contribution at filename. On error report error and return None."
     with open(filename) as f:
         try:
             return json.load(f)
         except json.decoder.JSONDecodeError as ex:
             # TODO: Error reporting
+            context.errors.error(ex.msg, filename, ex.lineno, ex.colno)
             raise ex
 
 
