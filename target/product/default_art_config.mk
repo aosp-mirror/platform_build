@@ -76,7 +76,11 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.media:service-media-s \
     com.android.permission:service-permission \
 
-PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION += art/build/boot/boot-image-profile.txt
+# Use $(wildcard) to avoid referencing the profile in thin manifests that don't have the
+# art project.
+ifneq (,$(wildcard art))
+  PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION += art/build/boot/boot-image-profile.txt
+endif
 
 # List of jars on the platform that system_server loads dynamically using separate classloaders.
 # Keep the list sorted library names.
