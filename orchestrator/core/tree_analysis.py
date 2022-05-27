@@ -1,4 +1,3 @@
-#
 # Copyright (C) 2022 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,25 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import subprocess
-import sys
 
-def run_ninja(context, targets):
-    """Run ninja.
-    """
+def analyze_trees(context, inner_trees):
+    inner_trees.for_each_tree(run_analysis)
 
-    # Construct the command
-    cmd = [
-            context.tools.ninja(),
-            "-f",
-            context.out.outer_ninja_file(),
-        ] + targets
+def run_analysis(tree_key, inner_tree, cookie):
+    inner_tree.invoke(["analyze"])
 
-    # Run the command
-    process = subprocess.run(cmd, shell=False)
 
-    # TODO: Probably want better handling of inner tree failures
-    if process.returncode:
-        sys.stderr.write("Build error in outer tree.\nstopping multitree build.\n")
-        sys.exit(1)
+
 
