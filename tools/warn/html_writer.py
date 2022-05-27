@@ -56,6 +56,7 @@
 
 from __future__ import print_function
 import csv
+import datetime
 import html
 import sys
 
@@ -258,7 +259,7 @@ def emit_stats_by_project(writer, warn_patterns, project_names):
 
 
 def dump_stats(writer, warn_patterns):
-  """Dump some stats about total number of warnings and such."""
+  """Dump some stats about total number of warnings and date."""
 
   known = 0
   skipped = 0
@@ -279,6 +280,8 @@ def dump_stats(writer, warn_patterns):
   if total < 1000:
     extra_msg = ' (low count may indicate incremental build)'
   writer('Total number of warnings: <b>' + str(total) + '</b>' + extra_msg)
+  date_time_str = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+  writer('<p>(generated on ' + date_time_str + ')')
 
 
 # New base table of warnings, [severity, warn_id, project, warning_message]
@@ -662,15 +665,26 @@ function computeTopDirsFiles() {
   var warningsOfFiles = {};
   var warningsOfDirs = {};
   var subDirs = {};
-  function addOneWarning(map, key) {
-    map[key] = 1 + ((key in map) ? map[key] : 0);
+  function addOneWarning(map, key, type, unique) {
+    function increaseCounter(idx) {
+      map[idx] = 1 + ((idx in map) ? map[idx] : 0);
+    }
+    increaseCounter(key)
+    if (type != "") {
+      increaseCounter(type + " " + key)
+      if (unique) {
+        increaseCounter(type + " *")
+      }
+    }
   }
   for (var i = 0; i < numWarnings; i++) {
-    var file = WarningMessages[i].replace(/:.*/, "");
-    addOneWarning(warningsOfFiles, file);
+    var message = WarningMessages[i]
+    var file = message.replace(/:.*/, "");
+    var warningType = message.endsWith("]") ? message.replace(/.*\[/, "[") : "";
+    addOneWarning(warningsOfFiles, file, warningType, true);
     var dirs = file.split("/");
     var dir = dirs[0];
-    addOneWarning(warningsOfDirs, dir);
+    addOneWarning(warningsOfDirs, dir, warningType, true);
     for (var d = 1; d < dirs.length - 1; d++) {
       var subDir = dir + "/" + dirs[d];
       if (!(dir in subDirs)) {
@@ -678,7 +692,7 @@ function computeTopDirsFiles() {
       }
       subDirs[dir][subDir] = 1;
       dir = subDir;
-      addOneWarning(warningsOfDirs, dir);
+      addOneWarning(warningsOfDirs, dir, warningType, false);
     }
   }
   var minDirWarnings = numWarnings*(LimitPercentWarnings/100);
@@ -725,27 +739,33 @@ function genTopDirsFilesTables() {
         document.getElementById(divName));
     table.draw(view, {allowHtml: true, alternatingRowStyle: true});
   }
-  addTable("Directory", "top_dirs_table", TopDirs, "selectDir");
-  addTable("File", "top_files_table", TopFiles, "selectFile");
+  addTable("[Warning Type] Directory", "top_dirs_table", TopDirs, "selectDir");
+  addTable("[Warning Type] File", "top_files_table", TopFiles, "selectFile");
 }
 function selectDirFile(idx, rows, dirFile) {
   if (rows.length <= idx) {
     return;
   }
   var name = rows[idx][2];
+  var type = "";
+  if (name.startsWith("[")) {
+    type = " " + name.replace(/ .*/, "");
+    name = name.replace(/.* /, "");
+  }
   var spanName = "selected_" + dirFile + "_name";
-  document.getElementById(spanName).innerHTML = name;
+  document.getElementById(spanName).innerHTML = name + type;
   var divName = "selected_" + dirFile + "_warnings";
   var numWarnings = rows[idx][1].v;
   var prefix = name.replace(/\\.\\.\\.$/, "");
   var data = new google.visualization.DataTable();
-  data.addColumn('string', numWarnings + ' warnings in ' + name);
+  data.addColumn('string', numWarnings + type + ' warnings in ' + name);
   var getWarningMessage = (FlagPlatform == "chrome")
         ? ((x) => addURLToLine(WarningMessages[Warnings[x][2]],
                                WarningLinks[Warnings[x][3]]))
         : ((x) => addURL(WarningMessages[Warnings[x][2]]));
   for (var i = 0; i < Warnings.length; i++) {
-    if (WarningMessages[Warnings[i][2]].startsWith(prefix)) {
+    if ((prefix.startsWith("*") || WarningMessages[Warnings[i][2]].startsWith(prefix)) &&
+        (type == "" || WarningMessages[Warnings[i][2]].endsWith(type))) {
       data.addRow([getWarningMessage(i)]);
     }
   }
@@ -827,14 +847,14 @@ def dump_html(flags, output_stream, warning_messages, warning_links,
   def section2():
     dump_dir_file_section(
         writer, 'directory', 'top_dirs_table',
-        'Directories with at least ' +
-        str(LIMIT_PERCENT_WARNINGS) + '% warnings')
+        'Directories/Warnings with at least ' +
+        str(LIMIT_PERCENT_WARNINGS) + '% of all cases')
   def section3():
     dump_dir_file_section(
         writer, 'file', 'top_files_table',
-        'Files with at least ' +
-        str(LIMIT_PERCENT_WARNINGS) + '% or ' +
-        str(LIMIT_WARNINGS_PER_FILE) + ' warnings')
+        'Files/Warnings with at least ' +
+        str(LIMIT_PERCENT_WARNINGS) + '% of all or ' +
+        str(LIMIT_WARNINGS_PER_FILE) + ' cases')
   def section4():
     writer('<script>')
     emit_js_data(writer, flags, warning_messages, warning_links,
