@@ -30,6 +30,7 @@ class Ninja(ninja_writer.Writer):
         super(Ninja, self).__init__(file)
         self._context = context
         self._did_copy_file = False
+        self._phonies = {}
 
     def add_copy_file(self, copy_to, copy_from):
         if not self._did_copy_file:
@@ -42,5 +43,17 @@ class Ninja(ninja_writer.Writer):
                 implicits=[self._context.tools.acp()])
         build_action.add_variable("out_dir", os.path.dirname(copy_to))
         self.add_build_action(build_action)
+
+    def add_global_phony(self, name, deps):
+        """Add a phony target where there are multiple places that will want to add to
+        the same phony. If you can, to save memory, use add_phony instead of this function."""
+        if type(deps) not in (list, tuple):
+            raise Exception("Assertion failed: bad type of deps: %s" % type(deps))
+        self._phonies.setdefault(name, []).extend(deps)
+
+    def write(self):
+        for phony, deps in self._phonies.items():
+            self.add_phony(phony, deps)
+        super(Ninja, self).write()
 
 
