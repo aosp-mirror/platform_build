@@ -36,23 +36,38 @@ class InnerTreeKey(object):
     def __hash__(self):
         return hash((self.root, self.product))
 
+    def _cmp(self, other):
+        if self.root < other.root:
+            return -1
+        if self.root > other.root:
+            return 1
+        if self.product == other.product:
+            return 0
+        if self.product is None:
+            return -1
+        if other.product is None:
+            return 1
+        if self.product < other.product:
+            return -1
+        return 1
+
     def __eq__(self, other):
-        return (self.root == other.root and self.product == other.product)
+        return self._cmp(other) == 0
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        return self._cmp(other) != 0
 
     def __lt__(self, other):
-        return (self.root, self.product) < (other.root, other.product)
+        return self._cmp(other) < 0
 
     def __le__(self, other):
-        return (self.root, self.product) <= (other.root, other.product)
+        return self._cmp(other) <= 0
 
     def __gt__(self, other):
-        return (self.root, self.product) > (other.root, other.product)
+        return self._cmp(other) > 0
 
     def __ge__(self, other):
-        return (self.root, self.product) >= (other.root, other.product)
+        return self._cmp(other) >= 0
 
 
 class InnerTree(object):
@@ -62,7 +77,12 @@ class InnerTree(object):
         self.product = product
         self.domains = {}
         # TODO: Base directory on OUT_DIR
-        self.out = OutDirLayout(context.out.inner_tree_dir(root))
+        out_root = context.out.inner_tree_dir(root)
+        if product:
+            out_root += "_" + product
+        else:
+            out_root += "_unbundled"
+        self.out = OutDirLayout(out_root)
 
     def __str__(self):
         return "InnerTree(root=%s product=%s domains=[%s])" % (enquote(self.root),
@@ -138,6 +158,11 @@ class InnerTrees(object):
         """Get an inner tree for tree_key"""
         return self.trees.get(tree_key)
 
+    def keys(self):
+        "Get the keys for the inner trees in name order."
+        return [self.trees[k] for k in sorted(self.trees.keys())]
+
+
 class OutDirLayout(object):
     """Encapsulates the logic about the layout of the inner tree out directories.
     See also context.OutDir for outer tree out dir contents."""
@@ -154,6 +179,12 @@ class OutDirLayout(object):
 
     def api_contributions_dir(self):
         return os.path.join(self._root, "api_contributions")
+
+    def build_targets_file(self):
+        return os.path.join(self._root, "build_targets.json")
+
+    def main_ninja_file(self):
+        return os.path.join(self._root, "inner_tree.ninja")
 
 
 def enquote(s):
