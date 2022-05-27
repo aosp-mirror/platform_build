@@ -38,33 +38,42 @@ class OutDir(object):
 
     def __init__(self, root):
         "Initialize with the root of the OUT_DIR for the outer tree."
-        self._root = root
+        self._out_root = root
         self._intermediates = "intermediates"
 
     def root(self):
-        return self._root
+        return self._out_root
 
     def inner_tree_dir(self, tree_root):
         """Root directory for inner tree inside the out dir."""
-        return os.path.join(self._root, "trees", tree_root)
+        return os.path.join(self._out_root, "trees", tree_root)
 
     def api_ninja_file(self):
         """The ninja file that assembles API surfaces."""
-        return os.path.join(self._root, "api_surfaces.ninja")
+        return os.path.join(self._out_root, "api_surfaces.ninja")
 
     def api_library_dir(self, surface, version, library):
         """Directory for all the contents of a library inside an API surface, including
         the build files.  Any intermediates should go in api_library_work_dir."""
-        return os.path.join(self._root, "api_surfaces", surface, str(version), library)
+        return os.path.join(self._out_root, "api_surfaces", surface, str(version), library)
 
     def api_library_work_dir(self, surface, version, library):
         """Intermediates / scratch directory for library inside an API surface."""
-        return os.path.join(self._root, self._intermediates, "api_surfaces", surface, str(version),
-                library)
+        return os.path.join(self._out_root, self._intermediates, "api_surfaces", surface,
+                str(version), library)
 
     def outer_ninja_file(self):
-        return os.path.join(self._root, "multitree.ninja")
+        return os.path.join(self._out_root, "multitree.ninja")
 
+    def module_share_dir(self, module_type, module_name):
+        return os.path.join(self._out_root, "shared", module_type, module_name)
+
+    def staging_dir(self):
+        return os.path.join(self._out_root, "staging")
+
+    def dist_dir(self):
+        "The DIST_DIR provided or out/dist" # TODO: Look at DIST_DIR
+        return os.path.join(self._out_root, "dist")
 
 class Errors(object):
     """Class for reporting and tracking errors."""
@@ -73,9 +82,21 @@ class Errors(object):
         self._stream = stream
         self._all = []
 
-    def error(self, message):
+    def error(self, message, file=None, line=None, col=None):
         """Record the error message."""
-        s = str(s)
+        s = ""
+        if file:
+            s += str(file)
+            s += ":"
+        if line:
+            s += str(line)
+            s += ":"
+        if col:
+            s += str(col)
+            s += ":"
+        if s:
+            s += " "
+        s += str(message)
         if s[-1] != "\n":
             s += "\n"
         self._all.append(s)
