@@ -48,6 +48,18 @@ ifneq ($(SANITIZE_TARGET)$(EMMA_INSTRUMENT_FRAMEWORK),)
   BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
 endif
 
+ifneq ($(CLANG_COVERAGE)$(NATIVE_COVERAGE_PATHS),)
+  # Always use sources when building with clang coverage and native coverage.
+  # It is possible that there are certain situations when building with coverage
+  # would work with prebuilts, e.g. when the coverage is not being applied to
+  # modules for which we provide prebuilts. Unfortunately, determining that
+  # would require embedding knowledge of which coverage paths affect which
+  # modules here. That would duplicate a lot of information, add yet another
+  # location  module authors have to update and complicate the logic here.
+  # For nowe we will just always build from sources when doing coverage builds.
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
 # TODO(b/172063604): Remove once products no longer use dex2oat(d)s.
 # If the product uses dex2oats and/or dex2oatds then build from sources as
 # ART does not currently provide prebuilts of those tools.
