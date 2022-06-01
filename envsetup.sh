@@ -894,7 +894,7 @@ function banchan()
     fi
 
     if [ -z "$product" ]; then
-        product=arm
+        product=arm64
     elif [ $(echo $product | wc -w) -gt 1 ]; then
         echo "banchan: Error: Multiple build archs or products supplied: $products"
         return
