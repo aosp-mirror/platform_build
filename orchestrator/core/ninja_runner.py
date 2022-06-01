@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import subprocess
+import sys
 
 def run_ninja(context, targets):
     """Run ninja.
