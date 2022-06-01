@@ -17,17 +17,10 @@
 import os
 
 def assemble_cc_api_library(context, ninja, build_file, stub_library):
-    print("\nassembling cc_api_library %s-%s %s from:" % (stub_library.api_surface,
-        stub_library.api_surface_version, stub_library.name))
-    for contrib in stub_library.contributions:
-        print("  %s %s" % (contrib.api_domain, contrib.library_contribution))
-
     staging_dir = context.out.api_library_dir(stub_library.api_surface,
             stub_library.api_surface_version, stub_library.name)
     work_dir = context.out.api_library_work_dir(stub_library.api_surface,
             stub_library.api_surface_version, stub_library.name)
-    print("staging_dir=%s" % (staging_dir))
-    print("work_dir=%s" % (work_dir))
 
     # Generate rules to copy headers
     includes = []
