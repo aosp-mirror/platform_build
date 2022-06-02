@@ -50,6 +50,28 @@ endif
 # to avoid checkbuilds making an extra copy of every module.
 LOCAL_CHECKED_MODULE := $(LOCAL_PREBUILT_MODULE_FILE)
 
+my_check_same_vndk_variants :=
+same_vndk_variants_stamp :=
+ifeq ($(LOCAL_CHECK_SAME_VNDK_VARIANTS),true)
+  ifeq ($(filter hwaddress address, $(SANITIZE_TARGET)),)
+    ifneq ($(CLANG_COVERAGE),true)
+      # Do not compare VNDK variant for special cases e.g. coverage builds.
+      ifneq ($(SKIP_VNDK_VARIANTS_CHECK),true)
+        my_check_same_vndk_variants := true
+        same_vndk_variants_stamp := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX))/same_vndk_variants.timestamp
+      endif
+    endif
+  endif
+endif
+
+ifeq ($(my_check_same_vndk_variants),true)
+  # Add the timestamp to the CHECKED list so that `checkbuild` can run it.
+  # Note that because `checkbuild` doesn't check LOCAL_BUILT_MODULE for soong-built modules adding
+  # the timestamp to LOCAL_BUILT_MODULE isn't enough. It is skipped when the vendor variant
+  # isn't used at all and it may break in the downstream trees.
+  LOCAL_ADDITIONAL_CHECKED_MODULE := $(same_vndk_variants_stamp)
+endif
+
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
@@ -125,21 +147,7 @@ ifdef LOCAL_INSTALLED_MODULE
   endif
 endif
 
-my_check_same_vndk_variants :=
-ifeq ($(LOCAL_CHECK_SAME_VNDK_VARIANTS),true)
-  ifeq ($(filter hwaddress address, $(SANITIZE_TARGET)),)
-    ifneq ($(CLANG_COVERAGE),true)
-        # Do not compare VNDK variant for special cases e.g. coverage builds.
-        ifneq ($(SKIP_VNDK_VARIANTS_CHECK),true)
-            my_check_same_vndk_variants := true
-        endif
-    endif
-  endif
-endif
-
 ifeq ($(my_check_same_vndk_variants),true)
-  same_vndk_variants_stamp := $(intermediates)/same_vndk_variants.timestamp
-
   my_core_register_name := $(subst .vendor,,$(subst .product,,$(my_register_name)))
   my_core_variant_files := $(call module-target-built-files,$(my_core_register_name))
   my_core_shared_lib := $(sort $(filter %.so,$(my_core_variant_files)))
