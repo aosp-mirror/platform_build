@@ -41,6 +41,9 @@ ALL_MODULES:=
 ALL_NON_MODULES:=
 NON_MODULES_WITHOUT_LICENSE_METADATA:=
 
+# List of copied targets that need license metadata copied.
+ALL_COPIED_TARGETS:=
+
 # Full paths to targets that should be added to the "make droid"
 # set of installed targets.
 ALL_DEFAULT_INSTALLED_MODULES:=
@@ -583,6 +586,19 @@ $(strip $(foreach target, $(sort $(1)), \
 endef
 
 ###########################################################
+## Record a target $(1) copied from another target(s) $(2) that will need
+## license metadata.
+###########################################################
+define declare-copy-target-license-metadata
+$(strip $(if $(filter $(OUT_DIR)%,$(2)),$(eval _dir:=$(call license-metadata-dir))\
+  $(eval _tgt:=$(strip $(1)))\
+  $(eval _meta := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(_tgt).meta_lic)))\
+  $(eval ALL_COPIED_TARGETS.$(_tgt).SOURCES := $(ALL_COPIED_TARGETS.$(_tgt).SOURCES) $(filter $(OUT_DIR)%,$(2)))\
+  $(eval ALL_COPIED_TARGETS += $(_tgt)),\
+  $(eval ALL_TARGETS.$(1).META_LIC:=$(module_license_metadata))))
+endef
+
+###########################################################
 ## License metadata build rule for my_register_name $(1)
 ###########################################################
 define license-metadata-rule
@@ -661,13 +677,6 @@ $(strip $(eval _deps := $(sort $(filter-out 0p: :,$(foreach d,$(strip $(ALL_NON_
 $(strip $(eval _notices := $(sort $(ALL_NON_MODULES.$(_tgt).NOTICES))))
 $(strip $(eval _path := $(sort $(ALL_NON_MODULES.$(_tgt).PATH))))
 $(strip $(eval _install_map := $(ALL_NON_MODULES.$(_tgt).ROOT_MAPPINGS)))
-$(strip $(eval \
-  $$(foreach d,$(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)), \
-    $$(if $$(strip $$(ALL_TARGETS.$$(d).META_LIC)), \
-      , \
-      $$(eval NON_MODULES_WITHOUT_LICENSE_METADATA += $$(d))) \
-  )) \
-)
 
 $(_meta): PRIVATE_KINDS := $(sort $(ALL_NON_MODULES.$(_tgt).LICENSE_KINDS))
 $(_meta): PRIVATE_CONDITIONS := $(sort $(ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS))
@@ -702,6 +711,60 @@ $(_meta) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notice
 	  @$$(PRIVATE_ARGUMENT_FILE) \
 	  -o $$@
 
+endef
+
+###########################################################
+## Record missing dependencies for non-module target $(1)
+###########################################################
+define record-missing-non-module-dependencies
+$(strip $(eval _tgt := $(strip $(1))))
+$(strip $(foreach d,$(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)), \
+  $(if $(strip $(ALL_TARGETS.$(d).META_LIC)), \
+    , \
+    $(eval NON_MODULES_WITHOUT_LICENSE_METADATA += $(d))) \
+))
+endef
+
+###########################################################
+## License metadata build rule for copied target $(1)
+###########################################################
+define copied-target-license-metadata-rule
+$(if $(strip $(ALL_TARGETS.$(1).META_LIC)),,$(call _copied-target-license-metadata-rule,$(1)))
+endef
+
+define _copied-target-license-metadata-rule
+$(strip $(eval _dir := $(call license-metadata-dir)))
+$(strip $(eval _meta := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(1).meta_lic))))
+$(strip $(eval ALL_TARGETS.$(1).META_LIC:=$(_meta)))
+$(strip $(eval _dep:=))
+$(strip $(foreach s,$(ALL_COPIED_TARGETS.$(1).SOURCES),\
+  $(eval _dmeta:=$(ALL_TARGETS.$(s).META_LIC))\
+  $(if $(filter 0p,$(_dmeta)),\
+    $(if $(filter-out 0p,$(_dep)),,$(eval ALL_TARGETS.$(1).META_LIC:=0p)),\
+    $(if $(_dep),\
+      $(if $(filter-out $(_dep),$(_dmeta)),$(error cannot copy target from multiple modules: $(1) from $(_dep) and $(_dmeta))),
+      $(eval _dep:=$(_dmeta))))))
+$(strip $(if $(strip $(_dep)),,$(error cannot copy target from unknown module: $(1) from $(ALL_COPIED_TARGETS.$(1).SOURCES))))
+
+ifneq (0p,$(ALL_TARGETS.$(1).META_LIC))
+$(_meta): PRIVATE_DEST_TARGET := $(1)
+$(_meta): PRIVATE_SOURCE_TARGETS := $(ALL_COPIED_TARGETS.$(1).SOURCES)
+$(_meta): PRIVATE_SOURCE_METADATA := $(_dep)
+$(_meta): PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,PACKAGING,copynotice)/$(_meta)/arguments
+$(_meta) : $(_dep)
+	rm -f $$@
+	mkdir -p $$(dir $$@)
+	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
+	$$(call dump-words-to-file,\
+	    $$(addprefix -i ,$$(PRIVATE_DEST_TARGET))\
+	    $$(addprefix -s ,$$(PRIVATE_SOURCE_TARGETS))\
+	    $$(addprefix -d ,$$(PRIVATE_SOURCE_METADATA)),\
+	    $$(PRIVATE_ARGUMENT_FILE))
+	OUT_DIR=$(OUT_DIR) $(COPY_LICENSE_METADATA) \
+	  @$$(PRIVATE_ARGUMENT_FILE) \
+	  -o $$@
+
+endif
 endef
 
 ###########################################################
@@ -919,6 +982,8 @@ $(strip \
   ) \
   $(foreach t,$(sort $(ALL_NON_MODULES)),$(eval $(call non-module-license-metadata-rule,$(t)))) \
   $(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m)))) \
+  $(foreach t,$(sort $(ALL_COPIED_TARGETS)),$(eval $(call copied-target-license-metadata-rule,$(t)))) \
+  $(foreach t,$(sort $(ALL_NON_MODULES)),$(call record-missing-non-module-dependencies,$(t))) \
   $(eval $(call report-missing-licenses-rule)) \
   $(eval $(call report-all-notice-library-names-rule)) \
   $(eval $(call build-all-license-metadata-rule)))
@@ -3403,11 +3468,11 @@ endef
 define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval $(if $(strip $(module_license_metadata)),\
-    $$(foreach f,$$(my_compat_dist_$(suite)),$$(eval ALL_TARGETS.$$(call word-colon,2,$$(f)).META_LIC := $(module_license_metadata))),\
+    $$(foreach f,$$(my_compat_dist_$(suite)),$$(call declare-copy-target-license-metadata,$$(call word-colon,2,$$(f)),$$(call word-colon,1,$$(f)))),\
     $$(eval my_test_data += $$(foreach f,$$(my_compat_dist_$(suite)), $$(call word-colon,2,$$(f)))) \
   )) \
   $(eval $(if $(strip $(module_license_metadata)),\
-    $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(eval ALL_TARGETS.$$(call word-colon,2,$$(f)).META_LIC := $(module_license_metadata))),\
+    $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call declare-copy-target-license-metadata,$$(call word-colon,2,$$(f)),$$(call word-colon,1,$$(f)))),\
     $$(eval my_test_config += $$(foreach f,$$(my_compat_dist_config_$(suite)), $$(call word-colon,2,$$(f)))) \
   )) \
   $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,\
