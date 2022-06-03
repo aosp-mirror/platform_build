@@ -39,9 +39,6 @@ type context struct {
 	rootFS fs.FS
 }
 
-func init() {
-}
-
 func main() {
 	var expandedArgs []string
 	for _, arg := range os.Args[1:] {
