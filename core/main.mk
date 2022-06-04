@@ -935,7 +935,7 @@ $(foreach suite,general-tests device-tests vts tvts art-host-tests host-unit-tes
           $(eval my_testcases := $(HOST_OUT_TESTCASES)),\
           $(eval my_testcases := $$(COMPATIBILITY_TESTCASES_OUT_$(suite))))\
         $(eval target := $(my_testcases)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
-        $(if $(strip $(ALL_TARGETS.$(target).META_LIC)),,$(eval ALL_TARGETS.$(target).META_LIC:=$(module_license_metadata)))\
+        $(if $(strip $(ALL_TARGETS.$(target).META_LIC)),,$(call declare-copy-target-license-metadata,$(target),$(f)))\
         $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
           $$(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES) $(f):$(target))\
         $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
