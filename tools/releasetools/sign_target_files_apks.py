@@ -1355,7 +1355,8 @@ def BuildVendorPartitions(output_zip_path):
       img_file_path = "IMAGES/{}.img".format(p)
       map_file_path = "IMAGES/{}.map".format(p)
       common.ZipWrite(output_zip, os.path.join(vendor_tempdir, img_file_path), img_file_path)
-      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, map_file_path), map_file_path)
+      if os.path.exists(os.path.join(vendor_tempdir, map_file_path)):
+        common.ZipWrite(output_zip, os.path.join(vendor_tempdir, map_file_path), map_file_path)
     # copy recovery.img, boot.img, recovery patch & install.sh
     if OPTIONS.rebuild_recovery:
       recovery_img = "IMAGES/recovery.img"
