@@ -40,6 +40,10 @@ def _parse_arguments(argv):
     export_parser = subparsers.add_parser("export_api_contributions",
             help="export the API contributions of this inner tree")
 
+    # create the parser for the "b" command
+    export_parser = subparsers.add_parser("analyze",
+            help="main build analysis for this inner tree")
+
     # Parse the arguments
     return parser.parse_args(argv)
 
