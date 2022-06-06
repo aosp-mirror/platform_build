@@ -97,7 +97,6 @@ class Options(object):
     self.stash_threshold = 0.8
     self.logfile = None
     self.host_tools = {}
-    self.sepolicy_name = 'sepolicy.apex'
 
 
 OPTIONS = Options()

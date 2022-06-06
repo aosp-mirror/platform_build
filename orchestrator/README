@@ -2,6 +2,7 @@ DEMO
 
 from the root of the workspace
 
-ln -fs ../build/build/orchestrator/inner_build/inner_build_demo.py master/.inner_build
-ln -fs ../build/build/orchestrator/inner_build/inner_build_demo.py sc-mainline-prod/.inner_build
+multitree_lunch build/build/make/orchestrator/test_workspace/combo.mcombo eng
+
+rm -rf out && multitree_build && echo "==== Files ====" && find out -type f
 

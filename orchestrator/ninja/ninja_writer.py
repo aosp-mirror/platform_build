@@ -49,6 +49,10 @@ class Writer:
   def add_subninja(self, subninja: Subninja):
     self.nodes.append(subninja)
 
+  def add_phony(self, name, deps):
+    build_action = BuildAction(name, "phony", inputs=deps)
+    self.add_build_action(build_action)
+
   def write(self):
     for node in self.nodes:
       for line in node.stream():

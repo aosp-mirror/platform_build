@@ -1,4 +1,4 @@
-per-file dex_preopt*.* = ngeoffray@google.com,skvadrik@google.com
+per-file *dex_preopt*.* = ngeoffray@google.com,skvadrik@google.com
 per-file verify_uses_libraries.sh = ngeoffray@google.com,skvadrik@google.com
 
 # For version updates
