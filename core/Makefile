@@ -5238,7 +5238,7 @@ ifneq (,$(strip $(BOARD_AVB_VBMETA_SYSTEM)))
 endif # BOARD_AVB_VBMETA_SYSTEM
 ifneq (,$(strip $(BOARD_AVB_VBMETA_VENDOR)))
 	$(hide) echo "avb_vbmeta_vendor=$(BOARD_AVB_VBMETA_VENDOR)" >> $@
-	$(hide) echo "avb_vbmeta_vendor_args=$(BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS)" >> $@
+	$(hide) echo "avb_vbmeta_vendor_args=$(BOARD_AVB_MAKE_VBMETA_VENDOR_IMAGE_ARGS)" >> $@
 	$(hide) echo "avb_vbmeta_vendor_key_path=$(BOARD_AVB_VBMETA_VENDOR_KEY_PATH)" >> $@
 	$(hide) echo "avb_vbmeta_vendor_algorithm=$(BOARD_AVB_VBMETA_VENDOR_ALGORITHM)" >> $@
 	$(hide) echo "avb_vbmeta_vendor_rollback_index_location=$(BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION)" >> $@
