@@ -20,6 +20,11 @@ import unittest
 sys.dont_write_bytecode = True
 import lunch
 
+# Create a test LunchContext object
+# Test workspace is in test/configs
+# Orchestrator prefix inside it is build/make
+test_lunch_context = lunch.LunchContext("test/configs", ["build", "make"])
+
 class TestStringMethods(unittest.TestCase):
 
     def test_find_dirs(self):
@@ -35,61 +40,61 @@ class TestStringMethods(unittest.TestCase):
                    "test/configs/device/aa/bb/multitree_combos/v.mcombo")
 
     def test_find_config_dirs(self):
-        self.assertEqual([x for x in lunch.find_config_dirs("test/configs")], [
+        self.assertEqual([x for x in lunch.find_config_dirs(test_lunch_context)], [
                     "test/configs/build/make/orchestrator/multitree_combos",
                     "test/configs/vendor/aa/bb/multitree_combos",
                     "test/configs/device/aa/bb/multitree_combos"])
 
     def test_find_named_config(self):
         # Inside build/orchestrator, overriding device and vendor
-        self.assertEqual(lunch.find_named_config("test/configs", "b"),
+        self.assertEqual(lunch.find_named_config(test_lunch_context, "b"),
                     "test/configs/build/make/orchestrator/multitree_combos/b.mcombo")
 
         # Nested dir inside a combo dir
-        self.assertEqual(lunch.find_named_config("test/configs", "nested"),
+        self.assertEqual(lunch.find_named_config(test_lunch_context, "nested"),
                     "test/configs/build/make/orchestrator/multitree_combos/nested/nested.mcombo")
 
         # Inside vendor, overriding device
-        self.assertEqual(lunch.find_named_config("test/configs", "v"),
+        self.assertEqual(lunch.find_named_config(test_lunch_context, "v"),
                     "test/configs/vendor/aa/bb/multitree_combos/v.mcombo")
 
         # Inside device
-        self.assertEqual(lunch.find_named_config("test/configs", "d"),
+        self.assertEqual(lunch.find_named_config(test_lunch_context, "d"),
                     "test/configs/device/aa/bb/multitree_combos/d.mcombo")
 
         # Make sure we don't look too deep (for performance)
-        self.assertIsNone(lunch.find_named_config("test/configs", "too_deep"))
+        self.assertIsNone(lunch.find_named_config(test_lunch_context, "too_deep"))
 
 
     def test_choose_config_file(self):
         # Empty string argument
-        self.assertEqual(lunch.choose_config_from_args("test/configs", [""]),
+        self.assertEqual(lunch.choose_config_from_args(test_lunch_context, [""]),
                     (None, None))
 
         # A PRODUCT-VARIANT name
-        self.assertEqual(lunch.choose_config_from_args("test/configs", ["v-eng"]),
+        self.assertEqual(lunch.choose_config_from_args(test_lunch_context, ["v-eng"]),
                     ("test/configs/vendor/aa/bb/multitree_combos/v.mcombo", "eng"))
 
         # A PRODUCT-VARIANT name that conflicts with a file
-        self.assertEqual(lunch.choose_config_from_args("test/configs", ["b-eng"]),
+        self.assertEqual(lunch.choose_config_from_args(test_lunch_context, ["b-eng"]),
                     ("test/configs/build/make/orchestrator/multitree_combos/b.mcombo", "eng"))
 
         # A PRODUCT-VARIANT that doesn't exist
-        self.assertEqual(lunch.choose_config_from_args("test/configs", ["z-user"]),
+        self.assertEqual(lunch.choose_config_from_args(test_lunch_context, ["z-user"]),
                     (None, None))
 
         # An explicit file
-        self.assertEqual(lunch.choose_config_from_args("test/configs",
+        self.assertEqual(lunch.choose_config_from_args(test_lunch_context,
                         ["test/configs/build/make/orchestrator/multitree_combos/b.mcombo", "eng"]),
                     ("test/configs/build/make/orchestrator/multitree_combos/b.mcombo", "eng"))
 
         # An explicit file that doesn't exist
-        self.assertEqual(lunch.choose_config_from_args("test/configs",
+        self.assertEqual(lunch.choose_config_from_args(test_lunch_context,
                         ["test/configs/doesnt_exist.mcombo", "eng"]),
                     (None, None))
 
         # An explicit file without a variant should fail
-        self.assertEqual(lunch.choose_config_from_args("test/configs",
+        self.assertEqual(lunch.choose_config_from_args(test_lunch_context,
                         ["test/configs/build/make/orchestrator/multitree_combos/b.mcombo"]),
                     ("test/configs/build/make/orchestrator/multitree_combos/b.mcombo", None))
 
@@ -119,7 +124,7 @@ class TestStringMethods(unittest.TestCase):
                         })
 
     def test_list(self):
-        self.assertEqual(sorted(lunch.find_all_lunchable("test/configs")),
+        self.assertEqual(sorted(lunch.find_all_lunchable(test_lunch_context)),
                 ["test/configs/build/make/orchestrator/multitree_combos/b.mcombo"])
 
 if __name__ == "__main__":
