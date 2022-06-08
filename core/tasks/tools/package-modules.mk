@@ -21,6 +21,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := $(my_package_name)
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_LICENSE_PACKAGE_NAME := Android
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := PACKAGING
 LOCAL_MODULE_STEM := $(my_package_name).zip
 LOCAL_UNINSTALLABLE_MODULE := true
