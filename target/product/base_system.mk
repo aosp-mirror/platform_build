@@ -54,7 +54,6 @@ PRODUCT_PACKAGES += \
     com.android.appsearch \
     com.android.bluetooth \
     com.android.conscrypt \
-    com.android.cronet \
     com.android.extservices \
     com.android.i18n \
     com.android.ipsec \
@@ -121,7 +120,6 @@ PRODUCT_PACKAGES += \
     init_system \
     input \
     installd \
-    IntentResolver \
     ip \
     iptables \
     ip-up-vpn \
@@ -225,7 +223,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NetworkStackNext \
+    NetworkStack \
     odsign \
     org.apache.http.legacy \
     otacerts \
