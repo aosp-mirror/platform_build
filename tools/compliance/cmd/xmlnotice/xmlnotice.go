@@ -26,18 +26,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	"android/soong/response"
 	"android/soong/tools/compliance"
 
 	"github.com/google/blueprint/deptools"
 )
 
 var (
-	outputFile  = flag.String("o", "-", "Where to write the NOTICE xml or xml.gz file. (default stdout)")
-	depsFile    = flag.String("d", "", "Where to write the deps file")
-	product     = flag.String("product", "", "The name of the product for which the notice is generated.")
-	stripPrefix = newMultiString("strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
-	title       = flag.String("title", "", "The title of the notice file.")
-
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoLicenses    = fmt.Errorf("No licenses found")
 )
@@ -68,23 +63,10 @@ func (ctx context) strip(installPath string) string {
 	return installPath
 }
 
-func init() {
-	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, `Usage: %s {options} file.meta_lic {file.meta_lic...}
-
-Outputs an xml NOTICE.xml or gzipped NOTICE.xml.gz file if the -o filename ends
-with ".gz".
-
-Options:
-`, filepath.Base(os.Args[0]))
-		flag.PrintDefaults()
-	}
-}
-
 // newMultiString creates a flag that allows multiple values in an array.
-func newMultiString(name, usage string) *multiString {
+func newMultiString(flags *flag.FlagSet, name, usage string) *multiString {
 	var f multiString
-	flag.Var(&f, name, usage)
+	flags.Var(&f, name, usage)
 	return &f
 }
 
@@ -95,16 +77,56 @@ func (ms *multiString) String() string     { return strings.Join(*ms, ", ") }
 func (ms *multiString) Set(s string) error { *ms = append(*ms, s); return nil }
 
 func main() {
-	flag.Parse()
+	var expandedArgs []string
+	for _, arg := range os.Args[1:] {
+		if strings.HasPrefix(arg, "@") {
+			f, err := os.Open(strings.TrimPrefix(arg, "@"))
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err.Error())
+				os.Exit(1)
+			}
+
+			respArgs, err := response.ReadRspFile(f)
+			f.Close()
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err.Error())
+				os.Exit(1)
+			}
+			expandedArgs = append(expandedArgs, respArgs...)
+		} else {
+			expandedArgs = append(expandedArgs, arg)
+		}
+	}
+
+	flags := flag.NewFlagSet("flags", flag.ExitOnError)
+
+	flags.Usage = func() {
+		fmt.Fprintf(os.Stderr, `Usage: %s {options} file.meta_lic {file.meta_lic...}
+
+Outputs an xml NOTICE.xml or gzipped NOTICE.xml.gz file if the -o filename ends
+with ".gz".
+
+Options:
+`, filepath.Base(os.Args[0]))
+		flags.PrintDefaults()
+	}
+
+	outputFile := flags.String("o", "-", "Where to write the NOTICE xml or xml.gz file. (default stdout)")
+	depsFile := flags.String("d", "", "Where to write the deps file")
+	product := flags.String("product", "", "The name of the product for which the notice is generated.")
+	stripPrefix := newMultiString(flags, "strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
+	title := flags.String("title", "", "The title of the notice file.")
+
+	flags.Parse(expandedArgs)
 
 	// Must specify at least one root target.
-	if flag.NArg() == 0 {
-		flag.Usage()
+	if flags.NArg() == 0 {
+		flags.Usage()
 		os.Exit(2)
 	}
 
 	if len(*outputFile) == 0 {
-		flag.Usage()
+		flags.Usage()
 		fmt.Fprintf(os.Stderr, "must specify file for -o; use - for stdout\n")
 		os.Exit(2)
 	} else {
@@ -141,10 +163,10 @@ func main() {
 
 	ctx := &context{ofile, os.Stderr, compliance.FS, *product, *stripPrefix, *title, &deps}
 
-	err := xmlNotice(ctx, flag.Args()...)
+	err := xmlNotice(ctx, flags.Args()...)
 	if err != nil {
 		if err == failNoneRequested {
-			flag.Usage()
+			flags.Usage()
 		}
 		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
 		os.Exit(1)
