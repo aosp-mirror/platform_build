@@ -326,8 +326,6 @@ endif
 # raw ones.
 define dump-variables-rbc
 $(eval _dump_variables_rbc_excluded := \
-  BOARD_PLAT_PRIVATE_SEPOLICY_DIR \
-  BOARD_PLAT_PUBLIC_SEPOLICY_DIR \
   BUILD_NUMBER \
   DATE \
   LOCAL_PATH \
