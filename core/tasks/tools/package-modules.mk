@@ -21,6 +21,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := $(my_package_name)
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_LICENSE_PACKAGE_NAME := Android
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := PACKAGING
 LOCAL_MODULE_STEM := $(my_package_name).zip
 LOCAL_UNINSTALLABLE_MODULE := true
@@ -94,7 +96,7 @@ endif
 $(my_package_zip): PRIVATE_COPY_PAIRS := $(my_copy_pairs)
 $(my_package_zip): PRIVATE_STAGING_DIR := $(my_staging_dir)
 $(my_package_zip): PRIVATE_PICKUP_FILES := $(my_pickup_files)
-$(my_package_zip) : $(my_built_modules) $(SOONG_ZIP)
+$(my_package_zip) : $(my_built_modules)
 	@echo "Package $@"
 	@rm -rf $(PRIVATE_STAGING_DIR) && mkdir -p $(PRIVATE_STAGING_DIR)
 	$(foreach p, $(PRIVATE_COPY_PAIRS),\
@@ -103,7 +105,7 @@ $(my_package_zip) : $(my_built_modules) $(SOONG_ZIP)
 	  cp -Rf $(word 1,$(pair)) $(word 2,$(pair)) && ) true
 	$(hide) $(foreach f, $(PRIVATE_PICKUP_FILES),\
 	  cp -RfL $(f) $(PRIVATE_STAGING_DIR) && ) true
-	$(hide) $(SOONG_ZIP) -o $@ -C $(PRIVATE_STAGING_DIR) -D $(PRIVATE_STAGING_DIR)
+	$(hide) cd $(PRIVATE_STAGING_DIR) && zip -rqX ../$(notdir $@) *
 
 my_makefile :=
 my_staging_dir :=
