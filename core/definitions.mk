@@ -573,16 +573,21 @@ define license-metadata-dir
 $(call generated-sources-dir-for,META,lic,)
 endef
 
+TARGETS_MISSING_LICENSE_METADATA:=
+
 ###########################################################
 # License metadata targets corresponding to targets in $(1)
 ###########################################################
 define corresponding-license-metadata
-$(strip $(foreach target, $(sort $(1)), \
+$(strip $(filter-out 0p,$(foreach target, $(sort $(1)), \
   $(if $(strip $(ALL_MODULES.$(target).META_LIC)), \
     $(ALL_MODULES.$(target).META_LIC), \
     $(if $(strip $(ALL_TARGETS.$(target).META_LIC)), \
       $(ALL_TARGETS.$(target).META_LIC), \
-      $(call append-path,$(call license-metadata-dir),$(patsubst $(OUT_DIR)%,out%,$(target).meta_lic))))))
+      $(eval TARGETS_MISSING_LICENSE_METADATA += $(target)) \
+    ) \
+  ) \
+)))
 endef
 
 ###########################################################
@@ -751,7 +756,7 @@ $(_meta): PRIVATE_DEST_TARGET := $(1)
 $(_meta): PRIVATE_SOURCE_TARGETS := $(ALL_COPIED_TARGETS.$(1).SOURCES)
 $(_meta): PRIVATE_SOURCE_METADATA := $(_dep)
 $(_meta): PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,PACKAGING,copynotice)/$(_meta)/arguments
-$(_meta) : $(_dep)
+$(_meta) : $(_dep) $(COPY_LICENSE_METADATA)
 	rm -f $$@
 	mkdir -p $$(dir $$@)
 	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
@@ -780,6 +785,7 @@ define declare-license-metadata
 $(strip \
   $(eval _tgt := $(subst //,/,$(strip $(1)))) \
   $(eval ALL_NON_MODULES += $(_tgt)) \
+  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir)/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_KINDS := $(strip $(2))) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS := $(strip $(3))) \
   $(eval ALL_NON_MODULES.$(_tgt).NOTICES := $(strip $(4))) \
@@ -820,6 +826,7 @@ define declare-container-license-metadata
 $(strip \
   $(eval _tgt := $(subst //,/,$(strip $(1)))) \
   $(eval ALL_NON_MODULES += $(_tgt)) \
+  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir)/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_KINDS := $(strip $(2))) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS := $(strip $(3))) \
   $(eval ALL_NON_MODULES.$(_tgt).NOTICES := $(strip $(4))) \
@@ -892,6 +899,7 @@ define declare-license-deps
 $(strip \
   $(eval _tgt := $(strip $(1))) \
   $(eval ALL_NON_MODULES += $(_tgt)) \
+  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir)/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
   $(eval ALL_NON_MODULES.$(_tgt).DEPENDENCIES := $(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES) $(2))) \
 )
 endef
@@ -908,6 +916,7 @@ define declare-container-license-deps
 $(strip \
   $(eval _tgt := $(strip $(1))) \
   $(eval ALL_NON_MODULES += $(_tgt)) \
+  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir)/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
   $(eval ALL_NON_MODULES.$(_tgt).DEPENDENCIES := $(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES) $(2))) \
   $(eval ALL_NON_MODULES.$(_tgt).IS_CONTAINER := true) \
   $(eval ALL_NON_MODULES.$(_tgt).ROOT_MAPPINGS := $(strip $(ALL_NON_MODULES.$(_tgt).ROOT_MAPPINGS) $(3))) \
@@ -919,12 +928,14 @@ endef
 ###########################################################
 define report-missing-licenses-rule
 .PHONY: reportmissinglicenses
-reportmissinglicenses: PRIVATE_NON_MODULES:=$(sort $(NON_MODULES_WITHOUT_LICENSE_METADATA))
-reportmissinglicenses: PRIVATE_COPIED_FILES:=$(sort $(filter $(NON_MODULES_WITHOUT_LICENSE_METADATA),$(foreach _pair,$(PRODUCT_COPY_FILES), $(PRODUCT_OUT)/$(call word-colon,2,$(_pair)))))
+reportmissinglicenses: PRIVATE_NON_MODULES:=$(sort $(NON_MODULES_WITHOUT_LICENSE_METADATA) $(TARGETS_MISSING_LICENSE_METADATA))
+reportmissinglicenses: PRIVATE_COPIED_FILES:=$(sort $(filter $(NON_MODULES_WITHOUT_LICENSE_METADATA) $(TARGETS_MISSING_LICENSE_METADATA),\
+  $(foreach _pair,$(PRODUCT_COPY_FILES), $(PRODUCT_OUT)/$(call word-colon,2,$(_pair)))))
 reportmissinglicenses:
 	@echo Reporting $$(words $$(PRIVATE_NON_MODULES)) targets without license metadata
 	$$(foreach t,$$(PRIVATE_NON_MODULES),if ! [ -h $$(t) ]; then echo No license metadata for $$(t) >&2; fi;)
 	$$(foreach t,$$(PRIVATE_COPIED_FILES),if ! [ -h $$(t) ]; then echo No license metadata for copied file $$(t) >&2; fi;)
+	echo $$(words $$(PRIVATE_NON_MODULES)) targets missing license metadata >&2
 
 endef
 
@@ -977,15 +988,9 @@ $(strip \
   $(foreach t,$(sort $(ALL_0P_TARGETS)), \
     $(eval ALL_TARGETS.$(t).META_LIC := 0p) \
   ) \
-  $(foreach t,$(sort $(ALL_NON_MODULES)), \
-    $(eval ALL_TARGETS.$(t).META_LIC := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(t).meta_lic))) \
-  ) \
   $(foreach t,$(sort $(ALL_NON_MODULES)),$(eval $(call non-module-license-metadata-rule,$(t)))) \
   $(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m)))) \
   $(foreach t,$(sort $(ALL_COPIED_TARGETS)),$(eval $(call copied-target-license-metadata-rule,$(t)))) \
-  $(foreach t,$(sort $(ALL_NON_MODULES)),$(call record-missing-non-module-dependencies,$(t))) \
-  $(eval $(call report-missing-licenses-rule)) \
-  $(eval $(call report-all-notice-library-names-rule)) \
   $(eval $(call build-all-license-metadata-rule)))
 endef
 
@@ -1054,6 +1059,22 @@ $(strip \
     $(if $(strip $(LOCAL_MODULE)),, \
         $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-intermediates-dir)) \
     $(call intermediates-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST),$(1),$(2),$(3)) \
+)
+endef
+
+# Uses LOCAL_MODULE_CLASS, LOCAL_MODULE, and LOCAL_IS_HOST_MODULE
+# to determine the intermediates directory.
+#
+# $(1): if non-empty, force the intermediates to be COMMON
+# $(2): if non-empty, force the intermediates to be for the 2nd arch
+# $(3): if non-empty, force the intermediates to be for the host cross os
+define local-meta-intermediates-dir
+$(strip \
+    $(if $(strip $(LOCAL_MODULE_CLASS)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-meta-intermediates-dir)) \
+    $(if $(strip $(LOCAL_MODULE)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-meta-intermediates-dir)) \
+    $(call intermediates-dir-for,META$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST),$(1),$(2),$(3)) \
 )
 endef
 
@@ -2476,7 +2497,47 @@ define dump-words-to-file
         @$(call emit-line,$(wordlist 38001,38500,$(1)),$(2))
         @$(call emit-line,$(wordlist 38501,39000,$(1)),$(2))
         @$(call emit-line,$(wordlist 39001,39500,$(1)),$(2))
-        @$(if $(wordlist 39501,39502,$(1)),$(error Too many words ($(words $(1)))))
+        @$(call emit-line,$(wordlist 39501,40000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 40001,40500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 40501,41000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 41001,41500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 41501,42000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 42001,42500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 42501,43000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 43001,43500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 43501,44000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 44001,44500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 44501,45000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 45001,45500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 45501,46000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 46001,46500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 46501,47000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 47001,47500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 47501,48000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 48001,48500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 48501,49000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 49001,49500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 49501,50000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 50001,50500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 50501,51000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 51001,51500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 51501,52000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 52001,52500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 52501,53000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 53001,53500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 53501,54000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 54001,54500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 54501,55000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 55001,55500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 55501,56000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 56001,56500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 56501,57000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 57001,57500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 57501,58000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 58001,58500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 58501,59000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 59001,59500,$(1)),$(2))
+        @$(if $(wordlist 59501,59502,$(1)),$(error Too many words ($(words $(1)))))
 endef
 # Return jar arguments to compress files in a given directory
 # $(1): directory
