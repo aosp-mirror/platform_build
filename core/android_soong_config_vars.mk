@@ -71,6 +71,15 @@ endif
 
 $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 
+# Ensure that those mainline modules who have individually toggleable prebuilts
+# are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
+# default.
+INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
+  wifi \
+
+$(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
+  $(call soong_config_set,$(m)_module,source_build,$(MODULE_BUILD_FROM_SOURCE)))
+
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
 $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
