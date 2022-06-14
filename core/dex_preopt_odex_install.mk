@@ -110,8 +110,7 @@ endif
 # Local module variables and functions used in dexpreopt and manifest_check.
 ################################################################################
 
-my_dexpreopt_libs_required := $(LOCAL_USES_LIBRARIES)
-my_dexpreopt_libs_optional := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
+my_filtered_optional_uses_libraries := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
   $(LOCAL_OPTIONAL_USES_LIBRARIES))
 
 # TODO(b/132357300): This may filter out too much, as PRODUCT_PACKAGES doesn't
@@ -121,7 +120,8 @@ my_dexpreopt_libs_optional := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBR
 # to load dexpreopt code on device. We should fix this, either by deferring
 # dependency computation until the full list of product packages is known, or
 # by adding product-specific lists of missing libraries.
-my_dexpreopt_libs_optional := $(filter $(PRODUCT_PACKAGES), $(my_dexpreopt_libs_optional))
+my_filtered_optional_uses_libraries := $(filter $(PRODUCT_PACKAGES), \
+  $(my_filtered_optional_uses_libraries))
 
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
   # compatibility libraries are added to class loader context of an app only if
@@ -146,6 +146,10 @@ else
   my_dexpreopt_libs_compat :=
 endif
 
+my_dexpreopt_libs := \
+  $(LOCAL_USES_LIBRARIES) \
+  $(my_filtered_optional_uses_libraries)
+
 # Module dexpreopt.config depends on dexpreopt.config files of each
 # <uses-library> dependency, because these libraries may be processed after
 # the current module by Make (there's no topological order), so the dependency
@@ -153,12 +157,11 @@ endif
 # this dexpreopt.config is generated. So it's necessary to add file-level
 # dependencies between dexpreopt.config files.
 my_dexpreopt_dep_configs := $(foreach lib, \
-  $(filter-out $(my_dexpreopt_libs_compat),$(my_dexpreopt_libs_required) $(my_dexpreopt_libs_optional)), \
+  $(filter-out $(my_dexpreopt_libs_compat),$(LOCAL_USES_LIBRARIES) $(my_filtered_optional_uses_libraries)), \
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,)/dexpreopt.config)
 
 # 1: SDK version
 # 2: list of libraries
-# 3: boolean, true if optional, else required
 #
 # Make does not process modules in topological order wrt. <uses-library>
 # dependencies, therefore we cannot rely on variables to get the information
@@ -177,47 +180,11 @@ add_json_class_loader_context = \
   $(foreach lib, $(2),\
     $(call add_json_map_anon) \
     $(call add_json_str, Name, $(lib)) \
-    $(call add_json_bool, Optional, $(filter true,$(3))) \
     $(call add_json_str, Host, $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar) \
     $(call add_json_str, Device, /system/framework/$(lib).jar) \
     $(call add_json_val, Subcontexts, null) \
     $(call end_json_map)) \
   $(call end_json_array)
-
-my_dexpreopt_archs :=
-my_dexpreopt_images :=
-my_dexpreopt_images_deps :=
-my_dexpreopt_image_locations_on_host :=
-my_dexpreopt_image_locations_on_device :=
-# Infix can be 'boot' or 'art'. Soong creates a set of variables for Make, one
-# for each boot image (primary and the framework extension). The only reason why
-# the primary image is exposed to Make is testing (art gtests) and benchmarking
-# (art golem benchmarks). Install rules that use those variables are in
-# dex_preopt_libart.mk. Here for dexpreopt purposes the infix is always 'boot'.
-my_dexpreopt_infix := boot
-
-ifdef LOCAL_DEX_PREOPT
-  ifeq (,$(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
-    # Store uncompressed dex files preopted in /system
-    ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
-      ifeq ($(call install-on-system-other, $(my_module_path)),)
-        LOCAL_UNCOMPRESS_DEX := true
-      endif  # install-on-system-other
-    else  # BOARD_USES_SYSTEM_OTHER_ODEX
-      LOCAL_UNCOMPRESS_DEX := true
-    endif
-  endif
-  my_create_dexpreopt_config := true
-endif
-
-# dexpreopt is disabled when TARGET_BUILD_UNBUNDLED_IMAGE is true,
-# but dexpreopt config files are required to dexpreopt in post-processing.
-ifeq ($(TARGET_BUILD_UNBUNDLED_IMAGE),true)
-  my_create_dexpreopt_config := true
-endif
-
-# This is needed for both <uses-library> check and dexpreopt command.
-my_dexpreopt_config := $(intermediates)/dexpreopt.config
 
 ################################################################################
 # Verify <uses-library> coherence between the build system and the manifest.
@@ -271,13 +238,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
     $(LOCAL_OPTIONAL_USES_LIBRARIES))
   my_relax_check_arg := $(if $(filter true,$(RELAX_USES_LIBRARY_CHECK)), \
     --enforce-uses-libraries-relax,)
-
-  my_dexpreopt_config_deps := $(my_dexpreopt_dep_configs)
-  my_dexpreopt_config_args := $(patsubst %,--dexpreopt-dep-config %,$(my_dexpreopt_dep_configs))
-  ifeq ($(my_create_dexpreopt_config), true)
-    my_dexpreopt_config_deps += $(my_dexpreopt_config)
-    my_dexpreopt_config_args += --dexpreopt-config $(my_dexpreopt_config)
-  endif
+  my_dexpreopt_config_args := $(patsubst %,--dexpreopt-config %,$(my_dexpreopt_dep_configs))
 
   my_enforced_uses_libraries := $(intermediates.COMMON)/enforce_uses_libraries.status
   $(my_enforced_uses_libraries): PRIVATE_USES_LIBRARIES := $(my_uses_libs_args)
@@ -286,7 +247,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
   $(my_enforced_uses_libraries): PRIVATE_RELAX_CHECK := $(my_relax_check_arg)
   $(my_enforced_uses_libraries): $(AAPT)
   $(my_enforced_uses_libraries): $(my_verify_script)
-  $(my_enforced_uses_libraries): $(my_dexpreopt_config_deps)
+  $(my_enforced_uses_libraries): $(my_dexpreopt_dep_configs)
   $(my_enforced_uses_libraries): $(my_manifest_or_apk)
 	@echo Verifying uses-libraries: $<
 	rm -f $@
@@ -305,6 +266,39 @@ endif
 ################################################################################
 # Dexpreopt command.
 ################################################################################
+
+my_dexpreopt_archs :=
+my_dexpreopt_images :=
+my_dexpreopt_images_deps :=
+my_dexpreopt_image_locations_on_host :=
+my_dexpreopt_image_locations_on_device :=
+# Infix can be 'boot' or 'art'. Soong creates a set of variables for Make, one
+# for each boot image (primary and the framework extension). The only reason why
+# the primary image is exposed to Make is testing (art gtests) and benchmarking
+# (art golem benchmarks). Install rules that use those variables are in
+# dex_preopt_libart.mk. Here for dexpreopt purposes the infix is always 'boot'.
+my_dexpreopt_infix := boot
+my_create_dexpreopt_config :=
+
+ifdef LOCAL_DEX_PREOPT
+  ifeq (,$(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
+    # Store uncompressed dex files preopted in /system
+    ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
+      ifeq ($(call install-on-system-other, $(my_module_path)),)
+        LOCAL_UNCOMPRESS_DEX := true
+      endif  # install-on-system-other
+    else  # BOARD_USES_SYSTEM_OTHER_ODEX
+      LOCAL_UNCOMPRESS_DEX := true
+    endif
+  endif
+  my_create_dexpreopt_config := true
+endif
+
+# dexpreopt is disabled when TARGET_BUILD_UNBUNDLED_IMAGE is true,
+# but dexpreopt config files are required to dexpreopt in post-processing.
+ifeq ($(TARGET_BUILD_UNBUNDLED_IMAGE),true)
+  my_create_dexpreopt_config := true
+endif
 
 ifeq ($(my_create_dexpreopt_config), true)
   ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
@@ -395,11 +389,10 @@ ifeq ($(my_create_dexpreopt_config), true)
   $(call add_json_bool, EnforceUsesLibraries,           $(filter true,$(LOCAL_ENFORCE_USES_LIBRARIES)))
   $(call add_json_str,  ProvidesUsesLibrary,            $(firstword $(LOCAL_PROVIDES_USES_LIBRARY) $(LOCAL_MODULE)))
   $(call add_json_map,  ClassLoaderContexts)
-  $(call add_json_class_loader_context, any, $(my_dexpreopt_libs_required),)
-  $(call add_json_class_loader_context, any, $(my_dexpreopt_libs_optional),true)
-  $(call add_json_class_loader_context,  28, $(my_dexpreopt_libs_compat_28),)
-  $(call add_json_class_loader_context,  29, $(my_dexpreopt_libs_compat_29),)
-  $(call add_json_class_loader_context,  30, $(my_dexpreopt_libs_compat_30),)
+  $(call add_json_class_loader_context, any, $(my_dexpreopt_libs))
+  $(call add_json_class_loader_context,  28, $(my_dexpreopt_libs_compat_28))
+  $(call add_json_class_loader_context,  29, $(my_dexpreopt_libs_compat_29))
+  $(call add_json_class_loader_context,  30, $(my_dexpreopt_libs_compat_30))
   $(call end_json_map)
   $(call add_json_list, Archs,                          $(my_dexpreopt_archs))
   $(call add_json_list, DexPreoptImages,                $(my_dexpreopt_images))
@@ -414,6 +407,7 @@ ifeq ($(my_create_dexpreopt_config), true)
 
   $(call json_end)
 
+  my_dexpreopt_config := $(intermediates)/dexpreopt.config
   my_dexpreopt_config_for_postprocessing := $(PRODUCT_OUT)/dexpreopt_config/$(LOCAL_MODULE)_dexpreopt.config
   my_dexpreopt_config_merger := $(BUILD_SYSTEM)/dex_preopt_config_merger.py
 
@@ -472,7 +466,7 @@ ifdef LOCAL_DEX_PREOPT
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
   my_dexpreopt_deps += \
-    $(foreach lib, $(my_dexpreopt_libs_required) $(my_dexpreopt_libs_optional) $(my_dexpreopt_libs_compat), \
+    $(foreach lib, $(my_dexpreopt_libs) $(my_dexpreopt_libs_compat), \
       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar)
   my_dexpreopt_deps += $(my_dexpreopt_images_deps)
   my_dexpreopt_deps += $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
