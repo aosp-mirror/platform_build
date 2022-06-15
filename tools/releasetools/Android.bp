@@ -50,15 +50,12 @@ python_defaults {
     ],
     libs: [
         "releasetools_common",
-        "releasetools_fsverity_metadata_generator",
         "releasetools_verity_utils",
     ],
     required: [
         "blk_alloc_to_base_fs",
         "e2fsck",
-        "fsck.erofs",
-        "img2simg",
-        "mkfs.erofs",
+        "mkerofsimage.sh",
         "mkuserimg_mke2fs",
         "simg2img",
         "tune2fs",
@@ -103,6 +100,14 @@ python_defaults {
 
 python_library_host {
     name: "ota_metadata_proto",
+    version: {
+        py2: {
+            enabled: true,
+        },
+        py3: {
+            enabled: true,
+        },
+    },
     srcs: [
        "ota_metadata.proto",
     ],
@@ -159,12 +164,10 @@ python_defaults {
         "releasetools_common",
         "releasetools_verity_utils",
         "apex_manifest",
-        "care_map_proto_py",
     ],
     required: [
         "brillo_update_payload",
         "checkvintf",
-        "generate_gki_certificate",
         "minigzip",
         "lz4",
         "toybox",
@@ -183,15 +186,29 @@ python_defaults {
 // Host libraries.
 //
 
+python_defaults {
+    name: "releasetools_library_defaults",
+    version: {
+        py2: {
+            enabled: true,
+        },
+        py3: {
+            enabled: true,
+        },
+    },
+}
+
 python_library_host {
     name: "releasetools_add_img_to_target_files",
     defaults: [
+        "releasetools_library_defaults",
         "releasetools_add_img_to_target_files_defaults",
     ],
 }
 
 python_library_host {
     name: "releasetools_apex_utils",
+    defaults: ["releasetools_library_defaults"],
     srcs: [
         "apex_utils.py",
     ],
@@ -205,6 +222,7 @@ python_library_host {
 python_library_host {
     name: "releasetools_build_image",
     defaults: [
+        "releasetools_library_defaults",
         "releasetools_build_image_defaults",
     ],
 }
@@ -212,6 +230,7 @@ python_library_host {
 python_library_host {
     name: "releasetools_build_super_image",
     defaults: [
+        "releasetools_library_defaults",
         "releasetools_build_super_image_defaults",
     ],
 }
@@ -219,12 +238,14 @@ python_library_host {
 python_library_host {
     name: "releasetools_check_target_files_vintf",
     defaults: [
+        "releasetools_library_defaults",
         "releasetools_check_target_files_vintf_defaults",
     ],
 }
 
 python_library_host {
     name: "releasetools_common",
+    defaults: ["releasetools_library_defaults"],
     srcs: [
         "blockimgdiff.py",
         "common.py",
@@ -239,7 +260,6 @@ python_library_host {
         "boot_signer",
         "brotli",
         "bsdiff",
-        "generate_gki_certificate",
         "imgdiff",
         "minigzip",
         "lz4",
@@ -253,6 +273,7 @@ python_library_host {
 python_library_host {
     name: "releasetools_img_from_target_files",
     defaults: [
+        "releasetools_library_defaults",
         "releasetools_img_from_target_files_defaults",
     ],
 }
@@ -260,22 +281,14 @@ python_library_host {
 python_library_host {
     name: "releasetools_ota_from_target_files",
     defaults: [
+        "releasetools_library_defaults",
         "releasetools_ota_from_target_files_defaults",
     ],
 }
 
 python_library_host {
-    name: "releasetools_fsverity_metadata_generator",
-    srcs: [
-        "fsverity_metadata_generator.py",
-    ],
-    libs: [
-        "fsverity_digests_proto_python",
-    ],
-}
-
-python_library_host {
     name: "releasetools_verity_utils",
+    defaults: ["releasetools_library_defaults"],
     srcs: [
         "verity_utils.py",
     ],
@@ -294,8 +307,13 @@ python_library_host {
 python_defaults {
     name: "releasetools_binary_defaults",
     version: {
-        py3: {
+        py2: {
+            enabled: true,
             embedded_launcher: true,
+        },
+        py3: {
+            enabled: false,
+            embedded_launcher: false,
         },
     },
     // TODO (b/140144201) Build imgdiff from releasetools_common
@@ -305,7 +323,6 @@ python_defaults {
         "brotli",
         "bsdiff",
         "deapexer",
-        "generate_gki_certificate",
         "imgdiff",
         "minigzip",
         "lz4",
@@ -383,7 +400,7 @@ python_binary_host {
         "releasetools_common",
     ],
     required: [
-        "aapt2",
+        "aapt",
     ],
 }
 
@@ -425,6 +442,7 @@ python_library_host {
     name: "releasetools_find_shareduid_violation",
     defaults: [
         "releasetools_find_shareduid_violation_defaults",
+        "releasetools_library_defaults",
     ],
 }
 
@@ -437,6 +455,46 @@ python_binary_host {
     libs: [
         "releasetools_common",
     ],
+}
+
+python_binary_host {
+    name: "merge_builds",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "merge_builds.py",
+    ],
+    libs: [
+        "releasetools_build_super_image",
+        "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "merge_target_files",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "merge_target_files.py",
+    ],
+    libs: [
+        "releasetools_add_img_to_target_files",
+        "releasetools_build_super_image",
+        "releasetools_check_target_files_vintf",
+        "releasetools_common",
+        "releasetools_find_shareduid_violation",
+        "releasetools_img_from_target_files",
+        "releasetools_ota_from_target_files",
+    ],
+    required: [
+        "checkvintf",
+        "host_init_verifier",
+        "secilc",
+    ],
+    target: {
+        darwin: {
+            // libs dep "releasetools_ota_from_target_files" is disabled on darwin
+            enabled: false,
+        },
+    },
 }
 
 python_binary_host {
@@ -518,34 +576,6 @@ python_binary_host {
     ],
 }
 
-python_binary_host {
-    name: "fsverity_manifest_generator",
-    defaults: ["releasetools_binary_defaults"],
-    srcs: [
-        "fsverity_manifest_generator.py",
-    ],
-    libs: [
-        "fsverity_digests_proto_python",
-        "releasetools_common",
-    ],
-    required: [
-        "aapt2",
-        "apksigner",
-        "fsverity",
-    ],
-}
-
-python_binary_host {
-    name: "fsverity_metadata_generator",
-    defaults: ["releasetools_binary_defaults"],
-    srcs: [
-        "fsverity_metadata_generator.py",
-    ],
-    required: [
-        "fsverity",
-    ],
-}
-
 //
 // Tests.
 //
@@ -557,12 +587,11 @@ python_defaults {
         "check_partition_sizes.py",
         "check_target_files_signatures.py",
         "make_recovery_patch.py",
+        "merge_target_files.py",
         "ota_package_parser.py",
         "sign_apex.py",
         "sign_target_files_apks.py",
         "validate_target_files.py",
-        ":releasetools_merge_sources",
-        ":releasetools_merge_tests",
 
         "test_*.py",
     ],
@@ -598,9 +627,39 @@ python_test_host {
     name: "releasetools_test",
     defaults: ["releasetools_test_defaults"],
     main: "test_utils.py",
-    // Don't use embedded_launcher, atest will try (but may fail) to load libc++.so from
-    // host, because the test executable won't be able to find the needed libs via its
-    // runpath.
+    version: {
+        py2: {
+            enabled: true,
+            // When using embedded launcher, atest will try (but may fail) to load libc++.so from
+            // host, because the test executable won't be able to find the needed libs via its
+            // runpath.
+            embedded_launcher: false,
+        },
+        py3: {
+            enabled: false,
+            embedded_launcher: false,
+        },
+    },
+    test_options: {
+        unit_test: true,
+    },
+}
+
+python_test_host {
+    name: "releasetools_py3_test",
+    defaults: ["releasetools_test_defaults"],
+    main: "test_utils.py",
+    test_suites: ["general-tests"],
+    version: {
+        py2: {
+            enabled: false,
+            embedded_launcher: false,
+        },
+        py3: {
+            enabled: true,
+            embedded_launcher: false,
+        },
+    },
     test_options: {
         unit_test: true,
     },

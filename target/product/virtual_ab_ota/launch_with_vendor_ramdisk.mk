@@ -24,4 +24,3 @@ PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.enabled=true
 PRODUCT_PACKAGES += \
     linker.vendor_ramdisk \
     e2fsck.vendor_ramdisk \
-    fsck.f2fs.vendor_ramdisk \

@@ -32,12 +32,6 @@ else
   endif
 endif
 
-# Third party code has additional no-override flags.
-is_third_party :=
-ifneq ($(filter external/% hardware/% vendor/%,$(LOCAL_PATH)),)
-  is_third_party := true
-endif
-
 my_soong_problems :=
 
 # The following LOCAL_ variables will be modified in this file.
@@ -54,10 +48,6 @@ my_conlyflags := $(LOCAL_CONLYFLAGS)
 my_cppflags := $(LOCAL_CPPFLAGS)
 my_cflags_no_override := $(GLOBAL_CLANG_CFLAGS_NO_OVERRIDE)
 my_cppflags_no_override := $(GLOBAL_CLANG_CPPFLAGS_NO_OVERRIDE)
-ifdef is_third_party
-    my_cflags_no_override += $(GLOBAL_CLANG_EXTERNAL_CFLAGS_NO_OVERRIDE)
-    my_cppflags_no_override += $(GLOBAL_CLANG_EXTERNAL_CFLAGS_NO_OVERRIDE)
-endif
 my_ldflags := $(LOCAL_LDFLAGS)
 my_ldlibs := $(LOCAL_LDLIBS)
 my_asflags := $(LOCAL_ASFLAGS)
@@ -572,6 +562,8 @@ my_generated_sources := $(patsubst $(generated_sources_dir)/%,$(intermediates)/%
 # since other compiled sources may depend on them, and we set up
 # the dependencies.
 my_gen_src_files := $(filter %.c %$(LOCAL_CPP_EXTENSION) %.S %.s,$(my_generated_sources))
+
+ALL_GENERATED_SOURCES += $(my_generated_sources)
 
 ####################################################
 ## Compile RenderScript with reflected C++

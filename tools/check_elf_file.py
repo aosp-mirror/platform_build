@@ -195,12 +195,10 @@ class ELFParser(object):
   @classmethod
   def _read_llvm_readobj(cls, elf_file_path, header, llvm_readobj):
     """Run llvm-readobj and parse the output."""
-    cmd = [llvm_readobj, '--dynamic-table', '--dyn-symbols', elf_file_path]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(
+      [llvm_readobj, '-dynamic-table', '-dyn-symbols', elf_file_path],
+      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, _ = proc.communicate()
-    rc = proc.returncode
-    if rc != 0:
-      raise subprocess.CalledProcessError(rc, cmd, out)
     lines = out.splitlines()
     return cls._parse_llvm_readobj(elf_file_path, header, lines)
 
