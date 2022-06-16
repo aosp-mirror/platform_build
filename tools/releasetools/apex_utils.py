@@ -66,7 +66,7 @@ class ApexApkSigner(object):
     self.avbtool = avbtool if avbtool else "avbtool"
     self.sign_tool = sign_tool
 
-  def ProcessApexFile(self, apk_keys, payload_key, signing_args=None):
+  def ProcessApexFile(self, apk_keys, payload_key, signing_args=None, is_sepolicy=False):
     """Scans and signs the payload files and repack the apex
 
     Args:
@@ -84,9 +84,13 @@ class ApexApkSigner(object):
                 self.debugfs_path, 'list', self.apex_path]
     entries_names = common.RunAndCheckOutput(list_cmd).split()
     apk_entries = [name for name in entries_names if name.endswith('.apk')]
+    sepolicy_entries = []
+    if is_sepolicy:
+      sepolicy_entries = [name for name in entries_names if
+          name.startswith('./etc/SEPolicy') and name.endswith('.zip')]
 
     # No need to sign and repack, return the original apex path.
-    if not apk_entries and self.sign_tool is None:
+    if not apk_entries and not sepolicy_entries and self.sign_tool is None:
       logger.info('No apk file to sign in %s', self.apex_path)
       return self.apex_path
 
@@ -102,14 +106,14 @@ class ApexApkSigner(object):
                        ' %s', entry)
 
     payload_dir, has_signed_content = self.ExtractApexPayloadAndSignContents(
-        apk_entries, apk_keys, payload_key, signing_args)
+        apk_entries, sepolicy_entries, apk_keys, payload_key, signing_args)
     if not has_signed_content:
-      logger.info('No contents has been signed in %s', self.apex_path)
+      logger.info('No contents have been signed in %s', self.apex_path)
       return self.apex_path
 
     return self.RepackApexPayload(payload_dir, payload_key, signing_args)
 
-  def ExtractApexPayloadAndSignContents(self, apk_entries, apk_keys, payload_key, signing_args):
+  def ExtractApexPayloadAndSignContents(self, apk_entries, sepolicy_entries, apk_keys, payload_key, signing_args):
     """Extracts the payload image and signs the containing apk files."""
     if not os.path.exists(self.debugfs_path):
       raise ApexSigningError(
@@ -120,11 +124,11 @@ class ApexApkSigner(object):
     extract_cmd = ['deapexer', '--debugfs_path',
                    self.debugfs_path, 'extract', self.apex_path, payload_dir]
     common.RunAndCheckOutput(extract_cmd)
+    assert os.path.exists(self.apex_path)
 
     has_signed_content = False
     for entry in apk_entries:
       apk_path = os.path.join(payload_dir, entry)
-      assert os.path.exists(self.apex_path)
 
       key_name = apk_keys.get(os.path.basename(entry))
       if key_name in common.SPECIAL_CERT_STRINGS:
@@ -140,6 +144,37 @@ class ApexApkSigner(object):
           unsigned_apk, apk_path, key_name, self.key_passwords.get(key_name),
           codename_to_api_level_map=self.codename_to_api_level_map)
       has_signed_content = True
+
+    for entry in sepolicy_entries:
+      sepolicy_path = os.path.join(payload_dir, entry)
+
+      if not 'etc' in entry:
+        logger.warning('Sepolicy path does not contain the intended directory name etc:'
+                       ' %s', entry)
+
+      key_name = apk_keys.get(os.path.basename(entry))
+      if key_name is None:
+        logger.warning('Failed to find signing keys for {} in'
+                       ' apex {}, payload key will be used instead.'
+                       ' Use "-e <name>=" to specify a key'
+                       .format(entry, self.apex_path))
+        key_name = payload_key
+
+      if key_name in common.SPECIAL_CERT_STRINGS:
+        logger.info('Not signing: %s due to special cert string', sepolicy_path)
+        continue
+
+      if OPTIONS.sign_sepolicy_path is not None:
+        sig_path = os.path.join(payload_dir, sepolicy_path + '.sig')
+        fsv_sig_path = os.path.join(payload_dir, sepolicy_path + '.fsv_sig')
+        old_sig = common.MakeTempFile()
+        old_fsv_sig = common.MakeTempFile()
+        os.rename(sig_path, old_sig)
+        os.rename(fsv_sig_path, old_fsv_sig)
+
+      logger.info('Signing sepolicy file %s in apex %s', sepolicy_path, self.apex_path)
+      if common.SignSePolicy(sepolicy_path, key_name, self.key_passwords.get(key_name)):
+        has_signed_content = True
 
     if self.sign_tool:
       logger.info('Signing payload contents in apex %s with %s', self.apex_path, self.sign_tool)
@@ -324,7 +359,8 @@ def ParseApexPayloadInfo(avbtool, payload_path):
 
 def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
                          container_pw, apk_keys, codename_to_api_level_map,
-                         no_hashtree, signing_args=None, sign_tool=None):
+                         no_hashtree, signing_args=None, sign_tool=None,
+                         is_sepolicy=False):
   """Signs the current uncompressed APEX with the given payload/container keys.
 
   Args:
@@ -337,6 +373,7 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
     no_hashtree: Don't include hashtree in the signed APEX.
     signing_args: Additional args to be passed to the payload signer.
     sign_tool: A tool to sign the contents of the APEX.
+    is_sepolicy: Indicates if the apex is a sepolicy.apex
 
   Returns:
     The path to the signed APEX file.
@@ -346,7 +383,8 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
   apk_signer = ApexApkSigner(apex_file, container_pw,
                              codename_to_api_level_map,
                              avbtool, sign_tool)
-  apex_file = apk_signer.ProcessApexFile(apk_keys, payload_key, signing_args)
+  apex_file = apk_signer.ProcessApexFile(
+      apk_keys, payload_key, signing_args, is_sepolicy)
 
   # 2a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
   # payload_key.
@@ -400,7 +438,8 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
 
 def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
                        container_pw, apk_keys, codename_to_api_level_map,
-                       no_hashtree, signing_args=None, sign_tool=None):
+                       no_hashtree, signing_args=None, sign_tool=None,
+                       is_sepolicy=False):
   """Signs the current compressed APEX with the given payload/container keys.
 
   Args:
@@ -412,6 +451,7 @@ def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
     codename_to_api_level_map: A dict that maps from codename to API level.
     no_hashtree: Don't include hashtree in the signed APEX.
     signing_args: Additional args to be passed to the payload signer.
+    is_sepolicy: Indicates if the apex is a sepolicy.apex
 
   Returns:
     The path to the signed APEX file.
@@ -438,7 +478,8 @@ def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
       codename_to_api_level_map,
       no_hashtree,
       signing_args,
-      sign_tool)
+      sign_tool,
+      is_sepolicy)
 
   # 3. Compress signed original apex.
   compressed_apex_file = common.MakeTempFile(prefix='apex-container-',
@@ -465,8 +506,8 @@ def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
 
 
 def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
-             apk_keys, codename_to_api_level_map,
-             no_hashtree, signing_args=None, sign_tool=None):
+             apk_keys, codename_to_api_level_map, no_hashtree,
+             signing_args=None, sign_tool=None, is_sepolicy=False):
   """Signs the current APEX with the given payload/container keys.
 
   Args:
@@ -478,6 +519,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
     codename_to_api_level_map: A dict that maps from codename to API level.
     no_hashtree: Don't include hashtree in the signed APEX.
     signing_args: Additional args to be passed to the payload signer.
+    is_sepolicy: Indicates if the apex is a sepolicy.apex
 
   Returns:
     The path to the signed APEX file.
@@ -503,7 +545,8 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
           no_hashtree=no_hashtree,
           apk_keys=apk_keys,
           signing_args=signing_args,
-          sign_tool=sign_tool)
+          sign_tool=sign_tool,
+          is_sepolicy=is_sepolicy)
     elif apex_type == 'COMPRESSED':
       return SignCompressedApex(
           avbtool,
@@ -515,7 +558,8 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
           no_hashtree=no_hashtree,
           apk_keys=apk_keys,
           signing_args=signing_args,
-          sign_tool=sign_tool)
+          sign_tool=sign_tool,
+          is_sepolicy=is_sepolicy)
     else:
       # TODO(b/172912232): support signing compressed apex
       raise ApexInfoError('Unsupported apex type {}'.format(apex_type))
