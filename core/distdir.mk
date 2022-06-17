@@ -46,11 +46,10 @@ $(foreach file,$(2), \
 endef
 
 .PHONY: shareprojects
-#shareprojects:
 
 define __share-projects-rule
 $(1) : PRIVATE_TARGETS := $(2)
-$(1) : PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,PACKAGING,codesharing)/$(1)/arguments
+$(1) : PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,METAPACKAGING,codesharing)/$(1)/arguments
 $(1): $(2) $(COMPLIANCE_LISTSHARE)
 	$(hide) rm -f $$@
 	mkdir -p $$(dir $$@)
@@ -67,19 +66,52 @@ define _share-projects-rule
 $(eval $(call __share-projects-rule,$(1),$(call corresponding-license-metadata,$(2))))
 endef
 
+.PHONY: alllicensetexts
+
+define __license-texts-rule
+$(2) : PRIVATE_GOAL := $(1)
+$(2) : PRIVATE_TARGETS := $(3)
+$(2) : PRIVATE_ROOTS := $(4)
+$(2) : PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,METAPACKAGING,licensetexts)/$(2)/arguments
+$(2): $(3) $(TEXTNOTICE)
+	$(hide) rm -f $$@
+	mkdir -p $$(dir $$@)
+	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
+	$$(if $$(strip $$(PRIVATE_TARGETS)),$$(call dump-words-to-file,\
+            -product="$$(PRIVATE_GOAL)" -title="$$(PRIVATE_GOAL)" \
+            $$(addprefix -strip_prefix ,$$(PRIVATE_ROOTS)) \
+            -strip_prefix=$(PRODUCT_OUT)/ -strip_prefix=$(HOST_OUT)/\
+            $$(PRIVATE_TARGETS),\
+            $$(PRIVATE_ARGUMENT_FILE)))
+	$$(if $$(strip $$(PRIVATE_TARGETS)),OUT_DIR=$(OUT_DIR) $(TEXTNOTICE) -o $$@ @$$(PRIVATE_ARGUMENT_FILE),touch $$@)
+endef
+
+# build list of projects to share in $(2) for dist targets in $(3) for dist goal $(1)
+#
+# $(1): the name of the dist goal
+# $(2): the intermediate project sharing file
+# $(3): the dist files to base the sharing on
+define _license-texts-rule
+$(eval $(call __license-texts-rule,$(1),$(2),$(call corresponding-license-metadata,$(3)),$(sort $(dir $(3)))))
+endef
+
 define _add_projects_to_share
-$(strip $(eval _idir := $(call intermediates-dir-for,PACKAGING,shareprojects))) \
+$(strip $(eval _idir := $(call intermediates-dir-for,METAPACKAGING,shareprojects))) \
+$(strip $(eval _tdir := $(call intermediates-dir-for,METAPACKAGING,licensetexts))) \
 $(strip $(eval _goals := $(sort $(_all_dist_goals)))) \
 $(strip $(eval _opairs := $(sort $(_all_dist_goal_output_pairs)))) \
 $(strip $(eval _dpairs := $(sort $(_all_dist_src_dst_pairs)))) \
 $(strip $(eval _allt :=)) \
 $(foreach goal,$(_goals), \
   $(eval _f := $(_idir)/$(goal).shareprojects) \
+  $(eval _n := $(_tdir)/$(goal).txt) \
   $(call dist-for-goals,$(goal),$(_f):shareprojects/$(basename $(notdir $(_f)))) \
+  $(call dist-for-goals,$(goal),$(_n):licensetexts/$(basename $(notdir $(_n)))) \
   $(eval _targets :=) \
   $(foreach op,$(filter $(goal):%,$(_opairs)),$(foreach p,$(filter %:$(call word-colon,2,$(op)),$(_dpairs)),$(eval _targets += $(call word-colon,1,$(p))))) \
   $(eval _allt += $(_targets)) \
   $(eval $(call _share-projects-rule,$(_f),$(_targets))) \
+  $(eval $(call _license-texts-rule,$(goal),$(_n),$(_targets))) \
 )
 endef
 
