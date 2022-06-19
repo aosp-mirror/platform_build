@@ -72,9 +72,9 @@ ELF = collections.namedtuple(
 
 def _get_os_name():
   """Get the host OS name."""
-  if sys.platform == 'linux2':
+  if sys.platform.startswith('linux'):
     return 'linux'
-  if sys.platform == 'darwin':
+  if sys.platform.startswith('darwin'):
     return 'darwin'
   raise ValueError(sys.platform + ' is not supported')
 
