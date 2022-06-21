@@ -274,6 +274,7 @@ $(call add_json_str,  PrebuiltHiddenApiDir, $(BOARD_PREBUILT_HIDDENAPI_DIR))
 
 $(call add_json_str,  ShippingApiLevel, $(PRODUCT_SHIPPING_API_LEVEL))
 
+$(call add_json_bool, BuildBrokenDepfile,                 $(filter true,$(BUILD_BROKEN_DEPFILE)))
 $(call add_json_bool, BuildBrokenEnforceSyspropOwner,     $(filter true,$(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER)))
 $(call add_json_bool, BuildBrokenTrebleSyspropNeverallow, $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
 $(call add_json_bool, BuildBrokenVendorPropertyNamespace, $(filter true,$(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE)))
