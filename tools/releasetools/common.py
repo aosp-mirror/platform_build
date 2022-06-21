@@ -1186,8 +1186,8 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   """
 
   def uniq_concat(a, b):
-    combined = set(a.split(" "))
-    combined.update(set(b.split(" ")))
+    combined = set(a.split())
+    combined.update(set(b.split()))
     combined = [item.strip() for item in combined if item.strip()]
     return " ".join(sorted(combined))
 
@@ -1208,7 +1208,7 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   # Super block devices are defined by the vendor dict.
   if "super_block_devices" in vendor_dict:
     merged_dict["super_block_devices"] = vendor_dict["super_block_devices"]
-    for block_device in merged_dict["super_block_devices"].split(" "):
+    for block_device in merged_dict["super_block_devices"].split():
       key = "super_%s_device_size" % block_device
       if key not in vendor_dict:
         raise ValueError("Vendor dict does not contain required key %s." % key)
@@ -1217,7 +1217,7 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   # Partition groups and group sizes are defined by the vendor dict because
   # these values may vary for each board that uses a shared system image.
   merged_dict["super_partition_groups"] = vendor_dict["super_partition_groups"]
-  for partition_group in merged_dict["super_partition_groups"].split(" "):
+  for partition_group in merged_dict["super_partition_groups"].split():
     # Set the partition group's size using the value from the vendor dict.
     key = "super_%s_group_size" % partition_group
     if key not in vendor_dict:

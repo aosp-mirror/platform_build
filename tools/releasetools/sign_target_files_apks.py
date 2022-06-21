@@ -881,7 +881,7 @@ def RewriteProps(data):
         pieces[-1] = EditTags(pieces[-1])
         value = "/".join(pieces)
       elif key == "ro.build.description":
-        pieces = value.split(" ")
+        pieces = value.split()
         assert pieces[-1].endswith("-keys")
         pieces[-1] = EditTags(pieces[-1])
         value = " ".join(pieces)
@@ -1098,7 +1098,7 @@ def RewriteAvbProps(misc_info):
 
     tokens = []
     changed = False
-    for token in args.split(' '):
+    for token in args.split():
       fingerprint_key = 'com.android.build.{}.fingerprint'.format(partition)
       if not token.startswith(fingerprint_key):
         tokens.append(token)
