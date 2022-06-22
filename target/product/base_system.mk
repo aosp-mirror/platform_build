@@ -52,7 +52,7 @@ PRODUCT_PACKAGES += \
     com.android.adbd \
     com.android.adservices \
     com.android.appsearch \
-    com.android.bluetooth \
+    com.android.btservices \
     com.android.conscrypt \
     com.android.cronet \
     com.android.extservices \
