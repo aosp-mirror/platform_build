@@ -38,7 +38,6 @@ VNDK-SP: android.hidl.safe_union@1.0.so
 VNDK-SP: libRSCpuRef.so
 VNDK-SP: libRSDriver.so
 VNDK-SP: libRS_internal.so
-VNDK-SP: libbacktrace.so
 VNDK-SP: libbase.so
 VNDK-SP: libbcinfo.so
 VNDK-SP: libblas.so
@@ -135,7 +134,6 @@ VNDK-core: libwifi-system-iface.so
 VNDK-core: libxml2.so
 VNDK-core: libyuv.so
 VNDK-core: libziparchive.so
-VNDK-private: libbacktrace.so
 VNDK-private: libblas.so
 VNDK-private: libcompiler_rt.so
 VNDK-private: libft2.so
@@ -167,7 +165,6 @@ VNDK-product: android.hidl.safe_union@1.0.so
 VNDK-product: android.hidl.token@1.0.so
 VNDK-product: android.system.suspend@1.0.so
 VNDK-product: libaudioutils.so
-VNDK-product: libbacktrace.so
 VNDK-product: libbase.so
 VNDK-product: libc++.so
 VNDK-product: libcamera_metadata.so
