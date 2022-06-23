@@ -157,3 +157,11 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.madvise.vdexfile.size=104857600 \
     dalvik.vm.madvise.odexfile.size=104857600 \
     dalvik.vm.madvise.artfile.size=4294967295
+
+# Properties for the Unspecialized App Process Pool
+PRODUCT_SYSTEM_PROPERTIES += \
+    dalvik.vm.usap_pool_enabled?=false \
+    dalvik.vm.usap_refill_threshold?=1 \
+    dalvik.vm.usap_pool_size_max?=3 \
+    dalvik.vm.usap_pool_size_min?=1 \
+    dalvik.vm.usap_pool_refill_delay_ms?=3000
