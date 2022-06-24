@@ -404,7 +404,7 @@ define inherit-product
     $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
     $(eval inherit_var := PRODUCTS.$(current_mk).INHERITS_FROM) \
     $(eval $(inherit_var) := $(sort $($(inherit_var)) $(np))) \
-    $(call dump-inherit,$(strip $(word 1,$(_include_stack))),$(1)) \
+    $(call dump-inherit,$(current_mk),$(1)) \
     $(call dump-config-vals,$(current_mk),inherit))
 endef
 
