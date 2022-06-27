@@ -34,6 +34,7 @@ $(call add_json_str,  Platform_security_patch,           $(PLATFORM_SECURITY_PAT
 $(call add_json_str,  Platform_preview_sdk_version,      $(PLATFORM_PREVIEW_SDK_VERSION))
 $(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
 $(call add_json_str,  Platform_version_last_stable,      $(PLATFORM_VERSION_LAST_STABLE))
+$(call add_json_str,  Platform_version_known_codenames,  $(PLATFORM_VERSION_KNOWN_CODENAMES))
 
 $(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION))
 
@@ -207,9 +208,8 @@ $(call add_json_list, BoardOdmSepolicyDirs,              $(BOARD_ODM_SEPOLICY_DI
 $(call add_json_list, BoardVendorDlkmSepolicyDirs,       $(BOARD_VENDOR_DLKM_SEPOLICY_DIRS))
 $(call add_json_list, BoardOdmDlkmSepolicyDirs,          $(BOARD_ODM_DLKM_SEPOLICY_DIRS))
 $(call add_json_list, BoardSystemDlkmSepolicyDirs,       $(BOARD_SYSTEM_DLKM_SEPOLICY_DIRS))
-# TODO: BOARD_PLAT_* dirs only kept for compatibility reasons. Will be a hard error on API level 31
-$(call add_json_list, SystemExtPublicSepolicyDirs,       $(SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS) $(BOARD_PLAT_PUBLIC_SEPOLICY_DIR))
-$(call add_json_list, SystemExtPrivateSepolicyDirs,      $(SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS) $(BOARD_PLAT_PRIVATE_SEPOLICY_DIR))
+$(call add_json_list, SystemExtPublicSepolicyDirs,       $(SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS))
+$(call add_json_list, SystemExtPrivateSepolicyDirs,      $(SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS))
 $(call add_json_list, BoardSepolicyM4Defs,               $(BOARD_SEPOLICY_M4DEFS))
 $(call add_json_str,  BoardSepolicyVers,                 $(BOARD_SEPOLICY_VERS))
 $(call add_json_str,  SystemExtSepolicyPrebuiltApiDir,   $(BOARD_SYSTEM_EXT_PREBUILT_DIR))
