@@ -49,3 +49,8 @@ genrule_defaults {
   out: ["kernel_release.txt"],
   cmd: "$(location) --tools lz4:$(location lz4) --input $(in) --output-release > $(out)"
 }
+
+cc_binary_host {
+  name: "build-runfiles",
+  srcs: ["build-runfiles.cc"],
+}
