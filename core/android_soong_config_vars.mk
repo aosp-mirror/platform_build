@@ -43,13 +43,13 @@ BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
 
 ifneq (,$(MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
-else ifeq (,$(filter sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
+else ifeq (,$(filter docs sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
   # Prebuilt module SDKs require prebuilt modules to work, and currently
   # prebuilt modules are only provided for com.google.android.xxx. If we can't
   # find one of them in PRODUCT_PACKAGES then assume com.android.xxx are in use,
   # and disable prebuilt SDKs. In particular this applies to AOSP builds.
   #
-  # However, sdk/win_sdk/sdk_addon builds might not include com.google.android.xxx
+  # However, docs/sdk/win_sdk/sdk_addon builds might not include com.google.android.xxx
   # packages, so for those we respect the default behavior.
   MODULE_BUILD_FROM_SOURCE := true
 else ifneq (,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
@@ -71,6 +71,16 @@ endif
 
 $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 
+# Ensure that those mainline modules who have individually toggleable prebuilts
+# are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
+# default.
+INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
+  wifi \
+
+$(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
+  $(if $(call soong_config_get,$(m)_module,source_build),,\
+    $(call soong_config_set,$(m)_module,source_build,$(MODULE_BUILD_FROM_SOURCE))))
+
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
 $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
@@ -88,6 +98,7 @@ endif
 # TODO(b/203088572): Remove when Java optimizations enabled by default for
 # SystemUI.
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
-# TODO(b/196084106): Remove when Java optimizations enabled by default for
-# system packages.
+# Enable by default unless explicitly set or overridden.
+# See frameworks/base/services/Android.bp for additional notes on side effects.
+SYSTEM_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
