@@ -1,5 +1,62 @@
 # Build System Changes for Android.mk Writers
 
+## Gensrcs starts disallowing depfile property
+
+To migrate all gensrcs to Bazel, we are restricting the use of depfile property
+because Bazel requires specifying the dependencies directly.
+
+To fix existing uses, remove depfile and directly specify all the dependencies
+in .bp files. For example:
+
+```
+gensrcs {
+    name: "framework-cppstream-protos",
+    tools: [
+        "aprotoc",
+        "protoc-gen-cppstream",
+    ],
+    cmd: "mkdir -p $(genDir)/$(in) " +
+        "&& $(location aprotoc) " +
+        "  --plugin=$(location protoc-gen-cppstream) " +
+        "  -I . " +
+        "  $(in) ",
+    srcs: [
+        "bar.proto",
+    ],
+    output_extension: "srcjar",
+}
+```
+where `bar.proto` imports `external.proto` would become
+
+```
+gensrcs {
+    name: "framework-cppstream-protos",
+    tools: [
+        "aprotoc",
+        "protoc-gen-cpptream",
+    ],
+    tool_files: [
+        "external.proto",
+    ],
+    cmd: "mkdir -p $(genDir)/$(in) " +
+        "&& $(location aprotoc) " +
+        "  --plugin=$(location protoc-gen-cppstream) " +
+        "  $(in) ",
+    srcs: [
+        "bar.proto",
+    ],
+    output_extension: "srcjar",
+}
+```
+as in https://android-review.googlesource.com/c/platform/frameworks/base/+/2125692/.
+
+`BUILD_BROKEN_DEPFILE` can be used to allowlist usage of depfile in `gensrcs`.
+
+If `depfile` is needed for generating javastream proto, `java_library` with `proto.type`
+set `stream` is the alternative solution. Sees
+https://android-review.googlesource.com/c/platform/packages/modules/Permission/+/2118004/
+for an example.
+
 ## Genrule starts disallowing directory inputs
 
 To better specify the inputs to the build, we are restricting use of directories
