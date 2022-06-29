@@ -22,10 +22,7 @@
 # Ramdisk
 PRODUCT_PACKAGES += \
     init_first_stage \
-    e2fsck.ramdisk \
-    fsck.f2fs.ramdisk \
-    tune2fs.ramdisk \
-    snapuserd.ramdisk \
+    snapuserd_ramdisk \
 
 # Debug ramdisk
 PRODUCT_PACKAGES += \

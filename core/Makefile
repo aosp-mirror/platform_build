@@ -694,8 +694,8 @@ $(WALL_WERROR):
 	@rm -f $@
 	echo "# Modules using -Wno-error" >> $@
 	for m in $(sort $(SOONG_MODULES_USING_WNO_ERROR) $(MODULES_USING_WNO_ERROR)); do echo $$m >> $@; done
-	echo "# Modules added default -Wall" >> $@
-	for m in $(sort $(SOONG_MODULES_ADDED_WALL) $(MODULES_ADDED_WALL)); do echo $$m >> $@; done
+	echo "# Modules that allow warnings" >> $@
+	for m in $(sort $(SOONG_MODULES_WARNINGS_ALLOWED) $(MODULES_WARNINGS_ALLOWED)); do echo $$m >> $@; done
 
 $(call declare-0p-target,$(WALL_WERROR))
 
@@ -842,10 +842,6 @@ $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST) $(FILESLIST_U
 $(call declare-0p-target,$(INSTALLED_FILES_FILE_ROOT))
 $(call declare-0p-target,$(INSTALLED_FILES_JSON_ROOT))
 
-ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
-endif
-
 #------------------------------------------------------------------
 # dtb
 ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
@@ -877,9 +873,6 @@ $(INSTALLED_FILES_FILE_RAMDISK) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST) $(FILES
 $(eval $(call declare-0p-target,$(INSTALLED_FILES_FILE_RAMDISK)))
 $(eval $(call declare-0p-target,$(INSTALLED_FILES_JSON_RAMDISK)))
 
-ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE_RAMDISK))
-endif
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
 ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
@@ -1712,38 +1705,12 @@ $(eval $(call copy-one-file,$(BUILD_SYSTEM)/WINPTHREADS_COPYING,$(winpthreads_no
 # Targets for user images
 # #################################################################
 
-INTERNAL_USERIMAGES_EXT_VARIANT :=
-ifeq ($(TARGET_USERIMAGES_USE_EXT2),true)
-INTERNAL_USERIMAGES_EXT_VARIANT := ext2
-else
-ifeq ($(TARGET_USERIMAGES_USE_EXT3),true)
-INTERNAL_USERIMAGES_EXT_VARIANT := ext3
-else
-ifeq ($(TARGET_USERIMAGES_USE_EXT4),true)
-INTERNAL_USERIMAGES_EXT_VARIANT := ext4
-endif
-endif
-endif
-
 # These options tell the recovery updater/installer how to mount the partitions writebale.
 # <fstype>=<fstype_opts>[|<fstype_opts>]...
 # fstype_opts := <opt>[,<opt>]...
 #         opt := <name>[=<value>]
 # The following worked on Nexus devices with Kernel 3.1, 3.4, 3.10
 DEFAULT_TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS := ext4=max_batch_time=0,commit=1,data=ordered,barrier=1,errors=panic,nodelalloc
-
-ifneq (true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED))
-  INTERNAL_USERIMAGES_SPARSE_EXT_FLAG := -s
-endif
-ifneq (true,$(TARGET_USERIMAGES_SPARSE_EROFS_DISABLED))
-  INTERNAL_USERIMAGES_SPARSE_EROFS_FLAG := -s
-endif
-ifneq (true,$(TARGET_USERIMAGES_SPARSE_SQUASHFS_DISABLED))
-  INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG := -s
-endif
-ifneq (true,$(TARGET_USERIMAGES_SPARSE_F2FS_DISABLED))
-  INTERNAL_USERIMAGES_SPARSE_F2FS_FLAG := -S
-endif
 
 INTERNAL_USERIMAGES_DEPS := \
     $(BUILD_IMAGE) \
@@ -1831,6 +1798,7 @@ endef
 define add-common-ro-flags-to-image-props
 $(eval _var := $(call to-upper,$(1)))
 $(if $(BOARD_$(_var)IMAGE_EROFS_COMPRESSOR),$(hide) echo "$(1)_erofs_compressor=$(BOARD_$(_var)IMAGE_EROFS_COMPRESSOR)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_EROFS_COMPRESS_HINTS),$(hide) echo "$(1)_erofs_compress_hints=$(BOARD_$(_var)IMAGE_EROFS_COMPRESS_HINTS)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_EROFS_PCLUSTER_SIZE),$(hide) echo "$(1)_erofs_pcluster_size=$(BOARD_$(_var)IMAGE_EROFS_PCLUSTER_SIZE)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_EXTFS_INODE_COUNT),$(hide) echo "$(1)_extfs_inode_count=$(BOARD_$(_var)IMAGE_EXTFS_INODE_COUNT)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_EXTFS_RSV_PCT),$(hide) echo "$(1)_extfs_rsv_pct=$(BOARD_$(_var)IMAGE_EXTFS_RSV_PCT)" >> $(2))
@@ -1910,12 +1878,16 @@ $(if $(filter $(2),oem),\
 )
 $(hide) echo "ext_mkuserimg=$(notdir $(MKEXTUSERIMG))" >> $(1)
 
-$(if $(INTERNAL_USERIMAGES_EXT_VARIANT),$(hide) echo "fs_type=$(INTERNAL_USERIMAGES_EXT_VARIANT)" >> $(1))
-$(if $(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG),$(hide) echo "extfs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG)" >> $(1))
-$(if $(INTERNAL_USERIMAGES_SPARSE_EROFS_FLAG),$(hide) echo "erofs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_EROFS_FLAG)" >> $(1))
-$(if $(INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG),$(hide) echo "squashfs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG)" >> $(1))
-$(if $(INTERNAL_USERIMAGES_SPARSE_F2FS_FLAG),$(hide) echo "f2fs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_F2FS_FLAG)" >> $(1))
+$(if $(filter true,$(TARGET_USERIMAGES_USE_EXT2)),$(hide) echo "fs_type=ext2" >> $(1),
+  $(if $(filter true,$(TARGET_USERIMAGES_USE_EXT3)),$(hide) echo "fs_type=ext3" >> $(1),
+    $(if $(filter true,$(TARGET_USERIMAGES_USE_EXT4)),$(hide) echo "fs_type=ext4" >> $(1))))
+
+$(if $(filter true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED)),,$(hide) echo "extfs_sparse_flag=-s" >> $(1))
+$(if $(filter true,$(TARGET_USERIMAGES_SPARSE_EROFS_DISABLED)),,$(hide) echo "erofs_sparse_flag=-s" >> $(1))
+$(if $(filter true,$(TARGET_USERIMAGES_SPARSE_SQUASHFS_DISABLED)),,$(hide) echo "squashfs_sparse_flag=-s" >> $(1))
+$(if $(filter true,$(TARGET_USERIMAGES_SPARSE_F2FS_DISABLED)),,$(hide) echo "f2fs_sparse_flag=-S" >> $(1))
 $(if $(BOARD_EROFS_COMPRESSOR),$(hide) echo "erofs_default_compressor=$(BOARD_EROFS_COMPRESSOR)" >> $(1))
+$(if $(BOARD_EROFS_COMPRESS_HINTS),$(hide) echo "erofs_default_compress_hints=$(BOARD_EROFS_COMPRESS_HINTS)" >> $(1))
 $(if $(BOARD_EROFS_PCLUSTER_SIZE),$(hide) echo "erofs_pcluster_size=$(BOARD_EROFS_PCLUSTER_SIZE)" >> $(1))
 $(if $(BOARD_EROFS_SHARE_DUP_BLOCKS),$(hide) echo "erofs_share_dup_blocks=$(BOARD_EROFS_SHARE_DUP_BLOCKS)" >> $(1))
 $(if $(BOARD_EROFS_USE_LEGACY_COMPRESSION),$(hide) echo "erofs_use_legacy_compression=$(BOARD_EROFS_USE_LEGACY_COMPRESSION)" >> $(1))
@@ -3108,10 +3080,6 @@ $(eval $(call declare-0p-target,$(INSTALLED_FILES_JSON)))
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
 
-ifeq ($(HOST_OS),linux)
-$(call dist-for-goals, sdk sdk_addon, $(INSTALLED_FILES_FILE))
-endif
-
 systemimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,systemimage)
 BUILT_SYSTEMIMAGE := $(systemimage_intermediates)/system.img
@@ -3515,7 +3483,7 @@ INSTALLED_VENDORIMAGE_TARGET := $(PRODUCT_OUT)/vendor.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_VENDORIMAGE),$(INSTALLED_VENDORIMAGE_TARGET)))
 $(if $(strip $(ALL_TARGETS.$(INSTALLED_VENDORIMAGE_TARGET).META_LIC)),,\
     $(if $(strip $(ALL_TARGETS.$(BOARD_PREBUILT_VENDORIMAGE).META_LIC)),\
-        $(eval ALL_TARGETS.$(INSTALLED_VENDORIMAGE_TARGET).META_LIC:=$(ALL_TARGETS.$(BOARD_PREBUILT_VENDORIMAGE).META_LIC)),\
+        $(call declare-copy-target-license-metadata,$(INSTALLED_VENDORIMAGE_TARGET),$(BOARD_PREBUILT_VENDORIMAGE)),\
         $(call declare-license-metadata,$(INSTALLED_VENDORIMAGE_TARGET),legacy_proprietary,proprietary,,"Vendor Image",vendor)))
 endif
 
@@ -5247,7 +5215,7 @@ ifneq (,$(strip $(BOARD_AVB_VBMETA_SYSTEM)))
 endif # BOARD_AVB_VBMETA_SYSTEM
 ifneq (,$(strip $(BOARD_AVB_VBMETA_VENDOR)))
 	$(hide) echo "avb_vbmeta_vendor=$(BOARD_AVB_VBMETA_VENDOR)" >> $@
-	$(hide) echo "avb_vbmeta_vendor_args=$(BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS)" >> $@
+	$(hide) echo "avb_vbmeta_vendor_args=$(BOARD_AVB_MAKE_VBMETA_VENDOR_IMAGE_ARGS)" >> $@
 	$(hide) echo "avb_vbmeta_vendor_key_path=$(BOARD_AVB_VBMETA_VENDOR_KEY_PATH)" >> $@
 	$(hide) echo "avb_vbmeta_vendor_algorithm=$(BOARD_AVB_VBMETA_VENDOR_ALGORITHM)" >> $@
 	$(hide) echo "avb_vbmeta_vendor_rollback_index_location=$(BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION)" >> $@
@@ -5974,6 +5942,8 @@ ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_PVMFWIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 	$(hide) cp $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET) $(zip_root)/PREBUILT_IMAGES/
+	$(hide) mkdir -p $(zip_root)/PVMFW
+	$(hide) cp $(PREBUILT_PVMFWIMAGE_TARGET) $(zip_root)/PVMFW/
 endif
 ifdef BOARD_PREBUILT_BOOTLOADER
 	$(hide) mkdir -p $(zip_root)/IMAGES
@@ -6798,8 +6768,6 @@ ATREE_FILES :=
 # if we don't have a real list, then use "everything"
 ifeq ($(strip $(ATREE_FILES)),)
 ATREE_FILES := \
-	$(ALL_DEFAULT_INSTALLED_MODULES) \
-	$(INSTALLED_RAMDISK_TARGET) \
 	$(ALL_DOCS) \
 	$(ALL_SDK_FILES)
 endif
@@ -6828,18 +6796,7 @@ include $(BUILD_SYSTEM)/sdk_font.mk
 deps := \
 	$(OUT_DOCS)/offline-sdk-timestamp \
 	$(SDK_METADATA_FILES) \
-	$(SYMBOLS_ZIP) \
-	$(COVERAGE_ZIP) \
-	$(APPCOMPAT_ZIP) \
-	$(INSTALLED_SYSTEMIMAGE_TARGET) \
-	$(INSTALLED_QEMU_SYSTEMIMAGE) \
-	$(INSTALLED_QEMU_RAMDISKIMAGE) \
-	$(INSTALLED_QEMU_VENDORIMAGE) \
-	$(QEMU_VERIFIED_BOOT_PARAMS) \
-	$(INSTALLED_USERDATAIMAGE_TARGET) \
-	$(INSTALLED_RAMDISK_TARGET) \
-	$(INSTALLED_SDK_BUILD_PROP_TARGET) \
-	$(INSTALLED_BUILD_PROP_TARGET) \
+  $(INSTALLED_SDK_BUILD_PROP_TARGET) \
 	$(ATREE_FILES) \
 	$(sdk_atree_files) \
 	$(HOST_OUT_EXECUTABLES)/atree \

@@ -59,6 +59,21 @@ class SignApexTest(test_utils.ReleaseToolsTestCase):
     self.assertTrue(os.path.exists(signed_test_apex))
 
   @test_utils.SkipIfExternalToolsUnavailable()
+  def test_SignSepolicyApex(self):
+    test_apex = os.path.join(self.testdata_dir, 'sepolicy.apex')
+    payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
+    container_key = os.path.join(self.testdata_dir, 'testkey')
+    apk_keys = {'SEPolicy-33.zip': os.path.join(self.testdata_dir, 'testkey')}
+    signed_test_apex = sign_apex.SignApexFile(
+        'avbtool',
+        test_apex,
+        payload_key,
+        container_key,
+        False,
+        None)
+    self.assertTrue(os.path.exists(signed_test_apex))
+
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_SignCompressedApexFile(self):
     apex = os.path.join(test_utils.get_current_dir(), 'com.android.apex.compressed.v1.capex')
     payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
@@ -71,21 +86,3 @@ class SignApexTest(test_utils.ReleaseToolsTestCase):
         False,
         codename_to_api_level_map={'S': 31, 'Tiramisu' : 32})
     self.assertTrue(os.path.exists(signed_apex))
-
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_SignApexWithSepolicy(self):
-    test_apex = os.path.join(self.testdata_dir, 'sepolicy.apex')
-    payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
-    container_key = os.path.join(self.testdata_dir, 'testkey')
-    sepolicy_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
-    sepolicy_cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
-    signed_test_apex = sign_apex.SignApexFile(
-        'avbtool',
-        test_apex,
-        payload_key,
-        container_key,
-        False,
-        None,
-        sepolicy_key=sepolicy_key,
-        sepolicy_cert=sepolicy_cert)
-    self.assertTrue(os.path.exists(signed_test_apex))

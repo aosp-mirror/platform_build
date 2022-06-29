@@ -43,7 +43,7 @@ assert_eq(["a", "b", "c"], rblf.mksort(["b", "a", "c", "c"]))
 
 assert_eq("", rblf.mkstrip(" \n \t    "))
 assert_eq("a b c", rblf.mkstrip("  a b   \n  c \t"))
-assert_eq(1, rblf.mkstrip(1))
+assert_eq("1", rblf.mkstrip("1 "))
 
 assert_eq("b1 b2", rblf.mksubst("a", "b", "a1 a2"))
 assert_eq(["b1", "x2"], rblf.mksubst("a", "b", ["a1", "x2"]))
@@ -89,6 +89,10 @@ assert_eq("bar", rblf.last_word("foo bar"))
 assert_eq("bar", rblf.last_word(["foo", "bar"]))
 assert_eq("", rblf.last_word(""))
 assert_eq("", rblf.last_word([]))
+
+assert_eq(["foo", "bar"], rblf.flatten_2d_list([["foo", "bar"]]))
+assert_eq(["foo", "bar"], rblf.flatten_2d_list([["foo"], ["bar"]]))
+assert_eq([], rblf.flatten_2d_list([]))
 
 assert_eq(
     ["build/make/tests/board.rbc", "build/make/tests/board_input_vars.rbc"],
