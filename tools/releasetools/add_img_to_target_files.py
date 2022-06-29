@@ -557,7 +557,7 @@ def AddPartitionTable(output_zip):
   cmd = [bpttool, "make_table", "--output_json", bpt.name,
          "--output_gpt", img.name]
   input_files_str = OPTIONS.info_dict["board_bpt_input_files"]
-  input_files = input_files_str.split(" ")
+  input_files = input_files_str.split()
   for i in input_files:
     cmd.extend(["--input", i])
   disk_size = OPTIONS.info_dict.get("board_bpt_disk_size")

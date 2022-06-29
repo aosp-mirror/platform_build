@@ -403,7 +403,9 @@ function addcompletions()
     # e.g.
     # ENVSETUP_NO_COMPLETION=adb # -> disable adb completion
     # ENVSETUP_NO_COMPLETION=adb:bit # -> disable adb and bit completion
+    local T=$(gettop)
     for f in ${completion_files[*]}; do
+        f="$T/$f"
         if [ ! -f "$f" ]; then
           echo "Warning: completion file $f not found"
         elif should_add_completion "$f"; then
@@ -456,7 +458,7 @@ function multitree_lunch()
     if $(echo "$1" | grep -q '^-') ; then
         # Calls starting with a -- argument are passed directly and the function
         # returns with the lunch.py exit code.
-        build/make/orchestrator/core/lunch.py "$@"
+        build/build/make/orchestrator/core/lunch.py "$@"
         code=$?
         if [[ $code -eq 2 ]] ; then
           echo 1>&2
@@ -467,7 +469,7 @@ function multitree_lunch()
         fi
     else
         # All other calls go through the --lunch variant of lunch.py
-        results=($(build/make/orchestrator/core/lunch.py --lunch "$@"))
+        results=($(build/build/make/orchestrator/core/lunch.py --lunch "$@"))
         code=$?
         if [[ $code -eq 2 ]] ; then
           echo 1>&2
@@ -815,7 +817,9 @@ function tapas()
     local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|arm64|x86_64)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
     local density="$(echo $* | xargs -n 1 echo | \grep -E '^(ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
-    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|arm64|x86_64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
+    local keys="$(echo $* | xargs -n 1 echo | \grep -E '^(devkeys)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|arm64|x86_64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi|devkeys)$' | xargs)"
+
 
     if [ "$showHelp" != "" ]; then
       $(gettop)/build/make/tapasHelp.sh
@@ -834,6 +838,10 @@ function tapas()
         echo "tapas: Error: Multiple densities supplied: $density"
         return
     fi
+    if [ $(echo $keys | wc -w) -gt 1 ]; then
+        echo "tapas: Error: Multiple keys supplied: $keys"
+        return
+    fi
 
     local product=aosp_arm
     case $arch in
@@ -841,6 +849,10 @@ function tapas()
       arm64)  product=aosp_arm64;;
       x86_64) product=aosp_x86_64;;
     esac
+    if [ -n "$keys" ]; then
+        product=${product/aosp_/aosp_${keys}_}
+    fi;
+
     if [ -z "$variant" ]; then
         variant=eng
     fi
@@ -878,7 +890,7 @@ function banchan()
     fi
 
     if [ -z "$product" ]; then
-        product=arm
+        product=arm64
     elif [ $(echo $product | wc -w) -gt 1 ]; then
         echo "banchan: Error: Multiple build archs or products supplied: $products"
         return
@@ -920,6 +932,34 @@ function banchan()
 function gettop
 {
     local TOPFILE=build/make/core/envsetup.mk
+    if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
+        # The following circumlocution ensures we remove symlinks from TOP.
+        (cd "$TOP"; PWD= /bin/pwd)
+    else
+        if [ -f $TOPFILE ] ; then
+            # The following circumlocution (repeated below as well) ensures
+            # that we record the true directory name and not one that is
+            # faked up with symlink names.
+            PWD= /bin/pwd
+        else
+            local HERE=$PWD
+            local T=
+            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
+                \cd ..
+                T=`PWD= /bin/pwd -P`
+            done
+            \cd "$HERE"
+            if [ -f "$T/$TOPFILE" ]; then
+                echo "$T"
+            fi
+        fi
+    fi
+}
+
+# TODO: Merge into gettop as part of launching multitree
+function multitree_gettop
+{
+    local TOPFILE=build/build/make/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
         # The following circumlocution ensures we remove symlinks from TOP.
         (cd "$TOP"; PWD= /bin/pwd)
@@ -1067,7 +1107,7 @@ function coredump_enable()
         return;
     fi;
     echo "Setting core limit for $PID to infinite...";
-    adb shell /system/bin/ulimit -p $PID -c unlimited
+    adb shell /system/bin/ulimit -P $PID -c unlimited
 }
 
 # core - send SIGV and pull the core for process
@@ -1824,6 +1864,21 @@ function mmma()
 function make()
 {
     _wrap_build $(get_make_command "$@") "$@"
+}
+
+function _multitree_lunch_error()
+{
+      >&2 echo "Couldn't locate the top of the tree. Please run \'source build/envsetup.sh\' and multitree_lunch from the root of your workspace."
+}
+
+function multitree_build()
+{
+    if T="$(multitree_gettop)"; then
+      "$T/build/build/orchestrator/core/orchestrator.py" "$@"
+    else
+      _multitree_lunch_error
+      return 1
+    fi
 }
 
 function provision()

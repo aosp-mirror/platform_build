@@ -1,0 +1,16 @@
+{
+    "lunchable": true,
+    "system": {
+        "tree": "master",
+        "product": "aosp_cf_arm64_phone"
+    },
+    "vendor": {
+        "tree": "master",
+        "product": "aosp_cf_arm64_phone"
+    },
+    "modules": {
+        "com.android.bionic": {
+            "tree": "sc-mainline-prod"
+        }
+    }
+}

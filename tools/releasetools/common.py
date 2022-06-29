@@ -72,7 +72,9 @@ class Options(object):
       if "ANDROID_HOST_OUT" in os.environ:
         self.search_path = os.environ["ANDROID_HOST_OUT"]
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
+    self.sign_sepolicy_path = None
     self.extra_signapk_args = []
+    self.extra_sign_sepolicy_args = []
     self.aapt2_path = "aapt2"
     self.java_path = "java"  # Use the one on the path by default.
     self.java_args = ["-Xmx2048m"]  # The default JVM args.
@@ -1187,8 +1189,8 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   """
 
   def uniq_concat(a, b):
-    combined = set(a.split(" "))
-    combined.update(set(b.split(" ")))
+    combined = set(a.split())
+    combined.update(set(b.split()))
     combined = [item.strip() for item in combined if item.strip()]
     return " ".join(sorted(combined))
 
@@ -1209,7 +1211,7 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   # Super block devices are defined by the vendor dict.
   if "super_block_devices" in vendor_dict:
     merged_dict["super_block_devices"] = vendor_dict["super_block_devices"]
-    for block_device in merged_dict["super_block_devices"].split(" "):
+    for block_device in merged_dict["super_block_devices"].split():
       key = "super_%s_device_size" % block_device
       if key not in vendor_dict:
         raise ValueError("Vendor dict does not contain required key %s." % key)
@@ -1218,7 +1220,7 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   # Partition groups and group sizes are defined by the vendor dict because
   # these values may vary for each board that uses a shared system image.
   merged_dict["super_partition_groups"] = vendor_dict["super_partition_groups"]
-  for partition_group in merged_dict["super_partition_groups"].split(" "):
+  for partition_group in merged_dict["super_partition_groups"].split():
     # Set the partition group's size using the value from the vendor dict.
     key = "super_%s_group_size" % partition_group
     if key not in vendor_dict:
@@ -2380,6 +2382,35 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
         "Failed to run signapk.jar: return code {}:\n{}".format(
             proc.returncode, stdoutdata))
 
+def SignSePolicy(sepolicy, key, password):
+  """Sign the sepolicy zip, producing an fsverity .fsv_sig and
+  an RSA .sig signature files.
+  """
+
+  if OPTIONS.sign_sepolicy_path is None:
+    return False
+
+  java_library_path = os.path.join(
+      OPTIONS.search_path, OPTIONS.signapk_shared_library_path)
+
+  cmd = ([OPTIONS.java_path] + OPTIONS.java_args +
+          ["-Djava.library.path=" + java_library_path,
+          "-jar", os.path.join(OPTIONS.search_path, OPTIONS.sign_sepolicy_path)] +
+          OPTIONS.extra_sign_sepolicy_args)
+
+  cmd.extend([key + OPTIONS.public_key_suffix,
+              key + OPTIONS.private_key_suffix,
+              sepolicy])
+
+  proc = Run(cmd, stdin=subprocess.PIPE)
+  if password is not None:
+    password += "\n"
+  stdoutdata, _ = proc.communicate(password)
+  if proc.returncode != 0:
+    raise ExternalError(
+        "Failed to run sign sepolicy: return code {}:\n{}".format(
+            proc.returncode, stdoutdata))
+  return True
 
 def CheckSize(data, target, info_dict):
   """Checks the data string passed against the max size limit.
@@ -2556,7 +2587,8 @@ def ParseOptions(argv,
     opts, args = getopt.getopt(
         argv, "hvp:s:x:" + extra_opts,
         ["help", "verbose", "path=", "signapk_path=",
-         "signapk_shared_library_path=", "extra_signapk_args=", "aapt2_path=",
+         "signapk_shared_library_path=", "extra_signapk_args=",
+         "sign_sepolicy_path=", "extra_sign_sepolicy_args=", "aapt2_path=",
          "java_path=", "java_args=", "android_jar_path=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
@@ -2580,6 +2612,10 @@ def ParseOptions(argv,
       OPTIONS.signapk_shared_library_path = a
     elif o in ("--extra_signapk_args",):
       OPTIONS.extra_signapk_args = shlex.split(a)
+    elif o in ("--sign_sepolicy_path",):
+      OPTIONS.sign_sepolicy_path = a
+    elif o in ("--extra_sign_sepolicy_args",):
+      OPTIONS.extra_sign_sepolicy_args = shlex.split(a)
     elif o in ("--aapt2_path",):
       OPTIONS.aapt2_path = a
     elif o in ("--java_path",):
