@@ -20,6 +20,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance"
 )
 
 func TestMain(m *testing.M) {
@@ -36,6 +38,7 @@ func Test_plaintext(t *testing.T) {
 	tests := []struct {
 		condition   string
 		name        string
+		outDir      string
 		roots       []string
 		ctx         context
 		expectedOut []string
@@ -289,7 +292,7 @@ func Test_plaintext(t *testing.T) {
 			if len(tt.ctx.sources) < 1 {
 				tt.ctx.sources = rootFiles
 			}
-			_, err := traceRestricted(&tt.ctx, stdout, stderr, rootFiles...)
+			_, err := traceRestricted(&tt.ctx, stdout, stderr, compliance.GetFS(tt.outDir), rootFiles...)
 			t.Logf("rtrace: stderr = %v", stderr)
 			t.Logf("rtrace: stdout = %v", stdout)
 			if err != nil {

@@ -282,6 +282,7 @@ _odm_dlkm_path_placeholder := ||ODM_DLKM-PATH-PH||
 _system_dlkm_path_placeholder := ||SYSTEM_DLKM-PATH-PH||
 TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
 TARGET_COPY_OUT_VENDOR_RAMDISK := vendor_ramdisk
+TARGET_COPY_OUT_VENDOR_KERNEL_RAMDISK := vendor_kernel_ramdisk
 TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
 # TODO(b/135957588) TARGET_COPY_OUT_PRODUCT_SERVICES will copy the target to
 # product
@@ -324,12 +325,27 @@ endif
 # instead of the raw variable values, because mk2rbc can't read the
 # raw ones.
 define dump-variables-rbc
-$(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(.VARIABLES)))\
+$(eval _dump_variables_rbc_excluded := \
+  BOARD_PLAT_PRIVATE_SEPOLICY_DIR \
+  BOARD_PLAT_PUBLIC_SEPOLICY_DIR \
+  BUILD_NUMBER \
+  DATE \
+  LOCAL_PATH \
+  MAKEFILE_LIST \
+  PRODUCTS \
+  PRODUCT_COPY_OUT_% \
+  RBC_PRODUCT_CONFIG \
+  RBC_BOARD_CONFIG \
+  SOONG_% \
+  TOPDIR \
+  TRACE_BEGIN_SOONG \
+  USER)
+$(file >$(OUT_DIR)/dump-variables-rbc-temp.txt,$(subst $(space),$(newline),$(sort $(filter-out $(_dump_variables_rbc_excluded),$(.VARIABLES)))))
 $(file >$(1),\
-$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt | grep -vhE "^(SOONG_.*|LOCAL_PATH|TOPDIR|PRODUCT_COPY_OUT_.*|TRACE_BEGIN_SOONG)$$"),\
+$(foreach v, $(shell grep -he "^[A-Z][A-Z0-9_]*$$" $(OUT_DIR)/dump-variables-rbc-temp.txt),\
 $(v) := $(strip $($(v)))$(newline))\
-$(foreach ns,$(SOONG_CONFIG_NAMESPACES),\
-$(foreach v,$(SOONG_CONFIG_$(ns)),\
+$(foreach ns,$(sort $(SOONG_CONFIG_NAMESPACES)),\
+$(foreach v,$(sort $(SOONG_CONFIG_$(ns))),\
 $$(call soong_config_set,$(ns),$(v),$(SOONG_CONFIG_$(ns)_$(v)))$(newline))))
 endef
 
@@ -988,6 +1004,7 @@ TARGET_SYSTEM_DLKM_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_SYSTEM_DLKM)
 .KATI_READONLY := TARGET_SYSTEM_DLKM_OUT
 
 TARGET_VENDOR_RAMDISK_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR_RAMDISK)
+TARGET_VENDOR_KERNEL_RAMDISK_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR_KERNEL_RAMDISK)
 
 TARGET_ROOT_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ROOT)
 TARGET_ROOT_OUT_BIN := $(TARGET_ROOT_OUT)/bin

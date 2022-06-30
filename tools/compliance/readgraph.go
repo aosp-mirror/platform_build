@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"os"
 	"strings"
 	"sync"
 
@@ -30,6 +31,22 @@ var (
 	// ConcurrentReaders is the size of the task pool for limiting resource usage e.g. open files.
 	ConcurrentReaders = 5
 )
+
+type globalFS struct{}
+
+func (s globalFS) Open(name string) (fs.File, error) {
+	return os.Open(name)
+}
+
+var FS globalFS
+
+// GetFS returns a filesystem for accessing files under the OUT_DIR environment variable.
+func GetFS(outDir string) fs.FS {
+	if len(outDir) > 0 {
+		return os.DirFS(outDir)
+	}
+	return os.DirFS(".")
+}
 
 // result describes the outcome of reading and parsing a single license metadata file.
 type result struct {

@@ -25,13 +25,8 @@ intermediates := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX))
 # The includer of this file will define a rule to build this target.
 linked_module := $(intermediates)/LINKED/$(notdir $(my_installed_module_stem))
 
-ALL_ORIGINAL_DYNAMIC_BINARIES += $(linked_module)
-
-# Because TARGET_SYMBOL_FILTER_FILE depends on ALL_ORIGINAL_DYNAMIC_BINARIES,
-# the linked_module rules won't necessarily inherit the PRIVATE_
-# variables from LOCAL_BUILT_MODULE.  This tells binary.make to explicitly
-# define the PRIVATE_ variables for linked_module as well as for
-# LOCAL_BUILT_MODULE.
+# This tells binary.make to explicitly define the PRIVATE_ variables for
+# linked_module as well as for LOCAL_BUILT_MODULE.
 LOCAL_INTERMEDIATE_TARGETS := $(linked_module)
 
 ###################################
@@ -60,9 +55,7 @@ my_unstripped_path := $(LOCAL_UNSTRIPPED_PATH)
 endif
 symbolic_input := $(inject_module)
 symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
-$(symbolic_output) : $(symbolic_input)
-	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target)
+$(eval $(call copy-unstripped-elf-file-with-mapping,$(symbolic_input),$(symbolic_output)))
 
 ###########################################################
 ## Store breakpad symbols

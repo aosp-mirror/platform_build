@@ -1,0 +1,6 @@
+{
+    "inherits": [
+        "test/configs/parsing/cycles/3.mcombo"
+    ]
+}
+

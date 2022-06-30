@@ -35,4 +35,6 @@ $(tradefed_tests_list_zip) : $(tradefed_tests) $(SOONG_ZIP)
 tradefed-tests-list : $(tradefed_tests_list_zip)
 $(call dist-for-goals, tradefed-tests-list, $(tradefed_tests_list_zip))
 
+$(call declare-1p-target,$(tradefed_tests_list_zip),)
+
 tests: tradefed-tests-list

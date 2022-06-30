@@ -21,3 +21,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
 # Enables treble, which enabled certain -D compilation flags. In particular, libhidlbase
 # uses -DENFORCE_VINTF_MANIFEST. See b/185759877
 PRODUCT_SHIPPING_API_LEVEL := 29
+
+# Builds using a module product should build modules from source, even if
+# BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE says otherwise.
+PRODUCT_MODULE_BUILD_FROM_SOURCE := true

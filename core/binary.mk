@@ -573,8 +573,6 @@ my_generated_sources := $(patsubst $(generated_sources_dir)/%,$(intermediates)/%
 # the dependencies.
 my_gen_src_files := $(filter %.c %$(LOCAL_CPP_EXTENSION) %.S %.s,$(my_generated_sources))
 
-ALL_GENERATED_SOURCES += $(my_generated_sources)
-
 ####################################################
 ## Compile RenderScript with reflected C++
 ####################################################

@@ -29,5 +29,6 @@ $(foreach m,$(1),\
       $(eval my_copy_dest := $(patsubst data/%,DATA/%,\
                                $(patsubst system/%,DATA/%,\
                                    $(patsubst $(PRODUCT_OUT)/%,%,$(ins)))))\
+      $(eval ALL_TARGETS.$(2)/$(my_copy_dest).META_LIC := $(if $(strip $(ALL_MODULES.$(m).META_LIC)),$(ALL_MODULES.$(m).META_LIC),$(ALL_MODULES.$(m).DELAYED_META_LIC)))\
       $(bui):$(2)/$(my_copy_dest))))
 endef

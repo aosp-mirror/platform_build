@@ -1,5 +1,36 @@
 # Build System Changes for Android.mk Writers
 
+## Genrule starts disallowing directory inputs
+
+To better specify the inputs to the build, we are restricting use of directories
+as inputs to genrules.
+
+To fix existing uses, change inputs to specify the inputs and update the command
+accordingly. For example:
+
+```
+genrule: {
+    name: "foo",
+    srcs: ["bar"],
+    cmd: "cp $(location bar)/*.xml $(gendir)",
+    ...
+}
+```
+
+would become
+
+```
+genrule: {
+    name: "foo",
+    srcs: ["bar/*.xml"],
+    cmd: "cp $(in) $(gendir)",
+    ...
+}
+```
+
+`BUILD_BROKEN_INPUT_DIR_MODULES` can be used to allowlist specific directories
+with genrules that have input directories.
+
 ## Dexpreopt starts enforcing `<uses-library>` checks (for Java modules)
 
 In order to construct correct class loader context for dexpreopt, build system

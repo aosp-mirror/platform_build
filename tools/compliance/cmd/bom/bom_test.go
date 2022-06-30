@@ -21,6 +21,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance"
 )
 
 func TestMain(m *testing.M) {
@@ -37,6 +39,7 @@ func Test(t *testing.T) {
 	tests := []struct {
 		condition   string
 		name        string
+		outDir      string
 		roots       []string
 		stripPrefix string
 		expectedOut []string
@@ -282,7 +285,7 @@ func Test(t *testing.T) {
 				rootFiles = append(rootFiles, "testdata/"+tt.condition+"/"+r)
 			}
 
-			ctx := context{stdout, stderr, os.DirFS("."), []string{tt.stripPrefix}}
+			ctx := context{stdout, stderr, compliance.GetFS(tt.outDir), []string{tt.stripPrefix}}
 
 			err := billOfMaterials(&ctx, rootFiles...)
 			if err != nil {

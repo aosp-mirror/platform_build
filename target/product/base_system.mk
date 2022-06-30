@@ -52,10 +52,8 @@ PRODUCT_PACKAGES += \
     com.android.adbd \
     com.android.adservices \
     com.android.appsearch \
-    com.android.bluetooth \
-    com.android.auxiliary \
+    com.android.btservices \
     com.android.conscrypt \
-    com.android.cronet \
     com.android.extservices \
     com.android.i18n \
     com.android.ipsec \
@@ -70,8 +68,6 @@ PRODUCT_PACKAGES += \
     com.android.neuralnetworks \
     com.android.scheduling \
     com.android.sdkext \
-    com.android.sepolicy \
-    com.android.supplementalprocess \
     com.android.tethering \
     com.android.tzdata \
     com.android.uwb \
@@ -124,8 +120,6 @@ PRODUCT_PACKAGES += \
     init_system \
     input \
     installd \
-    IntentResolver \
-    iorapd \
     ip \
     iptables \
     ip-up-vpn \
@@ -229,7 +223,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NetworkStackNext \
+    NetworkStack \
     odsign \
     org.apache.http.legacy \
     otacerts \
@@ -302,7 +296,7 @@ PRODUCT_PACKAGES += \
 # HWASAN runtime for SANITIZE_TARGET=hwaddress builds
 ifneq (,$(filter hwaddress,$(SANITIZE_TARGET)))
   PRODUCT_PACKAGES += \
-   libclang_rt.hwasan-aarch64-android.bootstrap
+   libclang_rt.hwasan.bootstrap
 endif
 
 # Jacoco agent JARS to be built and installed, if any.
@@ -376,7 +370,6 @@ PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
-    com.android.sepolicy.cert-debug.der \
     dmuserd \
     idlcli \
     init-debug.rc \

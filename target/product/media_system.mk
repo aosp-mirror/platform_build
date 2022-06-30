@@ -27,7 +27,6 @@ PRODUCT_PACKAGES += \
     com.android.media.remotedisplay.xml \
     CompanionDeviceManager \
     drmserver \
-    ethernet-service \
     fsck.f2fs \
     HTMLViewer \
     libfilterpack_imageproc \
@@ -51,8 +50,7 @@ endif
 # The order here is the same order they end up on the classpath, so it matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
     com.android.location.provider \
-    services \
-    ethernet-service
+    services
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt

@@ -24,6 +24,8 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance"
 )
 
 var (
@@ -45,6 +47,7 @@ func Test(t *testing.T) {
 	tests := []struct {
 		condition    string
 		name         string
+		outDir       string
 		roots        []string
 		stripPrefix  string
 		expectedOut  []matcher
@@ -459,7 +462,7 @@ func Test(t *testing.T) {
 
 			var deps []string
 
-			ctx := context{stdout, stderr, os.DirFS("."), "", []string{tt.stripPrefix}, "", &deps}
+			ctx := context{stdout, stderr, compliance.GetFS(tt.outDir), "", []string{tt.stripPrefix}, "", &deps}
 
 			err := xmlNotice(&ctx, rootFiles...)
 			if err != nil {
