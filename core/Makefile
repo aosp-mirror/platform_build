@@ -6913,7 +6913,6 @@ endif
 # depended on by each module in soong_cc_prebuilt.mk, where the module will have
 # a dependency on each shared library that it needs to be "reinstalled".
 FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INSTALL_PAIRS)))
-AFL_FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(AFL_FUZZ_TARGET_SHARED_DEPS_INSTALL_PAIRS)))
 
 # -----------------------------------------------------------------
 # The rule to build all fuzz targets for C++ and Rust, and package them.
@@ -6928,10 +6927,6 @@ AFL_FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(AFL_FUZZ_TARGET_SHARED_
 .PHONY: haiku
 haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
 $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
-
-.PHONY: haiku-afl
-haiku-afl: $(SOONG_AFL_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_AFL_FUZZ_TARGETS)
-$(call dist-for-goals,haiku-afl,$(SOONG_AFL_FUZZ_PACKAGING_ARCH_MODULES))
 
 .PHONY: haiku-java
 haiku-java: $(SOONG_JAVA_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_TARGETS)
