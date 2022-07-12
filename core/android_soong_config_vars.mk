@@ -75,6 +75,7 @@ $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 # are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
 # default.
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
+  permission \
   wifi \
 
 $(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
