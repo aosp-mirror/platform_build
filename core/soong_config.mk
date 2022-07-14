@@ -290,6 +290,8 @@ $(call add_json_list, SepolicyFreezeTestExtraPrebuiltDirs, $(SEPOLICY_FREEZE_TES
 
 $(call add_json_bool, GenerateAidlNdkPlatformBackend, $(filter true,$(NEED_AIDL_NDK_PLATFORM_BACKEND)))
 
+$(call add_json_bool, ForceMultilibFirstOnDevice, $(filter true,$(FORCE_MULTILIB_FIRST_ON_DEVICE)))
+
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
