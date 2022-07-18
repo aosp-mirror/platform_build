@@ -328,7 +328,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       compressor = prop_dict["erofs_default_compressor"]
     if "erofs_compressor" in prop_dict:
       compressor = prop_dict["erofs_compressor"]
-    if compressor:
+    if compressor and compressor != "none":
       build_command.extend(["-z", compressor])
 
     compress_hints = None

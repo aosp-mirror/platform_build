@@ -967,15 +967,11 @@ ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 INTERNAL_BOOTIMAGE_ARGS := \
 	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET))
 
-INTERNAL_INIT_BOOT_IMAGE_ARGS :=
-
 # TODO(b/229701033): clean up BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK.
 ifneq ($(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK),true)
   ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
     ifneq ($(BUILDING_INIT_BOOT_IMAGE),true)
       INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
-    else
-      INTERNAL_INIT_BOOT_IMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
     endif
   endif
 endif
@@ -1221,6 +1217,8 @@ ifeq ($(BUILDING_INIT_BOOT_IMAGE),true)
 
 INSTALLED_INIT_BOOT_IMAGE_TARGET := $(PRODUCT_OUT)/init_boot.img
 $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_RAMDISK_TARGET)
+
+INTERNAL_INIT_BOOT_IMAGE_ARGS := --ramdisk $(INSTALLED_RAMDISK_TARGET)
 
 ifdef BOARD_KERNEL_PAGESIZE
   INTERNAL_INIT_BOOT_IMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
@@ -2979,20 +2977,29 @@ $(FSVERITY_APK_OUT): PRIVATE_MANIFEST := $(FSVERITY_APK_MANIFEST_PATH)
 $(FSVERITY_APK_OUT): PRIVATE_FRAMEWORK_RES := $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
 $(FSVERITY_APK_OUT): PRIVATE_KEY := $(FSVERITY_APK_KEY_PATH)
 $(FSVERITY_APK_OUT): PRIVATE_INPUTS := $(fsverity-metadata-targets)
+$(FSVERITY_APK_OUT): PRIVATE_ASSETS := $(call intermediates-dir-for,ETC,build_manifest)/assets
 $(FSVERITY_APK_OUT): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
     $(HOST_OUT_EXECUTABLES)/fsverity $(HOST_OUT_EXECUTABLES)/aapt2 \
     $(HOST_OUT_EXECUTABLES)/apksigner $(FSVERITY_APK_MANIFEST_PATH) \
     $(FSVERITY_APK_KEY_PATH).x509.pem $(FSVERITY_APK_KEY_PATH).pk8 \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk \
     $(fsverity-metadata-targets)
-	$< --fsverity-path $(PRIVATE_FSVERITY) --aapt2-path $(PRIVATE_AAPT2) \
+	rm -rf $(PRIVATE_ASSETS)
+	mkdir -p $(PRIVATE_ASSETS)
+	$< --fsverity-path $(PRIVATE_FSVERITY) \
+	    --base-dir $(PRODUCT_OUT) \
+	    --output $(PRIVATE_ASSETS)/build_manifest.pb \
+	    $(PRIVATE_INPUTS)
+	$(PRIVATE_AAPT2) link -o $@ \
+	    -A $(PRIVATE_ASSETS) \
+	    -I $(PRIVATE_FRAMEWORK_RES) \
 	    --min-sdk-version $(PRIVATE_MIN_SDK_VERSION) \
 	    --version-code $(PRIVATE_VERSION_CODE) \
 	    --version-name $(PRIVATE_VERSION_NAME) \
-	    --apksigner-path $(PRIVATE_APKSIGNER) --apk-key-path $(PRIVATE_KEY) \
-	    --apk-manifest-path $(PRIVATE_MANIFEST) --framework-res $(PRIVATE_FRAMEWORK_RES) \
-	    --output $@ \
-	    --base-dir $(PRODUCT_OUT) $(PRIVATE_INPUTS)
+	    --manifest $(PRIVATE_MANIFEST)
+	$(PRIVATE_APKSIGNER) sign --in $@ \
+	    --cert $(PRIVATE_KEY).x509.pem \
+	    --key $(PRIVATE_KEY).pk8
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FSVERITY_APK_OUT)
 
@@ -6524,21 +6531,21 @@ INSTALLED_SUPERIMAGE_DEPENDENCIES += $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 endif
 endif
 
-# If BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT is set, super.img is built from images in the
-# $(PRODUCT_OUT) directory, and is built to $(PRODUCT_OUT)/super.img. Also, it will
-# be built for non-dist builds. This is useful for devices that uses super.img directly, e.g.
-# virtual devices.
-ifeq (true,$(BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT))
 $(INSTALLED_SUPERIMAGE_TARGET): $(INSTALLED_SUPERIMAGE_DEPENDENCIES)
 	$(call pretty,"Target super fs image for debug: $@")
 	$(call build-superimage-target,$(INSTALLED_SUPERIMAGE_TARGET),\
           $(call intermediates-dir-for,PACKAGING,superimage_debug)/misc_info.txt)
 
-droidcore-unbundled: $(INSTALLED_SUPERIMAGE_TARGET)
-
 # For devices that uses super image directly, the superimage target points to the file in $(PRODUCT_OUT).
 .PHONY: superimage
 superimage: $(INSTALLED_SUPERIMAGE_TARGET)
+
+# If BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT is set, super.img is built from images in the
+# $(PRODUCT_OUT) directory, and is built to $(PRODUCT_OUT)/super.img. Also, it will
+# be built for non-dist builds. This is useful for devices that uses super.img directly, e.g.
+# virtual devices.
+ifeq (true,$(BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT))
+droidcore-unbundled: $(INSTALLED_SUPERIMAGE_TARGET)
 
 $(call dist-for-goals,dist_files,$(INSTALLED_MISC_INFO_TARGET):super_misc_info.txt)
 endif # BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT
@@ -6906,6 +6913,7 @@ endif
 # depended on by each module in soong_cc_prebuilt.mk, where the module will have
 # a dependency on each shared library that it needs to be "reinstalled".
 FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INSTALL_PAIRS)))
+AFL_FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(AFL_FUZZ_TARGET_SHARED_DEPS_INSTALL_PAIRS)))
 
 # -----------------------------------------------------------------
 # The rule to build all fuzz targets for C++ and Rust, and package them.
@@ -6920,6 +6928,10 @@ FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INS
 .PHONY: haiku
 haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
 $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
+
+.PHONY: haiku-afl
+haiku-afl: $(SOONG_AFL_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_AFL_FUZZ_TARGETS)
+$(call dist-for-goals,haiku-afl,$(SOONG_AFL_FUZZ_PACKAGING_ARCH_MODULES))
 
 .PHONY: haiku-java
 haiku-java: $(SOONG_JAVA_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_TARGETS)
