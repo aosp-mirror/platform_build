@@ -2,6 +2,11 @@
 # that isn't explicitly part of the API
 -dontskipnonpubliclibraryclasses -dontskipnonpubliclibraryclassmembers
 
+# Annotations are implemented as attributes, so we have to explicitly keep them.
+# Keep all runtime-visible annotations like RuntimeVisibleParameterAnnotations
+# and RuntimeVisibleTypeAnnotations, as well as associated defaults.
+-keepattributes RuntimeVisible*Annotation*,AnnotationDefault
+
 # For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
 -keepclassmembers enum * {
     public static **[] values();
