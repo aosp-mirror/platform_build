@@ -98,6 +98,8 @@ python_defaults {
     ],
     required: [
         "checkvintf",
+        "deapexer",
+        "dump_apex_info",
     ],
 }
 

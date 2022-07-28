@@ -22,6 +22,7 @@ Usage: check_target_files_vintf target_files
 target_files can be a ZIP file or an extracted target files directory.
 """
 
+import json
 import logging
 import subprocess
 import sys
@@ -123,7 +124,12 @@ def CheckVintfFromExtractedTargetFiles(input_tmp, info_dict=None):
     logger.warning('PRODUCT_ENFORCE_VINTF_MANIFEST is not set, skipping checks')
     return True
 
+
   dirmap = GetDirmap(input_tmp)
+
+  apex_root, apex_info_file = PrepareApexDirectory(input_tmp)
+  dirmap['/apex'] = apex_root
+
   args_for_skus = GetArgsForSkus(info_dict)
   shipping_api_level_args = GetArgsForShippingApiLevel(info_dict)
   kernel_args = GetArgsForKernel(input_tmp)
@@ -132,6 +138,8 @@ def CheckVintfFromExtractedTargetFiles(input_tmp, info_dict=None):
       'checkvintf',
       '--check-compat',
   ]
+  common_command += ['--apex-info-file', apex_info_file]
+
   for device_path, real_path in sorted(dirmap.items()):
     common_command += ['--dirmap', '{}:{}'.format(device_path, real_path)]
   common_command += kernel_args
@@ -185,6 +193,98 @@ def GetVintfFileList():
   paths = sum((PathToPatterns(path) for path in paths if path), [])
   return paths
 
+def GetVintfApexUnzipPatterns():
+  """ Build unzip pattern for APEXes. """
+  patterns = []
+  for target_files_rel_paths in DIR_SEARCH_PATHS.values():
+    for target_files_rel_path in target_files_rel_paths:
+      patterns.append(os.path.join(target_files_rel_path,"apex/*"))
+
+  return patterns
+
+def PrepareApexDirectory(inp):
+  """ Prepare the APEX data.
+
+  Apex binaries do not support dirmaps, in order to use these binaries we
+  need to move the APEXes from the extracted target file archives to the
+  expected device locations.
+
+  The APEXes will also be extracted under the APEX/ directory
+  matching what would be on the target.
+
+  Create the following structure under the input inp directory:
+       APEX/apex             # Extracted APEXes
+       APEX/system/apex/     # System APEXes
+       APEX/vendor/apex/     # Vendor APEXes
+       ...
+
+  Args:
+    inp: path to the directory that contains the extracted target files archive.
+
+  Returns:
+    extracted apex directory
+    apex-info-list.xml file
+  """
+
+  def ExtractApexes(path, outp):
+    # Extract all APEXes found in input path.
+    debugfs_path = 'debugfs'
+    deapexer = 'deapexer'
+    if OPTIONS.search_path:
+      debugfs_path = os.path.join(OPTIONS.search_path, 'bin', 'debugfs_static')
+      deapexer_path = os.path.join(OPTIONS.search_path, 'bin', 'deapexer')
+      if os.path.isfile(deapexer_path):
+        deapexer = deapexer_path
+
+    logger.info('Extracting APEXs in %s', path)
+    for f in os.listdir(path):
+      logger.info('  adding APEX %s', os.path.basename(f))
+      apex = os.path.join(path, f)
+      cmd = [deapexer,
+             '--debugfs_path', debugfs_path,
+             'info',
+             apex]
+      info = json.loads(common.RunAndCheckOutput(cmd))
+
+      cmd = [deapexer,
+             '--debugfs_path', debugfs_path,
+             'extract',
+             apex,
+             os.path.join(outp, info['name'])]
+      common.RunAndCheckOutput(cmd)
+
+  root_dir_name = 'APEX'
+  root_dir = os.path.join(inp, root_dir_name)
+  extracted_root = os.path.join(root_dir, 'apex')
+  apex_info_file = os.path.join(extracted_root, 'apex-info-list.xml')
+
+  # Always create APEX directory for dirmap
+  os.makedirs(extracted_root)
+
+  create_info_file = False
+
+  # Loop through search path looking for and processing apex/ directories.
+  for device_path, target_files_rel_paths in DIR_SEARCH_PATHS.items():
+    for target_files_rel_path in target_files_rel_paths:
+      inp_partition = os.path.join(inp, target_files_rel_path,"apex")
+      if os.path.exists(inp_partition):
+        apex_dir = root_dir + os.path.join(device_path + "/apex");
+        os.makedirs(apex_dir)
+        os.rename(inp_partition, apex_dir)
+        ExtractApexes(apex_dir, extracted_root)
+        create_info_file = True
+
+  if create_info_file:
+    ### Create apex-info-list.xml
+    dump_cmd = ['dump_apex_info',
+                '--root_dir', root_dir,
+                '--out_file', apex_info_file]
+    common.RunAndCheckOutput(dump_cmd)
+    if not os.path.exists(apex_info_file):
+      raise RuntimeError('Failed to create apex info file %s', apex_info_file)
+    logger.info('Created %s', apex_info_file)
+
+  return extracted_root, apex_info_file
 
 def CheckVintfFromTargetFiles(inp, info_dict=None):
   """
@@ -198,7 +298,7 @@ def CheckVintfFromTargetFiles(inp, info_dict=None):
     True if VINTF check is skipped or compatible, False if incompatible. Raise
     a RuntimeError if any error occurs.
   """
-  input_tmp = common.UnzipTemp(inp, GetVintfFileList() + UNZIP_PATTERN)
+  input_tmp = common.UnzipTemp(inp, GetVintfFileList() + GetVintfApexUnzipPatterns() + UNZIP_PATTERN)
   return CheckVintfFromExtractedTargetFiles(input_tmp, info_dict)
 
 
