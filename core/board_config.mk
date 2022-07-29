@@ -20,6 +20,7 @@
 # ###############################################################
 
 _board_strip_readonly_list := \
+  BOARD_BOOTLOADER_IN_UPDATE_PACKAGE \
   BOARD_EGL_CFG \
   BOARD_HAVE_BLUETOOTH \
   BOARD_INSTALLER_CMDLINE \
