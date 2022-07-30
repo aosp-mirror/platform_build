@@ -1381,7 +1381,7 @@ def main(argv):
         OPTIONS.extra_apks[n] = key
     elif o == "--extra_apex_payload_key":
       apex_names, key = a.split("=")
-      for name in apex_names:
+      for name in apex_names.split(","):
         OPTIONS.extra_apex_payload_keys[name] = key
     elif o == "--skip_apks_with_path_prefix":
       # Check the prefix, which must be in all upper case.
