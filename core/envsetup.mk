@@ -323,7 +323,9 @@ endif
 # likely to be relevant to the product or board configuration.
 # Soong config variables are dumped as $(call soong_config_set) calls
 # instead of the raw variable values, because mk2rbc can't read the
-# raw ones.
+# raw ones. There is a final sed command on the output file to
+# remove leading spaces because I couldn't figure out how to remove
+# them in pure make code.
 define dump-variables-rbc
 $(eval _dump_variables_rbc_excluded := \
   BUILD_NUMBER \
@@ -345,6 +347,7 @@ $(v) := $(strip $($(v)))$(newline))\
 $(foreach ns,$(sort $(SOONG_CONFIG_NAMESPACES)),\
 $(foreach v,$(sort $(SOONG_CONFIG_$(ns))),\
 $$(call soong_config_set,$(ns),$(v),$(SOONG_CONFIG_$(ns)_$(v)))$(newline))))
+$(shell sed -i "s/^ *//g" $(1))
 endef
 
 # Read the product specs so we can get TARGET_DEVICE and other
