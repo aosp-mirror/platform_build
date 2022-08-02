@@ -56,6 +56,7 @@ PRODUCT_PACKAGES += \
     com.android.configinfrastructure \
     com.android.conscrypt \
     com.android.cronet \
+    com.android.devicelock \
     com.android.extservices \
     com.android.federatedcompute \
     com.android.healthconnect \

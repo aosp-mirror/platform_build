@@ -57,6 +57,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.btservices:framework-bluetooth \
     com.android.configinfrastructure:framework-configinfrastructure \
     com.android.conscrypt:conscrypt \
+    com.android.devicelock:framework-devicelock \
     com.android.federatedcompute:framework-federatedcompute \
     com.android.healthconnect:framework-healthconnect \
     com.android.i18n:core-icu4j \
@@ -102,6 +103,7 @@ PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
 # Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
     com.android.btservices:service-bluetooth \
+    com.android.devicelock:service-devicelock \
     com.android.os.statsd:service-statsd \
     com.android.scheduling:service-scheduling \
     com.android.tethering:service-connectivity \
