@@ -23,7 +23,6 @@ endif
 
 $(call declare-0p-target,$(target_notice_file_xml_gz))
 $(call declare-0p-target,$(installed_notice_html_or_xml_gz))
-ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
 endif
 
 .PHONY: vendorlicense
@@ -46,7 +45,6 @@ $(installed_vendor_notice_xml_gz): $(target_vendor_notice_file_xml_gz)
 
 $(call declare-0p-target,$(target_vendor_notice_file_xml_gz))
 $(call declare-0p-target,$(installed_vendor_notice_xml_gz))
-ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
 endif
 
 .PHONY: odmlicense
@@ -66,7 +64,6 @@ $(installed_odm_notice_xml_gz): $(target_odm_notice_file_xml_gz)
 
 $(call declare-0p-target,$(target_odm_notice_file_xml_gz))
 $(call declare-0p-target,$(installed_odm_notice_xml_gz))
-ALL_DEFAULT_INSTALLED_MODULES += $(installed_odm_notice_xml_gz)
 endif
 
 .PHONY: oemlicense
@@ -89,7 +86,6 @@ $(installed_product_notice_xml_gz): $(target_product_notice_file_xml_gz)
 
 $(call declare-0p-target,$(target_product_notice_file_xml_gz))
 $(call declare-0p-target,$(installed_product_notice_xml_gz))
-ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_notice_xml_gz)
 endif
 
 .PHONY: systemextlicense
@@ -109,7 +105,6 @@ $(installed_system_ext_notice_xml_gz): $(target_system_ext_notice_file_xml_gz)
 
 $(call declare-0p-target,$(target_system_ext_notice_file_xml_gz))
 $(call declare-0p-target,$(installed_system_ext_notice_xml_gz))
-ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_ext_notice_xml_gz)
 endif
 
 .PHONY: vendor_dlkmlicense
@@ -129,7 +124,6 @@ $(installed_vendor_dlkm_notice_xml_gz): $(target_vendor_dlkm_notice_file_xml_gz)
 
 $(call declare-0p-target,$(target_vendor_dlkm_notice_file_xml_gz))
 $(call declare-0p-target,$(installed_vendor_dlkm_notice_xml_gz))
-ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_dlkm_notice_xml_gz)
 endif
 
 .PHONY: odm_dlkmlicense
@@ -142,14 +136,13 @@ $(eval $(call text-notice-rule,$(target_odm_dlkm_notice_file_txt),"ODM_dlkm file
 
 $(eval $(call xml-notice-rule,$(target_odm_dlkm_notice_file_xml_gz),"ODM_dlkm filesystem image", \
          "Notices for files contained in the odm_dlkm filesystem image in this directory:", \
-         $(ODM_DLMK_NOTICE_DEPS)))
+         $(ODM_DLKM_NOTICE_DEPS)))
 
 $(installed_odm_dlkm_notice_xml_gz): $(target_odm_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
 
 $(call declare-0p-target,$(target_odm_dlkm_notice_file_xml_gz))
 $(call declare-0p-target,$(installed_odm_dlkm_notice_xml_gz))
-ALL_DEFAULT_INSTALLED_MODULES += $(installed_odm_dlkm_notice_xml_gz)
 endif
 
 .PHONY: system_dlkmlicense
@@ -162,14 +155,13 @@ $(eval $(call text-notice-rule,$(target_system_dlkm_notice_file_txt),"System_dlk
 
 $(eval $(call xml-notice-rule,$(target_system_dlkm_notice_file_xml_gz),"System_dlkm filesystem image", \
          "Notices for files contained in the system_dlkm filesystem image in this directory:", \
-         $(SYSTEM_DLMK_NOTICE_DEPS)))
+         $(SYSTEM_DLKM_NOTICE_DEPS)))
 
 $(installed_system_dlkm_notice_xml_gz): $(target_system_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
 
 $(call declare-0p-target,$(target_system_dlkm_notice_file_xml_gz))
 $(call declare-0p-target,$(installed_sysetm_dlkm_notice_xml_gz))
-ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_dlkm_notice_xml_gz)
 endif
 
 endif # not TARGET_BUILD_APPS
