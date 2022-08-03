@@ -4,9 +4,17 @@ require google.golang.org/protobuf v0.0.0
 
 replace google.golang.org/protobuf v0.0.0 => ../../../../external/golang-protobuf
 
-require android/soong v0.0.0
+require (
+	android/soong v0.0.0
+	github.com/google/blueprint v0.0.0
+)
 
-replace android/soong v0.0.0 => ../../../soong									      
+require golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
+
+replace android/soong v0.0.0 => ../../../soong
+
+replace github.com/google/blueprint => ../../../blueprint
+
 // Indirect deps from golang-protobuf
 exclude github.com/golang/protobuf v1.5.0
 
