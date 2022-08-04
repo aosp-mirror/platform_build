@@ -28,7 +28,7 @@ class TestContext(Context):
     "Context for testing. The real Context is manually constructed in orchestrator.py."
 
     def __init__(self, test_work_dir, test_name):
-        super(MockContext, self).__init__(os.path.join(test_work_dir, test_name),
+        super(TestContext, self).__init__(os.path.join(test_work_dir, test_name),
                 Errors(None))
 
 

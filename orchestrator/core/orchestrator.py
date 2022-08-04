@@ -55,14 +55,16 @@ def process_config(context, lunch_config):
 
     system_entry = lunch_config.get("system")
     if system_entry:
-        add(API_DOMAIN_SYSTEM, system_entry["tree"], system_entry["product"])
+        add(API_DOMAIN_SYSTEM, system_entry["inner-tree"],
+            system_entry["product"])
 
     vendor_entry = lunch_config.get("vendor")
     if vendor_entry:
-        add(API_DOMAIN_VENDOR, vendor_entry["tree"], vendor_entry["product"])
+        add(API_DOMAIN_VENDOR, vendor_entry["inner-tree"],
+            vendor_entry["product"])
 
     for module_name, module_entry in lunch_config.get("modules", []).items():
-        add(module_name, module_entry["tree"], None)
+        add(module_name, module_entry["inner-tree"], None)
 
     return inner_tree.InnerTrees(trees, domains)
 
