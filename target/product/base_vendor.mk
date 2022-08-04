@@ -42,7 +42,6 @@ PRODUCT_HOST_PACKAGES += \
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
     android.hardware.cas@1.2-service \
-    android.hardware.media.omx@1.0-service \
     boringssl_self_test_vendor \
     dumpsys_vendor \
     fs_config_files_nonsystem \
@@ -68,6 +67,13 @@ PRODUCT_PACKAGES += \
     passwd_vendor \
     selinux_policy_nonsystem \
     shell_and_utilities_vendor \
+
+# OMX not supported for 64bit_only builds
+ifneq ($(TARGET_SUPPORTS_OMX_SERVICE),false)
+    PRODUCT_PACKAGES += \
+        android.hardware.media.omx@1.0-service \
+
+endif
 
 # Base module when shipping api level is less than or equal to 29
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29 += \
