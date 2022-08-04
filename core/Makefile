@@ -1686,9 +1686,26 @@ endif # PRODUCT_NOTICE_SPLIT
 
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
 
+need_vendor_notice:=false
+ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+   need_vendor_notice:=true
+endif
+
+ifdef BUILDING_DEBUG_VENDOR_BOOT_IMAGE
+   need_vendor_notice:=true
+endif
+
+ifdef BUILDING_VENDOR_IMAGE
+   need_vendor_notice:=true
+endif
+
+ifeq (true,$(need_vendor_notice))
 ifneq (,$(installed_vendor_notice_xml_gz))
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
 endif
+endif
+
+need_vendor_notice:=
 
 ifdef BUILDING_ODM_IMAGE
 ifneq (,$(installed_odm_notice_xml_gz))

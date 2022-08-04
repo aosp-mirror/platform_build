@@ -283,6 +283,8 @@ $(foreach var,$(_board_true_false_vars), \
   $(if $(filter-out true false,$($(var))), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
 
+include $(BUILD_SYSTEM)/board_config_wifi.mk
+
 # Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
 TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
 TARGET_2ND_CPU_VARIANT_RUNTIME := $(or $(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_CPU_VARIANT))
