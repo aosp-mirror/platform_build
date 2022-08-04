@@ -147,7 +147,7 @@ class RunfilesCreator {
         info->type = FILE_TYPE_REGULAR;
       } else {
         info->type = FILE_TYPE_SYMLINK;
-        info->symlink_target = strdup(target);
+        info->symlink_target = target;
       }
 
       FileInfo parent_info;

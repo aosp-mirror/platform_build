@@ -135,7 +135,7 @@ ifdef my_register_name
 
   ifdef LOCAL_SOONG_LICENSE_METADATA
     # Soong modules have already produced a license metadata file, copy it to where Make expects it.
-    $(eval $(call copy-one-file, $(LOCAL_SOONG_LICENSE_METADATA), $(module_license_metadata)))
+    $(eval $(call copy-one-license-metadata-file, $(LOCAL_SOONG_LICENSE_METADATA), $(module_license_metadata),$(ALL_MODULES.$(my_register_name).BUILT),$(ALL_MODUES.$(my_register_name).INSTALLED)))
   else
     # Make modules don't have enough information to produce a license metadata rule until after fix-notice-deps
     # has been called, store the necessary information until later.

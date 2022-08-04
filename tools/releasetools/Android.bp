@@ -519,23 +519,6 @@ python_binary_host {
 }
 
 python_binary_host {
-    name: "fsverity_manifest_generator",
-    defaults: ["releasetools_binary_defaults"],
-    srcs: [
-        "fsverity_manifest_generator.py",
-    ],
-    libs: [
-        "fsverity_digests_proto_python",
-        "releasetools_common",
-    ],
-    required: [
-        "aapt2",
-        "apksigner",
-        "fsverity",
-    ],
-}
-
-python_binary_host {
     name: "fsverity_metadata_generator",
     defaults: ["releasetools_binary_defaults"],
     srcs: [

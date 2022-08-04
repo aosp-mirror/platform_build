@@ -75,11 +75,17 @@ def find_file(path, filename):
     for f in walk_paths(path, lambda x: x == filename):
         return f
 
+# TODO: When orchestrator is in its own git project remove the "build" and "make" here
+class LunchContext(object):
+    """Mockable container for lunch"""
+    def __init__(self, workspace_root, orchestrator_path_prefix_components=["build", "build", "make"]):
+      self.workspace_root = workspace_root
+      self.orchestrator_path_prefix_components = orchestrator_path_prefix_components
 
-def find_config_dirs(workspace_root):
+def find_config_dirs(context):
     """Find the configuration files in the well known locations inside workspace_root
 
-        <workspace_root>/build/build/orchestrator/multitree_combos
+        <workspace_root>/<orchestrator>/<path>/<prefix>/orchestrator/multitree_combos
            (AOSP devices, such as cuttlefish)
 
         <workspace_root>/vendor/**/multitree_combos
@@ -93,21 +99,20 @@ def find_config_dirs(workspace_root):
     """
     # TODO: This is not looking in inner trees correctly.
 
-    # TODO: When orchestrator is in its own git project remove the "make/" here
-    yield os.path.join(workspace_root, "build/build/make/orchestrator/multitree_combos")
+    yield os.path.join(context.workspace_root, *context.orchestrator_path_prefix_components, "orchestrator/multitree_combos")
 
     dirs = ["vendor", "device"]
     for d in dirs:
-        yield from find_dirs(os.path.join(workspace_root, d), "multitree_combos")
+        yield from find_dirs(os.path.join(context.workspace_root, d), "multitree_combos")
 
 
-def find_named_config(workspace_root, shortname):
-    """Find the config with the given shortname inside workspace_root.
+def find_named_config(context, shortname):
+    """Find the config with the given shortname inside context.workspace_root.
 
     Config directories are searched in the order described in find_config_dirs,
     and inside those directories, alphabetically."""
     filename = shortname + ".mcombo"
-    for config_dir in find_config_dirs(workspace_root):
+    for config_dir in find_config_dirs(context):
         found = find_file(config_dir, filename)
         if found:
             return found
@@ -122,7 +127,7 @@ def parse_product_variant(s):
     return split
 
 
-def choose_config_from_args(workspace_root, args):
+def choose_config_from_args(context, args):
     """Return the config file we should use for the given argument,
     or null if there's no file that matches that."""
     if len(args) == 1:
@@ -130,7 +135,7 @@ def choose_config_from_args(workspace_root, args):
         # file we don't match that.
         pv = parse_product_variant(args[0])
         if pv:
-            config = find_named_config(workspace_root, pv[0])
+            config = find_named_config(context, pv[0])
             if config:
                 return (config, pv[1])
             return None, None
@@ -295,9 +300,9 @@ def do_lunch(args):
     return EXIT_STATUS_OK
 
 
-def find_all_combo_files(workspace_root):
+def find_all_combo_files(context):
     """Find all .mcombo files in the prescribed locations in the tree."""
-    for dir in find_config_dirs(workspace_root):
+    for dir in find_config_dirs(context):
         for file in walk_paths(dir, lambda x: x.endswith(".mcombo")):
             yield file
 
@@ -313,10 +318,10 @@ def is_file_lunchable(config_file):
     return config.get("lunchable", False)
 
 
-def find_all_lunchable(workspace_root):
-    """Find all mcombo files in the tree (rooted at workspace_root) that when
+def find_all_lunchable(context):
+    """Find all mcombo files in the tree (rooted at context.workspace_root) that when
     parsed (and inheritance is flattened) have lunchable: true."""
-    for f in [x for x in find_all_combo_files(workspace_root) if is_file_lunchable(x)]:
+    for f in [x for x in find_all_combo_files(context) if is_file_lunchable(x)]:
         yield f
 
 
@@ -353,7 +358,8 @@ def load_current_config():
 
 def do_list():
     """Handle the --list command."""
-    for f in sorted(find_all_lunchable(".")):
+    lunch_context = LunchContext(".")
+    for f in sorted(find_all_lunchable(lunch_context)):
         print(f)
 
 
