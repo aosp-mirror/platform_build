@@ -27,7 +27,7 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       apkcerts.txt file, or the container key for an APEX. Option may be
       repeated to give multiple extra packages.
 
-  --extra_apex_payload_key <name=key>
+  --extra_apex_payload_key <name,name,...=key>
       Add a mapping for APEX package name to payload signing key, which will
       override the default payload signing key in apexkeys.txt. Note that the
       container key should be overridden via the `--extra_apks` flag above.
@@ -1380,8 +1380,9 @@ def main(argv):
       for n in names:
         OPTIONS.extra_apks[n] = key
     elif o == "--extra_apex_payload_key":
-      apex_name, key = a.split("=")
-      OPTIONS.extra_apex_payload_keys[apex_name] = key
+      apex_names, key = a.split("=")
+      for name in apex_names.split(","):
+        OPTIONS.extra_apex_payload_keys[name] = key
     elif o == "--skip_apks_with_path_prefix":
       # Check the prefix, which must be in all upper case.
       prefix = a.split('/')[0]
