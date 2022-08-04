@@ -240,9 +240,12 @@ def make_config_header(config_file, config, variant):
     trees = [("Component", "Path", "Product"),
              ("---------", "----", "-------")]
     entry = config.get("system", None)
+
     def add_config_tuple(trees, entry, name):
         if entry:
-            trees.append((name, entry.get("tree"), entry.get("product", "")))
+            trees.append(
+                (name, entry.get("inner-tree"), entry.get("product", "")))
+
     add_config_tuple(trees, config.get("system"), "system")
     add_config_tuple(trees, config.get("vendor"), "vendor")
     for k, v in config.get("modules", {}).items():

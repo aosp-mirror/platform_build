@@ -14,10 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 import subprocess
 import sys
 import textwrap
+
 
 class InnerTreeKey(object):
     """Trees are identified uniquely by their root and the TARGET_PRODUCT they will use to build.
@@ -26,20 +28,32 @@ class InnerTreeKey(object):
     TODO: This is true for soong. It's more likely that bazel could do analysis for two
     products at the same time in a single tree, so there's an optimization there to do
     eventually."""
+
     def __init__(self, root, product):
+        if isinstance(root, list):
+            self.melds = root[1:]
+            root = root[0]
+        else:
+            self.melds = []
         self.root = root
         self.product = product
 
     def __str__(self):
-        return "TreeKey(root=%s product=%s)" % (enquote(self.root), enquote(self.product))
+        return (f"TreeKey(root={enquote(self.root)} "
+                f"product={enquote(self.product)}")
 
     def __hash__(self):
         return hash((self.root, self.product))
 
     def _cmp(self, other):
+        assert isinstance(other, InnerTreeKey)
         if self.root < other.root:
             return -1
         if self.root > other.root:
+            return 1
+        if self.melds < other.melds:
+            return -1
+        if self.melds > other.melds:
             return 1
         if self.product == other.product:
             return 0
@@ -71,13 +85,16 @@ class InnerTreeKey(object):
 
 
 class InnerTree(object):
-    def __init__(self, context, root, product):
+    def __init__(self, context, paths, product):
         """Initialize with the inner tree root (relative to the workspace root)"""
-        self.root = root
+        if not isinstance(paths, list):
+            paths = [paths]
+        self.root = paths[0]
+        self.meld_dirs = paths[1:]
         self.product = product
         self.domains = {}
         # TODO: Base directory on OUT_DIR
-        out_root = context.out.inner_tree_dir(root)
+        out_root = context.out.inner_tree_dir(self.root)
         if product:
             out_root += "_" + product
         else:
@@ -85,9 +102,10 @@ class InnerTree(object):
         self.out = OutDirLayout(out_root)
 
     def __str__(self):
-        return "InnerTree(root=%s product=%s domains=[%s])" % (enquote(self.root),
-                enquote(self.product),
-                " ".join([enquote(d) for d in sorted(self.domains.keys())]))
+        return (f"InnerTree(root={enquote(self.root)} "
+                f"product={enquote(self.product)} "
+                f"domains={enquote(list(self.domains.keys()))} "
+                f"meld={enquote(self.meld_dirs)})")
 
     def invoke(self, args):
         """Call the inner tree command for this inner tree. Exits on failure."""
@@ -97,8 +115,9 @@ class InnerTree(object):
         # so we can print a good error message
         inner_build_tool = os.path.join(self.root, ".inner_build")
         if not os.access(inner_build_tool, os.X_OK):
-            sys.stderr.write(("Unable to execute %s. Is there an inner tree or lunch combo"
-                    + " misconfiguration?\n") % inner_build_tool)
+            sys.stderr.write(
+                f"Unable to execute {inner_build_tool}. Is there an inner tree "
+                "or lunch combo misconfiguration?\n")
             sys.exit(1)
 
         # TODO: This is where we should set up the shared trees
@@ -115,8 +134,9 @@ class InnerTree(object):
 
         # TODO: Probably want better handling of inner tree failures
         if process.returncode:
-            sys.stderr.write("Build error in inner tree: %s\nstopping multitree build.\n"
-                    % self.root)
+            sys.stderr.write(
+                f"Build error in inner tree: {self.root}\nstopping "
+                "multitree build.\n")
             sys.exit(1)
 
 
@@ -127,19 +147,19 @@ class InnerTrees(object):
 
     def __str__(self):
         "Return a debugging dump of this object"
-        return textwrap.dedent("""\
-        InnerTrees {
+
+        def _vals(values):
+            return ("\n" + " " * 16).join(sorted([str(t) for t in values]))
+
+        return textwrap.dedent(f"""\
+        InnerTrees {{
             trees: [
-                %(trees)s
+                {_vals(self.trees.values())}
             ]
             domains: [
-                %(domains)s
+                {_vals(self.domains.values())}
             ]
-        }""" % {
-            "trees": "\n        ".join(sorted([str(t) for t in self.trees.values()])),
-            "domains": "\n        ".join(sorted([str(d) for d in self.domains.values()])),
-        })
-
+        }}""")
 
     def for_each_tree(self, func, cookie=None):
         """Call func for each of the inner trees once for each product that will be built in it.
@@ -152,7 +172,6 @@ class InnerTrees(object):
         for key in sorted(self.trees.keys()):
             result[key] = func(key, self.trees[key], cookie)
         return result
-
 
     def get(self, tree_key):
         """Get an inner tree for tree_key"""
@@ -188,6 +207,4 @@ class OutDirLayout(object):
 
 
 def enquote(s):
-    return "None" if s is None else "\"%s\"" % s
-
-
+    return json.dumps(s)
