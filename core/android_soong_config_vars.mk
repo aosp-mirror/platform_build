@@ -147,8 +147,8 @@ ifeq (eng,$(TARGET_BUILD_VARIANT))
 $(call soong_config_set,messaging,build_variant_eng,true)
 endif
 
-# TODO(b/203088572): Remove when Java optimizations enabled by default for
-# SystemUI.
+# Enable SystemUI optimizations by default unless explicitly set.
+SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
 # TODO(b/196084106): Remove when Java optimizations enabled by default for
 # system packages.
