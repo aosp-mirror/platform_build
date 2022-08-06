@@ -1,8 +1,0 @@
-DEMO
-
-from the root of the workspace
-
-multitree_lunch build/build/make/orchestrator/test_workspace/combo.mcombo eng
-
-rm -rf out && multitree_build && echo "==== Files ====" && find out -type f
-
