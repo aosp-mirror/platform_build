@@ -170,7 +170,7 @@ ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
   # to the public SDK where platform essentially supports all previous SDK versions,
   # platform supports only a few number of recent system SDK versions as some of
   # old system APIs are gradually deprecated, removed and then deleted.
-  PLATFORM_SYSTEMSDK_MIN_VERSION := 28
+  PLATFORM_SYSTEMSDK_MIN_VERSION := 29
 endif
 .KATI_READONLY := PLATFORM_SYSTEMSDK_MIN_VERSION
 
