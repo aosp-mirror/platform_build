@@ -164,6 +164,7 @@ $(KATI_obsolete_var ALL_ORIGINAL_DYNAMIC_BINARIES,ALL_ORIGINAL_DYNAMIC_BINARIES 
 $(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY_FEC,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var PRODUCT_SUPPORTS_BOOT_SIGNER,VB 1.0 and related variables are no longer supported)
+$(KATI_obsolete_var PRODUCT_VERITY_SIGNING_KEY,VB 1.0 and related variables are no longer supported)
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
