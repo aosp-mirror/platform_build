@@ -136,7 +136,6 @@ _product_list_vars += PRODUCT_BOOT_JARS
 # PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
 _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 
-_product_single_value_vars += PRODUCT_SUPPORTS_BOOT_SIGNER
 _product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
 _product_single_value_vars += PRODUCT_SUPPORTS_VERITY
 _product_single_value_vars += PRODUCT_SUPPORTS_VERITY_FEC
