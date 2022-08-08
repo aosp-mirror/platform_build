@@ -125,9 +125,10 @@ local_path := $(LOCAL_PATH)
 module_license_metadata :=
 
 ifdef my_register_name
-  module_license_metadata := $(call local-intermediates-dir)/$(my_register_name).meta_lic
+  module_license_metadata := $(call local-meta-intermediates-dir)/$(my_register_name).meta_lic
 
-  $(foreach target,$(ALL_MODULES.$(my_register_name).BUILT) $(ALL_MODULES.$(my_register_name).INSTALLED) $(my_test_data) $(my_test_config),\
+  $(foreach target,$(ALL_MODULES.$(my_register_name).BUILT) $(ALL_MODULES.$(my_register_name).INSTALLED) $(foreach bi,$(LOCAL_SOONG_BUILT_INSTALLED),$(call word-colon,1,$(bi))) \
+      $(my_test_data) $(my_test_config),\
     $(eval ALL_TARGETS.$(target).META_LIC := $(module_license_metadata)))
 
   ALL_MODULES.$(my_register_name).META_LIC := $(strip $(ALL_MODULES.$(my_register_name).META_LIC) $(module_license_metadata))
