@@ -6258,7 +6258,7 @@ $(APPCOMPAT_ZIP): $(SOONG_ZIP)
 # The mac build doesn't build dex2oat, so create the zip file only if the build OS is linux.
 ifeq ($(BUILD_OS),linux)
 ifneq ($(DEX2OAT),)
-dexpreopt_tools_deps := $(DEXPREOPT_GEN_DEPS) $(DEXPREOPT_GEN) $(AAPT2)
+dexpreopt_tools_deps := $(DEXPREOPT_GEN_DEPS) $(DEXPREOPT_GEN)
 dexpreopt_tools_deps += $(HOST_OUT_EXECUTABLES)/dexdump
 dexpreopt_tools_deps += $(HOST_OUT_EXECUTABLES)/oatdump
 DEXPREOPT_TOOLS_ZIP := $(PRODUCT_OUT)/dexpreopt_tools.zip
