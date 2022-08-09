@@ -9,10 +9,15 @@
 # Add this flag in your package's own configuration if it's needed.
 #-flattenpackagehierarchy
 
-# Keep classes and methods that have the guava @VisibleForTesting annotation
--keep @**.VisibleForTesting class *
--keepclassmembers class * {
-@**.VisibleForTesting *;
+# Keep classes and methods that have @VisibleForTesting annotations, except in
+# intermediate libraries that export those annotations (e.g., androidx, guava).
+# This avoids keeping library-specific test code that isn't actually needed
+# for platform testing.
+# TODO(b/239961360): Migrate away from androidx.annotation.VisibleForTesting
+# and com.google.common.annotations.VisibleForTesting use in platform code.
+-keep @**.VisibleForTesting class !androidx.**,!com.google.common.**,*
+-keepclassmembers class !androidx.**,!com.google.common.**,* {
+    @**.VisibleForTesting *;
 }
 
 # Keep rule for members that are needed solely to keep alive downstream weak
