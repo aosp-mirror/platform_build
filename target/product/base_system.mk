@@ -380,7 +380,6 @@ PRODUCT_PACKAGES_DEBUG := \
     procrank \
     profcollectd \
     profcollectctl \
-    remount \
     servicedispatcher \
     showmap \
     sqlite3 \
