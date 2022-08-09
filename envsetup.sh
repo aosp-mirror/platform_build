@@ -455,10 +455,19 @@ function multitree_lunch()
 {
     local code
     local results
+    # Lunch must be run in the topdir, but this way we get a clear error
+    # message, instead of FileNotFound.
+    local T=$(multitree_gettop)
+    if [ -n "$T" ]; then
+      "$T/build/build/make/orchestrator/core/orchestrator.py" "$@"
+    else
+      _multitree_lunch_error
+      return 1
+    fi
     if $(echo "$1" | grep -q '^-') ; then
         # Calls starting with a -- argument are passed directly and the function
         # returns with the lunch.py exit code.
-        build/build/make/orchestrator/core/lunch.py "$@"
+        "${T}/build/build/make/orchestrator/core/lunch.py" "$@"
         code=$?
         if [[ $code -eq 2 ]] ; then
           echo 1>&2
@@ -469,7 +478,7 @@ function multitree_lunch()
         fi
     else
         # All other calls go through the --lunch variant of lunch.py
-        results=($(build/build/make/orchestrator/core/lunch.py --lunch "$@"))
+        results=($(${T}/build/build/make/orchestrator/core/lunch.py --lunch "$@"))
         code=$?
         if [[ $code -eq 2 ]] ; then
           echo 1>&2
@@ -1813,7 +1822,8 @@ function _wrap_build()
 function _trigger_build()
 (
     local -r bc="$1"; shift
-    if T="$(gettop)"; then
+    local T=$(gettop)
+    if [ -n "$T" ]; then
       _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
     else
       >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
@@ -1873,8 +1883,9 @@ function _multitree_lunch_error()
 
 function multitree_build()
 {
-    if T="$(multitree_gettop)"; then
-      "$T/build/build/orchestrator/core/orchestrator.py" "$@"
+    local T=$(multitree_gettop)
+    if [ -n "$T" ]; then
+      "$T/build/build/make/orchestrator/core/orchestrator.py" "$@"
     else
       _multitree_lunch_error
       return 1
