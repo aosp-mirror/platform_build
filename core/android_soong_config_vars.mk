@@ -76,11 +76,13 @@ $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 # default.
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
   bluetooth \
+  permission \
   uwb \
   wifi \
 
 $(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
-  $(call soong_config_set,$(m)_module,source_build,$(MODULE_BUILD_FROM_SOURCE)))
+  $(if $(call soong_config_get,$(m)_module,source_build),,\
+    $(call soong_config_set,$(m)_module,source_build,$(MODULE_BUILD_FROM_SOURCE))))
 
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
