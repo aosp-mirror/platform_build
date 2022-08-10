@@ -245,7 +245,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
   $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(my_optional_uses_libs_args)
   $(my_enforced_uses_libraries): PRIVATE_DEXPREOPT_CONFIGS := $(my_dexpreopt_config_args)
   $(my_enforced_uses_libraries): PRIVATE_RELAX_CHECK := $(my_relax_check_arg)
-  $(my_enforced_uses_libraries): $(AAPT)
+  $(my_enforced_uses_libraries): $(AAPT2)
   $(my_enforced_uses_libraries): $(my_verify_script)
   $(my_enforced_uses_libraries): $(my_dexpreopt_dep_configs)
   $(my_enforced_uses_libraries): $(my_manifest_or_apk)
@@ -254,7 +254,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
 	$(my_verify_script) \
 	  --enforce-uses-libraries \
 	  --enforce-uses-libraries-status $@ \
-	  --aapt $(AAPT) \
+	  --aapt $(AAPT2) \
 	  $(PRIVATE_USES_LIBRARIES) \
 	  $(PRIVATE_OPTIONAL_USES_LIBRARIES) \
 	  $(PRIVATE_DEXPREOPT_CONFIGS) \
