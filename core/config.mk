@@ -973,16 +973,6 @@ $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
     $(eval .KATI_READONLY := BOARD_$(group)_PARTITION_LIST) \
 )
 
-# BOARD_*_PARTITION_LIST: a list of the following tokens
-valid_super_partition_list := system vendor product system_ext odm vendor_dlkm odm_dlkm system_dlkm
-$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
-    $(if $(filter-out $(valid_super_partition_list),$(BOARD_$(group)_PARTITION_LIST)), \
-        $(error BOARD_$(group)_PARTITION_LIST contains invalid partition name \
-            $(filter-out $(valid_super_partition_list),$(BOARD_$(group)_PARTITION_LIST)). \
-            Valid names are $(valid_super_partition_list))))
-valid_super_partition_list :=
-
-
 # Define BOARD_SUPER_PARTITION_PARTITION_LIST, the sum of all BOARD_*_PARTITION_LIST
 ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
 $(error BOARD_SUPER_PARTITION_PARTITION_LIST should not be defined, but computed from \
