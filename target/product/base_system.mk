@@ -385,6 +385,7 @@ PRODUCT_PACKAGES_DEBUG := \
     iotop \
     iperf3 \
     iw \
+    layertracegenerator \
     logpersist.start \
     logtagd.rc \
     procrank \
