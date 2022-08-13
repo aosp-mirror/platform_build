@@ -1688,6 +1688,63 @@ endif # PRODUCT_NOTICE_SPLIT
 
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
 
+need_vendor_notice:=false
+ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+   need_vendor_notice:=true
+endif
+
+ifdef BUILDING_DEBUG_VENDOR_BOOT_IMAGE
+   need_vendor_notice:=true
+endif
+
+ifdef BUILDING_VENDOR_IMAGE
+   need_vendor_notice:=true
+endif
+
+ifeq (true,$(need_vendor_notice))
+ifneq (,$(installed_vendor_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
+endif
+endif
+
+need_vendor_notice:=
+
+ifdef BUILDING_ODM_IMAGE
+ifneq (,$(installed_odm_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_odm_notice_xml_gz)
+endif
+endif
+
+ifdef BUILDING_PRODUCT_IMAGE
+ifneq (,$(installed_product_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_notice_xml_gz)
+endif
+endif
+
+ifdef BUILDING_SYSTEM_EXT_IMAGE
+ifneq (,$(installed_system_ext_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_ext_notice_xml_gz)
+endif
+endif
+
+ifdef BUILDING_VENDOR_DLKM_IMAGE
+ifneq (,$(installed_vendor_dlkm_notice_xml_gz)
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_dlkm_notice_xml_gz)
+endif
+endif
+
+ifdef BUILDING_ODM_DLKM_IMAGE
+ifneq (,$(installed_odm_dlkm_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_odm_dlkm_notice_xml_gz)
+endif
+endif
+
+ifdef BUILDING_SYSTEM_DLKM_IMAGE
+ifneq (,$(installed_system_dlkm_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_dlkm_notice_xml_gz)
+endif
+endif
+
 endif  # TARGET_BUILD_APPS
 
 # The kernel isn't really a module, so to get its module file in there, we
@@ -3504,7 +3561,7 @@ INSTALLED_VENDORIMAGE_TARGET := $(PRODUCT_OUT)/vendor.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_VENDORIMAGE),$(INSTALLED_VENDORIMAGE_TARGET)))
 $(if $(strip $(ALL_TARGETS.$(INSTALLED_VENDORIMAGE_TARGET).META_LIC)),,\
     $(if $(strip $(ALL_TARGETS.$(BOARD_PREBUILT_VENDORIMAGE).META_LIC)),\
-        $(eval ALL_TARGETS.$(INSTALLED_VENDORIMAGE_TARGET).META_LIC:=$(ALL_TARGETS.$(BOARD_PREBUILT_VENDORIMAGE).META_LIC)),\
+        $(call declare-copy-target-license-metadata,$(INSTALLED_VENDORIMAGE_TARGET),$(BOARD_PREBUILT_VENDORIMAGE)),\
         $(call declare-license-metadata,$(INSTALLED_VENDORIMAGE_TARGET),legacy_proprietary,proprietary,,"Vendor Image",vendor)))
 endif
 
@@ -3878,6 +3935,11 @@ $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET): \
     $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) \
     $(INSTALLED_FILES_FILE_SYSTEM_DLKM)
 	$(build-system_dlkmimage-target)
+
+SYSTEM_DLKM_NOTICE_DEPS += $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
+
+$(call declare-1p-container,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),)
+$(call declare-container-license-deps,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEM_DLKM),$(PRODUCT_OUT)/:/)
 
 .PHONY: system_dlkmimage-nodeps sdnod
 system_dlkmimage-nodeps sdnod: | $(INTERNAL_USERIMAGES_DEPS)
