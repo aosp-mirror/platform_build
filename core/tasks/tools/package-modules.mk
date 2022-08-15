@@ -21,11 +21,13 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := $(my_package_name)
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_LICENSE_PACKAGE_NAME := Android
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_MODULE_CLASS := PACKAGING
 LOCAL_MODULE_STEM := $(my_package_name).zip
 LOCAL_UNINSTALLABLE_MODULE := true
 include $(BUILD_SYSTEM)/base_rules.mk
-my_staging_dir := $(intermediates)
+my_staging_dir := $(intermediates)/staging
 my_package_zip := $(LOCAL_BUILT_MODULE)
 
 my_built_modules := $(foreach p,$(my_copy_pairs),$(call word-colon,1,$(p)))
@@ -92,17 +94,18 @@ ifneq ($(my_missing_error),)
 endif
 
 $(my_package_zip): PRIVATE_COPY_PAIRS := $(my_copy_pairs)
+$(my_package_zip): PRIVATE_STAGING_DIR := $(my_staging_dir)
 $(my_package_zip): PRIVATE_PICKUP_FILES := $(my_pickup_files)
 $(my_package_zip) : $(my_built_modules)
 	@echo "Package $@"
-	@rm -rf $(dir $@) && mkdir -p $(dir $@)
+	@rm -rf $(PRIVATE_STAGING_DIR) && mkdir -p $(PRIVATE_STAGING_DIR)
 	$(foreach p, $(PRIVATE_COPY_PAIRS),\
 	  $(eval pair := $(subst :,$(space),$(p)))\
 	  mkdir -p $(dir $(word 2,$(pair))) && \
 	  cp -Rf $(word 1,$(pair)) $(word 2,$(pair)) && ) true
 	$(hide) $(foreach f, $(PRIVATE_PICKUP_FILES),\
-	  cp -RfL $(f) $(dir $@) && ) true
-	$(hide) cd $(dir $@) && zip -rqX $(notdir $@) *
+	  cp -RfL $(f) $(PRIVATE_STAGING_DIR) && ) true
+	$(hide) cd $(PRIVATE_STAGING_DIR) && zip -rqX ../$(notdir $@) *
 
 my_makefile :=
 my_staging_dir :=
