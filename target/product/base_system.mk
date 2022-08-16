@@ -52,7 +52,7 @@ PRODUCT_PACKAGES += \
     com.android.adbd \
     com.android.adservices \
     com.android.appsearch \
-    com.android.bluetooth \
+    com.android.btservices \
     com.android.conscrypt \
     com.android.extservices \
     com.android.i18n \
@@ -120,7 +120,6 @@ PRODUCT_PACKAGES += \
     init_system \
     input \
     installd \
-    IntentResolver \
     ip \
     iptables \
     ip-up-vpn \
