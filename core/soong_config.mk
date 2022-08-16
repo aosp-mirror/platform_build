@@ -94,6 +94,7 @@ $(call add_json_str,  AAPTPreferredConfig,               $(PRODUCT_AAPT_PREF_CON
 $(call add_json_list, AAPTPrebuiltDPI,                   $(PRODUCT_AAPT_PREBUILT_DPI))
 
 $(call add_json_str,  DefaultAppCertificate,             $(PRODUCT_DEFAULT_DEV_CERTIFICATE))
+$(call add_json_str,  MainlineSepolicyDevCertificates,   $(MAINLINE_SEPOLICY_DEV_CERTIFICATES))
 
 $(call add_json_str,  AppsDefaultVersionName,            $(APPS_DEFAULT_VERSION_NAME))
 
@@ -250,7 +251,7 @@ $(call add_json_map, VendorVars)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
   $(call add_json_map, $(namespace))\
   $(foreach key,$(SOONG_CONFIG_$(namespace)),\
-    $(call add_json_str,$(key),$(SOONG_CONFIG_$(namespace)_$(key))))\
+    $(call add_json_str,$(key),$(subst ",\",$(SOONG_CONFIG_$(namespace)_$(key)))))\
   $(call end_json_map))
 $(call end_json_map)
 
@@ -292,6 +293,8 @@ $(call add_json_list, SepolicyFreezeTestExtraDirs,         $(SEPOLICY_FREEZE_TES
 $(call add_json_list, SepolicyFreezeTestExtraPrebuiltDirs, $(SEPOLICY_FREEZE_TEST_EXTRA_PREBUILT_DIRS))
 
 $(call add_json_bool, GenerateAidlNdkPlatformBackend, $(filter true,$(NEED_AIDL_NDK_PLATFORM_BACKEND)))
+
+$(call add_json_bool, IgnorePrefer32OnDevice, $(filter true,$(IGNORE_PREFER32_ON_DEVICE)))
 
 $(call json_end)
 
