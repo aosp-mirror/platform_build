@@ -27,7 +27,7 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       apkcerts.txt file, or the container key for an APEX. Option may be
       repeated to give multiple extra packages.
 
-  --extra_apex_payload_key <name=key>
+  --extra_apex_payload_key <name,name,...=key>
       Add a mapping for APEX package name to payload signing key, which will
       override the default payload signing key in apexkeys.txt. Note that the
       container key should be overridden via the `--extra_apks` flag above.
@@ -141,6 +141,12 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       Allow the existence of the file 'userdebug_plat_sepolicy.cil' under
       (/system/system_ext|/system_ext)/etc/selinux.
       If not set, error out when the file exists.
+
+  --override_apk_keys <path>
+      Replace all APK keys with this private key
+
+  --override_apex_keys <path>
+      Replace all APEX keys with this private key
 """
 
 from __future__ import print_function
@@ -197,6 +203,8 @@ OPTIONS.android_jar_path = None
 OPTIONS.vendor_partitions = set()
 OPTIONS.vendor_otatools = None
 OPTIONS.allow_gsi_debug_sepolicy = False
+OPTIONS.override_apk_keys = None
+OPTIONS.override_apex_keys = None
 
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
@@ -245,6 +253,10 @@ def GetApexFilename(filename):
 
 
 def GetApkCerts(certmap):
+  if OPTIONS.override_apk_keys is not None:
+    for apk in certmap.keys():
+      certmap[apk] = OPTIONS.override_apk_keys
+
   # apply the key remapping to the contents of the file
   for apk, cert in certmap.items():
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
@@ -275,6 +287,15 @@ def GetApexKeys(keys_info, key_map):
   Raises:
     AssertionError: On invalid container / payload key overrides.
   """
+  if OPTIONS.override_apex_keys is not None:
+    for apex in keys_info.keys():
+      keys_info[apex] = (OPTIONS.override_apex_keys, keys_info[apex][1], keys_info[apex][2])
+
+  if OPTIONS.override_apk_keys is not None:
+    key = key_map.get(OPTIONS.override_apk_keys, OPTIONS.override_apk_keys)
+    for apex in keys_info.keys():
+      keys_info[apex] = (keys_info[apex][0], key, keys_info[apex][2])
+
   # Apply all the --extra_apex_payload_key options to override the payload
   # signing keys in the given keys_info.
   for apex, key in OPTIONS.extra_apex_payload_keys.items():
@@ -1380,8 +1401,9 @@ def main(argv):
       for n in names:
         OPTIONS.extra_apks[n] = key
     elif o == "--extra_apex_payload_key":
-      apex_name, key = a.split("=")
-      OPTIONS.extra_apex_payload_keys[apex_name] = key
+      apex_names, key = a.split("=")
+      for name in apex_names.split(","):
+        OPTIONS.extra_apex_payload_keys[name] = key
     elif o == "--skip_apks_with_path_prefix":
       # Check the prefix, which must be in all upper case.
       prefix = a.split('/')[0]
@@ -1484,6 +1506,10 @@ def main(argv):
       OPTIONS.vendor_partitions = set(a.split(","))
     elif o == "--allow_gsi_debug_sepolicy":
       OPTIONS.allow_gsi_debug_sepolicy = True
+    elif o == "--override_apk_keys":
+      OPTIONS.override_apk_keys = a
+    elif o == "--override_apex_keys":
+      OPTIONS.override_apex_keys = a
     else:
       return False
     return True
@@ -1537,6 +1563,8 @@ def main(argv):
           "vendor_partitions=",
           "vendor_otatools=",
           "allow_gsi_debug_sepolicy",
+          "override_apk_keys=",
+          "override_apex_keys=",
       ],
       extra_option_handler=option_handler)
 

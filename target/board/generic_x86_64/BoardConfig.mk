@@ -22,6 +22,9 @@ TARGET_2ND_CPU_ABI := x86
 TARGET_2ND_ARCH := x86
 TARGET_2ND_ARCH_VARIANT := x86_64
 
+# Include 64-bit mediaserver to support 64-bit only devices
+TARGET_DYNAMIC_64_32_MEDIASERVER := true
+
 include build/make/target/board/BoardConfigGsiCommon.mk
 
 ifndef BUILDING_GSI

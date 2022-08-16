@@ -963,19 +963,17 @@ define get-partition-size-argument
   $(if $(1),--partition_size $(1),--dynamic_partition_size)
 endef
 
+ifndef BOARD_PREBUILT_BOOTIMAGE
+
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 INTERNAL_BOOTIMAGE_ARGS := \
 	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET))
-
-INTERNAL_INIT_BOOT_IMAGE_ARGS :=
 
 # TODO(b/229701033): clean up BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK.
 ifneq ($(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK),true)
   ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
     ifneq ($(BUILDING_INIT_BOOT_IMAGE),true)
       INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
-    else
-      INTERNAL_INIT_BOOT_IMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
     endif
   endif
 endif
@@ -1184,7 +1182,10 @@ endif # BOARD_AVB_ENABLE
 endif # BUILDING_BOOT_IMAGE
 
 else # TARGET_NO_KERNEL == "true"
-ifdef BOARD_PREBUILT_BOOTIMAGE
+INSTALLED_BOOTIMAGE_TARGET :=
+endif # TARGET_NO_KERNEL
+
+else # BOARD_PREBUILT_BOOTIMAGE defined
 INTERNAL_PREBUILT_BOOTIMAGE := $(BOARD_PREBUILT_BOOTIMAGE)
 INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 
@@ -1206,10 +1207,8 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_BOOTIMAGE)
 	cp $(INTERNAL_PREBUILT_BOOTIMAGE) $@
 endif # BOARD_AVB_ENABLE
 
-else # BOARD_PREBUILT_BOOTIMAGE not defined
-INSTALLED_BOOTIMAGE_TARGET :=
 endif # BOARD_PREBUILT_BOOTIMAGE
-endif # TARGET_NO_KERNEL
+
 endif # my_installed_prebuilt_gki_apex not defined
 
 my_apex_extracted_boot_image :=
@@ -1221,6 +1220,8 @@ ifeq ($(BUILDING_INIT_BOOT_IMAGE),true)
 
 INSTALLED_INIT_BOOT_IMAGE_TARGET := $(PRODUCT_OUT)/init_boot.img
 $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_RAMDISK_TARGET)
+
+INTERNAL_INIT_BOOT_IMAGE_ARGS := --ramdisk $(INSTALLED_RAMDISK_TARGET)
 
 ifdef BOARD_KERNEL_PAGESIZE
   INTERNAL_INIT_BOOT_IMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
@@ -1687,6 +1688,63 @@ endif
 endif # PRODUCT_NOTICE_SPLIT
 
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
+
+need_vendor_notice:=false
+ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
+   need_vendor_notice:=true
+endif
+
+ifdef BUILDING_DEBUG_VENDOR_BOOT_IMAGE
+   need_vendor_notice:=true
+endif
+
+ifdef BUILDING_VENDOR_IMAGE
+   need_vendor_notice:=true
+endif
+
+ifeq (true,$(need_vendor_notice))
+ifneq (,$(installed_vendor_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
+endif
+endif
+
+need_vendor_notice:=
+
+ifdef BUILDING_ODM_IMAGE
+ifneq (,$(installed_odm_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_odm_notice_xml_gz)
+endif
+endif
+
+ifdef BUILDING_PRODUCT_IMAGE
+ifneq (,$(installed_product_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_notice_xml_gz)
+endif
+endif
+
+ifdef BUILDING_SYSTEM_EXT_IMAGE
+ifneq (,$(installed_system_ext_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_ext_notice_xml_gz)
+endif
+endif
+
+ifdef BUILDING_VENDOR_DLKM_IMAGE
+ifneq (,$(installed_vendor_dlkm_notice_xml_gz)
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_dlkm_notice_xml_gz)
+endif
+endif
+
+ifdef BUILDING_ODM_DLKM_IMAGE
+ifneq (,$(installed_odm_dlkm_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_odm_dlkm_notice_xml_gz)
+endif
+endif
+
+ifdef BUILDING_SYSTEM_DLKM_IMAGE
+ifneq (,$(installed_system_dlkm_notice_xml_gz))
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_dlkm_notice_xml_gz)
+endif
+endif
 
 endif  # TARGET_BUILD_APPS
 
@@ -2979,20 +3037,29 @@ $(FSVERITY_APK_OUT): PRIVATE_MANIFEST := $(FSVERITY_APK_MANIFEST_PATH)
 $(FSVERITY_APK_OUT): PRIVATE_FRAMEWORK_RES := $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
 $(FSVERITY_APK_OUT): PRIVATE_KEY := $(FSVERITY_APK_KEY_PATH)
 $(FSVERITY_APK_OUT): PRIVATE_INPUTS := $(fsverity-metadata-targets)
+$(FSVERITY_APK_OUT): PRIVATE_ASSETS := $(call intermediates-dir-for,ETC,build_manifest)/assets
 $(FSVERITY_APK_OUT): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
     $(HOST_OUT_EXECUTABLES)/fsverity $(HOST_OUT_EXECUTABLES)/aapt2 \
     $(HOST_OUT_EXECUTABLES)/apksigner $(FSVERITY_APK_MANIFEST_PATH) \
     $(FSVERITY_APK_KEY_PATH).x509.pem $(FSVERITY_APK_KEY_PATH).pk8 \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk \
     $(fsverity-metadata-targets)
-	$< --fsverity-path $(PRIVATE_FSVERITY) --aapt2-path $(PRIVATE_AAPT2) \
+	rm -rf $(PRIVATE_ASSETS)
+	mkdir -p $(PRIVATE_ASSETS)
+	$< --fsverity-path $(PRIVATE_FSVERITY) \
+	    --base-dir $(PRODUCT_OUT) \
+	    --output $(PRIVATE_ASSETS)/build_manifest.pb \
+	    $(PRIVATE_INPUTS)
+	$(PRIVATE_AAPT2) link -o $@ \
+	    -A $(PRIVATE_ASSETS) \
+	    -I $(PRIVATE_FRAMEWORK_RES) \
 	    --min-sdk-version $(PRIVATE_MIN_SDK_VERSION) \
 	    --version-code $(PRIVATE_VERSION_CODE) \
 	    --version-name $(PRIVATE_VERSION_NAME) \
-	    --apksigner-path $(PRIVATE_APKSIGNER) --apk-key-path $(PRIVATE_KEY) \
-	    --apk-manifest-path $(PRIVATE_MANIFEST) --framework-res $(PRIVATE_FRAMEWORK_RES) \
-	    --output $@ \
-	    --base-dir $(PRODUCT_OUT) $(PRIVATE_INPUTS)
+	    --manifest $(PRIVATE_MANIFEST)
+	$(PRIVATE_APKSIGNER) sign --in $@ \
+	    --cert $(PRIVATE_KEY).x509.pem \
+	    --key $(PRIVATE_KEY).pk8
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FSVERITY_APK_OUT)
 
@@ -3857,6 +3924,11 @@ $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET): \
     $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) \
     $(INSTALLED_FILES_FILE_SYSTEM_DLKM)
 	$(build-system_dlkmimage-target)
+
+SYSTEM_DLKM_NOTICE_DEPS += $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
+
+$(call declare-1p-container,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),)
+$(call declare-container-license-deps,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEM_DLKM),$(PRODUCT_OUT)/:/)
 
 .PHONY: system_dlkmimage-nodeps sdnod
 system_dlkmimage-nodeps sdnod: | $(INTERNAL_USERIMAGES_DEPS)
@@ -6189,7 +6261,7 @@ $(APPCOMPAT_ZIP): $(SOONG_ZIP)
 # The mac build doesn't build dex2oat, so create the zip file only if the build OS is linux.
 ifeq ($(BUILD_OS),linux)
 ifneq ($(DEX2OAT),)
-dexpreopt_tools_deps := $(DEXPREOPT_GEN_DEPS) $(DEXPREOPT_GEN) $(AAPT2)
+dexpreopt_tools_deps := $(DEXPREOPT_GEN_DEPS) $(DEXPREOPT_GEN)
 dexpreopt_tools_deps += $(HOST_OUT_EXECUTABLES)/dexdump
 dexpreopt_tools_deps += $(HOST_OUT_EXECUTABLES)/oatdump
 DEXPREOPT_TOOLS_ZIP := $(PRODUCT_OUT)/dexpreopt_tools.zip
@@ -6524,21 +6596,21 @@ INSTALLED_SUPERIMAGE_DEPENDENCIES += $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 endif
 endif
 
-# If BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT is set, super.img is built from images in the
-# $(PRODUCT_OUT) directory, and is built to $(PRODUCT_OUT)/super.img. Also, it will
-# be built for non-dist builds. This is useful for devices that uses super.img directly, e.g.
-# virtual devices.
-ifeq (true,$(BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT))
 $(INSTALLED_SUPERIMAGE_TARGET): $(INSTALLED_SUPERIMAGE_DEPENDENCIES)
 	$(call pretty,"Target super fs image for debug: $@")
 	$(call build-superimage-target,$(INSTALLED_SUPERIMAGE_TARGET),\
           $(call intermediates-dir-for,PACKAGING,superimage_debug)/misc_info.txt)
 
-droidcore-unbundled: $(INSTALLED_SUPERIMAGE_TARGET)
-
 # For devices that uses super image directly, the superimage target points to the file in $(PRODUCT_OUT).
 .PHONY: superimage
 superimage: $(INSTALLED_SUPERIMAGE_TARGET)
+
+# If BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT is set, super.img is built from images in the
+# $(PRODUCT_OUT) directory, and is built to $(PRODUCT_OUT)/super.img. Also, it will
+# be built for non-dist builds. This is useful for devices that uses super.img directly, e.g.
+# virtual devices.
+ifeq (true,$(BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT))
+droidcore-unbundled: $(INSTALLED_SUPERIMAGE_TARGET)
 
 $(call dist-for-goals,dist_files,$(INSTALLED_MISC_INFO_TARGET):super_misc_info.txt)
 endif # BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT
