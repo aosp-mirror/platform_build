@@ -99,15 +99,15 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       The second dir will be used for lookup if BOARD_USES_RECOVERY_AS_BOOT is
       set to true.
 
-  --avb_{boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
+  --avb_{boot,recovery,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
          vbmeta_vendor}_algorithm <algorithm>
-  --avb_{boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
+  --avb_{boot,recovery,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
          vbmeta_vendor}_key <key>
       Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
       the specified image. Otherwise it uses the existing values in info dict.
 
-  --avb_{apex,boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
-         vbmeta_vendor}_extra_args <args>
+  --avb_{apex,boot,recovery,system,system_other,vendor,dtbo,vbmeta,
+         vbmeta_system,vbmeta_vendor}_extra_args <args>
       Specify any additional args that are needed to AVB-sign the image
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
       the existing ones in info dict.
@@ -1450,6 +1450,12 @@ def main(argv):
       OPTIONS.avb_algorithms['dtbo'] = a
     elif o == "--avb_dtbo_extra_args":
       OPTIONS.avb_extra_args['dtbo'] = a
+    elif o == "--avb_recovery_key":
+      OPTIONS.avb_keys['recovery'] = a
+    elif o == "--avb_recovery_algorithm":
+      OPTIONS.avb_algorithms['recovery'] = a
+    elif o == "--avb_recovery_extra_args":
+      OPTIONS.avb_extra_args['recovery'] = a
     elif o == "--avb_system_key":
       OPTIONS.avb_keys['system'] = a
     elif o == "--avb_system_algorithm":
@@ -1539,6 +1545,9 @@ def main(argv):
           "avb_dtbo_algorithm=",
           "avb_dtbo_key=",
           "avb_dtbo_extra_args=",
+          "avb_recovery_algorithm=",
+          "avb_recovery_key=",
+          "avb_recovery_extra_args=",
           "avb_system_algorithm=",
           "avb_system_key=",
           "avb_system_extra_args=",

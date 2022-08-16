@@ -76,7 +76,9 @@ $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 # are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
 # default.
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
+  bluetooth \
   permission \
+  uwb \
   wifi \
 
 $(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
@@ -117,3 +119,11 @@ else
   SYSTEM_OPTIMIZE_JAVA ?= true
 endif
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
+
+# Check for SupplementalApi module.
+ifeq ($(wildcard packages/modules/SupplementalApi),)
+$(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,false)
+else
+$(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,true)
+endif
+
