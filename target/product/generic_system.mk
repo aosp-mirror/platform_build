@@ -52,11 +52,6 @@ PRODUCT_PACKAGES += \
     cppreopts.sh \
     otapreopt_script \
 
-# Bluetooth libraries
-PRODUCT_PACKAGES += \
-    audio.a2dp.default \
-    audio.hearing_aid.default \
-
 # For ringtones that rely on forward lock encryption
 PRODUCT_PACKAGES += libfwdlockengine
 
