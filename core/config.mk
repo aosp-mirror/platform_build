@@ -712,26 +712,10 @@ ifeq ($(PRODUCT_FULL_TREBLE),true)
   BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED ?= true
 endif
 
-# If PRODUCT_USE_VNDK is true and BOARD_VNDK_VERSION is not defined yet,
-# BOARD_VNDK_VERSION will be set to "current" as default.
-# PRODUCT_USE_VNDK will be true in Android-P or later launching devices.
-PRODUCT_USE_VNDK := false
-ifneq ($(PRODUCT_USE_VNDK_OVERRIDE),)
-  PRODUCT_USE_VNDK := $(PRODUCT_USE_VNDK_OVERRIDE)
-else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  # No shipping level defined
-else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),27),true)
-  PRODUCT_USE_VNDK := $(PRODUCT_FULL_TREBLE)
+# Starting in Android U, non-VNDK devices not supported
+ifndef BOARD_VNDK_VERSION
+BOARD_VNDK_VERSION := current
 endif
-
-ifeq ($(PRODUCT_USE_VNDK),true)
-  ifndef BOARD_VNDK_VERSION
-    BOARD_VNDK_VERSION := current
-  endif
-endif
-
-$(KATI_obsolete_var PRODUCT_USE_VNDK,Use BOARD_VNDK_VERSION instead)
-$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use BOARD_VNDK_VERSION instead)
 
 ifdef PRODUCT_PRODUCT_VNDK_VERSION
   ifndef BOARD_VNDK_VERSION
