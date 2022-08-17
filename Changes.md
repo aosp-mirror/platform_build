@@ -1,5 +1,31 @@
 # Build System Changes for Android.mk Writers
 
+## Stop referencing sysprop_library directly from cc modules
+
+For the migration to Bazel, we are no longer mapping sysprop_library targets
+to their generated `cc_library` counterparts when dependning on them from a
+cc module. Instead, directly depend on the generated module by prefixing the
+module name with `lib`. For example, depending on the following module:
+
+```
+sysprop_library {
+    name: "foo",
+    srcs: ["foo.sysprop"],
+}
+```
+
+from a module named `bar` can be done like so:
+
+```
+cc_library {
+    name: "bar",
+    srcs: ["bar.cc"],
+    deps: ["libfoo"],
+}
+```
+
+Failure to do this will result in an error about a missing variant.
+
 ## Gensrcs starts disallowing depfile property
 
 To migrate all gensrcs to Bazel, we are restricting the use of depfile property
