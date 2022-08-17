@@ -816,6 +816,16 @@ is 26 or 27, you can add `"target-level"="1"` to your device manifest instead.
 Clang is the default and only supported Android compiler, so there is no reason
 for this option to exist.
 
+### Stop using clang property
+
+Clang has been deleted from Soong. To fix any build errors, remove the clang
+property from affected Android.bp files using bpmodify.
+
+
+``` make
+go run bpmodify.go -w -m=module_name -remove-property=true -property=clang filepath
+```
+
 ### Other envsetup.sh variables  {#other_envsetup_variables}
 
 * ANDROID_TOOLCHAIN
