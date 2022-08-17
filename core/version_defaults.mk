@@ -42,24 +42,23 @@ endif
 
 DEFAULT_PLATFORM_VERSION := UP1A
 .KATI_READONLY := DEFAULT_PLATFORM_VERSION
-MIN_PLATFORM_VERSION := TP1A
+MIN_PLATFORM_VERSION := UP1A
 MAX_PLATFORM_VERSION := UP1A
 
 # The last stable version name of the platform that was released.  During
 # development, this stays at that previous version, while the codename indicates
 # further work based on the previous version.
-PLATFORM_VERSION_LAST_STABLE := 12
+PLATFORM_VERSION_LAST_STABLE := 13
 .KATI_READONLY := PLATFORM_VERSION_LAST_STABLE
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.TP1A := Tiramisu
 PLATFORM_VERSION_CODENAME.UP1A := UpsideDownCake
 
 # This is the user-visible version.  In a final release build it should
 # be empty to use PLATFORM_VERSION as the user-visible version.  For
 # a preview release it can be set to a user-friendly value like `12 Preview 1`
-PLATFORM_DISPLAY_VERSION :=
+PLATFORM_DISPLAY_VERSION := 13
 
 ifndef PLATFORM_SDK_VERSION
   # This is the canonical definition of the SDK version, which defines
@@ -74,16 +73,16 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 32
+  PLATFORM_SDK_VERSION := 33
 endif
 .KATI_READONLY := PLATFORM_SDK_VERSION
 
 # This is the sdk extension version of this tree.
-PLATFORM_SDK_EXTENSION_VERSION := 1
+PLATFORM_SDK_EXTENSION_VERSION := 3
 .KATI_READONLY := PLATFORM_SDK_EXTENSION_VERSION
 
 # This is the sdk extension version that PLATFORM_SDK_VERSION ships with.
-PLATFORM_BASE_SDK_EXTENSION_VERSION := 1
+PLATFORM_BASE_SDK_EXTENSION_VERSION := 3
 .KATI_READONLY := PLATFORM_BASE_SDK_EXTENSION_VERSION
 
 # This are all known codenames.
@@ -104,9 +103,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-    PLATFORM_SECURITY_PATCH := 2022-07-05
+    PLATFORM_SECURITY_PATCH := 2022-08-05
 endif
-.KATI_READONLY := PLATFORM_SECURITY_PATCH
 
 include $(BUILD_SYSTEM)/version_util.mk
-
