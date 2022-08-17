@@ -136,10 +136,7 @@ _product_list_vars += PRODUCT_BOOT_JARS
 # PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
 _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 
-_product_single_value_vars += PRODUCT_SUPPORTS_BOOT_SIGNER
 _product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
-_product_single_value_vars += PRODUCT_SUPPORTS_VERITY
-_product_single_value_vars += PRODUCT_SUPPORTS_VERITY_FEC
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 # List of system_server classpath jars on the platform.
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
@@ -168,7 +165,6 @@ _product_list_vars += PRODUCT_DEXPREOPT_SPEED_APPS
 _product_list_vars += PRODUCT_LOADED_BY_PRIVILEGED_MODULES
 _product_single_value_vars += PRODUCT_VBOOT_SIGNING_KEY
 _product_single_value_vars += PRODUCT_VBOOT_SIGNING_SUBKEY
-_product_single_value_vars += PRODUCT_VERITY_SIGNING_KEY
 _product_single_value_vars += PRODUCT_SYSTEM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_VENDOR_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_PRODUCT_VERITY_PARTITION
