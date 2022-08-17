@@ -166,23 +166,6 @@ def CreateVerityImageBuilder(prop_dict):
   if partition_size:
     partition_size = int(partition_size)
 
-  # Verified Boot 1.0
-  verity_supported = prop_dict.get("verity") == "true"
-  is_verity_partition = "verity_block_device" in prop_dict
-  if verity_supported and is_verity_partition:
-    if OPTIONS.verity_signer_path is not None:
-      signer_path = OPTIONS.verity_signer_path
-    else:
-      signer_path = prop_dict["verity_signer_cmd"]
-    return Version1VerityImageBuilder(
-        partition_size,
-        prop_dict["verity_block_device"],
-        prop_dict.get("verity_fec") == "true",
-        signer_path,
-        prop_dict["verity_key"] + ".pk8",
-        OPTIONS.verity_signer_args,
-        "verity_disable" in prop_dict)
-
   # Verified Boot 2.0
   if (prop_dict.get("avb_hash_enable") == "true" or
       prop_dict.get("avb_hashtree_enable") == "true"):
@@ -243,125 +226,6 @@ class VerityImageBuilder(object):
   def Build(self, out_file):
     """Builds the verity image and writes it to the given file."""
     raise NotImplementedError
-
-
-class Version1VerityImageBuilder(VerityImageBuilder):
-  """A VerityImageBuilder for Verified Boot 1.0."""
-
-  def __init__(self, partition_size, block_dev, fec_supported, signer_path,
-               signer_key, signer_args, verity_disable):
-    self.version = 1
-    self.partition_size = partition_size
-    self.block_device = block_dev
-    self.fec_supported = fec_supported
-    self.signer_path = signer_path
-    self.signer_key = signer_key
-    self.signer_args = signer_args
-    self.verity_disable = verity_disable
-    self.image_size = None
-    self.verity_size = None
-
-  def CalculateDynamicPartitionSize(self, image_size):
-    # This needs to be implemented. Note that returning the given image size as
-    # the partition size doesn't make sense, as it will fail later.
-    raise NotImplementedError
-
-  def CalculateMaxImageSize(self, partition_size=None):
-    """Calculates the max image size by accounting for the verity metadata.
-
-    Args:
-      partition_size: The partition size, which defaults to self.partition_size
-          if unspecified.
-
-    Returns:
-      The size of the image adjusted for verity metadata.
-    """
-    if partition_size is None:
-      partition_size = self.partition_size
-    assert partition_size > 0, \
-        "Invalid partition size: {}".format(partition_size)
-
-    hi = partition_size
-    if hi % BLOCK_SIZE != 0:
-      hi = (hi // BLOCK_SIZE) * BLOCK_SIZE
-
-    # verity tree and fec sizes depend on the partition size, which
-    # means this estimate is always going to be unnecessarily small
-    verity_size = GetVeritySize(hi, self.fec_supported)
-    lo = partition_size - verity_size
-    result = lo
-
-    # do a binary search for the optimal size
-    while lo < hi:
-      i = ((lo + hi) // (2 * BLOCK_SIZE)) * BLOCK_SIZE
-      v = GetVeritySize(i, self.fec_supported)
-      if i + v <= partition_size:
-        if result < i:
-          result = i
-          verity_size = v
-        lo = i + BLOCK_SIZE
-      else:
-        hi = i
-
-    self.image_size = result
-    self.verity_size = verity_size
-
-    logger.info(
-        "Calculated image size for verity: partition_size %d, image_size %d, "
-        "verity_size %d", partition_size, result, verity_size)
-    return result
-
-  def Build(self, out_file):
-    """Creates an image that is verifiable using dm-verity.
-
-    Args:
-      out_file: the output image.
-
-    Returns:
-      AssertionError: On invalid partition sizes.
-      BuildVerityImageError: On other errors.
-    """
-    image_size = int(self.image_size)
-    tempdir_name = common.MakeTempDir(suffix="_verity_images")
-
-    # Get partial image paths.
-    verity_image_path = os.path.join(tempdir_name, "verity.img")
-    verity_metadata_path = os.path.join(tempdir_name, "verity_metadata.img")
-
-    # Build the verity tree and get the root hash and salt.
-    root_hash, salt = BuildVerityTree(out_file, verity_image_path)
-
-    # Build the metadata blocks.
-    BuildVerityMetadata(
-        image_size, verity_metadata_path, root_hash, salt, self.block_device,
-        self.signer_path, self.signer_key, self.signer_args,
-        self.verity_disable)
-
-    padding_size = self.partition_size - self.image_size - self.verity_size
-    assert padding_size >= 0
-
-    # Build the full verified image.
-    Append(
-        verity_image_path, verity_metadata_path,
-        "Failed to append verity metadata")
-
-    if self.fec_supported:
-      # Build FEC for the entire partition, including metadata.
-      verity_fec_path = os.path.join(tempdir_name, "verity_fec.img")
-      BuildVerityFEC(
-          out_file, verity_image_path, verity_fec_path, padding_size)
-      Append(verity_image_path, verity_fec_path, "Failed to append FEC")
-
-    Append2Simg(
-        out_file, verity_image_path, "Failed to append verity data")
-
-  def PadSparseImage(self, out_file):
-    sparse_image_size = GetSimgSize(out_file)
-    if sparse_image_size > self.image_size:
-      raise BuildVerityImageError(
-          "Error: image size of {} is larger than partition size of "
-          "{}".format(sparse_image_size, self.image_size))
-    ZeroPadSimg(out_file, self.image_size - sparse_image_size)
 
 
 class VerifiedBootVersion2VerityImageBuilder(VerityImageBuilder):
@@ -536,15 +400,7 @@ class HashtreeInfo(object):
 
 
 def CreateHashtreeInfoGenerator(partition_name, block_size, info_dict):
-  generator = None
-  if (info_dict.get("verity") == "true" and
-      info_dict.get("{}_verity_block_device".format(partition_name))):
-    partition_size = info_dict["{}_size".format(partition_name)]
-    fec_supported = info_dict.get("verity_fec") == "true"
-    generator = VerifiedBootVersion1HashtreeInfoGenerator(
-        partition_size, block_size, fec_supported)
-
-  return generator
+  return None
 
 
 class HashtreeInfoGenerator(object):

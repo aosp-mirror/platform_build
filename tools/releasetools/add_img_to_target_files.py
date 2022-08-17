@@ -457,8 +457,7 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
 
   # Set the '_image_size' for given image size.
   is_verity_partition = "verity_block_device" in image_props
-  verity_supported = (image_props.get("verity") == "true" or
-                      image_props.get("avb_enable") == "true")
+  verity_supported = (image_props.get("avb_enable") == "true")
   is_avb_enable = image_props.get("avb_hashtree_enable") == "true"
   if verity_supported and (is_verity_partition or is_avb_enable):
     image_size = image_props.get("image_size")
