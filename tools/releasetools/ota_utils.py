@@ -16,6 +16,7 @@ import copy
 import itertools
 import logging
 import os
+import shutil
 import struct
 import zipfile
 
@@ -119,7 +120,7 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
 
   # Re-sign the package after updating the metadata entry.
   if OPTIONS.no_signing:
-    output_file = prelim_signing
+    shutil.copy(prelim_signing, output_file)
   else:
     SignOutput(prelim_signing, output_file)
 
