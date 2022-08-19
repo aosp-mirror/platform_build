@@ -76,8 +76,6 @@ OPTIONS = common.OPTIONS
 OPTIONS.add_missing = False
 OPTIONS.rebuild_recovery = False
 OPTIONS.replace_updated_files_list = []
-OPTIONS.replace_verity_public_key = False
-OPTIONS.replace_verity_private_key = False
 OPTIONS.is_signing = False
 
 # Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
@@ -1063,9 +1061,11 @@ def main(argv):
     elif o in ("-r", "--rebuild_recovery",):
       OPTIONS.rebuild_recovery = True
     elif o == "--replace_verity_private_key":
-      OPTIONS.replace_verity_private_key = (True, a)
+      raise ValueError("--replace_verity_private_key is no longer supported,"
+                       " please switch to AVB")
     elif o == "--replace_verity_public_key":
-      OPTIONS.replace_verity_public_key = (True, a)
+      raise ValueError("--replace_verity_public_key is no longer supported,"
+                       " please switch to AVB")
     elif o == "--is_signing":
       OPTIONS.is_signing = True
     else:
