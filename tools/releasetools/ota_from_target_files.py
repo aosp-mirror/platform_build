@@ -1289,8 +1289,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
   target_zip = zipfile.ZipFile(target_file, "r", allowZip64=True)
-  if (target_info.get("verity") == "true" or
-          target_info.get("avb_enable") == "true"):
+  if target_info.get("avb_enable") == "true":
     care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
                      "META/" + x in target_zip.namelist()]
 

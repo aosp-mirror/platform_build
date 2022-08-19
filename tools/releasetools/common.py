@@ -1678,23 +1678,9 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
     with open(img.name, 'ab') as f:
       f.write(boot_signature_bytes)
 
-  if (info_dict.get("boot_signer") == "true" and
-          info_dict.get("verity_key")):
-    # Hard-code the path as "/boot" for two-step special recovery image (which
-    # will be loaded into /boot during the two-step OTA).
-    if two_step_image:
-      path = "/boot"
-    else:
-      path = "/" + partition_name
-    cmd = [OPTIONS.boot_signer_path]
-    cmd.extend(OPTIONS.boot_signer_args)
-    cmd.extend([path, img.name,
-                info_dict["verity_key"] + ".pk8",
-                info_dict["verity_key"] + ".x509.pem", img.name])
-    RunAndCheckOutput(cmd)
 
   # Sign the image if vboot is non-empty.
-  elif info_dict.get("vboot"):
+  if info_dict.get("vboot"):
     path = "/" + partition_name
     img_keyblock = tempfile.NamedTemporaryFile()
     # We have switched from the prebuilt futility binary to using the tool
