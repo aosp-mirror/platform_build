@@ -3836,6 +3836,10 @@ endef
 -include $(TOPDIR)vendor/*/build/core/definitions.mk
 -include $(TOPDIR)device/*/build/core/definitions.mk
 -include $(TOPDIR)product/*/build/core/definitions.mk
+# Also the project-specific definitions.mk file
+-include $(TOPDIR)vendor/*/*/build/core/definitions.mk
+-include $(TOPDIR)device/*/*/build/core/definitions.mk
+-include $(TOPDIR)product/*/*/build/core/definitions.mk
 
 # broken:
 #	$(foreach file,$^,$(if $(findstring,.a,$(suffix $file)),-l$(file),$(file)))
