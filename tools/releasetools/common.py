@@ -861,6 +861,10 @@ def LoadInfoDict(input_file, repacking=False):
         d["avb_{}_salt".format(partition)] = sha256(
             fingerprint.encode()).hexdigest()
 
+    # Set up the salt for partitions without build.prop
+    if build_info.fingerprint:
+      d["avb_salt"] = sha256(build_info.fingerprint.encode()).hexdigest()
+
     # Set the vbmeta digest if exists
     try:
       d["vbmeta_digest"] = read_helper("META/vbmeta_digest.txt").rstrip()
