@@ -269,6 +269,7 @@ from common import IsSparseImage
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
+from payload_signer import PayloadSigner
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -333,70 +334,6 @@ SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
     'boot', 'dtbo', 'modem', 'odm', 'odm_dlkm', 'product', 'radio', 'recovery',
     'system_dlkm', 'system_ext', 'vbmeta', 'vbmeta_system', 'vbmeta_vendor',
     'vendor', 'vendor_boot']
-
-
-class PayloadSigner(object):
-  """A class that wraps the payload signing works.
-
-  When generating a Payload, hashes of the payload and metadata files will be
-  signed with the device key, either by calling an external payload signer or
-  by calling openssl with the package key. This class provides a unified
-  interface, so that callers can just call PayloadSigner.Sign().
-
-  If an external payload signer has been specified (OPTIONS.payload_signer), it
-  calls the signer with the provided args (OPTIONS.payload_signer_args). Note
-  that the signing key should be provided as part of the payload_signer_args.
-  Otherwise without an external signer, it uses the package key
-  (OPTIONS.package_key) and calls openssl for the signing works.
-  """
-
-  def __init__(self):
-    if OPTIONS.payload_signer is None:
-      # Prepare the payload signing key.
-      private_key = OPTIONS.package_key + OPTIONS.private_key_suffix
-      pw = OPTIONS.key_passwords[OPTIONS.package_key]
-
-      cmd = ["openssl", "pkcs8", "-in", private_key, "-inform", "DER"]
-      cmd.extend(["-passin", "pass:" + pw] if pw else ["-nocrypt"])
-      signing_key = common.MakeTempFile(prefix="key-", suffix=".key")
-      cmd.extend(["-out", signing_key])
-      common.RunAndCheckOutput(cmd, verbose=False)
-
-      self.signer = "openssl"
-      self.signer_args = ["pkeyutl", "-sign", "-inkey", signing_key,
-                          "-pkeyopt", "digest:sha256"]
-      self.maximum_signature_size = self._GetMaximumSignatureSizeInBytes(
-          signing_key)
-    else:
-      self.signer = OPTIONS.payload_signer
-      self.signer_args = OPTIONS.payload_signer_args
-      if OPTIONS.payload_signer_maximum_signature_size:
-        self.maximum_signature_size = int(
-            OPTIONS.payload_signer_maximum_signature_size)
-      else:
-        # The legacy config uses RSA2048 keys.
-        logger.warning("The maximum signature size for payload signer is not"
-                       " set, default to 256 bytes.")
-        self.maximum_signature_size = 256
-
-  @staticmethod
-  def _GetMaximumSignatureSizeInBytes(signing_key):
-    out_signature_size_file = common.MakeTempFile("signature_size")
-    cmd = ["delta_generator", "--out_maximum_signature_size_file={}".format(
-        out_signature_size_file), "--private_key={}".format(signing_key)]
-    common.RunAndCheckOutput(cmd)
-    with open(out_signature_size_file) as f:
-      signature_size = f.read().rstrip()
-    logger.info("%s outputs the maximum signature size: %s", cmd[0],
-                signature_size)
-    return int(signature_size)
-
-  def Sign(self, in_file):
-    """Signs the given input file. Returns the output filename."""
-    out_file = common.MakeTempFile(prefix="signed-", suffix=".bin")
-    cmd = [self.signer] + self.signer_args + ['-in', in_file, '-out', out_file]
-    common.RunAndCheckOutput(cmd)
-    return out_file
 
 
 class Payload(object):
@@ -1073,7 +1010,7 @@ def GeneratePartitionTimestampFlagsDowngrade(
   for part in pre_partition_state:
     if part.partition_name in partition_timestamps:
       partition_timestamps[part.partition_name] = \
-        max(part.version, partition_timestamps[part.partition_name])
+          max(part.version, partition_timestamps[part.partition_name])
   return [
       "--partition_timestamps",
       ",".join([key + ":" + val for (key, val)
@@ -1266,7 +1203,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   )
 
   # Sign the payload.
-  payload_signer = PayloadSigner()
+  payload_signer = PayloadSigner(
+      OPTIONS.package_key, OPTIONS.private_key_suffix)
   payload.Sign(payload_signer)
 
   # Write the payload into output zip.
