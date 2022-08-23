@@ -282,37 +282,6 @@ class VerifiedBootVersion2VerityImageBuilder(VerityImageBuilder):
       raise BuildVerityImageError("Failed to add AVB footer: {}".format(output))
 
 
-class HashtreeInfoGenerationError(Exception):
-  """An Exception raised during hashtree info generation."""
-
-  def __init__(self, message):
-    Exception.__init__(self, message)
-
-
-class HashtreeInfo(object):
-  def __init__(self):
-    self.hashtree_range = None
-    self.filesystem_range = None
-    self.hash_algorithm = None
-    self.salt = None
-    self.root_hash = None
-
-
-def CreateHashtreeInfoGenerator(partition_name, block_size, info_dict):
-  return None
-
-
-class HashtreeInfoGenerator(object):
-  def Generate(self, image):
-    raise NotImplementedError
-
-  def DecomposeSparseImage(self, image):
-    raise NotImplementedError
-
-  def ValidateHashtree(self):
-    raise NotImplementedError
-
-
 def CreateCustomImageBuilder(info_dict, partition_name, partition_size,
                             key_path, algorithm, signing_args):
   builder = None

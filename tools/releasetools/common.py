@@ -2055,7 +2055,6 @@ def UnzipTemp(filename, patterns=None):
 def GetUserImage(which, tmpdir, input_zip,
                  info_dict=None,
                  allow_shared_blocks=None,
-                 hashtree_info_generator=None,
                  reset_file_map=False):
   """Returns an Image object suitable for passing to BlockImageDiff.
 
@@ -2072,8 +2071,6 @@ def GetUserImage(which, tmpdir, input_zip,
     info_dict: The dict to be looked up for relevant info.
     allow_shared_blocks: If image is sparse, whether having shared blocks is
         allowed. If none, it is looked up from info_dict.
-    hashtree_info_generator: If present and image is sparse, generates the
-        hashtree_info for this sparse image.
     reset_file_map: If true and image is sparse, reset file map before returning
         the image.
   Returns:
@@ -2095,15 +2092,14 @@ def GetUserImage(which, tmpdir, input_zip,
     allow_shared_blocks = info_dict.get("ext4_share_dup_blocks") == "true"
 
   if is_sparse:
-    img = GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
-                         hashtree_info_generator)
+    img = GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks)
     if reset_file_map:
       img.ResetFileMap()
     return img
-  return GetNonSparseImage(which, tmpdir, hashtree_info_generator)
+  return GetNonSparseImage(which, tmpdir)
 
 
-def GetNonSparseImage(which, tmpdir, hashtree_info_generator=None):
+def GetNonSparseImage(which, tmpdir):
   """Returns a Image object suitable for passing to BlockImageDiff.
 
   This function loads the specified non-sparse image from the given path.
@@ -2121,11 +2117,10 @@ def GetNonSparseImage(which, tmpdir, hashtree_info_generator=None):
   # ota_from_target_files.py (since LMP).
   assert os.path.exists(path) and os.path.exists(mappath)
 
-  return images.FileImage(path, hashtree_info_generator=hashtree_info_generator)
+  return images.FileImage(path)
 
 
-def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
-                   hashtree_info_generator=None):
+def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
   """Returns a SparseImage object suitable for passing to BlockImageDiff.
 
   This function loads the specified sparse image from the given path, and
@@ -2138,8 +2133,6 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
     tmpdir: The directory that contains the prebuilt image and block map file.
     input_zip: The target-files ZIP archive.
     allow_shared_blocks: Whether having shared blocks is allowed.
-    hashtree_info_generator: If present, generates the hashtree_info for this
-        sparse image.
   Returns:
     A SparseImage object, with file_map info loaded.
   """
@@ -2156,8 +2149,7 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
   clobbered_blocks = "0"
 
   image = sparse_img.SparseImage(
-      path, mappath, clobbered_blocks, allow_shared_blocks=allow_shared_blocks,
-      hashtree_info_generator=hashtree_info_generator)
+      path, mappath, clobbered_blocks, allow_shared_blocks=allow_shared_blocks)
 
   # block.map may contain less blocks, because mke2fs may skip allocating blocks
   # if they contain all zeros. We can't reconstruct such a file from its block

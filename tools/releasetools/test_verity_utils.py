@@ -27,8 +27,7 @@ from rangelib import RangeSet
 from test_utils import (
     get_testdata_dir, ReleaseToolsTestCase, SkipIfExternalToolsUnavailable)
 from verity_utils import (
-    CalculateVbmetaDigest, CreateHashtreeInfoGenerator,
-    CreateVerityImageBuilder, HashtreeInfo)
+    CalculateVbmetaDigest, CreateVerityImageBuilder)
 
 BLOCK_SIZE = common.BLOCK_SIZE
 
