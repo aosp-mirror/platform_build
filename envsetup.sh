@@ -1069,7 +1069,7 @@ function qpid() {
 # Easy way to make system.img/etc writable
 function syswrite() {
   adb wait-for-device && adb root || return 1
-  if [[ $(adb disable-verity | grep "reboot") ]]; then
+  if [[ $(adb disable-verity | grep -i "reboot") ]]; then
       echo "rebooting"
       adb reboot && adb wait-for-device && adb root || return 1
   fi
