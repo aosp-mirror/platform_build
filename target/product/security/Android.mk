@@ -1,43 +1,6 @@
 LOCAL_PATH:= $(call my-dir)
 
 #######################################
-# verity_key (installed to /, i.e. part of system.img)
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := verity_key
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_SRC_FILES := $(LOCAL_MODULE)
-LOCAL_MODULE_CLASS := ETC
-LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
-
-# For devices using a separate ramdisk, we need a copy there to establish the chain of trust.
-ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-LOCAL_REQUIRED_MODULES := verity_key_ramdisk
-endif
-
-include $(BUILD_PREBUILT)
-
-#######################################
-# verity_key (installed to ramdisk)
-#
-# Enabling the target when using system-as-root would cause build failure, as TARGET_RAMDISK_OUT
-# points to the same location as TARGET_ROOT_OUT.
-ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-  include $(CLEAR_VARS)
-  LOCAL_MODULE := verity_key_ramdisk
-  LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-  LOCAL_LICENSE_CONDITIONS := notice
-  LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-  LOCAL_MODULE_CLASS := ETC
-  LOCAL_SRC_FILES := verity_key
-  LOCAL_MODULE_STEM := verity_key
-  LOCAL_MODULE_PATH := $(TARGET_RAMDISK_OUT)
-  include $(BUILD_PREBUILT)
-endif
-
-#######################################
 # adb key, if configured via PRODUCT_ADB_KEYS
 ifdef PRODUCT_ADB_KEYS
   ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)

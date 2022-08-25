@@ -799,6 +799,10 @@ function lunch()
     set_stuff_for_environment
     [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || printconfig
     destroy_build_var_cache
+
+    if [[ -n "${CHECK_MU_CONFIG:-}" ]]; then
+      check_mu_config
+    fi
 }
 
 unset COMMON_LUNCH_CHOICES_CACHE
@@ -1065,7 +1069,7 @@ function qpid() {
 # Easy way to make system.img/etc writable
 function syswrite() {
   adb wait-for-device && adb root || return 1
-  if [[ $(adb disable-verity | grep "reboot") ]]; then
+  if [[ $(adb disable-verity | grep -i "reboot") ]]; then
       echo "rebooting"
       adb reboot && adb wait-for-device && adb root || return 1
   fi
@@ -1842,7 +1846,20 @@ function b()
         bazel help
     else
         # Else, always run with the bp2build configuration, which sets Bazel's package path to the synthetic workspace.
-        bazel "$@" --config=bp2build
+        # Add the --config=bp2build after the first argument that doesn't start with a dash. That should be the bazel
+        # command. (build, test, run, ect) If the --config was added at the end, it wouldn't work with commands like:
+        # b run //foo -- --args-for-foo
+        local previous_args=""
+        for arg in $@;
+        do
+            previous_args+="$arg "
+            shift
+            if [[ $arg != -* ]]; # if $arg doesn't start with a dash
+            then
+                break
+            fi
+        done
+        bazel $previous_args --config=bp2build $@
     fi
 )
 
