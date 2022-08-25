@@ -64,11 +64,11 @@ PRODUCT_PACKAGES += \
 
 # Support additional VNDK snapshots
 PRODUCT_EXTRA_VNDK_VERSIONS := \
-    28 \
     29 \
     30 \
     31 \
     32 \
+    33 \
 
 # Do not build non-GSI partition images.
 PRODUCT_BUILD_CACHE_IMAGE := false

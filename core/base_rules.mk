@@ -1121,6 +1121,9 @@ endif
 ifdef LOCAL_IS_UNIT_TEST
 ALL_MODULES.$(my_register_name).IS_UNIT_TEST := $(LOCAL_IS_UNIT_TEST)
 endif
+ifdef LOCAL_TEST_OPTIONS_TAGS
+ALL_MODULES.$(my_register_name).TEST_OPTIONS_TAGS := $(LOCAL_TEST_OPTIONS_TAGS)
+endif
 test_config :=
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
