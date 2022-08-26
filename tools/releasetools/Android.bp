@@ -151,6 +151,7 @@ python_defaults {
         "non_ab_ota.py",
         "ota_from_target_files.py",
         "ota_utils.py",
+        "payload_signer.py",
         "target_files_diff.py",
     ],
     libs: [
