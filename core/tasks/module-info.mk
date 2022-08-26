@@ -24,6 +24,7 @@ $(MODULE_INFO_JSON):
 			'"classes_jar": [$(foreach w,$(sort $(ALL_MODULES.$(m).CLASSES_JAR)),"$(w)", )], ' \
 			'"test_mainline_modules": [$(foreach w,$(sort $(ALL_MODULES.$(m).TEST_MAINLINE_MODULES)),"$(w)", )], ' \
 			'"is_unit_test": "$(ALL_MODULES.$(m).IS_UNIT_TEST)", ' \
+			'"test_options_tags": [$(foreach w,$(sort $(ALL_MODULES.$(m).TEST_OPTIONS_TAGS)),"$(w)", )], ' \
 			'"data": [$(foreach w,$(sort $(ALL_MODULES.$(m).TEST_DATA)),"$(w)", )], ' \
 			'"runtime_dependencies": [$(foreach w,$(sort $(ALL_MODULES.$(m).LOCAL_RUNTIME_LIBRARIES)),"$(w)", )], ' \
 			'"data_dependencies": [$(foreach w,$(sort $(ALL_MODULES.$(m).TEST_DATA_BINS)),"$(w)", )], ' \
