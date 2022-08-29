@@ -1849,17 +1849,21 @@ function b()
         # Add the --config=bp2build after the first argument that doesn't start with a dash. That should be the bazel
         # command. (build, test, run, ect) If the --config was added at the end, it wouldn't work with commands like:
         # b run //foo -- --args-for-foo
-        local previous_args=""
-        for arg in $@;
-        do
-            previous_args+="$arg "
-            shift
-            if [[ $arg != -* ]]; # if $arg doesn't start with a dash
+        local config_set=0
+        local bazel_args_with_config=""
+        for arg in $@; do
+            if [[ $arg == "--" && $config_set -ne 1 ]]; # if we find --, insert config argument here
             then
-                break
+                bazel_args_with_config+="--config=bp2build -- "
+                config_set=1
+            else
+                bazel_args_with_config+="$arg "
             fi
         done
-        bazel $previous_args --config=bp2build $@
+        if [[ $config_set -ne 1 ]]; then
+            bazel_args_with_config+="--config=bp2build "
+        fi
+        eval "bazel $bazel_args_with_config"
     fi
 )
 
