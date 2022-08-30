@@ -23,8 +23,8 @@ import common
 import test_utils
 from sign_target_files_apks import (
     CheckApkAndApexKeysAvailable, EditTags, GetApkFileInfo, ReadApexKeysInfo,
-    ReplaceCerts, ReplaceGkiSigningKey, ReplaceVerityKeyId, RewriteAvbProps,
-    RewriteProps, WriteOtacerts)
+    ReplaceCerts, ReplaceGkiSigningKey, RewriteAvbProps, RewriteProps,
+    WriteOtacerts)
 
 
 class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
@@ -153,64 +153,6 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     self.assertEqual(
         '\n'.join([prop[1] for prop in props]) + '\n',
         RewriteProps('\n'.join([prop[0] for prop in props])))
-
-  def test_ReplaceVerityKeyId(self):
-    BOOT_CMDLINE1 = (
-        "console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 "
-        "androidboot.hardware=marlin user_debug=31 ehci-hcd.park=3 "
-        "lpm_levels.sleep_disabled=1 cma=32M@0-0xffffffff loop.max_part=7 "
-        "buildvariant=userdebug "
-        "veritykeyid=id:7e4333f9bba00adfe0ede979e28ed1920492b40f\n")
-
-    BOOT_CMDLINE2 = (
-        "console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 "
-        "androidboot.hardware=marlin user_debug=31 ehci-hcd.park=3 "
-        "lpm_levels.sleep_disabled=1 cma=32M@0-0xffffffff loop.max_part=7 "
-        "buildvariant=userdebug "
-        "veritykeyid=id:d24f2590e9abab5cff5f59da4c4f0366e3f43e94\n")
-
-    input_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
-      input_zip.writestr('BOOT/cmdline', BOOT_CMDLINE1)
-
-    # Test with the first certificate.
-    cert_file = os.path.join(self.testdata_dir, 'verity.x509.pem')
-
-    output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip, \
-         zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
-      ReplaceVerityKeyId(input_zip, output_zip, cert_file)
-
-    with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE1, output_zip.read('BOOT/cmdline').decode())
-
-    # Test with the second certificate.
-    cert_file = os.path.join(self.testdata_dir, 'testkey.x509.pem')
-
-    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip, \
-         zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
-      ReplaceVerityKeyId(input_zip, output_zip, cert_file)
-
-    with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE2, output_zip.read('BOOT/cmdline').decode())
-
-  def test_ReplaceVerityKeyId_no_veritykeyid(self):
-    BOOT_CMDLINE = (
-        "console=ttyHSL0,115200,n8 androidboot.hardware=bullhead boot_cpus=0-5 "
-        "lpm_levels.sleep_disabled=1 msm_poweroff.download_mode=0 "
-        "loop.max_part=7\n")
-
-    input_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
-      input_zip.writestr('BOOT/cmdline', BOOT_CMDLINE)
-
-    output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip, \
-         zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
-      ReplaceVerityKeyId(input_zip, output_zip, None)
-
-    with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE, output_zip.read('BOOT/cmdline').decode())
 
   def test_ReplaceCerts(self):
     cert1_path = os.path.join(self.testdata_dir, 'platform.x509.pem')
