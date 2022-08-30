@@ -1838,10 +1838,17 @@ function _trigger_build()
 # Convenience entry point (like m) to use Bazel in AOSP.
 function b()
 (
+    # Look for the --run-soong-tests flag and skip passing --skip-soong-tests to Soong if present
+    local run_tests=$(echo "$@" | grep -ow -- "--run-soong-tests")
+    local bazel_args=(${@/--run-soong-tests})
+    local skip_tests="--skip-soong-tests"
+    if [[ -n $run_tests ]]; then
+        skip_tests=""
+    fi
     # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
-    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= || return 1
+    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= $skip_tests || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
-    if [[ -z "$@" ]]; then
+    if [[ -z "$bazel_args" ]]; then
         # If there are no args, show help.
         bazel help
     else
@@ -1849,17 +1856,23 @@ function b()
         # Add the --config=bp2build after the first argument that doesn't start with a dash. That should be the bazel
         # command. (build, test, run, ect) If the --config was added at the end, it wouldn't work with commands like:
         # b run //foo -- --args-for-foo
-        local previous_args=""
-        for arg in $@;
+        local pre_config_args=""
+        local post_config_args=""
+        local start_post_config_args=0
+        for arg in $bazel_args;
         do
-            previous_args+="$arg "
-            shift
+            if [[ $start_post_config_args -eq 0 ]]; then
+                pre_config_args+="$arg "
+            else
+                post_config_args+="$arg "
+            fi
+
             if [[ $arg != -* ]]; # if $arg doesn't start with a dash
             then
-                break
+                start_post_config_args=1
             fi
         done
-        bazel $previous_args --config=bp2build $@
+        eval "bazel $pre_config_args --config=bp2build $post_config_args"
     fi
 )
 
