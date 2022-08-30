@@ -826,6 +826,7 @@ property from affected Android.bp files using bpmodify.
 go run bpmodify.go -w -m=module_name -remove-property=true -property=clang filepath
 ```
 
+`BUILD_BROKEN_CLANG_PROPERTY` can be used as temporarily workaround
 ### Other envsetup.sh variables  {#other_envsetup_variables}
 
 * ANDROID_TOOLCHAIN
