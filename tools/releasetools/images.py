@@ -149,7 +149,7 @@ class DataImage(Image):
 class FileImage(Image):
   """An image wrapped around a raw image file."""
 
-  def __init__(self, path, hashtree_info_generator=None):
+  def __init__(self, path):
     self.path = path
     self.blocksize = 4096
     self._file_size = os.path.getsize(self.path)
@@ -165,10 +165,6 @@ class FileImage(Image):
     self.extended = RangeSet()
 
     self.generator_lock = threading.Lock()
-
-    self.hashtree_info = None
-    if hashtree_info_generator:
-      self.hashtree_info = hashtree_info_generator.Generate(self)
 
     zero_blocks = []
     nonzero_blocks = []
@@ -190,8 +186,6 @@ class FileImage(Image):
       self.file_map["__ZERO"] = RangeSet(data=zero_blocks)
     if nonzero_blocks:
       self.file_map["__NONZERO"] = RangeSet(data=nonzero_blocks)
-    if self.hashtree_info:
-      self.file_map["__HASHTREE"] = self.hashtree_info.hashtree_range
 
   def __del__(self):
     self._file.close()
