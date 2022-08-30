@@ -263,7 +263,7 @@ import care_map_pb2
 import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
-                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, StreamingPropertyFiles, AbOtaPropertyFiles)
+                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME)
 from common import IsSparseImage
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
@@ -893,7 +893,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
-  payload = PayloadGenerator()
+  payload = PayloadGenerator(OPTIONS.include_secondary, OPTIONS.wipe_user_data)
 
   partition_timestamps_flags = []
   # Enforce a max timestamp this payload can be applied on top of.
@@ -1010,15 +1010,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # FinalizeMetadata().
   common.ZipClose(output_zip)
 
-  # AbOtaPropertyFiles intends to replace StreamingPropertyFiles, as it covers
-  # all the info of the latter. However, system updaters and OTA servers need to
-  # take time to switch to the new flag. We keep both of the flags for
-  # P-timeframe, and will remove StreamingPropertyFiles in later release.
-  needed_property_files = (
-      AbOtaPropertyFiles(),
-      StreamingPropertyFiles(),
-  )
-  FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
+  FinalizeMetadata(metadata, staging_file, output_file,
+                   package_key=OPTIONS.package_key)
 
 
 def main(argv):

@@ -81,7 +81,40 @@ class PayloadSigner(object):
                 signature_size)
     return int(signature_size)
 
-  def Sign(self, in_file):
+  @staticmethod
+  def _Run(cmd):
+    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
+
+  def SignPayload(self, unsigned_payload):
+
+    # 1. Generate hashes of the payload and metadata files.
+    payload_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
+    metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
+    cmd = ["brillo_update_payload", "hash",
+           "--unsigned_payload", unsigned_payload,
+           "--signature_size", str(self.maximum_signature_size),
+           "--metadata_hash_file", metadata_sig_file,
+           "--payload_hash_file", payload_sig_file]
+    self._Run(cmd)
+
+    # 2. Sign the hashes.
+    signed_payload_sig_file = self.SignHashFile(payload_sig_file)
+    signed_metadata_sig_file = self.SignHashFile(metadata_sig_file)
+
+    # 3. Insert the signatures back into the payload file.
+    signed_payload_file = common.MakeTempFile(prefix="signed-payload-",
+                                              suffix=".bin")
+    cmd = ["brillo_update_payload", "sign",
+           "--unsigned_payload", unsigned_payload,
+           "--payload", signed_payload_file,
+           "--signature_size", str(self.maximum_signature_size),
+           "--metadata_signature_file", signed_metadata_sig_file,
+           "--payload_signature_file", signed_payload_sig_file]
+    self._Run(cmd)
+    return signed_payload_file
+
+
+  def SignHashFile(self, in_file):
     """Signs the given input file. Returns the output filename."""
     out_file = common.MakeTempFile(prefix="signed-", suffix=".bin")
     cmd = [self.signer] + self.signer_args + ['-in', in_file, '-out', out_file]
