@@ -40,12 +40,9 @@ def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
                                         info_dict=source_info,
                                         allow_shared_blocks=allow_shared_blocks)
 
-    hashtree_info_generator = verity_utils.CreateHashtreeInfoGenerator(
-        name, 4096, target_info)
     partition_tgt = common.GetUserImage(name, OPTIONS.target_tmp, target_zip,
                                         info_dict=target_info,
-                                        allow_shared_blocks=allow_shared_blocks,
-                                        hashtree_info_generator=hashtree_info_generator)
+                                        allow_shared_blocks=allow_shared_blocks)
 
     # Check the first block of the source system partition for remount R/W only
     # if the filesystem is ext4.

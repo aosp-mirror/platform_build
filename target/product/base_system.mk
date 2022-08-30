@@ -221,6 +221,7 @@ PRODUCT_PACKAGES += \
     mke2fs \
     mkfs.erofs \
     monkey \
+    mtectrl \
     mtpd \
     ndc \
     netd \
@@ -315,6 +316,11 @@ ifeq ($(EMMA_INSTRUMENT),true)
     endif # EMMA_INSTRUMENT_FRAMEWORK
   endif # EMMA_INSTRUMENT_STATIC
 endif # EMMA_INSTRUMENT
+
+# For testing purposes
+ifeq ($(FORCE_AUDIO_SILENT), true)
+    PRODUCT_SYSTEM_PROPERTIES += ro.audio.silent=1
+endif
 
 # Host tools to install
 PRODUCT_HOST_PACKAGES += \
