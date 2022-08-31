@@ -1839,14 +1839,17 @@ function _trigger_build()
 function b()
 (
     # Look for the --run-soong-tests flag and skip passing --skip-soong-tests to Soong if present
-    local run_tests=$(echo "$@" | grep -ow -- "--run-soong-tests")
-    local bazel_args=(${@/--run-soong-tests})
+    local bazel_args=""
     local skip_tests="--skip-soong-tests"
-    if [[ -n $run_tests ]]; then
-        skip_tests=""
-    fi
+    for i in $@; do
+        if [[ $i != "--run-soong-tests" ]]; then
+            bazel_args+="$i "
+        else
+            skip_tests=""
+        fi
+    done
     # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
-    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= $skip_tests || return 1
+    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
     if [[ -z "$bazel_args" ]]; then
         # If there are no args, show help.
@@ -1856,23 +1859,21 @@ function b()
         # Add the --config=bp2build after the first argument that doesn't start with a dash. That should be the bazel
         # command. (build, test, run, ect) If the --config was added at the end, it wouldn't work with commands like:
         # b run //foo -- --args-for-foo
-        local pre_config_args=""
-        local post_config_args=""
-        local start_post_config_args=0
-        for arg in $bazel_args;
-        do
-            if [[ $start_post_config_args -eq 0 ]]; then
-                pre_config_args+="$arg "
-            else
-                post_config_args+="$arg "
-            fi
-
-            if [[ $arg != -* ]]; # if $arg doesn't start with a dash
+        local config_set=0
+        local bazel_args_with_config=""
+        for arg in $bazel_args; do
+            if [[ $arg == "--" && $config_set -ne 1 ]]; # if we find --, insert config argument here
             then
-                start_post_config_args=1
+                bazel_args_with_config+="--config=bp2build -- "
+                config_set=1
+            else
+                bazel_args_with_config+="$arg "
             fi
         done
-        eval "bazel $pre_config_args --config=bp2build $post_config_args"
+        if [[ $config_set -ne 1 ]]; then
+            bazel_args_with_config+="--config=bp2build "
+        fi
+        eval "bazel $bazel_args_with_config"
     fi
 )
 
@@ -2042,6 +2043,13 @@ function showcommands() {
           -f $OUT_DIR/combined-${TARGET_PRODUCT}.ninja \
           -t commands "$@")
     fi
+}
+
+function avbtool() {
+    if [[ ! -f "$ANDROID_SOONG_HOST_OUT"/bin/avbtool ]]; then
+        m avbtool
+    fi
+    "$ANDROID_SOONG_HOST_OUT"/bin/avbtool $@
 }
 
 validate_current_shell
