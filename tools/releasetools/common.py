@@ -82,10 +82,6 @@ class Options(object):
     self.public_key_suffix = ".x509.pem"
     self.private_key_suffix = ".pk8"
     # use otatools built boot_signer by default
-    self.boot_signer_path = "boot_signer"
-    self.boot_signer_args = []
-    self.verity_signer_path = None
-    self.verity_signer_args = []
     self.verbose = False
     self.tempfiles = []
     self.device_specific = None
@@ -1686,23 +1682,9 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
     with open(img.name, 'ab') as f:
       f.write(boot_signature_bytes)
 
-  if (info_dict.get("boot_signer") == "true" and
-          info_dict.get("verity_key")):
-    # Hard-code the path as "/boot" for two-step special recovery image (which
-    # will be loaded into /boot during the two-step OTA).
-    if two_step_image:
-      path = "/boot"
-    else:
-      path = "/" + partition_name
-    cmd = [OPTIONS.boot_signer_path]
-    cmd.extend(OPTIONS.boot_signer_args)
-    cmd.extend([path, img.name,
-                info_dict["verity_key"] + ".pk8",
-                info_dict["verity_key"] + ".x509.pem", img.name])
-    RunAndCheckOutput(cmd)
 
   # Sign the image if vboot is non-empty.
-  elif info_dict.get("vboot"):
+  if info_dict.get("vboot"):
     path = "/" + partition_name
     img_keyblock = tempfile.NamedTemporaryFile()
     # We have switched from the prebuilt futility binary to using the tool
@@ -2077,7 +2059,6 @@ def UnzipTemp(filename, patterns=None):
 def GetUserImage(which, tmpdir, input_zip,
                  info_dict=None,
                  allow_shared_blocks=None,
-                 hashtree_info_generator=None,
                  reset_file_map=False):
   """Returns an Image object suitable for passing to BlockImageDiff.
 
@@ -2094,8 +2075,6 @@ def GetUserImage(which, tmpdir, input_zip,
     info_dict: The dict to be looked up for relevant info.
     allow_shared_blocks: If image is sparse, whether having shared blocks is
         allowed. If none, it is looked up from info_dict.
-    hashtree_info_generator: If present and image is sparse, generates the
-        hashtree_info for this sparse image.
     reset_file_map: If true and image is sparse, reset file map before returning
         the image.
   Returns:
@@ -2117,15 +2096,14 @@ def GetUserImage(which, tmpdir, input_zip,
     allow_shared_blocks = info_dict.get("ext4_share_dup_blocks") == "true"
 
   if is_sparse:
-    img = GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
-                         hashtree_info_generator)
+    img = GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks)
     if reset_file_map:
       img.ResetFileMap()
     return img
-  return GetNonSparseImage(which, tmpdir, hashtree_info_generator)
+  return GetNonSparseImage(which, tmpdir)
 
 
-def GetNonSparseImage(which, tmpdir, hashtree_info_generator=None):
+def GetNonSparseImage(which, tmpdir):
   """Returns a Image object suitable for passing to BlockImageDiff.
 
   This function loads the specified non-sparse image from the given path.
@@ -2143,11 +2121,10 @@ def GetNonSparseImage(which, tmpdir, hashtree_info_generator=None):
   # ota_from_target_files.py (since LMP).
   assert os.path.exists(path) and os.path.exists(mappath)
 
-  return images.FileImage(path, hashtree_info_generator=hashtree_info_generator)
+  return images.FileImage(path)
 
 
-def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
-                   hashtree_info_generator=None):
+def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
   """Returns a SparseImage object suitable for passing to BlockImageDiff.
 
   This function loads the specified sparse image from the given path, and
@@ -2160,8 +2137,6 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
     tmpdir: The directory that contains the prebuilt image and block map file.
     input_zip: The target-files ZIP archive.
     allow_shared_blocks: Whether having shared blocks is allowed.
-    hashtree_info_generator: If present, generates the hashtree_info for this
-        sparse image.
   Returns:
     A SparseImage object, with file_map info loaded.
   """
@@ -2178,8 +2153,7 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
   clobbered_blocks = "0"
 
   image = sparse_img.SparseImage(
-      path, mappath, clobbered_blocks, allow_shared_blocks=allow_shared_blocks,
-      hashtree_info_generator=hashtree_info_generator)
+      path, mappath, clobbered_blocks, allow_shared_blocks=allow_shared_blocks)
 
   # block.map may contain less blocks, because mke2fs may skip allocating blocks
   # if they contain all zeros. We can't reconstruct such a file from its block
@@ -2634,13 +2608,13 @@ def ParseOptions(argv,
     elif o in ("--private_key_suffix",):
       OPTIONS.private_key_suffix = a
     elif o in ("--boot_signer_path",):
-      OPTIONS.boot_signer_path = a
+      raise ValueError("--boot_signer_path is no longer supported, please switch to AVB")
     elif o in ("--boot_signer_args",):
-      OPTIONS.boot_signer_args = shlex.split(a)
+      raise ValueError("--boot_signer_args is no longer supported, please switch to AVB")
     elif o in ("--verity_signer_path",):
-      OPTIONS.verity_signer_path = a
+      raise ValueError("--verity_signer_path is no longer supported, please switch to AVB")
     elif o in ("--verity_signer_args",):
-      OPTIONS.verity_signer_args = shlex.split(a)
+      raise ValueError("--verity_signer_args is no longer supported, please switch to AVB")
     elif o in ("-s", "--device_specific"):
       OPTIONS.device_specific = a
     elif o in ("-x", "--extra"):
