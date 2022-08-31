@@ -578,7 +578,7 @@ class PropertyFiles(object):
     else:
       tokens.append(ComputeEntryOffsetSize(METADATA_NAME))
       if METADATA_PROTO_NAME in zip_file.namelist():
-          tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
+        tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
 
     return ','.join(tokens)
 
@@ -707,7 +707,7 @@ def IsZucchiniCompatible(source_file: str, target_file: str):
   return sourceEntry and targetEntry and sourceEntry == targetEntry
 
 
-class Payload(object):
+class PayloadGenerator(object):
   """Manages the creation and the signing of an A/B OTA Payload."""
 
   PAYLOAD_BIN = 'payload.bin'
@@ -828,11 +828,11 @@ class Payload(object):
     assert self.payload_properties is not None
 
     if self.secondary:
-      payload_arcname = Payload.SECONDARY_PAYLOAD_BIN
-      payload_properties_arcname = Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT
+      payload_arcname = PayloadGenerator.SECONDARY_PAYLOAD_BIN
+      payload_properties_arcname = PayloadGenerator.SECONDARY_PAYLOAD_PROPERTIES_TXT
     else:
-      payload_arcname = Payload.PAYLOAD_BIN
-      payload_properties_arcname = Payload.PAYLOAD_PROPERTIES_TXT
+      payload_arcname = PayloadGenerator.PAYLOAD_BIN
+      payload_properties_arcname = PayloadGenerator.PAYLOAD_PROPERTIES_TXT
 
     # Add the signed payload file and properties into the zip. In order to
     # support streaming, we pack them as ZIP_STORED. So these entries can be
