@@ -2045,6 +2045,13 @@ function showcommands() {
     fi
 }
 
+function avbtool() {
+    if [[ ! -f "$ANDROID_SOONG_HOST_OUT"/bin/avbtool ]]; then
+        m avbtool
+    fi
+    "$ANDROID_SOONG_HOST_OUT"/bin/avbtool $@
+}
+
 validate_current_shell
 source_vendorsetup
 addcompletions
