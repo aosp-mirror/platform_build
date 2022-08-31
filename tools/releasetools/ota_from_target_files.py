@@ -263,7 +263,7 @@ import care_map_pb2
 import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
-                       Payload, SECURITY_PATCH_LEVEL_PROP_NAME, StreamingPropertyFiles, AbOtaPropertyFiles)
+                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, StreamingPropertyFiles, AbOtaPropertyFiles)
 from common import IsSparseImage
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
@@ -893,7 +893,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
-  payload = Payload()
+  payload = PayloadGenerator()
 
   partition_timestamps_flags = []
   # Enforce a max timestamp this payload can be applied on top of.
@@ -972,7 +972,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     # building an incremental OTA. See the comments for "--include_secondary".
     secondary_target_file = GetTargetFilesZipForSecondaryImages(
         target_file, OPTIONS.skip_postinstall)
-    secondary_payload = Payload(secondary=True)
+    secondary_payload = PayloadGenerator(secondary=True)
     secondary_payload.Generate(secondary_target_file,
                                additional_args=["--max_timestamp",
                                                 max_timestamp])
