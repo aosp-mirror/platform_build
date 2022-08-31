@@ -139,6 +139,27 @@ my_shared_libraries := $(strip \
 # my_shared_libraries).
 include $(BUILD_SYSTEM)/cxx_stl_setup.mk
 
+# When compiling against API imported module, use API import stub libraries.
+apiimport_postfix := .apiimport
+
+ifneq ($(LOCAL_USE_VNDK),)
+  ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+    apiimport_postfix := .apiimport.product
+  else
+    apiimport_postfix := .apiimport.vendor
+  endif
+endif
+
+ifdef my_shared_libraries
+my_shared_libraries := $(foreach l,$(my_shared_libraries), \
+ $(if $(filter $(l), $(API_IMPORTED_SHARED_LIBRARIES)), $(l)$(apiimport_postfix), $(l)))
+endif #my_shared_libraries
+
+ifdef my_system_shared_libraries
+my_system_shared_libraries := $(foreach l,$(my_system_shared_libraries), \
+ $(if $(filter $(l), $(API_IMPORTED_SHARED_LIBRARIES)), $(l)$(apiimport_postfix), $(l)))
+endif #my_system_shared_libraries
+
 ifdef my_shared_libraries
 ifdef LOCAL_USE_VNDK
   ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
