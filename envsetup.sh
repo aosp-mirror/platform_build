@@ -398,6 +398,7 @@ function addcompletions()
       packages/modules/adb/adb.bash
       system/core/fastboot/fastboot.bash
       tools/asuite/asuite.sh
+      prebuilts/bazel/common/bazel-complete.bash
     )
     # Completion can be disabled selectively to allow users to use non-standard completion.
     # e.g.
@@ -419,6 +420,8 @@ function addcompletions()
     if [ -z "$ZSH_VERSION" ]; then
         # Doesn't work in zsh.
         complete -o nospace -F _croot croot
+        # TODO(b/244559459): Support b autocompletion for zsh
+        complete -F _bazel__complete -o nospace b
     fi
     complete -F _lunch lunch
 
