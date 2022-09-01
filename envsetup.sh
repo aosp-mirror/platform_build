@@ -1849,7 +1849,7 @@ function b()
         fi
     done
     # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
-    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= || return 1
+    _trigger_build "all-modules" bp2build $skip_tests USE_BAZEL_ANALYSIS= || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
     if [[ -z "$bazel_args" ]]; then
         # If there are no args, show help.
@@ -2043,6 +2043,13 @@ function showcommands() {
           -f $OUT_DIR/combined-${TARGET_PRODUCT}.ninja \
           -t commands "$@")
     fi
+}
+
+function avbtool() {
+    if [[ ! -f "$ANDROID_SOONG_HOST_OUT"/bin/avbtool ]]; then
+        m avbtool
+    fi
+    "$ANDROID_SOONG_HOST_OUT"/bin/avbtool $@
 }
 
 validate_current_shell
