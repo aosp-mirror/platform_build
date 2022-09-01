@@ -5,6 +5,7 @@
 #   my_prebuilt_jni_libs
 #   my_installed_module_stem (from configure_module_stem.mk)
 #   partition_tag (from base_rules.mk)
+#   partition_lib_pairs
 #   my_prebuilt_src_file (from prebuilt_internal.mk)
 #
 # Output variables:
@@ -66,13 +67,32 @@ else ifneq ($(my_jni_shared_libraries),) # not my_embed_jni
   ifeq ($(filter address,$(SANITIZE_TARGET)),)
     my_symlink_target_dir := $(patsubst $(PRODUCT_OUT)%,%,\
       $(my_shared_library_path))
-    $(foreach lib,$(my_jni_filenames),\
-      $(call symlink-file, \
-        $(my_shared_library_path)/$(lib), \
-        $(my_symlink_target_dir)/$(lib), \
-        $(my_app_lib_path)/$(lib)) \
-      $(eval $$(LOCAL_INSTALLED_MODULE) : $$(my_app_lib_path)/$$(lib)) \
-      $(eval ALL_MODULES.$(my_register_name).INSTALLED += $$(my_app_lib_path)/$$(lib)))
+
+    ifdef partition_lib_pairs
+      # Support cross-partition jni lib dependency for bp modules
+      # API domain check is done in Soong
+      $(foreach pl_pair,$(partition_lib_pairs),\
+        $(eval lib_name := $(call word-colon, 1, $(pl_pair)))\
+        $(eval lib_partition := $(call word-colon, 2, $(pl_pair)))\
+        $(eval shared_library_path := $(call get_non_asan_path,\
+        $($(my_2nd_arch_prefix)TARGET_OUT$(lib_partition)_SHARED_LIBRARIES)))\
+        $(call symlink-file,\
+          $(shared_library_path)/$(lib_name).so,\
+          $(my_symlink_target_dir)/$(lib_name).so,\
+          $(my_app_lib_path)/$(lib_name).so)\
+        $(eval $$(LOCAL_INSTALLED_MODULE) : $$(my_app_lib_path)/$$(lib_name).so)\
+        $(eval ALL_MODULES.$(my_register_name).INSTALLED += $$(my_app_lib_path)/$$(lib_name).so))
+
+    else
+      # Cross-partition jni lib dependency currently not supported for mk modules
+      $(foreach lib,$(my_jni_filenames),\
+        $(call symlink-file, \
+          $(my_shared_library_path)/$(lib), \
+          $(my_symlink_target_dir)/$(lib), \
+          $(my_app_lib_path)/$(lib)) \
+        $(eval $$(LOCAL_INSTALLED_MODULE) : $$(my_app_lib_path)/$$(lib)) \
+        $(eval ALL_MODULES.$(my_register_name).INSTALLED += $$(my_app_lib_path)/$$(lib)))
+    endif # partition_lib_pairs
   endif
 
   # Clear jni_shared_libraries to not embed it into the apk.
