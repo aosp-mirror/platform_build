@@ -1873,7 +1873,7 @@ function b()
         if [[ $config_set -ne 1 ]]; then
             bazel_args_with_config+="--config=bp2build "
         fi
-        eval "bazel $bazel_args_with_config"
+        bazel $bazel_args_with_config
     fi
 )
 
