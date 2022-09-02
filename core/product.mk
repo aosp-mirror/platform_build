@@ -136,10 +136,7 @@ _product_list_vars += PRODUCT_BOOT_JARS
 # PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
 _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 
-_product_single_value_vars += PRODUCT_SUPPORTS_BOOT_SIGNER
 _product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
-_product_single_value_vars += PRODUCT_SUPPORTS_VERITY
-_product_single_value_vars += PRODUCT_SUPPORTS_VERITY_FEC
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 # List of system_server classpath jars on the platform.
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
@@ -168,7 +165,6 @@ _product_list_vars += PRODUCT_DEXPREOPT_SPEED_APPS
 _product_list_vars += PRODUCT_LOADED_BY_PRIVILEGED_MODULES
 _product_single_value_vars += PRODUCT_VBOOT_SIGNING_KEY
 _product_single_value_vars += PRODUCT_VBOOT_SIGNING_SUBKEY
-_product_single_value_vars += PRODUCT_VERITY_SIGNING_KEY
 _product_single_value_vars += PRODUCT_SYSTEM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_VENDOR_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_PRODUCT_VERITY_PARTITION
@@ -370,19 +366,12 @@ _product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 # "/system/framework/foo.jar" will be "system/framework/foo.jar.fsv_meta".
 _product_single_value_vars += PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
 
+# If true, sets the default for MODULE_BUILD_FROM_SOURCE. This overrides
+# BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE but not an explicitly set value.
+_product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
-
-define dump-product
-$(warning ==== $(1) ====)\
-$(foreach v,$(_product_var_list),\
-$(warning PRODUCTS.$(1).$(v) := $(call get-product-var,$(1),$(v))))\
-$(warning --------)
-endef
-
-define dump-products
-$(foreach p,$(PRODUCTS),$(call dump-product,$(p)))
-endef
 
 #
 # Functions for including product makefiles
@@ -392,12 +381,11 @@ endef
 # $(1): product to inherit
 #
 # To be called from product makefiles, and is later evaluated during the import-nodes
-# call below. It does three things:
+# call below. It does the following:
 #  1. Inherits all of the variables from $1.
 #  2. Records the inheritance in the .INHERITS_FROM variable
-#  3. Records the calling makefile in PARENT_PRODUCT_FILES
 #
-# (2) and (3) can be used together to reconstruct the include hierarchy
+# (2) and the PRODUCTS variable can be used together to reconstruct the include hierarchy
 # See e.g. product-graph.mk for an example of this.
 #
 define inherit-product
@@ -412,8 +400,7 @@ define inherit-product
     $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
     $(eval inherit_var := PRODUCTS.$(current_mk).INHERITS_FROM) \
     $(eval $(inherit_var) := $(sort $($(inherit_var)) $(np))) \
-    $(eval PARENT_PRODUCT_FILES := $(sort $(PARENT_PRODUCT_FILES) $(current_mk))) \
-    $(call dump-inherit,$(strip $(word 1,$(_include_stack))),$(1)) \
+    $(call dump-inherit,$(current_mk),$(1)) \
     $(call dump-config-vals,$(current_mk),inherit))
 endef
 
@@ -462,64 +449,18 @@ endef
 
 
 #
-# Does various consistency checks on all of the known products.
+# Does various consistency checks on the current product.
 # Takes no parameters, so $(call ) is not necessary.
 #
-define check-all-products
+define check-current-product
 $(if ,, \
-  $(eval _cap_names :=) \
-  $(foreach p,$(PRODUCTS), \
-    $(eval pn := $(strip $(PRODUCTS.$(p).PRODUCT_NAME))) \
-    $(if $(pn),,$(error $(p): PRODUCT_NAME must be defined.)) \
-    $(if $(filter $(pn),$(_cap_names)), \
-      $(error $(p): PRODUCT_NAME must be unique; "$(pn)" already used by $(strip \
-          $(foreach \
-            pp,$(PRODUCTS),
-              $(if $(filter $(pn),$(PRODUCTS.$(pp).PRODUCT_NAME)), \
-                $(pp) \
-               ))) \
-       ) \
-     ) \
-    $(eval _cap_names += $(pn)) \
-    $(if $(call is-c-identifier,$(pn)),, \
-      $(error $(p): PRODUCT_NAME must be a valid C identifier, not "$(pn)") \
-     ) \
-    $(eval pb := $(strip $(PRODUCTS.$(p).PRODUCT_BRAND))) \
-    $(if $(pb),,$(error $(p): PRODUCT_BRAND must be defined.)) \
-    $(foreach cf,$(strip $(PRODUCTS.$(p).PRODUCT_COPY_FILES)), \
-      $(if $(filter 2 3,$(words $(subst :,$(space),$(cf)))),, \
-        $(error $(p): malformed COPY_FILE "$(cf)") \
-       ) \
-     ) \
-   ) \
-)
-endef
-
-
-#
-# Returns the product makefile path for the product with the provided name
-#
-# $(1): short product name like "generic"
-#
-define _resolve-short-product-name
-  $(eval pn := $(strip $(1)))
-  $(eval p := \
-      $(foreach p,$(PRODUCTS), \
-          $(if $(filter $(pn),$(PRODUCTS.$(p).PRODUCT_NAME)), \
-            $(p) \
-       )) \
-   )
-  $(eval p := $(sort $(p)))
-  $(if $(filter 1,$(words $(p))), \
-    $(p), \
-    $(if $(filter 0,$(words $(p))), \
-      $(error No matches for product "$(pn)"), \
-      $(error Product "$(pn)" ambiguous: matches $(p)) \
-    ) \
-  )
-endef
-define resolve-short-product-name
-$(strip $(call _resolve-short-product-name,$(1)))
+  $(if $(call is-c-identifier,$(PRODUCT_NAME)),, \
+    $(error $(INTERNAL_PRODUCT): PRODUCT_NAME must be a valid C identifier, not "$(pn)")) \
+  $(if $(PRODUCT_BRAND),, \
+    $(error $(INTERNAL_PRODUCT): PRODUCT_BRAND must be defined.)) \
+  $(foreach cf,$(strip $(PRODUCT_COPY_FILES)), \
+    $(if $(filter 2 3,$(words $(subst :,$(space),$(cf)))),, \
+      $(error $(p): malformed COPY_FILE "$(cf)"))))
 endef
 
 # BoardConfig variables that are also inherited in product mks. Should ideally

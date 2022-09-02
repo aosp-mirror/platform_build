@@ -26,6 +26,7 @@ $(call add_soong_config_namespace,ANDROID)
 
 # Add variables to the namespace below:
 
+$(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
 $(call add_soong_config_var,ANDROID,IS_TARGET_MIXED_SEPOLICY)
 ifeq ($(IS_TARGET_MIXED_SEPOLICY),true)
@@ -43,18 +44,18 @@ BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
 
 ifneq (,$(MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
-else ifeq (,$(filter sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
+else ifeq (,$(filter docs sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
   # Prebuilt module SDKs require prebuilt modules to work, and currently
   # prebuilt modules are only provided for com.google.android.xxx. If we can't
   # find one of them in PRODUCT_PACKAGES then assume com.android.xxx are in use,
   # and disable prebuilt SDKs. In particular this applies to AOSP builds.
   #
-  # However, sdk/win_sdk/sdk_addon builds might not include com.google.android.xxx
+  # However, docs/sdk/win_sdk/sdk_addon builds might not include com.google.android.xxx
   # packages, so for those we respect the default behavior.
   MODULE_BUILD_FROM_SOURCE := true
-else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
-  # Always build from source in unbundled builds using the module targets.
-  MODULE_BUILD_FROM_SOURCE := true
+else ifneq (,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
+  # Let products override the branch default.
+  MODULE_BUILD_FROM_SOURCE := $(PRODUCT_MODULE_BUILD_FROM_SOURCE)
 else
   MODULE_BUILD_FROM_SOURCE := $(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE)
 endif
@@ -64,16 +65,25 @@ ifneq (,$(ART_MODULE_BUILD_FROM_SOURCE))
 else ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
   # Build ART modules from source if they are listed in TARGET_BUILD_APPS.
   ART_MODULE_BUILD_FROM_SOURCE := true
-else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
-  # Always build from source for the module targets. This ought to be covered by
-  # the TARGET_BUILD_APPS check above, but there are test builds that don't set it.
-  ART_MODULE_BUILD_FROM_SOURCE := true
 else
   # Do the same as other modules by default.
   ART_MODULE_BUILD_FROM_SOURCE := $(MODULE_BUILD_FROM_SOURCE)
 endif
 
 $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
+
+# Ensure that those mainline modules who have individually toggleable prebuilts
+# are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
+# default.
+INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
+  bluetooth \
+  permission \
+  uwb \
+  wifi \
+
+$(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
+  $(if $(call soong_config_get,$(m)_module,source_build),,\
+    $(call soong_config_set,$(m)_module,source_build,$(MODULE_BUILD_FROM_SOURCE))))
 
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
@@ -92,6 +102,28 @@ endif
 # TODO(b/203088572): Remove when Java optimizations enabled by default for
 # SystemUI.
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
-# TODO(b/196084106): Remove when Java optimizations enabled by default for
-# system packages.
+
+# Enable system_server optimizations by default unless explicitly set or if
+# there may be dependent runtime jars.
+# TODO(b/240588226): Remove the off-by-default exceptions after handling
+# system_server jars automatically w/ R8.
+ifeq (true,$(PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS))
+  # If system_server jar ordering is broken, don't assume services.jar can be
+  # safely optimized in isolation, as there may be dependent jars.
+  SYSTEM_OPTIMIZE_JAVA ?= false
+else ifneq (platform:services,$(lastword $(PRODUCT_SYSTEM_SERVER_JARS)))
+  # If services is not the final jar in the dependency ordering, don't assume
+  # it can be safely optimized in isolation, as there may be dependent jars.
+  SYSTEM_OPTIMIZE_JAVA ?= false
+else
+  SYSTEM_OPTIMIZE_JAVA ?= true
+endif
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
+
+# Check for SupplementalApi module.
+ifeq ($(wildcard packages/modules/SupplementalApi),)
+$(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,false)
+else
+$(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,true)
+endif
+

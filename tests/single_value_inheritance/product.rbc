@@ -18,7 +18,7 @@ load(":inherit2.rbc", _inherit2_init = "init")
 
 def init(g, handle):
   cfg = rblf.cfg(handle)
-  rblf.inherit(handle, "test/inherit1", _inherit1_init)
   rblf.inherit(handle, "test/inherit2", _inherit2_init)
+  rblf.inherit(handle, "test/inherit1", _inherit1_init)
 
   cfg["PRODUCT_DEFAULT_DEV_CERTIFICATE"] = ""

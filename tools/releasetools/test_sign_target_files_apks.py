@@ -23,8 +23,8 @@ import common
 import test_utils
 from sign_target_files_apks import (
     CheckApkAndApexKeysAvailable, EditTags, GetApkFileInfo, ReadApexKeysInfo,
-    ReplaceCerts, ReplaceGkiSigningKey, ReplaceVerityKeyId, RewriteAvbProps,
-    RewriteProps, WriteOtacerts)
+    ReplaceCerts, ReplaceGkiSigningKey, RewriteAvbProps, RewriteProps,
+    WriteOtacerts)
 
 
 class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
@@ -153,64 +153,6 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     self.assertEqual(
         '\n'.join([prop[1] for prop in props]) + '\n',
         RewriteProps('\n'.join([prop[0] for prop in props])))
-
-  def test_ReplaceVerityKeyId(self):
-    BOOT_CMDLINE1 = (
-        "console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 "
-        "androidboot.hardware=marlin user_debug=31 ehci-hcd.park=3 "
-        "lpm_levels.sleep_disabled=1 cma=32M@0-0xffffffff loop.max_part=7 "
-        "buildvariant=userdebug "
-        "veritykeyid=id:7e4333f9bba00adfe0ede979e28ed1920492b40f\n")
-
-    BOOT_CMDLINE2 = (
-        "console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 "
-        "androidboot.hardware=marlin user_debug=31 ehci-hcd.park=3 "
-        "lpm_levels.sleep_disabled=1 cma=32M@0-0xffffffff loop.max_part=7 "
-        "buildvariant=userdebug "
-        "veritykeyid=id:d24f2590e9abab5cff5f59da4c4f0366e3f43e94\n")
-
-    input_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
-      input_zip.writestr('BOOT/cmdline', BOOT_CMDLINE1)
-
-    # Test with the first certificate.
-    cert_file = os.path.join(self.testdata_dir, 'verity.x509.pem')
-
-    output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip, \
-         zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
-      ReplaceVerityKeyId(input_zip, output_zip, cert_file)
-
-    with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE1, output_zip.read('BOOT/cmdline').decode())
-
-    # Test with the second certificate.
-    cert_file = os.path.join(self.testdata_dir, 'testkey.x509.pem')
-
-    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip, \
-         zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
-      ReplaceVerityKeyId(input_zip, output_zip, cert_file)
-
-    with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE2, output_zip.read('BOOT/cmdline').decode())
-
-  def test_ReplaceVerityKeyId_no_veritykeyid(self):
-    BOOT_CMDLINE = (
-        "console=ttyHSL0,115200,n8 androidboot.hardware=bullhead boot_cpus=0-5 "
-        "lpm_levels.sleep_disabled=1 msm_poweroff.download_mode=0 "
-        "loop.max_part=7\n")
-
-    input_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'w', allowZip64=True) as input_zip:
-      input_zip.writestr('BOOT/cmdline', BOOT_CMDLINE)
-
-    output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip, \
-         zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
-      ReplaceVerityKeyId(input_zip, output_zip, None)
-
-    with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE, output_zip.read('BOOT/cmdline').decode())
 
   def test_ReplaceCerts(self):
     cert1_path = os.path.join(self.testdata_dir, 'platform.x509.pem')
@@ -476,7 +418,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       target_files_zip.writestr('META/apexkeys.txt', self.APEX_KEYS_TXT)
 
     with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
-      keys_info, sepolicy_keys_info = ReadApexKeysInfo(target_files_zip)
+      keys_info = ReadApexKeysInfo(target_files_zip)
 
     self.assertEqual({
         'apex.apexd_test.apex': (
@@ -486,7 +428,6 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
             'build/make/target/product/security/testkey', None),
         }, keys_info)
-    self.assertEqual({}, sepolicy_keys_info)
 
   def test_ReadApexKeysInfo_mismatchingContainerKeys(self):
     # Mismatching payload public / private keys.
@@ -516,7 +457,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
 
     with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
-      keys_info, sepolicy_keys_info = ReadApexKeysInfo(target_files_zip)
+      keys_info = ReadApexKeysInfo(target_files_zip)
 
     self.assertEqual({
         'apex.apexd_test.apex': (
@@ -526,7 +467,6 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
             'build/make/target/product/security/testkey', None),
         }, keys_info)
-    self.assertEqual({}, sepolicy_keys_info)
 
   def test_ReadApexKeysInfo_missingPayloadPublicKey(self):
     # Invalid lines will be skipped.
@@ -540,7 +480,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
 
     with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
-      keys_info, sepolicy_keys_info = ReadApexKeysInfo(target_files_zip)
+      keys_info = ReadApexKeysInfo(target_files_zip)
 
     self.assertEqual({
         'apex.apexd_test.apex': (
@@ -550,7 +490,6 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
             'build/make/target/product/security/testkey', None),
         }, keys_info)
-    self.assertEqual({}, sepolicy_keys_info)
 
   def test_ReadApexKeysInfo_presignedKeys(self):
     apex_keys = self.APEX_KEYS_TXT + (
@@ -564,7 +503,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
 
     with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
-      keys_info, sepolicy_keys_info = ReadApexKeysInfo(target_files_zip)
+      keys_info = ReadApexKeysInfo(target_files_zip)
 
     self.assertEqual({
         'apex.apexd_test.apex': (
@@ -574,7 +513,6 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
             'build/make/target/product/security/testkey', None),
         }, keys_info)
-    self.assertEqual({}, sepolicy_keys_info)
 
   def test_ReadApexKeysInfo_presignedKeys(self):
     apex_keys = self.APEX_KEYS_TXT + (
@@ -588,7 +526,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
 
     with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
-      keys_info, sepolicy_keys_info = ReadApexKeysInfo(target_files_zip)
+      keys_info = ReadApexKeysInfo(target_files_zip)
 
     self.assertEqual({
         'apex.apexd_test.apex': (
@@ -598,72 +536,6 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
             'build/make/target/product/security/testkey', None),
         }, keys_info)
-    self.assertEqual({}, sepolicy_keys_info)
-
-  def test_ReadApexKeysInfo_withSepolicyKeys(self):
-    apex_keys = self.APEX_KEYS_TXT + (
-        'name="sepolicy.apex" '
-        'public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" '
-        'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" '
-        'container_certificate="build/make/target/product/security/testkey.x509.pem" '
-        'container_private_key="build/make/target/product/security/testkey.pk8" '
-        'sepolicy_key="build/make/target/product/security/testkey.key" '
-        'sepolicy_certificate="build/make/target/product/security/testkey.x509.pem" '
-        'fsverity_tool="fsverity"')
-    target_files = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
-      target_files_zip.writestr('META/apexkeys.txt', apex_keys)
-
-    with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
-      keys_info, sepolicy_keys_info = ReadApexKeysInfo(target_files_zip)
-
-    self.assertEqual({
-        'apex.apexd_test.apex': (
-            'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
-            'build/make/target/product/security/testkey', None),
-        'apex.apexd_test_different_app.apex': (
-            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/make/target/product/security/testkey', None),
-        'sepolicy.apex': (
-            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/make/target/product/security/testkey', None),
-        }, keys_info)
-    self.assertEqual({'sepolicy.apex': (
-            'build/make/target/product/security/testkey.key',
-            'build/make/target/product/security/testkey.x509.pem',
-            'fsverity'),
-        }, sepolicy_keys_info)
-
-  def test_ReadApexKeysInfo_withSepolicyApex(self):
-    apex_keys = self.APEX_KEYS_TXT + (
-        'name="sepolicy.apex" '
-        'public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" '
-        'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" '
-        'container_certificate="build/make/target/product/security/testkey.x509.pem" '
-        'container_private_key="build/make/target/product/security/testkey.pk8" ')
-    target_files = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(target_files, 'w', allowZip64=True) as target_files_zip:
-      target_files_zip.writestr('META/apexkeys.txt', apex_keys)
-
-    with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zip:
-      keys_info, sepolicy_keys_info = ReadApexKeysInfo(target_files_zip)
-
-    self.assertEqual({
-        'apex.apexd_test.apex': (
-            'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
-            'build/make/target/product/security/testkey', None),
-        'apex.apexd_test_different_app.apex': (
-            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/make/target/product/security/testkey', None),
-        'sepolicy.apex': (
-            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/make/target/product/security/testkey', None),
-        }, keys_info)
-    self.assertEqual({'sepolicy.apex': (
-            None,
-            None,
-            None),
-        }, sepolicy_keys_info)
 
   def test_ReplaceGkiSigningKey(self):
     common.OPTIONS.gki_signing_key = 'release_gki_key'

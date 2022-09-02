@@ -72,7 +72,9 @@ class Options(object):
       if "ANDROID_HOST_OUT" in os.environ:
         self.search_path = os.environ["ANDROID_HOST_OUT"]
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
+    self.sign_sepolicy_path = None
     self.extra_signapk_args = []
+    self.extra_sign_sepolicy_args = []
     self.aapt2_path = "aapt2"
     self.java_path = "java"  # Use the one on the path by default.
     self.java_args = ["-Xmx2048m"]  # The default JVM args.
@@ -80,10 +82,6 @@ class Options(object):
     self.public_key_suffix = ".x509.pem"
     self.private_key_suffix = ".pk8"
     # use otatools built boot_signer by default
-    self.boot_signer_path = "boot_signer"
-    self.boot_signer_args = []
-    self.verity_signer_path = None
-    self.verity_signer_args = []
     self.verbose = False
     self.tempfiles = []
     self.device_specific = None
@@ -114,7 +112,7 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # AVB_FOOTER_ARGS_BY_PARTITION in sign_target_files_apks need to be updated
 # accordingly.
 AVB_PARTITIONS = ('boot', 'init_boot', 'dtbo', 'odm', 'product', 'pvmfw', 'recovery',
-                  'system', 'system_ext', 'vendor', 'vendor_boot',
+                  'system', 'system_ext', 'vendor', 'vendor_boot', 'vendor_kernel_boot',
                   'vendor_dlkm', 'odm_dlkm', 'system_dlkm')
 
 # Chained VBMeta partitions.
@@ -455,6 +453,11 @@ class BuildInfo(object):
     return vabc_enabled
 
   @property
+  def is_android_r(self):
+    system_prop = self.info_dict.get("system.build.prop")
+    return system_prop and system_prop.GetProp("ro.build.version.release") == "11"
+
+  @property
   def is_vabc_xor(self):
     vendor_prop = self.info_dict.get("vendor.build.prop")
     vabc_xor_enabled = vendor_prop and \
@@ -725,7 +728,7 @@ class RamdiskFormat(object):
   GZ = 2
 
 
-def _GetRamdiskFormat(info_dict):
+def GetRamdiskFormat(info_dict):
   if info_dict.get('lz4_ramdisks') == 'true':
     ramdisk_format = RamdiskFormat.LZ4
   else:
@@ -834,7 +837,7 @@ def LoadInfoDict(input_file, repacking=False):
 
   # Load recovery fstab if applicable.
   d["fstab"] = _FindAndLoadRecoveryFstab(d, input_file, read_helper)
-  ramdisk_format = _GetRamdiskFormat(d)
+  ramdisk_format = GetRamdiskFormat(d)
 
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
@@ -853,6 +856,10 @@ def LoadInfoDict(input_file, repacking=False):
       if fingerprint:
         d["avb_{}_salt".format(partition)] = sha256(
             fingerprint.encode()).hexdigest()
+
+    # Set up the salt for partitions without build.prop
+    if build_info.fingerprint:
+      d["avb_salt"] = sha256(build_info.fingerprint.encode()).hexdigest()
 
     # Set the vbmeta digest if exists
     try:
@@ -1182,16 +1189,20 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   """
 
   def uniq_concat(a, b):
-    combined = set(a.split(" "))
-    combined.update(set(b.split(" ")))
+    combined = set(a.split())
+    combined.update(set(b.split()))
     combined = [item.strip() for item in combined if item.strip()]
     return " ".join(sorted(combined))
 
   if (framework_dict.get("use_dynamic_partitions") !=
-          "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
+        "true") or (vendor_dict.get("use_dynamic_partitions") != "true"):
     raise ValueError("Both dictionaries must have use_dynamic_partitions=true")
 
   merged_dict = {"use_dynamic_partitions": "true"}
+  # For keys-value pairs that are the same, copy to merged dict
+  for key in vendor_dict.keys():
+    if key in framework_dict and framework_dict[key] == vendor_dict[key]:
+      merged_dict[key] = vendor_dict[key]
 
   merged_dict["dynamic_partition_list"] = uniq_concat(
       framework_dict.get("dynamic_partition_list", ""),
@@ -1200,7 +1211,7 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   # Super block devices are defined by the vendor dict.
   if "super_block_devices" in vendor_dict:
     merged_dict["super_block_devices"] = vendor_dict["super_block_devices"]
-    for block_device in merged_dict["super_block_devices"].split(" "):
+    for block_device in merged_dict["super_block_devices"].split():
       key = "super_%s_device_size" % block_device
       if key not in vendor_dict:
         raise ValueError("Vendor dict does not contain required key %s." % key)
@@ -1209,7 +1220,7 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
   # Partition groups and group sizes are defined by the vendor dict because
   # these values may vary for each board that uses a shared system image.
   merged_dict["super_partition_groups"] = vendor_dict["super_partition_groups"]
-  for partition_group in merged_dict["super_partition_groups"].split(" "):
+  for partition_group in merged_dict["super_partition_groups"].split():
     # Set the partition group's size using the value from the vendor dict.
     key = "super_%s_group_size" % partition_group
     if key not in vendor_dict:
@@ -1575,7 +1586,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
   img = tempfile.NamedTemporaryFile()
 
   if has_ramdisk:
-    ramdisk_format = _GetRamdiskFormat(info_dict)
+    ramdisk_format = GetRamdiskFormat(info_dict)
     ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file,
                                ramdisk_format=ramdisk_format)
 
@@ -1671,23 +1682,9 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
     with open(img.name, 'ab') as f:
       f.write(boot_signature_bytes)
 
-  if (info_dict.get("boot_signer") == "true" and
-          info_dict.get("verity_key")):
-    # Hard-code the path as "/boot" for two-step special recovery image (which
-    # will be loaded into /boot during the two-step OTA).
-    if two_step_image:
-      path = "/boot"
-    else:
-      path = "/" + partition_name
-    cmd = [OPTIONS.boot_signer_path]
-    cmd.extend(OPTIONS.boot_signer_args)
-    cmd.extend([path, img.name,
-                info_dict["verity_key"] + ".pk8",
-                info_dict["verity_key"] + ".x509.pem", img.name])
-    RunAndCheckOutput(cmd)
 
   # Sign the image if vboot is non-empty.
-  elif info_dict.get("vboot"):
+  if info_dict.get("vboot"):
     path = "/" + partition_name
     img_keyblock = tempfile.NamedTemporaryFile()
     # We have switched from the prebuilt futility binary to using the tool
@@ -1782,6 +1779,9 @@ def HasRamdisk(partition_name, info_dict=None):
   if info_dict.get("recovery_as_boot") == "true":
     return True  # the recovery-as-boot boot.img has a RECOVERY ramdisk.
 
+  if info_dict.get("gki_boot_image_without_ramdisk") == "true":
+    return False  # A GKI boot.img has no ramdisk since Android-13.
+
   if info_dict.get("system_root_image") == "true":
     # The ramdisk content is merged into the system.img, so there is NO
     # ramdisk in the boot.img or boot-<kernel version>.img.
@@ -1838,7 +1838,7 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   return None
 
 
-def _BuildVendorBootImage(sourcedir, info_dict=None):
+def _BuildVendorBootImage(sourcedir, partition_name, info_dict=None):
   """Build a vendor boot image from the specified sourcedir.
 
   Take a ramdisk, dtb, and vendor_cmdline from the input (in 'sourcedir'), and
@@ -1853,7 +1853,7 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
 
   img = tempfile.NamedTemporaryFile()
 
-  ramdisk_format = _GetRamdiskFormat(info_dict)
+  ramdisk_format = GetRamdiskFormat(info_dict)
   ramdisk_img = _MakeRamdisk(sourcedir, ramdisk_format=ramdisk_format)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
@@ -1863,8 +1863,13 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
 
   fn = os.path.join(sourcedir, "dtb")
   if os.access(fn, os.F_OK):
-    cmd.append("--dtb")
-    cmd.append(fn)
+    has_vendor_kernel_boot = (info_dict.get("vendor_kernel_boot", "").lower() == "true")
+
+    # Pack dtb into vendor_kernel_boot if building vendor_kernel_boot.
+    # Otherwise pack dtb into vendor_boot.
+    if not has_vendor_kernel_boot or partition_name == "vendor_kernel_boot":
+      cmd.append("--dtb")
+      cmd.append(fn)
 
   fn = os.path.join(sourcedir, "vendor_cmdline")
   if os.access(fn, os.F_OK):
@@ -1924,11 +1929,11 @@ def _BuildVendorBootImage(sourcedir, info_dict=None):
   # AVB: if enabled, calculate and add hash.
   if info_dict.get("avb_enable") == "true":
     avbtool = info_dict["avb_avbtool"]
-    part_size = info_dict["vendor_boot_size"]
+    part_size = info_dict[f'{partition_name}_size']
     cmd = [avbtool, "add_hash_footer", "--image", img.name,
-           "--partition_size", str(part_size), "--partition_name", "vendor_boot"]
-    AppendAVBSigningArgs(cmd, "vendor_boot")
-    args = info_dict.get("avb_vendor_boot_add_hash_footer_args")
+           "--partition_size", str(part_size), "--partition_name", partition_name]
+    AppendAVBSigningArgs(cmd, partition_name)
+    args = info_dict.get(f'avb_{partition_name}_add_hash_footer_args')
     if args and args.strip():
       cmd.extend(shlex.split(args))
     RunAndCheckOutput(cmd)
@@ -1962,7 +1967,31 @@ def GetVendorBootImage(name, prebuilt_name, unpack_dir, tree_subdir,
     info_dict = OPTIONS.info_dict
 
   data = _BuildVendorBootImage(
-      os.path.join(unpack_dir, tree_subdir), info_dict)
+      os.path.join(unpack_dir, tree_subdir), "vendor_boot", info_dict)
+  if data:
+    return File(name, data)
+  return None
+
+
+def GetVendorKernelBootImage(name, prebuilt_name, unpack_dir, tree_subdir,
+                       info_dict=None):
+  """Return a File object with the desired vendor kernel boot image.
+
+  Look for it under 'unpack_dir'/IMAGES, otherwise construct it from
+  the source files in 'unpack_dir'/'tree_subdir'."""
+
+  prebuilt_path = os.path.join(unpack_dir, "IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    logger.info("using prebuilt %s from IMAGES...", prebuilt_name)
+    return File.FromLocalFile(name, prebuilt_path)
+
+  logger.info("building image from target_files %s...", tree_subdir)
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  data = _BuildVendorBootImage(
+      os.path.join(unpack_dir, tree_subdir), "vendor_kernel_boot", info_dict)
   if data:
     return File(name, data)
   return None
@@ -2030,7 +2059,6 @@ def UnzipTemp(filename, patterns=None):
 def GetUserImage(which, tmpdir, input_zip,
                  info_dict=None,
                  allow_shared_blocks=None,
-                 hashtree_info_generator=None,
                  reset_file_map=False):
   """Returns an Image object suitable for passing to BlockImageDiff.
 
@@ -2047,8 +2075,6 @@ def GetUserImage(which, tmpdir, input_zip,
     info_dict: The dict to be looked up for relevant info.
     allow_shared_blocks: If image is sparse, whether having shared blocks is
         allowed. If none, it is looked up from info_dict.
-    hashtree_info_generator: If present and image is sparse, generates the
-        hashtree_info for this sparse image.
     reset_file_map: If true and image is sparse, reset file map before returning
         the image.
   Returns:
@@ -2070,15 +2096,14 @@ def GetUserImage(which, tmpdir, input_zip,
     allow_shared_blocks = info_dict.get("ext4_share_dup_blocks") == "true"
 
   if is_sparse:
-    img = GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
-                         hashtree_info_generator)
+    img = GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks)
     if reset_file_map:
       img.ResetFileMap()
     return img
-  return GetNonSparseImage(which, tmpdir, hashtree_info_generator)
+  return GetNonSparseImage(which, tmpdir)
 
 
-def GetNonSparseImage(which, tmpdir, hashtree_info_generator=None):
+def GetNonSparseImage(which, tmpdir):
   """Returns a Image object suitable for passing to BlockImageDiff.
 
   This function loads the specified non-sparse image from the given path.
@@ -2096,11 +2121,10 @@ def GetNonSparseImage(which, tmpdir, hashtree_info_generator=None):
   # ota_from_target_files.py (since LMP).
   assert os.path.exists(path) and os.path.exists(mappath)
 
-  return images.FileImage(path, hashtree_info_generator=hashtree_info_generator)
+  return images.FileImage(path)
 
 
-def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
-                   hashtree_info_generator=None):
+def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
   """Returns a SparseImage object suitable for passing to BlockImageDiff.
 
   This function loads the specified sparse image from the given path, and
@@ -2113,8 +2137,6 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
     tmpdir: The directory that contains the prebuilt image and block map file.
     input_zip: The target-files ZIP archive.
     allow_shared_blocks: Whether having shared blocks is allowed.
-    hashtree_info_generator: If present, generates the hashtree_info for this
-        sparse image.
   Returns:
     A SparseImage object, with file_map info loaded.
   """
@@ -2131,8 +2153,7 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
   clobbered_blocks = "0"
 
   image = sparse_img.SparseImage(
-      path, mappath, clobbered_blocks, allow_shared_blocks=allow_shared_blocks,
-      hashtree_info_generator=hashtree_info_generator)
+      path, mappath, clobbered_blocks, allow_shared_blocks=allow_shared_blocks)
 
   # block.map may contain less blocks, because mke2fs may skip allocating blocks
   # if they contain all zeros. We can't reconstruct such a file from its block
@@ -2339,6 +2360,36 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
         "Failed to run signapk.jar: return code {}:\n{}".format(
             proc.returncode, stdoutdata))
 
+def SignSePolicy(sepolicy, key, password):
+  """Sign the sepolicy zip, producing an fsverity .fsv_sig and
+  an RSA .sig signature files.
+  """
+
+  if OPTIONS.sign_sepolicy_path is None:
+    logger.info("No sign_sepolicy_path specified, %s was not signed", sepolicy)
+    return False
+
+  java_library_path = os.path.join(
+      OPTIONS.search_path, OPTIONS.signapk_shared_library_path)
+
+  cmd = ([OPTIONS.java_path] + OPTIONS.java_args +
+          ["-Djava.library.path=" + java_library_path,
+          "-jar", os.path.join(OPTIONS.search_path, OPTIONS.sign_sepolicy_path)] +
+          OPTIONS.extra_sign_sepolicy_args)
+
+  cmd.extend([key + OPTIONS.public_key_suffix,
+              key + OPTIONS.private_key_suffix,
+              sepolicy, os.path.dirname(sepolicy)])
+
+  proc = Run(cmd, stdin=subprocess.PIPE)
+  if password is not None:
+    password += "\n"
+  stdoutdata, _ = proc.communicate(password)
+  if proc.returncode != 0:
+    raise ExternalError(
+        "Failed to run sign sepolicy: return code {}:\n{}".format(
+            proc.returncode, stdoutdata))
+  return True
 
 def CheckSize(data, target, info_dict):
   """Checks the data string passed against the max size limit.
@@ -2515,7 +2566,8 @@ def ParseOptions(argv,
     opts, args = getopt.getopt(
         argv, "hvp:s:x:" + extra_opts,
         ["help", "verbose", "path=", "signapk_path=",
-         "signapk_shared_library_path=", "extra_signapk_args=", "aapt2_path=",
+         "signapk_shared_library_path=", "extra_signapk_args=",
+         "sign_sepolicy_path=", "extra_sign_sepolicy_args=", "aapt2_path=",
          "java_path=", "java_args=", "android_jar_path=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
@@ -2539,6 +2591,10 @@ def ParseOptions(argv,
       OPTIONS.signapk_shared_library_path = a
     elif o in ("--extra_signapk_args",):
       OPTIONS.extra_signapk_args = shlex.split(a)
+    elif o in ("--sign_sepolicy_path",):
+      OPTIONS.sign_sepolicy_path = a
+    elif o in ("--extra_sign_sepolicy_args",):
+      OPTIONS.extra_sign_sepolicy_args = shlex.split(a)
     elif o in ("--aapt2_path",):
       OPTIONS.aapt2_path = a
     elif o in ("--java_path",):
@@ -2552,13 +2608,13 @@ def ParseOptions(argv,
     elif o in ("--private_key_suffix",):
       OPTIONS.private_key_suffix = a
     elif o in ("--boot_signer_path",):
-      OPTIONS.boot_signer_path = a
+      raise ValueError("--boot_signer_path is no longer supported, please switch to AVB")
     elif o in ("--boot_signer_args",):
-      OPTIONS.boot_signer_args = shlex.split(a)
+      raise ValueError("--boot_signer_args is no longer supported, please switch to AVB")
     elif o in ("--verity_signer_path",):
-      OPTIONS.verity_signer_path = a
+      raise ValueError("--verity_signer_path is no longer supported, please switch to AVB")
     elif o in ("--verity_signer_args",):
-      OPTIONS.verity_signer_args = shlex.split(a)
+      raise ValueError("--verity_signer_args is no longer supported, please switch to AVB")
     elif o in ("-s", "--device_specific"):
       OPTIONS.device_specific = a
     elif o in ("-x", "--extra"):

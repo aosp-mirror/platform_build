@@ -328,8 +328,16 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       compressor = prop_dict["erofs_default_compressor"]
     if "erofs_compressor" in prop_dict:
       compressor = prop_dict["erofs_compressor"]
-    if compressor:
+    if compressor and compressor != "none":
       build_command.extend(["-z", compressor])
+
+    compress_hints = None
+    if "erofs_default_compress_hints" in prop_dict:
+      compress_hints = prop_dict["erofs_default_compress_hints"]
+    if "erofs_compress_hints" in prop_dict:
+      compress_hints = prop_dict["erofs_compress_hints"]
+    if compress_hints:
+      build_command.extend(["--compress-hints", compress_hints])
 
     build_command.extend(["--mount-point", prop_dict["mount_point"]])
     if target_out:
@@ -348,6 +356,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.extend(["-C", prop_dict["erofs_pcluster_size"]])
     if "erofs_share_dup_blocks" in prop_dict:
       build_command.extend(["--chunksize", "4096"])
+    if "erofs_use_legacy_compression" in prop_dict:
+      build_command.extend(["-E", "legacy-compress"])
 
     build_command.extend([out_file, in_dir])
     if "erofs_sparse_flag" in prop_dict and not disable_sparse:
@@ -650,20 +660,17 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   common_props = (
       "extfs_sparse_flag",
       "erofs_default_compressor",
+      "erofs_default_compress_hints",
       "erofs_pcluster_size",
       "erofs_share_dup_blocks",
       "erofs_sparse_flag",
+      "erofs_use_legacy_compression",
       "squashfs_sparse_flag",
       "system_f2fs_compress",
       "system_f2fs_sldc_flags",
       "f2fs_sparse_flag",
       "skip_fsck",
       "ext_mkuserimg",
-      "verity",
-      "verity_key",
-      "verity_signer_cmd",
-      "verity_fec",
-      "verity_disable",
       "avb_enable",
       "avb_avbtool",
       "use_dynamic_partition_size",
@@ -698,10 +705,12 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       (True, "avb_{}_hashtree_enable", "avb_hashtree_enable"),
       (True, "avb_{}_key_path", "avb_key_path"),
       (True, "avb_{}_salt", "avb_salt"),
+      (True, "erofs_use_legacy_compression", "erofs_use_legacy_compression"),
       (True, "ext4_share_dup_blocks", "ext4_share_dup_blocks"),
       (True, "{}_base_fs_file", "base_fs_file"),
       (True, "{}_disable_sparse", "disable_sparse"),
       (True, "{}_erofs_compressor", "erofs_compressor"),
+      (True, "{}_erofs_compress_hints", "erofs_compress_hints"),
       (True, "{}_erofs_pcluster_size", "erofs_pcluster_size"),
       (True, "{}_erofs_share_dup_blocks", "erofs_share_dup_blocks"),
       (True, "{}_extfs_inode_count", "extfs_inode_count"),
@@ -810,16 +819,18 @@ def GlobalDictFromImageProp(image_prop, mount_point):
 
 
 def main(argv):
-  if len(argv) != 4:
+  args = common.ParseOptions(argv, __doc__)
+
+  if len(args) != 4:
     print(__doc__)
     sys.exit(1)
 
   common.InitLogging()
 
-  in_dir = argv[0]
-  glob_dict_file = argv[1]
-  out_file = argv[2]
-  target_out = argv[3]
+  in_dir = args[0]
+  glob_dict_file = args[1]
+  out_file = args[2]
+  target_out = args[3]
 
   glob_dict = LoadGlobalDict(glob_dict_file)
   if "mount_point" in glob_dict:

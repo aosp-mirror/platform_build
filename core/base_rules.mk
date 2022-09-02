@@ -20,7 +20,11 @@ $(call record-module-type,base_rules)
 # Users can define base-rules-hook in their buildspec.mk to perform
 # arbitrary operations as each module is included.
 ifdef base-rules-hook
-$(if $(base-rules-hook),)
+  ifndef _has_warned_about_base_rules_hook
+    $(warning base-rules-hook is deprecated, please remove usages of it and/or convert to Soong.)
+    _has_warned_about_base_rules_hook := true
+  endif
+  $(if $(base-rules-hook),)
 endif
 
 ###########################################################
@@ -590,10 +594,18 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
       my_init_rc := $(foreach rc,$(LOCAL_INIT_RC_$(my_32_64_bit_suffix)) $(LOCAL_INIT_RC),$(LOCAL_PATH)/$(rc))
     endif
     ifneq ($(strip $(my_init_rc)),)
-      # Make doesn't support recovery as an output partition, but some Soong modules installed in recovery
-      # have init.rc files that need to be installed alongside them. Manually handle the case where the
-      # output file is in the recovery partition.
-      my_init_rc_path := $(if $(filter $(TARGET_RECOVERY_ROOT_OUT)/%,$(my_module_path)),$(TARGET_RECOVERY_ROOT_OUT)/system/etc,$(TARGET_OUT$(partition_tag)_ETC))
+      # Make doesn't support recovery or ramdisk as an output partition,
+      # but some Soong modules installed in recovery or ramdisk
+      # have init.rc files that need to be installed alongside them.
+      # Manually handle the case where the
+      # output file is in the recovery or ramdisk partition.
+      ifneq (,$(filter $(TARGET_RECOVERY_ROOT_OUT)/%,$(my_module_path)))
+        my_init_rc_path := $(TARGET_RECOVERY_ROOT_OUT)/system/etc
+      else ifneq (,$(filter $(TARGET_RAMDISK_OUT)/%,$(my_module_path)))
+        my_init_rc_path := $(TARGET_RAMDISK_OUT)/system/etc
+      else
+        my_init_rc_path := $(TARGET_OUT$(partition_tag)_ETC)
+      endif
       my_init_rc_pairs := $(foreach rc,$(my_init_rc),$(rc):$(my_init_rc_path)/init/$(notdir $(rc)))
       my_init_rc_installed := $(foreach rc,$(my_init_rc_pairs),$(call word-colon,2,$(rc)))
 
@@ -713,6 +725,11 @@ ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
 endif
 ifdef LOCAL_MULTILIB
   multi_arch := true
+# These conditionals allow this functionality to be mimicked in Soong
+else ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+    multi_arch := true
+  endif
 endif
 
 ifdef multi_arch
@@ -1103,6 +1120,9 @@ ALL_MODULES.$(my_register_name).FILE_CONTEXTS := $(LOCAL_FILE_CONTEXTS)
 endif
 ifdef LOCAL_IS_UNIT_TEST
 ALL_MODULES.$(my_register_name).IS_UNIT_TEST := $(LOCAL_IS_UNIT_TEST)
+endif
+ifdef LOCAL_TEST_OPTIONS_TAGS
+ALL_MODULES.$(my_register_name).TEST_OPTIONS_TAGS := $(LOCAL_TEST_OPTIONS_TAGS)
 endif
 test_config :=
 

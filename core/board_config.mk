@@ -174,6 +174,8 @@ _board_strip_list += ODM_MANIFEST_SKUS
 
 
 _build_broken_var_list := \
+  BUILD_BROKEN_CLANG_PROPERTY \
+  BUILD_BROKEN_DEPFILE \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_DUP_SYSPROP \
   BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES \
@@ -234,16 +236,13 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
-# TODO(colefaust) change this if to RBC_PRODUCT_CONFIG when
-# the board configuration is known to work on everything
-# the product config works on.
-ifndef RBC_BOARD_CONFIG
+ifndef RBC_PRODUCT_CONFIG
 include $(board_config_mk)
 else
   $(shell mkdir -p $(OUT_DIR)/rbc)
   $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_board_config.mk)
 
-  $(shell $(OUT_DIR)/soong/mk2rbc \
+  $(shell $(OUT_DIR)/mk2rbc \
     --mode=write -r --outdir $(OUT_DIR)/rbc \
     --boardlauncher=$(OUT_DIR)/rbc/boardlauncher.rbc \
     --input_variables=$(OUT_DIR)/rbc/make_vars_pre_board_config.mk \
@@ -254,7 +253,7 @@ else
   endif
 
   $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_board_config_results.mk \
-    $(OUT_DIR)/soong/rbcrun RBC_OUT="make,global" $(OUT_DIR)/rbc/boardlauncher.rbc)
+    $(OUT_DIR)/rbcrun RBC_OUT="make" $(OUT_DIR)/rbc/boardlauncher.rbc)
   ifneq ($(.SHELLSTATUS),0)
     $(error board configuration runner failed: $(.SHELLSTATUS))
   endif
@@ -284,6 +283,8 @@ $(foreach var,$(_board_strip_list),$(eval $(var) := $$(strip $$($(var)))))
 $(foreach var,$(_board_true_false_vars), \
   $(if $(filter-out true false,$($(var))), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
+
+include $(BUILD_SYSTEM)/board_config_wifi.mk
 
 # Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
 TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))

@@ -50,6 +50,28 @@ endif
 # to avoid checkbuilds making an extra copy of every module.
 LOCAL_CHECKED_MODULE := $(LOCAL_PREBUILT_MODULE_FILE)
 
+my_check_same_vndk_variants :=
+same_vndk_variants_stamp :=
+ifeq ($(LOCAL_CHECK_SAME_VNDK_VARIANTS),true)
+  ifeq ($(filter hwaddress address, $(SANITIZE_TARGET)),)
+    ifneq ($(CLANG_COVERAGE),true)
+      # Do not compare VNDK variant for special cases e.g. coverage builds.
+      ifneq ($(SKIP_VNDK_VARIANTS_CHECK),true)
+        my_check_same_vndk_variants := true
+        same_vndk_variants_stamp := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX))/same_vndk_variants.timestamp
+      endif
+    endif
+  endif
+endif
+
+ifeq ($(my_check_same_vndk_variants),true)
+  # Add the timestamp to the CHECKED list so that `checkbuild` can run it.
+  # Note that because `checkbuild` doesn't check LOCAL_BUILT_MODULE for soong-built modules adding
+  # the timestamp to LOCAL_BUILT_MODULE isn't enough. It is skipped when the vendor variant
+  # isn't used at all and it may break in the downstream trees.
+  LOCAL_ADDITIONAL_CHECKED_MODULE := $(same_vndk_variants_stamp)
+endif
+
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
@@ -125,21 +147,7 @@ ifdef LOCAL_INSTALLED_MODULE
   endif
 endif
 
-my_check_same_vndk_variants :=
-ifeq ($(LOCAL_CHECK_SAME_VNDK_VARIANTS),true)
-  ifeq ($(filter hwaddress address, $(SANITIZE_TARGET)),)
-    ifneq ($(CLANG_COVERAGE),true)
-        # Do not compare VNDK variant for special cases e.g. coverage builds.
-        ifneq ($(SKIP_VNDK_VARIANTS_CHECK),true)
-            my_check_same_vndk_variants := true
-        endif
-    endif
-  endif
-endif
-
 ifeq ($(my_check_same_vndk_variants),true)
-  same_vndk_variants_stamp := $(intermediates)/same_vndk_variants.timestamp
-
   my_core_register_name := $(subst .vendor,,$(subst .product,,$(my_register_name)))
   my_core_variant_files := $(call module-target-built-files,$(my_core_register_name))
   my_core_shared_lib := $(sort $(filter %.so,$(my_core_variant_files)))
@@ -184,7 +192,7 @@ ifndef LOCAL_IS_HOST_MODULE
       # drop /root as /root is mounted as /
       my_unstripped_path := $(patsubst $(TARGET_OUT_UNSTRIPPED)/root/%,$(TARGET_OUT_UNSTRIPPED)/%, $(my_unstripped_path))
       symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
-      $(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))
+      $(eval $(call copy-unstripped-elf-file-with-mapping,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))
       $(LOCAL_BUILT_MODULE): | $(symbolic_output)
 
       ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
@@ -260,6 +268,9 @@ installed_static_library_notice_file_targets := \
 installed_static_library_notice_file_targets += \
     $(foreach lib,$(LOCAL_RLIB_LIBRARIES), \
       NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-RLIB_LIBRARIES-$(lib))
+installed_static_library_notice_file_targets += \
+    $(foreach lib,$(LOCAL_PROC_MACRO_LIBRARIES), \
+      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-PROC_MACRO_LIBRARIES-$(lib))
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)

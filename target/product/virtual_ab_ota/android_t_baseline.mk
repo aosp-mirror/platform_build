@@ -37,5 +37,4 @@ PRODUCT_VIRTUAL_AB_COMPRESSION := true
 PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD ?= none
 PRODUCT_PACKAGES += \
     snapuserd \
-    snapuserd.recovery \
 

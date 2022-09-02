@@ -901,7 +901,7 @@ class SignApk {
      * Tries to load a JSE Provider by class name. This is for custom PrivateKey
      * types that might be stored in PKCS#11-like storage.
      */
-    private static void loadProviderIfNecessary(String providerClassName) {
+    private static void loadProviderIfNecessary(String providerClassName, String providerArg) {
         if (providerClassName == null) {
             return;
         }
@@ -920,27 +920,41 @@ class SignApk {
             return;
         }
 
-        Constructor<?> constructor = null;
-        for (Constructor<?> c : klass.getConstructors()) {
-            if (c.getParameterTypes().length == 0) {
-                constructor = c;
-                break;
+        Constructor<?> constructor;
+        Object o = null;
+        if (providerArg == null) {
+            try {
+                constructor = klass.getConstructor();
+                o = constructor.newInstance();
+            } catch (ReflectiveOperationException e) {
+                e.printStackTrace();
+                System.err.println("Unable to instantiate " + providerClassName
+                        + " with a zero-arg constructor");
+                System.exit(1);
+            }
+        } else {
+            try {
+                constructor = klass.getConstructor(String.class);
+                o = constructor.newInstance(providerArg);
+            } catch (ReflectiveOperationException e) {
+                // This is expected from JDK 9+; the single-arg constructor accepting the
+                // configuration has been replaced with a configure(String) method to be invoked
+                // after instantiating the Provider with the zero-arg constructor.
+                try {
+                    constructor = klass.getConstructor();
+                    o = constructor.newInstance();
+                    // The configure method will return either the modified Provider or a new
+                    // Provider if this one cannot be configured in-place.
+                    o = klass.getMethod("configure", String.class).invoke(o, providerArg);
+                } catch (ReflectiveOperationException roe) {
+                    roe.printStackTrace();
+                    System.err.println("Unable to instantiate " + providerClassName
+                            + " with the provided argument " + providerArg);
+                    System.exit(1);
+                }
             }
         }
-        if (constructor == null) {
-            System.err.println("No zero-arg constructor found for " + providerClassName);
-            System.exit(1);
-            return;
-        }
 
-        final Object o;
-        try {
-            o = constructor.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-            return;
-        }
         if (!(o instanceof Provider)) {
             System.err.println("Not a Provider class: " + providerClassName);
             System.exit(1);
@@ -1049,6 +1063,7 @@ class SignApk {
                            "[-a <alignment>] " +
                            "[--align-file-size] " +
                            "[-providerClass <className>] " +
+                           "[-providerArg <configureArg>] " +
                            "[-loadPrivateKeysFromKeyStore <keyStoreName>]" +
                            "[-keyStorePin <pin>]" +
                            "[--min-sdk-version <n>] " +
@@ -1073,6 +1088,7 @@ class SignApk {
 
         boolean signWholeFile = false;
         String providerClass = null;
+        String providerArg = null;
         String keyStoreName = null;
         String keyStorePin = null;
         int alignment = 4;
@@ -1081,6 +1097,7 @@ class SignApk {
         boolean signUsingApkSignatureSchemeV2 = true;
         boolean signUsingApkSignatureSchemeV4 = false;
         SigningCertificateLineage certLineage = null;
+        Integer rotationMinSdkVersion = null;
 
         int argstart = 0;
         while (argstart < args.length && args[argstart].startsWith("-")) {
@@ -1092,6 +1109,12 @@ class SignApk {
                     usage();
                 }
                 providerClass = args[++argstart];
+                ++argstart;
+            } else if("-providerArg".equals(args[argstart])) {
+                if (argstart + 1 >= args.length) {
+                    usage();
+                }
+                providerArg = args[++argstart];
                 ++argstart;
             } else if ("-loadPrivateKeysFromKeyStore".equals(args[argstart])) {
                 if (argstart + 1 >= args.length) {
@@ -1135,6 +1158,15 @@ class SignApk {
                             "Error reading lineage file: " + e.getMessage());
                 }
                 ++argstart;
+            } else if ("--rotation-min-sdk-version".equals(args[argstart])) {
+                String rotationMinSdkVersionString = args[++argstart];
+                try {
+                    rotationMinSdkVersion = Integer.parseInt(rotationMinSdkVersionString);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException(
+                            "--rotation-min-sdk-version must be a decimal number: " + rotationMinSdkVersionString);
+                }
+                ++argstart;
             } else {
                 usage();
             }
@@ -1153,7 +1185,7 @@ class SignApk {
             System.exit(2);
         }
 
-        loadProviderIfNecessary(providerClass);
+        loadProviderIfNecessary(providerClass, providerArg);
 
         String inputFilename = args[numArgsExcludeV4FilePath - 2];
         String outputFilename = args[numArgsExcludeV4FilePath - 1];
@@ -1226,15 +1258,22 @@ class SignApk {
                     }
                 }
 
-                try (ApkSignerEngine apkSigner =
-                        new DefaultApkSignerEngine.Builder(
-                                createSignerConfigs(privateKey, publicKey), minSdkVersion)
-                                .setV1SigningEnabled(true)
-                                .setV2SigningEnabled(signUsingApkSignatureSchemeV2)
-                                .setOtherSignersSignaturesPreserved(false)
-                                .setCreatedBy("1.0 (Android SignApk)")
-                                .setSigningCertificateLineage(certLineage)
-                                .build()) {
+                DefaultApkSignerEngine.Builder builder = new DefaultApkSignerEngine.Builder(
+                    createSignerConfigs(privateKey, publicKey), minSdkVersion)
+                    .setV1SigningEnabled(true)
+                    .setV2SigningEnabled(signUsingApkSignatureSchemeV2)
+                    .setOtherSignersSignaturesPreserved(false)
+                    .setCreatedBy("1.0 (Android SignApk)");
+
+                if (certLineage != null) {
+                   builder = builder.setSigningCertificateLineage(certLineage);
+                }
+
+                if (rotationMinSdkVersion != null) {
+                   builder = builder.setMinSdkVersionForRotation(rotationMinSdkVersion);
+                }
+
+                try (ApkSignerEngine apkSigner = builder.build()) {
                     // We don't preserve the input APK's APK Signing Block (which contains v2
                     // signatures)
                     apkSigner.inputApkSigningBlock(null);

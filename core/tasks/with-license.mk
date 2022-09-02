@@ -37,6 +37,10 @@ else
 		RADIO/bootloader.img:bootloader.img RADIO/radio.img:radio.img \
 		IMAGES/*.img:. OTA/android-info.txt:android-info.txt
 endif
+
+$(call declare-1p-container,$(license_image_input_zip),build)
+$(call declare-container-deps,$(license_image_input_zip),$(BUILT_TARGET_FILES_PACKAGE))
+
 with_license_zip := $(PRODUCT_OUT)/$(name).sh
 $(with_license_zip): PRIVATE_NAME := $(name)
 $(with_license_zip): PRIVATE_INPUT_ZIP := $(license_image_input_zip)
@@ -48,3 +52,7 @@ $(with_license_zip): $(HOST_OUT_EXECUTABLES)/generate-self-extracting-archive
 		$(PRIVATE_INPUT_ZIP) $(PRIVATE_NAME) $(PRIVATE_VENDOR_BLOBS_LICENSE)
 with-license : $(with_license_zip)
 $(call dist-for-goals, with-license, $(with_license_zip))
+
+$(call declare-1p-container,$(with_license_zip),)
+$(call declare-container-license-deps,$(with_license_zip),$(license_image_input_zip),$(with_license_zip):)
+

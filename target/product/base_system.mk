@@ -24,7 +24,7 @@ PRODUCT_PACKAGES += \
     android.hidl.manager-V1.0-java \
     android.hidl.memory@1.0-impl \
     android.hidl.memory@1.0-impl.vendor \
-    android.system.suspend@1.0-service \
+    android.system.suspend-service \
     android.test.base \
     android.test.mock \
     android.test.runner \
@@ -50,7 +50,9 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.adbd \
+    com.android.adservices \
     com.android.appsearch \
+    com.android.btservices \
     com.android.conscrypt \
     com.android.cronet \
     com.android.extservices \
@@ -60,6 +62,7 @@ PRODUCT_PACKAGES += \
     com.android.media \
     com.android.media.swcodec \
     com.android.mediaprovider \
+    com.android.ondevicepersonalization \
     com.android.os.statsd \
     com.android.permission \
     com.android.resolv \
@@ -69,6 +72,7 @@ PRODUCT_PACKAGES += \
     com.android.sepolicy \
     com.android.tethering \
     com.android.tzdata \
+    com.android.uwb \
     com.android.wifi \
     ContactsProvider \
     content \
@@ -218,6 +222,7 @@ PRODUCT_PACKAGES += \
     mke2fs \
     mkfs.erofs \
     monkey \
+    mtectrl \
     mtpd \
     ndc \
     netd \
@@ -271,7 +276,6 @@ PRODUCT_PACKAGES += \
     traced \
     traced_probes \
     tune2fs \
-    tzdatacheck \
     uiautomator \
     uinput \
     uncrypt \
@@ -314,6 +318,11 @@ ifeq ($(EMMA_INSTRUMENT),true)
   endif # EMMA_INSTRUMENT_STATIC
 endif # EMMA_INSTRUMENT
 
+# For testing purposes
+ifeq ($(FORCE_AUDIO_SILENT), true)
+    PRODUCT_SYSTEM_PROPERTIES += ro.audio.silent=1
+endif
+
 # Host tools to install
 PRODUCT_HOST_PACKAGES += \
     BugReport \
@@ -341,7 +350,6 @@ PRODUCT_HOST_PACKAGES += \
     sqlite3 \
     tinyplay \
     tune2fs \
-    tzdatacheck \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \
@@ -380,7 +388,6 @@ PRODUCT_PACKAGES_DEBUG := \
     procrank \
     profcollectd \
     profcollectctl \
-    remount \
     servicedispatcher \
     showmap \
     sqlite3 \

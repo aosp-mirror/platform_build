@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2014 The Android Open Source Project
+# Copyright (C) 2022 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-# Provides dependencies necessary for verified boot.
-
-PRODUCT_SUPPORTS_BOOT_SIGNER := true
-PRODUCT_SUPPORTS_VERITY := true
-PRODUCT_SUPPORTS_VERITY_FEC := true
-
-# The dev key is used to sign boot and recovery images, and the verity
-# metadata table. Actual product deliverables will be re-signed by hand.
-# We expect this file to exist with the suffixes ".x509.pem" and ".pk8".
-PRODUCT_VERITY_SIGNING_KEY := build/make/target/product/security/verity
-
-PRODUCT_PACKAGES += \
-        verity_key
+.PHONY: update-meta
+update-meta: $(SOONG_MULTITREE_METADATA)

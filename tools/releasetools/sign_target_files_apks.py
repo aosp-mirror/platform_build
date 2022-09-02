@@ -27,7 +27,7 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       apkcerts.txt file, or the container key for an APEX. Option may be
       repeated to give multiple extra packages.
 
-  --extra_apex_payload_key <name=key>
+  --extra_apex_payload_key <name,name,...=key>
       Add a mapping for APEX package name to payload signing key, which will
       override the default payload signing key in apexkeys.txt. Note that the
       container key should be overridden via the `--extra_apks` flag above.
@@ -99,15 +99,15 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       The second dir will be used for lookup if BOARD_USES_RECOVERY_AS_BOOT is
       set to true.
 
-  --avb_{boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
+  --avb_{boot,recovery,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
          vbmeta_vendor}_algorithm <algorithm>
-  --avb_{boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
+  --avb_{boot,recovery,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
          vbmeta_vendor}_key <key>
       Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
       the specified image. Otherwise it uses the existing values in info dict.
 
-  --avb_{apex,boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
-         vbmeta_vendor}_extra_args <args>
+  --avb_{apex,boot,recovery,system,system_other,vendor,dtbo,vbmeta,
+         vbmeta_system,vbmeta_vendor}_extra_args <args>
       Specify any additional args that are needed to AVB-sign the image
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
       the existing ones in info dict.
@@ -137,19 +137,16 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
   --android_jar_path <path>
       Path to the android.jar to repack the apex file.
 
-  --sepolicy_key <key>
-      Optional flag that specifies the sepolicy signing key, defaults to payload_key for the sepolicy.apex.
-
-  --sepolicy_cert <cert>
-      Optional flag that specifies the sepolicy signing cert.
-
-  --fsverity_tool <path>
-      Optional flag that specifies the path to fsverity tool to sign SEPolicy, defaults to fsverity.
-
   --allow_gsi_debug_sepolicy
       Allow the existence of the file 'userdebug_plat_sepolicy.cil' under
       (/system/system_ext|/system_ext)/etc/selinux.
       If not set, error out when the file exists.
+
+  --override_apk_keys <path>
+      Replace all APK keys with this private key
+
+  --override_apex_keys <path>
+      Replace all APEX keys with this private key
 """
 
 from __future__ import print_function
@@ -191,9 +188,6 @@ OPTIONS.skip_apks_with_path_prefix = set()
 OPTIONS.key_map = {}
 OPTIONS.rebuild_recovery = False
 OPTIONS.replace_ota_keys = False
-OPTIONS.replace_verity_public_key = False
-OPTIONS.replace_verity_private_key = False
-OPTIONS.replace_verity_keyid = False
 OPTIONS.remove_avb_public_keys = None
 OPTIONS.tag_changes = ("-test-keys", "-dev-keys", "+release-keys")
 OPTIONS.avb_keys = {}
@@ -205,10 +199,9 @@ OPTIONS.gki_signing_extra_args = None
 OPTIONS.android_jar_path = None
 OPTIONS.vendor_partitions = set()
 OPTIONS.vendor_otatools = None
-OPTIONS.sepolicy_key = None
-OPTIONS.sepolicy_cert = None
-OPTIONS.fsverity_tool = None
 OPTIONS.allow_gsi_debug_sepolicy = False
+OPTIONS.override_apk_keys = None
+OPTIONS.override_apex_keys = None
 
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
@@ -226,6 +219,7 @@ AVB_FOOTER_ARGS_BY_PARTITION = {
     'pvmfw': 'avb_pvmfw_add_hash_footer_args',
     'vendor': 'avb_vendor_add_hashtree_footer_args',
     'vendor_boot': 'avb_vendor_boot_add_hash_footer_args',
+    'vendor_kernel_boot': 'avb_vendor_kernel_boot_add_hash_footer_args',
     'vendor_dlkm': "avb_vendor_dlkm_add_hashtree_footer_args",
     'vbmeta': 'avb_vbmeta_args',
     'vbmeta_system': 'avb_vbmeta_system_args',
@@ -246,8 +240,6 @@ ALLOWED_VENDOR_PARTITIONS = set(["vendor", "odm"])
 def IsApexFile(filename):
   return filename.endswith(".apex") or filename.endswith(".capex")
 
-def IsSepolicyApex(filename):
-  return filename.endswith(OPTIONS.sepolicy_name)
 
 def GetApexFilename(filename):
   name = os.path.basename(filename)
@@ -258,6 +250,10 @@ def GetApexFilename(filename):
 
 
 def GetApkCerts(certmap):
+  if OPTIONS.override_apk_keys is not None:
+    for apk in certmap.keys():
+      certmap[apk] = OPTIONS.override_apk_keys
+
   # apply the key remapping to the contents of the file
   for apk, cert in certmap.items():
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
@@ -270,24 +266,6 @@ def GetApkCerts(certmap):
 
   return certmap
 
-def GetSepolicyKeys(keys_info):
-  """Gets SEPolicy signing keys applying overrides from command line options.
-
-  Args:
-    keys_info: A dict that maps from the SEPolicy APEX filename to a tuple of
-    (sepolicy_key, sepolicy_cert, fsverity_tool).
-
-  Returns:
-    A dict that contains the updated APEX key mapping, which should be used for
-    the current signing.
-  """
-  for name in keys_info:
-      (sepolicy_key, sepolicy_cert, fsverity_tool) = keys_info[name]
-      sepolicy_key = OPTIONS.sepolicy_key if OPTIONS.sepolicy_key else sepolicy_key
-      sepolicy_cert = OPTIONS.sepolicy_cert if OPTIONS.sepolicy_cert else sepolicy_cert
-      fsverity_tool = OPTIONS.fsverity_tool if OPTIONS.fsverity_tool else fsverity_tool
-      keys_info[name] = (sepolicy_key, sepolicy_cert, fsverity_tool)
-  return keys_info
 
 def GetApexKeys(keys_info, key_map):
   """Gets APEX payload and container signing keys by applying the mapping rules.
@@ -306,6 +284,15 @@ def GetApexKeys(keys_info, key_map):
   Raises:
     AssertionError: On invalid container / payload key overrides.
   """
+  if OPTIONS.override_apex_keys is not None:
+    for apex in keys_info.keys():
+      keys_info[apex] = (OPTIONS.override_apex_keys, keys_info[apex][1], keys_info[apex][2])
+
+  if OPTIONS.override_apk_keys is not None:
+    key = key_map.get(OPTIONS.override_apk_keys, OPTIONS.override_apk_keys)
+    for apex in keys_info.keys():
+      keys_info[apex] = (keys_info[apex][0], key, keys_info[apex][2])
+
   # Apply all the --extra_apex_payload_key options to override the payload
   # signing keys in the given keys_info.
   for apex, key in OPTIONS.extra_apex_payload_keys.items():
@@ -550,7 +537,7 @@ def IsBuildPropFile(filename):
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                        apk_keys, apex_keys, key_passwords,
                        platform_api_level, codename_to_api_level_map,
-                       compressed_extension, sepolicy_keys):
+                       compressed_extension):
   # maxsize measures the maximum filename length, including the ones to be
   # skipped.
   try:
@@ -618,17 +605,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         print("           : %-*s payload   (%s)" % (
             maxsize, name, payload_key))
 
-        sepolicy_key = None
-        sepolicy_cert = None
-        fsverity_tool = None
-
-        if IsSepolicyApex(name):
-          (sepolicy_key, sepolicy_cert, fsverity_tool) = sepolicy_keys[name]
-          print("           : %-*s sepolicy key   (%s)" % (
-            maxsize, name, sepolicy_key))
-          print("           : %-*s sepolicy cert  (%s)" % (
-            maxsize, name, sepolicy_cert))
-
         signed_apex = apex_utils.SignApex(
             misc_info['avb_avbtool'],
             data,
@@ -639,11 +615,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             codename_to_api_level_map,
             no_hashtree=None,  # Let apex_util determine if hash tree is needed
             signing_args=OPTIONS.avb_extra_args.get('apex'),
-            sign_tool=sign_tool,
-            is_sepolicy=IsSepolicyApex(name),
-            sepolicy_key=sepolicy_key,
-            sepolicy_cert=sepolicy_cert,
-            fsverity_tool=fsverity_tool)
+            sign_tool=sign_tool)
         common.ZipWrite(output_tf_zip, signed_apex, filename)
 
       else:
@@ -688,11 +660,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif filename == "META/misc_info.txt":
       pass
 
-    # Skip verity public key if we will replace it.
-    elif (OPTIONS.replace_verity_public_key and
-          filename in ("BOOT/RAMDISK/verity_key",
-                       "ROOT/verity_key")):
-      pass
     elif (OPTIONS.remove_avb_public_keys and
           (filename.startswith("BOOT/RAMDISK/avb/") or
            filename.startswith("BOOT/RAMDISK/first_stage_ramdisk/avb/"))):
@@ -705,10 +672,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if not matched_removal:
         # Copy it verbatim if we don't want to remove it.
         common.ZipWriteStr(output_tf_zip, out_info, data)
-
-    # Skip verity keyid (for system_root_image use) if we will replace it.
-    elif OPTIONS.replace_verity_keyid and filename == "BOOT/cmdline":
-      pass
 
     # Skip the vbmeta digest as we will recalculate it.
     elif filename == "META/vbmeta_digest.txt":
@@ -790,27 +753,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
   if OPTIONS.replace_ota_keys:
     ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
-
-  # Replace the keyid string in misc_info dict.
-  if OPTIONS.replace_verity_private_key:
-    ReplaceVerityPrivateKey(misc_info, OPTIONS.replace_verity_private_key[1])
-
-  if OPTIONS.replace_verity_public_key:
-    # Replace the one in root dir in system.img.
-    ReplaceVerityPublicKey(
-        output_tf_zip, 'ROOT/verity_key', OPTIONS.replace_verity_public_key[1])
-
-    if not system_root_image:
-      # Additionally replace the copy in ramdisk if not using system-as-root.
-      ReplaceVerityPublicKey(
-          output_tf_zip,
-          'BOOT/RAMDISK/verity_key',
-          OPTIONS.replace_verity_public_key[1])
-
-  # Replace the keyid string in BOOT/cmdline.
-  if OPTIONS.replace_verity_keyid:
-    ReplaceVerityKeyId(input_tf_zip, output_tf_zip,
-                       OPTIONS.replace_verity_keyid[1])
 
   # Replace the AVB signing keys, if any.
   ReplaceAvbSigningKeys(misc_info)
@@ -927,7 +869,7 @@ def RewriteProps(data):
         pieces[-1] = EditTags(pieces[-1])
         value = "/".join(pieces)
       elif key == "ro.build.description":
-        pieces = value.split(" ")
+        pieces = value.split()
         assert pieces[-1].endswith("-keys")
         pieces[-1] = EditTags(pieces[-1])
         value = " ".join(pieces)
@@ -1028,64 +970,6 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
     WriteOtacerts(output_tf_zip, info.filename, mapped_keys + extra_keys)
 
 
-def ReplaceVerityPublicKey(output_zip, filename, key_path):
-  """Replaces the verity public key at the given path in the given zip.
-
-  Args:
-    output_zip: The output target_files zip.
-    filename: The archive name in the output zip.
-    key_path: The path to the public key.
-  """
-  print("Replacing verity public key with %s" % (key_path,))
-  common.ZipWrite(output_zip, key_path, arcname=filename)
-
-
-def ReplaceVerityPrivateKey(misc_info, key_path):
-  """Replaces the verity private key in misc_info dict.
-
-  Args:
-    misc_info: The info dict.
-    key_path: The path to the private key in PKCS#8 format.
-  """
-  print("Replacing verity private key with %s" % (key_path,))
-  misc_info["verity_key"] = key_path
-
-
-def ReplaceVerityKeyId(input_zip, output_zip, key_path):
-  """Replaces the veritykeyid parameter in BOOT/cmdline.
-
-  Args:
-    input_zip: The input target_files zip, which should be already open.
-    output_zip: The output target_files zip, which should be already open and
-        writable.
-    key_path: The path to the PEM encoded X.509 certificate.
-  """
-  in_cmdline = input_zip.read("BOOT/cmdline").decode()
-  # Copy in_cmdline to output_zip if veritykeyid is not present.
-  if "veritykeyid" not in in_cmdline:
-    common.ZipWriteStr(output_zip, "BOOT/cmdline", in_cmdline)
-    return
-
-  out_buffer = []
-  for param in in_cmdline.split():
-    if "veritykeyid" not in param:
-      out_buffer.append(param)
-      continue
-
-    # Extract keyid using openssl command.
-    p = common.Run(["openssl", "x509", "-in", key_path, "-text"],
-                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    keyid, stderr = p.communicate()
-    assert p.returncode == 0, "Failed to dump certificate: {}".format(stderr)
-    keyid = re.search(
-        r'keyid:([0-9a-fA-F:]*)', keyid).group(1).replace(':', '').lower()
-    print("Replacing verity keyid with {}".format(keyid))
-    out_buffer.append("veritykeyid=id:%s" % (keyid,))
-
-  out_cmdline = ' '.join(out_buffer).strip() + '\n'
-  common.ZipWriteStr(output_zip, "BOOT/cmdline", out_cmdline)
-
-
 def ReplaceMiscInfoTxt(input_zip, output_zip, misc_info):
   """Replaces META/misc_info.txt.
 
@@ -1144,7 +1028,7 @@ def RewriteAvbProps(misc_info):
 
     tokens = []
     changed = False
-    for token in args.split(' '):
+    for token in args.split():
       fingerprint_key = 'com.android.build.{}.fingerprint'.format(partition)
       if not token.startswith(fingerprint_key):
         tokens.append(token)
@@ -1253,24 +1137,20 @@ def GetCodenameToApiLevelMap(input_tf_zip):
 def ReadApexKeysInfo(tf_zip):
   """Parses the APEX keys info from a given target-files zip.
 
-  Given a target-files ZipFile, parses the META/apexkeys.txt entry and returns
-  two dicts, the first one contains the mapping from APEX names
-  (e.g. com.android.tzdata) to a tuple of (payload_key, container_key,
-  sign_tool). The second one maps the sepolicy APEX name to a tuple containing
-  (sepolicy_key, sepolicy_cert, fsverity_tool).
+  Given a target-files ZipFile, parses the META/apexkeys.txt entry and returns a
+  dict that contains the mapping from APEX names (e.g. com.android.tzdata) to a
+  tuple of (payload_key, container_key, sign_tool).
 
   Args:
     tf_zip: The input target_files ZipFile (already open).
 
   Returns:
-    name : (payload_key, container_key, sign_tool)
+    (payload_key, container_key, sign_tool):
       - payload_key contains the path to the payload signing key
       - container_key contains the path to the container signing key
       - sign_tool is an apex-specific signing tool for its payload contents
-    name : (sepolicy_key, sepolicy_cert, fsverity_tool)
   """
   keys = {}
-  sepolicy_keys = {}
   for line in tf_zip.read('META/apexkeys.txt').decode().split('\n'):
     line = line.strip()
     if not line:
@@ -1281,9 +1161,6 @@ def ReadApexKeysInfo(tf_zip):
         r'private_key="(?P<PAYLOAD_PRIVATE_KEY>.*)"\s+'
         r'container_certificate="(?P<CONTAINER_CERT>.*)"\s+'
         r'container_private_key="(?P<CONTAINER_PRIVATE_KEY>.*?)"'
-        r'(\s+sepolicy_key="(?P<SEPOLICY_KEY>.*?)")?'
-        r'(\s+sepolicy_certificate="(?P<SEPOLICY_CERT>.*?)")?'
-        r'(\s+fsverity_tool="(?P<FSVERITY_TOOL>.*?)")?'
         r'(\s+partition="(?P<PARTITION>.*?)")?'
         r'(\s+sign_tool="(?P<SIGN_TOOL>.*?)")?$',
         line)
@@ -1312,18 +1189,12 @@ def ReadApexKeysInfo(tf_zip):
             container_private_key, OPTIONS.private_key_suffix):
       container_key = container_cert[:-len(OPTIONS.public_key_suffix)]
     else:
-      raise ValueError("Failed to parse container keys: \n{} **** {}".format(container_cert, container_private_key))
+      raise ValueError("Failed to parse container keys: \n{}".format(line))
 
     sign_tool = matches.group("SIGN_TOOL")
     keys[name] = (payload_private_key, container_key, sign_tool)
 
-    if IsSepolicyApex(name):
-      sepolicy_key = matches.group('SEPOLICY_KEY')
-      sepolicy_cert = matches.group('SEPOLICY_CERT')
-      fsverity_tool = matches.group('FSVERITY_TOOL')
-      sepolicy_keys[name] = (sepolicy_key, sepolicy_cert, fsverity_tool)
-
-  return keys, sepolicy_keys
+  return keys
 
 
 def BuildVendorPartitions(output_zip_path):
@@ -1354,12 +1225,13 @@ def BuildVendorPartitions(output_zip_path):
     vendor_misc_info["no_boot"] = "true"  # boot
     vendor_misc_info["vendor_boot"] = "false"  # vendor_boot
     vendor_misc_info["no_recovery"] = "true"  # recovery
+    vendor_misc_info["avb_enable"] = "false"  # vbmeta
 
   vendor_misc_info["board_bpt_enable"] = "false"  # partition-table
   vendor_misc_info["has_dtbo"] = "false"  # dtbo
   vendor_misc_info["has_pvmfw"] = "false"  # pvmfw
   vendor_misc_info["avb_custom_images_partition_list"] = ""  # custom images
-  vendor_misc_info["avb_enable"] = "false"  # vbmeta
+  vendor_misc_info["avb_building_vbmeta_image"] = "false" # skip building vbmeta
   vendor_misc_info["use_dynamic_partitions"] = "false"  # super_empty
   vendor_misc_info["build_super_partition"] = "false"  # super split
   with open(vendor_misc_info_path, "w") as output:
@@ -1413,9 +1285,14 @@ def BuildVendorPartitions(output_zip_path):
       img_file_path = "IMAGES/{}.img".format(p)
       map_file_path = "IMAGES/{}.map".format(p)
       common.ZipWrite(output_zip, os.path.join(vendor_tempdir, img_file_path), img_file_path)
-      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, map_file_path), map_file_path)
-    # copy recovery patch & install.sh
+      if os.path.exists(os.path.join(vendor_tempdir, map_file_path)):
+        common.ZipWrite(output_zip, os.path.join(vendor_tempdir, map_file_path), map_file_path)
+    # copy recovery.img, boot.img, recovery patch & install.sh
     if OPTIONS.rebuild_recovery:
+      recovery_img = "IMAGES/recovery.img"
+      boot_img = "IMAGES/boot.img"
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, recovery_img), recovery_img)
+      common.ZipWrite(output_zip, os.path.join(vendor_tempdir, boot_img), boot_img)
       recovery_patch_path = "VENDOR/recovery-from-boot.p"
       recovery_sh_path = "VENDOR/bin/install-recovery.sh"
       common.ZipWrite(output_zip, os.path.join(vendor_tempdir, recovery_patch_path), recovery_patch_path)
@@ -1433,8 +1310,9 @@ def main(argv):
       for n in names:
         OPTIONS.extra_apks[n] = key
     elif o == "--extra_apex_payload_key":
-      apex_name, key = a.split("=")
-      OPTIONS.extra_apex_payload_keys[apex_name] = key
+      apex_names, key = a.split("=")
+      for name in apex_names.split(","):
+        OPTIONS.extra_apex_payload_keys[name] = key
     elif o == "--skip_apks_with_path_prefix":
       # Check the prefix, which must be in all upper case.
       prefix = a.split('/')[0]
@@ -1456,11 +1334,14 @@ def main(argv):
         new.append(i[0] + i[1:].strip())
       OPTIONS.tag_changes = tuple(new)
     elif o == "--replace_verity_public_key":
-      OPTIONS.replace_verity_public_key = (True, a)
+      raise ValueError("--replace_verity_public_key is no longer supported,"
+                       " please switch to AVB")
     elif o == "--replace_verity_private_key":
-      OPTIONS.replace_verity_private_key = (True, a)
+      raise ValueError("--replace_verity_private_key is no longer supported,"
+                       " please switch to AVB")
     elif o == "--replace_verity_keyid":
-      OPTIONS.replace_verity_keyid = (True, a)
+      raise ValueError("--replace_verity_keyid is no longer supported, please"
+                       " switch to AVB")
     elif o == "--remove_avb_public_keys":
       OPTIONS.remove_avb_public_keys = a.split(",")
     elif o == "--avb_vbmeta_key":
@@ -1481,6 +1362,12 @@ def main(argv):
       OPTIONS.avb_algorithms['dtbo'] = a
     elif o == "--avb_dtbo_extra_args":
       OPTIONS.avb_extra_args['dtbo'] = a
+    elif o == "--avb_recovery_key":
+      OPTIONS.avb_keys['recovery'] = a
+    elif o == "--avb_recovery_algorithm":
+      OPTIONS.avb_algorithms['recovery'] = a
+    elif o == "--avb_recovery_extra_args":
+      OPTIONS.avb_extra_args['recovery'] = a
     elif o == "--avb_system_key":
       OPTIONS.avb_keys['system'] = a
     elif o == "--avb_system_algorithm":
@@ -1535,14 +1422,12 @@ def main(argv):
       OPTIONS.vendor_otatools = a
     elif o == "--vendor_partitions":
       OPTIONS.vendor_partitions = set(a.split(","))
-    elif o == '--sepolicy_key':
-      OPTIONS.sepolicy_key = a
-    elif o == '--sepolicy_cert':
-      OPTIONS.sepolicy_cert = a
-    elif o == '--fsverity_tool':
-      OPTIONS.fsverity_tool = a
     elif o == "--allow_gsi_debug_sepolicy":
       OPTIONS.allow_gsi_debug_sepolicy = True
+    elif o == "--override_apk_keys":
+      OPTIONS.override_apk_keys = a
+    elif o == "--override_apex_keys":
+      OPTIONS.override_apex_keys = a
     else:
       return False
     return True
@@ -1572,6 +1457,9 @@ def main(argv):
           "avb_dtbo_algorithm=",
           "avb_dtbo_key=",
           "avb_dtbo_extra_args=",
+          "avb_recovery_algorithm=",
+          "avb_recovery_key=",
+          "avb_recovery_extra_args=",
           "avb_system_algorithm=",
           "avb_system_key=",
           "avb_system_extra_args=",
@@ -1595,10 +1483,9 @@ def main(argv):
           "gki_signing_extra_args=",
           "vendor_partitions=",
           "vendor_otatools=",
-          "sepolicy_key=",
-          "sepolicy_cert=",
-          "fsverity_tool=",
           "allow_gsi_debug_sepolicy",
+          "override_apk_keys=",
+          "override_apex_keys=",
       ],
       extra_option_handler=option_handler)
 
@@ -1620,9 +1507,8 @@ def main(argv):
   apk_keys_info, compressed_extension = common.ReadApkCerts(input_zip)
   apk_keys = GetApkCerts(apk_keys_info)
 
-  apex_keys_info, sepolicy_keys_info = ReadApexKeysInfo(input_zip)
+  apex_keys_info = ReadApexKeysInfo(input_zip)
   apex_keys = GetApexKeys(apex_keys_info, apk_keys)
-  sepolicy_keys = GetSepolicyKeys(sepolicy_keys_info)
 
   # TODO(xunchang) check for the apks inside the apex files, and abort early if
   # the keys are not available.
@@ -1640,7 +1526,7 @@ def main(argv):
   ProcessTargetFiles(input_zip, output_zip, misc_info,
                      apk_keys, apex_keys, key_passwords,
                      platform_api_level, codename_to_api_level_map,
-                     compressed_extension, sepolicy_keys)
+                     compressed_extension)
 
   common.ZipClose(input_zip)
   common.ZipClose(output_zip)

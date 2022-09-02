@@ -255,7 +255,6 @@ import os.path
 import re
 import shlex
 import shutil
-import struct
 import subprocess
 import sys
 import zipfile
@@ -264,11 +263,12 @@ import care_map_pb2
 import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
-                       PropertyFiles, SECURITY_PATCH_LEVEL_PROP_NAME, GetZipEntryOffset)
+                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, StreamingPropertyFiles, AbOtaPropertyFiles)
 from common import IsSparseImage
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
+from payload_signer import PayloadSigner
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -335,207 +335,6 @@ SECONDARY_PAYLOAD_SKIPPED_IMAGES = [
     'vendor', 'vendor_boot']
 
 
-class PayloadSigner(object):
-  """A class that wraps the payload signing works.
-
-  When generating a Payload, hashes of the payload and metadata files will be
-  signed with the device key, either by calling an external payload signer or
-  by calling openssl with the package key. This class provides a unified
-  interface, so that callers can just call PayloadSigner.Sign().
-
-  If an external payload signer has been specified (OPTIONS.payload_signer), it
-  calls the signer with the provided args (OPTIONS.payload_signer_args). Note
-  that the signing key should be provided as part of the payload_signer_args.
-  Otherwise without an external signer, it uses the package key
-  (OPTIONS.package_key) and calls openssl for the signing works.
-  """
-
-  def __init__(self):
-    if OPTIONS.payload_signer is None:
-      # Prepare the payload signing key.
-      private_key = OPTIONS.package_key + OPTIONS.private_key_suffix
-      pw = OPTIONS.key_passwords[OPTIONS.package_key]
-
-      cmd = ["openssl", "pkcs8", "-in", private_key, "-inform", "DER"]
-      cmd.extend(["-passin", "pass:" + pw] if pw else ["-nocrypt"])
-      signing_key = common.MakeTempFile(prefix="key-", suffix=".key")
-      cmd.extend(["-out", signing_key])
-      common.RunAndCheckOutput(cmd, verbose=False)
-
-      self.signer = "openssl"
-      self.signer_args = ["pkeyutl", "-sign", "-inkey", signing_key,
-                          "-pkeyopt", "digest:sha256"]
-      self.maximum_signature_size = self._GetMaximumSignatureSizeInBytes(
-          signing_key)
-    else:
-      self.signer = OPTIONS.payload_signer
-      self.signer_args = OPTIONS.payload_signer_args
-      if OPTIONS.payload_signer_maximum_signature_size:
-        self.maximum_signature_size = int(
-            OPTIONS.payload_signer_maximum_signature_size)
-      else:
-        # The legacy config uses RSA2048 keys.
-        logger.warning("The maximum signature size for payload signer is not"
-                       " set, default to 256 bytes.")
-        self.maximum_signature_size = 256
-
-  @staticmethod
-  def _GetMaximumSignatureSizeInBytes(signing_key):
-    out_signature_size_file = common.MakeTempFile("signature_size")
-    cmd = ["delta_generator", "--out_maximum_signature_size_file={}".format(
-        out_signature_size_file), "--private_key={}".format(signing_key)]
-    common.RunAndCheckOutput(cmd)
-    with open(out_signature_size_file) as f:
-      signature_size = f.read().rstrip()
-    logger.info("%s outputs the maximum signature size: %s", cmd[0],
-                signature_size)
-    return int(signature_size)
-
-  def Sign(self, in_file):
-    """Signs the given input file. Returns the output filename."""
-    out_file = common.MakeTempFile(prefix="signed-", suffix=".bin")
-    cmd = [self.signer] + self.signer_args + ['-in', in_file, '-out', out_file]
-    common.RunAndCheckOutput(cmd)
-    return out_file
-
-
-class Payload(object):
-  """Manages the creation and the signing of an A/B OTA Payload."""
-
-  PAYLOAD_BIN = 'payload.bin'
-  PAYLOAD_PROPERTIES_TXT = 'payload_properties.txt'
-  SECONDARY_PAYLOAD_BIN = 'secondary/payload.bin'
-  SECONDARY_PAYLOAD_PROPERTIES_TXT = 'secondary/payload_properties.txt'
-
-  def __init__(self, secondary=False):
-    """Initializes a Payload instance.
-
-    Args:
-      secondary: Whether it's generating a secondary payload (default: False).
-    """
-    self.payload_file = None
-    self.payload_properties = None
-    self.secondary = secondary
-
-  def _Run(self, cmd):  # pylint: disable=no-self-use
-    # Don't pipe (buffer) the output if verbose is set. Let
-    # brillo_update_payload write to stdout/stderr directly, so its progress can
-    # be monitored.
-    if OPTIONS.verbose:
-      common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
-    else:
-      common.RunAndCheckOutput(cmd)
-
-  def Generate(self, target_file, source_file=None, additional_args=None):
-    """Generates a payload from the given target-files zip(s).
-
-    Args:
-      target_file: The filename of the target build target-files zip.
-      source_file: The filename of the source build target-files zip; or None if
-          generating a full OTA.
-      additional_args: A list of additional args that should be passed to
-          brillo_update_payload script; or None.
-    """
-    if additional_args is None:
-      additional_args = []
-
-    payload_file = common.MakeTempFile(prefix="payload-", suffix=".bin")
-    cmd = ["brillo_update_payload", "generate",
-           "--payload", payload_file,
-           "--target_image", target_file]
-    if source_file is not None:
-      cmd.extend(["--source_image", source_file])
-      if OPTIONS.disable_fec_computation:
-        cmd.extend(["--disable_fec_computation", "true"])
-      if OPTIONS.disable_verity_computation:
-        cmd.extend(["--disable_verity_computation", "true"])
-    cmd.extend(additional_args)
-    self._Run(cmd)
-
-    self.payload_file = payload_file
-    self.payload_properties = None
-
-  def Sign(self, payload_signer):
-    """Generates and signs the hashes of the payload and metadata.
-
-    Args:
-      payload_signer: A PayloadSigner() instance that serves the signing work.
-
-    Raises:
-      AssertionError: On any failure when calling brillo_update_payload script.
-    """
-    assert isinstance(payload_signer, PayloadSigner)
-
-    # 1. Generate hashes of the payload and metadata files.
-    payload_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
-    metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
-    cmd = ["brillo_update_payload", "hash",
-           "--unsigned_payload", self.payload_file,
-           "--signature_size", str(payload_signer.maximum_signature_size),
-           "--metadata_hash_file", metadata_sig_file,
-           "--payload_hash_file", payload_sig_file]
-    self._Run(cmd)
-
-    # 2. Sign the hashes.
-    signed_payload_sig_file = payload_signer.Sign(payload_sig_file)
-    signed_metadata_sig_file = payload_signer.Sign(metadata_sig_file)
-
-    # 3. Insert the signatures back into the payload file.
-    signed_payload_file = common.MakeTempFile(prefix="signed-payload-",
-                                              suffix=".bin")
-    cmd = ["brillo_update_payload", "sign",
-           "--unsigned_payload", self.payload_file,
-           "--payload", signed_payload_file,
-           "--signature_size", str(payload_signer.maximum_signature_size),
-           "--metadata_signature_file", signed_metadata_sig_file,
-           "--payload_signature_file", signed_payload_sig_file]
-    self._Run(cmd)
-
-    # 4. Dump the signed payload properties.
-    properties_file = common.MakeTempFile(prefix="payload-properties-",
-                                          suffix=".txt")
-    cmd = ["brillo_update_payload", "properties",
-           "--payload", signed_payload_file,
-           "--properties_file", properties_file]
-    self._Run(cmd)
-
-    if self.secondary:
-      with open(properties_file, "a") as f:
-        f.write("SWITCH_SLOT_ON_REBOOT=0\n")
-
-    if OPTIONS.wipe_user_data:
-      with open(properties_file, "a") as f:
-        f.write("POWERWASH=1\n")
-
-    self.payload_file = signed_payload_file
-    self.payload_properties = properties_file
-
-  def WriteToZip(self, output_zip):
-    """Writes the payload to the given zip.
-
-    Args:
-      output_zip: The output ZipFile instance.
-    """
-    assert self.payload_file is not None
-    assert self.payload_properties is not None
-
-    if self.secondary:
-      payload_arcname = Payload.SECONDARY_PAYLOAD_BIN
-      payload_properties_arcname = Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT
-    else:
-      payload_arcname = Payload.PAYLOAD_BIN
-      payload_properties_arcname = Payload.PAYLOAD_PROPERTIES_TXT
-
-    # Add the signed payload file and properties into the zip. In order to
-    # support streaming, we pack them as ZIP_STORED. So these entries can be
-    # read directly with the offset and length pairs.
-    common.ZipWrite(output_zip, self.payload_file, arcname=payload_arcname,
-                    compress_type=zipfile.ZIP_STORED)
-    common.ZipWrite(output_zip, self.payload_properties,
-                    arcname=payload_properties_arcname,
-                    compress_type=zipfile.ZIP_STORED)
-
-
 def _LoadOemDicts(oem_source):
   """Returns the list of loaded OEM properties dict."""
   if not oem_source:
@@ -545,113 +344,6 @@ def _LoadOemDicts(oem_source):
   for oem_file in oem_source:
     oem_dicts.append(common.LoadDictionaryFromFile(oem_file))
   return oem_dicts
-
-
-class StreamingPropertyFiles(PropertyFiles):
-  """A subclass for computing the property-files for streaming A/B OTAs."""
-
-  def __init__(self):
-    super(StreamingPropertyFiles, self).__init__()
-    self.name = 'ota-streaming-property-files'
-    self.required = (
-        # payload.bin and payload_properties.txt must exist.
-        'payload.bin',
-        'payload_properties.txt',
-    )
-    self.optional = (
-        # apex_info.pb isn't directly used in the update flow
-        'apex_info.pb',
-        # care_map is available only if dm-verity is enabled.
-        'care_map.pb',
-        'care_map.txt',
-        # compatibility.zip is available only if target supports Treble.
-        'compatibility.zip',
-    )
-
-
-class AbOtaPropertyFiles(StreamingPropertyFiles):
-  """The property-files for A/B OTA that includes payload_metadata.bin info.
-
-  Since P, we expose one more token (aka property-file), in addition to the ones
-  for streaming A/B OTA, for a virtual entry of 'payload_metadata.bin'.
-  'payload_metadata.bin' is the header part of a payload ('payload.bin'), which
-  doesn't exist as a separate ZIP entry, but can be used to verify if the
-  payload can be applied on the given device.
-
-  For backward compatibility, we keep both of the 'ota-streaming-property-files'
-  and the newly added 'ota-property-files' in P. The new token will only be
-  available in 'ota-property-files'.
-  """
-
-  def __init__(self):
-    super(AbOtaPropertyFiles, self).__init__()
-    self.name = 'ota-property-files'
-
-  def _GetPrecomputed(self, input_zip):
-    offset, size = self._GetPayloadMetadataOffsetAndSize(input_zip)
-    return ['payload_metadata.bin:{}:{}'.format(offset, size)]
-
-  @staticmethod
-  def _GetPayloadMetadataOffsetAndSize(input_zip):
-    """Computes the offset and size of the payload metadata for a given package.
-
-    (From system/update_engine/update_metadata.proto)
-    A delta update file contains all the deltas needed to update a system from
-    one specific version to another specific version. The update format is
-    represented by this struct pseudocode:
-
-    struct delta_update_file {
-      char magic[4] = "CrAU";
-      uint64 file_format_version;
-      uint64 manifest_size;  // Size of protobuf DeltaArchiveManifest
-
-      // Only present if format_version > 1:
-      uint32 metadata_signature_size;
-
-      // The Bzip2 compressed DeltaArchiveManifest
-      char manifest[metadata_signature_size];
-
-      // The signature of the metadata (from the beginning of the payload up to
-      // this location, not including the signature itself). This is a
-      // serialized Signatures message.
-      char medatada_signature_message[metadata_signature_size];
-
-      // Data blobs for files, no specific format. The specific offset
-      // and length of each data blob is recorded in the DeltaArchiveManifest.
-      struct {
-        char data[];
-      } blobs[];
-
-      // These two are not signed:
-      uint64 payload_signatures_message_size;
-      char payload_signatures_message[];
-    };
-
-    'payload-metadata.bin' contains all the bytes from the beginning of the
-    payload, till the end of 'medatada_signature_message'.
-    """
-    payload_info = input_zip.getinfo('payload.bin')
-    (payload_offset, payload_size) = GetZipEntryOffset(input_zip, payload_info)
-
-    # Read the underlying raw zipfile at specified offset
-    payload_fp = input_zip.fp
-    payload_fp.seek(payload_offset)
-    header_bin = payload_fp.read(24)
-
-    # network byte order (big-endian)
-    header = struct.unpack("!IQQL", header_bin)
-
-    # 'CrAU'
-    magic = header[0]
-    assert magic == 0x43724155, "Invalid magic: {:x}, computed offset {}" \
-        .format(magic, payload_offset)
-
-    manifest_size = header[2]
-    metadata_signature_size = header[3]
-    metadata_total = 24 + manifest_size + metadata_signature_size
-    assert metadata_total < payload_size
-
-    return (payload_offset, metadata_total)
 
 
 def ModifyVABCCompressionParam(content, algo):
@@ -1068,11 +760,12 @@ def GeneratePartitionTimestampFlagsDowngrade(
         pre_partition_state, post_partition_state):
   assert pre_partition_state is not None
   partition_timestamps = {}
-  for part in pre_partition_state:
-    partition_timestamps[part.partition_name] = part.version
   for part in post_partition_state:
-    partition_timestamps[part.partition_name] = \
-        max(part.version, partition_timestamps[part.partition_name])
+    partition_timestamps[part.partition_name] = part.version
+  for part in pre_partition_state:
+    if part.partition_name in partition_timestamps:
+      partition_timestamps[part.partition_name] = \
+          max(part.version, partition_timestamps[part.partition_name])
   return [
       "--partition_timestamps",
       ",".join([key + ":" + val for (key, val)
@@ -1145,6 +838,14 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
       logger.info("Either source or target does not support VABC, disabling.")
       OPTIONS.disable_vabc = True
 
+    # Virtual AB Compression was introduced in Androd S.
+    # Later, we backported VABC to Android R. But verity support was not
+    # backported, so if VABC is used and we are on Android R, disable
+    # verity computation.
+    if not OPTIONS.disable_vabc and source_info.is_android_r:
+      OPTIONS.disable_verity_computation = True
+      OPTIONS.disable_fec_computation = True
+
   else:
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
@@ -1192,7 +893,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
-  payload = Payload()
+  payload = PayloadGenerator()
 
   partition_timestamps_flags = []
   # Enforce a max timestamp this payload can be applied on top of.
@@ -1208,6 +909,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         metadata.postcondition.partition_state)
 
   if not ota_utils.IsZucchiniCompatible(source_file, target_file):
+    logger.warning(
+        "Builds doesn't support zucchini, or source/target don't have compatible zucchini versions. Disabling zucchini.")
     OPTIONS.enable_zucchini = False
 
   additional_args += ["--enable_zucchini",
@@ -1255,7 +958,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   )
 
   # Sign the payload.
-  payload_signer = PayloadSigner()
+  payload_signer = PayloadSigner(
+      OPTIONS.package_key, OPTIONS.private_key_suffix)
   payload.Sign(payload_signer)
 
   # Write the payload into output zip.
@@ -1268,7 +972,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     # building an incremental OTA. See the comments for "--include_secondary".
     secondary_target_file = GetTargetFilesZipForSecondaryImages(
         target_file, OPTIONS.skip_postinstall)
-    secondary_payload = Payload(secondary=True)
+    secondary_payload = PayloadGenerator(secondary=True)
     secondary_payload.Generate(secondary_target_file,
                                additional_args=["--max_timestamp",
                                                 max_timestamp])
@@ -1278,8 +982,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
   target_zip = zipfile.ZipFile(target_file, "r", allowZip64=True)
-  if (target_info.get("verity") == "true" or
-          target_info.get("avb_enable") == "true"):
+  if target_info.get("avb_enable") == "true":
     care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
                      "META/" + x in target_zip.namelist()]
 

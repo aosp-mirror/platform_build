@@ -100,20 +100,16 @@ def ValidateConfigLists():
   has_error = False
 
   # Check that partitions only come from one input.
-  for partition in _FRAMEWORK_PARTITIONS.union(_VENDOR_PARTITIONS):
-    image_path = 'IMAGES/{}.img'.format(partition.lower().replace('/', ''))
-    in_framework = (
-        any(item.startswith(partition) for item in OPTIONS.framework_item_list)
-        or image_path in OPTIONS.framework_item_list)
-    in_vendor = (
-        any(item.startswith(partition) for item in OPTIONS.vendor_item_list) or
-        image_path in OPTIONS.vendor_item_list)
-    if in_framework and in_vendor:
-      logger.error(
-          'Cannot extract items from %s for both the framework and vendor'
-          ' builds. Please ensure only one merge config item list'
-          ' includes %s.', partition, partition)
-      has_error = True
+  framework_partitions = ItemListToPartitionSet(OPTIONS.framework_item_list)
+  vendor_partitions = ItemListToPartitionSet(OPTIONS.vendor_item_list)
+  from_both = framework_partitions.intersection(vendor_partitions)
+  if from_both:
+    logger.error(
+        'Cannot extract items from the same partition in both the '
+        'framework and vendor builds. Please ensure only one merge config '
+        'item list (or inferred list) includes each partition: %s' %
+        ','.join(from_both))
+    has_error = True
 
   if any([
       key in OPTIONS.framework_misc_info_keys
@@ -131,7 +127,8 @@ def ValidateConfigLists():
 # system partition). The following regex matches this and extracts the
 # partition name.
 
-_PARTITION_ITEM_PATTERN = re.compile(r'^([A-Z_]+)/\*$')
+_PARTITION_ITEM_PATTERN = re.compile(r'^([A-Z_]+)/.*$')
+_IMAGE_PARTITION_PATTERN = re.compile(r'^IMAGES/(.*)\.img$')
 
 
 def ItemListToPartitionSet(item_list):
@@ -154,62 +151,89 @@ def ItemListToPartitionSet(item_list):
   partition_set = set()
 
   for item in item_list:
-    partition_match = _PARTITION_ITEM_PATTERN.search(item.strip())
-    partition_tag = partition_match.group(
-        1).lower() if partition_match else None
-
-    if partition_tag:
-      partition_set.add(partition_tag)
+    for pattern in (_PARTITION_ITEM_PATTERN, _IMAGE_PARTITION_PATTERN):
+      partition_match = pattern.search(item.strip())
+      if partition_match:
+        partition = partition_match.group(1).lower()
+        # These directories in target-files are not actual partitions.
+        if partition not in ('meta', 'images'):
+          partition_set.add(partition)
 
   return partition_set
 
 
 # Partitions that are grabbed from the framework partial build by default.
 _FRAMEWORK_PARTITIONS = {
-    'system', 'product', 'system_ext', 'system_other', 'root', 'system_dlkm'
-}
-# Partitions that are grabbed from the vendor partial build by default.
-_VENDOR_PARTITIONS = {
-    'vendor', 'odm', 'oem', 'boot', 'vendor_boot', 'recovery',
-    'prebuilt_images', 'radio', 'data', 'vendor_dlkm', 'odm_dlkm'
+    'system', 'product', 'system_ext', 'system_other', 'root', 'system_dlkm',
+    'vbmeta_system'
 }
 
 
 def InferItemList(input_namelist, framework):
-  item_list = []
+  item_set = set()
 
-  # Some META items are grabbed from partial builds directly.
+  # Some META items are always grabbed from partial builds directly.
   # Others are combined in merge_meta.py.
   if framework:
-    item_list.extend([
+    item_set.update([
         'META/liblz4.so',
         'META/postinstall_config.txt',
         'META/update_engine_config.txt',
         'META/zucchini_config.txt',
     ])
   else:  # vendor
-    item_list.extend([
+    item_set.update([
         'META/kernel_configs.txt',
         'META/kernel_version.txt',
         'META/otakeys.txt',
+        'META/pack_radioimages.txt',
         'META/releasetools.py',
-        'OTA/android-info.txt',
     ])
 
   # Grab a set of items for the expected partitions in the partial build.
-  for partition in (_FRAMEWORK_PARTITIONS if framework else _VENDOR_PARTITIONS):
-    for namelist in input_namelist:
-      if namelist.startswith('%s/' % partition.upper()):
-        fs_config_prefix = '' if partition == 'system' else '%s_' % partition
-        item_list.extend([
-            '%s/*' % partition.upper(),
-            'IMAGES/%s.img' % partition,
-            'IMAGES/%s.map' % partition,
-            'META/%sfilesystem_config.txt' % fs_config_prefix,
-        ])
-        break
+  seen_partitions = []
+  for namelist in input_namelist:
+    if namelist.endswith('/'):
+      continue
 
-  return sorted(item_list)
+    partition = namelist.split('/')[0].lower()
+
+    # META items are grabbed above, or merged later.
+    if partition == 'meta':
+      continue
+
+    if partition == 'images':
+      image_partition, extension = os.path.splitext(os.path.basename(namelist))
+      if image_partition == 'vbmeta':
+        # Always regenerate vbmeta.img since it depends on hash information
+        # from both builds.
+        continue
+      if extension in ('.img', '.map'):
+        # Include image files in IMAGES/* if the partition comes from
+        # the expected set.
+        if (framework and image_partition in _FRAMEWORK_PARTITIONS) or (
+            not framework and image_partition not in _FRAMEWORK_PARTITIONS):
+          item_set.add(namelist)
+      elif not framework:
+        # Include all miscellaneous non-image files in IMAGES/* from
+        # the vendor build.
+        item_set.add(namelist)
+      continue
+
+    # Skip already-visited partitions.
+    if partition in seen_partitions:
+      continue
+    seen_partitions.append(partition)
+
+    if (framework and partition in _FRAMEWORK_PARTITIONS) or (
+        not framework and partition not in _FRAMEWORK_PARTITIONS):
+      fs_config_prefix = '' if partition == 'system' else '%s_' % partition
+      item_set.update([
+          '%s/*' % partition.upper(),
+          'META/%sfilesystem_config.txt' % fs_config_prefix,
+      ])
+
+  return sorted(item_set)
 
 
 def InferFrameworkMiscInfoKeys(input_namelist):
@@ -223,8 +247,8 @@ def InferFrameworkMiscInfoKeys(input_namelist):
   ]
 
   for partition in _FRAMEWORK_PARTITIONS:
-    for namelist in input_namelist:
-      if namelist.startswith('%s/' % partition.upper()):
+    for partition_dir in ('%s/' % partition.upper(), 'SYSTEM/%s/' % partition):
+      if partition_dir in input_namelist:
         fs_type_prefix = '' if partition == 'system' else '%s_' % partition
         keys.extend([
             'avb_%s_hashtree_enable' % partition,

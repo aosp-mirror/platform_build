@@ -33,6 +33,8 @@ $(call add_json_csv,  Platform_version_active_codenames, $(PLATFORM_VERSION_ALL_
 $(call add_json_str,  Platform_security_patch,           $(PLATFORM_SECURITY_PATCH))
 $(call add_json_str,  Platform_preview_sdk_version,      $(PLATFORM_PREVIEW_SDK_VERSION))
 $(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
+$(call add_json_str,  Platform_version_last_stable,      $(PLATFORM_VERSION_LAST_STABLE))
+$(call add_json_str,  Platform_version_known_codenames,  $(PLATFORM_VERSION_KNOWN_CODENAMES))
 
 $(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION))
 
@@ -46,6 +48,7 @@ $(call add_json_bool, Debuggable,                        $(filter userdebug eng,
 $(call add_json_bool, Eng,                               $(filter eng,$(TARGET_BUILD_VARIANT)))
 
 $(call add_json_str,  DeviceName,                        $(TARGET_DEVICE))
+$(call add_json_str,  DeviceProduct,                     $(TARGET_PRODUCT))
 $(call add_json_str,  DeviceArch,                        $(TARGET_ARCH))
 $(call add_json_str,  DeviceArchVariant,                 $(TARGET_ARCH_VARIANT))
 $(call add_json_str,  DeviceCpuVariant,                  $(TARGET_CPU_VARIANT))
@@ -91,6 +94,7 @@ $(call add_json_str,  AAPTPreferredConfig,               $(PRODUCT_AAPT_PREF_CON
 $(call add_json_list, AAPTPrebuiltDPI,                   $(PRODUCT_AAPT_PREBUILT_DPI))
 
 $(call add_json_str,  DefaultAppCertificate,             $(PRODUCT_DEFAULT_DEV_CERTIFICATE))
+$(call add_json_str,  MainlineSepolicyDevCertificates,   $(MAINLINE_SEPOLICY_DEV_CERTIFICATES))
 
 $(call add_json_str,  AppsDefaultVersionName,            $(APPS_DEFAULT_VERSION_NAME))
 
@@ -168,6 +172,8 @@ $(call add_json_list, RecoverySnapshotDirsIncluded,      $(RECOVERY_SNAPSHOT_DIR
 $(call add_json_list, RecoverySnapshotDirsExcluded,      $(RECOVERY_SNAPSHOT_DIRS_EXCLUDED))
 $(call add_json_bool, HostFakeSnapshotEnabled,           $(HOST_FAKE_SNAPSHOT_ENABLE))
 
+$(call add_json_bool, MultitreeUpdateMeta,               $(filter true,$(TARGET_MULTITREE_UPDATE_META)))
+
 $(call add_json_bool, Treble_linker_namespaces,          $(filter true,$(PRODUCT_TREBLE_LINKER_NAMESPACES)))
 $(call add_json_bool, Enforce_vintf_manifest,            $(filter true,$(PRODUCT_ENFORCE_VINTF_MANIFEST)))
 
@@ -203,9 +209,8 @@ $(call add_json_list, BoardOdmSepolicyDirs,              $(BOARD_ODM_SEPOLICY_DI
 $(call add_json_list, BoardVendorDlkmSepolicyDirs,       $(BOARD_VENDOR_DLKM_SEPOLICY_DIRS))
 $(call add_json_list, BoardOdmDlkmSepolicyDirs,          $(BOARD_ODM_DLKM_SEPOLICY_DIRS))
 $(call add_json_list, BoardSystemDlkmSepolicyDirs,       $(BOARD_SYSTEM_DLKM_SEPOLICY_DIRS))
-# TODO: BOARD_PLAT_* dirs only kept for compatibility reasons. Will be a hard error on API level 31
-$(call add_json_list, SystemExtPublicSepolicyDirs,       $(SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS) $(BOARD_PLAT_PUBLIC_SEPOLICY_DIR))
-$(call add_json_list, SystemExtPrivateSepolicyDirs,      $(SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS) $(BOARD_PLAT_PRIVATE_SEPOLICY_DIR))
+$(call add_json_list, SystemExtPublicSepolicyDirs,       $(SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS))
+$(call add_json_list, SystemExtPrivateSepolicyDirs,      $(SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS))
 $(call add_json_list, BoardSepolicyM4Defs,               $(BOARD_SEPOLICY_M4DEFS))
 $(call add_json_str,  BoardSepolicyVers,                 $(BOARD_SEPOLICY_VERS))
 $(call add_json_str,  SystemExtSepolicyPrebuiltApiDir,   $(BOARD_SYSTEM_EXT_PREBUILT_DIR))
@@ -226,6 +231,8 @@ $(call add_json_list, ManifestPackageNameOverrides,      $(PRODUCT_MANIFEST_PACK
 $(call add_json_list, PackageNameOverrides,              $(PRODUCT_PACKAGE_NAME_OVERRIDES))
 $(call add_json_list, CertificateOverrides,              $(PRODUCT_CERTIFICATE_OVERRIDES))
 
+$(call add_json_str, ApexGlobalMinSdkVersionOverride,    $(APEX_GLOBAL_MIN_SDK_VERSION_OVERRIDE))
+
 $(call add_json_bool, EnforceSystemCertificate,          $(filter true,$(ENFORCE_SYSTEM_CERTIFICATE)))
 $(call add_json_list, EnforceSystemCertificateAllowList, $(ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST))
 
@@ -244,7 +251,7 @@ $(call add_json_map, VendorVars)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
   $(call add_json_map, $(namespace))\
   $(foreach key,$(SOONG_CONFIG_$(namespace)),\
-    $(call add_json_str,$(key),$(SOONG_CONFIG_$(namespace)_$(key))))\
+    $(call add_json_str,$(key),$(subst ",\",$(SOONG_CONFIG_$(namespace)_$(key)))))\
   $(call end_json_map))
 $(call end_json_map)
 
@@ -268,6 +275,8 @@ $(call add_json_str,  PrebuiltHiddenApiDir, $(BOARD_PREBUILT_HIDDENAPI_DIR))
 
 $(call add_json_str,  ShippingApiLevel, $(PRODUCT_SHIPPING_API_LEVEL))
 
+$(call add_json_bool, BuildBrokenClangProperty,                 $(filter true,$(BUILD_BROKEN_CLANG_PROPERTY)))
+$(call add_json_bool, BuildBrokenDepfile,                 $(filter true,$(BUILD_BROKEN_DEPFILE)))
 $(call add_json_bool, BuildBrokenEnforceSyspropOwner,     $(filter true,$(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER)))
 $(call add_json_bool, BuildBrokenTrebleSyspropNeverallow, $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
 $(call add_json_bool, BuildBrokenVendorPropertyNamespace, $(filter true,$(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE)))
@@ -285,6 +294,8 @@ $(call add_json_list, SepolicyFreezeTestExtraDirs,         $(SEPOLICY_FREEZE_TES
 $(call add_json_list, SepolicyFreezeTestExtraPrebuiltDirs, $(SEPOLICY_FREEZE_TEST_EXTRA_PREBUILT_DIRS))
 
 $(call add_json_bool, GenerateAidlNdkPlatformBackend, $(filter true,$(NEED_AIDL_NDK_PLATFORM_BACKEND)))
+
+$(call add_json_bool, IgnorePrefer32OnDevice, $(filter true,$(IGNORE_PREFER32_ON_DEVICE)))
 
 $(call json_end)
 
