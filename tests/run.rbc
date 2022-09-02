@@ -26,15 +26,24 @@ load(":product.rbc", "init")
 load(":board.rbc", board_init = "init")
 load(":board_input_vars.rbc", board_input_vars_init = "init")
 load("//build/make/tests/single_value_inheritance:test.rbc", test_single_value_inheritance = "test")
+load("//build/make/tests/artifact_path_requirements:test.rbc", test_artifact_path_requirements = "test")
+load("//build/make/tests/prefixed_sort_order:test.rbc", test_prefixed_sort_order = "test")
 
 def assert_eq(expected, actual):
     if expected != actual:
         fail("Expected '%s', got '%s'" % (expected, actual))
 
+def assert_dict_subset(expected, actual):
+    for key, val in expected.items():
+        assert_eq(val, actual[key])
+
 # Unit tests for non-trivial runtime functions
+assert_eq(["a", "b", "c"], rblf.mksort("b a    c c"))
+assert_eq(["a", "b", "c"], rblf.mksort(["b", "a", "c", "c"]))
+
 assert_eq("", rblf.mkstrip(" \n \t    "))
 assert_eq("a b c", rblf.mkstrip("  a b   \n  c \t"))
-assert_eq(1, rblf.mkstrip(1))
+assert_eq("1", rblf.mkstrip("1 "))
 
 assert_eq("b1 b2", rblf.mksubst("a", "b", "a1 a2"))
 assert_eq(["b1", "x2"], rblf.mksubst("a", "b", ["a1", "x2"]))
@@ -53,12 +62,37 @@ assert_eq(["foo/%"], rblf.mkpatsubst("%", "%/%", ["foo"]))
 assert_eq(["from/a:to/a", "from/b:to/b"], rblf.product_copy_files_by_pattern("from/%", "to/%", "a b"))
 
 assert_eq([], rblf.filter(["a", "", "b"], "f"))
-assert_eq(["", "b"], rblf.filter_out(["a", "" ], ["a", "", "b"] ))
+assert_eq(["ab%c", "axyzb%c"], rblf.filter(["a%b%c"], ["ab%c", "axyzb%c", "axyzb%cd", "axyzbwc"]))
+assert_eq(["abc", "bcd"], rblf.filter(["a%", "b%"], ["abc", "def", "bcd", "xabc"]))
+assert_eq(["b", "ab"], rblf.filter_out(["a", "" ], ["a", "", "b", "ab"]))
+assert_eq(["c"], rblf.filter_out(["a", "b" ], ["a", "b", "c"]))
+assert_eq(["c"], rblf.filter_out(["a%", "b" ], ["abc", "b", "c"]))
 
 assert_eq("foo.c no_folder", rblf.notdir(["src/foo.c", "no_folder"]))
 assert_eq("foo.c no_folder", rblf.notdir("src/foo.c no_folder"))
 assert_eq("", rblf.notdir("/"))
 assert_eq("", rblf.notdir(""))
+
+cwd = rblf_shell('pwd')
+assert_eq(cwd+"/foo/bar", rblf.abspath("foo/bar"))
+assert_eq(cwd+"/bar", rblf.abspath("foo/.././bar"))
+assert_eq(cwd+"/bar", rblf.abspath("foo/..////bar//"))
+assert_eq("/foo/baz", rblf.abspath("/foo/bar/../baz"))
+assert_eq(cwd+"/foo/bar "+cwd+"/foo/baz", rblf.abspath("foo/bar foo/baz"))
+assert_eq("/baz", rblf.abspath("/../../../../../../../../../../../../../../../../baz"))
+
+assert_eq("foo", rblf.first_word("foo bar"))
+assert_eq("foo", rblf.first_word(["foo", "bar"]))
+assert_eq("", rblf.first_word(""))
+assert_eq("", rblf.first_word([]))
+assert_eq("bar", rblf.last_word("foo bar"))
+assert_eq("bar", rblf.last_word(["foo", "bar"]))
+assert_eq("", rblf.last_word(""))
+assert_eq("", rblf.last_word([]))
+
+assert_eq(["foo", "bar"], rblf.flatten_2d_list([["foo", "bar"]]))
+assert_eq(["foo", "bar"], rblf.flatten_2d_list([["foo"], ["bar"]]))
+assert_eq([], rblf.flatten_2d_list([]))
 
 assert_eq(
     ["build/make/tests/board.rbc", "build/make/tests/board_input_vars.rbc"],
@@ -73,31 +107,28 @@ assert_eq(
     rblf.expand_wildcard("build/make/tests/run.rbc build/make/tests/nonexistent.rbc")
 )
 
-(globals, config, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
-assert_eq(
-    {
-      "PRODUCT_COPY_FILES": [
-          "part_from:part_to",
-          "device_from:device_to",
-          "device/google/redfin/audio/audio_platform_info_noextcodec_snd.xml:||VENDOR-PATH-PH||/etc/audio/audio_platform_info_noextcodec_snd.xml",
-          "xyz:/etc/xyz",
-          "x.xml:/etc/x.xml",
-          "y.xml:/etc/y.xml",
-          "from/sub/x:to/x",
-          "from/sub/y:to/y",
-      ],
-      "PRODUCT_HOST_PACKAGES": ["host"],
-      "PRODUCT_PACKAGES": [
-          "dev",
-          "inc",
-          "dev_after",
-          "board1_in",
-          "board1_is",
-      ],
-      "PRODUCT_PRODUCT_PROPERTIES": ["part_properties"]
-    },
-    { k:v for k, v in sorted(config.items()) }
-)
+(globals, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
+assert_dict_subset({
+    "PRODUCTS.test/device.mk.PRODUCT_COPY_FILES": [
+        "part_from:part_to",
+        "device_from:device_to",
+        "device/google/redfin/audio/audio_platform_info_noextcodec_snd.xml:||VENDOR-PATH-PH||/etc/audio/audio_platform_info_noextcodec_snd.xml",
+        "xyz:/etc/xyz",
+        "x.xml:/etc/x.xml",
+        "y.xml:/etc/y.xml",
+        "from/sub/x:to/x",
+        "from/sub/y:to/y",
+    ],
+    "PRODUCTS.test/device.mk.PRODUCT_HOST_PACKAGES": ["host"],
+    "PRODUCTS.test/device.mk.PRODUCT_PACKAGES": [
+        "dev",
+        "inc",
+        "dev_after",
+        "board1_in",
+        "board1_is",
+    ],
+    "PRODUCTS.test/device.mk.PRODUCT_PRODUCT_PROPERTIES": ["part_properties"]
+}, globals)
 
 ns = globals["$SOONG_CONFIG_NAMESPACES"]
 assert_eq(
@@ -127,8 +158,10 @@ assert_eq(
     { k:v for k,v in sorted(goals.items()) }
 )
 
-(board_globals, board_config, board_globals_base) = rblf.board_configuration(board_init, board_input_vars_init)
+(board_globals, board_globals_base) = rblf.board_configuration(board_init, board_input_vars_init)
 assert_eq({"A_LIST_VARIABLE": ["foo", "bar"]}, board_globals)
 assert_eq({"A_LIST_VARIABLE": ["foo"]}, board_globals_base)
 
 test_single_value_inheritance()
+test_artifact_path_requirements()
+test_prefixed_sort_order()

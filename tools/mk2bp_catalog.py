@@ -308,19 +308,31 @@ def print_analysis_header(link, title):
     print("""<th class="Count Warning">%s</th>""" % analyzer.title)
   print("      </tr>")
 
+# get all modules in $(PRODUCT_PACKAGE) and the corresponding deps
+def get_module_product_packages_plus_deps(initial_modules, result, soong_data):
+  for module in initial_modules:
+    if module in result:
+      continue
+    result.add(module)
+    if module in soong_data.deps:
+      get_module_product_packages_plus_deps(soong_data.deps[module], result, soong_data)
+
 def main():
   parser = argparse.ArgumentParser(description="Info about remaining Android.mk files.")
   parser.add_argument("--device", type=str, required=True,
                       help="TARGET_DEVICE")
+  parser.add_argument("--product-packages", type=argparse.FileType('r'),
+                      default=None,
+                      help="PRODUCT_PACKAGES")
   parser.add_argument("--title", type=str,
                       help="page title")
   parser.add_argument("--codesearch", type=str,
                       default="https://cs.android.com/android/platform/superproject/+/master:",
                       help="page title")
-  parser.add_argument("--out_dir", type=str,
+  parser.add_argument("--out-dir", type=str,
                       default=None,
                       help="Equivalent of $OUT_DIR, which will also be checked if"
-                        + " --out_dir is unset. If neither is set, default is"
+                        + " --out-dir is unset. If neither is set, default is"
                         + " 'out'.")
   parser.add_argument("--mode", type=str,
                       default="html",
@@ -354,16 +366,25 @@ def main():
       continue
     all_makefiles[filename] = Makefile(filename)
 
+  # Get all the modules in $(PRODUCT_PACKAGES) and the correspoding deps
+  product_package_modules_plus_deps = set()
+  if args.product_packages:
+    product_package_top_modules = args.product_packages.read().strip().split('\n')
+    get_module_product_packages_plus_deps(product_package_top_modules, product_package_modules_plus_deps, soong)
+
   if args.mode == "html":
-    HtmlProcessor(args=args, soong=soong, all_makefiles=all_makefiles).execute()
+    HtmlProcessor(args=args, soong=soong, all_makefiles=all_makefiles,
+        product_packages_modules=product_package_modules_plus_deps).execute()
   elif args.mode == "csv":
-    CsvProcessor(args=args, soong=soong, all_makefiles=all_makefiles).execute()
+    CsvProcessor(args=args, soong=soong, all_makefiles=all_makefiles,
+        product_packages_modules=product_package_modules_plus_deps).execute()
 
 class HtmlProcessor(object):
-  def __init__(self, args, soong, all_makefiles):
+  def __init__(self, args, soong, all_makefiles, product_packages_modules):
     self.args = args
     self.soong = soong
     self.all_makefiles = all_makefiles
+    self.product_packages_modules = product_packages_modules
     self.annotations = Annotations()
 
   def execute(self):
@@ -376,6 +397,8 @@ class HtmlProcessor(object):
     modules_by_partition = dict()
     partitions = set()
     for installed, module in self.soong.installed.items():
+      if len(self.product_packages_modules) > 0 and module not in self.product_packages_modules:
+        continue
       partition = get_partition_from_installed(HOST_OUT_ROOT, PRODUCT_OUT, installed)
       modules_by_partition.setdefault(partition, []).append(module)
       partitions.add(partition)
@@ -985,10 +1008,11 @@ class HtmlProcessor(object):
       return "";
 
 class CsvProcessor(object):
-  def __init__(self, args, soong, all_makefiles):
+  def __init__(self, args, soong, all_makefiles, product_packages_modules):
     self.args = args
     self.soong = soong
     self.all_makefiles = all_makefiles
+    self.product_packages_modules = product_packages_modules
 
   def execute(self):
     csvout = csv.writer(sys.stdout)
@@ -1004,6 +1028,8 @@ class CsvProcessor(object):
     for filename in sorted(self.all_makefiles.keys()):
       makefile = self.all_makefiles[filename]
       for module in self.soong.reverse_makefiles[filename]:
+        if len(self.product_packages_modules) > 0 and module not in self.product_packages_modules:
+          continue
         row = [filename, module]
         # Partitions
         row.append(";".join(sorted(set([get_partition_from_installed(HOST_OUT_ROOT, PRODUCT_OUT,

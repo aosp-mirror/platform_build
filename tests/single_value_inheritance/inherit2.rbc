@@ -18,3 +18,5 @@ def init(g, handle):
   cfg = rblf.cfg(handle)
 
   cfg["PRODUCT_CHARACTERISTICS"] = "nosdcard"
+  cfg.setdefault("PRODUCT_PACKAGES", [])
+  cfg["PRODUCT_PACKAGES"] += ["foo"]

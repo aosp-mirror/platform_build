@@ -64,6 +64,10 @@ from . import other_warn_patterns as other_patterns
 from . import tidy_warn_patterns as tidy_patterns
 
 
+# Location of this file is used to guess the root of Android source tree.
+THIS_FILE_PATH = 'build/make/tools/warn/warn_common.py'
+
+
 def parse_args(use_google3):
   """Define and parse the args. Return the parse_args() result."""
   parser = argparse.ArgumentParser(
@@ -217,15 +221,25 @@ def generate_chrome_cs_link(warning_line, flags):
   return link
 
 
-def find_warn_py_and_android_root(path):
-  """Return android source root path if warn.py is found."""
+def find_this_file_and_android_root(path):
+  """Return android source root path if this file is found."""
   parts = path.split('/')
   for idx in reversed(range(2, len(parts))):
     root_path = '/'.join(parts[:idx])
     # Android root directory should contain this script.
-    if os.path.exists(root_path + '/build/make/tools/warn.py'):
+    if os.path.exists(root_path + '/' + THIS_FILE_PATH):
       return root_path
   return ''
+
+
+def find_android_root_top_dirs(root_dir):
+  """Return a list of directories under the root_dir, if it exists."""
+  # Root directory should contain at least build/make and build/soong.
+  if (not os.path.isdir(root_dir + '/build/make') or
+      not os.path.isdir(root_dir + '/build/soong')):
+    return None
+  return list(filter(lambda d: os.path.isdir(root_dir + '/' + d),
+                     os.listdir(root_dir)))
 
 
 def find_android_root(buildlog):
@@ -239,8 +253,8 @@ def find_android_root(buildlog):
     # We want to find android_root of a local build machine.
     # Do not use RBE warning lines, which has '/b/f/w/' path prefix.
     # Do not use /tmp/ file warnings.
-    if warning_pattern.match(line) and (
-        '/b/f/w' not in line and not line.startswith('/tmp/')):
+    if ('/b/f/w' not in line and not line.startswith('/tmp/') and
+        warning_pattern.match(line)):
       warning_lines.append(line)
       count += 1
       if count > 9999:
@@ -249,17 +263,26 @@ def find_android_root(buildlog):
       # the source tree root.
       if count < 100:
         path = os.path.normpath(re.sub(':.*$', '', line))
-        android_root = find_warn_py_and_android_root(path)
+        android_root = find_this_file_and_android_root(path)
         if android_root:
-          return android_root
+          return android_root, find_android_root_top_dirs(android_root)
   # Do not use common prefix of a small number of paths.
+  android_root = ''
   if count > 10:
     # pytype: disable=wrong-arg-types
     root_path = os.path.commonprefix(warning_lines)
     # pytype: enable=wrong-arg-types
     if len(root_path) > 2 and root_path[len(root_path) - 1] == '/':
-      return root_path[:-1]
-  return ''
+      android_root = root_path[:-1]
+  if android_root and os.path.isdir(android_root):
+    return android_root, find_android_root_top_dirs(android_root)
+  # When the build.log file is moved to a different machine where
+  # android_root is not found, use the location of this script
+  # to find the android source tree sub directories.
+  if __file__.endswith('/' + THIS_FILE_PATH):
+    script_root = __file__.replace('/' + THIS_FILE_PATH, '')
+    return android_root, find_android_root_top_dirs(script_root)
+  return android_root, None
 
 
 def remove_android_root_prefix(path, android_root):
@@ -310,8 +333,6 @@ def parse_input_file_chrome(infile, flags):
   warning_pattern = re.compile(chrome_warning_pattern)
 
   # Collect all unique warning lines
-  # Remove the duplicated warnings save ~8% of time when parsing
-  # one typical build log than before
   unique_warnings = dict()
   for line in infile:
     if warning_pattern.match(line):
@@ -353,8 +374,7 @@ def parse_input_file_android(infile, flags):
   target_product = 'unknown'
   target_variant = 'unknown'
   build_id = 'unknown'
-  use_rbe = False
-  android_root = find_android_root(infile)
+  android_root, root_top_dirs = find_android_root(infile)
   infile.seek(0)
 
   # rustc warning messages have two lines that should be combined:
@@ -367,24 +387,39 @@ def parse_input_file_android(infile, flags):
   # C/C++ compiler warning messages have line and column numbers:
   #     some/path/file.c:line_number:column_number: warning: description
   warning_pattern = re.compile('(^[^ ]*/[^ ]*: warning: .*)|(^warning: .*)')
-  warning_without_file = re.compile('^warning: .*')
   rustc_file_position = re.compile('^[ ]+--> [^ ]*/[^ ]*:[0-9]+:[0-9]+')
 
-  # If RBE was used, try to reclaim some warning lines mixed with some
-  # leading chars from other concurrent job's stderr output .
+  # If RBE was used, try to reclaim some warning lines (from stdout)
+  # that contain leading characters from stderr.
   # The leading characters can be any character, including digits and spaces.
-  # It's impossible to correctly identify the starting point of the source
-  # file path without the file directory name knowledge.
-  # Here we can only be sure to recover lines containing "/b/f/w/".
-  rbe_warning_pattern = re.compile('.*/b/f/w/[^ ]*: warning: .*')
 
-   # Collect all unique warning lines
-  # Remove the duplicated warnings save ~8% of time when parsing
-  # one typical build log than before
+  # If a warning line's source file path contains the special RBE prefix
+  # /b/f/w/, we can remove all leading chars up to and including the "/b/f/w/".
+  bfw_warning_pattern = re.compile('.*/b/f/w/([^ ]*: warning: .*)')
+
+  # When android_root is known and available, we find its top directories
+  # and remove all leading chars before a top directory name.
+  # We assume that the leading chars from stderr do not contain "/".
+  # For example,
+  #   10external/...
+  #   12 warningsexternal/...
+  #   413 warningexternal/...
+  #   5 warnings generatedexternal/...
+  #   Suppressed 1000 warnings (packages/modules/...
+  if root_top_dirs:
+    extra_warning_pattern = re.compile(
+        '^.[^/]*((' + '|'.join(root_top_dirs) +
+        ')/[^ ]*: warning: .*)')
+  else:
+    extra_warning_pattern = re.compile('^[^/]* ([^ /]*/[^ ]*: warning: .*)')
+
+  # Collect all unique warning lines
   unique_warnings = dict()
+  checked_warning_lines = dict()
   line_counter = 0
   prev_warning = ''
   for line in infile:
+    line_counter += 1
     if prev_warning:
       if rustc_file_position.match(line):
         # must be a rustc warning, combine 2 lines into one warning
@@ -399,14 +434,31 @@ def parse_input_file_android(infile, flags):
           prev_warning, flags, android_root, unique_warnings)
       prev_warning = ''
 
-    if use_rbe and rbe_warning_pattern.match(line):
-      cleaned_up_line = re.sub('.*/b/f/w/', '', line)
-      unique_warnings = add_normalized_line_to_warnings(
-          cleaned_up_line, flags, android_root, unique_warnings)
+    # re.match is slow, with several warning line patterns and
+    # long input lines like "TIMEOUT: ...".
+    # We save significant time by skipping non-warning lines.
+    # But do not skip the first 100 lines, because we want to
+    # catch build variables.
+    if line_counter > 100 and line.find('warning: ') < 0:
       continue
 
+    # A large clean build output can contain up to 90% of duplicated
+    # "warning:" lines. If we can skip them quickly, we can
+    # speed up this for-loop 3X to 5X.
+    if line in checked_warning_lines:
+      continue
+    checked_warning_lines[line] = True
+
+    # Clean up extra prefix that could be introduced when RBE was used.
+    if '/b/f/w/' in line:
+      result = bfw_warning_pattern.search(line)
+    else:
+      result = extra_warning_pattern.search(line)
+    if result is not None:
+      line = result.group(1)
+
     if warning_pattern.match(line):
-      if warning_without_file.match(line):
+      if line.startswith('warning: '):
         # save this line and combine it with the next line
         prev_warning = line
       else:
@@ -416,7 +468,6 @@ def parse_input_file_android(infile, flags):
 
     if line_counter < 100:
       # save a little bit of time by only doing this for the first few lines
-      line_counter += 1
       result = re.search('(?<=^PLATFORM_VERSION=).*', line)
       if result is not None:
         platform_version = result.group(0)
@@ -432,13 +483,6 @@ def parse_input_file_android(infile, flags):
       result = re.search('(?<=^BUILD_ID=).*', line)
       if result is not None:
         build_id = result.group(0)
-        continue
-      result = re.search('(?<=^TOP=).*', line)
-      if result is not None:
-        android_root = result.group(1)
-        continue
-      if re.search('USE_RBE=', line) is not None:
-        use_rbe = True
         continue
 
   if android_root:

@@ -20,7 +20,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
+	"sort"
 	"strings"
 
 	"go.starlark.net/starlark"
@@ -112,36 +112,6 @@ func loader(thread *starlark.Thread, module string) (starlark.StringDict, error)
 	return e.globals, e.err
 }
 
-// fileExists returns True if file with given name exists.
-func fileExists(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
-	kwargs []starlark.Tuple) (starlark.Value, error) {
-	var path string
-	if err := starlark.UnpackPositionalArgs(b.Name(), args, kwargs, 1, &path); err != nil {
-		return starlark.None, err
-	}
-	if _, err := os.Stat(path); err != nil {
-		return starlark.False, nil
-	}
-	return starlark.True, nil
-}
-
-// regexMatch(pattern, s) returns True if s matches pattern (a regex)
-func regexMatch(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
-	kwargs []starlark.Tuple) (starlark.Value, error) {
-	var pattern, s string
-	if err := starlark.UnpackPositionalArgs(b.Name(), args, kwargs, 2, &pattern, &s); err != nil {
-		return starlark.None, err
-	}
-	match, err := regexp.MatchString(pattern, s)
-	if err != nil {
-		return starlark.None, err
-	}
-	if match {
-		return starlark.True, nil
-	}
-	return starlark.False, nil
-}
-
 // wildcard(pattern, top=None) expands shell's glob pattern. If 'top' is present,
 // the 'top/pattern' is globbed and then 'top/' prefix is removed.
 func wildcard(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
@@ -168,6 +138,10 @@ func wildcard(_ *starlark.Thread, b *starlark.Builtin, args starlark.Tuple,
 			files[i] = strings.TrimPrefix(files[i], prefix)
 		}
 	}
+	// Kati uses glob(3) with no flags, which means it's sorted
+	// because GLOB_NOSORT is not passed. Go's glob is not
+	// guaranteed to sort the results.
+	sort.Strings(files)
 	return makeStringList(files), nil
 }
 
@@ -287,12 +261,8 @@ func setup(env []string) {
 		"struct":   starlark.NewBuiltin("struct", starlarkstruct.Make),
 		"rblf_cli": structFromEnv(env),
 		"rblf_env": structFromEnv(os.Environ()),
-		// To convert makefile's $(wildcard foo)
-		"rblf_file_exists": starlark.NewBuiltin("rblf_file_exists", fileExists),
 		// To convert find-copy-subdir and product-copy-files-by pattern
 		"rblf_find_files": starlark.NewBuiltin("rblf_find_files", find),
-		// To convert makefile's $(filter ...)/$(filter-out)
-		"rblf_regex": starlark.NewBuiltin("rblf_regex", regexMatch),
 		// To convert makefile's $(shell cmd)
 		"rblf_shell": starlark.NewBuiltin("rblf_shell", shell),
 		// Output to stderr

@@ -22,6 +22,7 @@ def assert_eq(expected, actual):
         fail("Expected '%s', got '%s'" % (expected, actual))
 
 def test():
-    (globals, config, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
-    assert_eq("tablet", config["PRODUCT_CHARACTERISTICS"])
-    assert_eq("vendor/myvendor/certs/devkeys/devkey", config["PRODUCT_DEFAULT_DEV_CERTIFICATE"])
+    (globals, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
+    assert_eq("tablet", globals["PRODUCTS.test/device.mk.PRODUCT_CHARACTERISTICS"])
+    assert_eq("vendor/myvendor/certs/devkeys/devkey", globals["PRODUCTS.test/device.mk.PRODUCT_DEFAULT_DEV_CERTIFICATE"])
+    assert_eq(["foo", "bar"], globals["PRODUCTS.test/device.mk.PRODUCT_PACKAGES"])

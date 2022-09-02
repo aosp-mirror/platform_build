@@ -74,6 +74,7 @@ PRODUCT_MAKEFILES := \
 endif
 
 PRODUCT_MAKEFILES += \
+    $(LOCAL_DIR)/linux_bionic.mk \
     $(LOCAL_DIR)/mainline_sdk.mk \
     $(LOCAL_DIR)/module_arm.mk \
     $(LOCAL_DIR)/module_arm64.mk \

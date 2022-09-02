@@ -18,16 +18,22 @@ package {
 }
 
 blueprint_go_binary {
-    name: "checkshare",
+    name: "compliance_checkshare",
     srcs: ["cmd/checkshare/checkshare.go"],
-    deps: ["compliance-module"],
+    deps: [
+        "compliance-module",
+        "soong-response",
+    ],
     testSrcs: ["cmd/checkshare/checkshare_test.go"],
 }
 
 blueprint_go_binary {
     name: "compliancenotice_bom",
     srcs: ["cmd/bom/bom.go"],
-    deps: ["compliance-module"],
+    deps: [
+        "compliance-module",
+        "soong-response",
+    ],
     testSrcs: ["cmd/bom/bom_test.go"],
 }
 
@@ -42,23 +48,32 @@ blueprint_go_binary {
 }
 
 blueprint_go_binary {
-    name: "listshare",
+    name: "compliance_listshare",
     srcs: ["cmd/listshare/listshare.go"],
-    deps: ["compliance-module"],
+    deps: [
+        "compliance-module",
+        "soong-response",
+    ],
     testSrcs: ["cmd/listshare/listshare_test.go"],
 }
 
 blueprint_go_binary {
-    name: "dumpgraph",
+    name: "compliance_dumpgraph",
     srcs: ["cmd/dumpgraph/dumpgraph.go"],
-    deps: ["compliance-module"],
+    deps: [
+        "compliance-module",
+        "soong-response",
+    ],
     testSrcs: ["cmd/dumpgraph/dumpgraph_test.go"],
 }
 
 blueprint_go_binary {
-    name: "dumpresolutions",
+    name: "compliance_dumpresolutions",
     srcs: ["cmd/dumpresolutions/dumpresolutions.go"],
-    deps: ["compliance-module"],
+    deps: [
+        "compliance-module",
+        "soong-response",
+    ],
     testSrcs: ["cmd/dumpresolutions/dumpresolutions_test.go"],
 }
 
@@ -68,14 +83,18 @@ blueprint_go_binary {
     deps: [
         "compliance-module",
         "blueprint-deptools",
+        "soong-response",
     ],
     testSrcs: ["cmd/htmlnotice/htmlnotice_test.go"],
 }
 
 blueprint_go_binary {
-    name: "rtrace",
+    name: "compliance_rtrace",
     srcs: ["cmd/rtrace/rtrace.go"],
-    deps: ["compliance-module"],
+    deps: [
+        "compliance-module",
+        "soong-response",
+    ],
     testSrcs: ["cmd/rtrace/rtrace_test.go"],
 }
 
@@ -85,6 +104,7 @@ blueprint_go_binary {
     deps: [
         "compliance-module",
         "blueprint-deptools",
+        "soong-response",
     ],
     testSrcs: ["cmd/textnotice/textnotice_test.go"],
 }
@@ -95,6 +115,7 @@ blueprint_go_binary {
     deps: [
         "compliance-module",
         "blueprint-deptools",
+        "soong-response",
     ],
     testSrcs: ["cmd/xmlnotice/xmlnotice_test.go"],
 }

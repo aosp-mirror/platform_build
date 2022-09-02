@@ -395,16 +395,21 @@ function addcompletions()
     fi
 
     local completion_files=(
-      system/core/adb/adb.bash
+      packages/modules/adb/adb.bash
       system/core/fastboot/fastboot.bash
       tools/asuite/asuite.sh
+      prebuilts/bazel/common/bazel-complete.bash
     )
     # Completion can be disabled selectively to allow users to use non-standard completion.
     # e.g.
     # ENVSETUP_NO_COMPLETION=adb # -> disable adb completion
     # ENVSETUP_NO_COMPLETION=adb:bit # -> disable adb and bit completion
+    local T=$(gettop)
     for f in ${completion_files[*]}; do
-        if [ -f "$f" ] && should_add_completion "$f"; then
+        f="$T/$f"
+        if [ ! -f "$f" ]; then
+          echo "Warning: completion file $f not found"
+        elif should_add_completion "$f"; then
             . $f
         fi
     done
@@ -415,6 +420,8 @@ function addcompletions()
     if [ -z "$ZSH_VERSION" ]; then
         # Doesn't work in zsh.
         complete -o nospace -F _croot croot
+        # TODO(b/244559459): Support b autocompletion for zsh
+        complete -F _bazel__complete -o nospace b
     fi
     complete -F _lunch lunch
 
@@ -423,6 +430,70 @@ function addcompletions()
     complete -F _complete_android_module_names outmod
     complete -F _complete_android_module_names installmod
     complete -F _complete_android_module_names m
+}
+
+function multitree_lunch_help()
+{
+    echo "usage: lunch PRODUCT-VARIANT" 1>&2
+    echo "    Set up android build environment based on a product short name and variant" 1>&2
+    echo 1>&2
+    echo "lunch COMBO_FILE VARIANT" 1>&2
+    echo "    Set up android build environment based on a specific lunch combo file" 1>&2
+    echo "    and variant." 1>&2
+    echo 1>&2
+    echo "lunch --print [CONFIG]" 1>&2
+    echo "    Print the contents of a configuration.  If CONFIG is supplied, that config" 1>&2
+    echo "    will be flattened and printed.  If CONFIG is not supplied, the currently" 1>&2
+    echo "    selected config will be printed.  Returns 0 on success or nonzero on error." 1>&2
+    echo 1>&2
+    echo "lunch --list" 1>&2
+    echo "    List all possible combo files available in the current tree" 1>&2
+    echo 1>&2
+    echo "lunch --help" 1>&2
+    echo "lunch -h" 1>&2
+    echo "    Prints this message." 1>&2
+}
+
+function multitree_lunch()
+{
+    local code
+    local results
+    # Lunch must be run in the topdir, but this way we get a clear error
+    # message, instead of FileNotFound.
+    local T=$(multitree_gettop)
+    if [ -n "$T" ]; then
+      "$T/build/build/make/orchestrator/core/orchestrator.py" "$@"
+    else
+      _multitree_lunch_error
+      return 1
+    fi
+    if $(echo "$1" | grep -q '^-') ; then
+        # Calls starting with a -- argument are passed directly and the function
+        # returns with the lunch.py exit code.
+        "${T}/build/build/make/orchestrator/core/lunch.py" "$@"
+        code=$?
+        if [[ $code -eq 2 ]] ; then
+          echo 1>&2
+          multitree_lunch_help
+          return $code
+        elif [[ $code -ne 0 ]] ; then
+          return $code
+        fi
+    else
+        # All other calls go through the --lunch variant of lunch.py
+        results=($(${T}/build/build/make/orchestrator/core/lunch.py --lunch "$@"))
+        code=$?
+        if [[ $code -eq 2 ]] ; then
+          echo 1>&2
+          multitree_lunch_help
+          return $code
+        elif [[ $code -ne 0 ]] ; then
+          return $code
+        fi
+
+        export TARGET_BUILD_COMBO=${results[0]}
+        export TARGET_BUILD_VARIANT=${results[1]}
+    fi
 }
 
 function choosetype()
@@ -731,6 +802,10 @@ function lunch()
     set_stuff_for_environment
     [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || printconfig
     destroy_build_var_cache
+
+    if [[ -n "${CHECK_MU_CONFIG:-}" ]]; then
+      check_mu_config
+    fi
 }
 
 unset COMMON_LUNCH_CHOICES_CACHE
@@ -758,7 +833,9 @@ function tapas()
     local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|arm64|x86_64)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
     local density="$(echo $* | xargs -n 1 echo | \grep -E '^(ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
-    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|arm64|x86_64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
+    local keys="$(echo $* | xargs -n 1 echo | \grep -E '^(devkeys)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|arm64|x86_64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi|devkeys)$' | xargs)"
+
 
     if [ "$showHelp" != "" ]; then
       $(gettop)/build/make/tapasHelp.sh
@@ -777,6 +854,10 @@ function tapas()
         echo "tapas: Error: Multiple densities supplied: $density"
         return
     fi
+    if [ $(echo $keys | wc -w) -gt 1 ]; then
+        echo "tapas: Error: Multiple keys supplied: $keys"
+        return
+    fi
 
     local product=aosp_arm
     case $arch in
@@ -784,6 +865,10 @@ function tapas()
       arm64)  product=aosp_arm64;;
       x86_64) product=aosp_x86_64;;
     esac
+    if [ -n "$keys" ]; then
+        product=${product/aosp_/aosp_${keys}_}
+    fi;
+
     if [ -z "$variant" ]; then
         variant=eng
     fi
@@ -821,7 +906,7 @@ function banchan()
     fi
 
     if [ -z "$product" ]; then
-        product=arm
+        product=arm64
     elif [ $(echo $product | wc -w) -gt 1 ]; then
         echo "banchan: Error: Multiple build archs or products supplied: $products"
         return
@@ -863,6 +948,34 @@ function banchan()
 function gettop
 {
     local TOPFILE=build/make/core/envsetup.mk
+    if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
+        # The following circumlocution ensures we remove symlinks from TOP.
+        (cd "$TOP"; PWD= /bin/pwd)
+    else
+        if [ -f $TOPFILE ] ; then
+            # The following circumlocution (repeated below as well) ensures
+            # that we record the true directory name and not one that is
+            # faked up with symlink names.
+            PWD= /bin/pwd
+        else
+            local HERE=$PWD
+            local T=
+            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
+                \cd ..
+                T=`PWD= /bin/pwd -P`
+            done
+            \cd "$HERE"
+            if [ -f "$T/$TOPFILE" ]; then
+                echo "$T"
+            fi
+        fi
+    fi
+}
+
+# TODO: Merge into gettop as part of launching multitree
+function multitree_gettop
+{
+    local TOPFILE=build/build/make/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
         # The following circumlocution ensures we remove symlinks from TOP.
         (cd "$TOP"; PWD= /bin/pwd)
@@ -959,7 +1072,7 @@ function qpid() {
 # Easy way to make system.img/etc writable
 function syswrite() {
   adb wait-for-device && adb root || return 1
-  if [[ $(adb disable-verity | grep "reboot") ]]; then
+  if [[ $(adb disable-verity | grep -i "reboot") ]]; then
       echo "rebooting"
       adb reboot && adb wait-for-device && adb root || return 1
   fi
@@ -1010,7 +1123,7 @@ function coredump_enable()
         return;
     fi;
     echo "Setting core limit for $PID to infinite...";
-    adb shell /system/bin/ulimit -p $PID -c unlimited
+    adb shell /system/bin/ulimit -P $PID -c unlimited
 }
 
 # core - send SIGV and pull the core for process
@@ -1716,7 +1829,8 @@ function _wrap_build()
 function _trigger_build()
 (
     local -r bc="$1"; shift
-    if T="$(gettop)"; then
+    local T=$(gettop)
+    if [ -n "$T" ]; then
       _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
     else
       >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
@@ -1727,15 +1841,42 @@ function _trigger_build()
 # Convenience entry point (like m) to use Bazel in AOSP.
 function b()
 (
+    # Look for the --run-soong-tests flag and skip passing --skip-soong-tests to Soong if present
+    local bazel_args=""
+    local skip_tests="--skip-soong-tests"
+    for i in $@; do
+        if [[ $i != "--run-soong-tests" ]]; then
+            bazel_args+="$i "
+        else
+            skip_tests=""
+        fi
+    done
     # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
-    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= || return 1
+    _trigger_build "all-modules" bp2build $skip_tests USE_BAZEL_ANALYSIS= || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
-    if [[ -z "$@" ]]; then
+    if [[ -z "$bazel_args" ]]; then
         # If there are no args, show help.
         bazel help
     else
         # Else, always run with the bp2build configuration, which sets Bazel's package path to the synthetic workspace.
-        bazel "$@" --config=bp2build
+        # Add the --config=bp2build after the first argument that doesn't start with a dash. That should be the bazel
+        # command. (build, test, run, ect) If the --config was added at the end, it wouldn't work with commands like:
+        # b run //foo -- --args-for-foo
+        local config_set=0
+        local bazel_args_with_config=""
+        for arg in $bazel_args; do
+            if [[ $arg == "--" && $config_set -ne 1 ]]; # if we find --, insert config argument here
+            then
+                bazel_args_with_config+="--config=bp2build -- "
+                config_set=1
+            else
+                bazel_args_with_config+="$arg "
+            fi
+        done
+        if [[ $config_set -ne 1 ]]; then
+            bazel_args_with_config+="--config=bp2build "
+        fi
+        bazel $bazel_args_with_config
     fi
 )
 
@@ -1767,6 +1908,22 @@ function mmma()
 function make()
 {
     _wrap_build $(get_make_command "$@") "$@"
+}
+
+function _multitree_lunch_error()
+{
+      >&2 echo "Couldn't locate the top of the tree. Please run \'source build/envsetup.sh\' and multitree_lunch from the root of your workspace."
+}
+
+function multitree_build()
+{
+    local T=$(multitree_gettop)
+    if [ -n "$T" ]; then
+      "$T/build/build/make/orchestrator/core/orchestrator.py" "$@"
+    else
+      _multitree_lunch_error
+      return 1
+    fi
 }
 
 function provision()
@@ -1889,6 +2046,13 @@ function showcommands() {
           -f $OUT_DIR/combined-${TARGET_PRODUCT}.ninja \
           -t commands "$@")
     fi
+}
+
+function avbtool() {
+    if [[ ! -f "$ANDROID_SOONG_HOST_OUT"/bin/avbtool ]]; then
+        m avbtool
+    fi
+    "$ANDROID_SOONG_HOST_OUT"/bin/avbtool $@
 }
 
 validate_current_shell

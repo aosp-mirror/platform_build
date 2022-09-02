@@ -1,5 +1,88 @@
 # Build System Changes for Android.mk Writers
 
+## Stop referencing sysprop_library directly from cc modules
+
+For the migration to Bazel, we are no longer mapping sysprop_library targets
+to their generated `cc_library` counterparts when dependning on them from a
+cc module. Instead, directly depend on the generated module by prefixing the
+module name with `lib`. For example, depending on the following module:
+
+```
+sysprop_library {
+    name: "foo",
+    srcs: ["foo.sysprop"],
+}
+```
+
+from a module named `bar` can be done like so:
+
+```
+cc_library {
+    name: "bar",
+    srcs: ["bar.cc"],
+    deps: ["libfoo"],
+}
+```
+
+Failure to do this will result in an error about a missing variant.
+
+## Gensrcs starts disallowing depfile property
+
+To migrate all gensrcs to Bazel, we are restricting the use of depfile property
+because Bazel requires specifying the dependencies directly.
+
+To fix existing uses, remove depfile and directly specify all the dependencies
+in .bp files. For example:
+
+```
+gensrcs {
+    name: "framework-cppstream-protos",
+    tools: [
+        "aprotoc",
+        "protoc-gen-cppstream",
+    ],
+    cmd: "mkdir -p $(genDir)/$(in) " +
+        "&& $(location aprotoc) " +
+        "  --plugin=$(location protoc-gen-cppstream) " +
+        "  -I . " +
+        "  $(in) ",
+    srcs: [
+        "bar.proto",
+    ],
+    output_extension: "srcjar",
+}
+```
+where `bar.proto` imports `external.proto` would become
+
+```
+gensrcs {
+    name: "framework-cppstream-protos",
+    tools: [
+        "aprotoc",
+        "protoc-gen-cpptream",
+    ],
+    tool_files: [
+        "external.proto",
+    ],
+    cmd: "mkdir -p $(genDir)/$(in) " +
+        "&& $(location aprotoc) " +
+        "  --plugin=$(location protoc-gen-cppstream) " +
+        "  $(in) ",
+    srcs: [
+        "bar.proto",
+    ],
+    output_extension: "srcjar",
+}
+```
+as in https://android-review.googlesource.com/c/platform/frameworks/base/+/2125692/.
+
+`BUILD_BROKEN_DEPFILE` can be used to allowlist usage of depfile in `gensrcs`.
+
+If `depfile` is needed for generating javastream proto, `java_library` with `proto.type`
+set `stream` is the alternative solution. Sees
+https://android-review.googlesource.com/c/platform/packages/modules/Permission/+/2118004/
+for an example.
+
 ## Genrule starts disallowing directory inputs
 
 To better specify the inputs to the build, we are restricting use of directories
@@ -733,6 +816,17 @@ is 26 or 27, you can add `"target-level"="1"` to your device manifest instead.
 Clang is the default and only supported Android compiler, so there is no reason
 for this option to exist.
 
+### Stop using clang property
+
+Clang has been deleted from Soong. To fix any build errors, remove the clang
+property from affected Android.bp files using bpmodify.
+
+
+``` make
+go run bpmodify.go -w -m=module_name -remove-property=true -property=clang filepath
+```
+
+`BUILD_BROKEN_CLANG_PROPERTY` can be used as temporarily workaround
 ### Other envsetup.sh variables  {#other_envsetup_variables}
 
 * ANDROID_TOOLCHAIN

@@ -155,13 +155,16 @@ $(KATI_obsolete_var COVERAGE_PATHS,Use NATIVE_COVERAGE_PATHS instead)
 $(KATI_obsolete_var COVERAGE_EXCLUDE_PATHS,Use NATIVE_COVERAGE_EXCLUDE_PATHS instead)
 $(KATI_obsolete_var BOARD_VNDK_RUNTIME_DISABLE,VNDK-Lite is no longer supported)
 $(KATI_obsolete_var LOCAL_SANITIZE_BLACKLIST,Use LOCAL_SANITIZE_BLOCKLIST instead)
-$(KATI_deprecated_var BOARD_PLAT_PUBLIC_SEPOLICY_DIR,Use SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS instead)
-$(KATI_deprecated_var BOARD_PLAT_PRIVATE_SEPOLICY_DIR,Use SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS instead)
+$(KATI_obsolete_var BOARD_PLAT_PUBLIC_SEPOLICY_DIR,Use SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS instead)
+$(KATI_obsolete_var BOARD_PLAT_PRIVATE_SEPOLICY_DIR,Use SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS instead)
 $(KATI_obsolete_var TARGET_NO_VENDOR_BOOT,Use PRODUCT_BUILD_VENDOR_BOOT_IMAGE instead)
 $(KATI_obsolete_var PRODUCT_CHECK_ELF_FILES,Use BUILD_BROKEN_PREBUILT_ELF_FILES instead)
 $(KATI_obsolete_var ALL_GENERATED_SOURCES,ALL_GENERATED_SOURCES is no longer used)
 $(KATI_obsolete_var ALL_ORIGINAL_DYNAMIC_BINARIES,ALL_ORIGINAL_DYNAMIC_BINARIES is no longer used)
-
+$(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY,VB 1.0 and related variables are no longer supported)
+$(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY_FEC,VB 1.0 and related variables are no longer supported)
+$(KATI_obsolete_var PRODUCT_SUPPORTS_BOOT_SIGNER,VB 1.0 and related variables are no longer supported)
+$(KATI_obsolete_var PRODUCT_VERITY_SIGNING_KEY,VB 1.0 and related variables are no longer supported)
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
@@ -226,8 +229,6 @@ BUILD_NATIVE_TEST :=$= $(BUILD_SYSTEM)/native_test.mk
 BUILD_FUZZ_TEST :=$= $(BUILD_SYSTEM)/fuzz_test.mk
 
 BUILD_NOTICE_FILE :=$= $(BUILD_SYSTEM)/notice_files.mk
-BUILD_HOST_DALVIK_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_java_library.mk
-BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
 
 include $(BUILD_SYSTEM)/deprecation.mk
 
@@ -496,7 +497,9 @@ TARGET_BUILD_USE_PREBUILT_SDKS :=
 DISABLE_PREOPT :=
 ifneq (,$(TARGET_BUILD_APPS)$(TARGET_BUILD_UNBUNDLED_IMAGE))
   DISABLE_PREOPT := true
-  ifndef UNBUNDLED_BUILD_SDKS_FROM_SOURCE
+endif
+ifeq (true,$(TARGET_BUILD_UNBUNDLED))
+  ifneq (true,$(UNBUNDLED_BUILD_SDKS_FROM_SOURCE))
     TARGET_BUILD_USE_PREBUILT_SDKS := true
   endif
 endif
@@ -618,6 +621,7 @@ MAKE_RECOVERY_PATCH := $(HOST_OUT_EXECUTABLES)/make_recovery_patch$(HOST_EXECUTA
 OTA_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/ota_from_target_files$(HOST_EXECUTABLE_SUFFIX)
 SPARSE_IMG := $(HOST_OUT_EXECUTABLES)/sparse_img$(HOST_EXECUTABLE_SUFFIX)
 CHECK_PARTITION_SIZES := $(HOST_OUT_EXECUTABLES)/check_partition_sizes$(HOST_EXECUTABLE_SUFFIX)
+SYMBOLS_MAP := $(HOST_OUT_EXECUTABLES)/symbols_map
 
 PROGUARD_HOME := external/proguard
 PROGUARD := $(PROGUARD_HOME)/bin/proguard.sh
@@ -628,10 +632,8 @@ APPEND2SIMG := $(HOST_OUT_EXECUTABLES)/append2simg
 VERITY_SIGNER := $(HOST_OUT_EXECUTABLES)/verity_signer
 BUILD_VERITY_METADATA := $(HOST_OUT_EXECUTABLES)/build_verity_metadata
 BUILD_VERITY_TREE := $(HOST_OUT_EXECUTABLES)/build_verity_tree
-BOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/boot_signer
 FUTILITY := $(HOST_OUT_EXECUTABLES)/futility-host
 VBOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/vboot_signer
-FEC := $(HOST_OUT_EXECUTABLES)/fec
 
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
@@ -710,26 +712,10 @@ ifeq ($(PRODUCT_FULL_TREBLE),true)
   BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED ?= true
 endif
 
-# If PRODUCT_USE_VNDK is true and BOARD_VNDK_VERSION is not defined yet,
-# BOARD_VNDK_VERSION will be set to "current" as default.
-# PRODUCT_USE_VNDK will be true in Android-P or later launching devices.
-PRODUCT_USE_VNDK := false
-ifneq ($(PRODUCT_USE_VNDK_OVERRIDE),)
-  PRODUCT_USE_VNDK := $(PRODUCT_USE_VNDK_OVERRIDE)
-else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  # No shipping level defined
-else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),27),true)
-  PRODUCT_USE_VNDK := $(PRODUCT_FULL_TREBLE)
+# Starting in Android U, non-VNDK devices not supported
+ifndef BOARD_VNDK_VERSION
+BOARD_VNDK_VERSION := current
 endif
-
-ifeq ($(PRODUCT_USE_VNDK),true)
-  ifndef BOARD_VNDK_VERSION
-    BOARD_VNDK_VERSION := current
-  endif
-endif
-
-$(KATI_obsolete_var PRODUCT_USE_VNDK,Use BOARD_VNDK_VERSION instead)
-$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use BOARD_VNDK_VERSION instead)
 
 ifdef PRODUCT_PRODUCT_VNDK_VERSION
   ifndef BOARD_VNDK_VERSION
@@ -802,6 +788,7 @@ ifdef PRODUCT_MAINLINE_SEPOLICY_DEV_CERTIFICATES
 else
   MAINLINE_SEPOLICY_DEV_CERTIFICATES := $(dir $(DEFAULT_SYSTEM_DEV_CERTIFICATE))
 endif
+.KATI_READONLY := MAINLINE_SEPOLICY_DEV_CERTIFICATES
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(SOONG_OUT_DIR)/build_number.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
@@ -818,7 +805,7 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 # is made which breaks compatibility with the previous platform sepolicy version,
 # not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
 # be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 32
+sepolicy_major_vers := 33
 sepolicy_minor_vers := 0
 
 ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
@@ -858,6 +845,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     30.0 \
     31.0 \
     32.0 \
+    33.0 \
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
@@ -970,16 +958,6 @@ $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
     $(eval BOARD_$(group)_PARTITION_LIST ?=) \
     $(eval .KATI_READONLY := BOARD_$(group)_PARTITION_LIST) \
 )
-
-# BOARD_*_PARTITION_LIST: a list of the following tokens
-valid_super_partition_list := system vendor product system_ext odm vendor_dlkm odm_dlkm system_dlkm
-$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
-    $(if $(filter-out $(valid_super_partition_list),$(BOARD_$(group)_PARTITION_LIST)), \
-        $(error BOARD_$(group)_PARTITION_LIST contains invalid partition name \
-            $(filter-out $(valid_super_partition_list),$(BOARD_$(group)_PARTITION_LIST)). \
-            Valid names are $(valid_super_partition_list))))
-valid_super_partition_list :=
-
 
 # Define BOARD_SUPER_PARTITION_PARTITION_LIST, the sum of all BOARD_*_PARTITION_LIST
 ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
@@ -1230,10 +1208,27 @@ else ifneq (,$(filter-out false,$(USE_RBE)))
 endif
 .KATI_READONLY := GOMA_POOL RBE_POOL GOMA_OR_RBE_POOL
 
+JAVAC_NINJA_POOL :=
+R8_NINJA_POOL :=
+D8_NINJA_POOL :=
+
+ifneq ($(filter-out false,$(USE_RBE)),)
+  ifdef RBE_JAVAC
+    JAVAC_NINJA_POOL := $(RBE_POOL)
+  endif
+  ifdef RBE_R8
+    R8_NINJA_POOL := $(RBE_POOL)
+  endif
+  ifdef RBE_D8
+    D8_NINJA_POOL := $(RBE_POOL)
+  endif
+endif
+
+.KATI_READONLY := JAVAC_NINJA_POOL R8_NINJA_POOL D8_NINJA_POOL
+
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.
-dont_bother_goals := out \
-    product-graph dump-products
+dont_bother_goals := out product-graph
 
 # Make ANDROID Soong config variables visible to Android.mk files, for
 # consistency with those defined in BoardConfig.mk files.

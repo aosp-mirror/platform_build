@@ -108,20 +108,27 @@ class MergeUtilsTest(test_utils.ReleaseToolsTestCase):
 
   def test_ItemListToPartitionSet(self):
     item_list = [
+        'IMAGES/system_ext.img',
         'META/apexkeys.txt',
         'META/apkcerts.txt',
         'META/filesystem_config.txt',
         'PRODUCT/*',
         'SYSTEM/*',
-        'SYSTEM_EXT/*',
+        'SYSTEM/system_ext/*',
     ]
     partition_set = merge_utils.ItemListToPartitionSet(item_list)
     self.assertEqual(set(['product', 'system', 'system_ext']), partition_set)
 
   def test_InferItemList_Framework(self):
     zip_namelist = [
+        'IMAGES/product.img',
+        'IMAGES/product.map',
+        'IMAGES/system.img',
+        'IMAGES/system.map',
         'SYSTEM/my_system_file',
         'PRODUCT/my_product_file',
+        # Device does not use a separate system_ext partition.
+        'SYSTEM/system_ext/system_ext_file',
     ]
 
     item_list = merge_utils.InferItemList(zip_namelist, framework=True)
@@ -147,37 +154,55 @@ class MergeUtilsTest(test_utils.ReleaseToolsTestCase):
     zip_namelist = [
         'VENDOR/my_vendor_file',
         'ODM/my_odm_file',
+        'IMAGES/odm.img',
+        'IMAGES/odm.map',
+        'IMAGES/vendor.img',
+        'IMAGES/vendor.map',
+        'IMAGES/my_custom_image.img',
+        'IMAGES/my_custom_file.txt',
+        'IMAGES/vbmeta.img',
+        'CUSTOM_PARTITION/my_custom_file',
+        # Leftover framework pieces that shouldn't be grabbed.
+        'IMAGES/system.img',
+        'SYSTEM/system_file',
     ]
 
     item_list = merge_utils.InferItemList(zip_namelist, framework=False)
 
     expected_vendor_item_list = [
+        'CUSTOM_PARTITION/*',
+        'IMAGES/my_custom_file.txt',
+        'IMAGES/my_custom_image.img',
         'IMAGES/odm.img',
         'IMAGES/odm.map',
         'IMAGES/vendor.img',
         'IMAGES/vendor.map',
+        'META/custom_partition_filesystem_config.txt',
         'META/kernel_configs.txt',
         'META/kernel_version.txt',
         'META/odm_filesystem_config.txt',
         'META/otakeys.txt',
+        'META/pack_radioimages.txt',
         'META/releasetools.py',
         'META/vendor_filesystem_config.txt',
         'ODM/*',
-        'OTA/android-info.txt',
         'VENDOR/*',
     ]
     self.assertEqual(item_list, expected_vendor_item_list)
 
   def test_InferFrameworkMiscInfoKeys(self):
     zip_namelist = [
-        'SYSTEM/my_system_file',
-        'SYSTEM_EXT/my_system_ext_file',
+        'PRODUCT/',
+        'SYSTEM/',
+        'SYSTEM/system_ext/',
     ]
 
     keys = merge_utils.InferFrameworkMiscInfoKeys(zip_namelist)
 
     expected_keys = [
         'ab_update',
+        'avb_product_add_hashtree_footer_args',
+        'avb_product_hashtree_enable',
         'avb_system_add_hashtree_footer_args',
         'avb_system_ext_add_hashtree_footer_args',
         'avb_system_ext_hashtree_enable',
@@ -186,10 +211,13 @@ class MergeUtilsTest(test_utils.ReleaseToolsTestCase):
         'avb_vbmeta_system_algorithm',
         'avb_vbmeta_system_key_path',
         'avb_vbmeta_system_rollback_index_location',
+        'building_product_image',
         'building_system_ext_image',
         'building_system_image',
         'default_system_dev_certificate',
         'fs_type',
+        'product_disable_sparse',
+        'product_fs_type',
         'system_disable_sparse',
         'system_ext_disable_sparse',
         'system_ext_fs_type',

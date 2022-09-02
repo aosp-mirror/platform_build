@@ -537,14 +537,6 @@ class BlockImageDiff(object):
 
     self.touched_src_sha1 = self.src.RangeSha1(self.touched_src_ranges)
 
-    if self.tgt.hashtree_info:
-      out.append("compute_hash_tree {} {} {} {} {}\n".format(
-          self.tgt.hashtree_info.hashtree_range.to_string_raw(),
-          self.tgt.hashtree_info.filesystem_range.to_string_raw(),
-          self.tgt.hashtree_info.hash_algorithm,
-          self.tgt.hashtree_info.salt,
-          self.tgt.hashtree_info.root_hash))
-
     # Zero out extended blocks as a workaround for bug 20881595.
     if self.tgt.extended:
       assert (WriteSplitTransfers(out, "zero", self.tgt.extended) ==
@@ -826,12 +818,6 @@ class BlockImageDiff(object):
       # been touched, and touch all the blocks written by this
       # transfer.
       for s, e in xf.tgt_ranges:
-        for i in range(s, e):
-          assert touched[i] == 0
-          touched[i] = 1
-
-    if self.tgt.hashtree_info:
-      for s, e in self.tgt.hashtree_info.hashtree_range:
         for i in range(s, e):
           assert touched[i] == 0
           touched[i] = 1

@@ -245,7 +245,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
   $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(my_optional_uses_libs_args)
   $(my_enforced_uses_libraries): PRIVATE_DEXPREOPT_CONFIGS := $(my_dexpreopt_config_args)
   $(my_enforced_uses_libraries): PRIVATE_RELAX_CHECK := $(my_relax_check_arg)
-  $(my_enforced_uses_libraries): $(AAPT)
+  $(my_enforced_uses_libraries): $(AAPT2)
   $(my_enforced_uses_libraries): $(my_verify_script)
   $(my_enforced_uses_libraries): $(my_dexpreopt_dep_configs)
   $(my_enforced_uses_libraries): $(my_manifest_or_apk)
@@ -254,7 +254,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
 	$(my_verify_script) \
 	  --enforce-uses-libraries \
 	  --enforce-uses-libraries-status $@ \
-	  --aapt $(AAPT) \
+	  --aapt $(AAPT2) \
 	  $(PRIVATE_USES_LIBRARIES) \
 	  $(PRIVATE_OPTIONAL_USES_LIBRARIES) \
 	  $(PRIVATE_DEXPREOPT_CONFIGS) \
@@ -272,11 +272,13 @@ my_dexpreopt_images :=
 my_dexpreopt_images_deps :=
 my_dexpreopt_image_locations_on_host :=
 my_dexpreopt_image_locations_on_device :=
+# Infix can be 'boot' or 'art'. Soong creates a set of variables for Make, one
+# for each boot image (primary and the framework extension). The only reason why
+# the primary image is exposed to Make is testing (art gtests) and benchmarking
+# (art golem benchmarks). Install rules that use those variables are in
+# dex_preopt_libart.mk. Here for dexpreopt purposes the infix is always 'boot'.
 my_dexpreopt_infix := boot
 my_create_dexpreopt_config :=
-ifeq (true, $(DEXPREOPT_USE_ART_IMAGE))
-  my_dexpreopt_infix := art
-endif
 
 ifdef LOCAL_DEX_PREOPT
   ifeq (,$(filter PRESIGNED,$(LOCAL_CERTIFICATE)))

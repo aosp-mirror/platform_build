@@ -149,6 +149,13 @@ OPTIONS.framework_dexpreopt_tools = None
 OPTIONS.vendor_dexpreopt_config = None
 
 
+def move_only_exists(source, destination):
+  """Judge whether the file exists and then move the file."""
+
+  if os.path.exists(source):
+    shutil.move(source, destination)
+
+
 def create_merged_package(temp_dir):
   """Merges two target files packages into one target files structure.
 
@@ -286,9 +293,8 @@ def rebuild_image_with_sepolicy(target_files_dir):
   shutil.move(
       os.path.join(vendor_target_files_dir, 'IMAGES', partition_img),
       os.path.join(target_files_dir, 'IMAGES', partition_img))
-  shutil.move(
-      os.path.join(vendor_target_files_dir, 'IMAGES', partition_map),
-      os.path.join(target_files_dir, 'IMAGES', partition_map))
+  move_only_exists(os.path.join(vendor_target_files_dir, 'IMAGES', partition_map),
+        os.path.join(target_files_dir, 'IMAGES', partition_map))
 
   def copy_recovery_file(filename):
     for subdir in ('VENDOR', 'SYSTEM/vendor'):
