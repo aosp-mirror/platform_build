@@ -244,6 +244,9 @@ A/B OTA specific options
 
   --vabc_compression_param
       Compression algorithm to be used for VABC. Available options: gz, brotli, none
+
+  --security_patch_level
+      Override the security patch level in target files
 """
 
 from __future__ import print_function
@@ -316,6 +319,7 @@ OPTIONS.compressor_types = None
 OPTIONS.enable_zucchini = True
 OPTIONS.enable_lz4diff = False
 OPTIONS.vabc_compression_param = None
+OPTIONS.security_patch_level = None
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -913,6 +917,13 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         "Builds doesn't support zucchini, or source/target don't have compatible zucchini versions. Disabling zucchini.")
     OPTIONS.enable_zucchini = False
 
+  security_patch_level = target_info.GetBuildProp(
+      "ro.build.version.security_patch")
+  if OPTIONS.security_patch_level is not None:
+    security_patch_level = OPTIONS.security_patch_level
+
+  additional_args += ["--security_patch_level", security_patch_level]
+
   additional_args += ["--enable_zucchini",
                       str(OPTIONS.enable_zucchini).lower()]
 
@@ -1130,6 +1141,8 @@ def main(argv):
       OPTIONS.enable_lz4diff = a.lower() != "false"
     elif o == "--vabc_compression_param":
       OPTIONS.vabc_compression_param = a.lower()
+    elif o == "--security_patch_level":
+      OPTIONS.security_patch_level = a
     else:
       return False
     return True
@@ -1180,6 +1193,7 @@ def main(argv):
                                  "enable_zucchini=",
                                  "enable_lz4diff=",
                                  "vabc_compression_param=",
+                                 "security_patch_level=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
