@@ -62,7 +62,7 @@ python_defaults {
         "mkuserimg_mke2fs",
         "simg2img",
         "tune2fs",
-        "mkf2fsuserimg.sh",
+        "mkf2fsuserimg",
         "fsck.f2fs",
     ],
 }
