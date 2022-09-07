@@ -1036,6 +1036,24 @@ ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
   $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
 
 ##########################################################################
+## When compiling against API imported module, use API import stub
+## libraries.
+##########################################################################
+ifneq ($(LOCAL_USE_VNDK),)
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    apiimport_postfix := .apiimport
+    ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+      apiimport_postfix := .apiimport.product
+    else
+      apiimport_postfix := .apiimport.vendor
+    endif
+
+    my_required_modules := $(foreach l,$(my_required_modules), \
+      $(if $(filter $(l), $(API_IMPORTED_SHARED_LIBRARIES)), $(l)$(apiimport_postfix), $(l)))
+  endif
+endif
+
+##########################################################################
 ## When compiling against the VNDK, add the .vendor or .product suffix to
 ## required modules.
 ##########################################################################
