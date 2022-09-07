@@ -935,6 +935,7 @@ ifdef my_installed_prebuilt_gki_apex
   my_apex_extracted_boot_image := $(ALL_MODULES.$(my_installed_prebuilt_gki_apex).EXTRACTED_BOOT_IMAGE)
   INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
   $(eval $(call copy-one-file,$(my_apex_extracted_boot_image),$(INSTALLED_BOOTIMAGE_TARGET)))
+  $(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
 
   INTERNAL_PREBUILT_BOOTIMAGE := $(my_apex_extracted_boot_image)
 
@@ -1102,7 +1103,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILE
 	$(call pretty,"Target boot image: $@")
 	$(call build_boot_board_avb_enabled,$@)
 
-$(call declare-1p-container,$(INSTALLED_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_BOOTIMAGE_FILES) $(INTERNAL_GKI_CERTIFICATE_DEPS),$(PRODUCT_OUT)/:/)
 
 UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
@@ -1148,7 +1149,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(VBOOT_
 	$(call pretty,"Target boot image: $@")
 	$(call build_boot_supports_vboot,$@)
 
-$(call declare-1p-container,$(INSTALLED_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_BOOTIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
 UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
@@ -1170,7 +1171,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES)
 	$(call pretty,"Target boot image: $@")
 	$(call build_boot_novboot,$@)
 
-$(call declare-1p-container,$(INSTALLED_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_BOOTIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
 UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
@@ -1197,7 +1198,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_BOOTIMAGE) $(AVBTOOL) $(BOARD
 	    --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
 	    $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
 
-$(call declare-1p-container,$(INSTALLED_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",bool)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_PREBUILT_BOOTIMAGE),$(PRODUCT_OUT)/:/)
 
 UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
@@ -1565,7 +1566,6 @@ ifndef TARGET_BUILD_APPS
 # TARGET_OUT_NOTICE_FILES now that the notice files are gathered from
 # the src subdirectory.
 kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
-winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
 
 # Some targets get included under $(PRODUCT_OUT) for debug symbols or other
 # reasons--not to be flashed onto any device. Targets under these directories
@@ -1747,15 +1747,15 @@ endif
 
 endif  # TARGET_BUILD_APPS
 
-# The kernel isn't really a module, so to get its module file in there, we
-# make the target NOTICE files depend on this particular file too, which will
-# then be in the right directory for the find in combine-notice-files to work.
+# Presently none of the prebuilts etc. comply with policy to have a license text. Fake one here.
 $(eval $(call copy-one-file,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,$(kernel_notice_file)))
 
-# No matter where it gets copied from, a copied linux kernel is licensed under "GPL 2.0 only"
-$(eval $(call declare-copy-files-license-metadata,,:kernel,SPDX-license-identifier-GPL-2.0-only,notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,))
+ifneq (,$(strip $(INSTALLED_KERNEL_TARGET)))
+$(call declare-license-metadata,$(INSTALLED_KERNEL_TARGET),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
+endif
 
-$(eval $(call copy-one-file,$(BUILD_SYSTEM)/WINPTHREADS_COPYING,$(winpthreads_notice_file)))
+# No matter where it gets copied from, a copied linux kernel is licensed under "GPL 2.0 only"
+$(eval $(call declare-copy-files-license-metadata,,:kernel,SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,kernel))
 
 
 # #################################################################
@@ -2553,7 +2553,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(recoveryimage-deps)
 	$(call pretty,"Target boot image from recovery: $@")
 	$(call build-recoveryimage-target, $@, $(PRODUCT_OUT)/$(subst .img,,$(subst boot,kernel,$(notdir $@))))
 
-$(call declare-1p-container,$(INSTALLED_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",bool)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(recoveryimage-deps),$(PRODUCT_OUT)/:/)
 
 UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
@@ -2724,7 +2724,7 @@ $(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) 
 	$(call pretty,"Target boot debug image: $@")
 	$(call build-debug-bootimage-target, $@)
 
-$(call declare-1p-container,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
 $(call declare-container-license-deps,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(INSTALLED_BOOTIMAGE_TARGET),$(PRODUCT_OUT)/:/)
 
 UNMOUNTED_NOTICE_DEPS += $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
