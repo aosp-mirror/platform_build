@@ -2357,7 +2357,7 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
   stdoutdata, _ = proc.communicate(password)
   if proc.returncode != 0:
     raise ExternalError(
-        "Failed to run signapk.jar: return code {}:\n{}".format(
+        "Failed to run {}: return code {}:\n{}".format(cmd,
             proc.returncode, stdoutdata))
 
 def SignSePolicy(sepolicy, key, password):
