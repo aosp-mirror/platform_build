@@ -4961,9 +4961,9 @@ INTERNAL_OTATOOLS_MODULES := \
   mke2fs \
   mke2fs.conf \
   mkfs.erofs \
-  mkf2fsuserimg.sh \
+  mkf2fsuserimg \
   mksquashfs \
-  mksquashfsimage.sh \
+  mksquashfsimage \
   mkuserimg_mke2fs \
   ota_extractor \
   ota_from_target_files \
