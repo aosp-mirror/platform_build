@@ -48,7 +48,7 @@ UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
 SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
 
 
-def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
+def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=None, package_key=None, pw=None):
   """Finalizes the metadata and signs an A/B OTA package.
 
   In order to stream an A/B OTA package, we need 'ota-streaming-property-files'
@@ -66,8 +66,21 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
     input_file: The input ZIP filename that doesn't contain the package METADATA
         entry yet.
     output_file: The final output ZIP filename.
-    needed_property_files: The list of PropertyFiles' to be generated.
+    needed_property_files: The list of PropertyFiles' to be generated. Default is [AbOtaPropertyFiles(), StreamingPropertyFiles()]
+    package_key: The key used to sign this OTA package
+    pw: Password for the package_key
   """
+  no_signing = package_key is None
+
+  if needed_property_files is None:
+    # AbOtaPropertyFiles intends to replace StreamingPropertyFiles, as it covers
+    # all the info of the latter. However, system updaters and OTA servers need to
+    # take time to switch to the new flag. We keep both of the flags for
+    # P-timeframe, and will remove StreamingPropertyFiles in later release.
+    needed_property_files = (
+        AbOtaPropertyFiles(),
+        StreamingPropertyFiles(),
+    )
 
   def ComputeAllPropertyFiles(input_file, needed_property_files):
     # Write the current metadata entry with placeholders.
@@ -83,11 +96,11 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
     WriteMetadata(metadata, output_zip)
     ZipClose(output_zip)
 
-    if OPTIONS.no_signing:
+    if no_signing:
       return input_file
 
     prelim_signing = MakeTempFile(suffix='.zip')
-    SignOutput(input_file, prelim_signing)
+    SignOutput(input_file, prelim_signing, package_key, pw)
     return prelim_signing
 
   def FinalizeAllPropertyFiles(prelim_signing, needed_property_files):
@@ -122,10 +135,10 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   ZipClose(output_zip)
 
   # Re-sign the package after updating the metadata entry.
-  if OPTIONS.no_signing:
+  if no_signing:
     shutil.copy(prelim_signing, output_file)
   else:
-    SignOutput(prelim_signing, output_file)
+    SignOutput(prelim_signing, output_file, package_key, pw)
 
   # Reopen the final signed zip to double check the streaming metadata.
   with zipfile.ZipFile(output_file, allowZip64=True) as output_zip:
@@ -578,7 +591,7 @@ class PropertyFiles(object):
     else:
       tokens.append(ComputeEntryOffsetSize(METADATA_NAME))
       if METADATA_PROTO_NAME in zip_file.namelist():
-        tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
+          tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
 
     return ','.join(tokens)
 
@@ -600,10 +613,13 @@ class PropertyFiles(object):
     return []
 
 
-def SignOutput(temp_zip_name, output_zip_name):
-  pw = OPTIONS.key_passwords[OPTIONS.package_key]
+def SignOutput(temp_zip_name, output_zip_name, package_key=None, pw=None):
+  if package_key is None:
+    package_key = OPTIONS.package_key
+  if pw is None and OPTIONS.key_passwords:
+    pw = OPTIONS.key_passwords[package_key]
 
-  SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw,
+  SignFile(temp_zip_name, output_zip_name, package_key, pw,
            whole_file=True)
 
 
@@ -715,7 +731,7 @@ class PayloadGenerator(object):
   SECONDARY_PAYLOAD_BIN = 'secondary/payload.bin'
   SECONDARY_PAYLOAD_PROPERTIES_TXT = 'secondary/payload_properties.txt'
 
-  def __init__(self, secondary=False):
+  def __init__(self, secondary=False, wipe_user_data=False):
     """Initializes a Payload instance.
 
     Args:
@@ -724,6 +740,7 @@ class PayloadGenerator(object):
     self.payload_file = None
     self.payload_properties = None
     self.secondary = secondary
+    self.wipe_user_data = wipe_user_data
 
   def _Run(self, cmd):  # pylint: disable=no-self-use
     # Don't pipe (buffer) the output if verbose is set. Let
@@ -785,8 +802,8 @@ class PayloadGenerator(object):
     self._Run(cmd)
 
     # 2. Sign the hashes.
-    signed_payload_sig_file = payload_signer.Sign(payload_sig_file)
-    signed_metadata_sig_file = payload_signer.Sign(metadata_sig_file)
+    signed_payload_sig_file = payload_signer.SignHashFile(payload_sig_file)
+    signed_metadata_sig_file = payload_signer.SignHashFile(metadata_sig_file)
 
     # 3. Insert the signatures back into the payload file.
     signed_payload_file = common.MakeTempFile(prefix="signed-payload-",
@@ -799,24 +816,7 @@ class PayloadGenerator(object):
            "--payload_signature_file", signed_payload_sig_file]
     self._Run(cmd)
 
-    # 4. Dump the signed payload properties.
-    properties_file = common.MakeTempFile(prefix="payload-properties-",
-                                          suffix=".txt")
-    cmd = ["brillo_update_payload", "properties",
-           "--payload", signed_payload_file,
-           "--properties_file", properties_file]
-    self._Run(cmd)
-
-    if self.secondary:
-      with open(properties_file, "a") as f:
-        f.write("SWITCH_SLOT_ON_REBOOT=0\n")
-
-    if OPTIONS.wipe_user_data:
-      with open(properties_file, "a") as f:
-        f.write("POWERWASH=1\n")
-
     self.payload_file = signed_payload_file
-    self.payload_properties = properties_file
 
   def WriteToZip(self, output_zip):
     """Writes the payload to the given zip.
@@ -825,7 +825,23 @@ class PayloadGenerator(object):
       output_zip: The output ZipFile instance.
     """
     assert self.payload_file is not None
-    assert self.payload_properties is not None
+    # 4. Dump the signed payload properties.
+    properties_file = common.MakeTempFile(prefix="payload-properties-",
+                                          suffix=".txt")
+    cmd = ["brillo_update_payload", "properties",
+           "--payload", self.payload_file,
+           "--properties_file", properties_file]
+    self._Run(cmd)
+
+    if self.secondary:
+      with open(properties_file, "a") as f:
+        f.write("SWITCH_SLOT_ON_REBOOT=0\n")
+
+    if self.wipe_user_data:
+      with open(properties_file, "a") as f:
+        f.write("POWERWASH=1\n")
+
+    self.payload_properties = properties_file
 
     if self.secondary:
       payload_arcname = PayloadGenerator.SECONDARY_PAYLOAD_BIN
@@ -946,6 +962,6 @@ class AbOtaPropertyFiles(StreamingPropertyFiles):
     manifest_size = header[2]
     metadata_signature_size = header[3]
     metadata_total = 24 + manifest_size + metadata_signature_size
-    assert metadata_total < payload_size
+    assert metadata_total <= payload_size
 
     return (payload_offset, metadata_total)
