@@ -185,6 +185,10 @@ LOCAL_REQUIRED_MODULES += \
     $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES)) \
     $(VNDK_USING_CORE_VARIANT_LIBRARIES) \
     com.android.vndk.current
+
+LOCAL_ADDITIONAL_DEPENDENCIES += $(call module-built-files,\
+    $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES)))
+
 endif
 include $(BUILD_PHONY_PACKAGE)
 
