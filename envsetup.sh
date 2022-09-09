@@ -1866,20 +1866,29 @@ function b()
         # command. (build, test, run, ect) If the --config was added at the end, it wouldn't work with commands like:
         # b run //foo -- --args-for-foo
         local config_set=0
-        local bazel_args_with_config=""
+
+        # Represent the args as an array, not a string.
+        local bazel_args_with_config=()
         for arg in $bazel_args; do
             if [[ $arg == "--" && $config_set -ne 1 ]]; # if we find --, insert config argument here
             then
-                bazel_args_with_config+="--config=bp2build -- "
+                bazel_args_with_config+=("--config=bp2build -- ")
                 config_set=1
             else
-                bazel_args_with_config+="$arg "
+                bazel_args_with_config+=("$arg ")
             fi
         done
         if [[ $config_set -ne 1 ]]; then
-            bazel_args_with_config+="--config=bp2build "
+            bazel_args_with_config+=("--config=bp2build ")
         fi
-        bazel $bazel_args_with_config
+
+        if [ -n "$ZSH_VERSION" ]; then
+          # zsh breaks posix by not doing string-splitting on unquoted args
+          # by default. Enable the compatibility option.
+          setopt shwordsplit
+        fi
+        # Call Bazel.
+        bazel ${bazel_args_with_config[@]}
     fi
 )
 
