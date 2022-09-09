@@ -11,6 +11,8 @@ endif
 
 ifneq (,$(strip $(LOCAL_LICENSE_PACKAGE_NAME)))
 license_package_name:=$(strip $(LOCAL_LICENSE_PACKAGE_NAME))
+else
+license_package_name:=
 endif
 
 ifneq (,$(strip $(LOCAL_LICENSE_INSTALL_MAP)))
