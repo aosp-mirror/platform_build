@@ -18,3 +18,10 @@ py_binary(
     visibility = ["//visibility:public"],
     deps = [":event_log_tags"],
 )
+
+py_binary(
+    name = "check_elf_file",
+    srcs = ["check_elf_file.py"],
+    python_version = "PY3",
+    visibility = ["//visibility:public"],
+)
