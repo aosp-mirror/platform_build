@@ -988,9 +988,9 @@ $(strip \
   $(foreach t,$(sort $(ALL_0P_TARGETS)), \
     $(eval ALL_TARGETS.$(t).META_LIC := 0p) \
   ) \
+  $(foreach t,$(sort $(ALL_COPIED_TARGETS)),$(eval $(call copied-target-license-metadata-rule,$(t)))) \
   $(foreach t,$(sort $(ALL_NON_MODULES)),$(eval $(call non-module-license-metadata-rule,$(t)))) \
   $(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m)))) \
-  $(foreach t,$(sort $(ALL_COPIED_TARGETS)),$(eval $(call copied-target-license-metadata-rule,$(t)))) \
   $(eval $(call build-all-license-metadata-rule)))
 endef
 
@@ -3554,11 +3554,11 @@ define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval $(if $(strip $(module_license_metadata)),\
     $$(foreach f,$$(my_compat_dist_$(suite)),$$(call declare-copy-target-license-metadata,$$(call word-colon,2,$$(f)),$$(call word-colon,1,$$(f)))),\
-    $$(eval my_test_data += $$(foreach f,$$(my_compat_dist_$(suite)), $$(call word-colon,2,$$(f)))) \
+    $$(eval my_test_data += $$(my_compat_dist_$(suite))) \
   )) \
   $(eval $(if $(strip $(module_license_metadata)),\
     $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call declare-copy-target-license-metadata,$$(call word-colon,2,$$(f)),$$(call word-colon,1,$$(f)))),\
-    $$(eval my_test_config += $$(foreach f,$$(my_compat_dist_config_$(suite)), $$(call word-colon,2,$$(f)))) \
+    $$(eval my_test_config += $$(my_compat_dist_config_$(suite))) \
   )) \
   $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,\
     $(eval ALL_COMPATIBILITY_SUITES += $(suite)) \
