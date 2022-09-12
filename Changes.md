@@ -827,6 +827,27 @@ go run bpmodify.go -w -m=module_name -remove-property=true -property=clang filep
 ```
 
 `BUILD_BROKEN_CLANG_PROPERTY` can be used as temporarily workaround
+
+
+### Stop using clang_cflags and clang_asflags
+
+clang_cflags and clang_asflags are deprecated.
+To fix any build errors, use bpmodify to either
+    - move the contents of clang_asflags/clang_cflags into asflags/cflags or
+    - delete clang_cflags/as_flags as necessary
+
+To Move the contents:
+``` make
+go run bpmodify.go -w -m=module_name -move-property=true -property=clang_cflags -new-location=cflags filepath
+```
+
+To Delete:
+``` make
+go run bpmodify.go -w -m=module_name -remove-property=true -property=clang_cflags filepath
+```
+
+`BUILD_BROKEN_CLANG_ASFLAGS` and `BUILD_BROKEN_CLANG_CFLAGS` can be used as temporarily workarounds
+
 ### Other envsetup.sh variables  {#other_envsetup_variables}
 
 * ANDROID_TOOLCHAIN
