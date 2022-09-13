@@ -570,7 +570,7 @@ endef
 ## Target directory for license metadata files.
 ###########################################################
 define license-metadata-dir
-$(call generated-sources-dir-for,META,lic,)
+$(call generated-sources-dir-for,META,lic,$(filter-out $(PRODUCT_OUT)%,$(1)))
 endef
 
 TARGETS_MISSING_LICENSE_METADATA:=
@@ -595,7 +595,7 @@ endef
 ## license metadata.
 ###########################################################
 define declare-copy-target-license-metadata
-$(strip $(if $(filter $(OUT_DIR)%,$(2)),$(eval _dir:=$(call license-metadata-dir))\
+$(strip $(if $(filter $(OUT_DIR)%,$(2)),$(eval _dir:=$(call license-metadata-dir,$(1)))\
   $(eval _tgt:=$(strip $(1)))\
   $(eval _meta := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(_tgt).meta_lic)))\
   $(eval ALL_COPIED_TARGETS.$(_tgt).SOURCES := $(ALL_COPIED_TARGETS.$(_tgt).SOURCES) $(filter $(OUT_DIR)%,$(2)))\
@@ -675,7 +675,7 @@ endef
 ## License metadata build rule for non-module target $(1)
 ###########################################################
 define non-module-license-metadata-rule
-$(strip $(eval _dir := $(call license-metadata-dir)))
+$(strip $(eval _dir := $(call license-metadata-dir,$(1))))
 $(strip $(eval _tgt := $(strip $(1))))
 $(strip $(eval _meta := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(_tgt).meta_lic))))
 $(strip $(eval _deps := $(sort $(filter-out 0p: :,$(foreach d,$(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES)),$(ALL_TARGETS.$(call word-colon,1,$(d)).META_LIC):$(call wordlist-colon,2,9999,$(d)))))))
@@ -738,7 +738,7 @@ $(if $(strip $(ALL_TARGETS.$(1).META_LIC)),,$(call _copied-target-license-metada
 endef
 
 define _copied-target-license-metadata-rule
-$(strip $(eval _dir := $(call license-metadata-dir)))
+$(strip $(eval _dir := $(call license-metadata-dir,$(1))))
 $(strip $(eval _meta := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(1).meta_lic))))
 $(strip $(eval ALL_TARGETS.$(1).META_LIC:=$(_meta)))
 $(strip $(eval _dep:=))
@@ -785,7 +785,7 @@ define declare-license-metadata
 $(strip \
   $(eval _tgt := $(subst //,/,$(strip $(1)))) \
   $(eval ALL_NON_MODULES += $(_tgt)) \
-  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir)/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
+  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir,$(1))/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_KINDS := $(strip $(2))) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS := $(strip $(3))) \
   $(eval ALL_NON_MODULES.$(_tgt).NOTICES := $(strip $(4))) \
@@ -826,7 +826,7 @@ define declare-container-license-metadata
 $(strip \
   $(eval _tgt := $(subst //,/,$(strip $(1)))) \
   $(eval ALL_NON_MODULES += $(_tgt)) \
-  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir)/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
+  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir,$(1))/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_KINDS := $(strip $(2))) \
   $(eval ALL_NON_MODULES.$(_tgt).LICENSE_CONDITIONS := $(strip $(3))) \
   $(eval ALL_NON_MODULES.$(_tgt).NOTICES := $(strip $(4))) \
@@ -899,7 +899,7 @@ define declare-license-deps
 $(strip \
   $(eval _tgt := $(strip $(1))) \
   $(eval ALL_NON_MODULES += $(_tgt)) \
-  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir)/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
+  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir,$(1))/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
   $(eval ALL_NON_MODULES.$(_tgt).DEPENDENCIES := $(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES) $(2))) \
 )
 endef
@@ -916,7 +916,7 @@ define declare-container-license-deps
 $(strip \
   $(eval _tgt := $(strip $(1))) \
   $(eval ALL_NON_MODULES += $(_tgt)) \
-  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir)/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
+  $(eval ALL_TARGETS.$(_tgt).META_LIC := $(call license-metadata-dir,$(1))/$(patsubst $(OUT_DIR)%,out%,$(_tgt)).meta_lic) \
   $(eval ALL_NON_MODULES.$(_tgt).DEPENDENCIES := $(strip $(ALL_NON_MODULES.$(_tgt).DEPENDENCIES) $(2))) \
   $(eval ALL_NON_MODULES.$(_tgt).IS_CONTAINER := true) \
   $(eval ALL_NON_MODULES.$(_tgt).ROOT_MAPPINGS := $(strip $(ALL_NON_MODULES.$(_tgt).ROOT_MAPPINGS) $(3))) \
@@ -957,7 +957,7 @@ define report-all-notice-library-names-rule
 $(strip $(eval _all := $(call all-license-metadata)))
 
 .PHONY: reportallnoticelibrarynames
-reportallnoticelibrarynames: PRIVATE_LIST_FILE := $(call license-metadata-dir)/filelist
+reportallnoticelibrarynames: PRIVATE_LIST_FILE := $(call license-metadata-dir,COMMON)/filelist
 reportallnoticelibrarynames: | $(COMPLIANCENOTICE_SHIPPEDLIBS)
 reportallnoticelibrarynames: $(_all)
 	@echo Reporting notice library names for at least $$(words $(_all)) license metadata files
@@ -984,7 +984,6 @@ endef
 ###########################################################
 define build-license-metadata
 $(strip \
-  $(strip $(eval _dir := $(call license-metadata-dir))) \
   $(foreach t,$(sort $(ALL_0P_TARGETS)), \
     $(eval ALL_TARGETS.$(t).META_LIC := 0p) \
   ) \
