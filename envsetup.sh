@@ -1858,7 +1858,7 @@ function b()
     _trigger_build "all-modules" bp2build $skip_tests USE_BAZEL_ANALYSIS= || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
     if [[ -z "$bazel_args" ]]; then
-        # If there are no args, show help.
+        # If there are no args, show help and exit.
         bazel help
     else
         # Else, always run with the bp2build configuration, which sets Bazel's package path to the synthetic workspace.
@@ -1882,13 +1882,15 @@ function b()
             bazel_args_with_config+=("--config=bp2build ")
         fi
 
-        if [ -n "$ZSH_VERSION" ]; then
-          # zsh breaks posix by not doing string-splitting on unquoted args
-          # by default. Enable the compatibility option.
-          setopt shwordsplit
-        fi
         # Call Bazel.
-        bazel ${bazel_args_with_config[@]}
+        if [ -n "$ZSH_VERSION" ]; then
+            # zsh breaks posix by not doing string-splitting on unquoted args
+            # by default. Explicitly use the "=" flag to split.
+            # See https://zsh.sourceforge.io/Guide/zshguide05.html section 5.4.4.
+            bazel ${=bazel_args_with_config}
+        else
+            bazel ${bazel_args_with_config[@]}
+        fi
     fi
 )
 
