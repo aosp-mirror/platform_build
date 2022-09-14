@@ -599,7 +599,7 @@ $(APKCERTS_FILE):
 	    $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
 	      $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),EXTERNAL,,$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
 	      $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@))))
-	$(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),\
+	$(if $(filter true,$(PRODUCT_FSVERITY_GENERATE_METADATA)),\
 	  $(call _apkcerts_write_line,$(notdir $(basename $(FSVERITY_APK_OUT))),$(FSVERITY_APK_KEY_PATH).x509.pem,$(FSVERITY_APK_KEY_PATH).pk8,,system,$@))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
@@ -2933,21 +2933,35 @@ $1
 endef
 
 
-# -----------------------------------------------------------------
-# system image
-
 # FSVerity metadata generation
 # Generate fsverity metadata files (.fsv_meta) and build manifest
-# (system/etc/security/fsverity/BuildManifest.apk) BEFORE filtering systemimage files below
-ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
+# (<partition>/etc/security/fsverity/BuildManifest.apk) BEFORE filtering systemimage, vendorimage,
+# odmimage, productimage files below.
+ifeq ($(PRODUCT_FSVERITY_GENERATE_METADATA),true)
 
-# Generate fsv_meta
-fsverity-metadata-targets := $(sort $(filter \
+fsverity-metadata-targets-patterns := \
   $(TARGET_OUT)/framework/% \
   $(TARGET_OUT)/etc/boot-image.prof \
   $(TARGET_OUT)/etc/dirty-image-objects \
   $(TARGET_OUT)/etc/preloaded-classes \
-  $(TARGET_OUT)/etc/classpaths/%.pb, \
+  $(TARGET_OUT)/etc/classpaths/%.pb \
+
+ifdef BUILDING_SYSTEM_EXT_IMAGE
+fsverity-metadata-targets-patterns += $(TARGET_OUT_SYSTEM_EXT)/framework/%
+endif
+ifdef BUILDING_VENDOR_IMAGE
+fsverity-metadata-targets-patterns += $(TARGET_OUT_VENDOR)/framework/%
+endif
+ifdef BUILDING_ODM_IMAGE
+fsverity-metadata-targets-patterns += $(TARGET_OUT_ODM)/framework/%
+endif
+ifdef BUILDING_PRODUCT_IMAGE
+fsverity-metadata-targets-patterns += $(TARGET_OUT_PRODUCT)/framework/%
+endif
+
+# Generate fsv_meta
+fsverity-metadata-targets := $(sort $(filter \
+  $(fsverity-metadata-targets-patterns), \
   $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 define fsverity-generate-metadata
@@ -2961,47 +2975,80 @@ endef
 $(foreach f,$(fsverity-metadata-targets),$(eval $(call fsverity-generate-metadata,$(f))))
 ALL_DEFAULT_INSTALLED_MODULES += $(addsuffix .fsv_meta,$(fsverity-metadata-targets))
 
-# Generate BuildManifest.apk
 FSVERITY_APK_KEY_PATH := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
-FSVERITY_APK_OUT := $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk
-FSVERITY_APK_MANIFEST_PATH := system/security/fsverity/AndroidManifest.xml
-$(FSVERITY_APK_OUT): PRIVATE_FSVERITY := $(HOST_OUT_EXECUTABLES)/fsverity
-$(FSVERITY_APK_OUT): PRIVATE_AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
-$(FSVERITY_APK_OUT): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
-$(FSVERITY_APK_OUT): PRIVATE_VERSION_CODE := $(PLATFORM_SDK_VERSION)
-$(FSVERITY_APK_OUT): PRIVATE_VERSION_NAME := $(APPS_DEFAULT_VERSION_NAME)
-$(FSVERITY_APK_OUT): PRIVATE_APKSIGNER := $(HOST_OUT_EXECUTABLES)/apksigner
-$(FSVERITY_APK_OUT): PRIVATE_MANIFEST := $(FSVERITY_APK_MANIFEST_PATH)
-$(FSVERITY_APK_OUT): PRIVATE_FRAMEWORK_RES := $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
-$(FSVERITY_APK_OUT): PRIVATE_KEY := $(FSVERITY_APK_KEY_PATH)
-$(FSVERITY_APK_OUT): PRIVATE_INPUTS := $(fsverity-metadata-targets)
-$(FSVERITY_APK_OUT): PRIVATE_ASSETS := $(call intermediates-dir-for,ETC,build_manifest)/assets
-$(FSVERITY_APK_OUT): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
+FSVERITY_APK_MANIFEST_TEMPLATE_PATH := system/security/fsverity/AndroidManifest.xml
+
+# Generate and install BuildManifest.apk for the given partition
+# $(1): path of the output APK
+# $(2): partition name
+define fsverity-generate-and-install-manifest-apk
+fsverity-metadata-targets-$(2) := $(filter $(PRODUCT_OUT)/$(2)/%,\
+      $(fsverity-metadata-targets))
+$(1): PRIVATE_FSVERITY := $(HOST_OUT_EXECUTABLES)/fsverity
+$(1): PRIVATE_AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
+$(1): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
+$(1): PRIVATE_VERSION_CODE := $(PLATFORM_SDK_VERSION)
+$(1): PRIVATE_VERSION_NAME := $(APPS_DEFAULT_VERSION_NAME)
+$(1): PRIVATE_APKSIGNER := $(HOST_OUT_EXECUTABLES)/apksigner
+$(1): PRIVATE_MANIFEST := $(FSVERITY_APK_MANIFEST_TEMPLATE_PATH)
+$(1): PRIVATE_FRAMEWORK_RES := $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
+$(1): PRIVATE_KEY := $(FSVERITY_APK_KEY_PATH)
+$(1): PRIVATE_INPUTS := $$(fsverity-metadata-targets-$(2))
+$(1): PRIVATE_ASSETS := $(call intermediates-dir-for,ETC,build_manifest-$(2))/assets
+$(1): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
     $(HOST_OUT_EXECUTABLES)/fsverity $(HOST_OUT_EXECUTABLES)/aapt2 \
-    $(HOST_OUT_EXECUTABLES)/apksigner $(FSVERITY_APK_MANIFEST_PATH) \
+    $(HOST_OUT_EXECUTABLES)/apksigner $(FSVERITY_APK_MANIFEST_TEMPLATE_PATH) \
     $(FSVERITY_APK_KEY_PATH).x509.pem $(FSVERITY_APK_KEY_PATH).pk8 \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk \
-    $(fsverity-metadata-targets)
-	rm -rf $(PRIVATE_ASSETS)
-	mkdir -p $(PRIVATE_ASSETS)
-	$< --fsverity-path $(PRIVATE_FSVERITY) \
-	    --base-dir $(PRODUCT_OUT) \
-	    --output $(PRIVATE_ASSETS)/build_manifest.pb \
-	    $(PRIVATE_INPUTS)
-	$(PRIVATE_AAPT2) link -o $@ \
-	    -A $(PRIVATE_ASSETS) \
-	    -I $(PRIVATE_FRAMEWORK_RES) \
-	    --min-sdk-version $(PRIVATE_MIN_SDK_VERSION) \
-	    --version-code $(PRIVATE_VERSION_CODE) \
-	    --version-name $(PRIVATE_VERSION_NAME) \
-	    --manifest $(PRIVATE_MANIFEST)
-	$(PRIVATE_APKSIGNER) sign --in $@ \
-	    --cert $(PRIVATE_KEY).x509.pem \
-	    --key $(PRIVATE_KEY).pk8
+    $$(fsverity-metadata-targets-$(2))
+	rm -rf $$(PRIVATE_ASSETS)
+	mkdir -p $$(PRIVATE_ASSETS)
+ifdef fsverity-metadata-targets-$(2)
+	$$< --fsverity-path $$(PRIVATE_FSVERITY) \
+	    --base-dir $$(PRODUCT_OUT) \
+	    --output $$(PRIVATE_ASSETS)/build_manifest.pb \
+	    $$(PRIVATE_INPUTS)
+endif  # fsverity-metadata-targets-$(2)
+	$$(PRIVATE_AAPT2) link -o $$@ \
+	    -A $$(PRIVATE_ASSETS) \
+	    -I $$(PRIVATE_FRAMEWORK_RES) \
+	    --min-sdk-version $$(PRIVATE_MIN_SDK_VERSION) \
+	    --version-code $$(PRIVATE_VERSION_CODE) \
+	    --version-name $$(PRIVATE_VERSION_NAME) \
+	    --manifest $$(PRIVATE_MANIFEST) \
+            --rename-manifest-package com.android.security.fsverity_metadata.$(2)
+	$$(PRIVATE_APKSIGNER) sign --in $$@ \
+	    --cert $$(PRIVATE_KEY).x509.pem \
+	    --key $$(PRIVATE_KEY).pk8
 
-ALL_DEFAULT_INSTALLED_MODULES += $(FSVERITY_APK_OUT)
+ALL_DEFAULT_INSTALLED_MODULES += $(1)
 
-endif  # PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
+endef  # fsverity-generate-and-install-manifest-apk
+
+$(eval $(call fsverity-generate-and-install-manifest-apk, \
+  $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk,system))
+ifdef BUILDING_SYSTEM_EXT_IMAGE
+  $(eval $(call fsverity-generate-and-install-manifest-apk, \
+    $(TARGET_OUT_SYSTEM_EXT)/etc/security/fsverity/BuildManifest.apk,system_ext))
+endif
+ifdef BUILDING_VENDOR_IMAGE
+  $(eval $(call fsverity-generate-and-install-manifest-apk, \
+    $(TARGET_OUT_VENDOR)/etc/security/fsverity/BuildManifest.apk,vendor))
+endif
+ifdef BUILDING_ODM_IMAGE
+  $(eval $(call fsverity-generate-and-install-manifest-apk, \
+    $(TARGET_OUT_ODM)/etc/security/fsverity/BuildManifest.apk,odm))
+endif
+ifdef BUILDING_PRODUCT_IMAGE
+  $(eval $(call fsverity-generate-and-install-manifest-apk, \
+    $(TARGET_OUT_PRODUCT)/etc/security/fsverity/BuildManifest.apk,product))
+endif
+
+endif  # PRODUCT_FSVERITY_GENERATE_METADATA
+
+
+# -----------------------------------------------------------------
+# system image
 
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
