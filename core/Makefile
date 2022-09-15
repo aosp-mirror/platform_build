@@ -3907,6 +3907,10 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 # -----------------------------------------------------------------
 # Protected VM firmware image
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
+
+.PHONY: pvmfwimage
+pvmfwimage: $(INSTALLED_PVMFWIMAGE_TARGET)
+
 INSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img
 INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET := $(PRODUCT_OUT)/pvmfw_embedded.avbpubkey
 PREBUILT_PVMFWIMAGE_TARGET := packages/modules/Virtualization/pvmfw/pvmfw.img
