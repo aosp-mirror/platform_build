@@ -713,7 +713,7 @@ def IsZucchiniCompatible(source_file: str, target_file: str):
         if entry in zfp.namelist():
           return zfp.read(entry).decode()
     else:
-      entry_path = os.path.join(entry, path)
+      entry_path = os.path.join(path, entry)
       if os.path.exists(entry_path):
         with open(entry_path, "r") as fp:
           return fp.read()
