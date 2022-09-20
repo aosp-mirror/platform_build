@@ -19,8 +19,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='ota_metadata.proto',
   package='build.tools.releasetools',
   syntax='proto3',
-  serialized_options=_b('H\003'),
-  serialized_pb=_b('\n\x12ota_metadata.proto\x12\x18\x62uild.tools.releasetools\"X\n\x0ePartitionState\x12\x16\n\x0epartition_name\x18\x01 \x01(\t\x12\x0e\n\x06\x64\x65vice\x18\x02 \x03(\t\x12\r\n\x05\x62uild\x18\x03 \x03(\t\x12\x0f\n\x07version\x18\x04 \x01(\t\"\xce\x01\n\x0b\x44\x65viceState\x12\x0e\n\x06\x64\x65vice\x18\x01 \x03(\t\x12\r\n\x05\x62uild\x18\x02 \x03(\t\x12\x19\n\x11\x62uild_incremental\x18\x03 \x01(\t\x12\x11\n\ttimestamp\x18\x04 \x01(\x03\x12\x11\n\tsdk_level\x18\x05 \x01(\t\x12\x1c\n\x14security_patch_level\x18\x06 \x01(\t\x12\x41\n\x0fpartition_state\x18\x07 \x03(\x0b\x32(.build.tools.releasetools.PartitionState\"c\n\x08\x41pexInfo\x12\x14\n\x0cpackage_name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\x03\x12\x15\n\ris_compressed\x18\x03 \x01(\x08\x12\x19\n\x11\x64\x65\x63ompressed_size\x18\x04 \x01(\x03\"E\n\x0c\x41pexMetadata\x12\x35\n\tapex_info\x18\x01 \x03(\x0b\x32\".build.tools.releasetools.ApexInfo\"\xf8\x03\n\x0bOtaMetadata\x12;\n\x04type\x18\x01 \x01(\x0e\x32-.build.tools.releasetools.OtaMetadata.OtaType\x12\x0c\n\x04wipe\x18\x02 \x01(\x08\x12\x11\n\tdowngrade\x18\x03 \x01(\x08\x12P\n\x0eproperty_files\x18\x04 \x03(\x0b\x32\x38.build.tools.releasetools.OtaMetadata.PropertyFilesEntry\x12;\n\x0cprecondition\x18\x05 \x01(\x0b\x32%.build.tools.releasetools.DeviceState\x12<\n\rpostcondition\x18\x06 \x01(\x0b\x32%.build.tools.releasetools.DeviceState\x12#\n\x1bretrofit_dynamic_partitions\x18\x07 \x01(\x08\x12\x16\n\x0erequired_cache\x18\x08 \x01(\x03\x12\x15\n\rspl_downgrade\x18\t \x01(\x08\x1a\x34\n\x12PropertyFilesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"4\n\x07OtaType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x06\n\x02\x41\x42\x10\x01\x12\t\n\x05\x42LOCK\x10\x02\x12\t\n\x05\x42RICK\x10\x03\x42\x02H\x03\x62\x06proto3')
+  serialized_options=_b('\n\013android.otaB\022OtaPackageMetadataH\003'),
+  serialized_pb=_b('\n\x12ota_metadata.proto\x12\x18\x62uild.tools.releasetools\"X\n\x0ePartitionState\x12\x16\n\x0epartition_name\x18\x01 \x01(\t\x12\x0e\n\x06\x64\x65vice\x18\x02 \x03(\t\x12\r\n\x05\x62uild\x18\x03 \x03(\t\x12\x0f\n\x07version\x18\x04 \x01(\t\"\xce\x01\n\x0b\x44\x65viceState\x12\x0e\n\x06\x64\x65vice\x18\x01 \x03(\t\x12\r\n\x05\x62uild\x18\x02 \x03(\t\x12\x19\n\x11\x62uild_incremental\x18\x03 \x01(\t\x12\x11\n\ttimestamp\x18\x04 \x01(\x03\x12\x11\n\tsdk_level\x18\x05 \x01(\t\x12\x1c\n\x14security_patch_level\x18\x06 \x01(\t\x12\x41\n\x0fpartition_state\x18\x07 \x03(\x0b\x32(.build.tools.releasetools.PartitionState\"{\n\x08\x41pexInfo\x12\x14\n\x0cpackage_name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\x03\x12\x15\n\ris_compressed\x18\x03 \x01(\x08\x12\x19\n\x11\x64\x65\x63ompressed_size\x18\x04 \x01(\x03\x12\x16\n\x0esource_version\x18\x05 \x01(\x03\"E\n\x0c\x41pexMetadata\x12\x35\n\tapex_info\x18\x01 \x03(\x0b\x32\".build.tools.releasetools.ApexInfo\"\xf8\x03\n\x0bOtaMetadata\x12;\n\x04type\x18\x01 \x01(\x0e\x32-.build.tools.releasetools.OtaMetadata.OtaType\x12\x0c\n\x04wipe\x18\x02 \x01(\x08\x12\x11\n\tdowngrade\x18\x03 \x01(\x08\x12P\n\x0eproperty_files\x18\x04 \x03(\x0b\x32\x38.build.tools.releasetools.OtaMetadata.PropertyFilesEntry\x12;\n\x0cprecondition\x18\x05 \x01(\x0b\x32%.build.tools.releasetools.DeviceState\x12<\n\rpostcondition\x18\x06 \x01(\x0b\x32%.build.tools.releasetools.DeviceState\x12#\n\x1bretrofit_dynamic_partitions\x18\x07 \x01(\x08\x12\x16\n\x0erequired_cache\x18\x08 \x01(\x03\x12\x15\n\rspl_downgrade\x18\t \x01(\x08\x1a\x34\n\x12PropertyFilesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"4\n\x07OtaType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x06\n\x02\x41\x42\x10\x01\x12\t\n\x05\x42LOCK\x10\x02\x12\t\n\x05\x42RICK\x10\x03\x42#\n\x0b\x61ndroid.otaB\x12OtaPackageMetadataH\x03\x62\x06proto3')
 )
 
 
@@ -50,8 +50,8 @@ _OTAMETADATA_OTATYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=972,
-  serialized_end=1024,
+  serialized_start=996,
+  serialized_end=1048,
 )
 _sym_db.RegisterEnumDescriptor(_OTAMETADATA_OTATYPE)
 
@@ -216,6 +216,13 @@ _APEXINFO = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='source_version', full_name='build.tools.releasetools.ApexInfo.source_version', index=4,
+      number=5, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -229,7 +236,7 @@ _APEXINFO = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=347,
-  serialized_end=446,
+  serialized_end=470,
 )
 
 
@@ -259,8 +266,8 @@ _APEXMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=448,
-  serialized_end=517,
+  serialized_start=472,
+  serialized_end=541,
 )
 
 
@@ -297,8 +304,8 @@ _OTAMETADATA_PROPERTYFILESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=918,
-  serialized_end=970,
+  serialized_start=942,
+  serialized_end=994,
 )
 
 _OTAMETADATA = _descriptor.Descriptor(
@@ -384,8 +391,8 @@ _OTAMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=520,
-  serialized_end=1024,
+  serialized_start=544,
+  serialized_end=1048,
 )
 
 _DEVICESTATE.fields_by_name['partition_state'].message_type = _PARTITIONSTATE
