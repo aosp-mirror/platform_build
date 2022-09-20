@@ -1,4 +1,3 @@
-#!/bin/bash -e
 # Copyright (C) 2022 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-tests=(
- $(dirname $0)/lunch_tests.sh
-)
+# These commands are expected to always return successfully
 
-for test in $tests; do
-  bash -x $test
-done
+trap 'exit 1' ERR
+
+source $(dirname $0)/../envsetup.sh
+
+test_target=//build/bazel/scripts/difftool:difftool
+
+b cquery 'kind(test, //build/bazel/...)'
+b build "$test_target"
+b build "$test_target" --run-soong-tests
+b build --run-soong-tests "$test_target"
+b --run-soong-tests build "$test_target"
+b run $test_target
+b run $test_target -- --help
+b cquery --output=build 'kind(test, //build/bazel/...)'
+b cquery 'kind(test, //build/bazel/...)' --output=build
