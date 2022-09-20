@@ -1012,7 +1012,11 @@ ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS := \
     $(ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS) $(LOCAL_SYSTEM_SHARED_LIBRARIES)
 
 ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES := \
-    $(ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES) $(LOCAL_RUNTIME_LIBRARIES)
+    $(ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES) $(LOCAL_RUNTIME_LIBRARIES) \
+    $(LOCAL_JAVA_LIBRARIES)
+
+ALL_MODULES.$(my_register_name).LOCAL_STATIC_LIBRARIES := \
+    $(ALL_MODULES.$(my_register_name).LOCAL_STATIC_LIBRARIES) $(LOCAL_STATIC_JAVA_LIBRARIES)
 
 ifdef LOCAL_TEST_DATA
   # Export the list of targets that are handled as data inputs and required
@@ -1034,6 +1038,24 @@ endif
 ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
   $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS) \
   $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
+
+##########################################################################
+## When compiling against API imported module, use API import stub
+## libraries.
+##########################################################################
+ifneq ($(LOCAL_USE_VNDK),)
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    apiimport_postfix := .apiimport
+    ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+      apiimport_postfix := .apiimport.product
+    else
+      apiimport_postfix := .apiimport.vendor
+    endif
+
+    my_required_modules := $(foreach l,$(my_required_modules), \
+      $(if $(filter $(l), $(API_IMPORTED_SHARED_LIBRARIES)), $(l)$(apiimport_postfix), $(l)))
+  endif
+endif
 
 ##########################################################################
 ## When compiling against the VNDK, add the .vendor or .product suffix to

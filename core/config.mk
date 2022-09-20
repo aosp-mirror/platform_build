@@ -165,6 +165,7 @@ $(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY,VB 1.0 and related variables are no 
 $(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY_FEC,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var PRODUCT_SUPPORTS_BOOT_SIGNER,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var PRODUCT_VERITY_SIGNING_KEY,VB 1.0 and related variables are no longer supported)
+$(KATI_obsolete_var BOARD_PREBUILT_PVMFWIMAGE,pvmfw.bin is now built in AOSP and custom versions are no longer supported)
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
@@ -603,8 +604,8 @@ FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs
 MKE2FS_CONF := system/extras/ext4_utils/mke2fs.conf
 MKEROFS := $(HOST_OUT_EXECUTABLES)/mkfs.erofs
-MKSQUASHFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh
-MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
+MKSQUASHFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mksquashfsimage
+MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg
 SIMG2IMG := $(HOST_OUT_EXECUTABLES)/simg2img$(HOST_EXECUTABLE_SUFFIX)
 E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
 TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)

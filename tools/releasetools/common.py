@@ -77,7 +77,7 @@ class Options(object):
     self.extra_sign_sepolicy_args = []
     self.aapt2_path = "aapt2"
     self.java_path = "java"  # Use the one on the path by default.
-    self.java_args = ["-Xmx2048m"]  # The default JVM args.
+    self.java_args = ["-Xmx4096m"]  # The default JVM args.
     self.android_jar_path = None
     self.public_key_suffix = ".x509.pem"
     self.private_key_suffix = ".pk8"
@@ -2357,7 +2357,7 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
   stdoutdata, _ = proc.communicate(password)
   if proc.returncode != 0:
     raise ExternalError(
-        "Failed to run signapk.jar: return code {}:\n{}".format(
+        "Failed to run {}: return code {}:\n{}".format(cmd,
             proc.returncode, stdoutdata))
 
 def SignSePolicy(sepolicy, key, password):

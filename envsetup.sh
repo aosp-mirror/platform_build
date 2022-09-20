@@ -10,7 +10,8 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
               invocations of 'm' etc.
 - tapas:      tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
               Sets up the build environment for building unbundled apps (APKs).
-- banchan:    banchan <module1> [<module2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
+- banchan:    banchan <module1> [<module2> ...] [arm|x86|arm64|x86_64|arm64_only|x86_64only] \
+                      [eng|userdebug|user]
               Sets up the build environment for building unbundled modules (APEXes).
 - croot:      Changes directory to the top of the tree, or a subdirectory thereof.
 - m:          Makes from the top of the tree.
@@ -398,6 +399,7 @@ function addcompletions()
       packages/modules/adb/adb.bash
       system/core/fastboot/fastboot.bash
       tools/asuite/asuite.sh
+      prebuilts/bazel/common/bazel-complete.bash
     )
     # Completion can be disabled selectively to allow users to use non-standard completion.
     # e.g.
@@ -419,6 +421,8 @@ function addcompletions()
     if [ -z "$ZSH_VERSION" ]; then
         # Doesn't work in zsh.
         complete -o nospace -F _croot croot
+        # TODO(b/244559459): Support b autocompletion for zsh
+        complete -F _bazel__complete -o nospace b
     fi
     complete -F _lunch lunch
 
@@ -893,7 +897,7 @@ function tapas()
 function banchan()
 {
     local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
-    local product="$(echo $* | xargs -n 1 echo | \grep -E '^(.*_)?(arm|x86|arm64|x86_64)$' | xargs)"
+    local product="$(echo $* | xargs -n 1 echo | \grep -E '^(.*_)?(arm|x86|arm64|x86_64|arm64only|x86_64only)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
     local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|(.*_)?(arm|x86|arm64|x86_64))$' | xargs)"
 
@@ -922,6 +926,8 @@ function banchan()
       x86)    product=module_x86;;
       arm64)  product=module_arm64;;
       x86_64) product=module_x86_64;;
+      arm64only)  product=module_arm64only;;
+      x86_64only) product=module_x86_64only;;
     esac
     if [ -z "$variant" ]; then
         variant=eng
@@ -1849,10 +1855,10 @@ function b()
         fi
     done
     # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
-    _trigger_build "all-modules" bp2build USE_BAZEL_ANALYSIS= || return 1
+    _trigger_build "all-modules" bp2build $skip_tests USE_BAZEL_ANALYSIS= || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
     if [[ -z "$bazel_args" ]]; then
-        # If there are no args, show help.
+        # If there are no args, show help and exit.
         bazel help
     else
         # Else, always run with the bp2build configuration, which sets Bazel's package path to the synthetic workspace.
@@ -1860,20 +1866,31 @@ function b()
         # command. (build, test, run, ect) If the --config was added at the end, it wouldn't work with commands like:
         # b run //foo -- --args-for-foo
         local config_set=0
-        local bazel_args_with_config=""
+
+        # Represent the args as an array, not a string.
+        local bazel_args_with_config=()
         for arg in $bazel_args; do
             if [[ $arg == "--" && $config_set -ne 1 ]]; # if we find --, insert config argument here
             then
-                bazel_args_with_config+="--config=bp2build -- "
+                bazel_args_with_config+=("--config=bp2build -- ")
                 config_set=1
             else
-                bazel_args_with_config+="$arg "
+                bazel_args_with_config+=("$arg ")
             fi
         done
         if [[ $config_set -ne 1 ]]; then
-            bazel_args_with_config+="--config=bp2build "
+            bazel_args_with_config+=("--config=bp2build ")
         fi
-        eval "bazel $bazel_args_with_config"
+
+        # Call Bazel.
+        if [ -n "$ZSH_VERSION" ]; then
+            # zsh breaks posix by not doing string-splitting on unquoted args
+            # by default. Explicitly use the "=" flag to split.
+            # See https://zsh.sourceforge.io/Guide/zshguide05.html section 5.4.4.
+            bazel ${=bazel_args_with_config}
+        else
+            bazel ${bazel_args_with_config[@]}
+        fi
     fi
 )
 
@@ -2043,6 +2060,13 @@ function showcommands() {
           -f $OUT_DIR/combined-${TARGET_PRODUCT}.ninja \
           -t commands "$@")
     fi
+}
+
+function avbtool() {
+    if [[ ! -f "$ANDROID_SOONG_HOST_OUT"/bin/avbtool ]]; then
+        m avbtool
+    fi
+    "$ANDROID_SOONG_HOST_OUT"/bin/avbtool $@
 }
 
 validate_current_shell
