@@ -42,7 +42,7 @@ license_conditions: "restricted"
 	Classpath = `` +
 		`package_name: "Free Software"
 license_kinds: "SPDX-license-identifier-GPL-2.0-with-classpath-exception"
-license_conditions: "restricted"
+license_conditions: "permissive"
 `
 
 	// DependentModule starts a test metadata file for a module in the same package as `Classpath`.
@@ -521,7 +521,7 @@ func checkSame(rsActual, rsExpected ResolutionSet, t *testing.T) {
 			expectedConditions := expectedRl[i].Resolves()
 			actualConditions := actualRl[i].Resolves()
 			if expectedConditions != actualConditions {
-				t.Errorf("unexpected conditions apply to %q acting on %q: got %04x with names %s, want %04x with names %s",
+				t.Errorf("unexpected conditions apply to %q acting on %q: got %#v with names %s, want %#v with names %s",
 					target.name, expectedRl[i].actsOn.name,
 					actualConditions, actualConditions.Names(),
 					expectedConditions, expectedConditions.Names())
@@ -586,7 +586,7 @@ func checkResolves(rsActual, rsExpected ResolutionSet, t *testing.T) {
 			expectedConditions := expectedRl[i].Resolves()
 			actualConditions := actualRl[i].Resolves()
 			if expectedConditions != (expectedConditions & actualConditions) {
-				t.Errorf("expected conditions missing from %q acting on %q: got %04x with names %s, want %04x with names %s",
+				t.Errorf("expected conditions missing from %q acting on %q: got %#v with names %s, want %#v with names %s",
 					target.name, expectedRl[i].actsOn.name,
 					actualConditions, actualConditions.Names(),
 					expectedConditions, expectedConditions.Names())
