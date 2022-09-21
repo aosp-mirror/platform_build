@@ -58,6 +58,12 @@ INTERNAL_CLEAN_BUILD_VERSION := 6
 #$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/core_intermediates)
 #$(call add-clean-step, find $(OUT_DIR) -type f -name "IGTalkSession*" -print0 | xargs -0 rm -f)
 #$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/*)
+$(call add-clean-step, rm -rf $(OUT_DIR)/obj/ETC/build_manifest-vendor_intermediates)
+$(call add-clean-step, rm -rf $(OUT_DIR)/obj/ETC/build_manifest-odm_intermediates)
+$(call add-clean-step, rm -rf $(OUT_DIR)/obj/ETC/build_manifest-product_intermediates)
+$(call add-clean-step, rm -rf $(TARGET_OUT_VENDOR)/etc/security/fsverity)
+$(call add-clean-step, rm -rf $(TARGET_OUT_ODM)/etc/security/fsverity)
+$(call add-clean-step, rm -rf $(TARGET_OUT_PRODUCT)/etc/security/fsverity)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
