@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+exit 0 #TODO(b/244771600) remove this after CI is enabled
+
 tests=(
  $(dirname $0)/b_tests.sh
 )
