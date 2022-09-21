@@ -1234,6 +1234,7 @@ def BuildVendorPartitions(output_zip_path):
   vendor_misc_info["avb_building_vbmeta_image"] = "false" # skip building vbmeta
   vendor_misc_info["use_dynamic_partitions"] = "false"  # super_empty
   vendor_misc_info["build_super_partition"] = "false"  # super split
+  vendor_misc_info["avb_vbmeta_system"] = ""  # skip building vbmeta_system
   with open(vendor_misc_info_path, "w") as output:
     for key in sorted(vendor_misc_info):
       output.write("{}={}\n".format(key, vendor_misc_info[key]))
