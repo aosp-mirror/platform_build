@@ -289,8 +289,8 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"apacheBin.meta_lic", "notice|restricted_with_classpath_exception"},
-				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
+				{"apacheBin.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -300,8 +300,8 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"dependentModule.meta_lic", "notice|restricted_with_classpath_exception"},
-				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
+				{"dependentModule.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -312,7 +312,7 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			},
 			expectedActions: []tcond{
 				{"apacheBin.meta_lic", "notice"},
-				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -322,8 +322,8 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []tcond{
-				{"dependentModule.meta_lic", "notice|restricted_with_classpath_exception"},
-				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
+				{"dependentModule.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 	}
@@ -593,9 +593,9 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"apacheBin.meta_lic", "notice|restricted_with_classpath_exception"},
-				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
-				{"mitLib.meta_lic", "notice|restricted_with_classpath_exception"},
+				{"apacheBin.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -606,9 +606,9 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"dependentModule.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"dependentModule.meta_lic", "notice|restricted_with_classpath_exception"},
-				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
-				{"mitLib.meta_lic", "notice|restricted_with_classpath_exception"},
+				{"dependentModule.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -620,7 +620,7 @@ func TestResolveTopDownConditions(t *testing.T) {
 			},
 			expectedActions: []tcond{
 				{"apacheBin.meta_lic", "notice"},
-				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
 				{"mitLib.meta_lic", "notice"},
 			},
 		},
@@ -632,9 +632,9 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"dependentModule.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"dependentModule.meta_lic", "notice|restricted_with_classpath_exception"},
-				{"gplWithClasspathException.meta_lic", "restricted_with_classpath_exception"},
-				{"mitLib.meta_lic", "notice|restricted_with_classpath_exception"},
+				{"dependentModule.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 	}
