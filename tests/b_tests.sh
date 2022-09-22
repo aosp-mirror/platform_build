@@ -25,4 +25,4 @@ b build "$test_target" --run-soong-tests
 b build --run-soong-tests "$test_target"
 b --run-soong-tests build "$test_target"
 b cquery 'kind(test, //build/bazel/examples/android_app/...)' --config=android
-#TODO(b/242759256) add some 'b run' command examples
+b run $test_target -- --help >/dev/null
