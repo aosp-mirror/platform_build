@@ -96,14 +96,13 @@ func TestConditionSet(t *testing.T) {
 		{
 			name:       "everything",
 			conditions: []string{"unencumbered", "permissive", "notice", "reciprocal", "restricted", "proprietary"},
-			plus:       &[]string{"restricted_with_classpath_exception", "restricted_allows_dynamic_linking", "by_exception_only", "not_allowed"},
+			plus:       &[]string{"restricted_allows_dynamic_linking", "by_exception_only", "not_allowed"},
 			matchingAny: map[string][]string{
 				"unencumbered":                        []string{"unencumbered"},
 				"permissive":                          []string{"permissive"},
 				"notice":                              []string{"notice"},
 				"reciprocal":                          []string{"reciprocal"},
 				"restricted":                          []string{"restricted"},
-				"restricted_with_classpath_exception": []string{"restricted_with_classpath_exception"},
 				"restricted_allows_dynamic_linking":   []string{"restricted_allows_dynamic_linking"},
 				"proprietary":                         []string{"proprietary"},
 				"by_exception_only":                   []string{"by_exception_only"},
@@ -116,7 +115,6 @@ func TestConditionSet(t *testing.T) {
 				"notice",
 				"reciprocal",
 				"restricted",
-				"restricted_with_classpath_exception",
 				"restricted_allows_dynamic_linking",
 				"proprietary",
 				"by_exception_only",
@@ -131,7 +129,6 @@ func TestConditionSet(t *testing.T) {
 				"notice",
 				"reciprocal",
 				"restricted",
-				"restricted_with_classpath_exception",
 				"restricted_allows_dynamic_linking",
 				"proprietary",
 				"by_exception_only",
@@ -151,7 +148,6 @@ func TestConditionSet(t *testing.T) {
 				"notice",
 				"reciprocal",
 				"restricted",
-				"restricted_with_classpath_exception",
 				"restricted_allows_dynamic_linking",
 				"proprietary",
 				"by_exception_only",
@@ -168,7 +164,6 @@ func TestConditionSet(t *testing.T) {
 				"notice":                              []string{"notice"},
 				"reciprocal":                          []string{"reciprocal"},
 				"restricted":                          []string{"restricted"},
-				"restricted_with_classpath_exception": []string{},
 				"restricted_allows_dynamic_linking":   []string{"restricted_allows_dynamic_linking"},
 				"proprietary":                         []string{"proprietary"},
 				"by_exception_only":                   []string{"by_exception_only"},
@@ -195,7 +190,6 @@ func TestConditionSet(t *testing.T) {
 				"notice",
 				"reciprocal",
 				"restricted",
-				"restricted_with_classpath_exception",
 				"restricted_allows_dynamic_linking",
 				"proprietary",
 				"by_exception_only",
@@ -208,7 +202,6 @@ func TestConditionSet(t *testing.T) {
 				"notice":                              []string{"notice"},
 				"reciprocal":                          []string{"reciprocal"},
 				"restricted":                          []string{"restricted"},
-				"restricted_with_classpath_exception": []string{"restricted_with_classpath_exception"},
 				"restricted_allows_dynamic_linking":   []string{},
 				"proprietary":                         []string{"proprietary"},
 				"by_exception_only":                   []string{"by_exception_only"},
@@ -221,7 +214,6 @@ func TestConditionSet(t *testing.T) {
 				"notice",
 				"reciprocal",
 				"restricted",
-				"restricted_with_classpath_exception",
 				"proprietary",
 				"by_exception_only",
 				"not_allowed",
@@ -235,7 +227,6 @@ func TestConditionSet(t *testing.T) {
 				"notice",
 				"reciprocal",
 				"restricted",
-				"restricted_with_classpath_exception",
 				"restricted_allows_dynamic_linking",
 				"proprietary",
 				"by_exception_only",
@@ -247,7 +238,6 @@ func TestConditionSet(t *testing.T) {
 				"notice",
 				"reciprocal",
 				"restricted",
-				"restricted_with_classpath_exception",
 				"restricted_allows_dynamic_linking",
 				"proprietary",
 				"by_exception_only",
@@ -259,7 +249,6 @@ func TestConditionSet(t *testing.T) {
 				"notice":                              []string{},
 				"reciprocal":                          []string{},
 				"restricted":                          []string{},
-				"restricted_with_classpath_exception": []string{},
 				"restricted_allows_dynamic_linking":   []string{},
 				"proprietary":                         []string{},
 				"by_exception_only":                   []string{},
@@ -270,21 +259,20 @@ func TestConditionSet(t *testing.T) {
 		},
 		{
 			name:       "restrictedplus",
-			conditions: []string{"restricted", "restricted_with_classpath_exception", "restricted_allows_dynamic_linking"},
+			conditions: []string{"restricted", "restricted_allows_dynamic_linking"},
 			plus:       &[]string{"permissive", "notice", "restricted", "proprietary"},
 			matchingAny: map[string][]string{
 				"unencumbered":                        []string{},
 				"permissive":                          []string{"permissive"},
 				"notice":                              []string{"notice"},
 				"restricted":                          []string{"restricted"},
-				"restricted_with_classpath_exception": []string{"restricted_with_classpath_exception"},
 				"restricted_allows_dynamic_linking":   []string{"restricted_allows_dynamic_linking"},
 				"proprietary":                         []string{"proprietary"},
 				"restricted|proprietary":              []string{"restricted", "proprietary"},
 				"by_exception_only":                   []string{},
 				"proprietary|by_exception_only":       []string{"proprietary"},
 			},
-			expected: []string{"permissive", "notice", "restricted", "restricted_with_classpath_exception", "restricted_allows_dynamic_linking", "proprietary"},
+			expected: []string{"permissive", "notice", "restricted", "restricted_allows_dynamic_linking", "proprietary"},
 		},
 	}
 	for _, tt := range tests {
@@ -342,11 +330,11 @@ func TestConditionSet(t *testing.T) {
 				actual := cs.MatchingAny(toConditions(strings.Split(data, "|"))...)
 				actualNames := actual.Names()
 
-				t.Logf("MatchingAny(%s): actual set %04x %s", data, actual, actual.String())
-				t.Logf("MatchingAny(%s): expected set %04x %s", data, expected, expected.String())
+				t.Logf("MatchingAny(%s): actual set %#v %s", data, actual, actual.String())
+				t.Logf("MatchingAny(%s): expected set %#v %s", data, expected, expected.String())
 
 				if actual != expected {
-					t.Errorf("MatchingAny(%s): got %04x, want %04x", data, actual, expected)
+					t.Errorf("MatchingAny(%s): got %#v, want %#v", data, actual, expected)
 					continue
 				}
 				if len(actualNames) != len(expectedNames) {
@@ -382,11 +370,11 @@ func TestConditionSet(t *testing.T) {
 				actual := cs.MatchingAnySet(NewLicenseConditionSet(toConditions(strings.Split(data, "|"))...))
 				actualNames := actual.Names()
 
-				t.Logf("MatchingAnySet(%s): actual set %04x %s", data, actual, actual.String())
-				t.Logf("MatchingAnySet(%s): expected set %04x %s", data, expected, expected.String())
+				t.Logf("MatchingAnySet(%s): actual set %#v %s", data, actual, actual.String())
+				t.Logf("MatchingAnySet(%s): expected set %#v %s", data, expected, expected.String())
 
 				if actual != expected {
-					t.Errorf("MatchingAnySet(%s): got %04x, want %04x", data, actual, expected)
+					t.Errorf("MatchingAnySet(%s): got %#v, want %#v", data, actual, expected)
 					continue
 				}
 				if len(actualNames) != len(expectedNames) {
@@ -426,11 +414,11 @@ func TestConditionSet(t *testing.T) {
 
 			actualNames := actual.Names()
 
-			t.Logf("actual license condition set: %04x %s", actual, actual.String())
-			t.Logf("expected license condition set: %04x %s", expected, expected.String())
+			t.Logf("actual license condition set: %#v %s", actual, actual.String())
+			t.Logf("expected license condition set: %#v %s", expected, expected.String())
 
 			if actual != expected {
-				t.Errorf("checkExpected: got %04x, want %04x", actual, expected)
+				t.Errorf("checkExpected: got %#v, want %#v", actual, expected)
 				return false
 			}
 
@@ -487,7 +475,7 @@ func TestConditionSet(t *testing.T) {
 
 			notExpected := (AllLicenseConditions &^ expected)
 			notExpectedList := notExpected.AsList()
-			t.Logf("not expected license condition set: %04x %s", notExpected, notExpected.String())
+			t.Logf("not expected license condition set: %#v %s", notExpected, notExpected.String())
 
 			if len(tt.expected) == 0 {
 				if actual.HasAny(append(expectedConditions, notExpectedList...)...) {
@@ -526,11 +514,11 @@ func TestConditionSet(t *testing.T) {
 
 			actualNames := actual.Names()
 
-			t.Logf("actual license condition set: %04x %s", actual, actual.String())
-			t.Logf("expected license condition set: %04x %s", expected, expected.String())
+			t.Logf("actual license condition set: %#v %s", actual, actual.String())
+			t.Logf("expected license condition set: %#v %s", expected, expected.String())
 
 			if actual != expected {
-				t.Errorf("checkExpectedSet: got %04x, want %04x", actual, expected)
+				t.Errorf("checkExpectedSet: got %#v, want %#v", actual, expected)
 				return false
 			}
 
@@ -581,7 +569,7 @@ func TestConditionSet(t *testing.T) {
 			}
 
 			notExpected := (AllLicenseConditions &^ expected)
-			t.Logf("not expected license condition set: %04x %s", notExpected, notExpected.String())
+			t.Logf("not expected license condition set: %#v %s", notExpected, notExpected.String())
 
 			if len(tt.expected) == 0 {
 				if actual.MatchesAnySet(expected, notExpected) {
@@ -606,10 +594,10 @@ func TestConditionSet(t *testing.T) {
 				t.Errorf("actual.Difference({expected}).IsEmpty(): want true, got false")
 			}
 			if expected != actual.Intersection(expected) {
-				t.Errorf("expected == actual.Intersection({expected}): want true, got false (%04x != %04x)", expected, actual.Intersection(expected))
+				t.Errorf("expected == actual.Intersection({expected}): want true, got false (%#v != %#v)", expected, actual.Intersection(expected))
 			}
 			if actual != actual.Intersection(expected) {
-				t.Errorf("actual == actual.Intersection({expected}): want true, got false (%04x != %04x)", actual, actual.Intersection(expected))
+				t.Errorf("actual == actual.Intersection({expected}): want true, got false (%#v != %#v)", actual, actual.Intersection(expected))
 			}
 			return true
 		}
