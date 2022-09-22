@@ -49,7 +49,11 @@ func ConflictingSharedPrivateSource(lg *LicenseGraph) []SourceSharePrivacyConfli
 
 	// size is the size of the result
 	size := 0
-	for _, cs := range combined {
+	for actsOn, cs := range combined {
+		if actsOn.pure && !actsOn.LicenseConditions().MatchesAnySet(ImpliesShared) {
+			// no need to share code to build "a distribution medium"
+			continue
+		}
 		size += cs.Intersection(ImpliesShared).Len() * cs.Intersection(ImpliesPrivate).Len()
 	}
 	if size == 0 {
@@ -57,6 +61,9 @@ func ConflictingSharedPrivateSource(lg *LicenseGraph) []SourceSharePrivacyConfli
 	}
 	result := make([]SourceSharePrivacyConflict, 0, size)
 	for actsOn, cs := range combined {
+		if actsOn.pure { // no need to share code for "a distribution medium"
+			continue
+		}
 		pconditions := cs.Intersection(ImpliesPrivate).AsList()
 		ssconditions := cs.Intersection(ImpliesShared).AsList()
 
