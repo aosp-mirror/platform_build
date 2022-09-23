@@ -16,7 +16,6 @@ package compliance
 
 import (
 	"regexp"
-	"strings"
 )
 
 var (
@@ -62,14 +61,13 @@ var (
 
 	// ImpliesNotice lists the condition names implying a notice or attribution policy.
 	ImpliesNotice = LicenseConditionSet(UnencumberedCondition | PermissiveCondition | NoticeCondition | ReciprocalCondition |
-		RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition |
-		ProprietaryCondition | ByExceptionOnlyCondition)
+		RestrictedCondition | WeaklyRestrictedCondition | ProprietaryCondition | ByExceptionOnlyCondition)
 
 	// ImpliesReciprocal lists the condition names implying a local source-sharing policy.
 	ImpliesReciprocal = LicenseConditionSet(ReciprocalCondition)
 
 	// Restricted lists the condition names implying an infectious source-sharing policy.
-	ImpliesRestricted = LicenseConditionSet(RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition)
+	ImpliesRestricted = LicenseConditionSet(RestrictedCondition | WeaklyRestrictedCondition)
 
 	// ImpliesProprietary lists the condition names implying a confidentiality policy.
 	ImpliesProprietary = LicenseConditionSet(ProprietaryCondition)
@@ -81,7 +79,7 @@ var (
 	ImpliesPrivate = LicenseConditionSet(ProprietaryCondition)
 
 	// ImpliesShared lists the condition names implying a source-code sharing policy.
-	ImpliesShared = LicenseConditionSet(ReciprocalCondition | RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition)
+	ImpliesShared = LicenseConditionSet(ReciprocalCondition | RestrictedCondition | WeaklyRestrictedCondition)
 )
 
 var (
@@ -112,13 +110,9 @@ func LicenseConditionSetFromNames(tn *TargetNode, names ...string) LicenseCondit
 				continue
 			}
 			hasLgpl := false
-			hasClasspath := false
 			hasGeneric := false
 			for _, kind := range tn.LicenseKinds() {
-				if strings.HasSuffix(kind, "-with-classpath-exception") {
-					cs = cs.Plus(RestrictedClasspathExceptionCondition)
-					hasClasspath = true
-				} else if anyLgpl.MatchString(kind) {
+				if anyLgpl.MatchString(kind) {
 					cs = cs.Plus(WeaklyRestrictedCondition)
 					hasLgpl = true
 				} else if versionedGpl.MatchString(kind) {
@@ -131,7 +125,7 @@ func LicenseConditionSetFromNames(tn *TargetNode, names ...string) LicenseCondit
 					cs = cs.Plus(RestrictedCondition)
 				}
 			}
-			if hasGeneric && !hasLgpl && !hasClasspath {
+			if hasGeneric && !hasLgpl {
 				cs = cs.Plus(RestrictedCondition)
 			}
 			continue
@@ -202,9 +196,6 @@ func depConditionsPropagatingToTarget(lg *LicenseGraph, e *TargetEdge, depCondit
 	}
 
 	result |= depConditions & LicenseConditionSet(RestrictedCondition)
-	if 0 != (depConditions&LicenseConditionSet(RestrictedClasspathExceptionCondition)) && !edgeNodesAreIndependentModules(e) {
-		result |= LicenseConditionSet(RestrictedClasspathExceptionCondition)
-	}
 	return result
 }
 
@@ -241,9 +232,6 @@ func targetConditionsPropagatingToDep(lg *LicenseGraph, e *TargetEdge, targetCon
 		return result
 	}
 	result = result.Minus(WeaklyRestrictedCondition)
-	if edgeNodesAreIndependentModules(e) {
-		result = result.Minus(RestrictedClasspathExceptionCondition)
-	}
 	return result
 }
 
@@ -261,10 +249,7 @@ func conditionsAttachingAcrossEdge(lg *LicenseGraph, e *TargetEdge, universe Lic
 		return NewLicenseConditionSet()
 	}
 
-	result &= LicenseConditionSet(RestrictedCondition | RestrictedClasspathExceptionCondition)
-	if 0 != (result&LicenseConditionSet(RestrictedClasspathExceptionCondition)) && edgeNodesAreIndependentModules(e) {
-		result &= LicenseConditionSet(RestrictedCondition)
-	}
+	result &= LicenseConditionSet(RestrictedCondition)
 	return result
 }
 
@@ -280,10 +265,4 @@ func edgeIsDerivation(e *TargetEdge) bool {
 	isDynamic := e.annotations.HasAnnotation("dynamic")
 	isToolchain := e.annotations.HasAnnotation("toolchain")
 	return !isDynamic && !isToolchain
-}
-
-// edgeNodesAreIndependentModules returns true for edges where the target and
-// dependency are independent modules.
-func edgeNodesAreIndependentModules(e *TargetEdge) bool {
-	return e.target.PackageName() != e.dependency.PackageName()
 }
