@@ -360,7 +360,8 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) string {
 						continue
 					}
 				}
-				for r, prefix := range SafePrebuiltPrefixes {
+				for _, r := range OrderedSafePrebuiltPrefixes {
+					prefix := SafePrebuiltPrefixes[r]
 					match := r.FindString(licenseText)
 					if len(match) == 0 {
 						continue
