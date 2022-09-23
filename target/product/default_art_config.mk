@@ -56,6 +56,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.appsearch:framework-appsearch \
     com.android.btservices:framework-bluetooth \
     com.android.conscrypt:conscrypt \
+    com.android.federatedcompute:framework-federatedcompute \
     com.android.healthconnect:framework-healthconnect \
     com.android.i18n:core-icu4j \
     com.android.ipsec:android.net.ipsec.ike \
