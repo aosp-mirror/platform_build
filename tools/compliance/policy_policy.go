@@ -16,6 +16,8 @@ package compliance
 
 import (
 	"regexp"
+	"sort"
+	"strings"
 )
 
 var (
@@ -32,26 +34,31 @@ var (
 	// proprietary or confidential pathnames to whether to strip the prefix
 	// from the path when used as the library name for notices.
 	SafePathPrefixes = map[string]bool{
-		"external/":    true,
-		"art/":         false,
-		"build/":       false,
-		"cts/":         false,
-		"dalvik/":      false,
-		"developers/":  false,
-		"development/": false,
-		"frameworks/":  false,
-		"packages/":    true,
-		"prebuilts/":   false,
-		"sdk/":         false,
-		"system/":      false,
-		"test/":        false,
-		"toolchain/":   false,
-		"tools/":       false,
+		"external/":             true,
+		"art/":                  false,
+		"build/":                false,
+		"cts/":                  false,
+		"dalvik/":               false,
+		"developers/":           false,
+		"development/":          false,
+		"frameworks/":           false,
+		"packages/":             true,
+		"prebuilts/module_sdk/": true,
+		"prebuilts/":            false,
+		"sdk/":                  false,
+		"system/":               false,
+		"test/":                 false,
+		"toolchain/":            false,
+		"tools/":                false,
 	}
 
 	// SafePrebuiltPrefixes maps the regular expression to match a prebuilt
 	// containing the path of a safe prefix to the safe prefix.
 	SafePrebuiltPrefixes = make(map[*regexp.Regexp]string)
+
+	// OrderedSafePrebuiltPrefixes lists the SafePrebuiltPrefixes ordered by
+	// increasing length.
+	OrderedSafePrebuiltPrefixes = make([]*regexp.Regexp, 0, 0)
 
 	// ImpliesUnencumbered lists the condition names representing an author attempt to disclaim copyright.
 	ImpliesUnencumbered = LicenseConditionSet(UnencumberedCondition)
@@ -89,14 +96,33 @@ var (
 	ccBySa       = regexp.MustCompile(`^SPDX-license-identifier-CC-BY.*-SA.*`)
 )
 
+// byIncreasingLength implements `sort.Interface` to order regular expressions by increasing length.
+type byIncreasingLength []*regexp.Regexp
+
+func (l byIncreasingLength) Len() int      { return len(l) }
+func (l byIncreasingLength) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
+func (l byIncreasingLength) Less(i, j int) bool {
+	ri := l[i].String()
+	rj := l[j].String()
+	if len(ri) == len(rj) {
+		return ri < rj
+	}
+	return len(ri) < len(rj)
+}
+
 func init() {
 	for prefix := range SafePathPrefixes {
-		if prefix == "prebuilts/" {
+		if strings.HasPrefix(prefix, "prebuilts/") {
 			continue
 		}
-		r := regexp.MustCompile("^prebuilts/[^ ]*/" + prefix)
+		r := regexp.MustCompile("^prebuilts/(?:runtime/mainline/)?" + prefix)
 		SafePrebuiltPrefixes[r] = prefix
 	}
+	OrderedSafePrebuiltPrefixes = make([]*regexp.Regexp, 0, len(SafePrebuiltPrefixes))
+	for r := range SafePrebuiltPrefixes {
+		OrderedSafePrebuiltPrefixes = append(OrderedSafePrebuiltPrefixes, r)
+	}
+	sort.Sort(byIncreasingLength(OrderedSafePrebuiltPrefixes))
 }
 
 // LicenseConditionSetFromNames returns a set containing the recognized `names` and
