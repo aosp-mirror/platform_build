@@ -45,6 +45,140 @@ $(foreach file,$(2), \
     $(eval _all_dist_goal_output_pairs += $$(goal):$$(dst))))
 endef
 
+.PHONY: shareprojects
+
+define __share-projects-rule
+$(1) : PRIVATE_TARGETS := $(2)
+$(1): $(2) $(COMPLIANCE_LISTSHARE)
+	$(hide) rm -f $$@
+	mkdir -p $$(dir $$@)
+	$$(if $$(strip $$(PRIVATE_TARGETS)),OUT_DIR=$(OUT_DIR) $(COMPLIANCE_LISTSHARE) -o $$@ $$(PRIVATE_TARGETS),touch $$@)
+endef
+
+# build list of projects to share in $(1) for meta_lic in $(2)
+#
+# $(1): the intermediate project sharing file
+# $(2): the license metadata to base the sharing on
+define _share-projects-rule
+$(eval $(call __share-projects-rule,$(1),$(2)))
+endef
+
+.PHONY: alllicensetexts
+
+define __license-texts-rule
+$(2) : PRIVATE_GOAL := $(1)
+$(2) : PRIVATE_TARGETS := $(3)
+$(2) : PRIVATE_ROOTS := $(4)
+$(2) : PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,METAPACKAGING,licensetexts)/$(2)/arguments
+$(2): $(3) $(TEXTNOTICE)
+	$(hide) rm -f $$@
+	mkdir -p $$(dir $$@)
+	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
+	$$(if $$(strip $$(PRIVATE_TARGETS)),$$(call dump-words-to-file,\
+            -product="$$(PRIVATE_GOAL)" -title="$$(PRIVATE_GOAL)" \
+            $$(addprefix -strip_prefix ,$$(PRIVATE_ROOTS)) \
+            -strip_prefix=$(PRODUCT_OUT)/ -strip_prefix=$(HOST_OUT)/\
+            $$(PRIVATE_TARGETS),\
+            $$(PRIVATE_ARGUMENT_FILE)))
+	$$(if $$(strip $$(PRIVATE_TARGETS)),OUT_DIR=$(OUT_DIR) $(TEXTNOTICE) -o $$@ @$$(PRIVATE_ARGUMENT_FILE),touch $$@)
+endef
+
+# build list of projects to share in $(2) for meta_lic in $(3) for dist goals $(1)
+# Strip `out/dist/` used as proxy for 'DIST_DIR'
+#
+# $(1): the name of the dist goals
+# $(2): the intermediate project sharing file
+# $(3): the license metadata to base the sharing on
+define _license-texts-rule
+$(eval $(call __license-texts-rule,$(1),$(2),$(3),out/dist/))
+endef
+
+###########################################################
+## License metadata build rule for dist target $(1) with meta_lic $(2) copied from $(3)
+###########################################################
+define _dist-target-license-metadata-rule
+$(strip $(eval _meta :=$(2)))
+$(strip $(eval _dep:=))
+# 0p is the indicator for a non-copyrightable file where no party owns the copyright.
+# i.e. pure data with no copyrightable expression.
+# If all of the sources are 0p and only 0p, treat the copied file as 0p. Otherwise, all
+# of the sources must either be 0p or originate from a single metadata file to copy.
+$(strip $(foreach s,$(strip $(3)),\
+  $(eval _dmeta:=$(ALL_TARGETS.$(s).META_LIC))\
+  $(if $(strip $(_dmeta)),\
+    $(if $(filter-out 0p,$(_dep)),\
+      $(if $(filter-out $(_dep) 0p,$(_dmeta)),\
+        $(error cannot copy target from multiple modules: $(1) from $(_dep) and $(_dmeta)),\
+        $(if $(filter 0p,$(_dep)),$(eval _dep:=$(_dmeta)))),\
+      $(eval _dep:=$(_dmeta))\
+    ),\
+    $(eval TARGETS_MISSING_LICENSE_METADATA += $(s) $(1)))))
+
+
+ifeq (0p,$(strip $(_dep)))
+# Not copyrightable. No emcumbrances, no license text, no license kind etc.
+$(_meta): PRIVATE_CONDITIONS := unencumbered
+$(_meta): PRIVATE_SOURCES := $(3)
+$(_meta): PRIVATE_INSTALLED := $(1)
+# use `$(1)` which is the unique and relatively short `out/dist/$(target)`
+$(_meta): PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,METAPACKAGING,notice)/$(1)/arguments
+$(_meta): $(BUILD_LICENSE_METADATA)
+$(_meta) :
+	rm -f $$@
+	mkdir -p $$(dir $$@)
+	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
+	$$(call dump-words-to-file,\
+	    $$(addprefix -c ,$$(PRIVATE_CONDITIONS))\
+	    $$(addprefix -s ,$$(PRIVATE_SOURCES))\
+	    $$(addprefix -t ,$$(PRIVATE_TARGETS))\
+	    $$(addprefix -i ,$$(PRIVATE_INSTALLED)),\
+	    $$(PRIVATE_ARGUMENT_FILE))
+	OUT_DIR=$(OUT_DIR) $(BUILD_LICENSE_METADATA) \
+	  @$$(PRIVATE_ARGUMENT_FILE) \
+	  -o $$@
+
+else ifneq (,$(strip $(_dep)))
+# Not a missing target, copy metadata and `is_container` etc. from license metadata file `$(_dep)`
+$(_meta): PRIVATE_DEST_TARGET := $(1)
+$(_meta): PRIVATE_SOURCE_TARGETS := $(3)
+$(_meta): PRIVATE_SOURCE_METADATA := $(_dep)
+# use `$(1)` which is the unique and relatively short `out/dist/$(target)`
+$(_meta): PRIVATE_ARGUMENT_FILE := $(call intermediates-dir-for,METAPACKAGING,copynotice)/$(1)/arguments
+$(_meta) : $(_dep) $(COPY_LICENSE_METADATA)
+	rm -f $$@
+	mkdir -p $$(dir $$@)
+	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
+	$$(call dump-words-to-file,\
+	    $$(addprefix -i ,$$(PRIVATE_DEST_TARGET))\
+	    $$(addprefix -s ,$$(PRIVATE_SOURCE_TARGETS))\
+	    $$(addprefix -d ,$$(PRIVATE_SOURCE_METADATA)),\
+	    $$(PRIVATE_ARGUMENT_FILE))
+	OUT_DIR=$(OUT_DIR) $(COPY_LICENSE_METADATA) \
+	  @$$(PRIVATE_ARGUMENT_FILE) \
+	  -o $$@
+
+endif
+endef
+
+# use `out/dist/` as a proxy for 'DIST_DIR'
+define _add_projects_to_share
+$(strip $(eval _mdir := $(call intermediates-dir-for,METAPACKAGING,meta)/out/dist)) \
+$(strip $(eval _idir := $(call intermediates-dir-for,METAPACKAGING,shareprojects))) \
+$(strip $(eval _tdir := $(call intermediates-dir-for,METAPACKAGING,licensetexts))) \
+$(strip $(eval _allt := $(sort $(foreach goal,$(_all_dist_goal_output_pairs),$(call word-colon,2,$(goal)))))) \
+$(foreach target,$(_allt), \
+  $(eval _goals := $(sort $(foreach dg,$(filter %:$(target),$(_all_dist_goal_output_pairs)),$(call word-colon,1,$(dg))))) \
+  $(eval _srcs := $(sort $(foreach sdp,$(filter %:$(target),$(_all_dist_src_dst_pairs)),$(call word-colon,1,$(sdp))))) \
+  $(eval $(call _dist-target-license-metadata-rule,out/dist/$(target),$(_mdir)/out/dist/$(target).meta_lic,$(_srcs))) \
+  $(eval _f := $(_idir)/$(target).shareprojects) \
+  $(eval _n := $(_tdir)/$(target).txt) \
+  $(eval $(call dist-for-goals,$(_goals),$(_f):shareprojects/$(target).shareprojects)) \
+  $(eval $(call dist-for-goals,$(_goals),$(_n):licensetexts/$(target).txt)) \
+  $(eval $(call _share-projects-rule,$(_f),$(foreach t, $(filter-out $(TARGETS_MISSING_LICENSE_METADATA),out/dist/$(target)),$(_mdir)/$(t).meta_lic))) \
+  $(eval $(call _license-texts-rule,$(_goals),$(_n),$(foreach t,$(filter-out $(TARGETS_MISSING_LICENSE_METADATA),out/dist/$(target)),$(_mdir)/$(t).meta_lic))) \
+)
+endef
+
 #------------------------------------------------------------------
 # To be used at the end of the build to collect all the uses of
 # dist-for-goals, and write them into a file for the packaging step to use.
@@ -52,6 +186,15 @@ endef
 # $(1): The file to write
 define dist-write-file
 $(strip \
+  $(call _add_projects_to_share)\
+  $(if $(strip $(ANDROID_REQUIRE_LICENSE_METADATA)),\
+    $(foreach target,$(sort $(TARGETS_MISSING_LICENSE_METADATA)),$(warning target $(target) missing license metadata))\
+    $(if $(strip $(TARGETS_MISSING_LICENSE_METADATA)),\
+      $(if $(filter true error,$(ANDROID_REQUIRE_LICENSE_METADATA)),\
+        $(error $(words $(sort $(TARGETS_MISSING_LICENSE_METADATA))) targets need license metadata))))\
+  $(foreach t,$(sort $(ALL_NON_MODULES)),$(call record-missing-non-module-dependencies,$(t))) \
+  $(eval $(call report-missing-licenses-rule)) \
+  $(eval $(call report-all-notice-library-names-rule)) \
   $(KATI_obsolete_var dist-for-goals,Cannot be used after dist-write-file) \
   $(foreach goal,$(sort $(_all_dist_goals)), \
     $(eval $$(goal): _dist_$$(goal))) \
