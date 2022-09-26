@@ -104,8 +104,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -115,10 +114,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "dependentmodulenotice",
@@ -129,7 +125,6 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"dependentModule.meta_lic", "dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -139,9 +134,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "lgplonfpnotice",
@@ -347,7 +340,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -357,9 +350,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "independentmodulereverserestrictedshipped",
@@ -368,9 +359,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "independentmodulereversestaticnotice",
@@ -380,9 +369,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -392,10 +380,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "dependentmodulereversenotice",
@@ -405,7 +390,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -415,9 +400,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "dependentmodulereverserestrictedshipped",
@@ -426,11 +409,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "ponrnotice",
@@ -716,8 +695,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			},
 			expectedActions: []act{
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -727,10 +705,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
-			expectedActions: []act{
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "dependentmodulenotice",
@@ -741,7 +716,6 @@ func TestWalkActionsForCondition(t *testing.T) {
 			},
 			expectedActions: []act{
 				{"dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -751,9 +725,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
-			expectedActions: []act{
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "lgplonfpnotice",
@@ -956,7 +928,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -966,9 +938,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
-			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "independentmodulereverserestrictedshipped",
@@ -977,9 +947,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
-			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "independentmodulereversestaticnotice",
@@ -989,9 +957,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -1001,10 +968,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
-			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "dependentmodulereversenotice",
@@ -1014,7 +978,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -1024,9 +988,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
-			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "dependentmodulereverserestrictedshipped",
@@ -1035,10 +997,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
-			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "ponrnotice",

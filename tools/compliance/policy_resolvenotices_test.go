@@ -375,10 +375,8 @@ func TestResolveNotices(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -390,10 +388,8 @@ func TestResolveNotices(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"dependentModule.meta_lic", "dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 				{"dependentModule.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "mitLib.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -418,7 +414,7 @@ func TestResolveNotices(t *testing.T) {
 			expectedResolutions: []res{
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -430,9 +426,7 @@ func TestResolveNotices(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"dependentModule.meta_lic", "dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 				{"dependentModule.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "mitLib.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -444,11 +438,8 @@ func TestResolveNotices(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"dependentModule.meta_lic", "dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 				{"dependentModule.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "mitLib.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 	}

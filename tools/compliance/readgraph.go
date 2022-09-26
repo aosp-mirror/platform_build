@@ -198,6 +198,9 @@ type targetNode struct {
 
 	// resolution identifies the set of conditions resolved by acting on the target node.
 	resolution LicenseConditionSet
+
+	// pure indicates whether to treat the node as a pure aggregate (no internal linkage)
+	pure bool
 }
 
 // addDependencies converts the proto AnnotatedDependencies into `edges`
