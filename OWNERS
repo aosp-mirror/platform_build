@@ -1,3 +1,4 @@
 include platform/build/soong:/OWNERS
 
-per-file finalize_branch_for_release.sh = smoreland@google.com
+# Finalization scripts
+per-file finalize* = smoreland@google.com, alexbuy@google.com

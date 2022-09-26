@@ -53,7 +53,7 @@ $(test_suite_jdk): $(shell find $(test_suite_jdk_dir) -type f | sort)
 $(test_suite_jdk): $(SOONG_ZIP)
 	$(SOONG_ZIP) -o $@ -P $(PRIVATE_SUBDIR)/jdk -C $(PRIVATE_JDK_DIR) -D $(PRIVATE_JDK_DIR)
 
-$(call declare-license-metadata,$(test_suite_jdk),SPDX-license-identifier-GPL-2.0-with-classpath-exception,restricted,\
+$(call declare-license-metadata,$(test_suite_jdk),SPDX-license-identifier-GPL-2.0-with-classpath-exception,permissive,\
   $(test_suite_jdk_dir)/legal/java.base/LICENSE,JDK,prebuilts/jdk/$(notdir $(patsubst %/,%,$(dir $(test_suite_jdk_dir)))))
 
 # Copy license metadata

@@ -72,6 +72,16 @@ func (rs ResolutionSet) AttachesToTarget(target *TargetNode) bool {
 	return isPresent
 }
 
+// IsPureAggregate returns true if `target`, which must be in
+// `AttachesTo()` resolves to a pure aggregate in the resolution.
+func (rs ResolutionSet) IsPureAggregate(target *TargetNode) bool {
+	_, isPresent := rs[target]
+	if !isPresent {
+		panic(fmt.Errorf("ResolutionSet.IsPureAggregate(%s): not attached to %s", target.Name(), target.Name()))
+	}
+	return target.pure
+}
+
 // Resolutions returns the list of resolutions that `attachedTo`
 // target must resolve. Returns empty list if no conditions apply.
 func (rs ResolutionSet) Resolutions(attachesTo *TargetNode) ResolutionList {

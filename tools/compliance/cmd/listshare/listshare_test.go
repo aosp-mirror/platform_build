@@ -194,13 +194,6 @@ func Test(t *testing.T) {
 					conditions: []string{"restricted"},
 				},
 				{
-					project: "highest/apex",
-					conditions: []string{
-						"restricted",
-						"restricted_allows_dynamic_linking",
-					},
-				},
-				{
 					project: "static/binary",
 					conditions: []string{
 						"restricted_allows_dynamic_linking",
@@ -223,13 +216,6 @@ func Test(t *testing.T) {
 				{
 					project:    "base/library",
 					conditions: []string{"restricted"},
-				},
-				{
-					project: "container/zip",
-					conditions: []string{
-						"restricted",
-						"restricted_allows_dynamic_linking",
-					},
 				},
 				{
 					project:    "device/library",
@@ -320,10 +306,6 @@ func Test(t *testing.T) {
 					project:    "dynamic/binary",
 					conditions: []string{"restricted"},
 				},
-				{
-					project:    "highest/apex",
-					conditions: []string{"restricted"},
-				},
 			},
 		},
 		{
@@ -333,10 +315,6 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "base/library",
-					conditions: []string{"restricted"},
-				},
-				{
-					project:    "container/zip",
 					conditions: []string{"restricted"},
 				},
 				{
@@ -381,10 +359,6 @@ func Test(t *testing.T) {
 					project:    "bin/threelibraries",
 					conditions: []string{"restricted"},
 				},
-				{
-					project:    "container/zip",
-					conditions: []string{"restricted"},
-				},
 			},
 		},
 		{
@@ -394,10 +368,6 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "bin/threelibraries",
-					conditions: []string{"restricted"},
-				},
-				{
-					project:    "container/zip",
 					conditions: []string{"restricted"},
 				},
 				{
@@ -417,10 +387,6 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "bin/threelibraries",
-					conditions: []string{"restricted"},
-				},
-				{
-					project:    "container/zip",
 					conditions: []string{"restricted"},
 				},
 				{
@@ -444,10 +410,6 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "bin/threelibraries",
-					conditions: []string{"restricted"},
-				},
-				{
-					project:    "container/zip",
 					conditions: []string{"restricted"},
 				},
 				{

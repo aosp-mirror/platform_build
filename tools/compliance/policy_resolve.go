@@ -65,9 +65,7 @@ func TraceBottomUpConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 	// amap identifes targets previously walked. (guarded by mu)
 	amap := make(map[*TargetNode]struct{})
 
-	// cmap identifies targets previously walked as pure aggregates. i.e. as containers
-	// (guarded by mu)
-	cmap := make(map[*TargetNode]struct{})
+	// mu guards concurrent access to amap
 	var mu sync.Mutex
 
 	var walk func(target *TargetNode, treatAsAggregate bool) LicenseConditionSet
@@ -81,19 +79,16 @@ func TraceBottomUpConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 				if treatAsAggregate {
 					return target.resolution, true
 				}
-				if _, asAggregate := cmap[target]; !asAggregate {
+				if !target.pure {
 					return target.resolution, true
 				}
 				// previously walked in a pure aggregate context,
 				// needs to walk again in non-aggregate context
-				delete(cmap, target)
 			} else {
 				target.resolution |= conditionsFn(target)
 				amap[target] = struct{}{}
 			}
-			if treatAsAggregate {
-				cmap[target] = struct{}{}
-			}
+			target.pure = treatAsAggregate
 			return target.resolution, false
 		}
 		cs, alreadyWalked := priorWalkResults()
@@ -169,11 +164,7 @@ func TraceTopDownConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 	// amap contains the set of targets already walked. (guarded by mu)
 	amap := make(map[*TargetNode]struct{})
 
-	// cmap contains the set of targets walked as pure aggregates. i.e. containers
-	// (guarded by mu)
-	cmap := make(map[*TargetNode]struct{})
-
-	// mu guards concurrent access to cmap
+	// mu guards concurrent access to amap
 	var mu sync.Mutex
 
 	var walk func(fnode *TargetNode, cs LicenseConditionSet, treatAsAggregate bool)
@@ -183,10 +174,8 @@ func TraceTopDownConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 		mu.Lock()
 		fnode.resolution |= conditionsFn(fnode)
 		fnode.resolution |= cs
+		fnode.pure = treatAsAggregate
 		amap[fnode] = struct{}{}
-		if treatAsAggregate {
-			cmap[fnode] = struct{}{}
-		}
 		cs = fnode.resolution
 		mu.Unlock()
 		// for each dependency
@@ -208,11 +197,10 @@ func TraceTopDownConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 							return
 						}
 						// non-aggregates don't need walking as non-aggregate a 2nd time
-						if _, asAggregate := cmap[dnode]; !asAggregate {
+						if !dnode.pure {
 							return
 						}
 						// previously walked as pure aggregate; need to re-walk as non-aggregate
-						delete(cmap, dnode)
 					}
 				}
 				// add the conditions to the dependency
