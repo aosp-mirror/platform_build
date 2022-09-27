@@ -45,7 +45,7 @@ func (ctx ApplicableConditionsContext) Context(lg *LicenseGraph, path TargetEdge
 }
 
 // VisitNode is called for each root and for each walked dependency node by
-// WalkTopDown. When VisitNode returns true, WalkTopDown will proceed to walk
+// WalkTopDown and WalkTopDownBreadthFirst. When VisitNode returns true, WalkTopDown will proceed to walk
 // down the dependences of the node
 type VisitNode func(lg *LicenseGraph, target *TargetNode, path TargetEdgePath) bool
 
@@ -76,6 +76,54 @@ func WalkTopDown(ctx EdgeContextProvider, lg *LicenseGraph, visit VisitNode) {
 	for _, r := range lg.rootFiles {
 		path.Clear()
 		walk(lg.targets[r])
+	}
+}
+
+// WalkTopDownBreadthFirst performs a Breadth-first top down walk of `lg` calling `visit` and descending
+// into depenencies when `visit` returns true.
+func WalkTopDownBreadthFirst(ctx EdgeContextProvider, lg *LicenseGraph, visit VisitNode) {
+	path := NewTargetEdgePath(32)
+
+	var walk func(fnode *TargetNode)
+	walk = func(fnode *TargetNode) {
+		edgesToWalk := make(TargetEdgeList, 0, len(fnode.edges))
+		for _, edge := range fnode.edges {
+			var edgeContext interface{}
+			if ctx == nil {
+				edgeContext = nil
+			} else {
+				edgeContext = ctx.Context(lg, *path, edge)
+			}
+			path.Push(edge, edgeContext)
+			if visit(lg, edge.dependency, *path){
+				edgesToWalk = append(edgesToWalk, edge)
+			}
+			path.Pop()
+		}
+
+		for _, edge := range(edgesToWalk) {
+			var edgeContext interface{}
+			if ctx == nil {
+				edgeContext = nil
+			} else {
+				edgeContext = ctx.Context(lg, *path, edge)
+			}
+			path.Push(edge, edgeContext)
+			walk(edge.dependency)
+			path.Pop()
+		}
+	}
+
+	path.Clear()
+	rootsToWalk := make([]*TargetNode, 0, len(lg.rootFiles))
+	for _, r := range lg.rootFiles {
+		if visit(lg, lg.targets[r], *path){
+			rootsToWalk = append(rootsToWalk, lg.targets[r])
+		}
+	}
+
+	for _, rnode := range(rootsToWalk) {
+		walk(rnode)
 	}
 }
 
