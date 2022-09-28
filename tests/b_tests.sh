@@ -20,12 +20,9 @@ source $(dirname $0)/../envsetup.sh
 
 test_target=//build/bazel/scripts/difftool:difftool
 
-b cquery 'kind(test, //build/bazel/...)'
 b build "$test_target"
 b build "$test_target" --run-soong-tests
 b build --run-soong-tests "$test_target"
 b --run-soong-tests build "$test_target"
-b run $test_target
-b run $test_target -- --help
-b cquery --output=build 'kind(test, //build/bazel/...)'
-b cquery 'kind(test, //build/bazel/...)' --output=build
+b cquery 'kind(test, //build/bazel/examples/android_app/...)' --config=android
+b run $test_target -- --help >/dev/null
