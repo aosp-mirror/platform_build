@@ -19,5 +19,4 @@ tests=(
 
 for test in $tests; do
   bash -x $test
-  zsh -x $test
 done
