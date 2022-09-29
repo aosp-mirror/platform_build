@@ -463,7 +463,7 @@ function multitree_lunch()
     # message, instead of FileNotFound.
     local T=$(multitree_gettop)
     if [ -n "$T" ]; then
-      "$T/build/build/make/orchestrator/core/orchestrator.py" "$@"
+      "$T/orchestrator/build/orchestrator/core/orchestrator.py" "$@"
     else
       _multitree_lunch_error
       return 1
@@ -471,7 +471,7 @@ function multitree_lunch()
     if $(echo "$1" | grep -q '^-') ; then
         # Calls starting with a -- argument are passed directly and the function
         # returns with the lunch.py exit code.
-        "${T}/build/build/make/orchestrator/core/lunch.py" "$@"
+        "${T}/orchestrator/build/orchestrator/core/lunch.py" "$@"
         code=$?
         if [[ $code -eq 2 ]] ; then
           echo 1>&2
@@ -482,7 +482,7 @@ function multitree_lunch()
         fi
     else
         # All other calls go through the --lunch variant of lunch.py
-        results=($(${T}/build/build/make/orchestrator/core/lunch.py --lunch "$@"))
+        results=($(${T}/orchestrator/build/orchestrator/core/lunch.py --lunch "$@"))
         code=$?
         if [[ $code -eq 2 ]] ; then
           echo 1>&2
@@ -978,7 +978,7 @@ function gettop
 # TODO: Merge into gettop as part of launching multitree
 function multitree_gettop
 {
-    local TOPFILE=build/build/make/core/envsetup.mk
+    local TOPFILE=orchestrator/build/make/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
         # The following circumlocution ensures we remove symlinks from TOP.
         (cd "$TOP"; PWD= /bin/pwd)
@@ -1844,6 +1844,11 @@ function _trigger_build()
 # Convenience entry point (like m) to use Bazel in AOSP.
 function b()
 (
+    # zsh breaks posix by not doing string-splitting on unquoted args by default.
+    # See https://zsh.sourceforge.io/Guide/zshguide05.html section 5.4.4.
+    # Tell it to emulate Bourne shell for this function.
+    if [ -n "$ZSH_VERSION" ]; then emulate -L sh; fi
+
     # Look for the --run-soong-tests flag and skip passing --skip-soong-tests to Soong if present
     local bazel_args=""
     local skip_tests="--skip-soong-tests"
@@ -1883,14 +1888,7 @@ function b()
         fi
 
         # Call Bazel.
-        if [ -n "$ZSH_VERSION" ]; then
-            # zsh breaks posix by not doing string-splitting on unquoted args
-            # by default. Explicitly use the "=" flag to split.
-            # See https://zsh.sourceforge.io/Guide/zshguide05.html section 5.4.4.
-            bazel ${=bazel_args_with_config}
-        else
-            bazel ${bazel_args_with_config[@]}
-        fi
+        bazel ${bazel_args_with_config[@]}
     fi
 )
 
@@ -1933,7 +1931,7 @@ function multitree_build()
 {
     local T=$(multitree_gettop)
     if [ -n "$T" ]; then
-      "$T/build/build/make/orchestrator/core/orchestrator.py" "$@"
+      "$T/orchestrator/build/orchestrator/core/orchestrator.py" "$@"
     else
       _multitree_lunch_error
       return 1
