@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import subprocess
+import sys
+
+def get_build_var(var):
+  return subprocess.run(["build/soong/soong_ui.bash","--dumpvar-mode", var],
+                        check=True, capture_output=True, text=True).stdout.strip()
+
+
+def get_sources(modules):
+  result = subprocess.run(["./prebuilts/build-tools/linux-x86/bin/ninja", "-f",
+                           "out/combined-" + os.environ["TARGET_PRODUCT"] + ".ninja",
+                           "-t", "inputs", "-d", ] + modules,
+                          stderr=subprocess.STDOUT, stdout=subprocess.PIPE, check=False, text=True)
+  if result.returncode != 0:
+    sys.stderr.write(result.stdout)
+    sys.exit(1)
+  return set([f for f in result.stdout.split("\n") if not f.startswith("out/")])
+
+
+def m_nothing():
+  result = subprocess.run(["build/soong/soong_ui.bash", "--build-mode", "--all-modules",
+                           "--dir=" + os.getcwd(), "nothing"],
+                           check=False, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, text=True)
+  if result.returncode != 0:
+    sys.stderr.write(result.stdout)
+    sys.exit(1)
+
+
+def get_git_dirs():
+  text = subprocess.run(["repo","list"], check=True, capture_output=True, text=True).stdout
+  return [line.split(" : ")[0] + "/" for line in text.split("\n")]
+
+
+def get_referenced_projects(git_dirs, files):
+  # files must be sorted
+  referenced_dirs = set()
+  prev_dir = None
+  for f in files:
+    # Optimization is ~5x speedup for large sets of files
+    if prev_dir:
+      if f.startswith(prev_dir):
+        referenced_dirs.add(d)
+        continue
+    for d in git_dirs:
+      if f.startswith(d):
+        referenced_dirs.add(d)
+        prev_dir = d
+        break
+  return [d[0:-1] for d in referenced_dirs]
+
+
+def main(argv):
+  # Argument parsing
+  ap = argparse.ArgumentParser(description="List the required git projects for the given modules")
+  ap.add_argument("--products", nargs="*",
+                  help="The TARGET_PRODUCT to check. If not provided just uses whatever has"
+                        + " already been built")
+  ap.add_argument("--variants", nargs="*",
+                  help="The TARGET_BUILD_VARIANTS to check. If not provided just uses whatever has"
+                        + " already been built, or eng if --products is supplied")
+  ap.add_argument("--modules", nargs="*",
+                  help="The build modules to check, or droid it not supplied")
+  ap.add_argument("--why", nargs="*",
+                  help="Also print the input files used in these projects, or \"*\" for all")
+  args = ap.parse_args(argv[1:])
+
+  modules = args.modules if args.modules else ["droid"]
+
+  # Get the list of sources for all of the requested build combos
+  if not args.products and not args.variants:
+    sources = get_sources(modules)
+  else:
+    if not args.products:
+      sys.stderr.write("Error: --products must be supplied if --variants is supplied")
+      sys.exit(1)
+    sources = set()
+    build_num = 1
+    for product in args.products:
+      os.environ["TARGET_PRODUCT"] = product
+      variants = args.variants if args.variants else ["user", "userdebug", "eng"]
+      for variant in variants:
+        sys.stderr.write(f"Analyzing build {build_num} of {len(args.products)*len(variants)}\r")
+        os.environ["TARGET_BUILD_VARIANT"] = variant
+        m_nothing()
+        sources.update(get_sources(modules))
+        build_num += 1
+    sys.stderr.write("\n\n")
+
+  sources = sorted(sources)
+
+  # Print the list of git directories that has one or more of the sources in it
+  for project in sorted(get_referenced_projects(get_git_dirs(), sources)):
+    print(project)
+    if "*" in args.why or project in args.why:
+      prefix = project + "/"
+      for f in sources:
+        if f.startswith(prefix):
+          print("  " + f)
+
+
+if __name__ == "__main__":
+  sys.exit(main(sys.argv))
+
+
+# vim: set ts=2 sw=2 sts=2 expandtab nocindent tw=100:
