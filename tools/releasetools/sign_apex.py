@@ -42,10 +42,14 @@ Usage:  sign_apex [flags] input_apex_file output_apex_file
 
   --sign_tool <sign_tool>
       Optional flag that specifies a custom signing tool for the contents of the apex.
+
+  --container_pw <name1=passwd,name2=passwd>
+      A mapping of key_name to password
 """
 
 import logging
 import shutil
+import re
 import sys
 
 import apex_utils
@@ -56,7 +60,7 @@ OPTIONS = common.OPTIONS
 
 
 def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
-                 apk_keys=None, signing_args=None, codename_to_api_level_map=None, sign_tool=None):
+                 apk_keys=None, signing_args=None, codename_to_api_level_map=None, sign_tool=None, container_pw=None):
   """Signs the given apex file."""
   with open(apex_file, 'rb') as input_fp:
     apex_data = input_fp.read()
@@ -66,7 +70,7 @@ def SignApexFile(avbtool, apex_file, payload_key, container_key, no_hashtree,
       apex_data,
       payload_key=payload_key,
       container_key=container_key,
-      container_pw=None,
+      container_pw=container_pw,
       codename_to_api_level_map=codename_to_api_level_map,
       no_hashtree=no_hashtree,
       apk_keys=apk_keys,
@@ -108,6 +112,15 @@ def main(argv):
         options['extra_apks'].update({n: key})
     elif o == '--sign_tool':
       options['sign_tool'] = a
+    elif o == '--container_pw':
+      passwords = {}
+      pairs = a.split()
+      for pair in pairs:
+        if "=" not in pair:
+          continue
+        tokens = pair.split("=", maxsplit=1)
+        passwords[tokens[0].strip()] = tokens[1].strip()
+      options['container_pw'] = passwords
     else:
       return False
     return True
@@ -123,6 +136,7 @@ def main(argv):
           'payload_key=',
           'extra_apks=',
           'sign_tool=',
+          'container_pw=',
       ],
       extra_option_handler=option_handler)
 
@@ -143,7 +157,9 @@ def main(argv):
       signing_args=options.get('payload_extra_args'),
       codename_to_api_level_map=options.get(
           'codename_to_api_level_map', {}),
-      sign_tool=options.get('sign_tool', None))
+      sign_tool=options.get('sign_tool', None),
+      container_pw=options.get('container_pw'),
+  )
   shutil.copyfile(signed_apex, args[1])
   logger.info("done.")
 
