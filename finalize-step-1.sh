@@ -11,7 +11,7 @@ function revert_local_changes() {
         git checkout . ; git clean -fdx ;\
         git checkout @ ; git b fina-step1 -D ; git reset --hard; \
         repo start fina-step1 ; git checkout @ ; git b fina-step1 -D ;\
-        previousHash="$(git log --format=%H --no-merges --max-count=1 --grep ^FINALIZATION_STEP_1_SCRIPT_COMMIT)" ;\
+        previousHash="$(git log --format=%H --no-merges --max-count=100 --grep ^FINALIZATION_STEP_1_SCRIPT_COMMIT)" ;\
         if [[ $previousHash ]]; then git revert --no-commit $previousHash ; fi ;'
 }
 
