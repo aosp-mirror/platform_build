@@ -126,6 +126,7 @@ $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 # default.
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
   bluetooth \
+  permission \
   uwb \
   wifi \
 
@@ -147,11 +148,25 @@ ifeq (eng,$(TARGET_BUILD_VARIANT))
 $(call soong_config_set,messaging,build_variant_eng,true)
 endif
 
-# TODO(b/203088572): Remove when Java optimizations enabled by default for
-# SystemUI.
+# Enable SystemUI optimizations by default unless explicitly set.
+SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
-# TODO(b/196084106): Remove when Java optimizations enabled by default for
-# system packages.
+
+# Enable system_server optimizations by default unless explicitly set or if
+# there may be dependent runtime jars.
+# TODO(b/240588226): Remove the off-by-default exceptions after handling
+# system_server jars automatically w/ R8.
+ifeq (true,$(PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS))
+  # If system_server jar ordering is broken, don't assume services.jar can be
+  # safely optimized in isolation, as there may be dependent jars.
+  SYSTEM_OPTIMIZE_JAVA ?= false
+else ifneq (platform:services,$(lastword $(PRODUCT_SYSTEM_SERVER_JARS)))
+  # If services is not the final jar in the dependency ordering, don't assume
+  # it can be safely optimized in isolation, as there may be dependent jars.
+  SYSTEM_OPTIMIZE_JAVA ?= false
+else
+  SYSTEM_OPTIMIZE_JAVA ?= true
+endif
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
 
 # Check for SupplementalApi module.
