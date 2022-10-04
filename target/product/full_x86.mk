@@ -23,7 +23,7 @@
 # that isn't a wifi connection. This will instruct init.rc to enable the
 # network connection so that you can use it with ADB
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/device.mk)
 

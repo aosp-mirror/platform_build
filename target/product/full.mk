@@ -20,7 +20,7 @@
 # entirely appropriate to inherit from for on-device configurations.
 
 $(call inherit-product-if-exists, device/generic/goldfish/arm32-vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic/device.mk)
 
