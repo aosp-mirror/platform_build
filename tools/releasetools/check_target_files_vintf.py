@@ -142,9 +142,10 @@ def CheckVintfFromExtractedTargetFiles(input_tmp, info_dict=None):
     command = common_command + sku_args
     proc = common.Run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate()
+    last_out_line = out.split()[-1] if out != "" else out
     if proc.returncode == 0:
       logger.info("Command `%s` returns 'compatible'", ' '.join(command))
-    elif out.strip() == "INCOMPATIBLE":
+    elif last_out_line.strip() == "INCOMPATIBLE":
       logger.info("Command `%s` returns 'incompatible'", ' '.join(command))
       success = False
     else:
