@@ -39,7 +39,8 @@ function finalize_aidl_vndk_sdk_resources() {
 
     sed -i "s%$sdk_codename%$sdk_version%g" $sdk_build
 
-    # Update the current.txt
+    # Force update current.txt
+    $m clobber
     $m update-api
 }
 
