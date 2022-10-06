@@ -1821,8 +1821,10 @@ function b()
             skip_tests=""
         fi
     done
+
     # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
-    _trigger_build "all-modules" bp2build $skip_tests USE_BAZEL_ANALYSIS= || return 1
+    # RBE is disabled because it's not used with b builds and adds overhead: b/251441524
+    USE_RBE=false _trigger_build "all-modules" bp2build $skip_tests USE_BAZEL_ANALYSIS= || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
     if [[ -z "$bazel_args" ]]; then
         # If there are no args, show help and exit.
