@@ -15,6 +15,7 @@
 #
 
 import os.path
+import shutil
 
 import common
 import test_utils
@@ -86,6 +87,28 @@ class CheckTargetFilesVintfTest(test_utils.ReleaseToolsTestCase):
 
     return test_dir
 
+  # Prepare test dir with required HAL for APEX testing
+  def prepare_apex_test_dir(self, test_delta_rel_path):
+    test_dir = self.prepare_test_dir(test_delta_rel_path)
+    write_string_to_file(
+        """<compatibility-matrix version="1.0" level="1" type="framework">
+            <hal format="aidl" optional="false" updatable-via-apex="true">
+                <name>android.apex.foo</name>
+                <version>1</version>
+                <interface>
+                    <name>IApex</name>
+                    <instance>default</instance>
+                </interface>
+            </hal>
+            <sepolicy>
+                <sepolicy-version>0.0</sepolicy-version>
+                <kernel-sepolicy-version>0</kernel-sepolicy-version>
+            </sepolicy>
+        </compatibility-matrix>""",
+        os.path.join(test_dir, 'SYSTEM/etc/vintf/compatibility_matrix.1.xml'))
+
+    return test_dir
+
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_CheckVintf_skeleton(self):
     msg = 'vintf check with skeleton target files failed.'
@@ -143,3 +166,25 @@ class CheckTargetFilesVintfTest(test_utils.ReleaseToolsTestCase):
                          os.path.join(test_dir, 'VENDOR/etc/vintf/manifest.xml'))
     # Should raise an error because a file has invalid format.
     self.assertRaises(common.ExternalError, CheckVintf, test_dir)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_CheckVintf_apex_compat(self):
+    apex_file_name = 'com.android.apex.vendor.foo.with_vintf.apex'
+    msg = 'vintf/apex_compat should be compatible because ' \
+          'APEX %s has the required HALs' % (apex_file_name)
+    test_dir = self.prepare_apex_test_dir('vintf/apex_compat')
+    # Copy APEX under VENDOR/apex
+    apex_file = os.path.join(test_utils.get_current_dir(), apex_file_name)
+    apex_dir = os.path.join(test_dir, 'VENDOR/apex')
+    os.makedirs(apex_dir)
+    shutil.copy(apex_file, apex_dir)
+    # Should find required HAL via APEX
+    self.assertTrue(CheckVintf(test_dir), msg=msg)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_CheckVintf_apex_incompat(self):
+    msg = 'vintf/apex_incompat should be incompatible because ' \
+          'no APEX data'
+    test_dir = self.prepare_apex_test_dir('vintf/apex_incompat')
+    # Should not find required HAL
+    self.assertFalse(CheckVintf(test_dir), msg=msg)
