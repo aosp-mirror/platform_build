@@ -866,6 +866,11 @@ ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
   endif
 endif
 
+# TODO(b/241346584): Mark BOARD_BUILD_SYSTEM_ROOT_IMAGE as KATI_obsolete_var after all users are removed
+ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+    $(error BOARD_BUILD_SYSTEM_ROOT_IMAGE is deprecated)
+endif
+
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
     ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
         $(error BOARD_BUILD_SYSTEM_ROOT_IMAGE cannot be true for devices with dynamic partitions)
