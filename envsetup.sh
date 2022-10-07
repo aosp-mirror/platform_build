@@ -205,41 +205,6 @@ function setpaths()
     fi
 
     # and in with the new
-    local prebuiltdir=$(getprebuilt)
-    local gccprebuiltdir=$(get_abs_build_var ANDROID_GCC_PREBUILTS)
-
-    # defined in core/config.mk
-    local targetgccversion=$(get_build_var TARGET_GCC_VERSION)
-    local targetgccversion2=$(get_build_var 2ND_TARGET_GCC_VERSION)
-    export TARGET_GCC_VERSION=$targetgccversion
-
-    # The gcc toolchain does not exists for windows/cygwin. In this case, do not reference it.
-    export ANDROID_TOOLCHAIN=
-    export ANDROID_TOOLCHAIN_2ND_ARCH=
-    local ARCH=$(get_build_var TARGET_ARCH)
-    local toolchaindir toolchaindir2=
-    case $ARCH in
-        x86) toolchaindir=x86/x86_64-linux-android-$targetgccversion/bin
-            ;;
-        x86_64) toolchaindir=x86/x86_64-linux-android-$targetgccversion/bin
-            ;;
-        arm) toolchaindir=arm/arm-linux-androideabi-$targetgccversion/bin
-            ;;
-        arm64) toolchaindir=aarch64/aarch64-linux-android-$targetgccversion/bin;
-               toolchaindir2=arm/arm-linux-androideabi-$targetgccversion2/bin
-            ;;
-        *)
-            echo "Can't find toolchain for unknown architecture: $ARCH"
-            toolchaindir=xxxxxxxxx
-            ;;
-    esac
-    if [ -d "$gccprebuiltdir/$toolchaindir" ]; then
-        export ANDROID_TOOLCHAIN=$gccprebuiltdir/$toolchaindir
-    fi
-
-    if [ "$toolchaindir2" -a -d "$gccprebuiltdir/$toolchaindir2" ]; then
-        export ANDROID_TOOLCHAIN_2ND_ARCH=$gccprebuiltdir/$toolchaindir2
-    fi
 
     export ANDROID_DEV_SCRIPTS=$T/development/scripts:$T/prebuilts/devtools/tools
 
@@ -252,8 +217,7 @@ function setpaths()
             ;;
     esac
 
-    ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_TOOLCHAIN
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_TOOLCHAIN_2ND_ARCH
+    ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS)
     ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_DEV_SCRIPTS
 
     # Append llvm binutils prebuilts path to ANDROID_BUILD_PATHS.
@@ -361,8 +325,6 @@ function set_stuff_for_environment()
     set_sequence_number
 
     export ANDROID_BUILD_TOP=$(gettop)
-    # With this environment variable new GCC can apply colors to warnings/errors
-    export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 }
 
 function set_sequence_number()
