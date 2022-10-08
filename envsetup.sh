@@ -38,6 +38,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - godir:      Go to the directory containing a file.
 - allmod:     List all modules.
 - gomod:      Go to the directory containing a module.
+- bmod:       Get the Bazel label of a Soong module if it is converted with bp2build.
 - pathmod:    Get the directory containing a module.
 - outmod:     Gets the location of a module's installed outputs with a certain extension.
 - dirmods:    Gets the modules defined in a given directory.
@@ -392,6 +393,7 @@ function addcompletions()
     complete -F _complete_android_module_names gomod
     complete -F _complete_android_module_names outmod
     complete -F _complete_android_module_names installmod
+    complete -F _complete_android_module_names bmod
     complete -F _complete_android_module_names m
 }
 
@@ -1570,6 +1572,43 @@ function allmod() {
     python3 -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
 }
 
+# Return the Bazel label of a Soong module if it is converted with bp2build.
+function bmod()
+(
+    if [ $# -ne 1 ]; then
+        echo "usage: bmod <module>" >&2
+        return 1
+    fi
+
+    # We could run bp2build here, but it might trigger bp2build invalidation
+    # when used with `b` (e.g. --run_soong_tests) and/or add unnecessary waiting
+    # time overhead.
+    #
+    # For a snappy result, use the latest generated version in soong_injection,
+    # and ask users to run m bp2build if it doesn't exist.
+    converted_json="out/soong/soong_injection/metrics/converted_modules_path_map.json"
+
+    if [ ! -f $(gettop)/${converted_json} ]; then
+      echo "bp2build files not found. Have you ran 'm bp2build'?" >&2
+      return 1
+    fi
+
+    local target_label=$(python3 -c "import json
+module = '$1'
+converted_json='$converted_json'
+bp2build_converted_map = json.load(open(converted_json))
+if module not in bp2build_converted_map:
+    exit(1)
+print(bp2build_converted_map[module] + ':' + module)")
+
+    if [ -z "${target_label}" ]; then
+      echo "$1 is not converted to Bazel." >&2
+      return 1
+    else
+      echo "${target_label}"
+    fi
+)
+
 # Get the path of a specific module in the android tree, as cached in module-info.json.
 # If any build change is made, and it should be reflected in the output, you should run
 # 'refreshmod' first.  Note: This is the inverse of dirmods.
@@ -1821,8 +1860,10 @@ function b()
             skip_tests=""
         fi
     done
+
     # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
-    _trigger_build "all-modules" bp2build $skip_tests USE_BAZEL_ANALYSIS= || return 1
+    # RBE is disabled because it's not used with b builds and adds overhead: b/251441524
+    USE_RBE=false _trigger_build "all-modules" bp2build $skip_tests USE_BAZEL_ANALYSIS= || return 1
     # Then, run Bazel using the synthetic workspace as the --package_path.
     if [[ -z "$bazel_args" ]]; then
         # If there are no args, show help and exit.
