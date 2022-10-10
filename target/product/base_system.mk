@@ -53,6 +53,7 @@ PRODUCT_PACKAGES += \
     com.android.adservices \
     com.android.appsearch \
     com.android.btservices \
+    com.android.configinfrastructure \
     com.android.conscrypt \
     com.android.cronet \
     com.android.extservices \
