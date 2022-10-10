@@ -22,9 +22,9 @@ import common
 import test_utils
 from add_img_to_target_files import (
     AddPackRadioImages,
+    AddCareMapForAbOta, GetCareMap,
     CheckAbOtaImages)
 from rangelib import RangeSet
-from common import AddCareMapForAbOta, GetCareMap
 
 
 OPTIONS = common.OPTIONS
@@ -124,9 +124,9 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
   def _test_AddCareMapForAbOta():
     """Helper function to set up the test for test_AddCareMapForAbOta()."""
     OPTIONS.info_dict = {
-        'extfs_sparse_flag' : '-s',
-        'system_image_size' : 65536,
-        'vendor_image_size' : 40960,
+        'extfs_sparse_flag': '-s',
+        'system_image_size': 65536,
+        'vendor_image_size': 40960,
         'system_verity_block_device': '/dev/block/system',
         'vendor_verity_block_device': '/dev/block/vendor',
         'system.build.prop': common.PartitionBuildProps.FromDictionary(
@@ -154,8 +154,8 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         (0xCAC2, 12)])
 
     image_paths = {
-        'system' : system_image,
-        'vendor' : vendor_image,
+        'system': system_image,
+        'vendor': vendor_image,
     }
     return image_paths
 
@@ -244,9 +244,9 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     """Tests the case for partitions without fingerprint."""
     image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {
-        'extfs_sparse_flag' : '-s',
-        'system_image_size' : 65536,
-        'vendor_image_size' : 40960,
+        'extfs_sparse_flag': '-s',
+        'system_image_size': 65536,
+        'vendor_image_size': 40960,
         'system_verity_block_device': '/dev/block/system',
         'vendor_verity_block_device': '/dev/block/vendor',
     }
@@ -255,8 +255,9 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     AddCareMapForAbOta(care_map_file, ['system', 'vendor'], image_paths)
 
     expected = ['system', RangeSet("0-5 10-15").to_string_raw(), "unknown",
-                "unknown", 'vendor', RangeSet("0-9").to_string_raw(), "unknown",
-                "unknown"]
+                "unknown", 'vendor', RangeSet(
+        "0-9").to_string_raw(), "unknown",
+        "unknown"]
 
     self._verifyCareMap(expected, care_map_file)
 
@@ -397,8 +398,8 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         (0xCAC3, 4),
         (0xCAC1, 6)])
     OPTIONS.info_dict = {
-        'extfs_sparse_flag' : '-s',
-        'system_image_size' : 53248,
+        'extfs_sparse_flag': '-s',
+        'system_image_size': 53248,
     }
     name, care_map = GetCareMap('system', sparse_image)
     self.assertEqual('system', name)
@@ -413,14 +414,14 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         (0xCAC3, 4),
         (0xCAC1, 6)])
     OPTIONS.info_dict = {
-        'extfs_sparse_flag' : '-s',
-        'system_image_size' : -45056,
+        'extfs_sparse_flag': '-s',
+        'system_image_size': -45056,
     }
     self.assertRaises(AssertionError, GetCareMap, 'system', sparse_image)
 
   def test_GetCareMap_nonSparseImage(self):
     OPTIONS.info_dict = {
-        'system_image_size' : 53248,
+        'system_image_size': 53248,
     }
     # 'foo' is the image filename, which is expected to be not used by
     # GetCareMap().
