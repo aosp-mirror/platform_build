@@ -64,7 +64,9 @@ import verity_utils
 import ota_metadata_pb2
 
 from apex_utils import GetApexInfoFromTargetFiles
-from common import AddCareMapForAbOta, ZipDelete
+from common import ZipDelete, PARTITIONS_WITH_CARE_MAP, ExternalError, RunAndCheckOutput, MakeTempFile, ZipWrite
+import rangelib
+import sparse_img
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -83,6 +85,132 @@ OPTIONS.is_signing = False
 FIXED_FILE_TIMESTAMP = int((
     datetime.datetime(2009, 1, 1, 0, 0, 0, 0, None) -
     datetime.datetime.utcfromtimestamp(0)).total_seconds())
+
+
+def GetCareMap(which, imgname):
+  """Returns the care_map string for the given partition.
+
+  Args:
+    which: The partition name, must be listed in PARTITIONS_WITH_CARE_MAP.
+    imgname: The filename of the image.
+
+  Returns:
+    (which, care_map_ranges): care_map_ranges is the raw string of the care_map
+    RangeSet; or None.
+  """
+  assert which in PARTITIONS_WITH_CARE_MAP
+
+  # which + "_image_size" contains the size that the actual filesystem image
+  # resides in, which is all that needs to be verified. The additional blocks in
+  # the image file contain verity metadata, by reading which would trigger
+  # invalid reads.
+  image_size = OPTIONS.info_dict.get(which + "_image_size")
+  if not image_size:
+    return None
+
+  disable_sparse = OPTIONS.info_dict.get(which + "_disable_sparse")
+
+  image_blocks = int(image_size) // 4096 - 1
+  # It's OK for image_blocks to be 0, because care map ranges are inclusive.
+  # So 0-0 means "just block 0", which is valid.
+  assert image_blocks >= 0, "blocks for {} must be non-negative, image size: {}".format(
+      which, image_size)
+
+  # For sparse images, we will only check the blocks that are listed in the care
+  # map, i.e. the ones with meaningful data.
+  if "extfs_sparse_flag" in OPTIONS.info_dict and not disable_sparse:
+    simg = sparse_img.SparseImage(imgname)
+    care_map_ranges = simg.care_map.intersect(
+        rangelib.RangeSet("0-{}".format(image_blocks)))
+
+  # Otherwise for non-sparse images, we read all the blocks in the filesystem
+  # image.
+  else:
+    care_map_ranges = rangelib.RangeSet("0-{}".format(image_blocks))
+
+  return [which, care_map_ranges.to_string_raw()]
+
+
+def AddCareMapForAbOta(output_file, ab_partitions, image_paths):
+  """Generates and adds care_map.pb for a/b partition that has care_map.
+
+  Args:
+    output_file: The output zip file (needs to be already open),
+        or file path to write care_map.pb.
+    ab_partitions: The list of A/B partitions.
+    image_paths: A map from the partition name to the image path.
+  """
+  if not output_file:
+    raise ExternalError('Expected output_file for AddCareMapForAbOta')
+
+  care_map_list = []
+  for partition in ab_partitions:
+    partition = partition.strip()
+    if partition not in PARTITIONS_WITH_CARE_MAP:
+      continue
+
+    verity_block_device = "{}_verity_block_device".format(partition)
+    avb_hashtree_enable = "avb_{}_hashtree_enable".format(partition)
+    if (verity_block_device in OPTIONS.info_dict or
+            OPTIONS.info_dict.get(avb_hashtree_enable) == "true"):
+      if partition not in image_paths:
+        logger.warning('Potential partition with care_map missing from images: %s',
+                       partition)
+        continue
+      image_path = image_paths[partition]
+      if not os.path.exists(image_path):
+        raise ExternalError('Expected image at path {}'.format(image_path))
+
+      care_map = GetCareMap(partition, image_path)
+      if not care_map:
+        continue
+      care_map_list += care_map
+
+      # adds fingerprint field to the care_map
+      # TODO(xunchang) revisit the fingerprint calculation for care_map.
+      partition_props = OPTIONS.info_dict.get(partition + ".build.prop")
+      prop_name_list = ["ro.{}.build.fingerprint".format(partition),
+                        "ro.{}.build.thumbprint".format(partition)]
+
+      present_props = [x for x in prop_name_list if
+                       partition_props and partition_props.GetProp(x)]
+      if not present_props:
+        logger.warning(
+            "fingerprint is not present for partition %s", partition)
+        property_id, fingerprint = "unknown", "unknown"
+      else:
+        property_id = present_props[0]
+        fingerprint = partition_props.GetProp(property_id)
+      care_map_list += [property_id, fingerprint]
+
+  if not care_map_list:
+    return
+
+  # Converts the list into proto buf message by calling care_map_generator; and
+  # writes the result to a temp file.
+  temp_care_map_text = MakeTempFile(prefix="caremap_text-",
+                                           suffix=".txt")
+  with open(temp_care_map_text, 'w') as text_file:
+    text_file.write('\n'.join(care_map_list))
+
+  temp_care_map = MakeTempFile(prefix="caremap-", suffix=".pb")
+  care_map_gen_cmd = ["care_map_generator", temp_care_map_text, temp_care_map]
+  RunAndCheckOutput(care_map_gen_cmd)
+
+  if not isinstance(output_file, zipfile.ZipFile):
+    shutil.copy(temp_care_map, output_file)
+    return
+  # output_file is a zip file
+  care_map_path = "META/care_map.pb"
+  if care_map_path in output_file.namelist():
+    # Copy the temp file into the OPTIONS.input_tmp dir and update the
+    # replace_updated_files_list used by add_img_to_target_files
+    if not OPTIONS.replace_updated_files_list:
+      OPTIONS.replace_updated_files_list = []
+    shutil.copy(temp_care_map, os.path.join(OPTIONS.input_tmp, care_map_path))
+    OPTIONS.replace_updated_files_list.append(care_map_path)
+  else:
+    ZipWrite(output_file, temp_care_map, arcname=care_map_path)
 
 
 class OutputFile(object):
@@ -276,6 +404,7 @@ def AddOdmDlkm(output_zip):
       OPTIONS.input_tmp, OPTIONS.info_dict, "odm_dlkm", img,
       block_list=block_list)
   return img.name
+
 
 def AddSystemDlkm(output_zip):
   """Turn the contents of SystemDlkm into an system_dlkm image and store it in output_zip."""
@@ -780,7 +909,8 @@ def AddImagesToTargetFiles(filename):
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
   has_init_boot = OPTIONS.info_dict.get("init_boot") == "true"
   has_vendor_boot = OPTIONS.info_dict.get("vendor_boot") == "true"
-  has_vendor_kernel_boot = OPTIONS.info_dict.get("vendor_kernel_boot") == "true"
+  has_vendor_kernel_boot = OPTIONS.info_dict.get(
+      "vendor_kernel_boot") == "true"
 
   # {vendor,odm,product,system_ext,vendor_dlkm,odm_dlkm, system_dlkm, system, system_other}.img
   # can be built from source, or  dropped into target_files.zip as a prebuilt blob.
@@ -873,7 +1003,7 @@ def AddImagesToTargetFiles(filename):
         "VENDOR_KERNEL_BOOT")
     if vendor_kernel_boot_image:
       partitions['vendor_kernel_boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES",
-                                               "vendor_kernel_boot.img")
+                                                      "vendor_kernel_boot.img")
       if not os.path.exists(partitions['vendor_kernel_boot']):
         vendor_kernel_boot_image.WriteToDir(OPTIONS.input_tmp)
         if output_zip:
@@ -1051,7 +1181,8 @@ def OptimizeCompressedEntries(zipfile_path):
     ZipDelete(zipfile_path, [entry.filename for entry in entries_to_store])
     with zipfile.ZipFile(zipfile_path, "a", allowZip64=True) as zfp:
       for entry in entries_to_store:
-        zfp.write(os.path.join(tmpdir, entry.filename), entry.filename, compress_type=zipfile.ZIP_STORED)
+        zfp.write(os.path.join(tmpdir, entry.filename),
+                  entry.filename, compress_type=zipfile.ZIP_STORED)
 
 
 def main(argv):
