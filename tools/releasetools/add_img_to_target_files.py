@@ -46,6 +46,7 @@ Usage:  add_img_to_target_files [flag] target_files
 
 from __future__ import print_function
 
+import avbtool
 import datetime
 import logging
 import os
@@ -62,11 +63,11 @@ import build_super_image
 import common
 import verity_utils
 import ota_metadata_pb2
-
-from apex_utils import GetApexInfoFromTargetFiles
-from common import ZipDelete, PARTITIONS_WITH_CARE_MAP, ExternalError, RunAndCheckOutput, MakeTempFile, ZipWrite
 import rangelib
 import sparse_img
+
+from apex_utils import GetApexInfoFromTargetFiles
+from common import ZipDelete, PARTITIONS_WITH_CARE_MAP, ExternalError, RunAndCheckOutput, IsSparseImage, MakeTempFile, ZipWrite
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -87,6 +88,13 @@ FIXED_FILE_TIMESTAMP = int((
     datetime.datetime.utcfromtimestamp(0)).total_seconds())
 
 
+def ParseAvbFooter(img_path) -> avbtool.AvbFooter:
+  with open(img_path, 'rb') as fp:
+    fp.seek(-avbtool.AvbFooter.SIZE, os.SEEK_END)
+    data = fp.read(avbtool.AvbFooter.SIZE)
+    return avbtool.AvbFooter(data)
+
+
 def GetCareMap(which, imgname):
   """Returns the care_map string for the given partition.
 
@@ -100,15 +108,35 @@ def GetCareMap(which, imgname):
   """
   assert which in PARTITIONS_WITH_CARE_MAP
 
-  # which + "_image_size" contains the size that the actual filesystem image
-  # resides in, which is all that needs to be verified. The additional blocks in
-  # the image file contain verity metadata, by reading which would trigger
-  # invalid reads.
-  image_size = OPTIONS.info_dict.get(which + "_image_size")
-  if not image_size:
+  is_sparse_img = IsSparseImage(imgname)
+  unsparsed_image_size = os.path.getsize(imgname)
+
+  # A verified image contains original image + hash tree data + FEC data
+  # + AVB footer, all concatenated together. The caremap specifies a range
+  # of blocks that update_verifier should read on top of dm-verity device
+  # to verify correctness of OTA updates. When reading off of dm-verity device,
+  # the hashtree and FEC part of image isn't available. So caremap should
+  # only contain the original image blocks.
+  try:
+    avbfooter = None
+    if is_sparse_img:
+      with tempfile.NamedTemporaryFile() as tmpfile:
+        img = sparse_img.SparseImage(imgname)
+        unsparsed_image_size = img.total_blocks * img.blocksize
+        for data in img.ReadBlocks(img.total_blocks - 1, 1):
+          tmpfile.write(data)
+        tmpfile.flush()
+        avbfooter = ParseAvbFooter(tmpfile.name)
+    else:
+      avbfooter = ParseAvbFooter(imgname)
+  except LookupError as e:
+    logger.warning(
+        "Failed to parse avbfooter for partition %s image %s, %s", which, imgname, e)
     return None
 
-  disable_sparse = OPTIONS.info_dict.get(which + "_disable_sparse")
+  image_size = avbfooter.original_image_size
+  assert image_size < unsparsed_image_size, f"AVB footer's original image size {image_size} is larger than or equal to image size on disk {unsparsed_image_size}, this can't happen because a verified image = original image + hash tree data + FEC data + avbfooter."
+  assert image_size > 0
 
   image_blocks = int(image_size) // 4096 - 1
   # It's OK for image_blocks to be 0, because care map ranges are inclusive.
@@ -118,7 +146,7 @@ def GetCareMap(which, imgname):
 
   # For sparse images, we will only check the blocks that are listed in the care
   # map, i.e. the ones with meaningful data.
-  if "extfs_sparse_flag" in OPTIONS.info_dict and not disable_sparse:
+  if is_sparse_img:
     simg = sparse_img.SparseImage(imgname)
     care_map_ranges = simg.care_map.intersect(
         rangelib.RangeSet("0-{}".format(image_blocks)))

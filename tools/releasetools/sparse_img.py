@@ -80,7 +80,7 @@ class SparseImage(object):
     self.offset_map = offset_map = []
     self.clobbered_blocks = rangelib.RangeSet(data=clobbered_blocks)
 
-    for i in range(total_chunks):
+    for _ in range(total_chunks):
       header_bin = f.read(12)
       header = struct.unpack("<2H2I", header_bin)
       chunk_type = header[0]
@@ -165,6 +165,11 @@ class SparseImage(object):
 
   def ReadRangeSet(self, ranges):
     return [d for d in self._GetRangeData(ranges)]
+
+  def ReadBlocks(self, start=0, num_blocks=None):
+    if num_blocks is None:
+      num_blocks = self.total_blocks
+    return self._GetRangeData([(start, start + num_blocks)])
 
   def TotalSha1(self, include_clobbered_blocks=False):
     """Return the SHA-1 hash of all data in the 'care' regions.
