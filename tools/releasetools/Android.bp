@@ -37,6 +37,7 @@ python_defaults {
         "releasetools_build_image",
         "releasetools_build_super_image",
         "releasetools_common",
+        "libavbtool",
     ],
     required: [
         "care_map_generator",
