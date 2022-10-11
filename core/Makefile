@@ -3941,25 +3941,15 @@ pvmfwimage: $(INSTALLED_PVMFWIMAGE_TARGET)
 
 INSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img
 INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET := $(PRODUCT_OUT)/pvmfw_embedded.avbpubkey
-PREBUILT_PVMFWIMAGE_TARGET := packages/modules/Virtualization/pvmfw/pvmfw.img
-INTERNAL_PVMFW_EMBEDDED_AVBKEY := external/avb/test/data/testkey_rsa4096_pub.bin
-
-ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_PVMFWIMAGE_TARGET): $(PREBUILT_PVMFWIMAGE_TARGET) $(AVBTOOL) $(BOARD_AVB_PVMFW_KEY_PATH)
-	cp $< $@
-	$(AVBTOOL) add_hash_footer \
-	    --image $@ \
-	    $(call get-partition-size-argument,$(BOARD_PVMFWIMAGE_PARTITION_SIZE)) \
-	    --partition_name pvmfw $(INTERNAL_AVB_PVMFW_SIGNING_ARGS) \
-	    $(BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS)
+INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,pvmfw_img)
+INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_sign_key)
 
 $(call declare-1p-container,$(INSTALLED_PVMFWIMAGE_TARGET),)
-$(call declare-container-license-deps,$(INSTALLED_PVMFWIMAGE_TARGET),$(PREBUILT_PVMFWIMAGE_TARGET),$(PRODUCT_OUT)/:/)
+$(call declare-container-license-deps,$(INSTALLED_PVMFWIMAGE_TARGET),$(INTERNAL_PVMFWIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
 UNMOUNTED_NOTICE_DEPS += $(INSTALLED_PVMFWIMAGE_TARGET)
-else
-$(eval $(call copy-one-file,$(PREBUILT_PVMFWIMAGE_TARGET),$(INSTALLED_PVMFWIMAGE_TARGET)))
-endif
+
+$(eval $(call copy-one-file,$(INTERNAL_PVMFWIMAGE_FILES),$(INSTALLED_PVMFWIMAGE_TARGET)))
 
 $(INSTALLED_PVMFWIMAGE_TARGET): $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET)
 
@@ -5978,8 +5968,6 @@ ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_PVMFWIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 	$(hide) cp $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET) $(zip_root)/PREBUILT_IMAGES/
-	$(hide) mkdir -p $(zip_root)/PVMFW
-	$(hide) cp $(PREBUILT_PVMFWIMAGE_TARGET) $(zip_root)/PVMFW/
 endif
 ifdef BOARD_PREBUILT_BOOTLOADER
 	$(hide) mkdir -p $(zip_root)/IMAGES
