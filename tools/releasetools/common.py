@@ -2865,7 +2865,7 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
   zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
-def ZipDelete(zip_filename, entries):
+def ZipDelete(zip_filename, entries, force=False):
   """Deletes entries from a ZIP file.
 
   Since deleting entries from a ZIP file is not supported, it shells out to
@@ -2883,8 +2883,15 @@ def ZipDelete(zip_filename, entries):
   # If list is empty, nothing to do
   if not entries:
     return
-  cmd = ["zip", "-d", zip_filename] + entries
-  RunAndCheckOutput(cmd)
+  if force:
+    cmd = ["zip", "-q", "-d", zip_filename] + entries
+  else:
+    cmd = ["zip", "-d", zip_filename] + entries
+  if force:
+    p = Run(cmd)
+    p.wait()
+  else:
+    RunAndCheckOutput(cmd)
 
 
 def ZipClose(zip_file):
@@ -3979,6 +3986,8 @@ def GetBootImageTimestamp(boot_img):
 
 
 def IsSparseImage(filepath):
+  if not os.path.exists(filepath):
+    return False
   with open(filepath, 'rb') as fp:
     # Magic for android sparse image format
     # https://source.android.com/devices/bootloader/images

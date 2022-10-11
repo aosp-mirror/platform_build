@@ -16,6 +16,7 @@
 
 import os
 import os.path
+import tempfile
 import zipfile
 
 import common
@@ -124,9 +125,6 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
   def _test_AddCareMapForAbOta():
     """Helper function to set up the test for test_AddCareMapForAbOta()."""
     OPTIONS.info_dict = {
-        'extfs_sparse_flag': '-s',
-        'system_image_size': 65536,
-        'vendor_image_size': 40960,
         'system_verity_block_device': '/dev/block/system',
         'vendor_verity_block_device': '/dev/block/vendor',
         'system.build.prop': common.PartitionBuildProps.FromDictionary(
@@ -149,9 +147,9 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     system_image = test_utils.construct_sparse_image([
         (0xCAC1, 6),
         (0xCAC3, 4),
-        (0xCAC1, 8)])
+        (0xCAC1, 6)], "system")
     vendor_image = test_utils.construct_sparse_image([
-        (0xCAC2, 12)])
+        (0xCAC2, 10)], "vendor")
 
     image_paths = {
         'system': system_image,
@@ -210,9 +208,6 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     """Tests the case for device using AVB."""
     image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {
-        'extfs_sparse_flag': '-s',
-        'system_image_size': 65536,
-        'vendor_image_size': 40960,
         'avb_system_hashtree_enable': 'true',
         'avb_vendor_hashtree_enable': 'true',
         'system.build.prop': common.PartitionBuildProps.FromDictionary(
@@ -244,9 +239,6 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     """Tests the case for partitions without fingerprint."""
     image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {
-        'extfs_sparse_flag': '-s',
-        'system_image_size': 65536,
-        'vendor_image_size': 40960,
         'system_verity_block_device': '/dev/block/system',
         'vendor_verity_block_device': '/dev/block/vendor',
     }
@@ -266,9 +258,6 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     """Tests the case for partitions with thumbprint."""
     image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {
-        'extfs_sparse_flag': '-s',
-        'system_image_size': 65536,
-        'vendor_image_size': 40960,
         'system_verity_block_device': '/dev/block/system',
         'vendor_verity_block_device': '/dev/block/vendor',
         'system.build.prop': common.PartitionBuildProps.FromDictionary(
@@ -298,9 +287,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_AddCareMapForAbOta_skipPartition(self):
     image_paths = self._test_AddCareMapForAbOta()
-
-    # Remove vendor_image_size to invalidate the care_map for vendor.img.
-    del OPTIONS.info_dict['vendor_image_size']
+    test_utils.erase_avb_footer(image_paths["vendor"])
 
     care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.pb')
     AddCareMapForAbOta(care_map_file, ['system', 'vendor'], image_paths)
@@ -314,10 +301,8 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_AddCareMapForAbOta_skipAllPartitions(self):
     image_paths = self._test_AddCareMapForAbOta()
-
-    # Remove the image_size properties for all the partitions.
-    del OPTIONS.info_dict['system_image_size']
-    del OPTIONS.info_dict['vendor_image_size']
+    test_utils.erase_avb_footer(image_paths["system"])
+    test_utils.erase_avb_footer(image_paths["vendor"])
 
     care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.pb')
     AddCareMapForAbOta(care_map_file, ['system', 'vendor'], image_paths)
@@ -396,35 +381,18 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     sparse_image = test_utils.construct_sparse_image([
         (0xCAC1, 6),
         (0xCAC3, 4),
-        (0xCAC1, 6)])
-    OPTIONS.info_dict = {
-        'extfs_sparse_flag': '-s',
-        'system_image_size': 53248,
-    }
+        (0xCAC1, 6)], "system")
     name, care_map = GetCareMap('system', sparse_image)
     self.assertEqual('system', name)
-    self.assertEqual(RangeSet("0-5 10-12").to_string_raw(), care_map)
+    self.assertEqual(RangeSet("0-5 10-15").to_string_raw(), care_map)
 
   def test_GetCareMap_invalidPartition(self):
     self.assertRaises(AssertionError, GetCareMap, 'oem', None)
 
-  def test_GetCareMap_invalidAdjustedPartitionSize(self):
-    sparse_image = test_utils.construct_sparse_image([
-        (0xCAC1, 6),
-        (0xCAC3, 4),
-        (0xCAC1, 6)])
-    OPTIONS.info_dict = {
-        'extfs_sparse_flag': '-s',
-        'system_image_size': -45056,
-    }
-    self.assertRaises(AssertionError, GetCareMap, 'system', sparse_image)
-
   def test_GetCareMap_nonSparseImage(self):
-    OPTIONS.info_dict = {
-        'system_image_size': 53248,
-    }
-    # 'foo' is the image filename, which is expected to be not used by
-    # GetCareMap().
-    name, care_map = GetCareMap('system', 'foo')
-    self.assertEqual('system', name)
-    self.assertEqual(RangeSet("0-12").to_string_raw(), care_map)
+    with tempfile.NamedTemporaryFile() as tmpfile:
+      tmpfile.truncate(4096 * 13)
+      test_utils.append_avb_footer(tmpfile.name, "system")
+      name, care_map = GetCareMap('system', tmpfile.name)
+      self.assertEqual('system', name)
+      self.assertEqual(RangeSet("0-12").to_string_raw(), care_map)
