@@ -12,6 +12,28 @@
 using namespace android;
 using namespace base;
 
+// This load the whole file to memory so be careful!
+static bool sameContent(const std::string& path1, const std::string& path2) {
+  std::string f1;
+  if (!ReadFileToString(path1, &f1)) {
+    printf("Unable to read '%s' content: %m\n", path1.c_str());
+    return false;
+  }
+
+  std::string f2;
+  if (!ReadFileToString(path2, &f2)) {
+    printf("Unable to read '%s' content %m\n", path1.c_str());
+    return false;
+  }
+
+  if (f1.size() != f2.size()) {
+    printf("File '%s' and '%s' are not the same\n", path1.c_str(), path2.c_str());
+    return false;
+  }
+
+  return f1.compare(f2) == 0;
+}
+
 static std::string GetTestPath(const std::string& filename) {
   static std::string test_data_dir = android::base::GetExecutableDirectory() + "/tests/data/";
   return test_data_dir + filename;
@@ -83,6 +105,24 @@ TEST(Align, DifferenteOrders) {
 
   int processed = process(src.c_str(), dst.c_str(), 4, true, false, 4096);
   ASSERT_EQ(0, processed);
+
+  int verified = verify(dst.c_str(), 4, false, true);
+  ASSERT_EQ(0, verified);
+}
+
+TEST(Align, DirectoryEntryDoNotRequireAlignment) {
+  const std::string src = GetTestPath("archiveWithOneDirectoryEntry.zip");
+  int verified = verify(src.c_str(), 4, false, true);
+  ASSERT_EQ(0, verified);
+}
+
+TEST(Align, DirectoryEntry) {
+  const std::string src = GetTestPath("archiveWithOneDirectoryEntry.zip");
+  const std::string dst = GetTempPath("archiveWithOneDirectoryEntry_out.zip");
+
+  int processed = process(src.c_str(), dst.c_str(), 4, true, false, 4096);
+  ASSERT_EQ(0, processed);
+  ASSERT_EQ(true, sameContent(src, dst));
 
   int verified = verify(dst.c_str(), 4, false, true);
   ASSERT_EQ(0, verified);
