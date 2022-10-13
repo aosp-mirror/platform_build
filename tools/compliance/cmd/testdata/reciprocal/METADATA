@@ -1,0 +1,5 @@
+# Comments are allowed
+description: "Reciprocal Test Data"
+third_party {
+    version: "1.0"
+}

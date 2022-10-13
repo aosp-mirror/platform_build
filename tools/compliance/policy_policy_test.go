@@ -20,6 +20,8 @@ import (
 	"sort"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance/testfs"
 )
 
 func TestPolicy_edgeConditions(t *testing.T) {
@@ -210,7 +212,7 @@ func TestPolicy_edgeConditions(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			fs := make(testFS)
+			fs := make(testfs.TestFS)
 			stderr := &bytes.Buffer{}
 			target := meta[tt.edge.target] + fmt.Sprintf("deps: {\n  file: \"%s\"\n", tt.edge.dep)
 			for _, ann := range tt.edge.annotations {
