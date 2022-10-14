@@ -427,7 +427,7 @@ function multitree_lunch()
     # message, instead of FileNotFound.
     local T=$(multitree_gettop)
     if [ -n "$T" ]; then
-      "$T/orchestrator/build/orchestrator/core/orchestrator.py" "$@"
+      "$T/orchestrator/build/orchestrator/core/lunch.py" "$@"
     else
       _multitree_lunch_error
       return 1
