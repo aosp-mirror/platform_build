@@ -2,6 +2,9 @@
 # that isn't explicitly part of the API
 -dontskipnonpubliclibraryclasses -dontskipnonpubliclibraryclassmembers
 
+# Preserve line number information for debugging stack traces.
+-keepattributes SourceFile,LineNumberTable
+
 # Annotations are implemented as attributes, so we have to explicitly keep them.
 # Keep all runtime-visible annotations like RuntimeVisibleParameterAnnotations
 # and RuntimeVisibleTypeAnnotations, as well as associated defaults.
