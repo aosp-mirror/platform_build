@@ -26,5 +26,12 @@
 
     <test class="com.android.tradefed.testtype.IsolatedHostTest" >
         <option name="jar" value="{MODULE}.jar" />
+        <option name="java-flags" value="--add-modules=jdk.compiler"/>
+        <option name="java-flags" value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-opens=java.base/java.lang.reflect=ALL-UNNAMED"/>
+        <!-- b/238100560 -->
+        <option name="java-flags" value="--add-opens=java.base/jdk.internal.util.random=ALL-UNNAMED"/>
+        <!-- b/251387255 -->
+        <option name="java-flags" value="--add-opens=java.base/java.io=ALL-UNNAMED"/>
     </test>
 </configuration>
