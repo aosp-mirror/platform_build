@@ -84,17 +84,14 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=No
 
   def ComputeAllPropertyFiles(input_file, needed_property_files):
     # Write the current metadata entry with placeholders.
-    with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
+    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip:
       for property_files in needed_property_files:
         metadata.property_files[property_files.name] = property_files.Compute(
             input_zip)
-      namelist = input_zip.namelist()
 
-    if METADATA_NAME in namelist or METADATA_PROTO_NAME in namelist:
-      ZipDelete(input_file, [METADATA_NAME, METADATA_PROTO_NAME])
-    output_zip = zipfile.ZipFile(input_file, 'a', allowZip64=True)
-    WriteMetadata(metadata, output_zip)
-    ZipClose(output_zip)
+    ZipDelete(input_file, [METADATA_NAME, METADATA_PROTO_NAME], True)
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as output_zip:
+      WriteMetadata(metadata, output_zip)
 
     if no_signing:
       return input_file
@@ -104,7 +101,7 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=No
     return prelim_signing
 
   def FinalizeAllPropertyFiles(prelim_signing, needed_property_files):
-    with zipfile.ZipFile(prelim_signing, allowZip64=True) as prelim_signing_zip:
+    with zipfile.ZipFile(prelim_signing, 'r', allowZip64=True) as prelim_signing_zip:
       for property_files in needed_property_files:
         metadata.property_files[property_files.name] = property_files.Finalize(
             prelim_signing_zip,
@@ -130,9 +127,8 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=No
 
   # Replace the METADATA entry.
   ZipDelete(prelim_signing, [METADATA_NAME, METADATA_PROTO_NAME])
-  output_zip = zipfile.ZipFile(prelim_signing, 'a', allowZip64=True)
-  WriteMetadata(metadata, output_zip)
-  ZipClose(output_zip)
+  with zipfile.ZipFile(prelim_signing, 'a', allowZip64=True) as output_zip:
+    WriteMetadata(metadata, output_zip)
 
   # Re-sign the package after updating the metadata entry.
   if no_signing:
@@ -591,7 +587,7 @@ class PropertyFiles(object):
     else:
       tokens.append(ComputeEntryOffsetSize(METADATA_NAME))
       if METADATA_PROTO_NAME in zip_file.namelist():
-          tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
+        tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
 
     return ','.join(tokens)
 
