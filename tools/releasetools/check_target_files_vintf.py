@@ -241,18 +241,22 @@ def PrepareApexDirectory(inp):
     for f in os.listdir(path):
       logger.info('  adding APEX %s', os.path.basename(f))
       apex = os.path.join(path, f)
-      cmd = [deapexer,
-             '--debugfs_path', debugfs_path,
-             'info',
-             apex]
-      info = json.loads(common.RunAndCheckOutput(cmd))
+      if os.path.isdir(apex):
+        # TODO(b/242314000) Handle "flattened" apex
+        pass
+      else:
+        cmd = [deapexer,
+               '--debugfs_path', debugfs_path,
+               'info',
+               apex]
+        info = json.loads(common.RunAndCheckOutput(cmd))
 
-      cmd = [deapexer,
-             '--debugfs_path', debugfs_path,
-             'extract',
-             apex,
-             os.path.join(outp, info['name'])]
-      common.RunAndCheckOutput(cmd)
+        cmd = [deapexer,
+               '--debugfs_path', debugfs_path,
+               'extract',
+               apex,
+               os.path.join(outp, info['name'])]
+        common.RunAndCheckOutput(cmd)
 
   root_dir_name = 'APEX'
   root_dir = os.path.join(inp, root_dir_name)
