@@ -5034,6 +5034,7 @@ INTERNAL_OTATOOLS_MODULES += \
   apex_compression_tool \
   deapexer \
   debugfs_static \
+  dump_apex_info \
   merge_zips \
   resize2fs \
   soong_zip \
