@@ -4607,7 +4607,10 @@ $(check_vintf_system_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_syst
 $(call declare-0p-target,$(check_vintf_system_log))
 check_vintf_system_log :=
 
-vintffm_log := $(intermediates)/vintffm.log
+# -- Check framework manifest against frozen manifests for GSI targets. They need to be compatible.
+ifneq (true, $(BUILDING_VENDOR_IMAGE))
+    vintffm_log := $(intermediates)/vintffm.log
+endif
 check_vintf_all_deps += $(vintffm_log)
 $(vintffm_log): $(HOST_OUT_EXECUTABLES)/vintffm $(check_vintf_system_deps)
 	@( $< --check --dirmap /system:$(TARGET_OUT) \
