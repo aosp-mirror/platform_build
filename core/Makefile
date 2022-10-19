@@ -6383,6 +6383,10 @@ ifdef BUILDING_VENDOR_BOOT_IMAGE
   endif
 endif
 
+ifdef BUILDING_VENDOR_KERNEL_BOOT_IMAGE
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_KERNEL_RAMDISK_FILES)
+endif
+
 ifdef BUILDING_RECOVERY_IMAGE
   # TODO(b/30414428): Can't depend on INTERNAL_RECOVERYIMAGE_FILES alone like other
   # BUILT_TARGET_FILES_PACKAGE dependencies because currently there're cp/rsync/rm
