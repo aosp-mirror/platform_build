@@ -87,6 +87,5 @@ BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
 
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512
-DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
 BOARD_SEPOLICY_DIRS += device/generic/goldfish/sepolicy/common
