@@ -17,10 +17,11 @@ package compliance
 import (
 	"fmt"
 	"io"
-	"io/fs"
 	"sort"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance/testfs"
 )
 
 const (
@@ -145,51 +146,6 @@ func newTestConditionSet(lg *LicenseGraph, targetName string, conditionName []st
 	return cs
 }
 
-// testFS implements a test file system (fs.FS) simulated by a map from filename to []byte content.
-type testFS map[string][]byte
-
-// Open implements fs.FS.Open() to open a file based on the filename.
-func (fs *testFS) Open(name string) (fs.File, error) {
-	if _, ok := (*fs)[name]; !ok {
-		return nil, fmt.Errorf("unknown file %q", name)
-	}
-	return &testFile{fs, name, 0}, nil
-}
-
-// testFile implements a test file (fs.File) based on testFS above.
-type testFile struct {
-	fs   *testFS
-	name string
-	posn int
-}
-
-// Stat not implemented to obviate implementing fs.FileInfo.
-func (f *testFile) Stat() (fs.FileInfo, error) {
-	return nil, fmt.Errorf("unimplemented")
-}
-
-// Read copies bytes from the testFS map.
-func (f *testFile) Read(b []byte) (int, error) {
-	if f.posn < 0 {
-		return 0, fmt.Errorf("file not open: %q", f.name)
-	}
-	if f.posn >= len((*f.fs)[f.name]) {
-		return 0, io.EOF
-	}
-	n := copy(b, (*f.fs)[f.name][f.posn:])
-	f.posn += n
-	return n, nil
-}
-
-// Close marks the testFile as no longer in use.
-func (f *testFile) Close() error {
-	if f.posn < 0 {
-		return fmt.Errorf("file already closed: %q", f.name)
-	}
-	f.posn = -1
-	return nil
-}
-
 // edge describes test data edges to define test graphs.
 type edge struct {
 	target, dep string
@@ -268,7 +224,7 @@ func toGraph(stderr io.Writer, roots []string, edges []annotated) (*LicenseGraph
 			deps[edge.dep] = []annotated{}
 		}
 	}
-	fs := make(testFS)
+	fs := make(testfs.TestFS)
 	for file, edges := range deps {
 		body := meta[file]
 		for _, edge := range edges {
