@@ -34,8 +34,15 @@ var (
 
 type globalFS struct{}
 
+var _ fs.FS = globalFS{}
+var _ fs.StatFS = globalFS{}
+
 func (s globalFS) Open(name string) (fs.File, error) {
 	return os.Open(name)
+}
+
+func (s globalFS) Stat(name string) (fs.FileInfo, error) {
+	return os.Stat(name)
 }
 
 var FS globalFS
