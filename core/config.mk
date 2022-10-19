@@ -872,9 +872,6 @@ ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 endif
 
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
-    ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-        $(error BOARD_BUILD_SYSTEM_ROOT_IMAGE cannot be true for devices with dynamic partitions)
-    endif
     ifneq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
         $(error PRODUCT_USE_DYNAMIC_PARTITION_SIZE must be true for devices with dynamic partitions)
     endif
