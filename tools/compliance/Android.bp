@@ -18,6 +18,17 @@ package {
 }
 
 blueprint_go_binary {
+    name: "compliance_checkmetadata",
+    srcs: ["cmd/checkmetadata/checkmetadata.go"],
+    deps: [
+        "compliance-module",
+        "projectmetadata-module",
+        "soong-response",
+    ],
+    testSrcs: ["cmd/checkmetadata/checkmetadata_test.go"],
+}
+
+blueprint_go_binary {
     name: "compliance_checkshare",
     srcs: ["cmd/checkshare/checkshare.go"],
     deps: [
@@ -156,6 +167,8 @@ bootstrap_go_package {
         "test_util.go",
     ],
     deps: [
+        "compliance-test-fs-module",
+        "projectmetadata-module",
         "golang-protobuf-proto",
         "golang-protobuf-encoding-prototext",
         "license_metadata_proto",
