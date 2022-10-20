@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Unit test suite for the fs_config_genertor.py tool."""
 
 import tempfile
@@ -64,7 +64,7 @@ class Tests(unittest.TestCase):
     def test_aid_header_parser_good(self):
         """Test AID Header Parser good input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_FOO 1000
@@ -91,7 +91,7 @@ class Tests(unittest.TestCase):
     def test_aid_header_parser_good_unordered(self):
         """Test AID Header Parser good unordered input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_FOO 1000
@@ -118,7 +118,7 @@ class Tests(unittest.TestCase):
     def test_aid_header_parser_bad_aid(self):
         """Test AID Header Parser bad aid input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_FOO "bad"
@@ -131,7 +131,7 @@ class Tests(unittest.TestCase):
     def test_aid_header_parser_bad_oem_range(self):
         """Test AID Header Parser bad oem range input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_OEM_RESERVED_START 2900
@@ -145,7 +145,7 @@ class Tests(unittest.TestCase):
     def test_aid_header_parser_bad_oem_range_no_end(self):
         """Test AID Header Parser bad oem range (no end) input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_OEM_RESERVED_START 2900
@@ -158,7 +158,7 @@ class Tests(unittest.TestCase):
     def test_aid_header_parser_bad_oem_range_no_start(self):
         """Test AID Header Parser bad oem range (no start) input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_OEM_RESERVED_END 2900
@@ -171,7 +171,7 @@ class Tests(unittest.TestCase):
     def test_aid_header_parser_bad_oem_range_duplicated(self):
         """Test AID Header Parser bad oem range (no start) input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_OEM_RESERVED_START 2000
@@ -187,7 +187,7 @@ class Tests(unittest.TestCase):
     def test_aid_header_parser_bad_oem_range_mismatch_start_end(self):
         """Test AID Header Parser bad oem range mismatched input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_OEM_RESERVED_START 2900
@@ -201,7 +201,7 @@ class Tests(unittest.TestCase):
     def test_aid_header_parser_bad_duplicate_ranges(self):
         """Test AID Header Parser exits cleanly on duplicate AIDs"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_FOO 100
@@ -222,7 +222,7 @@ class Tests(unittest.TestCase):
           - https://android-review.googlesource.com/#/c/313169
         """
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_APP              10000 /* TODO: switch users over to AID_APP_START */
@@ -257,7 +257,7 @@ class Tests(unittest.TestCase):
     def test_fs_config_file_parser_good(self):
         """Test FSConfig Parser good input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 [/system/bin/file]
@@ -305,7 +305,7 @@ class Tests(unittest.TestCase):
     def test_fs_config_file_parser_bad(self):
         """Test FSConfig Parser bad input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 [/system/bin/file]
@@ -319,7 +319,7 @@ class Tests(unittest.TestCase):
     def test_fs_config_file_parser_bad_aid_range(self):
         """Test FSConfig Parser bad aid range value input file"""
 
-        with tempfile.NamedTemporaryFile() as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w') as temp_file:
             temp_file.write(
                 textwrap.dedent("""
                 [AID_OEM1]
