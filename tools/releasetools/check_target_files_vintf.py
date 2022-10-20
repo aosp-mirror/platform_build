@@ -24,12 +24,14 @@ target_files can be a ZIP file or an extracted target files directory.
 
 import json
 import logging
+import os
+import shutil
 import subprocess
 import sys
-import os
 import zipfile
 
 import common
+from apex_manifest import ParseApexManifest
 
 logger = logging.getLogger(__name__)
 
@@ -227,24 +229,26 @@ def PrepareApexDirectory(inp):
     apex-info-list.xml file
   """
 
+  debugfs_path = 'debugfs'
+  deapexer = 'deapexer'
+  if OPTIONS.search_path:
+    debugfs_path = os.path.join(OPTIONS.search_path, 'bin', 'debugfs_static')
+    deapexer_path = os.path.join(OPTIONS.search_path, 'bin', 'deapexer')
+    if os.path.isfile(deapexer_path):
+      deapexer = deapexer_path
+
   def ExtractApexes(path, outp):
     # Extract all APEXes found in input path.
-    debugfs_path = 'debugfs'
-    deapexer = 'deapexer'
-    if OPTIONS.search_path:
-      debugfs_path = os.path.join(OPTIONS.search_path, 'bin', 'debugfs_static')
-      deapexer_path = os.path.join(OPTIONS.search_path, 'bin', 'deapexer')
-      if os.path.isfile(deapexer_path):
-        deapexer = deapexer_path
-
     logger.info('Extracting APEXs in %s', path)
     for f in os.listdir(path):
       logger.info('  adding APEX %s', os.path.basename(f))
       apex = os.path.join(path, f)
-      if os.path.isdir(apex):
-        # TODO(b/242314000) Handle "flattened" apex
-        pass
-      else:
+      if os.path.isdir(apex) and os.path.isfile(os.path.join(apex, 'apex_manifest.pb')):
+        info = ParseApexManifest(os.path.join(apex, 'apex_manifest.pb'))
+        # Flattened APEXes may have symlinks for libs (linked to /system/lib)
+        # We need to blindly copy them all.
+        shutil.copytree(apex, os.path.join(outp, info.name), symlinks=True)
+      elif os.path.isfile(apex) and apex.endswith(('.apex', '.capex')):
         cmd = [deapexer,
                '--debugfs_path', debugfs_path,
                'info',
@@ -257,6 +261,8 @@ def PrepareApexDirectory(inp):
                apex,
                os.path.join(outp, info['name'])]
         common.RunAndCheckOutput(cmd)
+      else:
+        logger.info('  .. skipping %s (is it APEX?)', path)
 
   root_dir_name = 'APEX'
   root_dir = os.path.join(inp, root_dir_name)
