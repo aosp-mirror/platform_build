@@ -20,6 +20,7 @@ import copy
 import datetime
 import errno
 import fnmatch
+from genericpath import isdir
 import getopt
 import getpass
 import gzip
@@ -699,7 +700,13 @@ def ReadFromInputFile(input_file, fn):
   """Reads the contents of fn from input zipfile or directory."""
   if isinstance(input_file, zipfile.ZipFile):
     return input_file.read(fn).decode()
+  elif zipfile.is_zipfile(input_file):
+    with zipfile.ZipFile(input_file, "r", allowZip64=True) as zfp:
+      return zfp.read(fn).decode()
   else:
+    if not os.path.isdir(input_file):
+      raise ValueError(
+          "Invalid input_file, accepted inputs are ZipFile object, path to .zip file on disk, or path to extracted directory. Actual: " + input_file)
     path = os.path.join(input_file, *fn.split("/"))
     try:
       with open(path) as f:
@@ -1054,6 +1061,13 @@ class PartitionBuildProps(object):
     d = LoadDictionaryFromLines(lines)
     return {key: val for key, val in d.items()
             if key in self.props_allow_override}
+
+  def __getstate__(self):
+    state = self.__dict__.copy()
+    # Don't pickle baz
+    if "input_file" in state and isinstance(state["input_file"], zipfile.ZipFile):
+      state["input_file"] = state["input_file"].filename
+    return state
 
   def GetProp(self, prop):
     return self.build_props.get(prop)
