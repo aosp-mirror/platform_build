@@ -6099,12 +6099,14 @@ $(call dist-for-goals, target-files-package, $(BUILT_TARGET_FILES_PACKAGE))
 # -----------------------------------------------------------------
 # NDK Sysroot Package
 NDK_SYSROOT_TARGET := $(PRODUCT_OUT)/ndk_sysroot.tar.bz2
+.PHONY: ndk_sysroot
+ndk_sysroot: $(NDK_SYSROOT_TARGET)
 $(NDK_SYSROOT_TARGET): $(SOONG_OUT_DIR)/ndk.timestamp
 	@echo Package NDK sysroot...
 	$(hide) tar cjf $@ -C $(SOONG_OUT_DIR) ndk
 
 ifeq ($(HOST_OS),linux)
-$(call dist-for-goals,sdk,$(NDK_SYSROOT_TARGET))
+$(call dist-for-goals,sdk ndk_sysroot,$(NDK_SYSROOT_TARGET))
 endif
 
 ifeq ($(build_ota_package),true)
