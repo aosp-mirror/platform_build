@@ -23,3 +23,6 @@ TARGET_CPU_ABI := riscv64
 TARGET_DYNAMIC_64_32_MEDIASERVER := true
 
 include build/make/target/board/BoardConfigGsiCommon.mk
+
+# Temporary hack while prebuilt modules are missing riscv64.
+ALLOW_MISSING_DEPENDENCIES := true
