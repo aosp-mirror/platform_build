@@ -78,11 +78,11 @@ class Tests(unittest.TestCase):
             temp_file.flush()
 
             parser = AIDHeaderParser(temp_file.name)
-            oem_ranges = parser.oem_ranges
+            ranges = parser.ranges
             aids = parser.aids
 
-            self.assertTrue((2900, 2999) in oem_ranges)
-            self.assertFalse((5000, 6000) in oem_ranges)
+            self.assertTrue((2900, 2999) in ranges["vendor"])
+            self.assertFalse((5000, 6000) in ranges["vendor"])
 
             for aid in aids:
                 self.assertTrue(aid.normalized_value in ['1000', '1001'])
@@ -105,11 +105,11 @@ class Tests(unittest.TestCase):
             temp_file.flush()
 
             parser = AIDHeaderParser(temp_file.name)
-            oem_ranges = parser.oem_ranges
+            ranges = parser.ranges
             aids = parser.aids
 
-            self.assertTrue((2900, 2999) in oem_ranges)
-            self.assertFalse((5000, 6000) in oem_ranges)
+            self.assertTrue((2900, 2999) in ranges["vendor"])
+            self.assertFalse((5000, 6000) in ranges["vendor"])
 
             for aid in aids:
                 self.assertTrue(aid.normalized_value in ['1000', '1001'])
@@ -162,6 +162,22 @@ class Tests(unittest.TestCase):
             temp_file.write(
                 textwrap.dedent("""
                 #define AID_OEM_RESERVED_END 2900
+            """))
+            temp_file.flush()
+
+            with self.assertRaises(SystemExit):
+                AIDHeaderParser(temp_file.name)
+
+    def test_aid_header_parser_bad_oem_range_duplicated(self):
+        """Test AID Header Parser bad oem range (no start) input file"""
+
+        with tempfile.NamedTemporaryFile() as temp_file:
+            temp_file.write(
+                textwrap.dedent("""
+                #define AID_OEM_RESERVED_START 2000
+                #define AID_OEM_RESERVED_END 2900
+                #define AID_OEM_RESERVED_START 3000
+                #define AID_OEM_RESERVED_END 3900
             """))
             temp_file.flush()
 
@@ -262,7 +278,7 @@ class Tests(unittest.TestCase):
             """))
             temp_file.flush()
 
-            parser = FSConfigFileParser([temp_file.name], [(5000, 5999)])
+            parser = FSConfigFileParser([temp_file.name], {"oem1": [(5000, 5999)]})
             files = parser.files
             dirs = parser.dirs
             aids = parser.aids
@@ -284,7 +300,7 @@ class Tests(unittest.TestCase):
                              FSConfig('0777', 'AID_FOO', 'AID_SYSTEM', '0',
                                       '/vendor/path/dir/', temp_file.name))
 
-            self.assertEqual(aid, AID('AID_OEM1', '0x1389', temp_file.name, '/vendor/bin/sh'))
+            self.assertEqual(aid, AID('AID_OEM1', '0x1389', temp_file.name, '/bin/sh'))
 
     def test_fs_config_file_parser_bad(self):
         """Test FSConfig Parser bad input file"""
@@ -298,7 +314,7 @@ class Tests(unittest.TestCase):
             temp_file.flush()
 
             with self.assertRaises(SystemExit):
-                FSConfigFileParser([temp_file.name], [(5000, 5999)])
+                FSConfigFileParser([temp_file.name], {})
 
     def test_fs_config_file_parser_bad_aid_range(self):
         """Test FSConfig Parser bad aid range value input file"""
@@ -312,4 +328,7 @@ class Tests(unittest.TestCase):
             temp_file.flush()
 
             with self.assertRaises(SystemExit):
-                FSConfigFileParser([temp_file.name], [(5000, 5999)])
+                FSConfigFileParser([temp_file.name], {"oem1": [(5000, 5999)]})
+
+if __name__ == "__main__":
+    unittest.main()

@@ -179,6 +179,10 @@ class AID(object):
             and self.normalized_value == other.normalized_value \
             and self.login_shell == other.login_shell
 
+    def __repr__(self):
+        return "AID { identifier = %s, value = %s, normalized_value = %s, login_shell = %s }" % (
+            self.identifier, self.value, self.normalized_value, self.login_shell)
+
     @staticmethod
     def is_friendly(name):
         """Determines if an AID is a freindly name or C define.
@@ -312,7 +316,7 @@ class AIDHeaderParser(object):
     ]
     _AID_DEFINE = re.compile(r'\s*#define\s+%s.*' % AID.PREFIX)
     _RESERVED_RANGE = re.compile(
-        r'#define AID_(.+)_RESERVED_\d*_*(START|END)\s+(\d+)')
+        r'#define AID_(.+)_RESERVED_(?:(\d+)_)?(START|END)\s+(\d+)')
 
     # AID lines cannot end with _START or _END, ie AID_FOO is OK
     # but AID_FOO_START is skiped. Note that AID_FOOSTART is NOT skipped.
@@ -345,6 +349,7 @@ class AIDHeaderParser(object):
             aid_file (file): The open AID header file to parse.
         """
 
+        ranges_by_name = {}
         for lineno, line in enumerate(aid_file):
 
             def error_message(msg):
@@ -355,20 +360,24 @@ class AIDHeaderParser(object):
 
             range_match = self._RESERVED_RANGE.match(line)
             if range_match:
-                partition = range_match.group(1).lower()
-                value = int(range_match.group(3), 0)
+                partition, name, start, value = range_match.groups()
+                partition = partition.lower()
+                if name is None:
+                    name = "unnamed"
+                start = start == "START"
+                value = int(value, 0)
 
                 if partition == 'oem':
                     partition = 'vendor'
 
-                if partition in self._ranges:
-                    if isinstance(self._ranges[partition][-1], int):
-                        self._ranges[partition][-1] = (
-                            self._ranges[partition][-1], value)
-                    else:
-                        self._ranges[partition].append(value)
-                else:
-                    self._ranges[partition] = [value]
+                if partition not in ranges_by_name:
+                    ranges_by_name[partition] = {}
+                if name not in ranges_by_name[partition]:
+                    ranges_by_name[partition][name] = [None, None]
+                if ranges_by_name[partition][name][0 if start else 1] is not None:
+                    sys.exit(error_message("{} of range {} of partition {} was already defined".format(
+                        "Start" if start else "End", name, partition)))
+                ranges_by_name[partition][name][0 if start else 1] = value
 
             if AIDHeaderParser._AID_DEFINE.match(line):
                 chunks = line.split()
@@ -389,6 +398,21 @@ class AIDHeaderParser(object):
                     sys.exit(
                         error_message('{} for "{}"'.format(
                             exception, identifier)))
+
+        for partition in ranges_by_name:
+            for name in ranges_by_name[partition]:
+                start = ranges_by_name[partition][name][0]
+                end = ranges_by_name[partition][name][1]
+                if start is None:
+                    sys.exit("Range '%s' for partition '%s' had undefined start" % (name, partition))
+                if end is None:
+                    sys.exit("Range '%s' for partition '%s' had undefined end" % (name, partition))
+                if start > end:
+                    sys.exit("Range '%s' for partition '%s' had start after end. Start: %d, end: %d" % (name, partition, start, end))
+
+                if partition not in self._ranges:
+                    self._ranges[partition] = []
+                self._ranges[partition].append((start, end))
 
     def _handle_aid(self, identifier, value):
         """Handle an AID C #define.
