@@ -43,14 +43,6 @@ cc_binary_host {
 python_binary_host {
     name: "fs_config_generator",
     srcs: ["fs_config_generator.py"],
-    version: {
-        py2: {
-            enabled: true,
-        },
-        py3: {
-            enabled: false,
-        },
-    },
 }
 
 python_test_host {
@@ -60,14 +52,6 @@ python_test_host {
         "test_fs_config_generator.py",
         "fs_config_generator.py",
     ],
-    version: {
-        py2: {
-            enabled: true,
-        },
-        py3: {
-            enabled: false,
-        },
-    },
 }
 
 target_fs_config_gen_filegroup {
