@@ -62,6 +62,11 @@ PRODUCT_PACKAGES += \
     init.gsi.rc \
     init.vndk-nodef.rc \
 
+# Overlay the GSI specific SystemUI setting
+PRODUCT_PACKAGES += gsi_overlay_systemui
+PRODUCT_COPY_FILES += \
+    device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
+
 # Support additional VNDK snapshots
 PRODUCT_EXTRA_VNDK_VERSIONS := \
     29 \
