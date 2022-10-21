@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 """Generates config files for Android file system properties.
 
 This script is used for generating configuration files for configuring
@@ -11,7 +11,7 @@ Further documentation can be found in the README.
 """
 
 import argparse
-import ConfigParser
+import configparser
 import ctypes
 import re
 import sys
@@ -463,7 +463,7 @@ class AIDHeaderParser(object):
         # No core AIDs should be within any oem range.
         for aid in self._aid_value_to_name:
             for ranges in self._ranges.values():
-                if Utils.in_any_range(aid, ranges):
+                if Utils.in_any_range(int(aid, 0), ranges):
                     name = self._aid_value_to_name[aid]
                     raise ValueError(
                         'AID "%s" value: %u within reserved OEM Range: "%s"' %
@@ -569,7 +569,7 @@ class FSConfigFileParser(object):
         # override previous
         # sections.
 
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read(file_name)
 
         for section in config.sections():
@@ -613,7 +613,7 @@ class FSConfigFileParser(object):
 
         ranges = None
 
-        partitions = self._ranges.keys()
+        partitions = list(self._ranges.keys())
         partitions.sort(key=len, reverse=True)
         for partition in partitions:
             if aid.friendly.startswith(partition):
@@ -1073,7 +1073,7 @@ class FSConfigGen(BaseGenerator):
         user_binary = bytearray(ctypes.c_uint16(int(user, 0)))
         group_binary = bytearray(ctypes.c_uint16(int(group, 0)))
         caps_binary = bytearray(ctypes.c_uint64(caps_value))
-        path_binary = ctypes.create_string_buffer(path,
+        path_binary = ctypes.create_string_buffer(path.encode(),
                                                   path_length_aligned_64).raw
 
         out_file.write(length_binary)
@@ -1169,21 +1169,21 @@ class AIDArrayGen(BaseGenerator):
         hdr = AIDHeaderParser(args['hdrfile'])
         max_name_length = max(len(aid.friendly) + 1 for aid in hdr.aids)
 
-        print AIDArrayGen._GENERATED
-        print
-        print AIDArrayGen._INCLUDE
-        print
-        print AIDArrayGen._STRUCT_FS_CONFIG % max_name_length
-        print
-        print AIDArrayGen._OPEN_ID_ARRAY
+        print(AIDArrayGen._GENERATED)
+        print()
+        print(AIDArrayGen._INCLUDE)
+        print()
+        print(AIDArrayGen._STRUCT_FS_CONFIG % max_name_length)
+        print()
+        print(AIDArrayGen._OPEN_ID_ARRAY)
 
         for aid in hdr.aids:
-            print AIDArrayGen._ID_ENTRY % (aid.friendly, aid.identifier)
+            print(AIDArrayGen._ID_ENTRY % (aid.friendly, aid.identifier))
 
-        print AIDArrayGen._CLOSE_FILE_STRUCT
-        print
-        print AIDArrayGen._COUNT
-        print
+        print(AIDArrayGen._CLOSE_FILE_STRUCT)
+        print()
+        print(AIDArrayGen._COUNT)
+        print()
 
 
 @generator('oemaid')
@@ -1225,15 +1225,15 @@ class OEMAidGen(BaseGenerator):
 
         parser = FSConfigFileParser(args['fsconfig'], hdr_parser.ranges)
 
-        print OEMAidGen._GENERATED
+        print(OEMAidGen._GENERATED)
 
-        print OEMAidGen._FILE_IFNDEF_DEFINE
+        print(OEMAidGen._FILE_IFNDEF_DEFINE)
 
         for aid in parser.aids:
             self._print_aid(aid)
-            print
+            print()
 
-        print OEMAidGen._FILE_ENDIF
+        print(OEMAidGen._FILE_ENDIF)
 
     def _print_aid(self, aid):
         """Prints a valid #define AID identifier to stdout.
@@ -1245,10 +1245,10 @@ class OEMAidGen(BaseGenerator):
         # print the source file location of the AID
         found_file = aid.found
         if found_file != self._old_file:
-            print OEMAidGen._FILE_COMMENT % found_file
+            print(OEMAidGen._FILE_COMMENT % found_file)
             self._old_file = found_file
 
-        print OEMAidGen._GENERIC_DEFINE % (aid.identifier, aid.value)
+        print(OEMAidGen._GENERIC_DEFINE % (aid.identifier, aid.value))
 
 
 @generator('passwd')
@@ -1292,7 +1292,7 @@ class PasswdGen(BaseGenerator):
             return
 
         aids_by_partition = {}
-        partitions = hdr_parser.ranges.keys()
+        partitions = list(hdr_parser.ranges.keys())
         partitions.sort(key=len, reverse=True)
 
         for aid in aids:
@@ -1331,7 +1331,7 @@ class PasswdGen(BaseGenerator):
         except ValueError as exception:
             sys.exit(exception)
 
-        print "%s::%s:%s::/:%s" % (logon, uid, uid, aid.login_shell)
+        print("%s::%s:%s::/:%s" % (logon, uid, uid, aid.login_shell))
 
 
 @generator('group')
@@ -1356,7 +1356,7 @@ class GroupGen(PasswdGen):
         except ValueError as exception:
             sys.exit(exception)
 
-        print "%s::%s:" % (logon, uid)
+        print("%s::%s:" % (logon, uid))
 
 
 @generator('print')
@@ -1379,7 +1379,7 @@ class PrintGen(BaseGenerator):
         aids.sort(key=lambda item: int(item.normalized_value))
 
         for aid in aids:
-            print '%s %s' % (aid.identifier, aid.normalized_value)
+            print('%s %s' % (aid.identifier, aid.normalized_value))
 
 
 def main():
@@ -1393,7 +1393,7 @@ def main():
     gens = generator.get()
 
     # for each gen, instantiate and add them as an option
-    for name, gen in gens.iteritems():
+    for name, gen in gens.items():
 
         generator_option_parser = subparser.add_parser(name, help=gen.__doc__)
         generator_option_parser.set_defaults(which=name)
