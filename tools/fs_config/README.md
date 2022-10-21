@@ -69,12 +69,12 @@ generated header file.
 
 From within the `fs_config` directory, unit tests can be executed like so:
 
-    $ python -m unittest test_fs_config_generator.Tests
-    .............
+    $ python test_fs_config_generator.py
+    ................
     ----------------------------------------------------------------------
-    Ran 13 tests in 0.004s
-
+    Ran 16 tests in 0.004s
     OK
+
 
 One could also use nose if they would like:
 
