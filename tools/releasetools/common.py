@@ -723,7 +723,16 @@ def ExtractFromInputFile(input_file, fn):
     with open(tmp_file, 'wb') as f:
       f.write(input_file.read(fn))
     return tmp_file
+  elif zipfile.is_zipfile(input_file):
+    with zipfile.ZipFile(input_file, "r", allowZip64=True) as zfp:
+      tmp_file = MakeTempFile(os.path.basename(fn))
+      with open(tmp_file, "wb") as fp:
+        fp.write(zfp.read(fn))
+      return tmp_file
   else:
+    if not os.path.isdir(input_file):
+      raise ValueError(
+          "Invalid input_file, accepted inputs are ZipFile object, path to .zip file on disk, or path to extracted directory. Actual: " + input_file)
     file = os.path.join(input_file, *fn.split("/"))
     if not os.path.exists(file):
       raise KeyError(fn)
