@@ -139,6 +139,24 @@ func (e *TargetEdge) Annotations() TargetEdgeAnnotations {
 	return e.annotations
 }
 
+// IsRuntimeDependency returns true for edges representing shared libraries
+// linked dynamically at runtime.
+func (e *TargetEdge) IsRuntimeDependency() bool {
+	return edgeIsDynamicLink(e)
+}
+
+// IsDerivation returns true for edges where the target is a derivative
+// work of dependency.
+func (e *TargetEdge) IsDerivation() bool {
+	return edgeIsDerivation(e)
+}
+
+// IsBuildTool returns true for edges where the target is built
+// by dependency.
+func (e *TargetEdge) IsBuildTool() bool {
+	return !edgeIsDerivation(e) && !edgeIsDynamicLink(e)
+}
+
 // String returns a human-readable string representation of the edge.
 func (e *TargetEdge) String() string {
 	return fmt.Sprintf("%s -[%s]> %s", e.target.name, strings.Join(e.annotations.AsList(), ", "), e.dependency.name)
@@ -186,6 +204,11 @@ func (s TargetEdgePathSegment) Target() *TargetNode {
 // Dependency builds without Target, but Target needs Dependency to build.
 func (s TargetEdgePathSegment) Dependency() *TargetNode {
 	return s.edge.dependency
+}
+
+// Edge describes the target edge.
+func (s TargetEdgePathSegment) Edge() *TargetEdge {
+	return s.edge
 }
 
 // Annotations describes the type of edge by the set of annotations attached to
@@ -298,6 +321,11 @@ func (tn *TargetNode) Dependencies() TargetEdgeList {
 // PackageName returns the string that identifes the package for the target.
 func (tn *TargetNode) PackageName() string {
 	return tn.proto.GetPackageName()
+}
+
+// ModuleName returns the module name of the target.
+func (tn *TargetNode) ModuleName() string {
+	return tn.proto.GetModuleName()
 }
 
 // Projects returns the projects defining the target node. (unordered)
