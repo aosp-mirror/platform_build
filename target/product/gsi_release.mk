@@ -23,6 +23,8 @@
 # - Released GSI contains more VNDK packages to support old version vendors
 # - etc.
 #
+# See device/generic/common/README.md for more details.
+#
 
 BUILDING_GSI := true
 
