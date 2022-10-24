@@ -166,6 +166,8 @@ $(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY_FEC,VB 1.0 and related variables are
 $(KATI_obsolete_var PRODUCT_SUPPORTS_BOOT_SIGNER,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var PRODUCT_VERITY_SIGNING_KEY,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var BOARD_PREBUILT_PVMFWIMAGE,pvmfw.bin is now built in AOSP and custom versions are no longer supported)
+$(KATI_obsolete_var BOARD_BUILD_SYSTEM_ROOT_IMAGE)
+
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
@@ -864,11 +866,6 @@ ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
           PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)
     endif
   endif
-endif
-
-# TODO(b/241346584): Mark BOARD_BUILD_SYSTEM_ROOT_IMAGE as KATI_obsolete_var after all users are removed
-ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-    $(error BOARD_BUILD_SYSTEM_ROOT_IMAGE is deprecated)
 endif
 
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
