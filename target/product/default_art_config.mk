@@ -70,6 +70,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.tethering:framework-connectivity-t \
     com.android.tethering:framework-tethering \
     com.android.uwb:framework-uwb \
+    com.android.virt:framework-virtualization \
     com.android.wifi:framework-wifi \
 
 # List of system_server classpath jars delivered via apex.
