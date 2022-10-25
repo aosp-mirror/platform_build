@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2009 The Android Open Source Project
 #
@@ -121,7 +121,7 @@ def main(argv):
   results = list(set(perform_find(mindepth, prune, dirlist, filenames)))
   results.sort()
   for r in results:
-    print r
+    print(r)
 
 if __name__ == "__main__":
   main(sys.argv)
