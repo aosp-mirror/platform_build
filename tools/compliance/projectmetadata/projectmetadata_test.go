@@ -19,6 +19,7 @@ import (
 	"strings"
 	"testing"
 
+	"android/soong/compliance/project_metadata_proto"
 	"android/soong/tools/compliance/testfs"
 )
 
@@ -40,7 +41,78 @@ const (
 
 	// NO_NAME_0_1 represents a METADATA file with a description but no name
 	NO_NAME_0_1 = `description: "my library" third_party { version: "0.1" }`
+
+	// URL values per type
+	GIT_URL          = "http://example.github.com/my_lib"
+	SVN_URL          = "http://example.svn.com/my_lib"
+	HG_URL           = "http://example.hg.com/my_lib"
+	DARCS_URL        = "http://example.darcs.com/my_lib"
+	PIPER_URL        = "http://google3/third_party/my/package"
+	HOMEPAGE_URL     = "http://example.com/homepage"
+	OTHER_URL        = "http://google.com/"
+	ARCHIVE_URL      = "http://ftp.example.com/"
+	LOCAL_SOURCE_URL = "https://android.googlesource.com/platform/external/apache-http/"
 )
+
+// libWithUrl returns a METADATA file with the right download url
+func libWithUrl(urlTypes ...string) string {
+	var sb strings.Builder
+
+	fmt.Fprintln(&sb, `name: "mylib" description: "my library"
+	 third_party {
+	 	version: "1.0"`)
+
+	for _, urltype := range urlTypes {
+		var urlValue string
+		switch urltype {
+		case "GIT":
+			urlValue = GIT_URL
+		case "SVN":
+			urlValue = SVN_URL
+		case "HG":
+			urlValue = HG_URL
+		case "DARCS":
+			urlValue = DARCS_URL
+		case "PIPER":
+			urlValue = PIPER_URL
+		case "HOMEPAGE":
+			urlValue = HOMEPAGE_URL
+		case "OTHER":
+			urlValue = OTHER_URL
+		case "ARCHIVE":
+			urlValue = ARCHIVE_URL
+		case "LOCAL_SOURCE":
+			urlValue = LOCAL_SOURCE_URL
+		default:
+			panic(fmt.Errorf("unknown url type: %q. Please update libWithUrl() in build/make/tools/compliance/projectmetadata/projectmetadata_test.go", urltype))
+		}
+		fmt.Fprintf(&sb, "  url { type: %s value: %q }\n", urltype, urlValue)
+	}
+	fmt.Fprintln(&sb, `}`)
+
+	return sb.String()
+}
+
+func TestVerifyAllUrlTypes(t *testing.T) {
+	t.Run("verifyAllUrlTypes", func(t *testing.T) {
+		types := make([]string, 0, len(project_metadata_proto.URL_Type_value))
+		for t := range project_metadata_proto.URL_Type_value {
+			types = append(types, t)
+		}
+		libWithUrl(types...)
+	})
+}
+
+func TestUnknownPanics(t *testing.T) {
+	t.Run("Unknown panics", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("unexpected success: got no error, want panic")
+			}
+		}()
+		libWithUrl("SOME WILD VALUE THAT DOES NOT EXIST")
+	})
+}
 
 func TestReadMetadataForProjects(t *testing.T) {
 	tests := []struct {
@@ -56,7 +128,13 @@ func TestReadMetadataForProjects(t *testing.T) {
 				"/a/METADATA": []byte("name: \"Android\"\n"),
 			},
 			projects: []string{"/a"},
-			expected: []pmeta{{project: "/a", versionedName: "Android"}},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "Android",
+				name:          "Android",
+				version:       "",
+				downloadUrl:   "",
+			}},
 		},
 		{
 			name: "versioned",
@@ -64,7 +142,237 @@ func TestReadMetadataForProjects(t *testing.T) {
 				"/a/METADATA": []byte(MY_LIB_1_0),
 			},
 			projects: []string{"/a"},
-			expected: []pmeta{{project: "/a", versionedName: "mylib_v_1.0"}},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   "",
+			}},
+		},
+		{
+			name: "lib_with_homepage",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("HOMEPAGE")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   "",
+			}},
+		},
+		{
+			name: "lib_with_git",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("GIT")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   GIT_URL,
+			}},
+		},
+		{
+			name: "lib_with_svn",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("SVN")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   SVN_URL,
+			}},
+		},
+		{
+			name: "lib_with_hg",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("HG")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   HG_URL,
+			}},
+		},
+		{
+			name: "lib_with_darcs",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("DARCS")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   DARCS_URL,
+			}},
+		},
+		{
+			name: "lib_with_piper",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("PIPER")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   "",
+			}},
+		},
+		{
+			name: "lib_with_other",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("OTHER")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   "",
+			}},
+		},
+		{
+			name: "lib_with_local_source",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("LOCAL_SOURCE")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   "",
+			}},
+		},
+		{
+			name: "lib_with_archive",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("ARCHIVE")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   "",
+			}},
+		},
+		{
+			name: "lib_with_all_downloads",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("DARCS", "HG", "SVN", "GIT")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   GIT_URL,
+			}},
+		},
+		{
+			name: "lib_with_all_downloads_in_different_order",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("DARCS", "GIT", "SVN", "HG")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   GIT_URL,
+			}},
+		},
+		{
+			name: "lib_with_all_but_git",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("DARCS", "HG", "SVN")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   SVN_URL,
+			}},
+		},
+		{
+			name: "lib_with_all_but_git_and_svn",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("DARCS", "HG")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   HG_URL,
+			}},
+		},
+		{
+			name: "lib_with_all_nondownloads_and_git",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("HOMEPAGE", "LOCAL_SOURCE", "PIPER", "ARCHIVE", "GIT")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   GIT_URL,
+			}},
+		},
+		{
+			name: "lib_with_all_nondownloads",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl("HOMEPAGE", "LOCAL_SOURCE", "PIPER", "ARCHIVE")),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   "",
+			}},
+		},
+		{
+			name: "lib_with_all_nondownloads",
+			fs: &testfs.TestFS{
+				"/a/METADATA": []byte(libWithUrl()),
+			},
+			projects: []string{"/a"},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   "",
+			}},
 		},
 		{
 			name: "versioneddesc",
@@ -72,7 +380,13 @@ func TestReadMetadataForProjects(t *testing.T) {
 				"/a/METADATA": []byte(NO_NAME_0_1),
 			},
 			projects: []string{"/a"},
-			expected: []pmeta{{project: "/a", versionedName: "my library"}},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "my library",
+				name:          "",
+				version:       "0.1",
+				downloadUrl:   "",
+			}},
 		},
 		{
 			name: "unterminated",
@@ -91,9 +405,27 @@ func TestReadMetadataForProjects(t *testing.T) {
 			},
 			projects: []string{"/a", "/b", "/c"},
 			expected: []pmeta{
-				{project: "/a", versionedName: ""},
-				{project: "/b", versionedName: "mylib_v_1.0"},
-				{project: "/c", versionedName: "my library"},
+				{
+					project:       "/a",
+					versionedName: "",
+					name:          "",
+					version:       "",
+					downloadUrl:   "",
+				},
+				{
+					project:       "/b",
+					versionedName: "mylib_v_1.0",
+					name:          "mylib",
+					version:       "1.0",
+					downloadUrl:   "",
+				},
+				{
+					project:       "/c",
+					versionedName: "my library",
+					name:          "",
+					version:       "0.1",
+					downloadUrl:   "",
+				},
 			},
 		},
 		{
@@ -104,8 +436,20 @@ func TestReadMetadataForProjects(t *testing.T) {
 			},
 			projects: []string{"/a", "/b", "/c"},
 			expected: []pmeta{
-				{project: "/a", versionedName: ""},
-				{project: "/b", versionedName: "mylib_v_1.0"},
+				{
+					project:       "/a",
+					versionedName: "",
+					name:          "",
+					version:       "",
+					downloadUrl:   "",
+				},
+				{
+					project:       "/b",
+					versionedName: "mylib_v_1.0",
+					name:          "mylib",
+					version:       "1.0",
+					downloadUrl:   "",
+				},
 			},
 		},
 		{
@@ -116,8 +460,20 @@ func TestReadMetadataForProjects(t *testing.T) {
 			},
 			projects: []string{"/a", "/b", "/c"},
 			expected: []pmeta{
-				{project: "/a", versionedName: ""},
-				{project: "/c", versionedName: "my library"},
+				{
+					project:       "/a",
+					versionedName: "",
+					name:          "",
+					version:       "",
+					downloadUrl:   "",
+				},
+				{
+					project:       "/c",
+					versionedName: "my library",
+					name:          "",
+					version:       "0.1",
+					downloadUrl:   "",
+				},
 			},
 		},
 		{
@@ -128,8 +484,20 @@ func TestReadMetadataForProjects(t *testing.T) {
 			},
 			projects: []string{"/a", "/b", "/c"},
 			expected: []pmeta{
-				{project: "/b", versionedName: "mylib_v_1.0"},
-				{project: "/c", versionedName: "my library"},
+				{
+					project:       "/b",
+					versionedName: "mylib_v_1.0",
+					name:          "mylib",
+					version:       "1.0",
+					downloadUrl:   "",
+				},
+				{
+					project:       "/c",
+					versionedName: "my library",
+					name:          "",
+					version:       "0.1",
+					downloadUrl:   "",
+				},
 			},
 		},
 		{
@@ -170,7 +538,13 @@ func TestReadMetadataForProjects(t *testing.T) {
 				"/a/METADATA": []byte(EMPTY),
 			},
 			projects: []string{"/a"},
-			expected: []pmeta{{project: "/a", versionedName: ""}},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "",
+				name:          "",
+				version:       "",
+				downloadUrl:   "",
+			}},
 		},
 		{
 			name: "emptyother",
@@ -191,7 +565,13 @@ func TestReadMetadataForProjects(t *testing.T) {
 				"/a/METADATA.android": []byte(MY_LIB_1_0),
 			},
 			projects: []string{"/a"},
-			expected: []pmeta{{project: "/a", versionedName: "mylib_v_1.0"}},
+			expected: []pmeta{{
+				project:       "/a",
+				versionedName: "mylib_v_1.0",
+				name:          "mylib",
+				version:       "1.0",
+				downloadUrl:   "",
+			}},
 		},
 		{
 			name: "enchilada",
@@ -203,9 +583,27 @@ func TestReadMetadataForProjects(t *testing.T) {
 			},
 			projects: []string{"/a", "/b", "/c"},
 			expected: []pmeta{
-				{project: "/a", versionedName: ""},
-				{project: "/b", versionedName: "mylib_v_1.0"},
-				{project: "/c", versionedName: "my library"},
+				{
+					project:       "/a",
+					versionedName: "",
+					name:          "",
+					version:       "",
+					downloadUrl:   "",
+				},
+				{
+					project:       "/b",
+					versionedName: "mylib_v_1.0",
+					name:          "mylib",
+					version:       "1.0",
+					downloadUrl:   "",
+				},
+				{
+					project:       "/c",
+					versionedName: "my library",
+					name:          "",
+					version:       "0.1",
+					downloadUrl:   "",
+				},
 			},
 		},
 	}
@@ -255,10 +653,13 @@ func TestReadMetadataForProjects(t *testing.T) {
 type pmeta struct {
 	project       string
 	versionedName string
+	name          string
+	version       string
+	downloadUrl   string
 }
 
 func (pm pmeta) String() string {
-	return fmt.Sprintf("project: %q versionedName: %q\n", pm.project, pm.versionedName)
+	return fmt.Sprintf("project: %q versionedName: %q name: %q version: %q downloadUrl: %q\n", pm.project, pm.versionedName, pm.name, pm.version, pm.downloadUrl)
 }
 
 func (pm pmeta) equals(other *ProjectMetadata) bool {
@@ -266,6 +667,15 @@ func (pm pmeta) equals(other *ProjectMetadata) bool {
 		return false
 	}
 	if pm.versionedName != other.VersionedName() {
+		return false
+	}
+	if pm.name != other.Name() {
+		return false
+	}
+	if pm.version != other.Version() {
+		return false
+	}
+	if pm.downloadUrl != other.UrlsByTypeName().DownloadUrl() {
 		return false
 	}
 	return true
@@ -283,12 +693,30 @@ func (pm pmeta) difference(other *ProjectMetadata) string {
 	if pm.versionedName != other.VersionedName() {
 		fmt.Fprintf(&sb, " versionedName: %q", other.VersionedName())
 	}
+	if pm.name != other.Name() {
+		fmt.Fprintf(&sb, " name: %q", other.Name())
+	}
+	if pm.version != other.Version() {
+		fmt.Fprintf(&sb, " version: %q", other.Version())
+	}
+	if pm.downloadUrl != other.UrlsByTypeName().DownloadUrl() {
+		fmt.Fprintf(&sb, " downloadUrl: %q", other.UrlsByTypeName().DownloadUrl())
+	}
 	fmt.Fprintf(&sb, ", want")
 	if pm.project != other.project {
 		fmt.Fprintf(&sb, " project: %q", pm.project)
 	}
 	if pm.versionedName != other.VersionedName() {
 		fmt.Fprintf(&sb, " versionedName: %q", pm.versionedName)
+	}
+	if pm.name != other.Name() {
+		fmt.Fprintf(&sb, " name: %q", pm.name)
+	}
+	if pm.version != other.Version() {
+		fmt.Fprintf(&sb, " version: %q", pm.version)
+	}
+	if pm.downloadUrl != other.UrlsByTypeName().DownloadUrl() {
+		fmt.Fprintf(&sb, " downloadUrl: %q", pm.downloadUrl)
 	}
 	return sb.String()
 }
