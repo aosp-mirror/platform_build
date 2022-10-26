@@ -171,42 +171,47 @@ func TraceTopDownConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 
 	walk = func(fnode *TargetNode, cs LicenseConditionSet, treatAsAggregate bool) {
 		defer wg.Done()
-		mu.Lock()
-		fnode.resolution |= conditionsFn(fnode)
-		fnode.resolution |= cs
-		fnode.pure = treatAsAggregate
-		amap[fnode] = struct{}{}
-		cs = fnode.resolution
-		mu.Unlock()
+		continueWalk := func() bool {
+			mu.Lock()
+			defer mu.Unlock()
+			depcs := fnode.resolution
+			_, alreadyWalked := amap[fnode]
+			if alreadyWalked {
+				if cs.IsEmpty() {
+					return false
+				}
+				if cs.Difference(depcs).IsEmpty() {
+					// no new conditions
+
+					// pure aggregates never need walking a 2nd time with same conditions
+					if treatAsAggregate {
+						return false
+					}
+					// non-aggregates don't need walking as non-aggregate a 2nd time
+					if !fnode.pure {
+						return false
+					}
+					// previously walked as pure aggregate; need to re-walk as non-aggregate
+				}
+			}
+			fnode.resolution |= conditionsFn(fnode)
+			fnode.resolution |= cs
+			fnode.pure = treatAsAggregate
+			amap[fnode] = struct{}{}
+			cs = fnode.resolution
+			return true
+		}()
+		if !continueWalk {
+			return
+		}
 		// for each dependency
 		for _, edge := range fnode.edges {
-			func(edge *TargetEdge) {
-				// dcs holds the dpendency conditions inherited from the target
-				dcs := targetConditionsPropagatingToDep(lg, edge, cs, treatAsAggregate, conditionsFn)
-				dnode := edge.dependency
-				mu.Lock()
-				defer mu.Unlock()
-				depcs := dnode.resolution
-				_, alreadyWalked := amap[dnode]
-				if !dcs.IsEmpty() && alreadyWalked {
-					if dcs.Difference(depcs).IsEmpty() {
-						// no new conditions
-
-						// pure aggregates never need walking a 2nd time with same conditions
-						if treatAsAggregate {
-							return
-						}
-						// non-aggregates don't need walking as non-aggregate a 2nd time
-						if !dnode.pure {
-							return
-						}
-						// previously walked as pure aggregate; need to re-walk as non-aggregate
-					}
-				}
-				// add the conditions to the dependency
-				wg.Add(1)
-				go walk(dnode, dcs, treatAsAggregate && dnode.IsContainer())
-			}(edge)
+			// dcs holds the dpendency conditions inherited from the target
+			dcs := targetConditionsPropagatingToDep(lg, edge, cs, treatAsAggregate, conditionsFn)
+			dnode := edge.dependency
+			// add the conditions to the dependency
+			wg.Add(1)
+			go walk(dnode, dcs, treatAsAggregate && dnode.IsContainer())
 		}
 	}
 
