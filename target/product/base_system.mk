@@ -55,7 +55,6 @@ PRODUCT_PACKAGES += \
     com.android.btservices \
     com.android.configinfrastructure \
     com.android.conscrypt \
-    com.android.cronet \
     com.android.devicelock \
     com.android.extservices \
     com.android.federatedcompute \
