@@ -294,22 +294,6 @@ function setpaths()
     #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
 }
 
-function bazel()
-{
-    if which bazel &>/dev/null; then
-        >&2 echo "NOTE: bazel() function sourced from Android's envsetup.sh is being used instead of $(which bazel)"
-        >&2 echo
-    fi
-
-    local T="$(gettop)"
-    if [ ! "$T" ]; then
-        >&2 echo "Couldn't locate the top of the Android tree. Try setting TOP. This bazel() function cannot be used outside of the AOSP directory."
-        return
-    fi
-
-    "$T/tools/bazel" "$@"
-}
-
 function printconfig()
 {
     local T=$(gettop)
