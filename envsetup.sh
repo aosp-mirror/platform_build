@@ -1573,9 +1573,9 @@ function bmod()
     #
     # For a snappy result, use the latest generated version in soong_injection,
     # and ask users to run m bp2build if it doesn't exist.
-    converted_json="out/soong/soong_injection/metrics/converted_modules_path_map.json"
+    converted_json="$(get_abs_build_var OUT_DIR)/soong/soong_injection/metrics/converted_modules_path_map.json"
 
-    if [ ! -f $(gettop)/${converted_json} ]; then
+    if [ ! -f ${converted_json} ]; then
       echo "bp2build files not found. Have you ran 'm bp2build'?" >&2
       return 1
     fi
@@ -1980,13 +1980,7 @@ function showcommands() {
             return
             ;;
     esac
-    if [[ -z "$OUT_DIR" ]]; then
-      if [[ -z "$OUT_DIR_COMMON_BASE" ]]; then
-        OUT_DIR=out
-      else
-        OUT_DIR=${OUT_DIR_COMMON_BASE}/${PWD##*/}
-      fi
-    fi
+    OUT_DIR="$(get_abs_build_var OUT_DIR)"
     if [[ "$1" == "--regenerate" ]]; then
       shift 1
       NINJA_ARGS="-t commands $@" m
