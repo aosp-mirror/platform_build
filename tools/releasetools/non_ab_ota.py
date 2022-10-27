@@ -277,7 +277,7 @@ endif;
 
   # We haven't written the metadata entry, which will be done in
   # FinalizeMetadata.
-  common.ZipClose(output_zip)
+  output_zip.close()
 
   needed_property_files = (
       NonAbOtaPropertyFiles(),
@@ -531,7 +531,7 @@ endif;
 
   # We haven't written the metadata entry yet, which will be handled in
   # FinalizeMetadata().
-  common.ZipClose(output_zip)
+  output_zip.close()
 
   # Sign the generated zip package unless no_signing is specified.
   needed_property_files = (

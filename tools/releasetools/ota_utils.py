@@ -22,7 +22,7 @@ import zipfile
 
 import ota_metadata_pb2
 import common
-from common import (ZipDelete, ZipClose, OPTIONS, MakeTempFile,
+from common import (ZipDelete, OPTIONS, MakeTempFile,
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
                     SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps,
                     GetRamdiskFormat)
