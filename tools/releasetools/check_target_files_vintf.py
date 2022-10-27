@@ -280,8 +280,8 @@ def PrepareApexDirectory(inp):
       inp_partition = os.path.join(inp, target_files_rel_path,"apex")
       if os.path.exists(inp_partition):
         apex_dir = root_dir + os.path.join(device_path + "/apex");
-        os.makedirs(apex_dir)
-        os.rename(inp_partition, apex_dir)
+        os.makedirs(root_dir + device_path)
+        shutil.copytree(inp_partition, apex_dir, symlinks=True)
         ExtractApexes(apex_dir, extracted_root)
         create_info_file = True
 
