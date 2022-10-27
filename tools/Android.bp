@@ -59,3 +59,8 @@ python_binary_host {
   name: "check_radio_versions",
   srcs: ["check_radio_versions.py"],
 }
+
+python_binary_host {
+  name: "check_elf_file",
+  srcs: ["check_elf_file.py"],
+}
