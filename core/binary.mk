@@ -1488,7 +1488,7 @@ my_cppflags := $(call convert-to-clang-flags,$(my_cppflags))
 my_asflags := $(call convert-to-clang-flags,$(my_asflags))
 my_ldflags := $(call convert-to-clang-flags,$(my_ldflags))
 
-# No one should ever use this flag. On GCC it's mere presence will disable all
+# No one should ever use this flag. On GCC its mere presence will disable all
 # warnings, even those that are specified after it (contrary to typical warning
 # flag behavior). This circumvents CFLAGS_NO_OVERRIDE from forcibly enabling the
 # warnings that are *always* bugs.
