@@ -487,7 +487,7 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
       else:
         common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
 
-  common.ZipClose(target_zip)
+  target_zip.close()
 
   return target_file
 
@@ -624,7 +624,7 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
 
     # TODO(xunchang) handle META/postinstall_config.txt'
 
-  common.ZipClose(partial_target_zip)
+  partial_target_zip.close()
 
   return partial_target_file
 
@@ -709,7 +709,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   # Write new ab_partitions.txt file
   common.ZipWrite(target_zip, new_ab_partitions, arcname=AB_PARTITIONS)
 
-  common.ZipClose(target_zip)
+  target_zip.close()
 
   return target_file
 
@@ -1017,11 +1017,11 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     common.ZipWriteStr(output_zip, "apex_info.pb", ota_apex_info,
                        compress_type=zipfile.ZIP_STORED)
 
-  common.ZipClose(target_zip)
+  target_zip.close()
 
   # We haven't written the metadata entry yet, which will be handled in
   # FinalizeMetadata().
-  common.ZipClose(output_zip)
+  output_zip.close()
 
   FinalizeMetadata(metadata, staging_file, output_file,
                    package_key=OPTIONS.package_key)
