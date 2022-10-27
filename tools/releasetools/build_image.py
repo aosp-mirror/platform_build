@@ -410,7 +410,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       build_command.append("--casefold")
     if (needs_compress or prop_dict.get("f2fs_compress") == "true"):
       build_command.append("--compression")
-    if (prop_dict.get("mount_point") != "data"):
+    if "ro_mount_point" in prop_dict:
       build_command.append("--readonly")
     if (prop_dict.get("f2fs_compress") == "true"):
       build_command.append("--sldc")
@@ -756,6 +756,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     prop = "{}_extfs_rsv_pct".format(prefix)
     if not copy_prop(prop, "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
+
+    d["ro_mount_point"] = "1"
 
   # Copy partition-specific properties.
   d["mount_point"] = mount_point
