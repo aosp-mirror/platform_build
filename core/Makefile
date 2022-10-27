@@ -3933,7 +3933,7 @@ pvmfwimage: $(INSTALLED_PVMFWIMAGE_TARGET)
 INSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img
 INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET := $(PRODUCT_OUT)/pvmfw_embedded.avbpubkey
 INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,pvmfw_img)
-INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_sign_key)
+INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_embedded_key)
 
 $(call declare-1p-container,$(INSTALLED_PVMFWIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_PVMFWIMAGE_TARGET),$(INTERNAL_PVMFWIMAGE_FILES),$(PRODUCT_OUT)/:/)
