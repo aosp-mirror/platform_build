@@ -842,14 +842,13 @@ def ReplaceUpdatedFiles(zip_filename, files_list):
   SYSTEM/ after rebuilding recovery.
   """
   common.ZipDelete(zip_filename, files_list)
-  output_zip = zipfile.ZipFile(zip_filename, "a",
+  with zipfile.ZipFile(zip_filename, "a",
                                compression=zipfile.ZIP_DEFLATED,
-                               allowZip64=True)
-  for item in files_list:
-    file_path = os.path.join(OPTIONS.input_tmp, item)
-    assert os.path.exists(file_path)
-    common.ZipWrite(output_zip, file_path, arcname=item)
-  common.ZipClose(output_zip)
+                               allowZip64=True) as output_zip:
+    for item in files_list:
+      file_path = os.path.join(OPTIONS.input_tmp, item)
+      assert os.path.exists(file_path)
+      common.ZipWrite(output_zip, file_path, arcname=item)
 
 
 def HasPartition(partition_name):
@@ -1176,7 +1175,7 @@ def AddImagesToTargetFiles(filename):
   AddVbmetaDigest(output_zip)
 
   if output_zip:
-    common.ZipClose(output_zip)
+    output_zip.close()
     if OPTIONS.replace_updated_files_list:
       ReplaceUpdatedFiles(output_zip.filename,
                           OPTIONS.replace_updated_files_list)
