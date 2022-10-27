@@ -18,6 +18,9 @@ trap 'exit 1' ERR
 
 source $(dirname $0)/../envsetup.sh
 
+# lunch required to set up PATH to use b
+lunch aosp_arm64
+
 test_target=//build/bazel/scripts/difftool:difftool
 
 b build "$test_target"
