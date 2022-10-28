@@ -280,7 +280,7 @@ $(error You must put all the split source apks in the same folder: $(LOCAL_PACKA
 endif
 my_src_dir := $(LOCAL_PATH)/$(my_src_dir)
 
-$(built_apk_splits) : $(LOCAL_CERTIFICATE).pk8 $(LOCAL_CERTIFICATE).x509.pem
+$(built_apk_splits) : $(LOCAL_CERTIFICATE).pk8 $(LOCAL_CERTIFICATE).x509.pem | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR) $(SIGNAPK_JNI_LIBRARY_PATH)
 $(built_apk_splits) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
 $(built_apk_splits) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 $(built_apk_splits) : $(intermediates)/%.apk : $(my_src_dir)/%.apk
