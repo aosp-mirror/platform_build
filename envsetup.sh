@@ -1551,12 +1551,10 @@ function verifymodinfo() {
     fi
 }
 
-# List all modules for the current device, as cached in module-info.json. If any build change is
-# made and it should be reflected in the output, you should run 'refreshmod' first.
+# List all modules for the current device, as cached in all_modules.txt. If any build change is
+# made and it should be reflected in the output, you should run `m nothing` first.
 function allmod() {
-    verifymodinfo || return 1
-
-    python3 -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
+    cat $ANDROID_PRODUCT_OUT/all_modules.txt 2>/dev/null
 }
 
 # Return the Bazel label of a Soong module if it is converted with bp2build.
@@ -1735,7 +1733,7 @@ function installmod() {
 
 function _complete_android_module_names() {
     local word=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(QUIET_VERIFYMODINFO=true allmod | grep -E "^$word") )
+    COMPREPLY=( $(allmod | grep -E "^$word") )
 }
 
 # Print colored exit condition
