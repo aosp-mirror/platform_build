@@ -217,10 +217,10 @@ func TestResolveNotices(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"apacheBin.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -245,7 +245,7 @@ func TestResolveNotices(t *testing.T) {
 			expectedResolutions: []res{
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -258,17 +258,17 @@ func TestResolveNotices(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"apacheContainer.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 				{"apacheContainer.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"apacheBin.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "mitLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -280,11 +280,11 @@ func TestResolveNotices(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -309,7 +309,7 @@ func TestResolveNotices(t *testing.T) {
 			expectedResolutions: []res{
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
 				{"apacheBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -336,7 +336,7 @@ func TestResolveNotices(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -363,7 +363,7 @@ func TestResolveNotices(t *testing.T) {
 				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
 				{"apacheContainer.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"lgplLib.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
