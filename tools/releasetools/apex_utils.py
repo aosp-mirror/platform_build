@@ -428,7 +428,7 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
   apex_zip = zipfile.ZipFile(apex_file, 'a', allowZip64=True)
   common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
   common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
-  common.ZipClose(apex_zip)
+  apex_zip.close()
 
   # 3. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')

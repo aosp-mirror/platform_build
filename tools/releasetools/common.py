@@ -2797,18 +2797,6 @@ class PasswordManager(object):
 def ZipWrite(zip_file, filename, arcname=None, perms=0o644,
              compress_type=None):
 
-  # http://b/18015246
-  # Python 2.7's zipfile implementation wrongly thinks that zip64 is required
-  # for files larger than 2GiB. We can work around this by adjusting their
-  # limit. Note that `zipfile.writestr()` will not work for strings larger than
-  # 2GiB. The Python interpreter sometimes rejects strings that large (though
-  # it isn't clear to me exactly what circumstances cause this).
-  # `zipfile.write()` must be used directly to work around this.
-  #
-  # This mess can be avoided if we port to python3.
-  saved_zip64_limit = zipfile.ZIP64_LIMIT
-  zipfile.ZIP64_LIMIT = (1 << 32) - 1
-
   if compress_type is None:
     compress_type = zip_file.compression
   if arcname is None:
@@ -2834,14 +2822,13 @@ def ZipWrite(zip_file, filename, arcname=None, perms=0o644,
   finally:
     os.chmod(filename, saved_stat.st_mode)
     os.utime(filename, (saved_stat.st_atime, saved_stat.st_mtime))
-    zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
 def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
                 compress_type=None):
   """Wrap zipfile.writestr() function to work around the zip64 limit.
 
-  Even with the ZIP64_LIMIT workaround, it won't allow writing a string
+  Python's zip implementation won't allow writing a string
   longer than 2GiB. It gives 'OverflowError: size does not fit in an int'
   when calling crc32(bytes).
 
@@ -2849,9 +2836,6 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
   We should use ZipWrite() whenever possible, and only use ZipWriteStr()
   when we know the string won't be too long.
   """
-
-  saved_zip64_limit = zipfile.ZIP64_LIMIT
-  zipfile.ZIP64_LIMIT = (1 << 32) - 1
 
   if not isinstance(zinfo_or_arcname, zipfile.ZipInfo):
     zinfo = zipfile.ZipInfo(filename=zinfo_or_arcname)
@@ -2885,7 +2869,6 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
   zinfo.date_time = (2009, 1, 1, 0, 0, 0)
 
   zip_file.writestr(zinfo, data)
-  zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
 def ZipDelete(zip_filename, entries, force=False):
@@ -2917,18 +2900,6 @@ def ZipDelete(zip_filename, entries, force=False):
         zout.writestr(item, buffer)
 
   os.replace(new_zipfile, zip_filename)
-
-
-def ZipClose(zip_file):
-  # http://b/18015246
-  # zipfile also refers to ZIP64_LIMIT during close() when it writes out the
-  # central directory.
-  saved_zip64_limit = zipfile.ZIP64_LIMIT
-  zipfile.ZIP64_LIMIT = (1 << 32) - 1
-
-  zip_file.close()
-
-  zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
 class DeviceSpecificParams(object):
