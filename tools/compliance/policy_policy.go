@@ -117,32 +117,6 @@ func init() {
 func LicenseConditionSetFromNames(tn *TargetNode, names ...string) LicenseConditionSet {
 	cs := NewLicenseConditionSet()
 	for _, name := range names {
-		if name == "restricted" {
-			if 0 == len(tn.LicenseKinds()) {
-				cs = cs.Plus(RestrictedCondition)
-				continue
-			}
-			hasLgpl := false
-			hasGeneric := false
-			for _, kind := range tn.LicenseKinds() {
-				if anyLgpl.MatchString(kind) {
-					cs = cs.Plus(WeaklyRestrictedCondition)
-					hasLgpl = true
-				} else if versionedGpl.MatchString(kind) {
-					cs = cs.Plus(RestrictedCondition)
-				} else if genericGpl.MatchString(kind) {
-					hasGeneric = true
-				} else if kind == "legacy_restricted" || ccBySa.MatchString(kind) {
-					cs = cs.Plus(RestrictedCondition)
-				} else {
-					cs = cs.Plus(RestrictedCondition)
-				}
-			}
-			if hasGeneric && !hasLgpl {
-				cs = cs.Plus(RestrictedCondition)
-			}
-			continue
-		}
 		if lc, ok := RecognizedConditionNames[name]; ok {
 			cs |= LicenseConditionSet(lc)
 		}
