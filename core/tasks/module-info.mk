@@ -41,3 +41,9 @@ droidcore-unbundled: $(MODULE_INFO_JSON)
 
 $(call dist-for-goals, general-tests, $(MODULE_INFO_JSON))
 $(call dist-for-goals, droidcore-unbundled, $(MODULE_INFO_JSON))
+
+# On every build, generate an all_modules.txt file to be used for autocompleting
+# the m command. After timing this using $(shell date +"%s.%3N"), it only adds
+# 0.01 seconds to the internal master build, and will only rerun on builds that
+# rerun kati.
+$(file >$(PRODUCT_OUT)/all_modules.txt,$(subst $(space),$(newline),$(ALL_MODULES)))
