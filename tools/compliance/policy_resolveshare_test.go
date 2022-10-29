@@ -73,8 +73,8 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
-				{"lgplBin.meta_lic", "apacheLib.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplBin.meta_lic", "apacheLib.meta_lic", "lgplBin.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -84,7 +84,7 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
@@ -94,7 +94,7 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_allows_dynamic_linking"},
 			},
 		},
 		{
