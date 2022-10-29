@@ -57,7 +57,7 @@ license_conditions: "notice"
 	LGPL = `` +
 		`package_name: "Free Library"
 license_kinds: "SPDX-license-identifier-LGPL-2.0"
-license_conditions: "restricted"
+license_conditions: "restricted_allows_dynamic_linking"
 `
 
 	// MPL starts a test metadata file for a module with MPL 2.0 reciprical licensing.

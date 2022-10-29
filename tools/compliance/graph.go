@@ -300,23 +300,6 @@ func (tn *TargetNode) PackageName() string {
 	return tn.proto.GetPackageName()
 }
 
-// ModuleTypes returns the list of module types implementing the target.
-// (unordered)
-//
-// In an ideal world, only 1 module type would implement each target, but the
-// interactions between Soong and Make for host versus product and for a
-// variety of architectures sometimes causes multiple module types per target
-// (often a regular build target and a prebuilt.)
-func (tn *TargetNode) ModuleTypes() []string {
-	return append([]string{}, tn.proto.ModuleTypes...)
-}
-
-// ModuleClasses returns the list of module classes implementing the target.
-// (unordered)
-func (tn *TargetNode) ModuleClasses() []string {
-	return append([]string{}, tn.proto.ModuleClasses...)
-}
-
 // Projects returns the projects defining the target node. (unordered)
 //
 // In an ideal world, only 1 project defines a target, but the interaction
@@ -324,14 +307,6 @@ func (tn *TargetNode) ModuleClasses() []string {
 // product means a module is sometimes defined more than once.
 func (tn *TargetNode) Projects() []string {
 	return append([]string{}, tn.proto.Projects...)
-}
-
-// LicenseKinds returns the list of license kind names for the module or
-// target. (unordered)
-//
-// e.g. SPDX-license-identifier-MIT or legacy_proprietary
-func (tn *TargetNode) LicenseKinds() []string {
-	return append([]string{}, tn.proto.LicenseKinds...)
 }
 
 // LicenseConditions returns a copy of the set of license conditions
