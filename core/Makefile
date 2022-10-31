@@ -5045,6 +5045,10 @@ INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find build/make/target/product/security -type f -name "*.x509.pem" -o \
       -name "*.pk8"))
 
+INTERNAL_OTATOOLS_PACKAGE_FILES += \
+  $(sort $(shell find packages/modules -type f -name "*.x509.pem" -o -name "*.pk8" -o -name \
+      "key.pem"))
+
 ifneq (,$(wildcard device))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
