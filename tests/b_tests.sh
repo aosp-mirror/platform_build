@@ -18,6 +18,9 @@ trap 'exit 1' ERR
 
 source $(dirname $0)/../envsetup.sh
 
+# lunch required to set up PATH to use b
+lunch aosp_arm64
+
 test_target=//build/bazel/scripts/difftool:difftool
 
 b build "$test_target"
@@ -26,3 +29,8 @@ b build --run-soong-tests "$test_target"
 b --run-soong-tests build "$test_target"
 b cquery 'kind(test, //build/bazel/examples/android_app/...)' --config=android
 b run $test_target -- --help >/dev/null
+
+# Workflow tests for bmod
+bmod libm
+b run $(bmod fastboot) -- help
+b build $(bmod libm) $(bmod libcutils) --config=android

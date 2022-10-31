@@ -23,9 +23,11 @@ function finalize_aidl_vndk_sdk_resources() {
         out/host/linux-x86/bin/create_reference_dumps \
         -p aosp_arm64 --build-variant user
 
+    echo "NOTE: THIS INTENTIONALLY MAY FAIL AND REPAIR ITSELF (until 'DONE')"
     # Update new versions of files. See update-vndk-list.sh (which requires envsetup.sh)
     $m check-vndk-list || \
         { cp $top/out/soong/vndk/vndk.libraries.txt $top/build/make/target/product/gsi/current.txt; }
+    echo "DONE: THIS INTENTIONALLY MAY FAIL AND REPAIR ITSELF"
 
     # Finalize resources
     "$top/frameworks/base/tools/aapt2/tools/finalize_res.py" \
@@ -39,7 +41,8 @@ function finalize_aidl_vndk_sdk_resources() {
 
     sed -i "s%$sdk_codename%$sdk_version%g" $sdk_build
 
-    # Update the current.txt
+    # Force update current.txt
+    $m clobber
     $m update-api
 }
 

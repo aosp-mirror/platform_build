@@ -901,7 +901,7 @@ def WriteOtacerts(output_zip, filename, keys):
   certs_zip = zipfile.ZipFile(temp_file, "w", allowZip64=True)
   for k in keys:
     common.ZipWrite(certs_zip, k)
-  common.ZipClose(certs_zip)
+  certs_zip.close()
   common.ZipWriteStr(output_zip, filename, temp_file.getvalue())
 
 
@@ -1529,8 +1529,8 @@ def main(argv):
                      platform_api_level, codename_to_api_level_map,
                      compressed_extension)
 
-  common.ZipClose(input_zip)
-  common.ZipClose(output_zip)
+  input_zip.close()
+  output_zip.close()
 
   if OPTIONS.vendor_partitions and OPTIONS.vendor_otatools:
     BuildVendorPartitions(args[1])

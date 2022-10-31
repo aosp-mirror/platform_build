@@ -38,6 +38,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - godir:      Go to the directory containing a file.
 - allmod:     List all modules.
 - gomod:      Go to the directory containing a module.
+- bmod:       Get the Bazel label of a Soong module if it is converted with bp2build.
 - pathmod:    Get the directory containing a module.
 - outmod:     Gets the location of a module's installed outputs with a certain extension.
 - dirmods:    Gets the modules defined in a given directory.
@@ -205,41 +206,6 @@ function setpaths()
     fi
 
     # and in with the new
-    local prebuiltdir=$(getprebuilt)
-    local gccprebuiltdir=$(get_abs_build_var ANDROID_GCC_PREBUILTS)
-
-    # defined in core/config.mk
-    local targetgccversion=$(get_build_var TARGET_GCC_VERSION)
-    local targetgccversion2=$(get_build_var 2ND_TARGET_GCC_VERSION)
-    export TARGET_GCC_VERSION=$targetgccversion
-
-    # The gcc toolchain does not exists for windows/cygwin. In this case, do not reference it.
-    export ANDROID_TOOLCHAIN=
-    export ANDROID_TOOLCHAIN_2ND_ARCH=
-    local ARCH=$(get_build_var TARGET_ARCH)
-    local toolchaindir toolchaindir2=
-    case $ARCH in
-        x86) toolchaindir=x86/x86_64-linux-android-$targetgccversion/bin
-            ;;
-        x86_64) toolchaindir=x86/x86_64-linux-android-$targetgccversion/bin
-            ;;
-        arm) toolchaindir=arm/arm-linux-androideabi-$targetgccversion/bin
-            ;;
-        arm64) toolchaindir=aarch64/aarch64-linux-android-$targetgccversion/bin;
-               toolchaindir2=arm/arm-linux-androideabi-$targetgccversion2/bin
-            ;;
-        *)
-            echo "Can't find toolchain for unknown architecture: $ARCH"
-            toolchaindir=xxxxxxxxx
-            ;;
-    esac
-    if [ -d "$gccprebuiltdir/$toolchaindir" ]; then
-        export ANDROID_TOOLCHAIN=$gccprebuiltdir/$toolchaindir
-    fi
-
-    if [ "$toolchaindir2" -a -d "$gccprebuiltdir/$toolchaindir2" ]; then
-        export ANDROID_TOOLCHAIN_2ND_ARCH=$gccprebuiltdir/$toolchaindir2
-    fi
 
     export ANDROID_DEV_SCRIPTS=$T/development/scripts:$T/prebuilts/devtools/tools
 
@@ -252,8 +218,7 @@ function setpaths()
             ;;
     esac
 
-    ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_TOOLCHAIN
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_TOOLCHAIN_2ND_ARCH
+    ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS)
     ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_DEV_SCRIPTS
 
     # Append llvm binutils prebuilts path to ANDROID_BUILD_PATHS.
@@ -287,6 +252,9 @@ function setpaths()
     local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch"
     local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch"
     ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH:$AIDEGEN_PATH:$ATEST_PATH
+
+    # Build system
+    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$T/build/bazel/bin
 
     export ANDROID_BUILD_PATHS=$(tr -s : <<<"${ANDROID_BUILD_PATHS}:")
     export PATH=$ANDROID_BUILD_PATHS$PATH
@@ -329,22 +297,6 @@ function setpaths()
     #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
 }
 
-function bazel()
-{
-    if which bazel &>/dev/null; then
-        >&2 echo "NOTE: bazel() function sourced from Android's envsetup.sh is being used instead of $(which bazel)"
-        >&2 echo
-    fi
-
-    local T="$(gettop)"
-    if [ ! "$T" ]; then
-        >&2 echo "Couldn't locate the top of the Android tree. Try setting TOP. This bazel() function cannot be used outside of the AOSP directory."
-        return
-    fi
-
-    "$T/tools/bazel" "$@"
-}
-
 function printconfig()
 {
     local T=$(gettop)
@@ -361,8 +313,6 @@ function set_stuff_for_environment()
     set_sequence_number
 
     export ANDROID_BUILD_TOP=$(gettop)
-    # With this environment variable new GCC can apply colors to warnings/errors
-    export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 }
 
 function set_sequence_number()
@@ -430,6 +380,7 @@ function addcompletions()
     complete -F _complete_android_module_names gomod
     complete -F _complete_android_module_names outmod
     complete -F _complete_android_module_names installmod
+    complete -F _complete_android_module_names bmod
     complete -F _complete_android_module_names m
 }
 
@@ -463,7 +414,7 @@ function multitree_lunch()
     # message, instead of FileNotFound.
     local T=$(multitree_gettop)
     if [ -n "$T" ]; then
-      "$T/orchestrator/build/orchestrator/core/orchestrator.py" "$@"
+      "$T/orchestrator/build/orchestrator/core/lunch.py" "$@"
     else
       _multitree_lunch_error
       return 1
@@ -1600,13 +1551,48 @@ function verifymodinfo() {
     fi
 }
 
-# List all modules for the current device, as cached in module-info.json. If any build change is
-# made and it should be reflected in the output, you should run 'refreshmod' first.
+# List all modules for the current device, as cached in all_modules.txt. If any build change is
+# made and it should be reflected in the output, you should run `m nothing` first.
 function allmod() {
-    verifymodinfo || return 1
-
-    python3 -c "import json; print('\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys())))"
+    cat $ANDROID_PRODUCT_OUT/all_modules.txt 2>/dev/null
 }
+
+# Return the Bazel label of a Soong module if it is converted with bp2build.
+function bmod()
+(
+    if [ $# -ne 1 ]; then
+        echo "usage: bmod <module>" >&2
+        return 1
+    fi
+
+    # We could run bp2build here, but it might trigger bp2build invalidation
+    # when used with `b` (e.g. --run_soong_tests) and/or add unnecessary waiting
+    # time overhead.
+    #
+    # For a snappy result, use the latest generated version in soong_injection,
+    # and ask users to run m bp2build if it doesn't exist.
+    converted_json="$(get_abs_build_var OUT_DIR)/soong/soong_injection/metrics/converted_modules_path_map.json"
+
+    if [ ! -f ${converted_json} ]; then
+      echo "bp2build files not found. Have you ran 'm bp2build'?" >&2
+      return 1
+    fi
+
+    local target_label=$(python3 -c "import json
+module = '$1'
+converted_json='$converted_json'
+bp2build_converted_map = json.load(open(converted_json))
+if module not in bp2build_converted_map:
+    exit(1)
+print(bp2build_converted_map[module] + ':' + module)")
+
+    if [ -z "${target_label}" ]; then
+      echo "$1 is not converted to Bazel." >&2
+      return 1
+    else
+      echo "${target_label}"
+    fi
+)
 
 # Get the path of a specific module in the android tree, as cached in module-info.json.
 # If any build change is made, and it should be reflected in the output, you should run
@@ -1747,7 +1733,7 @@ function installmod() {
 
 function _complete_android_module_names() {
     local word=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(QUIET_VERIFYMODINFO=true allmod | grep -E "^$word") )
+    COMPREPLY=( $(allmod | grep -E "^$word") )
 }
 
 # Print colored exit condition
@@ -1838,57 +1824,6 @@ function _trigger_build()
     else
       >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
       return 1
-    fi
-)
-
-# Convenience entry point (like m) to use Bazel in AOSP.
-function b()
-(
-    # zsh breaks posix by not doing string-splitting on unquoted args by default.
-    # See https://zsh.sourceforge.io/Guide/zshguide05.html section 5.4.4.
-    # Tell it to emulate Bourne shell for this function.
-    if [ -n "$ZSH_VERSION" ]; then emulate -L sh; fi
-
-    # Look for the --run-soong-tests flag and skip passing --skip-soong-tests to Soong if present
-    local bazel_args=""
-    local skip_tests="--skip-soong-tests"
-    for i in $@; do
-        if [[ $i != "--run-soong-tests" ]]; then
-            bazel_args+="$i "
-        else
-            skip_tests=""
-        fi
-    done
-    # Generate BUILD, bzl files into the synthetic Bazel workspace (out/soong/workspace).
-    _trigger_build "all-modules" bp2build $skip_tests USE_BAZEL_ANALYSIS= || return 1
-    # Then, run Bazel using the synthetic workspace as the --package_path.
-    if [[ -z "$bazel_args" ]]; then
-        # If there are no args, show help and exit.
-        bazel help
-    else
-        # Else, always run with the bp2build configuration, which sets Bazel's package path to the synthetic workspace.
-        # Add the --config=bp2build after the first argument that doesn't start with a dash. That should be the bazel
-        # command. (build, test, run, ect) If the --config was added at the end, it wouldn't work with commands like:
-        # b run //foo -- --args-for-foo
-        local config_set=0
-
-        # Represent the args as an array, not a string.
-        local bazel_args_with_config=()
-        for arg in $bazel_args; do
-            if [[ $arg == "--" && $config_set -ne 1 ]]; # if we find --, insert config argument here
-            then
-                bazel_args_with_config+=("--config=bp2build -- ")
-                config_set=1
-            else
-                bazel_args_with_config+=("$arg ")
-            fi
-        done
-        if [[ $config_set -ne 1 ]]; then
-            bazel_args_with_config+=("--config=bp2build ")
-        fi
-
-        # Call Bazel.
-        bazel ${bazel_args_with_config[@]}
     fi
 )
 
@@ -2043,13 +1978,7 @@ function showcommands() {
             return
             ;;
     esac
-    if [[ -z "$OUT_DIR" ]]; then
-      if [[ -z "$OUT_DIR_COMMON_BASE" ]]; then
-        OUT_DIR=out
-      else
-        OUT_DIR=${OUT_DIR_COMMON_BASE}/${PWD##*/}
-      fi
-    fi
+    OUT_DIR="$(get_abs_build_var OUT_DIR)"
     if [[ "$1" == "--regenerate" ]]; then
       shift 1
       NINJA_ARGS="-t commands $@" m
