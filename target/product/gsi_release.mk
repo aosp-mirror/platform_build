@@ -23,6 +23,8 @@
 # - Released GSI contains more VNDK packages to support old version vendors
 # - etc.
 #
+# See device/generic/common/README.md for more details.
+#
 
 BUILDING_GSI := true
 
@@ -61,6 +63,11 @@ PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
     init.gsi.rc \
     init.vndk-nodef.rc \
+
+# Overlay the GSI specific SystemUI setting
+PRODUCT_PACKAGES += gsi_overlay_systemui
+PRODUCT_COPY_FILES += \
+    device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
 
 # Support additional VNDK snapshots
 PRODUCT_EXTRA_VNDK_VERSIONS := \
