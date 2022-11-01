@@ -58,13 +58,11 @@ type LicenseGraph struct {
 	/// (guarded by mu)
 	targets map[string]*TargetNode
 
-	// wgBU becomes non-nil when the bottom-up resolve begins and reaches 0
-	// (i.e. Wait() proceeds) when the bottom-up resolve completes. (guarded by mu)
-	wgBU *sync.WaitGroup
+	// onceBottomUp makes sure the bottom-up resolve walk only happens one time.
+	onceBottomUp sync.Once
 
-	// wgTD becomes non-nil when the top-down resolve begins and reaches 0 (i.e. Wait()
-	// proceeds) when the top-down resolve completes. (guarded by mu)
-	wgTD *sync.WaitGroup
+	// onceTopDown makes sure the top-down resolve walk only happens one time.
+	onceTopDown sync.Once
 
 	// shippedNodes caches the results of a full walk of nodes identifying targets
 	// distributed either directly or as derivative works. (creation guarded by mu)

@@ -5045,6 +5045,10 @@ INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find build/make/target/product/security -type f -name "*.x509.pem" -o \
       -name "*.pk8"))
 
+INTERNAL_OTATOOLS_PACKAGE_FILES += \
+  $(sort $(shell find packages/modules -type f -name "*.x509.pem" -o -name "*.pk8" -o -name \
+      "key.pem"))
+
 ifneq (,$(wildcard device))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
@@ -6824,12 +6828,26 @@ deps := \
 	$(HOST_OUT_EXECUTABLES)/atree \
 	$(HOST_OUT_EXECUTABLES)/line_endings
 
+# The name of the subdir within the platforms dir of the sdk. One of:
+# - android-<SDK_INT> (stable base dessert SDKs)
+# - android-<CODENAME> (stable extension SDKs)
+# - android-<SDK_INT>-ext<EXT_INT> (codename SDKs)
+sdk_platform_dir_name := $(strip \
+  $(if $(filter REL,$(PLATFORM_VERSION_CODENAME)), \
+    $(if $(filter $(PLATFORM_SDK_EXTENSION_VERSION),$(PLATFORM_BASE_SDK_EXTENSION_VERSION)), \
+      android-$(PLATFORM_SDK_VERSION), \
+      android-$(PLATFORM_SDK_VERSION)-ext$(PLATFORM_SDK_EXTENSION_VERSION) \
+    ), \
+    android-$(PLATFORM_VERSION_CODENAME) \
+  ) \
+)
+
 INTERNAL_SDK_TARGET := $(sdk_dir)/$(sdk_name).zip
 $(INTERNAL_SDK_TARGET): PRIVATE_NAME := $(sdk_name)
 $(INTERNAL_SDK_TARGET): PRIVATE_DIR := $(sdk_dir)/$(sdk_name)
 $(INTERNAL_SDK_TARGET): PRIVATE_DEP_FILE := $(sdk_dep_file)
 $(INTERNAL_SDK_TARGET): PRIVATE_INPUT_FILES := $(sdk_atree_files)
-
+$(INTERNAL_SDK_TARGET): PRIVATE_PLATFORM_NAME := $(sdk_platform_dir_name)
 # Set SDK_GNU_ERROR to non-empty to fail when a GNU target is built.
 #
 #SDK_GNU_ERROR := true
@@ -6854,7 +6872,7 @@ $(INTERNAL_SDK_TARGET): $(deps)
 	        -I $(PRODUCT_OUT) \
 	        -I $(HOST_OUT) \
 	        -I $(TARGET_COMMON_OUT_ROOT) \
-	        -v "PLATFORM_NAME=android-$(PLATFORM_VERSION)" \
+	        -v "PLATFORM_NAME=$(PRIVATE_PLATFORM_NAME)" \
 	        -v "OUT_DIR=$(OUT_DIR)" \
 	        -v "HOST_OUT=$(HOST_OUT)" \
 	        -v "TARGET_ARCH=$(TARGET_ARCH)" \
