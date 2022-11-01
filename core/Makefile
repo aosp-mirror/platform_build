@@ -5045,9 +5045,11 @@ INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find build/make/target/product/security -type f -name "*.x509.pem" -o \
       -name "*.pk8"))
 
+ifneq (,$(wildcard packages/modules))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find packages/modules -type f -name "*.x509.pem" -o -name "*.pk8" -o -name \
       "key.pem"))
+endif
 
 ifneq (,$(wildcard device))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \
