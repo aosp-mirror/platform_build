@@ -1506,7 +1506,7 @@ func (m spdxCreatorOrganization) String() string {
 }
 
 func fakeTime() time.Time {
-	return time.UnixMicro(0)
+	return time.UnixMicro(0).UTC()
 }
 
 type spdxCreatedTime struct{}
