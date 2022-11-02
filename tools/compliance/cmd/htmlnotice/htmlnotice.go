@@ -24,6 +24,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"android/soong/response"
@@ -275,7 +276,8 @@ func htmlNotice(ctx *context, files ...string) error {
 	}
 	fmt.Fprintln(ctx.stdout, "</body></html>")
 
-	*ctx.deps = ni.InputNoticeFiles()
+	*ctx.deps = ni.InputFiles()
+	sort.Strings(*ctx.deps)
 
 	return nil
 }
