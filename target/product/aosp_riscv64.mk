@@ -65,6 +65,9 @@ PRODUCT_PACKAGES := \
   linker \
   shell_and_utilities \
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
+PRODUCT_USES_DEFAULT_ART_CONFIG := false
+
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     root/init.zygote64.rc
 
