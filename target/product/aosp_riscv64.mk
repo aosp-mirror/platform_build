@@ -61,7 +61,7 @@ endif
 # TODO: this list should come via mainline_system.mk, but for now list
 # just the modules that work for riscv64.
 PRODUCT_PACKAGES := \
-  init \
+  init_system \
   linker \
   shell_and_utilities \
 
