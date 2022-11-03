@@ -2987,12 +2987,10 @@ $(1): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
     $$(fsverity-metadata-targets-$(2))
 	rm -rf $$(PRIVATE_ASSETS)
 	mkdir -p $$(PRIVATE_ASSETS)
-ifdef fsverity-metadata-targets-$(2)
 	$$< --fsverity-path $$(PRIVATE_FSVERITY) \
 	    --base-dir $$(PRODUCT_OUT) \
 	    --output $$(PRIVATE_ASSETS)/build_manifest.pb \
 	    $$(PRIVATE_INPUTS)
-endif  # fsverity-metadata-targets-$(2)
 	$$(PRIVATE_AAPT2) link -o $$@ \
 	    -A $$(PRIVATE_ASSETS) \
 	    -I $$(PRIVATE_FRAMEWORK_RES) \
@@ -5045,9 +5043,11 @@ INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find build/make/target/product/security -type f -name "*.x509.pem" -o \
       -name "*.pk8"))
 
+ifneq (,$(wildcard packages/modules))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find packages/modules -type f -name "*.x509.pem" -o -name "*.pk8" -o -name \
       "key.pem"))
+endif
 
 ifneq (,$(wildcard device))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \

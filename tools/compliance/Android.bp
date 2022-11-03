@@ -131,6 +131,17 @@ blueprint_go_binary {
     testSrcs: ["cmd/xmlnotice/xmlnotice_test.go"],
 }
 
+blueprint_go_binary {
+    name: "compliance_sbom",
+    srcs: ["cmd/sbom/sbom.go"],
+    deps: [
+        "compliance-module",
+        "blueprint-deptools",
+        "soong-response",
+    ],
+    testSrcs: ["cmd/sbom/sbom_test.go"],
+}
+
 bootstrap_go_package {
     name: "compliance-module",
     srcs: [
