@@ -229,11 +229,15 @@ def PrepareApexDirectory(inp):
     apex-info-list.xml file
   """
 
-  debugfs_path = 'debugfs'
   deapexer = 'deapexer'
+  debugfs_path = 'debugfs'
+  blkid_path = 'blkid'
+  fsckerofs_path = 'fsck.erofs'
   if OPTIONS.search_path:
     debugfs_path = os.path.join(OPTIONS.search_path, 'bin', 'debugfs_static')
     deapexer_path = os.path.join(OPTIONS.search_path, 'bin', 'deapexer')
+    blkid_path = os.path.join(OPTIONS.search_path, 'bin', 'blkid')
+    fsckerofs_path = os.path.join(OPTIONS.search_path, 'bin', 'fsck.erofs')
     if os.path.isfile(deapexer_path):
       deapexer = deapexer_path
 
@@ -257,6 +261,8 @@ def PrepareApexDirectory(inp):
 
         cmd = [deapexer,
                '--debugfs_path', debugfs_path,
+               '--fsckerofs_path', fsckerofs_path,
+               '--blkid_path', blkid_path,
                'extract',
                apex,
                os.path.join(outp, info['name'])]
