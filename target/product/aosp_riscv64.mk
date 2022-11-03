@@ -30,32 +30,43 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # GSI for system/product & support 64-bit apps only
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+#$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+TARGET_FLATTEN_APEX := false
 
 #
 # All components inherited here go to system_ext image
 #
-$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system_ext.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
+#$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system_ext.mk)
+#$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
 
 #
 # All components inherited here go to product image
 #
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
+#$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
 
 #
 # All components inherited here go to vendor image
 #
 #$(call inherit-product-if-exists, device/generic/goldfish/riscv64-vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
+#$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_riscv64/device.mk)
 
 #
 # Special settings for GSI releasing
 #
 ifeq (aosp_riscv64,$(TARGET_PRODUCT))
-$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
+#$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
 endif
+
+# TODO: this list should come via mainline_system.mk, but for now list
+# just the modules that work for riscv64.
+PRODUCT_PACKAGES := \
+  init_system \
+  linker \
+  shell_and_utilities \
+
+$(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
+PRODUCT_USES_DEFAULT_ART_CONFIG := false
 
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     root/init.zygote64.rc
