@@ -8,11 +8,11 @@
 
 function revert_local_changes() {
     repo forall -c '\
-        git checkout . ; git clean -fdx ;\
+        git checkout . ; git revert --abort ; git clean -fdx ;\
         git checkout @ ; git b fina-step1 -D ; git reset --hard; \
         repo start fina-step1 ; git checkout @ ; git b fina-step1 -D ;\
         previousHash="$(git log --format=%H --no-merges --max-count=100 --grep ^FINALIZATION_STEP_1_SCRIPT_COMMIT | tr \n \040)" ;\
-        if [[ $previousHash ]]; then git revert --no-commit $previousHash ; fi ;'
+        if [[ $previousHash ]]; then git revert --no-commit --strategy=ort --strategy-option=theirs $previousHash ; fi ;'
 }
 
 function commit_changes() {
