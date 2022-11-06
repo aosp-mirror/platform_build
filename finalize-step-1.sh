@@ -11,7 +11,12 @@ function revert_to_unfinalized_state() {
         git checkout . ; git revert --abort ; git clean -fdx ;\
         git checkout @ ; git b fina-step1 -D ; git reset --hard; \
         repo start fina-step1 ; git checkout @ ; git b fina-step1 -D ;\
-        previousHash="$(git log --format=%H --no-merges --max-count=100 --grep ^FINALIZATION_STEP_1_SCRIPT_COMMIT | tr \n \040)" ;\
+        baselineHash="$(git log --format=%H --no-merges --max-count=1 --grep ^FINALIZATION_STEP_1_BASELINE_COMMIT)" ;\
+        if [[ $baselineHash ]]; then
+          previousHash="$(git log --format=%H --no-merges --max-count=100 --grep ^FINALIZATION_STEP_1_SCRIPT_COMMIT $baselineHash..HEAD | tr \n \040)" ;\
+        else
+          previousHash="$(git log --format=%H --no-merges --max-count=100 --grep ^FINALIZATION_STEP_1_SCRIPT_COMMIT | tr \n \040)" ;\
+        fi ; \
         if [[ $previousHash ]]; then git revert --no-commit --strategy=ort --strategy-option=ours $previousHash ; fi ;'
 }
 
