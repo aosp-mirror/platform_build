@@ -36,31 +36,32 @@ TARGET_FLATTEN_APEX := false
 #
 # All components inherited here go to system_ext image
 #
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system_ext.mk)
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system_ext.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
 
 #
 # All components inherited here go to product image
 #
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
 
 #
 # All components inherited here go to vendor image
 #
-#$(call inherit-product-if-exists, device/generic/goldfish/riscv64-vendor.mk)
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
+$(call inherit-product-if-exists, device/generic/goldfish/riscv64-vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_riscv64/device.mk)
 
 #
 # Special settings for GSI releasing
 #
 ifeq (aosp_riscv64,$(TARGET_PRODUCT))
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
 endif
 
 # TODO: this list should come via mainline_system.mk, but for now list
 # just the modules that work for riscv64.
 PRODUCT_PACKAGES := \
+  init.environ.rc \
   init_system \
   linker \
   shell_and_utilities \
