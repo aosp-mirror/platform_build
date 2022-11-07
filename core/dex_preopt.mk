@@ -62,6 +62,8 @@ ifeq ($(PRODUCT_USES_DEFAULT_ART_CONFIG), true)
 
 boot_zip := $(PRODUCT_OUT)/boot.zip
 bootclasspath_jars := $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
+
+# TODO remove system_server_jars usages from boot.zip and depend directly on system_server.zip file.
 system_server_jars := \
   $(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),\
     $(PRODUCT_OUT)/system/framework/$(call word-colon,2,$(m)).jar)
@@ -78,6 +80,35 @@ $(boot_zip): $(bootclasspath_jars) $(system_server_jars) $(SOONG_ZIP) $(MERGE_ZI
 	rm -f $@.tmp
 
 $(call dist-for-goals, droidcore, $(boot_zip))
+
+# Build the system_server.zip which contains the Apex system server jars and standalone system server jars
+system_server_zip := $(PRODUCT_OUT)/system_server.zip
+apex_system_server_jars := \
+  $(foreach m,$(PRODUCT_APEX_SYSTEM_SERVER_JARS),\
+    $(PRODUCT_OUT)/apex/$(call word-colon,1,$(m))/javalib/$(call word-colon,2,$(m)).jar)
+
+apex_standalone_system_server_jars := \
+  $(foreach m,$(PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS),\
+    $(PRODUCT_OUT)/apex/$(call word-colon,1,$(m))/javalib/$(call word-colon,2,$(m)).jar)
+
+standalone_system_server_jars := \
+  $(foreach m,$(PRODUCT_STANDALONE_SYSTEM_SERVER_JARS),\
+    $(PRODUCT_OUT)/apex/$(call word-colon,1,$(m))/javalib/$(call word-colon,2,$(m)).jar)
+
+$(system_server_zip): PRIVATE_SYSTEM_SERVER_JARS := $(system_server_jars)
+$(system_server_zip): PRIVATE_APEX_SYSTEM_SERVER_JARS := $(apex_system_server_jars)
+$(system_server_zip): PRIVATE_APEX_STANDALONE_SYSTEM_SERVER_JARS := $(apex_standalone_system_server_jars)
+$(system_server_zip): PRIVATE_STANDALONE_SYSTEM_SERVER_JARS := $(standalone_system_server_jars)
+$(system_server_zip): $(system_server_jars) $(apex_system_server_jars) $(apex_standalone_system_server_jars) $(standalone_system_server_jars) $(SOONG_ZIP)
+	@echo "Create system server package: $@"
+	rm -f $@
+	$(SOONG_ZIP) -o $@ \
+	  -C $(PRODUCT_OUT) $(addprefix -f ,$(PRIVATE_SYSTEM_SERVER_JARS)) \
+	  -C $(PRODUCT_OUT) $(addprefix -f ,$(PRIVATE_APEX_SYSTEM_SERVER_JARS)) \
+          -C $(PRODUCT_OUT) $(addprefix -f ,$(PRIVATE_APEX_STANDALONE_SYSTEM_SERVER_JARS)) \
+	  -C $(PRODUCT_OUT) $(addprefix -f ,$(PRIVATE_STANDALONE_SYSTEM_SERVER_JARS))
+
+$(call dist-for-goals, droidcore, $(system_server_zip))
 
 endif  #PRODUCT_USES_DEFAULT_ART_CONFIG
 endif  #WITH_DEXPREOPT
