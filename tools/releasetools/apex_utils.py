@@ -63,6 +63,8 @@ class ApexApkSigner(object):
     self.codename_to_api_level_map = codename_to_api_level_map
     self.debugfs_path = os.path.join(
         OPTIONS.search_path, "bin", "debugfs_static")
+    self.fsckerofs_path = os.path.join(
+        OPTIONS.search_path, "bin", "fsck.erofs")
     self.avbtool = avbtool if avbtool else "avbtool"
     self.sign_tool = sign_tool
 
@@ -80,8 +82,13 @@ class ApexApkSigner(object):
           "Couldn't find location of debugfs_static: " +
           "Path {} does not exist. ".format(self.debugfs_path) +
           "Make sure bin/debugfs_static can be found in -p <path>")
-    list_cmd = ['deapexer', '--debugfs_path',
-                self.debugfs_path, 'list', self.apex_path]
+    if not os.path.exists(self.fsckerofs_path):
+      raise ApexSigningError(
+          "Couldn't find location of fsck.erofs: " +
+          "Path {} does not exist. ".format(self.fsckerofs_path) +
+          "Make sure bin/fsck.erofs can be found in -p <path>")
+    list_cmd = ['deapexer', '--debugfs_path', self.debugfs_path,
+                '--fsckerofs_path', self.fsckerofs_path, 'list', self.apex_path]
     entries_names = common.RunAndCheckOutput(list_cmd).split()
     apk_entries = [name for name in entries_names if name.endswith('.apk')]
     sepolicy_entries = []
@@ -120,9 +127,15 @@ class ApexApkSigner(object):
           "Couldn't find location of debugfs_static: " +
           "Path {} does not exist. ".format(self.debugfs_path) +
           "Make sure bin/debugfs_static can be found in -p <path>")
+    if not os.path.exists(self.fsckerofs_path):
+      raise ApexSigningError(
+          "Couldn't find location of fsck.erofs: " +
+          "Path {} does not exist. ".format(self.fsckerofs_path) +
+          "Make sure bin/fsck.erofs can be found in -p <path>")
     payload_dir = common.MakeTempDir()
-    extract_cmd = ['deapexer', '--debugfs_path',
-                   self.debugfs_path, 'extract', self.apex_path, payload_dir]
+    extract_cmd = ['deapexer', '--debugfs_path', self.debugfs_path,
+                   '--fsckerofs_path', self.fsckerofs_path, 'extract',
+                   self.apex_path, payload_dir]
     common.RunAndCheckOutput(extract_cmd)
     assert os.path.exists(self.apex_path)
 
@@ -457,6 +470,7 @@ def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
     The path to the signed APEX file.
   """
   debugfs_path = os.path.join(OPTIONS.search_path, 'bin', 'debugfs_static')
+  fsckerofs_path = os.path.join(OPTIONS.search_path, 'bin', 'fsck.erofs')
 
   # 1. Decompress original_apex inside compressed apex.
   original_apex_file = common.MakeTempFile(prefix='original-apex-',
@@ -464,6 +478,7 @@ def SignCompressedApex(avbtool, apex_file, payload_key, container_key,
   # Decompression target path should not exist
   os.remove(original_apex_file)
   common.RunAndCheckOutput(['deapexer', '--debugfs_path', debugfs_path,
+                            '--fsckerofs_path', fsckerofs_path,
                             'decompress', '--input', apex_file,
                             '--output', original_apex_file])
 
@@ -529,7 +544,9 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
     output_fp.write(apex_data)
 
   debugfs_path = os.path.join(OPTIONS.search_path, 'bin', 'debugfs_static')
+  fsckerofs_path = os.path.join(OPTIONS.search_path, 'bin', 'fsck.erofs')
   cmd = ['deapexer', '--debugfs_path', debugfs_path,
+         '--fsckerofs_path', fsckerofs_path,
          'info', '--print-type', apex_file]
 
   try:
@@ -603,11 +620,17 @@ def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
   debugfs_path = "debugfs"
   if OPTIONS.search_path:
     debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
+
+  fsckerofs_path = "fsck.erofs"
+  if OPTIONS.search_path:
+    fsckerofs_path = os.path.join(OPTIONS.search_path, "bin", "fsck.erofs")
+
   deapexer = 'deapexer'
   if OPTIONS.search_path:
     deapexer_path = os.path.join(OPTIONS.search_path, "bin", "deapexer")
     if os.path.isfile(deapexer_path):
       deapexer = deapexer_path
+
   for apex_filename in os.listdir(target_dir):
     apex_filepath = os.path.join(target_dir, apex_filename)
     if not os.path.isfile(apex_filepath) or \
@@ -622,6 +645,7 @@ def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
     # Check if the file is compressed or not
     apex_type = RunAndCheckOutput([
         deapexer, "--debugfs_path", debugfs_path,
+        "--fsckerofs_path", fsckerofs_path,
         'info', '--print-type', apex_filepath]).rstrip()
     if apex_type == 'COMPRESSED':
       apex_info.is_compressed = True
