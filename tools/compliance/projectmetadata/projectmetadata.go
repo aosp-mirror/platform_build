@@ -233,7 +233,7 @@ func (ix *Index) MetadataForProjects(projects ...string) ([]*ProjectMetadata, er
 
 // AllMetadataFiles returns the sorted list of all METADATA files read thus far.
 func (ix *Index) AllMetadataFiles() []string {
-	var files []string
+	files := []string(nil)
 	ix.projects.Range(func(key, value any) bool {
 		pi := value.(*projectIndex)
 		if pi.path != "" {

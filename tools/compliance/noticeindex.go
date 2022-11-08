@@ -231,12 +231,14 @@ func (ni *NoticeIndex) Hashes() chan hash {
 
 // InputFiles returns the complete list of files read during indexing.
 func (ni *NoticeIndex) InputFiles() []string {
-	projectMeta := ni.pmix.AllMetadataFiles()
-	files := make([]string, 0, len(ni.files) + len(ni.lg.targets) + len(projectMeta))
-	files = append(files, ni.files...)
+	licenseMeta := []string(nil)
 	for f := range ni.lg.targets {
-		files = append(files, f)
+		licenseMeta = append(licenseMeta, f)
 	}
+	projectMeta := ni.pmix.AllMetadataFiles()
+	files := make([]string, 0, len(ni.files) + len(licenseMeta) + len(projectMeta))
+	files = append(files, ni.files...)
+	files = append(files, licenseMeta...)
 	files = append(files, projectMeta...)
 	return files
 }

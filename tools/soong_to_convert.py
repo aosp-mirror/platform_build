@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #
 # Copyright (C) 2016 The Android Open Source Project
 #
@@ -50,6 +50,9 @@ that Make can detect are listed in parenthesis after the module:
 Not all problems can be discovered, but this is a starting point.
 
 """
+
+from __future__ import print_function
+
 import csv
 import sys
 
@@ -110,7 +113,7 @@ def display(results):
 
 def main(filename):
     """Read the CSV file, print the results"""
-    with open(filename, 'r') as csvfile:
+    with open(filename, 'rb') as csvfile:
         results = process(csv.reader(csvfile))
 
     native_results = filter(results, "native")
