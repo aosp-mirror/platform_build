@@ -860,6 +860,39 @@ These are all exported from envsetup.sh, but don't have clear equivalents within
 the makefile system. If you need one of them, you'll have to set up your own
 version.
 
+## Soong config variables
+
+### Soong config string variables must list all values they can be set to
+
+In order to facilitate the transition to bazel, all soong_config_string_variables
+must only be set to a value listed in their `values` property, or an empty string.
+It is a build error otherwise.
+
+Example Android.bp:
+```
+soong_config_string_variable {
+    name: "my_string_variable",
+    values: [
+        "foo",
+        "bar",
+    ],
+}
+
+soong_config_module_type {
+    name: "my_cc_defaults",
+    module_type: "cc_defaults",
+    config_namespace: "my_namespace",
+    variables: ["my_string_variable"],
+    properties: [
+        "shared_libs",
+        "static_libs",
+    ],
+}
+```
+Product config:
+```
+$(call soong_config_set,my_namespace,my_string_variable,baz) # Will be an error as baz is not listed in my_string_variable's values.
+```
 
 [build/soong/Changes.md]: https://android.googlesource.com/platform/build/soong/+/master/Changes.md
 [build/soong/docs/best_practices.md#headers]: https://android.googlesource.com/platform/build/soong/+/master/docs/best_practices.md#headers
