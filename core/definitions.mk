@@ -2121,6 +2121,7 @@ $(hide) $(PRIVATE_CXX_LINK) \
      $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
   ) \
   $(PRIVATE_LDFLAGS) \
+  $(PRIVATE_CRTBEGIN) \
   $(PRIVATE_ALL_OBJECTS) \
   -Wl,--whole-archive \
   $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
@@ -2129,8 +2130,10 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(PRIVATE_ALL_STATIC_LIBRARIES) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
+  $(PRIVATE_LIBCRT_BUILTINS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
   -o $@ \
+  $(PRIVATE_CRTEND) \
   $(PRIVATE_LDLIBS)
 endef
 endif
@@ -2264,6 +2267,7 @@ endef
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-executable-inner
 $(hide) $(PRIVATE_CXX_LINK) \
+  $(PRIVATE_CRTBEGIN) \
   $(PRIVATE_ALL_OBJECTS) \
   -Wl,--whole-archive \
   $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
@@ -2272,6 +2276,7 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(PRIVATE_ALL_STATIC_LIBRARIES) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
+  $(PRIVATE_LIBCRT_BUILTINS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
   $(foreach path,$(PRIVATE_RPATHS), \
     -Wl,-rpath,\$$ORIGIN/$(path)) \
@@ -2280,6 +2285,7 @@ $(hide) $(PRIVATE_CXX_LINK) \
   ) \
   $(PRIVATE_LDFLAGS) \
   -o $@ \
+  $(PRIVATE_CRTEND) \
   $(PRIVATE_LDLIBS)
 endef
 endif
