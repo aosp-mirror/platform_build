@@ -7,6 +7,7 @@ LLNDK: libandroid_net.so
 LLNDK: libbinder_ndk.so
 LLNDK: libc.so
 LLNDK: libcgrouprc.so
+LLNDK: libcom.android.tethering.connectivity_native.so
 LLNDK: libdl.so
 LLNDK: libft2.so
 LLNDK: liblog.so
