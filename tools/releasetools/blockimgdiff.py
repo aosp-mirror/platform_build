@@ -1171,7 +1171,7 @@ class BlockImageDiff(object):
           try:
             # Compresses with the default level
             compress_obj = zlib.compressobj(6, zlib.DEFLATED, -zlib.MAX_WBITS)
-            compressed_data = (compress_obj.compress("".join(tgt_data))
+            compressed_data = (compress_obj.compress(b"".join(tgt_data))
                                + compress_obj.flush())
             compressed_size = len(compressed_data)
           except zlib.error as e:
