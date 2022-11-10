@@ -58,6 +58,11 @@ func (pm *ProjectMetadata) String() string {
 	return fmt.Sprintf("project: %q\n%s", pm.project, pm.proto.String())
 }
 
+// Project returns the path to the directory containing the METADATA file
+func (pm *ProjectMetadata) Project() string {
+	return pm.project
+}
+
 // ProjectName returns the name of the project.
 func (pm *ProjectMetadata) Name() string {
 	return pm.proto.GetName()
