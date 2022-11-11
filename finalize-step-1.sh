@@ -9,7 +9,7 @@
 function revert_to_unfinalized_state() {
     repo forall -c '\
         git checkout . ; git revert --abort ; git clean -fdx ;\
-        git checkout @ ; git b fina-step1 -D ; git reset --hard; \
+        git checkout @ ; git branch fina-step1 -D ; git reset --hard; \
         repo start fina-step1 ; git checkout @ ; git b fina-step1 -D ;\
         baselineHash="$(git log --format=%H --no-merges --max-count=1 --grep ^FINALIZATION_STEP_1_BASELINE_COMMIT)" ;\
         if [[ $baselineHash ]]; then

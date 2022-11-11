@@ -233,7 +233,7 @@ func getDownloadUrl(_ *context, pm *projectmetadata.ProjectMetadata) string {
 	return url
 }
 
-// getProjectMetadata returns the project metadata for the target node
+// getProjectMetadata returns the optimal project metadata for the target node
 func getProjectMetadata(_ *context, pmix *projectmetadata.Index,
 	tn *compliance.TargetNode) (*projectmetadata.ProjectMetadata, error) {
 	pms, err := pmix.MetadataForProjects(tn.Projects()...)
@@ -244,8 +244,31 @@ func getProjectMetadata(_ *context, pmix *projectmetadata.Index,
 		return nil, nil
 	}
 
-	// TO DO: skip first element if it doesn't have one of the three info needed
-	return pms[0], nil
+	// Getting the project metadata that contains most of the info needed for sbomGenerator
+	score := -1
+	index := -1
+	for i := 0; i < len(pms); i++ {
+		tempScore := 0
+		if pms[i].Name() != "" {
+			tempScore += 1
+		}
+		if pms[i].Version() != "" {
+			tempScore += 1
+		}
+		if pms[i].UrlsByTypeName().DownloadUrl() != "" {
+			tempScore += 1
+		}
+
+		if tempScore == score {
+			if pms[i].Project() < pms[index].Project() {
+				index = i
+			}
+		} else if tempScore > score {
+			score = tempScore
+			index = i
+		}
+	}
+	return pms[index], nil
 }
 
 // sbomGenerator implements the spdx bom utility
