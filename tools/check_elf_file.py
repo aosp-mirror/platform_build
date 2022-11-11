@@ -407,8 +407,7 @@ class Checker(object):
     # Chech whether all DT_NEEDED entries are specified.
     for lib in self._file_under_test.dt_needed:
       if lib not in specified_sonames:
-        self._error('DT_NEEDED "{}" is not specified in shared_libs.'
-                    .format(lib.decode('utf-8')))
+        self._error(f'DT_NEEDED "{lib}" is not specified in shared_libs.')
         missing_shared_libs = True
 
     if missing_shared_libs:
@@ -471,16 +470,14 @@ class Checker(object):
 
     if missing_symbols:
       for sym, ver in sorted(missing_symbols):
-        sym = sym.decode('utf-8')
         if ver:
-          sym += '@' + ver.decode('utf-8')
-        self._error('Unresolved symbol: {}'.format(sym))
+          sym += '@' + ver
+        self._error(f'Unresolved symbol: {sym}')
 
       self._note()
       self._note('Some dependencies might be changed, thus the symbol(s) '
                  'above cannot be resolved.')
-      self._note('Please re-build the prebuilt file: "{}".'
-                 .format(self._file_path))
+      self._note(f'Please re-build the prebuilt file: "{self._file_path}".')
 
       self._note()
       self._note('If this is a new prebuilt file and it is designed to have '
