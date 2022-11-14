@@ -716,8 +716,13 @@ ifeq ($(PRODUCT_FULL_TREBLE),true)
 endif
 
 # Starting in Android U, non-VNDK devices not supported
+# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
+# letting upstream know it's important to you, we may do cleanup which breaks this
+# significantly. Please let us know if you are changing this.
 ifndef BOARD_VNDK_VERSION
+# READ WARNING - DO NOT CHANGE
 BOARD_VNDK_VERSION := current
+# READ WARNING - DO NOT CHANGE
 endif
 
 ifdef PRODUCT_PRODUCT_VNDK_VERSION
