@@ -58,7 +58,6 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.configinfrastructure:framework-configinfrastructure \
     com.android.conscrypt:conscrypt \
     com.android.devicelock:framework-devicelock \
-    com.android.federatedcompute:framework-federatedcompute \
     com.android.healthconnect:framework-healthconnect \
     com.android.i18n:core-icu4j \
     com.android.ipsec:android.net.ipsec.ike \
