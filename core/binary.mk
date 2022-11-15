@@ -19,7 +19,11 @@ include $(BUILD_SYSTEM)/use_lld_setup.mk
 # supply that, for example, when building libc itself.
 ifdef LOCAL_IS_HOST_MODULE
   ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
+    ifdef USE_HOST_MUSL
+      my_system_shared_libraries := libc_musl
+    else
       my_system_shared_libraries :=
+    endif
   else
       my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
   endif
@@ -348,9 +352,11 @@ my_ldlibs := $(filter $(my_allowed_ldlibs),$(my_ldlibs))
 else # LOCAL_IS_HOST_MODULE
   # Add -ldl, -lpthread, -lm and -lrt to host builds to match the default behavior of
   # device builds
-  my_ldlibs += -ldl -lpthread -lm
-  ifneq ($(HOST_OS),darwin)
-    my_ldlibs += -lrt
+  ifndef USE_HOST_MUSL
+    my_ldlibs += -ldl -lpthread -lm
+    ifneq ($(HOST_OS),darwin)
+      my_ldlibs += -lrt
+    endif
   endif
 endif
 
