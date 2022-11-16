@@ -367,6 +367,9 @@ _product_single_value_vars += PRODUCT_FSVERITY_GENERATE_METADATA
 # BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE but not an explicitly set value.
 _product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
 
+# If true, installs a full version of com.android.virt APEX.
+_product_single_value_vars += PRODUCT_AVF_ENABLED
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
