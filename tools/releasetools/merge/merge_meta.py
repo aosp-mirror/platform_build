@@ -52,6 +52,49 @@ PARTITION_TAG_PATTERN = re.compile(r'partition="(.*?)"')
 MODULE_KEY_PATTERN = re.compile(r'name="(.+)\.(apex|apk)"')
 
 
+def ParseUpdateEngineConfig(path: str):
+  """Parse the update_engine config stored in file `path`
+  Args
+    path: Path to update_engine_config.txt file in target_files
+
+  Returns
+    A tuple of (major, minor) version number . E.g. (2, 8)
+  """
+  with open(path, "r") as fp:
+    # update_engine_config.txt is only supposed to contain two lines,
+    # PAYLOAD_MAJOR_VERSION and PAYLOAD_MINOR_VERSION. 1024 should be more than
+    # sufficient. If the length is more than that, something is wrong.
+    data = fp.read(1024)
+    major = re.search(r"PAYLOAD_MAJOR_VERSION=(\d+)", data)
+    if not major:
+      raise ValueError(
+          f"{path} is an invalid update_engine config, missing PAYLOAD_MAJOR_VERSION {data}")
+    minor = re.search(r"PAYLOAD_MINOR_VERSION=(\d+)", data)
+    if not minor:
+      raise ValueError(
+          f"{path} is an invalid update_engine config, missing PAYLOAD_MINOR_VERSION {data}")
+    return (int(major.group(1)), int(minor.group(1)))
+
+
+def MergeUpdateEngineConfig(input_metadir1, input_metadir2, merged_meta_dir):
+  UPDATE_ENGINE_CONFIG_NAME = "update_engine_config.txt"
+  config1_path = os.path.join(
+      input_metadir1, UPDATE_ENGINE_CONFIG_NAME)
+  config2_path = os.path.join(
+      input_metadir2, UPDATE_ENGINE_CONFIG_NAME)
+  config1 = ParseUpdateEngineConfig(config1_path)
+  config2 = ParseUpdateEngineConfig(config2_path)
+  # Copy older config to merged target files for maximum compatibility
+  # update_engine in system partition is from system side, but
+  # update_engine_sideload in recovery is from vendor side.
+  if config1 < config2:
+    shutil.copy(config1_path, os.path.join(
+        merged_meta_dir, UPDATE_ENGINE_CONFIG_NAME))
+  else:
+    shutil.copy(config2_path, os.path.join(
+        merged_meta_dir, UPDATE_ENGINE_CONFIG_NAME))
+
+
 def MergeMetaFiles(temp_dir, merged_dir):
   """Merges various files in META/*."""
 
@@ -101,6 +144,11 @@ def MergeMetaFiles(temp_dir, merged_dir):
         vendor_meta_dir=vendor_meta_dir,
         merged_meta_dir=merged_meta_dir,
         file_name=file_name)
+
+  MergeUpdateEngineConfig(
+      framework_meta_dir,
+      vendor_meta_dir, merged_meta_dir,
+  )
 
   # Write the now-finalized OPTIONS.merged_misc_info.
   merge_utils.WriteSortedData(
