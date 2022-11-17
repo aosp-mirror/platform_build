@@ -62,6 +62,7 @@ endif
 # just the modules that work for riscv64.
 PRODUCT_PACKAGES := \
   init.environ.rc \
+  init_first_stage \
   init_system \
   linker \
   shell_and_utilities \
