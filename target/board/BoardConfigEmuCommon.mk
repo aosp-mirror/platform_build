@@ -33,8 +33,8 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
   # emulator needs super.img
   BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT := true
 
-  # 4G + 8M
-  BOARD_SUPER_PARTITION_SIZE := 4303355904
+  # 8G + 8M
+  BOARD_SUPER_PARTITION_SIZE := 8598323200
   BOARD_SUPER_PARTITION_GROUPS := emulator_dynamic_partitions
 
   ifeq ($(QEMU_USE_SYSTEM_EXT_PARTITIONS),true)
@@ -56,8 +56,8 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
         vendor
   endif
 
-  # 4G
-  BOARD_EMULATOR_DYNAMIC_PARTITIONS_SIZE := 4294967296
+  # 8G
+  BOARD_EMULATOR_DYNAMIC_PARTITIONS_SIZE := 8589934592
 
   # in build environment to speed up make -j
   ifeq ($(QEMU_DISABLE_AVB),true)
