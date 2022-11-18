@@ -83,6 +83,7 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.art:service-art \
     com.android.media:service-media-s \
     com.android.permission:service-permission \
+    com.android.rkpd:service-rkp \
 
 # Use $(wildcard) to avoid referencing the profile in thin manifests that don't have the
 # art project.
