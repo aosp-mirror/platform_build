@@ -58,7 +58,6 @@ PRODUCT_PACKAGES += \
     com.android.cronet \
     com.android.devicelock \
     com.android.extservices \
-    com.android.federatedcompute \
     com.android.healthconnect \
     com.android.i18n \
     com.android.ipsec \
