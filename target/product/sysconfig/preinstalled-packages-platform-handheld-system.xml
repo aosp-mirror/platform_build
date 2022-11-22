@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2019 The Android Open Source Project
+<!-- Copyright (C) 2022 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,17 +13,12 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<!-- System packages to preinstall on all devices with aosp_product, per user type.
+<!-- System packages to preinstall on all devices with handheld_system, per user type.
      Documentation at frameworks/base/data/etc/preinstalled-packages-platform.xml
 -->
 <config>
-    <install-in-user-type package="com.android.wallpaperpicker">
-        <install-in user-type="FULL" />
-    </install-in-user-type>
-
-    <!-- System packages that should not be pre-installed on the CLONE profile. -->
-    <!-- Messages -->
-    <install-in-user-type package="com.android.messaging">
+    <!--  Printer (Does not show on launcher, but shows on the share sheet) -->
+    <install-in-user-type package="com.android.bips">
         <install-in user-type="FULL" />
         <install-in user-type="PROFILE" />
         <do-not-install-in user-type="android.os.usertype.profile.CLONE" />
