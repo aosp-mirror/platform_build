@@ -49,8 +49,8 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			name: "fponlgpl",
 			edge: annotated{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			expectedDepActions: []string{
-				"apacheBin.meta_lic:lgplLib.meta_lic:restricted_allows_dynamic_linking",
-				"lgplLib.meta_lic:lgplLib.meta_lic:restricted_allows_dynamic_linking",
+				"apacheBin.meta_lic:lgplLib.meta_lic:restricted_if_statically_linked",
+				"lgplLib.meta_lic:lgplLib.meta_lic:restricted_if_statically_linked",
 			},
 			expectedTargetConditions: []string{},
 		},
@@ -85,15 +85,15 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			expectedTargetConditions: []string{},
 		},
 		{
-			name: "independentmodulestatic",
-			edge: annotated{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
-			expectedDepActions: []string{},
+			name:                     "independentmodulestatic",
+			edge:                     annotated{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{},
 		},
 		{
-			name: "dependentmodule",
-			edge: annotated{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
-			expectedDepActions: []string{},
+			name:                     "dependentmodule",
+			edge:                     annotated{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{},
 		},
 
@@ -101,7 +101,7 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			name:                     "lgplonfp",
 			edge:                     annotated{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			expectedDepActions:       []string{},
-			expectedTargetConditions: []string{"lgplBin.meta_lic:restricted_allows_dynamic_linking"},
+			expectedTargetConditions: []string{"lgplBin.meta_lic:restricted_if_statically_linked"},
 		},
 		{
 			name:                     "lgplonfpdynamic",
