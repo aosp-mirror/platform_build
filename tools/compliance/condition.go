@@ -58,15 +58,15 @@ const (
 var (
 	// RecognizedConditionNames maps condition strings to LicenseCondition.
 	RecognizedConditionNames = map[string]LicenseCondition{
-		"unencumbered":                        UnencumberedCondition,
-		"permissive":                          PermissiveCondition,
-		"notice":                              NoticeCondition,
-		"reciprocal":                          ReciprocalCondition,
-		"restricted":                          RestrictedCondition,
-		"restricted_allows_dynamic_linking":   WeaklyRestrictedCondition,
-		"proprietary":                         ProprietaryCondition,
-		"by_exception_only":                   ByExceptionOnlyCondition,
-		"not_allowed":                         NotAllowedCondition,
+		"unencumbered":                    UnencumberedCondition,
+		"permissive":                      PermissiveCondition,
+		"notice":                          NoticeCondition,
+		"reciprocal":                      ReciprocalCondition,
+		"restricted":                      RestrictedCondition,
+		"restricted_if_statically_linked": WeaklyRestrictedCondition,
+		"proprietary":                     ProprietaryCondition,
+		"by_exception_only":               ByExceptionOnlyCondition,
+		"not_allowed":                     NotAllowedCondition,
 	}
 )
 
@@ -84,7 +84,7 @@ func (lc LicenseCondition) Name() string {
 	case RestrictedCondition:
 		return "restricted"
 	case WeaklyRestrictedCondition:
-		return "restricted_allows_dynamic_linking"
+		return "restricted_if_statically_linked"
 	case ProprietaryCondition:
 		return "proprietary"
 	case ByExceptionOnlyCondition:
