@@ -695,6 +695,14 @@ $(foreach req,$(requirements),$(eval \
 PRODUCT_FULL_TREBLE_OVERRIDE ?=
 $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
 
+ifneq ($(PRODUCT_SEPOLICY_SPLIT),true)
+# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
+# letting upstream know it's important to you, we may do cleanup which breaks this
+# significantly. Please let us know if you are changing this.
+# TODO(b/257176017) - unsplit sepolicy is no longer supported
+PRODUCT_SEPOLICY_SPLIT := true
+endif
+
 # TODO(b/114488870): disallow PRODUCT_FULL_TREBLE_OVERRIDE from being used.
 .KATI_READONLY := \
     PRODUCT_FULL_TREBLE_OVERRIDE \
