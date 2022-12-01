@@ -204,8 +204,8 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"apacheBin.meta_lic", "notice|restricted_allows_dynamic_linking"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"apacheBin.meta_lic", "notice|restricted_if_statically_linked"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -216,7 +216,7 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			},
 			expectedActions: []tcond{
 				{"apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -227,9 +227,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"apacheContainer.meta_lic", "notice|restricted_allows_dynamic_linking"},
-				{"apacheBin.meta_lic", "notice|restricted_allows_dynamic_linking"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"apacheContainer.meta_lic", "notice|restricted_if_statically_linked"},
+				{"apacheBin.meta_lic", "notice|restricted_if_statically_linked"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -240,9 +240,9 @@ func TestResolveBottomUpConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"apacheContainer.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"apacheContainer.meta_lic", "notice|restricted_if_statically_linked"},
 				{"apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -253,7 +253,7 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			},
 			expectedActions: []tcond{
 				{"apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -266,7 +266,7 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			expectedActions: []tcond{
 				{"apacheContainer.meta_lic", "notice"},
 				{"apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -279,7 +279,7 @@ func TestResolveBottomUpConditions(t *testing.T) {
 			expectedActions: []tcond{
 				{"apacheContainer.meta_lic", "notice"},
 				{"apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -500,9 +500,9 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"apacheBin.meta_lic", "notice|restricted_allows_dynamic_linking"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
-				{"mitLib.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"apacheBin.meta_lic", "notice|restricted_if_statically_linked"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
+				{"mitLib.meta_lic", "notice|restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -514,7 +514,7 @@ func TestResolveTopDownConditions(t *testing.T) {
 			},
 			expectedActions: []tcond{
 				{"apacheBin.meta_lic", "notice"},
-				{"lgplBin.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplBin.meta_lic", "restricted_if_statically_linked"},
 				{"mitLib.meta_lic", "notice"},
 			},
 		},
@@ -527,10 +527,10 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"apacheContainer.meta_lic", "notice|restricted_allows_dynamic_linking"},
-				{"apacheBin.meta_lic", "notice|restricted_allows_dynamic_linking"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
-				{"mitLib.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"apacheContainer.meta_lic", "notice|restricted_if_statically_linked"},
+				{"apacheBin.meta_lic", "notice|restricted_if_statically_linked"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
+				{"mitLib.meta_lic", "notice|restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -541,9 +541,9 @@ func TestResolveTopDownConditions(t *testing.T) {
 				{"apacheContainer.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []tcond{
-				{"apacheContainer.meta_lic", "notice|restricted_allows_dynamic_linking"},
+				{"apacheContainer.meta_lic", "notice|restricted_if_statically_linked"},
 				{"apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -555,7 +555,7 @@ func TestResolveTopDownConditions(t *testing.T) {
 			},
 			expectedActions: []tcond{
 				{"apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 				{"mitLib.meta_lic", "notice"},
 			},
 		},
@@ -569,7 +569,7 @@ func TestResolveTopDownConditions(t *testing.T) {
 			expectedActions: []tcond{
 				{"apacheContainer.meta_lic", "notice"},
 				{"apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -582,7 +582,7 @@ func TestResolveTopDownConditions(t *testing.T) {
 			expectedActions: []tcond{
 				{"apacheContainer.meta_lic", "notice"},
 				{"apacheBin.meta_lic", "notice"},
-				{"lgplLib.meta_lic", "restricted_allows_dynamic_linking"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{

@@ -66,12 +66,14 @@ PRODUCT_PACKAGES += \
     com.android.os.statsd \
     com.android.permission \
     com.android.resolv \
+    com.android.rkpd \
     com.android.neuralnetworks \
     com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
     com.android.tzdata \
     com.android.uwb \
+    com.android.virt \
     com.android.wifi \
     ContactsProvider \
     content \

@@ -695,6 +695,14 @@ $(foreach req,$(requirements),$(eval \
 PRODUCT_FULL_TREBLE_OVERRIDE ?=
 $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
 
+ifneq ($(PRODUCT_SEPOLICY_SPLIT),true)
+# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
+# letting upstream know it's important to you, we may do cleanup which breaks this
+# significantly. Please let us know if you are changing this.
+# TODO(b/257176017) - unsplit sepolicy is no longer supported
+PRODUCT_SEPOLICY_SPLIT := true
+endif
+
 # TODO(b/114488870): disallow PRODUCT_FULL_TREBLE_OVERRIDE from being used.
 .KATI_READONLY := \
     PRODUCT_FULL_TREBLE_OVERRIDE \
@@ -716,8 +724,13 @@ ifeq ($(PRODUCT_FULL_TREBLE),true)
 endif
 
 # Starting in Android U, non-VNDK devices not supported
+# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
+# letting upstream know it's important to you, we may do cleanup which breaks this
+# significantly. Please let us know if you are changing this.
 ifndef BOARD_VNDK_VERSION
+# READ WARNING - DO NOT CHANGE
 BOARD_VNDK_VERSION := current
+# READ WARNING - DO NOT CHANGE
 endif
 
 ifdef PRODUCT_PRODUCT_VNDK_VERSION
@@ -1048,14 +1061,6 @@ endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 # hiddenapi-index.csv.
 BOARD_PREBUILT_HIDDENAPI_DIR ?=
 .KATI_READONLY := BOARD_PREBUILT_HIDDENAPI_DIR
-
-ifdef USE_HOST_MUSL
-  ifneq (,$(or $(BUILD_BROKEN_USES_BUILD_HOST_EXECUTABLE),\
-               $(BUILD_BROKEN_USES_BUILD_HOST_SHARED_LIBRARY),\
-               $(BUILD_BROKEN_USES_BUILD_HOST_STATIC_LIBRARY)))
-    $(error USE_HOST_MUSL can't be set when native host builds are enabled in Make with BUILD_BROKEN_USES_BUILD_HOST_*)
-  endif
-endif
 
 # ###############################################################
 # Set up final options.
