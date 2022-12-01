@@ -36,6 +36,17 @@ include $(BUILD_SYSTEM)/binary.mk
 my_host_libprofile_rt := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
 $(LOCAL_BUILT_MODULE): PRIVATE_HOST_LIBPROFILE_RT := $(my_host_libprofile_rt)
 
+ifdef USE_HOST_MUSL
+  my_crtbegin := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)HOST_OBJECT_libc_musl_crtbegin_so)
+  my_crtend := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)HOST_OBJECT_libc_musl_crtend_so)
+  my_libcrt_builtins := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBCRT_BUILTINS)
+endif
+
+$(LOCAL_BUILT_MODULE): PRIVATE_CRTBEGIN := $(my_crtbegin)
+$(LOCAL_BUILT_MODULE): PRIVATE_CRTEND := $(my_crtend)
+$(LOCAL_BUILT_MODULE): PRIVATE_LIBCRT_BUILTINS := $(my_libcrt_builtins)
+$(LOCAL_BUILT_MODULE): $(my_crtbegin) $(my_crtend) $(my_libcrt_builtins)
+
 $(LOCAL_BUILT_MODULE): \
         $(all_objects) \
         $(all_libraries) \

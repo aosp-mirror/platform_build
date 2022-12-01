@@ -493,6 +493,8 @@ endif
 # Typical build; include any Android.mk files we can find.
 #
 
+include $(BUILD_SYSTEM)/art_config.mk
+
 # Bring in dex_preopt.mk
 # This creates some modules so it needs to be included after
 # should-install-to-system is defined (in order for base_rules.mk to function

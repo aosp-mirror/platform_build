@@ -187,7 +187,7 @@ func Test(t *testing.T) {
 				},
 				{
 					project:    "device/library",
-					conditions: []string{"restricted_allows_dynamic_linking"},
+					conditions: []string{"restricted_if_statically_linked"},
 				},
 				{
 					project:    "dynamic/binary",
@@ -196,14 +196,14 @@ func Test(t *testing.T) {
 				{
 					project: "static/binary",
 					conditions: []string{
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
 						"reciprocal",
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 			},
@@ -219,7 +219,7 @@ func Test(t *testing.T) {
 				},
 				{
 					project:    "device/library",
-					conditions: []string{"restricted_allows_dynamic_linking"},
+					conditions: []string{"restricted_if_statically_linked"},
 				},
 				{
 					project:    "dynamic/binary",
@@ -228,14 +228,14 @@ func Test(t *testing.T) {
 				{
 					project: "static/binary",
 					conditions: []string{
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
 						"reciprocal",
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 			},
@@ -249,14 +249,14 @@ func Test(t *testing.T) {
 					project: "device/library",
 					conditions: []string{
 						"restricted",
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 				{
 					project: "distributable/application",
 					conditions: []string{
 						"restricted",
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 			},
@@ -269,20 +269,20 @@ func Test(t *testing.T) {
 				{
 					project: "device/library",
 					conditions: []string{
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 				{
 					project: "static/binary",
 					conditions: []string{
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
 						"reciprocal",
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 			},
