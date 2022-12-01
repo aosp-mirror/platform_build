@@ -2,18 +2,43 @@
 # Continuous Integration script for *-finalization-1 branches.
 # Reverts previous finalization script commits and runs local build.
 
+set -ex
+
 function revert_to_unfinalized_state() {
-    repo forall -c '\
-        git checkout . ; git revert --abort ; git clean -fdx ;\
-        git checkout @ ; git branch fina-step1 -D ; git reset --hard; \
-        repo start fina-step1 ; git checkout @ ; git b fina-step1 -D ;\
-        baselineHash="$(git log --format=%H --no-merges --max-count=1 --grep ^FINALIZATION_STEP_1_BASELINE_COMMIT)" ;\
+    declare -a projects=(
+        "build/make/"
+        "build/soong/"
+        "cts/"
+        "frameworks/base/"
+        "frameworks/hardware/interfaces/"
+        "frameworks/libs/modules-utils/"
+        "frameworks/libs/net/"
+        "hardware/interfaces/"
+        "libcore/"
+        "packages/services/Car/"
+        "platform_testing/"
+        "prebuilts/abi-dumps/ndk/"
+        "prebuilts/abi-dumps/platform/"
+        "prebuilts/abi-dumps/vndk/"
+        "system/hardware/interfaces/"
+        "system/tools/aidl/"
+        "tools/platform-compat"
+        "device/generic/car"
+        "development"
+    )
+
+    for project in "${projects[@]}"
+    do
+        local git_path="$top/$project"
+        echo "Reverting: $git_path"
+        baselineHash="$(git -C $git_path log --format=%H --no-merges --max-count=1 --grep ^FINALIZATION_STEP_1_BASELINE_COMMIT)" ;
         if [[ $baselineHash ]]; then
-          previousHash="$(git log --format=%H --no-merges --max-count=100 --grep ^FINALIZATION_STEP_1_SCRIPT_COMMIT $baselineHash..HEAD | tr \n \040)" ;\
+          previousHash="$(git -C $git_path log --format=%H --no-merges --max-count=100 --grep ^FINALIZATION_STEP_1_SCRIPT_COMMIT $baselineHash..HEAD | tr \n \040)" ;
         else
-          previousHash="$(git log --format=%H --no-merges --max-count=100 --grep ^FINALIZATION_STEP_1_SCRIPT_COMMIT | tr \n \040)" ;\
-        fi ; \
-        if [[ $previousHash ]]; then git revert --no-commit --strategy=ort --strategy-option=ours $previousHash ; fi ;'
+          previousHash="$(git -C $git_path log --format=%H --no-merges --max-count=100 --grep ^FINALIZATION_STEP_1_SCRIPT_COMMIT | tr \n \040)" ;
+        fi ;
+        if [[ $previousHash ]]; then git -C $git_path revert --no-commit --strategy=ort --strategy-option=ours $previousHash ; fi ;
+    done
 }
 
 function finalize_step_1_main() {
@@ -21,8 +46,6 @@ function finalize_step_1_main() {
     local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
 
     revert_to_unfinalized_state
-
-    set -ex
 
     # vndk etc finalization
     source $top/build/make/finalize-aidl-vndk-sdk-resources.sh
