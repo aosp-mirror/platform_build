@@ -4566,7 +4566,7 @@ APEX_INFO_FILE   := $(APEX_OUT)/apex-info-list.xml
 
 $(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/dump_apex_info $(apex_vintf_files)
 	@echo "Creating apex-info-file in $(PRODUCT_OUT) "
-	$< --root_dir $(PRODUCT_OUT) --out_file $@
+	$< --root_dir $(PRODUCT_OUT)
 
 apex_vintf_files :=
 
@@ -4768,7 +4768,6 @@ check_vintf_compatible_args += \
 ifdef PRODUCT_SHIPPING_API_LEVEL
 check_vintf_compatible_args += --property ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
 endif # PRODUCT_SHIPPING_API_LEVEL
-check_vintf_compatible_args += --apex-info-file $(APEX_INFO_FILE)
 
 $(check_vintf_compatible_log): PRIVATE_CHECK_VINTF_ARGS := $(check_vintf_compatible_args)
 $(check_vintf_compatible_log): PRIVATE_CHECK_VINTF_DEPS := $(check_vintf_compatible_deps)
