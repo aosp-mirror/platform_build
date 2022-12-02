@@ -63,6 +63,10 @@ class ApexApkSigner(object):
     self.codename_to_api_level_map = codename_to_api_level_map
     self.debugfs_path = os.path.join(
         OPTIONS.search_path, "bin", "debugfs_static")
+    self.fsckerofs_path = os.path.join(
+        OPTIONS.search_path, "bin", "fsck.erofs")
+    self.blkid_path = os.path.join(
+        OPTIONS.search_path, "bin", "blkid")
     self.avbtool = avbtool if avbtool else "avbtool"
     self.sign_tool = sign_tool
 
@@ -80,8 +84,8 @@ class ApexApkSigner(object):
           "Couldn't find location of debugfs_static: " +
           "Path {} does not exist. ".format(self.debugfs_path) +
           "Make sure bin/debugfs_static can be found in -p <path>")
-    list_cmd = ['deapexer', '--debugfs_path',
-                self.debugfs_path, 'list', self.apex_path]
+    list_cmd = ['deapexer', '--debugfs_path', self.debugfs_path,
+                'list', self.apex_path]
     entries_names = common.RunAndCheckOutput(list_cmd).split()
     apk_entries = [name for name in entries_names if name.endswith('.apk')]
     sepolicy_entries = []
@@ -120,9 +124,21 @@ class ApexApkSigner(object):
           "Couldn't find location of debugfs_static: " +
           "Path {} does not exist. ".format(self.debugfs_path) +
           "Make sure bin/debugfs_static can be found in -p <path>")
+    if not os.path.exists(self.fsckerofs_path):
+      raise ApexSigningError(
+          "Couldn't find location of fsck.erofs: " +
+          "Path {} does not exist. ".format(self.fsckerofs_path) +
+          "Make sure bin/fsck.erofs can be found in -p <path>")
+    if not os.path.exists(self.blkid_path):
+      raise ApexSigningError(
+          "Couldn't find location of blkid: " +
+          "Path {} does not exist. ".format(self.blkid_path) +
+          "Make sure bin/blkid can be found in -p <path>")
     payload_dir = common.MakeTempDir()
-    extract_cmd = ['deapexer', '--debugfs_path',
-                   self.debugfs_path, 'extract', self.apex_path, payload_dir]
+    extract_cmd = ['deapexer', '--debugfs_path', self.debugfs_path,
+                   '--fsckerofs_path', self.fsckerofs_path,
+                   '--blkid_path', self.blkid_path, 'extract',
+                   self.apex_path, payload_dir]
     common.RunAndCheckOutput(extract_cmd)
     assert os.path.exists(self.apex_path)
 
@@ -415,7 +431,7 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
   apex_zip = zipfile.ZipFile(apex_file, 'a', allowZip64=True)
   common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
   common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
-  common.ZipClose(apex_zip)
+  apex_zip.close()
 
   # 3. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
@@ -540,7 +556,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
           apex_file,
           payload_key=payload_key,
           container_key=container_key,
-          container_pw=None,
+          container_pw=container_pw,
           codename_to_api_level_map=codename_to_api_level_map,
           no_hashtree=no_hashtree,
           apk_keys=apk_keys,
@@ -553,7 +569,7 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
           apex_file,
           payload_key=payload_key,
           container_key=container_key,
-          container_pw=None,
+          container_pw=container_pw,
           codename_to_api_level_map=codename_to_api_level_map,
           no_hashtree=no_hashtree,
           apk_keys=apk_keys,
@@ -603,11 +619,13 @@ def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
   debugfs_path = "debugfs"
   if OPTIONS.search_path:
     debugfs_path = os.path.join(OPTIONS.search_path, "bin", "debugfs_static")
+
   deapexer = 'deapexer'
   if OPTIONS.search_path:
     deapexer_path = os.path.join(OPTIONS.search_path, "bin", "deapexer")
     if os.path.isfile(deapexer_path):
       deapexer = deapexer_path
+
   for apex_filename in os.listdir(target_dir):
     apex_filepath = os.path.join(target_dir, apex_filename)
     if not os.path.isfile(apex_filepath) or \

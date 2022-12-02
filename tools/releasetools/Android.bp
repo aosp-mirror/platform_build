@@ -37,6 +37,7 @@ python_defaults {
         "releasetools_build_image",
         "releasetools_build_super_image",
         "releasetools_common",
+        "libavbtool",
     ],
     required: [
         "care_map_generator",
@@ -94,10 +95,13 @@ python_defaults {
         "check_target_files_vintf.py",
     ],
     libs: [
+        "apex_manifest",
         "releasetools_common",
     ],
     required: [
         "checkvintf",
+        "deapexer",
+        "dump_apex_info",
     ],
 }
 

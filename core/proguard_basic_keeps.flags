@@ -2,6 +2,9 @@
 # that isn't explicitly part of the API
 -dontskipnonpubliclibraryclasses -dontskipnonpubliclibraryclassmembers
 
+# Preserve line number information for debugging stack traces.
+-keepattributes SourceFile,LineNumberTable
+
 # Annotations are implemented as attributes, so we have to explicitly keep them.
 # Keep all runtime-visible annotations like RuntimeVisibleParameterAnnotations
 # and RuntimeVisibleTypeAnnotations, as well as associated defaults.
@@ -53,7 +56,7 @@
 # -keep class * extends android.app.BackupAgent
 
 # Parcelable CREATORs must be kept for Parcelable functionality
--keep class * implements android.os.Parcelable {
+-keepclassmembers class * implements android.os.Parcelable {
   public static final ** CREATOR;
 }
 

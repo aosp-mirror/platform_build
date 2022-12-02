@@ -70,6 +70,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.tethering:framework-connectivity-t \
     com.android.tethering:framework-tethering \
     com.android.uwb:framework-uwb \
+    com.android.virt:framework-virtualization \
     com.android.wifi:framework-wifi \
 
 # List of system_server classpath jars delivered via apex.
@@ -82,6 +83,7 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.art:service-art \
     com.android.media:service-media-s \
     com.android.permission:service-permission \
+    com.android.rkpd:service-rkp \
 
 # Use $(wildcard) to avoid referencing the profile in thin manifests that don't have the
 # art project.
@@ -112,3 +114,5 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.image-dex2oat-Xmx=64m \
     dalvik.vm.dex2oat-Xms=64m \
     dalvik.vm.dex2oat-Xmx=512m \
+
+PRODUCT_ENABLE_UFFD_GC := false  # TODO(jiakaiz): Change this to "default".

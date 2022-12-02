@@ -165,6 +165,9 @@ $(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY,VB 1.0 and related variables are no 
 $(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY_FEC,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var PRODUCT_SUPPORTS_BOOT_SIGNER,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var PRODUCT_VERITY_SIGNING_KEY,VB 1.0 and related variables are no longer supported)
+$(KATI_obsolete_var BOARD_PREBUILT_PVMFWIMAGE,pvmfw.bin is now built in AOSP and custom versions are no longer supported)
+$(KATI_obsolete_var BOARD_BUILD_SYSTEM_ROOT_IMAGE)
+
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
@@ -611,7 +614,7 @@ TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/make/tools/fat16copy.py
-CHECK_ELF_FILE := build/make/tools/check_elf_file.py
+CHECK_ELF_FILE := $(HOST_OUT_EXECUTABLES)/check_elf_file$(HOST_EXECUTABLE_SUFFIX)
 LPMAKE := $(HOST_OUT_EXECUTABLES)/lpmake$(HOST_EXECUTABLE_SUFFIX)
 ADD_IMG_TO_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/add_img_to_target_files$(HOST_EXECUTABLE_SUFFIX)
 BUILD_IMAGE := $(HOST_OUT_EXECUTABLES)/build_image$(HOST_EXECUTABLE_SUFFIX)
@@ -692,6 +695,14 @@ $(foreach req,$(requirements),$(eval \
 PRODUCT_FULL_TREBLE_OVERRIDE ?=
 $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
 
+ifneq ($(PRODUCT_SEPOLICY_SPLIT),true)
+# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
+# letting upstream know it's important to you, we may do cleanup which breaks this
+# significantly. Please let us know if you are changing this.
+# TODO(b/257176017) - unsplit sepolicy is no longer supported
+PRODUCT_SEPOLICY_SPLIT := true
+endif
+
 # TODO(b/114488870): disallow PRODUCT_FULL_TREBLE_OVERRIDE from being used.
 .KATI_READONLY := \
     PRODUCT_FULL_TREBLE_OVERRIDE \
@@ -713,8 +724,13 @@ ifeq ($(PRODUCT_FULL_TREBLE),true)
 endif
 
 # Starting in Android U, non-VNDK devices not supported
+# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
+# letting upstream know it's important to you, we may do cleanup which breaks this
+# significantly. Please let us know if you are changing this.
 ifndef BOARD_VNDK_VERSION
+# READ WARNING - DO NOT CHANGE
 BOARD_VNDK_VERSION := current
+# READ WARNING - DO NOT CHANGE
 endif
 
 ifdef PRODUCT_PRODUCT_VNDK_VERSION
@@ -866,9 +882,6 @@ ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
 endif
 
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
-    ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-        $(error BOARD_BUILD_SYSTEM_ROOT_IMAGE cannot be true for devices with dynamic partitions)
-    endif
     ifneq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
         $(error PRODUCT_USE_DYNAMIC_PARTITION_SIZE must be true for devices with dynamic partitions)
     endif
@@ -1048,14 +1061,6 @@ endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 # hiddenapi-index.csv.
 BOARD_PREBUILT_HIDDENAPI_DIR ?=
 .KATI_READONLY := BOARD_PREBUILT_HIDDENAPI_DIR
-
-ifdef USE_HOST_MUSL
-  ifneq (,$(or $(BUILD_BROKEN_USES_BUILD_HOST_EXECUTABLE),\
-               $(BUILD_BROKEN_USES_BUILD_HOST_SHARED_LIBRARY),\
-               $(BUILD_BROKEN_USES_BUILD_HOST_STATIC_LIBRARY)))
-    $(error USE_HOST_MUSL can't be set when native host builds are enabled in Make with BUILD_BROKEN_USES_BUILD_HOST_*)
-  endif
-endif
 
 # ###############################################################
 # Set up final options.

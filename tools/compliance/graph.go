@@ -58,13 +58,11 @@ type LicenseGraph struct {
 	/// (guarded by mu)
 	targets map[string]*TargetNode
 
-	// wgBU becomes non-nil when the bottom-up resolve begins and reaches 0
-	// (i.e. Wait() proceeds) when the bottom-up resolve completes. (guarded by mu)
-	wgBU *sync.WaitGroup
+	// onceBottomUp makes sure the bottom-up resolve walk only happens one time.
+	onceBottomUp sync.Once
 
-	// wgTD becomes non-nil when the top-down resolve begins and reaches 0 (i.e. Wait()
-	// proceeds) when the top-down resolve completes. (guarded by mu)
-	wgTD *sync.WaitGroup
+	// onceTopDown makes sure the top-down resolve walk only happens one time.
+	onceTopDown sync.Once
 
 	// shippedNodes caches the results of a full walk of nodes identifying targets
 	// distributed either directly or as derivative works. (creation guarded by mu)
@@ -139,6 +137,24 @@ func (e *TargetEdge) Annotations() TargetEdgeAnnotations {
 	return e.annotations
 }
 
+// IsRuntimeDependency returns true for edges representing shared libraries
+// linked dynamically at runtime.
+func (e *TargetEdge) IsRuntimeDependency() bool {
+	return edgeIsDynamicLink(e)
+}
+
+// IsDerivation returns true for edges where the target is a derivative
+// work of dependency.
+func (e *TargetEdge) IsDerivation() bool {
+	return edgeIsDerivation(e)
+}
+
+// IsBuildTool returns true for edges where the target is built
+// by dependency.
+func (e *TargetEdge) IsBuildTool() bool {
+	return !edgeIsDerivation(e) && !edgeIsDynamicLink(e)
+}
+
 // String returns a human-readable string representation of the edge.
 func (e *TargetEdge) String() string {
 	return fmt.Sprintf("%s -[%s]> %s", e.target.name, strings.Join(e.annotations.AsList(), ", "), e.dependency.name)
@@ -186,6 +202,11 @@ func (s TargetEdgePathSegment) Target() *TargetNode {
 // Dependency builds without Target, but Target needs Dependency to build.
 func (s TargetEdgePathSegment) Dependency() *TargetNode {
 	return s.edge.dependency
+}
+
+// Edge describes the target edge.
+func (s TargetEdgePathSegment) Edge() *TargetEdge {
+	return s.edge
 }
 
 // Annotations describes the type of edge by the set of annotations attached to
@@ -300,21 +321,9 @@ func (tn *TargetNode) PackageName() string {
 	return tn.proto.GetPackageName()
 }
 
-// ModuleTypes returns the list of module types implementing the target.
-// (unordered)
-//
-// In an ideal world, only 1 module type would implement each target, but the
-// interactions between Soong and Make for host versus product and for a
-// variety of architectures sometimes causes multiple module types per target
-// (often a regular build target and a prebuilt.)
-func (tn *TargetNode) ModuleTypes() []string {
-	return append([]string{}, tn.proto.ModuleTypes...)
-}
-
-// ModuleClasses returns the list of module classes implementing the target.
-// (unordered)
-func (tn *TargetNode) ModuleClasses() []string {
-	return append([]string{}, tn.proto.ModuleClasses...)
+// ModuleName returns the module name of the target.
+func (tn *TargetNode) ModuleName() string {
+	return tn.proto.GetModuleName()
 }
 
 // Projects returns the projects defining the target node. (unordered)
@@ -324,14 +333,6 @@ func (tn *TargetNode) ModuleClasses() []string {
 // product means a module is sometimes defined more than once.
 func (tn *TargetNode) Projects() []string {
 	return append([]string{}, tn.proto.Projects...)
-}
-
-// LicenseKinds returns the list of license kind names for the module or
-// target. (unordered)
-//
-// e.g. SPDX-license-identifier-MIT or legacy_proprietary
-func (tn *TargetNode) LicenseKinds() []string {
-	return append([]string{}, tn.proto.LicenseKinds...)
 }
 
 // LicenseConditions returns a copy of the set of license conditions

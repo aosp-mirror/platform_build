@@ -135,15 +135,17 @@ ifneq (,$(findstring Darwin,$(UNAME)))
   HOST_OS := darwin
 endif
 
-HOST_OS_EXTRA := $(shell uname -rsm)
-ifeq ($(HOST_OS),linux)
-  ifneq ($(wildcard /etc/os-release),)
-    HOST_OS_EXTRA += $(shell source /etc/os-release; echo $$PRETTY_NAME)
+ifeq ($(CALLED_FROM_SETUP),true)
+  HOST_OS_EXTRA := $(shell uname -rsm)
+  ifeq ($(HOST_OS),linux)
+    ifneq ($(wildcard /etc/os-release),)
+      HOST_OS_EXTRA += $(shell source /etc/os-release; echo $$PRETTY_NAME)
+    endif
+  else ifeq ($(HOST_OS),darwin)
+    HOST_OS_EXTRA += $(shell sw_vers -productVersion)
   endif
-else ifeq ($(HOST_OS),darwin)
-  HOST_OS_EXTRA += $(shell sw_vers -productVersion)
+  HOST_OS_EXTRA := $(subst $(space),-,$(HOST_OS_EXTRA))
 endif
-HOST_OS_EXTRA := $(subst $(space),-,$(HOST_OS_EXTRA))
 
 # BUILD_OS is the real host doing the build.
 BUILD_OS := $(HOST_OS)
