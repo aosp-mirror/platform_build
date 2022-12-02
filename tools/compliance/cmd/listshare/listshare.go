@@ -149,6 +149,9 @@ func listShare(stdout, stderr io.Writer, rootFS fs.FS, files ...string) error {
 	// Group the resolutions by project.
 	presolution := make(map[string]compliance.LicenseConditionSet)
 	for _, target := range shareSource.AttachesTo() {
+		if shareSource.IsPureAggregate(target) && !target.LicenseConditions().MatchesAnySet(compliance.ImpliesShared) {
+			continue
+		}
 		rl := shareSource.Resolutions(target)
 		sort.Sort(rl)
 		for _, r := range rl {

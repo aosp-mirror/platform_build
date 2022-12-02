@@ -15,7 +15,6 @@
 package compliance
 
 import (
-	"bufio"
 	"crypto/md5"
 	"fmt"
 	"io"
@@ -25,16 +24,11 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-)
 
-const (
-	noProjectName = "\u2205"
+	"android/soong/tools/compliance/projectmetadata"
 )
 
 var (
-	nameRegexp         = regexp.MustCompile(`^\s*name\s*:\s*"(.*)"\s*$`)
-	descRegexp         = regexp.MustCompile(`^\s*description\s*:\s*"(.*)"\s*$`)
-	versionRegexp      = regexp.MustCompile(`^\s*version\s*:\s*"(.*)"\s*$`)
 	licensesPathRegexp = regexp.MustCompile(`licen[cs]es?/`)
 )
 
@@ -43,6 +37,8 @@ var (
 type NoticeIndex struct {
 	// lg identifies the license graph to which the index applies.
 	lg *LicenseGraph
+	// pmix indexes project metadata
+	pmix *projectmetadata.Index
 	// rs identifies the set of resolutions upon which the index is based.
 	rs ResolutionSet
 	// shipped identifies the set of target nodes shipped directly or as derivative works.
@@ -75,6 +71,7 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 	}
 	ni := &NoticeIndex{
 		lg:             lg,
+		pmix:           projectmetadata.NewIndex(rootFS),
 		rs:             rs,
 		shipped:        ShippedNodes(lg),
 		rootFS:         rootFS,
@@ -110,9 +107,12 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 		return hashes, nil
 	}
 
-	link := func(tn *TargetNode, hashes map[hash]struct{}, installPaths []string) {
+	link := func(tn *TargetNode, hashes map[hash]struct{}, installPaths []string) error {
 		for h := range hashes {
-			libName := ni.getLibName(tn, h)
+			libName, err := ni.getLibName(tn, h)
+			if err != nil {
+				return err
+			}
 			if _, ok := ni.libHash[libName]; !ok {
 				ni.libHash[libName] = make(map[hash]struct{})
 			}
@@ -145,6 +145,11 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 				}
 			}
 		}
+		return nil
+	}
+
+	cacheMetadata := func(tn *TargetNode) {
+		ni.pmix.MetadataForProjects(tn.Projects()...)
 	}
 
 	// returns error from walk below.
@@ -157,13 +162,17 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 		if !ni.shipped.Contains(tn) {
 			return false
 		}
+		go cacheMetadata(tn)
 		installPaths := getInstallPaths(tn, path)
 		var hashes map[hash]struct{}
 		hashes, err = index(tn)
 		if err != nil {
 			return false
 		}
-		link(tn, hashes, installPaths)
+		err = link(tn, hashes, installPaths)
+		if err != nil {
+			return false
+		}
 		if tn.IsContainer() {
 			return true
 		}
@@ -173,7 +182,10 @@ func IndexLicenseTexts(rootFS fs.FS, lg *LicenseGraph, rs ResolutionSet) (*Notic
 			if err != nil {
 				return false
 			}
-			link(r.actsOn, hashes, installPaths)
+			err = link(r.actsOn, hashes, installPaths)
+			if err != nil {
+				return false
+			}
 		}
 		return false
 	})
@@ -214,12 +226,18 @@ func (ni *NoticeIndex) Hashes() chan hash {
 		close(c)
 	}()
 	return c
+
 }
 
-// InputNoticeFiles returns the list of files that were hashed during IndexLicenseTexts.
-func (ni *NoticeIndex) InputNoticeFiles() []string {
-	files := append([]string(nil), ni.files...)
-	sort.Strings(files)
+// InputFiles returns the complete list of files read during indexing.
+func (ni *NoticeIndex) InputFiles() []string {
+	projectMeta := ni.pmix.AllMetadataFiles()
+	files := make([]string, 0, len(ni.files) + len(ni.lg.targets) + len(projectMeta))
+	files = append(files, ni.files...)
+	for f := range ni.lg.targets {
+		files = append(files, f)
+	}
+	files = append(files, projectMeta...)
 	return files
 }
 
@@ -308,15 +326,18 @@ func (ni *NoticeIndex) HashText(h hash) []byte {
 }
 
 // getLibName returns the name of the library associated with `noticeFor`.
-func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) string {
+func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) (string, error) {
 	for _, text := range noticeFor.LicenseTexts() {
 		if !strings.Contains(text, ":") {
 			if ni.hash[text].key != h.key {
 				continue
 			}
-			ln := ni.checkMetadataForLicenseText(noticeFor, text)
+			ln, err := ni.checkMetadataForLicenseText(noticeFor, text)
+			if err != nil {
+				return "", err
+			}
 			if len(ln) > 0 {
-				return ln
+				return ln, nil
 			}
 			continue
 		}
@@ -331,17 +352,20 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) string {
 		if err != nil {
 			continue
 		}
-		return ln
+		return ln, nil
 	}
 	// use name from METADATA if available
-	ln := ni.checkMetadata(noticeFor)
+	ln, err := ni.checkMetadata(noticeFor)
+	if err != nil {
+		return "", err
+	}
 	if len(ln) > 0 {
-		return ln
+		return ln, nil
 	}
 	// use package_name: from license{} module if available
 	pn := noticeFor.PackageName()
 	if len(pn) > 0 {
-		return pn
+		return pn, nil
 	}
 	for _, p := range noticeFor.Projects() {
 		if strings.HasPrefix(p, "prebuilts/") {
@@ -360,18 +384,17 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) string {
 						continue
 					}
 				}
-				for r, prefix := range SafePrebuiltPrefixes {
-					match := r.FindString(licenseText)
+				for _, safePrebuiltPrefix := range safePrebuiltPrefixes {
+					match := safePrebuiltPrefix.re.FindString(licenseText)
 					if len(match) == 0 {
 						continue
 					}
-					strip := SafePathPrefixes[prefix]
-					if strip {
+					if safePrebuiltPrefix.strip {
 						// strip entire prefix
 						match = licenseText[len(match):]
 					} else {
 						// strip from prebuilts/ until safe prefix
-						match = licenseText[len(match)-len(prefix):]
+						match = licenseText[len(match)-len(safePrebuiltPrefix.prefix):]
 					}
 					// remove LICENSE or NOTICE or other filename
 					li := strings.LastIndex(match, "/")
@@ -386,17 +409,17 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) string {
 							match = match[:li]
 						}
 					}
-					return match
+					return match, nil
 				}
 				break
 			}
 		}
-		for prefix, strip := range SafePathPrefixes {
-			if strings.HasPrefix(p, prefix) {
-				if strip {
-					return p[len(prefix):]
+		for _, safePathPrefix := range safePathPrefixes {
+			if strings.HasPrefix(p, safePathPrefix.prefix) {
+				if safePathPrefix.strip {
+					return p[len(safePathPrefix.prefix):], nil
 				} else {
-					return p
+					return p, nil
 				}
 			}
 		}
@@ -411,35 +434,26 @@ func (ni *NoticeIndex) getLibName(noticeFor *TargetNode, h hash) string {
 	if fi > 0 {
 		n = n[:fi]
 	}
-	return n
+	return n, nil
 }
 
 // checkMetadata tries to look up a library name from a METADATA file associated with `noticeFor`.
-func (ni *NoticeIndex) checkMetadata(noticeFor *TargetNode) string {
-	for _, p := range noticeFor.Projects() {
-		if name, ok := ni.projectName[p]; ok {
-			if name == noProjectName {
-				continue
-			}
-			return name
-		}
-		name, err := ni.checkMetadataFile(filepath.Join(p, "METADATA"))
-		if err != nil {
-			ni.projectName[p] = noProjectName
-			continue
-		}
-		if len(name) == 0 {
-			ni.projectName[p] = noProjectName
-			continue
-		}
-		ni.projectName[p] = name
-		return name
+func (ni *NoticeIndex) checkMetadata(noticeFor *TargetNode) (string, error) {
+	pms, err := ni.pmix.MetadataForProjects(noticeFor.Projects()...)
+	if err != nil {
+		return "", err
 	}
-	return ""
+	for _, pm := range pms {
+		name := pm.VersionedName()
+		if name != "" {
+			return name, nil
+		}
+	}
+	return "", nil
 }
 
 // checkMetadataForLicenseText
-func (ni *NoticeIndex) checkMetadataForLicenseText(noticeFor *TargetNode, licenseText string) string {
+func (ni *NoticeIndex) checkMetadataForLicenseText(noticeFor *TargetNode, licenseText string) (string, error) {
 	p := ""
 	for _, proj := range noticeFor.Projects() {
 		if strings.HasPrefix(licenseText, proj) {
@@ -457,79 +471,17 @@ func (ni *NoticeIndex) checkMetadataForLicenseText(noticeFor *TargetNode, licens
 				p = filepath.Dir(p)
 				continue
 			}
-			return ""
+			return "", nil
 		}
 	}
-	if name, ok := ni.projectName[p]; ok {
-		if name == noProjectName {
-			return ""
-		}
-		return name
-	}
-	name, err := ni.checkMetadataFile(filepath.Join(p, "METADATA"))
-	if err == nil && len(name) > 0 {
-		ni.projectName[p] = name
-		return name
-	}
-	ni.projectName[p] = noProjectName
-	return ""
-}
-
-// checkMetadataFile tries to look up a library name from a METADATA file at `path`.
-func (ni *NoticeIndex) checkMetadataFile(path string) (string, error) {
-	f, err := ni.rootFS.Open(path)
+	pms, err := ni.pmix.MetadataForProjects(p)
 	if err != nil {
 		return "", err
 	}
-	name := ""
-	description := ""
-	version := ""
-	s := bufio.NewScanner(f)
-	for s.Scan() {
-		line := s.Text()
-		m := nameRegexp.FindStringSubmatch(line)
-		if m != nil {
-			if 1 < len(m) && m[1] != "" {
-				name = m[1]
-			}
-			if version != "" {
-				break
-			}
-			continue
-		}
-		m = versionRegexp.FindStringSubmatch(line)
-		if m != nil {
-			if 1 < len(m) && m[1] != "" {
-				version = m[1]
-			}
-			if name != "" {
-				break
-			}
-			continue
-		}
-		m = descRegexp.FindStringSubmatch(line)
-		if m != nil {
-			if 1 < len(m) && m[1] != "" {
-				description = m[1]
-			}
-		}
+	if pms == nil {
+		return "", nil
 	}
-	_ = s.Err()
-	_ = f.Close()
-	if name != "" {
-		if version != "" {
-			if version[0] == 'v' || version[0] == 'V' {
-				return name + "_" + version, nil
-			} else {
-				return name + "_v_" + version, nil
-			}
-		}
-		return name, nil
-	}
-	if description != "" {
-		return description, nil
-	}
-	return "", nil
+	return pms[0].VersionedName(), nil
 }
 
 // addText reads and indexes the content of a license text file.

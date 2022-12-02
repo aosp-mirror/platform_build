@@ -23,7 +23,7 @@ import (
 type LicenseCondition uint16
 
 // LicenseConditionMask is a bitmask for the recognized license conditions.
-const LicenseConditionMask = LicenseCondition(0x3ff)
+const LicenseConditionMask = LicenseCondition(0x1ff)
 
 const (
 	// UnencumberedCondition identifies public domain or public domain-
@@ -41,36 +41,32 @@ const (
 	// RestrictedCondition identifies a license with requirement to share
 	// all source code linked to the module's source.
 	RestrictedCondition = LicenseCondition(0x0010)
-	// RestrictedClasspathExceptionCondition identifies RestrictedCondition
-	// waived for dynamic linking from independent modules.
-	RestrictedClasspathExceptionCondition = LicenseCondition(0x0020)
 	// WeaklyRestrictedCondition identifies a RestrictedCondition waived
 	// for dynamic linking.
-	WeaklyRestrictedCondition = LicenseCondition(0x0040)
+	WeaklyRestrictedCondition = LicenseCondition(0x0020)
 	// ProprietaryCondition identifies a license with source privacy
 	// requirements.
-	ProprietaryCondition = LicenseCondition(0x0080)
+	ProprietaryCondition = LicenseCondition(0x0040)
 	// ByExceptionOnly identifies a license where policy requires product
 	// counsel review prior to use.
-	ByExceptionOnlyCondition = LicenseCondition(0x0100)
+	ByExceptionOnlyCondition = LicenseCondition(0x0080)
 	// NotAllowedCondition identifies a license with onerous conditions
 	// where policy prohibits use.
-	NotAllowedCondition = LicenseCondition(0x0200)
+	NotAllowedCondition = LicenseCondition(0x0100)
 )
 
 var (
 	// RecognizedConditionNames maps condition strings to LicenseCondition.
 	RecognizedConditionNames = map[string]LicenseCondition{
-		"unencumbered":                        UnencumberedCondition,
-		"permissive":                          PermissiveCondition,
-		"notice":                              NoticeCondition,
-		"reciprocal":                          ReciprocalCondition,
-		"restricted":                          RestrictedCondition,
-		"restricted_with_classpath_exception": RestrictedClasspathExceptionCondition,
-		"restricted_allows_dynamic_linking":   WeaklyRestrictedCondition,
-		"proprietary":                         ProprietaryCondition,
-		"by_exception_only":                   ByExceptionOnlyCondition,
-		"not_allowed":                         NotAllowedCondition,
+		"unencumbered":                    UnencumberedCondition,
+		"permissive":                      PermissiveCondition,
+		"notice":                          NoticeCondition,
+		"reciprocal":                      ReciprocalCondition,
+		"restricted":                      RestrictedCondition,
+		"restricted_if_statically_linked": WeaklyRestrictedCondition,
+		"proprietary":                     ProprietaryCondition,
+		"by_exception_only":               ByExceptionOnlyCondition,
+		"not_allowed":                     NotAllowedCondition,
 	}
 )
 
@@ -87,10 +83,8 @@ func (lc LicenseCondition) Name() string {
 		return "reciprocal"
 	case RestrictedCondition:
 		return "restricted"
-	case RestrictedClasspathExceptionCondition:
-		return "restricted_with_classpath_exception"
 	case WeaklyRestrictedCondition:
-		return "restricted_allows_dynamic_linking"
+		return "restricted_if_statically_linked"
 	case ProprietaryCondition:
 		return "proprietary"
 	case ByExceptionOnlyCondition:
@@ -98,5 +92,5 @@ func (lc LicenseCondition) Name() string {
 	case NotAllowedCondition:
 		return "not_allowed"
 	}
-	panic(fmt.Errorf("unrecognized license condition: %04x", lc))
+	panic(fmt.Errorf("unrecognized license condition: %#v", lc))
 }

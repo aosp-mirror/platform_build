@@ -20,6 +20,8 @@ import (
 	"sort"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance/testfs"
 )
 
 func TestPolicy_edgeConditions(t *testing.T) {
@@ -47,8 +49,8 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			name: "fponlgpl",
 			edge: annotated{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			expectedDepActions: []string{
-				"apacheBin.meta_lic:lgplLib.meta_lic:restricted_allows_dynamic_linking",
-				"lgplLib.meta_lic:lgplLib.meta_lic:restricted_allows_dynamic_linking",
+				"apacheBin.meta_lic:lgplLib.meta_lic:restricted_if_statically_linked",
+				"lgplLib.meta_lic:lgplLib.meta_lic:restricted_if_statically_linked",
 			},
 			expectedTargetConditions: []string{},
 		},
@@ -83,21 +85,15 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			expectedTargetConditions: []string{},
 		},
 		{
-			name: "independentmodulestatic",
-			edge: annotated{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
-			expectedDepActions: []string{
-				"apacheBin.meta_lic:gplWithClasspathException.meta_lic:restricted_with_classpath_exception",
-				"gplWithClasspathException.meta_lic:gplWithClasspathException.meta_lic:restricted_with_classpath_exception",
-			},
+			name:                     "independentmodulestatic",
+			edge:                     annotated{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{},
 		},
 		{
-			name: "dependentmodule",
-			edge: annotated{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
-			expectedDepActions: []string{
-				"dependentModule.meta_lic:gplWithClasspathException.meta_lic:restricted_with_classpath_exception",
-				"gplWithClasspathException.meta_lic:gplWithClasspathException.meta_lic:restricted_with_classpath_exception",
-			},
+			name:                     "dependentmodule",
+			edge:                     annotated{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
+			expectedDepActions:       []string{},
 			expectedTargetConditions: []string{},
 		},
 
@@ -105,7 +101,7 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			name:                     "lgplonfp",
 			edge:                     annotated{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			expectedDepActions:       []string{},
-			expectedTargetConditions: []string{"lgplBin.meta_lic:restricted_allows_dynamic_linking"},
+			expectedTargetConditions: []string{"lgplBin.meta_lic:restricted_if_statically_linked"},
 		},
 		{
 			name:                     "lgplonfpdynamic",
@@ -166,13 +162,13 @@ func TestPolicy_edgeConditions(t *testing.T) {
 			name:                     "independentmodulereversestatic",
 			edge:                     annotated{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			expectedDepActions:       []string{},
-			expectedTargetConditions: []string{"gplWithClasspathException.meta_lic:restricted_with_classpath_exception"},
+			expectedTargetConditions: []string{},
 		},
 		{
 			name:                     "dependentmodulereverse",
 			edge:                     annotated{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			expectedDepActions:       []string{},
-			expectedTargetConditions: []string{"gplWithClasspathException.meta_lic:restricted_with_classpath_exception"},
+			expectedTargetConditions: []string{},
 		},
 		{
 			name: "ponr",
@@ -216,7 +212,7 @@ func TestPolicy_edgeConditions(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			fs := make(testFS)
+			fs := make(testfs.TestFS)
 			stderr := &bytes.Buffer{}
 			target := meta[tt.edge.target] + fmt.Sprintf("deps: {\n  file: \"%s\"\n", tt.edge.dep)
 			for _, ann := range tt.edge.annotations {
@@ -257,9 +253,9 @@ func TestPolicy_edgeConditions(t *testing.T) {
 						otherCs := otn.LicenseConditions()
 						depConditions |= otherCs
 					}
-					t.Logf("calculate target actions for edge=%s, dep conditions=%04x, treatAsAggregate=%v", edge.String(), depConditions, tt.treatAsAggregate)
+					t.Logf("calculate target actions for edge=%s, dep conditions=%#v %s, treatAsAggregate=%v", edge.String(), depConditions, depConditions, tt.treatAsAggregate)
 					csActual := depConditionsPropagatingToTarget(lg, edge, depConditions, tt.treatAsAggregate)
-					t.Logf("calculated target conditions as %04x{%s}", csActual, strings.Join(csActual.Names(), ", "))
+					t.Logf("calculated target conditions as %#v %s", csActual, csActual)
 					csExpected := NewLicenseConditionSet()
 					for _, triple := range tt.expectedDepActions {
 						fields := strings.Split(triple, ":")
@@ -269,9 +265,9 @@ func TestPolicy_edgeConditions(t *testing.T) {
 						}
 						csExpected |= expectedConditions
 					}
-					t.Logf("expected target conditions as %04x{%s}", csExpected, strings.Join(csExpected.Names(), ", "))
+					t.Logf("expected target conditions as %#v %s", csExpected, csExpected)
 					if csActual != csExpected {
-						t.Errorf("unexpected license conditions: got %04x, want %04x", csActual, csExpected)
+						t.Errorf("unexpected license conditions: got %#v, want %#v", csActual, csExpected)
 					}
 				})
 			}

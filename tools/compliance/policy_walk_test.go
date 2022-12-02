@@ -16,8 +16,21 @@ package compliance
 
 import (
 	"bytes"
+	"fmt"
+	"os"
+	"strings"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	// Change into the cmd directory before running the tests
+	// so they can find the testdata directory.
+	if err := os.Chdir("cmd"); err != nil {
+		fmt.Printf("failed to change to testdata directory: %s\n", err)
+		os.Exit(1)
+	}
+	os.Exit(m.Run())
+}
 
 func TestWalkResolutionsForCondition(t *testing.T) {
 	tests := []struct {
@@ -104,8 +117,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -115,10 +127,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "dependentmodulenotice",
@@ -129,7 +138,6 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			},
 			expectedResolutions: []res{
 				{"dependentModule.meta_lic", "dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -139,9 +147,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "lgplonfpnotice",
@@ -347,7 +353,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -357,9 +363,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "independentmodulereverserestrictedshipped",
@@ -368,9 +372,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "independentmodulereversestaticnotice",
@@ -380,9 +382,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -392,10 +393,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "dependentmodulereversenotice",
@@ -405,7 +403,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -415,9 +413,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "dependentmodulereverserestrictedshipped",
@@ -426,11 +422,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:      "ponrnotice",
@@ -716,8 +708,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			},
 			expectedActions: []act{
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -727,10 +718,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
-			expectedActions: []act{
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "dependentmodulenotice",
@@ -741,7 +729,6 @@ func TestWalkActionsForCondition(t *testing.T) {
 			},
 			expectedActions: []act{
 				{"dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -751,9 +738,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
-			expectedActions: []act{
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "lgplonfpnotice",
@@ -956,7 +941,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -966,9 +951,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
-			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "independentmodulereverserestrictedshipped",
@@ -977,9 +960,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
-			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "independentmodulereversestaticnotice",
@@ -989,9 +970,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -1001,10 +981,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
-			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "dependentmodulereversenotice",
@@ -1014,7 +991,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -1024,9 +1001,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
-			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "dependentmodulereverserestrictedshipped",
@@ -1035,10 +1010,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
-			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedActions: []act{},
 		},
 		{
 			name:      "ponrnotice",
@@ -1235,6 +1207,420 @@ func TestWalkActionsForCondition(t *testing.T) {
 			ResolveTopDownConditions(lg)
 			actualAs := WalkActionsForCondition(lg, tt.condition)
 			checkResolvesActions(lg, actualAs, expectedAs, t)
+		})
+	}
+}
+
+func TestWalkTopDownBreadthFirst(t *testing.T) {
+	tests := []struct {
+		name           string
+		roots          []string
+		edges          []annotated
+		expectedResult []string
+	}{
+		{
+			name:  "bin/bin1",
+			roots: []string{"bin/bin1.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+			},
+		},
+		{
+			name:  "bin/bin2",
+			roots: []string{"bin/bin2.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+		{
+			name:  "bin/bin3",
+			roots: []string{"bin/bin3.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/bin/bin3.meta_lic",
+			},
+		},
+		{
+			name:  "lib/liba.so",
+			roots: []string{"lib/liba.so.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/lib/liba.so.meta_lic",
+			},
+		},
+		{
+			name:  "lib/libb.so",
+			roots: []string{"lib/libb.so.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/lib/libb.so.meta_lic",
+			},
+		},
+		{
+			name:  "lib/libc.so",
+			roots: []string{"lib/libc.a.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/lib/libc.a.meta_lic",
+			},
+		},
+		{
+			name:  "lib/libd.so",
+			roots: []string{"lib/libd.so.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+		{
+			name:  "highest.apex",
+			roots: []string{"highest.apex.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/highest.apex.meta_lic",
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+		{
+			name:  "container.zip",
+			roots: []string{"container.zip.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/container.zip.meta_lic",
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+		{
+			name:  "application",
+			roots: []string{"application.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/application.meta_lic",
+				"testdata/notice/bin/bin3.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+			},
+		},
+		{
+			name:  "bin/bin1&lib/liba",
+			roots: []string{"bin/bin1.meta_lic","lib/liba.so.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+			},
+		},
+		{
+			name:  "bin/bin2&lib/libd",
+			roots: []string{"bin/bin2.meta_lic", "lib/libd.so.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+		{
+			name:  "application&bin/bin3",
+			roots: []string{"application.meta_lic", "bin/bin3.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/application.meta_lic",
+				"testdata/notice/bin/bin3.meta_lic",
+				"testdata/notice/bin/bin3.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+			},
+		},
+		{
+			name:  "highest.apex&container.zip",
+			roots: []string{"highest.apex.meta_lic", "container.zip.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/highest.apex.meta_lic",
+				"testdata/notice/container.zip.meta_lic",
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			stderr := &bytes.Buffer{}
+			actualOut := &bytes.Buffer{}
+
+			rootFiles := make([]string, 0, len(tt.roots))
+			for _, r := range tt.roots {
+				rootFiles = append(rootFiles, "testdata/notice/"+r)
+			}
+
+			lg, err := ReadLicenseGraph(GetFS(""), stderr, rootFiles)
+
+			if err != nil {
+				t.Errorf("unexpected test data error: got %s, want no error", err)
+				return
+			}
+
+			expectedRst := tt.expectedResult
+
+			WalkTopDownBreadthFirst(nil, lg, func(lg *LicenseGraph, tn *TargetNode, path TargetEdgePath) bool {
+				fmt.Fprintln(actualOut, tn.Name())
+				return true
+			})
+
+			actualRst := strings.Split(actualOut.String(), "\n")
+
+			if len(actualRst) > 0 {
+				actualRst = actualRst[:len(actualRst)-1]
+			}
+
+			t.Logf("actual nodes visited: %s", actualOut.String())
+			t.Logf("expected nodes visited: %s", strings.Join(expectedRst, "\n"))
+
+			if len(actualRst) != len(expectedRst) {
+				t.Errorf("WalkTopDownBreadthFirst: number of visited nodes is different: got %d, want %d", len(actualRst), len(expectedRst))
+			}
+
+			for i := 0; i < len(actualRst) && i < len(expectedRst); i++ {
+				if actualRst[i] != expectedRst[i] {
+					t.Errorf("WalkTopDownBreadthFirst: lines differ at index %d: got %q, want %q", i, actualRst[i], expectedRst[i])
+					break
+				}
+			}
+
+			if len(actualRst) < len(expectedRst) {
+				t.Errorf("WalkTopDownBreadthFirst: extra lines at %d: got %q, want nothing", len(actualRst), expectedRst[len(actualRst)])
+			}
+
+			if len(expectedRst) < len(actualRst) {
+				t.Errorf("WalkTopDownBreadthFirst: missing lines at %d: got nothing, want %q", len(expectedRst), actualRst[len(expectedRst)])
+			}
+		})
+	}
+}
+
+func TestWalkTopDownBreadthFirstWithoutDuplicates(t *testing.T) {
+	tests := []struct {
+		name           string
+		roots          []string
+		edges          []annotated
+		expectedResult []string
+	}{
+		{
+			name:  "bin/bin1",
+			roots: []string{"bin/bin1.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+			},
+		},
+		{
+			name:  "bin/bin2",
+			roots: []string{"bin/bin2.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+		{
+			name:  "bin/bin3",
+			roots: []string{"bin/bin3.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/bin/bin3.meta_lic",
+			},
+		},
+		{
+			name:  "lib/liba.so",
+			roots: []string{"lib/liba.so.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/lib/liba.so.meta_lic",
+			},
+		},
+		{
+			name:  "lib/libb.so",
+			roots: []string{"lib/libb.so.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/lib/libb.so.meta_lic",
+			},
+		},
+		{
+			name:  "lib/libc.so",
+			roots: []string{"lib/libc.a.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/lib/libc.a.meta_lic",
+			},
+		},
+		{
+			name:  "lib/libd.so",
+			roots: []string{"lib/libd.so.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+		{
+			name:  "highest.apex",
+			roots: []string{"highest.apex.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/highest.apex.meta_lic",
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+		{
+			name:  "container.zip",
+			roots: []string{"container.zip.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/container.zip.meta_lic",
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+		{
+			name:  "application",
+			roots: []string{"application.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/application.meta_lic",
+				"testdata/notice/bin/bin3.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+			},
+		},
+		{
+			name:  "bin/bin1&lib/liba",
+			roots: []string{"bin/bin1.meta_lic", "lib/liba.so.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+			},
+		},
+		{
+			name:  "bin/bin2&lib/libd",
+			roots: []string{"bin/bin2.meta_lic", "lib/libd.so.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+			},
+		},
+		{
+			name:  "application&bin/bin3",
+			roots: []string{"application.meta_lic", "bin/bin3.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/application.meta_lic",
+				"testdata/notice/bin/bin3.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+			},
+		},
+		{
+			name:  "highest.apex&container.zip",
+			roots: []string{"highest.apex.meta_lic", "container.zip.meta_lic"},
+			expectedResult: []string{
+				"testdata/notice/highest.apex.meta_lic",
+				"testdata/notice/container.zip.meta_lic",
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			stderr := &bytes.Buffer{}
+			actualOut := &bytes.Buffer{}
+
+			rootFiles := make([]string, 0, len(tt.roots))
+			for _, r := range tt.roots {
+				rootFiles = append(rootFiles, "testdata/notice/"+r)
+			}
+
+			lg, err := ReadLicenseGraph(GetFS(""), stderr, rootFiles)
+
+			if err != nil {
+				t.Errorf("unexpected test data error: got %s, want no error", err)
+				return
+			}
+
+			expectedRst := tt.expectedResult
+
+			//Keeping track of the visited nodes
+			//Only add to actualOut if not visited
+			visitedNodes := make(map[string]struct{})
+			WalkTopDownBreadthFirst(nil, lg, func(lg *LicenseGraph, tn *TargetNode, path TargetEdgePath) bool {
+				if _, alreadyVisited := visitedNodes[tn.Name()]; alreadyVisited {
+					return false
+				}
+				fmt.Fprintln(actualOut, tn.Name())
+				visitedNodes[tn.Name()] = struct{}{}
+				return true
+			})
+
+			actualRst := strings.Split(actualOut.String(), "\n")
+
+			if len(actualRst) > 0 {
+				actualRst = actualRst[:len(actualRst)-1]
+			}
+
+			t.Logf("actual nodes visited: %s", actualOut.String())
+			t.Logf("expected nodes visited: %s", strings.Join(expectedRst, "\n"))
+
+			if len(actualRst) != len(expectedRst) {
+				t.Errorf("WalkTopDownBreadthFirst: number of visited nodes is different: got %d, want %d", len(actualRst), len(expectedRst))
+			}
+
+			for i := 0; i < len(actualRst) && i < len(expectedRst); i++ {
+				if actualRst[i] != expectedRst[i] {
+					t.Errorf("WalkTopDownBreadthFirst: lines differ at index %d: got %q, want %q", i, actualRst[i], expectedRst[i])
+					break
+				}
+			}
+
+			if len(actualRst) < len(expectedRst) {
+				t.Errorf("WalkTopDownBreadthFirst: extra lines at %d: got %q, want nothing", len(actualRst), expectedRst[len(actualRst)])
+			}
+
+			if len(expectedRst) < len(actualRst) {
+				t.Errorf("WalkTopDownBreadthFirst: missing lines at %d: got nothing, want %q", len(expectedRst), actualRst[len(expectedRst)])
+			}
 		})
 	}
 }

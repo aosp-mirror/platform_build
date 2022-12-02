@@ -42,16 +42,24 @@ general_tests_host_shared_libs_zip := $(PRODUCT_OUT)/general-tests_host-shared-l
 
 # Copy kernel test modules to testcases directories
 include $(BUILD_SYSTEM)/tasks/tools/vts-kernel-tests.mk
-kernel_test_copy_pairs := \
-  $(call target-native-copy-pairs,$(kernel_test_modules),$(kernel_test_host_out))
-copy_kernel_tests := $(call copy-many-files,$(kernel_test_copy_pairs))
+ltp_copy_pairs := \
+  $(call target-native-copy-pairs,$(kernel_ltp_modules),$(kernel_ltp_host_out))
+kselftest_copy_pairs := \
+  $(call target-native-copy-pairs,$(kernel_kselftest_modules),$(kernel_kselftest_host_out))
+copy_ltp_tests := $(call copy-many-files,$(ltp_copy_pairs))
+copy_kselftest_tests := $(call copy-many-files,$(kselftest_copy_pairs))
 
-# PHONY target to be used to build and test `vts_kernel_tests` without building full vts
-.PHONY: vts_kernel_tests
-vts_kernel_tests: $(copy_kernel_tests)
+# PHONY target to be used to build and test `vts_ltp_tests` and `vts_kselftest_tests` without building full vts
+.PHONY: vts_kernel_ltp_tests
+vts_kernel_ltp_tests: $(copy_ltp_tests)
 
-$(general_tests_zip) : $(copy_kernel_tests)
-$(general_tests_zip) : PRIVATE_KERNEL_TEST_HOST_OUT := $(kernel_test_host_out)
+.PHONY: vts_kernel_kselftest_tests
+vts_kernel_kselftest_tests: $(copy_kselftest_tests)
+
+$(general_tests_zip) : $(copy_ltp_tests)
+$(general_tests_zip) : $(copy_kselftest_tests)
+$(general_tests_zip) : PRIVATE_KERNEL_LTP_HOST_OUT := $(kernel_ltp_host_out)
+$(general_tests_zip) : PRIVATE_KERNEL_KSELFTEST_HOST_OUT := $(kernel_kselftest_host_out)
 $(general_tests_zip) : PRIVATE_general_tests_list_zip := $(general_tests_list_zip)
 $(general_tests_zip) : .KATI_IMPLICIT_OUTPUTS := $(general_tests_list_zip) $(general_tests_configs_zip) $(general_tests_host_shared_libs_zip)
 $(general_tests_zip) : PRIVATE_TOOLS := $(general_tests_tools)
@@ -64,7 +72,8 @@ $(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(general_tests_tool
 	rm -f $@ $(PRIVATE_general_tests_list_zip)
 	mkdir -p $(PRIVATE_INTERMEDIATES_DIR) $(PRIVATE_INTERMEDIATES_DIR)/tools
 	echo $(sort $(COMPATIBILITY.general-tests.FILES)) | tr " " "\n" > $(PRIVATE_INTERMEDIATES_DIR)/list
-	find $(PRIVATE_KERNEL_TEST_HOST_OUT) >> $(PRIVATE_INTERMEDIATES_DIR)/list
+	find $(PRIVATE_KERNEL_LTP_HOST_OUT) >> $(PRIVATE_INTERMEDIATES_DIR)/list
+	find $(PRIVATE_KERNEL_KSELFTEST_HOST_OUT) >> $(PRIVATE_INTERMEDIATES_DIR)/list
 	grep $(HOST_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/host.list || true
 	grep $(TARGET_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/target.list || true
 	grep -e .*\\.config$$ $(PRIVATE_INTERMEDIATES_DIR)/host.list > $(PRIVATE_INTERMEDIATES_DIR)/host-test-configs.list || true

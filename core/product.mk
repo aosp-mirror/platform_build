@@ -356,19 +356,31 @@ _product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
 # This option is only meant to be set by compliance GSI targets.
 _product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 
-# If set, metadata files for the following artifacts will be generated.
-# - system/framework/*.jar
-# - system/framework/oat/<arch>/*.{oat,vdex,art}
-# - system/etc/boot-image.prof
-# - system/etc/dirty-image-objects
-# One fsverity metadata container file per one input file will be generated in
-# system.img, with a suffix ".fsv_meta". e.g. a container file for
-# "/system/framework/foo.jar" will be "system/framework/foo.jar.fsv_meta".
-_product_single_value_vars += PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
+# If set, fsverity metadata files will be generated for each files in the
+# allowlist, plus an manifest APK per partition. For example,
+# /system/framework/service.jar will come with service.jar.fsv_meta in the same
+# directory; the file information will also be included in
+# /system/etc/security/fsverity/BuildManifest.apk
+_product_single_value_vars += PRODUCT_FSVERITY_GENERATE_METADATA
 
 # If true, sets the default for MODULE_BUILD_FROM_SOURCE. This overrides
 # BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE but not an explicitly set value.
 _product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
+
+# If true, installs a full version of com.android.virt APEX.
+_product_single_value_vars += PRODUCT_AVF_ENABLED
+
+# Whether to use userfaultfd GC.
+# Possible values are:
+# - "default" or empty: both the build system and the runtime determine whether to use userfaultfd
+#   GC based on the vendor API level
+# - "true": forces the build system to use userfaultfd GC regardless of the vendor API level; the
+#   runtime determines whether to use userfaultfd GC based on the kernel support. Note that the
+#   device may have to re-compile everything on the first boot if the kernel doesn't support
+#   userfaultfd
+# - "false": disallows the build system and the runtime to use userfaultfd GC even if the device
+#   supports it
+_product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

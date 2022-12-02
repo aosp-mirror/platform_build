@@ -66,13 +66,14 @@ PRODUCT_PACKAGES += \
     com.android.os.statsd \
     com.android.permission \
     com.android.resolv \
+    com.android.rkpd \
     com.android.neuralnetworks \
     com.android.scheduling \
     com.android.sdkext \
-    com.android.sepolicy \
     com.android.tethering \
     com.android.tzdata \
     com.android.uwb \
+    com.android.virt \
     com.android.wifi \
     ContactsProvider \
     content \
@@ -240,6 +241,7 @@ PRODUCT_PACKAGES += \
     pppd \
     preinstalled-packages-platform.xml \
     privapp-permissions-platform.xml \
+    prng_seeder \
     racoon \
     recovery-persist \
     resize2fs \
@@ -376,7 +378,6 @@ PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
-    com.android.sepolicy.cert-debug.der \
     dmuserd \
     idlcli \
     init-debug.rc \

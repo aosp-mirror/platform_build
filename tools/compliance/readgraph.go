@@ -34,8 +34,15 @@ var (
 
 type globalFS struct{}
 
+var _ fs.FS = globalFS{}
+var _ fs.StatFS = globalFS{}
+
 func (s globalFS) Open(name string) (fs.File, error) {
 	return os.Open(name)
+}
+
+func (s globalFS) Stat(name string) (fs.FileInfo, error) {
+	return os.Stat(name)
 }
 
 var FS globalFS
@@ -198,6 +205,9 @@ type targetNode struct {
 
 	// resolution identifies the set of conditions resolved by acting on the target node.
 	resolution LicenseConditionSet
+
+	// pure indicates whether to treat the node as a pure aggregate (no internal linkage)
+	pure bool
 }
 
 // addDependencies converts the proto AnnotatedDependencies into `edges`

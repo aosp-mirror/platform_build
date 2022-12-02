@@ -1,0 +1,6 @@
+# Comments are allowed
+name: "1ptd"
+description: "First Party Test Data"
+third_party {
+    version: "1.0"
+}

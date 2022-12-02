@@ -29,30 +29,31 @@ var (
 		"toolchain": "toolchain",
 	}
 
-	// SafePathPrefixes maps the path prefixes presumed not to contain any
+	// safePathPrefixes maps the path prefixes presumed not to contain any
 	// proprietary or confidential pathnames to whether to strip the prefix
 	// from the path when used as the library name for notices.
-	SafePathPrefixes = map[string]bool{
-		"external/":    true,
-		"art/":         false,
-		"build/":       false,
-		"cts/":         false,
-		"dalvik/":      false,
-		"developers/":  false,
-		"development/": false,
-		"frameworks/":  false,
-		"packages/":    true,
-		"prebuilts/":   false,
-		"sdk/":         false,
-		"system/":      false,
-		"test/":        false,
-		"toolchain/":   false,
-		"tools/":       false,
+	safePathPrefixes = []safePathPrefixesType{
+		{"external/", true},
+		{"art/", false},
+		{"build/", false},
+		{"cts/", false},
+		{"dalvik/", false},
+		{"developers/", false},
+		{"development/", false},
+		{"frameworks/", false},
+		{"packages/", true},
+		{"prebuilts/module_sdk/", true},
+		{"prebuilts/", false},
+		{"sdk/", false},
+		{"system/", false},
+		{"test/", false},
+		{"toolchain/", false},
+		{"tools/", false},
 	}
 
-	// SafePrebuiltPrefixes maps the regular expression to match a prebuilt
+	// safePrebuiltPrefixes maps the regular expression to match a prebuilt
 	// containing the path of a safe prefix to the safe prefix.
-	SafePrebuiltPrefixes = make(map[*regexp.Regexp]string)
+	safePrebuiltPrefixes []safePrebuiltPrefixesType
 
 	// ImpliesUnencumbered lists the condition names representing an author attempt to disclaim copyright.
 	ImpliesUnencumbered = LicenseConditionSet(UnencumberedCondition)
@@ -62,14 +63,13 @@ var (
 
 	// ImpliesNotice lists the condition names implying a notice or attribution policy.
 	ImpliesNotice = LicenseConditionSet(UnencumberedCondition | PermissiveCondition | NoticeCondition | ReciprocalCondition |
-		RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition |
-		ProprietaryCondition | ByExceptionOnlyCondition)
+		RestrictedCondition | WeaklyRestrictedCondition | ProprietaryCondition | ByExceptionOnlyCondition)
 
 	// ImpliesReciprocal lists the condition names implying a local source-sharing policy.
 	ImpliesReciprocal = LicenseConditionSet(ReciprocalCondition)
 
 	// Restricted lists the condition names implying an infectious source-sharing policy.
-	ImpliesRestricted = LicenseConditionSet(RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition)
+	ImpliesRestricted = LicenseConditionSet(RestrictedCondition | WeaklyRestrictedCondition)
 
 	// ImpliesProprietary lists the condition names implying a confidentiality policy.
 	ImpliesProprietary = LicenseConditionSet(ProprietaryCondition)
@@ -81,8 +81,18 @@ var (
 	ImpliesPrivate = LicenseConditionSet(ProprietaryCondition)
 
 	// ImpliesShared lists the condition names implying a source-code sharing policy.
-	ImpliesShared = LicenseConditionSet(ReciprocalCondition | RestrictedCondition | RestrictedClasspathExceptionCondition | WeaklyRestrictedCondition)
+	ImpliesShared = LicenseConditionSet(ReciprocalCondition | RestrictedCondition | WeaklyRestrictedCondition)
 )
+
+type safePathPrefixesType struct {
+	prefix string
+	strip  bool
+}
+
+type safePrebuiltPrefixesType struct {
+	safePathPrefixesType
+	re *regexp.Regexp
+}
 
 var (
 	anyLgpl      = regexp.MustCompile(`^SPDX-license-identifier-LGPL.*`)
@@ -92,12 +102,13 @@ var (
 )
 
 func init() {
-	for prefix := range SafePathPrefixes {
-		if prefix == "prebuilts/" {
+	for _, safePathPrefix := range safePathPrefixes {
+		if strings.HasPrefix(safePathPrefix.prefix, "prebuilts/") {
 			continue
 		}
-		r := regexp.MustCompile("^prebuilts/[^ ]*/" + prefix)
-		SafePrebuiltPrefixes[r] = prefix
+		r := regexp.MustCompile("^prebuilts/(?:runtime/mainline/)?" + safePathPrefix.prefix)
+		safePrebuiltPrefixes = append(safePrebuiltPrefixes,
+			safePrebuiltPrefixesType{safePathPrefix, r})
 	}
 }
 
@@ -106,36 +117,6 @@ func init() {
 func LicenseConditionSetFromNames(tn *TargetNode, names ...string) LicenseConditionSet {
 	cs := NewLicenseConditionSet()
 	for _, name := range names {
-		if name == "restricted" {
-			if 0 == len(tn.LicenseKinds()) {
-				cs = cs.Plus(RestrictedCondition)
-				continue
-			}
-			hasLgpl := false
-			hasClasspath := false
-			hasGeneric := false
-			for _, kind := range tn.LicenseKinds() {
-				if strings.HasSuffix(kind, "-with-classpath-exception") {
-					cs = cs.Plus(RestrictedClasspathExceptionCondition)
-					hasClasspath = true
-				} else if anyLgpl.MatchString(kind) {
-					cs = cs.Plus(WeaklyRestrictedCondition)
-					hasLgpl = true
-				} else if versionedGpl.MatchString(kind) {
-					cs = cs.Plus(RestrictedCondition)
-				} else if genericGpl.MatchString(kind) {
-					hasGeneric = true
-				} else if kind == "legacy_restricted" || ccBySa.MatchString(kind) {
-					cs = cs.Plus(RestrictedCondition)
-				} else {
-					cs = cs.Plus(RestrictedCondition)
-				}
-			}
-			if hasGeneric && !hasLgpl && !hasClasspath {
-				cs = cs.Plus(RestrictedCondition)
-			}
-			continue
-		}
 		if lc, ok := RecognizedConditionNames[name]; ok {
 			cs |= LicenseConditionSet(lc)
 		}
@@ -202,9 +183,6 @@ func depConditionsPropagatingToTarget(lg *LicenseGraph, e *TargetEdge, depCondit
 	}
 
 	result |= depConditions & LicenseConditionSet(RestrictedCondition)
-	if 0 != (depConditions&LicenseConditionSet(RestrictedClasspathExceptionCondition)) && !edgeNodesAreIndependentModules(e) {
-		result |= LicenseConditionSet(RestrictedClasspathExceptionCondition)
-	}
 	return result
 }
 
@@ -241,9 +219,6 @@ func targetConditionsPropagatingToDep(lg *LicenseGraph, e *TargetEdge, targetCon
 		return result
 	}
 	result = result.Minus(WeaklyRestrictedCondition)
-	if edgeNodesAreIndependentModules(e) {
-		result = result.Minus(RestrictedClasspathExceptionCondition)
-	}
 	return result
 }
 
@@ -261,10 +236,7 @@ func conditionsAttachingAcrossEdge(lg *LicenseGraph, e *TargetEdge, universe Lic
 		return NewLicenseConditionSet()
 	}
 
-	result &= LicenseConditionSet(RestrictedCondition | RestrictedClasspathExceptionCondition)
-	if 0 != (result&LicenseConditionSet(RestrictedClasspathExceptionCondition)) && edgeNodesAreIndependentModules(e) {
-		result &= LicenseConditionSet(RestrictedCondition)
-	}
+	result &= LicenseConditionSet(RestrictedCondition)
 	return result
 }
 
@@ -280,10 +252,4 @@ func edgeIsDerivation(e *TargetEdge) bool {
 	isDynamic := e.annotations.HasAnnotation("dynamic")
 	isToolchain := e.annotations.HasAnnotation("toolchain")
 	return !isDynamic && !isToolchain
-}
-
-// edgeNodesAreIndependentModules returns true for edges where the target and
-// dependency are independent modules.
-func edgeNodesAreIndependentModules(e *TargetEdge) bool {
-	return e.target.PackageName() != e.dependency.PackageName()
 }

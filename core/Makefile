@@ -7,6 +7,7 @@ LOCAL_PATH := $(BUILD_SYSTEM)
 SYSTEM_NOTICE_DEPS :=
 VENDOR_NOTICE_DEPS :=
 UNMOUNTED_NOTICE_DEPS :=
+UNMOUNTED_NOTICE_VENDOR_DEPS :=
 ODM_NOTICE_DEPS :=
 OEM_NOTICE_DEPS :=
 PRODUCT_NOTICE_DEPS :=
@@ -546,6 +547,7 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR,$(if $(filter true,$(BOARD_USES_VENDOR_DLKMIMAGE)),$(TARGET_OUT_VENDOR_DLKM),$(TARGET_OUT_VENDOR)),vendor,modules.load,$(VENDOR_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-charger-load,$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,ODM,$(if $(filter true,$(BOARD_USES_ODM_DLKMIMAGE)),$(TARGET_OUT_ODM_DLKM),$(TARGET_OUT_ODM)),odm,modules.load,,$(kmd))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,SYSTEM,$(if $(filter true,$(BOARD_USES_SYSTEM_DLKMIMAGE)),$(TARGET_OUT_SYSTEM_DLKM),$(TARGET_OUT_SYSTEM)),system,modules.load,,$(kmd))) \
   $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-recovery-as-boot-load,$(kmd))),\
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,,$(kmd)))))
@@ -599,8 +601,10 @@ $(APKCERTS_FILE):
 	    $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
 	      $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),EXTERNAL,,$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@),\
 	      $(call _apkcerts_write_line,$(PACKAGES.$(p).STEM),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$(PACKAGES.$(p).PARTITION),$@))))
-	$(if $(filter true,$(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA)),\
-	  $(call _apkcerts_write_line,$(notdir $(basename $(FSVERITY_APK_OUT))),$(FSVERITY_APK_KEY_PATH).x509.pem,$(FSVERITY_APK_KEY_PATH).pk8,,system,$@))
+	$(if $(filter true,$(PRODUCT_FSVERITY_GENERATE_METADATA)),\
+	  $(call _apkcerts_write_line,BuildManifest,$(FSVERITY_APK_KEY_PATH).x509.pem,$(FSVERITY_APK_KEY_PATH).pk8,,system,$@) \
+	  $(if $(filter true,$(BUILDING_SYSTEM_EXT_IMAGE)),\
+            $(call _apkcerts_write_line,BuildManifestSystemExt,$(FSVERITY_APK_KEY_PATH).x509.pem,$(FSVERITY_APK_KEY_PATH).pk8,,system_ext,$@)))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
@@ -900,7 +904,7 @@ endif
 $(call declare-1p-container,$(INSTALLED_RAMDISK_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_RAMDISK_TARGET),$(INTERNAL_RAMDISK_FILE),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_RAMDISK_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_RAMDISK_TARGET)
 
 .PHONY: ramdisk-nodeps
 ramdisk-nodeps: $(MKBOOTFS) | $(COMPRESSION_COMMAND_DEPS)
@@ -935,6 +939,7 @@ ifdef my_installed_prebuilt_gki_apex
   my_apex_extracted_boot_image := $(ALL_MODULES.$(my_installed_prebuilt_gki_apex).EXTRACTED_BOOT_IMAGE)
   INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
   $(eval $(call copy-one-file,$(my_apex_extracted_boot_image),$(INSTALLED_BOOTIMAGE_TARGET)))
+  $(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
 
   INTERNAL_PREBUILT_BOOTIMAGE := $(my_apex_extracted_boot_image)
 
@@ -971,10 +976,8 @@ INTERNAL_BOOTIMAGE_ARGS := \
 
 # TODO(b/229701033): clean up BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK.
 ifneq ($(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK),true)
-  ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-    ifneq ($(BUILDING_INIT_BOOT_IMAGE),true)
-      INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
-    endif
+  ifneq ($(BUILDING_INIT_BOOT_IMAGE),true)
+    INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
   endif
 endif
 
@@ -985,9 +988,6 @@ endif
 endif
 
 INTERNAL_BOOTIMAGE_FILES := $(filter-out --%,$(INTERNAL_BOOTIMAGE_ARGS))
-
-# TODO(b/241346584) Remove this when BOARD_BUILD_SYSTEM_ROOT_IMAGE is deprecated
-INTERNAL_KERNEL_CMDLINE := $(strip $(INTERNAL_KERNEL_CMDLINE) buildvariant=$(TARGET_BUILD_VARIANT))
 
 # kernel cmdline/base/pagesize in boot.
 # - If using GKI, use GENERIC_KERNEL_CMDLINE. Remove kernel base and pagesize because they are
@@ -1094,10 +1094,10 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILE
 	$(call pretty,"Target boot image: $@")
 	$(call build_boot_board_avb_enabled,$@)
 
-$(call declare-1p-container,$(INSTALLED_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_BOOTIMAGE_FILES) $(INTERNAL_GKI_CERTIFICATE_DEPS),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
 
 .PHONY: bootimage-nodeps
 bootimage-nodeps: $(MKBOOTIMG) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)
@@ -1117,10 +1117,10 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(VBOOT_
 	$(call pretty,"Target boot image: $@")
 	$(call build_boot_supports_vboot,$@)
 
-$(call declare-1p-container,$(INSTALLED_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_BOOTIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
 
 .PHONY: bootimage-nodeps
 bootimage-nodeps: $(MKBOOTIMG) $(VBOOT_SIGNER) $(FUTILITY)
@@ -1139,10 +1139,10 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES)
 	$(call pretty,"Target boot image: $@")
 	$(call build_boot_novboot,$@)
 
-$(call declare-1p-container,$(INSTALLED_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_BOOTIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
 
 .PHONY: bootimage-nodeps
 bootimage-nodeps: $(MKBOOTIMG)
@@ -1169,10 +1169,10 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_BOOTIMAGE) $(AVBTOOL) $(BOARD
 	    --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
 	    $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
 
-$(call declare-1p-container,$(INSTALLED_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",bool)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_PREBUILT_BOOTIMAGE),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
 else
 $(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_BOOTIMAGE)
 	cp $(INTERNAL_PREBUILT_BOOTIMAGE) $@
@@ -1220,7 +1220,7 @@ $(INSTALLED_INIT_BOOT_IMAGE_TARGET):
 $(call declare-1p-target,$(INSTALLED_INIT_BOOT_IMAGE_TARGET),)
 endif
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
 
 else # BUILDING_INIT_BOOT_IMAGE is not true
 
@@ -1246,7 +1246,7 @@ $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(INTERNAL_PREBUILT_INIT_BOOT_IMAGE)
 $(call declare-1p-target,$(INSTALLED_INIT_BOOT_IMAGE_TARGET),)
 endif # BOARD_AVB_ENABLE
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_INIT_BOOT_IMAGE_TARGET)
 
 else # BOARD_PREBUILT_INIT_BOOT_IMAGE not defined
 INSTALLED_INIT_BOOT_IMAGE_TARGET :=
@@ -1533,7 +1533,6 @@ ifndef TARGET_BUILD_APPS
 # TARGET_OUT_NOTICE_FILES now that the notice files are gathered from
 # the src subdirectory.
 kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
-winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
 
 # Some targets get included under $(PRODUCT_OUT) for debug symbols or other
 # reasons--not to be flashed onto any device. Targets under these directories
@@ -1715,15 +1714,15 @@ endif
 
 endif  # TARGET_BUILD_APPS
 
-# The kernel isn't really a module, so to get its module file in there, we
-# make the target NOTICE files depend on this particular file too, which will
-# then be in the right directory for the find in combine-notice-files to work.
+# Presently none of the prebuilts etc. comply with policy to have a license text. Fake one here.
 $(eval $(call copy-one-file,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,$(kernel_notice_file)))
 
-# No matter where it gets copied from, a copied linux kernel is licensed under "GPL 2.0 only"
-$(eval $(call declare-copy-files-license-metadata,,:kernel,SPDX-license-identifier-GPL-2.0-only,notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,))
+ifneq (,$(strip $(INSTALLED_KERNEL_TARGET)))
+$(call declare-license-metadata,$(INSTALLED_KERNEL_TARGET),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
+endif
 
-$(eval $(call copy-one-file,$(BUILD_SYSTEM)/WINPTHREADS_COPYING,$(winpthreads_notice_file)))
+# No matter where it gets copied from, a copied linux kernel is licensed under "GPL 2.0 only"
+$(eval $(call declare-copy-files-license-metadata,,:kernel,SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,kernel))
 
 
 # #################################################################
@@ -1986,8 +1985,6 @@ $(if $(BOARD_AVB_ENABLE),\
         $(hide) echo "avb_system_dlkm_rollback_index_location=$(BOARD_SYSTEM_SYSTEM_DLKM_ROLLBACK_INDEX_LOCATION)" >> $(1)))
 $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
-$(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
-    $(hide) echo "system_root_image=true" >> $(1))
 $(if $(filter true,$(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK)),\
     $(hide) echo "gki_boot_image_without_ramdisk=true" >> $(1))
 $(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1)
@@ -2264,20 +2261,18 @@ endif
 #      (BOARD_USES_FULL_RECOVERY_IMAGE = true);
 #   b) We build a single image that contains boot and recovery both - no recovery image to install
 #      (BOARD_USES_RECOVERY_AS_BOOT = true);
-#   c) We mount the system image as / and therefore do not have a ramdisk in boot.img
-#      (BOARD_BUILD_SYSTEM_ROOT_IMAGE = true).
-#   d) We include the recovery DTBO image within recovery - not needing the resource file as we
+#   c) We include the recovery DTBO image within recovery - not needing the resource file as we
 #      do bsdiff because boot and recovery will contain different number of entries
 #      (BOARD_INCLUDE_RECOVERY_DTBO = true).
-#   e) We include the recovery ACPIO image within recovery - not needing the resource file as we
+#   d) We include the recovery ACPIO image within recovery - not needing the resource file as we
 #      do bsdiff because boot and recovery will contain different number of entries
 #      (BOARD_INCLUDE_RECOVERY_ACPIO = true).
-#   f) We build a single image that contains vendor_boot and recovery both - no recovery image to
+#   e) We build a single image that contains vendor_boot and recovery both - no recovery image to
 #      install
 #      (BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT = true).
 
 ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_USES_RECOVERY_AS_BOOT) \
-  $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO) $(BOARD_INCLUDE_RECOVERY_ACPIO) \
+  $(BOARD_INCLUDE_RECOVERY_DTBO) $(BOARD_INCLUDE_RECOVERY_ACPIO) \
   $(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT)))
 # Named '.dat' so we don't attempt to use imgdiff for patching it.
 RECOVERY_RESOURCE_ZIP := $(TARGET_OUT_VENDOR)/etc/recovery-resource.dat
@@ -2399,8 +2394,7 @@ $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP): $(MKBOOTFS) $(COMPRESSION_COMMAND_
 	# Use rsync because "cp -Rf" fails to overwrite broken symlinks on Mac.
 	rsync -a --exclude=sdcard $(IGNORE_RECOVERY_SEPOLICY) $(IGNORE_CACHE_LINK) $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
 	# Modifying ramdisk contents...
-	$(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),, \
-	  ln -sf /system/bin/init $(TARGET_RECOVERY_ROOT_OUT)/init)
+	ln -sf /system/bin/init $(TARGET_RECOVERY_ROOT_OUT)/init
 	# Removes $(TARGET_RECOVERY_ROOT_OUT)/init*.rc EXCEPT init.recovery*.rc.
 	find $(TARGET_RECOVERY_ROOT_OUT) -maxdepth 1 -name 'init*.rc' -type f -not -name "init.recovery.*.rc" | xargs rm -f
 	cp $(TARGET_ROOT_OUT)/init.recovery.*.rc $(TARGET_RECOVERY_ROOT_OUT)/ 2> /dev/null || true # Ignore error when the src file doesn't exist.
@@ -2471,10 +2465,10 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(recoveryimage-deps)
 	$(call pretty,"Target boot image from recovery: $@")
 	$(call build-recoveryimage-target, $@, $(PRODUCT_OUT)/$(subst .img,,$(subst boot,kernel,$(notdir $@))))
 
-$(call declare-1p-container,$(INSTALLED_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",bool)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(recoveryimage-deps),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_BOOTIMAGE_TARGET)
 endif # BOARD_USES_RECOVERY_AS_BOOT
 
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(recoveryimage-deps)
@@ -2492,7 +2486,7 @@ endif
 $(call declare-1p-container,$(INSTALLED_RECOVERYIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_RECOVERYIMAGE_TARGET),$(recoveryimage-deps),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_RECOVERYIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_RECOVERYIMAGE_TARGET)
 
 .PHONY: recoveryimage-nodeps
 recoveryimage-nodeps:
@@ -2578,7 +2572,7 @@ $(INSTALLED_DEBUG_RAMDISK_TARGET): $(MKBOOTFS) | $(COMPRESSION_COMMAND_DEPS)
 $(call declare-1p-container,$(INSTALLED_DEBUG_RAMDISK_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_DEBUG_RAMDISK_TARGET),$(INSTALLED_RAMDISK_TARGET),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_DEBUG_RAMDISK_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_DEBUG_RAMDISK_TARGET)
 
 .PHONY: ramdisk_debug-nodeps
 ramdisk_debug-nodeps: $(MKBOOTFS) | $(COMPRESSION_COMMAND_DEPS)
@@ -2642,10 +2636,10 @@ $(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) 
 	$(call pretty,"Target boot debug image: $@")
 	$(call build-debug-bootimage-target, $@)
 
-$(call declare-1p-container,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),)
+$(call declare-container-license-metadata,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
 $(call declare-container-license-deps,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(INSTALLED_BOOTIMAGE_TARGET),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
 
 .PHONY: bootimage_debug-nodeps
 bootimage_debug-nodeps: $(MKBOOTIMG) $(AVBTOOL)
@@ -2798,7 +2792,7 @@ $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET): $(MKBOOTFS) | $(COMPRESSION_COMMAND_DE
 $(call declare-1p-container,$(INSTALLED_TEST_HARNESS_RAMDISK_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_TEST_HARNESS_RAMDISK_TARGET),$(INTERNAL_TEST_HARNESS_RAMDISK_SRC_DEPS),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET)
 
 .PHONY: ramdisk_test_harness-nodeps
 ramdisk_test_harness-nodeps: $(MKBOOTFS) | $(COMPRESSION_COMMAND_DEPS)
@@ -2847,7 +2841,7 @@ $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_DEBUG_BOOTI
 $(call declare-1p-container,$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET),$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET)
 
 .PHONY: bootimage_test_harness-nodeps
 bootimage_test_harness-nodeps: $(MKBOOTIMG) $(AVBTOOL)
@@ -2933,21 +2927,26 @@ $1
 endef
 
 
-# -----------------------------------------------------------------
-# system image
-
 # FSVerity metadata generation
 # Generate fsverity metadata files (.fsv_meta) and build manifest
-# (system/etc/security/fsverity/BuildManifest.apk) BEFORE filtering systemimage files below
-ifeq ($(PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA),true)
+# (<partition>/etc/security/fsverity/BuildManifest<suffix>.apk) BEFORE filtering systemimage,
+# vendorimage, odmimage, productimage files below.
+ifeq ($(PRODUCT_FSVERITY_GENERATE_METADATA),true)
 
-# Generate fsv_meta
-fsverity-metadata-targets := $(sort $(filter \
+fsverity-metadata-targets-patterns := \
   $(TARGET_OUT)/framework/% \
   $(TARGET_OUT)/etc/boot-image.prof \
   $(TARGET_OUT)/etc/dirty-image-objects \
   $(TARGET_OUT)/etc/preloaded-classes \
-  $(TARGET_OUT)/etc/classpaths/%.pb, \
+  $(TARGET_OUT)/etc/classpaths/%.pb \
+
+ifdef BUILDING_SYSTEM_EXT_IMAGE
+fsverity-metadata-targets-patterns += $(TARGET_OUT_SYSTEM_EXT)/framework/%
+endif
+
+# Generate fsv_meta
+fsverity-metadata-targets := $(sort $(filter \
+  $(fsverity-metadata-targets-patterns), \
   $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 define fsverity-generate-metadata
@@ -2961,47 +2960,66 @@ endef
 $(foreach f,$(fsverity-metadata-targets),$(eval $(call fsverity-generate-metadata,$(f))))
 ALL_DEFAULT_INSTALLED_MODULES += $(addsuffix .fsv_meta,$(fsverity-metadata-targets))
 
-# Generate BuildManifest.apk
 FSVERITY_APK_KEY_PATH := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
-FSVERITY_APK_OUT := $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk
-FSVERITY_APK_MANIFEST_PATH := system/security/fsverity/AndroidManifest.xml
-$(FSVERITY_APK_OUT): PRIVATE_FSVERITY := $(HOST_OUT_EXECUTABLES)/fsverity
-$(FSVERITY_APK_OUT): PRIVATE_AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
-$(FSVERITY_APK_OUT): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
-$(FSVERITY_APK_OUT): PRIVATE_VERSION_CODE := $(PLATFORM_SDK_VERSION)
-$(FSVERITY_APK_OUT): PRIVATE_VERSION_NAME := $(APPS_DEFAULT_VERSION_NAME)
-$(FSVERITY_APK_OUT): PRIVATE_APKSIGNER := $(HOST_OUT_EXECUTABLES)/apksigner
-$(FSVERITY_APK_OUT): PRIVATE_MANIFEST := $(FSVERITY_APK_MANIFEST_PATH)
-$(FSVERITY_APK_OUT): PRIVATE_FRAMEWORK_RES := $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
-$(FSVERITY_APK_OUT): PRIVATE_KEY := $(FSVERITY_APK_KEY_PATH)
-$(FSVERITY_APK_OUT): PRIVATE_INPUTS := $(fsverity-metadata-targets)
-$(FSVERITY_APK_OUT): PRIVATE_ASSETS := $(call intermediates-dir-for,ETC,build_manifest)/assets
-$(FSVERITY_APK_OUT): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
+FSVERITY_APK_MANIFEST_TEMPLATE_PATH := system/security/fsverity/AndroidManifest.xml
+
+# Generate and install BuildManifest<suffix>.apk for the given partition
+# $(1): path of the output APK
+# $(2): partition name
+define fsverity-generate-and-install-manifest-apk
+fsverity-metadata-targets-$(2) := $(filter $(PRODUCT_OUT)/$(2)/%,\
+      $(fsverity-metadata-targets))
+$(1): PRIVATE_FSVERITY := $(HOST_OUT_EXECUTABLES)/fsverity
+$(1): PRIVATE_AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
+$(1): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
+$(1): PRIVATE_VERSION_CODE := $(PLATFORM_SDK_VERSION)
+$(1): PRIVATE_VERSION_NAME := $(APPS_DEFAULT_VERSION_NAME)
+$(1): PRIVATE_APKSIGNER := $(HOST_OUT_EXECUTABLES)/apksigner
+$(1): PRIVATE_MANIFEST := $(FSVERITY_APK_MANIFEST_TEMPLATE_PATH)
+$(1): PRIVATE_FRAMEWORK_RES := $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
+$(1): PRIVATE_KEY := $(FSVERITY_APK_KEY_PATH)
+$(1): PRIVATE_INPUTS := $$(fsverity-metadata-targets-$(2))
+$(1): PRIVATE_ASSETS := $(call intermediates-dir-for,ETC,build_manifest-$(2))/assets
+$(1): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
     $(HOST_OUT_EXECUTABLES)/fsverity $(HOST_OUT_EXECUTABLES)/aapt2 \
-    $(HOST_OUT_EXECUTABLES)/apksigner $(FSVERITY_APK_MANIFEST_PATH) \
+    $(HOST_OUT_EXECUTABLES)/apksigner $(FSVERITY_APK_MANIFEST_TEMPLATE_PATH) \
     $(FSVERITY_APK_KEY_PATH).x509.pem $(FSVERITY_APK_KEY_PATH).pk8 \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk \
-    $(fsverity-metadata-targets)
-	rm -rf $(PRIVATE_ASSETS)
-	mkdir -p $(PRIVATE_ASSETS)
-	$< --fsverity-path $(PRIVATE_FSVERITY) \
-	    --base-dir $(PRODUCT_OUT) \
-	    --output $(PRIVATE_ASSETS)/build_manifest.pb \
-	    $(PRIVATE_INPUTS)
-	$(PRIVATE_AAPT2) link -o $@ \
-	    -A $(PRIVATE_ASSETS) \
-	    -I $(PRIVATE_FRAMEWORK_RES) \
-	    --min-sdk-version $(PRIVATE_MIN_SDK_VERSION) \
-	    --version-code $(PRIVATE_VERSION_CODE) \
-	    --version-name $(PRIVATE_VERSION_NAME) \
-	    --manifest $(PRIVATE_MANIFEST)
-	$(PRIVATE_APKSIGNER) sign --in $@ \
-	    --cert $(PRIVATE_KEY).x509.pem \
-	    --key $(PRIVATE_KEY).pk8
+    $$(fsverity-metadata-targets-$(2))
+	rm -rf $$(PRIVATE_ASSETS)
+	mkdir -p $$(PRIVATE_ASSETS)
+	$$< --fsverity-path $$(PRIVATE_FSVERITY) \
+	    --base-dir $$(PRODUCT_OUT) \
+	    --output $$(PRIVATE_ASSETS)/build_manifest.pb \
+	    $$(PRIVATE_INPUTS)
+	$$(PRIVATE_AAPT2) link -o $$@ \
+	    -A $$(PRIVATE_ASSETS) \
+	    -I $$(PRIVATE_FRAMEWORK_RES) \
+	    --min-sdk-version $$(PRIVATE_MIN_SDK_VERSION) \
+	    --version-code $$(PRIVATE_VERSION_CODE) \
+	    --version-name $$(PRIVATE_VERSION_NAME) \
+	    --manifest $$(PRIVATE_MANIFEST) \
+            --rename-manifest-package com.android.security.fsverity_metadata.$(2)
+	$$(PRIVATE_APKSIGNER) sign --in $$@ \
+	    --cert $$(PRIVATE_KEY).x509.pem \
+	    --key $$(PRIVATE_KEY).pk8
 
-ALL_DEFAULT_INSTALLED_MODULES += $(FSVERITY_APK_OUT)
+ALL_DEFAULT_INSTALLED_MODULES += $(1)
 
-endif  # PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
+endef  # fsverity-generate-and-install-manifest-apk
+
+$(eval $(call fsverity-generate-and-install-manifest-apk, \
+  $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk,system))
+ifdef BUILDING_SYSTEM_EXT_IMAGE
+  $(eval $(call fsverity-generate-and-install-manifest-apk, \
+    $(TARGET_OUT_SYSTEM_EXT)/etc/security/fsverity/BuildManifestSystemExt.apk,system_ext))
+endif
+
+endif  # PRODUCT_FSVERITY_GENERATE_METADATA
+
+
+# -----------------------------------------------------------------
+# system image
 
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
@@ -3127,7 +3145,7 @@ INSTALLED_SYSTEMIMAGE := $(INSTALLED_SYSTEMIMAGE_TARGET)
 ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 ifneq ($(BOARD_USES_FULL_RECOVERY_IMAGE),true)
-ifneq (,$(filter true, $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO) $(BOARD_INCLUDE_RECOVERY_ACPIO)))
+ifneq (,$(filter true,$(BOARD_INCLUDE_RECOVERY_DTBO) $(BOARD_INCLUDE_RECOVERY_ACPIO)))
 diff_tool := $(HOST_OUT_EXECUTABLES)/bsdiff
 else
 diff_tool := $(HOST_OUT_EXECUTABLES)/imgdiff
@@ -3219,7 +3237,7 @@ $(INSTALLED_USERDATAIMAGE_TARGET): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS)
 $(call declare-1p-container,$(INSTALLED_USERDATAIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_USERDATAIMAGE_TARGET),$(INSTALLED_USERDATAIMAGE_TARGET_DEPS),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_USERDATAIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_USERDATAIMAGE_TARGET)
 
 .PHONY: userdataimage-nodeps
 userdataimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
@@ -3271,7 +3289,7 @@ $(INSTALLED_BPTIMAGE_TARGET): $(BPTTOOL) $(BOARD_BPT_INPUT_FILES)
 $(call declare-1p-container,$(INSTALLED_BPTIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_BPTIMAGE_TARGET),$(BOARD_BPT_INPUT_FILES),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_BPTIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_BPTIMAGE_TARGET)
 
 .PHONY: bptimage-nodeps
 bptimage-nodeps:
@@ -3310,7 +3328,7 @@ $(INSTALLED_CACHEIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_CACHEIMAG
 $(call declare-1p-container,$(INSTALLED_CACHEIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_CACHEIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_CACHEIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_CACHEIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_CACHEIMAGE_TARGET)
 
 .PHONY: cacheimage-nodeps
 cacheimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
@@ -3831,7 +3849,6 @@ $(INSTALLED_FILES_FILE_SYSTEM_DLKM): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES
 $(INSTALLED_FILES_FILE_SYSTEM_DLKM): $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) $(FILESLIST) $(FILESLIST_UTIL)
 	@echo Installed file list: $@
 	mkdir -p $(dir $@)
-	if [ -d "$(BOARD_SYSTEM_DLKM_SRC)" ]; then rsync -rupE $(BOARD_SYSTEM_DLKM_SRC)/ $(TARGET_OUT_SYSTEM_DLKM); fi
 	rm -f $@
 	$(FILESLIST) $(TARGET_OUT_SYSTEM_DLKM) > $(@:.txt=.json)
 	$(FILESLIST_UTIL) -c $(@:.txt=.json) > $@
@@ -3896,7 +3913,7 @@ $(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE) $(AVBTOOL) $(BOARD_AV
 $(call declare-1p-container,$(INSTALLED_DTBOIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_DTBOIMAGE_TARGET),$(BOARD_PREBUILT_DTBOIMAGE),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_DTBOIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_DTBOIMAGE_TARGET)
 else
 $(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
 	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
@@ -3907,33 +3924,21 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 # -----------------------------------------------------------------
 # Protected VM firmware image
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
+
+.PHONY: pvmfwimage
+pvmfwimage: $(INSTALLED_PVMFWIMAGE_TARGET)
+
 INSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img
 INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET := $(PRODUCT_OUT)/pvmfw_embedded.avbpubkey
-INTERNAL_PREBUILT_PVMFWIMAGE := packages/modules/Virtualization/pvmfw/pvmfw.img
-INTERNAL_PVMFW_EMBEDDED_AVBKEY := external/avb/test/data/testkey_rsa4096_pub.bin
-
-ifdef BOARD_PREBUILT_PVMFWIMAGE
-PREBUILT_PVMFWIMAGE_TARGET := $(BOARD_PREBUILT_PVMFWIMAGE)
-else
-PREBUILT_PVMFWIMAGE_TARGET := $(INTERNAL_PREBUILT_PVMFWIMAGE)
-endif
-
-ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_PVMFWIMAGE_TARGET): $(PREBUILT_PVMFWIMAGE_TARGET) $(AVBTOOL) $(BOARD_AVB_PVMFW_KEY_PATH)
-	cp $< $@
-	$(AVBTOOL) add_hash_footer \
-	    --image $@ \
-	    $(call get-partition-size-argument,$(BOARD_PVMFWIMAGE_PARTITION_SIZE)) \
-	    --partition_name pvmfw $(INTERNAL_AVB_PVMFW_SIGNING_ARGS) \
-	    $(BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS)
+INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,pvmfw_img)
+INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_embedded_key)
 
 $(call declare-1p-container,$(INSTALLED_PVMFWIMAGE_TARGET),)
-$(call declare-container-license-deps,$(INSTALLED_PVMFWIMAGE_TARGET),$(PREBUILT_PVMFWIMAGE_TARGET),$(PRODUCT_OUT)/:/)
+$(call declare-container-license-deps,$(INSTALLED_PVMFWIMAGE_TARGET),$(INTERNAL_PVMFWIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_PVMFWIMAGE_TARGET)
-else
-$(eval $(call copy-one-file,$(PREBUILT_PVMFWIMAGE_TARGET),$(INSTALLED_PVMFWIMAGE_TARGET)))
-endif
+UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_PVMFWIMAGE_TARGET)
+
+$(eval $(call copy-one-file,$(INTERNAL_PVMFWIMAGE_FILES),$(INSTALLED_PVMFWIMAGE_TARGET)))
 
 $(INSTALLED_PVMFWIMAGE_TARGET): $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET)
 
@@ -4340,18 +4345,6 @@ $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
     $(eval $(call check-and-set-custom-avb-chain-args,$(partition))))
 endif
 
-# Add kernel cmdline descriptor for kernel to mount system.img as root with
-# dm-verity. This works when system.img is either chained or not-chained:
-# - chained: The --setup_as_rootfs_from_kernel option will add dm-verity kernel
-#   cmdline descriptor to system.img
-# - not-chained: The --include_descriptors_from_image option for make_vbmeta_image
-#   will include the kernel cmdline descriptor from system.img into vbmeta.img
-ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-ifeq ($(filter system, $(BOARD_SUPER_PARTITION_PARTITION_LIST)),)
-BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += --setup_as_rootfs_from_kernel
-endif
-endif
-
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
 BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS += --padding_size 4096
 BOARD_AVB_MAKE_VBMETA_VENDOR_IMAGE_ARGS += --padding_size 4096
@@ -4477,7 +4470,7 @@ $(INSTALLED_VBMETA_VENDORIMAGE_TARGET): \
 
 $(call declare-1p-container,$(INSTALLED_VBMETA_VENDORIMAGE_TARGET),)
 
-UNMOUNTED_NOTICE_DEPS += $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
 endif
 
 define build-vbmetaimage-target
@@ -4557,6 +4550,26 @@ ifeq (,$(TARGET_BUILD_UNBUNDLED))
 intermediates := $(call intermediates-dir-for,PACKAGING,check_vintf_all)
 check_vintf_all_deps :=
 
+APEX_OUT := $(PRODUCT_OUT)/apex
+# -----------------------------------------------------------------
+# Create apex-info-file.xsd
+
+APEX_DIRS := \
+  $(TARGET_OUT)/apex/% \
+  $(TARGET_OUT_SYSTEM_EXT)/apex/% \
+  $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_ODM)/apex/% \
+  $(TARGET_OUT_PRODUCT)/apex/% \
+
+apex_vintf_files := $(sort $(filter $(APEX_DIRS), $(INTERNAL_ALLIMAGES_FILES)))
+APEX_INFO_FILE   := $(APEX_OUT)/apex-info-list.xml
+
+$(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/dump_apex_info $(apex_vintf_files)
+	@echo "Creating apex-info-file in $(PRODUCT_OUT) "
+	$< --root_dir $(PRODUCT_OUT)
+
+apex_vintf_files :=
+
 # The build system only writes VINTF metadata to */etc/vintf paths. Legacy paths aren't needed here
 # because they are only used for prebuilt images.
 check_vintf_common_srcs_patterns := \
@@ -4567,6 +4580,7 @@ check_vintf_common_srcs_patterns := \
   $(TARGET_OUT_SYSTEM_EXT)/etc/vintf/% \
 
 check_vintf_common_srcs := $(sort $(filter $(check_vintf_common_srcs_patterns),$(INTERNAL_ALLIMAGES_FILES)))
+check_vintf_common_srcs += $(APEX_INFO_FILE)
 check_vintf_common_srcs_patterns :=
 
 check_vintf_has_system :=
@@ -4591,7 +4605,10 @@ $(check_vintf_system_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_syst
 $(call declare-0p-target,$(check_vintf_system_log))
 check_vintf_system_log :=
 
-vintffm_log := $(intermediates)/vintffm.log
+# -- Check framework manifest against frozen manifests for GSI targets. They need to be compatible.
+ifneq (true, $(BUILDING_VENDOR_IMAGE))
+    vintffm_log := $(intermediates)/vintffm.log
+endif
 check_vintf_all_deps += $(vintffm_log)
 $(vintffm_log): $(HOST_OUT_EXECUTABLES)/vintffm $(check_vintf_system_deps)
 	@( $< --check --dirmap /system:$(TARGET_OUT) \
@@ -4746,6 +4763,7 @@ check_vintf_compatible_args += \
   --dirmap /odm:$(TARGET_OUT_ODM) \
   --dirmap /product:$(TARGET_OUT_PRODUCT) \
   --dirmap /system_ext:$(TARGET_OUT_SYSTEM_EXT) \
+  --dirmap /apex:$(APEX_OUT) \
 
 ifdef PRODUCT_SHIPPING_API_LEVEL
 check_vintf_compatible_args += --property ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
@@ -4992,8 +5010,11 @@ INTERNAL_OTATOOLS_MODULES := \
 INTERNAL_OTATOOLS_MODULES += \
   apexer \
   apex_compression_tool \
+  blkid \
   deapexer \
   debugfs_static \
+  dump_apex_info \
+  fsck.erofs \
   merge_zips \
   resize2fs \
   soong_zip \
@@ -5023,6 +5044,12 @@ INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find build/make/target/product/security -type f -name "*.x509.pem" -o \
       -name "*.pk8"))
 
+ifneq (,$(wildcard packages/modules))
+INTERNAL_OTATOOLS_PACKAGE_FILES += \
+  $(sort $(shell find packages/modules -type f -name "*.x509.pem" -o -name "*.pk8" -o -name \
+      "key.pem"))
+endif
+
 ifneq (,$(wildcard device))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
@@ -5039,8 +5066,8 @@ INTERNAL_OTATOOLS_PACKAGE_FILES += \
 endif
 
 INTERNAL_OTATOOLS_RELEASETOOLS := \
-  $(sort $(shell find build/make/tools/releasetools -name "*.pyc" -prune -o \
-      \( -type f -o -type l \) -print))
+  $(shell find build/make/tools/releasetools -name "*.pyc" -prune -o \
+      \( -type f -o -type l \) -print | sort)
 
 BUILT_OTATOOLS_PACKAGE := $(PRODUCT_OUT)/otatools.zip
 $(BUILT_OTATOOLS_PACKAGE): PRIVATE_ZIP_ROOT := $(call intermediates-dir-for,PACKAGING,otatools)/otatools
@@ -5686,10 +5713,8 @@ endif # INSTALLED_RECOVERYIMAGE_TARGET defined or BOARD_USES_RECOVERY_AS_BOOT is
 	    $(TARGET_ROOT_OUT),$(zip_root)/ROOT)
 	@# If we are using recovery as boot, this is already done when processing recovery.
 ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_RAMDISK_OUT),$(zip_root)/BOOT/RAMDISK)
-endif
 ifdef INSTALLED_KERNEL_TARGET
 	$(hide) cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/BOOT/
 endif
@@ -5952,8 +5977,6 @@ ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_PVMFWIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 	$(hide) cp $(INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET) $(zip_root)/PREBUILT_IMAGES/
-	$(hide) mkdir -p $(zip_root)/PVMFW
-	$(hide) cp $(PREBUILT_PVMFWIMAGE_TARGET) $(zip_root)/PVMFW/
 endif
 ifdef BOARD_PREBUILT_BOOTLOADER
 	$(hide) mkdir -p $(zip_root)/IMAGES
@@ -5997,10 +6020,8 @@ ifdef BUILDING_SYSTEM_DLKM_IMAGE
 endif
 	@# ROOT always contains the files for the root under normal boot.
 	$(hide) $(call fs_config,$(zip_root)/ROOT,) > $(zip_root)/META/root_filesystem_config.txt
-ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-	@# BOOT/RAMDISK exists and contains the ramdisk for recovery if using BOARD_USES_RECOVERY_AS_BOOT.
+	@# BOOT/RAMDISK contains the first stage and recovery ramdisk.
 	$(hide) $(call fs_config,$(zip_root)/BOOT/RAMDISK,) > $(zip_root)/META/boot_filesystem_config.txt
-endif
 ifdef BUILDING_INIT_BOOT_IMAGE
 	$(hide) $(call package_files-copy-root, $(TARGET_RAMDISK_OUT),$(zip_root)/INIT_BOOT/RAMDISK)
 	$(hide) $(call fs_config,$(zip_root)/INIT_BOOT/RAMDISK,) > $(zip_root)/META/init_boot_filesystem_config.txt
@@ -6010,10 +6031,6 @@ endif # BOARD_KERNEL_PAGESIZE
 endif # BUILDING_INIT_BOOT_IMAGE
 ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	$(call fs_config,$(zip_root)/VENDOR_BOOT/RAMDISK,) > $(zip_root)/META/vendor_boot_filesystem_config.txt
-endif
-ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-	@# BOOT/RAMDISK also exists and contains the first stage ramdisk if not using BOARD_BUILD_SYSTEM_ROOT_IMAGE.
-	$(hide) $(call fs_config,$(zip_root)/BOOT/RAMDISK,) > $(zip_root)/META/boot_filesystem_config.txt
 endif
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) $(call fs_config,$(zip_root)/RECOVERY/RAMDISK,) > $(zip_root)/META/recovery_filesystem_config.txt
@@ -6087,12 +6104,14 @@ $(call dist-for-goals, target-files-package, $(BUILT_TARGET_FILES_PACKAGE))
 # -----------------------------------------------------------------
 # NDK Sysroot Package
 NDK_SYSROOT_TARGET := $(PRODUCT_OUT)/ndk_sysroot.tar.bz2
+.PHONY: ndk_sysroot
+ndk_sysroot: $(NDK_SYSROOT_TARGET)
 $(NDK_SYSROOT_TARGET): $(SOONG_OUT_DIR)/ndk.timestamp
 	@echo Package NDK sysroot...
 	$(hide) tar cjf $@ -C $(SOONG_OUT_DIR) ndk
 
 ifeq ($(HOST_OS),linux)
-$(call dist-for-goals,sdk,$(NDK_SYSROOT_TARGET))
+$(call dist-for-goals,sdk ndk_sysroot,$(NDK_SYSROOT_TARGET))
 endif
 
 ifeq ($(build_ota_package),true)
@@ -6316,7 +6335,7 @@ SYSTEM_NOTICE_DEPS += $(COVERAGE_ZIP)
 ifeq (true,$(CLANG_COVERAGE))
   LLVM_PROFDATA := $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION)/bin/llvm-profdata
   LLVM_COV := $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION)/bin/llvm-cov
-  LIBCXX := $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION)/lib64/libc++.so.1
+  LIBCXX := $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION)/lib/x86_64-unknown-linux-gnu/libc++.so.1
   # Use llvm-profdata.zip for backwards compatibility with tradefed code.
   LLVM_COVERAGE_TOOLS_ZIP := $(PRODUCT_OUT)/llvm-profdata.zip
 
@@ -6810,12 +6829,26 @@ deps := \
 	$(HOST_OUT_EXECUTABLES)/atree \
 	$(HOST_OUT_EXECUTABLES)/line_endings
 
+# The name of the subdir within the platforms dir of the sdk. One of:
+# - android-<SDK_INT> (stable base dessert SDKs)
+# - android-<CODENAME> (stable extension SDKs)
+# - android-<SDK_INT>-ext<EXT_INT> (codename SDKs)
+sdk_platform_dir_name := $(strip \
+  $(if $(filter REL,$(PLATFORM_VERSION_CODENAME)), \
+    $(if $(filter $(PLATFORM_SDK_EXTENSION_VERSION),$(PLATFORM_BASE_SDK_EXTENSION_VERSION)), \
+      android-$(PLATFORM_SDK_VERSION), \
+      android-$(PLATFORM_SDK_VERSION)-ext$(PLATFORM_SDK_EXTENSION_VERSION) \
+    ), \
+    android-$(PLATFORM_VERSION_CODENAME) \
+  ) \
+)
+
 INTERNAL_SDK_TARGET := $(sdk_dir)/$(sdk_name).zip
 $(INTERNAL_SDK_TARGET): PRIVATE_NAME := $(sdk_name)
 $(INTERNAL_SDK_TARGET): PRIVATE_DIR := $(sdk_dir)/$(sdk_name)
 $(INTERNAL_SDK_TARGET): PRIVATE_DEP_FILE := $(sdk_dep_file)
 $(INTERNAL_SDK_TARGET): PRIVATE_INPUT_FILES := $(sdk_atree_files)
-
+$(INTERNAL_SDK_TARGET): PRIVATE_PLATFORM_NAME := $(sdk_platform_dir_name)
 # Set SDK_GNU_ERROR to non-empty to fail when a GNU target is built.
 #
 #SDK_GNU_ERROR := true
@@ -6840,7 +6873,7 @@ $(INTERNAL_SDK_TARGET): $(deps)
 	        -I $(PRODUCT_OUT) \
 	        -I $(HOST_OUT) \
 	        -I $(TARGET_COMMON_OUT_ROOT) \
-	        -v "PLATFORM_NAME=android-$(PLATFORM_VERSION)" \
+	        -v "PLATFORM_NAME=$(PRIVATE_PLATFORM_NAME)" \
 	        -v "OUT_DIR=$(OUT_DIR)" \
 	        -v "HOST_OUT=$(HOST_OUT)" \
 	        -v "TARGET_ARCH=$(TARGET_ARCH)" \
@@ -6925,14 +6958,22 @@ FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INS
 .PHONY: haiku
 haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
 $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
+$(call dist-for-goals,haiku,$(PRODUCT_OUT)/module-info.json)
 
-.PHONY: haiku-java
-haiku-java: $(SOONG_JAVA_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_TARGETS)
-$(call dist-for-goals,haiku-java,$(SOONG_JAVA_FUZZ_PACKAGING_ARCH_MODULES))
+.PHONY: haiku-java-device
+haiku-java-device: $(SOONG_JAVA_FUZZ_DEVICE_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_DEVICE_TARGETS)
+$(call dist-for-goals,haiku-java-device,$(SOONG_JAVA_FUZZ_DEVICE_PACKAGING_ARCH_MODULES))
+$(call dist-for-goals,haiku-java-device,$(PRODUCT_OUT)/module-info.json)
+
+.PHONY: haiku-java-host
+haiku-java-host: $(SOONG_JAVA_FUZZ_HOST_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_HOST_TARGETS)
+$(call dist-for-goals,haiku-java-host,$(SOONG_JAVA_FUZZ_HOST_PACKAGING_ARCH_MODULES))
+$(call dist-for-goals,haiku-java-host,$(PRODUCT_OUT)/module-info.json)
 
 .PHONY: haiku-rust
 haiku-rust: $(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_RUST_FUZZ_TARGETS)
 $(call dist-for-goals,haiku-rust,$(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES))
+$(call dist-for-goals,haiku-rust,$(PRODUCT_OUT)/module-info.json)
 
 # -----------------------------------------------------------------
 # Extract platform fonts used in Layoutlib

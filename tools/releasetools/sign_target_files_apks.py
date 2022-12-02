@@ -99,14 +99,14 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       The second dir will be used for lookup if BOARD_USES_RECOVERY_AS_BOOT is
       set to true.
 
-  --avb_{boot,recovery,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
-         vbmeta_vendor}_algorithm <algorithm>
-  --avb_{boot,recovery,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
-         vbmeta_vendor}_key <key>
+  --avb_{boot,init_boot,recovery,system,system_other,vendor,dtbo,vbmeta,
+         vbmeta_system,vbmeta_vendor}_algorithm <algorithm>
+  --avb_{boot,init_boot,recovery,system,system_other,vendor,dtbo,vbmeta,
+         vbmeta_system,vbmeta_vendor}_key <key>
       Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
       the specified image. Otherwise it uses the existing values in info dict.
 
-  --avb_{apex,boot,recovery,system,system_other,vendor,dtbo,vbmeta,
+  --avb_{apex,init_boot,boot,recovery,system,system_other,vendor,dtbo,vbmeta,
          vbmeta_system,vbmeta_vendor}_extra_args <args>
       Specify any additional args that are needed to AVB-sign the image
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
@@ -901,7 +901,7 @@ def WriteOtacerts(output_zip, filename, keys):
   certs_zip = zipfile.ZipFile(temp_file, "w", allowZip64=True)
   for k in keys:
     common.ZipWrite(certs_zip, k)
-  common.ZipClose(certs_zip)
+  certs_zip.close()
   common.ZipWriteStr(output_zip, filename, temp_file.getvalue())
 
 
@@ -1234,6 +1234,7 @@ def BuildVendorPartitions(output_zip_path):
   vendor_misc_info["avb_building_vbmeta_image"] = "false" # skip building vbmeta
   vendor_misc_info["use_dynamic_partitions"] = "false"  # super_empty
   vendor_misc_info["build_super_partition"] = "false"  # super split
+  vendor_misc_info["avb_vbmeta_system"] = ""  # skip building vbmeta_system
   with open(vendor_misc_info_path, "w") as output:
     for key in sorted(vendor_misc_info):
       output.write("{}={}\n".format(key, vendor_misc_info[key]))
@@ -1362,6 +1363,12 @@ def main(argv):
       OPTIONS.avb_algorithms['dtbo'] = a
     elif o == "--avb_dtbo_extra_args":
       OPTIONS.avb_extra_args['dtbo'] = a
+    elif o == "--avb_init_boot_key":
+      OPTIONS.avb_keys['init_boot'] = a
+    elif o == "--avb_init_boot_algorithm":
+      OPTIONS.avb_algorithms['init_boot'] = a
+    elif o == "--avb_init_boot_extra_args":
+      OPTIONS.avb_extra_args['init_boot'] = a
     elif o == "--avb_recovery_key":
       OPTIONS.avb_keys['recovery'] = a
     elif o == "--avb_recovery_algorithm":
@@ -1457,6 +1464,9 @@ def main(argv):
           "avb_dtbo_algorithm=",
           "avb_dtbo_key=",
           "avb_dtbo_extra_args=",
+          "avb_init_boot_algorithm=",
+          "avb_init_boot_key=",
+          "avb_init_boot_extra_args=",
           "avb_recovery_algorithm=",
           "avb_recovery_key=",
           "avb_recovery_extra_args=",
@@ -1528,8 +1538,8 @@ def main(argv):
                      platform_api_level, codename_to_api_level_map,
                      compressed_extension)
 
-  common.ZipClose(input_zip)
-  common.ZipClose(output_zip)
+  input_zip.close()
+  output_zip.close()
 
   if OPTIONS.vendor_partitions and OPTIONS.vendor_otatools:
     BuildVendorPartitions(args[1])
