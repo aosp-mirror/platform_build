@@ -129,8 +129,8 @@ def CheckVintfFromExtractedTargetFiles(input_tmp, info_dict=None):
 
   dirmap = GetDirmap(input_tmp)
 
-  apex_root, apex_info_file = PrepareApexDirectory(input_tmp)
-  dirmap['/apex'] = apex_root
+  # Simulate apexd from target-files.
+  dirmap['/apex'] = PrepareApexDirectory(input_tmp)
 
   args_for_skus = GetArgsForSkus(info_dict)
   shipping_api_level_args = GetArgsForShippingApiLevel(info_dict)
@@ -140,7 +140,6 @@ def CheckVintfFromExtractedTargetFiles(input_tmp, info_dict=None):
       'checkvintf',
       '--check-compat',
   ]
-  common_command += ['--apex-info-file', apex_info_file]
 
   for device_path, real_path in sorted(dirmap.items()):
     common_command += ['--dirmap', '{}:{}'.format(device_path, real_path)]
@@ -206,27 +205,29 @@ def GetVintfApexUnzipPatterns():
   return patterns
 
 def PrepareApexDirectory(inp):
-  """ Prepare the APEX data.
+  """ Prepare /apex directory before running checkvintf
 
   Apex binaries do not support dirmaps, in order to use these binaries we
   need to move the APEXes from the extracted target file archives to the
   expected device locations.
 
-  The APEXes will also be extracted under the APEX/ directory
-  matching what would be on the target.
+  This simulates how apexd activates APEXes.
+  1. create {inp}/APEX which is treated as a "/" on device.
+  2. copy apexes from target-files to {root}/{partition}/apex.
+  3. mount apexes under {root}/{partition}/apex at {root}/apex.
+  4. generate info files with dump_apex_info.
 
-  Create the following structure under the input inp directory:
-       APEX/apex             # Extracted APEXes
-       APEX/system/apex/     # System APEXes
-       APEX/vendor/apex/     # Vendor APEXes
+  We'll get the following layout
+       {inp}/APEX/apex             # Activated APEXes + some info files
+       {inp}/APEX/system/apex      # System APEXes
+       {inp}/APEX/vendor/apex      # Vendor APEXes
        ...
 
   Args:
     inp: path to the directory that contains the extracted target files archive.
 
   Returns:
-    extracted apex directory
-    apex-info-list.xml file
+    directory representing /apex on device
   """
 
   deapexer = 'deapexer'
@@ -273,15 +274,19 @@ def PrepareApexDirectory(inp):
   root_dir_name = 'APEX'
   root_dir = os.path.join(inp, root_dir_name)
   extracted_root = os.path.join(root_dir, 'apex')
-  apex_info_file = os.path.join(extracted_root, 'apex-info-list.xml')
 
-  # Always create APEX directory for dirmap
+  # Always create /apex directory for dirmap
   os.makedirs(extracted_root)
 
   create_info_file = False
 
   # Loop through search path looking for and processing apex/ directories.
   for device_path, target_files_rel_paths in DIR_SEARCH_PATHS.items():
+    # checkvintf only needs vendor apexes. skip other partitions for efficiency
+    if device_path not in ['/vendor', '/odm']:
+      continue
+    # First, copy VENDOR/apex/foo.apex to APEX/vendor/apex/foo.apex
+    # Then, extract the contents to APEX/apex/foo/
     for target_files_rel_path in target_files_rel_paths:
       inp_partition = os.path.join(inp, target_files_rel_path,"apex")
       if os.path.exists(inp_partition):
@@ -292,16 +297,11 @@ def PrepareApexDirectory(inp):
         create_info_file = True
 
   if create_info_file:
-    ### Create apex-info-list.xml
-    dump_cmd = ['dump_apex_info',
-                '--root_dir', root_dir,
-                '--out_file', apex_info_file]
+    ### Dump apex info files
+    dump_cmd = ['dump_apex_info', '--root_dir', root_dir]
     common.RunAndCheckOutput(dump_cmd)
-    if not os.path.exists(apex_info_file):
-      raise RuntimeError('Failed to create apex info file %s', apex_info_file)
-    logger.info('Created %s', apex_info_file)
 
-  return extracted_root, apex_info_file
+  return extracted_root
 
 def CheckVintfFromTargetFiles(inp, info_dict=None):
   """
