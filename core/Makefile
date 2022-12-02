@@ -306,6 +306,8 @@ endef
 # $(7): module archive
 # $(8): staging dir for stripped modules
 # $(9): module directory name
+# $(10): extra modules that might be dependency of modules in this partition, but should not be copied to output dir
+# $(11): mount point for extra modules
 # Returns a list of src:dest pairs to install the modules using copy-many-files.
 define build-image-kernel-modules
   $(if $(9), \
@@ -317,7 +319,7 @@ define build-image-kernel-modules
       $(eval _src := $(8)/$(notdir $(module))) \
       $(eval $(call copy-and-strip-kernel-module,$(module),$(_src)))) \
     $(_src):$(2)/lib/modules/$(_dir)$(notdir $(module))) \
-  $(eval $(call build-image-kernel-modules-depmod,$(1),$(3),$(4),$(5),$(6),$(7),$(2),$(9))) \
+  $(eval $(call build-image-kernel-modules-depmod,$(1),$(3),$(4),$(5),$(6),$(7),$(2),$(9),$(10),$(11))) \
   $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep:$(2)/lib/modules/$(_dir)modules.dep \
   $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias:$(2)/lib/modules/$(_dir)modules.alias \
   $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep:$(2)/lib/modules/$(_dir)modules.softdep \
@@ -332,6 +334,8 @@ endef
 # $(6): module archive
 # $(7): output dir
 # $(8): module directory name
+# $(9): extra modules which should not be copied to output dir, but might be dependency of modules in this partition
+# $(10): mount point for extra modules
 # TODO(b/144844424): If a module archive is being used, this step (which
 # generates obj/PACKAGING/.../modules.dep) also unzips the module archive into
 # the output directory. This should be moved to a module with a
@@ -341,8 +345,11 @@ define build-image-kernel-modules-depmod
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: .KATI_IMPLICIT_OUTPUTS := $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.alias $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(DEPMOD)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULES := $(strip $(1))
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_EXTRA_MODULES := $(strip $(9))
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MOUNT_POINT := $(2)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_EXTRA_MOUNT_POINT := $(10)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULE_DIR := $(3)/$(DEPMOD_STAGING_SUBDIR)/$(2)/lib/modules/$(8)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_EXTRA_MODULE_DIR := $(3)/$(DEPMOD_STAGING_SUBDIR)/$(10)/lib/modules/$(8)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_STAGING_DIR := $(3)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_LOAD_MODULES := $(strip $(4))
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_LOAD_FILE := $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
@@ -363,6 +370,20 @@ $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1) $(6)
 	  for MODULE in $$(PRIVATE_LOAD_MODULES); do \
 	    basename $$$$MODULE >> $$(PRIVATE_LOAD_FILE); \
 	  done; \
+	)
+	# The ln -sf + find -delete sequence is to remove any modules in
+	# PRIVATE_EXTRA_MODULES which have same basename as MODULES in PRIVATE_MODULES
+	# Basically, it computes a set difference. When there is a duplicate module
+	# present in both directories, we want modules in PRIVATE_MODULES to take
+	# precedence. Since depmod does not provide any guarantee about ordering of
+	# dependency resolution, we achieve this by maually removing any duplicate
+	# modules with lower priority.
+	$(if $(9),\
+	  find $$(PRIVATE_EXTRA_MODULE_DIR) -maxdepth 1 -type f -name "*.ko" -delete; \
+	  mkdir -p $$(PRIVATE_EXTRA_MODULE_DIR); \
+	  cp $$(EXTRA_MODULES) $$(PRIVATE_EXTRA_MODULE_DIR); \
+	  ln -sf $$(PRIVATE_EXTRA_MODULE_DIR)/*.ko $$(PRIVATE_EXTRA_MODULE_DIR); \
+	  find $$(PRIVATE_EXTRA_MODULE_DIR) -type l -delete; \
 	)
 	$(DEPMOD) -b $$(PRIVATE_STAGING_DIR) 0.0
 	# Turn paths in modules.dep into absolute paths
@@ -437,6 +458,9 @@ endef
 # $(4): module load filename
 # $(5): stripped staging directory
 # $(6): kernel module directory name (top is an out of band value for no directory)
+# $(7): list of extra modules that might be dependency of modules in this partition
+# $(8): mount point for extra modules. e.g. system
+
 define build-image-kernel-modules-dir
 $(if $(filter top,$(6)),\
   $(eval _kver :=)$(eval _sep :=),\
@@ -449,7 +473,7 @@ $(if $(strip $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver))$(BOARD_$(1)_KERNEL_MODU
     $(eval BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver) := $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)))) \
   $(if $(filter false,$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver))),\
     $(eval BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver) :=),) \
-  $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver)))) \
+  $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver),$(7),$(8)))) \
 $(if $(_kver), \
   $(eval _dir := $(_kver)/), \
   $(eval _dir :=)) \
@@ -546,7 +570,7 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
   $(eval $(result_var) += $(call build-image-kernel-modules-dir,VENDOR_RAMDISK,$(output_dir),,modules.load,$(VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR_KERNEL_RAMDISK,$(TARGET_VENDOR_KERNEL_RAMDISK_OUT),,modules.load,$(VENDOR_KERNEL_RAMDISK_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-ramdisk-recovery-load,$(kmd))) \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR,$(if $(filter true,$(BOARD_USES_VENDOR_DLKMIMAGE)),$(TARGET_OUT_VENDOR_DLKM),$(TARGET_OUT_VENDOR)),vendor,modules.load,$(VENDOR_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,VENDOR,$(if $(filter true,$(BOARD_USES_VENDOR_DLKMIMAGE)),$(TARGET_OUT_VENDOR_DLKM),$(TARGET_OUT_VENDOR)),vendor,modules.load,$(VENDOR_STRIPPED_MODULE_STAGING_DIR),$(kmd),$(BOARD_SYSTEM_KERNEL_MODULES),system)) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-charger-load,$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,ODM,$(if $(filter true,$(BOARD_USES_ODM_DLKMIMAGE)),$(TARGET_OUT_ODM_DLKM),$(TARGET_OUT_ODM)),odm,modules.load,,$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,SYSTEM,$(if $(filter true,$(BOARD_USES_SYSTEM_DLKMIMAGE)),$(TARGET_OUT_SYSTEM_DLKM),$(TARGET_OUT_SYSTEM)),system,modules.load,,$(kmd))) \
