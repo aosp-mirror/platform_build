@@ -2949,6 +2949,8 @@ fsverity-metadata-targets := $(sort $(filter \
   $(ALL_DEFAULT_INSTALLED_MODULES)))
 
 define fsverity-generate-metadata
+$(call declare-0p-target,$(1).fsv_meta)
+
 $(1).fsv_meta: PRIVATE_SRC := $(1)
 $(1).fsv_meta: PRIVATE_FSVERITY := $(HOST_OUT_EXECUTABLES)/fsverity
 $(1).fsv_meta: $(HOST_OUT_EXECUTABLES)/fsverity_metadata_generator $(HOST_OUT_EXECUTABLES)/fsverity $(1)
