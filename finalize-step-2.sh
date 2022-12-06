@@ -26,7 +26,7 @@ function commit_changes() {
             repo start fina-step1 ;
             git add -A . ;
             git commit -m FINALIZATION_STEP_2_SCRIPT_COMMIT -m WILL_BE_AUTOMATICALLY_REVERTED ;
-            repo upload --cbr --no-verify -o nokeycheck -t -y . ;
+            repo upload --cbr --no-verify -t -y . ;
             git clean -fdx ; git reset --hard ;
         fi'
 }
