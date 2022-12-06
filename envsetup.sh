@@ -266,7 +266,7 @@ function set_lunch_paths()
     export ANDROID_TARGET_OUT_TESTCASES=$(get_abs_build_var TARGET_OUT_TESTCASES)
 
     # Finally, set PATH
-    export PATH=$ANDROID_LUNCH_BUILD_PATHS$PATH
+    export PATH=$ANDROID_LUNCH_BUILD_PATHS:$PATH
 }
 
 # Add directories to PATH that are NOT dependent on the lunch target.
@@ -297,7 +297,8 @@ function set_global_paths()
 
     # And in with the new...
     ANDROID_GLOBAL_BUILD_PATHS=$T/build/bazel/bin
-    ANDRID_GLOBAL_BUILD_PATHS+=$T/development/scripts:$T/prebuilts/devtools/tools
+    ANDROID_GLOBAL_BUILD_PATHS+=:$T/development/scripts
+    ANDROID_GLOBAL_BUILD_PATHS+=:$T/prebuilts/devtools/tools
 
     # add kernel specific binaries
     if [ $(uname -s) = Linux ] ; then
@@ -324,7 +325,7 @@ function set_global_paths()
     fi
 
     # Finally, set PATH
-    export PATH=$ANDROID_GLOBAL_BUILD_PATHS$PATH
+    export PATH=$ANDROID_GLOBAL_BUILD_PATHS:$PATH
 }
 
 function printconfig()
