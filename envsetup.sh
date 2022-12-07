@@ -174,7 +174,10 @@ function check_variant()
     return 1
 }
 
-function setpaths()
+
+# Add directories to PATH that are dependent on the lunch target.
+# For directories that are not lunch-specific, add them in set_global_paths
+function set_lunch_paths()
 {
     local T=$(gettop)
     if [ ! "$T" ]; then
@@ -186,96 +189,65 @@ function setpaths()
     #                                                                #
     #              Read me before you modify this code               #
     #                                                                #
-    #   This function sets ANDROID_BUILD_PATHS to what it is adding  #
-    #   to PATH, and the next time it is run, it removes that from   #
-    #   PATH.  This is required so lunch can be run more than once   #
-    #   and still have working paths.                                #
+    #   This function sets ANDROID_LUNCH_BUILD_PATHS to what it is   #
+    #   adding to PATH, and the next time it is run, it removes that #
+    #   from PATH.  This is required so lunch can be run more than   #
+    #   once and still have working paths.                           #
     #                                                                #
     ##################################################################
 
-    # Note: on windows/cygwin, ANDROID_BUILD_PATHS will contain spaces
+    # Note: on windows/cygwin, ANDROID_LUNCH_BUILD_PATHS will contain spaces
     # due to "C:\Program Files" being in the path.
 
-    # out with the old
-    if [ -n "$ANDROID_BUILD_PATHS" ] ; then
-        export PATH=${PATH/$ANDROID_BUILD_PATHS/}
+    # Handle compat with the old ANDROID_BUILD_PATHS variable. 
+    # TODO: Remove this after we think everyone has lunched again.
+    if [ -z "$ANDROID_LUNCH_BUILD_PATHS" -a -n "$ANDROID_BUILD_PATHS" ] ; then
+      ANDROID_LUNCH_BUILD_PATHS="$ANDROID_BUILD_PATHS"
+      ANDROID_BUILD_PATHS=
     fi
     if [ -n "$ANDROID_PRE_BUILD_PATHS" ] ; then
         export PATH=${PATH/$ANDROID_PRE_BUILD_PATHS/}
         # strip leading ':', if any
         export PATH=${PATH/:%/}
+        ANDROID_PRE_BUILD_PATHS=
     fi
 
-    # and in with the new
+    # Out with the old...
+    if [ -n "$ANDROID_LUNCH_BUILD_PATHS" ] ; then
+        export PATH=${PATH/$ANDROID_LUNCH_BUILD_PATHS/}
+    fi
 
-    export ANDROID_DEV_SCRIPTS=$T/development/scripts:$T/prebuilts/devtools/tools
+    # And in with the new...
+    ANDROID_LUNCH_BUILD_PATHS=$(get_abs_build_var SOONG_HOST_OUT_EXECUTABLES)
+    ANDROID_LUNCH_BUILD_PATHS+=:$(get_abs_build_var HOST_OUT_EXECUTABLES)
 
-    # add kernel specific binaries
-    case $(uname -s) in
-        Linux)
-            export ANDROID_DEV_SCRIPTS=$ANDROID_DEV_SCRIPTS:$T/prebuilts/misc/linux-x86/dtc:$T/prebuilts/misc/linux-x86/libufdt
-            ;;
-        *)
-            ;;
-    esac
-
-    ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS)
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_DEV_SCRIPTS
-
-    # Append llvm binutils prebuilts path to ANDROID_BUILD_PATHS.
+    # Append llvm binutils prebuilts path to ANDROID_LUNCH_BUILD_PATHS.
     local ANDROID_LLVM_BINUTILS=$(get_abs_build_var ANDROID_CLANG_PREBUILTS)/llvm-binutils-stable
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_LLVM_BINUTILS
+    ANDROID_LUNCH_BUILD_PATHS+=:$ANDROID_LLVM_BINUTILS
 
     # Set up ASAN_SYMBOLIZER_PATH for SANITIZE_HOST=address builds.
     export ASAN_SYMBOLIZER_PATH=$ANDROID_LLVM_BINUTILS/llvm-symbolizer
 
-    # If prebuilts/android-emulator/<system>/ exists, prepend it to our PATH
-    # to ensure that the corresponding 'emulator' binaries are used.
-    case $(uname -s) in
-        Darwin)
-            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/darwin-x86_64
-            ;;
-        Linux)
-            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/linux-x86_64
-            ;;
-        *)
-            ANDROID_EMULATOR_PREBUILTS=
-            ;;
-    esac
-    if [ -n "$ANDROID_EMULATOR_PREBUILTS" -a -d "$ANDROID_EMULATOR_PREBUILTS" ]; then
-        ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_EMULATOR_PREBUILTS
-        export ANDROID_EMULATOR_PREBUILTS
-    fi
-
-    # Append asuite prebuilts path to ANDROID_BUILD_PATHS.
+    # Append asuite prebuilts path to ANDROID_LUNCH_BUILD_PATHS.
     local os_arch=$(get_build_var HOST_PREBUILT_TAG)
-    local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch"
-    local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch"
-    local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch"
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH:$AIDEGEN_PATH:$ATEST_PATH
-
-    # Build system
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$T/build/bazel/bin
-
-    export ANDROID_BUILD_PATHS=$(tr -s : <<<"${ANDROID_BUILD_PATHS}:")
-    export PATH=$ANDROID_BUILD_PATHS$PATH
-
-    # out with the duplicate old
-    if [ -n $ANDROID_PYTHONPATH ]; then
-        export PYTHONPATH=${PYTHONPATH//$ANDROID_PYTHONPATH/}
-    fi
-    # and in with the new
-    export ANDROID_PYTHONPATH=$T/development/python-packages:
-    if [ -n $VENDOR_PYTHONPATH  ]; then
-        ANDROID_PYTHONPATH=$ANDROID_PYTHONPATH$VENDOR_PYTHONPATH
-    fi
-    export PYTHONPATH=$ANDROID_PYTHONPATH$PYTHONPATH
+    ANDROID_LUNCH_BUILD_PATHS+=:$T/prebuilts/asuite/acloud/$os_arch
+    ANDROID_LUNCH_BUILD_PATHS+=:$T/prebuilts/asuite/aidegen/$os_arch
+    ANDROID_LUNCH_BUILD_PATHS+=:$T/prebuilts/asuite/atest/$os_arch
 
     export ANDROID_JAVA_HOME=$(get_abs_build_var ANDROID_JAVA_HOME)
     export JAVA_HOME=$ANDROID_JAVA_HOME
     export ANDROID_JAVA_TOOLCHAIN=$(get_abs_build_var ANDROID_JAVA_TOOLCHAIN)
-    export ANDROID_PRE_BUILD_PATHS=$ANDROID_JAVA_TOOLCHAIN:
-    export PATH=$ANDROID_PRE_BUILD_PATHS$PATH
+    ANDROID_LUNCH_BUILD_PATHS+=:$ANDROID_JAVA_TOOLCHAIN
+
+    # Fix up PYTHONPATH
+    if [ -n $ANDROID_PYTHONPATH ]; then
+        export PYTHONPATH=${PYTHONPATH//$ANDROID_PYTHONPATH/}
+    fi
+    export ANDROID_PYTHONPATH=$T/development/python-packages:
+    if [ -n $VENDOR_PYTHONPATH ]; then
+        ANDROID_PYTHONPATH=$ANDROID_PYTHONPATH$VENDOR_PYTHONPATH
+    fi
+    export PYTHONPATH=$ANDROID_PYTHONPATH$PYTHONPATH
 
     unset ANDROID_PRODUCT_OUT
     export ANDROID_PRODUCT_OUT=$(get_abs_build_var PRODUCT_OUT)
@@ -293,9 +265,67 @@ function setpaths()
     unset ANDROID_TARGET_OUT_TESTCASES
     export ANDROID_TARGET_OUT_TESTCASES=$(get_abs_build_var TARGET_OUT_TESTCASES)
 
-    # needed for building linux on MacOS
-    # TODO: fix the path
-    #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
+    # Finally, set PATH
+    export PATH=$ANDROID_LUNCH_BUILD_PATHS:$PATH
+}
+
+# Add directories to PATH that are NOT dependent on the lunch target.
+# For directories that are lunch-specific, add them in set_lunch_paths
+function set_global_paths()
+{
+    local T=$(gettop)
+    if [ ! "$T" ]; then
+        echo "Couldn't locate the top of the tree.  Try setting TOP."
+        return
+    fi
+
+    ##################################################################
+    #                                                                #
+    #              Read me before you modify this code               #
+    #                                                                #
+    #   This function sets ANDROID_GLOBAL_BUILD_PATHS to what it is  #
+    #   adding to PATH, and the next time it is run, it removes that #
+    #   from PATH.  This is required so envsetup.sh can be sourced   #
+    #   more than once and still have working paths.                 #
+    #                                                                #
+    ##################################################################
+
+    # Out with the old...
+    if [ -n "$ANDROID_GLOBAL_BUILD_PATHS" ] ; then
+        export PATH=${PATH/$ANDROID_GLOBAL_BUILD_PATHS/}
+    fi
+
+    # And in with the new...
+    ANDROID_GLOBAL_BUILD_PATHS=$T/build/bazel/bin
+    ANDROID_GLOBAL_BUILD_PATHS+=:$T/development/scripts
+    ANDROID_GLOBAL_BUILD_PATHS+=:$T/prebuilts/devtools/tools
+
+    # add kernel specific binaries
+    if [ $(uname -s) = Linux ] ; then
+        ANDROID_GLOBAL_BUILD_PATHS+=:$T/prebuilts/misc/linux-x86/dtc
+        ANDROID_GLOBAL_BUILD_PATHS+=:$T/prebuilts/misc/linux-x86/libufdt
+    fi
+
+    # If prebuilts/android-emulator/<system>/ exists, prepend it to our PATH
+    # to ensure that the corresponding 'emulator' binaries are used.
+    case $(uname -s) in
+        Darwin)
+            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/darwin-x86_64
+            ;;
+        Linux)
+            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/linux-x86_64
+            ;;
+        *)
+            ANDROID_EMULATOR_PREBUILTS=
+            ;;
+    esac
+    if [ -n "$ANDROID_EMULATOR_PREBUILTS" -a -d "$ANDROID_EMULATOR_PREBUILTS" ]; then
+        ANDROID_GLOBAL_BUILD_PATHS+=:$ANDROID_EMULATOR_PREBUILTS
+        export ANDROID_EMULATOR_PREBUILTS
+    fi
+
+    # Finally, set PATH
+    export PATH=$ANDROID_GLOBAL_BUILD_PATHS:$PATH
 }
 
 function printconfig()
@@ -310,7 +340,7 @@ function printconfig()
 
 function set_stuff_for_environment()
 {
-    setpaths
+    set_lunch_paths
     set_sequence_number
 
     export ANDROID_BUILD_TOP=$(gettop)
@@ -2004,5 +2034,7 @@ function avbtool() {
 }
 
 validate_current_shell
+set_global_paths
 source_vendorsetup
 addcompletions
+
