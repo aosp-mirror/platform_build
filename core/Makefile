@@ -379,10 +379,10 @@ $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1) $(6)
 	# dependency resolution, we achieve this by maually removing any duplicate
 	# modules with lower priority.
 	$(if $(9),\
-	  find $$(PRIVATE_EXTRA_MODULE_DIR) -maxdepth 1 -type f -name "*.ko" -delete; \
 	  mkdir -p $$(PRIVATE_EXTRA_MODULE_DIR); \
-	  cp $$(EXTRA_MODULES) $$(PRIVATE_EXTRA_MODULE_DIR); \
-	  ln -sf $$(PRIVATE_EXTRA_MODULE_DIR)/*.ko $$(PRIVATE_EXTRA_MODULE_DIR); \
+	  find $$(PRIVATE_EXTRA_MODULE_DIR) -maxdepth 1 -type f -name "*.ko" -delete; \
+	  cp $$(PRIVATE_EXTRA_MODULES) $$(PRIVATE_EXTRA_MODULE_DIR); \
+	  ln -sf $$(PRIVATE_MODULE_DIR)/*.ko $$(PRIVATE_EXTRA_MODULE_DIR); \
 	  find $$(PRIVATE_EXTRA_MODULE_DIR) -type l -delete; \
 	)
 	$(DEPMOD) -b $$(PRIVATE_STAGING_DIR) 0.0
