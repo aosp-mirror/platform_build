@@ -558,6 +558,14 @@ else
 endif
 
 BOARD_KERNEL_MODULE_DIRS += top
+
+# Default to not generating modules.dep for kernel modules on system
+# side. We should only load these modules if they are depended by vendor
+# side modules.
+ifeq ($(BOARD_SYSTEM_KERNEL_MODULES_LOAD),)
+  BOARD_SYSTEM_KERNEL_MODULES_LOAD := false
+endif
+
 $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,RECOVERY,$(TARGET_RECOVERY_ROOT_OUT),,modules.load.recovery,$(RECOVERY_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
   $(eval vendor_ramdisk_fragment := $(KERNEL_MODULE_DIR_VENDOR_RAMDISK_FRAGMENT_$(kmd))) \
