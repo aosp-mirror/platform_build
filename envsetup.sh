@@ -444,9 +444,7 @@ function multitree_lunch()
     # Lunch must be run in the topdir, but this way we get a clear error
     # message, instead of FileNotFound.
     local T=$(multitree_gettop)
-    if [ -n "$T" ]; then
-      "$T/orchestrator/build/orchestrator/core/lunch.py" "$@"
-    else
+    if [ -z "$T" ]; then
       _multitree_lunch_error
       return 1
     fi
