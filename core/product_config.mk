@@ -278,6 +278,14 @@ all_product_makefiles :=
 all_product_configs :=
 
 #############################################################################
+# Check product include tag allowlist
+BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := com.android.mainline_go com.android.mainline
+.KATI_READONLY := BLUEPRINT_INCLUDE_TAGS_ALLOWLIST
+$(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
+	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
+	$(call pretty-error, $(include_tag) is not in BLUEPRINT_INCLUDE_TAGS_ALLOWLIST: $(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST))))
+#############################################################################
+
 # Quick check and assign default values
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
