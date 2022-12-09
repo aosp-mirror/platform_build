@@ -29,13 +29,13 @@ function finalize_sdk_rel() {
     cp -r "$DEV_SRC_DIR/system/sepolicy/private/" "$DEV_SRC_DIR/system/sepolicy/prebuilts/api/${PLATFORM_SDK_VERSION}.0/"
 
     # prebuilts/abi-dumps/ndk
-    git -C "$DEV_SRC_DIR/prebuilts/abi-dumps/ndk" mv ${PLATFORM_CODENAME} ${PLATFORM_SDK_VERSION}
+    git -C "$DEV_SRC_DIR/prebuilts/abi-dumps/ndk" mv current ${PLATFORM_SDK_VERSION}
 
     # prebuilts/abi-dumps/vndk
     git -C "$DEV_SRC_DIR/prebuilts/abi-dumps/vndk" mv ${PLATFORM_CODENAME} ${PLATFORM_SDK_VERSION}
 
     # prebuilts/abi-dumps/platform
-    git -C "$DEV_SRC_DIR/prebuilts/abi-dumps/platform" mv ${PLATFORM_CODENAME} ${PLATFORM_SDK_VERSION}
+    git -C "$DEV_SRC_DIR/prebuilts/abi-dumps/platform" mv current ${PLATFORM_SDK_VERSION}
 }
 
 finalize_sdk_rel
