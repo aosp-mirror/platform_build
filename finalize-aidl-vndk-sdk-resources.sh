@@ -62,6 +62,11 @@ function finalize_aidl_vndk_sdk_resources() {
     local version_codes="$top/platform_testing/libraries/compatibility-common-util/src/com/android/compatibility/common/util/VersionCodes.java"
     sed -i -e "/=.*$((${PLATFORM_SDK_VERSION}-1));/a \\    ${SDK_VERSION}" $version_codes
 
+    # Finalize resources
+    "$top/frameworks/base/tools/aapt2/tools/finalize_res.py" \
+           "$top/frameworks/base/core/res/res/values/public-staging.xml" \
+           "$top/frameworks/base/core/res/res/values/public-final.xml"
+
     # frameworks/base
     sed -i "s%$SDK_CODENAME%$SDK_VERSION%g" "$top/frameworks/base/core/java/android/os/Build.java"
     sed -i -e "/=.*$((${PLATFORM_SDK_VERSION}-1)),/a \\    SDK_${PLATFORM_CODENAME_JAVA} = ${PLATFORM_SDK_VERSION}," "$top/frameworks/base/tools/aapt/SdkConstants.h"
@@ -70,11 +75,6 @@ function finalize_aidl_vndk_sdk_resources() {
     # Force update current.txt
     $m clobber
     $m update-api
-
-    # Finalize resources
-    "$top/frameworks/base/tools/aapt2/tools/finalize_res.py" \
-           "$top/frameworks/base/core/res/res/values/public-staging.xml" \
-           "$top/frameworks/base/core/res/res/values/public-final.xml"
 }
 
 finalize_aidl_vndk_sdk_resources
