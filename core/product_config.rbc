@@ -860,6 +860,10 @@ def _clear_var_list(g, h, var_list):
         if v in cfg:
             cfg[v] = __zero_value(cfg[v])
 
+        if v not in cfg and v not in g:
+            # Cause the variable to appear set like the make version does
+            g[v] = ""
+
 
 def __get_options():
     """Returns struct containing runtime global settings."""
