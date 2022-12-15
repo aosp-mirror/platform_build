@@ -32,6 +32,9 @@ function commit_changes() {
 }
 
 function finalize_step_1_main() {
+    # deprecated, do not use
+    exit 1
+
     local top="$(dirname "$0")"/../..
 
     repo selfupdate
