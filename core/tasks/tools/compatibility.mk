@@ -36,6 +36,7 @@ test_tools := $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed).jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed)-tests.jar \
   $(HOST_OUT_EXECUTABLES)/$(test_suite_tradefed) \
+  $(HOST_OUT_EXECUTABLES)/test-utils-script \
   $(test_suite_readme)
 
 $(foreach f,$(test_suite_readme),$(if $(strip $(ALL_TARGETS.$(f).META_LIC)),,$(eval ALL_TARGETS.$(f).META_LIC := $(module_license_metadata))))
