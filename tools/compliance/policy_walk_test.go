@@ -1171,6 +1171,24 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"mplBin.meta_lic", "reciprocal"},
 			},
 		},
+		{
+			name:      "regress-walk-twice",
+			condition: ImpliesShared,
+			roots:     []string{"mitBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic"},
+			edges: []annotated{
+				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"dynamic"}},
+				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"dynamic"}},
+				{"mitBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
+				{"mitBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
+			},
+			expectedActions: []act{
+				{"apacheBin.meta_lic", "restricted"},
+				{"mitLib.meta_lic", "restricted|restricted_if_statically_linked"},
+				{"gplLib.meta_lic", "restricted"},
+				{"mitBin.meta_lic", "restricted_if_statically_linked"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
