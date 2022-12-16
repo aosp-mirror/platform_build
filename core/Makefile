@@ -4592,35 +4592,39 @@ check_vintf_all_deps :=
 
 APEX_OUT := $(PRODUCT_OUT)/apex
 # -----------------------------------------------------------------
-# Create apex-info-file.xsd
+# Create apex-info-file.xml
 
-APEX_DIRS := \
+apex_dirs := \
   $(TARGET_OUT)/apex/% \
   $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
   $(TARGET_OUT_ODM)/apex/% \
   $(TARGET_OUT_PRODUCT)/apex/% \
 
-apex_vintf_files := $(sort $(filter $(APEX_DIRS), $(INTERNAL_ALLIMAGES_FILES)))
-APEX_INFO_FILE   := $(APEX_OUT)/apex-info-list.xml
+apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
+APEX_INFO_FILE := $(APEX_OUT)/apex-info-list.xml
 
-$(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/dump_apex_info $(apex_vintf_files)
+# dump_apex_info scans $(PRODUCT_OUT)/apex and writes apex-info-list.xml there.
+# This relies on the fact that rules for .apex files install the contents in $(PRODUCT_OUT)/apex.
+$(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/dump_apex_info $(apex_files)
 	@echo "Creating apex-info-file in $(PRODUCT_OUT) "
 	$< --root_dir $(PRODUCT_OUT)
 
-apex_vintf_files :=
+apex_files :=
+apex_dirs :=
 
 # The build system only writes VINTF metadata to */etc/vintf paths. Legacy paths aren't needed here
 # because they are only used for prebuilt images.
+# APEX files in /vendor/apex can have VINTF fragments as well.
 check_vintf_common_srcs_patterns := \
   $(TARGET_OUT)/etc/vintf/% \
   $(TARGET_OUT_VENDOR)/etc/vintf/% \
   $(TARGET_OUT_ODM)/etc/vintf/% \
   $(TARGET_OUT_PRODUCT)/etc/vintf/% \
   $(TARGET_OUT_SYSTEM_EXT)/etc/vintf/% \
+  $(TARGET_OUT_VENDOR)/apex/% \
 
 check_vintf_common_srcs := $(sort $(filter $(check_vintf_common_srcs_patterns),$(INTERNAL_ALLIMAGES_FILES)))
-check_vintf_common_srcs += $(APEX_INFO_FILE)
 check_vintf_common_srcs_patterns :=
 
 check_vintf_has_system :=
@@ -4661,7 +4665,8 @@ check_vintf_system_deps :=
 
 # -- Check vendor manifest / matrix including fragments (excluding other device manifests / matrices)
 check_vintf_vendor_deps := $(filter $(TARGET_OUT_VENDOR)/etc/vintf/%, $(check_vintf_common_srcs))
-ifneq ($(check_vintf_vendor_deps),)
+check_vintf_vendor_deps += $(filter $(TARGET_OUT_VENDOR)/apex/%, $(check_vintf_common_srcs))
+ifneq ($(strip $(check_vintf_vendor_deps)),)
 check_vintf_has_vendor := true
 check_vintf_vendor_log := $(intermediates)/check_vintf_vendor.log
 check_vintf_all_deps += $(check_vintf_vendor_log)
@@ -4672,9 +4677,9 @@ $(check_vintf_vendor_log): PRIVATE_VENDOR_SKUS := \
   $(if $(DEVICE_MANIFEST_FILE),EMPTY_VENDOR_SKU_PLACEHOLDER,\
     $(if $(DEVICE_MANIFEST_SKUS),,EMPTY_VENDOR_SKU_PLACEHOLDER)) \
   $(DEVICE_MANIFEST_SKUS)
-$(check_vintf_vendor_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_vendor_deps)
+$(check_vintf_vendor_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_vendor_deps) $(APEX_INFO_FILE)
 	$(foreach vendor_sku,$(PRIVATE_VENDOR_SKUS), \
-	  ( $< --check-one --dirmap /vendor:$(TARGET_OUT_VENDOR) \
+	  ( $< --check-one --dirmap /vendor:$(TARGET_OUT_VENDOR) --dirmap /apex:$(APEX_OUT) \
 	       --property ro.boot.product.vendor.sku=$(filter-out EMPTY_VENDOR_SKU_PLACEHOLDER,$(vendor_sku)) \
 	       > $@ 2>&1 ) || ( cat $@ && exit 1 ); )
 $(call declare-0p-target,$(check_vintf_vendor_log))
@@ -4788,7 +4793,7 @@ check_vintf_compatible_log := $(intermediates)/check_vintf_compatible.log
 check_vintf_all_deps += $(check_vintf_compatible_log)
 
 check_vintf_compatible_args :=
-check_vintf_compatible_deps := $(check_vintf_common_srcs)
+check_vintf_compatible_deps := $(check_vintf_common_srcs) $(APEX_INFO_FILE)
 
 ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),true)
 ifneq (,$(BUILT_KERNEL_VERSION_FILE)$(BUILT_KERNEL_CONFIGS_FILE))
