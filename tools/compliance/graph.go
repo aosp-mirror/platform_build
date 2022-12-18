@@ -459,36 +459,25 @@ func (ea TargetEdgeAnnotations) AsList() []string {
 }
 
 // TargetNodeSet describes a set of distinct nodes in a license graph.
-type TargetNodeSet struct {
-	nodes map[*TargetNode]struct{}
-}
+type TargetNodeSet map[*TargetNode]struct{}
 
 // Contains returns true when `target` is an element of the set.
-func (ts *TargetNodeSet) Contains(target *TargetNode) bool {
-	_, isPresent := ts.nodes[target]
+func (ts TargetNodeSet) Contains(target *TargetNode) bool {
+	_, isPresent := ts[target]
 	return isPresent
 }
 
-// AsList returns the list of target nodes in the set. (unordered)
-func (ts *TargetNodeSet) AsList() TargetNodeList {
-	result := make(TargetNodeList, 0, len(ts.nodes))
-	for tn := range ts.nodes {
-		result = append(result, tn)
-	}
-	return result
-}
-
 // Names returns the array of target node namess in the set. (unordered)
-func (ts *TargetNodeSet) Names() []string {
-	result := make([]string, 0, len(ts.nodes))
-	for tn := range ts.nodes {
+func (ts TargetNodeSet) Names() []string {
+	result := make([]string, 0, len(ts))
+	for tn := range ts {
 		result = append(result, tn.name)
 	}
 	return result
 }
 
 // String returns a human-readable string representation of the set.
-func (ts *TargetNodeSet) String() string {
+func (ts TargetNodeSet) String() string {
 	return fmt.Sprintf("{%s}", strings.Join(ts.Names(), ", "))
 }
 
