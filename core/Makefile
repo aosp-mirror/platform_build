@@ -3972,11 +3972,15 @@ INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET := $(PRODUCT_OUT)/pvmfw_embedded.avbpubke
 INSTALLED_PVMFW_BINARY_TARGET := $(call module-installed-files,pvmfw_bin)
 INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,pvmfw_img)
 INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_embedded_key)
+INTERNAL_PVMFW_SYMBOL := $(TARGET_OUT_EXECUTABLES_UNSTRIPPED)/pvmfw
 
 $(call declare-1p-container,$(INSTALLED_PVMFWIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_PVMFWIMAGE_TARGET),$(INTERNAL_PVMFWIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
 UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_PVMFWIMAGE_TARGET)
+
+# Place the unstripped pvmfw image to the symbols directory
+$(INTERNAL_PVMFWIMAGE_FILES): |$(INTERNAL_PVMFW_SYMBOL)
 
 $(eval $(call copy-one-file,$(INTERNAL_PVMFWIMAGE_FILES),$(INSTALLED_PVMFWIMAGE_TARGET)))
 
@@ -4580,6 +4584,7 @@ INTERNAL_ALLIMAGES_FILES := \
     $(INTERNAL_VENDOR_DLKMIMAGE_FILES) \
     $(INTERNAL_ODM_DLKMIMAGE_FILES) \
     $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) \
+    $(INTERNAL_PVMFWIMAGE_FILES) \
 
 # -----------------------------------------------------------------
 # Check VINTF of build
