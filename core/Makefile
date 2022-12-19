@@ -379,10 +379,10 @@ $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1) $(6)
 	# dependency resolution, we achieve this by maually removing any duplicate
 	# modules with lower priority.
 	$(if $(9),\
-	  find $$(PRIVATE_EXTRA_MODULE_DIR) -maxdepth 1 -type f -name "*.ko" -delete; \
 	  mkdir -p $$(PRIVATE_EXTRA_MODULE_DIR); \
-	  cp $$(EXTRA_MODULES) $$(PRIVATE_EXTRA_MODULE_DIR); \
-	  ln -sf $$(PRIVATE_EXTRA_MODULE_DIR)/*.ko $$(PRIVATE_EXTRA_MODULE_DIR); \
+	  find $$(PRIVATE_EXTRA_MODULE_DIR) -maxdepth 1 -type f -name "*.ko" -delete; \
+	  cp $$(PRIVATE_EXTRA_MODULES) $$(PRIVATE_EXTRA_MODULE_DIR); \
+	  ln -sf $$(PRIVATE_MODULE_DIR)/*.ko $$(PRIVATE_EXTRA_MODULE_DIR); \
 	  find $$(PRIVATE_EXTRA_MODULE_DIR) -type l -delete; \
 	)
 	$(DEPMOD) -b $$(PRIVATE_STAGING_DIR) 0.0
@@ -558,6 +558,14 @@ else
 endif
 
 BOARD_KERNEL_MODULE_DIRS += top
+
+# Default to not generating modules.dep for kernel modules on system
+# side. We should only load these modules if they are depended by vendor
+# side modules.
+ifeq ($(BOARD_SYSTEM_KERNEL_MODULES_LOAD),)
+  BOARD_SYSTEM_KERNEL_MODULES_LOAD := false
+endif
+
 $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,RECOVERY,$(TARGET_RECOVERY_ROOT_OUT),,modules.load.recovery,$(RECOVERY_STRIPPED_MODULE_STAGING_DIR),$(kmd))) \
   $(eval vendor_ramdisk_fragment := $(KERNEL_MODULE_DIR_VENDOR_RAMDISK_FRAGMENT_$(kmd))) \
@@ -3964,11 +3972,15 @@ INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET := $(PRODUCT_OUT)/pvmfw_embedded.avbpubke
 INSTALLED_PVMFW_BINARY_TARGET := $(call module-installed-files,pvmfw_bin)
 INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,pvmfw_img)
 INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_embedded_key)
+INTERNAL_PVMFW_SYMBOL := $(TARGET_OUT_EXECUTABLES_UNSTRIPPED)/pvmfw
 
 $(call declare-1p-container,$(INSTALLED_PVMFWIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_PVMFWIMAGE_TARGET),$(INTERNAL_PVMFWIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
 UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_PVMFWIMAGE_TARGET)
+
+# Place the unstripped pvmfw image to the symbols directory
+$(INTERNAL_PVMFWIMAGE_FILES): |$(INTERNAL_PVMFW_SYMBOL)
 
 $(eval $(call copy-one-file,$(INTERNAL_PVMFWIMAGE_FILES),$(INSTALLED_PVMFWIMAGE_TARGET)))
 
@@ -4572,6 +4584,7 @@ INTERNAL_ALLIMAGES_FILES := \
     $(INTERNAL_VENDOR_DLKMIMAGE_FILES) \
     $(INTERNAL_ODM_DLKMIMAGE_FILES) \
     $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) \
+    $(INTERNAL_PVMFWIMAGE_FILES) \
 
 # -----------------------------------------------------------------
 # Check VINTF of build
