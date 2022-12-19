@@ -162,6 +162,17 @@ assert_eq(
 assert_eq({"A_LIST_VARIABLE": ["foo", "bar"]}, board_globals)
 assert_eq({"A_LIST_VARIABLE": ["foo"]}, board_globals_base)
 
+g = {"FOO": "a", "BAR": "c", "BAZ": "e"}
+cfg = {"FOO": "b", "BAR": "d", "BAZ": "f"}
+rblf.clear_var_list(g, struct(cfg=cfg), "FOO BAR NEWVAR")
+assert_eq("", g["FOO"])
+assert_eq("", cfg["FOO"])
+assert_eq("", g["BAR"])
+assert_eq("", cfg["BAR"])
+assert_eq("e", g["BAZ"])
+assert_eq("f", cfg["BAZ"])
+assert_eq("", g.get("NEWVAR"))
+
 test_single_value_inheritance()
 test_artifact_path_requirements()
 test_prefixed_sort_order()

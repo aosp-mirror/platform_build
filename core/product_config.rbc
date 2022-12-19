@@ -830,6 +830,41 @@ def _product_copy_files_by_pattern(src, dest, s):
     return [ __mkpatsubst_word(parsed_percent, parsed_src, x) + ":" + __mkpatsubst_word(parsed_percent, parsed_dest, x) for x in words]
 
 
+__zero_values = {
+    "string": "",
+    "list": [],
+    "int": 0,
+    "float": 0,
+    "bool": False,
+    "dict": {},
+    "NoneType": None,
+    "tuple": (),
+}
+def __zero_value(x):
+    t = type(x)
+    if t in __zero_values:
+        return __zero_values[t]
+    else:
+        fail("Unknown type: "+t)
+
+
+def _clear_var_list(g, h, var_list):
+    cfg = __h_cfg(h)
+    for v in __words(var_list):
+        # Set these variables to their zero values rather than None
+        # or removing them from the dictionary because if they were
+        # removed entirely, ?= would set their value, when it would not
+        # after a make-based clear_var_list call.
+        if v in g:
+            g[v] = __zero_value(g[v])
+        if v in cfg:
+            cfg[v] = __zero_value(cfg[v])
+
+        if v not in cfg and v not in g:
+            # Cause the variable to appear set like the make version does
+            g[v] = ""
+
+
 def __get_options():
     """Returns struct containing runtime global settings."""
     settings = dict(
@@ -873,6 +908,7 @@ rblf = struct(
     addsuffix = _addsuffix,
     board_platform_in = _board_platform_in,
     board_platform_is = _board_platform_is,
+    clear_var_list = _clear_var_list,
     copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
