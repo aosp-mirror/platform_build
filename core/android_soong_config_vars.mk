@@ -91,6 +91,10 @@ $(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
 $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
+else
+ifdef KEEP_APEX_INHERIT
+$(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
+endif
 endif
 
 ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
