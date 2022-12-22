@@ -58,6 +58,9 @@ VNDK-SP: libunwindstack.so
 VNDK-SP: libutils.so
 VNDK-SP: libutilscallstack.so
 VNDK-SP: libz.so
+VNDK-core: android.frameworks.cameraservice.common-V1-ndk.so
+VNDK-core: android.frameworks.cameraservice.device-V1-ndk.so
+VNDK-core: android.frameworks.cameraservice.service-V1-ndk.so
 VNDK-core: android.hardware.audio.common@2.0.so
 VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
