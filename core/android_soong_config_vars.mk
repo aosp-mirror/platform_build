@@ -156,6 +156,10 @@ endif
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
 
+# Disable Compose in SystemUI by default.
+SYSTEMUI_USE_COMPOSE ?= false
+$(call add_soong_config_var,ANDROID,SYSTEMUI_USE_COMPOSE)
+
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
 # TODO(b/240588226): Remove the off-by-default exceptions after handling
