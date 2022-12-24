@@ -177,7 +177,7 @@ strip_file(const string& path)
         } else {
             // Split the arguments if more than 1
             char* cmd = strdup(strip_cmd);
-            const char** args = (const char**) malloc(sizeof(const char*) * (num_args + 2));
+            const char** args = (const char**) calloc((num_args + 2), sizeof(const char*));
 
             const char** curr = args;
             char* s = cmd;
