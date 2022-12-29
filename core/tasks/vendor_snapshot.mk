@@ -95,6 +95,7 @@ vendor-fake-snapshot:
 
 .PHONY: vendor-hwasan-snapshot
 vendor-hwasan-snapshot: PRIVATE_MAKEFILE := $(current_makefile)
+vendor-hwasan-snapshot:
 	$(call echo-error,$(PRIVATE_MAKEFILE),\
 		"CANNOT generate Vendor HWASAN snapshot. BOARD_VNDK_VERSION must be set to 'current'.")
 	exit 1
