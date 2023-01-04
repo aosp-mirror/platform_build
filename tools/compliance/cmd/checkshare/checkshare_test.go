@@ -241,6 +241,59 @@ func Test(t *testing.T) {
 			roots:          []string{"lib/libd.so.meta_lic"},
 			expectedStdout: "PASS",
 		},
+		{
+			condition:      "regressconcur",
+			name:           "container",
+			roots:          []string{"container.zip.meta_lic"},
+			expectedStdout: "FAIL",
+			expectedOutcomes: outcomeList{
+				&outcome{
+					target:           "testdata/regressconcur/bin/bin1.meta_lic",
+					privacyCondition: "proprietary",
+					shareCondition:   "restricted",
+				},
+				&outcome{
+					target:           "testdata/regressconcur/bin/bin2.meta_lic",
+					privacyCondition: "proprietary",
+					shareCondition:   "restricted",
+				},
+				&outcome{
+					target:           "testdata/regressconcur/bin/bin3.meta_lic",
+					privacyCondition: "proprietary",
+					shareCondition:   "restricted",
+				},
+				&outcome{
+					target:           "testdata/regressconcur/bin/bin4.meta_lic",
+					privacyCondition: "proprietary",
+					shareCondition:   "restricted",
+				},
+				&outcome{
+					target:           "testdata/regressconcur/bin/bin5.meta_lic",
+					privacyCondition: "proprietary",
+					shareCondition:   "restricted",
+				},
+				&outcome{
+					target:           "testdata/regressconcur/bin/bin6.meta_lic",
+					privacyCondition: "proprietary",
+					shareCondition:   "restricted",
+				},
+				&outcome{
+					target:           "testdata/regressconcur/bin/bin7.meta_lic",
+					privacyCondition: "proprietary",
+					shareCondition:   "restricted",
+				},
+				&outcome{
+					target:           "testdata/regressconcur/bin/bin8.meta_lic",
+					privacyCondition: "proprietary",
+					shareCondition:   "restricted",
+				},
+				&outcome{
+					target:           "testdata/regressconcur/bin/bin9.meta_lic",
+					privacyCondition: "proprietary",
+					shareCondition:   "restricted",
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.condition+" "+tt.name, func(t *testing.T) {

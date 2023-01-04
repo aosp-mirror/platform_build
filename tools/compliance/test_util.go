@@ -121,28 +121,24 @@ func newTestNode(lg *LicenseGraph, targetName string) *TargetNode {
 	return tn
 }
 
-// newTestCondition constructs a test license condition in the license graph.
-func newTestCondition(lg *LicenseGraph, targetName string, conditionName string) LicenseCondition {
-	tn := newTestNode(lg, targetName)
-	cl := LicenseConditionSetFromNames(tn, conditionName).AsList()
+// newTestCondition constructs a test license condition.
+func newTestCondition(conditionName string) LicenseCondition {
+	cl := LicenseConditionSetFromNames(conditionName).AsList()
 	if len(cl) == 0 {
 		panic(fmt.Errorf("attempt to create unrecognized condition: %q", conditionName))
 	} else if len(cl) != 1 {
 		panic(fmt.Errorf("unexpected multiple conditions from condition name: %q: got %d, want 1", conditionName, len(cl)))
 	}
 	lc := cl[0]
-	tn.licenseConditions = tn.licenseConditions.Plus(lc)
 	return lc
 }
 
-// newTestConditionSet constructs a test license condition set in the license graph.
-func newTestConditionSet(lg *LicenseGraph, targetName string, conditionName []string) LicenseConditionSet {
-	tn := newTestNode(lg, targetName)
-	cs := LicenseConditionSetFromNames(tn, conditionName...)
+// newTestConditionSet constructs a test license condition set.
+func newTestConditionSet(conditionName []string) LicenseConditionSet {
+	cs := LicenseConditionSetFromNames(conditionName...)
 	if cs.IsEmpty() {
 		panic(fmt.Errorf("attempt to create unrecognized condition: %q", conditionName))
 	}
-	tn.licenseConditions = tn.licenseConditions.Union(cs)
 	return cs
 }
 
@@ -283,12 +279,12 @@ func (l byAnnotatedEdge) Less(i, j int) bool {
 
 // act describes test data resolution actions to define test action sets.
 type act struct {
-	actsOn, origin, condition string
+	actsOn, condition string
 }
 
 // String returns a human-readable string representing the test action.
 func (a act) String() string {
-	return fmt.Sprintf("%s{%s:%s}", a.actsOn, a.origin, a.condition)
+	return fmt.Sprintf("%s{%s}", a.actsOn, a.condition)
 }
 
 // toActionSet converts a list of act test data into a test action set.
@@ -296,7 +292,7 @@ func toActionSet(lg *LicenseGraph, data []act) ActionSet {
 	as := make(ActionSet)
 	for _, a := range data {
 		actsOn := newTestNode(lg, a.actsOn)
-		cs := newTestConditionSet(lg, a.origin, strings.Split(a.condition, "|"))
+		cs := newTestConditionSet(strings.Split(a.condition, "|"))
 		as[actsOn] = cs
 	}
 	return as
@@ -304,7 +300,7 @@ func toActionSet(lg *LicenseGraph, data []act) ActionSet {
 
 // res describes test data resolutions to define test resolution sets.
 type res struct {
-	attachesTo, actsOn, origin, condition string
+	attachesTo, actsOn, condition string
 }
 
 // toResolutionSet converts a list of res test data into a test resolution set.
@@ -316,7 +312,7 @@ func toResolutionSet(lg *LicenseGraph, data []res) ResolutionSet {
 		if _, ok := rmap[attachesTo]; !ok {
 			rmap[attachesTo] = make(ActionSet)
 		}
-		cs := newTestConditionSet(lg, r.origin, strings.Split(r.condition, ":"))
+		cs := newTestConditionSet(strings.Split(r.condition, "|"))
 		rmap[attachesTo][actsOn] |= cs
 	}
 	return rmap
@@ -416,15 +412,13 @@ func toConflictList(lg *LicenseGraph, data []confl) []SourceSharePrivacyConflict
 	result := make([]SourceSharePrivacyConflict, 0, len(data))
 	for _, c := range data {
 		fields := strings.Split(c.share, ":")
-		oshare := fields[0]
 		cshare := fields[1]
 		fields = strings.Split(c.privacy, ":")
-		oprivacy := fields[0]
 		cprivacy := fields[1]
 		result = append(result, SourceSharePrivacyConflict{
 			newTestNode(lg, c.sourceNode),
-			newTestCondition(lg, oshare, cshare),
-			newTestCondition(lg, oprivacy, cprivacy),
+			newTestCondition(cshare),
+			newTestCondition(cprivacy),
 		})
 	}
 	return result
