@@ -1,0 +1,13 @@
+package_name:  "Android"
+projects:  "lib/restricted"
+license_kinds:  "SPDX-license-identifier-MIT"
+license_conditions:  "notice"
+is_container:  false
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/lib7.so"
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/lib7.a"
+installed:  "out/target/product/fictional/system/lib/lib7.so"
+sources:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/lib8.a"
+deps:  {
+  file:  "testdata/regressconcur/lib/lib8.a.meta_lic"
+  annotations:  "static"
+}
