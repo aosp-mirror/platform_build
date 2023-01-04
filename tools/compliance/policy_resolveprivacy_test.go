@@ -57,7 +57,7 @@ func TestResolveSourcePrivacy(t *testing.T) {
 				{"proprietary.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"proprietary.meta_lic", "proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
+				{"proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
 			},
 		},
 		{
@@ -67,7 +67,7 @@ func TestResolveSourcePrivacy(t *testing.T) {
 				{"gplBin.meta_lic", "proprietary.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
+				{"gplBin.meta_lic", "proprietary.meta_lic", "proprietary"},
 			},
 		},
 	}
