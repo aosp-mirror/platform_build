@@ -66,7 +66,7 @@ class ApexApkSigner(object):
     self.fsckerofs_path = os.path.join(
         OPTIONS.search_path, "bin", "fsck.erofs")
     self.blkid_path = os.path.join(
-        OPTIONS.search_path, "bin", "blkid")
+        OPTIONS.search_path, "bin", "blkid_static")
     self.avbtool = avbtool if avbtool else "avbtool"
     self.sign_tool = sign_tool
 
