@@ -175,7 +175,7 @@ func ReadLicenseGraph(rootFS fs.FS, stderr io.Writer, files []string) (*LicenseG
 		}
 		lg.edges = make(TargetEdgeList, 0, esize)
 		for _, tn := range lg.targets {
-			tn.licenseConditions = LicenseConditionSetFromNames(tn, tn.proto.LicenseConditions...)
+			tn.licenseConditions = LicenseConditionSetFromNames(tn.proto.LicenseConditions...)
 			err = addDependencies(lg, tn)
 			if err != nil {
 				return nil, fmt.Errorf("error indexing dependencies for %q: %w", tn.name, err)
