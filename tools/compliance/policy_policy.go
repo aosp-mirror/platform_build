@@ -114,7 +114,7 @@ func init() {
 
 // LicenseConditionSetFromNames returns a set containing the recognized `names` and
 // silently ignoring or discarding the unrecognized `names`.
-func LicenseConditionSetFromNames(tn *TargetNode, names ...string) LicenseConditionSet {
+func LicenseConditionSetFromNames(names ...string) LicenseConditionSet {
 	cs := NewLicenseConditionSet()
 	for _, name := range names {
 		if lc, ok := RecognizedConditionNames[name]; ok {
