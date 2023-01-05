@@ -2019,6 +2019,84 @@ endif
 # missing dependency errors.
 $(call build-license-metadata)
 
+# Generate SBOM in SPDX format
+product_copy_files_without_owner := $(foreach pcf,$(PRODUCT_COPY_FILES),$(call word-colon,1,$(pcf)):$(call word-colon,2,$(pcf)))
+ifeq ($(TARGET_BUILD_APPS),)
+dest_files_without_source := $(sort $(foreach pcf,$(product_copy_files_without_owner),$(if $(wildcard $(call word-colon,1,$(pcf))),,$(call word-colon,2,$(pcf)))))
+dest_files_without_source := $(addprefix $(PRODUCT_OUT)/,$(dest_files_without_source))
+installed_files := $(sort $(filter-out $(PRODUCT_OUT)/apex/% $(PRODUCT_OUT)/fake_packages/% $(PRODUCT_OUT)/testcases/% $(dest_files_without_source),$(filter $(PRODUCT_OUT)/%,$(modules_to_install))))
+else
+installed_files := $(apps_only_installed_files)
+endif
+
+# sbom-metadata.csv contains all raw data collected in Make for generating SBOM in generate-sbom.py.
+# There are multiple columns and each identifies the source of an installed file for a specific case.
+# The columns and their uses are described as below:
+#   installed_file: the file path on device, e.g. /product/app/Browser2/Browser2.apk
+#   module_path: the path of the module that generates the installed file, e.g. packages/apps/Browser2
+#   soong_module_type: Soong module type, e.g. android_app, cc_binary
+#   is_prebuilt_make_module: Y, if the installed file is from a prebuilt Make module, see prebuilt_internal.mk
+#   product_copy_files: the installed file is from variable PRODUCT_COPY_FILES, e.g. device/google/cuttlefish/shared/config/init.product.rc:product/etc/init/init.rc
+#   kernel_module_copy_files: the installed file is from variable KERNEL_MODULE_COPY_FILES, similar to product_copy_files
+#   is_platform_generated: this is an aggregated value including some small cases instead of adding more columns. It is set to Y if any case is Y
+#       is_build_prop: build.prop in each partition, see sysprop.mk.
+#       is_notice_file: NOTICE.xml.gz in each partition, see Makefile.
+#       is_dexpreopt_image_profile: see the usage of DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED in Soong and Make
+#       is_product_system_other_avbkey: see INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET
+#       is_system_other_odex_marker: see INSTALLED_SYSTEM_OTHER_ODEX_MARKER
+#       is_event_log_tags_file: see variable event_log_tags_file in Makefile
+#       is_kernel_modules_blocklist: modules.blocklist created for _dlkm partitions, see macro build-image-kernel-modules-dir in Makefile.
+#       is_fsverity_build_manifest_apk: BuildManifest<part>.apk files for system and system_ext partition, see ALL_FSVERITY_BUILD_MANIFEST_APK in Makefile.
+#       is_linker_config: see SYSTEM_LINKER_CONFIG and vendor_linker_config_file in Makefile.
+
+# (TODO: b/272358583 find another way of always rebuilding this target)
+# Remove the sbom-metadata.csv whenever makefile is evaluated
+$(shell rm $(PRODUCT_OUT)/sbom-metadata.csv >/dev/null 2>&1)
+$(PRODUCT_OUT)/sbom-metadata.csv: $(installed_files)
+	rm -f $@
+	@echo installed_file$(comma)module_path$(comma)soong_module_type$(comma)is_prebuilt_make_module$(comma)product_copy_files$(comma)kernel_module_copy_files$(comma)is_platform_generated >> $@
+	$(foreach f,$(installed_files),\
+	  $(eval _module_name := $(ALL_INSTALLED_FILES.$f)) \
+	  $(eval _path_on_device := $(patsubst $(PRODUCT_OUT)/%,%,$f)) \
+	  $(eval _module_path := $(strip $(sort $(ALL_MODULES.$(_module_name).PATH)))) \
+	  $(eval _soong_module_type := $(strip $(sort $(ALL_MODULES.$(_module_name).SOONG_MODULE_TYPE)))) \
+	  $(eval _is_prebuilt_make_module := $(ALL_MODULES.$(_module_name).IS_PREBUILT_MAKE_MODULE)) \
+	  $(eval _post_installed_dexpreopt_zip := $(DEXPREOPT.$(_module_name).POST_INSTALLED_DEXPREOPT_ZIP)) \
+	  $(eval _product_copy_files := $(sort $(filter %:$(_path_on_device),$(product_copy_files_without_owner)))) \
+	  $(eval _kernel_module_copy_files := $(sort $(filter %$(_path_on_device),$(KERNEL_MODULE_COPY_FILES)))) \
+	  $(eval _is_build_prop := $(call is-build-prop,$f)) \
+	  $(eval _is_notice_file := $(call is-notice-file,$f)) \
+	  $(eval _is_dexpreopt_image_profile := $(if $(filter %:/$(_path_on_device),$(DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED)),Y)) \
+	  $(eval _is_product_system_other_avbkey := $(if $(findstring $f,$(INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET)),Y)) \
+	  $(eval _is_event_log_tags_file := $(if $(findstring $f,$(event_log_tags_file)),Y)) \
+	  $(eval _is_system_other_odex_marker := $(if $(findstring $f,$(INSTALLED_SYSTEM_OTHER_ODEX_MARKER)),Y)) \
+	  $(eval _is_kernel_modules_blocklist := $(if $(findstring $f,$(ALL_KERNEL_MODULES_BLOCKLIST)),Y)) \
+	  $(eval _is_fsverity_build_manifest_apk := $(if $(findstring $f,$(ALL_FSVERITY_BUILD_MANIFEST_APK)),Y)) \
+	  $(eval _is_linker_config := $(if $(findstring $f,$(SYSTEM_LINKER_CONFIG) $(vendor_linker_config_file)),Y)) \
+	  $(eval _is_platform_generated := $(_is_build_prop)$(_is_notice_file)$(_is_dexpreopt_image_profile)$(_is_product_system_other_avbkey)$(_is_event_log_tags_file)$(_is_system_other_odex_marker)$(_is_kernel_modules_blocklist)$(_is_fsverity_build_manifest_apk)$(_is_linker_config)) \
+	  @echo /$(_path_on_device)$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated) >> $@ $(newline) \
+	  $(if $(_post_installed_dexpreopt_zip), \
+	  for i in $$(zipinfo -1 $(_post_installed_dexpreopt_zip)); do echo /$$i$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated) >> $@ ; done $(newline) \
+	  ) \
+	)
+
+.PHONY: sbom
+ifeq ($(TARGET_BUILD_APPS),)
+sbom: $(PRODUCT_OUT)/sbom.spdx.json
+$(PRODUCT_OUT)/sbom.spdx.json: $(PRODUCT_OUT)/sbom.spdx
+$(PRODUCT_OUT)/sbom.spdx: $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
+	rm -rf $@
+	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr=$(PRODUCT_MANUFACTURER) --json
+
+else
+apps_only_sbom_files := $(sort $(patsubst %,%.spdx,$(apps_only_installed_files)))
+$(apps_only_sbom_files): $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
+	rm -rf $@
+	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr=$(PRODUCT_MANUFACTURER) --unbundled
+
+sbom: $(apps_only_sbom_files)
+endif
+
 $(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)
 
 $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] writing build rules ...)
