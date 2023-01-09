@@ -224,6 +224,7 @@ warn_patterns = [
     analyzer_warn_check('clang-analyzer-valist.Unterminated'),
     analyzer_group_check('clang-analyzer-core.uninitialized'),
     analyzer_group_check('clang-analyzer-deadcode'),
+    analyzer_warn_check('clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling'),
     analyzer_warn_check('clang-analyzer-security.insecureAPI.bcmp'),
     analyzer_warn_check('clang-analyzer-security.insecureAPI.bcopy'),
     analyzer_warn_check('clang-analyzer-security.insecureAPI.bzero'),
