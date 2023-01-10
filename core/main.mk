@@ -92,6 +92,9 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 -include test/catbox/tools/build/config.mk
 # CTS-Root-specific config.
 -include test/cts-root/tools/build/config.mk
+# WVTS-specific config.
+-include test/wvts/tools/build/config.mk
+
 
 # Clean rules
 .PHONY: clean-dex-files
