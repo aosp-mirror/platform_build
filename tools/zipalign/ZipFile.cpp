@@ -372,7 +372,7 @@ status_t ZipFile::addCommon(const char* fileName, const void* data, size_t size,
     status_t result = OK;
     long lfhPosn, startPosn, endPosn, uncompressedLen;
     FILE* inputFp = NULL;
-    uint32_t crc;
+    uint32_t crc = 0;
     time_t modWhen;
 
     if (mReadOnly)
