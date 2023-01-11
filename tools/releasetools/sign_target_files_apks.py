@@ -531,7 +531,12 @@ def IsBuildPropFile(filename):
       # RECOVERY/RAMDISK/default.prop is a legacy path, but will always exist
       # as a symlink in the current code. So it's a no-op here. Keeping the
       # path here for clarity.
-      "RECOVERY/RAMDISK/default.prop") or filename.endswith("build.prop")
+      # Some build props might be stored under path
+      # VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/default.prop
+      # so overwrite all files that ends with build.prop or default.prop
+      "RECOVERY/RAMDISK/default.prop") or \
+        filename.endswith("build.prop") or \
+        filename.endswith("/default.prop")
 
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
